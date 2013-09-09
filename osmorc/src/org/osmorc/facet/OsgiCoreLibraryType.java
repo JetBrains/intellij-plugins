@@ -44,8 +44,11 @@ public class OsgiCoreLibraryType extends DownloadableLibraryTypeBase {
           try {
             String version = new Manifest(input).getMainAttributes().getValue(Constants.BUNDLE_VERSION);
             if (version != null) {
-              Version v = new Version(version);
-              return new LibraryVersionProperties(v.getMajor() + "." + v.getMinor() + "." + v.getMicro());
+              try {
+                Version v = new Version(version);
+                return new LibraryVersionProperties(v.getMajor() + "." + v.getMinor() + "." + v.getMicro());
+              }
+              catch (IllegalArgumentException ignored) { }
             }
           }
           finally {
