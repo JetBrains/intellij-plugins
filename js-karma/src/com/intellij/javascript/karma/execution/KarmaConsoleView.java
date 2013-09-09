@@ -24,6 +24,7 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
 import com.intellij.util.ObjectUtils;
@@ -91,8 +92,10 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
           if (myServer.isPortBound() && !myServer.areBrowsersReady()) {
             print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
             String url = myServer.formatUrl("/");
-            printHyperlink(url + "\n", new OpenUrlHyperlinkInfo(url));
+            printHyperlink(url, new OpenUrlHyperlinkInfo(url));
+            print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
           }
+          Disposer.dispose(alarm);
         }
       }, 1000, ModalityState.any());
       myServer.onBrowsersReady(new Runnable() {
