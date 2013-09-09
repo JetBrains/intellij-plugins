@@ -22,46 +22,35 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.osmorc.run;
 
-package org.osmorc.run.ui;
+import org.junit.Test;
+import org.osmorc.run.ui.SelectedBundle;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import org.junit.Test;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class SelectedBundleTest {
-    @Test
-    public void testToString() {
-        SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
-        assertThat(testObject.toString(), equalTo("testName (testURL)"));
-        testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
-        assertThat(testObject.toString(), equalTo("testName"));
-    }
+  @Test
+  public void testToString() {
+    SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
+    assertThat(testObject.toString(), equalTo("testName (testURL)"));
+    testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
+    assertThat(testObject.toString(), equalTo("testName"));
+  }
 
-    @Test
-    public void testEquals() {
-        SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
-        assertThat(testObject, equalTo(testObject));
-        testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
-        assertThat(testObject, equalTo(testObject));
-        testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.PlainLibrary);
-        assertThat(testObject, equalTo(testObject));
-        testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.PlainLibrary);
-        assertThat(testObject, equalTo(testObject));
-    }
-
-    @Test
-    public void testHashCode() {
-        SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
-        testObject.hashCode();
-        testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
-        testObject.hashCode();
-        testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.PlainLibrary);
-        testObject.hashCode();
-        testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.PlainLibrary);
-        testObject.hashCode();
-    }
+  @Test
+  public void testEquals() {
+    SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
+    assertThat(testObject, equalTo(testObject));
+    testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
+    assertThat(testObject, equalTo(testObject));
+    testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.PlainLibrary);
+    assertThat(testObject, equalTo(testObject));
+    testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.PlainLibrary);
+    assertThat(testObject, equalTo(testObject));
+  }
 }

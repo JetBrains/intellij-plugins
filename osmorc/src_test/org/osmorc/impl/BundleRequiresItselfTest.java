@@ -22,36 +22,50 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.settings;
 
+package org.osmorc.impl;
+
+import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
+import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
+import com.intellij.testFramework.fixtures.TempDirTestFixture;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-
-import static org.hamcrest.core.IsSame.sameInstance;
-import static org.junit.Assert.assertThat;
+import org.junit.runner.RunWith;
+import org.osmorc.SwingRunner;
+import org.osmorc.TestUtil;
 
 /**
+ * In 0.5.0 a bundle requiring itself produced  the exception reported in OSMORC-27 . Osmorc now ignores such
+ * dependencies during dependency synchronization and doesn't try to add a dependency from a module to itself.
+ *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ApplicationSettingsTest {
-  private ApplicationSettings testObject;
-  private FrameworkInstanceDefinition frameworkInstanceDefinition;
+@RunWith(SwingRunner.class)
+public class BundleRequiresItselfTest {
+    public BundleRequiresItselfTest() throws Exception {
+        fixture = TestUtil.createTestFixture();
+    }
 
-  @Before
-  public void setUp() {
-    frameworkInstanceDefinition = new FrameworkInstanceDefinition();
-    frameworkInstanceDefinition.setName("T");
-    frameworkInstanceDefinition.setFrameworkIntegratorName("i");
-    frameworkInstanceDefinition.setBaseFolder("b");
+    @Before
+    public void setUp() throws Exception {
+        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
+        myTempDirFixture.setUp();
+        fixture.setUp();
+    }
 
-    testObject = new ApplicationSettings();
-    testObject.getFrameworkInstanceDefinitions().add(frameworkInstanceDefinition);
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+        myTempDirFixture.tearDown();
+    }
 
-  @Test
-  public void testGetFrameworkInstance() {
-    FrameworkInstanceDefinition frameworkInstance = testObject.getFrameworkInstance(frameworkInstanceDefinition.getName());
-    assertThat(frameworkInstance, sameInstance(frameworkInstanceDefinition));
-  }
+    @Test
+    public void testBug() throws Exception {
+        TestUtil.loadModules("BundleRequiresItselfTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
+        TestUtil.createOsmorcFacetForAllModules(fixture.getProject());
+    }
+
+    private final IdeaProjectTestFixture fixture;
+    private TempDirTestFixture myTempDirFixture;
 }

@@ -1,4 +1,4 @@
-package org.osmorc.testutil;
+package org.osmorc;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,16 +8,16 @@ import org.osmorc.manifest.impl.BundleManifestImpl;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
 
 /**
- * Manifest holder which wraps an arbitrary manifest file. You can create files in thest using {@link com.intellij.testFramework.LightIdeaTestCase#createLightFile(String, String)}.
+ * Manifest holder which wraps an arbitrary manifest file.
+ * You can create files in test using {@link com.intellij.testFramework.LightIdeaTestCase#createLightFile(String, String)}.
  */
 public class TestManifestHolder extends AbstractManifestHolderImpl {
-  BundleManifest myManifest;
+  private BundleManifest myManifest;
   private Object myBoundObject;
 
   public TestManifestHolder(ManifestFile lightFile) {
     myManifest = new BundleManifestImpl(lightFile);
   }
-
 
   @NotNull
   @Override

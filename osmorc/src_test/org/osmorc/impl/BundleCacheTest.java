@@ -3,19 +3,16 @@ package org.osmorc.impl;
 import com.intellij.testFramework.LightIdeaTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
-import org.junit.Before;
+import org.osmorc.TestManifestHolder;
 import org.osmorc.manifest.BundleManifest;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderDisposedException;
-import org.osmorc.testutil.ManifestMaker;
-import org.osmorc.testutil.TestManifestHolder;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
-import static org.osmorc.testutil.ManifestMaker.bundleSymbolicName;
 
 /**
  * Test for {@link org.osmorc.impl.BundleCache}.
@@ -24,28 +21,41 @@ public class BundleCacheTest extends LightIdeaTestCase {
   private BundleCache myCache;
   private ManifestHolder myFragmentHolder;
 
-  @Before
+  @Override
   public void setUp() throws Exception {
     super.setUp();
 
     myCache = new BundleCache();
     myCache.updateWith(makeManifestHolder(
       "MANIFEST.MF",
-      bundleSymbolicName("foo.bar").bundleVersion("1.0.0").exportPackages("foo.bar")));
+      "Bundle-SymbolicName: foo.bar\n" +
+      "Bundle-Version: 1.0.0\n" +
+      "Export-Package: foo.bar"));
     myCache.updateWith(makeManifestHolder(
       "MANIFEST2.MF",
-      bundleSymbolicName("foo.bam").bundleVersion("1.2.0").exportPackages("foo.bam;version=1.2.0").importPackages("foo.bar")));
+      "Bundle-SymbolicName: foo.bam\n" +
+      "Bundle-Version: 1.2.0\n" +
+      "Export-Package: foo.bam;version=1.2.0\n" +
+      "Import-Package: foo.bar"));
     myCache.updateWith(makeManifestHolder(
       "MANIFEST3.MF",
-      bundleSymbolicName("foo.bam").bundleVersion("1.2.3").exportPackages("foo.bam; version=1.2.3").importPackages("foo.bar")));
+      "Bundle-SymbolicName: foo.bam\n" +
+      "Bundle-Version: 1.2.3\n" +
+      "Export-Package: foo.bam; version=1.2.3\n" +
+      "Import-Package: foo.bar"));
     myCache.updateWith(makeManifestHolder(
       "MANIFEST4.MF",
-      bundleSymbolicName("foo.baz").bundleVersion("1.2.1").exportPackages("foo.baz;version=1.2.0")
-        .importPackages("foo.bar", "foo.bam;version=\"[1.2.3,2.0.0)\"")));
+      "Bundle-SymbolicName: foo.baz\n" +
+      "Bundle-Version: 1.2.1\n" +
+      "Export-Package: foo.baz;version=1.2.0\n" +
+      "Import-Package: foo.bar, foo.bam;version=\"[1.2.3,2.0.0)\""));
     myCache.updateWith(myFragmentHolder = makeManifestHolder(
       "MANIFEST5.MF",
-      bundleSymbolicName("foo.bar.naff").bundleVersion("1.0.1").exportPackages("foo.bar.naff;version=1.0.1").importPackages("foo.bar")
-        .fragmentHost("foo.bar")));
+      "Bundle-SymbolicName: foo.bar.naff\n" +
+      "Bundle-Version: 1.0.1\n" +
+      "Export-Package: foo.bar.naff;version=1.0.1\n" +
+      "Import-Package: foo.bar\n" +
+      "Fragment-Host: foo.bar"));
   }
 
   public void testBundleLookupWithMoreThanOneResult() {
@@ -97,66 +107,8 @@ public class BundleCacheTest extends LightIdeaTestCase {
     assertThat(bundleManifest.getBundleVersion().toString(), equalTo("1.2.3"));
   }
 
-  public void testConcurrentUpdates() {
-    Thread updateThread1 = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        for (int i = 0; i < 1000; i++) {
-          myCache.updateWith(makeManifestHolder("MANIFEST_T1_" + i + ".MF",  bundleSymbolicName("foo.bar.t1").bundleVersion("1.0."+i)));
-        }
-        System.out.println("T1 done");
-      }
-    });
-    Thread updateThread2 = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        for (int i = 0; i < 1000; i++) {
-          myCache.updateWith(makeManifestHolder("MANIFEST_T2_" + i + ".MF", bundleSymbolicName("foo.bar.t2").bundleVersion("1.0."+i)));
-        }
-        System.out.println("T2 done");
-      }
-    });
-    CancelableRunnable cancelableRunnable = new CancelableRunnable() {
-      @Override
-      public void run() {
-        for (int i = 0; i < 1000 && !requestStop; i++) {
-          myCache.whoIs("foo.bar.t1");
-        }
-        System.out.println("T3 done");
-      }
-    };
-    Thread readThread = new Thread(cancelableRunnable);
-
-    updateThread1.start();
-    updateThread2.start();
-    readThread.start();
-
-    long elapsed = 0;
-    long last = System.currentTimeMillis();
-    while (updateThread1.isAlive() || updateThread2.isAlive()) {
-      elapsed += System.currentTimeMillis() - last;
-      last = System.currentTimeMillis();
-      if (elapsed > 10000) { // should be easily doable within 10 seconds
-        fail("Probable deadlock in BundleCache");
-      }
-      try {
-        //noinspection BusyWait
-        Thread.sleep(500);
-      }
-      catch (InterruptedException ignore) {
-        // ok
-      }
-    }
-    cancelableRunnable.requestStop = true;
-  }
-
-  private static abstract class CancelableRunnable implements Runnable {
-    public volatile boolean requestStop = false;
-  }
-
-  @NotNull
-  private static ManifestHolder makeManifestHolder(@NotNull String fileName, @NotNull ManifestMaker builder) {
-    return new TestManifestHolder((ManifestFile)createLightFile(fileName, builder.toString()));
+  private static ManifestHolder makeManifestHolder(String fileName, String text) {
+    return new TestManifestHolder((ManifestFile)createLightFile(fileName, text));
   }
 
   @NotNull

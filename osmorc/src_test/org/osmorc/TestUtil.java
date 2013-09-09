@@ -24,98 +24,78 @@
  */
 package org.osmorc;
 
-import com.intellij.codeInspection.InspectionManager;
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.application.Result;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.IdeaTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.util.io.ZipUtil;
-import junit.framework.Assert;
-import org.jdom.JDOMException;
-import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.Manually;
-import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class TestUtil {
+  private static final FileFilter VISIBLE_DIR_FILTER = new FileFilter() {
+    public boolean accept(File pathname) {
+      return pathname.isDirectory() && !pathname.getName().startsWith(".");
+    }
+  };
+
   public static IdeaProjectTestFixture createTestFixture() {
     IdeaTestCase.initPlatformPrefix();
     TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = JavaTestFixtureFactory.createFixtureBuilder("Osmorc Tests");
     return fixtureBuilder.getFixture();
   }
 
-  public static void loadModules(final String projectName, final Project project, final String projectDirPath) throws Exception {
-    final File projectZIP = new File(getTestDataDir(), projectName + ".zip");
+  public static void loadModules(String projectName, final Project project, String projectDirPath) throws Exception {
+    File projectZIP = new File(getTestDataDir(), projectName + ".zip");
     assert projectZIP.exists() : projectZIP.getAbsoluteFile() + " not found";
     assert !projectZIP.isDirectory() : projectZIP.getAbsolutePath() + " is a directory";
 
     final File projectDir = new File(projectDirPath);
     ZipUtil.extract(projectZIP, projectDir, null);
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        try {
-          final VirtualFile virtualDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(projectDir);
-          Assert.assertNotNull("Directory not found: " + projectDir, virtualDir);
-          virtualDir.refresh(false, true);
-          for (File moduleDir : projectDir.listFiles(new FileFilter() {
-            public boolean accept(File pathname) {
-              return pathname.isDirectory() && !pathname.getName().startsWith(".");
-            }
-          })) {
-            String moduleDirPath = moduleDir.getPath().replace(File.separatorChar, '/') + "/";
-            final String moduleFileName = moduleDirPath + moduleDir.getName() + ".iml";
-            if (new File(moduleFileName).exists()) {
-              Module module = ModuleManager.getInstance(project).loadModule(moduleFileName);
-              VirtualFile file = VirtualFileManager.getInstance().getFileSystem("file").findFileByPath(moduleDirPath);
-              PsiTestUtil.addContentRoot(module, file);
-              PsiTestUtil.addSourceRoot(module, file.findChild("src"));
-            }
+    new WriteAction() {
+      @Override
+      protected void run(Result result) throws Throwable {
+        VirtualFile virtualDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(projectDir);
+        assertNotNull("Directory not found: " + projectDir, virtualDir);
+        virtualDir.refresh(false, true);
+
+        for (File moduleDir : projectDir.listFiles(VISIBLE_DIR_FILTER)) {
+          String moduleDirPath = moduleDir.getPath().replace(File.separatorChar, '/') + "/";
+          final String moduleFileName = moduleDirPath + moduleDir.getName() + ".iml";
+          if (new File(moduleFileName).exists()) {
+            Module module = ModuleManager.getInstance(project).loadModule(moduleFileName);
+            VirtualFile file = LocalFileSystem.getInstance().findFileByPath(moduleDirPath);
+            assertNotNull(moduleDirPath, file);
+            PsiTestUtil.addContentRoot(module, file);
+            PsiTestUtil.addSourceRoot(module, file.findChild("src"));
           }
         }
-        catch (InvalidDataException e) {
-          throw new RuntimeException(e);
-        }
-        catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-        catch (JDOMException e) {
-          throw new RuntimeException(e);
-        }
-        catch (ModuleWithNameAlreadyExists e) {
-          throw new RuntimeException(e);
-        }
       }
-    });
+    }.execute().throwException();
   }
 
   public static void createOsmorcFacetForAllModules(final Project project) {
@@ -135,53 +115,13 @@ public class TestUtil {
     });
   }
 
-  public static void createOsmorcFacetForModule(final Project project, final String moduleName, boolean isManifestGenerated) {
-    final Module module = ModuleManager.getInstance(project).findModuleByName(moduleName);
-    createOsmorcFacetForModule(module, isManifestGenerated);
-  }
-
-  public static void createOsmorcFacetForModule(final Module module, final boolean isManifestGenerated) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        final ModifiableFacetModel modifiableFacetModel = FacetManager.getInstance(module).createModifiableModel();
-        final OsmorcFacet facet = new OsmorcFacet(module);
-        facet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
-        facet.getConfiguration().setManifestLocation("META-INF/MANIFEST.MF");
-        facet.getConfiguration().setManifestGenerationMode(isManifestGenerated ? OsmorcControlled : Manually);
-        modifiableFacetModel.addFacet(facet);
-        modifiableFacetModel.commit();
-      }
-    });
-  }
-
-  public static void removeOsmorcFacetOfModule(final Module module) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        final ModifiableFacetModel modifiableFacetModel = FacetManager.getInstance(module).createModifiableModel();
-        OsmorcFacet facet = modifiableFacetModel.getFacetByType(OsmorcFacetType.ID);
-        modifiableFacetModel.removeFacet(facet);
-        modifiableFacetModel.commit();
-      }
-    });
-  }
-
-  public static void createModuleDependency(final Project project, final String fromModuleName, final String toModuleName) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        final Module fromModule = ModuleManager.getInstance(project).findModuleByName(fromModuleName);
-        final Module toModule = ModuleManager.getInstance(project).findModuleByName(toModuleName);
-        ModuleRootModificationUtil.addDependency(fromModule, toModule);
-      }
-    });
-  }
-
   public static PsiFile loadPsiFile(Project project, String moduleName, String filePathInSource) {
     final ModuleRootManager rootManager = getModuleRootManager(project, moduleName);
     final VirtualFile root = rootManager.getSourceRoots()[0];
     VirtualFile file = root.findFileByRelativePath(filePathInSource);
-
+    assertNotNull(file);
     PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-
+    assertNotNull(psiFile);
     return psiFile;
   }
 
@@ -189,34 +129,17 @@ public class TestUtil {
     final ModuleRootManager rootManager = getModuleRootManager(project, moduleName);
     VirtualFile root = rootManager.getContentRoots()[0];
     VirtualFile file = root.findFileByRelativePath(filePathInContent);
-
-    return PsiManager.getInstance(project).findFile(file);
+    assertNotNull(file);
+    PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+    assertNotNull(psiFile);
+    return psiFile;
   }
 
   public static ModuleRootManager getModuleRootManager(Project project, String moduleName) {
     ModuleManager moduleManager = ModuleManager.getInstance(project);
-
     Module module = moduleManager.findModuleByName(moduleName);
-
+    assertNotNull(module);
     return ModuleRootManager.getInstance(module);
-  }
-
-  @NotNull
-  public static List<ProblemDescriptor> runInspection(LocalInspectionTool inspection, PsiFile psiFile, Project project) {
-    ProblemsHolder holder = new ProblemsHolder(InspectionManager.getInstance(project), psiFile, true);
-    final PsiElementVisitor elementVisitor = inspection.buildVisitor(holder, true);
-
-    psiFile.accept(new PsiRecursiveElementVisitor() {
-
-      public void visitElement(PsiElement psielement) {
-        psielement.accept(elementVisitor);
-        super.visitElement(psielement);
-      }
-    });
-
-
-    List<ProblemDescriptor> results = holder.getResults();
-    return results == null ? Collections.<ProblemDescriptor>emptyList() : results;
   }
 
   private static File getTestDataDir() {
@@ -233,18 +156,6 @@ public class TestUtil {
     }
 
     return TEST_DATA_DIR;
-  }
-
-  public static ModuleOrderEntry getOrderEntry(Module forModule, Module inModule) {
-    ModuleOrderEntry result = null;
-    OrderEntry[] orderEntries = ModuleRootManager.getInstance(inModule).getOrderEntries();
-    for (OrderEntry orderEntry : orderEntries) {
-      if (orderEntry instanceof ModuleOrderEntry && ((ModuleOrderEntry)orderEntry).getModule() == forModule) {
-        result = (ModuleOrderEntry)orderEntry;
-        break;
-      }
-    }
-    return result;
   }
 
   private static File TEST_DATA_DIR;

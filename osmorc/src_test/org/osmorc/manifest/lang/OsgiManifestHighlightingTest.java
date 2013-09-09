@@ -1,10 +1,8 @@
 package org.osmorc.manifest.lang;
 
-import com.intellij.openapi.application.PluginPathManager;
-import com.intellij.testFramework.PsiTestUtil;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.osmorc.AbstractOsgiTestCase;
 
-public class OsgiManifestHighlightingTest extends LightCodeInsightFixtureTestCase {
+public class OsgiManifestHighlightingTest extends AbstractOsgiTestCase {
   public void testBundleVersion() {
     doTest(
       "Bundle-Version: 1.<error descr=\"The minor component of the defined version is not a valid number\">0,u</error>\n"
@@ -12,8 +10,6 @@ public class OsgiManifestHighlightingTest extends LightCodeInsightFixtureTestCas
   }
 
   public void testBundleActivator() {
-    PsiTestUtil.addLibrary(myModule, "osgi.core", PluginPathManager.getPluginHomePath("Osmorc") + "/lib", "org.apache.felix.framework-4.2.1.jar");
-
     myFixture.addClass(
       "package main;\n" +
       "import org.osgi.framework.*;\n" +
