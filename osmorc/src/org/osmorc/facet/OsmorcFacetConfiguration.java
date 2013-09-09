@@ -30,6 +30,7 @@ import com.intellij.facet.FacetConfiguration;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetValidatorsManager;
+import com.intellij.facet.ui.libraries.FrameworkLibraryValidator;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PathMacroManager;
@@ -107,13 +108,18 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   private static final String KEY = "key";
   private static final String VALUE = "value";
 
-
-  public FacetEditorTab[] createEditorTabs(final FacetEditorContext editorContext,
-                                           final FacetValidatorsManager validatorsManager) {
-    return new FacetEditorTab[]{new OsmorcFacetGeneralEditorTab(editorContext),
-      new OsmorcFacetJAREditorTab(editorContext, validatorsManager), new OsmorcFacetManifestGenerationEditorTab(editorContext)};
+  @Override
+  public FacetEditorTab[] createEditorTabs(FacetEditorContext context, FacetValidatorsManager validatorsManager) {
+    FrameworkLibraryValidator validator = OsgiCoreLibraryType.getValidator(context, validatorsManager);
+    validatorsManager.registerValidator(validator);
+    return new FacetEditorTab[]{
+      new OsmorcFacetGeneralEditorTab(context),
+      new OsmorcFacetJAREditorTab(context, validatorsManager),
+      new OsmorcFacetManifestGenerationEditorTab(context)
+    };
   }
 
+  @Override
   public void readExternal(Element element) throws InvalidDataException {
     PathMacroManager.getInstance(ApplicationManager.getApplication()).expandPaths(element);
 
@@ -204,6 +210,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     }
   }
 
+  @Override
   public void writeExternal(Element element) throws WriteExternalException {
     element.setAttribute(MANIFEST_GENERATION_MODE, getManifestGenerationMode().name());
     element.setAttribute(MANIFEST_LOCATION, getManifestLocation());

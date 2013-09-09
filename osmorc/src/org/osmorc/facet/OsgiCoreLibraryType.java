@@ -1,5 +1,10 @@
 package org.osmorc.facet;
 
+import com.intellij.facet.impl.ui.FacetEditorsFactoryImpl;
+import com.intellij.facet.ui.FacetEditorContext;
+import com.intellij.facet.ui.FacetValidatorsManager;
+import com.intellij.facet.ui.libraries.FrameworkLibraryValidator;
+import com.intellij.framework.library.DownloadableLibraryService;
 import com.intellij.framework.library.DownloadableLibraryTypeBase;
 import com.intellij.framework.library.LibraryVersionProperties;
 import com.intellij.openapi.diagnostic.Logger;
@@ -7,6 +12,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.LibrariesHelper;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
+import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
@@ -72,5 +78,10 @@ public class OsgiCoreLibraryType extends DownloadableLibraryTypeBase {
   public static boolean isOsgiCoreLibrary(@NotNull Library library) {
     VirtualFile[] roots = library.getFiles(OrderRootType.CLASSES);
     return LibraryUtil.isClassAvailableInLibrary(roots, DETECTOR_CLASS);
+  }
+
+  public static FrameworkLibraryValidator getValidator(FacetEditorContext context, FacetValidatorsManager manager) {
+    CustomLibraryDescription description = DownloadableLibraryService.getInstance().createDescriptionForType(OsgiCoreLibraryType.class);
+    return FacetEditorsFactoryImpl.getInstanceImpl().createLibraryValidator(description, context, manager, ID);
   }
 }
