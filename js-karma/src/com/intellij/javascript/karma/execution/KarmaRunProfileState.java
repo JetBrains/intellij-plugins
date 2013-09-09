@@ -112,6 +112,7 @@ public class KarmaRunProfileState implements RunProfileState {
     Disposer.register(myProject, smtRunnerConsoleView);
 
     ProcessHandler processHandler = session.getProcessHandler();
+    // TODO make smtRunnerConsoleView instance of LanguageConsoleView to make it more usage for debugging
     DefaultExecutionResult executionResult = new DefaultExecutionResult(smtRunnerConsoleView, processHandler);
     executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;
