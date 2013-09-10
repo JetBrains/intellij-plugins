@@ -44,9 +44,6 @@ public class DartUnitRunConfiguration extends LocatableConfigurationBase {
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
     final Project project = env.getProject();
-    if (project == null) {
-      throw new ExecutionException("Can't find project");
-    }
     final String path = myRunnerParameters.getFilePath();
     if (path == null || VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(path)) == null) {
       throw new ExecutionException("Can't find file: " + path);
