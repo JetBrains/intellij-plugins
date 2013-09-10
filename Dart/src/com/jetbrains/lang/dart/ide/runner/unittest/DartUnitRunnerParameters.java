@@ -3,7 +3,7 @@ package com.jetbrains.lang.dart.ide.runner.unittest;
 /**
  * @author: Fedor.Korotkov
  */
-public class DartUnitRunnerParameters {
+public class DartUnitRunnerParameters implements Cloneable {
   private String myFilePath = null;
   private String myArguments = null;
   private String myVMOptions = null;
@@ -52,5 +52,16 @@ public class DartUnitRunnerParameters {
 
   public enum Scope {
     METHOD, GROUP, ALL
+  }
+
+  @Override
+  protected Object clone() throws CloneNotSupportedException {
+    final DartUnitRunnerParameters result = new DartUnitRunnerParameters();
+    result.setTestName(getTestName());
+    result.setArguments(getArguments());
+    result.setFilePath(getFilePath());
+    result.setScope(getScope());
+    result.setTestName(getTestName());
+    return result;
   }
 }
