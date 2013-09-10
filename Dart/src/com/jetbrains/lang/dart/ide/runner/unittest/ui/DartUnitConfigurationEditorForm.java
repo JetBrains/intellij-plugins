@@ -79,7 +79,12 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
     myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
-    myTestNameField.setText(StringUtil.notNullize(parameters.getTestName()));
+    if (parameters.getScope() != DartUnitRunnerParameters.Scope.ALL) {
+      myTestNameField.setText(StringUtil.notNullize(parameters.getTestName()));
+    }
+    else {
+      myTestNameField.setText("");
+    }
     setScope(parameters.getScope());
   }
 
@@ -121,6 +126,9 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
     parameters.setScope(getScope());
     if (getScope() != DartUnitRunnerParameters.Scope.ALL) {
       parameters.setTestName(StringUtil.nullize(myTestNameField.getText()));
+    }
+    else {
+      parameters.setTestName(null);
     }
   }
 
