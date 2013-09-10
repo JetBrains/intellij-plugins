@@ -8,7 +8,7 @@
   <depends optional="true" config-file="webide-support.xml">JavaScript</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="pub-support.xml">org.jetbrains.plugins.yaml</depends>
-  <depends optional="true" config-file="rich-platform.xml">com.intellij.modules.java</depends>
+  <!--<depends optional="true" config-file="rich-platform.xml">com.intellij.modules.java</depends>-->
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="dart-file-watcher.xml">com.intellij.plugins.watcher</depends>
   <change-notes>
