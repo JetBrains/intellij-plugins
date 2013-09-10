@@ -25,6 +25,7 @@
 package org.osmorc.manifest.impl;
 
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.psi.PsiNameHelper;
 import com.intellij.util.Function;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
@@ -85,7 +86,7 @@ public class BundleManifestImpl implements BundleManifest {
   }
 
   @Override
-  public boolean exportsPackage(@NotNull String packageSpec) {
+  public boolean isPackageExported(@NotNull String packageSpec) {
     Header header = myManifestFile.getHeader(EXPORT_PACKAGE);
     if (header == null) {
       return false;
@@ -185,6 +186,21 @@ public class BundleManifestImpl implements BundleManifest {
     // bundle should have exactly one clause
     // they follow the same semantics so i think it is safe to reuse this method here. We do not handle extension bundles at all.
     return clauses.size() == 1 && isRequiredBundle(clauses.get(0).getUnwrappedText());
+  }
+
+  @Override
+  public boolean isPackageImported(@NotNull String packageName) {
+    Object headerValue = getHeaderValue(IMPORT_PACKAGE);
+    if (headerValue != null) {
+      @SuppressWarnings("unchecked") List<String> packages = (List<String>)headerValue;
+      for (String imported : packages) {
+        if (PsiNameHelper.isSubpackageOf(packageName, imported)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   private Object getHeaderValue(String headerName) {

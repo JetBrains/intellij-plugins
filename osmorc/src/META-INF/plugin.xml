@@ -122,14 +122,15 @@
     <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="ClassInDefaultPackageInspection.name"
                      groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassInDefaultPackageInspection"/>
-    <!--<localInspection shortName="osmorcClassUnavailable" displayName="Class not available" groupName="OSGi"
-                     enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassUnavailableInspection"/>-->
     <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="UnknownManifestPackage.name"
                      groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.UnknownManifestPackageInspection"/>
     <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="WrongImportPackageInspection.name"
                      groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.WrongImportPackageInspection"/>
+    <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="PackageAccessibilityInspection.name"
+                     groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
+                     enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.PackageAccessibilityInspection"/>
 
     <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
     <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>

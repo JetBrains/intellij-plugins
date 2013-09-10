@@ -32,7 +32,7 @@ import org.osmorc.valueobject.Version;
 import java.util.List;
 
 /**
- * Represents a manifest of a bundle.
+ * Represents a manifest of a bundle (convenience wrapper around {@link ManifestFile}).
  *
  * @author Robert F. Beeger (robert@beeger.net)
  * @author Jan Thom&auml; (janthomae@janthomae.de)
@@ -40,33 +40,24 @@ import java.util.List;
 public interface BundleManifest {
   /**
    * Gets the actual manifest file behind this manifest.
-   *
-   * @return the manifest file
    */
   @NotNull
   ManifestFile getManifestFile();
 
   /**
-   * Gets the bundle version.
-   *
-   * @return the bundle version. If there is no bundle version, returns 0.0.0
+   * Gets the bundle version. If there is no bundle version, returns 0.0.0
    */
   @NotNull
   Version getBundleVersion();
 
   /**
-   * Gets the bundle symbolic name.
-   *
-   * @return the bundle symbolic name or null if this bundle has no symbolic name set. This would be an incorrect bundle, however
-   *         development environments, this may happen.
+   * Gets the bundle symbolic name or null if this bundle has no symbolic name set.
    */
   @Nullable
   String getBundleSymbolicName();
 
   /**
-   * Gets the bundle activator.
-   *
-   * @return the bundle activator. If this bundle has no activator, returns null.
+   * Gets the bundle activator. If this bundle has no activator, returns null.
    */
   @Nullable
   String getBundleActivator();
@@ -77,30 +68,27 @@ public interface BundleManifest {
    * @param packageSpec a package specification, e.g org.example.foo;version:=2.4.0
    * @return true, if this bundle exports the given package, false otherwise.
    */
-  boolean exportsPackage(@NotNull String packageSpec);
+  boolean isPackageExported(@NotNull String packageSpec);
 
   /**
-   * Returns a list of package specs that represent the imports of this bundle. Each package spec can be fed to {@link #exportsPackage(String)}
-   * of another bundle, to find out if the other bundle exports a package according to the given spec.
-   *
-   * @return a list of import package specs.
+   * Returns a list of package specs that represent the imports of this bundle.
+   * Each package spec can be fed to {@link #isPackageExported(String)} of another bundle
+   * to find out if it exports a package according to the given spec.
    */
   @NotNull
   List<String> getImports();
 
   /**
-   * Returns a list of bundle specs which represent the bundles, that this bundle requires. Each bundle spec can be fed to
-   * {@link #isRequiredBundle(String)} of another bundle to find out if the other bundle is the required bundle.
-   *
-   * @return the list of required bundles. If no bundles are required returns the empty list.
+   * Returns a list of bundle specs which represent the bundles, that this bundle requires.
+   * Each bundle spec can be fed to {@link #isRequiredBundle(String)} of another bundle
+   * to find out if it is the required bundle.
    */
   @NotNull
   List<String> getRequiredBundles();
 
   /**
    * Returns a list of entries in the BundleClasspath header.
-   *
-   * @return a list of entries. If the header does not exist, or does not have entries, returns an empty list.
+   * If the header does not exist or does not have entries, returns an empty list.
    */
   @NotNull
   List<String> getBundleClassPathEntries();
@@ -114,35 +102,31 @@ public interface BundleManifest {
   boolean isRequiredBundle(@NotNull String bundleSpec);
 
   /**
-   * Returns true, if this bundle re-exports the given bundle. This is the case if this bundle has a Require-Bundle
-   * header containing the given bundle and the header value has the visiblity-directive set to reexport.
-   *
-   * @param
-   * @return true, if this bundle re-exports the given bundle, false otherwise.
+   * Returns true, if this bundle re-exports the given bundle.
+   * This is the case if this bundle has a Require-Bundle header containing the given bundle
+   * and the header value has the visibility-directive set to reexport.
    */
   boolean reExportsBundle(@NotNull BundleManifest otherBundle);
 
   /**
    * Returns true if this manifest represents a fragment bundle.
-   *
-   * @return true if the manifest represents a fragement bundle, false otherwise..
    */
   boolean isFragmentBundle();
 
   /**
    * Checks, if this bundle would be a potential fragment host for the given fragment bundle.
-   *
-   * @param fragmentBundle the fragment bundle
-   * @return
    */
   boolean isFragmentHostFor(@NotNull BundleManifest fragmentBundle);
 
-
   /**
-   * A list of bundle specs which are re-exported by this bundle. It is the complement of {@link #reExportsBundle(BundleManifest)}.
-   *
-   * @return a list of exported bundles. If no bundles are re-exported the list is empty.
+   * A list of bundle specs which are re-exported by this bundle.
+   * This method complements {@link #reExportsBundle(BundleManifest)}.
    */
   @NotNull
   List<String> getReExportedBundles();
+
+  /**
+   * Returns true if given package is imported by this Import-Package header of this bundle.
+   */
+  boolean isPackageImported(@NotNull String packageName);
 }

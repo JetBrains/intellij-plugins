@@ -61,17 +61,22 @@ public class BundleManifestTest extends LightIdeaTestCase {
     "Export-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\n" +
     "Fragment-Host: foo.bar;bundle-version=\"(2.0.0, 2.5.0]\"\n";
 
+  private static final String Manifest9 =
+    "Bundle-SymbolicName: foo.bar\n" +
+    "Import-Package: foo.bar.baz, foo.bar.split" +
+    " _name;version=\"[1.0,1.0]\"\n";
+
   public void testExportsPackage() {
     BundleManifest bundleManifest = getManifest(Manifest1);
 
     assertThat(bundleManifest.getBundleSymbolicName(), equalTo("foo.bar"));
-    assertThat(bundleManifest.exportsPackage("foo.bar.baz"), is(true));
-    assertThat(bundleManifest.exportsPackage("foo.bar.bam"), is(true));
-    assertThat(bundleManifest.exportsPackage("naff.blah"), is(false));
-    assertThat(bundleManifest.exportsPackage("foo.bar.baz;version=1.0.0"), is(true));
-    assertThat(bundleManifest.exportsPackage("foo.bar.baz;version=2.0.0"), is(false));
-    assertThat(bundleManifest.exportsPackage("foo.bar.baz;version=\"[1.0.0, 2.0.0)\""), is(true));
-    assertThat(bundleManifest.exportsPackage("foo.bar.baz;version=\"[1.1.0, 2.0.0)\""), is(false));
+    assertThat(bundleManifest.isPackageExported("foo.bar.baz"), is(true));
+    assertThat(bundleManifest.isPackageExported("foo.bar.bam"), is(true));
+    assertThat(bundleManifest.isPackageExported("naff.blah"), is(false));
+    assertThat(bundleManifest.isPackageExported("foo.bar.baz;version=1.0.0"), is(true));
+    assertThat(bundleManifest.isPackageExported("foo.bar.baz;version=2.0.0"), is(false));
+    assertThat(bundleManifest.isPackageExported("foo.bar.baz;version=\"[1.0.0, 2.0.0)\""), is(true));
+    assertThat(bundleManifest.isPackageExported("foo.bar.baz;version=\"[1.1.0, 2.0.0)\""), is(false));
   }
 
   public void testSimpleRequireBundle() {
@@ -136,6 +141,14 @@ public class BundleManifestTest extends LightIdeaTestCase {
     assertThat(potentialHost2.isFragmentBundle(), is(false));
     assertThat(potentialHost1.isFragmentHostFor(fragment), is(false));
     assertThat(potentialHost2.isFragmentHostFor(fragment), is(true));
+  }
+
+  public void testImports() {
+    BundleManifest manifest = getManifest(Manifest9);
+    assertThat(manifest.isPackageImported("foo.bar.baz"), is(true));
+    assertThat(manifest.isPackageImported("foo.bar.split_name"), is(true));
+    assertThat(manifest.isPackageImported("foo.bar.bam"), is(false));
+    assertThat(manifest.isPackageImported("foo.bar"), is(false));
   }
 
   private static BundleManifest getManifest(String text) {

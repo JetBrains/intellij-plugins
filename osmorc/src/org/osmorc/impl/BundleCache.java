@@ -88,7 +88,7 @@ class BundleCache {
         continue;
       }
       if (bundleManifest != null) {
-        if (bundleManifest.exportsPackage(packageSpec)) {
+        if (bundleManifest.isPackageExported(packageSpec)) {
           result.add(manifestHolder);
         }
       }

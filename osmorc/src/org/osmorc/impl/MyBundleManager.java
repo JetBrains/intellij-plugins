@@ -317,6 +317,19 @@ public class MyBundleManager implements BundleManager {
     return null;
   }
 
+  @Nullable
+  @Override
+  public BundleManifest getManifestByBundleSpec(@NotNull String bundleSpec) {
+    ManifestHolder manifestHolder = myBundleCache.whoIsRequiredBundle(bundleSpec);
+    if (manifestHolder != null) {
+      try {
+        return manifestHolder.getBundleManifest();
+      }
+      catch (ManifestHolderDisposedException ignore) { }
+    }
+    return null;
+  }
+
   @Override
   public BundleManifest getManifestBySymbolicName(@NotNull String bundleSymbolicName) {
     List<Object> objects = whoIs(bundleSymbolicName);

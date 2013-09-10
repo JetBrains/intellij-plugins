@@ -46,13 +46,19 @@ public interface BundleManager {
    * If multiple bundles with that name are known, it will return the manifest of an arbitrarily chosen bundle.
    */
   @Nullable
-  BundleManifest getManifestBySymbolicName(String bundleSymbolicName);
+  BundleManifest getManifestBySymbolicName(@NotNull String bundleSymbolicName);
 
   /**
    * Returns the manifest for a given object or null if no manifest for the given object is known.
    */
   @Nullable
   BundleManifest getManifestByObject(@NotNull Object object);
+
+  /**
+   * Returns manifest of a bundle specified by a given requirement specification, or null if not found.
+   */
+  @Nullable
+  BundleManifest getManifestByBundleSpec(@NotNull String bundleSpec);
 
   /**
    * Adds the given module and it's dependencies to the list of known bundles.
