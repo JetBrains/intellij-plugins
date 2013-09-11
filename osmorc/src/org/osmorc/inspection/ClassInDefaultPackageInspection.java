@@ -22,67 +22,34 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.inspection;
 
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.*;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
+import org.osmorc.i18n.OsmorcBundle;
 
 /**
- * Inspection that reports classes which are located in the default package. These classes cannot be imported or
- * exported in OSGi.
+ * Inspection that reports classes which are located in the default package.
+ * These classes cannot be imported or exported in OSGi.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id$
  */
 public class ClassInDefaultPackageInspection extends LocalInspectionTool {
-
-  @Nls
   @NotNull
-  public String getGroupDisplayName() {
-    return "OSGi";
-  }
-
-  public boolean isEnabledByDefault() {
-    return true;
-  }
-
-  @NotNull
-  public HighlightDisplayLevel getDefaultLevel() {
-    return HighlightDisplayLevel.ERROR;
-  }
-
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return "Class is in default package";
-  }
-
-  @NonNls
-  @NotNull
-  public String getShortName() {
-    return "osmorcClassInDefaultPackage";
-  }
-
-  @NotNull
+  @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
     return new JavaElementVisitor() {
       @Override
       public void visitClass(PsiClass psiClass) {
         if (OsmorcFacet.hasOsmorcFacet(psiClass)) {
           PsiJavaFile file = (PsiJavaFile)psiClass.getContainingFile();
-          if ("".equals(file.getPackageName())) {
+          if (file.getPackageName().isEmpty()) {
             PsiIdentifier nameIdentifier = psiClass.getNameIdentifier();
             if (nameIdentifier != null) {
-              holder.registerProblem(nameIdentifier, "Class is in default package",
-                                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+              holder.registerProblem(nameIdentifier, OsmorcBundle.message("ClassInDefaultPackageInspection.message"));
             }
           }
         }

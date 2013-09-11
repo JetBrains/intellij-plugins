@@ -116,15 +116,19 @@
 
     <project.converterProvider implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxRunConfigurationConverterProvider"/>
 
-    <localInspection shortName="osmorcUnregisteredActivator" displayName="Bundle Activator not registered" groupName="OSGi"
+    <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="UnregisteredActivatorInspection.name"
+                     groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.UnregisteredActivatorInspection"/>
-    <localInspection shortName="osmorcClassInDefaultPackage" displayName="Class is in default package" groupName="OSGi"
+    <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="ClassInDefaultPackageInspection.name"
+                     groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassInDefaultPackageInspection"/>
     <!--<localInspection shortName="osmorcClassUnavailable" displayName="Class not available" groupName="OSGi"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassUnavailableInspection"/>-->
-    <localInspection shortName="osmorcUnknownManifestPackage" displayName="Unknown package" groupName="OSGi"
+    <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="UnknownManifestPackage.name"
+                     groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.UnknownManifestPackageInspection"/>
-    <localInspection shortName="osmorcWrongImportPackage" displayName="Wrong imported package" groupName="OSGi"
+    <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="WrongImportPackageInspection.name"
+                     groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.WrongImportPackageInspection"/>
 
     <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>

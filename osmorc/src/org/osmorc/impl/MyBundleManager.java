@@ -4,9 +4,11 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.util.CommonProcessors;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,6 +79,11 @@ public class MyBundleManager implements BundleManager {
     if (OsmorcFacet.hasOsmorcFacet(module)) {
       ManifestHolder manifestHolder = myManifestHolderRegistry.getManifestHolder(module);
       boolean needsNotification = myBundleCache.updateWith(manifestHolder);
+
+      CommonProcessors.CollectProcessor<Library> collector = new CommonProcessors.CollectProcessor<Library>();
+      OrderEnumerator.orderEntries(module).forEachLibrary(collector);
+      needsNotification |= doReindex(collector.getResults());
+
       needsNotification |= myBundleCache.cleanup();
       return needsNotification;
     }
