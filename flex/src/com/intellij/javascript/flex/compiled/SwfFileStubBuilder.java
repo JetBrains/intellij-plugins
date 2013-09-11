@@ -4,6 +4,7 @@ import com.intellij.idea.LoggerFactory;
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.flex.importer.FlexImporter;
 import com.intellij.lang.javascript.types.JSFileElementType;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -42,7 +43,7 @@ public class SwfFileStubBuilder implements BinaryFileStubBuilder {
       );
 
     } catch (Exception ex) {
-      LoggerFactory.getInstance().getLoggerInstance(SwfFileStubBuilder.class.getName()).warn(file.getPath(), ex);
+      Logger.getInstance(SwfFileStubBuilder.class.getName()).warn(file.getPath(), ex);
     }
 
     return stub;

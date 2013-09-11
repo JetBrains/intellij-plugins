@@ -2,11 +2,11 @@ package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
 import com.intellij.codeInsight.daemon.Validator;
-import com.intellij.idea.LoggerFactory;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
@@ -65,7 +65,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
             )) {
           descriptor = parentDescriptor.getElementDescriptor(tag, parentTag);
         } else if (parentDescriptor != null && !reportedAboutStackOverflow) { // TODO: remove diagnostic
-          LoggerFactory.getInstance().getLoggerInstance(getClass().getName()).error(
+          Logger.getInstance(getClass().getName()).error(
             new AssertionError("avoided SOE:\n"+tag.getContainingFile().getText())
           );
           reportedAboutStackOverflow = true;

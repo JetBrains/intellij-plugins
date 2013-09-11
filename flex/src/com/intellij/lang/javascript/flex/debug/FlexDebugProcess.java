@@ -129,7 +129,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private final FlexBreakpointsHandler myBreakpointsHandler;
   @NonNls private static final String FAULT_MARKER = "[Fault] ";
-  private static final Logger LOG = LoggerFactory.getInstance().getLoggerInstance(FlexDebugProcess.class.getName());
+  private static final Logger LOG = Logger.getInstance(FlexDebugProcess.class.getName());
   private static boolean doSimpleTracing = ((ApplicationEx)ApplicationManager.getApplication()).isInternal();
 
   private Object myStackFrameEqualityObject;
