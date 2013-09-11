@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ExecutionConsole;
-import com.intellij.idea.LoggerFactory;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
@@ -33,7 +32,7 @@ import java.net.ConnectException;
 import java.util.*;
 
 public class DartCommandLineDebugProcess extends XDebugProcess {
-  private static final Logger LOG = LoggerFactory.getInstance().getLoggerInstance(DartCommandLineDebugProcess.class.getName());
+  private static final Logger LOG = Logger.getInstance(DartCommandLineDebugProcess.class.getName());
   private final ExecutionResult myExecutionResult;
   private final DartVMConnection myConnection = new DartVMConnection();
   private final DartCommandLineBreakpointsHandler myBreakpointsHandler;

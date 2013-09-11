@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.ide.runner.server.connection;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.intellij.idea.LoggerFactory;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.io.socketConnection.AbstractRequest;
@@ -12,7 +11,7 @@ import java.io.Writer;
 import java.util.Map;
 
 public class JSONCommand implements AbstractRequest {
-  private static final Logger LOG = LoggerFactory.getInstance().getLoggerInstance(JSONCommand.class.getName());
+  private static final Logger LOG = Logger.getInstance(JSONCommand.class.getName());
   private final int id;
   private final JsonObject object;
 
