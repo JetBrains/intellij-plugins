@@ -28,7 +28,7 @@ public class GrStepDefinition extends AbstractStepDefinition implements PomNamed
   }
 
   public static GrStepDefinition getStepDefinition(final GrMethodCall statement) {
-    return CachedValuesManager.getManager(statement.getProject()).getCachedValue(statement, new CachedValueProvider<GrStepDefinition>() {
+    return CachedValuesManager.getCachedValue(statement, new CachedValueProvider<GrStepDefinition>() {
       @Nullable
       @Override
       public Result<GrStepDefinition> compute() {
