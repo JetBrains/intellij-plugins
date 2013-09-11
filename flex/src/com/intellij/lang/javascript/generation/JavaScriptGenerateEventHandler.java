@@ -305,8 +305,8 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
       final String functionText =
         "private function " + eventHandlerName + "(event:" + eventClassShortName + "):void{" + methodBody + "\n}\n";
 
-      final JSFunction addedElement = (JSFunction)doAddOneMethod(project, functionText, anchor);
-      ImportUtils.importAndShortenReference(eventClassFqn, addedElement, true, false);
+      JSFunction addedElement = (JSFunction)doAddOneMethod(project, functionText, anchor);
+      addedElement = (JSFunction)ImportUtils.importAndShortenReference(eventClassFqn, addedElement, true, false).second;
 
       final PsiElement templateBaseElement = referenceElement == null ? addedElement : myJsClass;
       final TemplateBuilderImpl templateBuilder = new TemplateBuilderImpl(templateBaseElement);

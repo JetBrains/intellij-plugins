@@ -29,7 +29,7 @@ public class CreateJSEventMethod extends CreateJSFunctionIntentionActionBase {
     template.addVariable("$event$", expression, expression, true);
     template.addTextSegment(":");
     String text = myEventTypeGenerator.compute();
-    text = ImportUtils.importAndShortenReference(text, refExpr, true, true);
+    text = ImportUtils.importAndShortenReference(text, refExpr, true, true).first;
     template.addTextSegment(text);
   }
 
