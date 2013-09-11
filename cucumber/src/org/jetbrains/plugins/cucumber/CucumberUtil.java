@@ -21,10 +21,6 @@ public class CucumberUtil {
   public static final String PREFIX_CHAR = "^";
   public static final String SUFFIX_CHAR = "$";
 
-  public static boolean isAlphabetCharOrSpace(char c) {
-    return Character.isLetterOrDigit(c) || Character.isSpaceChar(c);
-  }
-
   /**
    * Approximately checks if cucumber pattern could be matched to list of word prepared from cucumber step call.
    * Method ignores parameters of cucumber step and takes into account only keywords.
@@ -97,7 +93,7 @@ public class CucumberUtil {
         }
         continue;
       }
-      if (isAlphabetCharOrSpace(c)) {
+      if (Character.isLetterOrDigit(c)) {
         sb.append(c);
         if (sb.length() > 0) {
           if (sb.toString().length() > result.length()) {

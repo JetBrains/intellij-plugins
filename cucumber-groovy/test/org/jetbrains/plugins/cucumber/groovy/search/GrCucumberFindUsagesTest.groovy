@@ -139,4 +139,37 @@ Scenario Outline: eating
   }
 
 
+  void testStepDefinition2() {
+    doTest(
+      current: [ext: 'groovy', text: '''\
+import cucumber.runtime.PendingException
+/**
+ * Created by maxmedvedev on 7/6/13.
+ */
+
+this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
+this.metaClass.mixin(cucumber.runtime.groovy.EN)
+
+
+Given(~'^a mow<caret>er in (\\\\d+),(\\\\d+) facing north_java$') { int arg1, int arg2 ->
+    // Express the Regexp above with the code you wish you had
+    throw new PendingException()
+}'''],
+      feature: '''\
+# language: en
+Feature: Division_other
+  In order to avoid silly mistakes
+  Cashiers must be able to calculate a fraction
+
+  Scenario: go all east
+    Given a mower in 0,0 facing north_java
+    When I pivot the mower to the right_java
+    Given a commit 'fix'_java
+    Given a commit3 'fix'    _java
+''',
+      count: 1
+    )
+  }
+
+
 }
