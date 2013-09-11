@@ -1,6 +1,5 @@
 package com.intellij.tapestry.intellij.core.log;
 
-import com.intellij.idea.LoggerFactory;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.tapestry.core.log.Logger;
 
@@ -9,7 +8,7 @@ public class IntellijLogger implements Logger {
     private com.intellij.openapi.diagnostic.Logger _logger;
 
     public IntellijLogger(String loggerName) {
-        _logger = LoggerFactory.getInstance().getLoggerInstance(loggerName);
+        _logger = com.intellij.openapi.diagnostic.Logger.getInstance(loggerName);
     }
 
     public void debug(String message) {
