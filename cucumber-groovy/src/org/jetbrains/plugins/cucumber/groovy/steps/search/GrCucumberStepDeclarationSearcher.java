@@ -1,8 +1,10 @@
 package org.jetbrains.plugins.cucumber.groovy.steps.search;
 
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.pom.PomDeclarationSearcher;
 import com.intellij.pom.PomTarget;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
@@ -17,9 +19,15 @@ public class GrCucumberStepDeclarationSearcher extends PomDeclarationSearcher {
 
   @Override
   public void findDeclarationsAt(@NotNull PsiElement element, int offsetInElement, Consumer<PomTarget> consumer) {
+    PsiLanguageInjectionHost host = InjectedLanguageManager.getInstance(element.getProject()).getInjectionHost(element);
+    if (host != null) {
+      element = host;
+    }
     if (element.getParent() instanceof GrLiteral) {
-      final PsiElement literal = element.getParent();
-      final PsiElement parent = literal.getParent();    //~literal
+      element = element.getParent();
+    }
+    if (element instanceof GrLiteral) {
+      final PsiElement parent = element.getParent();    //~literal
       if (parent != null) {
         final PsiElement pparent = parent.getParent();  //(~literal)
         if (pparent != null) {
