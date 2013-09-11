@@ -18,7 +18,7 @@ import java.util.Set;
 /**
  * @author: Fedor.Korotkov
  */
-public class DartFileDependencyFinder implements FileDependencyFinder {
+public class DartFileDependencyFinder extends FileDependencyFinder {
   @Override
   public boolean accept(@Nullable String fileExtension) {
     return DartFileType.DEFAULT_EXTENSION.equals(fileExtension);
