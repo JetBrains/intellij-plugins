@@ -25,6 +25,9 @@
   <s:file name="myField"/>
   <s:file name="<error>INVALID_VALUE</error>"/>
 
+  <s:hidden name="myField"/>
+  <s:hidden name="<error>INVALID_VALUE</error>"/>
+
   <s:inputtransferselect name="myField"/>
   <s:inputtransferselect name="<error>INVALID_VALUE</error>"/>
   <s:inputtransferselect list="myField"/>

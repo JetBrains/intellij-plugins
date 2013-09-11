@@ -70,6 +70,7 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
       "combobox",
       "doubleselect",
       "file",
+      "hidden",
       "inputtransferselect",
       "optiontransferselect",
       "password",
