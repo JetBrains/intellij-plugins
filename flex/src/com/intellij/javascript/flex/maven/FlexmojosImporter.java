@@ -77,7 +77,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   }
 
   public void resolve(Project project, MavenProject mavenProject, NativeMavenProjectHolder nativeMavenProject,
-                      MavenEmbedderWrapper embedder) throws MavenProcessCanceledException {
+                      MavenEmbedderWrapper embedder, ResolveContext context) throws MavenProcessCanceledException {
     final MavenPlugin plugin = getFlexmojosPlugin(mavenProject);
     final String version = plugin.getVersion();
     if (version != null && StringUtil.compareVersionNumbers(version, "4") < 0) {
