@@ -36,26 +36,7 @@ public class UnregisteredActivatorInspectionTest extends AbstractOsgiTestCase {
       "");
   }
 
-  public void testFixEmptyManifest() {
-    doTestFix(
-      "",
-      "Bundle-Activator: pkg.C\n");
-  }
-
-  public void testFixHalfEmptyManifest() {
-    doTestFix(
-      "\n",
-      "Bundle-Activator: pkg.C\n\n");
-  }
-
-  public void testFixAppendToManifest() {
-    doTestFix(
-      "Bundle-Version: 1.0\n",
-      "Bundle-Version: 1.0\n" +
-      "Bundle-Activator: pkg.C\n");
-  }
-
-  public void testFixReplaceInManifest() {
+  public void testQuickFix() {
     doTestFix(
       "Bundle-Activator: pkg.X\n",
       "Bundle-Activator: pkg.C\n");

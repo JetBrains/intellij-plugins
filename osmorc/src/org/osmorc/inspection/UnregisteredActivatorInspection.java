@@ -24,16 +24,16 @@
  */
 package org.osmorc.inspection;
 
-import com.intellij.codeInspection.*;
+import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.ProjectScope;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
-import org.jetbrains.lang.manifest.psi.Section;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.Constants;
 import org.osmorc.BundleManager;
@@ -42,8 +42,6 @@ import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.manifest.BundleManifest;
 import org.osmorc.util.OsgiPsiUtil;
-
-import java.util.List;
 
 /**
  * Inspection that reports classes implementing BundleActivator
@@ -75,8 +73,8 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
                 if (configuration.isManifestManuallyEdited()) {
                   BundleManager bundleManager = ServiceManager.getService(project, BundleManager.class);
                   BundleManifest manifest = bundleManager.getManifestByObject(facet.getModule());
-                  if (manifest != null && !className.equals(manifest.getBundleActivator())) {
-                    fix = new RegisterInManifestQuickfix(className, manifest.getManifestFile());
+                  if (manifest == null || !className.equals(manifest.getBundleActivator())) {
+                    fix = new RegisterInManifestQuickfix(className);
                   }
                 }
                 else {
@@ -99,13 +97,11 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
     };
   }
 
-  private static class RegisterInManifestQuickfix implements LocalQuickFix {
+  private static class RegisterInManifestQuickfix extends AbstractOsgiQuickFix {
     private final String myActivatorClass;
-    private final ManifestFile myManifestFile;
 
-    private RegisterInManifestQuickfix(@NotNull String activatorClass, @NotNull ManifestFile manifestFile) {
+    private RegisterInManifestQuickfix(@NotNull String activatorClass) {
       myActivatorClass = activatorClass;
-      myManifestFile = manifestFile;
     }
 
     @NotNull
@@ -114,42 +110,16 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
       return OsmorcBundle.message("UnregisteredActivatorInspection.fix.manifest");
     }
 
-    @NotNull
-    @Override
-    public String getFamilyName() {
-      return OsmorcBundle.message("inspection.group");
-    }
-
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      if (CommonRefactoringUtil.checkReadOnlyStatus(myManifestFile)) {
-        Header activatorHeader = myManifestFile.getHeader(Constants.BUNDLE_ACTIVATOR);
-        Header newHeader = OsgiPsiUtil.createHeader(project, Constants.BUNDLE_ACTIVATOR, myActivatorClass);
-        if (activatorHeader != null) {
-          activatorHeader.replace(newHeader);
-        }
-        else {
-          addHeader(newHeader);
-        }
-      }
-    }
-
-    private void addHeader(Header newHeader) {
-      Section section = myManifestFile.getMainSection();
-      List<Header> headers = myManifestFile.getHeaders();
-      if (section == null) {
-        myManifestFile.add(newHeader.getParent());
-      }
-      else if (headers.isEmpty()) {
-        section.addBefore(newHeader, section.getFirstChild());
-      }
-      else {
-        section.addAfter(newHeader, headers.get(headers.size() - 1));
+      ManifestFile manifestFile = getVerifiedManifestFile(descriptor.getEndElement());
+      if (manifestFile != null) {
+        OsgiPsiUtil.setHeader(manifestFile, Constants.BUNDLE_ACTIVATOR, myActivatorClass);
       }
     }
   }
 
-  private static class RegisterInConfigurationQuickfix implements LocalQuickFix {
+  private static class RegisterInConfigurationQuickfix extends AbstractOsgiQuickFix {
     private final String myActivatorClass;
     private final OsmorcFacetConfiguration myConfiguration;
 
@@ -162,12 +132,6 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
     @Override
     public String getName() {
       return OsmorcBundle.message("UnregisteredActivatorInspection.fix.config");
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-      return OsmorcBundle.message("inspection.group");
     }
 
     @Override
