@@ -71,6 +71,13 @@ public interface BundleManifest {
   boolean isPackageExported(@NotNull String packageSpec);
 
   /**
+   * Returns a name part of a Export-Package header for the given package name,
+   * or null if the package is not exported by the bundle.
+   */
+  @Nullable
+  String getExportedPackage(@NotNull String packageName);
+
+  /**
    * Returns a list of package specs that represent the imports of this bundle.
    * Each package spec can be fed to {@link #isPackageExported(String)} of another bundle
    * to find out if it exports a package according to the given spec.

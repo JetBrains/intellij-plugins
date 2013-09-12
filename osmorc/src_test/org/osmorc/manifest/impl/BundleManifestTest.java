@@ -77,6 +77,15 @@ public class BundleManifestTest extends LightIdeaTestCase {
     assertThat(bundleManifest.isPackageExported("foo.bar.baz;version=2.0.0"), is(false));
     assertThat(bundleManifest.isPackageExported("foo.bar.baz;version=\"[1.0.0, 2.0.0)\""), is(true));
     assertThat(bundleManifest.isPackageExported("foo.bar.baz;version=\"[1.1.0, 2.0.0)\""), is(false));
+    assertThat(bundleManifest.isPackageExported("foo.bar.baz.wtf"), is(false));
+  }
+
+  public void testExportedPackage() throws Exception {
+    BundleManifest bundleManifest = getManifest(Manifest1);
+
+    assertThat(bundleManifest.getExportedPackage("foo.bar.baz"), is("foo.bar.baz"));
+    assertThat(bundleManifest.getExportedPackage("foo.bar.baz"), is("foo.bar.baz"));
+    assertThat(bundleManifest.getExportedPackage("foo.bar.oops"), is((String)null));
   }
 
   public void testSimpleRequireBundle() {

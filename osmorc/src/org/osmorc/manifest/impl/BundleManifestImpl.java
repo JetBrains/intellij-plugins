@@ -107,6 +107,22 @@ public class BundleManifestImpl implements BundleManifest {
     return satisfies(capabilities, requirements);
   }
 
+  @Nullable
+  @Override
+  public String getExportedPackage(@NotNull String packageName) {
+    Object headerValue = getHeaderValue(EXPORT_PACKAGE);
+    if (headerValue != null) {
+      @SuppressWarnings("unchecked") List<String> packages = (List<String>)headerValue;
+      for (String exported : packages) {
+        if (PsiNameHelper.isSubpackageOf(packageName, exported)) {
+          return exported;
+        }
+      }
+    }
+
+    return null;
+  }
+
   @NotNull
   @Override
   public List<String> getImports() {
@@ -230,5 +246,10 @@ public class BundleManifestImpl implements BundleManifest {
     }
 
     return true;
+  }
+
+  @Override
+  public String toString() {
+    return myManifestFile.getName() + ":" + getBundleSymbolicName() + ":" + getBundleVersion();
   }
 }

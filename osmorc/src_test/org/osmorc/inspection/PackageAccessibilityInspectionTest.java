@@ -1,6 +1,9 @@
 package org.osmorc.inspection;
 
+import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.psi.PsiFile;
 import org.osmorc.AbstractOsgiTestCase;
+import org.osmorc.i18n.OsmorcBundle;
 
 public class PackageAccessibilityInspectionTest extends AbstractOsgiTestCase {
   private static final String POSITIVE_TEST =
@@ -37,10 +40,47 @@ public class PackageAccessibilityInspectionTest extends AbstractOsgiTestCase {
     doTest(POSITIVE_TEST, "Require-Bundle: org.apache.felix.framework;bundle-version=\"[0,3)\"\n");
   }
 
+  public void testQuickFixExported() throws Exception {
+    doTestFix(
+      "package pkg;" +
+      "import org.osgi.framework.*;\n" +
+      "public abstract class C implements <caret>BundleActivator { }",
+
+      "Import-Package: javax.sql\n",
+
+      "Import-Package: javax.sql,\n" +
+      " org.osgi.framework\n");
+  }
+
+  public void testQuickFixImplicit() throws Exception {
+    doTestFix(
+      "package pkg;" +
+      "import javax.swing.*;\n" +
+      "public class C {\n" +
+      "  public static void main() {\n" +
+      "    <caret>Icon icon = null;\n" +
+      "  }\n" +
+      "}",
+
+      "Import-Package: org.osgi.framework\n",
+
+      "Import-Package: org.osgi.framework,\n" +
+      " javax.swing\n");
+  }
+
   private void doTest(String classText, String manifestText) {
     myFixture.enableInspections(new PackageAccessibilityInspection());
     myFixture.addFileToProject("META-INF/MANIFEST.MF", manifestText);
     myFixture.configureByText("C.java", classText);
     myFixture.checkHighlighting(true, false, false);
+  }
+
+  private void doTestFix(String classSource, String manifestSource, String expected) {
+    myFixture.enableInspections(new PackageAccessibilityInspection());
+    PsiFile manifest = myFixture.addFileToProject("META-INF/MANIFEST.MF", manifestSource);
+    myFixture.configureByText("C.java", classSource);
+    IntentionAction intention = myFixture.findSingleIntention(OsmorcBundle.message("PackageAccessibilityInspection.fix"));
+    myFixture.launchAction(intention);
+    assertEquals(expected, manifest.getText());
   }
 }

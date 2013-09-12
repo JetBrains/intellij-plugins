@@ -25,16 +25,26 @@
 package org.osmorc.inspection;
 
 import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.*;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.lang.manifest.psi.ManifestFile;
+import org.osgi.framework.Constants;
 import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.manifest.BundleManifest;
+import org.osmorc.util.OsgiPsiUtil;
+
+import java.util.List;
 
 /**
  * Inspection which checks if a package of a class is accessible inside the OSGi context.
@@ -43,12 +53,12 @@ import org.osmorc.manifest.BundleManifest;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class PackageAccessibilityInspection extends LocalInspectionTool {
+  private static final Logger LOG = Logger.getInstance(PackageAccessibilityInspection.class);
+
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
     return new JavaElementVisitor() {
-      private final BundleManager myBundleManager = ServiceManager.getService(holder.getProject(), BundleManager.class);
-
       @Override
       public void visitReferenceElement(PsiJavaCodeReferenceElement reference) {
         checkReference(reference);
@@ -68,8 +78,10 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
         OsmorcFacet facet = OsmorcFacet.getInstance(ref);
         if (facet != null && facet.getConfiguration().isManifestManuallyEdited()) {
           PsiElement target = ref.resolve();
-          if (target instanceof PsiClass && !isAccessible((PsiClass)target, facet.getModule())) {
-            holder.registerProblem(ref, OsmorcBundle.message("PackageAccessibilityInspection.message"));
+          Module module = facet.getModule();
+          if (target instanceof PsiClass && !isAccessible((PsiClass)target, module)) {
+            LocalQuickFix fix = new ImportPackageFix();
+            holder.registerProblem(ref, OsmorcBundle.message("PackageAccessibilityInspection.message"), fix);
           }
         }
       }
@@ -77,7 +89,6 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
       // OSGi Core Spec 3.5 "Class Loading Architecture"
       private boolean isAccessible(PsiClass aClass, Module requestorModule) {
         // The parent class loader (normally java.* packages from the boot class path)
-        // todo[r.sh] allow to specify boot delegation packages
         String packageName = ((PsiJavaFile)aClass.getContainingFile()).getPackageName();
         if (packageName.isEmpty() || packageName.startsWith("java.")) {
           return true;
@@ -90,7 +101,8 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
           return true;
         }
 
-        BundleManifest manifest = myBundleManager.getManifestByObject(requestorModule);
+        BundleManager bundleManager = ServiceManager.getService(holder.getProject(), BundleManager.class);
+        BundleManifest manifest = bundleManager.getManifestByObject(requestorModule);
         if (manifest != null) {
           // Imported packages
           if (manifest.isPackageImported(packageName)) {
@@ -99,7 +111,7 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
 
           // Required bundles
           for (String bundleSpec : manifest.getRequiredBundles()) {
-            BundleManifest bundle = myBundleManager.getManifestByBundleSpec(bundleSpec);
+            BundleManifest bundle = bundleManager.getManifestByBundleSpec(bundleSpec);
             if (bundle != null && bundle.isPackageExported(packageName)) {
               return true;
             }
@@ -111,5 +123,64 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
         return false;
       }
     };
+  }
+
+  private static class ImportPackageFix extends AbstractOsgiQuickFix {
+    @NotNull
+    @Override
+    public String getName() {
+      return OsmorcBundle.message("PackageAccessibilityInspection.fix");
+    }
+
+    @Override
+    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+      PsiElement element = descriptor.getPsiElement();
+      PsiElement target = ((PsiJavaCodeReferenceElement)element).resolve();
+      if (target == null) {
+        LOG.info("cannot resolve: " + element.getText());
+        return;
+      }
+
+      Module module = ModuleUtilCore.findModuleForPsiElement(element);
+      assert module != null : descriptor;
+      ModuleFileIndex index = ModuleRootManager.getInstance(module).getFileIndex();
+      List<OrderEntry> entries = index.getOrderEntriesForFile(target.getContainingFile().getVirtualFile());
+      assert !entries.isEmpty() : target;
+
+      Object exporter = null;
+      OrderEntry entry = entries.get(0);
+      if (entry instanceof ModuleSourceOrderEntry) {
+        exporter = ((ModuleSourceOrderEntry)entry).getRootModel().getModule();
+      }
+      else if (entry instanceof LibraryOrderEntry) {
+        exporter = ((LibraryOrderEntry)entry).getLibrary();
+        assert exporter != null : entry;
+      }
+      else if (!(entry instanceof JdkOrderEntry)) {
+        LOG.info("unknown entry: " + entry);
+        return;
+      }
+
+      String packageName = ((PsiJavaFile)target.getContainingFile()).getPackageName();
+      if (exporter != null) {
+        BundleManager bundleManager = ServiceManager.getService(project, BundleManager.class);
+        BundleManifest exporterManifest = bundleManager.getManifestByObject(exporter);
+        if (exporterManifest == null) {
+          LOG.info("providing entity has no manifest: " + exporter);
+          return;
+        }
+        String exportedPackage = exporterManifest.getExportedPackage(packageName);
+        if (exportedPackage == null) {
+          LOG.warn(packageName + " is not exported by " + exporterManifest);
+          return;
+        }
+        packageName = exportedPackage;
+      }
+
+      ManifestFile manifestFile = getVerifiedManifestFile(element);
+      if (manifestFile != null) {
+        OsgiPsiUtil.appendToHeader(manifestFile, Constants.IMPORT_PACKAGE, packageName);
+      }
+    }
   }
 }
