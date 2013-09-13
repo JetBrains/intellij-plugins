@@ -24,14 +24,17 @@ import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.coldFusion.model.lexer.CfmlLexer;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
+import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lexer.LayeredLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.lexer.XmlHighlightingLexer;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.search.IndexPatternBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.sql.psi.impl.lexer.SqlLexer;
+import com.intellij.sql.dialects.SqlDialectMappings;
+import com.intellij.sql.dialects.SqlLanguageDialect;
 
 
 /**
@@ -39,12 +42,14 @@ import com.intellij.sql.psi.impl.lexer.SqlLexer;
 public class CfmlIndexPatternBuilder implements IndexPatternBuilder {
   public Lexer getIndexingLexer(final PsiFile file) {
     if (file instanceof CfmlFile) {
+      Project project = file.getProject();
+      SqlLanguageDialect dialect = SqlDialectMappings.getMapping(project, file.getVirtualFile());
+      Lexer sqlLexer = LanguageParserDefinitions.INSTANCE.forLanguage(dialect).createLexer(project);
 
-
-      LayeredLexer cfmlLayeredLexer = new LayeredLexer(new CfmlLexer(true, file.getProject()));
+      LayeredLexer cfmlLayeredLexer = new LayeredLexer(new CfmlLexer(true, project));
 
       cfmlLayeredLexer.registerLayer(new XmlHighlightingLexer(), CfmlElementTypes.TEMPLATE_TEXT);
-      cfmlLayeredLexer.registerLayer(new SqlLexer(), CfmlElementTypes.SQL);
+      cfmlLayeredLexer.registerLayer(sqlLexer, CfmlElementTypes.SQL);
 
       return cfmlLayeredLexer;
     }
