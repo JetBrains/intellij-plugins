@@ -3,17 +3,22 @@ package org.osmorc.inspection;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiFile;
 import org.osmorc.AbstractOsgiTestCase;
+import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.i18n.OsmorcBundle;
+
+import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.Bnd;
+import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.Manually;
 
 public class PackageAccessibilityInspectionTest extends AbstractOsgiTestCase {
   private static final String POSITIVE_TEST =
     "package pkg;\n" +
-    "import org.osgi.framework.*;\n" +
-    "public class C implements <error descr=\"Package not accessible inside the OSGi context\">BundleActivator</error> {\n" +
-    "  public void start(<error descr=\"Package not accessible inside the OSGi context\">BundleContext</error> context) throws Exception {\n" +
-    "    System.out.println(new <error descr=\"Package not accessible inside the OSGi context\">Version</error>(\"1.0\"));\n" +
+    "import org.osgi.framework.launch.*;\n" +
+    "public class C {\n" +
+    "  public static void main() {\n" +
+    "    <error descr=\"The package is not imported in the manifest\">javax.swing.Icon</error> icon = null;\n" +
+    "    <error descr=\"The package is not imported in the manifest\">FrameworkFactory</error> factory =\n" +
+    "      new <error descr=\"The package is not exported by the bundle dependencies\">org.apache.felix.framework.FrameworkFactory</error>();\n" +
     "  }\n" +
-    "  public void stop(<error descr=\"Package not accessible inside the OSGi context\">BundleContext</error> context) throws Exception { }\n" +
     "}";
 
   private static final String NEGATIVE_TEST =
@@ -40,7 +45,28 @@ public class PackageAccessibilityInspectionTest extends AbstractOsgiTestCase {
     doTest(POSITIVE_TEST, "Require-Bundle: org.apache.felix.framework;bundle-version=\"[0,3)\"\n");
   }
 
-  public void testQuickFixExported() throws Exception {
+  public void testAutoImport() {
+    OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
+    assert facet != null;
+    try {
+      facet.getConfiguration().setManifestGenerationMode(Bnd);
+      doTest(
+        "package pkg;\n" +
+        "import org.osgi.framework.launch.*;\n" +
+        "public class C {\n" +
+        "  public static void main() {\n" +
+        "    javax.swing.Icon icon = null;\n" +
+        "    FrameworkFactory factory =\n" +
+        "      new <error descr=\"The package is not exported by the bundle dependencies\">org.apache.felix.framework.FrameworkFactory</error>();\n" +
+        "  }\n" +
+        "}", "");
+    }
+    finally {
+      facet.getConfiguration().setManifestGenerationMode(Manually);
+    }
+  }
+
+  public void testQuickFixExported() {
     doTestFix(
       "package pkg;" +
       "import org.osgi.framework.*;\n" +
@@ -52,7 +78,7 @@ public class PackageAccessibilityInspectionTest extends AbstractOsgiTestCase {
       " org.osgi.framework\n");
   }
 
-  public void testQuickFixImplicit() throws Exception {
+  public void testQuickFixImplicit() {
     doTestFix(
       "package pkg;" +
       "import javax.swing.*;\n" +
