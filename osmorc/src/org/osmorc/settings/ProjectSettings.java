@@ -48,12 +48,11 @@ import java.util.EventListener;
   storages = {@Storage(
     file = StoragePathMacros.PROJECT_FILE)})
 public class ProjectSettings implements PersistentStateComponent<ProjectSettings> {
-
   private EventDispatcher<ProjectSettingsListener> myDispatcher = EventDispatcher.create(ProjectSettingsListener.class);
+
   private @Nullable String myFrameworkInstanceName;
   private @NotNull String myDefaultManifestFileLocation = "META-INF/MANIFEST.MF";
   private @Nullable String myBundlesOutputPath;
-  private @NotNull ManifestSynchronizationType myManifestSynchronizationType = ManifestSynchronizationType.ManuallySynchronize;
 
   /**
    * Returns the default output path for bundles. This is the compiler output path plus "/bundles" (e.g. $PROJECT_ROOT/out/bundles).
@@ -85,18 +84,6 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
   }
 
   /**
-   * The synchronization type for manually edited manifests.
-   */
-  @NotNull
-  public ManifestSynchronizationType getManifestSynchronizationType() {
-    return myManifestSynchronizationType;
-  }
-
-  public void setManifestSynchronizationType(@NotNull ManifestSynchronizationType manifestSynchronizationType) {
-    myManifestSynchronizationType = manifestSynchronizationType;
-  }
-
-  /**
    * The project wide bundle output path. All compiled bundles will be put in this path. This can be overridden by facet settings.
    */
   @Nullable
@@ -104,8 +91,8 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
     return myBundlesOutputPath;
   }
 
-  public void setBundlesOutputPath(@Nullable String _bundlesOutputPath) {
-    this.myBundlesOutputPath = _bundlesOutputPath;
+  public void setBundlesOutputPath(@Nullable String bundlesOutputPath) {
+    myBundlesOutputPath = bundlesOutputPath;
   }
 
   /**
@@ -126,12 +113,9 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
     return myDefaultManifestFileLocation;
   }
 
-  public void setDefaultManifestFileLocation(@NotNull String defaultManifestFileLocation) {
-    myDefaultManifestFileLocation = defaultManifestFileLocation;
-    if (myDefaultManifestFileLocation.equals("META-INF")) {
-      // we specify full names, so to work with older projects, we have to convert this
-      myDefaultManifestFileLocation = "META-INF/MANIFEST.MF";
-    }
+  public void setDefaultManifestFileLocation(@NotNull String location) {
+    // we specify full names, so to work with older projects, we have to convert this
+    myDefaultManifestFileLocation = location.equals("META-INF") ? "META-INF/MANIFEST.MF" : location;
     myDispatcher.getMulticaster().projectSettingsChanged();
   }
 
@@ -160,26 +144,10 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
     myDispatcher.removeListener(listener);
   }
 
-
   /**
    * Interface for project settings listeners.
    */
   public interface ProjectSettingsListener extends EventListener {
     void projectSettingsChanged();
-  }
-
-  public enum ManifestSynchronizationType {
-    /**
-     * Modules with manually edited manifests won't be synchronized at all.
-     */
-    DoNotSynchronize,
-    /**
-     * Modules with manually edited manifests will be synchronized manually by clicking the notification bar.
-     */
-    ManuallySynchronize,
-    /**
-     * Modules with manually edited manifests will be automatically synchronized when they change.
-     */
-    AutomaticallySynchronize
   }
 }

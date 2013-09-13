@@ -25,7 +25,6 @@
 package org.osmorc.manifest.lang.psi;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.util.ArrayUtil;
@@ -39,30 +38,33 @@ import org.osmorc.manifest.BundleManifest;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class BundleReference extends PsiReferenceBase<HeaderValuePart> implements EmptyResolveMessageProvider {
+  private final BundleManager myBundleManager;
+
   public BundleReference(HeaderValuePart element) {
     super(element);
-    _bundleManager = ServiceManager.getService(element.getProject(), BundleManager.class);
+    myBundleManager = BundleManager.getInstance(element.getProject());
   }
 
   @Nullable
+  @Override
   public PsiElement resolve() {
-    BundleManifest bundleManifest = _bundleManager.getManifestBySymbolicName(unwrap(getCanonicalText()));
+    BundleManifest bundleManifest = myBundleManager.getManifestBySymbolicName(unwrap(getCanonicalText()));
     return bundleManifest != null ? bundleManifest.getManifestFile() : null;
   }
 
-  private String unwrap(String text) {
+  private static String unwrap(String text) {
     return text != null ? text.replaceAll("\n ", "").trim() : null;
   }
 
   @NotNull
+  @Override
   public Object[] getVariants() {
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 
   @NotNull
+  @Override
   public String getUnresolvedMessagePattern() {
     return "Cannot resolve bundle";
   }
-
-  private final BundleManager _bundleManager;
 }

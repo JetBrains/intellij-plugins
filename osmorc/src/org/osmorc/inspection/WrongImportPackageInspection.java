@@ -2,7 +2,6 @@ package org.osmorc.inspection;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -24,7 +23,7 @@ public class WrongImportPackageInspection extends LocalInspectionTool {
   @Override
   public PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new PsiElementVisitor() {
-      private final BundleManager myBundleManager = ServiceManager.getService(holder.getProject(), BundleManager.class);
+      private final BundleManager myBundleManager = BundleManager.getInstance(holder.getProject());
 
       @Override
       public void visitElement(PsiElement element) {

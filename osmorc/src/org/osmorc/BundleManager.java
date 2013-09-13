@@ -24,7 +24,9 @@
  */
 package org.osmorc;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,63 +42,56 @@ import java.util.Set;
  * @author Robert F. Beeger (robert@beeger.net)
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public interface BundleManager {
+public abstract class BundleManager {
+  public static BundleManager getInstance(@NotNull Project project) {
+    return ServiceManager.getService(project, BundleManager.class);
+  }
+
   /**
    * Returns the manifest for the given symbolic name or null if no bundle with that symbolic name is known.
    * If multiple bundles with that name are known, it will return the manifest of an arbitrarily chosen bundle.
    */
   @Nullable
-  BundleManifest getManifestBySymbolicName(@NotNull String bundleSymbolicName);
+  public abstract BundleManifest getManifestBySymbolicName(@NotNull String bundleSymbolicName);
 
   /**
    * Returns the manifest for a given object or null if no manifest for the given object is known.
    */
   @Nullable
-  BundleManifest getManifestByObject(@NotNull Object object);
+  public abstract BundleManifest getManifestByObject(@NotNull Object object);
 
   /**
    * Returns manifest of a bundle specified by a given requirement specification, or null if not found.
    */
   @Nullable
-  BundleManifest getManifestByBundleSpec(@NotNull String bundleSpec);
+  public abstract BundleManifest getManifestByBundleSpec(@NotNull String bundleSpec);
 
   /**
    * Adds the given module and it's dependencies to the list of known bundles.
    * If it exists, it's entries are updated.
    */
-  void reindex(@NotNull Module module);
+  public abstract void reindex(@NotNull Module module);
 
   /**
    * Adds the given libraries to the bundle index.
    */
-  void reindex(@NotNull Collection<Library> libraries);
+  public abstract void reindex(@NotNull Collection<Library> libraries);
 
   /**
    * Does a complete project reindex.
    * Cleans all data from the bundle manager and replaces it with the data from the given project instance.
    */
-  void reindexAll();
+  public abstract void reindexAll();
 
   /**
    * Resolves all dependencies of the given module, by analyzing the package import, require-bundle, bundle-classpath and fragment hosts
    * headers. Returns a list of {@link Module} and {@link Library} objects.
    */
   @NotNull
-  Set<Object> resolveDependenciesOf(@NotNull Module module);
-
-  /**
-   * Checks if the given dependency is re-exported by the given module. This is only the case, if the module has a Require-Bundle-Header
-   * that requires the given dependency and the visibility directive of this requirement is set to "reexport".
-   */
-  boolean isReExported(@NotNull Object dependency, @NotNull Module module);
-
-  /**
-   * Checks if the given host module/library is a fragment host of the given fragment module/library
-   */
-  boolean isFragmentHost(@NotNull Object host, @NotNull Object fragment);
+  public abstract Set<Object> resolveDependenciesOf(@NotNull Module module);
 
   /**
    * Returns true if the given package is provided by one of the registered bundles.
    */
-  boolean isProvided(@NotNull String packageSpec);
+  public abstract boolean isProvided(@NotNull String packageSpec);
 }

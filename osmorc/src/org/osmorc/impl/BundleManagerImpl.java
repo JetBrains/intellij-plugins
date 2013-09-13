@@ -9,7 +9,6 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.util.CommonProcessors;
-import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -27,11 +26,8 @@ import java.util.regex.Pattern;
 /**
  * Re-implementation of the bundle manager.
  */
-public class MyBundleManager implements BundleManager {
+public class BundleManagerImpl extends BundleManager {
   private static final Logger LOG = Logger.getInstance("#org.osmorc.impl.MyBundleManager");
-
-  public final static Topic<BundleModificationListener> BUNDLE_INDEX_CHANGE_TOPIC =
-    Topic.create("Bundle Index Changed", BundleModificationListener.class);
 
   private BundleCache myBundleCache;
   private ManifestHolderRegistry myManifestHolderRegistry;
@@ -42,95 +38,58 @@ public class MyBundleManager implements BundleManager {
    */
   private static final Pattern JarPathPattern = Pattern.compile("(.*/)?([^/]+.jar)");
 
-  public MyBundleManager(ManifestHolderRegistry manifestHolderRegistry, Project project) {
+  public BundleManagerImpl(ManifestHolderRegistry manifestHolderRegistry, Project project) {
     myManifestHolderRegistry = manifestHolderRegistry;
     myProject = project;
     myBundleCache = new BundleCache();
   }
 
-  private void notifyListenersOfBundleIndexChange() {
-    if (!myProject.isDisposed()) {
-      myProject.getMessageBus().syncPublisher(BUNDLE_INDEX_CHANGE_TOPIC).bundlesChanged();
-    }
-  }
-
   @Override
   public void reindex(@NotNull Module module) {
-    if (doReindex(module)) {
-      notifyListenersOfBundleIndexChange();
-    }
-  }
-
-  /**
-   * Adds the given module to the cache.
-   * Returns true if the internal state was changed (so that listeners should be notified).
-   */
-  private boolean doReindex(Module module) {
     if (module.isDisposed()) {
-      return false; // don't work on disposed modules
+      return; // don't work on disposed modules
     }
 
     if (!module.getProject().equals(myProject)) {
       LOG.warn("Someone tried to index a module that doesn't belong to my project.");
-      return false; // don't work on modules outside of the current project.
+      return; // don't work on modules outside of the current project.
     }
 
     // if the module has an osmorc facet, treat it as a bundle and add it to the cache
     if (OsmorcFacet.hasOsmorcFacet(module)) {
       ManifestHolder manifestHolder = myManifestHolderRegistry.getManifestHolder(module);
-      boolean needsNotification = myBundleCache.updateWith(manifestHolder);
+      myBundleCache.updateWith(manifestHolder);
 
       CommonProcessors.CollectProcessor<Library> collector = new CommonProcessors.CollectProcessor<Library>();
       OrderEnumerator.orderEntries(module).forEachLibrary(collector);
-      needsNotification |= doReindex(collector.getResults());
+      reindex(collector.getResults());
 
-      needsNotification |= myBundleCache.cleanup();
-      return needsNotification;
+      myBundleCache.cleanup();
     }
-
-    return false;
   }
 
   @Override
   public void reindex(@NotNull Collection<Library> libraries) {
-    if (doReindex(libraries)) {
-      notifyListenersOfBundleIndexChange();
-    }
-  }
-
-  /**
-   * Adds the given libraries to the cache.
-   * Returns true if the internal state was changed (so that listeners should be notified).
-   */
-  private boolean doReindex(Collection<Library> libraries) {
-    boolean needsNotification = false;
     for (Library library : libraries) {
       Collection<ManifestHolder> manifestHolders = myManifestHolderRegistry.getManifestHolders(library);
       for (ManifestHolder manifestHolder : manifestHolders) {
-        needsNotification |= myBundleCache.updateWith(manifestHolder);
+        myBundleCache.updateWith(manifestHolder);
       }
     }
-    needsNotification |= myBundleCache.cleanup();
-    return needsNotification;
+    myBundleCache.cleanup();
   }
 
   @Override
   public void reindexAll() {
-    boolean needsNotification = false;
-
     // there are no osgi structures on project level, so we can simply get all modules and index these.
     Module[] modules = ModuleManager.getInstance(myProject).getModules();
     for (Module module : modules) {
-      needsNotification |= doReindex(module);
+      reindex(module);
     }
 
     // finally index the project level libraries
     Library[] libraries = ProjectLibraryTable.getInstance(myProject).getLibraries();
-    needsNotification |= doReindex(Arrays.asList(libraries));
-
-    if (needsNotification) {
-      notifyListenersOfBundleIndexChange();
-    }
+    reindex(Arrays.asList(libraries));
   }
 
   @Override
@@ -297,13 +256,6 @@ public class MyBundleManager implements BundleManager {
     return result;
   }
 
-  @Override
-  public boolean isReExported(@NotNull Object dependency, @NotNull Module module) {
-    BundleManifest depManifest = getManifestByObject(dependency);
-    BundleManifest moduleManifest = getManifestByObject(module);
-    return depManifest != null && moduleManifest != null && moduleManifest.reExportsBundle(depManifest);
-  }
-
   @Nullable
   @Override
   public BundleManifest getManifestByObject(@NotNull Object object) {
@@ -337,21 +289,6 @@ public class MyBundleManager implements BundleManager {
       return getManifestByObject(objects.get(0));
     }
     return null;
-  }
-
-  @Override
-  public boolean isFragmentHost(@NotNull Object host, @NotNull Object fragment) {
-    BundleManifest fragmentManifest = getManifestByObject(fragment);
-    if (fragmentManifest == null || !fragmentManifest.isFragmentBundle()) {
-      return false;
-    }
-
-    BundleManifest hostManifest = getManifestByObject(host);
-    if (hostManifest == null) {
-      return false;
-    }
-
-    return hostManifest.isFragmentHostFor(fragmentManifest);
   }
 
   @Override

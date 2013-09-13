@@ -30,14 +30,14 @@ import static org.junit.Assert.assertThat;
 public class BundleManagerTest extends LightIdeaTestCase {
   private static final String FAKE_JAR_NAME = "fakeJar-1.0.0.jar";
 
-  private MyBundleManager myBundleManager;
+  private BundleManagerImpl myBundleManager;
   private Library myFakeJarLibrary;
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
 
-    myBundleManager = new MyBundleManager(new ManifestHolderRegistryImpl(getProject()), getProject());
+    myBundleManager = new BundleManagerImpl(new ManifestHolderRegistryImpl(getProject()), getProject());
     myBundleManager.addManifestHolder(makeHolder(
       "Manifest.MF",
       "Bundle-SymbolicName: org.eclipse.ui\n" +

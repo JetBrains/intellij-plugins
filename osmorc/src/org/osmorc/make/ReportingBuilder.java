@@ -27,7 +27,6 @@ package org.osmorc.make;
 import aQute.bnd.osgi.Builder;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -57,8 +56,7 @@ class ReportingBuilder extends Builder {
     if (facet != null) {
       OsmorcFacetConfiguration configuration = facet.getConfiguration();
       if (configuration.isManifestManuallyEdited()) {
-        BundleManager bundleManager = ServiceManager.getService(module.getProject(), BundleManager.class);
-        BundleManifest bundleManifest = bundleManager.getManifestByObject(module);
+        BundleManifest bundleManifest = BundleManager.getInstance(module.getProject()).getManifestByObject(module);
         if (bundleManifest != null) {
           PsiFile manifestFile = bundleManifest.getManifestFile();
           VirtualFile virtualFile = manifestFile.getVirtualFile();

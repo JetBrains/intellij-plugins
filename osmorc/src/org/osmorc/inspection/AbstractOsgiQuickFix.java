@@ -4,7 +4,6 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
@@ -27,9 +26,8 @@ public abstract class AbstractOsgiQuickFix implements LocalQuickFix {
   protected ManifestFile getVerifiedManifestFile(@NotNull PsiElement element) {
     Module module = ModuleUtilCore.findModuleForPsiElement(element);
     assert module != null : element;
-    BundleManager bundleManager = ServiceManager.getService(element.getProject(), BundleManager.class);
 
-    BundleManifest manifest = bundleManager.getManifestByObject(module);
+    BundleManifest manifest = BundleManager.getInstance(element.getProject()).getManifestByObject(module);
     if (manifest == null) {
       String message = OsmorcBundle.message("inspection.fix.no.manifest");
       Notifications.Bus.notify(new Notification("osmorc", getFamilyName(), message, NotificationType.WARNING));

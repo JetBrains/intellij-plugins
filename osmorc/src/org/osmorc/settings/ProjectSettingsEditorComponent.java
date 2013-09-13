@@ -22,10 +22,8 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.settings;
 
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -35,12 +33,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.ModuleDependencySynchronizer;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
@@ -55,20 +53,20 @@ import java.util.List;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class ProjectSettingsEditorComponent {
-  private boolean myModified;
-  @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"}) private ProjectSettings mySettings;
   private UserActivityWatcher myWatcher;
   private JPanel myMainPanel;
-  @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"}) private JComboBox myFrameworkInstance;
-  private JComboBox myDefaultManifestFileLocation;
+  private JComboBox myFrameworkInstance;
+  private ComboBox myDefaultManifestFileLocation;
   private TextFieldWithBrowseButton myBundleOutputPath;
   private JButton myApplyToAllButton;
-  private JComboBox mySynchronizationType;
-  private JButton mySynchronizeNowButton;
+
   private Project myProject;
+  private ProjectSettings mySettings;
+  private boolean myModified;
 
   public ProjectSettingsEditorComponent(Project project) {
     myProject = project;
+
     //noinspection unchecked
     myFrameworkInstance.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer("[not specified]") {
       @Override
@@ -82,6 +80,7 @@ public class ProjectSettingsEditorComponent {
         return false;
       }
     });
+
     myWatcher = new UserActivityWatcher();
     myWatcher.register(myMainPanel);
     myWatcher.addUserActivityListener(new UserActivityListener() {
@@ -91,87 +90,41 @@ public class ProjectSettingsEditorComponent {
     });
 
     myDefaultManifestFileLocation.setEditable(true);
+    //noinspection unchecked
     myDefaultManifestFileLocation.addItem("META-INF");
 
     myBundleOutputPath.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
-        onOutputPathSelect();
+        VirtualFile preselect = LocalFileSystem.getInstance().findFileByPath(myBundleOutputPath.getText());
+        if (preselect == null) preselect = myProject.getBaseDir();
+        VirtualFile virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), myProject, preselect);
+        if (virtualFile != null) {
+          myBundleOutputPath.setText(virtualFile.getPath());
+        }
       }
     });
 
     myApplyToAllButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        onApplyToAllClick();
-      }
-    });
-
-    mySynchronizeNowButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        ModuleDependencySynchronizer.resynchronizeAll(myProject);
-      }
-    });
-  }
-
-  private void onOutputPathSelect() {
-    VirtualFile preselect = LocalFileSystem.getInstance().findFileByPath(myBundleOutputPath.getText());
-    if (preselect == null) {
-      preselect = myProject.getBaseDir();
-    }
-    VirtualFile virtualFile =
-      FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), myProject, preselect);
-    if (virtualFile != null) {
-      myBundleOutputPath.setText(virtualFile.getPath());
-    }
-  }
-
-
-  private void onApplyToAllClick() {
-    final Application application = ApplicationManager.getApplication();
-    application.runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        Module[] modules = ModuleManager.getInstance(myProject).getModules();
-        for (Module module : modules) {
-          OsmorcFacet facet = OsmorcFacet.getInstance(module);
-          if (facet != null) {
-            OsmorcFacetConfiguration facetConfiguration = facet.getConfiguration();
-            facetConfiguration
-              .setJarFileLocation(facetConfiguration.getJarFileName(), OsmorcFacetConfiguration.OutputPathType.OsgiOutputPath);
-          }
-        }
-        SwingUtilities.invokeLater(new Runnable() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
           @Override
           public void run() {
-            Messages.showMessageDialog(myProject, "The output path has been applied to all OSGi facets in the current project.",
-                                       "Output path applied",
-                                       Messages.getInformationIcon());
+            for (Module module : ModuleManager.getInstance(myProject).getModules()) {
+              OsmorcFacet facet = OsmorcFacet.getInstance(module);
+              if (facet != null) {
+                OsmorcFacetConfiguration configuration = facet.getConfiguration();
+                configuration.setJarFileLocation(configuration.getJarFileName(), OsmorcFacetConfiguration.OutputPathType.OsgiOutputPath);
+              }
+            }
           }
         });
+
+        String message = "The output path has been applied to all OSGi facets in the current project.";
+        Messages.showInfoMessage(myProject, message, "Output Path Applied");
       }
     });
-  }
-
-  public void applyTo(ProjectSettings settings) {
-    final String fileLocation = (String)myDefaultManifestFileLocation.getSelectedItem();
-    if (fileLocation != null) {
-      settings.setDefaultManifestFileLocation(fileLocation);
-    }
-
-    FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)this.myFrameworkInstance.getSelectedItem();
-    settings.setFrameworkInstanceName(instance != null ? instance.getName() : null);
-
-    if (myBundleOutputPath.getText() != null && !"".equals(myBundleOutputPath.getText().trim())) {
-      settings.setBundlesOutputPath(myBundleOutputPath.getText());
-    }
-    else {
-      settings.setBundlesOutputPath(null);
-    }
-
-    SynchronizationItem selectedItem = (SynchronizationItem)mySynchronizationType.getSelectedItem();
-    settings.setManifestSynchronizationType(selectedItem.getType());
-    myModified = false;
   }
 
   public void dispose() {
@@ -182,11 +135,28 @@ public class ProjectSettingsEditorComponent {
     return myMainPanel;
   }
 
+  public void applyTo(ProjectSettings settings) {
+    String fileLocation = (String)myDefaultManifestFileLocation.getSelectedItem();
+    if (fileLocation != null) {
+      settings.setDefaultManifestFileLocation(fileLocation);
+    }
+
+    FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)myFrameworkInstance.getSelectedItem();
+    settings.setFrameworkInstanceName(instance != null ? instance.getName() : null);
+
+    String outputPath = myBundleOutputPath.getText();
+    settings.setBundlesOutputPath(!StringUtil.isEmptyOrSpaces(outputPath) ? outputPath : null);
+
+    myModified = false;
+  }
+
   public void resetTo(ProjectSettings settings) {
     mySettings = settings;
+
     refreshFrameworkInstanceCombobox();
-    refreshSynchronizationCombobox();
+
     myDefaultManifestFileLocation.setSelectedItem(mySettings.getDefaultManifestFileLocation());
+
     String bundlesPath = mySettings.getBundlesOutputPath();
     if (bundlesPath != null) {
       myBundleOutputPath.setText(bundlesPath);
@@ -194,12 +164,11 @@ public class ProjectSettingsEditorComponent {
     else {
       myBundleOutputPath.setText(ProjectSettings.getDefaultBundlesOutputPath(myProject));
     }
+
     myModified = false;
   }
 
-  private synchronized void refreshFrameworkInstanceCombobox() {
-    if (mySettings == null) return;
-
+  private void refreshFrameworkInstanceCombobox() {
     myFrameworkInstance.removeAllItems();
     //noinspection unchecked
     myFrameworkInstance.addItem(null);
@@ -226,58 +195,7 @@ public class ProjectSettingsEditorComponent {
     myFrameworkInstance.setSelectedItem(projectFrameworkInstance);
   }
 
-  private synchronized void refreshSynchronizationCombobox() {
-    if (mySettings == null) return;
-    mySynchronizationType.removeAllItems();
-
-    for (ProjectSettings.ManifestSynchronizationType type : ProjectSettings.ManifestSynchronizationType.values()) {
-      SynchronizationItem item = new SynchronizationItem(type);
-      mySynchronizationType.addItem(item);
-      if (type == mySettings.getManifestSynchronizationType()) {
-        mySynchronizationType.setSelectedItem(item);
-      }
-    }
-  }
-
   public boolean isModified() {
     return myModified;
-  }
-
-  public void frameworkInstancesChanged() {
-    boolean modified = myModified;
-    refreshFrameworkInstanceCombobox();
-    myModified = modified;
-  }
-
-  private void createUIComponents() {
-    myDefaultManifestFileLocation = new ComboBox();
-  }
-
-  private static class SynchronizationItem {
-    private ProjectSettings.ManifestSynchronizationType myType;
-
-    public SynchronizationItem(@NotNull ProjectSettings.ManifestSynchronizationType type) {
-      myType = type;
-    }
-
-    public ProjectSettings.ManifestSynchronizationType getType() {
-      return myType;
-    }
-
-
-    @Override
-    public String toString() {
-      switch (myType) {
-        case AutomaticallySynchronize:
-          return "Automatically synchronize dependencies";
-        case ManuallySynchronize:
-          return "Show notification bar and manually synchronize dependencies";
-        case DoNotSynchronize:
-          return "Do not synchronize dependencies";
-      }
-
-      // should not happen
-      return myType.toString();
-    }
   }
 }

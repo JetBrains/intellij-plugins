@@ -28,7 +28,6 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.ProjectScope;
@@ -71,8 +70,7 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
 
                 OsmorcFacetConfiguration configuration = facet.getConfiguration();
                 if (configuration.isManifestManuallyEdited()) {
-                  BundleManager bundleManager = ServiceManager.getService(project, BundleManager.class);
-                  BundleManifest manifest = bundleManager.getManifestByObject(facet.getModule());
+                  BundleManifest manifest = BundleManager.getInstance(project).getManifestByObject(facet.getModule());
                   if (manifest == null || !className.equals(manifest.getBundleActivator())) {
                     fix = new RegisterInManifestQuickfix(className);
                   }

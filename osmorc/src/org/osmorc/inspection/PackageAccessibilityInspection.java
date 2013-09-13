@@ -28,7 +28,6 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -133,7 +132,7 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
 
     // obtaining export name of the package from a providing manifest
     String exportedPackage;
-    BundleManager bundleManager = ServiceManager.getService(targetClass.getProject(), BundleManager.class);
+    BundleManager bundleManager = BundleManager.getInstance(targetClass.getProject());
     ModuleFileIndex index = ModuleRootManager.getInstance(requestorModule).getFileIndex();
     List<OrderEntry> entries = index.getOrderEntriesForFile(targetClass.getContainingFile().getVirtualFile());
     OrderEntry entry = !entries.isEmpty() ? entries.get(0) : null;
