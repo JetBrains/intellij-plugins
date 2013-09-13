@@ -5,7 +5,10 @@ import org.osmorc.AbstractOsgiTestCase;
 public class OsgiManifestHighlightingTest extends AbstractOsgiTestCase {
   public void testBundleVersion() {
     doTest(
-      "Bundle-Version: 1.<error descr=\"The minor component of the defined version is not a valid number\">0,u</error>\n"
+      "Bundle-Version: 1\n" +
+      "Bundle-Version: 1.0.0.FINAL\n" +
+      "Bundle-Version: <error descr=\"invalid version \\\\\"1.0,u\\\\\": non-numeric \\\\\"0,u\\\\\"\">1.0,u</error>\n" +
+      "Bundle-Version: <error descr=\"invalid version \\\\\"1.0.0.?\\\\\": invalid qualifier \\\\\"?\\\\\"\">1.0.0.?</error>\n"
     );
   }
 

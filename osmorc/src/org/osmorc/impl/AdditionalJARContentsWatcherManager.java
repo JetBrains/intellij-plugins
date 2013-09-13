@@ -29,7 +29,6 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.osmorc.AdditionalJARContentsWatcherManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 
@@ -39,43 +38,47 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Manages watch requests for the files that are part of the additional JAR contents and which
+ * may reside outside the project folder. Files outside the project folder are normally not watched
+ * by IDEA and so changes to them normally aren't noticed by IDEA. This manager makes sure that
+ * changes to those files in the additional JAR contents are watched.
+ *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class AdditionalJARContentsWatcherManagerImpl implements AdditionalJARContentsWatcherManager {
-  private final LocalFileSystem _fileSystem;
-  private final Module _module;
-  private final List<VirtualFile> _additionalBundleJARContents;
-  private final List<LocalFileSystem.WatchRequest> _watchRequests;
+public class AdditionalJARContentsWatcherManager {
+  private final LocalFileSystem myFileSystem;
+  private final Module myModule;
+  private final List<VirtualFile> myAdditionalBundleJARContents;
+  private final List<LocalFileSystem.WatchRequest> myWatchRequests;
 
-  public AdditionalJARContentsWatcherManagerImpl(Module module, LocalFileSystem fileSystem) {
-    _module = module;
-    _fileSystem = fileSystem;
-    _additionalBundleJARContents = new ArrayList<VirtualFile>();
-    _watchRequests = new ArrayList<LocalFileSystem.WatchRequest>();
-
+  public AdditionalJARContentsWatcherManager(LocalFileSystem fileSystem, Module module) {
+    myFileSystem = fileSystem;
+    myModule = module;
+    myAdditionalBundleJARContents = new ArrayList<VirtualFile>();
+    myWatchRequests = new ArrayList<LocalFileSystem.WatchRequest>();
     updateWatcherSetup();
   }
 
   public void updateWatcherSetup() {
-    OsmorcFacet osmorcFacet = OsmorcFacet.getInstance(_module);
+    OsmorcFacet osmorcFacet = OsmorcFacet.getInstance(myModule);
     if (osmorcFacet != null) {
       List<VirtualFile> newAdditionalJARContents = new ArrayList<VirtualFile>();
 
       OsmorcFacetConfiguration osmorcFacetConfiguration = osmorcFacet.getConfiguration();
       List<Pair<String, String>> jarContents = osmorcFacetConfiguration.getAdditionalJARContents();
       for (Pair<String, String> jarContent : jarContents) {
-        VirtualFile file = _fileSystem.findFileByPath(jarContent.getFirst());
+        VirtualFile file = myFileSystem.findFileByPath(jarContent.getFirst());
         if (file != null) {
           newAdditionalJARContents.add(file);
         }
       }
 
       List<LocalFileSystem.WatchRequest> toRemove = new ArrayList<LocalFileSystem.WatchRequest>();
-      for (Iterator<VirtualFile> jarContentsIterator = _additionalBundleJARContents.iterator(); jarContentsIterator.hasNext(); ) {
+      for (Iterator<VirtualFile> jarContentsIterator = myAdditionalBundleJARContents.iterator(); jarContentsIterator.hasNext(); ) {
         VirtualFile file = jarContentsIterator.next();
         if (!newAdditionalJARContents.contains(file)) {
           jarContentsIterator.remove();
-          for (Iterator<LocalFileSystem.WatchRequest> watchIterator = _watchRequests.iterator(); watchIterator.hasNext(); ) {
+          for (Iterator<LocalFileSystem.WatchRequest> watchIterator = myWatchRequests.iterator(); watchIterator.hasNext(); ) {
             LocalFileSystem.WatchRequest watchRequest = watchIterator.next();
             if (Comparing.strEqual(file.getPath(), watchRequest.getRootPath())) {
               toRemove.add(watchRequest);
@@ -87,27 +90,23 @@ public class AdditionalJARContentsWatcherManagerImpl implements AdditionalJARCon
 
       List<String> toAdd = new ArrayList<String>();
       for (VirtualFile newAdditionalJARContent : newAdditionalJARContents) {
-        if (!_additionalBundleJARContents.contains(newAdditionalJARContent)) {
+        if (!myAdditionalBundleJARContents.contains(newAdditionalJARContent)) {
           toAdd.add(newAdditionalJARContent.getPath());
-          _additionalBundleJARContents.add(newAdditionalJARContent);
+          myAdditionalBundleJARContents.add(newAdditionalJARContent);
         }
       }
 
-      final Set<LocalFileSystem.WatchRequest> requests = _fileSystem.replaceWatchedRoots(toRemove, toAdd, null);
-      _watchRequests.addAll(requests);
+      Set<LocalFileSystem.WatchRequest> requests = myFileSystem.replaceWatchedRoots(toRemove, toAdd, null);
+      myWatchRequests.addAll(requests);
     }
     else {
       cleanup();
     }
   }
 
-  public void dispose() {
-    cleanup();
-  }
-
-  private void cleanup() {
-    _fileSystem.removeWatchedRoots(_watchRequests);
-    _watchRequests.clear();
-    _additionalBundleJARContents.clear();
+  public void cleanup() {
+    myFileSystem.removeWatchedRoots(myWatchRequests);
+    myWatchRequests.clear();
+    myAdditionalBundleJARContents.clear();
   }
 }

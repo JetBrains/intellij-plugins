@@ -41,10 +41,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
-import org.osmorc.StacktraceUtil;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 import org.osmorc.settings.ApplicationSettings;
 import org.osmorc.util.OrderedProperties;
@@ -67,20 +67,18 @@ import java.util.regex.Pattern;
  */
 public class BndWrapper {
   /**
-   * Wraps an existing jar file using bnd's analyzer. This class will check and use any applying bundlification rules
-   * for this library that have been set up in Osmorcs library bundlification dialog.
+   * Wraps an existing jar file using Bnd analyzer. This class will check and use any applying bundlification rules
+   * for this library that have been set up in Osmorc library bundlification dialog.
    */
   @Nullable
   public String wrapLibrary(Module module, @NotNull CompileContext compileContext, final String sourceJarUrl, File targetDir) {
-    String messagePrefix = "[" + module.getName() + "] ";
+    String prefix = "[" + module.getName() + "] ";
+
     try {
       File sourceFile = new File(VfsUtilCore.urlToPath(sourceJarUrl));
       if (!sourceFile.exists()) {
-        compileContext.addMessage(CompilerMessageCategory.WARNING, messagePrefix +
-                                                                   "The library " +
-                                                                   sourceFile.getPath() +
-                                                                   " does not exist. Please check your module settings. Ignoring missing library.",
-                                  null, 0, 0);
+        String message = "The library " + sourceFile + " does not exist. Please check your module settings. Ignoring missing library.";
+        compileContext.addMessage(CompilerMessageCategory.WARNING, prefix + message, null, 0, 0);
         return null;
       }
       if (sourceFile.isDirectory()) {
@@ -126,19 +124,18 @@ public class BndWrapper {
     catch (final Exception e) {
       // There is some reported issue where a lot of exceptions have been thrown which caused a ton of popup
       // boxes, so we better put this into the compile context as normal error message. Can't reproduce the issue
-      // but i think it's stil the better way.
+      // but i think it's still the better way.
       // IDEA-27101
       // IDEA-69149 - Changed this form ERROR to WARNING, as a non-bundlified library might not be fatal (especially when importing a ton of libs from maven)
-      compileContext.addMessage(CompilerMessageCategory.WARNING,
-                                MessageFormat
-                                  .format(messagePrefix + "There was an unexpected problem when trying to bundlify {0}: {1}", sourceJarUrl,
-                                          StacktraceUtil.stackTraceToString(e)), null, 0, 0);
+      String message = MessageFormat.format("There was an unexpected problem when trying to bundlify {0}: {1}",
+                                            sourceJarUrl, ExceptionUtil.getThrowableText(e));
+      compileContext.addMessage(CompilerMessageCategory.WARNING, prefix + message, null, 0, 0);
     }
     return null;
   }
 
   /**
-   * Internal function which does the actual wrapping. This is 90% borrowed from bnd's source code.
+   * Internal function which does the actual wrapping. This is 90% borrowed from Bnd source code.
    *
    * @param module
    * @param compileContext the compile context
@@ -153,7 +150,7 @@ public class BndWrapper {
                          @NotNull File inputJar,
                          @NotNull final File outputJar,
                          @NotNull Map<String, String> properties) throws Exception {
-    final String messagePrefix = "[" + module.getName() + "][Library " + inputJar.getName() + "] ";
+    final String prefix = "[" + module.getName() + "][Library " + inputJar.getName() + "] ";
 
     String sourceFileUrl = VfsUtilCore.pathToUrl(inputJar.getPath());
     Analyzer analyzer = new ReportingAnalyzer(compileContext, sourceFileUrl);
@@ -172,9 +169,8 @@ public class BndWrapper {
         base = m.group(1);
       }
       else {
-        compileContext.addMessage(CompilerMessageCategory.ERROR,
-                                  messagePrefix + "Can not calculate name of output bundle, rename jar or use -properties", sourceFileUrl,
-                                  0, 0);
+        String message = "Can not calculate name of output bundle, rename jar or use -properties";
+        compileContext.addMessage(CompilerMessageCategory.ERROR, prefix + message, sourceFileUrl, 0, 0);
         return false;
       }
 
@@ -194,7 +190,7 @@ public class BndWrapper {
     }
     analyzer.calcManifest();
     Jar jar = analyzer.getJar();
-    final File f = FileUtil.createTempFile("tmpbnd", ".jar");
+    final File f = FileUtil.createTempFile("tmp.bnd.", ".jar");
     jar.write(f);
     jar.close();
     analyzer.close();
@@ -202,9 +198,8 @@ public class BndWrapper {
     // IDEA-26817 delete the old bundle, so the renameTo later works...
     if (outputJar.exists()) {
       if (!outputJar.delete()) {
-        compileContext.addMessage(CompilerMessageCategory.ERROR,
-                                  messagePrefix + "Could not delete outdated generated bundle. Is " + outputJar.getPath() + " writable?",
-                                  null, 0, 0);
+        String message = "Could not delete outdated generated bundle. Is " + outputJar.getPath() + " writable?";
+        compileContext.addMessage(CompilerMessageCategory.ERROR, prefix + message, null, 0, 0);
         return false;
       }
     }
@@ -219,22 +214,16 @@ public class BndWrapper {
               // and this is for the remaining 1%.
               VirtualFile src = LocalFileSystem.getInstance().findFileByIoFile(f);
               if (src == null) {
-                compileContext.addMessage(CompilerMessageCategory.ERROR,
-                                          messagePrefix +
-                                          "No jar file was created. This should not happen. Is " +
-                                          f.getPath() +
-                                          " writable?", null, 0,
-                                          0);
+                String message = "No jar file was created. This should not happen. Is " + f.getPath() + " writable?";
+                compileContext.addMessage(CompilerMessageCategory.ERROR, prefix + message, null, 0, 0);
                 return false;
               }
               // make sure the parent folder exists:
               File parentFolder = outputJar.getParentFile();
               if (!parentFolder.exists()) {
                 if (!parentFolder.mkdirs()) {
-                  compileContext
-                    .addMessage(CompilerMessageCategory.ERROR,
-                                messagePrefix + "Cannot create output folder. Is " + parentFolder.getPath() + " writable?",
-                                null, 0, 0);
+                  String message = "Cannot create output folder. Is " + parentFolder.getPath() + " writable?";
+                  compileContext.addMessage(CompilerMessageCategory.ERROR, prefix + message, null, 0, 0);
                   return false;
                 }
               }
@@ -244,10 +233,8 @@ public class BndWrapper {
               if (target == null) {
                 // this actually should not happen but since we are bound by murphy's law, we check this as well
                 // and believe it or not it DID happen.
-                compileContext.addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Output path " +
-                                                                         parentFolder.getPath() +
-                                                                         " was created but cannot be found anymore. This should not happen.",
-                                          null, 0, 0);
+                String message = "Output path " + parentFolder.getPath() + " was created but cannot be found anymore. This should not happen.";
+                compileContext.addMessage(CompilerMessageCategory.ERROR, prefix + message, null, 0, 0);
                 return false;
               }
               // IDEA-26817: target must be the dir, not the the file, so:
@@ -256,8 +243,8 @@ public class BndWrapper {
                 VfsUtilCore.copyFile(this, src, target, outputJar.getName());
               }
               catch (IOException e) {
-                compileContext
-                  .addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Could not copy " + src + " to " + target, null, 0, 0);
+                String message = "Could not copy " + src + " to " + target;
+                compileContext.addMessage(CompilerMessageCategory.ERROR, prefix + message, null, 0, 0);
                 return false;
               }
             }
@@ -375,13 +362,8 @@ public class BndWrapper {
       }
 
       @Override
-      public String getProperty(String key, String deflt) {
-        if (props.containsKey(key)) {
-          return key;
-        }
-        else {
-          return deflt;
-        }
+      public String getProperty(String key, String fallback) {
+        return props.containsKey(key) ? key : fallback;
       }
 
       @Override

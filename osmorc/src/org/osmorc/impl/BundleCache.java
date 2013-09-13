@@ -3,10 +3,10 @@ package org.osmorc.impl;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.osgi.framework.Version;
 import org.osmorc.manifest.BundleManifest;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderDisposedException;
-import org.osmorc.valueobject.Version;
 
 import java.util.*;
 

@@ -28,13 +28,12 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.header.HeaderParser;
+import org.jetbrains.lang.manifest.header.impl.StandardHeaderParser;
 import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
-import org.jetbrains.lang.manifest.header.impl.StandardHeaderParser;
-import org.osmorc.manifest.lang.valueparser.ValueParser;
-import org.osmorc.manifest.lang.valueparser.impl.VersionParser;
-import org.osmorc.valueobject.Version;
+import org.osgi.framework.Version;
+import org.osmorc.util.OsgiPsiUtil;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -42,16 +41,21 @@ import org.osmorc.valueobject.Version;
 public class BundleVersionParser extends StandardHeaderParser {
   public static final HeaderParser INSTANCE = new BundleVersionParser();
 
-  private final ValueParser<Version> myVersionParser = new VersionParser();
-
   private BundleVersionParser() { }
 
   @Override
   public boolean annotate(@NotNull Header header, @NotNull AnnotationHolder holder) {
     HeaderValue value = header.getHeaderValue();
     if (value instanceof HeaderValuePart) {
-      myVersionParser.parseValue((HeaderValuePart)value, holder);
+      try {
+        new Version(value.getUnwrappedText());
+      }
+      catch (IllegalArgumentException e) {
+        holder.createErrorAnnotation(OsgiPsiUtil.trimRange(value).shiftRight(value.getTextOffset()), e.getMessage());
+        return true;
+      }
     }
+
     return false;
   }
 
@@ -59,6 +63,13 @@ public class BundleVersionParser extends StandardHeaderParser {
   @Override
   public Object getConvertedValue(@NotNull Header header) {
     HeaderValue value = header.getHeaderValue();
-    return value instanceof HeaderValuePart ? myVersionParser.parseValue((HeaderValuePart)value, null) : null;
+    if (value instanceof HeaderValuePart) {
+      try {
+        return new Version(value.getUnwrappedText());
+      }
+      catch (IllegalArgumentException ignored) { }
+    }
+
+    return null;
   }
 }

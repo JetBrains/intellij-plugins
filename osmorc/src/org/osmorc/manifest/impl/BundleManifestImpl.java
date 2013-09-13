@@ -35,12 +35,12 @@ import org.jetbrains.lang.manifest.header.HeaderParserRepository;
 import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
+import org.osgi.framework.Version;
 import org.osgi.framework.wiring.BundleCapability;
 import org.osgi.framework.wiring.BundleRequirement;
 import org.osmorc.manifest.BundleManifest;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.Directive;
-import org.osmorc.valueobject.Version;
 
 import java.util.Collections;
 import java.util.List;

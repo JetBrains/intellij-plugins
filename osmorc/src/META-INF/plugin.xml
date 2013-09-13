@@ -86,25 +86,19 @@
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
-    <!-- Applications services -->
     <applicationService serviceImplementation="org.osmorc.settings.ApplicationSettings"/>
     <applicationService serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
     <applicationService serviceImplementation="org.osmorc.obrimport.ObrProvider"/>
 
-    <!-- Project services -->
     <projectService serviceImplementation="org.osmorc.settings.ProjectSettings"/>
-    <projectService serviceInterface="org.osmorc.BundleManager"
-                    serviceImplementation="org.osmorc.impl.BundleManagerImpl"/>
+    <projectService serviceInterface="org.osmorc.BundleManager" serviceImplementation="org.osmorc.impl.BundleManagerImpl"/>
     <projectService serviceInterface="org.osmorc.manifest.ManifestHolderRegistry"
                     serviceImplementation="org.osmorc.manifest.impl.ManifestHolderRegistryImpl"/>
 
-    <!-- Module services -->
     <moduleService serviceInterface="org.osmorc.manifest.ManifestHolder"
                    serviceImplementation="org.osmorc.manifest.impl.ModuleManifestHolderImpl"/>
-    <moduleService serviceInterface="org.osmorc.AdditionalJARContentsWatcherManager"
-                   serviceImplementation="org.osmorc.impl.AdditionalJARContentsWatcherManagerImpl"/>
+    <moduleService serviceImplementation="org.osmorc.impl.AdditionalJARContentsWatcherManager"/>
 
-    <!-- IDEA extensions -->
     <manifest.parser.provider implementation="org.osmorc.manifest.lang.header.OsgiManifestHeaderParsers"/>
     <manifest.parser.provider implementation="org.osmorc.manifest.lang.header.BndManifestHeaderParsers"/>
     <manifest.parser.provider implementation="org.osmorc.manifest.lang.header.EquinoxManifestHeaderParsers"/>

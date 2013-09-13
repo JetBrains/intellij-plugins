@@ -27,13 +27,14 @@ package org.osmorc;
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetManagerAdapter;
-import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetType;
+import org.osmorc.impl.AdditionalJARContentsWatcherManager;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -41,17 +42,12 @@ import org.osmorc.facet.OsmorcFacetType;
 public class OsmorcModuleComponent implements ModuleComponent {
   private final Module myModule;
   private final BundleManager myBundleManager;
-  private final AdditionalJARContentsWatcherManager myAdditionalJARContentsWatcherManager;
-  private final Application myApplication;
+  private final AdditionalJARContentsWatcherManager myWatcherManager;
 
-  public OsmorcModuleComponent(Module module,
-                               BundleManager bundleManager,
-                               AdditionalJARContentsWatcherManager additionalJARContentsWatcherManager,
-                               Application application) {
+  public OsmorcModuleComponent(Module module, BundleManager bundleManager, AdditionalJARContentsWatcherManager watcherManager) {
     myModule = module;
     myBundleManager = bundleManager;
-    myAdditionalJARContentsWatcherManager = additionalJARContentsWatcherManager;
-    myApplication = application;
+    myWatcherManager = watcherManager;
   }
 
   @NonNls
@@ -86,7 +82,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
 
   @Override
   public void projectClosed() {
-    myAdditionalJARContentsWatcherManager.dispose();
+    myWatcherManager.cleanup();
   }
 
   @Override
@@ -98,7 +94,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
         // reindex the module itself
         buildManifestIndex();
       }
-      myAdditionalJARContentsWatcherManager.updateWatcherSetup();
+      myWatcherManager.updateWatcherSetup();
     }
   }
 
@@ -108,7 +104,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
   private void buildManifestIndex() {
     OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
     if (facet != null) {
-      myApplication.invokeLater(new Runnable() {
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
         @Override
         public void run() {
           if (myModule.isDisposed()) return;
