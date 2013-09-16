@@ -8,6 +8,8 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.coverage.KarmaCoveragePeer;
+import com.intellij.javascript.karma.execution.KarmaRunSettings;
+import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.util.ProcessOutputArchive;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.Disposable;
@@ -43,8 +45,7 @@ public class KarmaServer {
   private final KarmaWatcher myWatcher;
 
   private final AtomicBoolean myOnPortBoundFired = new AtomicBoolean(false);
-  private final File myNodeInterpreter;
-  private final File myKarmaPackageDir;
+  private final KarmaServerSettings myServerSettings;
 
   private List<Runnable> myOnPortBoundCallbacks = Lists.newCopyOnWriteArrayList();
   private List<Runnable> myOnBrowsersReadyCallbacks = Lists.newCopyOnWriteArrayList();
@@ -57,17 +58,14 @@ public class KarmaServer {
   private final KarmaServerRestarter myRestarter;
   private final int myProcessHashCode;
 
-  public KarmaServer(@NotNull Project project,
-                     @NotNull File nodeInterpreter,
-                     @NotNull File karmaPackageDir,
-                     @NotNull File configurationFile) throws IOException {
+  public KarmaServer(@NotNull Project project, @NotNull KarmaServerSettings serverSettings) throws IOException {
     /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
         are already checked in KarmaRunConfiguration.checkConfiguration */
-    myNodeInterpreter = nodeInterpreter;
-    myKarmaPackageDir = karmaPackageDir;
-    myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(karmaPackageDir);
-    KillableColoredProcessHandler processHandler = startServer(nodeInterpreter, configurationFile);
+    myServerSettings = serverSettings;
+    myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(serverSettings.getKarmaPackageDir());
+    KillableColoredProcessHandler processHandler = startServer(serverSettings);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
+    File configurationFile = myServerSettings.getConfigurationFile();
     myState = new KarmaServerState(this, processHandler, configurationFile);
     myProcessOutputArchive = new ProcessOutputArchive(processHandler);
     myWatcher = new KarmaWatcher(this);
@@ -111,7 +109,7 @@ public class KarmaServer {
 
   @NotNull
   public String getNodeInterpreterPath() {
-    return myNodeInterpreter.getAbsolutePath();
+    return myServerSettings.getNodeInterpreterPath();
   }
 
   @NotNull
@@ -121,7 +119,7 @@ public class KarmaServer {
 
   @NotNull
   public File getKarmaPackageDir() {
-    return myKarmaPackageDir;
+    return myServerSettings.getKarmaPackageDir();
   }
 
   @NotNull
@@ -143,17 +141,18 @@ public class KarmaServer {
     myHandlers.put(handler.getEventType(), handler);
   }
 
-  private KillableColoredProcessHandler startServer(@NotNull File nodeInterpreter,
-                                                    @NotNull File configurationFile) throws IOException {
+  private KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings) throws IOException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
-    commandLine.setPassParentEnvironment(true);
-    commandLine.setWorkDirectory(configurationFile.getParentFile());
-    commandLine.setExePath(nodeInterpreter.getAbsolutePath());
+    KarmaRunSettings runSettings = serverSettings.getRunSettings();
+    commandLine.setPassParentEnvironment(runSettings.isPassParentEnvVars());
+    commandLine.getEnvironment().putAll(runSettings.getEnvVars());
+    commandLine.setWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
+    commandLine.setExePath(serverSettings.getNodeInterpreterPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
     //commandLine.addParameter("--debug=34598");
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaJsSourcesLocator.getKarmaPackageDir().getAbsolutePath());
-    commandLine.addParameter("--configFile=" + configurationFile.getAbsolutePath());
+    commandLine.addParameter("--configFile=" + serverSettings.getConfigurationFilePath());
     commandLine.addParameter("--coverageTempDir=" + myCoveragePeer.getCoverageTempDir());
 
     final Process process;

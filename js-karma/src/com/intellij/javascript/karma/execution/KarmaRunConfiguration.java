@@ -83,31 +83,31 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
 
   private void check(@Nullable String nodeInterpreterPath, @Nullable String karmaPackagePath) throws RuntimeConfigurationError {
     if (nodeInterpreterPath == null || nodeInterpreterPath.trim().isEmpty()) {
-      throw new RuntimeConfigurationError("Please specify Node.js interpreter.");
+      throw new RuntimeConfigurationError("Please specify Node.js interpreter");
     }
     File nodeInterpreter = new File(nodeInterpreterPath);
     if (!nodeInterpreter.isFile() || !nodeInterpreter.canExecute() || !nodeInterpreter.isAbsolute()) {
-      throw new RuntimeConfigurationError("Incorrect Node.js interpreter path.");
+      throw new RuntimeConfigurationError("Incorrect Node.js interpreter path");
     }
 
     if (karmaPackagePath == null || karmaPackagePath.trim().isEmpty()) {
-      throw new RuntimeConfigurationError("Please specify Karma Node.js package.");
+      throw new RuntimeConfigurationError("Please specify Karma Node.js package");
     }
     File karmaPackageDir = new File(karmaPackagePath);
     if (!karmaPackageDir.isDirectory() || !karmaPackageDir.isAbsolute()) {
-      throw new RuntimeConfigurationError("Incorrect Karma Node.js package.");
+      throw new RuntimeConfigurationError("Incorrect Karma Node.js package");
     }
 
     String configPath = myRunSettings.getConfigPath();
     if (configPath.trim().isEmpty()) {
-      throw new RuntimeConfigurationError("Config file path is empty.");
+      throw new RuntimeConfigurationError("Config file path is empty");
     }
     File configFile = new File(configPath);
     if (!configFile.exists()) {
-      throw new RuntimeConfigurationError("Configuration file does not exist.");
+      throw new RuntimeConfigurationError("Configuration file does not exist");
     }
     if (!configFile.isFile()) {
-      throw new RuntimeConfigurationError("Specified config file path is incorrect.");
+      throw new RuntimeConfigurationError("Specified config file path is incorrect");
     }
   }
 

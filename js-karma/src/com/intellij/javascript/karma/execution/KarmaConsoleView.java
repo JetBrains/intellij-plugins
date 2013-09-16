@@ -104,7 +104,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         public void onTerminated(int exitCode) {
           alarm.cancelAllRequests();
           rootFormatter.onServerProcessTerminated();
-          print("Karma server finished with exited code " + exitCode + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+          print("Karma server finished with exit code " + exitCode + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
         }
       });
     }

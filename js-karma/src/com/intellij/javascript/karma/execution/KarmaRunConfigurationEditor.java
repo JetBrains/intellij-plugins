@@ -1,5 +1,6 @@
 package com.intellij.javascript.karma.execution;
 
+import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
@@ -40,9 +41,11 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   private final TextFieldWithHistoryWithBrowseButton myNodeInterpreterPathTextFieldWithBrowseButton;
   private final TextFieldWithHistoryWithBrowseButton myKarmaPackageDirPathTextFieldWithBrowseButton;
   private final TextFieldWithHistoryWithBrowseButton myConfigPathTextFieldWithBrowseButton;
+  private final EnvironmentVariablesComponent myEnvironmentVariablesComponent;
 
   public KarmaRunConfigurationEditor(@NotNull Project project) {
     myProject = project;
+    int verticalSpace = 7;
     JPanel panel = new JPanel(new GridBagLayout());
     panel.add(new JLabel("Node.js interpreter:"), new GridBagConstraints(
       0, 0,
@@ -60,7 +63,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       1.0, 0.0,
       GridBagConstraints.WEST,
       GridBagConstraints.HORIZONTAL,
-      new Insets(0, 0, 7, 0),
+      new Insets(0, 0, verticalSpace, 0),
       0, 0
     ));
 
@@ -80,7 +83,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       0, 0,
       GridBagConstraints.WEST,
       GridBagConstraints.HORIZONTAL,
-      new Insets(0, 0, 7, 0),
+      new Insets(0, 0, verticalSpace, 0),
       0, 0
     ));
 
@@ -98,6 +101,17 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       0, 5,
       1, 1,
       1.0, 0.0,
+      GridBagConstraints.WEST,
+      GridBagConstraints.HORIZONTAL,
+      new Insets(0, 0, verticalSpace, 0),
+      0, 0
+    ));
+    myEnvironmentVariablesComponent = new EnvironmentVariablesComponent();
+    myEnvironmentVariablesComponent.setLabelLocation(BorderLayout.NORTH);
+    panel.add(myEnvironmentVariablesComponent, new GridBagConstraints(
+      0, 6,
+      1, 1,
+      0.0, 0.0,
       GridBagConstraints.WEST,
       GridBagConstraints.HORIZONTAL,
       new Insets(0, 0, 0, 0),
@@ -203,6 +217,9 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     setTextAndAddToHistory(myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent(), karmaNodePackageDir);
 
     setTextAndAddToHistory(myConfigPathTextFieldWithBrowseButton.getChildComponent(), runSettings.getConfigPath());
+
+    myEnvironmentVariablesComponent.setEnvs(runSettings.getEnvVars());
+    myEnvironmentVariablesComponent.setPassParentEnvs(runSettings.isPassParentEnvVars());
   }
 
   private static void setTextAndAddToHistory(@NotNull TextFieldWithHistory textFieldWithHistory, @Nullable String text) {
@@ -215,6 +232,8 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     String configPath = myConfigPathTextFieldWithBrowseButton.getChildComponent().getText();
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
     builder.setConfigPath(configPath);
+    builder.setEnvVars(myEnvironmentVariablesComponent.getEnvs());
+    builder.setPassParentEnvVars(myEnvironmentVariablesComponent.isPassParentEnvs());
     runConfiguration.setRunSettings(builder.build());
     String karmaNodePackageDir = myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent().getText();
     KarmaGlobalSettingsUtil.storeKarmaPackageDir(myProject, karmaNodePackageDir);
