@@ -140,7 +140,7 @@ public class NodeClassInfo {
     }
   }
 
-  private static void processSubtagsRecursively(final XmlTag tag, final Processor<XmlTag> processor) {
+  public static void processSubtagsRecursively(final XmlTag tag, final Processor<XmlTag> processor) {
     for (XmlTag subTag : tag.getSubTags()) {
       if (processor.process(subTag)) {
         processSubtagsRecursively(subTag, processor);

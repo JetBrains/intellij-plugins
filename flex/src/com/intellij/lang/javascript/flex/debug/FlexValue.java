@@ -1,10 +1,10 @@
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.javascript.JSDebuggerSupportUtils;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -17,11 +17,16 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.Processor;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
@@ -522,15 +527,36 @@ class FlexValue extends XValue {
         findJSClass(project, ModuleUtilCore.findModuleForFile(mySourcePosition.getFile(), project), typeFromFlexValueResult);
 
       if (jsClass != null) {
-        result = calcSourcePosition(JSInheritanceUtil.findMember(myName, jsClass, JSInheritanceUtil.SearchedMemberType.FieldsAndMethods,
-                                                                 JSFunction.FunctionKind.GETTER, true));
+        final Ref<PsiElement> fieldRef = new Ref<PsiElement>();
+        fieldRef.set(JSInheritanceUtil.findMember(myName, jsClass, JSInheritanceUtil.SearchedMemberType.FieldsAndMethods,
+                                                  JSFunction.FunctionKind.GETTER, true));
+
+        if (fieldRef.isNull() && jsClass instanceof MxmlJSClass) {
+          final PsiFile file = jsClass.getContainingFile();
+          final XmlFile xmlFile = file instanceof XmlFile ? (XmlFile)file : null;
+          final XmlTag rootTag = xmlFile == null ? null : xmlFile.getRootTag();
+          if (rootTag != null) {
+            NodeClassInfo.processSubtagsRecursively(rootTag, new Processor<XmlTag>() {
+              public boolean process(final XmlTag tag) {
+                final XmlAttribute idAttr = tag.getAttribute("id");
+                final String id = idAttr == null ? null : idAttr.getValue();
+                if (id != null && id.equals(myName)) {
+                  fieldRef.set(idAttr);
+                }
+                return !MxmlJSClass.isTagThatAllowsAnyXmlContent(tag);
+              }
+            });
+          }
+        }
+
+        result = calcSourcePosition(fieldRef.get());
       }
     }
     navigatable.setSourcePosition(result);
   }
 
   @Nullable
-  private static XSourcePosition calcSourcePosition(final JSQualifiedNamedElement element) {
+  private static XSourcePosition calcSourcePosition(final PsiElement element) {
     if (element != null) {
       final PsiElement navigationElement = element.getNavigationElement();
       final VirtualFile file = navigationElement.getContainingFile().getVirtualFile();
