@@ -330,11 +330,11 @@
       <add-to-group anchor="after" relative-to-action="Generate.Delegate.Actionscript" group-id="GenerateGroup"/>
     </action>
     <action id="Flex.NewActionScriptClass" class="com.intellij.lang.javascript.flex.actions.newfile.NewActionScriptClassAction"
-            text="ActionScript Class" description="Create new ActionScript class" icon="JavaScriptLanguageIcons.Psi.Ecmal4.Impl.ActionScriptClass">
+            text="ActionScript Class" description="Create new ActionScript class" icon="JavaScriptPsiIcons.Classes.ActionScriptClass">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
     </action>
     <action id="Flex.NewFlexComponent" class="com.intellij.lang.javascript.flex.actions.newfile.NewFlexComponentAction"
-            text="MXML Component" description="Create new MXML component" icon="JavaScriptLanguageIcons.Flex.XmlBackedClass">
+            text="MXML Component" description="Create new MXML component" icon="JavaScriptPsiIcons.Classes.XmlBackedClass">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="Flex.NewActionScriptClass"/>
     </action>
     <action id="Flex.Debugger.FilterSwfLoadUnloadMessages" class="com.intellij.lang.javascript.flex.debug.FilterSwfLoadUnloadMessagesAction"
