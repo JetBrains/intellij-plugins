@@ -266,7 +266,7 @@ public class MxmlLanguageTagsUtil {
   private static void addErrorMessage(final XmlElement element,
                                       final String message,
                                       final Validator.ValidationHost host,
-                                      final IntentionAction... intentionActions) {
+                                      @NotNull IntentionAction... intentionActions) {
 
     PsiElement target = element;
     PsiElement secondaryTarget = null;

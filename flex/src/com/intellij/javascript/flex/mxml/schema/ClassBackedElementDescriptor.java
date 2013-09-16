@@ -83,16 +83,19 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   @NonNls private static final String RADIO_BUTTON_GROUP_CLASS = "mx.controls.RadioButtonGroup";
 
   private final static XmlUtil.DuplicationInfoProvider<XmlElement> myDuplicationInfoProvider = new XmlUtil.DuplicationInfoProvider<XmlElement>() {
+    @Override
     public String getName(@NotNull final XmlElement xmlElement) {
       if (xmlElement instanceof XmlTag) return ((XmlTag)xmlElement).getLocalName();
       return ((XmlAttribute)xmlElement).getName();
     }
 
+    @Override
     @NotNull
     public String getNameKey(@NotNull final XmlElement xmlElement, final @NotNull String name) {
       return name;
     }
 
+    @Override
     @NotNull
     public PsiElement getNodeForMessage(@NotNull final XmlElement xmlElement) {
       return xmlElement;
@@ -126,10 +129,12 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     name = _name;
   }
 
+  @Override
   public String getQualifiedName() {
     return className;
   }
 
+  @Override
   public String getDefaultName() {
     return getName();
   }
@@ -138,6 +143,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return predefined;
   }
 
+  @Override
   public XmlElementDescriptor[] getElementsDescriptors(final XmlTag _context) {
     if (MxmlJSClass.isTagOrInsideTagThatAllowsAnyXmlContent(_context) || MxmlLanguageTagsUtil.isFxReparentTag(_context)) {
       return EMPTY_ARRAY;
@@ -249,6 +255,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return defaultPropertyDescriptor.getArrayType() != null ? defaultPropertyDescriptor.getArrayType() : defaultPropertyDescriptor.getType();
   }
 
+  @Override
   @Nullable
   public XmlElementDescriptor getElementDescriptor(final XmlTag childTag, final XmlTag contextTag) {
     if (MxmlJSClass.isTagThatAllowsAnyXmlContent(contextTag)) {
@@ -406,6 +413,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         attrList.hasModifier(JSAttributeList.ModifierType.DYNAMIC);
   }
 
+  @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(final @Nullable XmlTag _context) {
     if (MxmlLanguageTagsUtil.isFxPrivateTag(_context) || MxmlLanguageTagsUtil.isFxLibraryTag(_context)) {
       return XmlAttributeDescriptor.EMPTY;
@@ -556,6 +564,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
                                      final XmlTag rootTag) {
     if (rootTag != null) {
       final JSResolveUtil.JSInjectedFilesVisitor injectedFilesVisitor = new JSResolveUtil.JSInjectedFilesVisitor() {
+        @Override
         protected void process(final JSFile file) {
           collectMyAttributes(file, map, packageToInternalDescriptors);
         }
@@ -563,6 +572,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       FlexUtils.processMxmlTags(rootTag, true, injectedFilesVisitor);
 
       processClassBackedTagsWithIdAttribute(rootTag, new Processor<Pair<XmlAttribute, String>>() {
+        @Override
         public boolean process(final Pair<XmlAttribute, String> idAttributeAndItsType) {
           final XmlAttribute idAttribute = idAttributeAndItsType.first;
           final String idAttributeValue = idAttribute.getValue();
@@ -601,6 +611,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
                                    final Map<String, AnnotationBackedDescriptor> map,
                                    final Map<String, Map<String, AnnotationBackedDescriptor>> packageToInternalDescriptors) {
     processAttributes(jsClass, new AttributedItemsProcessor() {
+      @Override
       public boolean process(final JSNamedElement jsNamedElement, final boolean isPackageLocalVisibility) {
         String name = jsNamedElement.getName();
         if (name != null) {
@@ -670,6 +681,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         return true;
       }
 
+      @Override
       public boolean process(final JSAttributeNameValuePair pair, final String annotationName, final boolean included) {
         String name = pair.getSimpleValue();
 
@@ -771,6 +783,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
   }
 
+  @Override
   public void validate(@NotNull final XmlTag tag, @NotNull final ValidationHost host) {
     if (FlexSdkUtils.isFlex4Sdk(FlexUtils.getSdkForActiveBC(context.module))) {
       MxmlLanguageTagsUtil.checkFlex4Attributes(tag, host, true);
@@ -890,10 +903,12 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
   }
 
+  @Override
   public boolean requiresCdataBracesInContext(@NotNull final XmlTag context) {
     return predefined && XmlBackedJSClassImpl.SCRIPT_TAG_NAME.equals(context.getLocalName());
   }
 
+  @Override
   public Icon getIcon(@NotNull final PsiElement element, final int flags) {
     if (iconPath != null) {
       final PsiFile containingFile = element.getContainingFile();
@@ -1015,6 +1030,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       if (rootTag != null) {
         for (XmlTag metadataTag : rootTag.findSubTags(FlexPredefinedTagNames.METADATA, JavaScriptSupportLoader.MXML_URI3)) {
           JSResolveUtil.processInjectedFileForTag(metadataTag, new JSResolveUtil.JSInjectedFilesVisitor() {
+            @Override
             protected void process(final JSFile file) {
               for (PsiElement elt : file.getChildren()) {
                 if (elt instanceof JSAttributeList) {
@@ -1061,6 +1077,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return null;
   }
 
+  @Override
   public boolean allowElementsFromNamespace(final String namespace, final XmlTag context) {
     if (MxmlJSClass.isTagOrInsideTagThatAllowsAnyXmlContent(context)) {
       return false;
@@ -1115,7 +1132,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       myHost = host;
     }
 
-    public void reportError(final ASTNode nameIdentifier, final String s, ProblemKind kind, final IntentionAction... fixes) {
+    @Override
+    public void reportError(final ASTNode nameIdentifier, final String s, ProblemKind kind, @NotNull final IntentionAction... fixes) {
       final ValidationHost.ErrorType errorType = kind == ProblemKind.ERROR ? ValidationHost.ErrorType.ERROR: ValidationHost.ErrorType.WARNING;
       if (myHost instanceof IdeValidationHost) {
         ((IdeValidationHost) myHost).addMessageWithFixes(nameIdentifier.getPsi(), s, errorType, fixes);
@@ -1139,6 +1157,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
   private static boolean doProcess(final PsiElement jsClass, final AttributedItemsProcessor processor) {
     return JSResolveUtil.processMetaAttributesForClass(jsClass, new JSResolveUtil.MetaDataProcessor() {
+      @Override
       public boolean process(final @NotNull JSAttribute attr) {
         final String attrName = attr.getName();
         boolean skipped = false;
@@ -1157,6 +1176,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         return true;
       }
 
+      @Override
       public boolean handleOtherElement(final PsiElement el, final PsiElement context, Ref<PsiElement> continuePassElement) {
         if (continuePassElement != null) {
           if (el instanceof JSVarStatement) {
@@ -1180,6 +1200,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
   }
 
+  @Override
   public XmlAttributeDescriptor getAttributeDescriptor(String attributeName, final @Nullable XmlTag context) {
     if (isPrivateAttribute(attributeName, context)) {
       return new AnyXmlAttributeDescriptor(attributeName);
@@ -1262,10 +1283,12 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return attributeName;
   }
 
+  @Override
   public XmlAttributeDescriptor getAttributeDescriptor(final XmlAttribute attribute) {
     return getAttributeDescriptor(attribute.getName(), attribute.getParent());
   }
 
+  @Override
   public XmlNSDescriptor getNSDescriptor() {
     return null;
   }
@@ -1275,6 +1298,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return null;
   }
 
+  @Override
   public int getContentType() {
     return CONTENT_TYPE_UNKNOWN;
   }
@@ -1284,6 +1308,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return null;
   }
 
+  @Override
   @Nullable
   public PsiElement getDeclaration() {
     String className = predefined ? OBJECT_CLASS_NAME :this.className;
@@ -1294,6 +1319,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return (file != null && JavaScriptSupportLoader.isMxmlOrFxgFile(file)) ? file : jsClass;
   }
 
+  @Override
   @NonNls
   public String getName(final PsiElement context) {
     String prefix = null;
@@ -1346,6 +1372,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return prefix + ":" + name;
   }
 
+  @Override
   @NonNls
   public String getName() {
     return name == null ? getNameFromQName():name;
@@ -1355,9 +1382,11 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     return className(className);
   }
 
+  @Override
   public void init(final PsiElement element) {
   }
 
+  @Override
   public Object[] getDependences() {
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
