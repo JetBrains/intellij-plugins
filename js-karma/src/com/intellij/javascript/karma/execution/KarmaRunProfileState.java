@@ -19,8 +19,6 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-
 /**
  * @author Sergey Simonchik
  */
@@ -59,20 +57,21 @@ public class KarmaRunProfileState implements RunProfileState {
 
   @Nullable
   public KarmaServer getServerOrStart(@NotNull final Executor executor) throws ExecutionException {
-    File nodeInterpreter = new File(myNodeInterpreterPath);
-    File karmaPackageDir = new File(myKarmaPackageDirPath);
-    File configurationFile = new File(myRunSettings.getConfigPath());
+    KarmaServerSettings serverSettings = new KarmaServerSettings.Builder()
+      .setNodeInterpreterPath(myNodeInterpreterPath)
+      .setKarmaPackageDirPath(myKarmaPackageDirPath)
+      .setRunSettings(myRunSettings)
+      .build();
+
     KarmaServerRegistry registry = KarmaServerRegistry.getInstance(myProject);
-    KarmaServer server = registry.getServer(nodeInterpreter, karmaPackageDir, configurationFile);
+    KarmaServer server = registry.getServer(serverSettings);
     if (server != null && server.getRestarter().isRestartRequired()) {
       server.shutdownAsync();
       server = null;
     }
     if (server == null) {
       registry.startServer(
-        nodeInterpreter,
-        karmaPackageDir,
-        configurationFile,
+        serverSettings,
         new CatchingConsumer<KarmaServer, Exception>() {
           @Override
           public void consume(final Exception e) {
