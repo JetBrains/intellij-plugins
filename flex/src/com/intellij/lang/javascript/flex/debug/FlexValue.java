@@ -469,6 +469,47 @@ class FlexValue extends XValue {
     myDebugProcess.sendCommand(command);
   }
 
+  public boolean canNavigateToTypeSource() {
+    final boolean isObject = myResult.contains(OBJECT_MARKER);
+
+    if (isObject && mySourcePosition != null) {
+      final Pair<String, String> typeAndAdditionalInfo = getTypeAndAdditionalInfo(myResult);
+      final String typeFromFlexValueResult = typeAndAdditionalInfo.first;
+      return typeFromFlexValueResult != null;
+    }
+
+    return false;
+  }
+
+  public void computeTypeSourcePosition(@NotNull final XNavigatable navigatable) {
+    if (mySourcePosition == null) {
+      navigatable.setSourcePosition(null);
+      return;
+    }
+
+    final boolean isObject = myResult.contains(OBJECT_MARKER);
+
+    if (isObject) {
+      final Pair<String, String> typeAndAdditionalInfo = getTypeAndAdditionalInfo(myResult);
+      final String typeFromFlexValueResult = typeAndAdditionalInfo.first;
+      if (typeFromFlexValueResult != null) {
+        final Project project = myDebugProcess.getSession().getProject();
+        final JSClass jsClass =
+          findJSClass(project, ModuleUtilCore.findModuleForFile(mySourcePosition.getFile(), project), typeFromFlexValueResult);
+        navigatable.setSourcePosition(calcSourcePosition(jsClass));
+        return;
+      }
+    }
+
+    navigatable.setSourcePosition(null);
+  }
+
+  public boolean canNavigateToSource() {
+    return mySourcePosition != null && (myValueType == ValueType.Variable ||
+                                        myValueType == ValueType.Parameter ||
+                                        myValueType == ValueType.Field && myParentResult != null);
+  }
+
   @Override
   public void computeSourcePosition(@NotNull final XNavigatable navigatable) {
     if (mySourcePosition == null) {
@@ -556,7 +597,7 @@ class FlexValue extends XValue {
   }
 
   @Nullable
-  private static XSourcePosition calcSourcePosition(final PsiElement element) {
+  private static XSourcePosition calcSourcePosition(final @Nullable PsiElement element) {
     if (element != null) {
       final PsiElement navigationElement = element.getNavigationElement();
       final VirtualFile file = navigationElement.getContainingFile().getVirtualFile();
