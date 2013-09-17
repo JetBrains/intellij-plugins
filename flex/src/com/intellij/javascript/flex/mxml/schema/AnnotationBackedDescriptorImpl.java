@@ -797,7 +797,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
           errorElement = textElements[0];
         }
       }
-      host.addMessage(errorElement, message, ValidationHost.ERROR);
+      host.addMessage(errorElement, message, ValidationHost.ErrorType.ERROR);
     }
 
     if (context instanceof XmlTag &&
