@@ -1,10 +1,10 @@
 package com.dmarcotte.handlebars.psi.impl;
 
-import com.dmarcotte.handlebars.HbIcons;
 import com.dmarcotte.handlebars.psi.HbCloseBlockMustache;
 import com.dmarcotte.handlebars.psi.HbOpenBlockMustache;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import icons.HandlebarsIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +28,6 @@ public class HbOpenBlockMustacheImpl extends HbBlockMustacheImpl implements HbOp
   @Nullable
   @Override
   public Icon getIcon(int flags) {
-    return HbIcons.OPEN_BLOCK;
+    return HandlebarsIcons.Elements.OpenBlock;
   }
 }

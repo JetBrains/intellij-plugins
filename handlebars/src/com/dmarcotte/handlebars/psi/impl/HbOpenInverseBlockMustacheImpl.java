@@ -1,8 +1,8 @@
 package com.dmarcotte.handlebars.psi.impl;
 
-import com.dmarcotte.handlebars.HbIcons;
 import com.dmarcotte.handlebars.psi.HbOpenInverseBlockMustache;
 import com.intellij.lang.ASTNode;
+import icons.HandlebarsIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +16,6 @@ public class HbOpenInverseBlockMustacheImpl extends HbOpenBlockMustacheImpl impl
   @Nullable
   @Override
   public Icon getIcon(int flags) {
-    return HbIcons.OPEN_INVERSE;
+    return HandlebarsIcons.Elements.OpenInverse;
   }
 }

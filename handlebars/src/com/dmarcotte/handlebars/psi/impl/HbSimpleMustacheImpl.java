@@ -1,11 +1,11 @@
 package com.dmarcotte.handlebars.psi.impl;
 
-import com.dmarcotte.handlebars.HbIcons;
 import com.dmarcotte.handlebars.parsing.HbTokenTypes;
 import com.dmarcotte.handlebars.psi.HbMustacheName;
 import com.dmarcotte.handlebars.psi.HbSimpleMustache;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import icons.HandlebarsIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,9 +36,9 @@ public class HbSimpleMustacheImpl extends HbPlainMustacheImpl implements HbSimpl
     }
 
     if (openStacheElem.getNode().getElementType() == HbTokenTypes.OPEN_UNESCAPED) {
-      return HbIcons.OPEN_UNESCAPED;
+      return HandlebarsIcons.Elements.OpenUnescaped;
     }
 
-    return HbIcons.OPEN_MUSTACHE;
+    return HandlebarsIcons.Elements.OpenMustache;
   }
 }

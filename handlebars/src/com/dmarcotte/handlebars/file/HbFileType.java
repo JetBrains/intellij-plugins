@@ -1,7 +1,6 @@
 package com.dmarcotte.handlebars.file;
 
 import com.dmarcotte.handlebars.HbBundle;
-import com.dmarcotte.handlebars.HbIcons;
 import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.HbTemplateHighlighter;
 import com.intellij.lang.Language;
@@ -11,6 +10,7 @@ import com.intellij.openapi.fileTypes.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
+import icons.HandlebarsIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,7 +53,7 @@ public class HbFileType extends LanguageFileType implements TemplateLanguageFile
   }
 
   public Icon getIcon() {
-    return HbIcons.FILE_ICON;
+    return HandlebarsIcons.Handlebars_icon;
   }
 
   public Charset extractCharsetFromFileContent(@Nullable final Project project,

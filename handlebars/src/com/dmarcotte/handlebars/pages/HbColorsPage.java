@@ -2,12 +2,12 @@ package com.dmarcotte.handlebars.pages;
 
 import com.dmarcotte.handlebars.HbBundle;
 import com.dmarcotte.handlebars.HbHighlighter;
-import com.dmarcotte.handlebars.HbIcons;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
+import icons.HandlebarsIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -34,7 +34,7 @@ public class HbColorsPage implements ColorSettingsPage {
   }
 
   public Icon getIcon() {
-    return HbIcons.FILE_ICON;
+    return HandlebarsIcons.Handlebars_icon;
   }
 
   @NotNull

@@ -1,10 +1,10 @@
 package com.dmarcotte.handlebars.psi.impl;
 
-import com.dmarcotte.handlebars.HbIcons;
 import com.dmarcotte.handlebars.parsing.HbTokenTypes;
 import com.dmarcotte.handlebars.psi.HbSimpleInverse;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
+import icons.HandlebarsIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,9 +33,9 @@ public class HbSimpleInverseImpl extends HbPlainMustacheImpl implements HbSimple
   @Override
   public Icon getIcon(@IconFlags int flags) {
     if (getElseNode() != null) {
-      return HbIcons.OPEN_MUSTACHE;
+      return HandlebarsIcons.Elements.OpenMustache;
     }
-    return HbIcons.OPEN_INVERSE;
+    return HandlebarsIcons.Elements.OpenInverse;
   }
 
   /**
