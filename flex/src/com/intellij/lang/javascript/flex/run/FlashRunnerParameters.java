@@ -2,9 +2,12 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.execution.configurations.RuntimeConfigurationWarning;
 import com.intellij.flex.FlexCommonBundle;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
@@ -26,6 +29,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -351,6 +358,45 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     doCheck(super.checkAndGetModuleAndBC(project));
   }
 
+  public void reportWarnings(final Project project) throws RuntimeConfigurationWarning {
+    try {
+      final Pair<Module, FlexBuildConfiguration> moduleAndBC = super.checkAndGetModuleAndBC(project);
+      final Module module = moduleAndBC.first;
+      final FlexBuildConfiguration bc = moduleAndBC.second;
+      if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
+        checkNamespaceIfCustomDescriptor(module, bc.getSdk(), bc.getAirDesktopPackagingOptions(), getBCName());
+      }
+      else if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
+
+      }
+    }
+    catch (RuntimeConfigurationError e) {/* should be already checked somewhere else */}
+  }
+
+  private static void checkNamespaceIfCustomDescriptor(final Module module,
+                                                       final Sdk sdk,
+                                                       final AirDesktopPackagingOptions packagingOptions,
+                                                       final String bcName) throws RuntimeConfigurationWarning {
+    if (packagingOptions.isUseGeneratedDescriptor()) return;
+    if (packagingOptions.getCustomDescriptorPath().isEmpty()) return;
+    final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(packagingOptions.getCustomDescriptorPath());
+    if (descriptorFile == null || descriptorFile.isDirectory()) return;
+
+    final PsiFile file = PsiManager.getInstance(module.getProject()).findFile(descriptorFile);
+    final XmlTag rootTag = file instanceof XmlFile ? ((XmlFile)file).getRootTag() : null;
+    final String ns = rootTag == null ? null : rootTag.getNamespace();
+    final String nsVersion = ns != null && ns.startsWith(FlexCommonUtils.AIR_NAMESPACE_BASE)
+                             ? ns.substring(FlexCommonUtils.AIR_NAMESPACE_BASE.length())
+                             : null;
+    final String airSdkVersion = FlexCommonUtils.getAirVersion(sdk.getHomePath(), sdk.getVersionString());
+
+    if (nsVersion != null && airSdkVersion != null && !nsVersion.equals(airSdkVersion)) {
+      throw new RuntimeConfigurationWarning(
+        FlexBundle.message("bc.0.module.1.air.version.mismatch.warning", bcName, module.getName(), nsVersion, airSdkVersion,
+                           FileUtil.toSystemDependentName(descriptorFile.getPath())));
+    }
+  }
+
   public Pair<Module, FlexBuildConfiguration> checkAndGetModuleAndBC(final Project project) throws RuntimeConfigurationError {
     final Pair<Module, FlexBuildConfiguration> moduleAndBC = super.checkAndGetModuleAndBC(project);
     doCheck(moduleAndBC);
@@ -475,7 +521,9 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
       case Desktop:
         checkAdlAndAirRuntime(sdk);
-        checkCustomDescriptor(bc.getAirDesktopPackagingOptions(), getBCName(), getModuleName());
+        if (bc.getOutputType() == OutputType.Application) {
+          checkCustomDescriptor(bc.getAirDesktopPackagingOptions(), getBCName(), getModuleName());
+        }
         break;
 
       case Mobile:
@@ -483,13 +531,15 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
           case Emulator:
             checkAdlAndAirRuntime(sdk);
 
-            switch (myAppDescriptorForEmulator) {
-              case Android:
-                checkCustomDescriptor(bc.getAndroidPackagingOptions(), getBCName(), getModuleName());
-                break;
-              case IOS:
-                checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
-                break;
+            if (bc.getOutputType() == OutputType.Application) {
+              switch (myAppDescriptorForEmulator) {
+                case Android:
+                  checkCustomDescriptor(bc.getAndroidPackagingOptions(), getBCName(), getModuleName());
+                  break;
+                case IOS:
+                  checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
+                  break;
+              }
             }
             break;
           case AndroidDevice:

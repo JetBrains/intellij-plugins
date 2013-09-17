@@ -244,7 +244,9 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
 
       case Desktop:
         FlashRunnerParameters.checkAdlAndAirRuntime(sdk);
-        FlashRunnerParameters.checkCustomDescriptor(bc.getAirDesktopPackagingOptions(), getBCName(), getModuleName());
+        if (bc.getOutputType() == OutputType.Application) {
+          FlashRunnerParameters.checkCustomDescriptor(bc.getAirDesktopPackagingOptions(), getBCName(), getModuleName());
+        }
         break;
 
       case Mobile:
@@ -252,10 +254,14 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
 
         switch (myAppDescriptorForEmulator) {
           case Android:
-            FlashRunnerParameters.checkCustomDescriptor(bc.getAndroidPackagingOptions(), getBCName(), getModuleName());
+            if (bc.getOutputType() == OutputType.Application) {
+              FlashRunnerParameters.checkCustomDescriptor(bc.getAndroidPackagingOptions(), getBCName(), getModuleName());
+            }
             break;
           case IOS:
-            FlashRunnerParameters.checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
+            if (bc.getOutputType() == OutputType.Application) {
+              FlashRunnerParameters.checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
+            }
             break;
         }
         break;

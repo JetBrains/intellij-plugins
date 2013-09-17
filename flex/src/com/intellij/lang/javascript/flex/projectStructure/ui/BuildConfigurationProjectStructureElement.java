@@ -103,7 +103,10 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
         if (!(problem instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem)) {
           PlaceInProjectStructure place =
             new PlaceInBuildConfiguration(BuildConfigurationProjectStructureElement.this, problem.tabName, problem.locationOnTab);
-          problemsHolder.registerProblem(problem.errorMessage, null, ProjectStructureProblemType.error(problem.errorId), place, null);
+          final ProjectStructureProblemType problemType = problem.severity == ProjectStructureProblemType.Severity.ERROR
+                                                          ? ProjectStructureProblemType.error(problem.errorId)
+                                                          : ProjectStructureProblemType.warning(problem.errorId);
+          problemsHolder.registerProblem(problem.errorMessage, null, problemType, place, null);
         }
       }
     });

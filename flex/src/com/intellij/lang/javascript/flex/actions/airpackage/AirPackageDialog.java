@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOpti
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureProblemType;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -200,9 +201,9 @@ public class AirPackageDialog extends DialogWrapper {
       }
 
       final Ref<String> firstErrorRef = new Ref<String>();
-      FlexCompiler.checkPackagingOptions(bc, new Consumer<FlashProjectStructureProblem>() {
+      FlexCompiler.checkPackagingOptions(moduleAndBC.first, bc, new Consumer<FlashProjectStructureProblem>() {
         public void consume(final FlashProjectStructureProblem problem) {
-          if (firstErrorRef.isNull()) {
+          if (problem.severity == ProjectStructureProblemType.Severity.ERROR && firstErrorRef.isNull()) {
             firstErrorRef.set(problem.errorMessage);
           }
         }

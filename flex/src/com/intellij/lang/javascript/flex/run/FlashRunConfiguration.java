@@ -103,6 +103,7 @@ public class FlashRunConfiguration extends LocatableConfigurationBase
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
     myRunnerParameters.check(getProject());
+    myRunnerParameters.reportWarnings(getProject());
   }
 
   @NotNull
