@@ -40,7 +40,7 @@ public class DartExternalAnnotator extends ExternalAnnotator<DartAnalyzerDriver,
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.annotator.DartExternalAnnotator");
 
   @Override
-  public DartAnalyzerDriver collectionInformation(@NotNull final PsiFile file) {
+  public DartAnalyzerDriver collectInformation(@NotNull final PsiFile file) {
     final List<VirtualFile> library = DartResolveUtil.findLibrary(file, GlobalSearchScope.projectScope(file.getProject()));
     final VirtualFile libraryRoot = library.isEmpty() ? DartResolveUtil.getRealVirtualFile(file) : library.iterator().next();
     if (libraryRoot == null) {
