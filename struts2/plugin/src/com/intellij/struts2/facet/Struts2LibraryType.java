@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.facet;
 
-import com.intellij.framework.library.DownloadableLibraryTypeBase;
+import com.intellij.framework.library.DownloadableLibraryType;
 import icons.Struts2Icons;
 
 /**
@@ -23,7 +23,7 @@ import icons.Struts2Icons;
  *
  * @author Yann C&eacute;bron
  */
-public class Struts2LibraryType extends DownloadableLibraryTypeBase {
+public class Struts2LibraryType extends DownloadableLibraryType {
 
   public static final String STRUTS_VERSION_CLASS = "org.apache.struts2.StrutsConstants";
 

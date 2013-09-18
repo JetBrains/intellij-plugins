@@ -5,7 +5,7 @@ import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.facet.ui.libraries.FrameworkLibraryValidator;
 import com.intellij.framework.library.DownloadableLibraryService;
-import com.intellij.framework.library.DownloadableLibraryTypeBase;
+import com.intellij.framework.library.DownloadableLibraryType;
 import com.intellij.framework.library.LibraryVersionProperties;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.roots.OrderRootType;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-public class OsgiCoreLibraryType extends DownloadableLibraryTypeBase {
+public class OsgiCoreLibraryType extends DownloadableLibraryType {
   private static final String ID = "org.osgi.core";
   private static final String DETECTOR_CLASS = "org.osgi.framework.Constants";
 
