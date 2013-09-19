@@ -21,21 +21,6 @@ public class CucumberUtil {
   public static final String PREFIX_CHAR = "^";
   public static final String SUFFIX_CHAR = "$";
 
-  /**
-   * Approximately checks if cucumber pattern could be matched to list of word prepared from cucumber step call.
-   * Method ignores parameters of cucumber step and takes into account only keywords.
-   * @param pattern to check
-   * @param word word from cucumber step call
-   * @return true if pattern could by found by @param word
-   */
-  public static boolean isPatternRelatedToPartOfName(@Nullable Pattern pattern, @NotNull final String word) {
-    if (pattern == null) {
-      return false;
-    }
-    final String keyWord = getTheBiggestWordToSearchByIndex(pattern.getPattern());
-    return keyWord.equals(word);
-  }
-
   public static String getTheBiggestWordToSearchByIndex(@NotNull String regexp) {
     String result = "";
     if (regexp.startsWith(PREFIX_CHAR)) {
@@ -110,26 +95,5 @@ public class CucumberUtil {
       }
     }
     return result;
-  }
-
-  public static String getFeatureFileOrFolderNameFromParameters(@NotNull String parameters) {
-    String featureFile = null;
-    parameters = parameters.trim();
-    if (parameters.startsWith("\"")) {
-      int secondQuoteIndex = parameters.indexOf('"', 1);
-      if (secondQuoteIndex > 0) {
-        featureFile = parameters.substring(1, secondQuoteIndex);
-      } else {
-        return null;
-      }
-    }
-    if (featureFile == null) {
-      String[] tokens = parameters.split(" ");
-      if (tokens.length > 0) {
-        featureFile = tokens[0];
-      }
-    }
-
-    return StringUtil.isEmpty(featureFile) ? null : featureFile;
   }
 }

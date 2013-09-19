@@ -122,17 +122,17 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
-    final String featureFileOrFolder = CucumberUtil.getFeatureFileOrFolderNameFromParameters(getProgramParameters());
-    if (featureFileOrFolder == null) {
+    if (myFilePath == null) {
       throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.specify.file"));
-    } else if (!(new File(featureFileOrFolder)).exists()) {
+    } else if (!(new File(myFilePath)).exists()) {
       throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.file.doesnt.exist"));
     }
     else if (StringUtil.isEmpty(getGlue())) {
       throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.mustnt.be.empty"));
     }
 
-    if (!getProgramParameters().contains("--glue")) {
+    String programParameters = getProgramParameters();
+    if (programParameters == null || !programParameters.contains("--glue")) {
       throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.in.program.parameters"));
     }
 
