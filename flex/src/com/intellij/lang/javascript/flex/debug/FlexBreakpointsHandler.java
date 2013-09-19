@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
@@ -132,6 +133,10 @@ public class FlexBreakpointsHandler {
         .getModuleWithDependenciesAndLibrariesScope(myDebugProcess.getModule(), myDebugProcess.getBC(), myDebugProcess.isFlexUnit());
       if (scope.contains(file) || isInSourcesOfLibraryInScope(fileIndex, file, scope)) {
         return true;
+      }
+
+      if (DumbService.getInstance(project).isDumb()) {
+        return false;
       }
 
       final String relPath = VfsUtilCore.getRelativePath(file.getParent(), rootForFile, '.');
