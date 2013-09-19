@@ -32,7 +32,8 @@
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexSdkType2"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType"/>
     <library.type implementation="com.intellij.lang.javascript.flex.library.FlexLibraryType"/>
-    <packaging.sourceItemFilter implementation="com.intellij.lang.javascript.flex.projectStructure.FlexPackagingSourceItemFilter"/>
+    <packaging.sourceItemFilter implementation="com.intellij.lang.javascript.flex.artifacts.FlashPackagingSourceItemFilter"/>
+    <packaging.sourceItemProvider implementation="com.intellij.lang.javascript.flex.artifacts.FlashPackagingSourceItemsProvider"/>
     <xml.schemaProvider implementation="com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler"/>
     <xml.xmlExtension implementation="com.intellij.javascript.flex.mxml.schema.FlexXmlExtension"/>
     <renamePsiElementProcessor implementation="com.intellij.javascript.flex.FlexRenameHandler"/>
