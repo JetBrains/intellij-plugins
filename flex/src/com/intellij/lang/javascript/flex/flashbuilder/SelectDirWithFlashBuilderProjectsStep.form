@@ -42,7 +42,7 @@
         </constraints>
         <properties>
           <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
-          <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="project.file.location"/>
+          <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="project.files.location"/>
         </properties>
       </component>
       <vspacer id="d4c06">

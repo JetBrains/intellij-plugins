@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.projectImport.ProjectFormatPanel;
 import com.intellij.projectImport.ProjectImportWizardStep;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.util.PathUtil;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -98,11 +99,15 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
 
         if (isArchive) {
           myProjectLocationComponent.setText(FlexBundle.message("project.location"));
-          final String pDir = FileUtil.toSystemDependentName(getWizardContext().getProjectFileDirectory() + "/" + suggestedProjectName);
-          myProjectLocationComponent.getComponent().setText(pDir);
+
+          String dir = getWizardContext().getProjectFileDirectory();
+          if (new File(dir).isFile()) {
+            dir = PathUtil.getParentPath(dir);
+          }
+          myProjectLocationComponent.getComponent().setText(FileUtil.toSystemDependentName(dir + "/" + suggestedProjectName));
         }
         else {
-          myProjectLocationComponent.setText(FlexBundle.message("project.file.location"));
+          myProjectLocationComponent.setText(FlexBundle.message("project.files.location"));
           myProjectLocationComponent.getComponent()
             .setText(FileUtil.toSystemDependentName(file.isDirectory() ? file.getPath() : file.getParent().getPath()));
         }
