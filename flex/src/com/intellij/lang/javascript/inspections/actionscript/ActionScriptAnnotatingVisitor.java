@@ -22,11 +22,9 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.*;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassBase;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
+import com.intellij.lang.javascript.psi.ecmal4.impl.*;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
+import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -450,7 +448,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
               myHolder.createErrorAnnotation(returnTypeExpr != null ? returnTypeExpr.getNode() : node.findNameIdentifier(), msg);
             annotation.registerFix(new ChangeTypeFix(node, baseReturnType,
                                                      "javascript.fix.message.change.return.type.to.expected"));
-            annotation.registerFix(ActionScriptAnnotatingVisitor.createChangeBaseMethodSignatureFix(override, node));
+            annotation.registerFix(createChangeBaseMethodSignatureFix(override, node));
           }
           else if (incompatibleSignature == SignatureMatchResult.FUNCTION_KIND_DIFFERS) {
             String msg = JSBundle
@@ -1573,5 +1571,53 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       return ((JSVariable)resultElement).getType();
     }
     return super.getResolveResultType(qualifier, resultElement);
+  }
+
+  @Override
+  public ProblemHighlightType getUnresolvedReferenceHighlightType(@NotNull JSReferenceExpression node) {
+    JSExpression qualifier = ((JSReferenceExpressionImpl)node).getResolveQualifier();
+
+    if (qualifier != null) {
+      final PsiFile containingFile = node.getContainingFile();
+      JSType type = JSType.NO_TYPE;
+      boolean checkType = false;
+
+      if (qualifier instanceof JSReferenceExpression) {
+        ResolveResult[] results = ((JSReferenceExpression)qualifier).multiResolve(false);
+
+        if (results.length != 0) {
+          PsiElement resultElement = results[0].getElement();
+          if (resultElement instanceof JSPackageWrapper) return ProblemHighlightType.ERROR;
+          type = getResolveResultType(qualifier, resultElement);
+          checkType = true;
+        }
+      }
+      else {
+        type = JSResolveUtil.getExpressionJSType(qualifier, containingFile);
+        checkType = true;
+      }
+      if (checkType) {
+        if (type == JSType.NO_TYPE || type == JSType.ANY) {
+          return ProblemHighlightType.LIKE_UNKNOWN_SYMBOL;
+        }
+      }
+
+      JSClass jsClass = JSResolveUtil.findClassOfQualifier(qualifier, containingFile);
+      if (jsClass == null) {
+        return ProblemHighlightType.ERROR;
+      }
+
+      final JSAttributeList attributeList = jsClass.getAttributeList();
+      if (attributeList == null || !attributeList.hasModifier(JSAttributeList.ModifierType.DYNAMIC)) {
+        return ProblemHighlightType.ERROR;
+      }
+
+      final String qualifiedName = jsClass.getQualifiedName();
+      if ("Error".equals(qualifiedName) || "Date".equals(qualifiedName)) {
+        return ProblemHighlightType.GENERIC_ERROR_OR_WARNING;
+      }
+    }
+
+    return super.getUnresolvedReferenceHighlightType(node);
   }
 }

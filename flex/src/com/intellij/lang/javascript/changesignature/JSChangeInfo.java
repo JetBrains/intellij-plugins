@@ -3,12 +3,11 @@ package com.intellij.lang.javascript.changesignature;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
-import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.changeSignature.ChangeInfo;
-import com.intellij.refactoring.changeSignature.ParameterInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -24,7 +23,8 @@ public class JSChangeInfo implements ChangeInfo {
     myMethod = method;
     myNewName = method.getName();
     myNewVisibility = method.getAttributeList().getAccessType();
-    myNewReturnType = method.getReturnType().getResolvedTypeText();
+    final JSType returnType = method.getReturnType();
+    myNewReturnType = returnType != JSType.NO_TYPE ? null : returnType.getResolvedTypeText();
     myNewParameters = JSMethodDescriptor.getParameters(method);
   }
 
