@@ -4,6 +4,7 @@ import com.intellij.execution.JavaRunConfigurationExtensionManager;
 import com.intellij.execution.Location;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.junit.JavaRuntimeConfigurationProducerBase;
 import com.intellij.execution.junit2.info.LocationUtil;
 import com.intellij.openapi.module.Module;
@@ -16,6 +17,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+
+import java.util.List;
 
 /**
  * @author Andrey.Vokin
@@ -86,7 +89,8 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeCo
       final NullableComputable<String> glue = getGlue();
       configuration.setGlue(glue);
     }
-    configuration.setProgramParameters("\"" + file.getPath() + "\"" + FORMATTER_OPTIONS);
+    configuration.setFilePath(file.getPath());
+    configuration.setProgramParameters(FORMATTER_OPTIONS);
     if (StringUtil.isEmpty(configuration.MAIN_CLASS_NAME)) {
       configuration.MAIN_CLASS_NAME = mainClassName;
     }

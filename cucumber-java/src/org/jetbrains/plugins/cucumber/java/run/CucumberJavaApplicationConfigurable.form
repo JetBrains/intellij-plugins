@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.plugins.cucumber.java.run.CucumberJavaApplicationConfigurable">
-  <grid id="27dc6" binding="myWholePanel" layout-manager="GridLayoutManager" row-count="7" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="myWholePanel" layout-manager="GridLayoutManager" row-count="8" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
@@ -21,7 +21,7 @@
       </component>
       <component id="be76" class="com.intellij.openapi.ui.LabeledComponent" binding="myModule">
         <constraints>
-          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <componentClass value="javax.swing.JComboBox"/>
@@ -31,7 +31,7 @@
       </component>
       <vspacer id="84c61">
         <constraints>
-          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <component id="36fe8" class="com.intellij.openapi.ui.LabeledComponent" binding="myGlue">
@@ -56,7 +56,7 @@
       </component>
       <component id="40825" class="com.intellij.openapi.ui.LabeledComponent" binding="myWorkingDirectory">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
@@ -66,12 +66,22 @@
       </component>
       <component id="edabe" class="com.intellij.openapi.ui.LabeledComponent" binding="myVmOptions">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <componentClass value="com.intellij.ui.RawCommandLineEditor"/>
           <labelLocation value="West"/>
           <text resource-bundle="org/jetbrains/plugins/cucumber/java/CucumberJavaBundle" key="run.configuration.form.vm.options"/>
+        </properties>
+      </component>
+      <component id="4e853" class="com.intellij.openapi.ui.LabeledComponent" binding="myFeatureOrFolder">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
+          <labelLocation value="West"/>
+          <text resource-bundle="org/jetbrains/plugins/cucumber/java/CucumberJavaBundle" key="run.configuration.form.feature.or.folder.path"/>
         </properties>
       </component>
     </children>

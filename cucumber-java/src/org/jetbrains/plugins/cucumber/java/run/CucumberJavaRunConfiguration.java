@@ -34,6 +34,8 @@ import java.io.File;
 public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   private NullableComputable<String> glueInitializer = null;
 
+  public String myFilePath;
+
   public String GLUE;
 
   public CucumberJavaRunConfiguration(String name, Project project, CucumberJavaRunConfigurationType applicationConfigurationType) {
@@ -82,8 +84,9 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
               params.getProgramParametersList().addParametersString(" --glue " + glue);
             }
           }
-
         }
+
+        params.getProgramParametersList().addParametersString(myFilePath);
         return params;
       }
 
@@ -129,7 +132,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.mustnt.be.empty"));
     }
 
-    if (getProgramParameters().contains("--glue")) {
+    if (!getProgramParameters().contains("--glue")) {
       throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.in.program.parameters"));
     }
 
@@ -153,5 +156,13 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   public void setGlue(NullableComputable<String> value) {
     glueInitializer = value;
+  }
+
+  public String getFilePath() {
+    return myFilePath;
+  }
+
+  public void setFilePath(String filePath) {
+    myFilePath = filePath;
   }
 }

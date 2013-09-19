@@ -47,6 +47,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
   private LabeledComponent<RawCommandLineEditor> myVmOptions;
   private LabeledComponent<RawCommandLineEditor> myProgramArguments;
   private LabeledComponent<TextFieldWithBrowseButton> myWorkingDirectory;
+  private LabeledComponent<TextFieldWithBrowseButton> myFeatureOrFolder;
 
   private Module myModuleContext;
 
@@ -57,7 +58,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     ClassBrowser.createApplicationClassBrowser(project, myModuleSelector).setField(myMainClass.getComponent());
     myModuleContext = myModuleSelector.getModule();
 
-    ActionListener workingDirectoryActionListener = new ActionListener() {
+    final ActionListener workingDirectoryActionListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
         fileChooserDescriptor.setTitle(ExecutionBundle.message("select.working.directory.message"));
@@ -71,13 +72,21 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     };
     myWorkingDirectory.getComponent().getButton().addActionListener(workingDirectoryActionListener);
 
-    myModule.getComponent().addActionListener(new ActionListener() {
+    final ActionListener fileToRunActionListener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-
+        FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor();
+        fileChooserDescriptor.setTitle(CucumberJavaBundle.message("run.configuration.form.choose.file.or.folder.title"));
+        fileChooserDescriptor.putUserData(LangDataKeys.MODULE_CONTEXT, myModuleContext);
+        Project project = myProject;
+        VirtualFile file = FileChooser.chooseFile(fileChooserDescriptor, myWorkingDirectory, project, null);
+        if (file != null) {
+          setFeatureOrFolder(file.getPresentableUrl());
+        }
       }
-    });
+    };
+    myFeatureOrFolder.getComponent().getButton().addActionListener(fileToRunActionListener);
 
-    myAnchor = UIUtil.mergeComponentsWithAnchor(myMainClass, myGlue, myModule, myVmOptions, myProgramArguments, myWorkingDirectory);
+    myAnchor = UIUtil.mergeComponentsWithAnchor(myMainClass, myGlue, myFeatureOrFolder, myModule, myVmOptions, myProgramArguments, myWorkingDirectory);
 
     myProgramArguments.getComponent().setDialogCaption(CucumberJavaBundle.message("run.configuration.form.program.parameters.title"));
     myVmOptions.getComponent().setDialogCaption(CucumberJavaBundle.message("run.configuration.form.vm.options.title"));
@@ -86,6 +95,10 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
 
   public void setWorkingDirectory(String dir) {
     myWorkingDirectory.getComponent().setText(dir);
+  }
+
+  public void setFeatureOrFolder(String path) {
+    myFeatureOrFolder.getComponent().setText(path);
   }
 
   private void createUIComponents() {
@@ -114,6 +127,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     myAnchor = anchor;
     myMainClass.setAnchor(anchor);
     myGlue.setAnchor(anchor);
+    myFeatureOrFolder.setAnchor(anchor);
     myModule.setAnchor(anchor);
     myVmOptions.setAnchor(anchor);
     myProgramArguments.setAnchor(anchor);
@@ -130,6 +144,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
 
     myWorkingDirectory.getComponent().setText(configuration.getWorkingDirectory());
     myGlue.getComponent().setText(configuration.getGlue());
+    myFeatureOrFolder.getComponent().setText(configuration.getFilePath());
   }
 
   @Override
@@ -141,6 +156,9 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     configuration.setProgramParameters(myProgramArguments.getComponent().getText());
     configuration.setWorkingDirectory(myWorkingDirectory.getComponent().getText());
     configuration.setGlue(myGlue.getComponent().getText());
+    configuration.setFilePath(myFeatureOrFolder.getComponent().getText());
+    Module selectedModule = (Module)myModule.getComponent().getSelectedItem();
+    configuration.setModule(selectedModule);
   }
 
   @NotNull
