@@ -68,8 +68,35 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeCo
   }
 
   @Override
-  public int compareTo(Object o) {
+  public int compareTo(@NotNull Object o) {
     return PREFERED;
+  }
+
+  @Nullable
+  @Override
+  protected RunnerAndConfigurationSettings findExistingByElement(Location location,
+                                                                 @NotNull List<RunnerAndConfigurationSettings> existingConfigurations,
+                                                                 ConfigurationContext context) {
+    final PsiElement element = location.getPsiElement();
+    final String filePath;
+    if (element instanceof PsiDirectory) {
+      filePath = ((PsiDirectory)element).getVirtualFile().getPath();
+    } else {
+      filePath = element.getContainingFile().getVirtualFile().getPath();
+    }
+
+    for (RunnerAndConfigurationSettings settings : existingConfigurations) {
+      final RunConfiguration configuration = settings.getConfiguration();
+
+      if (configuration instanceof CucumberJavaRunConfiguration) {
+        final CucumberJavaRunConfiguration cucumberJavaRunConfiguration = (CucumberJavaRunConfiguration)configuration;
+
+        if (filePath.equals(cucumberJavaRunConfiguration.getFilePath())) {
+          return settings;
+        }
+      }
+    }
+    return null;
   }
 
   protected boolean isApplicable(PsiElement locationElement, final Module module) {
