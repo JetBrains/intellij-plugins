@@ -21,7 +21,6 @@ import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
-import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 
 import java.io.File;
@@ -58,7 +57,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-    final JavaCommandLineState state = new JavaApplicationCommandLineState(this, env) {
+    return new JavaApplicationCommandLineState(CucumberJavaRunConfiguration.this, env) {
       protected JavaParameters createJavaParameters() throws ExecutionException {
         final JavaParameters params = new JavaParameters();
         final JavaRunConfigurationModule module = getConfigurationModule();
@@ -113,7 +112,6 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         return new DefaultExecutionResult(console, processHandler, createActions(console, processHandler, executor));
       }
     };
-    return state;
   }
 
   private static String getSMRunnerPath() {
