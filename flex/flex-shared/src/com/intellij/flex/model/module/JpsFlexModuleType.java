@@ -6,10 +6,11 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.ex.JpsElementTypeBase;
 import org.jetbrains.jps.model.module.JpsModuleType;
 import org.jetbrains.jps.model.serialization.module.JpsModulePropertiesSerializer;
 
-public class JpsFlexModuleType extends JpsModuleType<JpsFlexBuildConfigurationManager> {
+public class JpsFlexModuleType extends JpsElementTypeBase<JpsFlexBuildConfigurationManager> implements JpsModuleType<JpsFlexBuildConfigurationManager> {
   public static final JpsFlexModuleType INSTANCE = new JpsFlexModuleType();
   private static final String ID = "Flex";
 

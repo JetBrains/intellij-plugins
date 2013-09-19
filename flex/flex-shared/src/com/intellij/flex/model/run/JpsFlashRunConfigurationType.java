@@ -3,10 +3,11 @@ package com.intellij.flex.model.run;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.ex.JpsElementTypeBase;
 import org.jetbrains.jps.model.runConfiguration.JpsRunConfigurationType;
 import org.jetbrains.jps.model.serialization.runConfigurations.JpsRunConfigurationPropertiesSerializer;
 
-public class JpsFlashRunConfigurationType extends JpsRunConfigurationType<JpsFlashRunnerParameters> {
+public class JpsFlashRunConfigurationType extends JpsElementTypeBase<JpsFlashRunnerParameters> implements JpsRunConfigurationType<JpsFlashRunnerParameters> {
 
   public static final JpsFlashRunConfigurationType INSTANCE = new JpsFlashRunConfigurationType();
   public static final String ID = "FlashRunConfigurationType";
