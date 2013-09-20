@@ -147,7 +147,9 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
       final FlexBuildConfiguration bc = trinity.getSecond();
       final FlashProjectStructureProblem problem = trinity.getThird();
 
-      final String message = FlexBundle.message("bc.0.module.1.problem.2", bc.getName(), module.getName(), problem.errorMessage);
+      final String message = problem instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem
+                             ? problem.errorMessage
+                             : FlexBundle.message("bc.0.module.1.problem.2", bc.getName(), module.getName(), problem.errorMessage);
       context.addMessage(CompilerMessageCategory.ERROR, message, null, -1, -1, new BCProblemNavigatable(module, bc.getName(), problem));
     }
   }

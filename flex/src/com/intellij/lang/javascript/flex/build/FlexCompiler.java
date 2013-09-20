@@ -635,9 +635,14 @@ public class FlexCompiler implements SourceProcessingCompiler {
         }
       }
       else if (!FileUtil.isAbsolute(bc.getOutputFolder())) {
-        errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(Severity.ERROR, bc.getName(), FlexBundle
-          .message("output.folder.not.absolute", FileUtil.toSystemDependentName(bc.getOutputFolder())),
-                                                                                      FlexBCConfigurable.Location.OutputFolder));
+        if (BCUtils.isFlexUnitBC(bc)) {
+          errorConsumer.consume(FlashProjectStructureProblem.FlexUnitOutputFolderProblem.INSTANCE);
+        }
+        else {
+          errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(Severity.ERROR, bc.getName(), FlexBundle
+            .message("output.folder.not.absolute", FileUtil.toSystemDependentName(bc.getOutputFolder())),
+                                                                                        FlexBCConfigurable.Location.OutputFolder));
+        }
       }
     }
 
