@@ -14,7 +14,7 @@ public abstract class IntellijJavaType implements IJavaType {
         if (type == null)
             return false;
 
-        if (getUnderlyingObject() == null || !(getUnderlyingObject() instanceof PsiType)) {
+        if (!(getUnderlyingObject() instanceof PsiType)) {
             _logger.warn("The type \"" + getName() + "\" didn't have a valid underlying object so correct usage of the type wasn't possible.");
 
             return false;
