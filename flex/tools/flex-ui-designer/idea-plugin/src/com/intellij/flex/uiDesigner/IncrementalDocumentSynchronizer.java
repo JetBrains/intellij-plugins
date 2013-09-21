@@ -60,7 +60,7 @@ final class IncrementalDocumentSynchronizer extends Update {
     }
 
     return event.getParent() == otherEvent.getParent() &&
-           event.getElement() == event.getElement();
+           event.getElement() == otherEvent.getElement();
   }
 
   @Override
