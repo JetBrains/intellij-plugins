@@ -36,6 +36,7 @@ import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
 import org.jetbrains.idea.maven.utils.MavenUtil;
+import org.jetbrains.jps.model.java.JavaSourceRootType;
 
 import javax.swing.event.HyperlinkEvent;
 import java.io.*;
@@ -331,7 +332,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
             MavenDefaultModifiableModelsProvider provider = new MavenDefaultModifiableModelsProvider(project);
             MavenRootModelAdapter a = new MavenRootModelAdapter(mavenProject, mavenProjectsManager.findModule(mavenProject), provider);
             for (String sourceRoot : sourceRoots) {
-              a.addSourceFolder(sourceRoot, false);
+              a.addSourceFolder(sourceRoot, JavaSourceRootType.SOURCE);
             }
             provider.commit();
             return true;

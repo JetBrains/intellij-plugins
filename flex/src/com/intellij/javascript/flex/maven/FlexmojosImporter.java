@@ -19,6 +19,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.PairConsumer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +34,8 @@ import org.jetbrains.idea.maven.server.MavenEmbedderWrapper;
 import org.jetbrains.idea.maven.server.NativeMavenProjectHolder;
 import org.jetbrains.idea.maven.utils.MavenLog;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
+import org.jetbrains.jps.model.java.JavaSourceRootType;
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import javax.swing.event.HyperlinkEvent;
 import java.util.*;
@@ -164,16 +167,17 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
     }
   }
 
-  public void collectSourceFolders(final MavenProject mavenProject, final List<String> result) {
+  @Override
+  public void collectSourceRoots(MavenProject mavenProject, PairConsumer<String, JpsModuleSourceRootType<?>> result) {
     final String localesDir = findConfigValue(mavenProject, "resourceBundlePath", "src/main/locales/{locale}");
     assert localesDir != null;
 
     for (String locale : getCompiledLocales(mavenProject)) {
-      result.add(localesDir.replace("{locale}", locale));
+      result.consume(localesDir.replace("{locale}", locale), JavaSourceRootType.SOURCE);
     }
 
     for (String locale : getRuntimeLocales(mavenProject)) {
-      result.add(localesDir.replace("{locale}", locale));
+      result.consume(localesDir.replace("{locale}", locale), JavaSourceRootType.SOURCE);
     }
   }
 
