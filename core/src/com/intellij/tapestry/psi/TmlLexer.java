@@ -2,6 +2,7 @@ package com.intellij.tapestry.psi;
 
 import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Reader;
 
@@ -20,7 +21,7 @@ public class TmlLexer extends XHtmlLexer {
   }
 
   @Override
-  public void start(CharSequence buffer, int startOffset, int endOffset, int initialState) {
+  public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
     myTokenType = null;
     super.start(buffer, startOffset, endOffset, initialState);
   }
