@@ -44,6 +44,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
 import org.osmorc.OsmorcProjectComponent;
 import org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab;
@@ -476,7 +477,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     return myBundleSymbolicName != null ? myBundleSymbolicName : "";
   }
 
-  public void setBundleSymbolicName(String bundleSymbolicName) {
+  public void setBundleSymbolicName(@Nullable String bundleSymbolicName) {
     myBundleSymbolicName = bundleSymbolicName;
   }
 
@@ -487,7 +488,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     return myBundleActivator != null ? myBundleActivator : "";
   }
 
-  public void setBundleActivator(String bundleActivator) {
+  public void setBundleActivator(@Nullable String bundleActivator) {
     myBundleActivator = bundleActivator;
   }
 
@@ -499,11 +500,11 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     return myBundleVersion != null ? myBundleVersion : "1.0.0";
   }
 
-  public void setBundleVersion(String bundleVersion) {
+  public void setBundleVersion(@Nullable String bundleVersion) {
     myBundleVersion = bundleVersion;
   }
 
-  public void setAdditionalProperties(String additionalProperties) {
+  public void setAdditionalProperties(@Nullable String additionalProperties) {
     myAdditionalProperties = additionalProperties;
   }
 

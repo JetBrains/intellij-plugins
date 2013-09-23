@@ -96,9 +96,8 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
 
       // Check if there are any overrides set up in the maven plugin settings
       conf.setBundleSymbolicName(computeSymbolicName(mavenProject)); // IDEA-63243
-      conf.setBundleVersion("instructions." + Constants.BUNDLE_VERSION);
-      conf.setBundleActivator("instructions." + Constants.BUNDLE_ACTIVATOR);
-
+      conf.setBundleVersion(findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_VERSION));
+      conf.setBundleActivator(findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_ACTIVATOR));
 
       if (StringUtil.isEmptyOrSpaces(conf.getBundleVersion())) {  // IDEA-74272
         // if there is no bundle-version int the instructions, derive it from the maven settings.
@@ -106,15 +105,13 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         conf.setBundleVersion(ImporterUtil.cleanupVersion(version));
       }
 
-      Map<String, String> props = new LinkedHashMap<String, String>(); // linkedhashmap, because we want to preserve the order of elements.
-
+      Map<String, String> props = new LinkedHashMap<String, String>(); // linked hash map, because we want to preserve the order of elements.
       Map<String, String> modelMap = mavenProject.getModelMap();
 
       String description = modelMap.get("description");
       if (!StringUtil.isEmptyOrSpaces(description)) {
         props.put(Constants.BUNDLE_DESCRIPTION, description);
       }
-
 
       String licenses = modelMap.get("licenses");
       if (!StringUtil.isEmptyOrSpaces(licenses)) {
