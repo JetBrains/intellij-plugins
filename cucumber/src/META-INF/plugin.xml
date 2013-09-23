@@ -2,11 +2,11 @@
 
 <idea-plugin version="2">
   <id>cucumber</id>
-  <name>Base Cucumber</name>
+  <name>Gherkin</name>
 
-  <description>Provides support of Cucumber language</description>
+  <description>Provides support of Gherkin language</description>
 
-  <version>1.0</version>
+  <version>1.1</version>
   <depends>com.intellij.modules.xml</depends>
   <idea-version since-build="123.0" until-build="131.*"/>
   <vendor>JetBrains</vendor>
