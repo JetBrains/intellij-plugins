@@ -35,12 +35,13 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.sql.dialects.SqlDialectMappings;
 import com.intellij.sql.dialects.SqlLanguageDialect;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
  */
 public class CfmlIndexPatternBuilder implements IndexPatternBuilder {
-  public Lexer getIndexingLexer(final PsiFile file) {
+  public Lexer getIndexingLexer(@NotNull final PsiFile file) {
     if (file instanceof CfmlFile) {
       Project project = file.getProject();
       SqlLanguageDialect dialect = SqlDialectMappings.getMapping(project, file.getVirtualFile());
@@ -56,7 +57,7 @@ public class CfmlIndexPatternBuilder implements IndexPatternBuilder {
     return null;
   }
 
-  public TokenSet getCommentTokenSet(final PsiFile file) {
+  public TokenSet getCommentTokenSet(@NotNull final PsiFile file) {
     if (file instanceof CfmlFile) {
       return CfmlTokenTypes.tsCOMMENTS;
     }

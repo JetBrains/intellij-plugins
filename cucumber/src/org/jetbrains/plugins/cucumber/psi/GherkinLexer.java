@@ -54,7 +54,7 @@ public class GherkinLexer extends LexerBase {
   }
 
   @Override
-  public void start(CharSequence buffer, int startOffset, int endOffset, int initialState) {
+  public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
     myBuffer = buffer;
     myStartOffset = startOffset;
     myEndOffset = endOffset;
@@ -319,6 +319,7 @@ public class GherkinLexer extends LexerBase {
     returnWhitespace(mark);
   }
 
+  @NotNull
   public CharSequence getBufferSequence() {
     return myBuffer;
   }
