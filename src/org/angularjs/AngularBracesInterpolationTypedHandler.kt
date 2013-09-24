@@ -18,12 +18,13 @@ public open class AngularBracesInterpolationTypedHandler(): TypedHandlerDelegate
         {
             if (c == '{')
             {
+                val addWhiteSpaceBetweenBraces = AngularJSConfig.whiteSpace
                 val document: Document? = editor?.getDocument()
                 val offset: Int = editor?.getCaretModel()?.getOffset()!!
                 var chars: CharSequence? = document?.getCharsSequence()
-                if (offset > 0 && (chars?.charAt(offset - 1))!! == '{')
+                if (offset > 0 && (chars?.charAt(offset - 1)) == '{')
                 {
-                    if (offset < 2 || (chars?.charAt(offset - 2))!! != '{')
+                    if (offset < 2 || (chars?.charAt(offset - 2)) != '{')
                     {
                         if (alreadyHasEnding(chars, c, offset))
                         {
@@ -34,17 +35,27 @@ public open class AngularBracesInterpolationTypedHandler(): TypedHandlerDelegate
                             var interpolation: String? = null
                             if (c == '{')
                             {
-                                interpolation = "{  }"
+                                if(addWhiteSpaceBetweenBraces)
+                                {
+                                    interpolation = "{  }"
+
+                                }
+                                else{
+                                    interpolation = "{}"
+                                }
                             }
 
                             if (interpolation != null)
                             {
-                                if (offset == (chars?.length())!! || (offset < (chars?.length())!! && (chars?.charAt(offset))!! != '}'))
+                                if (offset == (chars?.length()) || (offset < (chars?.length())!! && (chars?.charAt(offset)) != '}'))
                                 {
                                     interpolation += "}"
                                 }
 
-                                typeInStringAndMoveCaret(editor, offset + 2, interpolation)
+                                var move = 2
+                                if(!addWhiteSpaceBetweenBraces) move = 1
+
+                                typeInStringAndMoveCaret(editor, offset + move, interpolation)
                                 return TypedHandlerDelegate.Result.STOP
                             }
 
@@ -76,11 +87,11 @@ public open class AngularBracesInterpolationTypedHandler(): TypedHandlerDelegate
             {
                 endChar = c
             }
-            while (i < (chars?.length())!! && ((chars?.charAt(i))!! != '{' && (chars?.charAt(i))!! != endChar && (chars?.charAt(i))!! != '\n'))
+            while (i < (chars?.length())!! && ((chars?.charAt(i)) != '{' && (chars?.charAt(i)) != endChar && (chars?.charAt(i)) != '\n'))
             {
                 i++
             }
-            if (i + 1 < (chars?.length())!! && (chars?.charAt(i))!! == endChar && (chars?.charAt(i + 1))!! == '}')
+            if (i + 1 < (chars?.length())!! && (chars?.charAt(i)) == endChar && (chars?.charAt(i + 1)) == '}')
             {
                 return true
             }

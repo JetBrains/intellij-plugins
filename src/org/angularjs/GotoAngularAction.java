@@ -36,6 +36,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.usageView.UsageInfo;
+import com.intellij.usages.FindUsagesProcessPresentation;
 import com.intellij.usages.Usage;
 import com.intellij.usages.UsageInfo2UsageAdapter;
 import com.intellij.util.AdapterProcessor;
@@ -187,7 +188,7 @@ public class GotoAngularAction extends GotoActionBase {
 
         PsiDirectory directory = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
         FindInProjectUtil.findUsages(findModel, directory, project,
-                true, new AdapterProcessor<UsageInfo, Usage>(collectProcessor, UsageInfo2UsageAdapter.CONVERTER), FindInProjectUtil.setupProcessPresentation(project, true, FindInProjectUtil.setupViewPresentation(true, findModel)));
+                true, new AdapterProcessor<UsageInfo, Usage>(collectProcessor, UsageInfo2UsageAdapter.CONVERTER), new FindUsagesProcessPresentation());
 
 
         return collectProcessor.getResults();

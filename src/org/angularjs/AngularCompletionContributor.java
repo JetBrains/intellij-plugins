@@ -20,6 +20,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.usageView.UsageInfo;
+import com.intellij.usages.FindUsagesProcessPresentation;
 import com.intellij.usages.Usage;
 import com.intellij.usages.UsageInfo2UsageAdapter;
 import com.intellij.util.AdapterProcessor;
@@ -56,7 +57,7 @@ public class AngularCompletionContributor extends CompletionContributor {
 
         PsiDirectory directory = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
         FindInProjectUtil.findUsages(findModel, directory, project,
-                true, new AdapterProcessor<UsageInfo, Usage>(collectProcessor, UsageInfo2UsageAdapter.CONVERTER), FindInProjectUtil.setupProcessPresentation(project, true, FindInProjectUtil.setupViewPresentation(true, findModel)));
+                true, new AdapterProcessor<UsageInfo, Usage>(collectProcessor, UsageInfo2UsageAdapter.CONVERTER), new FindUsagesProcessPresentation());
 
 
         final Collection<Usage> usages = collectProcessor.getResults();

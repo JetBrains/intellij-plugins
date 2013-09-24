@@ -1,11 +1,15 @@
 <idea-plugin version="2" url="http://github.com/johnlindquist/angularjs-plugin">
     <name>AngularJS</name>
     <description>Support for AngularJS</description>
-    <version>0.1.6</version>
+    <version>0.1.9</version>
     <vendor url="http://johnlindquist.com" email="johnlindquist@gmail.com">johnlindquist</vendor>
     <change-notes><![CDATA[
         <html>
         <dl>
+            <dt>0.1.9</dt>
+            <dd>Added a setting for whitespace between braces</dd>
+            <dt>0.1.8</dt>
+            <dd>Fixing bug introduced by autocomplete with invalid elements (had to "revert" to old method of autocomplete, so I need to find a new approach for invalid elements</dd>
             <dt>0.1.7</dt>
             <dd>Focusing on WebStorm 7 compatibility</dd>
             <dt>0.1.6</dt>
@@ -31,16 +35,15 @@
 
 
     <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="130.000"/>
+    <idea-version since-build="107.105"/>
 
     <depends>JavaScript</depends>
     <depends>com.intellij.modules.platform</depends>
 
-    <application-components>
-        <!-- Add your application components here -->
-    </application-components>
-
     <project-components>
+        <component>
+            <implementation-class>org.angularjs.AngularJS</implementation-class>
+        </component>
     </project-components>
 
     <actions>
@@ -56,12 +59,15 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!--<xml.attributeDescriptorsProvider implementation="org.angularjs.AngularJSCustomAttributeDescriptorsProvider"/>-->
+        <!--<applicationConfigurable instance="org.angularjs.AngularJSConfigTemp.UIImpl" id="settings.angularjs"-->
+                                 <!--displayName="AngularJS"/>-->
+        <xml.attributeDescriptorsProvider implementation="org.angularjs.AngularJSCustomAttributeDescriptorsProvider"/>
+
         <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
 
         <typedHandler implementation="org.angularjs.AngularBracesInterpolationTypedHandler"/>
         <!--<applicationConfigurable instance="org.angularjs.AngularJSConfig"/>-->
-        <completion.contributor language="HTML" implementationClass="org.angularjs.DirectiveCompletionContributor"/>
+        <!--<completion.contributor language="HTML" implementationClass="org.angularjs.DirectiveCompletionContributor"/>-->
         <intentionAction>
             <className>org.angularjs.OpenInDocsIntention</className>
             <category>HTML</category>
@@ -72,5 +78,6 @@
         enabledByDefault="true" level="WARNING"
         implementationClass="org.angularjs.AngularInspection"/>
 -->
+        <applicationConfigurable instance="org.angularjs.AngularJSConfigurationPage"/>
     </extensions>
 </idea-plugin>
