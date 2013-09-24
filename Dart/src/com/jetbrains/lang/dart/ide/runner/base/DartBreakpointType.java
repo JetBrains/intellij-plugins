@@ -16,7 +16,6 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +28,7 @@ public class DartBreakpointType extends XLineBreakpointType<XBreakpointPropertie
     super("Dart", DartBundle.message("dart.break.point.title"));
   }
 
+  @Override
   public boolean canPutAt(@NotNull final VirtualFile file, final int line, @NotNull Project project) {
     if (file.getFileType() == DartFileType.INSTANCE) {
       Module module = ModuleUtilCore.findModuleForFile(file, project);
@@ -40,17 +40,14 @@ public class DartBreakpointType extends XLineBreakpointType<XBreakpointPropertie
     return false;
   }
 
+  @Override
   public XBreakpointProperties createBreakpointProperties(@NotNull final VirtualFile file, final int line) {
     return null;
   }
 
   @Override
   public List<XBreakpointGroupingRule<XLineBreakpoint<XBreakpointProperties>, ?>> getGroupingRules() {
-    XBreakpointGroupingRule<XLineBreakpoint<XBreakpointProperties>, ?> byFile = XDebuggerUtil.getInstance().getGroupingByFileRule();
-    List<XBreakpointGroupingRule<XLineBreakpoint<XBreakpointProperties>, ?>> rules =
-      new ArrayList<XBreakpointGroupingRule<XLineBreakpoint<XBreakpointProperties>, ?>>();
-    rules.add(byFile);
-    return rules;
+    return XDebuggerUtil.getInstance().getGroupingByFileRuleAsList();
   }
 
   @Override
