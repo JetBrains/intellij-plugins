@@ -16,12 +16,12 @@ import org.osmorc.facet.OsmorcFacetType;
 import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.Manually;
 
 public abstract class AbstractOsgiTestCase extends LightCodeInsightFixtureTestCase {
-  public static final DefaultLightProjectDescriptor OSGi_DESCRIPTOR = new DefaultLightProjectDescriptor() {
+  private static final DefaultLightProjectDescriptor OSGi_DESCRIPTOR = new DefaultLightProjectDescriptor() {
     @Override
     public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
       super.configureModule(module, model, contentEntry);
 
-      String libPath = PluginPathManager.getPluginHomePath("Osmorc") + "/lib";
+      String libPath = PluginPathManager.getPluginHomePath("osmorc") + "/lib";
       PsiTestUtil.addLibrary(module, model, "osgi.core", libPath, "org.apache.felix.framework-4.2.1.jar");
 
       OsmorcFacet facet = FacetManager.getInstance(module).addFacet(OsmorcFacetType.getInstance(), "OSGi", null);
