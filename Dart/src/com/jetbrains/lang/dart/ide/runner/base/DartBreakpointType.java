@@ -8,9 +8,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
-import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
+import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase;
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointGroupingRule;
-import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
@@ -21,11 +20,9 @@ import java.util.List;
 /**
  * @author: Fedor.Korotkov
  */
-public class DartBreakpointType extends XLineBreakpointType<XBreakpointProperties> {
-  private final XDebuggerEditorsProvider myEditorProvider = new DartDebuggerEditorsProvider();
-
+public class DartBreakpointType extends XLineBreakpointTypeBase {
   protected DartBreakpointType() {
-    super("Dart", DartBundle.message("dart.break.point.title"));
+    super("Dart", DartBundle.message("dart.break.point.title"), new DartDebuggerEditorsProvider());
   }
 
   @Override
@@ -41,18 +38,8 @@ public class DartBreakpointType extends XLineBreakpointType<XBreakpointPropertie
   }
 
   @Override
-  public XBreakpointProperties createBreakpointProperties(@NotNull final VirtualFile file, final int line) {
-    return null;
-  }
-
-  @Override
   public List<XBreakpointGroupingRule<XLineBreakpoint<XBreakpointProperties>, ?>> getGroupingRules() {
     return XDebuggerUtil.getInstance().getGroupingByFileRuleAsList();
-  }
-
-  @Override
-  public XDebuggerEditorsProvider getEditorsProvider(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, @NotNull Project project) {
-    return myEditorProvider;
   }
 
   @Override
