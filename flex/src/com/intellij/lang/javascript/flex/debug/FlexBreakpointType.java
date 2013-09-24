@@ -8,9 +8,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
-import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
+import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase;
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointGroupingRule;
-import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -20,11 +19,9 @@ import java.util.List;
  * Date: Jan 22, 2008
  * Time: 4:26:21 PM
  */
-public class FlexBreakpointType extends XLineBreakpointType<XBreakpointProperties> {
-  private final XDebuggerEditorsProvider myEditorProvider = new FlexDebuggerEditorsProvider();
-
+public class FlexBreakpointType extends XLineBreakpointTypeBase {
   protected FlexBreakpointType() {
-    super("flex", FlexBundle.message("flex.break.point.title"));
+    super("flex", FlexBundle.message("flex.break.point.title"), new FlexDebuggerEditorsProvider());
   }
 
   @Override
@@ -39,18 +36,8 @@ public class FlexBreakpointType extends XLineBreakpointType<XBreakpointPropertie
   }
 
   @Override
-  public XBreakpointProperties createBreakpointProperties(@NotNull final VirtualFile file, final int line) {
-    return null;
-  }
-
-  @Override
   public List<XBreakpointGroupingRule<XLineBreakpoint<XBreakpointProperties>, ?>> getGroupingRules() {
     return XDebuggerUtil.getInstance().getGroupingByFileRuleAsList();
-  }
-
-  @Override
-  public XDebuggerEditorsProvider getEditorsProvider(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, @NotNull Project project) {
-    return myEditorProvider;
   }
 
   @Override
