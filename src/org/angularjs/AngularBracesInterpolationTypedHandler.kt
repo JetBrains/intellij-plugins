@@ -14,6 +14,7 @@ import com.intellij.psi.PsiFile
  */
 public open class AngularBracesInterpolationTypedHandler(): TypedHandlerDelegate() {
     public override fun beforeCharTyped(c: Char, project: Project?, editor: Editor?, file: PsiFile?, fileType: FileType?): TypedHandlerDelegate.Result? {
+        if(!AngularJSConfig.braceEnabled) return TypedHandlerDelegate.Result.DEFAULT;
         if (file?.getFileType() == HtmlFileType.INSTANCE)
         {
             if (c == '{')
