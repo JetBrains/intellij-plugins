@@ -111,19 +111,25 @@
 
     <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="UnregisteredActivatorInspection.name"
                      groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
-                     enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.UnregisteredActivatorInspection"/>
+                     language="JAVA" enabledByDefault="true" level="ERROR"
+                     implementationClass="org.osmorc.inspection.UnregisteredActivatorInspection"/>
     <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="ClassInDefaultPackageInspection.name"
                      groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
-                     enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassInDefaultPackageInspection"/>
-    <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="UnknownManifestPackage.name"
-                     groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
-                     enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.UnknownManifestPackageInspection"/>
-    <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="WrongImportPackageInspection.name"
-                     groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
-                     enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.WrongImportPackageInspection"/>
+                     language="JAVA" enabledByDefault="true" level="ERROR"
+                     implementationClass="org.osmorc.inspection.ClassInDefaultPackageInspection"/>
     <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="PackageAccessibilityInspection.name"
                      groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
-                     enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.PackageAccessibilityInspection"/>
+                     language="JAVA" enabledByDefault="true" level="ERROR"
+                     implementationClass="org.osmorc.inspection.PackageAccessibilityInspection"/>
+
+    <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="UnknownManifestPackage.name"
+                     groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
+                     language="Manifest" enabledByDefault="true" level="ERROR"
+                     implementationClass="org.osmorc.inspection.UnknownManifestPackageInspection"/>
+    <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="WrongImportPackageInspection.name"
+                     groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
+                     language="Manifest" enabledByDefault="true" level="ERROR"
+                     implementationClass="org.osmorc.inspection.WrongImportPackageInspection"/>
 
     <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
     <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>
