@@ -27,6 +27,7 @@ public class FlexBreakpointType extends XLineBreakpointType<XBreakpointPropertie
     super("flex", FlexBundle.message("flex.break.point.title"));
   }
 
+  @Override
   public boolean canPutAt(@NotNull final VirtualFile file, final int line, @NotNull Project project) {
     if(file.getFileType() == ActionScriptFileType.INSTANCE ||
        JavaScriptSupportLoader.isFlexMxmFile(file)
@@ -37,6 +38,7 @@ public class FlexBreakpointType extends XLineBreakpointType<XBreakpointPropertie
     return false;
   }
 
+  @Override
   public XBreakpointProperties createBreakpointProperties(@NotNull final VirtualFile file, final int line) {
     return null;
   }
