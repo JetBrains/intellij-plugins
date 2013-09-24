@@ -12,6 +12,7 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.DefaultLibraryR
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UIBundle;
+import com.intellij.util.IconUtil;
 import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,7 +63,7 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
 
   private static class AddDocUrlDescriptor extends AttachRootButtonDescriptor {
     private AddDocUrlDescriptor() {
-      super(JavadocOrderRootType.getInstance(), FlexBundle.message("add.doc.url.button"));
+      super(JavadocOrderRootType.getInstance(), IconUtil.getAddLinkIcon(), FlexBundle.message("add.doc.url.button"));
     }
 
     @Override
