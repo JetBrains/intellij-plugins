@@ -13,7 +13,6 @@ import com.intellij.xdebugger.breakpoints.ui.XBreakpointGroupingRule;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,10 +43,7 @@ public class FlexBreakpointType extends XLineBreakpointType<XBreakpointPropertie
 
   @Override
   public List<XBreakpointGroupingRule<XLineBreakpoint<XBreakpointProperties>, ?>> getGroupingRules() {
-    XBreakpointGroupingRule<XLineBreakpoint<XBreakpointProperties>, ?> byFile = XDebuggerUtil.getInstance().getGroupingByFileRule();
-    List<XBreakpointGroupingRule<XLineBreakpoint<XBreakpointProperties>, ?>> rules = new ArrayList<XBreakpointGroupingRule<XLineBreakpoint<XBreakpointProperties>, ?>>();
-    rules.add(byFile);
-    return rules;
+    return XDebuggerUtil.getInstance().getGroupingByFileRuleAsList();
   }
 
   @Override
