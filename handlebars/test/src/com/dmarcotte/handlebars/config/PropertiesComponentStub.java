@@ -1,14 +1,14 @@
 package com.dmarcotte.handlebars.config;
 
 import com.intellij.ide.util.PropertiesComponent;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class PropertiesComponentStub extends PropertiesComponent {
-  private final Map<String, String> fakeStorage = new HashMap<String, String>();
+  private final Map<String, String> fakeStorage = new THashMap<String, String>();
 
   @Override
   public void unsetValue(String name) {
@@ -30,17 +30,29 @@ public class PropertiesComponentStub extends PropertiesComponent {
     fakeStorage.put(name, value);
   }
 
+  @Override
+  public void setValue(@NotNull String name, @NotNull String value, @NotNull String defaultValue) {
+    if (value.equals(defaultValue)) {
+      fakeStorage.remove(name);
+    }
+    else {
+      fakeStorage.put(name, value);
+    }
+  }
+
   @NotNull
   @Override
   public String getValue(@NonNls String name, @NotNull String defaultValue) {
     throw new UnsupportedOperationException("Implement me if needed");
   }
 
+  @Override
   @SuppressWarnings("UnusedDeclaration") // required by IDEA 12, but unused when building against IDEA 11
   public String[] getValues(@NonNls String name) {
     throw new UnsupportedOperationException("Implement me if needed");
   }
 
+  @Override
   @SuppressWarnings("UnusedDeclaration") // required by IDEA 12, but unused when building against IDEA 11
   public void setValues(@NonNls String name, String[] values) {
     throw new UnsupportedOperationException("Implement me if needed");
