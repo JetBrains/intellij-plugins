@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerBundle;
@@ -21,6 +22,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.pom.Navigatable;
@@ -54,8 +56,12 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
 
       suggestParallelCompilationIfNeeded(context.getProject(), modulesAndBCsToCompile);
 
-      final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems =
-        FlexCompiler.getProblems(context.getCompileScope(), modulesAndBCsToCompile);
+      final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems = ApplicationManager.getApplication()
+        .runReadAction(new Computable<Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>>>() {
+          public Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> compute() {
+            return FlexCompiler.getProblems(context.getCompileScope(), modulesAndBCsToCompile);
+          }
+        });
 
       if (!problems.isEmpty()) {
         reportProblems(context, problems);
