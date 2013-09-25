@@ -25,10 +25,13 @@
 
 package org.osmorc.facet.ui;
 
+import com.intellij.CommonBundle;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetValidatorsManager;
-import com.intellij.openapi.fileChooser.*;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.FileTypes;
@@ -317,8 +320,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
         VfsUtil.createDirectories(VfsUtil.urlToPath(outputPathUrl));
       }
       catch (IOException e) {
-        Messages.showErrorDialog(myRoot, OsmorcBundle.message("error"),
-                                 OsmorcBundle.message("facet.editor.cannot.create.output.path"));
+        Messages.showErrorDialog(myRoot, OsmorcBundle.message("facet.editor.cannot.create.output.path"), CommonBundle.message("title.error"));
         return;
       }
 
@@ -337,10 +339,8 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     descriptor.setTitle("Select bundle output directory");
     VirtualFile file = FileChooser.chooseFile(descriptor, myEditorContext.getProject(), preselectedFile);
     if (file != null) {
-      if (VfsUtil.isAncestor(moduleCompilerOutputPath, file, false)) {
-        Messages.showErrorDialog(myEditorContext.getProject(),
-                                 OsmorcBundle.message("facet.editor.jar.cannot.be.in.output.path"),
-                                 OsmorcBundle.message("error"));
+      if (VfsUtilCore.isAncestor(moduleCompilerOutputPath, file, false)) {
+        Messages.showErrorDialog(myRoot, OsmorcBundle.message("facet.editor.jar.cannot.be.in.output.path"), CommonBundle.message("title.error"));
         myJarOutputPathChooser.setText("");
         return;
       }
