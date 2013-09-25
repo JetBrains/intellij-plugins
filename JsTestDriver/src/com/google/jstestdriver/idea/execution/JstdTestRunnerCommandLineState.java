@@ -103,7 +103,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
     throws ExecutionException {
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
     TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(
-      new RuntimeConfigurationProducer.DelegatingRuntimeConfiguration<JstdRunConfiguration>(runConfiguration),
+      runConfiguration,
       JSTD_FRAMEWORK_NAME,
       executor
     );
