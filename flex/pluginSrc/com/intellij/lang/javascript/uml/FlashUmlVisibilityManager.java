@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.diagram.AbstractUmlVisibilityManager;
 import com.intellij.diagram.VisibilityLevel;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class FlashUmlVisibilityManager extends AbstractUmlVisibilityManager {
     if (element instanceof JSAttributeListOwner) {
       JSAttributeList attributeList = ((JSAttributeListOwner)element).getAttributeList();
       JSAttributeList.AccessType accessType =
-        attributeList != null ? attributeList.getAccessType() : JSUtils.getImplicitAccessType(element);
+        attributeList != null ? attributeList.getAccessType() : JSUtils.getImplicitAccessType((PsiElement)element);
 
       return predefinedLevels.get(ArrayUtil.indexOf(JSVisibilityUtil.ACCESS_TYPES, accessType));
     }
