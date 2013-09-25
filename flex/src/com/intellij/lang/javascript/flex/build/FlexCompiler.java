@@ -811,7 +811,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   private static void checkPackagingOptions(final Project project,
-                                            final Sdk sdk,
+                                            final @Nullable Sdk sdk,
                                             final AirPackagingOptions packagingOptions,
                                             final String outputFolderPath,
                                             final Consumer<FlashProjectStructureProblem> errorConsumer) {
@@ -836,7 +836,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                              FileUtil.toSystemDependentName(packagingOptions.getCustomDescriptorPath())),
                                                                  AirPackagingConfigurableBase.Location.CustomDescriptor));
         }
-        else {
+        else if (sdk != null) {
           final PsiFile file = PsiManager.getInstance(project).findFile(descriptorFile);
           final XmlTag rootTag = file instanceof XmlFile ? ((XmlFile)file).getRootTag() : null;
           final String ns = rootTag == null ? null : rootTag.getNamespace();
