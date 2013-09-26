@@ -138,6 +138,9 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
         }
       }, 500);
     }
+    else {
+      rebuildOSGiIndices();
+    }
   }
 
   private void rebuildOSGiIndices() {
