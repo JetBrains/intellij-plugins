@@ -10,7 +10,6 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.ShowFilePathAction;
-import com.intellij.idea.LoggerFactory;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
@@ -110,7 +109,8 @@ public class FlexDebugProcess extends XDebugProcess {
   private final Module myModule;
   private final FlexBuildConfiguration myBC;
   private final BCBasedRunnerParameters myRunnerParameters;
-  protected final String myAppSdkHome;
+
+  private final String myAppSdkHome;
   private final String myDebuggerSdkHome;
   private final String myDebuggerVersion;
 
@@ -135,9 +135,7 @@ public class FlexDebugProcess extends XDebugProcess {
   private Object myStackFrameEqualityObject;
   private Map<String, String> myQName2IdMap;
 
-  private boolean myFileIdIsUpToDate = false;
-  protected final BidirectionalMap<String, String> myFilePathToIdMap = new BidirectionalMap<String, String>();
-  protected final Map<String, Collection<String>> myFileNameToPathsMap = new THashMap<String, Collection<String>>();
+  private final KnownFilesInfo myKnownFilesInfo = new KnownFilesInfo(this);
 
   // if java.io.File.exists() takes more time than this timeout we assume that this is network drive and do not ping it any more
   private static final int FILE_EXISTS_MAX_TIMEOUT_MILLIS = 10;
@@ -297,6 +295,10 @@ public class FlexDebugProcess extends XDebugProcess {
 
   public boolean isFlexUnit() {
     return myRunnerParameters instanceof FlexUnitRunnerParameters;
+  }
+
+  public String getAppSdkHome() {
+    return myAppSdkHome;
   }
 
   public static Sdk getDebuggerSdk(final String sdkRaw, final Sdk bcSdk) {
@@ -545,7 +547,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
         if (line.contains("Additional ActionScript code has been loaded")) {
           if (!suspended) reader.readLine(false);
-          myFileIdIsUpToDate = false;
+          myKnownFilesInfo.setUpToDate(false);
         }
         else if ((index = line.indexOf(BREAKPOINT_MARKER)) != -1 && !line.contains(" created")) { // TODO: move to break point handler
           // Breakpoint 1, aaa() at A.mxml:14
@@ -670,59 +672,9 @@ public class FlexDebugProcess extends XDebugProcess {
     return false;
   }
 
-  protected static <K, T> void addToMap(final Map<K, Collection<T>> map, final K key, final T valueCollectionElement) {
-    Collection<T> valueCollection = map.get(key);
-    if (valueCollection == null) {
-      valueCollection = new ArrayList<T>(1);
-      map.put(key, valueCollection);
-    }
-
-    if (!valueCollection.contains(valueCollectionElement)) {
-      valueCollection.add(valueCollectionElement);
-    }
-  }
-
-  protected void ensureFilePathToIdMapIsUpToDate() {
-    if (myFileIdIsUpToDate) return; // this calculation is VERY costly
-    sendAndProcessOneCommand(
-      new DebuggerCommand("show files", CommandOutputProcessingType.SPECIAL_PROCESSING, VMState.SUSPENDED, VMState.SUSPENDED) {
-        @Override
-        CommandOutputProcessingMode onTextAvailable(@NonNls String s) {
-          processShowFilesResult(new StringTokenizer(s, "\r\n"));
-          return CommandOutputProcessingMode.DONE;
-        }
-      }, null);
-    myFileIdIsUpToDate = true;
-  }
-
-  protected void processShowFilesResult(StringTokenizer tokenizer) {
-    while (tokenizer.hasMoreTokens()) {
-      String line = tokenizer.nextToken();
-      int spaceIndex = line.indexOf(' ');
-      int commaPos = line.indexOf(',');
-
-      if (spaceIndex == -1 || commaPos == -1) {
-        log("Unexpected string format:" + line);
-        continue;
-      }
-
-      String id = line.substring(0, spaceIndex);
-      String fullPath = FileUtil.toSystemIndependentName(line.substring(spaceIndex + 1, commaPos));
-
-      int markerIndex = fullPath.indexOf("/frameworks/projects/");
-      if (markerIndex != -1 && fullPath.indexOf(SRC_PATH_ELEMENT, markerIndex) > 0) {
-        fullPath = myAppSdkHome + fullPath.substring(markerIndex);
-      }
-
-      String shortName = line.substring(commaPos + 2);
-      myFilePathToIdMap.put(fullPath, id);
-      addToMap(myFileNameToPathsMap, shortName, fullPath);
-    }
-  }
-
   protected String resolveFileReference(VirtualFile file) {
     String marker;
-    String id = myFilePathToIdMap.get(file.getPresentableUrl().replace(File.separatorChar, '/'));
+    String id = myKnownFilesInfo.getIdByFilePathNoUpdate(file.getPath());
 
     if (id != null) {
       marker = "#" + id;
@@ -736,8 +688,7 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   protected String getFileId(final String filePath) {
-    ensureFilePathToIdMapIsUpToDate();
-    return myFilePathToIdMap.get(filePath);
+    return myKnownFilesInfo.getIdByFilePath(filePath);
   }
 
   /**
@@ -758,11 +709,9 @@ public class FlexDebugProcess extends XDebugProcess {
   VirtualFile findFileByNameOrId(final @NotNull String fileName, @Nullable String packageName, final @Nullable String id) {
     // [1]
     if (id != null) {
-      ensureFilePathToIdMapIsUpToDate();
-      final List<String> value = myFilePathToIdMap.getKeysByValue(id);
+      final String path = myKnownFilesInfo.getFilePathById(id);
 
-      if (value != null && value.size() > 0) {
-        final String path = value.get(0);
+      if (path != null) {
         final VirtualFile fileById = findFileByPath(path);
 
         if (packageName == null) {
@@ -799,7 +748,7 @@ public class FlexDebugProcess extends XDebugProcess {
     final String packagePath = packageName.replace('.', '/');
 
     // [2]
-    final Collection<String> paths = myFileNameToPathsMap.get(fileName);
+    final Collection<String> paths = myKnownFilesInfo.getPathsByName(fileName);
 
     if (paths != null) {
       for (final String path : paths) {
@@ -846,7 +795,7 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     // last chance to find file out of project
-    final Collection<String> paths = myFileNameToPathsMap.get(fileName);
+    final Collection<String> paths = myKnownFilesInfo.getPathsByName(fileName);
     if (paths != null) {
       for (final String path : paths) {
         final VirtualFile file = findFileByPath(path);

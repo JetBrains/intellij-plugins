@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.debug;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.process.ProcessHandler;
@@ -117,7 +116,7 @@ public class FlexRunner extends GenericProgramRunner {
       super(callback, session, buildConfiguration, parameters);
     }
 
-    @Override
+    //@Override
     protected void processShowFilesResult(StringTokenizer tokenizer) {
       final Map<String, String> libNameToSourceRoot = new THashMap<String, String>();
       while (tokenizer.hasMoreTokens()) {
@@ -147,7 +146,7 @@ public class FlexRunner extends GenericProgramRunner {
               if (isBackSlash) {
                 firstSlashIndex = line.indexOf('\\');
               }
-              builder.append(myAppSdkHome).append("/frameworks/projects/").append(line, spaceIndex + 2, firstSlashIndex).append("/src/");
+              builder.append(getAppSdkHome()).append("/frameworks/projects/").append(line, spaceIndex + 2, firstSlashIndex).append("/src/");
               if (isBackSlash) {
                 builder.append(line.substring(firstSlashIndex + 1, commaPos).replace('\\', '/'));
               }
@@ -185,8 +184,8 @@ public class FlexRunner extends GenericProgramRunner {
         }
 
         String shortName = line.substring(commaPos + 2);
-        myFilePathToIdMap.put(fullPath, id);
-        addToMap(myFileNameToPathsMap, shortName, fullPath);
+        //myFilePathToIdMap.put(fullPath, id);
+        //addToMap(myFileNameToPathsMap, shortName, fullPath);
       }
     }
 
