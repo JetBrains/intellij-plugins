@@ -162,7 +162,7 @@ public class KarmaServerState {
   }
 
   private static class ServerProcessListener implements ProcessListener {
-    private static final Pattern SERVER_PORT_LINE_PATTERN = Pattern.compile("^INFO \\[.*\\]: Karma.+server started at http://[^:]+:(\\d+)/.*$");
+    private static final Pattern SERVER_PORT_LINE_PATTERN = Pattern.compile("Karma.+server started at http://[^:]+:(\\d+)/.*$");
 
     private final StringBuilder myBuffer = new StringBuilder();
     private final KarmaServerState myState;
