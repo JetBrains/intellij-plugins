@@ -97,12 +97,12 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
       if (myForCompletion || !myMethodCall && myReferenceName.equalsIgnoreCase(namedElement.getName())) {
         addIfNotNull(createResult(namedElement, true), myResult);
       }
-      final String getterName = PropertyUtil.suggestGetterName(field.getProject(), field);
+      final String getterName = PropertyUtil.suggestGetterName(field);
       if (myForCompletion || myMethodCall && myReferenceName.equalsIgnoreCase(getterName)) {
         myMethods.addMethod(new TapestryAccessorMethod(field, true, getterName), state.get(PsiSubstitutor.KEY), false);
         //addIfNotNull(createResult(new PropertyAccessorElement(field, getterName, true), true), myResult);
       }
-      final String setterName = PropertyUtil.suggestSetterName(field.getProject(), field);
+      final String setterName = PropertyUtil.suggestSetterName(field);
       if (!field.hasModifierProperty(FINAL) && (myForCompletion || myMethodCall && myReferenceName.equalsIgnoreCase(setterName))) {
         myMethods.addMethod(new TapestryAccessorMethod(field, false, setterName), state.get(PsiSubstitutor.KEY), false);
         //addIfNotNull(createResult(new PropertyAccessorElement(field, setterName, false), true), myResult);
