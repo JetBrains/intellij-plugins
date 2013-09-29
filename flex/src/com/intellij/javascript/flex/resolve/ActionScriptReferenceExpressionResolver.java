@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
@@ -71,7 +70,6 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
     }
 
     SinkResolveProcessor localProcessor;
-    final Ref<JSType> qualifierType = Ref.create(null);
     if (myLocalResolve) {
       final PsiElement topParent = JSResolveUtil.getTopReferenceParent(myParent);
       localProcessor = new SinkResolveProcessor(myReferencedName, myRef) {
@@ -145,7 +143,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
     }
 
     ResolveResult[] results =
-      resolveFromIndices(localProcessor, qualifierType.get());
+      resolveFromIndices(localProcessor, null);
 
     if (results.length == 0 && localProcessor.isEncounteredXmlLiteral()) {
       return dummyResult(myRef);
