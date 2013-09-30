@@ -483,7 +483,7 @@ module Spec
               get_time_in_ms(example.execution_result[:started_at]) :
               get_current_time_in_ms
 
-          debug_log("Output caputre started.")
+          debug_log("Output capturing started.")
 
           put_data_to_storage(example, RunningExampleData.new(my_running_example_full_name, "", started_at_ms, *std_files))
         end
