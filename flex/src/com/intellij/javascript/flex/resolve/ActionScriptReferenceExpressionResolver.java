@@ -143,7 +143,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
     }
 
     ResolveResult[] results =
-      resolveFromIndices(localProcessor, null);
+      resolveFromIndices(localProcessor);
 
     if (results.length == 0 && localProcessor.isEncounteredXmlLiteral()) {
       return dummyResult(myRef);
@@ -153,9 +153,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
   }
 
   @Override
-  protected void prepareProcessor(JSType qualifierType,
-                                  WalkUpResolveProcessor processor,
-                                  SinkResolveProcessor localProcessor) {
+  protected void prepareProcessor(WalkUpResolveProcessor processor, SinkResolveProcessor localProcessor) {
     boolean inDefinition = false;
     boolean allowOnlyCompleteMatches = myLocalResolve && localProcessor.isEncounteredDynamicClasses();
 
