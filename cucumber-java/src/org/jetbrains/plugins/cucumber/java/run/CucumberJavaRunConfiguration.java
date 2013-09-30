@@ -37,9 +37,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   public String GLUE;
 
-  public CucumberJavaRunConfiguration(String name, Project project, CucumberJavaRunConfigurationType applicationConfigurationType) {
-    super(name, project, applicationConfigurationType);
-  }
+  public String myNameFilter;
 
   protected CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
     super(name, project, factory);
@@ -162,5 +160,13 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   public void setFilePath(String filePath) {
     myFilePath = filePath;
+  }
+
+  public String getNameFilter() {
+    return myNameFilter;
+  }
+
+  public void setNameFilter(String nameFilter) {
+    myNameFilter = nameFilter;
   }
 }

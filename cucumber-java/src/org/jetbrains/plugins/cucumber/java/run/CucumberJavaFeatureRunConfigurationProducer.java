@@ -1,7 +1,7 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
+import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,8 +25,8 @@ import java.util.Set;
  */
 public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
-  protected NullableComputable<String> getGlue() {
-    final PsiFile file = mySourceElement.getContainingFile();
+  protected NullableComputable<String> getGlue(@NotNull final PsiElement element) {
+    final PsiFile file = element.getContainingFile();
     if (file instanceof GherkinFile) {
       return new NullableComputable<String>() {
         @Nullable
@@ -48,22 +48,21 @@ public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRun
   }
 
   @Override
-  protected String getName() {
-    return "Feature: " + getFileToRun().getNameWithoutExtension();
+  protected String getConfigurationName(@NotNull ConfigurationContext context) {
+    final VirtualFile featureFile = getFileToRun(context);
+    assert featureFile != null;
+    return "Feature: " + featureFile.getNameWithoutExtension();
   }
 
-  @NotNull
+  @Nullable
   @Override
-  protected VirtualFile getFileToRun() {
-    PsiFile psiFile = mySourceElement.getContainingFile();
-    assert psiFile != null;
-    VirtualFile result = psiFile.getVirtualFile();
-    assert result != null;
-    return result;
-  }
+  protected VirtualFile getFileToRun(ConfigurationContext context) {
+    final PsiElement element = context.getPsiLocation();
+    final GherkinStepsHolder scenario = PsiTreeUtil.getParentOfType(element, GherkinScenario.class, GherkinScenarioOutline.class);
+    if (element != null && scenario == null && element.getContainingFile() instanceof GherkinFile) {
+      return element.getContainingFile().getVirtualFile();
+    }
 
-  protected boolean isApplicable(PsiElement locationElement, final Module module) {
-    final GherkinStepsHolder scenario = PsiTreeUtil.getParentOfType(mySourceElement, GherkinScenario.class, GherkinScenarioOutline.class);
-    return locationElement != null && locationElement.getContainingFile() instanceof GherkinFile && scenario == null;
+    return null;
   }
 }

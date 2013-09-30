@@ -1,10 +1,7 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
-import com.intellij.execution.Location;
-import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,10 +24,10 @@ import java.util.Set;
  */
 public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
-  protected NullableComputable<String> getGlue() {
+  protected NullableComputable<String> getGlue(@NotNull final PsiElement element) {
     final Set<String> glues = new HashSet<String>();
-    if (mySourceElement instanceof PsiDirectory) {
-      final PsiDirectory dir = (PsiDirectory)mySourceElement;
+    if (element instanceof PsiDirectory) {
+      final PsiDirectory dir = (PsiDirectory)element;
       final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
 
       return new NullableComputable<String>() {
@@ -67,25 +64,18 @@ public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends Cuc
   }
 
   @Override
-  protected String getName() {
-    return CucumberBundle.message("cucumber.run.all.features", ((PsiDirectory) mySourceElement).getVirtualFile().getName());
+  protected String getConfigurationName(@NotNull final ConfigurationContext context) {
+    final PsiElement element = context.getPsiLocation();
+    return CucumberBundle.message("cucumber.run.all.features", ((PsiDirectory)element).getVirtualFile().getName());
   }
 
-  @NotNull
+  @Nullable
   @Override
-  protected VirtualFile getFileToRun() {
-    return ((PsiDirectory) mySourceElement).getVirtualFile();
-  }
-
-  protected boolean isApplicable(PsiElement locationElement, final Module module) {
-    return locationElement != null && locationElement instanceof PsiDirectory;
-  }
-
-  @Override
-  protected RunnerAndConfigurationSettings createConfiguration(Location location, ConfigurationContext context, @NotNull final String mainClassName) {
-    RunnerAndConfigurationSettings result = super.createConfiguration(location, context, mainClassName);
-    CucumberJavaRunConfiguration runConfiguration = (CucumberJavaRunConfiguration)result.getConfiguration();
-    runConfiguration.getEnvs().put("current_dir", getFileToRun().getPath());
-    return result;
+  protected VirtualFile getFileToRun(ConfigurationContext context) {
+    final PsiElement element = context.getPsiLocation();
+    if (element != null && element instanceof PsiDirectory) {
+      return ((PsiDirectory) element).getVirtualFile();
+    }
+    return null;
   }
 }
