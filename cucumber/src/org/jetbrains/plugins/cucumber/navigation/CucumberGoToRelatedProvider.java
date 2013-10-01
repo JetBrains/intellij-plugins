@@ -2,6 +2,7 @@ package org.jetbrains.plugins.cucumber.navigation;
 
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.navigation.GotoRelatedProvider;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.psi.PsiElement;
@@ -25,7 +26,7 @@ import java.util.List;
 public class CucumberGoToRelatedProvider extends GotoRelatedProvider {
   @NotNull
   public List<? extends GotoRelatedItem> getItems(@NotNull DataContext context) {
-    final PsiFile file = LangDataKeys.PSI_FILE.getData(context);
+    final PsiFile file = CommonDataKeys.PSI_FILE.getData(context);
     if (file != null) {
       return getItems(file);
     }

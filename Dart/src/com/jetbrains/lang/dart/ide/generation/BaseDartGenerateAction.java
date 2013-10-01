@@ -28,7 +28,7 @@ public abstract class BaseDartGenerateAction extends AnAction {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return Pair.create(null, null);
     Editor editor = e.getData(CommonDataKeys.EDITOR);
-    PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
+    PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
     return Pair.create(editor, psiFile);
   }
 

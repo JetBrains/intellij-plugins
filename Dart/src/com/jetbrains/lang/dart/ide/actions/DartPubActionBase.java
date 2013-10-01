@@ -41,7 +41,7 @@ abstract public class DartPubActionBase extends AnAction {
     final DataContext dataContext = e.getDataContext();
     final Presentation presentation = e.getPresentation();
 
-    final PsiFile psiFile = LangDataKeys.PSI_FILE.getData(dataContext);
+    final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(dataContext);
     final boolean enabled = psiFile instanceof YAMLFile && isEnabled((YAMLFile)psiFile);
 
     presentation.setVisible(enabled);
@@ -63,7 +63,7 @@ abstract public class DartPubActionBase extends AnAction {
 
   @Override
   public void actionPerformed(final AnActionEvent e) {
-    final PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
+    final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
     Module module = LangDataKeys.MODULE.getData(e.getDataContext());
     if (!(psiFile instanceof YAMLFile) || module == null) {
       Messages.showOkCancelDialog(e.getProject(), DartBundle.message("dart.sdk.bad.dartpub.file"),
