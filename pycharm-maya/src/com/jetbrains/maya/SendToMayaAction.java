@@ -112,7 +112,7 @@ public class SendToMayaAction extends AnAction {
 
   @Nullable
   private static PyFile getPythonFile(AnActionEvent e) {
-    VirtualFile vFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+    VirtualFile vFile = e.getData(CommonDataKeys.VIRTUAL_FILE);
     Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
 
     if (project != null && vFile != null) {

@@ -17,7 +17,6 @@ package jetbrains.communicator.idea.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -33,7 +32,7 @@ public class ActionUtil {
   }
 
   static VirtualFile getFile(AnActionEvent e) {
-    return (PlatformDataKeys.VIRTUAL_FILE.getData(e.getDataContext()));
+    return (CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext()));
   }
 
   static Editor getEditor(AnActionEvent e) {
