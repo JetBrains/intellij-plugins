@@ -9,11 +9,11 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.io.socketConnection.AbstractResponseToRequestHandler;
+import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
-import com.intellij.xdebugger.impl.XSourcePositionImpl;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.connection.JsonResponse;
 import org.jetbrains.annotations.NotNull;
@@ -132,7 +132,7 @@ public class DartStackFrame extends XStackFrame {
   @Override
   public XSourcePosition getSourcePosition() {
     VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(myFileUrl);
-    return virtualFile != null && myLine >= 0 ? XSourcePositionImpl.create(virtualFile, myLine) : null;
+    return virtualFile != null && myLine >= 0 ? XDebuggerUtil.getInstance().createPosition(virtualFile, myLine) : null;
   }
 
   @Override
