@@ -83,7 +83,7 @@ public class SendToMayaAction extends AnAction {
 
   @Nullable
   private static String getSelectionText(AnActionEvent e) {
-    Editor editor = PlatformDataKeys.EDITOR.getData(e.getDataContext());
+    Editor editor = CommonDataKeys.EDITOR.getData(e.getDataContext());
     if (editor != null) {
       SelectionModel model = editor.getSelectionModel();
       return model.getSelectedText();
@@ -131,7 +131,7 @@ public class SendToMayaAction extends AnAction {
   }
 
   private static boolean isPythonEditor(AnActionEvent e) {
-    Editor editor = PlatformDataKeys.EDITOR.getData(e.getDataContext());
+    Editor editor = CommonDataKeys.EDITOR.getData(e.getDataContext());
     Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
 
     if (project == null || editor == null) {
