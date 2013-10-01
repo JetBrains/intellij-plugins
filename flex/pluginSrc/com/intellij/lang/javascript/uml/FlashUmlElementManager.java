@@ -98,7 +98,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
   }
 
   public PsiElement findInDataContext(DataContext context) {
-    PsiElement element = LangDataKeys.PSI_ELEMENT.getData(context);
+    PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(context);
     if (isAcceptableAsNode(element)) {
       return element;
     }
