@@ -526,6 +526,11 @@ public class FlexDebugProcess extends XDebugProcess {
       }
       if (commandOutput == null) break;
 
+      if (commandOutput.contains("Player session terminated")) {
+        handleProbablyUnexpectedStop(commandOutput);
+        break;
+      }
+
       commandOutput = commandOutput.trim();
       log(commandOutput);
 
@@ -631,9 +636,6 @@ public class FlexDebugProcess extends XDebugProcess {
         else if (line.startsWith("Set additional breakpoints")) {
           //Set additional breakpoints as desired, and then type 'continue'.
           toInsertContinue = true;    // TODO: move to break point handler
-        }
-        else if (line.startsWith("Player session terminated")) {
-          handleProbablyUnexpectedStop(line);
         }
         else if (line.contains("Execution halted")) {
           if (!getSession().isPaused()) {
