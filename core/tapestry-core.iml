@@ -42,7 +42,7 @@
     <orderEntry type="module" module-name="openapi" exported="" />
     <orderEntry type="module" module-name="web-openapi" exported="" />
     <orderEntry type="module" module-name="compiler-openapi" exported="" />
-    <orderEntry type="module" module-name="J2EE" exported="" />
+    <orderEntry type="module" module-name="javaee-impl" exported="" />
     <orderEntry type="module" module-name="idea" exported="" />
     <orderEntry type="module" module-name="xml" exported="" />
     <orderEntry type="module" module-name="web-impl" />
