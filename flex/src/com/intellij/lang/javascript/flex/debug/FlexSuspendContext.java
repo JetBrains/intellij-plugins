@@ -26,8 +26,13 @@ public class FlexSuspendContext extends XSuspendContext {
   private static final Pattern STACK_FRAMES_DELIMITER = Pattern.compile(".(\\r?\\n)#\\d+ ");
   private static final String AT_MARKER = "at ";
 
-  public FlexSuspendContext(FlexStackFrame stackFrame) {
-    myFlexExecutionStack = new FlexExecutionStack(stackFrame);
+  public FlexSuspendContext(final FlexStackFrame topFrame) {
+    myFlexExecutionStack = new FlexExecutionStack(topFrame);
+  }
+
+  public FlexSuspendContext(final FlexDebugProcess flexDebugProcess, final String[] frames) {
+    myFlexExecutionStack = new FlexExecutionStack(createStackFrame(flexDebugProcess, frames[0]));
+    myFlexExecutionStack.setFrames(frames);
   }
 
   public XExecutionStack getActiveExecutionStack() {
@@ -36,11 +41,16 @@ public class FlexSuspendContext extends XSuspendContext {
 
   private static class FlexExecutionStack extends XExecutionStack {
     private final FlexStackFrame myTopFrame;
+    private @Nullable String[] myFrames;
 
-    private FlexExecutionStack(final FlexStackFrame stackFrame) {
+    private FlexExecutionStack(final FlexStackFrame topFrame) {
       super("");
 
-      myTopFrame = stackFrame;
+      myTopFrame = topFrame;
+    }
+
+    private void setFrames(final String[] frames) {
+      myFrames = frames;
     }
 
     public XStackFrame getTopFrame() {
@@ -48,18 +58,22 @@ public class FlexSuspendContext extends XSuspendContext {
     }
 
     public void computeStackFrames(final int frameIndex, final XStackFrameContainer container) {
-      myTopFrame.getDebugProcess().sendCommand(new DebuggerCommand("bt", CommandOutputProcessingType.SPECIAL_PROCESSING) {
-        @Override
-        CommandOutputProcessingMode onTextAvailable(@NonNls final String s) {
-          if (container.isObsolete()) return CommandOutputProcessingMode.DONE;
-          processFrames(s, container, frameIndex);
-          return CommandOutputProcessingMode.DONE;
-        }
-      });
+      if (myFrames != null) {
+        processFrames(myFrames, container, frameIndex);
+      }
+      else {
+        myTopFrame.getDebugProcess().sendCommand(new DebuggerCommand("bt", CommandOutputProcessingType.SPECIAL_PROCESSING) {
+          @Override
+          CommandOutputProcessingMode onTextAvailable(@NonNls final String s) {
+            if (container.isObsolete()) return CommandOutputProcessingMode.DONE;
+            processFrames(splitStackFrames(s), container, frameIndex);
+            return CommandOutputProcessingMode.DONE;
+          }
+        });
+      }
     }
 
-    private void processFrames(String s, XStackFrameContainer container, int frameIndex) {
-      String[] frames = splitStackFrames(s);
+    private void processFrames(String[] frames, XStackFrameContainer container, int frameIndex) {
       final XStackFrame[] allFrames = new XStackFrame[frames.length];
       int i = 0;
 
@@ -69,51 +83,90 @@ public class FlexSuspendContext extends XSuspendContext {
         container.addStackFrames(Collections.<XStackFrame>emptyList(), true); // empty value
         return;
       }
-      String stackFrame = frames[i];
-      myTopFrame.setScope(extractScope(stackFrame));
+      String frameText = frames[i];
+      myTopFrame.setScope(extractScope(frameText));
       myTopFrame.setFrameIndex(0);
       allFrames[i++] = myTopFrame;
 
       while (i < frames.length) {
-        stackFrame = frames[i];
-        VirtualFile file = null;
+        frameText = frames[i];
 
-        final Trinity<String, String, Integer> fileNameAndIndexAndLine = getFileNameAndIndexAndLine(frames[i]);
-        final String fileName = fileNameAndIndexAndLine.first;
-        final String fileId = fileNameAndIndexAndLine.second;
-        int line = fileNameAndIndexAndLine.third;
+        final FlexStackFrame flexStackFrame = createStackFrame(flexDebugProcess, frameText);
 
-        if (!StringUtil.isEmpty(fileName)) {
-          final String packageName;
-          final int classMarkerIndex = stackFrame.indexOf(FlexStackFrame.CLASS_MARKER);
-          final int packageEndIndex = stackFrame.indexOf("::", classMarkerIndex);
-          final int classEndIndex = stackFrame.indexOf("'", classMarkerIndex);
-
-          if (classMarkerIndex > 0 && packageEndIndex > classMarkerIndex && packageEndIndex < classEndIndex) {
-            packageName = stackFrame.substring(classMarkerIndex + FlexStackFrame.CLASS_MARKER.length(), packageEndIndex);
-          }
-          else {
-            packageName = "";
-          }
-
-          file = flexDebugProcess.findFileByNameOrId(fileName, packageName, fileId);
-
-          if (file == null) {
-            // todo find position in decompiled code
-          }
-        }
-
-        final XSourcePosition sourcePosition = file != null ? XDebuggerUtil.getInstance().createPosition(file, line > 0 ? line - 1 : line) : null;
-        final FlexStackFrame flexStackFrame = sourcePosition != null ? new FlexStackFrame(flexDebugProcess, sourcePosition)
-                                                                     : new FlexStackFrame(flexDebugProcess, fileName, line);
         allFrames[i] = flexStackFrame;
-        flexStackFrame.setScope(extractScope(stackFrame));
+        flexStackFrame.setScope(extractScope(frameText));
         flexStackFrame.setFrameIndex(i);
         i++;
       }
 
       container.addStackFrames(Arrays.asList(allFrames).subList(frameIndex, allFrames.length), true);
     }
+  }
+
+  private static FlexStackFrame createStackFrame(final FlexDebugProcess flexDebugProcess, final String frameText) {
+    // #0   global$init() at Some4Class.as#42:6
+    // #0   FlexSprite() at FlexSprite.as:59
+    // #2   Some4Class() at Singleton.as#16:0
+    // #2   UIComponent() at <null>:0\r\nNo active session
+    // #0   global/publicFun() at publicFun.as#41:5
+    // #0   HelloFlex4/button1_clickHandler(event=[Object 181591585, class='flash.events::MouseEvent']) at HelloFlex4.mxml#40:11
+    // #0   NameUtil$/createUniqueName(object=[Object 172624937, class='mx.controls::TextInput']) at NameUtil.as#29:65
+    // #0   EventDispatcher/dispatchEvent(_arg1=null) at <null>:0\r\nNo active session
+    // #0   FlexEvent(type="valueCommit", bubbles=false, cancelable=false) at FlexEvent.as#18:1178
+    // #0   HelloFlex4/get abc() at HelloFlex4.mxml#40:18
+    // #0   HelloFlex4/set abc(value="Asd") at HelloFlex4.mxml#40:22
+
+    // #0   this = [Object 94314641, class='BackWorker'].BackWorker/onProgress(event=[Object 246336977, class='flash.events::ProgressEvent']) at BackWorker.as:36
+    // #1   EventDispatcher/dispatchEventFunction() at <null>:0
+    // #2   this = [Object 106360769, class='fr.kikko.lab::ShineMP3Encoder'].EventDispatcher/dispatchEvent(_arg1=[Object 246336977, class='flash.events::ProgressEvent']) at <null>:0
+    // #3   this = [Object 106360769, class='fr.kikko.lab::ShineMP3Encoder'].ShineMP3Encoder/update(event=[Object 246068457, class='flash.events::TimerEvent']) at ShineMP3Encoder.as:63
+    // #4   Timer/_timerDispatch() at <null>:0
+    // #5   this = [Object 152354881, class='flash.utils::Timer'].Timer/tick() at <null>:0
+
+
+    VirtualFile file = null;
+
+    final Trinity<String, String, Integer> fileNameAndIndexAndLine = getFileNameAndIdAndLine(frameText);
+    final String fileName = fileNameAndIndexAndLine.first;
+    final String fileId = fileNameAndIndexAndLine.second;
+    int line = fileNameAndIndexAndLine.third;
+
+    if (!StringUtil.isEmpty(fileName)) {
+      file = flexDebugProcess.findFileByNameOrId(fileName, getPackageFromFrameText(frameText), fileId);
+
+      if (file == null) {
+        // todo find position in decompiled code
+      }
+    }
+
+    final XSourcePosition sourcePosition = file == null ? null
+                                                        : XDebuggerUtil.getInstance().createPosition(file, line > 0 ? line - 1 : line);
+    return sourcePosition != null ? new FlexStackFrame(flexDebugProcess, sourcePosition)
+                                  : new FlexStackFrame(flexDebugProcess, fileName, line);
+  }
+
+  private static String getPackageFromFrameText(final String frameText) {
+    // #2   this = [Object 106360769, class='fr.kikko.lab::ShineMP3Encoder'].EventDispatcher/dispatchEvent(_arg1=[Object 246336977, class='flash.events::ProgressEvent']) at <null>:0
+    String packageName = null;
+
+    int startIndex = frameText.indexOf(' ');
+    while (startIndex != -1 && frameText.length() > startIndex && frameText.charAt(startIndex) == ' ') {
+      startIndex++;
+    }
+
+    if (startIndex > 0 && frameText.substring(startIndex).startsWith("this = [")) {
+      final int classMarkerIndex = frameText.indexOf(FlexStackFrame.CLASS_MARKER, startIndex);
+      final int packageEndIndex = frameText.indexOf("::", classMarkerIndex + FlexStackFrame.CLASS_MARKER.length());
+      final int classEndIndex = frameText.indexOf("']", classMarkerIndex + FlexStackFrame.CLASS_MARKER.length());
+
+      if (classMarkerIndex > 0 && packageEndIndex > classMarkerIndex && packageEndIndex < classEndIndex) {
+        packageName = frameText.substring(classMarkerIndex + FlexStackFrame.CLASS_MARKER.length(), packageEndIndex);
+      }
+      else {
+        packageName = "";
+      }
+    }
+    return packageName;
   }
 
   static String[] splitStackFrames(String s) {
@@ -148,38 +201,7 @@ public class FlexSuspendContext extends XSuspendContext {
     return methodStart == -1 ? clsMethodText : clsMethodText.substring(methodStart + 1) + ": " + clsMethodText.substring(0, methodStart);
   }
 
-  @Nullable
-  static FlexStackFrame getStackFrame(final FlexDebugProcess flexDebugProcess,
-                                      final String frameText) {
-    // #0   global$init() at Some4Class.as#42:6
-    // #0   FlexSprite() at FlexSprite.as:59
-    // #2   Some4Class() at Singleton.as#16:0
-    // #2   UIComponent() at <null>:0\r\nNo active session
-    // #0   global/publicFun() at publicFun.as#41:5
-    // #0   HelloFlex4/button1_clickHandler(event=[Object 181591585, class='flash.events::MouseEvent']) at HelloFlex4.mxml#40:11
-    // #0   NameUtil$/createUniqueName(object=[Object 172624937, class='mx.controls::TextInput']) at NameUtil.as#29:65
-    // #0   EventDispatcher/dispatchEvent(_arg1=null) at <null>:0\r\nNo active session
-    // #0   FlexEvent(type="valueCommit", bubbles=false, cancelable=false) at FlexEvent.as#18:1178
-    // #0   HelloFlex4/get abc() at HelloFlex4.mxml#40:18
-    // #0   HelloFlex4/set abc(value="Asd") at HelloFlex4.mxml#40:22
-
-    final Trinity<String, String, Integer> fileNameAndIndexAndLine = getFileNameAndIndexAndLine(frameText);
-    final String fileName = fileNameAndIndexAndLine.first;
-    final String fileId = fileNameAndIndexAndLine.second;
-    int line = fileNameAndIndexAndLine.third;
-
-    final VirtualFile file = fileName == null ? null : flexDebugProcess.findFileByNameOrId(fileName, null, fileId);
-    if (file == null) {
-      // todo find position in decompiled code
-    }
-
-    final XSourcePosition sourcePosition = file != null ? XDebuggerUtil.getInstance().createPosition(file, line > 0 ? line - 1 : line)
-                                                        : null;
-    return sourcePosition != null ? new FlexStackFrame(flexDebugProcess, sourcePosition)
-                                  : new FlexStackFrame(flexDebugProcess, fileName, line);
-  }
-
-  private static Trinity<String, String, Integer> getFileNameAndIndexAndLine(final String text) {
+  private static Trinity<String, String, Integer> getFileNameAndIdAndLine(final String text) {
     final int atPos = text.lastIndexOf(AT_MARKER);
     if (atPos == -1) return Trinity.create(null, null, 0);
 

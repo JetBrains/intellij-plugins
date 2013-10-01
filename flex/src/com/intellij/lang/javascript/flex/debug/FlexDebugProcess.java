@@ -135,6 +135,7 @@ public class FlexDebugProcess extends XDebugProcess {
   private Object myStackFrameEqualityObject;
   private Map<String, String> myQName2IdMap;
 
+  private int myCurrentWorker = 0;
   private final KnownFilesInfo myKnownFilesInfo = new KnownFilesInfo(this);
 
   // if java.io.File.exists() takes more time than this timeout we assume that this is network drive and do not ping it any more
@@ -550,7 +551,21 @@ public class FlexDebugProcess extends XDebugProcess {
       while (iterator.hasNext()) {
         final String line = iterator.next();
 
-        if (line.contains("Additional ActionScript code has been loaded")) {
+        if (line.startsWith("Active worker has changed to worker ")) {
+          try {
+            final String workerText = line.substring("Active worker has changed to worker ".length());
+            if ("Main Thread".equals(workerText)) {
+              myCurrentWorker = 0;
+            }
+            else {
+              myCurrentWorker = Integer.parseInt(workerText);
+            }
+          }
+          catch (NumberFormatException e) {
+            log("Unexpected worker number");
+          }
+        }
+        else if (line.contains("Additional ActionScript code has been loaded")) {
           if (!suspended) reader.readLine(false);
           myKnownFilesInfo.setUpToDate(false);
         }
@@ -711,7 +726,7 @@ public class FlexDebugProcess extends XDebugProcess {
   VirtualFile findFileByNameOrId(final @NotNull String fileName, @Nullable String packageName, final @Nullable String id) {
     // [1]
     if (id != null) {
-      final String path = myKnownFilesInfo.getFilePathById(id);
+      final String path = myKnownFilesInfo.getFilePathById(myCurrentWorker, id);
 
       if (path != null) {
         final VirtualFile fileById = findFileByPath(path);
@@ -750,7 +765,7 @@ public class FlexDebugProcess extends XDebugProcess {
     final String packagePath = packageName.replace('.', '/');
 
     // [2]
-    final Collection<String> paths = myKnownFilesInfo.getPathsByName(fileName);
+    final Collection<String> paths = myKnownFilesInfo.getPathsByName(myCurrentWorker, fileName);
 
     if (paths != null) {
       for (final String path : paths) {
@@ -797,7 +812,7 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     // last chance to find file out of project
-    final Collection<String> paths = myKnownFilesInfo.getPathsByName(fileName);
+    final Collection<String> paths = myKnownFilesInfo.getPathsByName(myCurrentWorker, fileName);
     if (paths != null) {
       for (final String path : paths) {
         final VirtualFile file = findFileByPath(path);

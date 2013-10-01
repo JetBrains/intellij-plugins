@@ -30,10 +30,8 @@ public class KnownFilesInfo {
   }
 
   @Nullable
-  public String getFilePathById(final String id) {
+  public String getFilePathById(final int worker, final String id) {
     ensureUpToDate();
-
-    final int worker = 0; // todo calculate correct worker
 
     final BidirectionalMap<String, String> filePathToId = myWorkerToFilePathToIdMap.get(worker);
     final List<String> paths = filePathToId == null ? null : filePathToId.getKeysByValue(id);
@@ -60,10 +58,8 @@ public class KnownFilesInfo {
   }
 
   @Nullable
-  public Collection<String> getPathsByName(final String fileName) {
+  public Collection<String> getPathsByName(final int worker, final String fileName) {
     ensureUpToDate();
-
-    final int worker = 0; // todo calculate correct worker
 
     final Map<String, Collection<String>> fileNameToPaths = myWorkerToFileNameToPathsMap.get(worker);
     return fileNameToPaths == null ? null : fileNameToPaths.get(fileName);

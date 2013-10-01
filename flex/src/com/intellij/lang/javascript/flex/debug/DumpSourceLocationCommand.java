@@ -6,17 +6,18 @@ class DumpSourceLocationCommand extends DebuggerCommand {
   private FlexDebugProcess myFlexDebugProcess;
 
   public DumpSourceLocationCommand(FlexDebugProcess flexDebugProcess) {
-    super("frame 0", CommandOutputProcessingType.SPECIAL_PROCESSING);
+    super("bt", CommandOutputProcessingType.SPECIAL_PROCESSING);
     myFlexDebugProcess = flexDebugProcess;
   }
 
   @Override
   CommandOutputProcessingMode onTextAvailable(@NonNls final String text) {
     if (!myFlexDebugProcess.getSession().isPaused()) {
-      final FlexStackFrame topFrame = FlexSuspendContext.getStackFrame(myFlexDebugProcess, text);
-      assert topFrame != null;
-      final FlexSuspendContext suspendContext = new FlexSuspendContext(topFrame);
-      myFlexDebugProcess.getSession().positionReached(suspendContext);
+      final String[] frames = FlexSuspendContext.splitStackFrames(text);
+      if (frames.length > 0) {
+        final FlexSuspendContext suspendContext = new FlexSuspendContext(myFlexDebugProcess, frames);
+        myFlexDebugProcess.getSession().positionReached(suspendContext);
+      }
     }
 
     return CommandOutputProcessingMode.DONE;
