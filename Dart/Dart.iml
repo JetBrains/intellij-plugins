@@ -20,7 +20,6 @@
     <orderEntry type="module" module-name="ChromeConnector" />
     <orderEntry type="module" module-name="JavaScriptDebugger" />
     <orderEntry type="library" name="gson" level="project" />
-    <orderEntry type="module" module-name="xdebugger-impl" />
     <orderEntry type="module" module-name="yaml" />
     <orderEntry type="module" module-name="smRunner" />
     <orderEntry type="module" module-name="LiveEdit" />
