@@ -133,7 +133,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     // handle PsiPackage (invoked when 'View as packages' mode is selected)
     Project project = CommonDataKeys.PROJECT.getData(context);
     if (project != null) {
-      VirtualFile file = PlatformDataKeys.VIRTUAL_FILE.getData(context);
+      VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(context);
       if (file != null) {
         PsiDirectory directory = PsiManager.getInstance(project).findDirectory(file);
         if (directory != null && isAcceptableAsNode(directory)) {

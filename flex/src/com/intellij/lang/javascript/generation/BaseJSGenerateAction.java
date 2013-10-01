@@ -37,7 +37,7 @@ abstract class BaseJSGenerateAction extends AnAction {
     Editor editor = e.getData(CommonDataKeys.EDITOR);
     PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
     
-    final VirtualFile file = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+    final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
     if (file != null && JavaScriptSupportLoader.isFlexMxmFile(file)) {
       editor = BaseCodeInsightAction.getInjectedEditor(project, editor);
       psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
@@ -51,7 +51,7 @@ abstract class BaseJSGenerateAction extends AnAction {
   @Override
   public void update(final AnActionEvent e) {
     final Pair<Editor, PsiFile> editorAndPsiFile = getEditorAndPsiFile(e);
-    final VirtualFile file = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+    final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
     final Editor editor = editorAndPsiFile.first;
     final PsiFile psiFile = editorAndPsiFile.second;
 

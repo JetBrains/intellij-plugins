@@ -64,7 +64,7 @@ public class RunDesignViewAction extends DumbAwareAction {
   @Nullable
   private static PsiFile getPsiFile(Project project, DataContext dataContext, boolean popupPlace) {
     if (popupPlace) {
-      final VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
+      final VirtualFile virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
       if (virtualFile != null) {
         return PsiManager.getInstance(project).findFile(virtualFile);
       }
