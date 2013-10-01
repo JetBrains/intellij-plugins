@@ -106,7 +106,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     // if caret stands on a member or whitespace, show diagram for the enclosing class
     final Editor editor = LangDataKeys.EDITOR.getData(context);
     if (editor != null) {
-      final PsiFile file = LangDataKeys.PSI_FILE.getData(context);
+      final PsiFile file = CommonDataKeys.PSI_FILE.getData(context);
       if (file != null) {
         PsiElement elementAtOffset = file.findElementAt(editor.getCaretModel().getOffset());
         final PsiNamedElement enclosing = PsiTreeUtil.getParentOfType(elementAtOffset, JSClass.class, JSFile.class, XmlFile.class);
