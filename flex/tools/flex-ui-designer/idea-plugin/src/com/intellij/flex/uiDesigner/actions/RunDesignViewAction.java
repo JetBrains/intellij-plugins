@@ -70,7 +70,7 @@ public class RunDesignViewAction extends DumbAwareAction {
       }
     }
     else {
-      Editor editor = PlatformDataKeys.EDITOR.getData(dataContext);
+      Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
       if (editor == null) {
         editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
       }

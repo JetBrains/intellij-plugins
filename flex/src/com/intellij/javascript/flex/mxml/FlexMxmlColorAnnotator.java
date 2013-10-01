@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
@@ -162,7 +163,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
     public AnAction getClickAction() {
       return new AnAction() {
         public void actionPerformed(final AnActionEvent e) {
-          final Editor editor = PlatformDataKeys.EDITOR.getData(e.getDataContext());
+          final Editor editor = CommonDataKeys.EDITOR.getData(e.getDataContext());
           if (editor != null) {
             Color currentColor = getColor(myColorValue);
             final Color color = ColorChooser

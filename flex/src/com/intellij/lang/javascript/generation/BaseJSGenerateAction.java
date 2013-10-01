@@ -34,7 +34,7 @@ abstract class BaseJSGenerateAction extends AnAction {
   private static Pair<Editor, PsiFile> getEditorAndPsiFile(final AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return Pair.create(null, null);
-    Editor editor = e.getData(PlatformDataKeys.EDITOR);
+    Editor editor = e.getData(CommonDataKeys.EDITOR);
     PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
     
     final VirtualFile file = e.getData(PlatformDataKeys.VIRTUAL_FILE);
