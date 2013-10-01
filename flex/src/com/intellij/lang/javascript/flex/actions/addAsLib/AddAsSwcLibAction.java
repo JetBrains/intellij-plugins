@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -50,7 +51,7 @@ public class AddAsSwcLibAction extends AnAction {
   @NotNull
   private static List<VirtualFile> getRoots(AnActionEvent e) {
     final Project project = getEventProject(e);
-    final VirtualFile[] files = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY);
+    final VirtualFile[] files = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
     if (project == null || files == null || files.length == 0) return Collections.emptyList();
 
     //final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
