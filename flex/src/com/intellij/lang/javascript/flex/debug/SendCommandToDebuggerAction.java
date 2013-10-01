@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -21,7 +22,7 @@ import javax.swing.*;
  */
 public class SendCommandToDebuggerAction extends AnAction {
   public void update(final AnActionEvent e) {
-    Project project = e.getData(PlatformDataKeys.PROJECT);
+    Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
 
     final boolean internal = ApplicationManagerEx.getApplicationEx().isInternal();
@@ -30,7 +31,7 @@ public class SendCommandToDebuggerAction extends AnAction {
   }
 
   public void actionPerformed(final AnActionEvent e) {
-    Project project = e.getData(PlatformDataKeys.PROJECT);
+    Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
 
     final XDebugSession xDebugSession = XDebuggerManager.getInstance(project).getCurrentSession();

@@ -32,6 +32,7 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.ui.JSFormatUtil;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -130,7 +131,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     }
 
     // handle PsiPackage (invoked when 'View as packages' mode is selected)
-    Project project = PlatformDataKeys.PROJECT.getData(context);
+    Project project = CommonDataKeys.PROJECT.getData(context);
     if (project != null) {
       VirtualFile file = PlatformDataKeys.VIRTUAL_FILE.getData(context);
       if (file != null) {

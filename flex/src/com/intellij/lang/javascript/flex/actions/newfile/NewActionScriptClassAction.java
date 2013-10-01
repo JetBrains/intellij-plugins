@@ -28,7 +28,7 @@ public class NewActionScriptClassAction extends AnAction {
   }
 
   private boolean isAvailable(DataContext dataContext) {
-    final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
+    final Project project = CommonDataKeys.PROJECT.getData(dataContext);
     final IdeView view = LangDataKeys.IDE_VIEW.getData(dataContext);
     if (project == null || view == null) return false;
 
@@ -58,7 +58,7 @@ public class NewActionScriptClassAction extends AnAction {
       return;
     }
 
-    final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
+    final Project project = CommonDataKeys.PROJECT.getData(dataContext);
 
     final PsiDirectory dir = view.getOrChooseDirectory();
     if (dir == null || project == null) return;

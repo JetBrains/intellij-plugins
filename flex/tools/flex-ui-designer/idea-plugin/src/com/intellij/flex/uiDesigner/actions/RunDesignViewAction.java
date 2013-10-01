@@ -5,6 +5,7 @@ import com.intellij.flex.uiDesigner.DesignerApplicationManager;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
@@ -33,7 +34,7 @@ public class RunDesignViewAction extends DumbAwareAction {
   @Override
   public void actionPerformed(final AnActionEvent event) {
     final DataContext dataContext = event.getDataContext();
-    XmlFile psiFile = (XmlFile)getPsiFile(PlatformDataKeys.PROJECT.getData(dataContext), dataContext, ActionPlaces.isPopupPlace(event.getPlace()));
+    XmlFile psiFile = (XmlFile)getPsiFile(CommonDataKeys.PROJECT.getData(dataContext), dataContext, ActionPlaces.isPopupPlace(event.getPlace()));
     assert psiFile != null;
 
     if (!DebugPathManager.IS_DEV) {
@@ -82,7 +83,7 @@ public class RunDesignViewAction extends DumbAwareAction {
   }
 
   private static boolean isEnabled(final DataContext dataContext, boolean popupPlace) {
-    final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
+    final Project project = CommonDataKeys.PROJECT.getData(dataContext);
     return project != null &&
            !DumbService.isDumb(project) &&
            DesignerApplicationManager.isApplicable(project, getPsiFile(project, dataContext, popupPlace));

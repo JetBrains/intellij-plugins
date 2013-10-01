@@ -4,6 +4,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.options.ConfigurationException;
@@ -119,7 +120,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
 
     addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Project project = PlatformDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext());
+        Project project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext());
         if (project == null) {
           project = ProjectManager.getInstance().getDefaultProject();
         }
