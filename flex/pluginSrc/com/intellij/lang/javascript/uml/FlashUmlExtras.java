@@ -7,6 +7,7 @@ import com.intellij.diagram.settings.DiagramConfigElement;
 import com.intellij.diagram.settings.DiagramConfigGroup;
 import com.intellij.diagram.util.DiagramUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +57,7 @@ public class FlashUmlExtras extends DiagramExtras<Object> {
 
   @Override
   public Object getData(final String dataId, final List<DiagramNode<Object>> diagramNodes, final DiagramBuilder builder) {
-    if (!PlatformDataKeys.NAVIGATABLE.is(dataId)) {
+    if (!CommonDataKeys.NAVIGATABLE.is(dataId)) {
       return null;
     }
 

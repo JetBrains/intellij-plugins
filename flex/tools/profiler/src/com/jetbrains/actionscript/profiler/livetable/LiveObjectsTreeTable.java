@@ -1,5 +1,6 @@
 package com.jetbrains.actionscript.profiler.livetable;
 
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
@@ -31,7 +32,7 @@ public class LiveObjectsTreeTable extends ColoredSortableTreeTable implements Da
   @Override
   @Nullable
   public Object getData(@NonNls String dataId) {
-    if (PlatformDataKeys.NAVIGATABLE.is(dataId)) {
+    if (CommonDataKeys.NAVIGATABLE.is(dataId)) {
       return navigatableSelectedItem();
     }
     return null;
