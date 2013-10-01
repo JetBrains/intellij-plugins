@@ -7,6 +7,7 @@ import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -26,6 +27,8 @@ import java.util.List;
  * @author Sergey Simonchik
  */
 public class JstdSettingsUtil {
+
+  private static final Key<Boolean> JSTD_CONFIG_FILES_IN_PROJECT = new Key<Boolean>("JSTD_CONFIG_FILES_IN_PROJECT");
 
   private JstdSettingsUtil() {}
 
@@ -56,6 +59,16 @@ public class JstdSettingsUtil {
     }
     Collection<VirtualFile> configs = FileTypeIndex.getFiles(JstdConfigFileType.INSTANCE, directorySearchScope);
     return Lists.newArrayList(configs);
+  }
+
+  public static boolean areJstdConfigFilesInProjectCached(@NotNull Project project) {
+    Boolean value = project.getUserData(JSTD_CONFIG_FILES_IN_PROJECT);
+    if (value != null) {
+      return value;
+    }
+    value = areJstdConfigFilesInProject(project);
+    project.putUserData(JSTD_CONFIG_FILES_IN_PROJECT, value);
+    return value;
   }
 
   public static boolean areJstdConfigFilesInProject(@NotNull Project project) {

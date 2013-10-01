@@ -1,10 +1,9 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.jstestdriver.idea.assertFramework.library.JstdLibraryUtil;
-import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
-import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.google.jstestdriver.idea.debug.JstdDebugProgramRunner;
 import com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer;
+import com.google.jstestdriver.idea.execution.JstdSettingsUtil;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -17,6 +16,8 @@ import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -53,6 +54,9 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
     Project project = element.getProject();
     JSFile jsFile = ObjectUtils.tryCast(element.getContainingFile(), JSFile.class);
     if (jsFile == null) {
+      return null;
+    }
+    if (!JstdSettingsUtil.areJstdConfigFilesInProjectCached(element.getProject())) {
       return null;
     }
     LineMarkerInfo lineMarkerInfo = getJstdLineMarkerInfo(project, jsFile, element);
