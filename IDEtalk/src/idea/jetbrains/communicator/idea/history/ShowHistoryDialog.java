@@ -20,6 +20,7 @@ import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
@@ -144,7 +145,7 @@ public class ShowHistoryDialog extends IdeaDialog {
     @Override
     @Nullable
     public Object getData(@NonNls String dataId) {
-      if (PlatformDataKeys.PROJECT.getName().equals(dataId)) {
+      if (CommonDataKeys.PROJECT.getName().equals(dataId)) {
         return myProject;
       }
       return null;

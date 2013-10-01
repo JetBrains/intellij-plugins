@@ -17,6 +17,7 @@ package com.jetbrains.maya;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
@@ -40,7 +41,7 @@ public class SendToMayaAction extends AnAction {
   }
 
   public void actionPerformed(AnActionEvent e) {
-    Project p = PlatformDataKeys.PROJECT.getData(e.getDataContext());
+    Project p = CommonDataKeys.PROJECT.getData(e.getDataContext());
 
     if (p != null) {
 
@@ -112,7 +113,7 @@ public class SendToMayaAction extends AnAction {
   @Nullable
   private static PyFile getPythonFile(AnActionEvent e) {
     VirtualFile vFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
-    Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
+    Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
 
     if (project != null && vFile != null) {
       final PsiManager psiManager = PsiManager.getInstance(project);
@@ -131,7 +132,7 @@ public class SendToMayaAction extends AnAction {
 
   private static boolean isPythonEditor(AnActionEvent e) {
     Editor editor = PlatformDataKeys.EDITOR.getData(e.getDataContext());
-    Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
+    Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
 
     if (project == null || editor == null) {
       return false;

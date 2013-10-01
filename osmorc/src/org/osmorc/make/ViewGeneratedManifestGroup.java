@@ -28,6 +28,7 @@ package org.osmorc.make;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -53,7 +54,7 @@ public class ViewGeneratedManifestGroup extends ActionGroup {
   public void update(AnActionEvent e) {
     // IDEA-79063 only show this when there are actually osmorc facets available.
     boolean enabled = false;
-    Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
+    Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
     if (project != null) {
       for (Module m : ModuleManager.getInstance(project).getModules()) {
         if (OsmorcFacet.hasOsmorcFacet(m)) {

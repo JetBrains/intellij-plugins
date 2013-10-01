@@ -17,6 +17,7 @@ package jetbrains.communicator.idea;
 
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
@@ -387,7 +388,7 @@ public class IDEAFacade implements IDEFacade {
     Project res = null;
 
     if (component != null) {
-      res = (Project) getData(component, PlatformDataKeys.PROJECT.getName());
+      res = (Project) getData(component, CommonDataKeys.PROJECT.getName());
     }
     else {
       IdeFrame[] frames = WindowManagerEx.getInstanceEx().getAllProjectFrames();
