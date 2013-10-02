@@ -17,7 +17,6 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
@@ -751,7 +750,13 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   static String getPropertyType(final JSNamedElement jsNamedElement) {
-    return jsNamedElement instanceof JSVariable ? ((JSVariable)jsNamedElement).getTypeString() : JSResolveUtil.getTypeFromSetAccessor(jsNamedElement);
+    if (jsNamedElement instanceof JSVariable) {
+      return ((JSVariable)jsNamedElement).getTypeString();
+    }
+    else {
+      JSType type = JSResolveUtil.getTypeFromSetAccessor(jsNamedElement);
+      return type != JSType.NO_TYPE ? type.getTypeText() : null;
+    }
   }
 
   private void appendSuperClassDescriptors(final Map<String, AnnotationBackedDescriptor> map,
