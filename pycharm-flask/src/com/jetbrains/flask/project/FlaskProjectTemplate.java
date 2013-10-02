@@ -22,6 +22,8 @@ import com.jetbrains.python.module.PyModuleService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+
 /**
  * @author yole
  */
@@ -36,6 +38,11 @@ public class FlaskProjectTemplate implements ProjectTemplate {
   @Override
   public String getDescription() {
     return "Creates a new Python Web application using the <a href=\"http://flask.pocoo.org\">Flask</a> microframework";
+  }
+
+  @Override
+  public Icon getIcon() {
+    return null;
   }
 
   @NotNull
