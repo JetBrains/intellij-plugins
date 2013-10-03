@@ -35,20 +35,8 @@ public class FlexLibraryConfigurable extends LibraryConfigurable {
     }
 
     @NotNull
-    public ModifiableModelEx getModifiableModel() {
+    public ModifiableModel getModifiableModel() {
       throw new UnsupportedOperationException();
-    }
-
-    @NotNull
-    @Override
-    public String[] getExcludedRootUrls() {
-      throw new UnsupportedOperationException("'getExcludedRootUrls' not implemented in " + getClass().getName());
-    }
-
-    @NotNull
-    @Override
-    public VirtualFile[] getExcludedRoots() {
-      throw new UnsupportedOperationException("'getExcludedRootFiles' not implemented in " + getClass().getName());
     }
 
     public LibraryTable getTable() {
