@@ -216,15 +216,10 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
       runManager.setTemporaryConfiguration(configuration);
     }
     runManager.setSelectedConfiguration(configuration);
-    if (configuration.isSingleton()) {
-      ProgramRunner programRunner = ProgramRunnerUtil.getRunner(executor.getId(), configuration);
-      if (programRunner != null) {
-        ExecutionEnvironment env = new ExecutionEnvironment(executor, programRunner, configuration, project);
-        ExecutionManager.getInstance(project).restartRunProfile(programRunner, env, null);
-      }
-    }
-    else {
-      ProgramRunnerUtil.executeConfiguration(project, configuration, executor);
+    ProgramRunner programRunner = ProgramRunnerUtil.getRunner(executor.getId(), configuration);
+    if (programRunner != null) {
+      ExecutionEnvironment env = new ExecutionEnvironment(executor, programRunner, configuration, project);
+      ExecutionManager.getInstance(project).restartRunProfile(programRunner, env, null);
     }
   }
 
