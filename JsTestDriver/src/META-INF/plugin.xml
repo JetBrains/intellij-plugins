@@ -41,7 +41,7 @@
     <fileTypeFactory implementation="com.google.jstestdriver.idea.config.JstdConfigFileTypeFactory"/>
     <configurationType implementation="com.google.jstestdriver.idea.execution.JstdConfigurationType"/>
     <programRunner implementation="com.google.jstestdriver.idea.execution.JstdRunProgramRunner"/>
-    <configurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer"/>
+    <runConfigurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRunConfigurationProducer"/>
     <applicationService serviceImplementation="com.google.jstestdriver.idea.server.JstdServerState"/>
     <projectService serviceImplementation="com.google.jstestdriver.idea.server.ui.JstdToolWindowManager"/>
     <fileBasedIndex implementation="com.google.jstestdriver.idea.config.JstdTestFilePathIndex"/>

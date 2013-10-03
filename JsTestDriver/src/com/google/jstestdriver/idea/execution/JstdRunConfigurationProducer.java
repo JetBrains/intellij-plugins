@@ -6,11 +6,10 @@ import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.intellij.execution.Location;
-import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.javascript.testFramework.JstdRunElement;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
 import com.intellij.javascript.testFramework.TestFileStructurePack;
@@ -20,6 +19,7 @@ import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -33,9 +33,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProducer {
+public class JstdRunConfigurationProducer extends RunConfigurationProducer<JstdRunConfiguration> {
 
-  private static final Logger LOG = Logger.getInstance(JstdRuntimeConfigurationProducer.class);
+  private static final Logger LOG = Logger.getInstance(JstdRunConfigurationProducer.class);
 
   private static final JstdRunSettingsProvider[] RUN_SETTINGS_PROVIDERS = {
       new JstdDirectoryRunSettingsProvider(),
@@ -44,15 +44,8 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       new JsFileRunSettingsProvider()
   };
 
-  private PsiElement mySourceElement;
-
-  public JstdRuntimeConfigurationProducer() {
+  public JstdRunConfigurationProducer() {
     super(JstdConfigurationType.getInstance());
-  }
-
-  @Override
-  public PsiElement getSourceElement() {
-    return mySourceElement;
   }
 
   private static void logTakenTime(String actionName, long startTimeNano, String... args) {
@@ -71,122 +64,13 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     logTakenTime("createConfigurationByElement", startTimeNano, args);
   }
 
-  private static void logDoneFindExistingByElement(long startTimeNano, String... args) {
-    logTakenTime("findExistingByElement", startTimeNano, args);
-  }
-
-  @Override
-  protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
-    RunConfiguration original = context.getOriginalConfiguration(null);
-    if (original != null && !ConfigurationTypeUtil.equals(original.getType(), JstdConfigurationType.getInstance())) {
-      return null;
-    }
-    long startTimeNano = System.nanoTime();
-    @SuppressWarnings({"unchecked"})
-    RunSettingsContext runSettingsContext = buildRunSettingsContext(location);
-    if (runSettingsContext == null) {
-      logDoneCreateConfigurationByElement(startTimeNano, "1");
-      return null;
-    }
-
-    final RunnerAndConfigurationSettings runnerSettings = cloneTemplateConfiguration(location.getProject(), null);
-    JstdRunConfiguration runConfiguration = ObjectUtils.tryCast(runnerSettings.getConfiguration(), JstdRunConfiguration.class);
-    if (runConfiguration == null) {
-      logDoneCreateConfigurationByElement(startTimeNano, "2");
-      return null;
-    }
-
-    JstdRunSettings settings = runSettingsContext.myRunSettings;
-    if (settings.getConfigFile().isEmpty()) {
-      JstdRunSettings clonedSettings = runConfiguration.getRunSettings();
-      JstdRunSettings.Builder builder = new JstdRunSettings.Builder(settings);
-      builder.setConfigFile(clonedSettings.getConfigFile());
-      settings = builder.build();
-    }
-    runConfiguration.setRunSettings(settings);
-
-    mySourceElement = runSettingsContext.myPsiElement;
-
-    String configurationName = runConfiguration.resetGeneratedName();
-    runConfiguration.setName(configurationName);
-    runnerSettings.setName(configurationName);
-
-    logDoneCreateConfigurationByElement(startTimeNano, "3");
-    return runnerSettings;
-  }
-
-  @SuppressWarnings({"RawUseOfParameterizedType"})
-  @Override
-  protected RunnerAndConfigurationSettings findExistingByElement(final Location location,
-                                                                 @NotNull final List<RunnerAndConfigurationSettings> existingConfigurations,
-                                                                 ConfigurationContext context) {
-    long startTimeNano = System.nanoTime();
-    RunSettingsContext runSettingsContext = buildRunSettingsContext(location);
-    if (runSettingsContext == null) {
-      logDoneFindExistingByElement(startTimeNano, "1");
-      return null;
-    }
-    final JstdRunSettings runSettingsPattern = runSettingsContext.myRunSettings;
-    RunnerAndConfigurationSettings bestRaCSettings = null;
-    for (RunnerAndConfigurationSettings candidateRaCSettings : existingConfigurations) {
-      JstdRunConfiguration runConfiguration = ObjectUtils.tryCast(candidateRaCSettings.getConfiguration(), JstdRunConfiguration.class);
-      if (runConfiguration == null) {
-        continue;
-      }
-      JstdRunSettings runSettingsCandidate = runConfiguration.getRunSettings();
-      TestType patternTestType = runSettingsPattern.getTestType();
-      if (patternTestType == runSettingsCandidate.getTestType()) {
-        if (runSettingsPattern.getTestType() == TestType.ALL_CONFIGS_IN_DIRECTORY) {
-          File dir1 = new File(runSettingsPattern.getDirectory());
-          File dir2 = new File(runSettingsCandidate.getDirectory());
-          if (dir1.isDirectory() && dir2.isDirectory() && dir1.equals(dir2)) {
-            bestRaCSettings = candidateRaCSettings;
-            break;
-          }
-        } else if (patternTestType == TestType.CONFIG_FILE) {
-          File configFilePattern = new File(runSettingsPattern.getConfigFile());
-          File configFileCandidate = new File(runSettingsCandidate.getConfigFile());
-          if (configFilePattern.isFile() && configFileCandidate.isFile() && configFilePattern.equals(configFileCandidate)) {
-            bestRaCSettings = candidateRaCSettings;
-            break;
-          }
-        } else if (patternTestType == TestType.JS_FILE || patternTestType == TestType.TEST_CASE || patternTestType == TestType.TEST_METHOD) {
-          File jsFilePattern = new File(runSettingsPattern.getJsFilePath());
-          File jsFileCandidate = new File(runSettingsCandidate.getJsFilePath());
-          boolean eq = jsFileCandidate.isFile() && jsFilePattern.equals(jsFileCandidate);
-          if (patternTestType == TestType.TEST_CASE) {
-            eq = eq && runSettingsPattern.getTestCaseName().equals(runSettingsCandidate.getTestCaseName());
-          }
-          if (patternTestType == TestType.TEST_METHOD) {
-            eq = eq && runSettingsPattern.getTestMethodName().equals(runSettingsCandidate.getTestMethodName());
-          }
-          if (eq) {
-            if (bestRaCSettings == null) {
-              bestRaCSettings = candidateRaCSettings;
-            } else {
-              JstdRunConfiguration bestRunConfiguration = ObjectUtils.tryCast(bestRaCSettings.getConfiguration(), JstdRunConfiguration.class);
-              if (bestRunConfiguration != null) {
-                JstdRunSettings bestRunSettings = bestRunConfiguration.getRunSettings();
-                if (!new File(bestRunSettings.getConfigFile()).isFile()) {
-                  bestRaCSettings = candidateRaCSettings;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    logDoneFindExistingByElement(startTimeNano, "2");
-    return bestRaCSettings;
-  }
-
   @Nullable
-  private static RunSettingsContext buildRunSettingsContext(@Nullable Location<?> location) {
+  private static JstdRunSettings buildRunSettingsContext(@Nullable Location<?> location) {
     if (location != null) {
       PsiElement element = location.getPsiElement();
       JstdRunSettings runSettings = findJstdRunSettings(element);
       if (runSettings != null) {
-        return new RunSettingsContext(runSettings, element);
+        return runSettings;
       }
     }
     return null;
@@ -204,18 +88,86 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
   }
 
   @Override
-  public int compareTo(Object o) {
-    return PREFERED;
+  protected boolean setupConfigurationFromContext(JstdRunConfiguration configuration,
+                                                  ConfigurationContext context,
+                                                  Ref<PsiElement> sourceElement) {
+    RunConfiguration original = context.getOriginalConfiguration(null);
+    if (original != null && !ConfigurationTypeUtil.equals(original.getType(), JstdConfigurationType.getInstance())) {
+      return false;
+    }
+    Project project = configuration.getProject();
+    if (project != null) {
+      if (!JstdSettingsUtil.areJstdConfigFilesInProjectCached(project)) {
+        return false;
+      }
+    }
+    long startTimeNano = System.nanoTime();
+    @SuppressWarnings({"unchecked"})
+    JstdRunSettings settings = buildRunSettingsContext(context.getLocation());
+    if (settings == null) {
+      logDoneCreateConfigurationByElement(startTimeNano, "1");
+      return false;
+    }
+
+    if (settings.getConfigFile().isEmpty()) {
+      JstdRunSettings clonedSettings = configuration.getRunSettings();
+      JstdRunSettings.Builder builder = new JstdRunSettings.Builder(settings);
+      builder.setConfigFile(clonedSettings.getConfigFile());
+      settings = builder.build();
+    }
+    configuration.setRunSettings(settings);
+
+    String configurationName = configuration.resetGeneratedName();
+    configuration.setName(configurationName);
+
+    logDoneCreateConfigurationByElement(startTimeNano, "3");
+
+    return true;
   }
 
-  private static class RunSettingsContext {
-    private final JstdRunSettings myRunSettings;
-    private final PsiElement myPsiElement;
-
-    private RunSettingsContext(JstdRunSettings runSettings, PsiElement psiElement) {
-      myRunSettings = runSettings;
-      myPsiElement = psiElement;
+  @Override
+  public boolean isConfigurationFromContext(JstdRunConfiguration configuration, ConfigurationContext context) {
+    JstdRunSettings patternRunSettings = buildRunSettingsContext(context.getLocation());
+    if (patternRunSettings == null) {
+      return false;
     }
+    JstdRunSettings candidateRunSettings = configuration.getRunSettings();
+    TestType patternTestType = patternRunSettings.getTestType();
+    if (patternTestType != candidateRunSettings.getTestType()) {
+      return false;
+    }
+    if (patternTestType == TestType.ALL_CONFIGS_IN_DIRECTORY) {
+      File dir1 = new File(patternRunSettings.getDirectory());
+      File dir2 = new File(candidateRunSettings.getDirectory());
+      if (dir1.isDirectory() && dir2.isDirectory() && FileUtil.filesEqual(dir1, dir2)) {
+        return true;
+      }
+    } else if (patternTestType == TestType.CONFIG_FILE) {
+      File configFilePattern = new File(patternRunSettings.getConfigFile());
+      File configFileCandidate = new File(candidateRunSettings.getConfigFile());
+      if (configFilePattern.isFile()
+          && configFileCandidate.isFile()
+          && FileUtil.filesEqual(configFilePattern, configFileCandidate)) {
+        return true;
+      }
+    } else if (patternTestType == TestType.JS_FILE
+               || patternTestType == TestType.TEST_CASE
+               || patternTestType == TestType.TEST_METHOD) {
+      File patternJsFile = new File(patternRunSettings.getJsFilePath());
+      File candidateJsFile = new File(candidateRunSettings.getJsFilePath());
+      boolean eq = candidateJsFile.isFile() && FileUtil.filesEqual(patternJsFile, candidateJsFile);
+      if (patternTestType == TestType.TEST_CASE) {
+        eq = eq && patternRunSettings.getTestCaseName().equals(candidateRunSettings.getTestCaseName());
+      }
+      if (patternTestType == TestType.TEST_METHOD) {
+        eq = eq && patternRunSettings.getTestCaseName().equals(candidateRunSettings.getTestCaseName());
+        eq = eq && patternRunSettings.getTestMethodName().equals(candidateRunSettings.getTestMethodName());
+      }
+      if (eq) {
+        return true;
+       }
+    }
+    return false;
   }
 
   private interface JstdRunSettingsProvider {
@@ -335,4 +287,5 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
   private static String getPath(@NotNull VirtualFile virtualFile) {
     return FileUtil.toSystemDependentName(virtualFile.getPath());
   }
+
 }
