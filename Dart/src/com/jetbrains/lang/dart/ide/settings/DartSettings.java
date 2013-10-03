@@ -45,7 +45,7 @@ public class DartSettings {
   private final String sdkUrl;
 
   public DartSettings(String path) {
-    sdkUrl = StringUtil.isEmpty(VirtualFileManager.extractProtocol(path)) ? VfsUtil.pathToUrl(path) : path;
+    sdkUrl = StringUtil.isEmpty(VirtualFileManager.extractProtocol(path)) ? VfsUtilCore.pathToUrl(path) : path;
   }
 
   public String getSdkPath() {
@@ -213,6 +213,7 @@ public class DartSettings {
         final File rootDir = new File(FileUtil.toSystemDependentName(sdkPath));
         final List<File> dartFiles = findDartFiles(rootDir);
         final List<VirtualFile> vFiles = new ArrayList<VirtualFile>();
+
         for (File file : dartFiles) {
           VirtualFile vf = LocalFileSystem.getInstance().findFileByIoFile(file);
           if (vf == null) {
@@ -222,10 +223,12 @@ public class DartSettings {
             vFiles.add(vf);
           }
         }
+
         ScriptingLibraryModel libraryModel = libraryManager.getLibraryByName(DartBundle.message("dart.sdk.name"));
         if (libraryModel != null) {
           libraryManager.removeLibrary(libraryModel);
         }
+
         libraryModel = libraryManager.createLibrary(
           DartBundle.message("dart.sdk.name"),
           VfsUtilCore.toVirtualFileArray(vFiles),
@@ -234,13 +237,16 @@ public class DartSettings {
           ScriptingLibraryModel.LibraryLevel.GLOBAL,
           false
         );
+
         libraryModel.setFrameworkDescriptor(new ScriptingFrameworkDescriptor(
           DartBundle.message("dart.sdk.name"),
           DartSdkUtil.getSdkVersion(FileUtil.toSystemDependentName(sdkPath)))
         );
-        final JSLibraryMappings mappings = ServiceManager.getService(myProject, JSLibraryMappings.class);
-        mappings.associateWithProject(DartBundle.message("dart.sdk.name"));
+
+        JSLibraryMappings.getInstance(myProject).associateWithProject(DartBundle.message("dart.sdk.name"));
+
         libraryManager.commitChanges();
+
         return libraryModel;
       }
     });
