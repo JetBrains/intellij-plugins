@@ -2,7 +2,7 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.jstestdriver.idea.assertFramework.library.JstdLibraryUtil;
 import com.google.jstestdriver.idea.debug.JstdDebugProgramRunner;
-import com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer;
+import com.google.jstestdriver.idea.execution.JstdRunConfigurationProducer;
 import com.google.jstestdriver.idea.execution.JstdSettingsUtil;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
@@ -10,10 +10,12 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.execution.*;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.actions.ConfigurationFromContext;
+import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.executors.DefaultRunExecutor;
-import com.intellij.execution.junit.RuntimeConfigurationProducer;
-import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
@@ -179,19 +181,20 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
       return;
     }
     DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
-    JstdRuntimeConfigurationProducer jstdOriginalProducer = getJstdRuntimeConfigurationProducer();
+    RunConfigurationProducer jstdOriginalProducer = getJstdRunConfigurationProducer();
     if (jstdOriginalProducer == null) {
       return;
     }
-    Location<PsiElement> location = PsiLocation.fromPsiElement(element);
     ConfigurationContext context = ConfigurationContext.getFromContext(dataContext);
-    RuntimeConfigurationProducer producer = jstdOriginalProducer.createProducer(location, context);
     boolean created = false;
-    RunnerAndConfigurationSettings configuration = producer.findExistingConfiguration(location, context);
+    RunnerAndConfigurationSettings configuration = jstdOriginalProducer.findExistingConfiguration(context);
     if (configuration == null) {
       created = true;
-      configuration = producer.getConfiguration();
-      if (configuration == null) {
+      ConfigurationFromContext fromContext = jstdOriginalProducer.createConfigurationFromContext(context);
+      if (fromContext != null) {
+        configuration = fromContext.getConfigurationSettings();
+      }
+      else {
         return;
       }
     }
@@ -200,8 +203,8 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
   }
 
   @Nullable
-  private static JstdRuntimeConfigurationProducer getJstdRuntimeConfigurationProducer() {
-    return RuntimeConfigurationProducer.getInstance(JstdRuntimeConfigurationProducer.class);
+  private static RunConfigurationProducer getJstdRunConfigurationProducer() {
+    return RunConfigurationProducer.getInstance(JstdRunConfigurationProducer.class);
   }
 
   private static void execute(@NotNull Project project,
@@ -214,12 +217,11 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
     }
     runManager.setSelectedConfiguration(configuration);
     if (configuration.isSingleton()) {
-      ExecutionTarget activeTarget = ExecutionTargetManager.getActiveTarget(project);
-      ExecutionManager.getInstance(project).restartRunProfile(project,
-                                                              executor,
-                                                              activeTarget,
-                                                              configuration,
-                                                              (RunContentDescriptor)null);
+      ProgramRunner programRunner = ProgramRunnerUtil.getRunner(executor.getId(), configuration);
+      if (programRunner != null) {
+        ExecutionEnvironment env = new ExecutionEnvironment(executor, programRunner, configuration, project);
+        ExecutionManager.getInstance(project).restartRunProfile(programRunner, env, null);
+      }
     }
     else {
       ProgramRunnerUtil.executeConfiguration(project, configuration, executor);
