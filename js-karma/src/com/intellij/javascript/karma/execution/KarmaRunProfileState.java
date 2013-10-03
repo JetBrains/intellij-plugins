@@ -112,7 +112,7 @@ public class KarmaRunProfileState implements RunProfileState {
 
     ProcessHandler processHandler = session.getProcessHandler();
     DefaultExecutionResult executionResult = new DefaultExecutionResult(smtRunnerConsoleView, processHandler);
-    executionResult.setRestartActions(new ToggleAutoTestAction());
+    executionResult.setRestartActions(new ToggleAutoTestAction(myExecutionEnvironment));
     return executionResult;
   }
 
