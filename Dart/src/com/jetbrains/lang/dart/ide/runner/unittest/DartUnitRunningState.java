@@ -79,7 +79,7 @@ public class DartUnitRunningState extends CommandLineState {
     consoleView.attachToProcess(processHandler);
 
     DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
-    executionResult.setRestartActions(new ToggleAutoTestAction());
+    executionResult.setRestartActions(new ToggleAutoTestAction(getEnvironment()));
     return executionResult;
   }
 

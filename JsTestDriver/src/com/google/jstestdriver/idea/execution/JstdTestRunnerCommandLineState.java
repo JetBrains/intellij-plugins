@@ -8,13 +8,11 @@ import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.jstestdriver.JsTestDriverServer;
 import com.google.jstestdriver.idea.TestRunner;
-import com.google.jstestdriver.idea.util.EscapeUtils;
-import com.intellij.javascript.testFramework.TestFileStructureManager;
-import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
+import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.google.jstestdriver.idea.util.TestFileScope;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
@@ -22,7 +20,6 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
@@ -34,6 +31,8 @@ import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.javascript.testFramework.TestFileStructureManager;
+import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -93,7 +92,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
     consoleView.attachToProcess(processHandler);
 
     DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
-    executionResult.setRestartActions(new ToggleAutoTestAction());
+    executionResult.setRestartActions(new ToggleAutoTestAction(getEnvironment()));
     return executionResult;
   }
 
