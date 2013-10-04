@@ -418,7 +418,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     final NotificationListener listener = new NotificationListener.Adapter() {
       @Override
       protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
-        Messages.showErrorDialog(project, FlexBundle.message("flexmojos4.details.start") + details,
+        Messages.showErrorDialog(project, FlexBundle.message("flexmojos4.details.start", details),
                                  FlexBundle.message("flexmojos.project.import"));
         notification.expire();
       }
