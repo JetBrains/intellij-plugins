@@ -45,7 +45,9 @@ public class GherkinPsiUtil {
       for (int i = 1; i < groupCount; i++) {
         final int start = match.beginOffset(i);
         final int end = match.endOffset(i);
-        parameterRanges.add(new TextRange(start, end).shiftRight(shiftOffset));
+        if (start >= 0 && end >= 0) {
+          parameterRanges.add(new TextRange(start, end).shiftRight(shiftOffset));
+        }
       }
     }
 
