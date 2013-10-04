@@ -38,6 +38,7 @@ import com.intellij.ui.components.JBList;
 import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -174,13 +175,13 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
     return types.toArray(new Type[types.size()]);
   }
 
-  private static void execute(@NotNull Executor executor, @NotNull PsiElement element) {
+  private static void execute(@NotNull Executor executor, @NotNull final PsiElement element) {
     Project project = element.getProject();
     Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
     if (editor == null) {
       return;
     }
-    DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
+    DataContext dataContext = createDataContext(editor, element);
     RunConfigurationProducer jstdOriginalProducer = getJstdRunConfigurationProducer();
     if (jstdOriginalProducer == null) {
       return;
@@ -200,6 +201,20 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
     }
 
     execute(project, executor, configuration, created);
+  }
+
+  private static DataContext createDataContext(@NotNull Editor editor, @NotNull final PsiElement element) {
+    final DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
+    return new DataContext() {
+      @Nullable
+      @Override
+      public Object getData(@NonNls String dataId) {
+        if (Location.DATA_KEY.is(dataId)) {
+          return new PsiLocation<PsiElement>(element.getProject(), element);
+        }
+        return dataContext.getData(dataId);
+      }
+    };
   }
 
   @Nullable
