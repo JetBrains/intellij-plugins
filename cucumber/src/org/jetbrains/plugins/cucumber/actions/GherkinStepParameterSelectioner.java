@@ -5,6 +5,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinPsiUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
@@ -30,30 +32,41 @@ public class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
   }
 
   @Override
-  public boolean canSelect(PsiElement e) {
+  public boolean canSelect(@NotNull PsiElement e) {
     return e.getParent() instanceof GherkinStep;
   }
 
+  @NotNull
   @Override
-  public List<TextRange> select(final PsiElement e, final CharSequence editorText, final int cursorOffset, final Editor editor) {
+  public List<TextRange> select(@NotNull final PsiElement e,
+                                @NotNull final CharSequence editorText,
+                                final int cursorOffset,
+                                @NotNull final Editor editor) {
     final List<TextRange> result = new ArrayList<TextRange>();
-    if (editor.getSettings().isCamelWords()){
+    if (editor.getSettings().isCamelWords()) {
       result.addAll(super.select(e, editorText, cursorOffset, editor));
     }
     final GherkinStep step = (GherkinStep)e.getParent();
-    final CucumberStepReference reference = (CucumberStepReference)step.getReference();
-    final AbstractStepDefinition definition = reference != null ? reference.resolveToDefinition() : null;
-    if (definition != null) {
-      final List<TextRange> ranges =
-        GherkinPsiUtil.buildParameterRanges(step, definition, step.getTextOffset() + reference.getRangeInElement().getStartOffset());
-      result.addAll(ranges);
-      result.addAll(buildAdditionalRanges(ranges, editorText));
+    final PsiReference[] references = step.getReferences();
+    for (PsiReference reference : references) {
+      if (reference instanceof CucumberStepReference) {
+        final AbstractStepDefinition definition = ((CucumberStepReference)reference).resolveToDefinition();
+        if (definition != null) {
+          final List<TextRange> ranges =
+            GherkinPsiUtil.buildParameterRanges(step, definition, step.getTextOffset() + reference.getRangeInElement().getStartOffset());
+          if (ranges != null) {
+            result.addAll(ranges);
+            result.addAll(buildAdditionalRanges(ranges, editorText));
+          }
+        }
+      }
     }
     buildAdditionalRanges(result, editorText);
     return result;
   }
 
-  private static List<TextRange> buildAdditionalRanges(final List<TextRange> ranges, final CharSequence editorText) {
+  @NotNull
+  private static List<TextRange> buildAdditionalRanges(@NotNull final List<TextRange> ranges, @NotNull final CharSequence editorText) {
     final List<TextRange> result = new ArrayList<TextRange>();
     for (TextRange textRange : ranges) {
       if (textRange.isEmpty()) continue;
@@ -62,18 +75,34 @@ public class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
     return result;
   }
 
-  private static void addRangesForText(final List<TextRange> result, final TextRange textRange, final CharSequence charSequence) {
+  private static void addRangesForText(@NotNull final List<TextRange> result,
+                                       @NotNull final TextRange textRange,
+                                       @NotNull final CharSequence charSequence) {
     final int startOffset = textRange.getStartOffset();
     final int endOffset = textRange.getEndOffset();
     final String text = charSequence.subSequence(startOffset, endOffset).toString();
     for (Pair<String, String> startEnd : START_END) {
       final String start = startEnd.first;
       final String end = startEnd.second;
+
       if (text.startsWith(start) && text.endsWith(end)) {
-        final TextRange newRange = new TextRange(startOffset + start.length(), endOffset - end.length());
+        final TextRange newRange = TextRange.create(startOffset + start.length(), endOffset - end.length());
         if (!newRange.isEmpty()) {
           result.add(newRange);
           addRangesForText(result, newRange, charSequence);
+        }
+      }
+
+      //with edges
+      int startOffsetWithEdge = startOffset - start.length();
+      int endOffsetWithEdge = endOffset + end.length();
+      if (startOffsetWithEdge >= 0 && endOffsetWithEdge <= charSequence.length()) {
+        final String textWithEdges = charSequence.subSequence(startOffsetWithEdge, endOffsetWithEdge).toString();
+        if (textWithEdges.startsWith(start) && textWithEdges.endsWith(end)) {
+          final TextRange newRange = TextRange.create(startOffsetWithEdge, endOffsetWithEdge);
+          if (!newRange.isEmpty()) {
+            result.add(newRange);
+          }
         }
       }
     }
