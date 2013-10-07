@@ -15,12 +15,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
 
-
-
   public ActionScriptCodeStylePanel(final CodeStyleSettings settings) {
     super(settings);
-    mySpaceAfterTypeRefColonCheckBox.setVisible(true);
-    mySpaceBeforeTypeRefColonCheckBox.setVisible(true);
     myNamingConventionsPane.setVisible(true);
     myFormattingOptionsPane.setVisible(true);
     myIndentPackageChildren.setVisible(true);

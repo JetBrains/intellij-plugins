@@ -61,11 +61,19 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                           CodeStyleSettingsCustomizable.SPACES_OTHER);
       consumer
         .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_AFTER_DOTS_IN_REST_PARAMETER",
-                          "After '...' in rest parameter",
+                          JSBundle.message("space.after.dots.in.rest.parameter"),
                           CodeStyleSettingsCustomizable.SPACES_OTHER);
       consumer.showCustomOption(JSCodeStyleSettings.class, "SPACE_BEFORE_FUNCTION_LEFT_PARENTH",
                                 JSBundle.message("space.before.function.left.parenth"),
                                 CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES);
+      consumer
+        .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_BEFORE_TYPE_COLON",
+                          JSBundle.message("space.before.type.colon"),
+                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+      consumer
+        .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_AFTER_TYPE_COLON",
+                          JSBundle.message("space.after.type.colon"),
+                          CodeStyleSettingsCustomizable.SPACES_OTHER);
     }
     else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
       List<String> blankLinesOptions = new ArrayList<String>();
