@@ -2,6 +2,7 @@ package org.jetbrains.plugins.cucumber.java.resolve;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
@@ -24,5 +25,10 @@ public abstract class BaseCucumberJavaResolveTest extends CucumberResolveTest {
   @Override
   protected String getRelatedTestDataPath() {
     return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "resolve";
+  }
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CucumberJavaTestUtil.createCucumberProjectDescriptor();
   }
 }
