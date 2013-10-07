@@ -602,6 +602,9 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
             PsiReference ref = null;
             String tagName = ((XmlTag)tag).getLocalName();
             String attrName = ((XmlAttribute)parent).getName();
+            String attrValue = ((XmlAttribute)parent).getValue();
+
+            if (attrValue != null && attrValue.contains("{")) return PsiReference.EMPTY_ARRAY;
 
             if (FlexStateElementNames.NAME.equals(attrName)) {
               if ("State".equals(tagName)) {
