@@ -21,7 +21,7 @@ import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.highlight.OgnlHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -41,7 +41,7 @@ public class OgnlTemplateContextType extends TemplateContextType {
       return true;
     }
 
-    return PsiUtilBase.getLanguageAtOffset(psiFile, offset) == OgnlLanguage.INSTANCE;
+    return PsiUtilCore.getLanguageAtOffset(psiFile, offset) == OgnlLanguage.INSTANCE;
   }
 
   @Override
