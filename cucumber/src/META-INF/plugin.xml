@@ -6,7 +6,7 @@
 
   <description>Provides support of Gherkin language</description>
 
-  <version>1.1</version>
+  <version>1.2</version>
   <depends>com.intellij.modules.xml</depends>
   <idea-version since-build="123.0" until-build="133.0"/>
   <vendor>JetBrains</vendor>
@@ -66,10 +66,8 @@
 
     <extendWordSelectionHandler implementation="org.jetbrains.plugins.cucumber.actions.GherkinStepParameterSelectioner"/>
 
-    <lang.refactoringSupport language="Gherkin"
-                             implementationClass="org.jetbrains.plugins.cucumber.refactoring.GherkinRefactoringSupportProvider"/>
-
     <gotoRelatedProvider implementation="org.jetbrains.plugins.cucumber.navigation.CucumberGoToRelatedProvider"/>
+    <renameHandler implementation="org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinInplaceRenameHandler"/>
 
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
