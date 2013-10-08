@@ -14,11 +14,6 @@ import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
  * Date: 7/20/12
  */
 public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-  }
-
   protected void checkReference(@NotNull final String step, @Nullable final String stepDefinitionName) {
     final CucumberStepReference ref = (CucumberStepReference)findReferenceBySignature(step);
     assert ref != null;
