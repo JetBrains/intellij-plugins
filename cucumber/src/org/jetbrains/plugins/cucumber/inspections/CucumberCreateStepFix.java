@@ -122,7 +122,16 @@ public class CucumberCreateStepFix implements LocalQuickFix {
           }
         });
 
-      popupStep.showCenteredInCurrentWindow(step.getProject());
+      if (!ApplicationManager.getApplication().isUnitTestMode()) {
+        popupStep.showCenteredInCurrentWindow(step.getProject());
+      } else {
+        new WriteCommandAction.Simple(step.getProject()) {
+          @Override
+          protected void run() throws Throwable {
+            createStepDefinition(step, files.get(1));
+          }
+        }.execute();
+      }
     }
     else {
       createFileOrStepDefinition(step, null);
