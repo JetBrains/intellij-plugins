@@ -197,7 +197,11 @@ public class CucumberCompletionContributor extends CompletionContributor {
           ranges.add(new TextRange(m.start(), m.end()));
         }
 
-        result.addElement(LookupElementBuilder.create(text).withInsertHandler(new StepInsertHandler(ranges)));
+        final PsiElement element = definition.getElement();
+        final LookupElementBuilder lookup = element != null 
+                                            ? LookupElementBuilder.create(element, text).bold()
+                                            : LookupElementBuilder.create(text);
+        result.addElement(lookup.withInsertHandler(new StepInsertHandler(ranges)));
       }
     }
   }

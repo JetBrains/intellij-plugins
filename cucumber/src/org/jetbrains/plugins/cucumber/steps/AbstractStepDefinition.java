@@ -39,6 +39,7 @@ public abstract class AbstractStepDefinition {
     return pattern != null && new Perl5Matcher().contains(stepName, pattern);
   }
 
+  @Nullable
   public PsiElement getElement() {
     return myElementPointer.getElement();
   }
