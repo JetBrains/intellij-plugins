@@ -13,11 +13,20 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 @TestDataPath("$CONTENT_ROOT/testData/selectWord")
 public class GherkinStepParameterSelectionerTest extends CucumberCodeInsightTestCase {
 
-  public void testStepWithQuotedString() throws Exception {
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
     myFixture.configureByFile("MyStepdefs.java");
+  }
+
+  public void testStepWithQuotedString() throws Exception {
     doTest();
   }
 
+  public void testScenarioStepWithTag() throws Exception {
+    doTest();
+  }
+  
   private void doTest() {
     CodeInsightTestUtil.doWordSelectionTestOnDirectory(myFixture, getTestName(true), "feature");
   }

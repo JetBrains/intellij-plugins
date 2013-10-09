@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.cucumber.actions;
 
 import com.intellij.codeInsight.editorActions.wordSelection.AbstractWordSelectioner;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -9,6 +10,8 @@ import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinPsiUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
+import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
+import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
@@ -33,7 +36,7 @@ public class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
 
   @Override
   public boolean canSelect(@NotNull PsiElement e) {
-    return e.getParent() instanceof GherkinStep;
+    return e.getParent() instanceof GherkinStep || e.getParent() instanceof GherkinStepsHolder;
   }
 
   @NotNull
@@ -46,22 +49,35 @@ public class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
     if (editor.getSettings().isCamelWords()) {
       result.addAll(super.select(e, editorText, cursorOffset, editor));
     }
-    final GherkinStep step = (GherkinStep)e.getParent();
-    final PsiReference[] references = step.getReferences();
-    for (PsiReference reference : references) {
-      if (reference instanceof CucumberStepReference) {
-        final AbstractStepDefinition definition = ((CucumberStepReference)reference).resolveToDefinition();
-        if (definition != null) {
-          final List<TextRange> ranges =
-            GherkinPsiUtil.buildParameterRanges(step, definition, step.getTextOffset() + reference.getRangeInElement().getStartOffset());
-          if (ranges != null) {
-            result.addAll(ranges);
-            result.addAll(buildAdditionalRanges(ranges, editorText));
+    final PsiElement parent = e.getParent();
+    if (parent instanceof GherkinStep) {
+      final GherkinStep step = (GherkinStep)parent;
+      final PsiReference[] references = step.getReferences();
+      for (PsiReference reference : references) {
+        if (reference instanceof CucumberStepReference) {
+          final AbstractStepDefinition definition = ((CucumberStepReference)reference).resolveToDefinition();
+          if (definition != null) {
+            final List<TextRange> ranges =
+              GherkinPsiUtil.buildParameterRanges(step, definition, step.getTextOffset() + reference.getRangeInElement().getStartOffset());
+            if (ranges != null) {
+              result.addAll(ranges);
+              result.addAll(buildAdditionalRanges(ranges, editorText));
+            }
           }
         }
       }
+      buildAdditionalRanges(result, editorText);
+    } else if (parent instanceof GherkinStepsHolder) {
+      final ASTNode stepHolderNode = parent.getNode();
+      if (stepHolderNode != null) {
+        final ASTNode keyword = stepHolderNode.findChildByType(GherkinTokenTypes.KEYWORDS);
+        if (keyword != null) {
+          result.add(TextRange.create(keyword.getTextRange().getStartOffset(), parent.getTextRange().getEndOffset()));
+        }
+      }
+      result.add(parent.getTextRange());
     }
-    buildAdditionalRanges(result, editorText);
+    
     return result;
   }
 
