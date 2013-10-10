@@ -1112,6 +1112,11 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
+  protected void checkCallArgumentType(JSParameter p, JSExpression expression, JSCallExpression node, JSFunction resolveResult) {
+    checkExpressionIsAssignableToVariable(p, expression, node.getContainingFile(), "javascript.argument.type.mismatch", false);
+  }
+
+  @Override
   protected void checkExpressionIsAssignableToVariable(JSVariable p,
                                                        final JSExpression expr,
                                                        PsiFile containingFile,
