@@ -69,8 +69,7 @@ public class XmlObjectEvaluator {
         value.computeChildren(node);
       }
 
-      final FakeCompositeNode rootNode = getRootNode();
-      rootNode.myCallback.evaluated(rootNode.toPresentableSting(0), MONOSPACED_FONT);
+      getRootNode().myCallback.evaluated(getRootNode().toPresentableSting(0), MONOSPACED_FONT);
     }
 
     private FakeCompositeNode getRootNode() {
