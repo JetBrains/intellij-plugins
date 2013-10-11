@@ -15,8 +15,16 @@ else
     end
 
     def self.plugin_rm_reporter_init(options)
-      Minitest.reporter.reporters.clear
-      self.reporter << MyReporter.new(options)
+      if have_minitest_reporters(self.reporter.reporters)
+        self.reporter.reporters.clear
+        self.reporter << MyReporter.new(options)
+      end
+    end
+
+    private
+
+    def self.have_minitest_reporters(reporters)
+      (reporter.reporters.index { |r| r.class.name == "Minitest::Reporters::RubyMineReporter" }).nil?
     end
 
     class MyReporter
