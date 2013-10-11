@@ -29,9 +29,9 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
-import com.intellij.lang.javascript.psi.types.JSPrimitiveTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.primitives.JSObjectType;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.lang.javascript.validation.*;
@@ -1514,7 +1514,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   protected boolean isCallableType(boolean inNewExpression, JSType type) {
     final String typeText = type.getTypeText();
     return "Class".equals(typeText) ||
-           inNewExpression && (type instanceof JSPrimitiveTypeImpl.JSObjectType) ||
+           inNewExpression && type instanceof JSObjectType ||
            JSTypeUtils.hasFunctionType(type);
   }
 
