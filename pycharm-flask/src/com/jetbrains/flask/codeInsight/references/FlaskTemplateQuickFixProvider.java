@@ -75,7 +75,10 @@ public class FlaskTemplateQuickFixProvider implements PyUnresolvedReferenceQuick
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       PsiDirectory templatesDir = FlaskTemplateManager.getTemplatesDirectory(descriptor.getPsiElement());
       if (templatesDir == null) return;
-      PsiFile file = templatesDir.createFile(myTemplateName);
+      PsiFile file = templatesDir.findFile(myTemplateName);
+      if (file == null) {
+        file = templatesDir.createFile(myTemplateName);
+      }
       file.navigate(true);
     }
   }
