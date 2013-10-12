@@ -26,7 +26,7 @@ public class HbConfigurationPage implements SearchableConfigurable {
   @NotNull
   @Override
   public String getId() {
-    return "editor.preferences.handlebarsOptions";
+    return "reference.settings.ide.settings.handlebars.mustache";
   }
 
   @Override
