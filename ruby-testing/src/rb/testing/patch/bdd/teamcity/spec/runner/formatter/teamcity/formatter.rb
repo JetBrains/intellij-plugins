@@ -89,6 +89,7 @@ module Spec
 
           # Initializes
           @groups_stack = []
+          @ex_group_finished_event_supported = nil
 
           # check out output stream is a Drb stream, in such case all commands should be send there
           redirect_output_via_drb = !output_stream.nil? && (defined? DRb::DRbObject) && output_stream.kind_of?(DRb::DRbObject)
