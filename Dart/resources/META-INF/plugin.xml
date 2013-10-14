@@ -231,10 +231,12 @@
     <completion.contributor language="Dart"
                             implementationClass="com.jetbrains.lang.dart.ide.completion.DartReferenceCompletionContributor"/>
 
-    <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartExternalAnnotator"/>
+    <!--<externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartExternalAnnotator"/>-->
+    <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator"/>
     <!--<annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartUnresolvedReferenceVisitor"/>-->
 
+    <projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalyzerService" serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
 
