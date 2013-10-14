@@ -4,7 +4,6 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.SmartList;
-import com.jetbrains.lang.dart.analyzer.AnalyzerMessage;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -21,15 +20,15 @@ public enum DartResolverErrorCode {
   UNDEFINED_IDENTIFIER {
     @NotNull
     @Override
-    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       return findFixesForUnresolved(file, startOffset);
     }
   }, UNDEFINED_CLASS {
     @NotNull
     @Override
-    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // Undefined class '%s'
-      String className = DartPresentableUtil.findLastQuotedWord(message.getMessage());
+      String className = DartPresentableUtil.findLastQuotedWord(message);
       if (className != null) {
         final List<BaseCreateFix> result = new SmartList<BaseCreateFix>(new CreateDartClassAction(className));
         DartFixesUtil.suggestImports(result, file, className);
@@ -41,8 +40,8 @@ public enum DartResolverErrorCode {
   UNDEFINED_GETTER {
     @NotNull
     @Override
-    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
-      String name = DartPresentableUtil.findFirstQuotedWord(message.getMessage());
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
+      String name = DartPresentableUtil.findFirstQuotedWord(message);
       return name == null ?
              Collections.<IntentionAction>emptyList() :
              Arrays.asList(new CreateDartGetterSetterAction(name, true, isStaticContext(file, startOffset)));
@@ -51,8 +50,8 @@ public enum DartResolverErrorCode {
   UNDEFINED_SETTER {
     @NotNull
     @Override
-    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
-      String name = DartPresentableUtil.findFirstQuotedWord(message.getMessage());
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
+      String name = DartPresentableUtil.findFirstQuotedWord(message);
       return name == null ?
              Collections.<IntentionAction>emptyList() :
              Arrays.asList(new CreateDartGetterSetterAction(name, false, isStaticContext(file, startOffset)));
@@ -60,36 +59,34 @@ public enum DartResolverErrorCode {
   }, UNDEFINED_OPERATOR {
     @NotNull
     @Override
-    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // There is no such operator '' in 'A'
-      String operator = DartPresentableUtil.findFirstQuotedWord(message.getMessage());
+      String operator = DartPresentableUtil.findFirstQuotedWord(message);
       return operator == null ? Collections.<IntentionAction>emptyList() : Arrays.asList(new CreateDartOperatorAction(operator));
     }
   },
   CANNOT_RESOLVE_METHOD {
     @NotNull
     @Override
-    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // cannot resolve method '%s'
-      final String messageText = message.getMessage();
-      String functionName = DartPresentableUtil.findLastQuotedWord(messageText);
+      String functionName = DartPresentableUtil.findLastQuotedWord(message);
       return functionName == null ? Collections.<IntentionAction>emptyList()
                                   : Arrays.asList(new CreateGlobalDartFunctionAction(functionName));
     }
   }, CANNOT_RESOLVE_METHOD_IN_CLASS {
     @NotNull
     @Override
-    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // cannot resolve method '%s' in class '%s'
-      final String messageText = message.getMessage();
-      String functionName = DartPresentableUtil.findFirstQuotedWord(messageText);
+      String functionName = DartPresentableUtil.findFirstQuotedWord(message);
       return functionName == null ? Collections.<IntentionAction>emptyList()
                                   : Arrays.asList(new CreateDartMethodAction(functionName, true));
     }
   }, FIELD_DOES_NOT_HAVE_A_GETTER {
     @NotNull
     @Override
-    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // Field does not have a getter
       PsiElement elementAt = file.findElementAt(startOffset);
       return elementAt == null ? Collections.<IntentionAction>emptyList() : Arrays.asList(new CreateDartGetterSetterAction(
@@ -101,7 +98,7 @@ public enum DartResolverErrorCode {
   }, FIELD_DOES_NOT_HAVE_A_SETTER {
     @NotNull
     @Override
-    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // Field does not have a setter
       PsiElement elementAt = file.findElementAt(startOffset);
       return elementAt == null ? Collections.<IntentionAction>emptyList() : Arrays.asList(new CreateDartGetterSetterAction(
@@ -114,7 +111,7 @@ public enum DartResolverErrorCode {
   NOT_A_STATIC_FIELD {
     @NotNull
     @Override
-    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // "%s" is not a static field
       DartComponent target = DartResolveUtil.findReferenceAndComponentTarget(file.findElementAt(startOffset));
       return target == null ? Collections.<IntentionAction>emptyList() : Arrays.asList(new MakeStaticAction(target));
@@ -122,7 +119,7 @@ public enum DartResolverErrorCode {
   }, NOT_A_STATIC_METHOD {
     @NotNull
     @Override
-    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // "%s" is not a static method
       DartComponent target = DartResolveUtil.findReferenceAndComponentTarget(file.findElementAt(startOffset));
       return target == null ? Collections.<IntentionAction>emptyList() : Arrays.asList(new MakeStaticAction(target));
@@ -130,7 +127,7 @@ public enum DartResolverErrorCode {
   };
 
   @NotNull
-  public abstract List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message);
+  public abstract List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message);
 
   public static DartResolverErrorCode findError(String code) {
     try {
