@@ -5,80 +5,11 @@
 part of dart._collection.dev;
 
 /**
- * Class implementing the read-operations on [List].
+ * Mixin that throws on the length changing operations of [List].
  *
- * Implements all read-only operations, except [:operator[]:] and [:length:],
- * in terms of those two operations.
+ * Intended to mix-in on top of [ListMixin] for fixed-length lists.
  */
-abstract class ListBase<E> extends ListIterable<E> implements List<E> {
-  // List interface.
-  int get length;
-  E operator[](int index);
-
-  // Collection interface.
-  // Implement in a fully mutable specialized class if necessary.
-  // The fixed-length and unmodifiable lists throw on all members
-  // of the collection interface.
-
-  // Iterable interface.
-  E elementAt(int index) {
-    return this[index];
-  }
-
-  Map<int, E> asMap() {
-    return new ListMapView(this);
-  }
-
-  List<E> sublist(int start, [int end]) {
-    if (end == null) end = length;
-    if (start < 0 || start > this.length) {
-      throw new RangeError.range(start, 0, this.length);
-    }
-    if (end < start || end > this.length) {
-      throw new RangeError.range(end, start, this.length);
-    }
-    int length = end - start;
-    List<E> result = new List<E>()..length = length;
-    for (int i = 0; i < length; i++) {
-      result[i] = this[start + i];
-    }
-    return result;
-  }
-
-  List<E> getRange(int start, int length) => sublist(start, start + length);
-
-  int indexOf(E element, [int start = 0]) {
-    return Arrays.indexOf(this, element, start, this.length);
-  }
-
-  int lastIndexOf(E element, [int start = null]) {
-    if (start == null) start = length - 1;
-    return Arrays.lastIndexOf(this, element, start);
-  }
-
-  Iterable<E> get reversed => new ReversedListIterable(this);
-}
-
-/**
- * Abstract class implementing the non-length changing operations of [List].
- *
- * All modifications are performed using [[]=].
- */
-abstract class FixedLengthListBase<E> extends ListBase<E> {
-  void operator[]=(int index, E value);
-
-  void sort([Comparator<E> compare]) {
-    Sort.sort(this, compare);
-  }
-
-  void setRange(int start, int length, List<E> from, [int startFrom]) {
-    if (length < 0) throw new ArgumentError("length: $length");
-    if (startFrom == null) startFrom = 0;
-    for (int i = 0; i < length; i++) {
-      this[start + i] = from[startFrom + i];
-    }
-  }
-
+abstract class FixedLengthListMixin<E>  {
   void set length(int newLength) {
     throw new UnsupportedError(
         "Cannot change the length of a fixed-length list");
@@ -89,12 +20,12 @@ abstract class FixedLengthListBase<E> extends ListBase<E> {
         "Cannot add to a fixed-length list");
   }
 
-  void addLast(E value) {
+  void insert(int index, E value) {
     throw new UnsupportedError(
         "Cannot add to a fixed-length list");
   }
 
-  void insert(int index, E value) {
+  void insertAll(int at, Iterable<E> iterable) {
     throw new UnsupportedError(
         "Cannot add to a fixed-length list");
   }
@@ -104,17 +35,7 @@ abstract class FixedLengthListBase<E> extends ListBase<E> {
         "Cannot add to a fixed-length list");
   }
 
-  void remove(E element) {
-    throw new UnsupportedError(
-        "Cannot remove from a fixed-length list");
-  }
-
-  void removeAll(Iterable elements) {
-    throw new UnsupportedError(
-        "Cannot remove from a fixed-length list");
-  }
-
-  void retainAll(Iterable elements) {
+  bool remove(Object element) {
     throw new UnsupportedError(
         "Cannot remove from a fixed-length list");
   }
@@ -144,21 +65,25 @@ abstract class FixedLengthListBase<E> extends ListBase<E> {
         "Cannot remove from a fixed-length list");
   }
 
-  void removeRange(int start, int length) {
+  void removeRange(int start, int end) {
     throw new UnsupportedError(
         "Cannot remove from a fixed-length list");
   }
 
-  void insertRange(int start, int length, [E initialValue]) {
+  void replaceRange(int start, int end, Iterable<E> iterable) {
     throw new UnsupportedError(
-        "Cannot insert range in a fixed-length list");
+        "Cannot remove from a fixed-length list");
   }
 }
 
 /**
- * An unmodifiable [List].
+ * Mixin for an unmodifiable [List] class.
+ *
+ * This overrides all mutating methods with methods that throw.
+ * This mixin is intended to be mixed in on top of [ListMixin] on
+ * unmodifiable lists.
  */
-abstract class UnmodifiableListBase<E> extends ListBase<E> {
+abstract class UnmodifiableListMixin<E> implements List<E> {
 
   void operator []=(int index, E value) {
     throw new UnsupportedError(
@@ -170,17 +95,22 @@ abstract class UnmodifiableListBase<E> extends ListBase<E> {
         "Cannot change the length of an unmodifiable list");
   }
 
-  void add(E value) {
+  void setAll(int at, Iterable<E> iterable) {
     throw new UnsupportedError(
-        "Cannot add to an unmodifiable list");
+        "Cannot modify an unmodifiable list");
   }
 
-  void addLast(E value) {
+  void add(E value) {
     throw new UnsupportedError(
-        "Cannot add to an unmodifiable list");
+      "Cannot add to an unmodifiable list");
   }
 
   E insert(int index, E value) {
+    throw new UnsupportedError(
+        "Cannot add to an unmodifiable list");
+  }
+
+  void insertAll(int at, Iterable<E> iterable) {
     throw new UnsupportedError(
         "Cannot add to an unmodifiable list");
   }
@@ -190,17 +120,7 @@ abstract class UnmodifiableListBase<E> extends ListBase<E> {
         "Cannot add to an unmodifiable list");
   }
 
-  void remove(E element) {
-    throw new UnsupportedError(
-        "Cannot remove from an unmodifiable list");
-  }
-
-  void removeAll(Iterable elements) {
-    throw new UnsupportedError(
-        "Cannot remove from an unmodifiable list");
-  }
-
-  void retainAll(Iterable elements) {
+  bool remove(Object element) {
     throw new UnsupportedError(
         "Cannot remove from an unmodifiable list");
   }
@@ -220,6 +140,11 @@ abstract class UnmodifiableListBase<E> extends ListBase<E> {
         "Cannot modify an unmodifiable list");
   }
 
+  void shuffle() {
+    throw new UnsupportedError(
+        "Cannot modify an unmodifiable list");
+  }
+
   void clear() {
     throw new UnsupportedError(
         "Cannot clear an unmodifiable list");
@@ -235,54 +160,42 @@ abstract class UnmodifiableListBase<E> extends ListBase<E> {
         "Cannot remove from an unmodifiable list");
   }
 
-  void setRange(int start, int length, List<E> from, [int startFrom]) {
+  void setRange(int start, int end, Iterable<E> iterable, [int skipCount = 0]) {
     throw new UnsupportedError(
         "Cannot modify an unmodifiable list");
   }
 
-  void removeRange(int start, int length) {
+  void removeRange(int start, int end) {
     throw new UnsupportedError(
         "Cannot remove from an unmodifiable list");
   }
 
-  void insertRange(int start, int length, [E initialValue]) {
+  void replaceRange(int start, int end, Iterable<E> iterable) {
     throw new UnsupportedError(
-        "Cannot insert range in an unmodifiable list");
+        "Cannot remove from an unmodifiable list");
+  }
+
+  void fillRange(int start, int end, [E fillValue]) {
+    throw new UnsupportedError(
+        "Cannot modify an unmodifiable list");
   }
 }
 
-/** An empty fixed-length list. */
-class EmptyList<E> extends FixedLengthListBase<E> {
-  int get length => 0;
-  E operator[](int index) { throw new RangeError.value(index); }
-  void operator []=(int index, E value) { throw new RangeError.value(index); }
-  Iterable<E> skip(int count) => const EmptyIterable();
-  Iterable<E> take(int count) => const EmptyIterable();
-  Iterable<E> get reversed => const EmptyIterable();
-  void sort([int compare(E a, E b)]) {}
-}
-
-class ReversedListIterable<E> extends ListIterable<E> {
-  Iterable<E> _source;
-  ReversedListIterable(this._source);
-
-  int get length => _source.length;
-
-  E elementAt(int index) => _source.elementAt(_source.length - 1 - index);
-}
+/**
+ * Abstract implementation of a fixed-length list.
+ *
+ * All operations are defined in terms of `length`, `operator[]` and
+ * `operator[]=`, which need to be implemented.
+ */
+typedef FixedLengthListBase<E> = ListBase<E> with FixedLengthListMixin<E>;
 
 /**
- * An [Iterable] of the UTF-16 code units of a [String] in index order.
+ * Abstract implementation of an unmodifiable list.
+ *
+ * All operations are defined in terms of `length` and `operator[]`,
+ * which need to be implemented.
  */
-class CodeUnits extends UnmodifiableListBase<int> {
-  /** The string that this is the code units of. */
-  String _string;
-
-  CodeUnits(this._string);
-
-  int get length => _string.length;
-  int operator[](int i) => _string.codeUnitAt(i);
-}
+typedef UnmodifiableListBase<E> = ListBase<E> with UnmodifiableListMixin<E>;
 
 class _ListIndicesIterable extends ListIterable<int> {
   List _backedList;
@@ -310,7 +223,8 @@ class ListMapView<E> implements Map<int, E> {
   Iterable<int> get keys => new _ListIndicesIterable(_values);
 
   bool get isEmpty => _values.isEmpty;
-  bool containsValue(E value) => _values.contains(value);
+  bool get isNotEmpty => _values.isNotEmpty;
+  bool containsValue(Object value) => _values.contains(value);
   bool containsKey(int key) => key is int && key >= 0 && key < length;
 
   void forEach(void f(int key, E value)) {
@@ -338,4 +252,17 @@ class ListMapView<E> implements Map<int, E> {
   void clear() {
     throw new UnsupportedError("Cannot modify an unmodifiable map");
   }
+
+  void addAll(Map<int, E> other) {
+    throw new UnsupportedError("Cannot modify an unmodifiable map");
+  }
+}
+
+class ReversedListIterable<E> extends ListIterable<E> {
+  Iterable<E> _source;
+  ReversedListIterable(this._source);
+
+  int get length => _source.length;
+
+  E elementAt(int index) => _source.elementAt(_source.length - 1 - index);
 }

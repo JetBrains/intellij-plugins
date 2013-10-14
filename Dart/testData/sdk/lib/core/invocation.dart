@@ -11,42 +11,42 @@ part of dart.core;
  * an object doesn't support the member invocation that was attempted
  * on it.
  */
-abstract class InvocationMirror {
+abstract class Invocation {
   /** The name of the invoked member. */
-  String get memberName;
+  Symbol get memberName;
 
-  /** An unmodifiable view of the positional arguments of the call. */
+  /**
+   * An unmodifiable view of the positional arguments of the call.
+   *
+   * If the member is a getter, the positional arguments is empty.
+   */
   List get positionalArguments;
 
-  /** An unmodifiable view of the named arguments of the call. */
-  Map<String, dynamic> get namedArguments;
+  /**
+   * An unmodifiable view of the named arguments of the call.
+   *
+   * If the member is a getter, setter or operator, the named arguments
+   * is empty.
+   */
+  Map<Symbol, dynamic> get namedArguments;
 
   /** Whether the invocation was a method call. */
   bool get isMethod;
 
   /**
    * Whether the invocation was a getter call.
-   * If so, both types of arguments will be null.
+   * If so, both types of arguments is empty.
    */
   bool get isGetter;
 
   /**
    * Whether the invocation was a setter call.
    *
-   * If so, [arguments] will have exactly one positonal argument,
-   * and namedArguments will be null.
+   * If so, [arguments] has exactly one positonal argument,
+   * and [namedArguments] is empty.
    */
   bool get isSetter;
 
   /** Whether the invocation was a getter or a setter call. */
   bool get isAccessor => isGetter || isSetter;
-
-  /**
-   * Perform the invocation on the provided object.
-   *
-   * If the object doesn't support the invocation, its [noSuchMethod]
-   * method will be called with either this [InvocationMirror] or another
-   * equivalent [InvocationMirror].
-   */
-  invokeOn(Object receiver);
 }

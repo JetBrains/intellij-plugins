@@ -90,7 +90,7 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
     return ContainerUtil.find(annotationHolder, new Condition<Annotation>() {
       @Override
       public boolean value(Annotation action) {
-        return message.equals(action.getMessage());
+        return action.getMessage().startsWith(message);
       }
     });
   }

@@ -120,7 +120,7 @@ public class DartExternalAnnotator extends ExternalAnnotator<DartAnalyzerDriver,
       DartResolverErrorCode code = DartResolverErrorCode.findError(message.getErrorCode());
       fixes = code == null ? Collections.<IntentionAction>emptyList() : code.getFixes(file, startOffset, message.getMessage());
     }
-    else if ("STATIC_TYPE_WARNING".equals(message.getSubSystem())) {
+    else if ("STATIC_TYPE_WARNING".equals(message.getSubSystem()) || "COMPILE_TIME_ERROR".equals(message.getSubSystem())) {
       DartTypeErrorCode code = DartTypeErrorCode.findError(message.getErrorCode());
       fixes = code == null ? Collections.<IntentionAction>emptyList() : code.getFixes(file, startOffset, message.getMessage());
     }

@@ -4,13 +4,39 @@
 
 part of dart._collection.dev;
 
+
+// This is a hack to make @deprecated work in dart:io. Don't remove or use this,
+// unless coordinated with either me or the core library team. Thanks!
+// TODO(ajohnsen): Remove at the 11th of August 2013.
+// TODO(ajohnsen): Remove hide in:
+//    tools/dom/templates/html/dart2js/html_dart2js.darttemplate
+//    tools/dom/templates/html/dart2js/svg_dart2js.darttemplate
+//    tools/dom/templates/html/dart2js/web_audio_dart2js.darttemplate
+//    tools/dom/templates/html/dart2js/web_gl_dart2js.darttemplate
+//    tools/dom/templates/html/dart2js/web_sql_dart2js.darttemplate
+//    tools/dom/templates/html/dartium/html_dartium.darttemplate
+//    tools/dom/templates/html/dartium/svg_dartium.darttemplate
+//    tools/dom/templates/html/dartium/web_audio_dartium.darttemplate
+//    tools/dom/templates/html/dartium/web_gl_dartium.darttemplate
+//    tools/dom/templates/html/dartium/web_sql_dartium.darttemplate
+//    sdk/lib/core/regexp.dart
+// TODO(floitsch): also used in dart:async until end of September for
+//    deprecation of runZonedExperimental.
+// TODO(floitsch): also used in dart:json and dart:utf until middle of October
+//    for deprecation of json and utf libraries.
+
+// We use a random string constant to avoid it clashing with other constants.
+// This is, because we have a test that verifies that no metadata is included
+// in the output, when no mirrors need them.
+const deprecated = "qB2n4PYM";
+
 /**
  * An [Iterable] for classes that have efficient [length] and [elementAt].
  *
  * All other methods are implemented in terms of [length] and [elementAt],
  * including [iterator].
  */
-abstract class ListIterable<E> extends Iterable<E> {
+abstract class ListIterable<E> extends IterableBase<E> {
   int get length;
   E elementAt(int i);
 
@@ -46,7 +72,7 @@ abstract class ListIterable<E> extends Iterable<E> {
     return elementAt(0);
   }
 
-  bool contains(E element) {
+  bool contains(Object element) {
     int length = this.length;
     for (int i = 0; i < length; i++) {
       if (elementAt(i) == element) return true;
@@ -79,7 +105,7 @@ abstract class ListIterable<E> extends Iterable<E> {
     return false;
   }
 
-  E firstWhere(bool test(E element), { E orElse() }) {
+  dynamic firstWhere(bool test(E element), { Object orElse() }) {
     int length = this.length;
     for (int i = 0; i < length; i++) {
       E element = elementAt(i);
@@ -92,7 +118,7 @@ abstract class ListIterable<E> extends Iterable<E> {
     throw new StateError("No matching element");
   }
 
-  E lastWhere(bool test(E element), { E orElse() }) {
+  dynamic lastWhere(bool test(E element), { Object orElse() }) {
     int length = this.length;
     for (int i = length - 1; i >= 0; i--) {
       E element = elementAt(i);
@@ -126,49 +152,9 @@ abstract class ListIterable<E> extends Iterable<E> {
     throw new StateError("No matching element");
   }
 
-  E min([int compare(E a, E b)]) {
-    if (length == 0) return null;
-    if (compare == null) {
-      var defaultCompare = Comparable.compare;
-      compare = defaultCompare;
-    }
-    E min = elementAt(0);
+  String join([String separator = ""]) {
     int length = this.length;
-    for (int i = 1; i < length; i++) {
-      E element = elementAt(i);
-      if (compare(min, element) > 0) {
-        min = element;
-      }
-      if (length != this.length) {
-        throw new ConcurrentModificationError(this);
-      }
-    }
-    return min;
-  }
-
-  E max([int compare(E a, E b)]) {
-    if (length == 0) return null;
-    if (compare == null) {
-      var defaultCompare = Comparable.compare;
-      compare = defaultCompare;
-    }
-    E max = elementAt(0);
-    int length = this.length;
-    for (int i = 1; i < length; i++) {
-      E element = elementAt(i);
-      if (compare(max, element) < 0) {
-        max = element;
-      }
-      if (length != this.length) {
-        throw new ConcurrentModificationError(this);
-      }
-    }
-    return max;
-  }
-
-  String join([String separator]) {
-    int length = this.length;
-    if (separator != null && !separator.isEmpty) {
+    if (!separator.isEmpty) {
       if (length == 0) return "";
       String first = "${elementAt(0)}";
       if (length != this.length) {
@@ -177,7 +163,7 @@ abstract class ListIterable<E> extends Iterable<E> {
       StringBuffer buffer = new StringBuffer(first);
       for (int i = 1; i < length; i++) {
         buffer.write(separator);
-        buffer.write("${elementAt(i)}");
+        buffer.write(elementAt(i));
         if (length != this.length) {
           throw new ConcurrentModificationError(this);
         }
@@ -186,7 +172,7 @@ abstract class ListIterable<E> extends Iterable<E> {
     } else {
       StringBuffer buffer = new StringBuffer();
       for (int i = 0; i < length; i++) {
-        buffer.write("${elementAt(i)}");
+        buffer.write(elementAt(i));
         if (length != this.length) {
           throw new ConcurrentModificationError(this);
         }
@@ -199,7 +185,16 @@ abstract class ListIterable<E> extends Iterable<E> {
 
   Iterable map(f(E element)) => new MappedListIterable(this, f);
 
-  reduce(var initialValue, combine(var previousValue, E element)) {
+  E reduce(E combine(var value, E element)) {
+    if (length == 0) throw new StateError("No elements");
+    E value = elementAt(0);
+    for (int i = 1; i < length; i++) {
+      value = combine(value, elementAt(i));
+    }
+    return value;
+  }
+
+  fold(var initialValue, combine(var previousValue, E element)) {
     var value = initialValue;
     int length = this.length;
     for (int i = 0; i < length; i++) {
@@ -247,7 +242,19 @@ class SubListIterable<E> extends ListIterable<E> {
   /** If null, represents the length of the iterable. */
   final int _endOrLength;
 
-  SubListIterable(this._iterable, this._start, this._endOrLength);
+  SubListIterable(this._iterable, this._start, this._endOrLength) {
+    if (_start < 0) {
+      throw new RangeError.value(_start);
+    }
+    if (_endOrLength != null) {
+      if (_endOrLength < 0) {
+        throw new RangeError.value(_endOrLength);
+      }
+      if (_start > _endOrLength) {
+        throw new RangeError.range(_start, 0, _endOrLength);
+      }
+    }
+  }
 
   int get _endIndex {
     int length = _iterable.length;
@@ -279,12 +286,12 @@ class SubListIterable<E> extends ListIterable<E> {
   }
 
   Iterable<E> skip(int count) {
-    if (count < 0) throw new ArgumentError(count);
+    if (count < 0) throw new RangeError.value(count);
     return new SubListIterable(_iterable, _start + count, _endOrLength);
   }
 
   Iterable<E> take(int count) {
-    if (count < 0) throw new ArgumentError(count);
+    if (count < 0) throw new RangeError.value(count);
     if (_endOrLength == null) {
       return new SubListIterable(_iterable, _start, _start + count);
     } else {
@@ -314,10 +321,11 @@ class ListIterator<E> implements Iterator<E> {
   E get current => _current;
 
   bool moveNext() {
-    if (_length != _iterable.length) {
+    int length = _iterable.length;
+    if (_length != length) {
       throw new ConcurrentModificationError(_iterable);
     }
-    if (_index == _length) {
+    if (_index >= length) {
       _current = null;
       return false;
     }
@@ -329,11 +337,9 @@ class ListIterator<E> implements Iterator<E> {
 
 typedef T _Transformation<S, T>(S value);
 
-class MappedIterable<S, T> extends Iterable<T> {
+class MappedIterable<S, T> extends IterableBase<T> {
   final Iterable<S> _iterable;
-  // TODO(ahe): Restore type when feature is implemented in dart2js
-  // checked mode. http://dartbug.com/7733
-  final /* _Transformation<S, T> */ _f;
+  final _Transformation<S, T> _f;
 
   MappedIterable(this._iterable, T this._f(S element));
 
@@ -353,9 +359,7 @@ class MappedIterable<S, T> extends Iterable<T> {
 class MappedIterator<S, T> extends Iterator<T> {
   T _current;
   final Iterator<S> _iterator;
-  // TODO(ahe): Restore type when feature is implemented in dart2js
-  // checked mode. http://dartbug.com/7733
-  final /* _Transformation<S, T> */ _f;
+  final _Transformation<S, T> _f;
 
   MappedIterator(this._iterator, T this._f(S element));
 
@@ -374,9 +378,7 @@ class MappedIterator<S, T> extends Iterator<T> {
 /** Specialized alternative to [MappedIterable] for mapped [List]s. */
 class MappedListIterable<S, T> extends ListIterable<T> {
   final Iterable<S> _source;
-  // TODO(ahe): Restore type when feature is implemented in dart2js
-  // checked mode. http://dartbug.com/7733
-  final /* _Transformation<S, T> */ _f;
+  final _Transformation<S, T> _f;
 
   MappedListIterable(this._source, T this._f(S value));
 
@@ -387,11 +389,9 @@ class MappedListIterable<S, T> extends ListIterable<T> {
 
 typedef bool _ElementPredicate<E>(E element);
 
-class WhereIterable<E> extends Iterable<E> {
+class WhereIterable<E> extends IterableBase<E> {
   final Iterable<E> _iterable;
-  // TODO(ahe): Restore type when feature is implemented in dart2js
-  // checked mode. http://dartbug.com/7733
-  final /* _ElementPredicate */ _f;
+  final _ElementPredicate _f;
 
   WhereIterable(this._iterable, bool this._f(E element));
 
@@ -400,9 +400,7 @@ class WhereIterable<E> extends Iterable<E> {
 
 class WhereIterator<E> extends Iterator<E> {
   final Iterator<E> _iterator;
-  // TODO(ahe): Restore type when feature is implemented in dart2js
-  // checked mode. http://dartbug.com/7733
-  final /* _ElementPredicate */ _f;
+  final _ElementPredicate _f;
 
   WhereIterator(this._iterator, bool this._f(E element));
 
@@ -420,11 +418,9 @@ class WhereIterator<E> extends Iterator<E> {
 
 typedef Iterable<T> _ExpandFunction<S, T>(S sourceElement);
 
-class ExpandIterable<S, T> extends Iterable<T> {
+class ExpandIterable<S, T> extends IterableBase<T> {
   final Iterable<S> _iterable;
-  // TODO(ahe): Restore type when feature is implemented in dart2js
-  // checked mode. http://dartbug.com/7733
-  final /* _ExpandFunction */ _f;
+  final _ExpandFunction _f;
 
   ExpandIterable(this._iterable, Iterable<T> this._f(S element));
 
@@ -433,9 +429,7 @@ class ExpandIterable<S, T> extends Iterable<T> {
 
 class ExpandIterator<S, T> implements Iterator<T> {
   final Iterator<S> _iterator;
-  // TODO(ahe): Restore type when feature is implemented in dart2js
-  // checked mode. http://dartbug.com/7733
-  final /* _ExpandFunction */ _f;
+  final _ExpandFunction _f;
   // Initialize _currentExpansion to an empty iterable. A null value
   // marks the end of iteration, and we don't want to call _f before
   // the first moveNext call.
@@ -467,7 +461,7 @@ class ExpandIterator<S, T> implements Iterator<T> {
   }
 }
 
-class TakeIterable<E> extends Iterable<E> {
+class TakeIterable<E> extends IterableBase<E> {
   final Iterable<E> _iterable;
   final int _takeCount;
 
@@ -505,11 +499,9 @@ class TakeIterator<E> extends Iterator<E> {
   }
 }
 
-class TakeWhileIterable<E> extends Iterable<E> {
+class TakeWhileIterable<E> extends IterableBase<E> {
   final Iterable<E> _iterable;
-  // TODO(ahe): Restore type when feature is implemented in dart2js
-  // checked mode. http://dartbug.com/7733
-  final /* _ElementPredicate */ _f;
+  final _ElementPredicate _f;
 
   TakeWhileIterable(this._iterable, bool this._f(E element));
 
@@ -520,9 +512,7 @@ class TakeWhileIterable<E> extends Iterable<E> {
 
 class TakeWhileIterator<E> extends Iterator<E> {
   final Iterator<E> _iterator;
-  // TODO(ahe): Restore type when feature is implemented in dart2js
-  // checked mode. http://dartbug.com/7733
-  final /* _ElementPredicate */ _f;
+  final _ElementPredicate _f;
   bool _isFinished = false;
 
   TakeWhileIterator(this._iterator, bool this._f(E element));
@@ -542,19 +532,19 @@ class TakeWhileIterator<E> extends Iterator<E> {
   }
 }
 
-class SkipIterable<E> extends Iterable<E> {
+class SkipIterable<E> extends IterableBase<E> {
   final Iterable<E> _iterable;
   final int _skipCount;
 
   SkipIterable(this._iterable, this._skipCount) {
     if (_skipCount is! int || _skipCount < 0) {
-      throw new ArgumentError(_skipCount);
+      throw new RangeError(_skipCount);
     }
   }
 
   Iterable<E> skip(int n) {
     if (n is! int || n < 0) {
-      throw new ArgumentError(n);
+      throw new RangeError.value(n);
     }
     return new SkipIterable<E>(_iterable, _skipCount + n);
   }
@@ -581,11 +571,9 @@ class SkipIterator<E> extends Iterator<E> {
   E get current => _iterator.current;
 }
 
-class SkipWhileIterable<E> extends Iterable<E> {
+class SkipWhileIterable<E> extends IterableBase<E> {
   final Iterable<E> _iterable;
-  // TODO(ahe): Restore type when feature is implemented in dart2js
-  // checked mode. http://dartbug.com/7733
-  final /* _ElementPredicate */ _f;
+  final _ElementPredicate _f;
 
   SkipWhileIterable(this._iterable, bool this._f(E element));
 
@@ -596,9 +584,7 @@ class SkipWhileIterable<E> extends Iterable<E> {
 
 class SkipWhileIterator<E> extends Iterator<E> {
   final Iterator<E> _iterator;
-  // TODO(ahe): Restore type when feature is implemented in dart2js
-  // checked mode. http://dartbug.com/7733
-  final /* _ElementPredicate */ _f;
+  final _ElementPredicate _f;
   bool _hasSkipped = false;
 
   SkipWhileIterator(this._iterator, bool this._f(E element));
@@ -619,7 +605,7 @@ class SkipWhileIterator<E> extends Iterator<E> {
 /**
  * The always empty [Iterable].
  */
-class EmptyIterable<E> extends Iterable<E> {
+class EmptyIterable<E> extends IterableBase<E> {
   const EmptyIterable();
 
   Iterator<E> get iterator => const EmptyIterator();
@@ -638,7 +624,7 @@ class EmptyIterable<E> extends Iterable<E> {
 
   E elementAt(int index) { throw new RangeError.value(index); }
 
-  bool contains(E element) => false;
+  bool contains(Object element) => false;
 
   bool every(bool test(E element)) => true;
 
@@ -659,25 +645,31 @@ class EmptyIterable<E> extends Iterable<E> {
     throw new StateError("No matching element");
   }
 
-  E min([int compare(E a, E b)]) => null;
-
-  E max([int compare(E a, E b)]) => null;
-
-  String join([String separator]) => "";
+  String join([String separator = ""]) => "";
 
   Iterable<E> where(bool test(E element)) => this;
 
   Iterable map(f(E element)) => const EmptyIterable();
 
-  reduce(var initialValue, combine(var previousValue, E element)) {
+  E reduce(E combine(E value, E element)) {
+    throw new StateError("No elements");
+  }
+
+  fold(var initialValue, combine(var previousValue, E element)) {
     return initialValue;
   }
 
-  Iterable<E> skip(int count) => this;
+  Iterable<E> skip(int count) {
+    if (count < 0) throw new RangeError.value(count);
+    return this;
+  }
 
   Iterable<E> skipWhile(bool test(E element)) => this;
 
-  Iterable<E> take(int count) => this;
+  Iterable<E> take(int count) {
+    if (count < 0) throw new RangeError.value(count);
+    this;
+  }
 
   Iterable<E> takeWhile(bool test(E element)) => this;
 
@@ -696,4 +688,416 @@ class EmptyIterator<E> implements Iterator<E> {
 /** An [Iterator] that can move in both directions. */
 abstract class BidirectionalIterator<T> implements Iterator<T> {
   bool movePrevious();
+}
+
+/**
+ * This class provides default implementations for Iterables (including Lists).
+ *
+ * The uses of this class will be replaced by mixins.
+ */
+class IterableMixinWorkaround {
+  // A list to identify cyclic collections during toString() calls.
+  static List _toStringList = new List();
+
+  static bool contains(Iterable iterable, var element) {
+    for (final e in iterable) {
+      if (e == element) return true;
+    }
+    return false;
+  }
+
+  static void forEach(Iterable iterable, void f(o)) {
+    for (final e in iterable) {
+      f(e);
+    }
+  }
+
+  static bool any(Iterable iterable, bool f(o)) {
+    for (final e in iterable) {
+      if (f(e)) return true;
+    }
+    return false;
+  }
+
+  static bool every(Iterable iterable, bool f(o)) {
+    for (final e in iterable) {
+      if (!f(e)) return false;
+    }
+    return true;
+  }
+
+  static dynamic reduce(Iterable iterable,
+                        dynamic combine(previousValue, element)) {
+    Iterator iterator = iterable.iterator;
+    if (!iterator.moveNext()) throw new StateError("No elements");
+    var value = iterator.current;
+    while (iterator.moveNext()) {
+      value = combine(value, iterator.current);
+    }
+    return value;
+  }
+
+  static dynamic fold(Iterable iterable,
+                      dynamic initialValue,
+                      dynamic combine(dynamic previousValue, element)) {
+    for (final element in iterable) {
+      initialValue = combine(initialValue, element);
+    }
+    return initialValue;
+  }
+
+  /**
+   * Removes elements matching [test] from [list].
+   *
+   * This is performed in two steps, to avoid exposing an inconsistent state
+   * to the [test] function. First the elements to retain are found, and then
+   * the original list is updated to contain those elements.
+   */
+  static void removeWhereList(List list, bool test(var element)) {
+    List retained = [];
+    int length = list.length;
+    for (int i = 0; i < length; i++) {
+      var element = list[i];
+      if (!test(element)) {
+        retained.add(element);
+      }
+      if (length != list.length) {
+        throw new ConcurrentModificationError(list);
+      }
+    }
+    if (retained.length == length) return;
+    list.length = retained.length;
+    for (int i = 0; i < retained.length; i++) {
+      list[i] = retained[i];
+    }
+  }
+
+  static bool isEmpty(Iterable iterable) {
+    return !iterable.iterator.moveNext();
+  }
+
+  static dynamic first(Iterable iterable) {
+    Iterator it = iterable.iterator;
+    if (!it.moveNext()) {
+      throw new StateError("No elements");
+    }
+    return it.current;
+  }
+
+  static dynamic last(Iterable iterable) {
+    Iterator it = iterable.iterator;
+    if (!it.moveNext()) {
+      throw new StateError("No elements");
+    }
+    dynamic result;
+    do {
+      result = it.current;
+    } while(it.moveNext());
+    return result;
+  }
+
+  static dynamic single(Iterable iterable) {
+    Iterator it = iterable.iterator;
+    if (!it.moveNext()) throw new StateError("No elements");
+    dynamic result = it.current;
+    if (it.moveNext()) throw new StateError("More than one element");
+    return result;
+  }
+
+  static dynamic firstWhere(Iterable iterable,
+                            bool test(dynamic value),
+                            dynamic orElse()) {
+    for (dynamic element in iterable) {
+      if (test(element)) return element;
+    }
+    if (orElse != null) return orElse();
+    throw new StateError("No matching element");
+  }
+
+  static dynamic lastWhere(Iterable iterable,
+                           bool test(dynamic value),
+                           dynamic orElse()) {
+    dynamic result = null;
+    bool foundMatching = false;
+    for (dynamic element in iterable) {
+      if (test(element)) {
+        result = element;
+        foundMatching = true;
+      }
+    }
+    if (foundMatching) return result;
+    if (orElse != null) return orElse();
+    throw new StateError("No matching element");
+  }
+
+  static dynamic lastWhereList(List list,
+                               bool test(dynamic value),
+                               dynamic orElse()) {
+    // TODO(floitsch): check that arguments are of correct type?
+    for (int i = list.length - 1; i >= 0; i--) {
+      dynamic element = list[i];
+      if (test(element)) return element;
+    }
+    if (orElse != null) return orElse();
+    throw new StateError("No matching element");
+  }
+
+  static dynamic singleWhere(Iterable iterable, bool test(dynamic value)) {
+    dynamic result = null;
+    bool foundMatching = false;
+    for (dynamic element in iterable) {
+      if (test(element)) {
+        if (foundMatching) {
+          throw new StateError("More than one matching element");
+        }
+        result = element;
+        foundMatching = true;
+      }
+    }
+    if (foundMatching) return result;
+    throw new StateError("No matching element");
+  }
+
+  static dynamic elementAt(Iterable iterable, int index) {
+    if (index is! int || index < 0) throw new RangeError.value(index);
+    int remaining = index;
+    for (dynamic element in iterable) {
+      if (remaining == 0) return element;
+      remaining--;
+    }
+    throw new RangeError.value(index);
+  }
+
+  static String join(Iterable iterable, [String separator]) {
+    StringBuffer buffer = new StringBuffer();
+    buffer.writeAll(iterable, separator);
+    return buffer.toString();
+  }
+
+  static String joinList(List list, [String separator]) {
+    if (list.isEmpty) return "";
+    if (list.length == 1) return "${list[0]}";
+    StringBuffer buffer = new StringBuffer();
+    if (separator.isEmpty) {
+      for (int i = 0; i < list.length; i++) {
+        buffer.write(list[i]);
+      }
+    } else {
+      buffer.write(list[0]);
+      for (int i = 1; i < list.length; i++) {
+        buffer.write(separator);
+        buffer.write(list[i]);
+      }
+    }
+    return buffer.toString();
+  }
+
+  static String toStringIterable(Iterable iterable, String leftDelimiter,
+                                 String rightDelimiter) {
+    for (int i = 0; i < _toStringList.length; i++) {
+      if (identical(_toStringList[i], iterable)) {
+        return '$leftDelimiter...$rightDelimiter';
+        }
+    }
+
+    StringBuffer result = new StringBuffer();
+    try {
+      _toStringList.add(iterable);
+      result.write(leftDelimiter);
+      result.writeAll(iterable, ', ');
+      result.write(rightDelimiter);
+    } finally {
+      assert(identical(_toStringList.last, iterable));
+      _toStringList.removeLast();
+    }
+    return result.toString();
+  }
+
+  static Iterable where(Iterable iterable, bool f(var element)) {
+    return new WhereIterable(iterable, f);
+  }
+
+  static Iterable map(Iterable iterable, f(var element)) {
+    return new MappedIterable(iterable, f);
+  }
+
+  static Iterable mapList(List list, f(var element)) {
+    return new MappedListIterable(list, f);
+  }
+
+  static Iterable expand(Iterable iterable, Iterable f(var element)) {
+    return new ExpandIterable(iterable, f);
+  }
+
+  static Iterable takeList(List list, int n) {
+    // The generic type is currently lost. It will be fixed with mixins.
+    return new SubListIterable(list, 0, n);
+  }
+
+  static Iterable takeWhile(Iterable iterable, bool test(var value)) {
+    // The generic type is currently lost. It will be fixed with mixins.
+    return new TakeWhileIterable(iterable, test);
+  }
+
+  static Iterable skipList(List list, int n) {
+    // The generic type is currently lost. It will be fixed with mixins.
+    return new SubListIterable(list, n, null);
+  }
+
+  static Iterable skipWhile(Iterable iterable, bool test(var value)) {
+    // The generic type is currently lost. It will be fixed with mixins.
+    return new SkipWhileIterable(iterable, test);
+  }
+
+  static Iterable reversedList(List list) {
+    return new ReversedListIterable(list);
+  }
+
+  static void sortList(List list, int compare(a, b)) {
+    if (compare == null) compare = Comparable.compare;
+    Sort.sort(list, compare);
+  }
+
+  static void shuffleList(List list) {
+    Random random = new Random();
+    int length = list.length;
+    while (length > 1) {
+      int pos = random.nextInt(length);
+      length -= 1;
+      var tmp = list[length];
+      list[length] = list[pos];
+      list[pos] = tmp;
+    }
+  }
+
+  static int indexOfList(List list, var element, int start) {
+    return Arrays.indexOf(list, element, start, list.length);
+  }
+
+  static int lastIndexOfList(List list, var element, int start) {
+    if (start == null) start = list.length - 1;
+    return Arrays.lastIndexOf(list, element, start);
+  }
+
+  static void _rangeCheck(List list, int start, int end) {
+    if (start < 0 || start > list.length) {
+      throw new RangeError.range(start, 0, list.length);
+    }
+    if (end < start || end > list.length) {
+      throw new RangeError.range(end, start, list.length);
+    }
+  }
+
+  static Iterable getRangeList(List list, int start, int end) {
+    _rangeCheck(list, start, end);
+    // The generic type is currently lost. It will be fixed with mixins.
+    return new SubListIterable(list, start, end);
+  }
+
+  static void setRangeList(List list, int start, int end,
+                           Iterable from, int skipCount) {
+    _rangeCheck(list, start, end);
+    int length = end - start;
+    if (length == 0) return;
+
+    if (skipCount < 0) throw new ArgumentError(skipCount);
+
+    // TODO(floitsch): Make this accept more.
+    List otherList;
+    int otherStart;
+    if (from is List) {
+      otherList = from;
+      otherStart = skipCount;
+    } else {
+      otherList = from.skip(skipCount).toList(growable: false);
+      otherStart = 0;
+    }
+    if (otherStart + length > otherList.length) {
+      throw new StateError("Not enough elements");
+    }
+    Arrays.copy(otherList, otherStart, list, start, length);
+  }
+
+  static void replaceRangeList(List list, int start, int end,
+                               Iterable iterable) {
+    _rangeCheck(list, start, end);
+    // TODO(floitsch): optimize this.
+    list.removeRange(start, end);
+    list.insertAll(start, iterable);
+  }
+
+  static void fillRangeList(List list, int start, int end, fillValue) {
+    _rangeCheck(list, start, end);
+    for (int i = start; i < end; i++) {
+      list[i] = fillValue;
+    }
+  }
+
+  static void insertAllList(List list, int index, Iterable iterable) {
+    if (index < 0 || index > list.length) {
+      throw new RangeError.range(index, 0, list.length);
+    }
+    if (iterable is! List && iterable is! Set) {
+      iterable = iterable.toList(growable: false);
+    }
+    int insertionLength = iterable.length;
+    list.length += insertionLength;
+    list.setRange(index + insertionLength, list.length, list, index);
+    for (var element in iterable) {
+      list[index++] = element;
+    }
+  }
+
+  static void setAllList(List list, int index, Iterable iterable) {
+    if (index < 0 || index > list.length) {
+      throw new RangeError.range(index, 0, list.length);
+    }
+    for (var element in iterable) {
+      list[index++] = element;
+    }
+  }
+
+  static Map<int, dynamic> asMapList(List l) {
+    return new ListMapView(l);
+  }
+
+  static bool setContainsAll(Set set, Iterable other) {
+    for (var element in other) {
+      if (!set.contains(element)) return false;
+    }
+    return true;
+  }
+
+  static Set setIntersection(Set set, Set other, Set result) {
+    Set smaller;
+    Set larger;
+    if (set.length < other.length) {
+      smaller = set;
+      larger = other;
+    } else {
+      smaller = other;
+      larger = set;
+    }
+    for (var element in smaller) {
+      if (larger.contains(element)) {
+        result.add(element);
+      }
+    }
+    return result;
+  }
+
+  static Set setUnion(Set set, Set other, Set result) {
+    result.addAll(set);
+    result.addAll(other);
+    return result;
+  }
+
+  static Set setDifference(Set set, Set other, Set result) {
+    for (var element in set) {
+      if (!other.contains(element)) {
+        result.add(element);
+      }
+    }
+    return result;
+  }
 }

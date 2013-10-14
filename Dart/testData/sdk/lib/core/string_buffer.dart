@@ -5,9 +5,11 @@
 part of dart.core;
 
 /**
- * The StringBuffer class is useful for concatenating strings
- * efficiently. Only on a call to [toString] are the strings
- * concatenated to a single String.
+ * A class for concatenating strings efficiently.
+ *
+ * Allows for the incremental building of a string using write*() methods.
+ * The strings are concatenated to a single string only when [toString] is
+ * called.
  */
 class StringBuffer implements StringSink {
 
@@ -24,55 +26,41 @@ class StringBuffer implements StringSink {
   bool get isEmpty => length == 0;
 
   /**
-   * Converts [obj] to a string and adds it to the buffer.
-   *
-   * *Deprecated*. Use [write] instead.
+   * Returns whether the buffer is not empty. This is a constant-time
+   * operation.
    */
-  @deprecated
-  void add(Object obj) => write(obj);
+  bool get isNotEmpty => !isEmpty;
 
+  /// Adds the contents of [obj], converted to a string, to the buffer.
   external void write(Object obj);
 
-  void writeAll(Iterable objects) {
-    for (Object obj in objects) write(obj);
+  /// Adds the string representation of [charCode] to the buffer.
+  external void writeCharCode(int charCode);
+
+  void writeAll(Iterable objects, [String separator = ""]) {
+    Iterator iterator = objects.iterator;
+    if (!iterator.moveNext()) return;
+    if (separator.isEmpty) {
+      do {
+        write(iterator.current);
+      } while (iterator.moveNext());
+    } else {
+      write(iterator.current);
+      while (iterator.moveNext()) {
+        write(separator);
+        write(iterator.current);
+      }
+    }
   }
 
-  void writeln(Object obj) {
+  void writeln([Object obj = ""]) {
     write(obj);
     write("\n");
   }
 
   /**
-   * Adds the string representation of [charCode] to the buffer.
-   *
-   * *Deprecated* Use [writeCharCode] instead.
-   */
-  @deprecated
-  void addCharCode(int charCode) {
-    writeCharCode(charCode);
-  }
-
-  /// Adds the string representation of [charCode] to the buffer.
-  void writeCharCode(int charCode) {
-    write(new String.fromCharCode(charCode));
-  }
-
-  /**
-   * Adds all items in [objects] to the buffer.
-   *
-   * *Deprecated*. Use [writeAll] instead.
-   */
-  @deprecated
-  void addAll(Iterable objects) {
-    for (Object obj in objects) write(obj);
-  }
-
-  /**
    * Clears the string buffer.
-   *
-   * *Deprecated*.
    */
-  @deprecated
   external void clear();
 
   /// Returns the contents of buffer as a concatenated string.

@@ -9,12 +9,18 @@ part of dart.core;
 // different platform implementations.
 
 /**
+ * A double-precision floating point number.
+ *
  * Representation of Dart doubles containing double specific constants
  * and operations and specializations of operations inherited from
- * [num].
+ * [num]. Dart doubles are 64-bit floating-point numbers as specified in the
+ * IEEE 754 standard.
  *
  * The [double] type is contagious. Operations on [double]s return
  * [double] results.
+ *
+ * It is a compile-time error for a class to attempt to extend or implement
+ * double.
  */
 abstract class double extends num {
   static const double NAN = 0.0 / 0.0;
@@ -23,7 +29,6 @@ abstract class double extends num {
   static const double MIN_POSITIVE = 5e-324;
   static const double MAX_FINITE = 1.7976931348623157e+308;
 
-  /** Return the remainder from dividing this [double] by [other]. */
   double remainder(num other);
 
   /** Addition operator. */
@@ -35,7 +40,6 @@ abstract class double extends num {
   /** Multiplication operator. */
   double operator *(num other);
 
-  /** Euclidean modulo operator. */
   double operator %(num other);
 
   /** Division operator. */
@@ -45,7 +49,7 @@ abstract class double extends num {
    * Truncating division operator.
    *
    * The result of the truncating division [:a ~/ b:] is equivalent to
-   * [:(a / b).truncate().toInt():].
+   * [:(a / b).truncate():].
    */
   int operator ~/(num other);
 
@@ -56,24 +60,66 @@ abstract class double extends num {
   double abs();
 
   /**
-   * Returns the integer value closest to this [double].
+   * Returns the integer closest to `this`.
+   *
+   * Rounds away from zero when there is no closest integer:
+   *  [:(3.5).round() == 4:] and [:(-3.5).round() == -4:].
+   *
+   * If `this` is not finite (`NaN` or infinity), throws an [UnsupportedError].
+   */
+  int round();
+
+  /**
+   * Returns the greatest integer no greater than `this`.
+   *
+   * If `this` is not finite (`NaN` or infinity), throws an [UnsupportedError].
+   */
+  int floor();
+
+  /**
+   * Returns the least integer no smaller than `this`.
+   *
+   * If `this` is not finite (`NaN` or infinity), throws an [UnsupportedError].
+   */
+  int ceil();
+
+  /**
+   * Returns the integer obtained by discarding any fractional
+   * digits from `this`.
+   *
+   * If `this` is not finite (`NaN` or infinity), throws an [UnsupportedError].
+   */
+  int truncate();
+
+  /**
+   * Returns the integer value, as a double, closest to `this`.
    *
    * Rounds away from zero when there is no closest integer:
    *  [:(3.5).round() == 4:] and [:(-3.5).round() == -4:].
    */
-  double round();
-
-  /** Returns the greatest integer value no greater than this [double]. */
-  double floor();
-
-  /** Returns the least integer value that is no smaller than this [double]. */
-  double ceil();
+  double roundToDouble();
 
   /**
-   * Returns the integer value obtained by discarding any fractional
-   * digits from this [double].
+   * Returns the greatest integer value no greater than `this`.
+   *
+   * The result is a double.
    */
-  double truncate();
+  double floorToDouble();
+
+  /**
+   * Returns the least integer value no smaller than `this`.
+   *
+   * The result is a double.
+   */
+  double ceilToDouble();
+
+  /**
+   * Returns the integer obtained by discarding any fractional
+   * digits from `this`.
+   *
+   * The result is a double.
+   */
+  double truncateToDouble();
 
   /**
    * Provide a representation of this [double] value.
@@ -93,17 +139,37 @@ abstract class double extends num {
   /**
    * Parse [source] as an double literal and return its value.
    *
-   * Accepts the same format as double literals:
-   *   [: ['+'|'-'] [digit* '.'] digit+ [('e'|'E') ['+'|'-'] digit+] :]
+   * Accepts an optional sign (`+` or `-`) followed by either the characters
+   * "Infinity", the characters "NaN" or a floating-point representation.
+   * A floating-point representation is composed of a mantissa and an optional
+   * exponent part. The mantissa is either a decimal point (`.`) followed by a
+   * sequence of (decimal) digits, or a sequence of digits
+   * optionally followed by a decimal point and optionally more digits. The
+   * (optional) exponent part consists of the character "e" or "E", an optional
+   * sign, and one or more digits.
    *
-   * Also recognizes "NaN", "Infinity" and "-Infinity" as inputs and
-   * returns the corresponding double value.
+   * Leading and trailing whitespace is ignored.
    *
-   * If the [soure] is not a valid double literal, the [handleError]
+   * If the [source] is not a valid double literal, the [onError]
    * is called with the [source] as argument, and its return value is
-   * used instead. If no handleError is provided, a [FormatException]
-   * is thrown.
+   * used instead. If no `onError` is provided, a [FormatException]
+   * is thrown instead.
+   *
+   * The [onError] function is only invoked if [source] is a [String] with an
+   * invalid format. It is not invoked if the [source] is invalid for some
+   * other reason, for example by being `null`.
+   *
+   * Examples of accepted strings:
+   *
+   *     "3.14"
+   *     "  3.14 \xA0"
+   *     "0."
+   *     ".0"
+   *     "-1.e3"
+   *     "1234E+7"
+   *     "+.12e-9"
+   *     "-NaN"
    */
   external static double parse(String source,
-                               [double handleError(String source)]);
+                               [double onError(String source)]);
 }

@@ -5,7 +5,18 @@
 part of dart.core;
 
 /**
- * Everything in Dart is an [Object].
+ * The base class for all Dart objects.
+ *
+ * Because Object is the root of the Dart class hierarchy,
+ * every other Dart class is a subclass of Object.
+ *
+ * When you define a class, you should override [toString]
+ * to return a string describing an instance of that class.
+ * You might also need to define [hashCode] and [==], as described in the
+ * [Implementing map keys]
+ * (http://www.dartlang.org/docs/dart-up-and-running/contents/ch03.html#ch03-implementing-map-keys)
+ * section of the [library tour]
+ * (http://www.dartlang.org/docs/dart-up-and-running/contents/ch03.html).
  */
 class Object {
   /**
@@ -22,6 +33,25 @@ class Object {
    *
    * The default behavior for all [Object]s is to return true if and
    * only if [:this:] and [other] are the same object.
+   *
+   * Override this method to specify a different equality relation on
+   * a class. The overriding method must still be an equivalence relation.
+   * That is, it must be:
+   *
+   *  * Total: It must return a boolean for all arguments. It should never throw
+   *    or return `null`.
+   *
+   *  * Reflexive: For all objects `o`, `o == o` must be true.
+   *
+   *  * Symmetric: For all objects `o1` and `o2`, `o1 == o2` and `o2 == o1` must
+   *    either both be true, or both be false.
+   *
+   *  * Transitive: For all objects `o1`, `o2`, and `o3`, if `o1 == o2` and
+   *    `o2 == o3` are true, then `o1 == o3` must be true.
+   *
+   * The method should also be consistent over time, so equality of two objects
+   * should not change over time, or at least only change if one of the objects
+   * was modified.
    *
    * If a subclass overrides the equality operator it should override
    * the [hashCode] method as well to maintain consistency.
@@ -50,14 +80,14 @@ class Object {
   /**
    * [noSuchMethod] is invoked when users invoke a non-existant method
    * on an object. The name of the method and the arguments of the
-   * invocation are passed to [noSuchMethod] in an [InvocationMirror].
+   * invocation are passed to [noSuchMethod] in an [Invocation].
    * If [noSuchMethod] returns a value, that value becomes the result of
    * the original invocation.
    *
    * The default behavior of [noSuchMethod] is to throw a
    * [noSuchMethodError].
    */
-  external dynamic noSuchMethod(InvocationMirror invocation);
+  external dynamic noSuchMethod(Invocation invocation);
 
   /**
    * A representation of the runtime type of the object.
