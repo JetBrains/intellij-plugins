@@ -5,8 +5,6 @@
 part of dart.core;
 
 class Error {
-  const Error();
-
   /**
    * Safely convert a value to a [String] description.
    *
@@ -18,52 +16,87 @@ class Error {
       return object.toString();
     }
     if (object is String) {
-      // TODO(ahe): Remove backslash when http://dartbug.com/4995 is fixed.
       String string = object;
-      const backslash = '\\';
-      String escaped = string
-        .replaceAll('$backslash', '$backslash$backslash')
-        .replaceAll('\n', '${backslash}n')
-        .replaceAll('\r', '${backslash}r')
-        .replaceAll('"',  '$backslash"');
-      return '"$escaped"';
+      StringBuffer buffer = new StringBuffer('"');
+      const int TAB = 0x09;
+      const int NEWLINE = 0x0a;
+      const int CARRIGE_RETURN = 0x0d;
+      const int BACKSLASH = 0x5c;
+      const int DOUBLE_QUOTE = 0x22;
+      const int DIGIT_ZERO = 0x30;
+      const int LOWERCASE_A = 0x61;
+      const int MAX_CONTROL = 0x1f;
+      for (int i = 0; i < string.length; i++) {
+        int codeUnit = string.codeUnitAt(i);
+        if (codeUnit <= MAX_CONTROL) {
+          if (codeUnit == NEWLINE) {
+            buffer.write(r"\n");
+          } else if (codeUnit == CARRIGE_RETURN) {
+            buffer.write(r"\r");
+          } else if (codeUnit == TAB) {
+            buffer.write(r"\t");
+          } else {
+            buffer.write(r"\x");
+            // Convert code in range 0x00 .. 0x1f to hex a two-digit hex string.
+            if (codeUnit < 0x10) {
+              buffer.write("0");
+            } else {
+              buffer.write("1");
+              codeUnit -= 0x10;
+            }
+            // Single digit to hex.
+            buffer.writeCharCode(codeUnit < 10 ? DIGIT_ZERO + codeUnit
+                                               : LOWERCASE_A - 10 + codeUnit);
+          }
+        } else if (codeUnit == BACKSLASH) {
+          buffer.write(r"\\");
+        } else if (codeUnit == DOUBLE_QUOTE) {
+          buffer.write(r'\"');
+        } else {
+          buffer.writeCharCode(codeUnit);
+        }
+      }
+      buffer.write('"');
+      return buffer.toString();
     }
     return _objectToString(object);
   }
 
   external static String _objectToString(Object object);
+
+  external StackTrace get stackTrace;
 }
 
 /**
  * Error thrown by the runtime system when an assert statement fails.
  */
-class AssertionError implements Error {
+class AssertionError extends Error {
 }
 
 /**
  * Error thrown by the runtime system when a type assertion fails.
  */
-class TypeError implements AssertionError {
+class TypeError extends AssertionError {
 }
 
 /**
  * Error thrown by the runtime system when a cast operation fails.
  */
-class CastError implements Error {
+class CastError extends Error {
 }
 
 /**
  * Error thrown when attempting to throw [:null:].
  */
-class NullThrownError implements Error {
-  const NullThrownError();
+class NullThrownError extends Error {
+  NullThrownError();
   String toString() => "Throw of null.";
 }
 
 /**
  * Error thrown when a function is passed an unacceptable argument.
  */
-class ArgumentError implements Error {
+class ArgumentError extends Error {
   final message;
 
   /** The [message] describes the erroneous argument. */
@@ -110,47 +143,61 @@ class RangeError extends ArgumentError {
  * of a switch) without meeting a break or similar end of the control
  * flow.
  */
-class FallThroughError implements Error {
-  const FallThroughError();
+class FallThroughError extends Error {
+  FallThroughError();
 }
 
 
-class AbstractClassInstantiationError implements Error {
+class AbstractClassInstantiationError extends Error {
   final String _className;
-  const AbstractClassInstantiationError(String this._className);
+  AbstractClassInstantiationError(String this._className);
   String toString() => "Cannot instantiate abstract class: '$_className'";
 }
+
 
 /**
  * Error thrown by the default implementation of [:noSuchMethod:] on [Object].
  */
-class NoSuchMethodError implements Error {
+class NoSuchMethodError extends Error {
   final Object _receiver;
-  final String _memberName;
+  final Symbol _memberName;
   final List _arguments;
-  final Map<String,dynamic> _namedArguments;
+  final Map<Symbol, dynamic> _namedArguments;
   final List _existingArgumentNames;
 
   /**
    * Create a [NoSuchMethodError] corresponding to a failed method call.
    *
-   * The first parameter to this constructor is the receiver of the method call.
+   * The [receiver] is the receiver of the method call.
    * That is, the object on which the method was attempted called.
-   * The second parameter is the name of the called method or accessor.
-   * The third parameter is a list of the positional arguments that the method
-   * was called with.
-   * The fourth parameter is a map from [String] names to the values of named
+   * If the receiver is `null`, it is interpreted as a call to a top-level
+   * function of a library.
+   *
+   * The [memberName] is a [Symbol] representing the name of the called method
+   * or accessor. It should not be `null`.
+   *
+   * The [positionalArguments] is a list of the positional arguments that the
+   * method was called with. If `null`, it is considered equivalent to the
+   * empty list.
+   *
+   * The [namedArguments] is a map from [Symbol]s to the values of named
    * arguments that the method was called with.
+   *
    * The optional [exisitingArgumentNames] is the expected parameters of a
    * method with the same name on the receiver, if available. This is
-   * the method that would have been called if the parameters had matched.
+   * the signature of the method that would have been called if the parameters
+   * had matched.
    */
-  const NoSuchMethodError(Object this._receiver,
-                          String this._memberName,
-                          List this._arguments,
-                          Map<String,dynamic> this._namedArguments,
-                          [List existingArgumentNames = null])
-      : this._existingArgumentNames = existingArgumentNames;
+  NoSuchMethodError(Object receiver,
+                    Symbol memberName,
+                    List positionalArguments,
+                    Map<Symbol ,dynamic> namedArguments,
+                    [List existingArgumentNames = null])
+      : _receiver = receiver,
+        _memberName = memberName,
+        _arguments = positionalArguments,
+        _namedArguments = namedArguments,
+        _existingArgumentNames = existingArgumentNames;
 
   external String toString();
 }
@@ -162,7 +209,7 @@ class NoSuchMethodError implements Error {
  * This [Error] is thrown when an instance cannot implement one of the methods
  * in its signature.
  */
-class UnsupportedError implements Error {
+class UnsupportedError extends Error {
   final String message;
   UnsupportedError(this.message);
   String toString() => "Unsupported operation: $message";
@@ -179,7 +226,7 @@ class UnsupportedError implements Error {
  * an [UnsupportedError] instead. This error is only intended for
  * use during development.
  */
-class UnimplementedError implements UnsupportedError {
+class UnimplementedError extends Error implements UnsupportedError {
   final String message;
   UnimplementedError([String this.message]);
   String toString() => (this.message != null
@@ -194,7 +241,7 @@ class UnimplementedError implements UnsupportedError {
  * This is a generic error used for a variety of different erroneous
  * actions. The message should be descriptive.
  */
-class StateError implements Error {
+class StateError extends Error {
   final String message;
   StateError(this.message);
   String toString() => "Bad state: $message";
@@ -208,11 +255,11 @@ class StateError implements Error {
  * ([Iterable] or similar collection of values) should declare which operations
  * are allowed during an iteration.
  */
-class ConcurrentModificationError implements Error {
+class ConcurrentModificationError extends Error {
   /** The object that was modified in an incompatible way. */
   final Object modifiedObject;
 
-  const ConcurrentModificationError([this.modifiedObject]);
+  ConcurrentModificationError([this.modifiedObject]);
 
   String toString() {
     if (modifiedObject == null) {
@@ -227,18 +274,29 @@ class ConcurrentModificationError implements Error {
 class OutOfMemoryError implements Error {
   const OutOfMemoryError();
   String toString() => "Out of Memory";
+
+  StackTrace get stackTrace => null;
 }
+
 
 class StackOverflowError implements Error {
   const StackOverflowError();
   String toString() => "Stack Overflow";
+
+  StackTrace get stackTrace => null;
 }
 
 /**
- * Error thrown when a runtime error occurs.
+ * Error thrown when a lazily initialized variable cannot be initialized.
+ *
+ * A static/library variable with an initializer expression is initialized
+ * the first time it is read. If evaluating the initializer expression causes
+ * another read of the variable, this error is thrown.
  */
-class RuntimeError implements Error {
-  final message;
-  RuntimeError(this.message);
-  String toString() => "RuntimeError: $message";
+class CyclicInitializationError extends Error {
+  final String variableName;
+  CyclicInitializationError([this.variableName]);
+  String toString() => variableName == null
+      ? "Reading static variable during its initialization"
+      : "Reading static variable '$variableName' during its initialization";
 }

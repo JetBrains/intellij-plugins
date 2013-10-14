@@ -3,11 +3,12 @@ abstract class I {
   set foo(x);
 }
 class A implements I {
+  get foo => 0;
 
   set foo(x) {
+    
   }
 
-  get foo => 0;
 }
 
 main() {

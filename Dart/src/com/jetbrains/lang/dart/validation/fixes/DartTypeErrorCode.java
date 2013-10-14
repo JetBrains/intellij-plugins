@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.validation.fixes;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.jetbrains.lang.dart.analyzer.AnalyzerMessage;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,14 +29,8 @@ public enum DartTypeErrorCode {
       // "%s" is not a member of %s
       return findFixesForUnresolved(file, startOffset);
     }
-  }, CONCRETE_CLASS_WITH_UNIMPLEMENTED_MEMBERS {
-    @NotNull
-    @Override
-    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
-      // Concrete class %s has unimplemented member(s) %s
-      return Arrays.asList(new ImplementMethodAction(startOffset));
-    }
-  }, EXTRA_ARGUMENT {
+  },
+  EXTRA_ARGUMENT {
     @NotNull
     @Override
     public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
@@ -99,6 +92,15 @@ public enum DartTypeErrorCode {
     public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // todo:  static member %s of %s cannot be accessed through an instance
       return Collections.emptyList();
+    }
+  },
+  UNDEFINED_OPERATOR {
+    @NotNull
+    @Override
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
+      // There is no such operator '%s' in '%s'
+      String operator = DartPresentableUtil.findFirstQuotedWord(message);
+      return operator == null ? Collections.<IntentionAction>emptyList() : Arrays.asList(new CreateDartOperatorAction(operator));
     }
   };
 

@@ -5,38 +5,98 @@
 part of dart.core;
 
 /**
- * A [Map] is an associative container, mapping a key to a value.
- * Null values are supported, but null keys are not.
+ * An unordered collection of key-value pairs, from which you retrieve a value
+ * by using its associated key.
+ *
+ * Each key can occur at most once in a map.
  */
 abstract class Map<K, V> {
   /**
-   * Creates a map with the default implementation.
+   * Creates a Map instance with the default implementation.
    */
-  factory Map() => new HashMap<K, V>();
+  factory Map() = LinkedHashMap<K, V>;
 
   /**
-   * Creates a [Map] that contains all key value pairs of [other].
+   * Creates a Map instance that contains all key-value pairs of [other].
    */
-  factory Map.from(Map<K, V> other) => new HashMap<K, V>.from(other);
-
-
-  /**
-   * Returns whether this map contains the given [value].
-   */
-  bool containsValue(V value);
+  factory Map.from(Map<K, V> other) = LinkedHashMap<K, V>.from;
 
   /**
-   * Returns whether this map contains the given [key].
+   * Creates an identity map with the default implementation.
    */
-  bool containsKey(K key);
+  factory Map.identity() = LinkedHashMap<K, V>.identity;
+
+  /**
+   * Creates a Map instance in which the keys and values are computed from the
+   * [iterable].
+   *
+   * For each element of the [iterable] this constructor computes a key-value
+   * pair, by applying [key] and [value] respectively.
+   *
+   * The example below creates a new Map from a List. The keys of `map` are
+   * `list` values converted to strings, and the values of the `map` are the
+   * squares of the `list` values:
+   *
+   *     List<int> list = [1, 2, 3];
+   *     Map<String, int> map = new Map.fromIterable(list,
+   *         key: (item) => item.toString(),
+   *         value: (item) => item * item));
+   *
+   *     map['1'] + map['2']; // 1 + 4
+   *     map['3'] - map['2']; // 9 - 4
+   *
+   * If no values are specified for [key] and [value] the default is the
+   * identity function.
+   *
+   * In the following example, the keys and corresponding values of `map`
+   * are `list` values:
+   *
+   *     map = new Map.fromIterable(list);
+   *     map[1] + map[2]; // 1 + 2
+   *     map[3] - map[2]; // 3 - 2
+   *
+   * The keys computed by the source [iterable] do not need to be unique. The
+   * last occurrence of a key will simply overwrite any previous value.
+   */
+  factory Map.fromIterable(Iterable iterable,
+      {K key(element), V value(element)}) = LinkedHashMap<K, V>.fromIterable;
+
+  /**
+   * Creates a Map instance associating the given [keys] to [values].
+   *
+   * This constructor iterates over [keys] and [values] and maps each element of
+   * [keys] to the corresponding element of [values].
+   *
+   *     List<String> letters = ['b', 'c'];
+   *     List<String> words = ['bad', 'cat'];
+   *     Map<String, String> map = new Map.fromIterables(letters, words);
+   *     map['b'] + map['c'];  // badcat
+   *
+   * If [keys] contains the same object multiple times, the last occurrence
+   * overwrites the previous value.
+   *
+   * It is an error if the two [Iterable]s don't have the same length.
+   */
+  factory Map.fromIterables(Iterable<K> keys, Iterable<V> values)
+      = LinkedHashMap<K, V>.fromIterables;
+
+  /**
+   * Returns true if this map contains the given value.
+   */
+  bool containsValue(Object value);
+
+  /**
+   * Returns true if this map contains the given key.
+   */
+  bool containsKey(Object key);
 
   /**
    * Returns the value for the given [key] or null if [key] is not
    * in the map. Because null values are supported, one should either
-   * use containsKey to distinguish between an absent key and a null
+   * use [containsKey] to distinguish between an absent key and a null
    * value, or use the [putIfAbsent] method.
    */
-  V operator [](K key);
+  V operator [](Object key);
 
   /**
    * Associates the [key] with the given [value].
@@ -48,10 +108,28 @@ abstract class Map<K, V> {
    * updates the map by mapping [key] to the value returned by
    * [ifAbsent]. Returns the value in the map.
    *
-   * It is an error to add or remove keys from map during the call to
-   * [ifAbsent].
+   *     Map<String, int> scores = {'Bob': 36};
+   *     for (var key in ['Bob', 'Rohan', 'Sophena']) {
+   *       scores.putIfAbsent(key, () => key.length);
+   *     }
+   *     scores['Bob'];      // 36
+   *     scores['Rohan'];    //  5
+   *     scores['Sophena'];  //  7
+   *
+   * The code that [ifAbsent] executes must not add or remove keys.
    */
   V putIfAbsent(K key, V ifAbsent());
+
+  /**
+   * Adds all key-value pairs of [other] to this map.
+   *
+   * If a key of [other] is already in this map, its value is overwritten.
+   *
+   * The operation is equivalent to doing `this[key] = value` for each key
+   * and associated value in other. It iterates over [other], which must
+   * therefore not change during the iteration.
+   */
+  void addAll(Map<K, V> other);
 
   /**
    * Removes the association for the given [key]. Returns the value for
@@ -59,7 +137,7 @@ abstract class Map<K, V> {
    * can be null and a returned null value does not always imply that the
    * key is absent.
    */
-  V remove(K key);
+  V remove(Object key);
 
   /**
    * Removes all pairs from the map.
@@ -76,7 +154,6 @@ abstract class Map<K, V> {
   /**
    * The keys of [this].
    */
-  // TODO(floitsch): this should return a [Set].
   Iterable<K> get keys;
 
   /**
@@ -93,4 +170,9 @@ abstract class Map<K, V> {
    * Returns true if there is no {key, value} pair in the map.
    */
   bool get isEmpty;
+
+  /**
+   * Returns true if there is at least one {key, value} pair in the map.
+   */
+  bool get isNotEmpty;
 }

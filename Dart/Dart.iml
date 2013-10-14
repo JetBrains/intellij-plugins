@@ -29,7 +29,8 @@
     <orderEntry type="module" module-name="fileWatcher" />
     <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="webide-impl" />
-    <orderEntry type="module" module-name="IntelliLang-js" scope="RUNTIME" />
+    <orderEntry type="module" module-name="IntelliLang-js" scope="TEST" />
+    <orderEntry type="module" module-name="idea-tests" scope="TEST" />
   </component>
 </module>
 

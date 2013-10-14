@@ -1,8 +1,5 @@
 package com.jetbrains.lang.dart.analyzer;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.jetbrains.lang.dart.util.DartTestUtils;
-
 public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
   @Override
   protected String getBasePath() {
@@ -10,19 +7,19 @@ public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
   }
 
   public void testCannotResolveMethod1() throws Throwable {
-    doTest("The FUNCTION 'foo' is not defined");
+    doTest("The function 'foo' is not defined");
   }
 
   public void testCannotResolveMethod2() throws Throwable {
-    doTest("The FUNCTION 'add' is not defined");
+    doTest("The function 'add' is not defined");
   }
 
   public void testCannotResolveMethod3() throws Throwable {
-    doTest("The FUNCTION 'add' is not defined");
+    doTest("The function 'add' is not defined");
   }
 
   public void testCannotResolveMethod4$DartImportFix() throws Throwable {
-    doTest("The FUNCTION 'superPrint' is not defined", "cannotResolveMethod4PrinterLibrary.dart");
+    doTest("The function 'superPrint' is not defined", "cannotResolveMethod4PrinterLibrary.dart");
   }
 
   public void testCannotResolveMethodInClass1() throws Throwable {
@@ -33,17 +30,16 @@ public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
     doTest("There is no such getter 'foo' in 'A'");
   }
 
-  public void testFieldDoesNotHaveASetter1() throws Throwable {
+  // fails because analyzer now reports this error as "Final variables cannot be assigned a value"
+  public void _testFieldDoesNotHaveASetter1() throws Throwable {
     doTest("There is no such setter 'foo' in 'A'");
   }
 
-  public void NotAStaticField() throws Throwable {
-    // https://code.google.com/p/dart/issues/detail?id=10754
-    doTest("\"bar\" is not a static field");
+  public void testNotAStaticField() throws Throwable {
+    doTest("Instance member 'bar' cannot be accessed using static access");
   }
 
-  public void NotAStaticMethod() throws Throwable {
-    // https://code.google.com/p/dart/issues/detail?id=10754
-    doTest("\"bar\" is not a static method");
+  public void testNotAStaticMethod() throws Throwable {
+    doTest("Instance member 'bar' cannot be accessed using static access");
   }
 }

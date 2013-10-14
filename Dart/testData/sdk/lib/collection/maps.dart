@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+part of dart.collection;
+
 /*
  * Helper class which implements complex [Map] operations
  * in term of basic ones ([Map.keys], [Map.operator []],
@@ -37,7 +39,7 @@ class Maps {
   }
 
   static clear(Map map) {
-    for (final k in map.keys) {
+    for (final k in map.keys.toList()) {
       map.remove(k);
     }
   }
@@ -48,17 +50,18 @@ class Maps {
     }
   }
 
-  static Collection getValues(Map map) {
-    final result = [];
-    for (final k in map.keys) {
-      result.add(map[k]);
-    }
-    return result;
+  static Iterable getValues(Map map) {
+    return map.keys.map((key) => map[key]);
   }
 
   static int length(Map map) => map.keys.length;
 
-  static bool isEmpty(Map map) => length(map) == 0;
+  static bool isEmpty(Map map) => map.keys.isEmpty;
+
+  static bool isNotEmpty(Map map) => map.keys.isNotEmpty;
+
+  // A list to identify cyclic maps during toString() calls.
+  static List _toStringList = new List();
 
   /**
    * Returns a string representing the specified map. The returned string
@@ -77,37 +80,71 @@ class Maps {
    * simply return the results of this method applied to the collection.
    */
   static String mapToString(Map m) {
+    for (int i = 0; i < _toStringList.length; i++) {
+      if (identical(_toStringList[i], m)) { return '{...}'; }
+    }
+
     var result = new StringBuffer();
-    _emitMap(m, result, new List());
+    try {
+      _toStringList.add(m);
+      result.write('{');
+      bool first = true;
+      m.forEach((k, v) {
+        if(!first) {
+          result.write(', ');
+        }
+        first = false;
+        result.write(k);
+        result.write(': ');
+        result.write(v);
+      });
+      result.write('}');
+    } finally {
+      assert(identical(_toStringList.last, m));
+      _toStringList.removeLast();
+    }
+
     return result.toString();
   }
 
+  static _id(x) => x;
+
   /**
-   * Appends a string representing the specified map to the specified
-   * string buffer. The string is formatted as per [mapToString].
-   * The [:visiting:] list contains references to all of the enclosing
-   * collections and maps (which are currently in the process of being
-   * emitted into [:result:]). The [:visiting:] parameter allows this method
-   * to generate a [:'[...]':] or [:'{...}':] where required. In other words,
-   * it allows this method and [_emitCollection] to identify recursive maps
-   * and collections.
+   * Fills a map with key/value pairs computed from [iterable].
+   *
+   * This method is used by Map classes in the named constructor fromIterable.
    */
-  static void _emitMap(Map m, StringBuffer result, List visiting) {
-    visiting.add(m);
-    result.add('{');
+  static void _fillMapWithMappedIterable(Map map, Iterable iterable,
+                                         key(element), value(element)) {
+    if (key == null) key = _id;
+    if (value == null) value = _id;
 
-    bool first = true;
-    m.forEach((k, v) {
-      if (!first) {
-        result.add(', ');
-      }
-      first = false;
-      Collections._emitObject(k, result, visiting);
-      result.add(': ');
-      Collections._emitObject(v, result, visiting);
-    });
+    for (var element in iterable) {
+      map[key(element)] = value(element);
+    }
+  }
 
-    result.add('}');
-    visiting.removeLast();
+  /**
+   * Fills a map by associating the [keys] to [values].
+   *
+   * This method is used by Map classes in the named constructor fromIterables.
+   */
+  static void _fillMapWithIterables(Map map, Iterable keys,
+                                    Iterable values) {
+    Iterator keyIterator = keys.iterator;
+    Iterator valueIterator = values.iterator;
+
+    bool hasNextKey = keyIterator.moveNext();
+    bool hasNextValue = valueIterator.moveNext();
+
+    while (hasNextKey && hasNextValue) {
+      map[keyIterator.current] = valueIterator.current;
+      hasNextKey = keyIterator.moveNext();
+      hasNextValue = valueIterator.moveNext();
+    }
+
+    if (hasNextKey || hasNextValue) {
+      throw new ArgumentError("Iterables do not have same length.");
+    }
   }
 }
