@@ -1,18 +1,21 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.dart.engine.context.AnalysisContext;
+import com.google.dart.engine.error.AnalysisError;
 import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationSession;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.lang.dart.ide.annotator.DartExternalAnnotator;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,9 +26,12 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
+    final DartSettings settings = getDartSettings();
+    DartSettingsUtil.setSettings(settings);
+
     System.setProperty(
       "com.google.dart.sdk",
-      getDartSettings().getSdkPath()
+      settings.getSdkPath()
     );
     // todo: hack to remove
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
@@ -85,7 +91,13 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
   private Annotation doHighlightingAndFindIntention(final String message) throws IOException {
     final AnnotationHolderImpl annotationHolder = new AnnotationHolderImpl(new AnnotationSession(myFixture.getFile()));
 
-    new DartExternalAnnotator().apply(myFixture.getFile(), getMessagesFromAnalyzer(), annotationHolder);
+
+    final DartInProcessAnnotator annotator = new DartInProcessAnnotator();
+    final Pair<DartFileBasedSource, AnalysisContext> information = annotator.collectInformation(myFixture.getFile());
+    final AnalysisError[] errors = annotator.doAnnotate(information);
+    annotator.apply(myFixture.getFile(), errors, annotationHolder);
+
+//    new DartExternalAnnotator().apply(myFixture.getFile(), getMessagesFromAnalyzer(), annotationHolder);
 
     return ContainerUtil.find(annotationHolder, new Condition<Annotation>() {
       @Override
