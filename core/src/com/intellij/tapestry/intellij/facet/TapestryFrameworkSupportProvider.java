@@ -2,9 +2,8 @@ package com.intellij.tapestry.intellij.facet;
 
 import com.intellij.CommonBundle;
 import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
-import com.intellij.ide.util.frameworkSupport.FrameworkRole;
 import com.intellij.ide.util.frameworkSupport.FrameworkVersion;
-import com.intellij.javaee.framework.JavaWebProjectType;
+import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -95,11 +94,6 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
   @NotNull
   @Override
   public String[] getProjectCategories() {
-    return new String[] {JavaWebProjectType.JAVA_WEB};
-  }
-
-  @Override
-  public FrameworkRole[] getRoles() {
-    return new FrameworkRole[] { JavaWebProjectType.ROLE };
+    return new String[] {WebFacet.ID.toString()};
   }
 }
