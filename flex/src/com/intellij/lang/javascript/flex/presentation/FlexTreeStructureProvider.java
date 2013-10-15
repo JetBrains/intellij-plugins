@@ -27,6 +27,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiCompiledFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
@@ -76,7 +77,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
     else {
       for (final AbstractTreeNode child : children) {
         Object o = child.getValue();
-        if (o instanceof JSFileImpl && DialectDetector.isActionScript((PsiFile)o) ||
+        if (o instanceof JSFileImpl && !(o instanceof PsiCompiledFile) && DialectDetector.isActionScript((PsiFile)o) ||
             o instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)o)) {
           result.add(new FlexFileNode((PsiFile)o, ((ProjectViewNode)parent).getSettings()));
           continue;

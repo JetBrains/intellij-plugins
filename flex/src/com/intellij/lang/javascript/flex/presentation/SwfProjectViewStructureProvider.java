@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.diagnostic.LogMessageEx;
-import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.SelectableTreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
@@ -16,8 +15,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.lang.javascript.psi.util.JSUtils;
+import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -26,9 +25,9 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiCompiledFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
@@ -41,13 +40,14 @@ import java.util.*;
 public class SwfProjectViewStructureProvider implements SelectableTreeStructureProvider, DumbAware {
 
   private static final Logger LOG = Logger.getInstance(SwfProjectViewStructureProvider.class.getName());
-  
+  private static final int MAX_TOTAL_SWFS_SIZE_IN_FOLDER_TO_SHOW_STRUCTURE = 5 * 1024 * 1024; // 5Mb
+
   private static final Comparator<JSQualifiedNamedElement> QNAME_COMPARATOR = new Comparator<JSQualifiedNamedElement>() {
     @Override
     public int compare(JSQualifiedNamedElement o1, JSQualifiedNamedElement o2) {
       final String qName = o1.getQualifiedName();
       final String qName2 = o2.getQualifiedName();
-      if (qName == null || qName2 == null) return qName == null && qName2 == null ? 0: qName != null ? 1:-1;
+      if (qName == null || qName2 == null) return qName == null && qName2 == null ? 0 : qName != null ? 1 : -1;
       String[] tokens1 = qName.split("\\.");
       String[] tokens2 = qName2.split("\\.");
 
@@ -155,26 +155,23 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
     if (!(parent instanceof PsiFileNode)) {
       return children;
     }
-    PsiFile psiFile = ((PsiFileNode)parent).getValue();
-    if (psiFile == null) {
-      return children;
-    }
-    if (FileTypeManager.getInstance().getFileTypeByFileName(psiFile.getName()) != FlexApplicationComponent.SWF_FILE_TYPE) {
+
+    final PsiFile psiFile = ((PsiFileNode)parent).getValue();
+    if (!(psiFile instanceof PsiCompiledFile) || !(psiFile instanceof JSFile)) {
       return children;
     }
 
-    VirtualFile vFile = psiFile.getVirtualFile();
-    if (vFile == null) {
+    final VirtualFile vFile = psiFile.getVirtualFile();
+    if (vFile == null || vFile.getFileType() != FlexApplicationComponent.SWF_FILE_TYPE) {
       return children;
     }
 
-    PsiFile file = PsiManager.getInstance(parent.getProject()).findFile(vFile);
-    if (file == null) {
+    if (isTooManySWFs(vFile.getParent())) {
       return children;
     }
 
     List<JSQualifiedNamedElement> elements = new ArrayList<JSQualifiedNamedElement>();
-    for (JSSourceElement e : ((JSFile)file).getStatements()) {
+    for (JSSourceElement e : ((JSFile)psiFile).getStatements()) {
       if (e instanceof JSQualifiedNamedElement) {
         String qName = ((JSQualifiedNamedElement)e).getQualifiedName();
         if (qName == null) {
@@ -193,6 +190,19 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
 
     Collections.sort(elements, QNAME_COMPARATOR);
     return getChildrenForPackage("", elements, 0, elements.size(), psiFile.getProject(), ((PsiFileNode)parent).getSettings());
+  }
+
+  private static boolean isTooManySWFs(final VirtualFile folder) {
+    int size = 0;
+    for (VirtualFile file : folder.getChildren()) {
+      if (file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE) {
+        size += file.getLength();
+        if (size > MAX_TOTAL_SWFS_SIZE_IN_FOLDER_TO_SHOW_STRUCTURE) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   static Collection<AbstractTreeNode> getChildrenForPackage(String aPackage,
