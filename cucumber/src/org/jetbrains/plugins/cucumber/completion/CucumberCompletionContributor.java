@@ -14,6 +14,7 @@ import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
@@ -93,6 +94,11 @@ public class CucumberCompletionContributor extends CompletionContributor {
   }
 
   private static void addScenarioKeywords(CompletionResultSet result, PsiFile originalFile, PsiElement originalPosition) {
+    PsiElement prevElement = getPreviousElement(originalPosition);
+    if (prevElement == null) {
+      return;
+    }
+
     final Project project = originalFile.getProject();
     final GherkinKeywordTable table = GherkinKeywordTable.getKeywordsTable(originalFile, project);
     final List<String> keywords = new ArrayList<String>();
@@ -101,14 +107,27 @@ public class CucumberCompletionContributor extends CompletionContributor {
       keywords.addAll(table.getBackgroundKeywords());
     }
 
-    addKeywordsToResult(table.getScenarioKeywords(), result, true, SCENARIO_KEYWORD_PRIORITY);
-    addKeywordsToResult(table.getScenarioOutlineKeywords(), result, true, SCENARIO_OUTLINE_KEYWORD_PRIORITY);
+    if (prevElement.getNode().getElementType() == GherkinTokenTypes.SCENARIO_KEYWORD) {
+      result = result.withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix("Scenario " + result.getPrefixMatcher().getPrefix()));
+      addKeywordsToResult(table.getScenarioOutlineKeywords(), result, false, SCENARIO_OUTLINE_KEYWORD_PRIORITY, false);
+    } else {
+      addKeywordsToResult(table.getScenarioKeywords(), result, true, SCENARIO_KEYWORD_PRIORITY, true);
+      addKeywordsToResult(table.getScenarioOutlineKeywords(), result, true, SCENARIO_OUTLINE_KEYWORD_PRIORITY, true);
+    }
 
     if (PsiTreeUtil.getParentOfType(originalPosition, GherkinScenarioOutlineImpl.class, GherkinExamplesBlockImpl.class) != null) {
       keywords.addAll(table.getExampleSectionKeywords());
     }
     // add to result
     addKeywordsToResult(keywords, result, true);
+  }
+
+  private static PsiElement getPreviousElement(PsiElement originalPosition) {
+    PsiElement prevElement = originalPosition.getPrevSibling();
+    if (prevElement != null && prevElement instanceof PsiWhiteSpace) {
+      prevElement = prevElement.getPrevSibling();
+    }
+    return prevElement;
   }
 
   private static void addFeatureKeywords(CompletionResultSet result, PsiFile originalFile) {
@@ -123,21 +142,26 @@ public class CucumberCompletionContributor extends CompletionContributor {
   private static void addKeywordsToResult(final Collection<String> keywords,
                                           final CompletionResultSet result,
                                           final boolean withColonSuffix) {
-    addKeywordsToResult(keywords, result, withColonSuffix, 0);
+    addKeywordsToResult(keywords, result, withColonSuffix, 0, true);
   }
 
   private static void addKeywordsToResult(final Collection<String> keywords,
                                           final CompletionResultSet result,
-                                          final boolean withColonSuffix, int priority) {
+                                          final boolean withColonSuffix, int priority, boolean withSpace) {
     for (String keyword : keywords) {
-      LookupElement element = createKeywordLookupElement(withColonSuffix ? keyword + ":" : keyword);
+      LookupElement element = createKeywordLookupElement(withColonSuffix ? keyword + ":" : keyword, withSpace);
 
       result.addElement(PrioritizedLookupElement.withPriority(element, priority));
     }
   }
 
-  private static LookupElement createKeywordLookupElement(final String keyword) {
-    return TailTypeDecorator.withTail(LookupElementBuilder.create(keyword), TailType.SPACE);
+  private static LookupElement createKeywordLookupElement(final String keyword, boolean withSpace) {
+    LookupElement result = LookupElementBuilder.create(keyword);
+    if (withSpace) {
+      result = TailTypeDecorator.withTail(result, TailType.SPACE);
+    }
+
+    return result;
   }
 
   private static boolean haveBackground(PsiFile originalFile) {
