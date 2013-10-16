@@ -7,6 +7,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.TailTypeDecorator;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -48,6 +49,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
   private static final int SCENARIO_OUTLINE_KEYWORD_PRIORITY = 60;
   public static final String POSSIBLE_GROUP_REGEX = "\\(([^)]*)\\)\\?";
   public static final String PARAMETERS_REGEX = "<string>|<number>";
+  public static final String INTELLIJ_IDEA_RULEZZZ = "IntellijIdeaRulezzz";
 
   public CucumberCompletionContributor() {
     final PsiElementPattern.Capture<PsiElement> inScenario = psiElement().inside(psiElement().withElementType(GherkinElementTypes.SCENARIOS));
@@ -108,8 +110,17 @@ public class CucumberCompletionContributor extends CompletionContributor {
     }
 
     if (prevElement.getNode().getElementType() == GherkinTokenTypes.SCENARIO_KEYWORD) {
-      result = result.withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix("Scenario " + result.getPrefixMatcher().getPrefix()));
-      addKeywordsToResult(table.getScenarioOutlineKeywords(), result, false, SCENARIO_OUTLINE_KEYWORD_PRIORITY, false);
+      String scenarioKeyword = (String)table.getScenarioKeywords().toArray()[0];
+      result = result.withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix(scenarioKeyword + " " + result.getPrefixMatcher().getPrefix()));
+
+      boolean haveColon = false;
+      final String elementText = originalPosition.getText();
+      final int rulezzIndex = elementText.indexOf(INTELLIJ_IDEA_RULEZZZ);
+      if (rulezzIndex >= 0) {
+        haveColon = elementText.substring(rulezzIndex + INTELLIJ_IDEA_RULEZZZ.length()).trim().startsWith(":");
+      }
+
+      addKeywordsToResult(table.getScenarioOutlineKeywords(), result, !haveColon, SCENARIO_OUTLINE_KEYWORD_PRIORITY, !haveColon);
     } else {
       addKeywordsToResult(table.getScenarioKeywords(), result, true, SCENARIO_KEYWORD_PRIORITY, true);
       addKeywordsToResult(table.getScenarioOutlineKeywords(), result, true, SCENARIO_OUTLINE_KEYWORD_PRIORITY, true);
@@ -122,8 +133,8 @@ public class CucumberCompletionContributor extends CompletionContributor {
     addKeywordsToResult(keywords, result, true);
   }
 
-  private static PsiElement getPreviousElement(PsiElement originalPosition) {
-    PsiElement prevElement = originalPosition.getPrevSibling();
+  private static PsiElement getPreviousElement(PsiElement element) {
+    PsiElement prevElement = element.getPrevSibling();
     if (prevElement != null && prevElement instanceof PsiWhiteSpace) {
       prevElement = prevElement.getPrevSibling();
     }

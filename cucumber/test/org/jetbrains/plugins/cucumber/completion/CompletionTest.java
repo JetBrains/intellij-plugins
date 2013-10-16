@@ -14,6 +14,10 @@ public class CompletionTest extends CucumberCodeInsightTestCase {
     doTest();
   }
 
+ public void testOutlineWithoutColon() {
+    doTest();
+  }
+
   @Override
   protected String getTestDataPath() {
     return CucumberTestUtil.getTestDataPath() + "/completion/insert";
