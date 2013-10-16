@@ -14,6 +14,8 @@ class JetBrainsUnitConfig extends Configuration {
   Map<String, int> group2id;
   bool done = false;
 
+  JetBrainsUnitConfig() : super.blank() {}
+
   void onStart() {
     _filterTests(testCases);
     testCases.forEach((TestCase testCase) => maxId = maxId < testCase.id ? testCase.id : maxId);
