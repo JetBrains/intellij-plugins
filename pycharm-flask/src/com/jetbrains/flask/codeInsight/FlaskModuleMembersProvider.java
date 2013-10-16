@@ -21,7 +21,7 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.python.codeInsight.PyDynamicMember;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyPsiFacade;
-import com.jetbrains.python.psi.impl.PyQualifiedName;
+import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolver;
 import com.jetbrains.python.psi.types.PyModuleMembersProvider;
 
@@ -41,7 +41,7 @@ public class FlaskModuleMembersProvider extends PyModuleMembersProvider {
     if (qName.equals("flask.ext")) {
       List<PyDynamicMember> result = new ArrayList<PyDynamicMember>();
       PyPsiFacade psiFacade = PyPsiFacade.getInstance(module.getProject());
-      QualifiedNameResolver visitor = psiFacade.qualifiedNameResolver(PyQualifiedName.fromComponents()).fromElement(module);
+      QualifiedNameResolver visitor = psiFacade.qualifiedNameResolver(QualifiedName.fromComponents()).fromElement(module);
       List<PsiDirectory> rootElements = visitor.resultsOfType(PsiDirectory.class);
       for (PsiDirectory psiDirectory: rootElements) {
         for (PsiFile file : psiDirectory.getFiles()) {
