@@ -142,7 +142,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
   public boolean isReportGenerationAvailable(@NotNull Project project,
                                              @NotNull DataContext dataContext,
                                              @NotNull CoverageSuitesBundle currentSuite) {
-    return true;
+    return false;
   }
 
   @Override
