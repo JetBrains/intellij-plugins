@@ -9,7 +9,7 @@ import java.io.File;
  * User: Andrey.Vokin
  * Date: 3/13/13
  */
-public class CucumberCompletionTest extends CucumberCodeInsightTestCase {
+public class CucumberCompletionVariantsTest extends CucumberCodeInsightTestCase {
   private CompletionTester myCompletionTester;
 
   public void testScenarioPriority() throws Throwable {
