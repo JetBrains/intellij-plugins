@@ -22,7 +22,7 @@ import com.intellij.psi.PsiReferenceBase;
 import com.intellij.util.ArrayUtil;
 import com.jetbrains.flask.codeInsight.FlaskNames;
 import com.jetbrains.python.psi.*;
-import com.jetbrains.python.psi.impl.PyQualifiedName;
+import com.intellij.psi.util.QualifiedName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,7 +95,7 @@ public class FlaskViewMethodReference extends PsiReferenceBase<StringLiteralExpr
   }
 
   public static boolean isRouteDecorator(PyDecorator decorator) {
-    PyQualifiedName qualifiedName = decorator.getQualifiedName();
+    QualifiedName qualifiedName = decorator.getQualifiedName();
     if (qualifiedName != null && qualifiedName.endsWith(FlaskNames.ROUTE)) {
       return true;
     }

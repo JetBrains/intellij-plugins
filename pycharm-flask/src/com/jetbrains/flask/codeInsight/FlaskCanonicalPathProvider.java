@@ -20,7 +20,7 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyFromImportStatement;
 import com.jetbrains.python.psi.PyImportElement;
-import com.jetbrains.python.psi.impl.PyQualifiedName;
+import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.PyCanonicalPathProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,17 +31,17 @@ import org.jetbrains.annotations.Nullable;
 public class FlaskCanonicalPathProvider implements PyCanonicalPathProvider {
   @Nullable
   @Override
-  public PyQualifiedName getCanonicalPath(@NotNull PyQualifiedName qName, PsiElement foothold) {
+  public QualifiedName getCanonicalPath(@NotNull QualifiedName qName, PsiElement foothold) {
     if (foothold == null) {
       return null;
     }
     if (flaskReexportsWerkzeug(qName, foothold.getText()) && importsFlask(foothold.getContainingFile())) {
-      return PyQualifiedName.fromComponents(FlaskNames.FLASK_MODULE);
+      return QualifiedName.fromComponents(FlaskNames.FLASK_MODULE);
     }
     if (qName.getComponentCount() > 0) {
       String head = qName.getComponents().get(0);
       if (head.startsWith("flask_")) {
-        return FlaskNames.FLASK_EXT.append(PyQualifiedName.fromComponents(head.substring(6))).append(qName.removeHead(1));
+        return FlaskNames.FLASK_EXT.append(QualifiedName.fromComponents(head.substring(6))).append(qName.removeHead(1));
       }
       else if (head.equals(FlaskNames.FLASKEXT)) {
         return FlaskNames.FLASK_EXT.append(qName.removeHead(1));
@@ -50,7 +50,7 @@ public class FlaskCanonicalPathProvider implements PyCanonicalPathProvider {
     return null;
   }
 
-  private static boolean flaskReexportsWerkzeug(PyQualifiedName qName, String name) {
+  private static boolean flaskReexportsWerkzeug(QualifiedName qName, String name) {
     return (qName.toString().equals("werkzeug.exceptions") && FlaskNames.ABORT.equals(name)) ||
            (qName.toString().equals("werkzeug.utils") && FlaskNames.REDIRECT.equals(name));
   }
@@ -60,14 +60,14 @@ public class FlaskCanonicalPathProvider implements PyCanonicalPathProvider {
       return false;
     }
     PyFile pyFile = (PyFile) file;
-    PyQualifiedName flask = PyQualifiedName.fromComponents("flask");
+    QualifiedName flask = QualifiedName.fromComponents("flask");
     for (PyFromImportStatement importStatement : pyFile.getFromImports()) {
       if (flask.equals(importStatement.getImportSourceQName())) {
         return true;
       }
     }
     for (PyImportElement importElement : pyFile.getImportTargets()) {
-      PyQualifiedName qName = importElement.getImportedQName();
+      QualifiedName qName = importElement.getImportedQName();
       if (qName != null && qName.matchesPrefix(flask)) {
         return true;
       }

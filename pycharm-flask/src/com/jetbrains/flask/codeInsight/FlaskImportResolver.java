@@ -18,7 +18,7 @@ package com.jetbrains.flask.codeInsight;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.python.psi.PyPsiFacade;
 import com.jetbrains.python.psi.impl.PyImportResolver;
-import com.jetbrains.python.psi.impl.PyQualifiedName;
+import com.intellij.psi.util.QualifiedName;
 import com.jetbrains.python.psi.resolve.QualifiedNameResolveContext;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,18 +29,18 @@ public class FlaskImportResolver implements PyImportResolver {
 
   @Nullable
   @Override
-  public PsiElement resolveImportReference(PyQualifiedName qualifiedName,
+  public PsiElement resolveImportReference(QualifiedName qualifiedName,
                                            QualifiedNameResolveContext resolveContext) {
     if (qualifiedName.matchesPrefix(FlaskNames.FLASK_EXT) && qualifiedName.getComponentCount() >= 3) {
       PyPsiFacade psiFacade = PyPsiFacade.getInstance(resolveContext.getProject());
       String topName = qualifiedName.getComponents().get(2);
-      PyQualifiedName subName = qualifiedName.removeHead(3);
-      PyQualifiedName qName = PyQualifiedName.fromComponents("flask_" + topName).append(subName);
+      QualifiedName subName = qualifiedName.removeHead(3);
+      QualifiedName qName = QualifiedName.fromComponents("flask_" + topName).append(subName);
       PsiElement item = psiFacade.qualifiedNameResolver(qName).withContext(resolveContext).firstResult();
       if (item != null) {
         return item;
       }
-      qName = PyQualifiedName.fromComponents(FlaskNames.FLASKEXT, topName).append(subName);
+      qName = QualifiedName.fromComponents(FlaskNames.FLASKEXT, topName).append(subName);
       item = psiFacade.qualifiedNameResolver(qName).withContext(resolveContext).withPlainDirectories().firstResult();
       if (item != null) {
         return item;
