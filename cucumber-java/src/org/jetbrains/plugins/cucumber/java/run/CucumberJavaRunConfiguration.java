@@ -130,7 +130,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     }
 
     String programParameters = getProgramParameters();
-    if (programParameters == null || !programParameters.contains("--glue")) {
+    if (programParameters != null && programParameters.contains("--glue")) {
       throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.in.program.parameters"));
     }
 
