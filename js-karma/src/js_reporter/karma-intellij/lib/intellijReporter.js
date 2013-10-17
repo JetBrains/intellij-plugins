@@ -109,7 +109,36 @@ function startBrowsersTracking(globalEmitter) {
   });
 }
 
-function IntellijReporter(config, fileList, formatError, globalEmitter) {
+// Makes sure that only intellijReporter is allowed to output.
+// Otherwise we'll get messages doubling and possible prefixing '##[teamcity ]' with other output that results
+// in test output tree breaking.
+// Would be nice to remove this hack.
+function clearOtherAdapters(injector, intellijReporter) {
+  process.nextTick(function () {
+    var multiReporter;
+    try {
+      multiReporter = injector.get('reporter');
+    }
+    catch (ex) {
+      console.warn("Can't get 'reporter'");
+      return;
+    }
+
+    if (multiReporter != null) {
+      var savedAdapters = intellijReporter.adapters.slice();
+      intellijReporter.adapters.forEach(function (adapter) {
+        if (typeof multiReporter.removeAdapter === 'function') {
+          multiReporter.removeAdapter(adapter);
+        }
+      });
+      if (intellijReporter.adapters.length === 0) {
+        Array.prototype.push.apply(intellijReporter.adapters, savedAdapters);
+      }
+    }
+  });
+}
+
+function IntellijReporter(config, fileList, formatError, globalEmitter, injector) {
   new FileListUpdater(config, fileList);
   startBrowsersTracking(globalEmitter);
   this.adapters = [];
@@ -125,6 +154,8 @@ function IntellijReporter(config, fileList, formatError, globalEmitter) {
   var tree;
 
   this.onRunStart = function (browsers) {
+    clearOtherAdapters(injector, that);
+
     totalTestCount = 0;
     uncheckedBrowserCount = browsers.length;
     tree = new Tree(cli.getConfigFile(), write);
@@ -181,7 +212,7 @@ function IntellijReporter(config, fileList, formatError, globalEmitter) {
   };
 }
 
-IntellijReporter.$inject = ['config', 'fileList', 'formatError', 'emitter'];
+IntellijReporter.$inject = ['config', 'fileList', 'formatError', 'emitter', 'injector'];
 
 IntellijReporter.reporterName = 'intellij_c831a91b03572bad3b3db88354641e3b';
 
