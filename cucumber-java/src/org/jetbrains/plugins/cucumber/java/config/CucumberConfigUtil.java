@@ -78,7 +78,7 @@ public class CucumberConfigUtil {
     if (oldMain != null) return CUCUMBER_VERSION_1_0;
 
     final PsiClass newMain = facade.findClass(CUCUMBER_API_CLI_MAIN_1_1, module.getModuleWithLibrariesScope());
-    if (newMain != null) return CUCUMBER_VERSION_1_0;
+    if (newMain != null) return CUCUMBER_VERSION_1_1;
 
     return null;
   }

@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotationProvider;
 import org.jetbrains.plugins.cucumber.psi.*;
 
@@ -33,6 +34,14 @@ public class CucumberJavaUtil {
     }
 
     return name;
+  }
+
+  public static String getCucumberPendingExceptionFqn(@NotNull final PsiElement context) {
+    final String version = CucumberConfigUtil.getCucumberCoreVersion(context);
+    if (version != null && version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_1_1) >= 0) {
+      return "cucumber.api.PendingException";
+    }
+    return "cucumber.runtime.PendingException";
   }
 
   @Nullable

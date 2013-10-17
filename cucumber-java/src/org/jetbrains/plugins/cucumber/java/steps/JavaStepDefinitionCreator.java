@@ -210,7 +210,7 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
 
     final Step cucumberStep = new Step(new ArrayList<Comment>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
     final String snippet = new SnippetGenerator(new JavaSnippet()).getSnippet(cucumberStep)
-      .replace("PendingException", "cucumber.runtime.PendingException")
+      .replace("PendingException", CucumberJavaUtil.getCucumberPendingExceptionFqn(step))
       .replaceFirst("@", methodAnnotation)
       .replaceAll("\\\\\\\\", "\\\\")
       .replaceAll("\\\\d", "\\\\\\\\d");
