@@ -2,7 +2,10 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.*;
+import com.intellij.execution.configurations.LocatableConfigurationBase;
+import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -25,8 +28,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author: Fedor.Korotkov
  */
-public class DartCommandLineRunConfiguration extends LocatableConfigurationBase
-  implements ModuleRunConfiguration {
+public class DartCommandLineRunConfiguration extends LocatableConfigurationBase {
   @Nullable
   private String myFilePath = null;
   @Nullable
@@ -125,11 +127,5 @@ public class DartCommandLineRunConfiguration extends LocatableConfigurationBase
   public void readExternal(final Element element) throws InvalidDataException {
     super.readExternal(element);
     XmlSerializer.deserializeInto(this, element);
-  }
-
-  @NotNull
-  @Override
-  public Module[] getModules() {
-    return Module.EMPTY_ARRAY;
   }
 }
