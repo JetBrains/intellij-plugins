@@ -9,7 +9,6 @@ import com.intellij.execution.junit2.info.LocationUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
@@ -19,7 +18,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.model.java.JavaSourceRootType;
 
 /**
  * @author Andrey.Vokin
@@ -64,8 +62,6 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
 
     final Module module = ModuleUtilCore.findModuleForFile(virtualFile, project);
     if (module == null) return false;
-    int testRootCount = ModuleRootManager.getInstance(module).getSourceRoots(JavaSourceRootType.TEST_SOURCE).size();
-    if (testRootCount < 2) return false;
 
     String mainClassName = null;
     final Location location = context.getLocation();
@@ -106,7 +102,6 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
     return true;
   }
-
 
   @Override
   public boolean isConfigurationFromContext(CucumberJavaRunConfiguration runConfiguration, ConfigurationContext context) {
