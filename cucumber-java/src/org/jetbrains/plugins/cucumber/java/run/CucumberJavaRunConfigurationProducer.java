@@ -96,7 +96,8 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
       configuration.setProgramParameters(newProgramParameters);
     }
 
-    configuration.setName(getConfigurationName(context));
+    configuration.myGeneratedName = getConfigurationName(context);
+    configuration.setGeneratedName();
 
     setupConfigurationModule(context, configuration);
     JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);

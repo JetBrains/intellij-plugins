@@ -39,6 +39,8 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   public String myNameFilter;
 
+  public String myGeneratedName;
+
   protected CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
     super(name, project, factory);
   }
@@ -168,5 +170,16 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   public void setNameFilter(String nameFilter) {
     myNameFilter = nameFilter;
+  }
+
+  @Nullable
+  @Override
+  public String suggestedName() {
+    return myGeneratedName;
+  }
+
+  @Override
+  public String getActionName() {
+    return getName();
   }
 }
