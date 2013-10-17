@@ -6,10 +6,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.psi.DartPsiCompositeElement;
 import com.jetbrains.lang.dart.psi.DartType;
@@ -19,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 public class DartTypeHandler extends TypedHandlerDelegate {
   private boolean myAfterTypeOrComponentName = false;
   private boolean myAfterDollar = false;
-  private boolean myCompleteStringLiteral = false;
-
 
   @Override
   public Result beforeCharTyped(char c,
@@ -34,9 +29,6 @@ public class DartTypeHandler extends TypedHandlerDelegate {
     }
     else if (c == '{') {
       myAfterDollar = checkAfterDollarInString(file, offset);
-    }
-    else if ((c == '\'' || c == '"') && isDartContext(file.findElementAt(offset-1))) {
-      myCompleteStringLiteral = !checkInStringLiteral(file, offset);
     }
     return super.beforeCharTyped(c, project, editor, file, fileType);
   }
@@ -57,12 +49,6 @@ public class DartTypeHandler extends TypedHandlerDelegate {
     return PsiTreeUtil.getParentOfType(at, DartPsiCompositeElement.class) != null;
   }
 
-  private static boolean checkInStringLiteral(PsiFile file, int offset) {
-    PsiElement at = file.findElementAt(offset - 1);
-    IElementType elementType = at instanceof LeafPsiElement ? ((LeafPsiElement)at).getElementType() : null;
-    return DartTokenTypesSets.STRINGS.contains(elementType);
-  }
-
   @Override
   public Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file) {
     String textToInsert = null;
@@ -73,10 +59,6 @@ public class DartTypeHandler extends TypedHandlerDelegate {
     else if (c == '{' && myAfterDollar) {
       myAfterDollar = false;
       textToInsert = "}";
-    }
-    else if (myCompleteStringLiteral && (c == '\'' || c == '"')) {
-      myCompleteStringLiteral = false;
-      textToInsert = Character.toString(c);
     }
     if (textToInsert != null) {
       int offset = editor.getCaretModel().getOffset();
