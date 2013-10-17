@@ -7,30 +7,36 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
 import icons.DartIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.yaml.psi.YAMLFile;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
+import java.io.File;
+
 abstract public class DartPubActionBase extends AnAction {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.actions.DartPubActionBase");
+  private static final String GROUP_DISPLAY_ID = "Dart Pub Tool";
 
   public DartPubActionBase() {
     super(DartIcons.Dart_16);
@@ -38,66 +44,82 @@ abstract public class DartPubActionBase extends AnAction {
 
   @Override
   public void update(AnActionEvent e) {
-    final DataContext dataContext = e.getDataContext();
-    final Presentation presentation = e.getPresentation();
+    e.getPresentation().setText(getPresentableText());
+    final boolean enabled = getModuleAndPubspecYamlFile(e) != null;
+    e.getPresentation().setVisible(enabled);
+    e.getPresentation().setEnabled(enabled);
+  }
 
-    final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(dataContext);
-    final boolean enabled = psiFile instanceof YAMLFile && isEnabled((YAMLFile)psiFile);
+  @Nullable
+  private Pair<Module, VirtualFile> getModuleAndPubspecYamlFile(final AnActionEvent e) {
+    final Module module = LangDataKeys.MODULE.getData(e.getDataContext());
+    final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
 
-    presentation.setVisible(enabled);
-    presentation.setEnabled(enabled);
-
-    if (enabled) {
-      presentation.setText(getPresentationText());
+    if (module != null && psiFile != null && psiFile.getName().equalsIgnoreCase("pubspec.yaml")) {
+      final VirtualFile file = psiFile.getOriginalFile().getVirtualFile();
+      return file != null && isEnabled(file) ? Pair.create(module, file) : null;
     }
+    return null;
+  }
+
+  protected boolean isEnabled(@NotNull VirtualFile file) {
+    return true;
   }
 
   @Nls
-  protected abstract String getPresentationText();
-
-  protected abstract boolean isEnabled(YAMLFile file);
+  protected abstract String getPresentableText();
 
   protected abstract String getPubCommandArgument();
 
-  protected abstract boolean isOK(@NotNull String output);
+  protected abstract String getSuccessOutputMessage();
 
   @Override
   public void actionPerformed(final AnActionEvent e) {
-    final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
-    Module module = LangDataKeys.MODULE.getData(e.getDataContext());
-    if (!(psiFile instanceof YAMLFile) || module == null) {
-      Messages.showOkCancelDialog(e.getProject(), DartBundle.message("dart.sdk.bad.dartpub.file"),
-                                  DartBundle.message("dart.warning"),
-                                  DartIcons.Dart_16);
-      return;
-    }
-    final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(psiFile);
+    final Pair<Module, VirtualFile> moduleAndPubspecYamlFile = getModuleAndPubspecYamlFile(e);
+    if (moduleAndPubspecYamlFile == null) return;
 
-    if (virtualFile == null) {
-      return;
-    }
+    File sdkRoot = getSdkRoot(moduleAndPubspecYamlFile);
+    if (sdkRoot == null) {
+      final int answer = Messages.showDialog(moduleAndPubspecYamlFile.first.getProject(), "Dart SDK is not configured",
+                                             getPresentableText(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
+      if (answer != 0) return;
 
-    final DartSettings settings = DartSettings.getSettingsForModule(module);
-    final VirtualFile dartPub = settings == null ? null : settings.getPub();
-    if (dartPub == null) {
-      Messages.showOkCancelDialog(e.getProject(),
-                                  DartBundle.message("dart.sdk.bad.dartpub.path", settings != null ? settings.getPubUrl() : ""),
-                                  DartBundle.message("dart.warning"),
-                                  DartIcons.Dart_16);
-      return;
+      ShowSettingsUtil.getInstance().showSettingsDialog(moduleAndPubspecYamlFile.first.getProject(), DartBundle.message("dart.title"));
+
+      sdkRoot = getSdkRoot(moduleAndPubspecYamlFile);
+      if (sdkRoot == null) return;
     }
 
-    new Task.Backgroundable(psiFile.getProject(), "Dart Pub", true) {
+    File pubFile = new File(sdkRoot, SystemInfo.isWindows ? "bin/pub.bat" : "bin/pub");
+    if (!pubFile.isFile()) {
+      final int answer =
+        Messages.showDialog(moduleAndPubspecYamlFile.first.getProject(), DartBundle.message("dart.sdk.bad.dartpub.path", pubFile.getPath()),
+                            getPresentableText(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
+      if (answer != 0) return;
+
+      ShowSettingsUtil.getInstance().showSettingsDialog(moduleAndPubspecYamlFile.first.getProject(), DartBundle.message("dart.title"));
+
+      sdkRoot = getSdkRoot(moduleAndPubspecYamlFile);
+      if (sdkRoot == null) return;
+
+      pubFile = new File(sdkRoot, SystemInfo.isWindows ? "bin/pub.bat" : "bin/pub");
+      if (!pubFile.isFile()) return;
+    }
+
+    doExecute(moduleAndPubspecYamlFile.first, moduleAndPubspecYamlFile.second, sdkRoot.getPath(), pubFile.getPath());
+  }
+
+  private void doExecute(final Module module, final VirtualFile pubspecYamlFile, final String sdkPath, final String pubPath) {
+    final Task.Backgroundable task = new Task.Backgroundable(module.getProject(), getPresentableText(), true) {
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Running pub manager...");
-        indicator.setFraction(0.0);
+        indicator.setIndeterminate(true);
         final GeneralCommandLine command = new GeneralCommandLine();
-        command.setExePath(dartPub.getPath());
-        command.setWorkDirectory(virtualFile.getParent().getPath());
+        command.setExePath(pubPath);
+        command.setWorkDirectory(pubspecYamlFile.getParent().getPath());
         command.addParameter(getPubCommandArgument());
-        command.getEnvironment().put("DART_SDK", settings.getSdkPath());
+        command.getEnvironment().put("DART_SDK", sdkPath);
 
-        // save on disk
         ApplicationManager.getApplication().invokeAndWait(new Runnable() {
           @Override
           public void run() {
@@ -114,31 +136,36 @@ abstract public class DartPubActionBase extends AnAction {
           LOG.debug(processOutput.getStderr());
 
           final String output = processOutput.getStdout().trim();
-          final boolean ok = isOK(output);
-
-          if (!ok) {
-            Notifications.Bus.notify(new Notification(e.getPresentation().getText(),
-                                                      DartBundle.message("dart.pub.title"),
-                                                      DartBundle.message("dart.pub.error", output, processOutput.getStderr()),
-                                                      NotificationType.WARNING));
+          if (output.contains(getSuccessOutputMessage())) {
+            Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, getPresentableText(),
+                                                      getSuccessOutputMessage().replace('!', '.'),
+                                                      NotificationType.INFORMATION));
+            pubspecYamlFile.getParent().refresh(true, true);
           }
           else {
-            Notifications.Bus.notify(new Notification(e.getPresentation().getText(),
-                                                      DartBundle.message("dart.pub.title"),
-                                                      output,
-                                                      NotificationType.INFORMATION));
-            virtualFile.getParent().refresh(true, false);
+            // todo presentable output!
+            Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, getPresentableText(),
+                                                      DartBundle.message("dart.pub.error", output, processOutput.getStderr()),
+                                                      NotificationType.ERROR));
           }
         }
         catch (ExecutionException ex) {
           LOG.error(ex);
-          Notifications.Bus.notify(new Notification(e.getPresentation().getText(),
-                                                    DartBundle.message("dart.pub.title"),
+          Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, getPresentableText(),
                                                     DartBundle.message("dart.pub.exception", ex.getMessage()),
                                                     NotificationType.ERROR));
         }
-        indicator.setFraction(1.0);
       }
-    }.setCancelText("Stop").queue();
+    };
+
+    task.queue();
+  }
+
+  @Nullable
+  private static File getSdkRoot(final Pair<Module, VirtualFile> moduleAndPubspecYamlFile) {
+    final DartSettings settings = DartSettings.getSettingsForModule(moduleAndPubspecYamlFile.first);
+    final String sdkPath = settings == null ? null : settings.getSdkPath();
+    final File sdkRoot = sdkPath == null || StringUtil.isEmptyOrSpaces(sdkPath) ? null : new File(sdkPath);
+    return sdkRoot == null || !sdkRoot.isDirectory() ? null : sdkRoot;
   }
 }

@@ -37,9 +37,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartSettings {
   private static final Key<Pair<Long, Map<String, String>>> LIBRARIES_TIME_AND_MAP_KEY = Key.create("dart.internal.libraries");
   private final String sdkUrl;
@@ -94,15 +91,6 @@ public class DartSettings {
 
   public String getDart2JSUrl() {
     return sdkUrl + "/bin/" + (SystemInfo.isWindows ? "dart2js.bat" : "dart2js");
-  }
-
-  @Nullable
-  public VirtualFile getPub() {
-    return VirtualFileManager.getInstance().findFileByUrl(getPubUrl());
-  }
-
-  public String getPubUrl() {
-    return sdkUrl + "/bin/" + (SystemInfo.isWindows ? "pub.bat" : "pub");
   }
 
   @Nullable
