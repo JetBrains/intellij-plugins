@@ -148,6 +148,7 @@
 
     <lang.braceMatcher language="Dart" implementationClass="com.jetbrains.lang.dart.ide.DartBraceMatcher"/>
     <typedHandler implementation="com.jetbrains.lang.dart.ide.editor.DartTypeHandler" id="Dart"/>
+    <quoteHandler fileType="Dart" className="com.jetbrains.lang.dart.ide.editor.DartQuoteHandler"/>
 
     <lang.commenter language="Dart" implementationClass="com.jetbrains.lang.dart.ide.DartCommenter"/>
     <lang.parserDefinition language="Dart" implementationClass="com.jetbrains.lang.dart.DartParserDefinition"/>
@@ -231,10 +232,12 @@
     <completion.contributor language="Dart"
                             implementationClass="com.jetbrains.lang.dart.ide.completion.DartReferenceCompletionContributor"/>
 
-    <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartExternalAnnotator"/>
+    <!--<externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartExternalAnnotator"/>-->
+    <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator"/>
     <!--<annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartUnresolvedReferenceVisitor"/>-->
 
+    <projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalyzerService" serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
 
