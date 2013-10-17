@@ -305,5 +305,17 @@
             text="Getter and Setter">
       <add-to-group anchor="after" relative-to-action="Generate.SetAccessor.Dart" group-id="GenerateGroup"/>
     </action>
+
+    <group>
+      <action id="Dart.pub.install" class="com.jetbrains.lang.dart.ide.actions.DartPubInstallAction"
+              text="Dart: Install Packages" description="Install Dart packages">
+      </action>
+      <action id="Dart.pub.update" class="com.jetbrains.lang.dart.ide.actions.DartPubUpdateAction"
+              text="Dart: Update Packages" description="Update Dart packages">
+      </action>
+      <separator/>
+      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+      <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
+    </group>
   </actions>
 </idea-plugin>
