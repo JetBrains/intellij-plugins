@@ -7,7 +7,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.TailTypeDecorator;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -96,11 +95,6 @@ public class CucumberCompletionContributor extends CompletionContributor {
   }
 
   private static void addScenarioKeywords(CompletionResultSet result, PsiFile originalFile, PsiElement originalPosition) {
-    PsiElement prevElement = getPreviousElement(originalPosition);
-    if (prevElement == null) {
-      return;
-    }
-
     final Project project = originalFile.getProject();
     final GherkinKeywordTable table = GherkinKeywordTable.getKeywordsTable(originalFile, project);
     final List<String> keywords = new ArrayList<String>();
@@ -109,7 +103,8 @@ public class CucumberCompletionContributor extends CompletionContributor {
       keywords.addAll(table.getBackgroundKeywords());
     }
 
-    if (prevElement.getNode().getElementType() == GherkinTokenTypes.SCENARIO_KEYWORD) {
+    final PsiElement prevElement = getPreviousElement(originalPosition);
+    if (prevElement != null && prevElement.getNode().getElementType() == GherkinTokenTypes.SCENARIO_KEYWORD) {
       String scenarioKeyword = (String)table.getScenarioKeywords().toArray()[0];
       result = result.withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix(scenarioKeyword + " " + result.getPrefixMatcher().getPrefix()));
 
