@@ -714,7 +714,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   private static void disableCompilationSkippedWarning(final Project project) {
     NotificationsConfiguration.getNotificationsConfiguration()
-      .changeSettings(COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.getDisplayId(), NotificationDisplayType.NONE, false);
+      .changeSettings(COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.getDisplayId(), NotificationDisplayType.NONE, false, false);
     ToolWindowManager.getInstance(project)
       .notifyByBalloon(EventLog.LOG_TOOL_WINDOW_ID, MessageType.INFO, FlexBundle.message("make.before.launch.warning.disabled"));
   }
