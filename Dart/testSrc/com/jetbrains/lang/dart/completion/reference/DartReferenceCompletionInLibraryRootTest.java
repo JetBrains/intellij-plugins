@@ -72,7 +72,7 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
   public void testPackages4() throws Throwable {
     myFixture.addFileToProject("pubspec.yaml", "");
     myFixture.addFileToProject("packages/foo/foo.dart", "");
-    PsiFile psiFile = myFixture.addFileToProject("packages/my_app/main.dart", "import 'package:foo/<caret>';");
+    PsiFile psiFile = myFixture.addFileToProject("my_app/main.dart", "import 'package:foo/<caret>';");
     myFixture.configureFromExistingVirtualFile(DartResolveUtil.getRealVirtualFile(psiFile));
     doTestVariantsInner(getTestName(false) + ".txt");
   }
