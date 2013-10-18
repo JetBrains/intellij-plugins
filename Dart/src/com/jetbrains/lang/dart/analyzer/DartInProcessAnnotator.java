@@ -13,7 +13,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -49,7 +51,11 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
     final File sdkDir = new File(sdkPath);
     if (!sdkDir.isDirectory()) return null;
 
+    if (FileUtil.isAncestor(sdkDir.getPath(), virtualFile.getPath(), true)) return null;
+
     final VirtualFile packagesFolder = DartResolveUtil.findPackagesFolder(psiFile);
+
+    if (packagesFolder != null && VfsUtilCore.isAncestor(packagesFolder, virtualFile, true)) return null;
 
     return Pair.create(DartFileBasedSource.getSource(psiFile.getProject(), virtualFile),
                        DartAnalyzerService.getInstance(psiFile.getProject()).getAnalysisContext(sdkPath, packagesFolder));
