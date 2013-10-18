@@ -37,11 +37,6 @@ public class CreateDartGetterSetterAction extends CreateDartFunctionActionBase {
   }
 
   @Override
-  protected boolean isAvailable(Project project, PsiElement element, Editor editor, PsiFile file) {
-    return PsiTreeUtil.getParentOfType(myElement, DartReference.class) != null;
-  }
-
-  @Override
   protected boolean buildTemplate(Template template, @NotNull PsiElement element) {
     if (myStatic) {
       template.addTextSegment("static ");
