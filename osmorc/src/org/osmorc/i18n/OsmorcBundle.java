@@ -24,49 +24,27 @@
  */
 package org.osmorc.i18n;
 
-import com.intellij.CommonBundle;
+import com.intellij.AbstractBundle;
 import icons.OsmorcIdeaIcons;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 import javax.swing.*;
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.util.ResourceBundle;
 
 /**
  * Internationalization bundle for Osmorc.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class OsmorcBundle {
-  private static Reference<ResourceBundle> ourBundle;
+public class OsmorcBundle extends AbstractBundle {
+  private static final String PATH_TO_BUNDLE = "org.osmorc.i18n.OsmorcBundle";
+  private static final AbstractBundle ourInstance = new OsmorcBundle();
 
-  @NonNls
-  private static final String BUNDLE = "org.osmorc.i18n.OsmorcBundle";
-
-  private OsmorcBundle() { }
-
-  @NotNull
-  public static String message(@PropertyKey(resourceBundle = BUNDLE) @NotNull String key, Object... params) {
-    return CommonBundle.message(getBundle(), key, params);
+  private OsmorcBundle() {
+    super(PATH_TO_BUNDLE);
   }
 
-  /**
-   * Returns the resource bundle. In case there is a memory shortage the resource bundle is garbage collected. This
-   * method will provide a new resource bundle in case the previous one got garbage collected.
-   */
-  private static ResourceBundle getBundle() {
-    ResourceBundle bundle = null;
-    if (ourBundle != null) {
-      bundle = ourBundle.get();
-    }
-    if (bundle == null) {
-      bundle = ResourceBundle.getBundle(BUNDLE);
-      ourBundle = new SoftReference<ResourceBundle>(bundle);
-    }
-    return bundle;
+  public static String message(@PropertyKey(resourceBundle = PATH_TO_BUNDLE)String key, Object... params) {
+    return ourInstance.getMessage(key, params);
   }
 
   /**

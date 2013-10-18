@@ -14,43 +14,24 @@
  */
 package com.intellij.struts2;
 
-import com.intellij.CommonBundle;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.AbstractBundle;
 import org.jetbrains.annotations.PropertyKey;
-
-import java.lang.ref.Reference;
-import java.lang.ref.SoftReference;
-import java.util.ResourceBundle;
 
 /**
  * MessageResource provider.
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsBundle {
-
-  private static Reference<ResourceBundle> ourBundle;
-
-  @NonNls
+public class StrutsBundle extends AbstractBundle {
   private static final String PATH_TO_BUNDLE = "resources.Struts2Bundle";
+  private static final StrutsBundle ourInstance = new StrutsBundle();
 
   private StrutsBundle() {
+    super(PATH_TO_BUNDLE);
   }
 
-  public static String message(@PropertyKey(resourceBundle = PATH_TO_BUNDLE) final String key, final Object... params) {
-    return CommonBundle.message(getBundle(), key, params);
-  }
-
-  private static ResourceBundle getBundle() {
-    ResourceBundle bundle = null;
-    if (ourBundle != null) {
-      bundle = ourBundle.get();
-    }
-    if (bundle == null) {
-      bundle = ResourceBundle.getBundle(PATH_TO_BUNDLE);
-      ourBundle = new SoftReference<ResourceBundle>(bundle);
-    }
-    return bundle;
+  public static String message(@PropertyKey(resourceBundle = PATH_TO_BUNDLE)String key, Object... params) {
+    return ourInstance.getMessage(key, params);
   }
 
 }
