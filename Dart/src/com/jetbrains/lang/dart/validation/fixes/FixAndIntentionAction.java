@@ -38,8 +38,8 @@ public abstract class FixAndIntentionAction implements LocalQuickFix, IntentionA
     myElement = element;
   }
 
-  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    if (myElement == null) return false;
+  public final boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    if (myElement == null || !myElement.isValid()) return false;
     return isAvailable(project, myElement, editor, file);
   }
 
