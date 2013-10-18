@@ -101,6 +101,12 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     if (VECTOR_CLASS_NAME.equals(psiElementType)) {
       psiElementType = JSImportHandlingUtil.resolveTypeName(expression.getText(), expression); // to avoid loosing generics
     }
+    myCallExpressionsToApply.pollLast(); // MyClass(anyVar) is cast to MyClass
     addType(psiElementType, resolveResult);
+  }
+
+  @Override
+  protected boolean useVariableType(JSType type) {
+    return myCallExpressionsToApply.isEmpty() && super.useVariableType(type);
   }
 }
