@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.Function;
+import com.intellij.util.containers.WeakValueHashMap;
 import com.jetbrains.lang.dart.DartFileType;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -20,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class DartAnalyzerService {
@@ -28,13 +28,12 @@ public class DartAnalyzerService {
   private final Project myProject;
 
   private final Map<Pair<String, VirtualFile>, AnalysisContext> mySdkPathAndPackagesDirToAnalysisContext =
-    new THashMap<Pair<String, VirtualFile>, AnalysisContext>();
+    new WeakValueHashMap<Pair<String, VirtualFile>, AnalysisContext>();
 
   private final Collection<VirtualFile> myCreatedFiles = Collections.synchronizedSet(new THashSet<VirtualFile>());
 
   private final Map<VirtualFile, DartFileBasedSource> myFileToSourceMap =
-    Collections.synchronizedMap(new HashMap<VirtualFile, DartFileBasedSource>());
-
+    Collections.synchronizedMap(new THashMap<VirtualFile, DartFileBasedSource>());
 
   public DartAnalyzerService(final Project project) {
     myProject = project;
