@@ -28,9 +28,12 @@ public class CreateDartOperatorAction extends CreateDartMethodAction {
 
   @Override
   protected boolean isAvailable(Project project, PsiElement element, Editor editor, PsiFile file) {
-    DartOperatorExpressionImpl operatorExpression = PsiTreeUtil.getParentOfType(element, DartOperatorExpressionImpl.class);
+    final DartOperatorExpressionImpl operatorExpression = PsiTreeUtil.getParentOfType(element, DartOperatorExpressionImpl.class);
     final DartReference[] references = PsiTreeUtil.getChildrenOfType(operatorExpression, DartReference.class);
-    return references != null && references[0].resolveDartClass().getDartClass() != null;
+    if (references == null || references[0].resolveDartClass().getDartClass() == null) return false;
+
+    final PsiElement anchor = findAnchor(element);
+    return anchor != null && !isInDartSdkOrDartPackagesFolder(anchor.getContainingFile());
   }
 
   @Nullable

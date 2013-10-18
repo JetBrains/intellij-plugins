@@ -32,7 +32,9 @@ abstract public class CreateDartFunctionActionBase extends BaseCreateFix {
 
   @Override
   protected boolean isAvailable(Project project, PsiElement element, Editor editor, PsiFile file) {
-    return PsiTreeUtil.getParentOfType(myElement, DartReference.class) != null;
+    if (PsiTreeUtil.getParentOfType(myElement, DartReference.class) == null) return false;
+    final PsiElement anchor = findAnchor(element);
+    return anchor != null && !isInDartSdkOrDartPackagesFolder(anchor.getContainingFile());
   }
 
   @Override

@@ -9,12 +9,20 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BaseCreateFix extends FixAndIntentionAction {
   @Override
   public boolean startInWriteAction() {
     return true;
+  }
+
+  protected static boolean isInDartSdkOrDartPackagesFolder(final @NotNull PsiFile psiFile) {
+    final VirtualFile vFile = psiFile.getOriginalFile().getVirtualFile();
+    return vFile != null && DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile.getProject(), vFile);
   }
 
   @Nullable
