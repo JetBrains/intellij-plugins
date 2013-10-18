@@ -72,7 +72,7 @@ public class DartSettings {
   }
 
   public String getCompilerUrl() {
-    return sdkUrl + "/bin/dart";
+    return sdkUrl + (SystemInfo.isWindows ? "/bin/dart.exe" : "/bin/dart");
   }
 
   @Nullable
