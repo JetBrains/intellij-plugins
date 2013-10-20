@@ -1,6 +1,14 @@
 package com.dmarcotte.handlebars.structure;
 
+import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.ide.structureView.impl.StructureViewComposite;
 import com.intellij.ide.structureView.newStructureView.StructureViewComponent;
+import com.intellij.lang.LanguageStructureViewBuilder;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.Consumer;
 
@@ -15,10 +23,10 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
   private void doStructureViewTest(final String fileText, final String expectedTree) {
     myFixture.configureByText(ourTestFileName, fileText);
 
-    myFixture.testStructureView(new Consumer<StructureViewComponent>() {
+    testStructureView(myFixture.getFile(), new Consumer<StructureViewComposite>() {
       @Override
-      public void consume(StructureViewComponent component) {
-        JTree tree = component.getTree();
+      public void consume(StructureViewComposite component) {
+        JTree tree = ((StructureViewComponent) component.getSelectedStructureView()).getTree();
 
         // expand the whole tree
         int rowCount = tree.getRowCount();
@@ -29,6 +37,22 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
         assertTreeEqual(tree, expectedTree + "\n");
       }
     });
+  }
+
+  public void testStructureView(PsiFile file, Consumer<StructureViewComposite> consumer) {
+    final VirtualFile vFile = file.getVirtualFile();
+    final FileEditor fileEditor = FileEditorManager.getInstance(getProject()).getSelectedEditor(vFile);
+    final StructureViewBuilder builder = LanguageStructureViewBuilder.INSTANCE.getStructureViewBuilder(file);
+    assert builder != null;
+
+    StructureViewComposite composite = null;
+    try {
+      composite = (StructureViewComposite) builder.createStructureView(fileEditor, file.getProject());
+      consumer.consume(composite);
+    }
+    finally {
+      if (composite != null) Disposer.dispose(composite);
+    }
   }
 
   public void testNestedBlocks() throws Exception {
