@@ -15,6 +15,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.NonFocusableCheckBox;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -105,7 +107,7 @@ public class FlexModuleWizardForm {
     }
   }
 
-  public void reset(final String moduleName) {
+  public void reset(@Nullable final String moduleName) {
     myTargetPlayerCombo.setSelectedItem(TargetPlatform.Web);
     myPureActionScriptCheckBox.setSelected(false);
     myOutputTypeCombo.setSelectedItem(OutputType.Application);
@@ -113,7 +115,9 @@ public class FlexModuleWizardForm {
     myIOSCheckBox.setSelected(true);
     BCUtils.updateAvailableTargetPlayers(mySdkCombo.getSelectedSdk(), myTargetPlayerCombo);
     mySampleAppCheckBox.setSelected(true);
-    onModuleNameChanged(moduleName);
+    if (moduleName != null) {
+      onModuleNameChanged(moduleName);
+    }
     myHtmlWrapperCheckBox.setSelected(true);
     myEnableHistoryCheckBox.setSelected(true);
     myCheckPlayerVersionCheckBox.setSelected(true);
@@ -187,7 +191,7 @@ public class FlexModuleWizardForm {
                                                    myExpressInstallCheckBox.isEnabled() && myExpressInstallCheckBox.isSelected());
   }
 
-  public void onModuleNameChanged(final String moduleName) {
+  public void onModuleNameChanged(@NotNull final String moduleName) {
     if (!mySampleAppNameNameChangedByUser) {
       final StringBuilder builder = new StringBuilder();
       for (int i = 0; i < moduleName.length(); i++) {
