@@ -18,13 +18,11 @@ import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.indices.ModuleExcludeIndex;
 import org.jetbrains.jps.model.JpsModel;
-import org.jetbrains.jps.model.JpsSimpleElement;
-import org.jetbrains.jps.model.java.JavaSourceRootProperties;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.java.compiler.JpsJavaCompilerConfiguration;
+import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.jps.model.module.JpsTypedModule;
-import org.jetbrains.jps.model.module.JpsTypedModuleSourceRoot;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
@@ -64,7 +62,7 @@ public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescript
     final JavaSourceRootType rootType = getTargetType() == FlexResourceBuildTargetType.PRODUCTION ? JavaSourceRootType.SOURCE
                                                                                                   : JavaSourceRootType.TEST_SOURCE;
 
-    for (JpsTypedModuleSourceRoot<JpsSimpleElement<JavaSourceRootProperties>> sourceRoot : getModule().getSourceRoots(rootType)) {
+    for (JpsModuleSourceRoot sourceRoot : getModule().getSourceRoots(rootType)) {
       final File root = JpsPathUtil.urlToFile(sourceRoot.getUrl());
       result.add(new FlexSourceRootDescriptor(this, root));
     }

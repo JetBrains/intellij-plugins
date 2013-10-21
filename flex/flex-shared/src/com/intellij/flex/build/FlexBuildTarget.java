@@ -23,12 +23,10 @@ import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.indices.ModuleExcludeIndex;
 import org.jetbrains.jps.model.JpsModel;
 import org.jetbrains.jps.model.JpsProject;
-import org.jetbrains.jps.model.JpsSimpleElement;
-import org.jetbrains.jps.model.java.JavaSourceRootProperties;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.JpsOrderRootType;
-import org.jetbrains.jps.model.module.JpsTypedModuleSourceRoot;
+import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.jps.model.runConfiguration.JpsRunConfigurationType;
 import org.jetbrains.jps.model.runConfiguration.JpsTypedRunConfiguration;
 import org.jetbrains.jps.util.JpsPathUtil;
@@ -127,18 +125,14 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
 
     final Collection<File> srcRoots = new ArrayList<File>();
 
-    for (JpsTypedModuleSourceRoot<JpsSimpleElement<JavaSourceRootProperties>> sourceRoot
-      : myBC.getModule().getSourceRoots(JavaSourceRootType.SOURCE)) {
-
+    for (JpsModuleSourceRoot sourceRoot : myBC.getModule().getSourceRoots(JavaSourceRootType.SOURCE)) {
       final File root = JpsPathUtil.urlToFile(sourceRoot.getUrl());
       result.add(new FlexSourceRootDescriptor(this, root));
       srcRoots.add(root);
     }
 
     if (FlexCommonUtils.isFlexUnitBC(myBC)) {
-      for (JpsTypedModuleSourceRoot<JpsSimpleElement<JavaSourceRootProperties>> sourceRoot
-        : myBC.getModule().getSourceRoots(JavaSourceRootType.TEST_SOURCE)) {
-
+      for (JpsModuleSourceRoot sourceRoot : myBC.getModule().getSourceRoots(JavaSourceRootType.TEST_SOURCE)) {
         final File root = JpsPathUtil.urlToFile(sourceRoot.getUrl());
         result.add(new FlexSourceRootDescriptor(this, root));
         srcRoots.add(root);
