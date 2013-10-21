@@ -1,5 +1,9 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.dart.engine.context.AnalysisContext;
+import com.google.dart.engine.error.AnalysisError;
+import com.intellij.openapi.util.Pair;
+
 public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
   @Override
   protected String getBasePath() {
@@ -41,5 +45,23 @@ public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
 
   public void testNotAStaticMethod() throws Throwable {
     doTest("Instance member 'bar' cannot be accessed using static access");
+  }
+
+  public void testNoDartInHtml() throws Throwable {
+    myFixture.configureByFiles(getTestName(true) + ".html");
+    assertNull(new DartInProcessAnnotator().collectInformation(myFixture.getFile()));
+  }
+
+  public void testNoErrorsInHtml() throws Throwable {
+    final String testName = getTestName(true);
+    myFixture.configureByFiles(testName + ".html", testName + "_2.dart");
+    final DartInProcessAnnotator annotator = new DartInProcessAnnotator();
+    final Pair<DartFileBasedSource, AnalysisContext> information = annotator.collectInformation(myFixture.getFile());
+    final AnalysisError[] errors = annotator.doAnnotate(information);
+    assertEmpty(errors);
+  }
+
+  public void testCreateMethodInHtml() throws Throwable {
+    doTest("The function 'bar' is not defined");
   }
 }

@@ -49,7 +49,7 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
 
   void doTest(String message, String... additionalFiles) throws IOException {
     doTestWithoutCheck(message, additionalFiles);
-    myFixture.checkResultByFile(getTestName(true) + ".after.dart");
+    myFixture.checkResultByFile(getTestName(true) + ".after" + getExtension());
   }
 
   void doTestWithoutCheck(String message, String... additionalFiles) throws IOException {
@@ -58,7 +58,7 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
     final String fixSimpleClassName = dollarIndex > 0 ? fullTestName.substring(dollarIndex + 1) : null;
     final String testName = dollarIndex > 0 ? fullTestName.substring(0, dollarIndex) : fullTestName;
 
-    String[] files = ArrayUtil.append(additionalFiles, testName + ".dart");
+    String[] files = ArrayUtil.append(additionalFiles, testName + getExtension());
     files = ArrayUtil.reverseArray(files);
 
     myFixture.configureByFiles(files);
@@ -87,10 +87,13 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
     });
   }
 
+  private String getExtension() {
+    return getTestName(true).endsWith("InHtml") ? ".html" : ".dart";
+  }
+
   @Nullable
   private Annotation doHighlightingAndFindIntention(final String message) throws IOException {
     final AnnotationHolderImpl annotationHolder = new AnnotationHolderImpl(new AnnotationSession(myFixture.getFile()));
-
 
     final DartInProcessAnnotator annotator = new DartInProcessAnnotator();
     final Pair<DartFileBasedSource, AnalysisContext> information = annotator.collectInformation(myFixture.getFile());
