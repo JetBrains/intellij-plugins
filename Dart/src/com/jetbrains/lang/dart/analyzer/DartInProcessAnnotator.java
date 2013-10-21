@@ -19,7 +19,11 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.validation.fixes.DartResolverErrorCode;
 import com.jetbrains.lang.dart.validation.fixes.DartTypeErrorCode;
@@ -51,6 +55,8 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
     final File sdkDir = new File(sdkPath);
     if (!sdkDir.isDirectory()) return null;
 
+    if (psiFile instanceof XmlFile && !containsDartEmbeddedContent((XmlFile)psiFile)) return null;
+
     if (FileUtil.isAncestor(sdkDir.getPath(), virtualFile.getPath(), true)) return null;
 
     final VirtualFile packagesFolder = DartResolveUtil.findPackagesFolder(psiFile);
@@ -59,6 +65,19 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
 
     return Pair.create(DartFileBasedSource.getSource(psiFile.getProject(), virtualFile),
                        DartAnalyzerService.getInstance(psiFile.getProject()).getAnalysisContext(sdkPath, packagesFolder));
+  }
+
+  private static boolean containsDartEmbeddedContent(final XmlFile file) {
+    final String text = file.getText();
+    int i = -1;
+    while ((i = text.indexOf("application/dart", i + 1)) != -1) {
+      final PsiElement element = file.findElementAt(i);
+      final XmlTag tag = element == null ? null : PsiTreeUtil.getParentOfType(element, XmlTag.class);
+      if (tag != null && "script".equalsIgnoreCase(tag.getName()) && PsiTreeUtil.getChildOfType(tag, DartEmbeddedContent.class) != null) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override

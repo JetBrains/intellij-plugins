@@ -112,7 +112,20 @@ public class DartAnalyzerService {
   private void applyChangeSet(final AnalysisContext context) {
     final ChangeSet changeSet = new ChangeSet();
 
-    for (final Source source : context.getLibrarySources()) {
+    handleDeletedAndOutOfDateSources(changeSet, context.getLibrarySources());
+    handleDeletedAndOutOfDateSources(changeSet, context.getHtmlSources());
+
+    synchronized (myCreatedFiles) {
+      for (VirtualFile file : myCreatedFiles) {
+        changeSet.added(DartFileBasedSource.getSource(myProject, file));
+      }
+    }
+
+    context.applyChanges(changeSet);
+  }
+
+  private void handleDeletedAndOutOfDateSources(final ChangeSet changeSet, final Source[] sources) {
+    for (final Source source : sources) {
       if (source instanceof DartFileBasedSource) {
         if (!source.exists() || !myFileToSourceMap.containsKey(((DartFileBasedSource)source).getFile())) {
           changeSet.removed(source);
@@ -124,14 +137,6 @@ public class DartAnalyzerService {
         }
       }
     }
-
-    synchronized (myCreatedFiles) {
-      for (VirtualFile file : myCreatedFiles) {
-        changeSet.added(DartFileBasedSource.getSource(myProject, file));
-      }
-    }
-
-    context.applyChanges(changeSet);
   }
 
   /**
