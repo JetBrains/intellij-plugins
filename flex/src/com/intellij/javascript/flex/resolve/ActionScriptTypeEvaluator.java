@@ -1,5 +1,7 @@
 package com.intellij.javascript.flex.resolve;
 
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -12,13 +14,21 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.XmlToken;
+import com.intellij.psi.xml.XmlTokenType;
+import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.ARRAY_CLASS_NAME;
 import static com.intellij.lang.javascript.psi.JSCommonTypeNames.VECTOR_CLASS_NAME;
 
 /**
  * @author Konstantin.Ulitin
  */
 public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
+  private static final String REPEATER_CLASS_FQN = "mx.core.Repeater";
+
   public ActionScriptTypeEvaluator(BaseJSSymbolProcessor.EvaluateContext context,
                                       BaseJSSymbolProcessor.TypeProcessor processor, boolean ecma) {
     super(context, processor, ecma);
@@ -108,5 +118,54 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   @Override
   protected boolean useVariableType(JSType type) {
     return myCallExpressionsToApply.isEmpty() && super.useVariableType(type);
+  }
+
+  @Override
+  protected boolean addTypeFromElementResolveResult(JSReferenceExpression expression,
+                                                    PsiElement parent,
+                                                    PsiElement resolveResult,
+                                                    boolean wasPrototype,
+                                                    boolean hasSomeType) {
+    if (resolveResult instanceof JSNamedElementProxy && JavaScriptSupportLoader.isFlexMxmFile(resolveResult.getContainingFile())) {
+      resolveResult = ((JSNamedElementProxy)resolveResult).getElement();
+    }
+    if (resolveResult instanceof XmlToken) {
+      final XmlToken xmlToken = (XmlToken)resolveResult;
+      final XmlAttribute xmlAttribute = PsiTreeUtil.getParentOfType(xmlToken, XmlAttribute.class);
+      final XmlTag xmlTag = PsiTreeUtil.getParentOfType(xmlToken, XmlTag.class);
+      if (xmlToken.getTokenType() == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN &&
+          xmlAttribute != null &&
+          "id".equals(xmlAttribute.getName()) &&
+          xmlTag != null &&
+          isInsideRepeaterTag(xmlTag)) {
+        final PsiElement arrayClass = JSResolveUtil.findClassByQName(ARRAY_CLASS_NAME, xmlToken);
+        if (arrayClass != null) {
+          final String arrayType = new BaseJSSymbolProcessor.TagContextBuilder(resolveResult, null).typeName;
+          addType(arrayType == null ? ARRAY_CLASS_NAME : arrayType + "[]", arrayClass);
+        }
+      }
+      else {
+        final XmlTag tag = PsiTreeUtil.getParentOfType(resolveResult, XmlTag.class, false);
+        final JSClass clazz = JSResolveUtil.getClassFromTagNameInMxml(tag);
+        if (clazz != null) {
+            final String name = clazz.getQualifiedName();
+            if (name != null) {
+              addType(name, clazz);
+            }
+        }
+      }
+      return hasSomeType;
+    }
+    return super.addTypeFromElementResolveResult(expression, parent, resolveResult, wasPrototype, hasSomeType);
+  }
+
+  private static boolean isInsideRepeaterTag(final @NotNull XmlTag xmlTag) {
+    PsiElement parent = xmlTag;
+    while ((parent = parent.getParent()) instanceof XmlTag) {
+      if (REPEATER_CLASS_FQN.equals(new BaseJSSymbolProcessor.TagContextBuilder(parent, "").typeName)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
