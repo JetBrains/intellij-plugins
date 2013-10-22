@@ -17,6 +17,7 @@ module.exports = function(config) {
   var originalReporters = config.reporters || [];
   var coverageEnabled = originalReporters.indexOf('coverage') >= 0;
   var junitEnabled = originalReporters.indexOf('junit') >= 0;
+  var htmlEnabled = originalReporters.indexOf('html') >= 0;
   // Is resetting 'reporters' list safe?
   var reporters = [IntellijReporter.reporterName];
   if (coverageEnabled) {
@@ -28,6 +29,9 @@ module.exports = function(config) {
   }
   if (junitEnabled) {
     reporters.push('junit');
+  }
+  if (htmlEnabled) {
+    reporters.push('html');
   }
   config.reporters = reporters;
 
