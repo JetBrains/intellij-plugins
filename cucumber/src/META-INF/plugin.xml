@@ -58,6 +58,7 @@
     <completion.contributor language="Gherkin"
                             implementationClass="org.jetbrains.plugins.cucumber.completion.CucumberCompletionContributor"/>
 
+    <enterHandlerDelegate implementation="org.jetbrains.plugins.cucumber.codeinsight.CucumberEnterHandler"/>
     <typedHandler implementation="org.jetbrains.plugins.cucumber.codeinsight.GherkinTypedHandler"/>
 
     <spellchecker.support language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.spellchecker.GherkinSpellcheckerStrategy"/>
@@ -67,6 +68,7 @@
     <extendWordSelectionHandler implementation="org.jetbrains.plugins.cucumber.actions.GherkinStepParameterSelectioner"/>
 
     <gotoRelatedProvider implementation="org.jetbrains.plugins.cucumber.navigation.CucumberGoToRelatedProvider"/>
+
     <renameHandler implementation="org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinInplaceRenameHandler"/>
 
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
