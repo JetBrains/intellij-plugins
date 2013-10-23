@@ -135,7 +135,7 @@ public class GherkinBlock implements ASTBlock {
     ASTBlock block2 = (ASTBlock) child2;
     final IElementType elementType1 = block1.getNode().getElementType();
     final IElementType elementType2 = block2.getNode().getElementType();
-    if (GherkinElementTypes.SCENARIOS.contains(elementType2)) {
+    if (GherkinElementTypes.SCENARIOS.contains(elementType2) && elementType1 != GherkinTokenTypes.COMMENT) {
       return Spacing.createSpacing(0, 0, 2, true, 2);
     }
     if (elementType1 == GherkinTokenTypes.PIPE &&
