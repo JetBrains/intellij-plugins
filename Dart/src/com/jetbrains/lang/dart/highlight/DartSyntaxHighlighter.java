@@ -39,6 +39,9 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
 
     ATTRIBUTES.put(LBRACE, DartSyntaxHighlighterColors.BRACES);
     ATTRIBUTES.put(RBRACE, DartSyntaxHighlighterColors.BRACES);
+    ATTRIBUTES.put(SHORT_TEMPLATE_ENTRY_START, DartSyntaxHighlighterColors.BRACES);
+    ATTRIBUTES.put(LONG_TEMPLATE_ENTRY_START, DartSyntaxHighlighterColors.BRACES);
+    ATTRIBUTES.put(LONG_TEMPLATE_ENTRY_END, DartSyntaxHighlighterColors.BRACES);
 
     ATTRIBUTES.put(LBRACKET, DartSyntaxHighlighterColors.BRACKETS);
     ATTRIBUTES.put(RBRACKET, DartSyntaxHighlighterColors.BRACKETS);
