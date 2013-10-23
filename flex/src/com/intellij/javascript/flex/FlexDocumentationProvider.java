@@ -7,40 +7,38 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlComment;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.psi.xml.XmlToken;
+import com.intellij.psi.xml.*;
 import com.intellij.util.Consumer;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -85,6 +83,21 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   private static @NonNls final Pattern ourIMGselector =
     Pattern.compile("<img.*?src=\"([^>\"]*)\"", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
+  @NonNls private static final String PACKAGE = "package";
+  @NonNls private static final String HTML_EXTENSION = ".html";
+  @NonNls private static final String PACKAGE_FILE = PACKAGE + HTML_EXTENSION;
+
+  private static final Map<String, String> DOCUMENTED_ATTRIBUTES;
+  static {
+    DOCUMENTED_ATTRIBUTES = new THashMap<String, String>();
+    DOCUMENTED_ATTRIBUTES.put("Event", "event:");
+    DOCUMENTED_ATTRIBUTES.put("Style", "style:");
+    DOCUMENTED_ATTRIBUTES.put("Effect", "effect:");
+  }
+
+  public FlexDocumentationProvider() {
+    super();
+  }
 
   @Override
   public String generateDoc(PsiElement _element, PsiElement originalElement) {
@@ -641,4 +654,257 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
     return result;
   }
 
+  private static String getLinkToResolve(JSQualifiedNamedElement origin, String link) {
+    String originQname = origin.getQualifiedName();
+    if (link.length() == 0) {
+      return originQname;
+    }
+    else if (StringUtil.startsWithChar(link, '#')) {
+      if (origin instanceof JSClass) {
+        return originQname + "." + link.substring(1);
+      }
+      else {
+        String aPackage = StringUtil.getPackageName(originQname);
+        return aPackage + "." + link.substring(1);
+      }
+    }
+    else {
+      String linkFile = link.contains("#") ? link.substring(0, link.lastIndexOf('#')) : link;
+      String linkAnchor = link.contains("#") ? link.substring(link.lastIndexOf('#') + 1) : null;
+
+      final String qname;
+      if (StringUtil.endsWithIgnoreCase(linkFile, HTML_EXTENSION)) {
+        String prefix = StringUtil.getPackageName(originQname);
+        while (linkFile.startsWith("../")) {
+          linkFile = linkFile.substring("../".length());
+          prefix = StringUtil.getPackageName(prefix);
+        }
+
+        String linkFilename;
+        if (linkFile.endsWith(PACKAGE_FILE)) {
+          linkFilename = StringUtil.trimEnd(linkFile, PACKAGE_FILE);
+          linkFilename = StringUtil.trimEnd(linkFilename, "/");
+        }
+        else {
+          linkFilename = linkFile.substring(0, linkFile.lastIndexOf("."));
+        }
+        if (linkFilename.length() > 0) {
+          qname = (prefix.length() > 0 ? prefix + "." : prefix) + linkFilename.replaceAll("/", ".");
+        }
+        else {
+          qname = prefix;
+        }
+      }
+      else {
+        qname = linkFile;
+      }
+
+      return linkAnchor != null ? (qname.length() > 0 ? qname + "." : qname) + linkAnchor : qname;
+    }
+  }
+
+  @Nullable
+  private static JSQualifiedNamedElement findParentQualifiedElement(PsiElement element) {
+    if (element instanceof JSClass) {
+      return (JSClass)element;
+    }
+    if (element instanceof XmlComment) {
+      PsiElement parent = element.getParent();
+      if (parent instanceof XmlProlog) {
+        PsiElement e = parent.getNextSibling();
+        if (e instanceof XmlTag) {
+          return XmlBackedJSClassImpl.getContainingComponent((XmlElement)e);
+        }
+      }
+    }
+    if (element instanceof JSFunction || element instanceof JSVariable) {
+      final PsiElement parent = JSResolveUtil.findParent(element);
+      if (parent instanceof JSClass) {
+        return (JSClass)parent;
+      }
+      else if (parent instanceof JSFile || parent instanceof JSPackage) {
+        return (JSQualifiedNamedElement)element;
+      }
+    }
+
+    JSAttribute attribute = null;
+    if (element instanceof JSAttribute) {
+      attribute = (JSAttribute)element;
+    } else if (element instanceof JSAttributeNameValuePair) {
+      attribute = (JSAttribute)element.getParent();
+    }
+
+    if (attribute != null && DOCUMENTED_ATTRIBUTES.containsKey(attribute.getName())) {
+      final JSClass jsClass = PsiTreeUtil.getParentOfType(element, JSClass.class);
+      if (jsClass != null) {
+        return jsClass;
+      }
+    }
+
+    return null;
+  }
+
+  @Nullable
+  private static String getSeeAlsoLinkResolved(PsiElement originElement, String link) {
+    JSQualifiedNamedElement qualifiedElement = findParentQualifiedElement(originElement);
+    if (qualifiedElement == null) {
+      return null;
+    }
+    String linkToResolve = getLinkToResolve(qualifiedElement, link);
+    final PsiElement resolvedElement = getDocumentationElementForLinkStatic(originElement.getManager(), linkToResolve, originElement);
+    if (resolvedElement != null) {
+      return linkToResolve;
+    }
+    return null;
+  }
+
+  @Nullable
+  public PsiElement getDocumentationElementForLink(final PsiManager psiManager, String link, final PsiElement context) {
+    return getDocumentationElementForLinkStatic(psiManager, link, context);
+  }
+
+  @Nullable
+  private static PsiElement getDocumentationElementForLinkStatic(final PsiManager psiManager, String link, final PsiElement context) {
+    final int delimiterIndex = link.lastIndexOf(':');
+    final JavaScriptIndex index = JavaScriptIndex.getInstance(psiManager.getProject());
+
+    String attributeType = null;
+    String attributeName = null;
+    for (Map.Entry<String, String> e : DOCUMENTED_ATTRIBUTES.entrySet()) {
+      final String pattern = "." + e.getValue();
+      if (link.contains(pattern)) {
+        attributeType = e.getKey();
+        attributeName = StringUtil.substringAfter(link, pattern);
+        link = link.substring(0, link.indexOf(pattern));
+        break;
+      }
+    }
+    if (delimiterIndex != -1 && attributeType == null) {
+      final int delimiterIndex2 = link.lastIndexOf(':', delimiterIndex - 1);
+      if (delimiterIndex2 == -1) return null;
+      String fileName = link.substring(0, delimiterIndex2).replace(File.separatorChar, '/');
+      String name = link.substring(delimiterIndex2 + 1, delimiterIndex);
+      int offset = Integer.parseInt(link.substring(delimiterIndex + 1));
+      VirtualFile relativeFile = VfsUtil.findRelativeFile(fileName, null);
+      if (relativeFile == null) {
+        relativeFile = JSResolveUtil.findPredefinedOrLibraryFile(psiManager.getProject(), fileName);
+      }
+      return index.findSymbolByFileAndNameAndOffset(relativeFile, name, offset, psiManager.findFile(relativeFile));
+    }
+    else if (attributeType != null) {
+      PsiElement clazz = JSResolveUtil.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
+      if (!(clazz instanceof JSClass)) {
+        return null;
+      }
+      return findNamedAttribute((JSClass)clazz, attributeType, attributeName);
+    }
+    else {
+      PsiElement clazz = JSResolveUtil.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
+      if (clazz == null && link.contains(".")) {
+        String qname = link.substring(0, link.lastIndexOf('.'));
+        clazz = JSResolveUtil.findClassByQName(qname, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
+        if (clazz instanceof JSClass) {
+          JSClass jsClass = (JSClass)clazz;
+          String member = link.substring(link.lastIndexOf('.') + 1);
+
+          if (member.endsWith("()")) {
+            member = member.substring(0, member.length() - 2);
+
+            PsiElement result = findMethod(jsClass, member);
+            if (result == null) {
+              result = findProperty(jsClass, member); // user might refer to a property
+            }
+            return result;
+          }
+          else {
+            PsiElement result = jsClass.findFieldByName(member);
+            if (result == null) {
+              result = findProperty(jsClass, member);
+            }
+            if (result == null) {
+              result = findMethod(jsClass, member); // user might forget brackets
+            }
+            return result;
+          }
+        }
+      }
+
+      if (clazz instanceof JSVariable) {
+        return clazz;
+      }
+
+      if (link.endsWith("()")) {
+        link = link.substring(0, link.length() - 2);
+        clazz = JSResolveUtil.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
+        if (clazz instanceof JSFunction) {
+          return clazz;
+        }
+      }
+
+      if (clazz == null && context != null) {
+        final PsiReference[] references = new JSDocReferenceSet(context, link, 0, false).getReferences();
+        if (references.length > 0) {
+          final PsiElement resolve = references[references.length - 1].resolve();
+          if (resolve != null) return resolve;
+        }
+      }
+      return clazz;
+    }
+  }
+
+  @Nullable
+  private static JSAttributeNameValuePair findNamedAttribute(JSClass clazz, final String type, final String name) {
+    final Ref<JSAttributeNameValuePair> attribute = new Ref<JSAttributeNameValuePair>();
+    JSResolveUtil.processMetaAttributesForClass(clazz, new JSResolveUtil.MetaDataProcessor() {
+      public boolean process(@NotNull JSAttribute jsAttribute) {
+        if (type.equals(jsAttribute.getName())) {
+          final JSAttributeNameValuePair jsAttributeNameValuePair = jsAttribute.getValueByName("name");
+          if (jsAttributeNameValuePair != null && name.equals(jsAttributeNameValuePair.getSimpleValue())) {
+            attribute.set(jsAttributeNameValuePair);
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public boolean handleOtherElement(PsiElement el, PsiElement context, @Nullable Ref<PsiElement> continuePassElement) {
+        return true;
+      }
+    });
+    return attribute.get();
+  }
+
+  private static PsiElement findProperty(JSClass jsClass, String name) {
+    PsiElement result = jsClass.findFunctionByNameAndKind(name, JSFunction.FunctionKind.GETTER);
+    if (result == null) {
+      result = jsClass.findFunctionByNameAndKind(name, JSFunction.FunctionKind.SETTER);
+    }
+    return result;
+  }
+
+  private static PsiElement findMethod(JSClass jsClass, String name) {
+    PsiElement result = jsClass.findFunctionByNameAndKind(name, JSFunction.FunctionKind.CONSTRUCTOR);
+    if (result == null) {
+      result = jsClass.findFunctionByNameAndKind(name, JSFunction.FunctionKind.SIMPLE);
+    }
+    return result;
+  }
+
+  @Nullable
+  @Override
+  public String tryGetSeeAlsoLink(final String remainingLineContent, PsiElement element) {
+    if (!remainingLineContent.contains(".") && !remainingLineContent.startsWith("#")) {
+      // first try to find class in the same package, then in default one
+      JSQualifiedNamedElement qualifiedElement = findParentQualifiedElement(element);
+      if (qualifiedElement != null) {
+        String qname = qualifiedElement.getQualifiedName();
+        String aPackage = qname.contains(".") ? qname.substring(0, qname.lastIndexOf('.') + 1) : "";
+        String resolvedLink = getSeeAlsoLinkResolved(element, aPackage + remainingLineContent);
+        if (resolvedLink != null) {
+          return resolvedLink;
+        }
+      }
+    }
+    return getSeeAlsoLinkResolved(element, remainingLineContent);
+  }
 }
