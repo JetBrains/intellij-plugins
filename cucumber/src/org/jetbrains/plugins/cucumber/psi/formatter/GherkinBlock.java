@@ -33,9 +33,11 @@ public class GherkinBlock implements ASTBlock {
                                                                    GherkinElementTypes.STEP,
                                                                    GherkinElementTypes.TABLE);
 
-  private static final TokenSet BLOCKS_TO_INDENT_CHILDREN = TokenSet.create(GherkinElementTypes.FEATURE,
+  private static final TokenSet BLOCKS_TO_INDENT_CHILDREN = TokenSet.create(GherkinElementTypes.GHERKIN_FILE,
+                                                                            GherkinElementTypes.FEATURE,
                                                                             GherkinElementTypes.SCENARIO,
                                                                             GherkinElementTypes.SCENARIO_OUTLINE);
+
   public GherkinBlock(ASTNode node) {
     this(node, Indent.getAbsoluteNoneIndent());
   }
