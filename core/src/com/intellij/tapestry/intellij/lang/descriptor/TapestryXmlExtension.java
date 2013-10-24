@@ -27,7 +27,7 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
 
   @Nullable
   @Override
-  public String[][] getNamespacesFromDocument(final XmlDocument parent) {
+  public String[][] getNamespacesFromDocument(final XmlDocument parent, boolean declarationsExist) {
     String[][] namespaces = {
       {"", XmlUtil.XHTML_URI},
       {"t", TapestryConstants.TEMPLATE_NAMESPACE},
@@ -48,11 +48,6 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
       }
     }
     return namespaces;
-  }
-
-  @Override
-  public boolean canOverrideNamespace(String prefix) {
-    return "t".equals(prefix) || "p".equals(prefix);
   }
 
   private static String getNamespacePrefixFromDeclaration(XmlAttribute attribute) {
