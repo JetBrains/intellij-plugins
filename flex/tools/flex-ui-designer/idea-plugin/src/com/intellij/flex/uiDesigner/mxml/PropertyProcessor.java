@@ -11,11 +11,12 @@ import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -520,7 +521,8 @@ class PropertyProcessor implements ValueWriter {
 
       final Module module = ModuleUtilCore.findModuleForPsiElement(valueProvider.getElement());
       if (module != null) {
-        jsClass = (JSClass)JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(trimmed, module.getModuleWithDependenciesAndLibrariesScope(false)));
+        jsClass = (JSClass)JSResolveUtil.unwrapProxy(
+          JSClassResolver.findClassByQName(trimmed, module.getModuleWithDependenciesAndLibrariesScope(false)));
       }
 
       if (jsClass == null) {
@@ -529,7 +531,7 @@ class PropertyProcessor implements ValueWriter {
     }
 
     if (InjectionUtil.isProjectComponent(jsClass)) {
-      if (JSInheritanceUtil.isParentClass(jsClass, "spark.components.View")) {
+      if (ActionScriptClassResolver.isParentClass(jsClass, "spark.components.View")) {
         int projectComponentFactoryId = getProjectComponentFactoryId(jsClass);
         assert projectComponentFactoryId != -1;
         writer.projectClassReference(projectComponentFactoryId);

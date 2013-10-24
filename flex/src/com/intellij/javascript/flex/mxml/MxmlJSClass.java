@@ -1,6 +1,7 @@
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
+import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -319,5 +320,10 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
       return findFirstScriptTag();
     }
     return null;
+  }
+
+  @Override
+  protected JSLanguageDialect getClassLanguage() {
+    return JavaScriptSupportLoader.ECMA_SCRIPT_L4;
   }
 }

@@ -6,12 +6,11 @@ import com.intellij.diagram.actions.DiagramCreateNewElementAction;
 import com.intellij.ide.util.DirectoryChooserUtil;
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.uml.FlashUmlDataModel;
 import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.graph.base.Node;
 import com.intellij.openapi.graph.builder.util.GraphViewUtil;
 import com.intellij.openapi.module.Module;
@@ -46,7 +45,7 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
       GlobalSearchScope superClassScope = module != null
                                           ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
                                           : GlobalSearchScope.projectScope(params.getTargetDirectory().getProject());
-      PsiElement byQName = JSResolveUtil.findClassByQName(params.getSuperclassFqn(), superClassScope);
+      PsiElement byQName = JSClassResolver.findClassByQName(params.getSuperclassFqn(), superClassScope);
       superClass = byQName instanceof JSClass ? (JSClass)byQName : null;
     }
     else {

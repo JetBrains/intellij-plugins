@@ -1,6 +1,6 @@
 package com.jetbrains.actionscript.profiler.util;
 
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.EverythingGlobalScope;
@@ -41,7 +41,7 @@ public class ResolveUtil {
     if (scope == null) {
       return null;
     }
-    return JSResolveUtil.findClassByQName(name, scope);
+    return JSClassResolver.findClassByQName(name, scope);
   }
 
   public static boolean containsInScope(String name, @Nullable GlobalSearchScope scope) {

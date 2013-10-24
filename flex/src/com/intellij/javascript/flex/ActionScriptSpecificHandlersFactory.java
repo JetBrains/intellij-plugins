@@ -1,6 +1,7 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.javascript.flex.completion.ActionScriptCompletionKeywordsContributor;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.javascript.flex.resolve.ActionScriptReferenceExpressionResolver;
 import com.intellij.javascript.flex.resolve.ActionScriptTypeEvaluator;
 import com.intellij.lang.javascript.completion.JSCompletionKeywordsContributor;
@@ -14,10 +15,7 @@ import com.intellij.lang.javascript.psi.ExpectedTypeEvaluator;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
-import com.intellij.lang.javascript.psi.resolve.VariantsProcessor;
+import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -71,5 +69,11 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
     }
 
     return -1;
+  }
+
+  @NotNull
+  @Override
+  public JSClassResolver newClassResolver() {
+    return new ActionScriptClassResolver();
   }
 }

@@ -16,7 +16,7 @@ import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
@@ -313,7 +313,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     if (StringUtil.isEmpty(className)) {
       throw new RuntimeConfigurationError(FlexBundle.message("test.class.not.specified"));
     }
-    final PsiElement classToTest = JSResolveUtil.findClassByQName(className, searchScope);
+    final PsiElement classToTest = JSClassResolver.findClassByQName(className, searchScope);
     if (!(classToTest instanceof JSClass)) {
       throw new RuntimeConfigurationError(FlexBundle.message("class.not.found", className));
     }

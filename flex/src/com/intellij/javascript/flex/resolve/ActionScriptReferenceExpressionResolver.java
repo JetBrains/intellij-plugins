@@ -63,7 +63,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
         myRef.getQualifier() == null &&
         myContainingFile instanceof JSFile &&
         XmlBackedJSClassImpl.isImplementsAttribute((JSFile)myContainingFile)) {
-      PsiElement byQName = JSResolveUtil.findClassByQName(myRef.getText(), myRef);
+      PsiElement byQName = ActionScriptClassResolver.findClassByQNameStatic(myRef.getText(), myRef);
       // for some reason Flex compiler allows to implement non-public interface in default package, so let's not check access type here
       if (byQName != null) return new ResolveResult[] {new JSResolveResult(byQName)};
       return ResolveResult.EMPTY_ARRAY;

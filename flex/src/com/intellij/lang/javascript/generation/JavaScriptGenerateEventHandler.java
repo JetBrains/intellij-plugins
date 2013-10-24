@@ -4,11 +4,13 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.*;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.ImportUtils;
@@ -196,13 +198,13 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
   }
 
   public static boolean isEventClass(final JSClass jsClass) {
-    final PsiElement eventClass = JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, jsClass));
+    final PsiElement eventClass = JSResolveUtil.unwrapProxy(ActionScriptClassResolver.findClassByQNameStatic(FlexCommonTypeNames.FLASH_EVENT_FQN, jsClass));
     if ((eventClass instanceof JSClass) && JSInheritanceUtil.isParentClass(jsClass, (JSClass)eventClass)) {
       return true;
     }
 
     final PsiElement eventClass2 =
-      JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(FlexCommonTypeNames.STARLING_EVENT_FQN, jsClass));
+      JSResolveUtil.unwrapProxy(ActionScriptClassResolver.findClassByQNameStatic(FlexCommonTypeNames.STARLING_EVENT_FQN, jsClass));
     if ((eventClass2 instanceof JSClass) && JSInheritanceUtil.isParentClass(jsClass, (JSClass)eventClass2)) {
       return true;
     }
@@ -425,7 +427,8 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
     @Nullable
     private JSClass getEventBaseClass() {
       final PsiElement eventClass = JSResolveUtil
-        .unwrapProxy(JSResolveUtil.findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, myJsClass));
+        .unwrapProxy(JSDialectSpecificHandlersFactory.forElement(myJsClass).newClassResolver()
+                       .findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, myJsClass));
       if (eventClass instanceof JSClass) return (JSClass)eventClass;
       return null;
     }

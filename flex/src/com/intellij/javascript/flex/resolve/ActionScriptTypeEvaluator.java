@@ -138,7 +138,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
           "id".equals(xmlAttribute.getName()) &&
           xmlTag != null &&
           isInsideRepeaterTag(xmlTag)) {
-        final PsiElement arrayClass = JSResolveUtil.findClassByQName(ARRAY_CLASS_NAME, xmlToken);
+        final PsiElement arrayClass = ActionScriptClassResolver.findClassByQNameStatic(ARRAY_CLASS_NAME, xmlToken);
         if (arrayClass != null) {
           final String arrayType = new BaseJSSymbolProcessor.TagContextBuilder(resolveResult, null).typeName;
           addType(arrayType == null ? ARRAY_CLASS_NAME : arrayType + "[]", arrayClass);

@@ -2,12 +2,13 @@ package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.DiagramVfsResolver;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -98,7 +99,7 @@ public class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
     else {
       searchScope = GlobalSearchScope.allScope(project);
     }
-    final PsiElement clazz = JSResolveUtil.findClassByQName(fqn, searchScope);
+    final PsiElement clazz = JSClassResolver.findClassByQName(fqn, searchScope);
     if (clazz instanceof JSClass) return clazz;
     if (FlashUmlElementManager.packageExists(project, fqn, searchScope)) return fqn;
     return null;

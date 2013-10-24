@@ -4,6 +4,7 @@ import com.intellij.codeInsight.documentation.AbstractExternalFilter;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.documentation.PlatformDocumentationUtil;
 import com.intellij.ide.BrowserUtil;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
@@ -93,10 +94,6 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
     DOCUMENTED_ATTRIBUTES.put("Event", "event:");
     DOCUMENTED_ATTRIBUTES.put("Style", "style:");
     DOCUMENTED_ATTRIBUTES.put("Effect", "effect:");
-  }
-
-  public FlexDocumentationProvider() {
-    super();
   }
 
   @Override
@@ -792,17 +789,17 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       return index.findSymbolByFileAndNameAndOffset(relativeFile, name, offset, psiManager.findFile(relativeFile));
     }
     else if (attributeType != null) {
-      PsiElement clazz = JSResolveUtil.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
+      PsiElement clazz = ActionScriptClassResolver.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
       if (!(clazz instanceof JSClass)) {
         return null;
       }
       return findNamedAttribute((JSClass)clazz, attributeType, attributeName);
     }
     else {
-      PsiElement clazz = JSResolveUtil.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
+      PsiElement clazz = ActionScriptClassResolver.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
       if (clazz == null && link.contains(".")) {
         String qname = link.substring(0, link.lastIndexOf('.'));
-        clazz = JSResolveUtil.findClassByQName(qname, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
+        clazz = ActionScriptClassResolver.findClassByQName(qname, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
         if (clazz instanceof JSClass) {
           JSClass jsClass = (JSClass)clazz;
           String member = link.substring(link.lastIndexOf('.') + 1);
@@ -835,7 +832,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
       if (link.endsWith("()")) {
         link = link.substring(0, link.length() - 2);
-        clazz = JSResolveUtil.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
+        clazz = ActionScriptClassResolver.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
         if (clazz instanceof JSFunction) {
           return clazz;
         }

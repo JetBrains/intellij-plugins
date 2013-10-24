@@ -8,6 +8,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -22,13 +23,13 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.*;
-import com.intellij.lang.javascript.psi.ecmal4.impl.*;
+import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
+import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
+import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
+import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
+import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.psi.types.primitives.JSObjectType;
@@ -171,7 +172,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             break;
           }
 
-          final PsiElement baseClass = JSResolveUtil.findClassByQName(baseClassFqn, attributeNameValuePair);
+          final PsiElement baseClass = ActionScriptClassResolver.findClassByQNameStatic(baseClassFqn, attributeNameValuePair);
 
           if (baseClass instanceof JSClass) {
             resolvedBaseClasses.add(baseClassFqn);
@@ -1259,7 +1260,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           Map<String,String> eventsMap = ActionScriptSmartCompletionContributor.getEventsMap(clazz);
           String qName = eventsMap.get(type);
           if (qName != null) {
-            PsiElement classFromNamespace = JSClassBase.findClassFromNamespace(qName, clazz);
+            PsiElement classFromNamespace = JSClassResolver.findClassFromNamespace(qName, clazz);
             if (classFromNamespace instanceof JSClass) return (JSClass)classFromNamespace;
             // if uncomment next 2 lines then the following event listener parameter won't be highlighted with warning
             // new Sprite().addEventListener(ErrorEvent.ERROR, function(e:AccelerometerEvent):void{})
@@ -1274,8 +1275,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       PsiElement resolve = ((JSReferenceExpression)adHocQualifierExpr).resolve();
       if (resolve instanceof JSClass) {
         JSClass clazz = (JSClass)resolve;
-        if (JSInheritanceUtil.isParentClass((JSClass)resolve, FlexCommonTypeNames.FLASH_EVENT_FQN, false) ||
-            JSInheritanceUtil.isParentClass((JSClass)resolve, FlexCommonTypeNames.STARLING_EVENT_FQN, false)) {
+        if (ActionScriptClassResolver.isParentClass((JSClass)resolve, FlexCommonTypeNames.FLASH_EVENT_FQN, false) ||
+            ActionScriptClassResolver.isParentClass((JSClass)resolve, FlexCommonTypeNames.STARLING_EVENT_FQN, false)) {
           return clazz;
         }
       }

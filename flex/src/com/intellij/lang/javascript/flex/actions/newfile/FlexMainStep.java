@@ -7,7 +7,7 @@ import com.intellij.ide.wizard.CommitStepException;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.ui.newclass.MainStep;
 import com.intellij.lang.javascript.ui.newclass.WizardModel;
@@ -55,7 +55,7 @@ public class FlexMainStep extends MainStep {
       if (!JSUtils.isValidClassName(getSuperclassFqn(), true)) {
         return false;
       }
-      if (!(JSResolveUtil.findClassByQName(getSuperclassFqn(), getSuperclassScope()) instanceof JSClass)) {
+      if (!(JSClassResolver.findClassByQName(getSuperclassFqn(), getSuperclassScope()) instanceof JSClass)) {
         return false;
       }
     }

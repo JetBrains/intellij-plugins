@@ -4,17 +4,17 @@ import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.daemon.XmlErrorMessages;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeNameValuePairImpl;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
-import com.intellij.lang.javascript.flex.ReferenceSupport;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
@@ -225,7 +225,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
         else if (baseClasses.length > 0) {
           //
           for (String aClass : baseClasses) {
-            if (JSResolveUtil.findClassByQName(aClass, myElement) != null) {
+            if (ActionScriptClassResolver.findClassByQNameStatic(aClass, myElement) != null) {
               if (baseClass == null) {
                 baseClass = aClass;
               }

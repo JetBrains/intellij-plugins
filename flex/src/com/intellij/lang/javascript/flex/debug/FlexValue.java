@@ -2,11 +2,12 @@ package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.javascript.JSDebuggerSupportUtils;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -835,19 +836,19 @@ class FlexValue extends XValue {
       }
 
       final JavaScriptIndex jsIndex = JavaScriptIndex.getInstance(project);
-      PsiElement jsClass = JSResolveUtil.findClassByQName(type, jsIndex, module);
+      PsiElement jsClass = ActionScriptClassResolver.findClassByQName(type, jsIndex, module);
 
       if (!(jsClass instanceof JSClass) && type.endsWith("$")) { // fdb adds '$' to class name in case of static context
-        jsClass = JSResolveUtil.findClassByQName(type.substring(0, type.length() - 1), jsIndex, module);
+        jsClass = ActionScriptClassResolver.findClassByQName(type.substring(0, type.length() - 1), jsIndex, module);
       }
 
       if (!(jsClass instanceof JSClass) && module != null) {
         // probably this class came from dynamically loaded module that is not in moduleWithDependenciesAndLibrariesScope(module)
         final GlobalSearchScope scope = ProjectScope.getAllScope(project);
-        jsClass = JSResolveUtil.findClassByQName(type, scope);
+        jsClass = JSClassResolver.findClassByQName(type, scope);
 
         if (!(jsClass instanceof JSClass) && type.endsWith("$")) {
-          jsClass = JSResolveUtil.findClassByQName(type.substring(0, type.length() - 1), scope);
+          jsClass = JSClassResolver.findClassByQName(type.substring(0, type.length() - 1), scope);
         }
       }
 

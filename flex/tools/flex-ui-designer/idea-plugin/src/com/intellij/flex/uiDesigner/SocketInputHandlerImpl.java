@@ -7,7 +7,7 @@ import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.PropertiesFileType;
 import com.intellij.lang.properties.psi.PropertiesFile;
@@ -563,7 +563,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       @Override
       public void run() {
         JSClass classElement =
-          ((JSClass)JSResolveUtil.findClassByQName(className, module.getModuleWithDependenciesAndLibrariesScope(false)));
+          ((JSClass)JSClassResolver.findClassByQName(className, module.getModuleWithDependenciesAndLibrariesScope(false)));
         classElement.navigate(true);
         ProjectUtil.focusProjectWindow(classElement.getProject(), true);
       }

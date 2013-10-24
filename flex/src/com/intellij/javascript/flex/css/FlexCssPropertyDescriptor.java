@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.application.ApplicationManager;
@@ -298,7 +299,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       Collection<JSQualifiedNamedElement> candidates = stubIndex.get(JSQualifiedElementIndex.KEY, className.hashCode(), project, scope);
       findStyleAttributes(candidates, visited, navElement2pairInfo);
       // search in MXML files
-      PsiElement jsClass = JSResolveUtil.findClassByQName(className, scope);
+      PsiElement jsClass = JSClassResolver.findClassByQName(className, scope);
       if (jsClass instanceof JSClass) {
         findStyleAttributesInClassOrSuper((JSClass)jsClass, visited, navElement2pairInfo);
       }

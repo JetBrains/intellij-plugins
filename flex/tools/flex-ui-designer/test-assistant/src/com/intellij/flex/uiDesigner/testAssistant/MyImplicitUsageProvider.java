@@ -1,12 +1,12 @@
 package com.intellij.flex.uiDesigner.testAssistant;
 
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 
@@ -31,7 +31,7 @@ class MyImplicitUsageProvider implements ImplicitUsageProvider {
     }
 
     final JSClass clazz = (JSClass)method.getParent();
-    if (!JSInheritanceUtil.isParentClass(clazz, "com.intellij.flex.uiDesigner.TestCase")) {
+    if (!ActionScriptClassResolver.isParentClass(clazz, "com.intellij.flex.uiDesigner.TestCase")) {
       return false;
     }
 

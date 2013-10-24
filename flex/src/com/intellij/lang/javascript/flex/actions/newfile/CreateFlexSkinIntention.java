@@ -1,12 +1,12 @@
 package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateMxmlFileIntentionBase;
 import com.intellij.openapi.application.ApplicationManager;
@@ -83,7 +83,7 @@ public class CreateFlexSkinIntention extends CreateMxmlFileIntentionBase {
       builder.append("\n");
     }
 
-    final PsiElement element = JSResolveUtil.findClassByQName(hostComponent, context);
+    final PsiElement element = ActionScriptClassResolver.findClassByQNameStatic(hostComponent, context);
     if (element instanceof JSClass) {
       final JSClass jsClass = (JSClass)element;
       final Collection<String> skinStates = getSkinStates(jsClass);

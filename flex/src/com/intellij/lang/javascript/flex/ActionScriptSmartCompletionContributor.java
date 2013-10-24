@@ -5,6 +5,7 @@ import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.completion.JSSmartCompletionContributor;
@@ -220,7 +221,8 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       myEventsMap = getEventsMap(clazzToProcess);
 
       final PsiElement eventClass1 = JSResolveUtil.unwrapProxy(
-        JSResolveUtil.findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression)));
+        ActionScriptClassResolver
+          .findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression)));
       if ((eventClass1 instanceof JSClass)) {
         setToProcessMembers(true);
         setTypeContext(false);
@@ -233,7 +235,8 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       }
 
       final PsiElement eventClass2 = JSResolveUtil.unwrapProxy(
-        JSResolveUtil.findClassByQName(FlexCommonTypeNames.STARLING_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression)));
+        ActionScriptClassResolver
+          .findClassByQName(FlexCommonTypeNames.STARLING_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression)));
       if ((eventClass2 instanceof JSClass)) {
         setToProcessMembers(true);
         setTypeContext(false);

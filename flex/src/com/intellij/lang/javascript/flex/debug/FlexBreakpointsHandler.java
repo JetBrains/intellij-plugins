@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.project.DumbService;
@@ -141,7 +141,7 @@ public class FlexBreakpointsHandler {
 
       final String relPath = VfsUtilCore.getRelativePath(file.getParent(), rootForFile, '.');
       final String fqn = StringUtil.getQualifiedName(relPath, file.getNameWithoutExtension());
-      final PsiElement clazz = JSResolveUtil.findClassByQName(fqn, scope);
+      final PsiElement clazz = JSClassResolver.findClassByQName(fqn, scope);
       // ignore breakpoints in classes that are out of scope of debugged BC if this scope also contains class with the same fqn;
       // but if resolved class is in decompiled code (library.swf inside *.swc file) then there's a chance that source file for this library
       // is not configured properly (or it is in the unrelated Haxe module), in this case allow to set breakpoint.

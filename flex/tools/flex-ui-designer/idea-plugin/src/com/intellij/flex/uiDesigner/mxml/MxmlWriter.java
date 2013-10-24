@@ -14,10 +14,10 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.javascript.flex.mxml.schema.MxmlBackedElementDescriptor;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
@@ -626,8 +626,8 @@ public class MxmlWriter {
   private static boolean isHaloNavigator(String className, JSClass jsClass) {
     return className.equals(FlexCommonTypeNames.ACCORDION) ||
            className.equals(FlexCommonTypeNames.VIEW_STACK) ||
-           JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.ACCORDION) ||
-           JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.VIEW_STACK);
+           ActionScriptClassResolver.isParentClass(jsClass, FlexCommonTypeNames.ACCORDION) ||
+           ActionScriptClassResolver.isParentClass(jsClass, FlexCommonTypeNames.VIEW_STACK);
   }
 
   private void addProblem(XmlElement xmlElement, @PropertyKey(resourceBundle = FlashUIDesignerBundle.BUNDLE) String key, Object... params) {
@@ -647,21 +647,21 @@ public class MxmlWriter {
       final String className = parentDescriptor.getQualifiedName();
       final JSClass jsClass;
       if (parentDescriptor instanceof MxmlBackedElementDescriptor) {
-        jsClass = (JSClass)JSResolveUtil.findClassByQName(className, parentTag);
+        jsClass = (JSClass)ActionScriptClassResolver.findClassByQNameStatic(className, parentTag);
       }
       else {
         jsClass = (JSClass)parentDescriptor.getDeclaration();
       }
 
       final boolean isDirectContainerImpl = className.equals(FlexCommonTypeNames.ICONTAINER);
-      if (isDirectContainerImpl || JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.ICONTAINER)) {
+      if (isDirectContainerImpl || ActionScriptClassResolver.isParentClass(jsClass, FlexCommonTypeNames.ICONTAINER)) {
         if (isXmlText) {
           addProblem(parentTag, "initializer.cannot.be.represented.in.text", parentTag.getLocalName());
           return null;
         }
 
         if (!isDirectContainerImpl && isHaloNavigator(className, jsClass) &&
-            !JSInheritanceUtil.isParentClass((JSClass)descriptor.getDeclaration(), FlexCommonTypeNames.INAVIGATOR_CONTENT)) {
+            !ActionScriptClassResolver.isParentClass((JSClass)descriptor.getDeclaration(), FlexCommonTypeNames.INAVIGATOR_CONTENT)) {
           addProblem(parentTag, "children.must.be", parentTag.getLocalName(), FlexCommonTypeNames.INAVIGATOR_CONTENT);
           return null;
         }

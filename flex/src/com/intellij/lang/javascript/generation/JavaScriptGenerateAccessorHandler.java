@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.generation;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -118,7 +119,7 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
   }
 
   public static boolean isEventDispatcher(final JSClass jsClass) {
-    final PsiElement eventClass = JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName("flash.events.IEventDispatcher", jsClass));
+    final PsiElement eventClass = JSResolveUtil.unwrapProxy(ActionScriptClassResolver.findClassByQNameStatic("flash.events.IEventDispatcher", jsClass));
     if (!(eventClass instanceof JSClass)) return false;
     if (JSInheritanceUtil.isParentClass(jsClass, (JSClass)eventClass)) {
       return true;

@@ -2,11 +2,11 @@ package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -42,14 +42,14 @@ public class FlexQualifiedNameLocationProvider implements TestLocationProvider {
     link = link.substring(link.indexOf(":") + 1);
 
     final JavaScriptIndex index = JavaScriptIndex.getInstance(project);
-    PsiElement element = JSResolveUtil.findClassByQName(link, index, module);
+    PsiElement element = ActionScriptClassResolver.findClassByQName(link, index, module);
     if (element instanceof JSClass) {
       return (JSElement)element;
     }
 
     if (element == null && link.contains(".") && link.endsWith("()")) {
       String qname = link.substring(0, link.lastIndexOf('.'));
-      element = JSResolveUtil.findClassByQName(qname, index, module);
+      element = ActionScriptClassResolver.findClassByQName(qname, index, module);
       if (element instanceof JSClass) {
         String methodName = link.substring(link.lastIndexOf('.') + 1, link.length() - 2);
         return ((JSClass)element).findFunctionByNameAndKind(methodName, JSFunction.FunctionKind.SIMPLE);

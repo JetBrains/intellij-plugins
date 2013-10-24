@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.flex.FlexMethodChooserDialog;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
@@ -217,7 +217,7 @@ public class WhatToTestForm {
         return null;
       }
 
-      final PsiElement clazz = JSResolveUtil.findClassByQName(myClassField.getText(), GlobalSearchScope.moduleScope(module));
+      final PsiElement clazz = JSClassResolver.findClassByQName(myClassField.getText(), GlobalSearchScope.moduleScope(module));
       if (!(clazz instanceof JSClass)) {
         Messages.showErrorDialog(getProject(), FlexBundle.message("class.not.found", myClassField.getText()),
                                  ExecutionBundle.message("choose.test.method.dialog.title"));

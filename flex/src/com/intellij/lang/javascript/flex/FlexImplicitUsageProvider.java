@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitSupport;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
@@ -15,7 +16,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -46,7 +46,7 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
       final Module module = ModuleUtilCore.findModuleForPsiElement(clazz);
       if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return false;
       if (FlashRunConfigurationProducer.isAcceptedMainClass(clazz, module)) return true;
-      if (JSInheritanceUtil.isParentClass(clazz, FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME)) return true;
+      if (ActionScriptClassResolver.isParentClass(clazz, FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME)) return true;
 
       FlexUnitSupport flexUnitSupport = FlexUnitSupport.getSupport(module);
       if (flexUnitSupport != null && flexUnitSupport.isTestClass(clazz, true)) return true;

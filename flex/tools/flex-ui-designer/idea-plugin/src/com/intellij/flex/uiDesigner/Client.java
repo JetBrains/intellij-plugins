@@ -9,9 +9,9 @@ import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
@@ -587,11 +587,11 @@ public class Client implements Disposable {
       assert jsClass != null;
       out.writeAmfUtf(jsClass.getQualifiedName());
 
-      if (JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.SPARK_APPLICATION) ||
-          JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.MX_APPLICATION)) {
+      if (ActionScriptClassResolver.isParentClass(jsClass, FlexCommonTypeNames.SPARK_APPLICATION) ||
+          ActionScriptClassResolver.isParentClass(jsClass, FlexCommonTypeNames.MX_APPLICATION)) {
         flags = 1;
       }
-      else if (JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.IUI_COMPONENT)) {
+      else if (ActionScriptClassResolver.isParentClass(jsClass, FlexCommonTypeNames.IUI_COMPONENT)) {
         flags = 0;
       }
       else {

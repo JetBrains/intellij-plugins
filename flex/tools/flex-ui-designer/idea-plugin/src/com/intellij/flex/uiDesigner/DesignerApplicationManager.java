@@ -4,12 +4,12 @@ import com.intellij.ProjectTopics;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.flex.uiDesigner.preview.MxmlPreviewToolWindowManager;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
@@ -416,7 +416,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     }
 
     final JSClass jsClass = XmlBackedJSClassFactory.getInstance().getXmlBackedClass(((XmlFile)psiFile).getRootTag());
-    return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.FLASH_DISPLAY_OBJECT_CONTAINER);
+    return jsClass != null && ActionScriptClassResolver.isParentClass(jsClass, FlexCommonTypeNames.FLASH_DISPLAY_OBJECT_CONTAINER);
   }
 
   public static boolean dumbAwareIsApplicable(Project project, PsiFile psiFile) {

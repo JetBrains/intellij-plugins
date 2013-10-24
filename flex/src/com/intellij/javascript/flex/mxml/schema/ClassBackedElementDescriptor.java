@@ -11,6 +11,7 @@ import com.intellij.javascript.flex.FlexReferenceContributor;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.FlexNameAlias;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JSBundle;
@@ -545,7 +546,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
               appendSuperClassDescriptors(
                   map,
                   packageToInternalDescriptors,
-                  JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(OBJECT_CLASS_NAME, jsClass)),
+                  JSResolveUtil.unwrapProxy(ActionScriptClassResolver.findClassByQNameStatic(OBJECT_CLASS_NAME, jsClass)),
                   visited);
             }
           }
@@ -938,7 +939,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       return EMPTY_ARRAY;
     }
 
-    final PsiElement clazz = JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(arrayElementType, declaration));
+    final PsiElement clazz = JSResolveUtil.unwrapProxy(ActionScriptClassResolver.findClassByQNameStatic(arrayElementType, declaration));
     if (!(clazz instanceof JSClass)) {
       return EMPTY_ARRAY;
     }
@@ -1318,7 +1319,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   public PsiElement getDeclaration() {
     String className = predefined ? OBJECT_CLASS_NAME :this.className;
     if (className.equals(CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME)) className = VECTOR_CLASS_NAME;
-    final PsiElement jsClass = JSResolveUtil.findClassByQName(className, JavaScriptIndex.getInstance(project), context.module);
+    final PsiElement jsClass = ActionScriptClassResolver.findClassByQName(className, JavaScriptIndex.getInstance(project), context.module);
     final PsiFile file = jsClass == null ? null : jsClass.getContainingFile();
     // can be MXML file listed as a component in the manifest file
     return (file != null && JavaScriptSupportLoader.isMxmlOrFxgFile(file)) ? file : jsClass;

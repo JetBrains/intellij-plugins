@@ -9,6 +9,7 @@ import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.FlexNameAlias;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -630,7 +631,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     final PsiElement parent = attributeOrTag.getParent();
     final XmlElementDescriptor descriptor = parent instanceof XmlTag ? ((XmlTag)parent).getDescriptor() : null;
     final PsiElement declaration = descriptor instanceof ClassBackedElementDescriptor ? descriptor.getDeclaration() : null;
-    final PsiElement iStyleClient = JSResolveUtil.findClassByQName(I_STYLE_CLIENT_CLASS, attributeOrTag);
+    final PsiElement iStyleClient = ActionScriptClassResolver.findClassByQNameStatic(I_STYLE_CLIENT_CLASS, attributeOrTag);
 
     if (!(declaration instanceof JSClass) || !(iStyleClient instanceof JSClass)
         || !JSInheritanceUtil.isParentClass((JSClass)JSResolveUtil.unwrapProxy(declaration),
@@ -668,7 +669,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       return parentDescriptor.getElementsDescriptors(context);
     }
 
-    if (arrayElementType != null && JSResolveUtil.findClassByQName(arrayElementType, context) != null) {
+    if (arrayElementType != null && ActionScriptClassResolver.findClassByQNameStatic(arrayElementType, context) != null) {
       return parentDescriptor.getElementDescriptorsInheritedFromGivenType(arrayElementType);
     }
     if (type != null && ClassBackedElementDescriptor.isAdequateType(type)) {
@@ -702,7 +703,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       if (descriptor == null ||
           isVectorType(type) && isVectorDescriptor(descriptor) ||
           JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type) && isArrayDescriptor(descriptor) ||
-          JSResolveUtil.findClassByQName(arrayElementType, childTag) == null) {
+          ActionScriptClassResolver.findClassByQNameStatic(arrayElementType, childTag) == null) {
         return descriptor;
       }
 

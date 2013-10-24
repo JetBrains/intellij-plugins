@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -462,7 +463,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       }
 
       PsiElement clazz =
-        JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(myOverriddenMainClass, moduleAndBC.first.getModuleScope(true)));
+        JSResolveUtil.unwrapProxy(JSClassResolver.findClassByQName(myOverriddenMainClass, moduleAndBC.first.getModuleScope(true)));
       if (!(clazz instanceof JSClass)) {
         throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.found", myOverriddenMainClass, bc.getName()));
       }
