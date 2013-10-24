@@ -130,16 +130,21 @@
         <image29x29></image29x29>
         <image32x32></image32x32>
         <image36x36></image36x36>
+        <image40x40></image40x40>
         <image48x48></image48x48>
         <image50x50></image50x50>
         <image57x57></image57x57>
         <image58x58></image58x58>
         <image72x72></image72x72>
+        <image76x76></image76x76>
+        <image80x80></image80x80>
         <image96x96></image96x96>
         <image100x100></image100x100>
         <image114x114></image114x114>
+        <image120x120></image120x120>
         <image128x128></image128x128>
         <image144x144></image144x144>
+        <image152x152></image152x152>
         <image512x512></image512x512>
         <image732x412></image732x412>
         <image1024x1024></image1024x1024>
