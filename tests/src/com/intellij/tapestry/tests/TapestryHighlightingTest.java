@@ -4,7 +4,7 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.tapestry.intellij.inspections.TelReferencesInspection;
-import com.intellij.util.xml.DeprecatedClassUsageInspection;
+import com.intellij.codeInspection.xml.DeprecatedClassUsageInspection;
 
 /**
  * @author Alexey Chmutov
