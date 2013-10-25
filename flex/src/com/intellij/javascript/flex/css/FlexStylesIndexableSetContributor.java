@@ -32,12 +32,12 @@ public class FlexStylesIndexableSetContributor extends IndexableSetContributor {
   public static GlobalSearchScope enlarge(final GlobalSearchScope scope) {
     return scope.union(new GlobalSearchScope() {
       @Override
-      public boolean contains(final VirtualFile file) {
+      public boolean contains(@NotNull final VirtualFile file) {
         return FILES.contains(file);
       }
 
       @Override
-      public int compare(final VirtualFile file1, final VirtualFile file2) {
+      public int compare(@NotNull final VirtualFile file1, @NotNull final VirtualFile file2) {
         return scope.compare(file1, file2);
       }
 

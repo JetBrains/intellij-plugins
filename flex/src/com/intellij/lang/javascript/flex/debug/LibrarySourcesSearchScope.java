@@ -20,12 +20,12 @@ public class LibrarySourcesSearchScope extends GlobalSearchScope {
     myIndex = ProjectRootManager.getInstance(project).getFileIndex();
   }
 
-  public boolean contains(final VirtualFile file) {
+  public boolean contains(@NotNull final VirtualFile file) {
     final VirtualFile libSrcRoot = myIndex.getSourceRootForFile(file);
     return libSrcRoot != null && myLibrarySourceRoots.contains(libSrcRoot);
   }
 
-  public int compare(final VirtualFile file1, final VirtualFile file2) {
+  public int compare(@NotNull final VirtualFile file1, @NotNull final VirtualFile file2) {
     return 0;
   }
 
