@@ -85,7 +85,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
           }
         }
 
-        params.getProgramParametersList().addParametersString(myFilePath);
+        params.getProgramParametersList().addParametersString("\"" + myFilePath + "\"");
         return params;
       }
 
