@@ -210,7 +210,7 @@ public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTes
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
           @Override
           public void run() {
-            ((DocumentImpl)doc).stripTrailingSpaces();
+            ((DocumentImpl)doc).stripTrailingSpaces(getProject());
           }
         });
       }
