@@ -83,7 +83,7 @@ public class JstdDebugBrowserInfo<Connection> {
     for (SlaveBrowser slaveBrowser : browsers.getSlaveBrowsers()) {
       String browserName = slaveBrowser.getBrowserInfo().getName();
       for (JSDebugEngine<Connection> engine : engines) {
-        if (engine.getId().equalsIgnoreCase(browserName)) {
+        if (engine.getWebBrowser().getName().equalsIgnoreCase(browserName)) {
           debugBrowserInfos.add(new JstdDebugBrowserInfo<Connection>(engine, slaveBrowser.getCaptureUrl(), slaveBrowser));
         }
       }

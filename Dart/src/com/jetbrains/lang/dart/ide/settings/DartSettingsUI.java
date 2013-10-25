@@ -132,7 +132,7 @@ public class DartSettingsUI {
         final String executable = getExecutablePathByFolderPath(FileUtil.toSystemIndependentName(myPathChooser.getText()), "dart");
         if (executable == null) {
           // bad
-          mySetupLabel.setText(DartBundle.message("dart.sdk.bad.path"));
+          mySetupLabel.setText(DartBundle.message("dart.sdk.bad.path", myPathChooser.getText()));
         }
         else {
           mySetupLabel.setText(

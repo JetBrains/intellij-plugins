@@ -62,7 +62,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   @Override
   public ValidationInfo validate() {
     if (getSdkData() == null) {
-      return new ValidationInfo(DartBundle.message("dart.sdk.bad.path"));
+      return new ValidationInfo(DartBundle.message("dart.sdk.bad.path", mySdkPath.getText()));
     }
     return null;
   }
