@@ -427,7 +427,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
     @Nullable
     private JSClass getEventBaseClass() {
       final PsiElement eventClass = JSResolveUtil
-        .unwrapProxy(JSDialectSpecificHandlersFactory.forElement(myJsClass).newClassResolver()
+        .unwrapProxy(JSDialectSpecificHandlersFactory.forElement(myJsClass).getClassResolver()
                        .findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, myJsClass));
       if (eventClass instanceof JSClass) return (JSClass)eventClass;
       return null;

@@ -1,20 +1,47 @@
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.DialectOptionHolder;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.JSResolveHelper;
+import com.intellij.lang.javascript.index.JSIndexedRootProvider;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.stubs.StubIndex;
+import com.intellij.util.indexing.AdditionalIndexedRootsScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.*;
 
 /**
  * @author Konstantin.Ulitin
  */
 public class ActionScriptClassResolver extends JSClassResolver {
+
+  private static ActionScriptClassResolver INSTANCE = null;
+
+  protected ActionScriptClassResolver() { }
+
+  public static ActionScriptClassResolver getInstance() {
+    if (INSTANCE == null) INSTANCE = new ActionScriptClassResolver();
+    return INSTANCE;
+  }
 
   @Override
   public PsiElement findClassByQName(@NotNull String link, @NotNull PsiElement context) {
@@ -22,17 +49,17 @@ public class ActionScriptClassResolver extends JSClassResolver {
   }
 
   public static PsiElement findClassByQNameStatic(@NotNull String link, @NotNull PsiElement context) {
-    return findClassByQName(link, JavaScriptIndex.getInstance(context.getProject()), JSResolveUtil.getResolveScope(context), DialectOptionHolder.ECMA_4);
+    return getInstance().findClassByQName(link, JavaScriptIndex.getInstance(context.getProject()), JSResolveUtil.getResolveScope(context),
+                                          DialectOptionHolder.ECMA_4);
   }
 
-  /** AS and TS */
   public static PsiElement findClassByQName(@NotNull final String link, final JavaScriptIndex index, final Module module) {
     GlobalSearchScope searchScope = JSInheritanceUtil.getEnforcedScope();
     if (searchScope == null) {
       searchScope =
         module != null ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module) : GlobalSearchScope.allScope(index.getProject());
     }
-    return findClassByQName(link, index, searchScope, DialectOptionHolder.ECMA_4);
+    return getInstance().findClassByQName(link, index, searchScope, DialectOptionHolder.ECMA_4);
   }
 
   public static boolean isParentClass(JSClass clazz, String className) {
@@ -45,6 +72,110 @@ public class ActionScriptClassResolver extends JSClassResolver {
     if (!(parentClass instanceof JSClass)) return false;
 
     return JSInheritanceUtil.isParentClass(clazz, (JSClass)parentClass, strict);
+  }
+
+  protected PsiElement doFindClassByQName(@NotNull String link, final JavaScriptIndex index, GlobalSearchScope searchScope,
+                                               boolean allowFileLocalSymbols, @NotNull DialectOptionHolder dialect) {
+    if (VECTOR_CLASS_NAME.equals(link)) {
+      link = JSResolveUtil.VECTOR$OBJECT_TYPE_NAME; // standard Vector class is empty, take at least Vector of objects, there is no other difference ! // TODO:
+    }
+    Project project = index.getProject();
+    final PsiElement[] result = new PsiElement[1];
+
+    boolean clazzShouldBeTakenFromOurLibrary = OBJECT_CLASS_NAME.equals(link) || "Arguments".equals(link);
+    if (clazzShouldBeTakenFromOurLibrary && !(searchScope instanceof AdditionalIndexedRootsScope)) {
+      // object from swf do not contain necessary members!
+      searchScope = new AdditionalIndexedRootsScope(searchScope, JSIndexedRootProvider.class);
+    }
+    final Collection<JSQualifiedNamedElement> candidates = StubIndex.getInstance().get(JSQualifiedElementIndex.KEY, link.hashCode(),
+                                                                                       project, searchScope);
+    ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    PsiElement preferredResult = null;
+    long preferredResultTimestamp = 0;
+
+    for(Object _clazz:candidates) {
+      if (!(_clazz instanceof JSQualifiedNamedElement)) continue;
+      JSQualifiedNamedElement clazz = (JSQualifiedNamedElement)_clazz;
+
+      if (link.equals(clazz.getQualifiedName())) {
+        PsiFile file = clazz.getContainingFile();
+        if (!file.getLanguage().isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4)) continue;
+        VirtualFile vFile = file.getVirtualFile();
+        if (clazzShouldBeTakenFromOurLibrary &&
+            !JavaScriptIndex.ECMASCRIPT_JS2.equals(vFile.getName()) // object from swf do not contain necessary members!
+          ) {
+          continue;
+        }
+        if (!allowFileLocalSymbols && JSResolveUtil.isFileLocalSymbol(clazz)) {
+          continue;
+        }
+
+        result[0] = clazz;
+
+        if (projectFileIndex.isInSourceContent(vFile)) {
+          // the absolute preference is for classes from sources
+          preferredResult = clazz;
+          break;
+        }
+
+        // choose the right class in the same way as compiler does: with the latest timestamp in catalog.xml file
+        if (preferredResult == null) {
+          preferredResult = clazz;
+          // do not initialize preferredResultTimestamp here, it is expensive and may be not required if only 1 candidate
+        }
+        else {
+          if (preferredResultTimestamp == 0) {
+            // was not initialized yet
+            preferredResultTimestamp = getResolveResultTimestamp(preferredResult);
+          }
+
+          final long classTimestamp = getResolveResultTimestamp(clazz);
+          if (classTimestamp > preferredResultTimestamp) {
+            preferredResult = clazz;
+            preferredResultTimestamp = classTimestamp;
+          }
+        }
+      }
+    }
+
+    if (result[0] == null) {
+      String className = link.substring(link.lastIndexOf('.') + 1);
+      if (className.length() > 0 && !isBuiltInClassName(className) &&
+          (Character.isLetter(className.charAt(0)) || '_' == className.charAt(0))) {
+        // TODO optimization, remove when packages will be properly handled
+        result[0] = findClassByQNameViaHelper(link, project, className, searchScope);
+      }
+    }
+    return preferredResult!= null ? preferredResult : result[0];
+  }
+
+  private static long getResolveResultTimestamp(PsiElement candidate) {
+    for (JSResolveHelper helper : Extensions.getExtensions(JSResolveHelper.EP_NAME)) {
+      long result = helper.getResolveResultTimestamp(candidate);
+      if (result != -1) {
+        return result;
+      }
+    }
+    return -1;
+  }
+
+  private static boolean isBuiltInClassName(final String className) {
+    return OBJECT_CLASS_NAME.equals(className) ||
+           BOOLEAN_CLASS_NAME.equals(className) ||
+           FUNCTION_CLASS_NAME.equals(className) ||
+           STRING_CLASS_NAME.equals(className);
+  }
+  
+  @Nullable
+  private static PsiElement findClassByQNameViaHelper(final String link,
+                                                      final Project project,
+                                                      final String className,
+                                                      final GlobalSearchScope scope) {
+    for(JSResolveHelper helper: Extensions.getExtensions(JSResolveHelper.EP_NAME)) {
+      PsiElement result = helper.findClassByQName(link, project, className, scope);
+      if (result != null) return result;
+    }
+    return null;
   }
 }
 

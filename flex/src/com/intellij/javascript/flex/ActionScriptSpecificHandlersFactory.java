@@ -73,7 +73,7 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
 
   @NotNull
   @Override
-  public JSClassResolver newClassResolver() {
-    return new ActionScriptClassResolver();
+  public JSClassResolver getClassResolver() {
+    return ActionScriptClassResolver.getInstance();
   }
 }

@@ -65,7 +65,9 @@ public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvi
       final GlobalSearchScope forced = ((PsiCodeFragment)element).getForcedResolveScope();
       if (forced != null) return forced;
     }
-    final PsiFile psiFile = element.getContainingFile().getOriginalFile();
+    final PsiFile containingFile = element.getContainingFile();
+    if (containingFile == null) return JSResolveUtil.getJavaScriptSymbolsResolveScope(element.getProject());
+    final PsiFile psiFile = containingFile.getOriginalFile();
     VirtualFile file = psiFile.getVirtualFile();
     final Project project = psiFile.getProject();
     if (file == null) return JSResolveUtil.getJavaScriptSymbolsResolveScope(project);

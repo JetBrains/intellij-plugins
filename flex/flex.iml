@@ -32,6 +32,7 @@
     <orderEntry type="module" module-name="jps-builders" />
     <orderEntry type="library" name="Velocity" level="project" />
     <orderEntry type="module" module-name="properties" />
+    <orderEntry type="module" module-name="webide-api" />
   </component>
 </module>
 
