@@ -237,7 +237,8 @@
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator"/>
     <!--<annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartUnresolvedReferenceVisitor"/>-->
 
-    <projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalyzerService" serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"/>
+    <projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"
+                    serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
 
@@ -317,5 +318,9 @@
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
     </group>
+
+    <action id="open.in.dartium" class="com.jetbrains.lang.dart.ide.actions.OpenInDartiumAction">
+      <add-to-group group-id="RunContextPopupGroup" anchor="first"/>
+    </action>
   </actions>
 </idea-plugin>
