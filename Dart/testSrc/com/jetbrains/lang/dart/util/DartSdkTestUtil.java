@@ -15,6 +15,6 @@ public class DartSdkTestUtil {
   public static void configFakeSdk(CodeInsightTestFixture fixture, String sdkHome) {
     VirtualFile file = fixture.copyDirectoryToProject(sdkHome, "sdk");
     final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
-    propertiesComponent.setValue(DartSettingsUtil.DART_SDK_PATH, file.getUrl());
+    propertiesComponent.setValue(DartSettingsUtil.DART_SDK_PATH_PROPERTY_NAME, file.getUrl());
   }
 }
