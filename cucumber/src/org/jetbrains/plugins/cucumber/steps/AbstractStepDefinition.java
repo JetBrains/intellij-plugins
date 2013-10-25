@@ -85,13 +85,13 @@ public abstract class AbstractStepDefinition {
 
     AbstractStepDefinition that = (AbstractStepDefinition)o;
 
-    if (myElementPointer != null ? !myElementPointer.equals(that.myElementPointer) : that.myElementPointer != null) return false;
+    if (!myElementPointer.equals(that.myElementPointer)) return false;
 
     return true;
   }
 
   @Override
   public int hashCode() {
-    return myElementPointer != null ? myElementPointer.hashCode() : 0;
+    return myElementPointer.hashCode();
   }
 }
