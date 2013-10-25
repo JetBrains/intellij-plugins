@@ -154,7 +154,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     Set<JSDebugEngine<C>> capturedEngines = ContainerUtil.newHashSet();
     for (JSDebugEngine<C> engine : engines) {
       for (CapturedBrowser browser : browsers) {
-        if (browser.getName().contains(engine.getBrowserFamily().getName())) {
+        if (browser.getName().contains(engine.getWebBrowser().getName())) {
           capturedEngines.add(engine);
           break;
         }

@@ -185,7 +185,7 @@ public class JstdRunConfigurationVerifier {
       for (BrowserInfo browser : capturedBrowsers) {
         String browserName = browser.getName();
         for (JSDebugEngine<?> engine : engines) {
-          if (engine.getId().equalsIgnoreCase(browserName)) {
+          if (engine.getWebBrowser().getName().equalsIgnoreCase(browserName)) {
             ok = true;
             break;
           }
