@@ -52,11 +52,11 @@ public class CfmlJavaLoaderClassType extends PsiType {
       myModule = myVirtualFile != null ? fileIndex.getModuleForFile(myVirtualFile) : null;
     }
 
-    public boolean contains(VirtualFile file) {
+    public boolean contains(@NotNull VirtualFile file) {
       return VfsUtil.isAncestor(myVirtualFile, file, true);
     }
 
-    public int compare(VirtualFile file1, VirtualFile file2) {
+    public int compare(@NotNull VirtualFile file1, @NotNull VirtualFile file2) {
       return 0;
     }
 
