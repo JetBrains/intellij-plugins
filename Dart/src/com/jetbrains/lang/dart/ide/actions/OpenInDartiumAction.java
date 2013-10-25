@@ -7,7 +7,7 @@ import com.intellij.ide.browsers.WebBrowserUrlProvider;
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -36,7 +36,7 @@ public class OpenInDartiumAction extends AnAction {
   }
 
   public void update(final AnActionEvent e) {
-    final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
+    final PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
 
     final boolean available = psiFile instanceof XmlFile &&
                               DartSettingsUtil.getDartiumPath() != null &&
@@ -46,7 +46,7 @@ public class OpenInDartiumAction extends AnAction {
   }
 
   public void actionPerformed(final AnActionEvent e) {
-    final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
+    final PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
     if (!(psiFile instanceof XmlFile)) return;
     final String dartiumPath = DartSettingsUtil.getDartiumPath();
     if (dartiumPath == null || !isHtmlFileWithDartScript(((XmlFile)psiFile))) return;
