@@ -24,7 +24,7 @@ import com.intellij.jam.reflect.JamAnnotationMeta;
 import com.intellij.jam.reflect.JamAttributeMeta;
 import com.intellij.jam.reflect.JamPackageMeta;
 import com.intellij.jam.reflect.JamStringAttributeMeta;
-import com.intellij.javaee.model.common.CommonModelElement;
+import com.intellij.jam.model.common.CommonModelElement;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;

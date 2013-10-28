@@ -21,7 +21,7 @@ import com.intellij.jam.*;
 import com.intellij.jam.annotations.JamPsiConnector;
 import com.intellij.jam.annotations.JamPsiValidity;
 import com.intellij.jam.reflect.*;
-import com.intellij.javaee.model.common.CommonModelElement;
+import com.intellij.jam.model.common.CommonModelElement;
 import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.lang.properties.IProperty;

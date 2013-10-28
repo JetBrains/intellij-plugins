@@ -23,7 +23,7 @@ import com.intellij.jam.JamStringAttributeElement;
 import com.intellij.jam.annotations.JamPsiConnector;
 import com.intellij.jam.annotations.JamPsiValidity;
 import com.intellij.jam.reflect.*;
-import com.intellij.javaee.model.common.CommonModelElement;
+import com.intellij.jam.model.common.CommonModelElement;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;

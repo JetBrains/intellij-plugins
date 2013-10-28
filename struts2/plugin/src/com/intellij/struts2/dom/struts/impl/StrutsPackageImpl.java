@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.javaee.model.xml.impl.BaseImpl;
+import com.intellij.jam.model.common.BaseImpl;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValue;

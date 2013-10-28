@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
-import com.intellij.javaee.model.xml.CommonDomModelElement;
+import com.intellij.jam.model.common.CommonDomModelElement;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.NameValue;
 
