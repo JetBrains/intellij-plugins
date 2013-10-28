@@ -13,7 +13,6 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.util.CatchingConsumer;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -108,8 +107,6 @@ public class KarmaRunProfileState implements RunProfileState {
                                                               myRunSettings,
                                                               myExecutionType);
     SMTRunnerConsoleView smtRunnerConsoleView = session.getSmtConsoleView();
-    Disposer.register(myProject, smtRunnerConsoleView);
-
     ProcessHandler processHandler = session.getProcessHandler();
     // TODO make smtRunnerConsoleView instance of LanguageConsoleView to make it more usage for debugging
     DefaultExecutionResult executionResult = new DefaultExecutionResult(smtRunnerConsoleView, processHandler);
