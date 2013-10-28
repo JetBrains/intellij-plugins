@@ -4,13 +4,11 @@ import com.intellij.ide.browsers.Url;
 import com.intellij.ide.browsers.UrlOpener;
 import com.intellij.ide.browsers.WebBrowserService;
 import com.intellij.ide.browsers.WebBrowserUrlProvider;
-import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -18,6 +16,7 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlBundle;
+import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import icons.DartIcons;
@@ -63,9 +62,8 @@ public class OpenInDartiumAction extends AnAction {
     }
   }
 
-  private static boolean isHtmlFileWithDartScript(final @NotNull XmlFile psiFile) {
-    final VirtualFile vFile = psiFile.getVirtualFile();
-    if (vFile == null || vFile.getFileType() != HtmlFileType.INSTANCE) return false;
+  public static boolean isHtmlFileWithDartScript(final @NotNull XmlFile psiFile) {
+    if (!HtmlUtil.isHtmlFile(psiFile)) return false;
 
     final String text = psiFile.getText();
     int i = -1;
