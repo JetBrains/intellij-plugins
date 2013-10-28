@@ -8,8 +8,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.resolve.*;
-import com.intellij.lang.javascript.psi.types.JSTypeSource;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.*;
+import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveArrayType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -54,11 +54,16 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     JSExpression methodExpr = newExpression.getMethodExpression();
     if (methodExpr != null) {
       if (methodExpr instanceof JSArrayLiteralExpression) {
-        String type = VECTOR_CLASS_NAME;
+        JSTypeSource source = JSTypeSourceFactory.createTypeSource(methodExpr);
+        JSType type = JSNamedType.createType(VECTOR_CLASS_NAME, source, JSNamedType.StaticOrInstance.INSTANCE);
 
         PsiElement arrayInitializingType = newExpression.getArrayInitializingType();
         if (arrayInitializingType != null) {
-          type += ".<" + JSImportHandlingUtil.resolveTypeName(arrayInitializingType.getText(), newExpression) + ">";
+          JSType argType = JSNamedType.createType(JSImportHandlingUtil.resolveTypeName(arrayInitializingType.getText(), newExpression),
+                                                  source,
+                                                  JSNamedType.StaticOrInstance.INSTANCE);
+          type = new JSGenericTypeImpl(source, type);
+          ((JSGenericTypeImpl)type).addGenericArgument(argType);
         }
         addType(type, methodExpr);
       }
@@ -88,7 +93,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
             text = JSImportHandlingUtil.resolveTypeName(text, methodExpr);
           }
         }
-        addType(JSTypeUtils.createType(text, JSTypeSourceFactory.createTypeSource(methodExpr, false, JSTypeSource.StaticOrInstance.INSTANCE)), methodExpr);
+        addType(JSTypeUtils.createType(text, JSTypeSourceFactory.createTypeSource(methodExpr, false)), methodExpr);
       }
     }
   }
@@ -108,11 +113,13 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
                             parent instanceof JSCallExpression ?
                             ((JSClass)resolveResult).getQualifiedName():"Class";
     psiElementType  = ResolveProcessor.fixGenericTypeName(psiElementType);
+    JSTypeSource source = JSTypeSourceFactory.createTypeSource(expression);
+    JSType type = JSNamedType.createType(psiElementType, source, JSNamedType.StaticOrInstance.UNKNOWN);
     if (VECTOR_CLASS_NAME.equals(psiElementType)) {
-      psiElementType = JSImportHandlingUtil.resolveTypeName(expression.getText(), expression); // to avoid loosing generics
+      type = JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(expression.getText(), expression), source);
     }
     myCallExpressionsToApply.pollLast(); // MyClass(anyVar) is cast to MyClass
-    addType(psiElementType, resolveResult);
+    addType(type, resolveResult);
   }
 
   @Override
@@ -141,7 +148,16 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
         final PsiElement arrayClass = ActionScriptClassResolver.findClassByQNameStatic(ARRAY_CLASS_NAME, xmlToken);
         if (arrayClass != null) {
           final String arrayType = new BaseJSSymbolProcessor.TagContextBuilder(resolveResult, null).typeName;
-          addType(arrayType == null ? ARRAY_CLASS_NAME : arrayType + "[]", arrayClass);
+          JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
+          JSType type;
+          if (arrayType != null) {
+            JSType baseType = JSNamedType.createType(arrayType, source, JSNamedType.StaticOrInstance.INSTANCE);
+            type = new JSArrayTypeImpl(baseType, source);
+          }
+          else {
+            type = new JSPrimitiveArrayType(source, JSNamedType.StaticOrInstance.INSTANCE);
+          }
+          addType(type, arrayClass);
         }
       }
       else {

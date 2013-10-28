@@ -30,7 +30,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
-import com.intellij.lang.javascript.psi.types.JSTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.psi.types.primitives.JSObjectType;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
@@ -1489,7 +1489,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                JSTokenTypes.SHIFT_OPERATIONS.contains(sign) ||
                sign == JSTokenTypes.MINUS) {
       final PsiFile containingFile = node.getContainingFile();
-      final JSType numberType = JSTypeImpl.createType(NUMBER_CLASS_NAME, JSTypeSourceFactory.createTypeSource(lOperand, true));
+      final JSType numberType = JSNamedType.createType(NUMBER_CLASS_NAME, JSTypeSourceFactory.createTypeSource(lOperand, true),
+                                                       JSNamedType.StaticOrInstance.INSTANCE);
       ValidateTypesUtil.checkExpressionIsAssignableToType(lOperand, numberType, myHolder, containingFile,
                                                           "javascript.expression.type.implicitly.coerced.to.unrelated.type", null);
       ValidateTypesUtil.checkExpressionIsAssignableToType(rOperand, numberType, myHolder, containingFile,

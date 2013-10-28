@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
@@ -65,8 +65,8 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
     else {
       final JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(myScope, true);
       myResult = new JSCompositeTypeImpl(typeSource,
-                                         JSTypeImpl.createType(JSCommonTypeNames.INT_TYPE_NAME, typeSource),
-                                         JSTypeImpl.createType(JSCommonTypeNames.UINT_TYPE_NAME, typeSource));
+                                         JSNamedType.createType(JSCommonTypeNames.INT_TYPE_NAME, typeSource, JSNamedType.StaticOrInstance.INSTANCE),
+                                         JSNamedType.createType(JSCommonTypeNames.UINT_TYPE_NAME, typeSource, JSNamedType.StaticOrInstance.INSTANCE));
     }
   }
 
