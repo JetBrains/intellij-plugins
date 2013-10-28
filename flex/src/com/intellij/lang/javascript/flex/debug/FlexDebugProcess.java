@@ -49,7 +49,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import org.jetbrains.io.LocalFileFinder;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
@@ -61,7 +61,6 @@ import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerBundle;
@@ -72,7 +71,6 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.intellij.xdebugger.frame.XValueMarkerProvider;
 import com.intellij.xdebugger.stepping.XSmartStepIntoHandler;
-import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -137,10 +135,6 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private int myCurrentWorker = 0;
   private final KnownFilesInfo myKnownFilesInfo = new KnownFilesInfo(this);
-
-  // if java.io.File.exists() takes more time than this timeout we assume that this is network drive and do not ping it any more
-  private static final int FILE_EXISTS_MAX_TIMEOUT_MILLIS = 10;
-  private final Map<Character, Boolean> myWindowsDrivesMap = new THashMap<Character, Boolean>();
 
   private String myFdbLaunchCommand;
 
@@ -729,7 +723,7 @@ public class FlexDebugProcess extends XDebugProcess {
       final String path = myKnownFilesInfo.getFilePathById(myCurrentWorker, id);
 
       if (path != null) {
-        final VirtualFile fileById = findFileByPath(path);
+        final VirtualFile fileById = LocalFileFinder.findFile(path);
 
         if (packageName == null) {
           // try to guess package name
@@ -771,7 +765,7 @@ public class FlexDebugProcess extends XDebugProcess {
       for (final String path : paths) {
         final String folderPath = PathUtil.getParentPath(path);
         if (folderPath.endsWith(packagePath)) {
-          final VirtualFile file = findFileByPath(path);
+          final VirtualFile file = LocalFileFinder.findFile(path);
           if (file != null) {
             return getThisOrSimilarFileInProject(file, packageName);
           }
@@ -815,7 +809,7 @@ public class FlexDebugProcess extends XDebugProcess {
     final Collection<String> paths = myKnownFilesInfo.getPathsByName(myCurrentWorker, fileName);
     if (paths != null) {
       for (final String path : paths) {
-        final VirtualFile file = findFileByPath(path);
+        final VirtualFile file = LocalFileFinder.findFile(path);
         if (file != null) {
           return file;
         }
@@ -823,38 +817,6 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     return null;
-  }
-
-  @Nullable
-  private VirtualFile findFileByPath(final String path) {
-    if (!SystemInfo.isWindows || windowsDriveExists(path)) {
-      return LocalFileSystem.getInstance().findFileByPath(path);
-    }
-    return null;
-  }
-
-  private boolean windowsDriveExists(final String filePath) {
-    if (filePath.length() > 2 && Character.isLetter(filePath.charAt(0)) && filePath.charAt(1) == ':') {
-      final char driveLetter = Character.toUpperCase(filePath.charAt(0));
-      final Boolean driveExists = myWindowsDrivesMap.get(driveLetter);
-
-      if (driveExists != null) {
-        return driveExists;
-      }
-      else {
-        final long t0 = System.currentTimeMillis();
-        boolean exists = new File(driveLetter + ":" + File.separator).exists();
-
-        if (System.currentTimeMillis() - t0 > FILE_EXISTS_MAX_TIMEOUT_MILLIS) {
-          exists = false; // may be a slow network drive
-        }
-
-        myWindowsDrivesMap.put(driveLetter, exists);
-        return exists;
-      }
-    }
-
-    return false;
   }
 
   @NotNull
