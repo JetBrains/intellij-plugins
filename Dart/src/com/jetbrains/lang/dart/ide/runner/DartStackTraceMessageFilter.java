@@ -6,7 +6,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -39,7 +38,7 @@ public class DartStackTraceMessageFilter implements Filter {
       if (packages != null) {
         String relativePath = fileUrl.substring(DartResolveUtil.PACKAGE_PREFIX.length());
         relativePath = FileUtil.toSystemIndependentName(relativePath);
-        file = VfsUtil.findRelativeFile(packages, relativePath.split("/"));
+        file = VfsUtilCore.findRelativeFile(relativePath, packages);
       }
     }
     if (file == null) {

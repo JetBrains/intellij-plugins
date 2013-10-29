@@ -16,7 +16,10 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -100,7 +103,7 @@ public class DartSettings {
     if (relativeLibPath == null) {
       return null;
     }
-    return VfsUtil.findRelativeFile(libRoot, relativeLibPath.split("/"));
+    return VfsUtilCore.findRelativeFile(relativeLibPath, libRoot);
   }
 
   public Collection<String> getLibraries(PsiElement context) {

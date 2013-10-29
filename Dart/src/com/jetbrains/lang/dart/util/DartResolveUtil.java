@@ -9,7 +9,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -42,9 +41,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartResolveUtil {
   public static final String PACKAGE_PREFIX = "package:";
 
@@ -394,7 +390,7 @@ public class DartResolveUtil {
     if (sourceFile == null && libraryNameOrPath.startsWith(PACKAGE_PREFIX)) {
       final VirtualFile packagesFolder = findPackagesFolder(context);
       final String pathInPackages = FileUtil.toSystemIndependentName(libraryNameOrPath.substring(PACKAGE_PREFIX.length()));
-      sourceFile = packagesFolder == null ? null : VfsUtil.findRelativeFile(packagesFolder, pathInPackages.split("/"));
+      sourceFile = packagesFolder == null ? null : VfsUtilCore.findRelativeFile(pathInPackages, packagesFolder);
     }
     return sourceFile;
   }
@@ -415,10 +411,11 @@ public class DartResolveUtil {
 
   @Nullable
   public static VirtualFile findRelativeFile(@NotNull VirtualFile file, String path) {
-    if (file.getParent() == null) {
+    final VirtualFile parent = file.getParent();
+    if (parent == null) {
       return VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(path));
     }
-    return VfsUtil.findRelativeFile(file, ("../" + path).split("/"));
+    return VfsUtilCore.findRelativeFile(path, parent);
   }
 
   public static boolean sameLibrary(@NotNull PsiElement context1, @NotNull PsiElement context2) {
