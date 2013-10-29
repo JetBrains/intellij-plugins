@@ -19,27 +19,24 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 import com.jetbrains.lang.dart.util.DartFileTemplateUtil;
+import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Properties;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class CreateDartFileAction extends CreateFromTemplateAction<PsiFile> {
   public CreateDartFileAction() {
-    super(DartBundle.message("action.create.new.file"), DartBundle.message("action.create.new.file"), icons.DartIcons.Dart_16);
+    super(DartBundle.message("action.create.new.file"), DartBundle.message("action.create.new.file"), DartIcons.Dart_16);
   }
 
   @Override
   protected boolean isAvailable(DataContext dataContext) {
     final Module module = LangDataKeys.MODULE.getData(dataContext);
     final ModuleType moduleType = module == null ? null : ModuleType.get(module);
-    final boolean isWebOrDartModule = moduleType instanceof WebModuleTypeBase || moduleType instanceof DartModuleTypeBase;
+    final boolean isWebOrDartModule = moduleType instanceof WebModuleTypeBase;
     return super.isAvailable(dataContext) && isWebOrDartModule;
   }
 
