@@ -5,9 +5,6 @@
   <extensions defaultExtensionNs="com.intellij">
     <project.converterProvider implementation="com.jetbrains.lang.dart.ide.DartRunConfigurationConverterProvider"/>
   </extensions>
-  <extensions defaultExtensionNs="Dart">
-    <debugger.breakpoint.class.provider implementation="com.jetbrains.lang.dart.ide.runner.base.JSTypeProvider"/>
-  </extensions>
   <extensions defaultExtensionNs="JavaScriptDebugger">
     <engine implementation="com.jetbrains.lang.dart.ide.runner.client.DartiumDebuggerEngine" />
   </extensions>

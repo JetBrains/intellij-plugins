@@ -134,11 +134,6 @@
     </component>
   </project-components>
 
-  <extensionPoints>
-    <extensionPoint name="debugger.breakpoint.class.provider"
-                    interface="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineBreakpointTypeProvider"/>
-  </extensionPoints>
-
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <fileTypeFactory implementation="com.jetbrains.lang.dart.DartFileTypeFactory"/>
