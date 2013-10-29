@@ -4,7 +4,6 @@
     <moduleType id="DART_MODULE" implementationClass="com.jetbrains.lang.dart.ide.module.DartModuleType"/>
 
     <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.base.DartBreakpointType"/>
-    <moduleConfigurationEditorProvider implementation="com.jetbrains.lang.dart.ide.projectStructure.DartModuleConfigurationEditorProvider"/>
   </extensions>
   <extensions defaultExtensionNs="Dart">
     <debugger.breakpoint.class.provider implementation="com.jetbrains.lang.dart.ide.runner.base.DartBreakpointTypeProvider"/>
