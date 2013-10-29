@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.google.gson.JsonObject;
 import com.intellij.icons.AllIcons;
+import com.intellij.javascript.debugger.breakpoints.JavaScriptBreakpointType;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -10,6 +11,7 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.server.connection.JsonResponse;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -30,52 +32,51 @@ public class DartCommandLineBreakpointsHandler {
     myDebugProcess = process;
 
     List<XBreakpointHandler> handlers = new ArrayList<XBreakpointHandler>(2);
-    for (DartCommandLineBreakpointTypeProvider breakpointTypeProvider : DartCommandLineBreakpointTypeProvider.EP_NAME.getExtensions()) {
-      handlers.add(new XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>>(breakpointTypeProvider.provideBreakpointClass()) {
-        public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
-          final XSourcePosition position = breakpoint.getSourcePosition();
-          if (position != null) {
-            myDebugProcess.sendCommand(getSetBreakpointCommand(breakpoint), new AbstractResponseToRequestHandler<JsonResponse>() {
-              @Override
-              public boolean processResponse(JsonResponse response) {
-                if (response.getJsonObject().get("error") != null) {
-                  myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, AllIcons.Debugger.Db_invalid_breakpoint, null);
-                  return true;
-                }
-                final JsonObject result = response.getJsonObject().get("result").getAsJsonObject();
-                final int id = result.get("breakpointId").getAsInt();
-                myBreakpointToIndexMap.put(breakpoint, id);
-                myIndexToBreakpointMap.put(id, breakpoint);
-                myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, AllIcons.Debugger.Db_verified_breakpoint, null);
-                return true;
-              }
-            });
-          }
-        }
+    handlers.add(new XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>>(JavaScriptBreakpointType.class) {
+      public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
+        final XSourcePosition position = breakpoint.getSourcePosition();
+        if (position == null)  return;
+        if (position.getFile().getFileType() != DartFileType.INSTANCE) return;
 
-        private boolean isValidSourceBreakpoint(XSourcePosition position) {
-          ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myDebugProcess.getSession().getProject()).getFileIndex();
-          VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(position.getFile());
-          return rootForFile != null;
-        }
-
-        public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
-          final XSourcePosition position = breakpoint.getSourcePosition();
-          if (position != null && isValidSourceBreakpoint(position)) {
-            myDebugProcess.sendCommand(getRemoveBreakpointCommand(breakpoint), new AbstractResponseToRequestHandler<JsonResponse>() {
-              @Override
-              public boolean processResponse(JsonResponse response) {
-                final Integer id = myBreakpointToIndexMap.remove(breakpoint);
-                if (myIndexToBreakpointMap.containsKey(id)) {
-                  myIndexToBreakpointMap.remove(id);
-                }
-                return true;
-              }
-            });
+        myDebugProcess.sendCommand(getSetBreakpointCommand(breakpoint), new AbstractResponseToRequestHandler<JsonResponse>() {
+          @Override
+          public boolean processResponse(JsonResponse response) {
+            if (response.getJsonObject().get("error") != null) {
+              myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, AllIcons.Debugger.Db_invalid_breakpoint, null);
+              return true;
+            }
+            final JsonObject result = response.getJsonObject().get("result").getAsJsonObject();
+            final int id = result.get("breakpointId").getAsInt();
+            myBreakpointToIndexMap.put(breakpoint, id);
+            myIndexToBreakpointMap.put(id, breakpoint);
+            myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, AllIcons.Debugger.Db_verified_breakpoint, null);
+            return true;
           }
+        });
+      }
+
+      private boolean isValidSourceBreakpoint(XSourcePosition position) {
+        ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myDebugProcess.getSession().getProject()).getFileIndex();
+        VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(position.getFile());
+        return rootForFile != null;
+      }
+
+      public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
+        final XSourcePosition position = breakpoint.getSourcePosition();
+        if (position != null && isValidSourceBreakpoint(position)) {
+          myDebugProcess.sendCommand(getRemoveBreakpointCommand(breakpoint), new AbstractResponseToRequestHandler<JsonResponse>() {
+            @Override
+            public boolean processResponse(JsonResponse response) {
+              final Integer id = myBreakpointToIndexMap.remove(breakpoint);
+              if (myIndexToBreakpointMap.containsKey(id)) {
+                myIndexToBreakpointMap.remove(id);
+              }
+              return true;
+            }
+          });
         }
-      });
-    }
+      }
+    });
 
     myBreakpointHandlers = handlers.toArray(new XBreakpointHandler<?>[handlers.size()]);
   }
