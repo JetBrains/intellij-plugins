@@ -1,10 +1,4 @@
 <idea-plugin version="2">
-  <project-components>
-    <component>
-      <implementation-class>com.jetbrains.lang.dart.compilation.DartCompilerHandler</implementation-class>
-      <skipForDefaultProject/>
-    </component>
-  </project-components>
   <extensions defaultExtensionNs="com.intellij">
     <sdkType implementation="com.jetbrains.lang.dart.ide.DartSdkType"/>
     <moduleType id="DART_MODULE" implementationClass="com.jetbrains.lang.dart.ide.module.DartModuleType"/>
