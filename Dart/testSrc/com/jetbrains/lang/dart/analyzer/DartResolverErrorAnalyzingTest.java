@@ -55,9 +55,14 @@ public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
   public void testNoErrorsInHtml() throws Throwable {
     final String testName = getTestName(true);
     myFixture.configureByFiles(testName + ".html", testName + "_2.dart");
-    final DartInProcessAnnotator annotator = new DartInProcessAnnotator();
-    final Pair<DartFileBasedSource, AnalysisContext> information = annotator.collectInformation(myFixture.getFile());
-    final AnalysisError[] errors = annotator.doAnnotate(information);
+    final AnalysisError[] errors = getErrorsFromAnnotator();
+    assertEmpty(errors);
+  }
+
+  public void testPartInSubfolder() throws Throwable {
+    final String testName = getTestName(true);
+    myFixture.configureByFiles(testName + ".dart", "subfolder/" + testName + "_part.dart");
+    final AnalysisError[] errors = getErrorsFromAnnotator();
     assertEmpty(errors);
   }
 
