@@ -11,6 +11,8 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.ide.browsers.Url;
+import com.intellij.ide.browsers.Urls;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
@@ -100,7 +102,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
       return null;
     }
     final Connection connection = debugEngine.openConnection(true);
-    final String url = karmaServer.formatUrl("/debug.html");
+    final Url url = Urls.newFromEncoded(karmaServer.formatUrl("/debug.html"));
 
     final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
     XDebugSession session = XDebuggerManager.getInstance(project).startSession(

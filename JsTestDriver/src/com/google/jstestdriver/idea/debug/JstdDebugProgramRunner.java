@@ -16,6 +16,8 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.Url;
+import com.intellij.ide.browsers.Urls;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.JSDebugProcess;
@@ -87,10 +89,10 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     final JSDebugEngine<Connection> debugEngine = debugBrowserInfo.getDebugEngine();
     if (!debugEngine.prepareDebugger(project)) return null;
 
-    final String url;
+    final Url url;
     final Connection connection = debugEngine.openConnection(false);
     if (debugEngine.getBrowserFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME)) {
-      url = "http://127.0.0.1:" + JstdToolWindowPanel.serverPort + debugBrowserInfo.getCapturedBrowserUrl();
+      url = Urls.newHttpUrl("127.0.0.1:" + JstdToolWindowPanel.serverPort, debugBrowserInfo.getCapturedBrowserUrl());
     }
     else {
       url = null;
@@ -104,7 +106,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     XDebugSession session = XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
       @Override
       @NotNull
-      public XDebugProcess start(@NotNull final XDebugSession session) {
+      public XDebugProcess start(@NotNull XDebugSession session) {
         JSDebugProcess process = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
         process.setElementsInspectorEnabled(false);
         return process;
@@ -112,7 +114,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     });
 
     // must be here, after all breakpoints were queued
-    ((JSDebugProcess)session.getDebugProcess()).getConnection().queueRequest(new Runnable() {
+    ((JSDebugProcess)session.getDebugProcess()).getConnection().executeOnStart(new Runnable() {
       @Override
       public void run() {
         resumeJstdClientRunning(executionResult.getProcessHandler());
