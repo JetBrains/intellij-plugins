@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Dart-plugin.iml" filepath="$PROJECT_DIR$/Dart-plugin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Dart-plugin-ij.iml" filepath="$PROJECT_DIR$/Dart-plugin-ij.iml" />
     </modules>
   </component>
 </project>
