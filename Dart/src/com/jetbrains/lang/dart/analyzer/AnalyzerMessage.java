@@ -4,7 +4,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -14,9 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class AnalyzerMessage {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.AnalyzerMessage");
 
@@ -134,7 +130,7 @@ public class AnalyzerMessage {
         final int index = sourceUrl.indexOf(libraryRootPath);
         final String relativePath = sourceUrl.substring(index + libraryRootPath.length() + 1);
         LOG.debug("relative path from lib: " + relativePath);
-        virtualFile = VfsUtil.findRelativeFile(virtualFile, relativePath.split("/"));
+        virtualFile = VfsUtilCore.findRelativeFile(relativePath, virtualFile);
         LOG.debug("fix source url: " + (virtualFile == null ? null : virtualFile.getPath()));
       }
       if (virtualFile == null) {

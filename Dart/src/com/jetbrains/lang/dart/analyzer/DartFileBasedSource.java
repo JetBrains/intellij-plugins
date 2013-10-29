@@ -8,7 +8,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
@@ -121,7 +120,7 @@ public class DartFileBasedSource implements Source {
   @Override
   public Source resolveRelative(final URI containedUri) {
     final VirtualFile file = containedUri.getScheme() == null
-                             ? VfsUtil.findRelativeFile(myFile.getParent(), containedUri.toString())
+                             ? VfsUtilCore.findRelativeFile(containedUri.toString(), myFile.getParent())
                              : LocalFileSystem.getInstance().findFileByPath(containedUri.getPath());
 
     return file == null ? null : getSource(myProject, file);

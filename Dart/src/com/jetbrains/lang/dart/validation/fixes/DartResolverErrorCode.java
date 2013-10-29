@@ -106,7 +106,9 @@ public enum DartResolverErrorCode {
     public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // Instance member '%s' cannot be accessed using static access
       DartComponent target = DartResolveUtil.findReferenceAndComponentTarget(file.findElementAt(startOffset));
-      return target == null ? Collections.<IntentionAction>emptyList() : Arrays.asList(new MakeStaticAction(target));
+      return target == null || BaseCreateFix.isInDartSdkOrDartPackagesFolder(target.getContainingFile())
+             ? Collections.<IntentionAction>emptyList()
+             : Arrays.asList(new MakeStaticAction(target));
     }
   },
   NON_ABSTRACT_CLASS_INHERITS_ABSTRACT_MEMBER_FIVE_PLUS {
