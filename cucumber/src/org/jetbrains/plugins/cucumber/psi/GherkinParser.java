@@ -5,6 +5,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
@@ -36,7 +37,7 @@ public class GherkinParser implements PsiParser {
     final PsiBuilder.Marker marker = builder.mark();
 
     assert builder.getTokenType() == GherkinTokenTypes.FEATURE_KEYWORD;
-    final int featureEnd = builder.getCurrentOffset() + builder.getTokenText().length();
+    final int featureEnd = builder.getCurrentOffset() + getTokenLength(builder.getTokenText());
 
     PsiBuilder.Marker descMarker = null;
     while(true) {
@@ -141,7 +142,7 @@ public class GherkinParser implements PsiParser {
       if (hadLineBreakBefore(builder, prevTokenEnd)) {
         break;
       }
-      prevTokenEnd = builder.getCurrentOffset() + tokenText.length();
+      prevTokenEnd = builder.getCurrentOffset() + getTokenLength(tokenText);
       if (builder.getTokenType() == GherkinTokenTypes.STEP_PARAMETER_TEXT) {
         final PsiBuilder.Marker stepParameterMarker = builder.mark();
         builder.advanceLexer();
@@ -226,7 +227,7 @@ public class GherkinParser implements PsiParser {
         isHeaderRow = false;
         rowMarker = builder.mark();
       }
-      prevCellEnd = builder.getCurrentOffset() + builder.getTokenText().length();
+      prevCellEnd = builder.getCurrentOffset() + getTokenLength(builder.getTokenText());
       prevToken = tokenType;
       builder.advanceLexer();
     }
@@ -235,7 +236,6 @@ public class GherkinParser implements PsiParser {
       closeCell(cellMarker);
     }
     closeRowMarker(rowMarker, isHeaderRow);
-    isHeaderRow = false;
     marker.done(GherkinElementTypes.TABLE);
   }
 
@@ -245,5 +245,9 @@ public class GherkinParser implements PsiParser {
 
   private static void closeRowMarker(PsiBuilder.Marker rowMarker, boolean headerRow) {
     rowMarker.done(headerRow ? GherkinElementTypes.TABLE_HEADER_ROW : GherkinElementTypes.TABLE_ROW);
+  }
+
+  private static int getTokenLength(@Nullable final String tokenText) {
+    return tokenText != null ? tokenText.length() : 0;
   }
 }
