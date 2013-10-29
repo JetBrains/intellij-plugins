@@ -110,6 +110,12 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
     });
   }
 
+  protected AnalysisError[] getErrorsFromAnnotator() {
+    final DartInProcessAnnotator annotator = new DartInProcessAnnotator();
+    final Pair<DartFileBasedSource, AnalysisContext> information = annotator.collectInformation(myFixture.getFile());
+    return annotator.doAnnotate(information);
+  }
+
   private List<AnalyzerMessage> getMessagesFromAnalyzer() throws IOException {
     PsiFile file = myFixture.getFile();
     assertNotNull(file);
