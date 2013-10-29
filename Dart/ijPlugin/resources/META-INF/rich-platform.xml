@@ -1,6 +1,5 @@
 <idea-plugin version="2">
   <extensions defaultExtensionNs="com.intellij">
     <sdkType implementation="com.jetbrains.lang.dart.ide.DartSdkType"/>
-    <moduleType id="DART_MODULE" implementationClass="com.jetbrains.lang.dart.ide.module.DartModuleType"/>
   </extensions>
 </idea-plugin>

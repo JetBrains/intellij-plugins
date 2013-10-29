@@ -8,8 +8,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.WebModuleTypeBase;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
@@ -29,7 +27,6 @@ import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
 import gnu.trove.THashMap;
@@ -180,16 +177,10 @@ public class DartSettings {
   @Nullable
   public static DartSettings getSettingsForModule(@Nullable Module module) {
     // todo: check file path
-    DartSettings settings = null;
     if (shouldTakeWebSettings(module) || ApplicationManager.getApplication().isUnitTestMode()) {
-      settings = DartSettingsUtil.getSettings();
+      return DartSettingsUtil.getSettings();
     }
-    else if (module != null && ModuleType.get(module) instanceof DartModuleTypeBase) {
-      final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-      final Sdk sdk = moduleRootManager.getSdk();
-      settings = new DartSettings(StringUtil.notNullize(sdk == null ? null : sdk.getHomePath()));
-    }
-    return settings;
+    return null;
   }
 
   public static boolean shouldTakeWebSettings(@Nullable Module module) {
