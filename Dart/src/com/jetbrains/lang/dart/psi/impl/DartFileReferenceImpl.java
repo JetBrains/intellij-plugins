@@ -4,7 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
@@ -29,9 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartFileReferenceImpl extends DartExpressionImpl implements DartReference, PsiPolyVariantReference {
   public DartFileReferenceImpl(ASTNode node) {
     super(node);
@@ -134,7 +131,7 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
       String relativePath = FileUtil.toSystemIndependentName(text.substring(DartResolveUtil.PACKAGE_PREFIX.length()));
       final VirtualFile sourceFile = packagesFolder == null
                                      ? null
-                                     : VfsUtil.findRelativeFile(packagesFolder, relativePath.split("/"));
+                                     : VfsUtilCore.findRelativeFile(relativePath, packagesFolder);
       final PsiFile sourcePsiFile = sourceFile == null ? null : psiFile.getManager().findFile(sourceFile);
       return sourcePsiFile == null ? ResolveResult.EMPTY_ARRAY : new ResolveResult[]{new PsiElementResolveResult(sourcePsiFile)};
     }
