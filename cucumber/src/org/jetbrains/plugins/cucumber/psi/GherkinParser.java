@@ -153,7 +153,7 @@ public class GherkinParser implements PsiParser {
     }
     final IElementType tokenTypeAfterName = builder.getTokenType();
     if (tokenTypeAfterName == GherkinTokenTypes.PIPE) {
-      parseTable(builder, false);
+      parseTable(builder);
     } else if (tokenTypeAfterName == GherkinTokenTypes.PYSTRING) {
       parsePystring(builder);
     }
@@ -188,12 +188,12 @@ public class GherkinParser implements PsiParser {
       builder.advanceLexer();
     }
     if (builder.getTokenType() == GherkinTokenTypes.PIPE) {
-      parseTable(builder, true);
+      parseTable(builder);
     }
     marker.done(GherkinElementTypes.EXAMPLES_BLOCK);
   }
 
-  private static void parseTable(PsiBuilder builder, final boolean isOutlineExamples) {
+  private static void parseTable(PsiBuilder builder) {
     final PsiBuilder.Marker marker = builder.mark();
     PsiBuilder.Marker rowMarker = builder.mark();
     int prevCellEnd = -1;
