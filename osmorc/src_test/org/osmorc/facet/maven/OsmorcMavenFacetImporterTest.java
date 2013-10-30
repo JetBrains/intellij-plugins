@@ -1,22 +1,22 @@
 package org.osmorc.facet.maven;
 
+import com.intellij.facet.FacetTypeId;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.idea.maven.importing.FacetImporter;
 import org.jetbrains.idea.maven.importing.FacetImporterTestCase;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
-import org.osmorc.maven.facet.OsmorcFacetImporter;
 
 import java.io.IOException;
 
 /**
  * Test case for testing the {@link org.osmorc.maven.facet.OsmorcFacetImporter}.
  */
-public class OsmorcMavenFacetImporterTest extends FacetImporterTestCase<OsmorcFacet, OsmorcFacetType> {
+public class OsmorcMavenFacetImporterTest extends FacetImporterTestCase<OsmorcFacet> {
+
   @Override
-  protected FacetImporter<OsmorcFacet, ?, OsmorcFacetType> createImporter() {
-    return new OsmorcFacetImporter();
+  protected FacetTypeId<OsmorcFacet> getFacetTypeId() {
+    return OsmorcFacetType.ID;
   }
 
   public void testSimpleImport() throws IOException {
