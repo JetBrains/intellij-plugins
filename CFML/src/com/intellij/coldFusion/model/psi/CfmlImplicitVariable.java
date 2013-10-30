@@ -65,6 +65,7 @@ public class CfmlImplicitVariable extends RenameableFakePsiElement implements Cf
     return myName;
   }
 
+  @NotNull
   public PsiElement getNavigationElement() {
     return myComment;
   }
