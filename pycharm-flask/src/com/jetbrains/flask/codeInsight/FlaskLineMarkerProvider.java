@@ -105,7 +105,9 @@ public class FlaskLineMarkerProvider extends RelatedItemLineMarkerProvider {
           viewFunctions.add(containingFunction);
         }
       }
-      return createViewFunctionNavigationMarker(element, viewFunctions);
+      if (!viewFunctions.isEmpty()) {
+        return createViewFunctionNavigationMarker(element, viewFunctions);
+      }
     }
     return null;
   }
