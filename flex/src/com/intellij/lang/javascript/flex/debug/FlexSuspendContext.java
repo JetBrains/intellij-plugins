@@ -15,12 +15,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author nik
- */
 public class FlexSuspendContext extends XSuspendContext {
   private final FlexExecutionStack myFlexExecutionStack;
   private static final Pattern STACK_FRAMES_DELIMITER = Pattern.compile(".(\\r?\\n)#\\d+ ");
@@ -32,7 +30,7 @@ public class FlexSuspendContext extends XSuspendContext {
 
   public FlexSuspendContext(final FlexDebugProcess flexDebugProcess, final String[] frames) {
     myFlexExecutionStack = new FlexExecutionStack(createStackFrame(flexDebugProcess, frames[0]));
-    myFlexExecutionStack.setFrames(frames);
+    myFlexExecutionStack.myAprioriKnownFrames = myFlexExecutionStack.getFrames(frames);
   }
 
   public XExecutionStack getActiveExecutionStack() {
@@ -41,7 +39,7 @@ public class FlexSuspendContext extends XSuspendContext {
 
   private static class FlexExecutionStack extends XExecutionStack {
     private final FlexStackFrame myTopFrame;
-    private @Nullable String[] myFrames;
+    private @Nullable List<XStackFrame> myAprioriKnownFrames;
 
     private FlexExecutionStack(final FlexStackFrame topFrame) {
       super("");
@@ -49,39 +47,36 @@ public class FlexSuspendContext extends XSuspendContext {
       myTopFrame = topFrame;
     }
 
-    private void setFrames(final String[] frames) {
-      myFrames = frames;
-    }
-
     public XStackFrame getTopFrame() {
       return myTopFrame;
     }
 
     public void computeStackFrames(final int frameIndex, final XStackFrameContainer container) {
-      if (myFrames != null) {
-        processFrames(myFrames, container, frameIndex);
+      if (myAprioriKnownFrames != null) {
+        container.addStackFrames(myAprioriKnownFrames.subList(frameIndex, myAprioriKnownFrames.size()), true);
       }
       else {
         myTopFrame.getDebugProcess().sendCommand(new DebuggerCommand("bt", CommandOutputProcessingType.SPECIAL_PROCESSING) {
           @Override
           CommandOutputProcessingMode onTextAvailable(@NonNls final String s) {
             if (container.isObsolete()) return CommandOutputProcessingMode.DONE;
-            processFrames(splitStackFrames(s), container, frameIndex);
+
+            final List<XStackFrame> frames = getFrames(splitStackFrames(s));
+            container.addStackFrames(frames.subList(frameIndex, frames.size()), true);
             return CommandOutputProcessingMode.DONE;
           }
         });
       }
     }
 
-    private void processFrames(String[] frames, XStackFrameContainer container, int frameIndex) {
+    private List<XStackFrame> getFrames(String[] frames) {
       final XStackFrame[] allFrames = new XStackFrame[frames.length];
       int i = 0;
 
       final FlexDebugProcess flexDebugProcess = myTopFrame.getDebugProcess();
 
       if (frames.length == 0) {
-        container.addStackFrames(Collections.<XStackFrame>emptyList(), true); // empty value
-        return;
+        return Collections.emptyList();
       }
       String frameText = frames[i];
       myTopFrame.setScope(extractScope(frameText));
@@ -99,7 +94,7 @@ public class FlexSuspendContext extends XSuspendContext {
         i++;
       }
 
-      container.addStackFrames(Arrays.asList(allFrames).subList(frameIndex, allFrames.length), true);
+      return Arrays.asList(allFrames);
     }
   }
 
