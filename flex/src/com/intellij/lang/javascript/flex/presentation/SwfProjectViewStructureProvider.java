@@ -219,13 +219,22 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
     for (int i = from; i < to; i++) {
       JSQualifiedNamedElement element = elements.get(i);
       String qName = element.getQualifiedName();
-      assert qName.startsWith(aPackage) : qName + " does not start with " + aPackage;
+      assert aPackage.isEmpty() || qName.startsWith(aPackage + ".") : qName + " does not start with " + aPackage;
       if (StringUtil.getPackageName(qName).equals(aPackage)) {
         classes.add(new SwfQualifiedNamedElementNode(project, element, settings));
       }
       else {
-        String subpackage =
-          settings.isFlattenPackages() ? StringUtil.getPackageName(qName) : qName.substring(0, qName.indexOf('.', aPackage.length() + 1));
+        final int endIndex = qName.indexOf('.', aPackage.length() + 1);
+        if (endIndex <= 0) {
+          final Attachment attachment = element.getParent() != null
+                                        ? new Attachment("Parent element.txt", element.getParent().getText())
+                                        : new Attachment("Element text.txt", element.getText());
+          LOG.error(LogMessageEx.createEvent("package=[" + aPackage + "], qName=[" + qName + "]", DebugUtil.currentStackTrace(),
+                                             attachment));
+          continue;
+        }
+
+        String subpackage = settings.isFlattenPackages() ? StringUtil.getPackageName(qName) : qName.substring(0, endIndex);
         if (currentSubpackage == null) {
           subpackageStart = i;
         }
