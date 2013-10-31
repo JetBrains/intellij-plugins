@@ -35,6 +35,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  */
 public class CucumberCompletionContributor extends CompletionContributor {
   private static final Map<String, String> GROUP_TYPE_MAP = new HashMap<String, String>();
+  private static final Map<String, String> INTERPOLATION_PARAMETERS_MAP = new HashMap<String, String>();
   static {
     GROUP_TYPE_MAP.put("(.*)", "<string>");
     GROUP_TYPE_MAP.put("(.+)", "<string>");
@@ -42,16 +43,14 @@ public class CucumberCompletionContributor extends CompletionContributor {
     GROUP_TYPE_MAP.put("([^\"]+)", "<string>");
     GROUP_TYPE_MAP.put("(\\d*)", "<number>");
     GROUP_TYPE_MAP.put("(\\d+)", "<number>");
+    INTERPOLATION_PARAMETERS_MAP.put("#\\{[^\\}]*\\}", "<param>");
   }
 
   private static final int SCENARIO_KEYWORD_PRIORITY = 70;
   private static final int SCENARIO_OUTLINE_KEYWORD_PRIORITY = 60;
-  public static final String POSSIBLE_GROUP_REGEX = "\\((\\?:)?([^)]*)\\)\\?";
-  public static final Pattern POSSIBLE_GROUP_PATTERN = Pattern.compile(POSSIBLE_GROUP_REGEX);
-  public static final String QUESTION_MARK_REGEX = "([^\\\\])\\?";
-  public static final Pattern QUESTION_MARK_PATTERN = Pattern.compile(QUESTION_MARK_REGEX);
-  public static final String PARAMETERS_REGEX = "<string>|<number>";
-  public static final Pattern PARAMETERS_PATTERN = Pattern.compile(PARAMETERS_REGEX);
+  public static final Pattern POSSIBLE_GROUP_PATTERN = Pattern.compile("\\(([^\\)]*)\\)");
+  public static final Pattern QUESTION_MARK_PATTERN = Pattern.compile("([^\\\\])\\?:?");
+  public static final Pattern PARAMETERS_PATTERN = Pattern.compile("<string>|<number>|<param>");
   public static final String INTELLIJ_IDEA_RULEZZZ = "IntellijIdeaRulezzz";
 
   public CucumberCompletionContributor() {
@@ -215,16 +214,19 @@ public class CucumberCompletionContributor extends CompletionContributor {
           text = StringUtil.replace(text, group.getKey(), group.getValue());
         }
 
-        final List<TextRange> ranges = new ArrayList<TextRange>();
-
-        Matcher m = POSSIBLE_GROUP_PATTERN.matcher(text);
-        while (m.find()) {
-          ranges.add(new TextRange(m.start(), m.end() - 3));
-          text = m.replaceAll("$2");
+        for (Map.Entry<String, String> group : INTERPOLATION_PARAMETERS_MAP.entrySet()) {
+          text = text.replaceAll(group.getKey(), group.getValue());
         }
 
-        m = QUESTION_MARK_PATTERN.matcher(text);
+        final List<TextRange> ranges = new ArrayList<TextRange>();
+        Matcher m = QUESTION_MARK_PATTERN.matcher(text);
         if (m.find()) {
+          text = m.replaceAll("$1");
+        }
+
+        m = POSSIBLE_GROUP_PATTERN.matcher(text);
+        while (m.find()) {
+          ranges.add(new TextRange(m.start(), m.end() - 3));
           text = m.replaceAll("$1");
         }
 
