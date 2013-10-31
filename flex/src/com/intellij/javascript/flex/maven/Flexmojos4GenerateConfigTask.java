@@ -155,7 +155,9 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   }
 
   void submit(MavenProject mavenProject, final Module module, final String configFilePath) {
-    assert out == null && !projects.contains(mavenProject);
+    assert out == null;
+    assert !projects.contains(mavenProject): mavenProject.getName();
+
     projects.add(mavenProject);
     myModuleToConfigFilePath.put(module, configFilePath);
   }
