@@ -226,7 +226,6 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
         m = POSSIBLE_GROUP_PATTERN.matcher(text);
         while (m.find()) {
-          ranges.add(new TextRange(m.start(), m.end() - 3));
           text = m.replaceAll("$1");
         }
 
