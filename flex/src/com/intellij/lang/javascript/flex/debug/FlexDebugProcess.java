@@ -280,8 +280,9 @@ public class FlexDebugProcess extends XDebugProcess {
     startCommandProcessingThread();
   }
 
+  @Nullable
   public Module getModule() {
-    return myModule;
+    return myModule.isDisposed() ? null : myModule;
   }
 
   public FlexBuildConfiguration getBC() {

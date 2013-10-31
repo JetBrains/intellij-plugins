@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -129,8 +130,11 @@ public class FlexBreakpointsHandler {
         return false;
       }
 
-      final ModuleWithDependenciesScope scope = FlexUtils
-        .getModuleWithDependenciesAndLibrariesScope(myDebugProcess.getModule(), myDebugProcess.getBC(), myDebugProcess.isFlexUnit());
+      final Module module = myDebugProcess.getModule();
+      if (module == null) return false;
+
+      final ModuleWithDependenciesScope scope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, myDebugProcess.getBC(),
+                                                                                                     myDebugProcess.isFlexUnit());
       if (scope.contains(file) || isInSourcesOfLibraryInScope(fileIndex, file, scope)) {
         return true;
       }
