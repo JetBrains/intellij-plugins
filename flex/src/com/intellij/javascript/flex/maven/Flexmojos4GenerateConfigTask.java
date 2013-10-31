@@ -329,8 +329,11 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
         sourceRoots.forEachEntry(new TObjectObjectProcedure<MavenProject, List<String>>() {
           @Override
           public boolean execute(MavenProject mavenProject, List<String> sourceRoots) {
+            final Module module = mavenProjectsManager.findModule(mavenProject);
+            if (module == null) return true;
+
             MavenDefaultModifiableModelsProvider provider = new MavenDefaultModifiableModelsProvider(project);
-            MavenRootModelAdapter a = new MavenRootModelAdapter(mavenProject, mavenProjectsManager.findModule(mavenProject), provider);
+            MavenRootModelAdapter a = new MavenRootModelAdapter(mavenProject, module, provider);
             for (String sourceRoot : sourceRoots) {
               a.addSourceFolder(sourceRoot, JavaSourceRootType.SOURCE);
             }
