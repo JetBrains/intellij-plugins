@@ -39,6 +39,10 @@ public class PlaceInBuildConfiguration extends PlaceInProjectStructure {
   @NotNull
   @Override
   public ActionCallback navigate() {
+    if (myStructureElement.getModule().isDisposed()) {
+      return new ActionCallback.Done();
+    }
+
     Place place = FlexProjectStructureUtil.createPlace(myStructureElement.getModule(), myStructureElement.getBC(), myTabName);
     if (myLocationOnTab != null) {
       place.putPath(FlexBCConfigurable.LOCATION_ON_TAB, myLocationOnTab);
