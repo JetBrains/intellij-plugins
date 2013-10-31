@@ -14,11 +14,8 @@
  */
 package com.intellij.struts2.dom;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.util.xml.stubs.DomStubTest;
-
-import java.io.File;
 
 /**
  * @author Yann C&eacute;bron
@@ -26,9 +23,8 @@ import java.io.File;
 public class StrutsDomStubTest extends DomStubTest {
 
   @Override
-  protected String getTestDataPath() {
-    return PathManager.getHomePath().replace(File.separatorChar, '/') +
-           BasicLightHighlightingTestCase.TEST_DATA_PATH + "stubs";
+  protected String getBasePath() {
+    return BasicLightHighlightingTestCase.TEST_DATA_PATH + "stubs";
   }
 
   public void testStrutsXml() {
