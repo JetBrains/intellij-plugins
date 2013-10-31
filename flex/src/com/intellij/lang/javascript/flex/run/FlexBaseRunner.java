@@ -10,6 +10,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
+import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -27,7 +28,6 @@ import com.intellij.lang.javascript.flex.actions.airpackage.DeviceInfo;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.debug.FlexDebugRunner;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitConsoleProperties;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
@@ -279,7 +279,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                              ProcessHandler processHandler) throws ExecutionException {
     final RunProfile runConfiguration = env.getRunProfile();
     final FlexStackTraceFilter stackTraceFilter = new FlexStackTraceFilter(project);
-    final FlexUnitConsoleProperties consoleProps = new FlexUnitConsoleProperties(((FlexUnitRunConfiguration)runConfiguration), env.getExecutor());
+    final SMTRunnerConsoleProperties consoleProps =
+      new SMTRunnerConsoleProperties(((FlexUnitRunConfiguration)runConfiguration), "FlexUnit", env.getExecutor());
     consoleProps.addStackTraceFilter(stackTraceFilter);
 
     final BaseTestsOutputConsoleView consoleView = SMTestRunnerConnectionUtil
