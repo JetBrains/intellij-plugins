@@ -89,7 +89,7 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
 
   @Override
   public boolean supportsPython3() {
-    return false;
+    return true;
   }
 
   @Override
