@@ -46,8 +46,12 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
   private static final int SCENARIO_KEYWORD_PRIORITY = 70;
   private static final int SCENARIO_OUTLINE_KEYWORD_PRIORITY = 60;
-  public static final String POSSIBLE_GROUP_REGEX = "\\(([^)]*)\\)\\?";
+  public static final String POSSIBLE_GROUP_REGEX = "\\((\\?:)?([^)]*)\\)\\?";
+  public static final Pattern POSSIBLE_GROUP_PATTERN = Pattern.compile(POSSIBLE_GROUP_REGEX);
+  public static final String QUESTION_MARK_REGEX = "([^\\\\])\\?";
+  public static final Pattern QUESTION_MARK_PATTERN = Pattern.compile(QUESTION_MARK_REGEX);
   public static final String PARAMETERS_REGEX = "<string>|<number>";
+  public static final Pattern PARAMETERS_PATTERN = Pattern.compile(PARAMETERS_REGEX);
   public static final String INTELLIJ_IDEA_RULEZZZ = "IntellijIdeaRulezzz";
 
   public CucumberCompletionContributor() {
@@ -213,16 +217,18 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
         final List<TextRange> ranges = new ArrayList<TextRange>();
 
-        Pattern p = Pattern.compile(POSSIBLE_GROUP_REGEX);
-        Matcher m = p.matcher(text);
+        Matcher m = POSSIBLE_GROUP_PATTERN.matcher(text);
         while (m.find()) {
           ranges.add(new TextRange(m.start(), m.end() - 3));
-          text = m.replaceAll("$1");
-          m = p.matcher(text);
+          text = m.replaceAll("$2");
         }
 
-        final Pattern pattern = Pattern.compile(PARAMETERS_REGEX);
-        m = pattern.matcher(text);
+        m = QUESTION_MARK_PATTERN.matcher(text);
+        if (m.find()) {
+          text = m.replaceAll("$1");
+        }
+
+        m = PARAMETERS_PATTERN.matcher(text);
         while (m.find()) {
           ranges.add(new TextRange(m.start(), m.end()));
         }

@@ -24,6 +24,10 @@ public class CucumberJavaCompletionTest extends CucumberJavaCodeInsightTestCase 
     doTestVariants();
   }
 
+  public void testStepWithQuestionMark() throws Throwable {
+    doTestVariants();
+  }
+
   private void doTestVariants() throws Throwable {
     myFixture.copyDirectoryToProject(getTestName(true), "");
     myCompletionTester.doTestVariantsInner(getTestName(true) + File.separator + getTestName(true) + ".feature", GherkinFileType.INSTANCE);

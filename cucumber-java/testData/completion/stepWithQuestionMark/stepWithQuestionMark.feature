@@ -1,6 +1,6 @@
 Feature: test completion priority for Scenario keywords
   Scenario: Test
-    Given I<caret>
+    Given <caret>
 ---
-BASIC 1 INCLUDES
-I will pay <number>
+BASIC 1 EQUALS
+tests project exists with <number>
