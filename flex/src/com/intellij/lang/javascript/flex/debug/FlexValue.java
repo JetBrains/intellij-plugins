@@ -399,8 +399,18 @@ class FlexValue extends XValue {
 
     final String typeFromFlexValueResult = getTypeAndAdditionalInfo(myResult).first;
 
+    final String expression;
+    try {
+      expression = referenceObjectBase(i, OBJECT_MARKER);
+    }
+    catch (StringIndexOutOfBoundsException e) {
+      FlexDebugProcess.log(new Exception(myResult, e));
+      node.addChildren(XValueChildrenList.EMPTY, true);
+      return;
+    }
+
     final FlexStackFrame.EvaluateCommand
-      command = myFlexStackFrame.new EvaluateCommand(referenceObjectBase(i, OBJECT_MARKER), null) {
+      command = myFlexStackFrame.new EvaluateCommand(expression, null) {
       @Override
       CommandOutputProcessingMode doOnTextAvailable(@NonNls final String resultS) {
         StringTokenizer tokenizer = new StringTokenizer(resultS, "\r\n");
@@ -737,6 +747,7 @@ class FlexValue extends XValue {
 
   private static boolean isInteger(final String s) {
     try {
+      //noinspection ResultOfMethodCallIgnored
       Integer.parseInt(s);
       return true;
     }
