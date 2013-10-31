@@ -5,8 +5,10 @@ import com.google.dart.engine.context.AnalysisContext;
 import com.google.dart.engine.context.ChangeSet;
 import com.google.dart.engine.sdk.DirectoryBasedDartSdk;
 import com.google.dart.engine.source.*;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.*;
@@ -38,7 +40,7 @@ public class DartAnalyzerService {
   public DartAnalyzerService(final Project project) {
     myProject = project;
 
-    LocalFileSystem.getInstance().addVirtualFileListener(new VirtualFileAdapter() {
+    final VirtualFileAdapter listener = new VirtualFileAdapter() {
       public void beforePropertyChange(final VirtualFilePropertyEvent event) {
         if (VirtualFile.PROP_NAME.equals(event.getPropertyName())) {
           fileDeleted(event);
@@ -73,6 +75,14 @@ public class DartAnalyzerService {
         if (FileUtilRt.extensionEquals(event.getFileName(), DartFileType.DEFAULT_EXTENSION)) {
           myCreatedFiles.add(event.getFile());
         }
+      }
+    };
+
+    LocalFileSystem.getInstance().addVirtualFileListener(listener);
+
+    Disposer.register(project, new Disposable() {
+      public void dispose() {
+        LocalFileSystem.getInstance().removeVirtualFileListener(listener);
       }
     });
   }
