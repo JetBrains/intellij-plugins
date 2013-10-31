@@ -169,7 +169,12 @@ class FlexValue extends XValue {
       additionalInfo = typeAndAdditionalInfo.second;
 
       if (typeFromFlexValueResult != null) {
-        val = "[".concat(getObjectId(myResult, myResult.indexOf(OBJECT_MARKER), OBJECT_MARKER)).concat("]");
+        try {
+          val = "[".concat(getObjectId(myResult, myResult.indexOf(OBJECT_MARKER), OBJECT_MARKER)).concat("]");
+        }
+        catch (StringIndexOutOfBoundsException e) {
+          FlexDebugProcess.log(new Exception(myResult, e));
+        }
       }
     }
 
