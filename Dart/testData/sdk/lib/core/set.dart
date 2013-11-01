@@ -19,8 +19,14 @@ part of dart.core;
  * Sets may be either ordered or unordered. [HashSet] is unordered and doesn't
  * guarantee anything about the order that elements are accessed in by
  * iteration. [LinkedHashSet] iterates in the insertion order of its elements.
+ *
+ * It is generally not allowed to modify the set (add or remove elements) while
+ * an operation on the set is being performed, for example during a call to
+ * [forEach] or [containsAll]. Nor is it allowed to modify the set while
+ * iterating either the set itself or any `Iterable` that is backed by the set,
+ * such as the ones returned by methods like [where] and [map].
  */
-abstract class Set<E> extends IterableBase<E> {
+abstract class Set<E> extends IterableBase<E> implements EfficientLength {
   /**
    * Creates an empty [Set].
    *
@@ -53,11 +59,11 @@ abstract class Set<E> extends IterableBase<E> {
   bool contains(Object value);
 
   /**
-   * Adds [value] into the set.
+   * Adds [value] into the set. Returns `true` if [value] was added to the set.
    *
-   * The method has no effect if [value] is already in the set.
+   * If [value] already exists, the set is not changed and `false` is returned.
    */
-  void add(E value);
+  bool add(E value);
 
   /**
    * Adds all of [elements] to this Set.
@@ -73,6 +79,14 @@ abstract class Set<E> extends IterableBase<E> {
    * if [value] value was not in the set.
    */
   bool remove(Object value);
+
+  /**
+   * If an object equal to [object] is in the set, return it.
+   *
+   * Checks if there is an object in the set that is equal to [object].
+   * If so, that object is returned, otherwise returns null.
+   */
+  E lookup(Object object);
 
   /**
    * Removes each element of [elements] from this set.

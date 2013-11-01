@@ -78,14 +78,14 @@ class Object {
   external String toString();
 
   /**
-   * [noSuchMethod] is invoked when users invoke a non-existant method
+   * [noSuchMethod] is invoked when users invoke a non-existent method
    * on an object. The name of the method and the arguments of the
    * invocation are passed to [noSuchMethod] in an [Invocation].
    * If [noSuchMethod] returns a value, that value becomes the result of
    * the original invocation.
    *
    * The default behavior of [noSuchMethod] is to throw a
-   * [noSuchMethodError].
+   * [NoSuchMethodError].
    */
   external dynamic noSuchMethod(Invocation invocation);
 
