@@ -27,6 +27,29 @@ class NumberSyntax {
   }
 }
 
+class SymbolLiterals {
+  void f() {
+    f(
+        #~,
+        #[], #[]=,
+        #*, #/, #%, #~/,
+        #+, #-,
+        #<<, #>>,
+        #>=, #>, #<=, #<,
+        #&, #^, #|,
+        #name, #q.n.a.m.e
+    );
+    x = #~;
+    x = #[]; x = #[]=;
+    x = #*; x = #/; x = #%; x = #~/;
+    x = #+; x = #-;
+    x = #<<; x = #>>;
+    x = #>=; x = #>; x = #<=; x = #<;
+    x = #&; x = #^; x = #|;
+    x = #name; x = #q.n.a.m.e;
+  }
+}
+
 class ArrayLiteralSyntax {
   void f() {
     var a0 = [];

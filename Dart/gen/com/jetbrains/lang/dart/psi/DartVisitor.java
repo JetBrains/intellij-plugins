@@ -504,6 +504,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitSymbolLiteralExpression(@NotNull DartSymbolLiteralExpression o) {
+    visitExpression(o);
+  }
+
   public void visitTernaryExpression(@NotNull DartTernaryExpression o) {
     visitExpression(o);
   }

@@ -374,6 +374,9 @@ public class DartParser implements PsiParser {
     else if (root_ == SWITCH_STATEMENT) {
       result_ = switchStatement(builder_, level_ + 1);
     }
+    else if (root_ == SYMBOL_LITERAL_EXPRESSION) {
+      result_ = symbolLiteralExpression(builder_, level_ + 1);
+    }
     else if (root_ == TERNARY_EXPRESSION) {
       result_ = ternaryExpression(builder_, level_ + 1);
     }
@@ -445,8 +448,8 @@ public class DartParser implements PsiParser {
       LITERAL_EXPRESSION, LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION,
       MULTIPLICATIVE_EXPRESSION, NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION,
       PREFIX_EXPRESSION, REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION,
-      SUFFIX_EXPRESSION, SUPER_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION,
-      VALUE_EXPRESSION),
+      SUFFIX_EXPRESSION, SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION,
+      THIS_EXPRESSION, VALUE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -3431,25 +3434,26 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // 'null' | 'true' | 'false' | HEX_NUMBER | NUMBER | stringLiteralExpression | listLiteralExpression | mapLiteralExpression
+  // NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | mapLiteralExpression | listLiteralExpression
   public static boolean literalExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "literalExpression")) return false;
-    if (!nextTokenIs(builder_, LBRACKET) && !nextTokenIs(builder_, FALSE)
-        && !nextTokenIs(builder_, NULL) && !nextTokenIs(builder_, TRUE)
-        && !nextTokenIs(builder_, LBRACE) && !nextTokenIs(builder_, HEX_NUMBER)
+    if (!nextTokenIs(builder_, LBRACKET) && !nextTokenIs(builder_, LBRACE)
+        && !nextTokenIs(builder_, FALSE) && !nextTokenIs(builder_, HASH)
+        && !nextTokenIs(builder_, HEX_NUMBER) && !nextTokenIs(builder_, NULL)
         && !nextTokenIs(builder_, NUMBER) && !nextTokenIs(builder_, OPEN_QUOTE)
         && !nextTokenIs(builder_, RAW_SINGLE_QUOTED_STRING) && !nextTokenIs(builder_, RAW_TRIPLE_QUOTED_STRING)
-        && replaceVariants(builder_, 10, "<literal expression>")) return false;
+        && !nextTokenIs(builder_, TRUE) && replaceVariants(builder_, 11, "<literal expression>")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<literal expression>");
     result_ = consumeToken(builder_, NULL);
     if (!result_) result_ = consumeToken(builder_, TRUE);
     if (!result_) result_ = consumeToken(builder_, FALSE);
-    if (!result_) result_ = consumeToken(builder_, HEX_NUMBER);
     if (!result_) result_ = consumeToken(builder_, NUMBER);
+    if (!result_) result_ = consumeToken(builder_, HEX_NUMBER);
     if (!result_) result_ = stringLiteralExpression(builder_, level_ + 1);
-    if (!result_) result_ = listLiteralExpression(builder_, level_ + 1);
+    if (!result_) result_ = symbolLiteralExpression(builder_, level_ + 1);
     if (!result_) result_ = mapLiteralExpression(builder_, level_ + 1);
+    if (!result_) result_ = listLiteralExpression(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, LITERAL_EXPRESSION, result_, false, null);
     return result_;
   }
@@ -5559,6 +5563,32 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, DEFAULT);
     if (!result_) result_ = consumeToken(builder_, RBRACE);
     if (!result_) result_ = nonStrictID(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // HASH (userDefinableOperator | simpleQualifiedReferenceExpression)
+  public static boolean symbolLiteralExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "symbolLiteralExpression")) return false;
+    if (!nextTokenIs(builder_, HASH)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, HASH);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && symbolLiteralExpression_1(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, SYMBOL_LITERAL_EXPRESSION, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  // userDefinableOperator | simpleQualifiedReferenceExpression
+  private static boolean symbolLiteralExpression_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "symbolLiteralExpression_1")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = userDefinableOperator(builder_, level_ + 1);
+    if (!result_) result_ = simpleQualifiedReferenceExpression(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }

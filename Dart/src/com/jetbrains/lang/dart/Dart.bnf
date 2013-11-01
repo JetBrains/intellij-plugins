@@ -553,8 +553,10 @@ newExpression ::= 'new' type ('.' referenceExpression)? arguments
 constConstructorExpression ::= 'const' type ('.' referenceExpression)? arguments
 {pin=1 mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-literalExpression ::= 'null' | 'true' | 'false' | HEX_NUMBER | NUMBER | stringLiteralExpression | listLiteralExpression | mapLiteralExpression
+literalExpression ::= NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | mapLiteralExpression | listLiteralExpression
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+
+symbolLiteralExpression ::= HASH (userDefinableOperator | simpleQualifiedReferenceExpression) {pin=1}
 
 compoundLiteralExpression ::= 'const'? typeArguments? (listLiteralExpression | mapLiteralExpression)
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
