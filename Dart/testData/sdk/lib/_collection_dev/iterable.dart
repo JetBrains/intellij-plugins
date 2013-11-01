@@ -4,31 +4,19 @@
 
 part of dart._collection.dev;
 
-
-// This is a hack to make @deprecated work in dart:io. Don't remove or use this,
-// unless coordinated with either me or the core library team. Thanks!
-// TODO(ajohnsen): Remove at the 11th of August 2013.
-// TODO(ajohnsen): Remove hide in:
-//    tools/dom/templates/html/dart2js/html_dart2js.darttemplate
-//    tools/dom/templates/html/dart2js/svg_dart2js.darttemplate
-//    tools/dom/templates/html/dart2js/web_audio_dart2js.darttemplate
-//    tools/dom/templates/html/dart2js/web_gl_dart2js.darttemplate
-//    tools/dom/templates/html/dart2js/web_sql_dart2js.darttemplate
-//    tools/dom/templates/html/dartium/html_dartium.darttemplate
-//    tools/dom/templates/html/dartium/svg_dartium.darttemplate
-//    tools/dom/templates/html/dartium/web_audio_dartium.darttemplate
-//    tools/dom/templates/html/dartium/web_gl_dartium.darttemplate
-//    tools/dom/templates/html/dartium/web_sql_dartium.darttemplate
-//    sdk/lib/core/regexp.dart
-// TODO(floitsch): also used in dart:async until end of September for
-//    deprecation of runZonedExperimental.
-// TODO(floitsch): also used in dart:json and dart:utf until middle of October
-//    for deprecation of json and utf libraries.
-
-// We use a random string constant to avoid it clashing with other constants.
-// This is, because we have a test that verifies that no metadata is included
-// in the output, when no mirrors need them.
-const deprecated = "qB2n4PYM";
+/**
+ * Marker interface for [Iterable] subclasses that have an efficient
+ * [length] implementation.
+ */
+abstract class EfficientLength {
+  /**
+   * Returns the number of elements in the iterable.
+   *
+   * This is an efficient operation that doesn't require iterating through
+   * the elements.
+   */
+  int get length;
+}
 
 /**
  * An [Iterable] for classes that have efficient [length] and [elementAt].
@@ -36,7 +24,8 @@ const deprecated = "qB2n4PYM";
  * All other methods are implemented in terms of [length] and [elementAt],
  * including [iterator].
  */
-abstract class ListIterable<E> extends IterableBase<E> {
+abstract class ListIterable<E> extends IterableBase<E>
+                               implements EfficientLength {
   int get length;
   E elementAt(int i);
 
@@ -341,7 +330,14 @@ class MappedIterable<S, T> extends IterableBase<T> {
   final Iterable<S> _iterable;
   final _Transformation<S, T> _f;
 
-  MappedIterable(this._iterable, T this._f(S element));
+  factory MappedIterable(Iterable iterable, T function(S value)) {
+    if (iterable is EfficientLength) {
+      return new EfficientLengthMappedIterable<S, T>(iterable, function);
+    }
+    return new MappedIterable<S, T>._(iterable, function);
+  }
+
+  MappedIterable._(this._iterable, T this._f(S element));
 
   Iterator<T> get iterator => new MappedIterator<S, T>(_iterable.iterator, _f);
 
@@ -354,6 +350,12 @@ class MappedIterable<S, T> extends IterableBase<T> {
   T get last => _f(_iterable.last);
   T get single => _f(_iterable.single);
   T elementAt(int index) => _f(_iterable.elementAt(index));
+}
+
+class EfficientLengthMappedIterable<S, T> extends MappedIterable<S, T>
+                                          implements EfficientLength {
+  EfficientLengthMappedIterable(Iterable iterable, T function(S value))
+      : super._(iterable, function);
 }
 
 class MappedIterator<S, T> extends Iterator<T> {
@@ -375,8 +377,13 @@ class MappedIterator<S, T> extends Iterator<T> {
   T get current => _current;
 }
 
-/** Specialized alternative to [MappedIterable] for mapped [List]s. */
-class MappedListIterable<S, T> extends ListIterable<T> {
+/**
+ * Specialized alternative to [MappedIterable] for mapped [List]s.
+ *
+ * Expects efficient `length` and `elementAt` on the source iterable.
+ */
+class MappedListIterable<S, T> extends ListIterable<T>
+                               implements EfficientLength {
   final Iterable<S> _source;
   final _Transformation<S, T> _f;
 
@@ -465,16 +472,35 @@ class TakeIterable<E> extends IterableBase<E> {
   final Iterable<E> _iterable;
   final int _takeCount;
 
-  TakeIterable(this._iterable, this._takeCount) {
-    if (_takeCount is! int || _takeCount < 0) {
-      throw new ArgumentError(_takeCount);
+  factory TakeIterable(Iterable<E> iterable, int takeCount) {
+    if (takeCount is! int || takeCount < 0) {
+      throw new ArgumentError(takeCount);
     }
+    if (iterable is EfficientLength) {
+      return new EfficientLengthTakeIterable<E>(iterable, takeCount);
+    }
+    return new TakeIterable<E>._(iterable, takeCount);
   }
+
+  TakeIterable._(this._iterable, this._takeCount);
 
   Iterator<E> get iterator {
     return new TakeIterator<E>(_iterable.iterator, _takeCount);
   }
 }
+
+class EfficientLengthTakeIterable<E> extends TakeIterable<E>
+                                     implements EfficientLength {
+  EfficientLengthTakeIterable(Iterable<E> iterable, int takeCount)
+      : super._(iterable, takeCount);
+
+  int get length {
+    int iterableLength = _iterable.length;
+    if (iterableLength > _takeCount) return _takeCount;
+    return iterableLength;
+  }
+}
+
 
 class TakeIterator<E> extends Iterator<E> {
   final Iterator<E> _iterator;
@@ -536,7 +562,14 @@ class SkipIterable<E> extends IterableBase<E> {
   final Iterable<E> _iterable;
   final int _skipCount;
 
-  SkipIterable(this._iterable, this._skipCount) {
+  factory SkipIterable(Iterable<E> iterable, int skipCount) {
+    if (iterable is EfficientLength) {
+      return new EfficientLengthSkipIterable<E>(iterable, skipCount);
+    }
+    return new SkipIterable<E>._(iterable, skipCount);
+  }
+
+  SkipIterable._(this._iterable, this._skipCount) {
     if (_skipCount is! int || _skipCount < 0) {
       throw new RangeError(_skipCount);
     }
@@ -551,6 +584,18 @@ class SkipIterable<E> extends IterableBase<E> {
 
   Iterator<E> get iterator {
     return new SkipIterator<E>(_iterable.iterator, _skipCount);
+  }
+}
+
+class EfficientLengthSkipIterable<E> extends SkipIterable<E>
+                                     implements EfficientLength {
+  EfficientLengthSkipIterable(Iterable<E> iterable, int skipCount)
+      : super._(iterable, skipCount);
+
+  int get length {
+    int length = _iterable.length - _skipCount;
+    if (length >= 0) return length;
+    return 0;
   }
 }
 
@@ -605,7 +650,7 @@ class SkipWhileIterator<E> extends Iterator<E> {
 /**
  * The always empty [Iterable].
  */
-class EmptyIterable<E> extends IterableBase<E> {
+class EmptyIterable<E> extends IterableBase<E> implements EfficientLength {
   const EmptyIterable();
 
   Iterator<E> get iterator => const EmptyIterator();
@@ -897,7 +942,7 @@ class IterableMixinWorkaround {
     for (int i = 0; i < _toStringList.length; i++) {
       if (identical(_toStringList[i], iterable)) {
         return '$leftDelimiter...$rightDelimiter';
-        }
+      }
     }
 
     StringBuffer result = new StringBuffer();
@@ -958,8 +1003,8 @@ class IterableMixinWorkaround {
     Sort.sort(list, compare);
   }
 
-  static void shuffleList(List list) {
-    Random random = new Random();
+  static void shuffleList(List list, Random random) {
+    if (random == null) random = new Random();
     int length = list.length;
     while (length > 1) {
       int pos = random.nextInt(length);
@@ -1021,9 +1066,28 @@ class IterableMixinWorkaround {
   static void replaceRangeList(List list, int start, int end,
                                Iterable iterable) {
     _rangeCheck(list, start, end);
-    // TODO(floitsch): optimize this.
-    list.removeRange(start, end);
-    list.insertAll(start, iterable);
+    if (iterable is! EfficientLength) {
+      iterable = iterable.toList();
+    }
+    int removeLength = end - start;
+    int insertLength = iterable.length;
+    if (removeLength >= insertLength) {
+      int delta = removeLength - insertLength;
+      int insertEnd = start + insertLength;
+      int newEnd = list.length - delta;
+      list.setRange(start, insertEnd, iterable);
+      if (delta != 0) {
+        list.setRange(insertEnd, newEnd, list, end);
+        list.length = newEnd;
+      }
+    } else {
+      int delta = insertLength - removeLength;
+      int newLength = list.length + delta;
+      int insertEnd = start + insertLength;  // aka. end + delta.
+      list.length = newLength;
+      list.setRange(insertEnd, newLength, list, end);
+      list.setRange(start, insertEnd, iterable);
+    }
   }
 
   static void fillRangeList(List list, int start, int end, fillValue) {
@@ -1037,7 +1101,7 @@ class IterableMixinWorkaround {
     if (index < 0 || index > list.length) {
       throw new RangeError.range(index, 0, list.length);
     }
-    if (iterable is! List && iterable is! Set) {
+    if (iterable is! EfficientLength) {
       iterable = iterable.toList(growable: false);
     }
     int insertionLength = iterable.length;
