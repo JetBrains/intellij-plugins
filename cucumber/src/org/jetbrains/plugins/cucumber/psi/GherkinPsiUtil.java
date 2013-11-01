@@ -39,7 +39,7 @@ public class GherkinPsiUtil {
     final Pattern pattern = definition.getPattern();
     if (pattern == null) return null;
     final Perl5Matcher matcher = new Perl5Matcher();
-    if (matcher.matches(step.getStepName(), pattern)) {
+    if (matcher.contains(step.getStepName(), pattern)) {
       final MatchResult match = matcher.getMatch();
       final int groupCount = match.groups();
       for (int i = 1; i < groupCount; i++) {
