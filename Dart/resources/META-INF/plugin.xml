@@ -302,12 +302,8 @@
     </action>
 
     <group>
-      <action id="Dart.pub.install" class="com.jetbrains.lang.dart.ide.actions.DartPubInstallAction"
-              text="Dart: Install Packages" description="Install Dart packages">
-      </action>
-      <action id="Dart.pub.update" class="com.jetbrains.lang.dart.ide.actions.DartPubUpdateAction"
-              text="Dart: Update Packages" description="Update Dart packages">
-      </action>
+      <action id="Dart.pub.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction" text="Dart: Build"/>
+      <action id="Dart.pub.upgrade" class="com.jetbrains.lang.dart.ide.actions.DartPubUpgradeAction" text="Dart: Upgrade Dependencies"/>
       <separator/>
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>

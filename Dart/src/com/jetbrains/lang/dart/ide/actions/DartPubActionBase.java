@@ -51,27 +51,23 @@ abstract public class DartPubActionBase extends AnAction {
   }
 
   @Nullable
-  private Pair<Module, VirtualFile> getModuleAndPubspecYamlFile(final AnActionEvent e) {
+  private static Pair<Module, VirtualFile> getModuleAndPubspecYamlFile(final AnActionEvent e) {
     final Module module = LangDataKeys.MODULE.getData(e.getDataContext());
     final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
 
     if (module != null && psiFile != null && psiFile.getName().equalsIgnoreCase("pubspec.yaml")) {
       final VirtualFile file = psiFile.getOriginalFile().getVirtualFile();
-      return file != null && isEnabled(file) ? Pair.create(module, file) : null;
+      return file != null ? Pair.create(module, file) : null;
     }
     return null;
-  }
-
-  protected boolean isEnabled(@NotNull VirtualFile file) {
-    return true;
   }
 
   @Nls
   protected abstract String getPresentableText();
 
-  protected abstract String getPubCommandArgument();
+  protected abstract String getPubCommand();
 
-  protected abstract String getSuccessOutputMessage();
+  protected abstract String getSuccessMessage();
 
   @Override
   public void actionPerformed(final AnActionEvent e) {
@@ -112,12 +108,12 @@ abstract public class DartPubActionBase extends AnAction {
   private void doExecute(final Module module, final VirtualFile pubspecYamlFile, final String sdkPath, final String pubPath) {
     final Task.Backgroundable task = new Task.Backgroundable(module.getProject(), getPresentableText(), true) {
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText("Running pub manager...");
+        indicator.setText(DartBundle.message("dart.pub.0.in.progress", getPubCommand()));
         indicator.setIndeterminate(true);
         final GeneralCommandLine command = new GeneralCommandLine();
         command.setExePath(pubPath);
         command.setWorkDirectory(pubspecYamlFile.getParent().getPath());
-        command.addParameter(getPubCommandArgument());
+        command.addParameter(getPubCommand());
         command.getEnvironment().put("DART_SDK", sdkPath);
 
         ApplicationManager.getApplication().invokeAndWait(new Runnable() {
@@ -130,24 +126,20 @@ abstract public class DartPubActionBase extends AnAction {
 
         try {
           final ProcessOutput processOutput = new CapturingProcessHandler(command).runProcess();
+          final String err = processOutput.getStderr().trim();
 
-          LOG.debug("pub terminated with exit code: " + processOutput.getExitCode());
-          LOG.debug(processOutput.getStdout());
-          LOG.debug(processOutput.getStderr());
+          LOG.debug("pub " + getPubCommand() + ", exit code: " + processOutput.getExitCode() + ", err:\n" +
+                    err + "\nout:\n" + processOutput.getStdout());
 
-          final String output = processOutput.getStdout().trim();
-          if (output.contains(getSuccessOutputMessage())) {
-            Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, getPresentableText(),
-                                                      getSuccessOutputMessage().replace('!', '.'),
+          if (err.isEmpty()) {
+            Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, getPresentableText(), getSuccessMessage(),
                                                       NotificationType.INFORMATION));
-            pubspecYamlFile.getParent().refresh(true, true);
           }
           else {
-            // todo presentable output!
-            Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, getPresentableText(),
-                                                      DartBundle.message("dart.pub.error", output, processOutput.getStderr()),
-                                                      NotificationType.ERROR));
+            Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, getPresentableText(), err, NotificationType.ERROR));
           }
+
+          pubspecYamlFile.getParent().refresh(true, true); // even in case of error there may be something generated to refresh
         }
         catch (ExecutionException ex) {
           LOG.error(ex);
