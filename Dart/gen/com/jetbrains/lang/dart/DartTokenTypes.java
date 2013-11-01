@@ -126,6 +126,7 @@ public interface DartTokenTypes {
   IElementType SUPER_EXPRESSION = new DartElementType("SUPER_EXPRESSION");
   IElementType SWITCH_CASE = new DartElementType("SWITCH_CASE");
   IElementType SWITCH_STATEMENT = new DartElementType("SWITCH_STATEMENT");
+  IElementType SYMBOL_LITERAL_EXPRESSION = new DartElementType("SYMBOL_LITERAL_EXPRESSION");
   IElementType TERNARY_EXPRESSION = new DartElementType("TERNARY_EXPRESSION");
   IElementType THIS_EXPRESSION = new DartElementType("THIS_EXPRESSION");
   IElementType THROW_STATEMENT = new DartElementType("THROW_STATEMENT");
@@ -614,6 +615,9 @@ public interface DartTokenTypes {
       }
       else if (type == SWITCH_STATEMENT) {
         return new DartSwitchStatementImpl(node);
+      }
+      else if (type == SYMBOL_LITERAL_EXPRESSION) {
+        return new DartSymbolLiteralExpressionImpl(node);
       }
       else if (type == TERNARY_EXPRESSION) {
         return new DartTernaryExpressionImpl(node);
