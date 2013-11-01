@@ -218,8 +218,8 @@ Dart File
                     ID
                       PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
-          VAR_INIT
-            PsiElement(=)('=')
+          PsiElement(=)('=')
+          TYPE
             REFERENCE_EXPRESSION
               REFERENCE_EXPRESSION
                 ID
@@ -260,8 +260,8 @@ Dart File
                     ID
                       PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
-          VAR_INIT
-            PsiElement(=)('=')
+          PsiElement(=)('=')
+          TYPE
             REFERENCE_EXPRESSION
               REFERENCE_EXPRESSION
                 ID
@@ -270,6 +270,113 @@ Dart File
               REFERENCE_EXPRESSION
                 ID
                   PsiElement(IDENTIFIER)('m')
+          PsiElement(;)(';')
+      PsiElement(})('}')
+  CLASS_DEFINITION
+    PsiElement(abstract)('abstract')
+    PsiElement(class)('class')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('Map')
+    TYPE_PARAMETERS
+      PsiElement(<)('<')
+      TYPE_PARAMETER
+        COMPONENT_NAME
+          ID
+            PsiElement(IDENTIFIER)('K')
+      PsiElement(,)(',')
+      TYPE_PARAMETER
+        COMPONENT_NAME
+          ID
+            PsiElement(IDENTIFIER)('V')
+      PsiElement(>)('>')
+    CLASS_BODY
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        FACTORY_CONSTRUCTOR_DECLARATION
+          PsiElement(factory)('factory')
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Map')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            PsiElement())(')')
+          PsiElement(=)('=')
+          TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('LinkedHashMap')
+            TYPE_ARGUMENTS
+              PsiElement(<)('<')
+              TYPE_LIST
+                TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('K')
+                PsiElement(,)(',')
+                TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('V')
+              PsiElement(>)('>')
+          PsiElement(;)(';')
+        FACTORY_CONSTRUCTOR_DECLARATION
+          PsiElement(factory)('factory')
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Map')
+          PsiElement(.)('.')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('from')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            NORMAL_FORMAL_PARAMETER
+              VAR_DECLARATION
+                VAR_ACCESS_DECLARATION
+                  TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('Map')
+                    TYPE_ARGUMENTS
+                      PsiElement(<)('<')
+                      TYPE_LIST
+                        TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('K')
+                        PsiElement(,)(',')
+                        TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('V')
+                      PsiElement(>)('>')
+                  COMPONENT_NAME
+                    ID
+                      PsiElement(IDENTIFIER)('other')
+            PsiElement())(')')
+          PsiElement(=)('=')
+          TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('LinkedHashMap')
+            TYPE_ARGUMENTS
+              PsiElement(<)('<')
+              TYPE_LIST
+                TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('K')
+                PsiElement(,)(',')
+                TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('V')
+              PsiElement(>)('>')
+          PsiElement(.)('.')
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('from')
           PsiElement(;)(';')
       PsiElement(})('}')
   CLASS_DEFINITION
@@ -496,8 +603,8 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             PsiElement())(')')
-          VAR_INIT
-            PsiElement(=)('=')
+          PsiElement(=)('=')
+          TYPE
             REFERENCE_EXPRESSION
               REFERENCE_EXPRESSION
                 ID

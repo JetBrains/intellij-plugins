@@ -1960,7 +1960,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // ('external' | 'const')* 'factory' referenceExpression ('.' componentName)? formalParameterList (varInit ';' | functionBodyOrNative | ';')?
+  // ('external' | 'const')* 'factory' referenceExpression ('.' componentName)? formalParameterList factoryTail?
   public static boolean factoryConstructorDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factoryConstructorDeclaration")) return false;
     if (!nextTokenIs(builder_, CONST) && !nextTokenIs(builder_, EXTERNAL)
@@ -2024,34 +2024,11 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // (varInit ';' | functionBodyOrNative | ';')?
+  // factoryTail?
   private static boolean factoryConstructorDeclaration_5(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factoryConstructorDeclaration_5")) return false;
-    factoryConstructorDeclaration_5_0(builder_, level_ + 1);
+    factoryTail(builder_, level_ + 1);
     return true;
-  }
-
-  // varInit ';' | functionBodyOrNative | ';'
-  private static boolean factoryConstructorDeclaration_5_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factoryConstructorDeclaration_5_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = factoryConstructorDeclaration_5_0_0(builder_, level_ + 1);
-    if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
-    if (!result_) result_ = consumeToken(builder_, SEMICOLON);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // varInit ';'
-  private static boolean factoryConstructorDeclaration_5_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factoryConstructorDeclaration_5_0_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = varInit(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, SEMICOLON);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
   }
 
   /* ********************************************************** */
@@ -2066,6 +2043,35 @@ public class DartParser implements PsiParser {
     pinned_ = result_; // pin = 1
     result_ = result_ && type(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, FACTORY_SPECIFICATION, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // varFactoryDeclaration ';' | functionBodyOrNative | ';'
+  static boolean factoryTail(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factoryTail")) return false;
+    if (!nextTokenIs(builder_, SEMICOLON) && !nextTokenIs(builder_, EQ)
+        && !nextTokenIs(builder_, EXPRESSION_BODY_DEF) && !nextTokenIs(builder_, NATIVE)
+        && !nextTokenIs(builder_, LBRACE)) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = factoryTail_0(builder_, level_ + 1);
+    if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
+    if (!result_) result_ = consumeToken(builder_, SEMICOLON);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // varFactoryDeclaration ';'
+  private static boolean factoryTail_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factoryTail_0")) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = varFactoryDeclaration(builder_, level_ + 1);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && consumeToken(builder_, SEMICOLON);
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
     return result_ || pinned_;
   }
 
@@ -5781,11 +5787,13 @@ public class DartParser implements PsiParser {
   public static boolean type(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "type")) return false;
     boolean result_ = false;
+    boolean pinned_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<type>");
     result_ = simpleQualifiedReferenceExpression(builder_, level_ + 1);
+    pinned_ = result_; // pin = 1
     result_ = result_ && type_1(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, TYPE, result_, false, null);
-    return result_;
+    exit_section_(builder_, level_, marker_, TYPE, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   // typeArguments?
@@ -6264,6 +6272,42 @@ public class DartParser implements PsiParser {
     result_ = varDeclarationList(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
     result_ = result_ && consumeToken(builder_, SEMICOLON);
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // '=' type ['.' referenceExpression]
+  static boolean varFactoryDeclaration(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "varFactoryDeclaration")) return false;
+    if (!nextTokenIs(builder_, EQ)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, EQ);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, type(builder_, level_ + 1));
+    result_ = pinned_ && varFactoryDeclaration_2(builder_, level_ + 1) && result_;
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  // ['.' referenceExpression]
+  private static boolean varFactoryDeclaration_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "varFactoryDeclaration_2")) return false;
+    varFactoryDeclaration_2_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // '.' referenceExpression
+  private static boolean varFactoryDeclaration_2_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "varFactoryDeclaration_2_0")) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, DOT);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && referenceExpression(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
     return result_ || pinned_;
   }

@@ -296,8 +296,7 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
     doTestWithSDK(1);
   }
 
-  // todo alexander.doroshko: fix Maps methods resolve 
-  public void _testReference19() throws Throwable {
+  public void testReference19() throws Throwable {
     doTestWithSDK(1);
   }
 

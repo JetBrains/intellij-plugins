@@ -48,8 +48,8 @@ public class DartFactoryConstructorDeclarationImpl extends AbstractDartComponent
 
   @Override
   @Nullable
-  public DartVarInit getVarInit() {
-    return findChildByClass(DartVarInit.class);
+  public DartType getType() {
+    return findChildByClass(DartType.class);
   }
 
 }
