@@ -283,7 +283,7 @@ classTypeAlias ::= 'typedef' componentName typeParameters? '=' 'abstract'? type 
 
 interfaceBody ::= '{' interfaceMembers '}' {pin=1}
 interfaceMembers ::= (metadata* interfaceMemberDefinition)*
-{recoverUntil="simple_scope_recover" implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
+{recoverUntil=simple_scope_recover implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 
 private interfaceMemberDefinition ::= methodPrototypeDeclaration
                                     | varDeclarationListWithSemicolon
@@ -295,8 +295,10 @@ private interface_member_definition_recover::= !('abstract' | 'assert' | 'class'
                                                | 'implements' | 'import' | 'interface' | 'is' | 'library' | 'native' | 'negate'
                                                | 'operator' | 'set' | '@' | 'static' | 'typedef' | 'var' | '}' | <<nonStrictID>>)
 
-factoryConstructorDeclaration ::= ('external' | 'const')* 'factory' referenceExpression ('.' componentName)? formalParameterList (varInit ';' | functionBodyOrNative | ';')?
+factoryConstructorDeclaration ::= ('external' | 'const')* 'factory' referenceExpression ('.' componentName)? formalParameterList factoryTail?
 {pin=2 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+private factoryTail ::= varFactoryDeclaration ';' | functionBodyOrNative | ';' {pin(".*")=1}
+private varFactoryDeclaration ::= '=' type ['.' referenceExpression] {pin(".*")=1}
 
 userDefinableOperator ::= multiplicativeOperator
                         | additiveOperator
@@ -349,6 +351,7 @@ componentName ::= << nonStrictID >>
 id ::= IDENTIFIER
 
 type ::= simpleQualifiedReferenceExpression typeArguments? {
+  pin=1
   methods=[
     resolveReference
   ]

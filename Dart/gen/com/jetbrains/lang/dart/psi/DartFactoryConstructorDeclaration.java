@@ -20,6 +20,6 @@ public interface DartFactoryConstructorDeclaration extends DartComponent {
   DartFunctionBody getFunctionBody();
 
   @Nullable
-  DartVarInit getVarInit();
+  DartType getType();
 
 }

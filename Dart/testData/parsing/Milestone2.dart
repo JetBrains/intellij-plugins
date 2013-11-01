@@ -34,6 +34,11 @@ class B {
   factory B.n(int x) = A.m;
 }
 
+abstract class Map<K, V> {
+  factory Map() = LinkedHashMap<K, V>;
+  factory Map.from(Map<K, V> other) = LinkedHashMap<K, V>.from;
+}
+
 class C {
   var f = g..m1()..m2()..f.a;
 }
