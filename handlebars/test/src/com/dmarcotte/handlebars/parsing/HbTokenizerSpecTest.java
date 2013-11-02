@@ -60,12 +60,12 @@ public class HbTokenizerSpecTest extends HbLexerTest {
    */
   public void testEscapingEscapeCharacter() {
     TokenizerResult result = tokenize("{{foo}} \\\\{{bar}} \\\\{{baz}}");
-    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, WHITE_SPACE, CONTENT, OPEN, ID, CLOSE, WHITE_SPACE, CONTENT, OPEN, ID, CLOSE);
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, CONTENT, OPEN, ID, CLOSE, CONTENT, OPEN, ID, CLOSE);
 
-    result.shouldBeToken(4, CONTENT, "\\\\");
-    result.shouldBeToken(6, ID, "bar");
-    result.shouldBeToken(9, CONTENT, "\\\\");
-    result.shouldBeToken(11, ID, "baz");
+    result.shouldBeToken(3, CONTENT, " \\\\");
+    result.shouldBeToken(5, ID, "bar");
+    result.shouldBeToken(7, CONTENT, " \\\\");
+    result.shouldBeToken(9, ID, "baz");
   }
 
   /**
@@ -73,12 +73,21 @@ public class HbTokenizerSpecTest extends HbLexerTest {
    */
   public void testMixedEscapedDelimitersAndEscapedEscapes() {
     TokenizerResult result = tokenize("{{foo}} \\\\{{bar}} \\{{baz}}");
-    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, WHITE_SPACE, CONTENT, OPEN, ID, CLOSE, WHITE_SPACE, ESCAPE_CHAR, CONTENT);
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, CONTENT, OPEN, ID, CLOSE, WHITE_SPACE, ESCAPE_CHAR, CONTENT);
 
-    result.shouldBeToken(4, CONTENT, "\\\\");
-    result.shouldBeToken(5, OPEN, "{{");
-    result.shouldBeToken(6, ID, "bar");
-    result.shouldBeToken(10, CONTENT, "{{baz}}");
+    result.shouldBeToken(3, CONTENT, " \\\\");
+    result.shouldBeToken(4, OPEN, "{{");
+    result.shouldBeToken(5, ID, "bar");
+    result.shouldBeToken(9, CONTENT, "{{baz}}");
+
+    result = tokenize("{{foo}} \\{{bar}} \\\\{{baz}}");
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, WHITE_SPACE, ESCAPE_CHAR, CONTENT, CONTENT, OPEN, ID, CLOSE);
+
+    result.shouldBeToken(4, ESCAPE_CHAR, "\\");
+    result.shouldBeToken(5, CONTENT, "{{bar}} ");
+    result.shouldBeToken(6, CONTENT, "\\\\");
+    result.shouldBeToken(7, OPEN, "{{");
+    result.shouldBeToken(8, ID, "baz");
   }
 
   /**
@@ -86,10 +95,10 @@ public class HbTokenizerSpecTest extends HbLexerTest {
    */
   public void testEscapedEscapeCharOnTripleStash() {
     TokenizerResult result = tokenize("{{foo}} \\\\{{{bar}}} {{baz}}");
-    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, WHITE_SPACE, CONTENT, OPEN_UNESCAPED, ID, CLOSE_UNESCAPED, WHITE_SPACE, OPEN, ID, CLOSE);
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, CONTENT, OPEN_UNESCAPED, ID, CLOSE_UNESCAPED, WHITE_SPACE, OPEN, ID, CLOSE);
 
-    result.shouldBeToken(4, CONTENT, "\\\\");
-    result.shouldBeToken(6, ID, "bar");
+    result.shouldBeToken(3, CONTENT, " \\\\");
+    result.shouldBeToken(5, ID, "bar");
   }
 
   /**

@@ -64,8 +64,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 
           // inspect the characters leading up to this mustache for escaped characters
           if (yylength() > 1 && yytext().subSequence(yylength() - 2, yylength()).toString().equals("\\\\")) {
-            yypushback(2); // put the escaped escape char back
-            yypushState(emu);
+            return HbTokenTypes.CONTENT; // double-slash is just more content
           } else if (yylength() > 0 && yytext().toString().substring(yylength() - 1, yylength()).equals("\\")) {
             yypushback(1); // put the escape char back
             yypushState(emu);
@@ -90,24 +89,15 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 
 <emu> {
     "\\" { return HbTokenTypes.ESCAPE_CHAR; }
-    "\\\\" {
-        yypopState();
-        return HbTokenTypes.CONTENT;
-    }
     "{{"~"{{" { // grab everything up to the next open stache
-          // backtrack over any stache characters at the end of this string
-          while (yylength() > 0 && yytext().subSequence(yylength() - 1, yylength()).toString().equals("{")) {
+          // backtrack over any stache characters or escape characters at the end of this string
+          while (yylength() > 0
+                  && (yytext().subSequence(yylength() - 1, yylength()).toString().equals("{")
+                      || yytext().subSequence(yylength() - 1, yylength()).toString().equals("\\"))) {
             yypushback(1);
           }
 
-          if (yylength() > 0 && yytext().toString().substring(yylength() - 1, yylength()).equals("\\")) {
-            // the next mustache is escaped, push back the escape char so that we can lex it as such
-            yypushback(1);
-          } else {
-            // the next mustache is not escaped, we're done in this state
-            yypopState();
-          }
-
+          yypopState();
           return HbTokenTypes.CONTENT;
     }
     "{{"!([^]*"{{"[^]*) { // otherwise, if the remaining text just contains the one escaped mustache, then it's all CONTENT
@@ -116,7 +106,6 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 }
 
 <mu> {
-
   "{{>" { return HbTokenTypes.OPEN_PARTIAL; }
   "{{#" { return HbTokenTypes.OPEN_BLOCK; }
   "{{/" { return HbTokenTypes.OPEN_ENDBLOCK; }

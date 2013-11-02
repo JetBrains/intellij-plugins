@@ -48,6 +48,11 @@ public abstract class HbLexerTest extends PlatformLiteFixture {
     public String getElementContent() {
       return _elementContent;
     }
+
+    @Override
+    public String toString() {
+      return _elementType + ": " + _elementContent;
+    }
   }
 
   static class TokenizerResult {
@@ -66,7 +71,7 @@ public abstract class HbLexerTest extends PlatformLiteFixture {
       // these have the same length next - doing the content compare first yields more illuminating failures
       // in the case of a mis-match
       for (int i = 0; i < Math.min(_tokens.size(), tokenTypes.length); i++) {
-        Assert.assertEquals(tokenTypes[i], _tokens.get(i).getElementType());
+        Assert.assertEquals("Bad token at position " + i, tokenTypes[i], _tokens.get(i).getElementType());
       }
 
       Assert.assertEquals(tokenTypes.length, _tokens.size());
