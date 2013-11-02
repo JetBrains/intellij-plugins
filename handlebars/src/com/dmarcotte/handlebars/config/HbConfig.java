@@ -15,6 +15,14 @@ public class HbConfig {
     setBooleanPropertyValue(AUTO_GENERATE_CLOSE_TAG, enabled);
   }
 
+  public static boolean isAutocompleteMustachesEnabled() {
+    return getBooleanPropertyValue(AUTOCOMPLETE_MUSTACHES);
+  }
+
+  public static void setAutocompleteMustachesEnabled(boolean enabled) {
+    setBooleanPropertyValue(AUTOCOMPLETE_MUSTACHES, enabled);
+  }
+
   public static boolean isFormattingEnabled() {
     return getBooleanPropertyValue(FORMATTER);
   }

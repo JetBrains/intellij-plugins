@@ -45,6 +45,12 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
   }
 
   public void testCloseDoubleBraces() {
+    HbConfig.setAutocompleteMustachesEnabled(false);
+    doCharTest('}', "foo {{bar<caret>", "foo {{bar}<caret>");
+    doCharTest('}', "foo {{&bar<caret>", "foo {{&bar}<caret>");
+    doCharTest('}', "foo {{/bar<caret>", "foo {{/bar}<caret>");
+
+    HbConfig.setAutocompleteMustachesEnabled(true);
     doCharTest('}', "foo {{bar<caret>", "foo {{bar}}<caret>");
     doCharTest('}', "foo {{&bar<caret>", "foo {{&bar}}<caret>");
     doCharTest('}', "foo {{/bar<caret>", "foo {{/bar}}<caret>");
@@ -61,6 +67,10 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
   }
 
   public void testCloseTripleBraces() {
+    HbConfig.setAutocompleteMustachesEnabled(false);
+    doCharTest('}', "foo {{{bar<caret>", "foo {{{bar}<caret>");
+
+    HbConfig.setAutocompleteMustachesEnabled(true);
     doCharTest('}', "foo {{{bar<caret>", "foo {{{bar}}}<caret>");
   }
 

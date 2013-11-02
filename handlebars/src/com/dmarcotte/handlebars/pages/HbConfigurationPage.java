@@ -22,6 +22,7 @@ public class HbConfigurationPage implements SearchableConfigurable {
   private JPanel myWholePanel;
   private JCheckBox myFormattingCheckBox;
   private JComboBox myCommenterLanguage;
+  private JCheckBox myAutocompleteMustaches;
 
   @NotNull
   @Override
@@ -58,6 +59,7 @@ public class HbConfigurationPage implements SearchableConfigurable {
   @Override
   public boolean isModified() {
     return myAutoGenerateClosingTagCheckBox.isSelected() != HbConfig.isAutoGenerateCloseTagEnabled()
+           || myAutocompleteMustaches.isSelected() != HbConfig.isAutocompleteMustachesEnabled()
            || myFormattingCheckBox.isSelected() != HbConfig.isFormattingEnabled()
            || !((Language)myCommenterLanguage.getSelectedItem()).getID().equals(HbConfig.getCommenterLanguage().getID());
   }
@@ -65,6 +67,7 @@ public class HbConfigurationPage implements SearchableConfigurable {
   @Override
   public void apply() throws ConfigurationException {
     HbConfig.setAutoGenerateCloseTagEnabled(myAutoGenerateClosingTagCheckBox.isSelected());
+    HbConfig.setAutocompleteMustachesEnabled(myAutocompleteMustaches.isSelected());
     HbConfig.setFormattingEnabled(myFormattingCheckBox.isSelected());
     HbConfig.setCommenterLanguage((Language)myCommenterLanguage.getSelectedItem());
   }
@@ -72,6 +75,7 @@ public class HbConfigurationPage implements SearchableConfigurable {
   @Override
   public void reset() {
     myAutoGenerateClosingTagCheckBox.setSelected(HbConfig.isAutoGenerateCloseTagEnabled());
+    myAutocompleteMustaches.setSelected(HbConfig.isAutocompleteMustachesEnabled());
     myFormattingCheckBox.setSelected(HbConfig.isFormattingEnabled());
     resetCommentLanguageCombo(HbConfig.getCommenterLanguage());
   }

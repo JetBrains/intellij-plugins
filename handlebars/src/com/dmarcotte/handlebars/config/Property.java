@@ -23,6 +23,20 @@ enum Property {
     }
   },
 
+  AUTOCOMPLETE_MUSTACHES {
+    @NotNull
+    @Override
+    public String getStringName() {
+      return "HbAutocompleteMustaches";
+    }
+
+    @NotNull
+    @Override
+    public String getDefault() {
+      return ENABLED;
+    }
+  },
+
   FORMATTER {
     @NotNull
     @Override

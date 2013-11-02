@@ -19,6 +19,9 @@ public class PropertyTest2 {
     PROPERTY_TEST_DEFINITIONS.add(new PropertyTestDefinition(Property.AUTO_GENERATE_CLOSE_TAG,
                                                              "HbDisableAutoGenerateCloseTag"));
 
+    PROPERTY_TEST_DEFINITIONS.add(new PropertyTestDefinition(Property.AUTOCOMPLETE_MUSTACHES,
+                                                             "HbAutocompleteMustaches"));
+
     PROPERTY_TEST_DEFINITIONS.add(new PropertyTestDefinition(Property.FORMATTER,
                                                              "HbFormatter"));
 

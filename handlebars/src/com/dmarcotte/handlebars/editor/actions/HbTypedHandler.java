@@ -70,7 +70,7 @@ public class HbTypedHandler extends TypedHandlerDelegate {
     boolean closeBraceCompleted = false;
 
     if (provider instanceof HbFileViewProvider) {
-      if (c == '}' && !previousChar.equals("}")) {
+      if (HbConfig.isAutocompleteMustachesEnabled() && c == '}' && !previousChar.equals("}")) {
         // we may be able to complete the second brace
         PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
         PsiElement elementAt = provider.findElementAt(offset - 1, HbLanguage.class);

@@ -19,7 +19,7 @@ public class PropertyTest1 {
   @Test
   public void testPropertiesChange() {
     // expectedNumberOfPropertyFields represents the number of enum entries plus that static members, plus one for the $VALUES that every enum gets
-    int expectedNumberOfPropertyFields = 7;
+    int expectedNumberOfPropertyFields = 8;
 
     Assert.assertEquals("Declared properties in enum \"" +
                         Property.class.getSimpleName() +
