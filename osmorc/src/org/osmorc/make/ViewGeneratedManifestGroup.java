@@ -70,7 +70,7 @@ public class ViewGeneratedManifestGroup extends ActionGroup {
   @Override
   public AnAction[] getChildren(@Nullable AnActionEvent e) {
     if (e == null) return EMPTY_ACTIONS_LIST;
-    @Nullable Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
+    @Nullable Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
     if (project == null) {
       return EMPTY_ACTIONS_LIST;
     }
