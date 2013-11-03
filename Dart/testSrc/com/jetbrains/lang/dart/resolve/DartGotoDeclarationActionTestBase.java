@@ -22,7 +22,7 @@ abstract public class DartGotoDeclarationActionTestBase extends DartCodeInsightF
   }
 
   protected void doTest(int expectedSize) throws IOException {
-    doTest(expectedSize, getTestName(true) + ".dart");
+    doTest(expectedSize, getTestName(false) + ".dart");
   }
 
   protected void doTest(int expectedSize, String... files) throws IOException {
