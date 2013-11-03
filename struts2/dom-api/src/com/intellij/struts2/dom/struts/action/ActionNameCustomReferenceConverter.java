@@ -21,6 +21,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.codeStyle.SuggestedNameInfo;
 import com.intellij.psi.codeStyle.VariableKind;
+import com.intellij.psi.util.PsiTypesUtil;
 import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.Processor;
@@ -88,7 +89,7 @@ public class ActionNameCustomReferenceConverter implements CustomReferenceConver
         }
 
         final Project project = psiClass.getProject();
-        final PsiClassType classType = JavaPsiFacade.getInstance(project).getElementFactory().createType(psiClass);
+        final PsiClassType classType = PsiTypesUtil.getClassType(psiClass);
         final JavaCodeStyleManager codeStyleManager = JavaCodeStyleManager.getInstance(project);
         final SuggestedNameInfo info = codeStyleManager.suggestVariableName(VariableKind.LOCAL_VARIABLE, null, null, classType);
 

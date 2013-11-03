@@ -27,6 +27,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.jsp.JspManager;
+import com.intellij.psi.util.PsiTypesUtil;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsConstants;
@@ -105,8 +106,7 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
               if (target != null &&
                   (file.getManager().areElementsEquivalent(file, target) ||
                    file.getManager().areElementsEquivalent(file.getOriginalFile(), target))) {
-                final PsiClassType actionType =
-                  JavaPsiFacade.getInstance(actionClass.getProject()).getElementFactory().createType(actionClass);
+                final PsiClassType actionType = PsiTypesUtil.getClassType(actionClass);
                 final FtlPsiType ftlPsiType = FtlPsiType.wrap(actionType);
                 result.add(new MyFtlLightVariable("", action.getXmlTag(), ftlPsiType));
                 result.add(new MyFtlLightVariable("action", action.getXmlTag(), ftlPsiType));
