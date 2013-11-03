@@ -4,6 +4,7 @@ import com.intellij.facet.FacetManager;
 import com.intellij.javaee.web.WebRoot;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
@@ -42,7 +43,7 @@ public class IdeaUtils {
    * @return <code>true</code> if the given event was created from a module node, <code>false</code> otherwise.
    */
   public static boolean isModuleNode(AnActionEvent event) {
-    final Project project = event.getData(PlatformDataKeys.PROJECT);
+    final Project project = event.getData(CommonDataKeys.PROJECT);
     final Module module = event.getData(LangDataKeys.MODULE_CONTEXT);
 
     return project != null && module != null;
