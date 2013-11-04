@@ -1,8 +1,9 @@
 package com.jetbrains.lang.dart.ide.template;
 
 import com.intellij.ide.util.projectWizard.SettingsStep;
+import com.intellij.openapi.fileChooser.ChooseFileHandler;
 import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -28,11 +29,12 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     mySdkPath.getButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        final FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false);
-        final VirtualFile file = FileChooser.chooseFile(descriptor, mySdkPath, null, null);
-        if (file != null) {
-          mySdkPath.setText(FileUtil.toSystemDependentName(file.getPath()));
-        }
+        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), null, mySdkPath, null, new ChooseFileHandler() {
+          @Override
+          public void consume(@NotNull VirtualFile file) {
+            mySdkPath.setText(FileUtil.toSystemDependentName(file.getPath()));
+          }
+        });
       }
     });
 

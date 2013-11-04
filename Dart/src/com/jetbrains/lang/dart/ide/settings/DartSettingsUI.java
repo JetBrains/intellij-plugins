@@ -5,8 +5,9 @@ import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.fileChooser.ChooseFileHandler;
 import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -22,6 +23,7 @@ import com.intellij.webcore.libraries.ui.ScriptingContextsConfigurable;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
 import icons.DartIcons;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -30,9 +32,6 @@ import javax.swing.event.HyperlinkListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartSettingsUI {
   private JPanel myMainPanel;
   private TextFieldWithBrowseButton myPathChooser;
@@ -46,32 +45,35 @@ public class DartSettingsUI {
     myPathChooser.getButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        final FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false);
-        final VirtualFile file = FileChooser.chooseFile(descriptor, myMainPanel, null, null);
-        if (file != null && getExecutablePathByFolderPath(file.getPath(), "dart") == null) {
-          Messages.showOkCancelDialog(
-            myProject,
-            DartBundle.message("dart.sdk.bad.home.path.to.dartvm"), DartBundle.message("dart.sdk.name"),
-            DartIcons.Dart_16
-          );
-        }
-        else if (file != null && getExecutablePathByFolderPath(file.getPath(), "dart") != null) {
-          myPathChooser.setText(FileUtil.toSystemDependentName(file.getPath()));
-          updateUI();
-          if (!SystemInfo.isWindows && getSettings().getAnalyzer() == null) {
-            Messages.showErrorDialog(
-              myProject,
-              DartBundle.message("dart.sdk.bad.analyzer.path", getSettings().getAnalyzerUrl()),
-              DartBundle.message("dart.warning")
-            );
+        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), null, myMainPanel, null, new ChooseFileHandler() {
+          @Override
+          public void consume(@NotNull VirtualFile file) {
+            if (getExecutablePathByFolderPath(file.getPath(), "dart") == null) {
+              Messages.showOkCancelDialog(
+                myProject,
+                DartBundle.message("dart.sdk.bad.home.path.to.dartvm"), DartBundle.message("dart.sdk.name"),
+                DartIcons.Dart_16
+              );
+            }
+            else if (getExecutablePathByFolderPath(file.getPath(), "dart") != null) {
+              myPathChooser.setText(FileUtil.toSystemDependentName(file.getPath()));
+              updateUI();
+              if (!SystemInfo.isWindows && getSettings().getAnalyzer() == null) {
+                Messages.showErrorDialog(
+                  myProject,
+                  DartBundle.message("dart.sdk.bad.analyzer.path", getSettings().getAnalyzerUrl()),
+                  DartBundle.message("dart.warning")
+                );
+              }
+            }
           }
-        }
+        });
       }
     });
     mySetupScopeLabel.addHyperlinkListener(new HyperlinkListener() {
       @Override
       public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && DartSettingsUtil.isDartSDKConfigured(DartSettingsUI.this.myProject)) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && DartSettingsUtil.isDartSDKConfigured(myProject)) {
           JSLibraryManager libraryManager = ServiceManager.getService(myProject, JSLibraryManager.class);
           final JSLibraryMappings mappings = ServiceManager.getService(project, JSLibraryMappings.class);
           ShowSettingsUtil.getInstance().editConfigurable(
@@ -83,7 +85,7 @@ public class DartSettingsUI {
           writeToken.finish();
         }
         else if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && !DartSettingsUtil
-          .isDartSDKConfigured(DartSettingsUI.this.myProject) && isDartSDKPathValid()) {
+          .isDartSDKConfigured(myProject) && isDartSDKPathValid()) {
           updateOrCreateDartLibrary();
           updateUI();
         }

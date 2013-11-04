@@ -1,8 +1,9 @@
 package com.jetbrains.lang.dart.ide.actions.ui;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.fileChooser.ChooseFileHandler;
 import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -13,6 +14,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.lang.dart.DartBundle;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -56,25 +58,27 @@ public class Dart2JSSettingsDialog extends DialogWrapper {
     myInputFilePath.getButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, false, false, false, false, false);
-        final VirtualFile file = FileChooser.chooseFile(descriptor, myMainPanel, null, project == null ? null : project.getBaseDir());
-        if (file != null) {
-          final String filePath = FileUtil.toSystemDependentName(file.getPath());
-          myInputFilePath.setText(filePath);
-          if (StringUtil.isEmpty(myOutputFilePath.getText())) {
-            myOutputFilePath.setText(filePath + ".js");
+        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), project, myMainPanel, project == null ? null : project.getBaseDir(), new ChooseFileHandler() {
+          @Override
+          public void consume(@NotNull VirtualFile file) {
+            final String filePath = FileUtil.toSystemDependentName(file.getPath());
+            myInputFilePath.setText(filePath);
+            if (StringUtil.isEmpty(myOutputFilePath.getText())) {
+              myOutputFilePath.setText(filePath + ".js");
+            }
           }
-        }
+        });
       }
     });
     myOutputFilePath.getButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, false, false, false, false, false);
-        final VirtualFile file = FileChooser.chooseFile(descriptor, myMainPanel, null, null);
-        if (file != null) {
-          myOutputFilePath.setText(FileUtil.toSystemDependentName(file.getPath()));
-        }
+        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), project, myMainPanel, null, new ChooseFileHandler() {
+          @Override
+          public void consume(@NotNull VirtualFile file) {
+            myOutputFilePath.setText(FileUtil.toSystemDependentName(file.getPath()));
+          }
+        });
       }
     });
 
