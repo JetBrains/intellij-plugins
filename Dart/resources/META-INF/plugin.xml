@@ -184,10 +184,6 @@
             text="Dart File" description="Create new Dart file/class/interface">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
-    <action id="Dart.dart2js" class="com.jetbrains.lang.dart.ide.actions.Dart2JSAction"
-            text="dart2js" description="Translate Dart to JavaScript">
-      <add-to-group group-id="CutCopyPasteGroup" anchor="last"/>
-    </action>
     <action id="Generate.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateConstructorAction"
             text="Constructor">
       <add-to-group anchor="first" group-id="GenerateGroup"/>
@@ -206,8 +202,9 @@
     </action>
 
     <group>
-      <action id="Dart.pub.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction" text="Dart: Build"/>
-      <action id="Dart.pub.upgrade" class="com.jetbrains.lang.dart.ide.actions.DartPubUpgradeAction" text="Dart: Upgrade Dependencies"/>
+      <action id="Dart.dart2js" class="com.jetbrains.lang.dart.ide.actions.Dart2JSAction" text="Compile Dart to JavaScript" description="Run 'dart2js' compiler"/>
+      <action id="Dart.pub.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction" text="Dart: Build" description="Run 'pub build'"/>
+      <action id="Dart.pub.upgrade" class="com.jetbrains.lang.dart.ide.actions.DartPubUpgradeAction" text="Dart: Upgrade Dependencies" description="Run 'pub upgrade'"/>
       <separator/>
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
