@@ -3,7 +3,7 @@
 <idea-plugin version="2">
 
   <id>com.jetbrains.typoscript</id>
-  <name>TypoScript Support</name>
+  <name>TYPO3 TypoScript Support</name>
 
   <description>Typo3 language TypoScript support</description>
 
