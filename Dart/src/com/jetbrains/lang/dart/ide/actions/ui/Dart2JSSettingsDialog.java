@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.ide.actions.ui;
 
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.fileChooser.ChooseFileHandler;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
@@ -13,6 +12,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +58,7 @@ public class Dart2JSSettingsDialog extends DialogWrapper {
     myInputFilePath.getButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), project, myMainPanel, project == null ? null : project.getBaseDir(), new ChooseFileHandler() {
+        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), project, myMainPanel, project == null ? null : project.getBaseDir(), new Consumer<VirtualFile>() {
           @Override
           public void consume(@NotNull VirtualFile file) {
             final String filePath = FileUtil.toSystemDependentName(file.getPath());
@@ -73,7 +73,7 @@ public class Dart2JSSettingsDialog extends DialogWrapper {
     myOutputFilePath.getButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), project, myMainPanel, null, new ChooseFileHandler() {
+        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), project, myMainPanel, null, new Consumer<VirtualFile>() {
           @Override
           public void consume(@NotNull VirtualFile file) {
             myOutputFilePath.setText(FileUtil.toSystemDependentName(file.getPath()));

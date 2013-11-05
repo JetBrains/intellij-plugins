@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.ide.template;
 
 import com.intellij.ide.util.projectWizard.SettingsStep;
-import com.intellij.openapi.fileChooser.ChooseFileHandler;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -9,6 +8,7 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.WebProjectGenerator;
+import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.DartSdkData;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
@@ -29,7 +29,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     mySdkPath.getButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), null, mySdkPath, null, new ChooseFileHandler() {
+        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), null, mySdkPath, null, new Consumer<VirtualFile>() {
           @Override
           public void consume(@NotNull VirtualFile file) {
             mySdkPath.setText(FileUtil.toSystemDependentName(file.getPath()));

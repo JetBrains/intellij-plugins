@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.fileChooser.ChooseFileHandler;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -18,6 +17,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.HyperlinkLabel;
+import com.intellij.util.Consumer;
 import com.intellij.webcore.libraries.ScriptingLibraryMappings;
 import com.intellij.webcore.libraries.ui.ScriptingContextsConfigurable;
 import com.jetbrains.lang.dart.DartBundle;
@@ -45,7 +45,7 @@ public class DartSettingsUI {
     myPathChooser.getButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), null, myMainPanel, null, new ChooseFileHandler() {
+        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), null, myMainPanel, null, new Consumer<VirtualFile>() {
           @Override
           public void consume(@NotNull VirtualFile file) {
             if (getExecutablePathByFolderPath(file.getPath(), "dart") == null) {
