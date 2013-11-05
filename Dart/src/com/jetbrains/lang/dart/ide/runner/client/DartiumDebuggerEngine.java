@@ -11,20 +11,22 @@ import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
-
   public DartiumDebuggerEngine() {
     super("dartium");
   }
 
+  @Override
   @NotNull
   public WebBrowser getWebBrowser() {
     return DartSettingsUtil.DARTIUM;
   }
 
+  @Override
   public void checkAvailability(final Project project) throws RuntimeConfigurationError {
     DartSettingsUtil.getDartiumPathOrThrowErrorWithQuickFix(project);
   }
 
+  @Override
   protected boolean isPreferredEngineForFile(final PsiFile psiFile) {
     return psiFile instanceof XmlFile &&
            DartSettingsUtil.getDartiumPath() != null &&

@@ -27,6 +27,7 @@ public class DartSettingsUtil {
 
   public static final WebBrowser DARTIUM = WebBrowser
     .createCustomBrowser(BrowsersConfiguration.BrowserFamily.CHROME, "Dartium", DartIcons.Dartium_16, new NullableComputable<String>() {
+      @Override
       @Nullable
       public String compute() {
         return getDartiumPath();
@@ -99,6 +100,7 @@ public class DartSettingsUtil {
     }
     else {
       throw new RuntimeConfigurationError(message, new Runnable() {
+        @Override
         public void run() {
           ShowSettingsUtil.getInstance().showSettingsDialog(project, DartBundle.message("dart.title"));
         }
