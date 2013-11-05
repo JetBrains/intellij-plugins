@@ -84,11 +84,11 @@ public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
     doTest("Missing inherited member 'I.foo'");
   }
 
-  public void _testFieldHasNoGetter1() throws Throwable {
-    doTest("There is no such getter 'bar' in 'Foo'"); // no error reported for some reason
+  public void testFieldHasNoGetter1() throws Throwable {
+    doTest("There is no such getter 'bar' in 'Foo'"); // dartanalyzer bug: reported as Hint instead of Error
   }
 
-  public void _testFieldHasNoSetter1() throws Throwable { // no error reported for some reason
+  public void testFieldHasNoSetter1() throws Throwable { // dartanalyzer bug: no error reported
     // https://code.google.com/p/dart/issues/detail?id=10756
     doTest("Field 'bar' has no setter");
   }

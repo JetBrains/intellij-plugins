@@ -19,6 +19,20 @@ part of dart.core;
  */
 abstract class int extends num {
   /**
+   * Returns the integer value of the given environment declaration [name].
+   *
+   * The result is the same as would be returned by:
+   *
+   *     int.parse(const String.fromEnvironment(name, defaultValue: ""),
+   *               (_) => defaultValue)
+   *
+   * Example:
+   *
+   *     const int.fromEnvironment("defaultPort", defaultValue: 80)
+   */
+  external const factory int.fromEnvironment(String name, {int defaultValue});
+
+  /**
    * Bit-wise and operator.
    *
    * Treating both `this` and [other] as sufficiently large two's component
