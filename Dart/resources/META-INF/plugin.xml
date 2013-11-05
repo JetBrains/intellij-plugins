@@ -5,122 +5,16 @@
   <vendor>JetBrains</vendor>
   <idea-version since-build="132.0"/>
   <depends>com.intellij.modules.xml</depends>
-  <depends optional="true" config-file="webide-support.xml">JavaScript</depends>
+  <depends>JavaScript</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="dart-file-watcher.xml">com.intellij.plugins.watcher</depends>
   <change-notes>
     <![CDATA[
-        <p>0.5-...:</p>
         <ul>
-          <li>Bug fixes</li>
-        </ul>
-        <p>0.4.9:</p>
-        <ul>
-          <li>Bug fixes</li>
-          <li>Copyright support</li>
-        </ul>
-        <p>0.4.7:</p>
-        <ul>
-          <li>Dart Project Template</li>
-          <li>Bug fixes</li>
-        </ul>
-        <p>0.4.2-0.4.6:</p>
-        <ul>
-          <li>Bug fixes</li>
-        </ul>
-        <p>0.4.1:</p>
-        <ul>
-          <li>Bug fixes</li>
-          <li>Command Line Applications support in webide</li>
-        </ul>
-        <p>0.4:</p>
-        <ul>
-          <li>M1 ready</li>
-          <li>Cascaded Invocations</li>
-          <li>New optional named parameter syntax</li>
-          <li>Extract Method refactoring</li>
-          <li>Quick fixes</li>
-          <li>New import syntax support</li>
-        </ul>
-        <p>0.3.7:</p>
-        <ul>
-          <li>Debugger improvements</li>
-          <li>Debugging unit tests</li>
-        </ul>
-        <p>0.3.6:</p>
-        <ul>
-          <li>New getter syntax</li>
-          <li>'as' operator</li>
-          <li>Bug fixes</li>
-        </ul>
-        <p>0.3.5:</p>
-        <ul>
-          <li>Unit Testing</li>
-          <li>Pub support</li>
-          <li>Remote debugging</li>
-          <li>Introduce variable refactoring</li>
-          <li>Surround Action</li>
-          <li>Performance improvements</li>
-          <li>Bug fixes</li>
-        </ul>
-        <p>0.3.4:</p>
-        <ul>
-          <li>Command line applications</li>
-          <li>Debugger for client-side and server-side applications</li>
-          <li>Performance improvements</li>
-          <li>New icons</li>
-          <li>Bug fixes</li>
-        </ul>
-        <p>0.3.3:</p>
-        <ul>
-          <li>Bug fixes</li>
-        </ul>
-        <p>0.3.2:</p>
-        <ul>
-          <li>dart2js Support</li>
-          <li>Quick Documentation</li>
-          <li>Goto Implementation(s) action</li>
-          <li>Goto Super Method action</li>
-          <li>File Structure</li>
-          <li>Type resolving improvements</li>
-          <li>Goto Symbol Action</li>
-          <li>Dart Analyzer Support</li>
-          <li>Generate Action</li>
-        </ul>
-        <p>0.3.1:</p>
-        <ul>
-          <li>Reformat Code</li>
-          <li>Color scheme</li>
-          <li>Rename refactoring</li>
-          <li>Move refactoring</li>
-          <li>Dart SDK Support</li>
-          <li>Quick definition</li>
-          <li>Parameter info action</li>
-          <li>Frog Support</li>
-        </ul>
-        <p>0.3:</p>
-        <ul>
-          <li>Parser improvements</li>
-          <li>Jump to declaration</li>
-          <li>Reference completion</li>
-          <li>Class completion</li>
-          <li>Go to Class</li>
-          <li>Search for usages</li>
-          <li>Highlight symbol occurencies</li>
-        </ul>
-        <p>0.2:</p>
-        <ul>
-          <li>New parser</li>
-          <li>Keyword completion</li>
-          <li>Local resolve</li>
-        </ul>
-        <p>0.1.2:</p>
-        <ul>
-          <li>Basic syntax coloring</li>
-          <li>Brace matching</li>
-          <li>Commenting</li>
-          <li>Comments folding</li>
+          <li>'pub build' and 'pub upgrade' actions in context menu of pubspec.yaml file</li>
+          <li>context menu items to open and to debug HTML file in Dartium</li>
+          <li>bug fixes</li>
         </ul>
       ]]>
   </change-notes>
@@ -194,6 +88,12 @@
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex"/>
 
     <definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>
+
+    <projectTemplatesFactory implementation="com.jetbrains.lang.dart.ide.template.DartTemplatesFactory"/>
+    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartWebApplicationGenerator"/>
+
+    <projectConfigurable instance="com.jetbrains.lang.dart.ide.settings.DartSettingsConfigurable"
+                         id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
 
     <internalFileTemplate name="Dart Class"/>
     <internalFileTemplate name="Dart Interface"/>
@@ -276,6 +176,10 @@
   </extensions>
 
   <actions>
+    <action class="com.jetbrains.lang.dart.ide.actions.ShowDartSettingsAction"
+            id="ShowDartSettingsAction" text="Dart Settings">
+      <add-to-group group-id="MainToolBarSettings" anchor="last"/>
+    </action>
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
             text="Dart File" description="Create new Dart file/class/interface">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
