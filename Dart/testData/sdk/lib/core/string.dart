@@ -125,6 +125,27 @@ abstract class String implements Comparable<String>, Pattern {
   }
 
   /**
+   * Returns the string value of the environment declaration [name].
+   *
+   * Environment declarations are provided by the surrounding system compiling
+   * or running the Dart program. Declarations map a string key to a string
+   * value.
+   *
+   * If [name] is not declared in the environment, the result is instead
+   * [defaultValue].
+   *
+   * Example of getting a value:
+   *
+   *     const String.fromEnvironment("defaultFloo", defaultValue: "no floo")
+   *
+   * Example of checking whether a declaration is there at all:
+   *
+   *     var isDeclared = const String.fromEnvironment("maybeDeclared") != null;
+   */
+  external const factory String.fromEnvironment(String name,
+                                                {String defaultValue});
+
+  /**
    * Gets the character (as a single-code-unit [String]) at the given [index].
    *
    * The returned string represents exactly one UTF-16 code unit, which may be
