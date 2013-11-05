@@ -6,6 +6,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.Consumer;
 import com.jetbrains.actionscript.profiler.model.ActionScriptProfileSettings;
 
 import javax.swing.*;
@@ -40,11 +41,13 @@ public class ActionScriptProfileSettingsForm {
     myPathToMmCfgTextField.getButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        final VirtualFile mmCfg = FileChooser.chooseFile(FlexUtils.createFileChooserDescriptor("cfg"), getPanel(), null, null);
-        if (mmCfg != null) {
-          customPathToMmCfg = mmCfg.getPath();
-          updateMmCfg();
-        }
+        FileChooser.chooseFile(FlexUtils.createFileChooserDescriptor("cfg"), null, getPanel(), null, new Consumer<VirtualFile>() {
+          @Override
+          public void consume(VirtualFile file) {
+            customPathToMmCfg = file.getPath();
+            updateMmCfg();
+          }
+        });
       }
     });
   }
