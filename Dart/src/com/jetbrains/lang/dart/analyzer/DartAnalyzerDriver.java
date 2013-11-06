@@ -13,9 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartAnalyzerDriver {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.AnalyzerDriver");
   @NotNull
@@ -43,7 +40,7 @@ public class DartAnalyzerDriver {
     try {
       command.addParameter("--machine");
 
-      final VirtualFile packages = DartResolveUtil.findPackagesFolder(libraryRoot, myProject);
+      final VirtualFile packages = DartResolveUtil.getDartPackagesFolder(myProject, libraryRoot);
       if (packages != null && packages.isDirectory()) {
         command.addParameter("--package-root");
         command.addParameter(packages.getPath() + "/");

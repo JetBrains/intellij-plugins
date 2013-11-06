@@ -44,9 +44,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartUnitRunningState extends CommandLineState {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.actions.DartPubAction");
 
@@ -162,7 +159,7 @@ public class DartUnitRunningState extends CommandLineState {
 
     String libUrl = VfsUtilCore.pathToUrl(myUnitParameters.getFilePath());
     final VirtualFile libraryRoot = VirtualFileManager.getInstance().findFileByUrl(libUrl);
-    final VirtualFile packages = DartResolveUtil.findPackagesFolder(libraryRoot, getEnvironment().getProject());
+    final VirtualFile packages = DartResolveUtil.getDartPackagesFolder(getEnvironment().getProject(), libraryRoot);
     if (packages != null && packages.isDirectory()) {
       commandLine.addParameter("--package-root=" + packages.getPath() + "/");
     }
@@ -207,7 +204,7 @@ public class DartUnitRunningState extends CommandLineState {
 
   private String getUnitPath(String path) {
     VirtualFile libRoot = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(path));
-    VirtualFile packagesFolder = DartResolveUtil.findPackagesFolder(libRoot, getEnvironment().getProject());
+    VirtualFile packagesFolder = DartResolveUtil.getDartPackagesFolder(getEnvironment().getProject(), libRoot);
     if (myDartSettings == null || (packagesFolder != null && packagesFolder.findChild("unittest") != null)) {
       return "package:unittest/unittest.dart";
     }

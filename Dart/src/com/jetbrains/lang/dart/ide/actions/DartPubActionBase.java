@@ -26,6 +26,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import icons.DartIcons;
 import org.jetbrains.annotations.Nls;
@@ -139,7 +140,11 @@ abstract public class DartPubActionBase extends AnAction {
             Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, getPresentableText(), err, NotificationType.ERROR));
           }
 
-          pubspecYamlFile.getParent().refresh(true, true); // even in case of error there may be something generated to refresh
+          ApplicationManager.getApplication().invokeLater(new Runnable() {
+            public void run() {
+              DartProjectComponent.excludePackagesFolders(module, pubspecYamlFile);
+            }
+          });
         }
         catch (ExecutionException ex) {
           LOG.error(ex);

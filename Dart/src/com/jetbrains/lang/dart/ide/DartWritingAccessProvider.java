@@ -3,8 +3,7 @@ package com.jetbrains.lang.dart.ide;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.vfs.VFileProperty;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.WritingAccessProvider;
 import com.jetbrains.lang.dart.DartFileType;
@@ -48,12 +47,11 @@ public class DartWritingAccessProvider extends WritingAccessProvider {
   }
 
   private static boolean isInDartPackagesFolder(final ProjectFileIndex fileIndex, final VirtualFile file) {
-    // todo check Windows junctions when supported
-    if (!SystemInfo.isWindows && !file.is(VFileProperty.SYMLINK)) return false;
-
     VirtualFile parent = file;
     while ((parent = parent.getParent()) != null && fileIndex.isInContent(parent)) {
-      if ("packages".equals(parent.getName())) return true;
+      if ("packages".equals(parent.getName())) {
+        return VfsUtilCore.findRelativeFile("../pubspec.yaml", parent) != null;
+      }
     }
 
     return false;

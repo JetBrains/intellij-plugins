@@ -20,9 +20,6 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartCommandLineRunningState extends CommandLineState {
   private final Module module;
   private final @NotNull String filePath;
@@ -90,7 +87,7 @@ public class DartCommandLineRunningState extends CommandLineState {
       commandLine.addParameter(argumentsTokenizer.nextToken());
     }
 
-    final VirtualFile packages = DartResolveUtil.findPackagesFolder(libraryFile, module.getProject());
+    final VirtualFile packages = DartResolveUtil.getDartPackagesFolder(module.getProject(), libraryFile);
     if (packages != null && packages.isDirectory()) {
       commandLine.addParameter("--package-root=" + packages.getPath() + "/");
     }
