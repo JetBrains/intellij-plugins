@@ -95,6 +95,7 @@ function init(KarmaCoverageReporter, config, helper, logger) {
   var currentBrowser = null;
 
   var superOnRunStart = this.onRunStart.bind(this);
+  var superOnBrowserStart = this.onBrowserStart.bind(this);
   this.onRunStart = function(browsers) {
     currentBrowser = findBestBrowser(browsers);
     var browserArray = [];
@@ -102,6 +103,16 @@ function init(KarmaCoverageReporter, config, helper, logger) {
       browserArray = [currentBrowser];
     }
     superOnRunStart(browserArray);
+    if (currentBrowser) {
+      // TODO remove this hack as soon as https://github.com/karma-runner/karma-coverage/issues/30 is fixed
+      superOnBrowserStart(currentBrowser);
+    }
+  };
+
+  this.onBrowserStart = function(browser) {
+    if (browser === currentBrowser) {
+      superOnBrowserStart.apply(this, arguments);
+    }
   };
 
   var superOnSpecComplete = this.onSpecComplete.bind(this);
