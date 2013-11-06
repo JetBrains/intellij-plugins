@@ -17,6 +17,7 @@ package com.jetbrains.typoscript.lang;
 
 import com.intellij.codeInsight.generation.CommenterDataHolder;
 import com.intellij.codeInsight.generation.SelfManagingCommenter;
+import com.intellij.codeInsight.generation.SelfManagingCommenterUtil;
 import com.intellij.lang.Commenter;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
@@ -122,19 +123,7 @@ public class TypoScriptCommenter implements Commenter, SelfManagingCommenter<Typ
                                         @NotNull MyCommenterData data) {
     String commentSuffix = data.getBlockCommentSuffix();
     String commentPrefix = data.getBlockCommentPrefix();
-
-    selectionStart = CharArrayUtil.shiftForward(document.getCharsSequence(), selectionStart, " \t\n");
-    selectionEnd = CharArrayUtil.shiftBackward(document.getCharsSequence(), selectionEnd - 1, " \t\n") + 1;
-
-    if (selectionEnd < selectionStart) {
-      selectionEnd = selectionStart;
-    }
-
-    if (CharArrayUtil.regionMatches(document.getCharsSequence(), selectionEnd - commentSuffix.length(), commentSuffix) &&
-        CharArrayUtil.regionMatches(document.getCharsSequence(), selectionStart, commentPrefix)) {
-      return new TextRange(selectionStart, selectionEnd);
-    }
-    return null;
+    return SelfManagingCommenterUtil.getBlockCommentRange(selectionStart, selectionEnd, document, commentPrefix, commentSuffix);
   }
 
   @Override
@@ -175,10 +164,8 @@ public class TypoScriptCommenter implements Commenter, SelfManagingCommenter<Typ
   @Override
   public TextRange insertBlockComment(int startOffset, int endOffset, Document document, MyCommenterData data) {
     String prefix = data.getBlockCommentPrefix();
-    document.insertString(startOffset, prefix);
     String suffix = data.getBlockCommentSuffix();
-    document.insertString(endOffset + prefix.length(), suffix);
-    return new TextRange(startOffset, startOffset + prefix.length() + suffix.length());
+    return SelfManagingCommenterUtil.insertBlockComment(startOffset, endOffset, document, prefix, suffix);
   }
 
   static class MyCommenterData extends CommenterDataHolder {
