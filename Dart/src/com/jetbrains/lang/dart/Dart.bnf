@@ -382,7 +382,7 @@ private nonLabelledStatement ::= block // Guard to break tie with map literal.
                                | breakStatement
                                | continueStatement
                                | returnStatement
-                               | throwStatement
+                               | throwStatementWithSemicolon
                                | assertStatement
                                | statementFollowedBySemiColon
                                | ';'
@@ -402,7 +402,8 @@ assertStatement ::= 'assert' '(' expressionWithRecoverUntilParen ')' ';' {pin=1}
 breakStatement ::= 'break' referenceExpression? ';' {pin=1}
 continueStatement ::= 'continue' referenceExpression? ';' {pin=1}
 returnStatement ::= 'return' expression? ';' {pin=1}
-throwStatement ::= 'throw' expression? ';' {pin=1}
+private throwStatementWithSemicolon ::= throwStatement ';' {pin=1}
+throwStatement ::= 'throw' expression? {pin=1} // in dart spec this is 'throw expression', not 'throw statement'
 
 forLoopPartsInBraces::= '(' forLoopParts ')'
 forLoopParts::= varDeclarationList ';' expression? ';' expressionList?
@@ -593,5 +594,5 @@ functionBody ::= arrowBodyWithSemi | block
 private arrowBodyWithSemi ::= arrowBody ';' {pin=1}
 
 functionExpressionBody ::= arrowBody | block
-private arrowBody ::= '=>' expression {pin=1}
+private arrowBody ::= '=>' (expression | throwStatement) {pin=1}
 
