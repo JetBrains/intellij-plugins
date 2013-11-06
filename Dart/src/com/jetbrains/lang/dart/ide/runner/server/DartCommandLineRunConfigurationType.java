@@ -5,7 +5,12 @@ import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.search.FileTypeIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.DartFileType;
+import icons.DartIcons;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author: Fedor.Korotkov
@@ -19,11 +24,16 @@ public class DartCommandLineRunConfigurationType extends ConfigurationTypeBase {
     super("DartCommandLineRunConfigurationType",
           DartBundle.message("runner.command.line.configuration.name"),
           DartBundle.message("runner.command.line.configuration.name"),
-          icons.DartIcons.Dart_16);
+          DartIcons.Dart_16);
     addFactory(new ConfigurationFactory(this) {
       @Override
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new DartCommandLineRunConfiguration("Dart", project, DartCommandLineRunConfigurationType.this);
+      }
+
+      @Override
+      public boolean isApplicable(@NotNull Project project) {
+        return FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project));
       }
     });
   }
