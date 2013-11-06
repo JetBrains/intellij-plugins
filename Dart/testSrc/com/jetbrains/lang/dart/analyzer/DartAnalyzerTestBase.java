@@ -100,8 +100,6 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
     final AnalysisError[] errors = annotator.doAnnotate(information);
     annotator.apply(myFixture.getFile(), errors, annotationHolder);
 
-//    new DartExternalAnnotator().apply(myFixture.getFile(), getMessagesFromAnalyzer(), annotationHolder);
-
     return ContainerUtil.find(annotationHolder, new Condition<Annotation>() {
       @Override
       public boolean value(Annotation action) {
