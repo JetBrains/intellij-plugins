@@ -7,6 +7,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.karma.util.ProcessOutputArchive;
 import com.intellij.javascript.nodejs.BaseNodeJSFilter;
 import com.intellij.openapi.Disposable;
@@ -123,25 +124,23 @@ public class KarmaServerLogComponent implements ComponentWithActions {
   }
 
   public void installOn(@NotNull final RunnerLayoutUi ui, boolean requestFocus) {
-    final Content consoleContent = ui.createContent("KarmaServer",
-                                                    this,
-                                                    "Karma Server",
-                                                    null,
-                                                    myConsole.getPreferredFocusableComponent());
-    consoleContent.setCloseable(false);
-    ui.addContent(consoleContent, 4, PlaceInGrid.bottom, false);
+    final Content content = ui.createContent("KarmaServer",
+                                             this,
+                                             "Karma Server",
+                                             null,
+                                             myConsole.getPreferredFocusableComponent());
+    content.setCloseable(false);
+    ui.addContent(content, 4, PlaceInGrid.bottom, false);
     if (requestFocus && !myServer.isPortBound()) {
-      ui.selectAndFocus(consoleContent, false, false);
+      ui.selectAndFocus(content, false, false);
     }
     myServer.onTerminated(new KarmaServerTerminatedListener() {
       @Override
       public void onTerminated(int exitCode) {
-        if (!ui.isDisposed()) {
-          ui.selectAndFocus(consoleContent, false, false);
-        }
+        KarmaUtil.selectAndFocusIfNotDisposed(ui, content, false, false);
       }
     });
-    start(consoleContent);
+    start(content);
   }
 
 }

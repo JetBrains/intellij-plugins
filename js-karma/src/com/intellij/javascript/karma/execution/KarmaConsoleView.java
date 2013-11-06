@@ -23,6 +23,7 @@ import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.content.Content;
@@ -76,13 +77,13 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
                                                                                       myServer,
                                                                                       myExecutionSession.isDebug());
     if (myServer.areBrowsersReady()) {
-      ui.selectAndFocus(consoleContent, false, false);
+      KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false);
     }
     else {
       myServer.onPortBound(new Runnable() {
         @Override
         public void run() {
-          ui.selectAndFocus(consoleContent, false, false);
+          KarmaUtil.selectAndFocusIfNotDisposed(ui, consoleContent, false, false);
         }
       });
       final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, consoleContent);
