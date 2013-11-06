@@ -28,7 +28,9 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.i18n.OsmorcBundle;
+import org.osmorc.settings.ProjectSettings;
 
 /**
  * Configuration type for a bundle run configuration.
@@ -45,6 +47,11 @@ public class OsgiConfigurationType extends ConfigurationTypeBase {
       @Override
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new OsgiRunConfiguration(project, this, "");
+      }
+
+      @Override
+      public boolean isApplicable(@NotNull Project project) {
+        return ProjectSettings.getInstance(project).getFrameworkInstanceName() != null;
       }
     });
   }
