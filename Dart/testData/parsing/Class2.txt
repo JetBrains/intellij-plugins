@@ -162,7 +162,7 @@ Dart File
                       PsiElement(throw)('throw')
                       LITERAL_EXPRESSION
                         PsiElement(NUMBER)('42')
-                      PsiElement(;)(';')
+                    PsiElement(;)(';')
                 SWITCH_STATEMENT
                   PsiElement(switch)('switch')
                   PsiElement(()('(')

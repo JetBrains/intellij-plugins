@@ -43,6 +43,7 @@ class FunctionBody {
   FunctionBody() : this.x = 99 => 42;
 
   foo() => 99;
+  foo1() => throw new Exception();
   get x() => x;
   set y(x) => x + y;  // Setters should be void -- not enforced by syntax.
   operator +(x) => x + 42;
@@ -61,5 +62,6 @@ class FunctionBody {
     var h = fugl() => 99;
 
     2.isOdd();
+    return () => throw new Exception();
   }
 }

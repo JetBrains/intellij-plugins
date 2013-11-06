@@ -34,4 +34,10 @@ public class DartFunctionExpressionBodyImpl extends DartPsiCompositeElementImpl 
     return findChildByClass(DartExpression.class);
   }
 
+  @Override
+  @Nullable
+  public DartThrowStatement getThrowStatement() {
+    return findChildByClass(DartThrowStatement.class);
+  }
+
 }

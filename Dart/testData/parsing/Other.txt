@@ -128,7 +128,7 @@ Dart File
                         PsiElement(throw)('throw')
                         LITERAL_EXPRESSION
                           PsiElement(NUMBER)('42')
-                        PsiElement(;)(';')
+                      PsiElement(;)(';')
                       VAR_DECLARATION_LIST
                         VAR_ACCESS_DECLARATION
                           PsiElement(var)('var')
@@ -315,6 +315,27 @@ Dart File
             PsiElement(=>)('=>')
             LITERAL_EXPRESSION
               PsiElement(NUMBER)('99')
+            PsiElement(;)(';')
+        METHOD_DECLARATION
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('foo1')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            PsiElement())(')')
+          FUNCTION_BODY
+            PsiElement(=>)('=>')
+            THROW_STATEMENT
+              PsiElement(throw)('throw')
+              NEW_EXPRESSION
+                PsiElement(new)('new')
+                TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('Exception')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  PsiElement())(')')
             PsiElement(;)(';')
         GETTER_DECLARATION
           PsiElement(get)('get')
@@ -585,5 +606,25 @@ Dart File
                     PsiElement(()('(')
                     PsiElement())(')')
                 PsiElement(;)(';')
+                RETURN_STATEMENT
+                  PsiElement(return)('return')
+                  FUNCTION_EXPRESSION
+                    FORMAL_PARAMETER_LIST
+                      PsiElement(()('(')
+                      PsiElement())(')')
+                    FUNCTION_EXPRESSION_BODY
+                      PsiElement(=>)('=>')
+                      THROW_STATEMENT
+                        PsiElement(throw)('throw')
+                        NEW_EXPRESSION
+                          PsiElement(new)('new')
+                          TYPE
+                            REFERENCE_EXPRESSION
+                              ID
+                                PsiElement(IDENTIFIER)('Exception')
+                          ARGUMENTS
+                            PsiElement(()('(')
+                            PsiElement())(')')
+                  PsiElement(;)(';')
               PsiElement(})('}')
       PsiElement(})('}')

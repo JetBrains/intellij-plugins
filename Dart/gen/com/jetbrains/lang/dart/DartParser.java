@@ -699,7 +699,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '=>' expression
+  // '=>' (expression | throwStatement)
   static boolean arrowBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "arrowBody")) return false;
     if (!nextTokenIs(builder_, EXPRESSION_BODY_DEF)) return false;
@@ -708,9 +708,20 @@ public class DartParser implements PsiParser {
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, EXPRESSION_BODY_DEF);
     pinned_ = result_; // pin = 1
-    result_ = result_ && expression(builder_, level_ + 1);
+    result_ = result_ && arrowBody_1(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
     return result_ || pinned_;
+  }
+
+  // expression | throwStatement
+  private static boolean arrowBody_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "arrowBody_1")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = expression(builder_, level_ + 1);
+    if (!result_) result_ = throwStatement(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -4165,7 +4176,7 @@ public class DartParser implements PsiParser {
   //                                | breakStatement
   //                                | continueStatement
   //                                | returnStatement
-  //                                | throwStatement
+  //                                | throwStatementWithSemicolon
   //                                | assertStatement
   //                                | statementFollowedBySemiColon
   //                                | ';'
@@ -4184,7 +4195,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = breakStatement(builder_, level_ + 1);
     if (!result_) result_ = continueStatement(builder_, level_ + 1);
     if (!result_) result_ = returnStatement(builder_, level_ + 1);
-    if (!result_) result_ = throwStatement(builder_, level_ + 1);
+    if (!result_) result_ = throwStatementWithSemicolon(builder_, level_ + 1);
     if (!result_) result_ = assertStatement(builder_, level_ + 1);
     if (!result_) result_ = statementFollowedBySemiColon(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, SEMICOLON);
@@ -5640,7 +5651,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // 'throw' expression? ';'
+  // 'throw' expression?
   public static boolean throwStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "throwStatement")) return false;
     if (!nextTokenIs(builder_, THROW)) return false;
@@ -5649,8 +5660,7 @@ public class DartParser implements PsiParser {
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, THROW);
     pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, throwStatement_1(builder_, level_ + 1));
-    result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
+    result_ = result_ && throwStatement_1(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, THROW_STATEMENT, result_, pinned_, null);
     return result_ || pinned_;
   }
@@ -5660,6 +5670,21 @@ public class DartParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "throwStatement_1")) return false;
     expression(builder_, level_ + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // throwStatement ';'
+  static boolean throwStatementWithSemicolon(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "throwStatementWithSemicolon")) return false;
+    if (!nextTokenIs(builder_, THROW)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = throwStatement(builder_, level_ + 1);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && consumeToken(builder_, SEMICOLON);
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   /* ********************************************************** */

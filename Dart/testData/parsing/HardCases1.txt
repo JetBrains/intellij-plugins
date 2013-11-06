@@ -76,7 +76,7 @@ Dart File
                           PsiElement(REGULAR_STRING_PART)('int status expected')
                           PsiElement(CLOSING_QUOTE)('"')
                       PsiElement())(')')
-                  PsiElement(;)(';')
+                PsiElement(;)(';')
               PsiElement(})('}')
           FOR_STATEMENT
             PsiElement(for)('for')
