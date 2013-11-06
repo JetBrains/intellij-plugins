@@ -6,16 +6,14 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.lang.dart.DartBundle;
+import icons.DartIcons;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartUnitRunConfigurationType extends ConfigurationTypeBase {
   protected DartUnitRunConfigurationType() {
     super("DartUnitRunConfigurationType",
           DartBundle.message("runner.unit.configuration.name"),
           DartBundle.message("runner.unit.configuration.description"),
-          icons.DartIcons.Dart_16);
+          DartIcons.Dart_test);
     addFactory(new DartUnitConfigurationFactory(this));
   }
 
