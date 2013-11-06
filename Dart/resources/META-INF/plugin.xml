@@ -22,9 +22,6 @@
   <application-components/>
 
   <project-components>
-    <component>
-      <implementation-class>com.jetbrains.lang.dart.DartSupportLoader</implementation-class>
-    </component>
   </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
