@@ -59,7 +59,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
 
     if (FileUtil.isAncestor(sdkDir.getPath(), virtualFile.getPath(), true)) return null;
 
-    final VirtualFile packagesFolder = DartResolveUtil.findPackagesFolder(psiFile);
+    final VirtualFile packagesFolder = DartResolveUtil.getDartPackagesFolder(psiFile.getProject(), virtualFile);
 
     if (packagesFolder != null && VfsUtilCore.isAncestor(packagesFolder, virtualFile, true)) return null;
 

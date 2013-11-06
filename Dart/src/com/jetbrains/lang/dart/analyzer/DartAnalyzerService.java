@@ -94,8 +94,6 @@ public class DartAnalyzerService {
 
   @NotNull
   public AnalysisContext getAnalysisContext(final @NotNull String sdkPath, @Nullable VirtualFile packagesFolder) {
-    if (packagesFolder != null) packagesFolder = packagesFolder.getCanonicalFile();
-
     final Pair<String, VirtualFile> key = Pair.create(sdkPath, packagesFolder);
     AnalysisContext context = mySdkPathAndPackagesDirToAnalysisContext.get(key);
 

@@ -34,7 +34,7 @@ public class DartStackTraceMessageFilter implements Filter {
     if (fileUrl.startsWith(DartResolveUtil.PACKAGE_PREFIX) && libraryRootPath != null) {
       String libUrl = VfsUtilCore.pathToUrl(libraryRootPath);
       final VirtualFile libraryRoot = VirtualFileManager.getInstance().findFileByUrl(libUrl);
-      final VirtualFile packages = DartResolveUtil.findPackagesFolder(libraryRoot, project);
+      final VirtualFile packages = DartResolveUtil.getDartPackagesFolder(project, libraryRoot);
       if (packages != null) {
         String relativePath = fileUrl.substring(DartResolveUtil.PACKAGE_PREFIX.length());
         relativePath = FileUtil.toSystemIndependentName(relativePath);

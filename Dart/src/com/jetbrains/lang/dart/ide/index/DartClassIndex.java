@@ -18,9 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartClassIndex extends ScalarIndexExtension<String> {
   public static final ID<String, Void> DART_CLASS_INDEX = ID.create("DartClassIndex");
   private static final int INDEX_VERSION = 2;
@@ -67,12 +64,7 @@ public class DartClassIndex extends ScalarIndexExtension<String> {
       FileBasedIndex.getInstance().getContainingFiles(DART_CLASS_INDEX, name, searchScope);
     final Set<DartComponentName> result = new THashSet<DartComponentName>();
     for (VirtualFile vFile : files) {
-      // sym link
-      VirtualFile realFile = vFile.getCanonicalFile();
-      if (realFile == null) {
-        continue;
-      }
-      final PsiFile psiFile = PsiManager.getInstance(project).findFile(realFile);
+      final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
       for (PsiElement root : DartResolveUtil.findDartRoots(psiFile)) {
         for (DartComponent component : DartResolveUtil.getClassDeclarations(root)) {
           if (name.equals(component.getName())) {

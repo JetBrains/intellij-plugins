@@ -1,10 +1,5 @@
 package com.jetbrains.lang.dart.resolve;
 
-import com.jetbrains.lang.dart.util.DartSdkTestUtil;
-
-/**
- * @author: Fedor.Korotkov
- */
 public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTestBase {
 
   public void testArrayAccess() throws Throwable {
@@ -108,15 +103,18 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
   }
 
   public void testLibrary1() throws Throwable {
-    doTest(myFixture.configureByFiles("Library1.dart", "Library1Helper.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Helper.dart"), 1);
   }
 
   public void testLibrary2() throws Throwable {
-    doTest(myFixture.configureByFiles("Library2Foo.dart", "Library2.dart", "Library2Bar.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + "Foo.dart", testName + ".dart", testName + "Bar.dart"), 1);
   }
 
   public void testLibrary3() throws Throwable {
-    doTest(myFixture.configureByFiles("Library3.dart", "Library3Foo.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Foo.dart"), 1);
   }
 
   public void testLibrary4() throws Throwable {
@@ -124,46 +122,56 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
   }
 
   public void testLibrary5() throws Throwable {
-    doTest(myFixture.configureByFiles("Library5.dart", "Library5Helper.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Helper.dart"), 1);
   }
 
   public void testLibrary6() throws Throwable {
-    doTest(myFixture.configureByFiles("Library6.dart", "Library6Helper.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Helper.dart"), 1);
   }
 
   public void testLibrary7() throws Throwable {
-    doTest(myFixture.configureByFiles("Library7.dart", "Library6Helper.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Helper.dart"), 1);
   }
 
   public void testLibrary8() throws Throwable {
-    doTest(myFixture.configureByFiles("Library8.dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
   }
 
   public void testLibrary9() throws Throwable {
-    doTest(myFixture.configureByFiles("Library9.dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 0);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 0);
   }
 
   public void testLibrary10() throws Throwable {
     myFixture.addFileToProject("pubspec.yaml", "");
-    doTest(myFixture.configureByFiles("Library10.dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
   }
 
   public void testLibrary11() throws Throwable {
-    doTest(myFixture.configureByFiles("Library11.dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
   }
 
   public void testLibrary12() throws Throwable {
     myFixture.addFileToProject("pubspec.yaml", "");
-    doTest(myFixture.configureByFiles("Library12.dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
   }
 
   public void testLibrary13() throws Throwable {
-    doTest(myFixture.configureByFiles("additional/bar.dart", "Library13.dart", "additional/foo.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles("additional/bar.dart", testName + ".dart", "additional/foo.dart"), 1);
   }
 
 
   public void testLibrary14() throws Throwable {
-    doTest(myFixture.configureByFiles("Library14Helper.dart", "Library14.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + "Helper.dart", testName + ".dart"), 1);
   }
 
   public void testMixin1() throws Throwable {
@@ -208,20 +216,24 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
 
   public void testPackage1() throws Throwable {
     myFixture.addFileToProject("pubspec.yaml", "");
-    doTest(myFixture.configureByFiles("Package1.dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
   }
 
   public void testPackage2() throws Throwable {
     myFixture.addFileToProject("pubspec.yaml", "");
-    doTest(myFixture.configureByFiles("Package2.dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
   }
 
   public void testPackage3() throws Throwable {
-    doTest(myFixture.configureByFiles("Package3.dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 0);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 0);
   }
 
   public void testPackage4() throws Throwable {
-    doTest(myFixture.configureByFiles("Package4.dart", "additional/foo_functions.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", "additional/foo_functions.dart"), 1);
   }
 
   public void testReference1() throws Throwable {
@@ -249,11 +261,13 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
   }
 
   public void testReference7() throws Throwable {
-    doTest(myFixture.configureByFiles("Reference7.dart", "Reference7Helper.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Helper.dart"), 1);
   }
 
   public void testReference8() throws Throwable {
-    doTest(myFixture.configureByFiles("Reference8.dart", "Reference8Helper.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Helper.dart"), 1);
   }
 
   public void testReference9() throws Throwable {
@@ -329,7 +343,8 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
   }
 
   public void testReference27() throws Throwable {
-    doTest(myFixture.configureByFiles("Reference27.dart", "Reference27Helper.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Helper.dart"), 1);
   }
 
   public void testReference28() throws Throwable {
@@ -378,7 +393,9 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
 
   public void testReferenceWEB6238() throws Throwable {
     myFixture.copyFileToProject("packages/foo/Foo.dart");
-    doTest(1, "ReferenceWEB6238.dart", "ReferenceWEB6238_root.dart");
+    myFixture.addFileToProject("pubspec.yaml", "");
+    final String testName = getTestName(false);
+    doTest(1, testName + ".dart", testName + "_root.dart");
   }
 
   public void testType1() throws Throwable {
@@ -386,7 +403,8 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
   }
 
   public void testType2() throws Throwable {
-    doTest(myFixture.configureByFiles("Type2.dart", "Type2Library.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Library.dart"), 1);
   }
 
   public void testType3() throws Throwable {
@@ -402,10 +420,11 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
   }
 
   public void testTypeInExtends2() throws Throwable {
-    doTest(myFixture.configureByFiles("TypeInExtends2.dart", "TypeInExtends2Bar.dart", "TypeInExtends2Library.dart"), 1);
+    final String testName = getTestName(false);
+    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Bar.dart", testName + "Library.dart"), 1);
   }
 
-  public void testWi14225() throws Throwable {
+  public void testWEB14225() throws Throwable {
     doTest(1);
   }
 }

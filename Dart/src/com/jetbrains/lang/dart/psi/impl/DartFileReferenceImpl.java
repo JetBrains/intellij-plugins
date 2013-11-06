@@ -81,9 +81,10 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
   @Override
   public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
     final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(getContainingFile());
+    final VirtualFile parentFolder = virtualFile == null ? null : virtualFile.getParent();
     final VirtualFile destinationVirtualFile = DartResolveUtil.getRealVirtualFile(element.getContainingFile());
-    if (virtualFile != null && destinationVirtualFile != null) {
-      setNewPath(FileUtil.getRelativePath(virtualFile.getParent().getPath(), destinationVirtualFile.getPath(), '/'));
+    if (parentFolder != null && destinationVirtualFile != null) {
+      setNewPath(FileUtil.getRelativePath(parentFolder.getPath(), destinationVirtualFile.getPath(), '/'));
     }
     return this;
   }
@@ -127,7 +128,7 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
     final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(psiFile);
     final String text = StringUtil.unquoteString(getText());
     if (text.startsWith(DartResolveUtil.PACKAGE_PREFIX)) {
-      final VirtualFile packagesFolder = DartResolveUtil.findPackagesFolder(this);
+      final VirtualFile packagesFolder = DartResolveUtil.getDartPackagesFolder(getProject(), virtualFile);
       String relativePath = FileUtil.toSystemIndependentName(text.substring(DartResolveUtil.PACKAGE_PREFIX.length()));
       final VirtualFile sourceFile = packagesFolder == null
                                      ? null
@@ -171,15 +172,17 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
     return ArrayUtil.mergeArrays(super.getReferences(), referenceSet.getAllReferences());
   }
 
+  @NotNull
   private PsiReference[] getPackageReferences(String path, int startIndex) {
-    VirtualFile packagesFolder = DartResolveUtil.findPackagesFolder(this);
     VirtualFile file = DartResolveUtil.getRealVirtualFile(getContainingFile());
-    if (packagesFolder == null || file == null) {
+    VirtualFile parentFile = file == null ? null : file.getParent();
+    VirtualFile packagesFolder = DartResolveUtil.getDartPackagesFolder(getProject(), file);
+    if (packagesFolder == null || parentFile == null) {
       return PsiReference.EMPTY_ARRAY;
     }
-    String prefix = FileUtil.getRelativePath(file.getParent().getPath(), packagesFolder.getPath(), '/');
+    String prefix = FileUtil.getRelativePath(parentFile.getPath(), packagesFolder.getPath(), '/');
     if (prefix == null) {
-      return null;
+      return PsiReference.EMPTY_ARRAY;
     }
     prefix += "/";
     int shift = startIndex - prefix.length();

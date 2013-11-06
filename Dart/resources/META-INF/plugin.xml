@@ -22,6 +22,10 @@
   <application-components/>
 
   <project-components>
+    <component>
+      <implementation-class>com.jetbrains.lang.dart.DartProjectComponent</implementation-class>
+      <skipForDefaultProject/>
+    </component>
   </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -134,8 +138,6 @@
 
     <codeInspection.InspectionExtension id="dartGlobalInspection"
                                         implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>
-
-    <treeStructureProvider implementation="com.jetbrains.lang.dart.ide.projectView.DartTreeStructureProvider"/>
 
     <stepsBeforeRunProvider implementation="com.jetbrains.lang.dart.ide.runner.before.Dart2JSBeforeRunTaskProvider"/>
 

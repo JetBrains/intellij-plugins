@@ -6,9 +6,7 @@ import com.jetbrains.lang.dart.util.DartSdkTestUtil;
 import java.io.IOException;
 
 /**
- * Part of DartGotoDeclarationActionTest tests in script block
- *
- * @author: Fedor.Korotkov
+ * Part of {@link com.jetbrains.lang.dart.resolve.DartGotoDeclarationActionTest} tests in script block
  */
 public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActionTestBase {
 
@@ -385,7 +383,7 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
     doTest(1);
   }
 
-  public void testWi14225() throws Throwable {
+  public void testWEB14225() throws Throwable {
     doTest(1);
   }
 }

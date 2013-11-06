@@ -1,9 +1,9 @@
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
@@ -15,16 +15,15 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.BooleanValueHolder;
 import com.intellij.util.Function;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -274,7 +273,7 @@ public class DartResolveUtil {
         if (!libraryRoots.isEmpty()) {
           return libraryRoots.iterator().next();
         }
-        return findFileByPath(virtualFile, context, libraryNameOrPath);
+        return findFileByPath(context.getProject(), virtualFile, libraryNameOrPath);
       }
     }
     return null;
@@ -337,7 +336,7 @@ public class DartResolveUtil {
     }
 
     for (String relativePathOrUrl : DartPathIndex.getPaths(context.getProject(), virtualFile)) {
-      if (fileNames != null && !fileNames.contains(getFileName(relativePathOrUrl))) {
+      if (fileNames != null && !fileNames.contains(PathUtil.getFileName(relativePathOrUrl))) {
         continue;
       }
       VirtualFile childFile = findRelativeFile(virtualFile, relativePathOrUrl);
@@ -371,7 +370,7 @@ public class DartResolveUtil {
           return false;
         }
       }
-      VirtualFile sourceFile = findFileByPath(virtualFile, context, libraryNameOrPath);
+      VirtualFile sourceFile = findFileByPath(context.getProject(), virtualFile, libraryNameOrPath);
       if (sourceFile != null) {
         if (!processTopLevelDeclarationsImpl(context, processor, sourceFile, fileNames, processedFiles)) {
           return false;
@@ -382,26 +381,17 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  private static VirtualFile findFileByPath(VirtualFile virtualFile, PsiElement context, String libraryNameOrPath) {
+  private static VirtualFile findFileByPath(Project project, VirtualFile virtualFile, String libraryNameOrPath) {
     // maybe path
     VirtualFile sourceFile = findRelativeFile(virtualFile, libraryNameOrPath);
     sourceFile = sourceFile != null ? sourceFile : VirtualFileManager.getInstance().findFileByUrl(libraryNameOrPath);
     // package
     if (sourceFile == null && libraryNameOrPath.startsWith(PACKAGE_PREFIX)) {
-      final VirtualFile packagesFolder = findPackagesFolder(context);
+      final VirtualFile packagesFolder = getDartPackagesFolder(project, virtualFile);
       final String pathInPackages = FileUtil.toSystemIndependentName(libraryNameOrPath.substring(PACKAGE_PREFIX.length()));
       sourceFile = packagesFolder == null ? null : VfsUtilCore.findRelativeFile(pathInPackages, packagesFolder);
     }
     return sourceFile;
-  }
-
-  public static String getFileName(String systemIndependentPath) {
-    final int index = systemIndependentPath.lastIndexOf('/');
-    return index == -1 ? systemIndependentPath : systemIndependentPath.substring(index + 1);
-  }
-
-  public static boolean isDartLibraryURI(String libraryName) {
-    return libraryName.indexOf(':') != -1 && "dart".equalsIgnoreCase(libraryName.substring(0, libraryName.indexOf(':')));
   }
 
   @Nullable
@@ -1047,63 +1037,18 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  public static VirtualFile findPackagesFolder(@NotNull PsiElement context) {
-    List<VirtualFile> libraries = findLibrary(context.getContainingFile());
-    for (VirtualFile library : libraries) {
-      VirtualFile packagesFolderByFile = findPackagesFolderByFile(library);
-      if (packagesFolderByFile != null) {
-        return packagesFolderByFile;
+  public static VirtualFile getDartPackagesFolder(final Project project, final VirtualFile file) {
+    if (project == null || file == null) return null;
+
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    VirtualFile parent = file;
+    while ((parent = parent.getParent()) != null && fileIndex.isInContent(parent)) {
+      if (parent.findChild("pubspec.yaml") != null) {
+        final VirtualFile packagesFolder = parent.findChild("packages");
+        return packagesFolder != null && packagesFolder.isDirectory() ? packagesFolder : null;
       }
     }
-
-    final Module module = ModuleUtilCore.findModuleForPsiElement(context);
-    return findPackagesFolder(context.getProject(), module);
-  }
-
-  @Nullable
-  public static VirtualFile findPackagesFolder(@Nullable VirtualFile library, @Nullable Project project) {
-    if (library == null || project == null) {
-      return null;
-    }
-    VirtualFile packagesFolderByFile = findPackagesFolderByFile(library);
-    if (packagesFolderByFile != null) {
-      return packagesFolderByFile;
-    }
-    final Module module = ModuleUtilCore.findModuleForFile(library, project);
-    return findPackagesFolder(project, module);
-  }
-
-  private static VirtualFile findPackagesFolder(Project project, Module module) {
-    final GlobalSearchScope scope = module == null
-                                    ? GlobalSearchScope.allScope(project)
-                                    : GlobalSearchScope.moduleScope(module);
-    return findPackagesFolder(project, scope);
-  }
-
-  @Nullable
-  public static VirtualFile findPackagesFolder(@NotNull Project project, @NotNull GlobalSearchScope scope) {
-    for (VirtualFile file : FilenameIndex.getVirtualFilesByName(project, "pubspec.yaml", scope)) {
-      final VirtualFile packagesFolder = findPackagesFolderByFile(file);
-      if (packagesFolder != null) {
-        return packagesFolder;
-      }
-    }
-
-    // try all
-    for (VirtualFile file : FilenameIndex.getVirtualFilesByName(project, "pubspec.yaml", GlobalSearchScope.allScope(project))) {
-      final VirtualFile packagesFolder = findPackagesFolderByFile(file);
-      if (packagesFolder != null) {
-        return packagesFolder;
-      }
-    }
-
     return null;
-  }
-
-  @Nullable
-  public static VirtualFile findPackagesFolderByFile(@Nullable VirtualFile file) {
-    final VirtualFile folder = file == null ? null : file.getParent();
-    return folder == null ? null : folder.findChild("packages");
   }
 
   @Nullable
@@ -1151,20 +1096,6 @@ public class DartResolveUtil {
       result[i] = new PsiElementResolveResult(elements.get(i));
     }
     return result;
-  }
-
-  public static boolean containsDartSources(@NotNull XmlFile root) {
-    final BooleanValueHolder result = new BooleanValueHolder(false);
-    root.accept(new XmlRecursiveElementVisitor() {
-      @Override
-      public void visitXmlTag(XmlTag tag) {
-        if ("script".equals(tag.getName()) && "application/dart".equals(tag.getAttributeValue("type"))) {
-          result.setValue(true);
-        }
-        super.visitXmlTag(tag);
-      }
-    });
-    return result.getValue();
   }
 
   public static void treeWalkUpAndTopLevelDeclarations(PsiElement context, PsiScopeProcessor processor) {
