@@ -1,5 +1,7 @@
 package com.jetbrains.lang.dart.highlight;
 
+import com.intellij.ide.highlighter.HtmlFileHighlighter;
+import com.intellij.ide.highlighter.XmlFileHighlighter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
@@ -13,9 +15,6 @@ import java.util.Map;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
   private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<IElementType, TextAttributesKey>();
 
@@ -55,6 +54,9 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
     ATTRIBUTES.put(DOC_COMMENT, DartSyntaxHighlighterColors.DOC_COMMENT);
 
     ATTRIBUTES.put(BAD_CHARACTER, DartSyntaxHighlighterColors.BAD_CHARACTER);
+
+    HtmlFileHighlighter.registerEmbeddedTokenAttributes(ATTRIBUTES, null);
+    XmlFileHighlighter.registerEmbeddedTokenAttributes(ATTRIBUTES, null);
   }
 
   @NotNull
@@ -65,9 +67,5 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
   @NotNull
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return pack(ATTRIBUTES.get(tokenType));
-  }
-
-  public static Map<IElementType, TextAttributesKey> getKeys() {
-    return ATTRIBUTES;
   }
 }
