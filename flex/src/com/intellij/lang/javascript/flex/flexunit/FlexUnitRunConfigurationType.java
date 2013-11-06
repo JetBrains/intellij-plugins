@@ -3,7 +3,9 @@ package com.intellij.lang.javascript.flex.flexunit;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.module.TypedModuleService;
 import com.intellij.openapi.project.Project;
 import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +20,11 @@ public class FlexUnitRunConfigurationType implements ConfigurationType {
     myFactory = new ConfigurationFactory(this) {
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new FlexUnitRunConfiguration(project, this, "");
+      }
+
+      @Override
+      public boolean isApplicable(@NotNull Project project) {
+        return TypedModuleService.getInstance(project).hasModulesOfType(FlexModuleType.getInstance());
       }
     };
   }
