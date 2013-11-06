@@ -15,10 +15,13 @@
  */
 package com.intellij.coldFusion.UI.runner;
 
+import com.intellij.coldFusion.model.files.CfmlFileType;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.search.FileTypeIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import icons.CFMLIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +36,11 @@ public class CfmlRunConfigurationType implements ConfigurationType {
 
   public CfmlRunConfigurationType() {
     myConfigurationFactory = new ConfigurationFactory(this) {
+      @Override
+      public boolean isApplicable(@NotNull Project project) {
+        return FileTypeIndex.containsFileOfType(CfmlFileType.INSTANCE, GlobalSearchScope.projectScope(project));
+      }
+
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new CfmlRunConfiguration(project, this, "Cold Fusion");
       }
