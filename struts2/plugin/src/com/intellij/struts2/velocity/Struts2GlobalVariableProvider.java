@@ -17,22 +17,17 @@ package com.intellij.struts2.velocity;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.FakePsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.CommonClassNames;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.velocity.VtlGlobalVariableProvider;
+import com.intellij.velocity.psi.VtlLightVariable;
 import com.intellij.velocity.psi.VtlVariable;
 import com.intellij.velocity.psi.files.VtlFile;
-import com.intellij.velocity.psi.files.VtlFileType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +41,7 @@ public class Struts2GlobalVariableProvider extends VtlGlobalVariableProvider {
 
   @NotNull
   @Override
-  public Collection<? extends VtlVariable> getGlobalVariables(final VtlFile file) {
+  public Collection<VtlVariable> getGlobalVariables(@NotNull final VtlFile file) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(file);
     if (module == null) {
       return Collections.emptySet();
@@ -56,7 +51,7 @@ public class Struts2GlobalVariableProvider extends VtlGlobalVariableProvider {
       return Collections.emptySet();
     }
 
-    final List<MyVtlVariable> result = new ArrayList<MyVtlVariable>();
+    final List<VtlVariable> result = ContainerUtil.newArrayList();
     result.add(new MyVtlVariable("response", file, "javax.servlet.http.HttpServletResponse"));
     result.add(new MyVtlVariable("res", file, "javax.servlet.http.HttpServletResponse"));
     result.add(new MyVtlVariable("request", file, "javax.servlet.http.HttpServletRequest"));
@@ -73,62 +68,15 @@ public class Struts2GlobalVariableProvider extends VtlGlobalVariableProvider {
   }
 
 
-  private static class MyVtlVariable extends FakePsiElement implements VtlVariable {
+  private static class MyVtlVariable extends VtlLightVariable {
 
-    private final PsiType myType;
-    private final String name;
-    private final PsiElement parent;
-
-    private MyVtlVariable(final String name, final PsiElement parent, final String fqnClassName) {
-      this.name = name;
-      this.parent = parent;
-      this.myType = createType(parent, fqnClassName);
-    }
-
-    private static PsiType createType(final PsiElement parent, final String fqnClassName) {
-      try {
-        return JavaPsiFacade.getInstance(parent.getProject()).getElementFactory().createTypeFromText(fqnClassName, parent);
-      } catch (IncorrectOperationException e) {
-        return null;
-      }
-    }
-
-    @Override
-    public String getName() {
-      return name;
+    private MyVtlVariable(final String name, final VtlFile parent, final String fqnClassName) {
+      super(name, parent, fqnClassName);
     }
 
     @Override
     public Icon getIcon(final boolean b) {
       return StrutsIcons.STRUTS_VARIABLE;
-    }
-
-    @NotNull
-    @Override
-    public SearchScope getUseScope() {
-      return GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) super.getUseScope(), VtlFileType.INSTANCE);
-    }
-
-    @NotNull
-    @Override
-    public PsiElement getNavigationElement() {
-      return parent;
-    }
-
-    @Override
-    public PsiType getPsiType() {
-      return myType;
-    }
-
-    @Nullable
-    @Override
-    public PsiComment getDocComment() {
-      return null;
-    }
-
-    @Override
-    public PsiElement getParent() {
-      return parent;
     }
   }
 
