@@ -9,8 +9,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -97,8 +95,8 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
 
     final DartInProcessAnnotator annotator = new DartInProcessAnnotator();
     final Pair<DartFileBasedSource, AnalysisContext> information = annotator.collectInformation(myFixture.getFile());
-    final AnalysisError[] errors = annotator.doAnnotate(information);
-    annotator.apply(myFixture.getFile(), errors, annotationHolder);
+    final AnalysisContext analysisContext = annotator.doAnnotate(information);
+    annotator.apply(myFixture.getFile(), analysisContext, annotationHolder);
 
     return ContainerUtil.find(annotationHolder, new Condition<Annotation>() {
       @Override
@@ -111,18 +109,9 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
   protected AnalysisError[] getErrorsFromAnnotator() {
     final DartInProcessAnnotator annotator = new DartInProcessAnnotator();
     final Pair<DartFileBasedSource, AnalysisContext> information = annotator.collectInformation(myFixture.getFile());
-    return annotator.doAnnotate(information);
-  }
-
-  private List<AnalyzerMessage> getMessagesFromAnalyzer() throws IOException {
-    PsiFile file = myFixture.getFile();
-    assertNotNull(file);
-    VirtualFile virtualFile = file.getVirtualFile();
-    assertNotNull(virtualFile);
-    DartSettings settings = getDartSettings();
-    VirtualFile analyzer = settings.getAnalyzer();
-    assertNotNull(analyzer);
-    DartAnalyzerDriver analyzerDriver = new DartAnalyzerDriver(myFixture.getProject(), analyzer, settings.getSdkPath(), virtualFile);
-    return analyzerDriver.analyze();
+    if (information == null) return AnalysisError.NO_ERRORS;
+    final AnalysisContext analysisContext = annotator.doAnnotate(information);
+    final DartFileBasedSource source = DartFileBasedSource.getSource(getProject(), myFixture.getFile().getVirtualFile());
+    return analysisContext == null ? AnalysisError.NO_ERRORS : analysisContext.getErrors(source).getErrors();
   }
 }

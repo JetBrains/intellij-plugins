@@ -428,6 +428,7 @@ public class DartResolveUtil {
   }
 
   public static List<VirtualFile> findLibrary(final PsiFile context, GlobalSearchScope scope) {
+    // todo wouldn't it be better to resolve 'part of XXX' instead?
     final VirtualFile contextVirtualFile = getRealVirtualFile(context);
     if (isLibraryRoot(context)) {
       DartLibraryStatement libraryStatement = null;
