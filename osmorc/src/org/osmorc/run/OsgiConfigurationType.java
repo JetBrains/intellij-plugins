@@ -27,10 +27,12 @@ package org.osmorc.run;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.facet.OsmorcFacetType;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.settings.ProjectSettings;
+import org.osmorc.settings.ApplicationSettings;
 
 /**
  * Configuration type for a bundle run configuration.
@@ -51,7 +53,8 @@ public class OsgiConfigurationType extends ConfigurationTypeBase {
 
       @Override
       public boolean isApplicable(@NotNull Project project) {
-        return ProjectSettings.getInstance(project).getFrameworkInstanceName() != null;
+        return !ApplicationSettings.getInstance().getFrameworkInstanceDefinitions().isEmpty()
+               && ProjectFacetManager.getInstance(project).hasFacets(OsmorcFacetType.ID);
       }
     });
   }
