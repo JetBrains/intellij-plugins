@@ -1,8 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
-import com.google.dart.engine.context.AnalysisContext;
 import com.google.dart.engine.error.AnalysisError;
-import com.intellij.openapi.util.Pair;
 
 public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
   @Override
@@ -68,5 +66,13 @@ public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
 
   public void testCreateMethodInHtml() throws Throwable {
     doTest("The function 'bar' is not defined");
+  }
+
+  public void testAnalyzePart() throws Throwable {
+    final String testName = getTestName(true);
+    myFixture.configureByFiles(testName + ".dart", testName + "_main.dart");
+    final AnalysisError[] errors = getErrorsFromAnnotator();
+    assertEquals(1, errors.length);
+    assertEquals("The function 'incorrect' is not defined", errors[0].getMessage());
   }
 }

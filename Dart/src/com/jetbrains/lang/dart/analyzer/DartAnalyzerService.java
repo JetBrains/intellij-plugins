@@ -8,12 +8,11 @@ import com.google.dart.engine.source.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.Function;
-import com.intellij.util.containers.WeakValueHashMap;
 import com.jetbrains.lang.dart.DartFileType;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -21,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -29,8 +29,9 @@ public class DartAnalyzerService {
 
   private final Project myProject;
 
-  private final Map<Pair<String, VirtualFile>, AnalysisContext> mySdkPathAndPackagesDirToAnalysisContext =
-    new WeakValueHashMap<Pair<String, VirtualFile>, AnalysisContext>();
+  private @Nullable String mySdkPath;
+  private @Nullable VirtualFile myDartPackagesFolder;
+  private @Nullable WeakReference<AnalysisContext> myAnalysisContextRef;
 
   private final Collection<VirtualFile> myCreatedFiles = Collections.synchronizedSet(new THashSet<VirtualFile>());
 
@@ -93,11 +94,16 @@ public class DartAnalyzerService {
   }
 
   @NotNull
-  public AnalysisContext getAnalysisContext(final @NotNull String sdkPath, @Nullable VirtualFile packagesFolder) {
-    final Pair<String, VirtualFile> key = Pair.create(sdkPath, packagesFolder);
-    AnalysisContext context = mySdkPathAndPackagesDirToAnalysisContext.get(key);
+  public AnalysisContext getAnalysisContext(final @NotNull VirtualFile annotatedFile,
+                                            final @NotNull String sdkPath,
+                                            final @Nullable VirtualFile packagesFolder) {
+    AnalysisContext analysisContext = myAnalysisContextRef == null ? null : myAnalysisContextRef.get();
 
-    if (context == null) {
+    if (analysisContext != null && Comparing.equal(sdkPath, mySdkPath) && Comparing.equal(packagesFolder, myDartPackagesFolder)) {
+      applyChangeSet(analysisContext, annotatedFile);
+      myCreatedFiles.clear();
+    }
+    else {
       final DartUriResolver dartUriResolver = new DartUriResolver(new DirectoryBasedDartSdk(new File(sdkPath)));
       final UriResolver fileResolver = new DartFileResolver(myProject);
       final SourceFactory sourceFactory = packagesFolder == null
@@ -105,20 +111,24 @@ public class DartAnalyzerService {
                                           : new SourceFactory(dartUriResolver, fileResolver,
                                                               new PackageUriResolver(new File(packagesFolder.getPath())));
 
-      context = AnalysisEngine.getInstance().createAnalysisContext();
-      context.setSourceFactory(sourceFactory);
-      mySdkPathAndPackagesDirToAnalysisContext.put(key, context);
-    }
-    else {
-      applyChangeSet(context);
-      myCreatedFiles.clear();
+      analysisContext = AnalysisEngine.getInstance().createAnalysisContext();
+      analysisContext.setSourceFactory(sourceFactory);
+
+      mySdkPath = sdkPath;
+      myDartPackagesFolder = packagesFolder;
+      myAnalysisContextRef = new WeakReference<AnalysisContext>(analysisContext);
     }
 
-    return context;
+    return analysisContext;
   }
 
-  private void applyChangeSet(final AnalysisContext context) {
+  private void applyChangeSet(final AnalysisContext context, final VirtualFile annotatedFile) {
     final ChangeSet changeSet = new ChangeSet();
+
+    final DartFileBasedSource source = myFileToSourceMap.get(annotatedFile);
+    if (source != null) {
+      handleDeletedAndOutOfDateSources(changeSet, source);
+    }
 
     handleDeletedAndOutOfDateSources(changeSet, context.getLibrarySources());
     handleDeletedAndOutOfDateSources(changeSet, context.getHtmlSources());
@@ -132,7 +142,7 @@ public class DartAnalyzerService {
     context.applyChanges(changeSet);
   }
 
-  private void handleDeletedAndOutOfDateSources(final ChangeSet changeSet, final Source[] sources) {
+  private void handleDeletedAndOutOfDateSources(final ChangeSet changeSet, final Source... sources) {
     for (final Source source : sources) {
       if (source instanceof DartFileBasedSource) {
         if (!source.exists() || !myFileToSourceMap.containsKey(((DartFileBasedSource)source).getFile())) {
