@@ -28,7 +28,8 @@ public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
     doTest("The method 'bar' is not defined for the class 'Foo'");
   }
 
-  public void testFieldDoesNotHaveAGetter1() throws Throwable {
+  // dartanalyzer bug: error is not reported
+  public void _testFieldDoesNotHaveAGetter1() throws Throwable {
     doTest("There is no such getter 'foo' in 'A'");
   }
 
