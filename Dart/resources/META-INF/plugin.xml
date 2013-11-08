@@ -98,7 +98,6 @@
                          id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
 
     <internalFileTemplate name="Dart Class"/>
-    <internalFileTemplate name="Dart Interface"/>
     <internalFileTemplate name="Dart Empty File"/>
 
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartListVariableMacro"/>
