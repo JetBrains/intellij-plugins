@@ -9,12 +9,11 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.*;
 import com.intellij.util.diff.FlyweightCapableTreeStructure;
 
-import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
+import static com.intellij.lang.parser.GeneratedParserUtilBase._SECTION_GENERAL_;
+import static com.intellij.lang.parser.GeneratedParserUtilBase.adapt_builder_;
+import static com.intellij.lang.parser.GeneratedParserUtilBase.enterErrorRecordingSection;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 public interface DartTokenTypesSets {
   IFileElementType DART_FILE = new IFileElementType("DARTFILE", DartLanguage.INSTANCE);
 
@@ -27,22 +26,68 @@ public interface DartTokenTypesSets {
 
   TokenSet STRINGS = TokenSet.create(RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING, OPEN_QUOTE, CLOSING_QUOTE, REGULAR_STRING_PART);
   TokenSet WHITE_SPACES = TokenSet.create(WHITE_SPACE);
-  TokenSet UNRESERVED = TokenSet.create(ABSTRACT, ASSERT,
-                                        FACTORY, GET, IMPLEMENTS,
-                                        IMPORT, INTERFACE, IS, AS, ON, LIBRARY,
-                                        NEGATE, OPERATOR, SET,
-                                        STATIC, TYPEDEF, WITH);
 
-  TokenSet RESERVED = TokenSet.create(IF, ELSE, TRY, THROW, RETHROW, CATCH, FINALLY, TRUE,
-                                      FALSE, NULL, SWITCH, CASE, DEFAULT,
-                                      BREAK, CONTINUE, DO, WHILE, FOR, IN, VAR,
-                                      FINAL, HASH, SHOW, HIDE, PART, OF,
-                                      RETURN, THIS, SUPER, CLASS, EXTENDS, NEW, CONST);
+  TokenSet RESERVED_WORDS = TokenSet.create(ASSERT,
+                                            BREAK,
+                                            CASE,
+                                            CATCH,
+                                            CLASS,
+                                            CONST,
+                                            CONTINUE,
+                                            DEFAULT,
+                                            DO,
+                                            ELSE,
+                                            EXTENDS,
+                                            FALSE,
+                                            FINAL,
+                                            FINALLY,
+                                            FOR,
+                                            IF,
+                                            IN,
+                                            IS,
+                                            NEW,
+                                            NULL,
+                                            RETHROW,
+                                            RETURN,
+                                            SUPER,
+                                            SWITCH,
+                                            THIS,
+                                            THROW,
+                                            TRUE,
+                                            TRY,
+                                            VAR,
+                                            WHILE,
+                                            WITH,
+
+                                            INTERFACE);
+
+  TokenSet BUILT_IN_IDENTIFIERS = TokenSet.create(ABSTRACT,
+                                                  AS,
+                                                  EXPORT,
+                                                  EXTERNAL,
+                                                  FACTORY,
+                                                  GET,
+                                                  IMPLEMENTS,
+                                                  IMPORT,
+                                                  LIBRARY,
+                                                  OPERATOR,
+                                                  PART,
+                                                  SET,
+                                                  STATIC,
+                                                  TYPEDEF);
+
+  TokenSet TOKENS_HIGHLIGHTED_AS_KEYWORDS = TokenSet.orSet(RESERVED_WORDS,
+                                                           BUILT_IN_IDENTIFIERS,
+                                                           TokenSet.create(ON,
+                                                                           OF,
+                                                                           NATIVE,
+                                                                           SHOW,
+                                                                           HIDE));
 
   TokenSet OPERATORS = TokenSet.create(
     MINUS, MINUS_EQ, MINUS_MINUS, PLUS, PLUS_PLUS, PLUS_EQ, DIV, DIV_EQ, MUL, MUL_EQ, INT_DIV, INT_DIV_EQ, REM_EQ, REM, BIN_NOT, NOT,
     EQ, EQ_EQ, EQ_EQ_EQ, NEQ, NEQ_EQ, GT, GT_EQ, GT_GT_EQ, GT_GT_GT_EQ, LT, LT_EQ, LT_LT, LT_LT_EQ, OR, OR_EQ, OR_OR, XOR, XOR_EQ, AND,
-    AND_EQ, AND_AND, LBRACKET, RBRACKET, NEGATE, AS
+    AND_EQ, AND_AND, LBRACKET, RBRACKET, AS
   );
 
   TokenSet ASSIGNMENT_OPERATORS = TokenSet.create(

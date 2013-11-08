@@ -3180,7 +3180,7 @@ public class DartParser implements PsiParser {
 
   /* ********************************************************** */
   // !('abstract' | 'assert' | 'class' | 'const' | 'extends' | 'factory' | 'final' | 'get'
-  //                                                | 'implements' | 'import' | 'interface' | 'is' | 'library' | 'native' | 'negate'
+  //                                                | 'implements' | 'import' | 'interface' | 'is' | 'library' | 'native'
   //                                                | 'operator' | 'set' | '@' | 'static' | 'typedef' | 'var' | '}' | <<nonStrictID>>)
   static boolean interface_member_definition_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "interface_member_definition_recover")) return false;
@@ -3192,7 +3192,7 @@ public class DartParser implements PsiParser {
   }
 
   // 'abstract' | 'assert' | 'class' | 'const' | 'extends' | 'factory' | 'final' | 'get'
-  //                                                | 'implements' | 'import' | 'interface' | 'is' | 'library' | 'native' | 'negate'
+  //                                                | 'implements' | 'import' | 'interface' | 'is' | 'library' | 'native'
   //                                                | 'operator' | 'set' | '@' | 'static' | 'typedef' | 'var' | '}' | <<nonStrictID>>
   private static boolean interface_member_definition_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "interface_member_definition_recover_0")) return false;
@@ -3212,7 +3212,6 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, IS);
     if (!result_) result_ = consumeToken(builder_, LIBRARY);
     if (!result_) result_ = consumeToken(builder_, NATIVE);
-    if (!result_) result_ = consumeToken(builder_, NEGATE);
     if (!result_) result_ = consumeToken(builder_, OPERATOR);
     if (!result_) result_ = consumeToken(builder_, SET);
     if (!result_) result_ = consumeToken(builder_, AT);
@@ -5112,7 +5111,7 @@ public class DartParser implements PsiParser {
   //                               | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'var' | 'while' | '{' | '}' | '~'
   //                               | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
   //                               | "abstract" | "assert" | "class"  | "extends" | "factory" | "get" | "implements" | "import" | "interface"
-  //                               | "is" | "@" | "library" | "native" | "negate" | "as" | "on" | "set" | "static" | "typedef" | "operator")
+  //                               | "is" | "@" | "library" | "native" | "as" | "on" | "set" | "static" | "typedef" | "operator")
   static boolean statement_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement_recover")) return false;
     boolean result_ = false;
@@ -5127,7 +5126,7 @@ public class DartParser implements PsiParser {
   //                               | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'var' | 'while' | '{' | '}' | '~'
   //                               | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
   //                               | "abstract" | "assert" | "class"  | "extends" | "factory" | "get" | "implements" | "import" | "interface"
-  //                               | "is" | "@" | "library" | "native" | "negate" | "as" | "on" | "set" | "static" | "typedef" | "operator"
+  //                               | "is" | "@" | "library" | "native" | "as" | "on" | "set" | "static" | "typedef" | "operator"
   private static boolean statement_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement_recover_0")) return false;
     boolean result_ = false;
@@ -5189,7 +5188,6 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, AT);
     if (!result_) result_ = consumeToken(builder_, LIBRARY);
     if (!result_) result_ = consumeToken(builder_, NATIVE);
-    if (!result_) result_ = consumeToken(builder_, NEGATE);
     if (!result_) result_ = consumeToken(builder_, AS);
     if (!result_) result_ = consumeToken(builder_, ON);
     if (!result_) result_ = consumeToken(builder_, SET);
@@ -6043,7 +6041,6 @@ public class DartParser implements PsiParser {
   //                         | bitwiseOperator
   //                         | '=='  // Disallow negative '&' === equality checks.
   //                         | '~'   // Disallow ! operator.
-  //                         | 'negate'
   //                         | '[' ']' '='?
   public static boolean userDefinableOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "userDefinableOperator")) return false;
@@ -6054,9 +6051,8 @@ public class DartParser implements PsiParser {
         && !nextTokenIs(builder_, LT_EQ) && !nextTokenIs(builder_, EQ_EQ)
         && !nextTokenIs(builder_, GT) && !nextTokenIs(builder_, GT_EQ)
         && !nextTokenIs(builder_, LBRACKET) && !nextTokenIs(builder_, XOR)
-        && !nextTokenIs(builder_, NEGATE) && !nextTokenIs(builder_, OR)
-        && !nextTokenIs(builder_, BIN_NOT) && !nextTokenIs(builder_, INT_DIV)
-        && replaceVariants(builder_, 18, "<user definable operator>")) return false;
+        && !nextTokenIs(builder_, OR) && !nextTokenIs(builder_, BIN_NOT)
+        && !nextTokenIs(builder_, INT_DIV) && replaceVariants(builder_, 17, "<user definable operator>")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<user definable operator>");
     result_ = multiplicativeOperator(builder_, level_ + 1);
@@ -6066,27 +6062,26 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = bitwiseOperator(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, EQ_EQ);
     if (!result_) result_ = consumeToken(builder_, BIN_NOT);
-    if (!result_) result_ = consumeToken(builder_, NEGATE);
-    if (!result_) result_ = userDefinableOperator_8(builder_, level_ + 1);
+    if (!result_) result_ = userDefinableOperator_7(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, USER_DEFINABLE_OPERATOR, result_, false, null);
     return result_;
   }
 
   // '[' ']' '='?
-  private static boolean userDefinableOperator_8(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "userDefinableOperator_8")) return false;
+  private static boolean userDefinableOperator_7(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "userDefinableOperator_7")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, LBRACKET);
     result_ = result_ && consumeToken(builder_, RBRACKET);
-    result_ = result_ && userDefinableOperator_8_2(builder_, level_ + 1);
+    result_ = result_ && userDefinableOperator_7_2(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // '='?
-  private static boolean userDefinableOperator_8_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "userDefinableOperator_8_2")) return false;
+  private static boolean userDefinableOperator_7_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "userDefinableOperator_7_2")) return false;
     consumeToken(builder_, EQ);
     return true;
   }

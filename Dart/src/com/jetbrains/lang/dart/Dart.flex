@@ -135,20 +135,25 @@ FLOAT_LITERAL=(({FLOATING_POINT_LITERAL1})|({FLOATING_POINT_LITERAL2}))
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {SINGLE_LINE_COMMENT}          { return SINGLE_LINE_COMMENT; }
 <YYINITIAL>                      {PROGRAM_COMMENT}              { return SINGLE_LINE_COMMENT; }
 
+// reserved words
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "assert"               { return ASSERT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "break"                { return BREAK; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "case"                 { return CASE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "catch"                { return CATCH; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "class"                { return CLASS; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "const"                { return CONST; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "continue"             { return CONTINUE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "default"              { return DEFAULT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "do"                   { return DO; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "else"                 { return ELSE; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "extends"              { return EXTENDS; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "false"                { return FALSE; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "finally"              { return FINALLY; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "final"                { return FINAL; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "finally"              { return FINALLY; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "for"                  { return FOR; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "if"                   { return IF; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "in"                   { return IN; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "is"                   { return IS; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "new"                  { return NEW; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "null"                 { return NULL; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "rethrow"              { return RETHROW; }
@@ -161,33 +166,32 @@ FLOAT_LITERAL=(({FLOATING_POINT_LITERAL1})|({FLOATING_POINT_LITERAL2}))
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "try"                  { return TRY; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "var"                  { return VAR; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "while"                { return WHILE; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "class"                { return CLASS; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "extends"              { return EXTENDS; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "with"                 { return WITH; }
 
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "interface"            { return INTERFACE; } // todo there are no interfaces in Dart
+
+// BUILT_IN_IDENTIFIER (todo: can be used as normal identifiers)
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "abstract"             { return ABSTRACT; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "assert"               { return ASSERT; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "as"                   { return AS; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "export"               { return EXPORT; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "external"             { return EXTERNAL; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "factory"              { return FACTORY; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "get"                  { return GET; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "implements"           { return IMPLEMENTS; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "interface"            { return INTERFACE; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "is"                   { return IS; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "as"                   { return AS; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "on"                   { return ON; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "of"                   { return OF; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "negate"               { return NEGATE; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "import"               { return IMPORT; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "library"              { return LIBRARY; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "operator"             { return OPERATOR; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "part"                 { return PART; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "set"                  { return SET; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "static"               { return STATIC; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "typedef"              { return TYPEDEF; }
+
+// other (todo: can be used as normal identifiers)
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "on"                   { return ON; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "of"                   { return OF; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "native"               { return NATIVE; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "import"               { return IMPORT; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "export"               { return EXPORT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "show"                 { return SHOW; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "hide"                 { return HIDE; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "part"                 { return PART; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "library"              { return LIBRARY; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "external"             { return EXTERNAL; }
 
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {IDENTIFIER}           { return IDENTIFIER; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "["                { return LBRACKET; }

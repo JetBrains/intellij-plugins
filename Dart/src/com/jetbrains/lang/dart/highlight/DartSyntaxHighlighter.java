@@ -19,8 +19,7 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
   private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<IElementType, TextAttributesKey>();
 
   static {
-    fillMap(ATTRIBUTES, RESERVED, DartSyntaxHighlighterColors.KEYWORD);
-    fillMap(ATTRIBUTES, UNRESERVED, DartSyntaxHighlighterColors.KEYWORD);
+    fillMap(ATTRIBUTES, TOKENS_HIGHLIGHTED_AS_KEYWORDS, DartSyntaxHighlighterColors.KEYWORD);
 
     fillMap(ATTRIBUTES, BINARY_OPERATORS, DartSyntaxHighlighterColors.OPERATION_SIGN);
     fillMap(ATTRIBUTES, LOGIC_OPERATORS, DartSyntaxHighlighterColors.OPERATION_SIGN);
