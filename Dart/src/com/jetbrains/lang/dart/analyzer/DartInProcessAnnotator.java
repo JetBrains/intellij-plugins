@@ -44,8 +44,8 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
   public Pair<DartFileBasedSource, AnalysisContext> collectInformation(@NotNull final PsiFile psiFile) {
     final Project project = psiFile.getProject();
 
-    final VirtualFile annotatetFile = DartResolveUtil.getRealVirtualFile(psiFile);
-    if (annotatetFile == null) return null;
+    final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
+    if (annotatedFile == null) return null;
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
     if (module == null) return null;
@@ -61,17 +61,17 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
 
     if (psiFile instanceof XmlFile && !containsDartEmbeddedContent((XmlFile)psiFile)) return null;
 
-    if (FileUtil.isAncestor(sdkDir.getPath(), annotatetFile.getPath(), true)) return null;
+    if (FileUtil.isAncestor(sdkDir.getPath(), annotatedFile.getPath(), true)) return null;
 
-    final VirtualFile packagesFolder = DartResolveUtil.getDartPackagesFolder(project, annotatetFile);
+    final VirtualFile packagesFolder = DartResolveUtil.getDartPackagesFolder(project, annotatedFile);
 
-    if (packagesFolder != null && VfsUtilCore.isAncestor(packagesFolder, annotatetFile, true)) return null;
+    if (packagesFolder != null && VfsUtilCore.isAncestor(packagesFolder, annotatedFile, true)) return null;
 
     final List<VirtualFile> libraries = DartResolveUtil.findLibrary(psiFile, GlobalSearchScope.projectScope(project));
-    final VirtualFile fileToAnalyze = libraries.isEmpty() || libraries.contains(annotatetFile) ? annotatetFile : libraries.get(0);
+    final VirtualFile fileToAnalyze = libraries.isEmpty() || libraries.contains(annotatedFile) ? annotatedFile : libraries.get(0);
 
     return Pair.create(DartFileBasedSource.getSource(project, fileToAnalyze),
-                       DartAnalyzerService.getInstance(project).getAnalysisContext(annotatetFile, sdkPath, packagesFolder));
+                       DartAnalyzerService.getInstance(project).getAnalysisContext(annotatedFile, sdkPath, packagesFolder));
   }
 
   private static boolean containsDartEmbeddedContent(final XmlFile file) {
