@@ -432,6 +432,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitRethrowStatement(@NotNull DartRethrowStatement o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitReturnStatement(@NotNull DartReturnStatement o) {
     visitPsiCompositeElement(o);
   }

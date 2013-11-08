@@ -14,7 +14,10 @@ class Baz extends Kuk implements A, B, C {
   void baz() {
     if (42) if (42) 42; else throw 42;
     switch (42) { case 42: return 42; default: break; }
-    try { } catch (var e) { }
+    try { } catch (var e) {
+     rethrow
+     rethrow;
+    }
     int kongy(x,y) { return 42; }  // This is a comment.
     for (var i in e) {}
     for (var i in e.baz) {}

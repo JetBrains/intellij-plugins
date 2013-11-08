@@ -33,7 +33,7 @@ public interface DartTokenTypesSets {
                                         NEGATE, OPERATOR, SET,
                                         STATIC, TYPEDEF, WITH);
 
-  TokenSet RESERVED = TokenSet.create(IF, ELSE, TRY, THROW, CATCH, FINALLY, TRUE,
+  TokenSet RESERVED = TokenSet.create(IF, ELSE, TRY, THROW, RETHROW, CATCH, FINALLY, TRUE,
                                       FALSE, NULL, SWITCH, CASE, DEFAULT,
                                       BREAK, CONTINUE, DO, WHILE, FOR, IN, VAR,
                                       FINAL, HASH, SHOW, HIDE, PART, OF,

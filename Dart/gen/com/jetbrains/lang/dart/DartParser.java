@@ -323,6 +323,9 @@ public class DartParser implements PsiParser {
     else if (root_ == RELATIONAL_OPERATOR) {
       result_ = relationalOperator(builder_, level_ + 1);
     }
+    else if (root_ == RETHROW_STATEMENT) {
+      result_ = rethrowStatement(builder_, level_ + 1);
+    }
     else if (root_ == RETURN_STATEMENT) {
       result_ = returnStatement(builder_, level_ + 1);
     }
@@ -1835,7 +1838,7 @@ public class DartParser implements PsiParser {
   //                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '>>>=' | '?' | '[' | ']'
   //                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
   //                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
-  //                                | 'for' | 'get' | 'if' | 'in' | 'interface' | 'native' | 'new' | 'null' | 'operator'
+  //                                | 'for' | 'get' | 'if' | 'in' | 'interface' | 'native' | 'new' | 'null' | 'operator' | 'rethrow'
   //                                | 'return' | 'set' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try'
   //                                | 'typedef' | 'var' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/=' | '.'
   //                                | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
@@ -1854,7 +1857,7 @@ public class DartParser implements PsiParser {
   //                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '>>>=' | '?' | '[' | ']'
   //                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
   //                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
-  //                                | 'for' | 'get' | 'if' | 'in' | 'interface' | 'native' | 'new' | 'null' | 'operator'
+  //                                | 'for' | 'get' | 'if' | 'in' | 'interface' | 'native' | 'new' | 'null' | 'operator' | 'rethrow'
   //                                | 'return' | 'set' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try'
   //                                | 'typedef' | 'var' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/=' | '.'
   //                                | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
@@ -1929,6 +1932,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, NEW);
     if (!result_) result_ = consumeToken(builder_, NULL);
     if (!result_) result_ = consumeToken(builder_, OPERATOR);
+    if (!result_) result_ = consumeToken(builder_, RETHROW);
     if (!result_) result_ = consumeToken(builder_, RETURN);
     if (!result_) result_ = consumeToken(builder_, SET);
     if (!result_) result_ = consumeToken(builder_, STATIC);
@@ -1957,14 +1961,14 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, RAW_TRIPLE_QUOTED_STRING);
     if (!result_) result_ = consumeToken(builder_, LONG_TEMPLATE_ENTRY_END);
     if (!result_) result_ = shiftRightOperator(builder_, level_ + 1);
-    if (!result_) result_ = expression_recover_0_94(builder_, level_ + 1);
+    if (!result_) result_ = expression_recover_0_95(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // '.' '.'
-  private static boolean expression_recover_0_94(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "expression_recover_0_94")) return false;
+  private static boolean expression_recover_0_95(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "expression_recover_0_95")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
@@ -4167,11 +4171,12 @@ public class DartParser implements PsiParser {
   /* ********************************************************** */
   // block // Guard to break tie with map literal.
   //                                | metadata* functionDeclarationWithBody ';'?
+  //                                | forStatement ';'?
   //                                | whileStatement ';'?
   //                                | doWhileStatement ';'?
-  //                                | forStatement ';'?
-  //                                | ifStatement ';'?
   //                                | switchStatement ';'?
+  //                                | ifStatement ';'?
+  //                                | rethrowStatement
   //                                | tryStatement
   //                                | breakStatement
   //                                | continueStatement
@@ -4191,6 +4196,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = nonLabelledStatement_4(builder_, level_ + 1);
     if (!result_) result_ = nonLabelledStatement_5(builder_, level_ + 1);
     if (!result_) result_ = nonLabelledStatement_6(builder_, level_ + 1);
+    if (!result_) result_ = rethrowStatement(builder_, level_ + 1);
     if (!result_) result_ = tryStatement(builder_, level_ + 1);
     if (!result_) result_ = breakStatement(builder_, level_ + 1);
     if (!result_) result_ = continueStatement(builder_, level_ + 1);
@@ -4238,12 +4244,12 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // whileStatement ';'?
+  // forStatement ';'?
   private static boolean nonLabelledStatement_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement_2")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = whileStatement(builder_, level_ + 1);
+    result_ = forStatement(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement_2_1(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -4256,12 +4262,12 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // doWhileStatement ';'?
+  // whileStatement ';'?
   private static boolean nonLabelledStatement_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement_3")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = doWhileStatement(builder_, level_ + 1);
+    result_ = whileStatement(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement_3_1(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -4274,12 +4280,12 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // forStatement ';'?
+  // doWhileStatement ';'?
   private static boolean nonLabelledStatement_4(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement_4")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = forStatement(builder_, level_ + 1);
+    result_ = doWhileStatement(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement_4_1(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -4292,12 +4298,12 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // ifStatement ';'?
+  // switchStatement ';'?
   private static boolean nonLabelledStatement_5(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement_5")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = ifStatement(builder_, level_ + 1);
+    result_ = switchStatement(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement_5_1(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -4310,12 +4316,12 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // switchStatement ';'?
+  // ifStatement ';'?
   private static boolean nonLabelledStatement_6(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement_6")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = switchStatement(builder_, level_ + 1);
+    result_ = ifStatement(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement_6_1(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -4736,6 +4742,21 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // 'rethrow' ';'
+  public static boolean rethrowStatement(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "rethrowStatement")) return false;
+    if (!nextTokenIs(builder_, RETHROW)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, RETHROW);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && consumeToken(builder_, SEMICOLON);
+    exit_section_(builder_, level_, marker_, RETHROW_STATEMENT, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
   // 'return' expression? ';'
   public static boolean returnStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "returnStatement")) return false;
@@ -5087,7 +5108,7 @@ public class DartParser implements PsiParser {
 
   /* ********************************************************** */
   // !('!' | '(' | ')' | '+' | '++' | '-' | '--' | ';' | '<' | '[' | 'assert' | 'break' | 'case' | 'const'
-  //                               | 'continue' | 'default' | 'do' | 'else' | 'false' | 'final' | 'for' | 'if' | 'new' | 'null' | 'return'
+  //                               | 'continue' | 'default' | 'do' | 'else' | 'false' | 'final' | 'for' | 'if' | 'new' | 'null' | 'rethrow' | 'return'
   //                               | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'var' | 'while' | '{' | '}' | '~'
   //                               | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
   //                               | "abstract" | "assert" | "class"  | "extends" | "factory" | "get" | "implements" | "import" | "interface"
@@ -5102,7 +5123,7 @@ public class DartParser implements PsiParser {
   }
 
   // '!' | '(' | ')' | '+' | '++' | '-' | '--' | ';' | '<' | '[' | 'assert' | 'break' | 'case' | 'const'
-  //                               | 'continue' | 'default' | 'do' | 'else' | 'false' | 'final' | 'for' | 'if' | 'new' | 'null' | 'return'
+  //                               | 'continue' | 'default' | 'do' | 'else' | 'false' | 'final' | 'for' | 'if' | 'new' | 'null' | 'rethrow' | 'return'
   //                               | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'var' | 'while' | '{' | '}' | '~'
   //                               | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
   //                               | "abstract" | "assert" | "class"  | "extends" | "factory" | "get" | "implements" | "import" | "interface"
@@ -5135,6 +5156,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, IF);
     if (!result_) result_ = consumeToken(builder_, NEW);
     if (!result_) result_ = consumeToken(builder_, NULL);
+    if (!result_) result_ = consumeToken(builder_, RETHROW);
     if (!result_) result_ = consumeToken(builder_, RETURN);
     if (!result_) result_ = consumeToken(builder_, STATIC);
     if (!result_) result_ = consumeToken(builder_, SUPER);

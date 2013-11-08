@@ -41,6 +41,9 @@ public interface DartWhileStatement extends DartPsiCompositeElement {
   List<DartMetadata> getMetadataList();
 
   @Nullable
+  DartRethrowStatement getRethrowStatement();
+
+  @Nullable
   DartReturnStatement getReturnStatement();
 
   @Nullable

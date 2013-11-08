@@ -37,6 +37,7 @@
   IN="in"
   NEW="new"
   NULL="null"
+  RETHROW="rethrow"
   RETURN="return"
   SUPER="super"
   SWITCH="switch"
@@ -365,7 +366,7 @@ block ::= '{' statements '}' {pin=1}
 statements ::= statement* {implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 private statement ::= label* nonLabelledStatement {pin=2 recoverUntil="statement_recover"}
 private statement_recover ::= !('!' | '(' | ')' | '+' | '++' | '-' | '--' | ';' | '<' | '[' | 'assert' | 'break' | 'case' | 'const'
-                              | 'continue' | 'default' | 'do' | 'else' | 'false' | 'final' | 'for' | 'if' | 'new' | 'null' | 'return'
+                              | 'continue' | 'default' | 'do' | 'else' | 'false' | 'final' | 'for' | 'if' | 'new' | 'null' | 'rethrow' | 'return'
                               | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'var' | 'while' | '{' | '}' | '~'
                               | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
                               | "abstract" | "assert" | "class"  | "extends" | "factory" | "get" | "implements" | "import" | "interface"
@@ -373,11 +374,12 @@ private statement_recover ::= !('!' | '(' | ')' | '+' | '++' | '-' | '--' | ';' 
 
 private nonLabelledStatement ::= block // Guard to break tie with map literal.
                                | metadata* functionDeclarationWithBody ';'?
+                               | forStatement ';'?
                                | whileStatement ';'?
                                | doWhileStatement ';'?
-                               | forStatement ';'?
-                               | ifStatement ';'?
                                | switchStatement ';'?
+                               | ifStatement ';'?
+                               | rethrowStatement
                                | tryStatement
                                | breakStatement
                                | continueStatement
@@ -402,6 +404,7 @@ assertStatement ::= 'assert' '(' expressionWithRecoverUntilParen ')' ';' {pin=1}
 breakStatement ::= 'break' referenceExpression? ';' {pin=1}
 continueStatement ::= 'continue' referenceExpression? ';' {pin=1}
 returnStatement ::= 'return' expression? ';' {pin=1}
+rethrowStatement ::= 'rethrow' ';' {pin=1}
 private throwStatementWithSemicolon ::= throwStatement ';' {pin=1}
 throwStatement ::= 'throw' expression? {pin=1} // in dart spec this is 'throw expression', not 'throw statement'
 
@@ -453,7 +456,7 @@ private expression_recover ::= !('!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | 
                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '>>>=' | '?' | '[' | ']'
                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
-                               | 'for' | 'get' | 'if' | 'in' | 'interface' | 'native' | 'new' | 'null' | 'operator'
+                               | 'for' | 'get' | 'if' | 'in' | 'interface' | 'native' | 'new' | 'null' | 'operator' | 'rethrow'
                                | 'return' | 'set' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try'
                                | 'typedef' | 'var' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/=' | '.'
                                | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING

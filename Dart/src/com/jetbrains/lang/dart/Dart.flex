@@ -133,7 +133,7 @@ FLOAT_LITERAL=(({FLOATING_POINT_LITERAL1})|({FLOATING_POINT_LITERAL2}))
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {DOC_COMMENT}                  { return DOC_COMMENT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {SINGLE_LINE_DOC_COMMENT}      { return DOC_COMMENT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {SINGLE_LINE_COMMENT}          { return SINGLE_LINE_COMMENT; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> {PROGRAM_COMMENT}              { return SINGLE_LINE_COMMENT; }
+<YYINITIAL>                      {PROGRAM_COMMENT}              { return SINGLE_LINE_COMMENT; }
 
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "break"                { return BREAK; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "case"                 { return CASE; }
@@ -151,6 +151,7 @@ FLOAT_LITERAL=(({FLOATING_POINT_LITERAL1})|({FLOATING_POINT_LITERAL2}))
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "in"                   { return IN; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "new"                  { return NEW; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "null"                 { return NULL; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "rethrow"              { return RETHROW; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "return"               { return RETURN; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "super"                { return SUPER; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "switch"               { return SWITCH; }

@@ -41,6 +41,9 @@ public interface DartStatements extends DartExecutionScope {
   List<DartMetadata> getMetadataList();
 
   @NotNull
+  List<DartRethrowStatement> getRethrowStatementList();
+
+  @NotNull
   List<DartReturnStatement> getReturnStatementList();
 
   @NotNull

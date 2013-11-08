@@ -41,6 +41,9 @@ public interface DartParenthesizedExpression extends DartExpression, DartReferen
   List<DartMetadata> getMetadataList();
 
   @Nullable
+  DartRethrowStatement getRethrowStatement();
+
+  @Nullable
   DartReturnStatement getReturnStatement();
 
   @Nullable

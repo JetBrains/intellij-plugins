@@ -44,6 +44,9 @@ public interface DartForStatement extends DartPsiCompositeElement {
   List<DartMetadata> getMetadataList();
 
   @Nullable
+  DartRethrowStatement getRethrowStatement();
+
+  @Nullable
   DartReturnStatement getReturnStatement();
 
   @Nullable

@@ -90,6 +90,12 @@ public class DartDoWhileStatementImpl extends DartPsiCompositeElementImpl implem
 
   @Override
   @Nullable
+  public DartRethrowStatement getRethrowStatement() {
+    return findChildByClass(DartRethrowStatement.class);
+  }
+
+  @Override
+  @Nullable
   public DartReturnStatement getReturnStatement() {
     return findChildByClass(DartReturnStatement.class);
   }
