@@ -1,4 +1,0 @@
-AnalyzerMessage{virtualFile=null, line=37, offset=14, length=14, type=WARNING, message='missing argument of type Point2D', subSystem=STATIC_TYPE, errorCode='MISSING_ARGUMENT'}
-AnalyzerMessage{virtualFile=null, line=37, offset=29, length=1, type=WARNING, message='"BrushEnd" has no method named "operator +"', subSystem=STATIC_TYPE, errorCode='INTERFACE_HAS_NO_METHOD_NAMED'}
-AnalyzerMessage{virtualFile=null, line=61, offset=31, length=13, type=WARNING, message=''Point2D' is not assignable to 'num'', subSystem=STATIC_TYPE, errorCode='TYPE_NOT_ASSIGNMENT_COMPATIBLE'}
-AnalyzerMessage{virtualFile=null, line=61, offset=26, length=18, type=WARNING, message=''num' is not assignable to 'Point2D'', subSystem=STATIC_TYPE, errorCode='TYPE_NOT_ASSIGNMENT_COMPATIBLE'}

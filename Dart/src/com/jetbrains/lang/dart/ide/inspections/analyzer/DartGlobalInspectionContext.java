@@ -1,43 +1,41 @@
 package com.jetbrains.lang.dart.ide.inspections.analyzer;
 
-import com.intellij.analysis.AnalysisScope;
+import com.google.dart.engine.context.AnalysisContext;
+import com.google.dart.engine.error.AnalysisError;
 import com.intellij.codeInspection.GlobalInspectionContext;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ex.Tools;
 import com.intellij.codeInspection.lang.GlobalInspectionContextExtension;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressWrapper;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.SearchScope;
-import com.jetbrains.lang.dart.analyzer.AnalyzerMessage;
-import com.jetbrains.lang.dart.analyzer.DartAnalyzerDriver;
-import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.analyzer.DartFileBasedSource;
+import com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class DartGlobalInspectionContext implements GlobalInspectionContextExtension<DartGlobalInspectionContext> {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.inspections.analyzer.DartGlobalInspectionContext");
+  static final Key<DartGlobalInspectionContext> KEY = Key.create("DartGlobalInspectionContext");
 
-  public static final Key<DartGlobalInspectionContext> KEY = Key.create("DartGlobalInspectionContext");
+  private final Map<VirtualFile, AnalysisError[]> libraryRoot2Errors = new THashMap<VirtualFile, AnalysisError[]>();
 
-  private final Map<VirtualFile, List<AnalyzerMessage>> libraryRoot2Errors = new THashMap<VirtualFile, List<AnalyzerMessage>>();
-
-  public Map<VirtualFile, List<AnalyzerMessage>> getLibraryRoot2Errors() {
+  public Map<VirtualFile, AnalysisError[]> getLibraryRoot2Errors() {
     return libraryRoot2Errors;
   }
 
@@ -47,53 +45,44 @@ public class DartGlobalInspectionContext implements GlobalInspectionContextExten
     return KEY;
   }
 
-
   @Override
-  public void performPreRunActivities(@NotNull List<Tools> globalTools, @NotNull List<Tools> localTools, @NotNull GlobalInspectionContext context) {
-    final Project project = context.getProject();
-    AnalysisScope scope = context.getRefManager().getScope();
-    SearchScope searchScope = scope == null ? GlobalSearchScope.EMPTY_SCOPE : scope.toSearchScope();
-    final GlobalSearchScope globalSearchScope = (GlobalSearchScope)searchScope.union(GlobalSearchScope.EMPTY_SCOPE);
-    final Set<String> allLibraryNames = ApplicationManager.getApplication().runReadAction(new Computable<Set<String>>() {
-      @Override
-      public Set<String> compute() {
-        return DartLibraryIndex.getAllLibraryNames(project);
-      }
-    });
-    List<VirtualFile> libraryRoots = new ArrayList<VirtualFile>();
+  public void performPreRunActivities(@NotNull List<Tools> globalTools,
+                                      @NotNull List<Tools> localTools,
+                                      @NotNull GlobalInspectionContext context) {
+    setIndicatorText("Looking for Dart files...");
 
-    setIndicatorText("Finding Dart libraries");
-    for (String libraryName : allLibraryNames) {
-      libraryRoots.addAll(DartLibraryIndex.findSingleLibraryClass(libraryName, globalSearchScope));
-    }
+    final GlobalSearchScope scope = GlobalSearchScope.EMPTY_SCOPE.union(context.getRefManager().getScope().toSearchScope());
+    final Collection<VirtualFile> dartFiles = FileTypeIndex.getFiles(DartFileType.INSTANCE, scope);
 
-    setIndicatorText("Running Dart Analyzer");
-
-    for (VirtualFile libraryRoot : libraryRoots) {
-      analyzeLibrary(libraryRoot, project);
+    for (VirtualFile dartFile : dartFiles) {
+      analyzeFile(dartFile, context.getProject());
     }
   }
 
-  private void analyzeLibrary(@NotNull VirtualFile libraryRoot, @NotNull Project project) {
-    Module module = ModuleUtilCore.findModuleForFile(libraryRoot, project);
-    if (module == null) {
-      LOG.info("Cannot find module for: " + libraryRoot.getPath());
+  private void analyzeFile(@NotNull final VirtualFile virtualFile, @NotNull final Project project) {
+    final DartInProcessAnnotator annotator = new DartInProcessAnnotator();
+
+    final Pair<DartFileBasedSource, AnalysisContext> sourceAndContext =
+      ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<DartFileBasedSource, AnalysisContext>>() {
+        @Nullable
+        public Pair<DartFileBasedSource, AnalysisContext> compute() {
+          final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+          if (psiFile == null) return null;
+          return annotator.collectInformation(psiFile);
+        }
+      });
+
+    if (sourceAndContext == null) {
       return;
     }
 
-    DartSettings settings = DartSettings.getSettingsForModule(module);
-    final VirtualFile analyzer = settings == null ? null : settings.getAnalyzer();
-    final DartAnalyzerDriver analyzerDriver =
-      analyzer == null ? null : new DartAnalyzerDriver(module.getProject(), analyzer, settings.getSdkPath(), libraryRoot);
+    setIndicatorText("Analyzing " + virtualFile.getName() + "...");
 
-    setIndicatorText("Analyzing library root: " + libraryRoot.getName());
+    final AnalysisContext analysisContext = annotator.doAnnotate(sourceAndContext);
+    if (analysisContext == null) return;
 
-    if (analyzer == null) {
-      LOG.info("Cannot run analyzer for: " + libraryRoot.getPath());
-      return;
-    }
 
-    libraryRoot2Errors.put(libraryRoot, analyzerDriver.analyze());
+    libraryRoot2Errors.put(virtualFile, analysisContext.getErrors(DartFileBasedSource.getSource(project, virtualFile)).getErrors());
   }
 
   private static void setIndicatorText(String text) {
