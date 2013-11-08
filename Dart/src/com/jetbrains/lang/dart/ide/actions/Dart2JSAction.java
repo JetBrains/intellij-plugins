@@ -15,11 +15,10 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.actions.ui.Dart2JSSettingsDialog;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
@@ -29,9 +28,6 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class Dart2JSAction extends AnAction {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.actions.Dart2JSAction");
 
@@ -99,6 +95,12 @@ public class Dart2JSAction extends AnAction {
 
         try {
           final String output = ScriptRunnerUtil.getProcessOutput(command);
+
+          final VirtualFile folder = LocalFileSystem.getInstance().findFileByPath(PathUtil.getParentPath(dialog.getInputPath()));
+          if (folder != null) {
+            folder.refresh(true, false);
+          }
+
           ProgressManager.progress("");
           LOG.debug(output);
           boolean error = !output.isEmpty();
@@ -113,13 +115,6 @@ public class Dart2JSAction extends AnAction {
                                                     DartBundle.message("dart2js.title"),
                                                     DartBundle.message("dart2js.js.file.created", jsFilePath),
                                                     NotificationType.INFORMATION));
-
-          final String parentDir = VfsUtil.getParentDir(dialog.getInputPath());
-          assert parentDir != null;
-          final VirtualFile outputParentVirtualFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(parentDir));
-          if (outputParentVirtualFile != null) {
-            outputParentVirtualFile.refresh(true, false);
-          }
         }
         catch (ExecutionException ex) {
           LOG.error(ex);
