@@ -211,7 +211,13 @@ Dart File
                     BLOCK
                       PsiElement({)('{')
                       STATEMENTS
-                        <empty list>
+                        RETHROW_STATEMENT
+                          PsiElement(rethrow)('rethrow')
+                        PsiErrorElement:';' expected, got 'rethrow'
+                          <empty list>
+                        RETHROW_STATEMENT
+                          PsiElement(rethrow)('rethrow')
+                          PsiElement(;)(';')
                       PsiElement(})('}')
                 FUNCTION_DECLARATION_WITH_BODY
                   RETURN_TYPE

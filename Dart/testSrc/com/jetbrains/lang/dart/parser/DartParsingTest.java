@@ -5,9 +5,6 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartParserDefinition;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartParsingTest extends ParsingTestCase {
   public DartParsingTest() {
     super("parsing", DartFileType.DEFAULT_EXTENSION, new DartParserDefinition());

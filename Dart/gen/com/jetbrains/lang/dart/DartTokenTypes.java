@@ -109,6 +109,7 @@ public interface DartTokenTypes {
   IElementType REDIRECTION = new DartElementType("REDIRECTION");
   IElementType REFERENCE_EXPRESSION = new DartElementType("REFERENCE_EXPRESSION");
   IElementType RELATIONAL_OPERATOR = new DartElementType("RELATIONAL_OPERATOR");
+  IElementType RETHROW_STATEMENT = new DartElementType("RETHROW_STATEMENT");
   IElementType RETURN_STATEMENT = new DartElementType("RETURN_STATEMENT");
   IElementType RETURN_TYPE = new DartElementType("RETURN_TYPE");
   IElementType SETTER_DECLARATION = new DartElementType("SETTER_DECLARATION");
@@ -239,6 +240,7 @@ public interface DartTokenTypes {
   IElementType REGULAR_STRING_PART = new DartElementType("REGULAR_STRING_PART");
   IElementType REM = new DartElementType("%");
   IElementType REM_EQ = new DartElementType("%=");
+  IElementType RETHROW = new DartElementType("rethrow");
   IElementType RETURN = new DartElementType("return");
   IElementType RPAREN = new DartElementType(")");
   IElementType SEMICOLON = new DartElementType(";");
@@ -564,6 +566,9 @@ public interface DartTokenTypes {
       }
       else if (type == RELATIONAL_OPERATOR) {
         return new DartRelationalOperatorImpl(node);
+      }
+      else if (type == RETHROW_STATEMENT) {
+        return new DartRethrowStatementImpl(node);
       }
       else if (type == RETURN_STATEMENT) {
         return new DartReturnStatementImpl(node);
