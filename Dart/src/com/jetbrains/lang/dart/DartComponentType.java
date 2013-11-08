@@ -8,77 +8,34 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 public enum DartComponentType {
-  CLASS(0) {
-    @Override
-    public Icon getIcon() {
-      return DartIcons.Class_dart;
-    }
-  }, INTERFACE(1) {
-    @Override
-    public Icon getIcon() {
-      return DartIcons.Interface_dart;
-    }
-  }, FUNCTION(2) {
-    @Override
-    public Icon getIcon() {
-      return DartIcons.Function_dart;
-    }
-  }, METHOD(3) {
-    @Override
-    public Icon getIcon() {
-      return DartIcons.Method_dart;
-    }
-  }, VARIABLE(4) {
-    @Override
-    public Icon getIcon() {
-      return DartIcons.Variable_dart;
-    }
-  }, FIELD(5) {
-    @Override
-    public Icon getIcon() {
-      return DartIcons.Field_dart;
-    }
-  }, PARAMETER(6) {
-    @Override
-    public Icon getIcon() {
-      return DartIcons.Parameter_dart;
-    }
-  }, TYPEDEF(7) {
-    @Override
-    public Icon getIcon() {
-      return DartIcons.Annotationtype_dart;
-    }
-  }, CONSTRUCTOR(8) {
-    @Override
-    public Icon getIcon() {
-      return DartIcons.Class_dart;
-    }
-  }, OPERATOR(9) {
-    @Override
-    public Icon getIcon() {
-      return DartIcons.Method_dart;
-    }
-  }, LABEL(10) {
-    @Override
-    public Icon getIcon() {
-      return DartIcons.Label_dart;
-    }
-  };
-  private final int myKey;
+  CLASS(0, DartIcons.Class_dart),
+  INTERFACE(1, DartIcons.Interface_dart),
+  FUNCTION(2, DartIcons.Function_dart),
+  METHOD(3, DartIcons.Method_dart),
+  VARIABLE(4, DartIcons.Variable_dart),
+  FIELD(5, DartIcons.Field_dart),
+  PARAMETER(6, DartIcons.Parameter_dart),
+  TYPEDEF(7, DartIcons.Annotationtype_dart),
+  CONSTRUCTOR(8, DartIcons.Class_dart),
+  OPERATOR(9, DartIcons.Method_dart),
+  LABEL(10, DartIcons.Label_dart);
 
-  DartComponentType(int key) {
+  private final int myKey;
+  private final Icon myIcon;
+
+  DartComponentType(int key, final Icon icon) {
     myKey = key;
+    myIcon = icon;
   }
 
   public int getKey() {
     return myKey;
   }
 
-  public abstract Icon getIcon();
+  public Icon getIcon() {
+    return myIcon;
+  }
 
   @Nullable
   public static DartComponentType valueOf(int key) {
