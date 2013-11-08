@@ -1,7 +1,7 @@
 class Point1D {
   double _x;
   Point1D(this._x);
-  Point1D operator negate() => new Point1D(_x);
+  Point1D operator -() => new Point1D(_x);
 
   foo(){}
 }

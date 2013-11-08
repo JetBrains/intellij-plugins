@@ -12,9 +12,6 @@ import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartOperatorExpressionImpl extends DartExpressionImpl implements DartReference {
   public DartOperatorExpressionImpl(ASTNode node) {
     super(node);
@@ -90,11 +87,7 @@ public class DartOperatorExpressionImpl extends DartExpressionImpl implements Da
       return DartClassResolveResult.EMPTY;
     }
     // ignore right class. it's a warning.
-    String sign = getOperatorSign();
-    if ("-".equals(sign) && this instanceof DartPrefixExpression) {
-      sign = "negate";
-    }
-    final DartOperator operator = dartClass.findOperator(sign, null);
+    final DartOperator operator = dartClass.findOperator(getOperatorSign(), null);
     return DartResolveUtil.getDartClassResolveResult(operator, leftClassResolveResult.getSpecialization());
   }
 

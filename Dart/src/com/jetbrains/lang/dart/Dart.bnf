@@ -21,20 +21,25 @@
 
   generateFirstCheck=50
 
+// reserved words
+  ASSERT="assert"
   BREAK="break"
   CASE="case"
   CATCH="catch"
+  CLASS="class"
   CONST="const"
   CONTINUE="continue"
   DEFAULT="default"
   DO="do"
   ELSE="else"
+  EXTENDS="extends"
   FALSE="false"
-  FINALLY="finally"
   FINAL="final"
+  FINALLY="finally"
   FOR="for"
   IF="if"
   IN="in"
+  IS="is"
   NEW="new"
   NULL="null"
   RETHROW="rethrow"
@@ -47,35 +52,32 @@
   TRY="try"
   VAR="var"
   WHILE="while"
-  CLASS="class"
-  EXTENDS="extends"
+  WITH="with"
 
+  INTERFACE="interface"
+
+// BUILT_IN_IDENTIFIER
   ABSTRACT="abstract"
-  ASSERT="assert"
+  AS="as"
+  EXPORT="export"
+  EXTERNAL="external"
   FACTORY="factory"
   GET="get"
   IMPLEMENTS="implements"
-  INTERFACE="interface"
-  IS="is"
-  AS="as"
-  ON="on"
-  OF="of"
-  NEGATE="negate"
+  IMPORT="import"
+  LIBRARY="library"
   OPERATOR="operator"
+  PART="part"
   SET="set"
   STATIC="static"
   TYPEDEF="typedef"
 
+// other
+  ON="on"
+  OF="of"
   NATIVE="native"
-
-  LIBRARY="library"
-  IMPORT="import"
-  EXPORT="export"
   SHOW="show"
   HIDE="hide"
-  PART="part"
-  EXTERNAL="external"
-  WITH="with"
 
   LBRACE="{"
   RBRACE="}"
@@ -293,7 +295,7 @@ private interfaceMemberDefinition ::= methodPrototypeDeclaration
                                     | operatorPrototypeWithSemicolon
                                     {recoverUntil="interface_member_definition_recover"}
 private interface_member_definition_recover::= !('abstract' | 'assert' | 'class' | 'const' | 'extends' | 'factory' | 'final' | 'get'
-                                               | 'implements' | 'import' | 'interface' | 'is' | 'library' | 'native' | 'negate'
+                                               | 'implements' | 'import' | 'interface' | 'is' | 'library' | 'native'
                                                | 'operator' | 'set' | '@' | 'static' | 'typedef' | 'var' | '}' | <<nonStrictID>>)
 
 factoryConstructorDeclaration ::= ('external' | 'const')* 'factory' referenceExpression ('.' componentName)? formalParameterList factoryTail?
@@ -308,7 +310,6 @@ userDefinableOperator ::= multiplicativeOperator
                         | bitwiseOperator
                         | '=='  // Disallow negative '&' === equality checks.
                         | '~'   // Disallow ! operator.
-                        | 'negate'
                         | '[' ']' '='?
 
 multiplicativeOperator ::= '*' | '/' | '%' | '~/'
@@ -370,7 +371,7 @@ private statement_recover ::= !('!' | '(' | ')' | '+' | '++' | '-' | '--' | ';' 
                               | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'var' | 'while' | '{' | '}' | '~'
                               | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
                               | "abstract" | "assert" | "class"  | "extends" | "factory" | "get" | "implements" | "import" | "interface"
-                              | "is" | "@" | "library" | "native" | "negate" | "as" | "on" | "set" | "static" | "typedef" | "operator")
+                              | "is" | "@" | "library" | "native" | "as" | "on" | "set" | "static" | "typedef" | "operator")
 
 private nonLabelledStatement ::= block // Guard to break tie with map literal.
                                | metadata* functionDeclarationWithBody ';'?

@@ -214,7 +214,6 @@ public interface DartTokenTypes {
   IElementType MUL = new DartElementType("*");
   IElementType MUL_EQ = new DartElementType("*=");
   IElementType NATIVE = new DartElementType("native");
-  IElementType NEGATE = new DartElementType("negate");
   IElementType NEQ = new DartElementType("!=");
   IElementType NEQ_EQ = new DartElementType("!==");
   IElementType NEW = new DartElementType("new");

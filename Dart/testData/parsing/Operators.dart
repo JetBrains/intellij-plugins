@@ -9,7 +9,6 @@ class Shifting {
 class Operators {
 
   operator ~() { }
-  operator negate() { }
 
   operator *(x) { }
   operator /(x) { }

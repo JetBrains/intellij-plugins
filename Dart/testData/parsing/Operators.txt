@@ -100,19 +100,6 @@ Dart File
         OPERATOR_DECLARATION
           PsiElement(operator)('operator')
           USER_DEFINABLE_OPERATOR
-            PsiElement(negate)('negate')
-          FORMAL_PARAMETER_LIST
-            PsiElement(()('(')
-            PsiElement())(')')
-          FUNCTION_BODY
-            BLOCK
-              PsiElement({)('{')
-              STATEMENTS
-                <empty list>
-              PsiElement(})('}')
-        OPERATOR_DECLARATION
-          PsiElement(operator)('operator')
-          USER_DEFINABLE_OPERATOR
             MULTIPLICATIVE_OPERATOR
               PsiElement(*)('*')
           FORMAL_PARAMETER_LIST

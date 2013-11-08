@@ -28,16 +28,13 @@ import java.util.*;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartKeywordCompletionContributor extends CompletionContributor {
   private static final Set<String> allowedKeywords = new THashSet<String>() {
     {
-      for (IElementType elementType : DartTokenTypesSets.RESERVED.getTypes()) {
+      for (IElementType elementType : DartTokenTypesSets.RESERVED_WORDS.getTypes()) {
         add(elementType.toString());
       }
-      for (IElementType elementType : DartTokenTypesSets.UNRESERVED.getTypes()) {
+      for (IElementType elementType : DartTokenTypesSets.BUILT_IN_IDENTIFIERS.getTypes()) {
         add(elementType.toString());
       }
     }

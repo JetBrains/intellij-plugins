@@ -11,22 +11,18 @@ import java.util.Set;
 import static com.jetbrains.lang.dart.DartTokenTypes.ID;
 import static com.jetbrains.lang.dart.DartTokenTypes.IDENTIFIER;
 
-/**
- * @author gregsh
- */
-@SuppressWarnings("StringEquality")
 public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
   private static Key<Boolean> WITHOUT_CASCADE = Key.create("dart.without.cascade");
 
   // todo: operator is pseudoKeyword
   private static final Set<String> pseudoKeywords = new THashSet<String>(Arrays.asList(
     "abstract", "assert", "class", "extends", "factory", "implements", "import", "interface",
-    "is", "as", "on", "library", "native", "negate", "source", "static", "typedef", "operator",
+    "is", "as", "on", "library", "native", "source", "static", "typedef", "operator",
     "set", "get", "of", "part", "show", "hide", "export", "with"
   ));
 
   private static final Set<String> operators = new THashSet<String>(Arrays.asList(
-    "%", "&", "*", "+", "-", "/", "<", "<<", "<=", "==", ">", ">=", "[", "^", "negate", "|", "~", "~/"
+    "%", "&", "*", "+", "-", "/", "<", "<<", "<=", "==", ">", ">=", "[", "^", "|", "~", "~/"
   ));
 
   public static boolean cascadeStopper(PsiBuilder builder_, int level_) {
