@@ -18,9 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Set;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartColorAnnotator implements Annotator {
   private static final Set<String> builtinTypes = new THashSet<String>(Arrays.asList(
     "int", "num", "bool", "double", "String"
@@ -28,6 +25,8 @@ public class DartColorAnnotator implements Annotator {
 
   @Override
   public void annotate(@NotNull PsiElement node, @NotNull AnnotationHolder holder) {
+    if (holder.isBatchMode()) return;
+
     PsiElement element = node;
     if (element instanceof DartReference && element.getParent() instanceof DartType) {
       final TextAttributesKey attribute = getAttributeByBuiltinType(element.getText());
@@ -41,7 +40,7 @@ public class DartColorAnnotator implements Annotator {
       final DartReference[] references = PsiTreeUtil.getChildrenOfType(element, DartReference.class);
       boolean chain = references != null && references.length > 1;
       if (!chain) {
-        element = ((DartReference)element).resolve();
+        element = ((DartReference)element).resolve(); // todo this takes too much time
       }
     }
     if (element instanceof DartComponentName) {
