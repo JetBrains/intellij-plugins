@@ -15,9 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartSdkUtil {
   @Nullable
   public static DartSdkData testDartSdk(String path) {
@@ -29,13 +26,16 @@ public class DartSdkUtil {
     return new DartSdkData(path, getSdkVersion(path));
   }
 
-  public static String getSdkVersion(String path) {
+  public static String getSdkVersion(String sdkHomePath) {
     try {
-      return FileUtil.loadFile(new File(path, "revision")).trim();
+      final File versionFile = new File(sdkHomePath, "version");
+      if (versionFile.isFile() && versionFile.length() < 100) {
+        return FileUtil.loadFile(versionFile).trim();
+      }
     }
-    catch (IOException e) {
-      return "NA";
+    catch (IOException ignored) {
     }
+    return "unknown";
   }
 
   @Nullable
