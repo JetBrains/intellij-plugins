@@ -35,41 +35,44 @@ import java.awt.event.ActionListener;
 public class DartSettingsUI {
   private JPanel myMainPanel;
   private TextFieldWithBrowseButton myPathChooser;
-  private JLabel mySetupLabel;
+  private JLabel mySdkVersionLabel;
+  private JCheckBox myDartSdkEnabledCheckBox;
   private HyperlinkLabel mySetupScopeLabel;
-  private JCheckBox myDartSdkEnabled;
+
   private final Project myProject;
 
   public DartSettingsUI(final Project project) {
     myProject = project;
-    myPathChooser.getButton().addActionListener(new ActionListener() {
+    myPathChooser.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), null, myMainPanel, null, new Consumer<VirtualFile>() {
           @Override
-          public void consume(@NotNull VirtualFile file) {
-            if (getExecutablePathByFolderPath(file.getPath(), "dart") == null) {
+          public void consume(@NotNull VirtualFile sdkFolder) {
+            if (getExecutablePathByFolderPath(sdkFolder.getPath(), "dart") == null) {
+              final VirtualFile child = sdkFolder.findChild("dart-sdk");
+              if (child != null && child.isDirectory()) {
+                sdkFolder = child;
+              }
+            }
+
+            if (getExecutablePathByFolderPath(sdkFolder.getPath(), "dart") == null) {
               Messages.showOkCancelDialog(
                 myProject,
-                DartBundle.message("dart.sdk.bad.home.path.to.dartvm"), DartBundle.message("dart.sdk.name"),
+                DartBundle.message("dart.sdk.bad.path", FileUtil.toSystemDependentName(sdkFolder.getPath())),
+                DartBundle.message("dart.sdk.name"),
                 DartIcons.Dart_16
               );
             }
-            else if (getExecutablePathByFolderPath(file.getPath(), "dart") != null) {
-              myPathChooser.setText(FileUtil.toSystemDependentName(file.getPath()));
+            else {
+              myPathChooser.setText(FileUtil.toSystemDependentName(sdkFolder.getPath()));
               updateUI();
-              if (!SystemInfo.isWindows && getSettings().getAnalyzer() == null) {
-                Messages.showErrorDialog(
-                  myProject,
-                  DartBundle.message("dart.sdk.bad.analyzer.path", getSettings().getAnalyzerUrl()),
-                  DartBundle.message("dart.warning")
-                );
-              }
             }
           }
         });
       }
     });
+
     mySetupScopeLabel.addHyperlinkListener(new HyperlinkListener() {
       @Override
       public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -98,7 +101,7 @@ public class DartSettingsUI {
         }
       }
     });
-    myDartSdkEnabled.addActionListener(new ActionListener() {
+    myDartSdkEnabledCheckBox.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         final JSLibraryManager libraryManager = JSLibraryManager.getInstance(myProject);
@@ -120,30 +123,25 @@ public class DartSettingsUI {
 
   private void updateUI() {
     final boolean sdkConfigured = DartSettingsUtil.isDartSDKConfigured(myProject);
-    myDartSdkEnabled.setEnabled(sdkConfigured);
+    myDartSdkEnabledCheckBox.setEnabled(sdkConfigured);
     final JSLibraryManager libraryManager = JSLibraryManager.getInstance(myProject);
-    myDartSdkEnabled.setSelected(libraryManager.getLibraryMappings().isAssociatedWithProject(DartBundle.message("dart.sdk.name")));
+    myDartSdkEnabledCheckBox.setSelected(libraryManager.getLibraryMappings().isAssociatedWithProject(DartBundle.message("dart.sdk.name")));
+
     if (!sdkConfigured) {
-      mySetupLabel.setText(DartBundle.message("dart.sdk.not.configured"));
+      mySdkVersionLabel.setText(DartBundle.message("dart.sdk.not.configured"));
       mySetupScopeLabel.setHyperlinkText(DartBundle.message("dart.sdk.configure"));
       return;
     }
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        final String executable = getExecutablePathByFolderPath(FileUtil.toSystemIndependentName(myPathChooser.getText()), "dart");
-        if (executable == null) {
-          // bad
-          mySetupLabel.setText(DartBundle.message("dart.sdk.bad.path", myPathChooser.getText()));
-        }
-        else {
-          mySetupLabel.setText(
-            DartBundle.message("dart.sdk.setup", DartSdkUtil.getSdkVersion(FileUtil.toSystemDependentName(myPathChooser.getText())))
-          );
-          mySetupScopeLabel.setHyperlinkText(DartBundle.message("dart.sdk.edit.usage.scope"));
-        }
-      }
-    });
+
+    final String executable = getExecutablePathByFolderPath(FileUtil.toSystemIndependentName(myPathChooser.getText()), "dart");
+    if (executable == null) {
+      // bad
+      mySdkVersionLabel.setText(DartBundle.message("dart.sdk.bad.path", myPathChooser.getText()));
+    }
+    else {
+      mySdkVersionLabel.setText(DartSdkUtil.getSdkVersion(myPathChooser.getText()));
+      mySetupScopeLabel.setHyperlinkText(DartBundle.message("dart.sdk.edit.usage.scope"));
+    }
   }
 
   public void updateOrCreateDartLibrary() {
