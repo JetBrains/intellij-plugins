@@ -50,7 +50,7 @@ public class DartStackFrame extends XStackFrame {
       final DartStackFrame stackFrame = stackFrames.get(i);
       JsonObject commandObject = DartCommandLineDebugProcess.getCommandObject("getLineNumberTable");
       JsonObject params = new JsonObject();
-      params.addProperty("url", stackFrame.getFileUrl());
+      params.addProperty("url", DartCommandLineDebugProcess.fixFileUrl(stackFrame.getFileUrl()));
       params.addProperty("libraryId", stackFrame.getLibraryId());
       commandObject.add("params", params);
       final boolean isLast = i == stackFrames.size() - 1;
