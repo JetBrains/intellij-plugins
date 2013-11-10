@@ -122,9 +122,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
       }
     } else {
       final JSReferenceExpressionImpl.QualifiedItemProcessor processor = new JSReferenceExpressionImpl.QualifiedItemProcessor(
-        myReferencedName,
-                                                                                                                              myContainingFile,
-                                                                                                                              myRef);
+        myReferencedName, myContainingFile, myRef);
       processor.setTypeContext(JSResolveUtil.isExprInTypeContext(myRef));
       JSTypeEvaluator.evaluateTypes(myQualifier, myContainingFile, processor);
 
@@ -142,8 +140,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
       }
     }
 
-    ResolveResult[] results =
-      resolveFromIndices(localProcessor);
+    ResolveResult[] results = resolveFromIndices(localProcessor);
 
     if (results.length == 0 && localProcessor.isEncounteredXmlLiteral()) {
       return dummyResult(myRef);

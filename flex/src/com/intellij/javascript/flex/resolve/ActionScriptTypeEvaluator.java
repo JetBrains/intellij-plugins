@@ -112,10 +112,10 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
                             PsiTreeUtil.getChildOfType(expression, JSE4XNamespaceReference.class) != null || // TODO avoid it
                             parent instanceof JSCallExpression ?
                             ((JSClass)resolveResult).getQualifiedName():"Class";
-    psiElementType  = ResolveProcessor.fixGenericTypeName(psiElementType);
     JSTypeSource source = JSTypeSourceFactory.createTypeSource(expression);
     JSType type = JSNamedType.createType(psiElementType, source, JSNamedType.StaticOrInstance.UNKNOWN);
-    if (VECTOR_CLASS_NAME.equals(psiElementType)) {
+    if (type instanceof JSGenericTypeImpl) type = ((JSGenericTypeImpl)type).getType();
+    if (JSTypeUtils.isActionScriptVectorType(type)) {
       type = JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(expression.getText(), expression), source);
     }
     myCallExpressionsToApply.pollLast(); // MyClass(anyVar) is cast to MyClass

@@ -4,7 +4,6 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
@@ -26,9 +25,10 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
     JSFunction fun = PsiTreeUtil.getParentOfType(param, JSFunction.class);
     PsiElement element = JSResolveUtil.findParent(fun);
 
-    if (element instanceof JSClass &&
-        JSCommonTypeNames.VECTOR_CLASS_NAME.equals(ResolveProcessor.fixGenericTypeName(((JSClass)element).getQualifiedName()))
-      ) {
+    JSType classType = element instanceof JSClass ?
+                       JSNamedType.createType(((JSClass)element).getQualifiedName(), null, JSNamedType.StaticOrInstance.INSTANCE) :
+                       null;
+    if (classType != null && JSTypeUtils.isActionScriptVectorType(classType)) {
       String name = fun.getName();
       String qualifiedExpressionType = null;
 
