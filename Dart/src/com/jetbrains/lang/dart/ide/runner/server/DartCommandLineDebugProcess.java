@@ -139,7 +139,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
         }
         while (!connected && attempts > 0);
 
-        while (true) {
+        while (!getSession().isStopped()) {
           processOneCommandLoop();
         }
       }
@@ -370,6 +370,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   @Override
   public void stop() {
     myConnection.close();
+    sendSimpleCommand("fake command to release processOneCommandLoop() thread hanging on wait()");
   }
 
   @Override
