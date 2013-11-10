@@ -279,7 +279,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   private void initLines(List<DartStackFrame> frames, Runnable runnable) {
     for (DartStackFrame stackFrame : frames) {
       JsonObject command = getCommandObject("getLineNumberTable");
-      command.addProperty("url", stackFrame.getFileUrl());
+      command.addProperty("url", fixFileUrl(stackFrame.getFileUrl()));
       sendCommand(command);
     }
     runnable.run();
@@ -385,5 +385,17 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   @Override
   public void runToPosition(@NotNull XSourcePosition position) {
     DartCommandLineBreakpointsHandler.handleRunToPosition(position, this);
+  }
+
+  public static String fixFileUrl(final String fileUrl) {
+    if (!fileUrl.startsWith("file:///")) {
+      if (fileUrl.startsWith("file://")) {
+        return "file:///" + fileUrl.substring("file://".length());
+      }
+      if (fileUrl.startsWith("file:/")) {
+        return "file:///" + fileUrl.substring("file:/".length());
+      }
+    }
+    return fileUrl;
   }
 }

@@ -3,9 +3,6 @@ package com.jetbrains.lang.dart.ide.runner.server;
 import com.google.gson.JsonObject;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.debugger.breakpoints.JavaScriptBreakpointType;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.io.socketConnection.AbstractResponseToRequestHandler;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
@@ -35,7 +32,7 @@ public class DartCommandLineBreakpointsHandler {
     handlers.add(new XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>>(JavaScriptBreakpointType.class) {
       public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
         final XSourcePosition position = breakpoint.getSourcePosition();
-        if (position == null)  return;
+        if (position == null) return;
         if (position.getFile().getFileType() != DartFileType.INSTANCE) return;
 
         myDebugProcess.sendCommand(getSetBreakpointCommand(breakpoint), new AbstractResponseToRequestHandler<JsonResponse>() {
@@ -55,26 +52,21 @@ public class DartCommandLineBreakpointsHandler {
         });
       }
 
-      private boolean isValidSourceBreakpoint(XSourcePosition position) {
-        ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myDebugProcess.getSession().getProject()).getFileIndex();
-        VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(position.getFile());
-        return rootForFile != null;
-      }
-
       public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
         final XSourcePosition position = breakpoint.getSourcePosition();
-        if (position != null && isValidSourceBreakpoint(position)) {
-          myDebugProcess.sendCommand(getRemoveBreakpointCommand(breakpoint), new AbstractResponseToRequestHandler<JsonResponse>() {
-            @Override
-            public boolean processResponse(JsonResponse response) {
-              final Integer id = myBreakpointToIndexMap.remove(breakpoint);
-              if (myIndexToBreakpointMap.containsKey(id)) {
-                myIndexToBreakpointMap.remove(id);
-              }
-              return true;
+        if (position == null) return;
+        if (position.getFile().getFileType() != DartFileType.INSTANCE) return;
+
+        myDebugProcess.sendCommand(getRemoveBreakpointCommand(breakpoint), new AbstractResponseToRequestHandler<JsonResponse>() {
+          @Override
+          public boolean processResponse(JsonResponse response) {
+            final Integer id = myBreakpointToIndexMap.remove(breakpoint);
+            if (myIndexToBreakpointMap.containsKey(id)) {
+              myIndexToBreakpointMap.remove(id);
             }
-          });
-        }
+            return true;
+          }
+        });
       }
     });
 
@@ -103,7 +95,7 @@ public class DartCommandLineBreakpointsHandler {
 
   private static JsonObject getParams(XLineBreakpoint<XBreakpointProperties> breakpoint) {
     final JsonObject result = new JsonObject();
-    result.addProperty("url", breakpoint.getFileUrl());
+    result.addProperty("url", DartCommandLineDebugProcess.fixFileUrl(breakpoint.getFileUrl()));
     result.addProperty("line", breakpoint.getLine() + 1);
     return result;
   }
@@ -112,7 +104,7 @@ public class DartCommandLineBreakpointsHandler {
     final JsonObject command = new JsonObject();
     command.addProperty("command", "setBreakpoint");
     final JsonObject params = new JsonObject();
-    params.addProperty("url", position.getFile().getUrl());
+    params.addProperty("url", DartCommandLineDebugProcess.fixFileUrl(position.getFile().getUrl()));
     params.addProperty("line", position.getLine());
     command.add("params", params);
 
