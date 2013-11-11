@@ -744,7 +744,8 @@ public class CompilerConfigGeneratorRt {
   }
 
   private static File getOrCreateConfigFile(final String fileName, final String text) throws IOException {
-    final File configFile = new File(FlexCommonUtils.getTempFlexConfigsDirPath() + "/" + fileName);
+    final File tempFolder = new File(FlexCommonUtils.getTempFlexConfigsDirPath());
+    final File configFile = new File(tempFolder, fileName);
     final byte[] textBytes = text.getBytes();
 
     /*
@@ -757,7 +758,8 @@ public class CompilerConfigGeneratorRt {
     }
     */
 
-    if (!FileUtil.createParentDirs(configFile)) {
+    // configFile.isDirectory() check is required because folder could be created by a parallel process
+    if (!FileUtil.createDirectory(tempFolder) && !tempFolder.isDirectory()) {
       throw new IOException("Failed to create folder " + configFile.getParent());
     }
 
