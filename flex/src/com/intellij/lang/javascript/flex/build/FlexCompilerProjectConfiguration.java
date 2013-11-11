@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project;
   }
 )
 public class FlexCompilerProjectConfiguration implements PersistentStateComponent<FlexCompilerProjectConfiguration> {
-  static final int PARALLEL_COMPILATIONS_LIMIT = 10;
 
   public boolean GENERATE_FLEXMOJOS_CONFIGS = true;
 
@@ -46,7 +45,7 @@ public class FlexCompilerProjectConfiguration implements PersistentStateComponen
       USE_BUILT_IN_COMPILER = true;
     }
 
-    MAX_PARALLEL_COMPILATIONS = state.MAX_PARALLEL_COMPILATIONS;
+    //  MAX_PARALLEL_COMPILATIONS = state.MAX_PARALLEL_COMPILATIONS;
     HEAP_SIZE_MB = state.HEAP_SIZE_MB;
     VM_OPTIONS = state.VM_OPTIONS;
   }
