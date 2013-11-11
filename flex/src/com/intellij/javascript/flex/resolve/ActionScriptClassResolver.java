@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.JSResolveHelper;
 import com.intellij.lang.javascript.index.JSIndexedRootProvider;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
+import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
@@ -76,12 +77,7 @@ public class ActionScriptClassResolver extends JSClassResolver {
 
   protected PsiElement doFindClassByQName(@NotNull String link, final JavaScriptIndex index, GlobalSearchScope searchScope,
                                                boolean allowFileLocalSymbols, @NotNull DialectOptionHolder dialect) {
-    if (VECTOR_CLASS_NAME.equals(link)) {
-      link = JSResolveUtil.VECTOR$OBJECT_TYPE_NAME; // standard Vector class is empty, take at least Vector of objects, there is no other difference ! // TODO:
-    }
     Project project = index.getProject();
-    final PsiElement[] result = new PsiElement[1];
-
     boolean clazzShouldBeTakenFromOurLibrary = OBJECT_CLASS_NAME.equals(link) || "Arguments".equals(link);
     if (clazzShouldBeTakenFromOurLibrary && !(searchScope instanceof AdditionalIndexedRootsScope)) {
       // object from swf do not contain necessary members!
@@ -90,8 +86,9 @@ public class ActionScriptClassResolver extends JSClassResolver {
     final Collection<JSQualifiedNamedElement> candidates = StubIndex.getInstance().get(JSQualifiedElementIndex.KEY, link.hashCode(),
                                                                                        project, searchScope);
     ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    PsiElement preferredResult = null;
-    long preferredResultTimestamp = 0;
+    PsiElement resultFromSourceContent = null;
+    PsiElement resultFromLibraries = null;
+    long resultFormLibrariesTimestamp = 0;
 
     for(Object _clazz:candidates) {
       if (!(_clazz instanceof JSQualifiedNamedElement)) continue;
@@ -110,43 +107,49 @@ public class ActionScriptClassResolver extends JSClassResolver {
           continue;
         }
 
-        result[0] = clazz;
-
         if (projectFileIndex.isInSourceContent(vFile)) {
           // the absolute preference is for classes from sources
-          preferredResult = clazz;
-          break;
+          if (resultFromSourceContent != null && JSCommonTypeNames.VECTOR_CLASS_NAME.equals(link)) {
+            if (clazz.getChildren().length > resultFromSourceContent.getChildren().length) {
+              resultFromSourceContent = clazz;
+            }
+          }
+          else {
+            resultFromSourceContent = clazz;
+          }
+          continue;
         }
 
         // choose the right class in the same way as compiler does: with the latest timestamp in catalog.xml file
-        if (preferredResult == null) {
-          preferredResult = clazz;
-          // do not initialize preferredResultTimestamp here, it is expensive and may be not required if only 1 candidate
+        if (resultFromLibraries == null) {
+          resultFromLibraries = clazz;
+          // do not initialize resultFormLibrariesTimestamp here, it is expensive and may be not required if only 1 candidate
         }
         else {
-          if (preferredResultTimestamp == 0) {
+          if (resultFormLibrariesTimestamp == 0) {
             // was not initialized yet
-            preferredResultTimestamp = getResolveResultTimestamp(preferredResult);
+            resultFormLibrariesTimestamp = getResolveResultTimestamp(resultFromLibraries);
           }
 
           final long classTimestamp = getResolveResultTimestamp(clazz);
-          if (classTimestamp > preferredResultTimestamp) {
-            preferredResult = clazz;
-            preferredResultTimestamp = classTimestamp;
+          if (classTimestamp > resultFormLibrariesTimestamp) {
+            resultFromLibraries = clazz;
+            resultFormLibrariesTimestamp = classTimestamp;
           }
         }
       }
     }
 
-    if (result[0] == null) {
+    PsiElement result = resultFromSourceContent != null ? resultFromSourceContent : resultFromLibraries;
+    if (result == null) {
       String className = link.substring(link.lastIndexOf('.') + 1);
       if (className.length() > 0 && !isBuiltInClassName(className) &&
           (Character.isLetter(className.charAt(0)) || '_' == className.charAt(0))) {
         // TODO optimization, remove when packages will be properly handled
-        result[0] = findClassByQNameViaHelper(link, project, className, searchScope);
+        result = findClassByQNameViaHelper(link, project, className, searchScope);
       }
     }
-    return preferredResult!= null ? preferredResult : result[0];
+    return result;
   }
 
   private static long getResolveResultTimestamp(PsiElement candidate) {
