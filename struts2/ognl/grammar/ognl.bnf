@@ -146,12 +146,11 @@ literalExpression ::= numberLiteralExpression |
   ]
 }
 
-referenceExpression ::= ('@')? IDENTIFIER ('.' IDENTIFIER) * ('@' IDENTIFIER)? {
+referenceExpression ::= (variableExpression | ('@')? IDENTIFIER) ('.' IDENTIFIER)* ('@' IDENTIFIER)? {
   mixin="com.intellij.lang.ognl.psi.impl.OgnlReferenceExpressionBase"
 }
 
 variableExpression ::= '#' IDENTIFIER {
-  pin=1
   mixin="com.intellij.lang.ognl.psi.impl.OgnlVariableExpressionBase"
 }
 

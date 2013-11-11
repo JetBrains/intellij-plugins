@@ -644,8 +644,6 @@ public class OgnlParser implements PsiParser {
   // referenceExpression '(' methodCallParameters ')'
   public static boolean methodCallExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "methodCallExpression")) return false;
-    if (!nextTokenIs(builder_, AT) && !nextTokenIs(builder_, IDENTIFIER)
-        && replaceVariants(builder_, 2, "<method call expression>")) return false;
     boolean result_ = false;
     boolean pinned_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<method call expression>");
@@ -689,40 +687,57 @@ public class OgnlParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "variableExpression")) return false;
     if (!nextTokenIs(builder_, HASH)) return false;
     boolean result_ = false;
-    boolean pinned_ = false;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, HASH);
-    pinned_ = result_; // pin = 1
     result_ = result_ && consumeToken(builder_, IDENTIFIER);
-    exit_section_(builder_, level_, marker_, VARIABLE_EXPRESSION, result_, pinned_, null);
-    return result_ || pinned_;
+    exit_section_(builder_, marker_, VARIABLE_EXPRESSION, result_);
+    return result_;
   }
 
-  // ('@')? IDENTIFIER ('.' IDENTIFIER) * ('@' IDENTIFIER)?
+  // (variableExpression | ('@')? IDENTIFIER) ('.' IDENTIFIER)* ('@' IDENTIFIER)?
   public static boolean referenceExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "referenceExpression")) return false;
-    if (!nextTokenIs(builder_, AT) && !nextTokenIs(builder_, IDENTIFIER)
-        && replaceVariants(builder_, 2, "<reference expression>")) return false;
     boolean result_ = false;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<reference expression>");
+    Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<reference expression>");
     result_ = referenceExpression_0(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, IDENTIFIER);
+    result_ = result_ && referenceExpression_1(builder_, level_ + 1);
     result_ = result_ && referenceExpression_2(builder_, level_ + 1);
-    result_ = result_ && referenceExpression_3(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, REFERENCE_EXPRESSION, result_, false, null);
     return result_;
   }
 
-  // ('@')?
+  // variableExpression | ('@')? IDENTIFIER
   private static boolean referenceExpression_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "referenceExpression_0")) return false;
-    referenceExpression_0_0(builder_, level_ + 1);
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = variableExpression(builder_, level_ + 1);
+    if (!result_) result_ = referenceExpression_0_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // ('@')? IDENTIFIER
+  private static boolean referenceExpression_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "referenceExpression_0_1")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = referenceExpression_0_1_0(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, IDENTIFIER);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // ('@')?
+  private static boolean referenceExpression_0_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "referenceExpression_0_1_0")) return false;
+    referenceExpression_0_1_0_0(builder_, level_ + 1);
     return true;
   }
 
   // ('@')
-  private static boolean referenceExpression_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "referenceExpression_0_0")) return false;
+  private static boolean referenceExpression_0_1_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "referenceExpression_0_1_0_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, AT);
@@ -730,15 +745,15 @@ public class OgnlParser implements PsiParser {
     return result_;
   }
 
-  // ('.' IDENTIFIER) *
-  private static boolean referenceExpression_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "referenceExpression_2")) return false;
+  // ('.' IDENTIFIER)*
+  private static boolean referenceExpression_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "referenceExpression_1")) return false;
     int offset_ = builder_.getCurrentOffset();
     while (true) {
-      if (!referenceExpression_2_0(builder_, level_ + 1)) break;
+      if (!referenceExpression_1_0(builder_, level_ + 1)) break;
       int next_offset_ = builder_.getCurrentOffset();
       if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "referenceExpression_2");
+        empty_element_parsed_guard_(builder_, offset_, "referenceExpression_1");
         break;
       }
       offset_ = next_offset_;
@@ -747,8 +762,8 @@ public class OgnlParser implements PsiParser {
   }
 
   // '.' IDENTIFIER
-  private static boolean referenceExpression_2_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "referenceExpression_2_0")) return false;
+  private static boolean referenceExpression_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "referenceExpression_1_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
@@ -758,15 +773,15 @@ public class OgnlParser implements PsiParser {
   }
 
   // ('@' IDENTIFIER)?
-  private static boolean referenceExpression_3(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "referenceExpression_3")) return false;
-    referenceExpression_3_0(builder_, level_ + 1);
+  private static boolean referenceExpression_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "referenceExpression_2")) return false;
+    referenceExpression_2_0(builder_, level_ + 1);
     return true;
   }
 
   // '@' IDENTIFIER
-  private static boolean referenceExpression_3_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "referenceExpression_3_0")) return false;
+  private static boolean referenceExpression_2_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "referenceExpression_2_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, AT);

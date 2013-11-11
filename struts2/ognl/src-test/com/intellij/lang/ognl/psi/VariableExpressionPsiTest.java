@@ -51,6 +51,10 @@ public class VariableExpressionPsiTest extends PsiTestCase {
     doTest("this", ResolveTarget.SELF, null);
   }
 
+  public void testReferenceAfterVariable() {
+    parseSingleExpression("#root.something.method()");
+  }
+
   private OgnlVariableExpression parse(@Language(value = OgnlLanguage.ID,
                                                  prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                  suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {

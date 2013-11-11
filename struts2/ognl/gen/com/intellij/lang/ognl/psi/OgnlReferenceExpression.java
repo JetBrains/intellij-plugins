@@ -23,4 +23,7 @@ import com.intellij.psi.PsiElement;
 
 public interface OgnlReferenceExpression extends OgnlExpression {
 
+  @Nullable
+  OgnlVariableExpression getVariableExpression();
+
 }

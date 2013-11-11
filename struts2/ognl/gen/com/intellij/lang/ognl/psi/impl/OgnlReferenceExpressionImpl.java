@@ -37,4 +37,10 @@ public class OgnlReferenceExpressionImpl extends OgnlReferenceExpressionBase imp
     else super.accept(visitor);
   }
 
+  @Override
+  @Nullable
+  public OgnlVariableExpression getVariableExpression() {
+    return findChildByClass(OgnlVariableExpression.class);
+  }
+
 }
