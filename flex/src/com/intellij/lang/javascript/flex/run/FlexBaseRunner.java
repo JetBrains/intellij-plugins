@@ -3,7 +3,10 @@ package com.intellij.lang.javascript.flex.run;
 import com.intellij.CommonBundle;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.compiler.options.CompileStepBeforeRunNoErrorCheck;
-import com.intellij.execution.*;
+import com.intellij.execution.CantRunException;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.impl.RunDialog;
 import com.intellij.execution.process.ProcessHandler;
@@ -52,10 +55,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.JDOMUtil;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -406,7 +406,16 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   @Nullable
   public static String getApplicationId(final String airDescriptorPath) {
-    final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(airDescriptorPath);
+    final VirtualFile descriptorFile = ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>() {
+      public VirtualFile compute() {
+        final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
+        if (file != null) {
+          file.refresh(false, false);
+        }
+        return file;
+      }
+    });
+
     if (descriptorFile != null) {
       try {
         return FlexUtils.findXMLElement(descriptorFile.getInputStream(), "<application><id>");
@@ -418,7 +427,16 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   @Nullable
   public static String getApplicationName(final String airDescriptorPath) {
-    final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(airDescriptorPath);
+    final VirtualFile descriptorFile = ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>() {
+      public VirtualFile compute() {
+        final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
+        if (file != null) {
+          file.refresh(false, false);
+        }
+        return file;
+      }
+    });
+
     if (descriptorFile != null) {
       try {
         return FlexUtils.findXMLElement(descriptorFile.getInputStream(), "<application><name>");
