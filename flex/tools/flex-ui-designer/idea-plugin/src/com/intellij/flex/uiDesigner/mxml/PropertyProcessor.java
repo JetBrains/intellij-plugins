@@ -16,7 +16,6 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -522,7 +521,7 @@ class PropertyProcessor implements ValueWriter {
       final Module module = ModuleUtilCore.findModuleForPsiElement(valueProvider.getElement());
       if (module != null) {
         jsClass = (JSClass)JSResolveUtil.unwrapProxy(
-          JSClassResolver.findClassByQName(trimmed, module.getModuleWithDependenciesAndLibrariesScope(false)));
+          ActionScriptClassResolver.findClassByQNameStatic(trimmed, module.getModuleWithDependenciesAndLibrariesScope(false)));
       }
 
       if (jsClass == null) {

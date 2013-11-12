@@ -8,12 +8,12 @@ import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.ComponentSet;
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
@@ -171,7 +171,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
           public Set<String> compute() {
             if (DumbService.getInstance(myProject).isDumb()) return null;
             Set<String> result = new THashSet<String>();
-            final JSClass clazz = (JSClass)JSClassResolver.findClassByQName(params.getClassName(), moduleScope);
+            final JSClass clazz = (JSClass)ActionScriptClassResolver.findClassByQNameStatic(params.getClassName(), moduleScope);
             collectCustomRunners(result, clazz, support, null);
             isFlexUnit1Suite.set(support.isFlexUnit1SuiteSubclass(clazz));
             isSuite.set(support.isSuite(clazz));
@@ -195,7 +195,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
           public Set<String> compute() {
             if (DumbService.getInstance(myProject).isDumb()) return null;
             Set<String> result = new THashSet<String>();
-            final JSClass clazz = (JSClass)JSClassResolver.findClassByQName(params.getClassName(), moduleScope);
+            final JSClass clazz = (JSClass)ActionScriptClassResolver.findClassByQNameStatic(params.getClassName(), moduleScope);
             collectCustomRunners(result, clazz, support, null);
             return result;
           }
@@ -222,7 +222,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
                 .processElementsInScopeRecursive(params.getPackageName(), new JSPackageIndex.PackageQualifiedElementsProcessor() {
                   public boolean process(String qualifiedName, JSPackageIndexInfo.Kind kind, boolean isPublic) {
                     if (kind == JSPackageIndexInfo.Kind.CLASS) {
-                      PsiElement clazz = JSClassResolver.findClassByQName(qualifiedName, moduleScope);
+                      PsiElement clazz = ActionScriptClassResolver.findClassByQNameStatic(qualifiedName, moduleScope);
                       if (clazz instanceof JSClass && support.isTestClass((JSClass)clazz, false)) {
                         Set<String> customRunners = new THashSet<String>();
                         collectCustomRunners(customRunners, (JSClass)clazz, support, null);

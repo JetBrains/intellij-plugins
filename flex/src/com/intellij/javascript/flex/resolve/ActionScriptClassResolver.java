@@ -63,20 +63,29 @@ public class ActionScriptClassResolver extends JSClassResolver {
     return getInstance().findClassByQName(link, index, searchScope, DialectOptionHolder.ECMA_4);
   }
 
+  @Nullable
+  @Override
+  public PsiElement findClassByQName(@NotNull String link, @NotNull GlobalSearchScope scope) {
+    return findClassByQNameStatic(link, scope);
+  }
+
+  public static PsiElement findClassByQNameStatic(@NotNull final String link, @NotNull GlobalSearchScope scope) {
+    return getInstance().findClassByQName(link, JavaScriptIndex.getInstance(scope.getProject()), scope, DialectOptionHolder.ECMA_4);
+  }
+
   public static boolean isParentClass(JSClass clazz, String className) {
     return isParentClass(clazz, className, true);
   }
 
   public static boolean isParentClass(JSClass clazz, String className, boolean strict) {
-    final PsiElement parentClass = JSResolveUtil.unwrapProxy(findClassByQName(
-      className, clazz.getResolveScope()));
+    final PsiElement parentClass = JSResolveUtil.unwrapProxy(findClassByQNameStatic(className, clazz.getResolveScope()));
     if (!(parentClass instanceof JSClass)) return false;
 
     return JSInheritanceUtil.isParentClass(clazz, (JSClass)parentClass, strict);
   }
 
   protected PsiElement doFindClassByQName(@NotNull String link, final JavaScriptIndex index, GlobalSearchScope searchScope,
-                                               boolean allowFileLocalSymbols, @NotNull DialectOptionHolder dialect) {
+                                          boolean allowFileLocalSymbols, @NotNull DialectOptionHolder dialect) {
     Project project = index.getProject();
     boolean clazzShouldBeTakenFromOurLibrary = OBJECT_CLASS_NAME.equals(link) || "Arguments".equals(link);
     if (clazzShouldBeTakenFromOurLibrary && !(searchScope instanceof AdditionalIndexedRootsScope)) {

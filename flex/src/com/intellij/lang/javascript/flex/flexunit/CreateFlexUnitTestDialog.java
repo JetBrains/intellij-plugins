@@ -3,12 +3,12 @@ package com.intellij.lang.javascript.flex.flexunit;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.refactoring.ui.JSMemberSelectionPanel;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
@@ -184,7 +184,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
 
   protected void doOKAction() {
     final String superClassFqn = mySuperClassField.getText().trim();
-    final PsiElement element = JSClassResolver.findClassByQName(superClassFqn, getSuperClassScope(myModule));
+    final PsiElement element = ActionScriptClassResolver.findClassByQNameStatic(superClassFqn, getSuperClassScope(myModule));
     mySuperClass = element instanceof JSClass ? (JSClass)element : null;
 
     if (myCreateTestSourceFolderCheckBox.isVisible() && myCreateTestSourceFolderCheckBox.isSelected()) {

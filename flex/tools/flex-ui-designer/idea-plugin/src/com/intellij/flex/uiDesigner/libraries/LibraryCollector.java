@@ -2,11 +2,11 @@ package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.uiDesigner.LogMessageUtil;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
-import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -218,7 +218,8 @@ class LibraryCollector {
   }
 
   private boolean libraryContains(String className, VirtualFile jarFile) {
-    return JSClassResolver.findClassByQName(className, GlobalSearchScope.fileScope(module.getProject(), Library.getSwfFile(jarFile))) != null;
+    return ActionScriptClassResolver
+             .findClassByQNameStatic(className, GlobalSearchScope.fileScope(module.getProject(), Library.getSwfFile(jarFile))) != null;
   }
 
   private void collectFromLibraryOrderEntry(VirtualFile[] files) {

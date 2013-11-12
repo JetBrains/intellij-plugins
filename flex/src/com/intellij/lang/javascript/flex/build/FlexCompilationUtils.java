@@ -7,6 +7,7 @@ import com.intellij.flex.build.AirDescriptorOptions;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
@@ -21,7 +22,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -367,7 +367,7 @@ public class FlexCompilationUtils {
                 }
 
                 final String mainClass = StringUtil.notNullize(info.getMainClass(module), bc.getMainClass());
-                final PsiElement jsClass = JSClassResolver.findClassByQName(mainClass, module.getModuleScope());
+                final PsiElement jsClass = ActionScriptClassResolver.findClassByQNameStatic(mainClass, module.getModuleScope());
 
                 final String fixedText = replaceMacros(wrapperText, FileUtil.getNameWithoutExtension(outputFileName), targetPlayer,
                                                        jsClass instanceof JSClass ? (JSClass)jsClass : null);

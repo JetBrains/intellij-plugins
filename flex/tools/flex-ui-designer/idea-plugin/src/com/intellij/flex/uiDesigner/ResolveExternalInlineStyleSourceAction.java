@@ -3,10 +3,10 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -96,7 +96,7 @@ public class ResolveExternalInlineStyleSourceAction implements Runnable {
   }
 
   public Navigatable find() {
-    JSClass classElement = ((JSClass)JSClassResolver.findClassByQName(parentFqn, scope));
+    JSClass classElement = ((JSClass)ActionScriptClassResolver.findClassByQNameStatic(parentFqn, scope));
     assert classElement != null;
 
     XmlTag rootTag = ((XmlFile)classElement.getNavigationElement().getContainingFile()).getRootTag();

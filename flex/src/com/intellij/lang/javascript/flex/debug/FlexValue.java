@@ -6,7 +6,6 @@ import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -861,10 +860,10 @@ class FlexValue extends XValue {
       if (!(jsClass instanceof JSClass) && module != null) {
         // probably this class came from dynamically loaded module that is not in moduleWithDependenciesAndLibrariesScope(module)
         final GlobalSearchScope scope = ProjectScope.getAllScope(project);
-        jsClass = JSClassResolver.findClassByQName(type, scope);
+        jsClass = ActionScriptClassResolver.findClassByQNameStatic(type, scope);
 
         if (!(jsClass instanceof JSClass) && type.endsWith("$")) {
-          jsClass = JSClassResolver.findClassByQName(type.substring(0, type.length() - 1), scope);
+          jsClass = ActionScriptClassResolver.findClassByQNameStatic(type.substring(0, type.length() - 1), scope);
         }
       }
 

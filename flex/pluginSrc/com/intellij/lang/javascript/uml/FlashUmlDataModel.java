@@ -18,6 +18,7 @@ package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.*;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.ImportUtils;
@@ -30,7 +31,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
@@ -119,7 +119,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
       public boolean process(VirtualFile file, String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         String qualifiedName = StringUtil.getQualifiedName(packageName, name);
         if (kind == JSPackageIndexInfo.Kind.CLASS || kind == JSPackageIndexInfo.Kind.INTERFACE) {
-          PsiElement element = JSClassResolver.findClassByQName(qualifiedName, searchScope);
+          PsiElement element = ActionScriptClassResolver.findClassByQNameStatic(qualifiedName, searchScope);
           if (element instanceof JSClass) {
             result.add((JSClass)element);
           }

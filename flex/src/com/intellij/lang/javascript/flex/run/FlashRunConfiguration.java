@@ -9,6 +9,7 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -18,7 +19,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
-import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -163,7 +163,7 @@ public class FlashRunConfiguration extends LocatableConfigurationBase
     final String packageName = DirectoryIndex.getInstance(module.getProject()).getPackageName(directory.getVirtualFile());
     if (!StringUtil.getPackageName(className).equals(packageName)) return false;
 
-    final PsiElement psiElement = JSClassResolver.findClassByQName(className, GlobalSearchScope.moduleScope(module));
+    final PsiElement psiElement = ActionScriptClassResolver.findClassByQNameStatic(className, GlobalSearchScope.moduleScope(module));
     return psiElement instanceof JSClass && directory.equals(psiElement.getContainingFile().getParent());
   }
 

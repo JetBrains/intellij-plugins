@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -11,7 +12,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.openapi.diagnostic.Logger;
@@ -85,23 +85,23 @@ public class FlexUnitSupport {
   }
 
   private static FlexUnitSupport getSupport(final GlobalSearchScope searchScope) {
-    PsiElement flexUnit1TestClass = JSClassResolver.findClassByQName(FLEX_UNIT_1_TESTCASE_CLASS, searchScope);
+    PsiElement flexUnit1TestClass = ActionScriptClassResolver.findClassByQNameStatic(FLEX_UNIT_1_TESTCASE_CLASS, searchScope);
 
     if (!(flexUnit1TestClass instanceof JSClass)) return null;
 
-    PsiElement flexUnit1TestSuiteClass = JSClassResolver.findClassByQName(FLEX_UNIT_1_TESTSUITE_CLASS, searchScope);
+    PsiElement flexUnit1TestSuiteClass = ActionScriptClassResolver.findClassByQNameStatic(FLEX_UNIT_1_TESTSUITE_CLASS, searchScope);
 
     if (!(flexUnit1TestSuiteClass instanceof JSClass)) {
       LOG.warn(FLEX_UNIT_1_TESTCASE_CLASS + " class is present but " + FLEX_UNIT_1_TESTSUITE_CLASS + " is not");
       return null;
     }
 
-    boolean flexUnit4Present = JSClassResolver.findClassByQName(FLEX_UNIT_4_CORE_CLASS, searchScope) instanceof JSClass;
+    boolean flexUnit4Present = ActionScriptClassResolver.findClassByQNameStatic(FLEX_UNIT_4_CORE_CLASS, searchScope) instanceof JSClass;
 
-    PsiElement flunitTestClass = flexUnit4Present ? JSClassResolver.findClassByQName(FLUNIT_TESTCASE_CLASS, searchScope) : null;
+    PsiElement flunitTestClass = flexUnit4Present ? ActionScriptClassResolver.findClassByQNameStatic(FLUNIT_TESTCASE_CLASS, searchScope) : null;
 
     PsiElement flunitTestSuiteClass =
-      (flunitTestClass instanceof JSClass) ? (JSClass)JSClassResolver.findClassByQName(FLUNIT_TESTSUITE_CLASS, searchScope) : null;
+      (flunitTestClass instanceof JSClass) ? (JSClass)ActionScriptClassResolver.findClassByQNameStatic(FLUNIT_TESTSUITE_CLASS, searchScope) : null;
 
     return new FlexUnitSupport((JSClass)flexUnit1TestClass, (JSClass)flexUnit1TestSuiteClass, (JSClass)flunitTestClass,
                                (JSClass)flunitTestSuiteClass, flexUnit4Present);

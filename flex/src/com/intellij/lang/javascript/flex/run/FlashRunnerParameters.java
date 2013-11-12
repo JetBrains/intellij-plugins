@@ -9,6 +9,7 @@ import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.BrowserUtil;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
@@ -18,7 +19,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -462,8 +462,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.set"));
       }
 
-      PsiElement clazz =
-        JSResolveUtil.unwrapProxy(JSClassResolver.findClassByQName(myOverriddenMainClass, moduleAndBC.first.getModuleScope(true)));
+      PsiElement clazz = JSResolveUtil.unwrapProxy(
+        ActionScriptClassResolver.findClassByQNameStatic(myOverriddenMainClass, moduleAndBC.first.getModuleScope(true)));
       if (!(clazz instanceof JSClass)) {
         throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.found", myOverriddenMainClass, bc.getName()));
       }

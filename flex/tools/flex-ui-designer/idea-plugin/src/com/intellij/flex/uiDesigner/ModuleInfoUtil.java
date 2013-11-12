@@ -7,11 +7,11 @@ import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.Application;
@@ -120,16 +120,16 @@ public final class ModuleInfoUtil {
     GlobalSearchScope moduleWithDependenciesAndLibrariesScope = module.getModuleWithDependenciesAndLibrariesScope(false);
     final List<JSClass> holders = new ArrayList<JSClass>(2);
     if (flexSdkVersion.charAt(0) > '3') {
-      JSClass clazz = ((JSClass)JSClassResolver
-        .findClassByQName(FlexCommonTypeNames.SPARK_APPLICATION, moduleWithDependenciesAndLibrariesScope));
+      JSClass clazz = ((JSClass)ActionScriptClassResolver
+        .findClassByQNameStatic(FlexCommonTypeNames.SPARK_APPLICATION, moduleWithDependenciesAndLibrariesScope));
       // it is not legal case, but user can use patched/modified Flex SDK
       if (clazz != null) {
         holders.add(clazz);
       }
     }
 
-    JSClass mxApplicationClass = ((JSClass)JSClassResolver
-      .findClassByQName(FlexCommonTypeNames.MX_APPLICATION, moduleWithDependenciesAndLibrariesScope));
+    JSClass mxApplicationClass = ((JSClass)ActionScriptClassResolver
+      .findClassByQNameStatic(FlexCommonTypeNames.MX_APPLICATION, moduleWithDependenciesAndLibrariesScope));
     // if null, mx.swc is not added to module dependencies
     if (mxApplicationClass != null) {
       holders.add(mxApplicationClass);
