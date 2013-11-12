@@ -30,6 +30,7 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
@@ -59,6 +60,8 @@ import java.util.*;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsgiRunConfiguration extends RunConfigurationBase implements ModuleRunConfiguration {
+  private static final Logger LOG = Logger.getInstance("#org.osmorc.run.OsgiRunConfiguration");
+
   @NonNls private static final String BUNDLE_ELEMENT = "bundle";
   @NonNls private static final String NAME_ATTRIBUTE = "name";
   @NonNls private static final String VM_PARAMETERS_ATTRIBUTE = "vmParameters";
@@ -80,7 +83,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
 
   private OsgiRunConfigurationChecker checker;
   private LegacyOsgiRunConfigurationLoader legacyOsgiRunConfigurationLoader;
-
   private List<SelectedBundle> bundlesToDeploy;
   private int frameworkStartLevel = 1;
   private int defaultStartLevel = 5;
@@ -288,11 +290,20 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   @Override
   public Module[] getModules() {
     List<Module> modules = new ArrayList<Module>();
+
+    ModuleManager moduleManager = ModuleManager.getInstance(getProject());
     for (SelectedBundle selectedBundle : getBundlesToDeploy()) {
       if (selectedBundle.isModule()) {
-        modules.add(ModuleManager.getInstance(getProject()).findModuleByName(selectedBundle.getName()));
+        Module module = moduleManager.findModuleByName(selectedBundle.getName());
+        if (module != null) {
+          modules.add(module);
+        }
+        else {
+          LOG.error("no module [" + selectedBundle.getName() + "]");
+        }
       }
     }
+
     return modules.toArray(new Module[modules.size()]);
   }
 

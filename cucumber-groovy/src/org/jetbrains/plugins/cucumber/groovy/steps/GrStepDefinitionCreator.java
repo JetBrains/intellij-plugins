@@ -57,10 +57,10 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     String fileName = name + '.' + GroovyFileType.DEFAULT_EXTENSION;
     final String version = CucumberConfigUtil.getCucumberCoreVersion(dir);
     if (version != null && version.compareTo(VERSION1_1) >= 0) {
-      return GroovyTemplatesFactory.createFromTemplate(dir, name, fileName, GROOVY_STEP_DEFINITION_FILE_TMPL_1_1);
+      return GroovyTemplatesFactory.createFromTemplate(dir, name, fileName, GROOVY_STEP_DEFINITION_FILE_TMPL_1_1, true);
     }
     else {
-      return GroovyTemplatesFactory.createFromTemplate(dir, name, fileName, GROOVY_STEP_DEFINITION_FILE_TMPL_1_0);
+      return GroovyTemplatesFactory.createFromTemplate(dir, name, fileName, GROOVY_STEP_DEFINITION_FILE_TMPL_1_0, true);
     }
   }
 
