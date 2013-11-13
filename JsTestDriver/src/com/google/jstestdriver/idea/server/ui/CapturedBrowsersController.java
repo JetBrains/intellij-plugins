@@ -33,7 +33,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.IdeBorderFactory;
@@ -276,7 +275,7 @@ public class CapturedBrowsersController implements ServerListener {
         Project project = null;
         int exitCode = Messages.showOkCancelDialog(project, message, "JsTestDriver Browser Capturing Failed",
             "Specify path", "Cancel", Messages.getWarningIcon());
-        if (exitCode == DialogWrapper.OK_EXIT_CODE) {
+        if (exitCode == Messages.OK) {
           ShowSettingsUtil settingsUtil = ShowSettingsUtil.getInstance();
           settingsUtil.editConfigurable(project, new BrowserSettings());
         }
