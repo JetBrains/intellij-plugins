@@ -31,7 +31,7 @@ public class AskPathDialog extends DialogWrapper {
   protected void doOKAction() {
     final File dir = new File(getPath());
     if (dir.isDirectory() && dir.list().length > 0) {
-      if (Messages.OK !=
+      if (Messages.YES !=
           Messages
             .showYesNoDialog(myMainPanel, FlexBundle.message("folder.not.empty", dir.getPath()), getTitle(), Messages.getWarningIcon())) {
         return;

@@ -195,7 +195,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
         if (dir.isDirectory() && dir.list().length > 0) {
           final String title = StringUtil.capitalizeWords(
             ProjectBundle.message("project.new.wizard.import.title", getWizardContext().getPresentationName()), true);
-          if (Messages.OK !=
+          if (Messages.YES !=
               Messages
                 .showYesNoDialog(myMainPanel, FlexBundle.message("folder.not.empty", dir.getPath()), title, Messages.getWarningIcon())) {
             return false;

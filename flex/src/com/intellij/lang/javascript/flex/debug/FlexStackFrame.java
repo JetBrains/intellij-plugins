@@ -464,7 +464,7 @@ public class FlexStackFrame extends XStackFrame {
             final Project project = getDebugProcess().getSession().getProject();
             final int answer =
               Messages.showYesNoDialog(project, message, FlexBundle.message("breakpoint.condition.error"), Messages.getQuestionIcon());
-            stopRef.set(answer == 0);
+            stopRef.set(answer == Messages.YES);
           }
         }, ModalityState.defaultModalityState());
 

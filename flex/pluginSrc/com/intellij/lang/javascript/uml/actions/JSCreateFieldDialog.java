@@ -158,7 +158,7 @@ public class JSCreateFieldDialog extends DialogWrapper {
         return;
       }
       else {
-        if (Messages.showYesNoDialog(myContentPane, errorStatus.first, getTitle(), Messages.getQuestionIcon()) != 0) {
+        if (Messages.showYesNoDialog(myContentPane, errorStatus.first, getTitle(), Messages.getQuestionIcon()) != Messages.YES) {
           return;
         }
       }

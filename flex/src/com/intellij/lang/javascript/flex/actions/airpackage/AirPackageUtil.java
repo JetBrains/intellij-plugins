@@ -210,7 +210,7 @@ public class AirPackageUtil {
         if (answer == -1) {
           return false;
         }
-        else if (answer == 0) {
+        if (answer == Messages.YES) {
           installAirRuntimeOnDevice(project, sdk, runnerParameters.getDeviceInfo(), adtVersionTruncated, !airRuntimeVersion.isEmpty());
         }
       }

@@ -111,7 +111,7 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
       boolean contains = existingMethod.getParent() == myTargetClass;
       String message = JSBundle.message("class.already.contains.method.warning", myTargetClass.getQualifiedName(),
                                         Integer.valueOf(contains ? 1 : 2), getMethodName());
-      if (Messages.showYesNoDialog(myProject, message, getTitle(), Messages.getQuestionIcon()) != 0) {
+      if (Messages.showYesNoDialog(myProject, message, getTitle(), Messages.getQuestionIcon()) != Messages.YES) {
         return EXIT_SILENTLY;
       }
     }
