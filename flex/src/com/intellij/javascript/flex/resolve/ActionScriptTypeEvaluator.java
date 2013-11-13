@@ -114,7 +114,6 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
                             ((JSClass)resolveResult).getQualifiedName():"Class";
     JSTypeSource source = JSTypeSourceFactory.createTypeSource(expression);
     JSType type = JSNamedType.createType(psiElementType, source, JSNamedType.StaticOrInstance.UNKNOWN);
-    if (type instanceof JSGenericTypeImpl) type = ((JSGenericTypeImpl)type).getType();
     if (JSTypeUtils.isActionScriptVectorType(type)) {
       type = JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(expression.getText(), expression), source);
     }

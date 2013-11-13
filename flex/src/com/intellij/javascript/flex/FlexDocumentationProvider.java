@@ -9,12 +9,14 @@ import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSNamedElement;
+import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -449,9 +451,8 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   }
 
   private static String getAsDocRelativePath(JSQualifiedNamedElement element) {
-    final JSType type = JSNamedType.createType(element.getQualifiedName(), null, JSNamedType.StaticOrInstance.INSTANCE);
-    final String rawTypeString = JSTypeUtils.getRawTypeString(type, false, false);
-    final String qName = rawTypeString != null ? rawTypeString : "";
+    String qName = element.getQualifiedName();
+    if (qName == null) qName = "";
     final String shortName = element instanceof JSClass ? StringUtil.getShortName(qName) : PACKAGE;
     String packageName = StringUtil.getPackageName(qName);
     packageName = packageName.replace('.', '/');
