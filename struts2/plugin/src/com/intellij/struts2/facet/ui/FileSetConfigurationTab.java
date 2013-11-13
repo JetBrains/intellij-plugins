@@ -273,7 +273,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
                                                                          fileSet.getName()),
                                                     StrutsBundle.message("facet.fileset.remove.fileset.title"),
                                                     Messages.getQuestionIcon());
-        if (result == DialogWrapper.OK_EXIT_CODE) {
+        if (result == Messages.YES) {
           if (fileSet.isAutodetected()) {
             fileSet.setRemoved(true);
             myBuffer.add(fileSet);

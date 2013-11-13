@@ -39,7 +39,7 @@ public class JabberConnectionCommand extends BaseJabberConnectionCommand {
 
   public void execute() {
     if (isConnected()) {
-      if (0 == Messages.showYesNoDialog(StringUtil.getMsg("disconnect.from.jabber.account"),
+      if (Messages.YES == Messages.showYesNoDialog(StringUtil.getMsg("disconnect.from.jabber.account"),
           StringUtil.getMsg("disconnect.confirmation"), Messages.getQuestionIcon())) {
         myJabberFacade.disconnect();
         myJabberFacade.getMyAccount().setLoginAllowed(false);
