@@ -205,9 +205,17 @@ module Teamcity
 #### Scenarios, Scenario Outlines(real and fake from Example's table rows):
 # @Processes: Scenario(real without examples' fake scenarios), ScenarioOutline
 # Here we can do cleanup for scenarios in current feature: Scenario, ScenarioOutline
+      def scenario_outline?(feature_element)
+        if defined? ::Cucumber::Ast
+          feature_element.class == ::Cucumber::Ast::ScenarioOutline
+        else
+          # API changed in Cucumber 2.0 
+          feature_element.class == ::Cucumber::Core::Ast::ScenarioOutline
+        end
+      end
+
       def tc_before_feature_element (feature_element)
-        is_outline = feature_element.class == ::Cucumber::Ast::ScenarioOutline
-        @in_outline_scenario_stack.push((is_outline) ? true : nil)
+        @in_outline_scenario_stack.push(scenario_outline?(feature_element) ? true : nil)
         register_tags_holder
       end
 
@@ -230,7 +238,7 @@ module Teamcity
 
         process_new_feature_element_name(keyword, name, file_colon_line, source_indent)
 
-        unless (scenario_outline_suites_set?)
+        unless scenario_outline_suites_set?
           # don't trigger on "Scenario Outline" suite of substituted scenarios
           log_in_idea(@message_factory.create_custom_progress_test_status(:started))
         end
