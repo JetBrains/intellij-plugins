@@ -8,7 +8,7 @@
 
   <version>1.2</version>
   <depends>com.intellij.modules.xml</depends>
-  <idea-version since-build="123.0" until-build="133.0"/>
+  <idea-version since-build="133.0" until-build="134.0"/>
   <vendor>JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
