@@ -47,6 +47,7 @@ public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
     return JSBundle.message("js.implicitly.internal.declaration.inspection.name");
   }
 
+  @NotNull
   protected JSElementVisitor createVisitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
     return new JSElementVisitor() {
       @Override

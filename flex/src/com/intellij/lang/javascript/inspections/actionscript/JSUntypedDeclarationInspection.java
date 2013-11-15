@@ -50,6 +50,7 @@ public class JSUntypedDeclarationInspection extends JSInspection {
     return JSBundle.message("js.untyped.declaration.inspection.name");
   }
 
+  @NotNull
   protected JSElementVisitor createVisitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
     return new JSElementVisitor() {
       @Override public void visitJSVariable(final JSVariable node) {
