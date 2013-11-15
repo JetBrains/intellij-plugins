@@ -95,8 +95,8 @@ public class ActionScriptClassResolver extends JSClassResolver {
     final Collection<JSQualifiedNamedElement> candidates = StubIndex.getInstance().get(JSQualifiedElementIndex.KEY, link.hashCode(),
                                                                                        project, searchScope);
     ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    PsiElement resultFromSourceContent = null;
-    PsiElement resultFromLibraries = null;
+    JSQualifiedNamedElement resultFromSourceContent = null;
+    JSQualifiedNamedElement resultFromLibraries = null;
     long resultFormLibrariesTimestamp = 0;
 
     for(Object _clazz:candidates) {
@@ -118,12 +118,8 @@ public class ActionScriptClassResolver extends JSClassResolver {
 
         if (projectFileIndex.isInSourceContent(vFile)) {
           // the absolute preference is for classes from sources
-          if (resultFromSourceContent != null && JSCommonTypeNames.VECTOR_CLASS_NAME.equals(link)) {
-            if (clazz.getChildren().length > resultFromSourceContent.getChildren().length) {
-              resultFromSourceContent = clazz;
-            }
-          }
-          else {
+          if (resultFromSourceContent == null ||
+              JSCommonTypeNames.VECTOR_CLASS_NAME.equals(link) && clazz.getChildren().length > resultFromSourceContent.getChildren().length) {
             resultFromSourceContent = clazz;
           }
           continue;
@@ -133,6 +129,11 @@ public class ActionScriptClassResolver extends JSClassResolver {
         if (resultFromLibraries == null) {
           resultFromLibraries = clazz;
           // do not initialize resultFormLibrariesTimestamp here, it is expensive and may be not required if only 1 candidate
+        }
+        else if (JSCommonTypeNames.VECTOR_CLASS_NAME.equals(link)) {
+          if (clazz.getChildren().length > resultFromLibraries.getChildren().length) {
+            resultFromLibraries = clazz;
+          }
         }
         else {
           if (resultFormLibrariesTimestamp == 0) {
