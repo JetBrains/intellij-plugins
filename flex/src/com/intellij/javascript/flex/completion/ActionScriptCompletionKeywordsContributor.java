@@ -25,8 +25,8 @@ public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywo
   public boolean process(KeywordCompletionConsumer consumer, PsiElement context) {
     if (JSCompletionContributor.getInstance().isDoingSmartCodeCompleteAction()) return false;
     final PsiElement parent = context.getParent();
-    final PsiElement grandParent = parent.getParent();
-    final PsiElement grandGrandParent = grandParent.getParent();
+    final PsiElement grandParent = parent != null ? parent.getParent() : null;
+    final PsiElement grandGrandParent = grandParent != null ? grandParent.getParent() : null;
     if (parent instanceof JSReferenceExpression && (
       (JSResolveUtil.isExprInTypeContext((JSReferenceExpression)parent) ||
        (grandParent instanceof JSExpressionStatement && (JSResolveUtil.isPlaceWhereNsCanBe(grandParent) ||

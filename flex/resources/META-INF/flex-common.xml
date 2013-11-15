@@ -63,7 +63,7 @@
                                     implementationClass="com.intellij.javascript.flex.mxml.XmlBackedClassLineMarkerProvider"/>
     <lang.parserDefinition language="Decompiled SWF"
                            implementationClass="com.intellij.javascript.flex.compiled.DecompiledSwfParserDefinition"/>
-    <lang.documentationProvider language="JavaScript" implementationClass="com.intellij.javascript.flex.FlexDocumentationProvider"/>
+    <lang.documentationProvider language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.FlexDocumentationProvider"/>
     <lang.rearranger language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.arrangement.ActionScriptRearranger"/>
     <structureViewBuilder key="SWF" factoryClass="com.intellij.javascript.flex.compiled.SwfStructureViewBuilderProvider"/>
 
