@@ -177,6 +177,11 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
   };
 
   this.onSpecComplete = function (browser, result) {
+    var suiteNames = result.suite
+      , specName = result.description;
+    if (specName == null) {
+      return;
+    }
     var browserNode = getOrCreateBrowserNode(tree, browser);
     if (typeof browserNode.checkedForTotalTestCount === 'undefined') {
       browserNode.checkedForTotalTestCount = true;
@@ -186,8 +191,8 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
         tree.write('##teamcity[testCount count=\'' + totalTestCount + '\']\n');
       }
     }
-    var suiteNode = getOrCreateLowerSuiteNode(browserNode, result.suite, write);
-    var specNode = createSpecNode(suiteNode, result.suite, result.description);
+    var suiteNode = getOrCreateLowerSuiteNode(browserNode, suiteNames, write);
+    var specNode = createSpecNode(suiteNode, suiteNames, specName);
     var status;
     if (result.skipped) {
       status = 1;
