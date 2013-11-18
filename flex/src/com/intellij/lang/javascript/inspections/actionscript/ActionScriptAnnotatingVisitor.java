@@ -15,6 +15,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.flex.*;
+import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
 import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
 import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
@@ -125,12 +126,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   protected static ChangeSignatureFix createChangeBaseMethodSignatureFix(final JSFunction superMethod, final JSFunction override) {
-    return new ChangeSignatureFix(superMethod, JSMethodDescriptor.getParameters(superMethod)) {
-      @Override
-      protected String getOverriddenReturnType() {
-        return StringUtil.notNullize(override.getReturnType().getResolvedTypeText());
-      }
-    };
+    String s = StringUtil.notNullize(override.getReturnType().getResolvedTypeText());
+    ChangeSignatureFix fix = new ChangeSignatureFix(superMethod, JSMethodDescriptor.getParameters(superMethod));
+    fix.setOverriddenReturnType(s);
+    return fix;
   }
 
   @Override
@@ -904,12 +903,12 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       String s = modifiers[0].getElementType().toString().toLowerCase(Locale.ENGLISH);
       final String type = s.substring(s.indexOf(':') + 1, s.indexOf('_'));
       for (ASTNode a : modifiers) {
-        final Annotation errorAnnotation = createErrorAnnotation(a.getPsi(),
-                                                                 JSBundle.message(
-                                                                   "javascript.validation.message.attribute.was.specified.multiple.times",
-                                                                   type),
-                                                                 ProblemHighlightType.ERROR,
-                                                                 myHolder);
+        final Annotation errorAnnotation = JSProblemUtil.createErrorAnnotation(a.getPsi(),
+                                                                               JSBundle.message(
+                                                                                 "javascript.validation.message.attribute.was.specified.multiple.times",
+                                                                                 type),
+                                                                               ProblemHighlightType.ERROR,
+                                                                               myHolder);
         errorAnnotation.registerFix(new RemoveASTNodeFix(ourModifierFixIds[i], a));
       }
     }
@@ -1050,7 +1049,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         // ok
       }
       else {
-        createErrorAnnotation(
+        JSProblemUtil.createErrorAnnotation(
           initializer,
           JSBundle.message("javascript.namespace.initializer.should.be.string.or.another.namespace.reference"),
           ProblemHighlightType.ERROR,
@@ -1191,7 +1190,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           else {
             expr_ = expr;
           }
-          registerProblem(
+          JSProblemUtil.registerProblem(
             expr_,
             JSBundle.message("javascript.callback.signature.mismatch"),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myHolder, JSValidateTypesInspection.SHORT_NAME,
@@ -1204,7 +1203,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           if (expectedEventClass == null) {
             if (!JSResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_EVENT_FQN, actualParameterType, parameters[0]) &&
                 !JSResolveUtil.isAssignableType(FlexCommonTypeNames.STARLING_EVENT_FQN, actualParameterType, parameters[0])) {
-              JSAnnotatingVisitor.registerProblem(
+              JSProblemUtil.registerProblem(
                 expr instanceof JSFunctionExpression ? parameters[0] : expr,
                 JSBundle.message("javascript.callback.signature.mismatch"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myHolder, JSValidateTypesInspection.SHORT_NAME,
@@ -1214,7 +1213,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           }
           else {
             if (!JSResolveUtil.isAssignableType(actualParameterType, expectedEventClass.getQualifiedName(), parameters[0])) {
-              JSAnnotatingVisitor.registerProblem(
+              JSProblemUtil.registerProblem(
                 expr instanceof JSFunctionExpression ? parameters[0] : expr,
                 JSBundle.message("javascript.callback.signature.mismatch.event.class", expectedEventClass.getQualifiedName()),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myHolder, JSValidateTypesInspection.SHORT_NAME,
@@ -1334,7 +1333,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       myHolder.createErrorAnnotation(
         typeElement,
         JSBundle.message("javascript.validation.message.unexpected.type.for.rest.parameter")
-      ).registerFix(new RemoveASTNodeFix("javascript.fix.remove.type.reference", false, nodesBefore.first, nodesBefore.second));
+      ).registerFix(JSFixFactory.getInstance().removeASTNodeFix("javascript.fix.remove.type.reference", false, nodesBefore.first, nodesBefore.second));
     }
   }
 
@@ -1448,7 +1447,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         final JSExpression[] expressions = argumentList != null ? argumentList.getArguments() : JSExpression.EMPTY_ARRAY;
         if (expressions.length > 0) {
           final CreateConstructorFix fix = CreateConstructorFix.createIfApplicable(node);
-          registerProblem(
+          JSProblemUtil.registerProblem(
             ValidateTypesUtil.getPlaceForSignatureProblem(node, argumentList),
             JSBundle.message("javascript.invalid.number.of.parameters", "0"),
             ValidateTypesUtil.getHighlightTypeForTypeOrSignatureProblem(node), myHolder, JSCheckFunctionSignaturesInspection.SHORT_NAME,
@@ -1530,9 +1529,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       if (resolveResult instanceof JSClass && ((JSClass)resolveResult).isInterface()) {
         final PsiElement referenceNameElement = methodExpression.getReferenceNameElement();
 
-        registerProblem(referenceNameElement,
-                        JSBundle.message("javascript.interface.can.not.be.instantiated.message"),
-                        getUnresolvedReferenceHighlightType(methodExpression), myHolder, JSUnresolvedFunctionInspection.SHORT_NAME);
+        JSProblemUtil.registerProblem(referenceNameElement,
+                                      JSBundle.message("javascript.interface.can.not.be.instantiated.message"),
+                                      getUnresolvedReferenceHighlightType(methodExpression), myHolder,
+                                      JSUnresolvedFunctionInspection.SHORT_NAME);
         return false;
       }
     }
@@ -1549,7 +1549,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     if (!JSResolveUtil.isAssignableType("XML", type, argumentList) &&
         !JSResolveUtil.isAssignableType("XMLList", type, argumentList)
       ) {
-      JSAnnotatingVisitor.registerProblem(
+      JSProblemUtil.registerProblem(
         node.getMethodExpression(),
         JSBundle.message("javascript.invalid.e4x.filter.query.receiver", type),
         ValidateTypesUtil.getHighlightTypeForTypeOrSignatureProblem(node),

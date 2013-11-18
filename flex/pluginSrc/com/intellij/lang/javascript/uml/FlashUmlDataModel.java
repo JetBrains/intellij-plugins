@@ -34,6 +34,7 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
+import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -186,7 +187,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     final JSClass fromClass = (JSClass)source;
     final JSClass toClass = (JSClass)target;
 
-    if (JSRefactoringUtil.isInLibrary(fromClass)) {
+    if (JSProjectUtil.isInLibrary(fromClass)) {
       return;
     }
 

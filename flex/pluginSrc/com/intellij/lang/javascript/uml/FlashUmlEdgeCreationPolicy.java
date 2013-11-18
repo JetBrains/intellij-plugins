@@ -4,7 +4,7 @@ import com.intellij.diagram.DiagramEdgeCreationPolicy;
 import com.intellij.diagram.DiagramNode;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
+import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class FlashUmlEdgeCreationPolicy extends DiagramEdgeCreationPolicy<Object> {
@@ -14,7 +14,7 @@ public class FlashUmlEdgeCreationPolicy extends DiagramEdgeCreationPolicy<Object
     final JSClass clazz = (JSClass)source.getIdentifyingElement();
     JSAttributeList attributeList = clazz.getAttributeList();
     if (attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.FINAL)) return false;
-    if (JSRefactoringUtil.isInLibrary(clazz)) return false;
+    if (JSProjectUtil.isInLibrary(clazz)) return false;
     return true;
   }
 
