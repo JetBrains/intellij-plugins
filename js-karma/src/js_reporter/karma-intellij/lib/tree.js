@@ -121,6 +121,18 @@ function TestSuiteNode(tree, id, parentNode, name, type, locationHint) {
 
 inherit(TestSuiteNode, Node);
 
+/**
+ * Returns child node by its name.
+ * @param childKey unique string that identifies this node (it can be node's name)
+ * @returns {?Node} child node (null, if no child node with such name found)
+ */
+TestSuiteNode.prototype.findChildNodeByKey = function(childKey) {
+  if (Object.prototype.hasOwnProperty.call(this.lookupMap, childKey)) {
+    return this.lookupMap[childKey];
+  }
+  return null;
+};
+
 TestSuiteNode.prototype.getStartCommandName = function () {
   return 'testSuiteStarted';
 };
@@ -138,6 +150,19 @@ TestSuiteNode.prototype.getFinishCommandName = function () {
  * @returns {TestSuiteNode | TestNode}
  */
 TestSuiteNode.prototype.addChild = function (childName, isChildSuite, nodeType, locationHint) {
+  return this.addChildWithKey(childName, childName, isChildSuite, nodeType, locationHint);
+};
+
+/**
+ *
+ * @param {String} childKey unique string that identifies this node (sometimes childName isn't enough)
+ * @param {String} childName node name (e.g. browser name / suite name / spec name)
+ * @param {Boolean} isChildSuite true if child node can have children
+ * @param {String} nodeType child node type (e.g. 'config', 'browser')
+ * @param {String} locationHint navigation info
+ * @returns {TestSuiteNode | TestNode}
+ */
+TestSuiteNode.prototype.addChildWithKey = function (childKey, childName, isChildSuite, nodeType, locationHint) {
   if (this.isFinished) {
     throw Error('Child node could be created for finished node!');
   }
@@ -150,6 +175,9 @@ TestSuiteNode.prototype.addChild = function (childName, isChildSuite, nodeType, 
     child = new TestNode(this.tree, childId, this, childName, nodeType, locationHint);
   }
   this.children.push(child);
+  if (isChildSuite) {
+    this.lookupMap[childKey] = child;
+  }
   return child;
 };
 
