@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.inspections.analyzer;
 
 import com.google.dart.engine.context.AnalysisContext;
 import com.google.dart.engine.error.AnalysisError;
+import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInspection.GlobalInspectionContext;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ex.Tools;
@@ -49,9 +50,11 @@ public class DartGlobalInspectionContext implements GlobalInspectionContextExten
   public void performPreRunActivities(@NotNull List<Tools> globalTools,
                                       @NotNull List<Tools> localTools,
                                       @NotNull GlobalInspectionContext context) {
-    setIndicatorText("Looking for Dart files...");
+    final AnalysisScope analysisScope = context.getRefManager().getScope();
+    if (analysisScope == null) return;
 
-    final GlobalSearchScope scope = GlobalSearchScope.EMPTY_SCOPE.union(context.getRefManager().getScope().toSearchScope());
+    final GlobalSearchScope scope = GlobalSearchScope.EMPTY_SCOPE.union(analysisScope.toSearchScope());
+    setIndicatorText("Looking for Dart files...");
     final Collection<VirtualFile> dartFiles = FileTypeIndex.getFiles(DartFileType.INSTANCE, scope);
 
     for (VirtualFile dartFile : dartFiles) {
