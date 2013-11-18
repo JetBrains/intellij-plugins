@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.facet;
 
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
 import com.intellij.framework.library.DownloadableLibraryService;
 import com.intellij.framework.library.FrameworkSupportWithLibrary;
@@ -24,6 +25,7 @@ import com.intellij.ide.util.frameworkSupport.FrameworkSupportConfigurableBase;
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel;
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportProviderBase;
 import com.intellij.ide.util.frameworkSupport.FrameworkVersion;
+import com.intellij.jam.model.util.JamCommonUtil;
 import com.intellij.javaee.model.xml.web.Filter;
 import com.intellij.javaee.model.xml.web.FilterMapping;
 import com.intellij.javaee.model.xml.web.WebApp;
@@ -51,6 +53,7 @@ import com.intellij.struts2.StrutsFileTemplateProvider;
 import com.intellij.struts2.facet.ui.StrutsConfigsSearcher;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.containers.MultiMap;
+import com.intellij.util.descriptors.ConfigFile;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -140,10 +143,14 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
           new WriteCommandAction.Simple(modifiableRootModel.getProject()) {
             protected void run() throws Throwable {
               final WebFacet webFacet = strutsFacet.getWebFacet();
-              final WebApp webApp = webFacet.getRoot();
-              if (webApp == null) {
-                return;
-              }
+
+              final ConfigFile configFile = webFacet.getWebXmlDescriptor();
+              if (configFile == null) return;
+
+              final XmlFile webXmlFile = configFile.getXmlFile();
+              final WebApp webApp = JamCommonUtil.getRootElement(webXmlFile, WebApp.class, null);
+              if (webApp == null) return;
+              if (!FileModificationService.getInstance().prepareFileForWrite(webXmlFile)) return;
 
               final Filter strutsFilter = webApp.addFilter();
               strutsFilter.getFilterName().setStringValue("struts2");
