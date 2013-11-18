@@ -6,10 +6,9 @@ var cli = require("./intellijCli.js")
 
 function getOrCreateBrowserNode(tree, browser) {
   var configFileNode = tree.configFileNode;
-  var browserNode = configFileNode.lookupMap[browser.id];
+  var browserNode = configFileNode.findChildNodeByKey(browser.id);
   if (!browserNode) {
-    browserNode = configFileNode.addChild(browser.name, true, 'browser', null);
-    configFileNode.lookupMap[browser.id] = browserNode;
+    browserNode = configFileNode.addChildWithKey(browser.id, browser.name, true, 'browser', null);
     browserNode.writeStartMessage();
   }
   return browserNode;
@@ -35,11 +34,10 @@ function getOrCreateLowerSuiteNode(browserNode, suiteNames, write) {
       write(message + '\n');
       continue;
     }
-    var nextNode = node.lookupMap[suiteName];
+    var nextNode = node.findChildNodeByKey(suiteName);
     if (!nextNode) {
       var locationHint = intellijUtil.joinList(suiteNames, 0, i + 1, '.');
       nextNode = node.addChild(suiteName, true, 'suite', locationHint);
-      node.lookupMap[suiteName] = nextNode;
       nextNode.writeStartMessage();
     }
     node = nextNode;
@@ -48,14 +46,10 @@ function getOrCreateLowerSuiteNode(browserNode, suiteNames, write) {
 }
 
 function createSpecNode(suiteNode, suiteNames, specName) {
-  var specNode = suiteNode.lookupMap[specName];
-  if (specNode) {
-    throw Error("Spec node is already created");
-  }
   var names = suiteNames.slice();
   names.push(specName);
   var locationHint = intellijUtil.joinList(names, 0, names.length, '.');
-  specNode = suiteNode.addChild(specName, false, 'test', locationHint);
+  var specNode = suiteNode.addChild(specName, false, 'test', locationHint);
   specNode.writeStartMessage();
   return specNode;
 }
