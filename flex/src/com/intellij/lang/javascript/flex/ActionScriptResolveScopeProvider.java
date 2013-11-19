@@ -19,6 +19,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.ResolveScopeManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,6 +33,7 @@ public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvi
     return getResolveScope(file, project, true);
   }
 
+  @Nullable
   private GlobalSearchScope getResolveScope(@NotNull VirtualFile file, Project project, boolean checkApplicable) {
     if (file instanceof VirtualFileWindow) {
       file = ((VirtualFileWindow)file).getDelegate();
@@ -73,7 +75,9 @@ public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvi
     if (file == null) return JSResolveUtil.getJavaScriptSymbolsResolveScope(project);
 
     final GlobalSearchScope scope = isApplicable(file) ? ResolveScopeManager.getInstance(project).getDefaultResolveScope(file) : null;
-    return scope != null ? scope : getResolveScope(file, project, false);
+    if (scope != null) return scope;
+    final GlobalSearchScope fileResolveScope = getResolveScope(file, project, false);
+    return fileResolveScope != null ? fileResolveScope : JSResolveUtil.getJavaScriptSymbolsResolveScope(project);
   }
 
   protected boolean isApplicable(final VirtualFile file) {
