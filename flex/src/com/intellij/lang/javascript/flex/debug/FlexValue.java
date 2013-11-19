@@ -371,7 +371,7 @@ class FlexValue extends XValue {
         new XFullValueEvaluator() {
           @Override
           public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
-            callback.evaluated(unquoted, isXml ? XmlObjectEvaluator.MONOSPACED_FONT : null);
+            callback.evaluated(StringUtil.convertLineSeparators(unquoted), isXml ? XmlObjectEvaluator.MONOSPACED_FONT : null);
           }
         });
     }
