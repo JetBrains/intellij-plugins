@@ -562,6 +562,10 @@ public class FlexCommonUtils {
       return !bcNature.pureAS; // Apache Flex SDK 4.9
     }
 
+    if (swcName.equals("experimental_mobile.swc")) {
+      return bcNature.isMobilePlatform() && !bcNature.pureAS; // Apache Flex SDK 4.11
+    }
+
     if (swcName.equals("automation.swc") ||
         swcName.equals("automation_agent.swc") ||
         swcName.equals("automation_dmv.swc") ||
