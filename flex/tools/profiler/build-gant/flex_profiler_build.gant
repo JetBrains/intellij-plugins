@@ -51,7 +51,7 @@ def buildFlex(configName, target) {
     jvmarg(value: "-Duser.language=en")
     jvmarg(value: "-Duser.region=en")
     classpath {
-      fileset(dir: "$flexBuildHome/../flex-ui-designer/build-gant/compiler-libs")
+      fileset(dir: "$flexBuildHome/../flex-ui-designer/idea-plugin/testData/lib/flex-sdk/4.6/lib")
     }
     arg(value: "-load-config=$flexSandbox/base.xml")
     arg(value: "-load-config=$flexBuildHome/${configName}.xml")
