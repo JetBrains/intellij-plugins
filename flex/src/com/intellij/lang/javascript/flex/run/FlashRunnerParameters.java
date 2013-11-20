@@ -382,6 +382,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     if (packagingOptions.getCustomDescriptorPath().isEmpty()) return;
     final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(packagingOptions.getCustomDescriptorPath());
     if (descriptorFile == null || descriptorFile.isDirectory()) return;
+    if (sdk.getSdkType() == FlexmojosSdkType.getInstance()) return;
 
     final PsiFile file = PsiManager.getInstance(module.getProject()).findFile(descriptorFile);
     final XmlTag rootTag = file instanceof XmlFile ? ((XmlFile)file).getRootTag() : null;

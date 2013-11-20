@@ -27,6 +27,7 @@ import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.*;
@@ -836,7 +837,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                              FileUtil.toSystemDependentName(packagingOptions.getCustomDescriptorPath())),
                                                                  AirPackagingConfigurableBase.Location.CustomDescriptor));
         }
-        else if (sdk != null) {
+        else if (sdk != null && sdk.getSdkType() != FlexmojosSdkType.getInstance()) {
           final PsiFile file = PsiManager.getInstance(project).findFile(descriptorFile);
           final XmlTag rootTag = file instanceof XmlFile ? ((XmlFile)file).getRootTag() : null;
           final String ns = rootTag == null ? null : rootTag.getNamespace();
