@@ -82,10 +82,6 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
 
   public void execute(@NotNull ExecutionEnvironment executionEnvironment,
                       @Nullable Callback callback) throws ExecutionException {
-    final RunnerSettings runnerSettings = executionEnvironment.getRunnerSettings();
-    if (runnerSettings == null) {
-      return; // TODO: what does this mean?
-    }
     RunProfile runProfile = executionEnvironment.getRunProfile();
 
     if (!startProfiling((FlashRunConfiguration)runProfile)) {
