@@ -8,6 +8,8 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import icons.FlexIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.model.java.JavaSourceRootType;
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import javax.swing.*;
 
@@ -53,5 +55,10 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
 
   public static FlexModuleType getInstance() {
     return (FlexModuleType)ModuleTypeManager.getInstance().findByID(MODULE_TYPE_ID);
+  }
+
+  @Override
+  public boolean isSupportedRootType(JpsModuleSourceRootType type) {
+    return type == JavaSourceRootType.SOURCE || type == JavaSourceRootType.TEST_SOURCE;
   }
 }
