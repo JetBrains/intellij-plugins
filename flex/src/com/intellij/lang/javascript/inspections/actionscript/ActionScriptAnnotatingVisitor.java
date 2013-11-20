@@ -1627,4 +1627,39 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
     return super.getUnresolvedReferenceHighlightType(node);
   }
+
+  private void checkClassReferenceInStaticContext(final JSExpression node, @PropertyKey(resourceBundle = JSBundle.BUNDLE) String key) {
+    PsiElement element =
+      PsiTreeUtil.getParentOfType(node, JSExecutionScope.class, JSClass.class, JSObjectLiteralExpression.class);
+
+    if (element instanceof JSFunction) {
+      final JSFunction function = (JSFunction)element;
+
+      final JSAttributeList attributeList = function.getAttributeList();
+      if (attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.STATIC)) {
+        myHolder.createErrorAnnotation(node, JSBundle.message(key));
+        return;
+      }
+    }
+
+    if (node instanceof JSSuperExpression) {
+      if (element instanceof JSObjectLiteralExpression) {
+        element = PsiTreeUtil.getParentOfType(node, JSExecutionScope.class, JSClass.class);
+      }
+
+      if(element == null ||
+         !(element instanceof JSClass) &&
+         !(JSResolveUtil.findParent(element) instanceof JSClass)
+        ) {
+        final String message = JSBundle.message("javascript.validation.message.super.referenced.without.class.instance.context");
+        myHolder.createErrorAnnotation(node, message);
+      }
+    }
+  }
+
+  @Override
+  public void visitJSSuperExpression(final JSSuperExpression node) {
+    checkClassReferenceInStaticContext(node, "javascript.validation.message.super.referenced.from.static.context");
+  }
+
 }
