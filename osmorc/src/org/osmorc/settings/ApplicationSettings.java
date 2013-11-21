@@ -26,11 +26,14 @@
 package org.osmorc.settings;
 
 import com.intellij.openapi.components.*;
+import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 
 import java.util.List;
@@ -47,6 +50,7 @@ import java.util.List;
     file = StoragePathMacros.APP_CONFIG + "/osmorc.xml")})
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
   private List<FrameworkInstanceDefinition> myInstances = ContainerUtil.newArrayList();
+  private List<FrameworkInstanceDefinition> myActiveInstances = null;
   private List<LibraryBundlificationRule> myRules = ContainerUtil.newArrayList(new LibraryBundlificationRule());
 
   public static ApplicationSettings getInstance() {
@@ -70,6 +74,7 @@ public class ApplicationSettings implements PersistentStateComponent<Application
 
   public void setFrameworkInstanceDefinitions(List<FrameworkInstanceDefinition> instances) {
     myInstances = instances;
+    myActiveInstances = null;
   }
 
   @AbstractCollection(elementTag = "libraryBundlificationRule")
@@ -94,5 +99,19 @@ public class ApplicationSettings implements PersistentStateComponent<Application
       }
     }
     return null;
+  }
+
+  @NotNull
+  public List<FrameworkInstanceDefinition> getActiveFrameworkInstanceDefinitions() {
+    if (myActiveInstances == null) {
+      final FrameworkIntegratorRegistry registry = FrameworkIntegratorRegistry.getInstance();
+      myActiveInstances = ContainerUtil.filter(myInstances, new Condition<FrameworkInstanceDefinition>() {
+        @Override
+        public boolean value(FrameworkInstanceDefinition definition) {
+          return registry.findIntegratorByInstanceDefinition(definition) != null;
+        }
+      });
+    }
+    return myActiveInstances;
   }
 }

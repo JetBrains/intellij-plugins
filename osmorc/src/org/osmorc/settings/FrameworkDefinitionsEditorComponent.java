@@ -186,7 +186,7 @@ public class FrameworkDefinitionsEditorComponent {
 
   public void resetTo(@NotNull ApplicationSettings settings) {
     myModel.clear();
-    for (FrameworkInstanceDefinition instance : settings.getFrameworkInstanceDefinitions()) {
+    for (FrameworkInstanceDefinition instance : settings.getActiveFrameworkInstanceDefinitions()) {
       //noinspection unchecked
       myModel.addElement(instance);
     }
