@@ -162,16 +162,6 @@ public class ActionScriptClassResolver extends JSClassResolver {
     return result;
   }
 
-  private static long getResolveResultTimestamp(PsiElement candidate) {
-    for (JSResolveHelper helper : Extensions.getExtensions(JSResolveHelper.EP_NAME)) {
-      long result = helper.getResolveResultTimestamp(candidate);
-      if (result != -1) {
-        return result;
-      }
-    }
-    return -1;
-  }
-
   private static boolean isBuiltInClassName(final String className) {
     return OBJECT_CLASS_NAME.equals(className) ||
            BOOLEAN_CLASS_NAME.equals(className) ||
