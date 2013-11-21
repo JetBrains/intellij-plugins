@@ -34,6 +34,7 @@
   <!-- required dependencies -->
   <depends>com.intellij.javaee</depends>
   <depends>JavaScript</depends>
+  <depends>com.intellij.java-i18n</depends>
 
   <!-- optional dependencies -->
   <depends optional="true">HtmlTools</depends>
