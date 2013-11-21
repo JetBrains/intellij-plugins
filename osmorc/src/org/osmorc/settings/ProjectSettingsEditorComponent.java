@@ -71,7 +71,7 @@ public class ProjectSettingsEditorComponent {
     myFrameworkInstance.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer("[not specified]") {
       @Override
       protected boolean isInstanceDefined(@NotNull FrameworkInstanceDefinition instance) {
-        List<FrameworkInstanceDefinition> instanceDefinitions = ApplicationSettings.getInstance().getFrameworkInstanceDefinitions();
+        List<FrameworkInstanceDefinition> instanceDefinitions = ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions();
         for (FrameworkInstanceDefinition instanceDefinition : instanceDefinitions) {
           if (instance.equals(instanceDefinition)) {
             return true;
@@ -173,7 +173,7 @@ public class ProjectSettingsEditorComponent {
     //noinspection unchecked
     myFrameworkInstance.addItem(null);
 
-    List<FrameworkInstanceDefinition> instanceDefinitions = ApplicationSettings.getInstance().getFrameworkInstanceDefinitions();
+    List<FrameworkInstanceDefinition> instanceDefinitions = ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions();
     final String frameworkInstanceName = mySettings.getFrameworkInstanceName();
 
     FrameworkInstanceDefinition projectFrameworkInstance = null;

@@ -101,7 +101,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     DefaultComboBoxModel model = new DefaultComboBoxModel();
     //noinspection unchecked
     model.addElement(null);
-    for (FrameworkInstanceDefinition instance : ApplicationSettings.getInstance().getFrameworkInstanceDefinitions()) {
+    for (FrameworkInstanceDefinition instance : ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions()) {
       //noinspection unchecked
       model.addElement(instance);
     }
