@@ -426,7 +426,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
     if (_context != null && MxmlLanguageTagsUtil.isComponentTag(_context)) {
       return new XmlAttributeDescriptor[]{
-        new ClassNameAttributeDescriptor(null),
+        new ClassNameAttributeDescriptor(this),
         new AnnotationBackedDescriptorImpl(FlexMxmlLanguageAttributeNames.ID, this, true, null, null, null)
       };
     }
