@@ -1662,4 +1662,9 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     checkClassReferenceInStaticContext(node, "javascript.validation.message.super.referenced.from.static.context");
   }
 
+
+  @Override
+  protected boolean obtainNextMatchedParams(int[] matchedParams, JSParameter[] parameters) {
+    return false;
+  }
 }
