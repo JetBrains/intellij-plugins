@@ -1067,6 +1067,9 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForTargetPlayer(final String targetPlayer) {
+    if (StringUtil.compareVersionNumbers(targetPlayer, "14") >= 0) return "25";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "13") >= 0) return "24";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "12") >= 0) return "23";
     if (StringUtil.compareVersionNumbers(targetPlayer, "11.9") >= 0) return "22";
     if (StringUtil.compareVersionNumbers(targetPlayer, "11.8") >= 0) return "21";
     if (StringUtil.compareVersionNumbers(targetPlayer, "11.7") >= 0) return "20";
@@ -1084,6 +1087,9 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForAirVersion(final String airVersion) {
+    if (StringUtil.compareVersionNumbers(airVersion, "14") >= 0) return "25";
+    if (StringUtil.compareVersionNumbers(airVersion, "13") >= 0) return "24"; // yes, they are going to release 13 after 4
+    if (StringUtil.compareVersionNumbers(airVersion, "4") >= 0) return "23";
     if (StringUtil.compareVersionNumbers(airVersion, "3.9") >= 0) return "22";
     if (StringUtil.compareVersionNumbers(airVersion, "3.8") >= 0) return "21";
     if (StringUtil.compareVersionNumbers(airVersion, "3.7") >= 0) return "20";
