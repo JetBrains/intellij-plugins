@@ -37,7 +37,8 @@ public class ActionScriptClassResolver extends JSClassResolver {
 
   private static ActionScriptClassResolver INSTANCE = null;
 
-  protected ActionScriptClassResolver() { }
+  protected ActionScriptClassResolver() {
+  }
 
   public static ActionScriptClassResolver getInstance() {
     if (INSTANCE == null) INSTANCE = new ActionScriptClassResolver();
@@ -97,9 +98,9 @@ public class ActionScriptClassResolver extends JSClassResolver {
     ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     JSQualifiedNamedElement resultFromSourceContent = null;
     JSQualifiedNamedElement resultFromLibraries = null;
-    long resultFormLibrariesTimestamp = 0;
+    long resultFromLibrariesTimestamp = 0;
 
-    for(Object _clazz:candidates) {
+    for (Object _clazz : candidates) {
       if (!(_clazz instanceof JSQualifiedNamedElement)) continue;
       JSQualifiedNamedElement clazz = (JSQualifiedNamedElement)_clazz;
 
@@ -118,33 +119,31 @@ public class ActionScriptClassResolver extends JSClassResolver {
 
         if (projectFileIndex.isInSourceContent(vFile)) {
           // the absolute preference is for classes from sources
-          if (resultFromSourceContent == null ||
-              JSCommonTypeNames.VECTOR_CLASS_NAME.equals(link) && clazz.getChildren().length > resultFromSourceContent.getChildren().length) {
-            resultFromSourceContent = clazz;
-          }
+          resultFromSourceContent = clazz;
           continue;
         }
 
         // choose the right class in the same way as compiler does: with the latest timestamp in catalog.xml file
         if (resultFromLibraries == null) {
           resultFromLibraries = clazz;
-          // do not initialize resultFormLibrariesTimestamp here, it is expensive and may be not required if only 1 candidate
+          // do not initialize resultFromLibrariesTimestamp here, it is expensive and may be not required if only 1 candidate
         }
         else if (JSCommonTypeNames.VECTOR_CLASS_NAME.equals(link)) {
-          if (clazz.getChildren().length > resultFromLibraries.getChildren().length) {
+          if (clazz instanceof JSClass && resultFromLibraries instanceof JSClass &&
+              ((JSClass)clazz).getFunctions().length > ((JSClass)resultFromLibraries).getFunctions().length) {
             resultFromLibraries = clazz;
           }
         }
         else {
-          if (resultFormLibrariesTimestamp == 0) {
+          if (resultFromLibrariesTimestamp == 0) {
             // was not initialized yet
-            resultFormLibrariesTimestamp = getResolveResultTimestamp(resultFromLibraries);
+            resultFromLibrariesTimestamp = getResolveResultTimestamp(resultFromLibraries);
           }
 
           final long classTimestamp = getResolveResultTimestamp(clazz);
-          if (classTimestamp > resultFormLibrariesTimestamp) {
+          if (classTimestamp > resultFromLibrariesTimestamp) {
             resultFromLibraries = clazz;
-            resultFormLibrariesTimestamp = classTimestamp;
+            resultFromLibrariesTimestamp = classTimestamp;
           }
         }
       }
@@ -168,13 +167,13 @@ public class ActionScriptClassResolver extends JSClassResolver {
            FUNCTION_CLASS_NAME.equals(className) ||
            STRING_CLASS_NAME.equals(className);
   }
-  
+
   @Nullable
   private static PsiElement findClassByQNameViaHelper(final String link,
                                                       final Project project,
                                                       final String className,
                                                       final GlobalSearchScope scope) {
-    for(JSResolveHelper helper: Extensions.getExtensions(JSResolveHelper.EP_NAME)) {
+    for (JSResolveHelper helper : Extensions.getExtensions(JSResolveHelper.EP_NAME)) {
       PsiElement result = helper.findClassByQName(link, project, className, scope);
       if (result != null) return result;
     }
