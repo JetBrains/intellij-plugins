@@ -143,15 +143,12 @@ public class BundleCompiler implements PackagingCompiler {
 
     OsmorcFacetConfiguration configuration = facet.getConfiguration();
 
-    VirtualFile moduleOutputUrl = getModuleOutputUrl(module);
-    if (moduleOutputUrl == null) {
+    File moduleOutputDir = getModuleOutputDir(module);
+    if (moduleOutputDir == null) {
       String message = "Unable to determine the compiler output path for module " + module.getName();
       context.addMessage(CompilerMessageCategory.WARNING, message, null, 0, 0);
       return;
     }
-    File moduleOutputDir = VfsUtilCore.virtualToIoFile(moduleOutputUrl);
-
-    List<String> classPathUrls = ContainerUtil.newSmartList(moduleOutputUrl.getUrl());
 
     // build a bnd file or use a provided one.
     File bndFile = getBndFile(module, facet, context, moduleOutputDir);
@@ -168,7 +165,7 @@ public class BundleCompiler implements PackagingCompiler {
 
     progressIndicator.setText2("Running bnd to build the bundle");
     try {
-      BndWrapper.build(module, context, bndFile, classPathUrls, outputPath);
+      BndWrapper.build(module, context, bndFile, moduleOutputDir, outputPath);
     }
     catch (Exception e) {
       context.addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Unexpected error: " + e.getMessage(), null, 0, 0);
@@ -332,25 +329,22 @@ public class BundleCompiler implements PackagingCompiler {
   }
 
   /**
-   * Returns the manifest file for the given module if it exists
-   *
-   * @param module the module
-   * @return the manifest file or null if it doesnt exist
+   * Returns the manifest file for the given module or null if it does not exist.
    */
   @Nullable
-  public static VirtualFile getManifestFile(@NotNull Module module) {
+  public static File getManifestFile(@NotNull Module module) {
     OsmorcFacet facet = OsmorcFacet.getInstance(module);
-    // FIXES Exception (http://ea.jetbrains.com/browser/ea_problems/17161)
-    if (facet == null) {
-      return null;
-    }
-    ModuleRootManager manager = ModuleRootManager.getInstance(module);
-    for (VirtualFile root : manager.getContentRoots()) {
-      VirtualFile result = VfsUtilCore.findRelativeFile(facet.getManifestLocation(), root);
-      if (result != null) {
-        return result;
+    if (facet != null) {
+      String manifestLocation = facet.getManifestLocation();
+      ModuleRootManager manager = ModuleRootManager.getInstance(module);
+      for (String root : manager.getContentRootUrls()) {
+        File file = new File(VfsUtilCore.urlToPath(root), manifestLocation);
+        if (file.exists()) {
+          return file;
+        }
       }
     }
+
     return null;
   }
 
@@ -373,14 +367,19 @@ public class BundleCompiler implements PackagingCompiler {
     return new BundleValidityState(in);
   }
 
-
   /**
-   * Returns a virtual file representing the module's output path.
+   * Returns a file representing the module's output path.
    */
   @Nullable
-  public static VirtualFile getModuleOutputUrl(@NotNull Module module) {
+  public static File getModuleOutputDir(@NotNull Module module) {
     CompilerModuleExtension extension = CompilerModuleExtension.getInstance(module);
-    return extension != null ? extension.getCompilerOutputPath() : null;
+    if (extension != null) {
+      String url = extension.getCompilerOutputUrl();
+      if (url != null) {
+        return new File(VfsUtilCore.urlToPath(url));
+      }
+    }
+    return null;
   }
 
   /**
@@ -392,11 +391,7 @@ public class BundleCompiler implements PackagingCompiler {
   public static String[] bundlifyLibraries(@NotNull Module module,
                                            @NotNull ProgressIndicator indicator,
                                            @NotNull CompileContext compileContext) {
-    File outputDir = null;
-    VirtualFile moduleOutputUrl = getModuleOutputUrl(module);
-    if (moduleOutputUrl != null) {
-      outputDir = BndWrapper.getOutputDir(VfsUtilCore.virtualToIoFile(moduleOutputUrl), compileContext);
-    }
+    File outputDir = BndWrapper.getOutputDir(getModuleOutputDir(module), compileContext);
     if (outputDir == null) {
       // couldn't create output path, abort here..
       return ArrayUtil.EMPTY_STRING_ARRAY;
@@ -461,10 +456,7 @@ public class BundleCompiler implements PackagingCompiler {
    */
   @Nullable
   public static String getJarFileName(@NotNull final Module module) {
-    final OsmorcFacet facet = OsmorcFacet.getInstance(module);
-    if (facet != null) {
-      return facet.getConfiguration().getJarFileLocation();
-    }
-    return null;
+    OsmorcFacet facet = OsmorcFacet.getInstance(module);
+    return facet != null ? facet.getConfiguration().getJarFileLocation() : null;
   }
 }
