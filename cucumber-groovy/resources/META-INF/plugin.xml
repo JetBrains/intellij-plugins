@@ -3,7 +3,7 @@
   <id>cucumber-groovy</id>
   <name>Cucumber for Groovy</name>
   <description>Provides support of Cucumber for Groovy</description>
-  <version>1.0</version>
+  <version>999.999</version>
   <depends>cucumber</depends>
   <depends>org.intellij.groovy</depends>
   <depends>cucumber-java</depends>
