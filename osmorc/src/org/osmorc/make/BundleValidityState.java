@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.make;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -32,12 +31,14 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.IOUtil;
 import gnu.trove.TObjectLongHashMap;
 import gnu.trove.TObjectLongProcedure;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
@@ -52,13 +53,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The validitystate of a bundle. This tells IntellIJ if files have been changed lately.
+ * The validity state of a bundle. This tells IntelliJ if files have been changed lately.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
- * @version $Id$
  */
 public class BundleValidityState implements ValidityState {
+  private final String myModuleName;
+  private final String[] myFileUrls;
+  private final long[] myFileTimestamps;
+  private final String myJarUrl;
+  private final long myJarLastModificationTime;
+  private final boolean myAlwaysRebuildBundleJAR;
+  private final long myRulesModifiedTimeStamp;
 
   /**
    * Ctor. Used by the bundle compiler to create a validity state for a given module.
@@ -66,20 +73,20 @@ public class BundleValidityState implements ValidityState {
    * @param module the mode to create the validity state for.
    */
   public BundleValidityState(final Module module) {
-    moduleName = module.getName();
-    jarUrl = BundleCompiler.getJarFileName(module);
+    myModuleName = module.getName();
+    myJarUrl = BundleCompiler.getJarFileName(module);
 
-    final OsmorcFacet osmorcFacet = OsmorcFacet.getInstance(module);
-    alwaysRebuildBundleJAR = OsmorcFacet.hasOsmorcFacet(module) &&
-                             osmorcFacet.getConfiguration().isAlwaysRebuildBundleJAR();
+    OsmorcFacet osmorcFacet = OsmorcFacet.getInstance(module);
+    OsmorcFacetConfiguration configuration = osmorcFacet != null ? osmorcFacet.getConfiguration() : null;
+    myAlwaysRebuildBundleJAR = configuration != null && configuration.isAlwaysRebuildBundleJAR();
 
-    if (alwaysRebuildBundleJAR) {
-      jarLastModificationTime = 0;
-      fileTimestamps = new long[0];
-      fileUrls = ArrayUtil.EMPTY_STRING_ARRAY;
+    if (myAlwaysRebuildBundleJAR) {
+      myJarLastModificationTime = 0;
+      myFileTimestamps = new long[0];
+      myFileUrls = ArrayUtil.EMPTY_STRING_ARRAY;
     }
     else {
-      jarLastModificationTime = (new File(VfsUtil.urlToPath(jarUrl))).lastModified();
+      myJarLastModificationTime = (new File(VfsUtilCore.urlToPath(myJarUrl))).lastModified();
       final TObjectLongHashMap<String> url2Timestamps = new TObjectLongHashMap<String>();
 
       // note down the modification times of all files that will be copied by the Jar builder
@@ -90,8 +97,7 @@ public class BundleValidityState implements ValidityState {
             registerTimestamps(moduleOutputDir, url2Timestamps);
           }
         }
-      }
-      );
+      });
 
       // add the manifest from the facet settings (it might not be in the source roots)
       // so the build is also triggered when only the manifest has changed
@@ -101,7 +107,6 @@ public class BundleValidityState implements ValidityState {
       }
 
       if (osmorcFacet != null) {
-        OsmorcFacetConfiguration configuration = osmorcFacet.getConfiguration();
         List<Pair<String, String>> jarContents = configuration.getAdditionalJARContents();
         for (Pair<String, String> jarContent : jarContents) {
           VirtualFile file = LocalFileSystem.getInstance().findFileByPath(jarContent.getFirst());
@@ -109,43 +114,43 @@ public class BundleValidityState implements ValidityState {
             registerTimestamps(file, url2Timestamps);
           }
         }
+
         // OSMORC-130 - include BND files into change calculation
         if (configuration.isUseBndFile()) {
           String bndFileLocation = configuration.getBndFileLocation();
-          VirtualFile bndFile = LocalFileSystem.getInstance()
-            .findFileByIoFile(BundleCompiler.findFileInModuleContentRoots(bndFileLocation, module));
-          if (bndFile != null && bndFile.exists()) {
-            registerTimestamps(bndFile, url2Timestamps);
-            registerDependencies(bndFile, url2Timestamps);
+          File bndFileIo = BundleCompiler.findFileInModuleContentRoots(bndFileLocation, module);
+          if (bndFileIo != null) {
+            VirtualFile bndFile = LocalFileSystem.getInstance().findFileByIoFile(bndFileIo);
+            if (bndFile != null && bndFile.exists()) {
+              registerTimestamps(bndFile, url2Timestamps);
+              registerDependencies(bndFile, url2Timestamps);
+            }
           }
         }
       }
 
-
       // we put the urls and timestamps into two arrays for easy serialization
-      fileUrls = new String[url2Timestamps.size()];
-      fileTimestamps = new long[url2Timestamps.size()];
+      myFileUrls = new String[url2Timestamps.size()];
+      myFileTimestamps = new long[url2Timestamps.size()];
 
-      // functor for copying from map to arrays.
-      TObjectLongProcedure<String> tobjectlongprocedure = new TObjectLongProcedure<String>() {
+      url2Timestamps.forEachEntry(new TObjectLongProcedure<String>() {
         public boolean execute(String s, long l) {
-          fileUrls[i] = s;
-          fileTimestamps[i] = l;
+          myFileUrls[i] = s;
+          myFileTimestamps[i] = l;
           i++;
           return true;
         }
 
         int i;
-      };
-      // and copy
-      url2Timestamps.forEachEntry(tobjectlongprocedure);
+      });
     }
+
     long lastModified = 0;
     ApplicationSettings settings = ServiceManager.getService(ApplicationSettings.class);
     for (LibraryBundlificationRule bundlificationRule : settings.getLibraryBundlificationRules()) {
       lastModified = Math.max(lastModified, bundlificationRule.getLastModified());
     }
-    rulesModifiedTimeStamp = lastModified;
+    myRulesModifiedTimeStamp = lastModified;
   }
 
   /**
@@ -154,9 +159,9 @@ public class BundleValidityState implements ValidityState {
    * @param bndFile        the bnd file.
    * @param url2Timestamps the map containing the known timestamps
    */
-  private void registerDependencies(VirtualFile bndFile, TObjectLongHashMap<String> url2Timestamps) {
+  private static void registerDependencies(VirtualFile bndFile, TObjectLongHashMap<String> url2Timestamps) {
     try {
-      String contents = VfsUtil.loadText(bndFile);
+      String contents = VfsUtilCore.loadText(bndFile);
       Pattern p = Pattern.compile("-include[:=\\s](.+)");
       Matcher m = p.matcher(contents);
       while (m.find()) {
@@ -170,7 +175,7 @@ public class BundleValidityState implements ValidityState {
 
           // according to bnd specs all file locations are relative to the including file
           // TODO: we currently do not support replacing bnd's properties or macros in the file locations
-          VirtualFile dependentFile = VfsUtil.findRelativeFile(listMember, bndFile);
+          VirtualFile dependentFile = VfsUtilCore.findRelativeFile(listMember, bndFile);
           if (dependentFile != null && dependentFile.exists()) {
             if (url2Timestamps.containsKey(dependentFile.getUrl())) {
               // welcome to the world of circular dependencies
@@ -190,110 +195,81 @@ public class BundleValidityState implements ValidityState {
     }
   }
 
-  /**
-   * Deserialization ctor.
-   *
-   * @param in the input stream which contains the serialzed data
-   * @throws IOException in case there is a problem during deserialization
-   */
-  public BundleValidityState(DataInput in)
-    throws IOException {
-    alwaysRebuildBundleJAR = in.readBoolean();
-    moduleName = IOUtil.readString(in);
+  public BundleValidityState(DataInput in) throws IOException {
+    myAlwaysRebuildBundleJAR = in.readBoolean();
+    myModuleName = IOUtil.readString(in);
     int i = in.readInt();
-    fileUrls = new String[i];
-    fileTimestamps = new long[i];
+    myFileUrls = new String[i];
+    myFileTimestamps = new long[i];
     for (int j = 0; j < i; j++) {
       String s = IOUtil.readString(in);
       long l = in.readLong();
-      fileUrls[j] = s;
-      fileTimestamps[j] = l;
+      myFileUrls[j] = s;
+      myFileTimestamps[j] = l;
     }
 
-    jarUrl = IOUtil.readString(in);
-    jarLastModificationTime = in.readLong();
-    rulesModifiedTimeStamp = in.readLong();
+    myJarUrl = IOUtil.readString(in);
+    myJarLastModificationTime = in.readLong();
+    myRulesModifiedTimeStamp = in.readLong();
   }
 
-  /**
-   * Serialization method
-   *
-   * @param out output stream to serialize to
-   * @throws IOException in case a problem occurs during serialization
-   */
-  public void save(DataOutput out)
-    throws IOException {
-    out.writeBoolean(alwaysRebuildBundleJAR);
-    IOUtil.writeString(moduleName, out);
-    int i = fileUrls.length;
+  @Override
+  public void save(DataOutput out) throws IOException {
+    out.writeBoolean(myAlwaysRebuildBundleJAR);
+    IOUtil.writeString(myModuleName, out);
+    int i = myFileUrls.length;
     out.writeInt(i);
     for (int j = 0; j < i; j++) {
-      String s = fileUrls[j];
-      long l = fileTimestamps[j];
+      String s = myFileUrls[j];
+      long l = myFileTimestamps[j];
       IOUtil.writeString(s, out);
       out.writeLong(l);
     }
 
-    IOUtil.writeString(jarUrl, out);
-    out.writeLong(jarLastModificationTime);
-    out.writeLong(rulesModifiedTimeStamp);
+    IOUtil.writeString(myJarUrl, out);
+    out.writeLong(myJarLastModificationTime);
+    out.writeLong(myRulesModifiedTimeStamp);
   }
 
+  @Override
+  public boolean equalsTo(ValidityState validityState) {
+    if (myAlwaysRebuildBundleJAR) {
+      return false;
+    }
+    if (!(validityState instanceof BundleValidityState)) {
+      return false;
+    }
 
-  /**
-   * @return the URL where the jar for this bundle will be created at
-   */
-  public String getOutputJarUrl() {
-    return jarUrl;
-  }
-
-  public boolean equalsTo(ValidityState validitystate) {
-    if (alwaysRebuildBundleJAR) {
+    BundleValidityState other = (BundleValidityState)validityState;
+    if (myRulesModifiedTimeStamp != other.myRulesModifiedTimeStamp) {
       return false;
     }
-    if (!(validitystate instanceof BundleValidityState)) {
+    if (!myModuleName.equals(other.myModuleName)) {
       return false;
     }
-    BundleValidityState myvalstate = (BundleValidityState)validitystate;
-    if (rulesModifiedTimeStamp != myvalstate.rulesModifiedTimeStamp) {
+    if (myFileUrls.length != other.myFileUrls.length) {
       return false;
     }
-    if (!moduleName.equals(myvalstate.moduleName)) {
-      return false;
-    }
-    if (fileUrls.length != myvalstate.fileUrls.length) {
-      return false;
-    }
-    for (int i = 0; i < fileUrls.length; i++) {
-      String s = fileUrls[i];
-      long l = fileTimestamps[i];
-      if (!s.equals(myvalstate.fileUrls[i]) || l != myvalstate.fileTimestamps[i]) {
+    for (int i = 0; i < myFileUrls.length; i++) {
+      String s = myFileUrls[i];
+      long l = myFileTimestamps[i];
+      if (!s.equals(other.myFileUrls[i]) || l != other.myFileTimestamps[i]) {
         return false;
       }
     }
-    return Comparing.strEqual(jarUrl, myvalstate.jarUrl) &&
-           jarLastModificationTime == myvalstate.jarLastModificationTime;
+    return Comparing.strEqual(myJarUrl, other.myJarUrl) &&
+           myJarLastModificationTime == other.myJarLastModificationTime;
   }
 
-  private final String moduleName;
-  private final String fileUrls[];
-  private final long fileTimestamps[];
-  private final String jarUrl;
-  private final long jarLastModificationTime;
-  private final boolean alwaysRebuildBundleJAR;
-  private final long rulesModifiedTimeStamp;
-
-
-  private static void registerTimestamps(VirtualFile virtualfile, TObjectLongHashMap<String> url2Timestamps) {
-    if (virtualfile.isDirectory()) {
-      VirtualFile avirtualfile1[] = virtualfile.getChildren();
-      for (VirtualFile virtualfile1 : avirtualfile1) {
-        registerTimestamps(virtualfile1, url2Timestamps);
+  private static void registerTimestamps(VirtualFile root, final TObjectLongHashMap<String> url2Timestamps) {
+    VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor() {
+      @Override
+      public boolean visitFile(@NotNull VirtualFile file) {
+        if (!file.isDirectory()) {
+          url2Timestamps.put(file.getUrl(), file.getTimeStamp());
+        }
+        return super.visitFile(file);
       }
-    }
-    else {
-      url2Timestamps.put(virtualfile.getUrl(), virtualfile.getTimeStamp());
-    }
+    });
   }
 }
-
