@@ -30,11 +30,8 @@ import javax.swing.tree.MutableTreeNode;
 import java.io.IOException;
 import java.util.Date;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Disposable {
-  public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("Action Script Profiler");
+  public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("ActionScript Profiler");
   private JPanel mainPanel;
   private NavigatableTree snapshotTree;
   private JLabel myStatusLabel;
