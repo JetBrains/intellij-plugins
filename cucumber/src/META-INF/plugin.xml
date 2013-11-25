@@ -3,10 +3,8 @@
 <idea-plugin version="2">
   <id>cucumber</id>
   <name>Gherkin</name>
-
   <description>Provides support of Gherkin language</description>
-
-  <version>1.2</version>
+  <version>999.999</version>
   <depends>com.intellij.modules.xml</depends>
   <idea-version since-build="123.0" until-build="133.0"/>
   <vendor>JetBrains</vendor>
