@@ -173,9 +173,9 @@ public class FlexCommonUtils {
 
   /**
    * @return <code>Trinity.first</code> - module name<br/>
-   *         <code>Trinity.second</code> - BC name<br/>
-   *         <code>Trinity.third</code> - forced debug status: <code>true</code> or <code>false</code> means that this bc is compiled for further packaging and we need swf to have corresponding debug status;
-   *         <code>null</code> means that bc is compiled as is (i.e. as configured) without any modifications
+   * <code>Trinity.second</code> - BC name<br/>
+   * <code>Trinity.third</code> - forced debug status: <code>true</code> or <code>false</code> means that this bc is compiled for further packaging and we need swf to have corresponding debug status;
+   * <code>null</code> means that bc is compiled as is (i.e. as configured) without any modifications
    */
   @Nullable
   public static Trinity<String, String, Boolean> getModuleAndBCNameAndForcedDebugStatusByBuildTargetId(final String buildTargetId) {
@@ -602,10 +602,7 @@ public class FlexCommonUtils {
   }
 
   private static boolean isSwcFromMobileFolderIncluded(final BuildConfigurationNature bcNature, final String swcName) {
-    if (!swcName.equals("mobilecomponents.swc")) {
-      LOG.warn("Unknown SWC in '<Flex SDK>/frameworks/libs/mobile' folder: " + swcName);
-    }
-    return !bcNature.pureAS && bcNature.isMobilePlatform();
+    return bcNature.isMobilePlatform() && !bcNature.pureAS;
   }
 
   private static boolean isSwcFromMxFolderIncluded(final BuildConfigurationNature bcNature,
