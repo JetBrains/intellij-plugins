@@ -781,9 +781,9 @@ public class DartParser implements PsiParser {
         && !nextTokenIs(builder_, MUL_EQ) && !nextTokenIs(builder_, PLUS_EQ)
         && !nextTokenIs(builder_, MINUS_EQ) && !nextTokenIs(builder_, DIV_EQ)
         && !nextTokenIs(builder_, LT_LT_EQ) && !nextTokenIs(builder_, EQ)
-        && !nextTokenIs(builder_, GT_GT_EQ) && !nextTokenIs(builder_, GT_GT_GT_EQ)
-        && !nextTokenIs(builder_, XOR_EQ) && !nextTokenIs(builder_, OR_EQ)
-        && !nextTokenIs(builder_, INT_DIV_EQ) && replaceVariants(builder_, 13, "<assign expression>")) return false;
+        && !nextTokenIs(builder_, GT_GT_EQ) && !nextTokenIs(builder_, XOR_EQ)
+        && !nextTokenIs(builder_, OR_EQ) && !nextTokenIs(builder_, INT_DIV_EQ)
+        && replaceVariants(builder_, 12, "<assign expression>")) return false;
     boolean result_ = false;
     boolean pinned_ = false;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<assign expression>");
@@ -823,16 +823,16 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>>=' | '>>=' | '&=' | '^=' | '|='
+  // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '^=' | '|='
   public static boolean assignmentOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "assignmentOperator")) return false;
     if (!nextTokenIs(builder_, REM_EQ) && !nextTokenIs(builder_, AND_EQ)
         && !nextTokenIs(builder_, MUL_EQ) && !nextTokenIs(builder_, PLUS_EQ)
         && !nextTokenIs(builder_, MINUS_EQ) && !nextTokenIs(builder_, DIV_EQ)
         && !nextTokenIs(builder_, LT_LT_EQ) && !nextTokenIs(builder_, EQ)
-        && !nextTokenIs(builder_, GT_GT_EQ) && !nextTokenIs(builder_, GT_GT_GT_EQ)
-        && !nextTokenIs(builder_, XOR_EQ) && !nextTokenIs(builder_, OR_EQ)
-        && !nextTokenIs(builder_, INT_DIV_EQ) && replaceVariants(builder_, 13, "<assignment operator>")) return false;
+        && !nextTokenIs(builder_, GT_GT_EQ) && !nextTokenIs(builder_, XOR_EQ)
+        && !nextTokenIs(builder_, OR_EQ) && !nextTokenIs(builder_, INT_DIV_EQ)
+        && replaceVariants(builder_, 12, "<assignment operator>")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<assignment operator>");
     result_ = consumeToken(builder_, EQ);
@@ -843,7 +843,6 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, PLUS_EQ);
     if (!result_) result_ = consumeToken(builder_, MINUS_EQ);
     if (!result_) result_ = consumeToken(builder_, LT_LT_EQ);
-    if (!result_) result_ = consumeToken(builder_, GT_GT_GT_EQ);
     if (!result_) result_ = consumeToken(builder_, GT_GT_EQ);
     if (!result_) result_ = consumeToken(builder_, AND_EQ);
     if (!result_) result_ = consumeToken(builder_, XOR_EQ);
@@ -1835,7 +1834,7 @@ public class DartParser implements PsiParser {
   /* ********************************************************** */
   // !('!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
   //                                | '+=' | ',' | '-' | '--' | '-=' | '...' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
-  //                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '>>>=' | '?' | '[' | ']'
+  //                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
   //                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
   //                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
   //                                | 'for' | 'get' | 'if' | 'in' | 'interface' | 'native' | 'new' | 'null' | 'operator' | 'rethrow'
@@ -1854,7 +1853,7 @@ public class DartParser implements PsiParser {
 
   // '!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
   //                                | '+=' | ',' | '-' | '--' | '-=' | '...' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
-  //                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '>>>=' | '?' | '[' | ']'
+  //                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
   //                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
   //                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
   //                                | 'for' | 'get' | 'if' | 'in' | 'interface' | 'native' | 'new' | 'null' | 'operator' | 'rethrow'
@@ -1902,7 +1901,6 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, GT);
     if (!result_) result_ = consumeToken(builder_, GT_EQ);
     if (!result_) result_ = consumeToken(builder_, GT_GT_EQ);
-    if (!result_) result_ = consumeToken(builder_, GT_GT_GT_EQ);
     if (!result_) result_ = consumeToken(builder_, QUEST);
     if (!result_) result_ = consumeToken(builder_, LBRACKET);
     if (!result_) result_ = consumeToken(builder_, RBRACKET);
@@ -1961,14 +1959,14 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, RAW_TRIPLE_QUOTED_STRING);
     if (!result_) result_ = consumeToken(builder_, LONG_TEMPLATE_ENTRY_END);
     if (!result_) result_ = shiftRightOperator(builder_, level_ + 1);
-    if (!result_) result_ = expression_recover_0_95(builder_, level_ + 1);
+    if (!result_) result_ = expression_recover_0_94(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // '.' '.'
-  private static boolean expression_recover_0_95(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "expression_recover_0_95")) return false;
+  private static boolean expression_recover_0_94(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "expression_recover_0_94")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);

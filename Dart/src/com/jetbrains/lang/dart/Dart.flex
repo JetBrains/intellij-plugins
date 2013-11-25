@@ -227,8 +227,8 @@ FLOAT_LITERAL=(({FLOATING_POINT_LITERAL1})|({FLOATING_POINT_LITERAL2}))
 <YYINITIAL, LONG_TEMPLATE_ENTRY> ":"                { return COLON; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> ">"                { return GT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> ">="               { return GT_EQ; }
+//<YYINITIAL, LONG_TEMPLATE_ENTRY> ">>"               { return GT_GT; } // breaks generics parsing
 <YYINITIAL, LONG_TEMPLATE_ENTRY> ">>="              { return GT_GT_EQ; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> ">>>="             { return GT_GT_GT_EQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "<"                { return LT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "<="               { return LT_EQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "<<"               { return LT_LT; }
