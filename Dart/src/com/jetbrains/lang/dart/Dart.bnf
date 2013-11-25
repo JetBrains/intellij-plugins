@@ -115,7 +115,6 @@
   GT=">"
   GT_EQ=">="
   GT_GT_EQ=">>="
-  GT_GT_GT_EQ=">>>="
   LT="<"
   LT_EQ="<="
   LT_LT="<<"
@@ -313,7 +312,7 @@ userDefinableOperator ::= multiplicativeOperator
                         | '[' ']' '='?
 
 multiplicativeOperator ::= '*' | '/' | '%' | '~/'
-assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>>=' | '>>=' | '&=' | '^=' | '|='
+assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '^=' | '|='
 additiveOperator ::= '+' | '-'
 shiftOperator ::= '<<' | shiftRightOperator
 relationalOperator ::= '>=' | '>' | '<=' | '<'
@@ -454,7 +453,7 @@ parameterNameReferenceExpression ::= << nonStrictID >>
 expression ::= assignExpressionWrapper {recoverUntil="expression_recover"}
 private expression_recover ::= !('!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
                                | '+=' | ',' | '-' | '--' | '-=' | '...' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
-                               | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '>>>=' | '?' | '[' | ']'
+                               | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
                                | 'for' | 'get' | 'if' | 'in' | 'interface' | 'native' | 'new' | 'null' | 'operator' | 'rethrow'
