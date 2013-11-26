@@ -8,40 +8,44 @@ import com.intellij.lang.LanguageCommenters;
 import org.jetbrains.annotations.Nullable;
 
 public class HbCommenter implements Commenter {
-
   private static final Commenter ourHandlebarsCommenter = new HandlebarsCommenter();
 
   @Nullable
   @Override
   public String getLineCommentPrefix() {
-    return getCommenter().getLineCommentPrefix();
+    Commenter commenter = getCommenter();
+    return commenter != null ? commenter.getLineCommentPrefix() : null;
   }
 
   @Nullable
   @Override
   public String getBlockCommentPrefix() {
-    return getCommenter().getBlockCommentPrefix();
+    Commenter commenter = getCommenter();
+    return commenter != null ? commenter.getBlockCommentPrefix() : null;
   }
 
   @Nullable
   @Override
   public String getBlockCommentSuffix() {
-    return getCommenter().getBlockCommentSuffix();
+    Commenter commenter = getCommenter();
+    return commenter != null ? commenter.getBlockCommentSuffix() : null;
   }
 
   @Nullable
   @Override
   public String getCommentedBlockCommentPrefix() {
-    return getCommenter().getCommentedBlockCommentPrefix();
+    Commenter commenter = getCommenter();
+    return commenter != null ? commenter.getCommentedBlockCommentPrefix() : null;
   }
 
   @Nullable
   @Override
   public String getCommentedBlockCommentSuffix() {
-    return getCommenter().getCommentedBlockCommentSuffix();
+    Commenter commenter = getCommenter();
+    return commenter != null ? commenter.getCommentedBlockCommentSuffix() : null;
   }
 
-  private Commenter getCommenter() {
+  private static Commenter getCommenter() {
     Language commenterLanguage = HbConfig.getCommenterLanguage();
     if (commenterLanguage == null) {
       commenterLanguage = HbLanguage.getDefaultTemplateLang().getLanguage();
