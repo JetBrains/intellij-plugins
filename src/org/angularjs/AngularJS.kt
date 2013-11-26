@@ -6,6 +6,8 @@ import java.util.HashMap
 import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.psi.search.GlobalSearchScope
 
 /**
  * Created by johnlindquist on 6/28/13.
@@ -80,12 +82,11 @@ open class AngularJS(project:Project):AbstractProjectComponent(project){
     }
 
     public override fun initComponent() {
-
         attrs = directiveNames.map { name -> AngularAttributeDescriptor("ng-" + name)}
         attrs.forEach {
             descriptor -> attrLookup.put(descriptor.getName()!!, descriptor)
         }
-        attrArray = attrs.toArray(array<AngularAttributeDescriptor>())
+        attrArray = attrs.copyToArray()
     }
     public override fun disposeComponent() {
 
