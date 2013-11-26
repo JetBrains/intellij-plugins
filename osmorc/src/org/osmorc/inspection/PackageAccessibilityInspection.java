@@ -116,8 +116,13 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
 
   // OSGi Core Spec 3.5 "Class Loading Architecture"
   private static String checkAccessibility(PsiElement targetClass, OsmorcFacet facet) {
+    PsiFile targetFile = targetClass.getContainingFile();
+    if (!(targetFile instanceof PsiClassOwner)) {
+      return null;  // alien file, ignore
+    }
+
     // The parent class loader (normally java.* packages from the boot class path)
-    String packageName = ((PsiJavaFile)targetClass.getContainingFile()).getPackageName();
+    String packageName = ((PsiClassOwner)targetFile).getPackageName();
     if (packageName.isEmpty() || packageName.startsWith("java.")) {
       return null;
     }
@@ -134,7 +139,7 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
     String exportedPackage;
     BundleManager bundleManager = BundleManager.getInstance(targetClass.getProject());
     ModuleFileIndex index = ModuleRootManager.getInstance(requestorModule).getFileIndex();
-    List<OrderEntry> entries = index.getOrderEntriesForFile(targetClass.getContainingFile().getVirtualFile());
+    List<OrderEntry> entries = index.getOrderEntriesForFile(targetFile.getVirtualFile());
     OrderEntry entry = !entries.isEmpty() ? entries.get(0) : null;
     if (entry instanceof ModuleSourceOrderEntry) {
       BundleManifest manifest = bundleManager.getManifestByObject(((ModuleSourceOrderEntry)entry).getRootModel().getModule());
