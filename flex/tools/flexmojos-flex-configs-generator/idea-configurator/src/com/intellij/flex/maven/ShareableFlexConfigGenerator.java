@@ -88,7 +88,7 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
   @Override
   protected void writeTag(String indent, String name, String value, String parentName) throws IOException {
     if (name.equals(PATH_ELEMENT) || name.equals("library") || name.equals("manifest") || name.equals("path")) {
-      out.append(indent).append("\t<").append(name).append(">");
+      out.append(indent).append("\t<").append(name).append('>');
 
       if (parentName.equals(FILE_SPECS) || parentName.equals("source-path") || parentName.equals("include-sources") || parentName.equals("include-file")) {
         if (value.startsWith(baseDir)) {
@@ -129,7 +129,7 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
     }
   }
 
-  private void target(String value) throws IOException {
+  private void target(String value) {
     out.append("@@target@@").append(value, lastSlashIndex(value), value.length());
   }
 
