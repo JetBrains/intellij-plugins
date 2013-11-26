@@ -936,7 +936,7 @@ Dart File
       PsiElement(var)('var')
       COMPONENT_NAME
         ID
-          PsiElement(interface)('interface')
+          PsiElement(IDENTIFIER)('interface')
   PsiElement(;)(';')
   VAR_DECLARATION_LIST
     VAR_ACCESS_DECLARATION
@@ -946,19 +946,19 @@ Dart File
             PsiElement(IDENTIFIER)('bool')
       COMPONENT_NAME
         ID
-          PsiElement(interface)('interface')
+          PsiElement(IDENTIFIER)('interface')
   PsiElement(;)(';')
   VAR_DECLARATION_LIST
     VAR_ACCESS_DECLARATION
       PsiElement(final)('final')
       COMPONENT_NAME
         ID
-          PsiElement(interface)('interface')
+          PsiElement(IDENTIFIER)('interface')
   PsiElement(;)(';')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     COMPONENT_NAME
       ID
-        PsiElement(interface)('interface')
+        PsiElement(IDENTIFIER)('interface')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       PsiElement())(')')
@@ -976,7 +976,7 @@ Dart File
             PsiElement(IDENTIFIER)('String')
     COMPONENT_NAME
       ID
-        PsiElement(interface)('interface')
+        PsiElement(IDENTIFIER)('interface')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       PsiElement())(')')
@@ -989,7 +989,7 @@ Dart File
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     COMPONENT_NAME
       ID
-        PsiElement(interface)('interface')
+        PsiElement(IDENTIFIER)('interface')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       PsiElement())(')')
@@ -1070,7 +1070,7 @@ Dart File
             PsiElement(var)('var')
             COMPONENT_NAME
               ID
-                PsiElement(interface)('interface')
+                PsiElement(IDENTIFIER)('interface')
         PsiElement(;)(';')
         VAR_DECLARATION_LIST
           VAR_ACCESS_DECLARATION
@@ -1080,19 +1080,19 @@ Dart File
                   PsiElement(IDENTIFIER)('bool')
             COMPONENT_NAME
               ID
-                PsiElement(interface)('interface')
+                PsiElement(IDENTIFIER)('interface')
         PsiElement(;)(';')
         VAR_DECLARATION_LIST
           VAR_ACCESS_DECLARATION
             PsiElement(final)('final')
             COMPONENT_NAME
               ID
-                PsiElement(interface)('interface')
+                PsiElement(IDENTIFIER)('interface')
         PsiElement(;)(';')
         METHOD_DECLARATION
           COMPONENT_NAME
             ID
-              PsiElement(interface)('interface')
+              PsiElement(IDENTIFIER)('interface')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             PsiElement())(')')
@@ -1110,7 +1110,7 @@ Dart File
                   PsiElement(IDENTIFIER)('String')
           COMPONENT_NAME
             ID
-              PsiElement(interface)('interface')
+              PsiElement(IDENTIFIER)('interface')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             PsiElement())(')')
@@ -1123,7 +1123,7 @@ Dart File
         METHOD_DECLARATION
           COMPONENT_NAME
             ID
-              PsiElement(interface)('interface')
+              PsiElement(IDENTIFIER)('interface')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             PsiElement())(')')
@@ -1208,7 +1208,7 @@ Dart File
               PsiElement(var)('var')
               COMPONENT_NAME
                 ID
-                  PsiElement(interface)('interface')
+                  PsiElement(IDENTIFIER)('interface')
           PsiElement(;)(';')
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
@@ -1218,19 +1218,19 @@ Dart File
                     PsiElement(IDENTIFIER)('bool')
               COMPONENT_NAME
                 ID
-                  PsiElement(interface)('interface')
+                  PsiElement(IDENTIFIER)('interface')
           PsiElement(;)(';')
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
               PsiElement(final)('final')
               COMPONENT_NAME
                 ID
-                  PsiElement(interface)('interface')
+                  PsiElement(IDENTIFIER)('interface')
           PsiElement(;)(';')
           FUNCTION_DECLARATION_WITH_BODY
             COMPONENT_NAME
               ID
-                PsiElement(interface)('interface')
+                PsiElement(IDENTIFIER)('interface')
             FORMAL_PARAMETER_LIST
               PsiElement(()('(')
               PsiElement())(')')
@@ -1248,7 +1248,7 @@ Dart File
                     PsiElement(IDENTIFIER)('String')
             COMPONENT_NAME
               ID
-                PsiElement(interface)('interface')
+                PsiElement(IDENTIFIER)('interface')
             FORMAL_PARAMETER_LIST
               PsiElement(()('(')
               PsiElement())(')')
@@ -1261,7 +1261,7 @@ Dart File
           CALL_EXPRESSION
             REFERENCE_EXPRESSION
               ID
-                PsiElement(interface)('interface')
+                PsiElement(IDENTIFIER)('interface')
             ARGUMENTS
               PsiElement(()('(')
               PsiElement())(')')

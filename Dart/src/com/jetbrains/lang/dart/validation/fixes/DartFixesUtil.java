@@ -85,7 +85,6 @@ public class DartFixesUtil {
       public boolean process(DartComponentInfo info) {
         final DartComponentType componentType = info.getType();
         if (componentType == DartComponentType.CLASS ||
-            componentType == DartComponentType.INTERFACE ||
             componentType == DartComponentType.FUNCTION ||
             componentType == DartComponentType.VARIABLE) {
           result.add(new DartImportFix(name, info));

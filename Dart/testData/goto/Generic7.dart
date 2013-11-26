@@ -1,12 +1,12 @@
-interface A<T> extends B<T> {
+class A<T> extends B<T> {
 
 }
 
-interface B<E> extends C<E> {
+class B<E> extends C<E> {
 
 }
 
-interface C<D> {
+class C<D> {
   D value;
 }
 

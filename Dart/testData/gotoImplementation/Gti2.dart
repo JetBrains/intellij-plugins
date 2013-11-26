@@ -1,6 +1,6 @@
 class Resizable implements IResizable {
   resize() {}
 }
-interface IResizable {
+class IResizable {
   <caret>resize();
 }

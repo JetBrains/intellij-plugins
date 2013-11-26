@@ -5,9 +5,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public interface DartClass extends DartComponent {
   @Nullable
   DartType getSuperClass();
@@ -17,8 +14,6 @@ public interface DartClass extends DartComponent {
 
   @NotNull
   List<DartType> getMixinsList();
-
-  boolean isInterface();
 
   boolean isGeneric();
 

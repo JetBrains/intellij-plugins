@@ -36,9 +36,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 @SuppressWarnings("MethodMayBeStatic")
 public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   @Nullable
@@ -294,7 +291,6 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   private static boolean notFunctionMethodClass(DartComponentType type) {
     final boolean isFunctionMethodClass = type == DartComponentType.METHOD ||
                                           type == DartComponentType.FUNCTION ||
-                                          type == DartComponentType.INTERFACE ||
                                           type == DartComponentType.CLASS;
     return !isFunctionMethodClass;
   }

@@ -6,7 +6,7 @@ class Reference{
   }
 }
 
-interface Bar {
+class Bar {
   var test1;
   var test2;
 }

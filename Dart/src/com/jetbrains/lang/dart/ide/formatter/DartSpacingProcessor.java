@@ -12,9 +12,6 @@ import com.intellij.psi.tree.TokenSet;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartSpacingProcessor {
   TokenSet KEYWORDS_WITH_SPACE_AFTER = TokenSet.create(
     VAR,
@@ -60,10 +57,6 @@ public class DartSpacingProcessor {
     final IElementType type1 = node1.getElementType();
     final ASTNode node2 = ((AbstractBlock)child2).getNode();
     final IElementType type2 = node2.getElementType();
-    final ASTNode nodeNode1 = node1 == null ? null : node1.getFirstChildNode();
-    final IElementType typeType1 = nodeNode1 == null ? null : nodeNode1.getElementType();
-    final ASTNode nodeNode2 = node2 == null ? null : node2.getFirstChildNode();
-    final IElementType typeType2 = nodeNode2 == null ? null : nodeNode2.getElementType();
 
     if (FUNCTION_DEFINITION.contains(type2)) {
       return Spacing.createSpacing(0, 0, 2, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
@@ -89,11 +82,8 @@ public class DartSpacingProcessor {
     if (type1 == CLASS_MEMBERS || type2 == CLASS_MEMBERS) {
       return addSingleSpaceIf(false, true);
     }
-    if (type1 == INTERFACE_MEMBERS || type2 == INTERFACE_MEMBERS) {
-      return addSingleSpaceIf(false, true);
-    }
 
-    if (type1 == CLASS_MEMBERS || type1 == INTERFACE_MEMBERS) {
+    if (type1 == CLASS_MEMBERS) {
       return addLineBreak();
     }
 
@@ -164,10 +154,6 @@ public class DartSpacingProcessor {
     }
 
     if (elementType == CLASS_DEFINITION && type2 == CLASS_BODY) {
-      return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
-    }
-
-    if (elementType == INTERFACE_DEFINITION && type2 == INTERFACE_BODY) {
       return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
     }
 

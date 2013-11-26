@@ -7,7 +7,7 @@ class Reference{
   }
 }
 
-interface Bar {
+class Bar {
   test1();
   test2();
 }

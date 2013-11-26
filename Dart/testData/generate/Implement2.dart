@@ -2,6 +2,6 @@ class TestMock implements Test {
   <caret>
 }
 
-interface Test {
+class Test {
   get foo();
 }

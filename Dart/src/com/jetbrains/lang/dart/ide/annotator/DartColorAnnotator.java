@@ -89,8 +89,6 @@ public class DartColorAnnotator implements Annotator {
       case CLASS:
       case TYPEDEF:
         return TextAttributesKey.find(DartSyntaxHighlighterColors.DART_CLASS);
-      case INTERFACE:
-        return TextAttributesKey.find(DartSyntaxHighlighterColors.DART_INTERFACE);
       case PARAMETER:
         return TextAttributesKey.find(DartSyntaxHighlighterColors.DART_PARAMETER);
       case FUNCTION:

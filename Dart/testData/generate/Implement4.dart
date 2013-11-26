@@ -1,4 +1,4 @@
-interface I {
+class I {
   get foo();
   set foo(x);
 }

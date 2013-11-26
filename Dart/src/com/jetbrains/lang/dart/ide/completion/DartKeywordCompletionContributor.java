@@ -65,26 +65,16 @@ public class DartKeywordCompletionContributor extends CompletionContributor {
              }
            });
     extend(CompletionType.BASIC,
-           psiElement().inFile(StandardPatterns.instanceOf(DartFile.class)).withParent(DartClassDefinition.class),
-           new CompletionProvider<CompletionParameters>() {
-             @Override
-             protected void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
-                                           @NotNull CompletionResultSet result) {
-               result.addElement(LookupElementBuilder.create(DartTokenTypes.IMPLEMENTS.toString()));
-             }
-           });
-    extend(CompletionType.BASIC,
-           psiElement().inFile(StandardPatterns.instanceOf(DartFile.class)).andOr(
-             psiElement().withParent(DartClassDefinition.class),
-             psiElement().withParent(DartInterfaceDefinition.class)
-           ),
+           psiElement()
+             .inFile(StandardPatterns.instanceOf(DartFile.class))
+             .withParent(DartClassDefinition.class),
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull CompletionParameters parameters,
                                            ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
                result.addElement(LookupElementBuilder.create(DartTokenTypes.EXTENDS.toString()));
+               result.addElement(LookupElementBuilder.create(DartTokenTypes.IMPLEMENTS.toString()));
              }
            });
   }
@@ -94,7 +84,7 @@ public class DartKeywordCompletionContributor extends CompletionContributor {
     final PsiElement posFile = position.getContainingFile();
 
     final List<PsiElement> pathToBlockStatement = UsefulPsiTreeUtil.getPathToParentOfType(position, DartBlock.class);
-    final DartPsiCompositeElement classInterface = PsiTreeUtil.getParentOfType(position, DartClassMembers.class, DartInterfaceMembers.class);
+    final DartPsiCompositeElement classInterface = PsiTreeUtil.getParentOfType(position, DartClassMembers.class);
 
     final String text;
     final int offset;

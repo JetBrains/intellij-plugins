@@ -25,15 +25,3 @@ abstract class Test3 {
 
     int b;
 }
-
-interface ITest4 {
-    String f;
-
-    foo();
-}
-
-abstract class Test5 {
-    String f;
-
-    abstract foo();
-}

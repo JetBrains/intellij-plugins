@@ -18,9 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartDocumentationProvider implements DocumentationProvider {
   private static final String BASE_DART_DOC_URL = "http://api.dartlang.org/docs/releases/latest/";
   private static final String STD_LIB_PREFIX = "dart.";
@@ -78,7 +75,7 @@ public class DartDocumentationProvider implements DocumentationProvider {
       // method
       resultUrl.append('/').append(dartClass.getName()).append(".html").append('#').append(componentName);
     }
-    else if (componentType == DartComponentType.CLASS || componentType == DartComponentType.INTERFACE) {
+    else if (componentType == DartComponentType.CLASS) {
       // class
       resultUrl.append('/').append(componentName).append(".html");
     }

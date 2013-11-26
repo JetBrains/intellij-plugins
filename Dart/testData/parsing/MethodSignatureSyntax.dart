@@ -1,5 +1,5 @@
 // Test various basic forms of formal parameters.
-interface MethodSignatureSyntax extends D, E {
+class MethodSignatureSyntax extends D implements E, F {
   a();
   b(x);
   c(int x);

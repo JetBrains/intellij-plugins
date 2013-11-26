@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartResolver implements ResolveCache.AbstractResolver<DartReference, List<? extends PsiElement>> {
   public static final DartResolver INSTANCE = new DartResolver();
 
@@ -144,8 +141,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     PsiTreeUtil.treeWalkUp(resolveScopeProcessor, scopeElement, null, new ResolveState());
     // supers
     final DartClass dartClass = PsiTreeUtil.getParentOfType(scopeElement, DartClass.class);
-    final boolean inClass = PsiTreeUtil.getParentOfType(scopeElement, DartClassBody.class, false) != null ||
-                            PsiTreeUtil.getParentOfType(scopeElement, DartInterfaceBody.class, false) != null;
+    final boolean inClass = PsiTreeUtil.getParentOfType(scopeElement, DartClassBody.class, false) != null;
     if (result.isEmpty() && dartClass != null && inClass) {
       final DartComponent field = filterAccess(scopeElement, dartClass.findMembersByName(name));
       if (field != null) {

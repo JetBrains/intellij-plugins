@@ -57,9 +57,7 @@ public interface DartTokenTypesSets {
                                             TRY,
                                             VAR,
                                             WHILE,
-                                            WITH,
-
-                                            INTERFACE);
+                                            WITH);
 
   TokenSet BUILT_IN_IDENTIFIERS = TokenSet.create(ABSTRACT,
                                                   AS,
@@ -121,7 +119,6 @@ public interface DartTokenTypesSets {
     FUNCTION_DECLARATION_WITH_BODY,
     FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE,
     METHOD_DECLARATION,
-    METHOD_PROTOTYPE_DECLARATION,
     GETTER_DECLARATION,
     SETTER_DECLARATION
   );
@@ -135,14 +132,12 @@ public interface DartTokenTypesSets {
   TokenSet BLOCKS = TokenSet.create(
     BLOCK,
     CLASS_MEMBERS,
-    INTERFACE_MEMBERS,
     DART_FILE,
     EMBEDDED_CONTENT
   );
 
   TokenSet DECLARATIONS = TokenSet.create(
     CLASS_DEFINITION,
-    INTERFACE_DEFINITION,
     FUNCTION_DECLARATION_WITH_BODY,
     FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE,
     GETTER_DECLARATION,

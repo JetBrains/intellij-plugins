@@ -123,10 +123,6 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
-  public void visitDefaultFactroy(@NotNull DartDefaultFactroy o) {
-    visitPsiCompositeElement(o);
-  }
-
   public void visitDefaultFormalNamedParameter(@NotNull DartDefaultFormalNamedParameter o) {
     visitPsiCompositeElement(o);
   }
@@ -153,10 +149,6 @@ public class DartVisitor extends PsiElementVisitor {
 
   public void visitFactoryConstructorDeclaration(@NotNull DartFactoryConstructorDeclaration o) {
     visitComponent(o);
-  }
-
-  public void visitFactorySpecification(@NotNull DartFactorySpecification o) {
-    visitPsiCompositeElement(o);
   }
 
   public void visitFieldFormalParameter(@NotNull DartFieldFormalParameter o) {
@@ -248,18 +240,6 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
-  public void visitInterfaceBody(@NotNull DartInterfaceBody o) {
-    visitPsiCompositeElement(o);
-  }
-
-  public void visitInterfaceDefinition(@NotNull DartInterfaceDefinition o) {
-    visitClass(o);
-  }
-
-  public void visitInterfaceMembers(@NotNull DartInterfaceMembers o) {
-    visitExecutionScope(o);
-  }
-
   public void visitInterfaces(@NotNull DartInterfaces o) {
     visitPsiCompositeElement(o);
   }
@@ -334,10 +314,6 @@ public class DartVisitor extends PsiElementVisitor {
     visitComponent(o);
   }
 
-  public void visitMethodPrototypeDeclaration(@NotNull DartMethodPrototypeDeclaration o) {
-    visitComponent(o);
-  }
-
   public void visitMixins(@NotNull DartMixins o) {
     visitPsiCompositeElement(o);
   }
@@ -377,10 +353,6 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitOperatorDeclaration(@NotNull DartOperatorDeclaration o) {
-    visitOperator(o);
-  }
-
-  public void visitOperatorPrototype(@NotNull DartOperatorPrototype o) {
     visitOperator(o);
   }
 
@@ -493,10 +465,6 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitSuperclass(@NotNull DartSuperclass o) {
-    visitPsiCompositeElement(o);
-  }
-
-  public void visitSuperinterfaces(@NotNull DartSuperinterfaces o) {
     visitPsiCompositeElement(o);
   }
 

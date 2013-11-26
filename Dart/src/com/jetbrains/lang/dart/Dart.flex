@@ -168,8 +168,6 @@ FLOAT_LITERAL=(({FLOATING_POINT_LITERAL1})|({FLOATING_POINT_LITERAL2}))
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "while"                { return WHILE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "with"                 { return WITH; }
 
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "interface"            { return INTERFACE; } // todo there are no interfaces in Dart
-
 // BUILT_IN_IDENTIFIER (todo: can be used as normal identifiers)
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "abstract"             { return ABSTRACT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "as"                   { return AS; }
