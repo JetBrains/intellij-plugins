@@ -8,21 +8,21 @@ import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import com.intellij.codeInsight.CodeInsightSettings
 
 /**
  * Heavily borrow from @dcheryasov's work on Django braces
  */
 public open class AngularBracesInterpolationTypedHandler(): TypedHandlerDelegate() {
     public override fun beforeCharTyped(c: Char, project: Project?, editor: Editor?, file: PsiFile?, fileType: FileType?): TypedHandlerDelegate.Result? {
-        if(!AngularJSConfig.braceEnabled) return TypedHandlerDelegate.Result.DEFAULT;
+        if(CodeInsightSettings.getInstance()!!.AUTOINSERT_PAIR_BRACKET) return TypedHandlerDelegate.Result.DEFAULT;
         if (file?.getFileType() == HtmlFileType.INSTANCE)
         {
             if (c == '{')
             {
                 val addWhiteSpaceBetweenBraces = AngularJSConfig.whiteSpace
-                val document: Document? = editor?.getDocument()
-                val offset: Int = editor?.getCaretModel()?.getOffset()!!
-                var chars: CharSequence? = document?.getCharsSequence()
+                val offset = editor?.getCaretModel()?.getOffset()!!
+                var chars = editor?.getDocument()?.getText()
                 if (offset > 0 && (chars?.charAt(offset - 1)) == '{')
                 {
                     if (offset < 2 || (chars?.charAt(offset - 2)) != '{')

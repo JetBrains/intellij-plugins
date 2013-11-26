@@ -16,7 +16,6 @@ import java.awt.event.ItemListener;
 public class AngularJSConfigurationPage implements SearchableConfigurable {
     private JCheckBox includeWhitespaceBetweenBracesCheckBox;
     private JPanel myPanel;
-    private JCheckBox enableAutomaticBraceInsertionCheckBox;
 
     @NotNull
     @Override
@@ -53,16 +52,6 @@ public class AngularJSConfigurationPage implements SearchableConfigurable {
                 AngularJSConfig.object$.setWhiteSpace(selected);
             }
         });
-
-        enableAutomaticBraceInsertionCheckBox.setSelected(AngularJSConfig.object$.getBraceEnabled());
-        enableAutomaticBraceInsertionCheckBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent itemEvent) {
-                boolean selected = enableAutomaticBraceInsertionCheckBox.isSelected();
-                AngularJSConfig.object$.setBraceEnabled(selected);
-            }
-        });
-
 
         return myPanel;
     }
