@@ -57,8 +57,7 @@
 
         <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
 
-        <typedHandler implementation="org.angularjs.AngularBracesInterpolationTypedHandler"/>
-        <!--<completion.contributor language="HTML" implementationClass="org.angularjs.DirectiveCompletionContributor"/>-->
+        <typedHandler implementation="org.angularjs.editor.AngularBracesInterpolationTypedHandler"/>
         <intentionAction>
             <className>org.angularjs.intentions.OpenAngularJSDocsIntention</className>
             <category>HTML</category>
