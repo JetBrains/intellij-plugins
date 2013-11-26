@@ -9,6 +9,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.codeInsight.CodeInsightSettings
+import org.angularjs.settings.AngularJSConfig
 
 /**
  * Heavily borrow from @dcheryasov's work on Django braces
@@ -20,7 +21,7 @@ public open class AngularBracesInterpolationTypedHandler(): TypedHandlerDelegate
         {
             if (c == '{')
             {
-                val addWhiteSpaceBetweenBraces = AngularJSConfig.whiteSpace
+                val addWhiteSpaceBetweenBraces = AngularJSConfig.getInstance()!!.INSERT_WHITESPACE
                 val offset = editor?.getCaretModel()?.getOffset()!!
                 var chars = editor?.getDocument()?.getText()
                 if (offset > 0 && (chars?.charAt(offset - 1)) == '{')

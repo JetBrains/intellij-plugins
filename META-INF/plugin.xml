@@ -70,6 +70,8 @@
             <category>HTML</category>
             <descriptionDirectoryName>HTML</descriptionDirectoryName>
         </intentionAction>
-        <applicationConfigurable instance="org.angularjs.AngularJSConfigurationPage"/>
+        <applicationService serviceInterface="org.angularjs.settings.AngularJSConfig"
+                            serviceImplementation="org.angularjs.settings.AngularJSConfig"/>
+        <editorSmartKeysConfigurable instance="org.angularjs.settings.AngularJSConfigurationPage"/>
     </extensions>
 </idea-plugin>
