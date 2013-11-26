@@ -27,12 +27,7 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
                         if (alreadyHasEnding(chars, offset)) {
                             return TypedHandlerDelegate.Result.CONTINUE;
                         } else {
-                            String interpolation;
-                            if(addWhiteSpaceBetweenBraces) {
-                                interpolation = "{  }";
-                            } else{
-                                interpolation = "{}";
-                            }
+                            String interpolation = addWhiteSpaceBetweenBraces ? "{  }" : "{}";
 
                             if (offset == chars.length() || (offset < chars.length() && chars.charAt(offset) != '}')) {
                                 interpolation += "}";
