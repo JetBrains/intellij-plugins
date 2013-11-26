@@ -20,9 +20,6 @@ import java.util.Set;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartClassNameCompletionContributor extends CompletionContributor {
   public DartClassNameCompletionContributor() {
     final PsiElementPattern.Capture<PsiElement> idInComponentName =
@@ -48,7 +45,7 @@ public class DartClassNameCompletionContributor extends CompletionContributor {
                    new Condition<DartComponentInfo>() {
                      @Override
                      public boolean value(DartComponentInfo info) {
-                       return info.getType() == DartComponentType.CLASS || info.getType() == DartComponentType.INTERFACE;
+                       return info.getType() == DartComponentType.CLASS;
                      }
                    }
                  );

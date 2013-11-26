@@ -3,6 +3,6 @@ class Gti1 extends Resizable {
 class Resizable implements IResizable {
   resize() {}
 }
-interface <caret>IResizable {
+class <caret>IResizable {
   resize();
 }

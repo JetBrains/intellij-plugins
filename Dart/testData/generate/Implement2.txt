@@ -5,6 +5,6 @@ class TestMock implements Test {
   }
 }
 
-interface Test {
+class Test {
   get foo();
 }

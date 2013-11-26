@@ -1,26 +1,32 @@
 Dart File
   PsiComment(SINGLE_LINE_COMMENT)('// Test various basic forms of formal parameters.')
-  INTERFACE_DEFINITION
-    PsiElement(interface)('interface')
+  CLASS_DEFINITION
+    PsiElement(class)('class')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('MethodSignatureSyntax')
-    SUPERINTERFACES
+    SUPERCLASS
       PsiElement(extends)('extends')
+      TYPE
+        REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('D')
+    INTERFACES
+      PsiElement(implements)('implements')
       TYPE_LIST
         TYPE
           REFERENCE_EXPRESSION
             ID
-              PsiElement(IDENTIFIER)('D')
+              PsiElement(IDENTIFIER)('E')
         PsiElement(,)(',')
         TYPE
           REFERENCE_EXPRESSION
             ID
-              PsiElement(IDENTIFIER)('E')
-    INTERFACE_BODY
+              PsiElement(IDENTIFIER)('F')
+    CLASS_BODY
       PsiElement({)('{')
-      INTERFACE_MEMBERS
-        METHOD_PROTOTYPE_DECLARATION
+      CLASS_MEMBERS
+        METHOD_DECLARATION
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('a')
@@ -28,7 +34,7 @@ Dart File
             PsiElement(()('(')
             PsiElement())(')')
           PsiElement(;)(';')
-        METHOD_PROTOTYPE_DECLARATION
+        METHOD_DECLARATION
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('b')
@@ -40,7 +46,7 @@ Dart File
                   PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           PsiElement(;)(';')
-        METHOD_PROTOTYPE_DECLARATION
+        METHOD_DECLARATION
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('c')
@@ -58,7 +64,7 @@ Dart File
                       PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           PsiElement(;)(';')
-        METHOD_PROTOTYPE_DECLARATION
+        METHOD_DECLARATION
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('d')
@@ -73,7 +79,7 @@ Dart File
                       PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           PsiElement(;)(';')
-        METHOD_PROTOTYPE_DECLARATION
+        METHOD_DECLARATION
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('e')
@@ -88,7 +94,7 @@ Dart File
                       PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           PsiElement(;)(';')
-        METHOD_PROTOTYPE_DECLARATION
+        METHOD_DECLARATION
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('f')
@@ -105,7 +111,7 @@ Dart File
                   PsiElement(IDENTIFIER)('y')
             PsiElement())(')')
           PsiElement(;)(';')
-        METHOD_PROTOTYPE_DECLARATION
+        METHOD_DECLARATION
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('g')
@@ -125,7 +131,7 @@ Dart File
                   PsiElement(IDENTIFIER)('y')
             PsiElement())(')')
           PsiElement(;)(';')
-        METHOD_PROTOTYPE_DECLARATION
+        METHOD_DECLARATION
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('h')
@@ -145,7 +151,7 @@ Dart File
                   PsiElement(IDENTIFIER)('y')
             PsiElement())(')')
           PsiElement(;)(';')
-        METHOD_PROTOTYPE_DECLARATION
+        METHOD_DECLARATION
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('j')
@@ -168,7 +174,7 @@ Dart File
                       PsiElement(IDENTIFIER)('y')
             PsiElement())(')')
           PsiElement(;)(';')
-        METHOD_PROTOTYPE_DECLARATION
+        METHOD_DECLARATION
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('k')
@@ -191,7 +197,7 @@ Dart File
                       PsiElement(IDENTIFIER)('y')
             PsiElement())(')')
           PsiElement(;)(';')
-        METHOD_PROTOTYPE_DECLARATION
+        METHOD_DECLARATION
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('l')
@@ -214,7 +220,7 @@ Dart File
                   PsiElement(IDENTIFIER)('y')
             PsiElement())(')')
           PsiElement(;)(';')
-        METHOD_PROTOTYPE_DECLARATION
+        METHOD_DECLARATION
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('m')

@@ -251,7 +251,7 @@ public class DartResolveUtil {
     final Set<DartClass> result = new THashSet<DartClass>();
     for (DartComponent component : components) {
       final DartComponentType type = DartComponentType.typeOf(component);
-      if (type == DartComponentType.CLASS || type == DartComponentType.INTERFACE) {
+      if (type == DartComponentType.CLASS) {
         result.add((DartClass)component);
       }
     }
@@ -736,10 +736,6 @@ public class DartResolveUtil {
     if (type == DartComponentType.CLASS) {
       final DartClassBody classBody = PsiTreeUtil.getChildOfAnyType(dartClass, DartClassBody.class);
       body = classBody != null ? classBody.getClassMembers() : null;
-    }
-    else if (type == DartComponentType.INTERFACE) {
-      final DartInterfaceBody interfaceBody = PsiTreeUtil.getChildOfType(dartClass, DartInterfaceBody.class);
-      body = interfaceBody != null ? interfaceBody.getInterfaceMembers() : null;
     }
     return body;
   }

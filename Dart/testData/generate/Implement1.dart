@@ -2,7 +2,7 @@ class Implement1 implements IFoo<Bar> {
     <caret>
 }
 
-interface IFoo<T> {
+class IFoo<T> {
   T getFoo();
 }
 

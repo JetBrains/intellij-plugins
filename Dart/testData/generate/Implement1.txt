@@ -5,7 +5,7 @@ class Implement1 implements IFoo<Bar> {
   }
 }
 
-interface IFoo<T> {
+class IFoo<T> {
   T getFoo();
 }
 

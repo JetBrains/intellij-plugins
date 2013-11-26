@@ -3,6 +3,6 @@ class Gts2 extends Resizable {
 class Resizable implements IResizable {
   resize() {}
 }
-interface IResizable {
+class IResizable {
   <caret>resize();
 }

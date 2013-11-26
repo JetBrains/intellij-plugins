@@ -9,28 +9,25 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public enum DartComponentType {
-  CLASS(0, DartIcons.Class_dart),
-  INTERFACE(1, DartIcons.Interface_dart),
-  FUNCTION(2, DartIcons.Function_dart),
-  METHOD(3, DartIcons.Method_dart),
-  VARIABLE(4, DartIcons.Variable_dart),
-  FIELD(5, DartIcons.Field_dart),
-  PARAMETER(6, DartIcons.Parameter_dart),
-  TYPEDEF(7, DartIcons.Annotationtype_dart),
-  CONSTRUCTOR(8, DartIcons.Class_dart),
-  OPERATOR(9, DartIcons.Method_dart),
-  LABEL(10, DartIcons.Label_dart);
+  CLASS(DartIcons.Class_dart),
+  FUNCTION(DartIcons.Function_dart),
+  METHOD(DartIcons.Method_dart),
+  VARIABLE(DartIcons.Variable_dart),
+  FIELD(DartIcons.Field_dart),
+  PARAMETER(DartIcons.Parameter_dart),
+  TYPEDEF(DartIcons.Annotationtype_dart),
+  CONSTRUCTOR(DartIcons.Class_dart),
+  OPERATOR(DartIcons.Method_dart),
+  LABEL(DartIcons.Label_dart);
 
-  private final int myKey;
   private final Icon myIcon;
 
-  DartComponentType(int key, final Icon icon) {
-    myKey = key;
+  DartComponentType(final Icon icon) {
     myIcon = icon;
   }
 
   public int getKey() {
-    return myKey;
+    return ordinal();
   }
 
   public Icon getIcon() {
@@ -39,31 +36,7 @@ public enum DartComponentType {
 
   @Nullable
   public static DartComponentType valueOf(int key) {
-    switch (key) {
-      case 0:
-        return CLASS;
-      case 1:
-        return INTERFACE;
-      case 2:
-        return FUNCTION;
-      case 3:
-        return METHOD;
-      case 4:
-        return VARIABLE;
-      case 5:
-        return FIELD;
-      case 6:
-        return PARAMETER;
-      case 7:
-        return TYPEDEF;
-      case 8:
-        return CONSTRUCTOR;
-      case 9:
-        return OPERATOR;
-      case 10:
-        return LABEL;
-    }
-    return null;
+    return  key >= 0 && key < values().length ? values()[key] : null;
   }
 
   @Nullable
@@ -77,9 +50,6 @@ public enum DartComponentType {
     }
     if (element instanceof DartClassDefinition) {
       return CLASS;
-    }
-    if (element instanceof DartInterfaceDefinition) {
-      return INTERFACE;
     }
     if (element instanceof DartFunctionTypeAlias || element instanceof DartClassTypeAlias) {
       return TYPEDEF;
@@ -102,8 +72,7 @@ public enum DartComponentType {
       final PsiElement dartClassCandidate = PsiTreeUtil.getParentOfType(element, DartComponent.class, DartOperator.class);
       return dartClassCandidate instanceof DartClass ? METHOD : FUNCTION;
     }
-    if (element instanceof DartMethodDeclaration
-        || element instanceof DartMethodPrototypeDeclaration) {
+    if (element instanceof DartMethodDeclaration) {
       final DartClass dartClass = PsiTreeUtil.getParentOfType(element, DartClass.class);
       final String dartClassName = dartClass != null ? dartClass.getName() : null;
       return dartClassName != null && dartClassName.equals(((DartComponent)element).getName()) ? CONSTRUCTOR : METHOD;

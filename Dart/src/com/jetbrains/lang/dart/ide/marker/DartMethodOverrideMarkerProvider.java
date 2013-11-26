@@ -20,7 +20,6 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.psi.DartInterfaceDefinition;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,9 +29,6 @@ import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartMethodOverrideMarkerProvider implements LineMarkerProvider {
 
   @Override
@@ -75,8 +71,7 @@ public class DartMethodOverrideMarkerProvider implements LineMarkerProvider {
     }
     final PsiElement element = methodDeclaration.getComponentName();
     final DartComponent dartComponent = filteredSuperItems.iterator().next();
-    final boolean overrides = !dartComponent.isAbstract() &&
-                              !(PsiTreeUtil.getParentOfType(dartComponent, DartClass.class) instanceof DartInterfaceDefinition);
+    final boolean overrides = !dartComponent.isAbstract();
     final Icon icon = overrides ? AllIcons.Gutter.OverridingMethod : AllIcons.Gutter.ImplementingMethod;
     assert element != null;
     return new LineMarkerInfo<PsiElement>(

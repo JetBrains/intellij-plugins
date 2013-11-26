@@ -10,6 +10,6 @@ class Foo2 implements IFoo {
     }
 }
 
-interface IFoo {
+class IFoo {
     fo<caret>o();
 }

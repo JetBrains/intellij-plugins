@@ -14,12 +14,10 @@ import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.ide.index.DartInheritanceIndex;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.psi.DartInterfaceDefinition;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,9 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartImplementationsMarkerProvider implements LineMarkerProvider {
 
   @Override
@@ -55,7 +50,7 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
     }
   }
 
-  private void collectMarkers(Collection<LineMarkerInfo> result, DartClass dartClass) {
+  private static void collectMarkers(Collection<LineMarkerInfo> result, DartClass dartClass) {
     final List<DartClass> subClasses = DartInheritanceIndex.getItemsByName(dartClass);
     if (!subClasses.isEmpty()) {
       result.add(createImplementationMarker(dartClass, subClasses));
@@ -64,9 +59,8 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
     for (DartClass subClass : subClasses) {
       subItems.addAll(DartResolveUtil.getNamedSubComponents(subClass));
     }
-    final boolean isInterface = DartComponentType.typeOf(dartClass) == DartComponentType.INTERFACE;
     for (DartComponent dartComponent : DartResolveUtil.getNamedSubComponents(dartClass)) {
-      final LineMarkerInfo markerInfo = tryCreateImplementationMarker(dartComponent, subItems, isInterface || dartComponent.isAbstract());
+      final LineMarkerInfo markerInfo = tryCreateImplementationMarker(dartComponent, subItems, dartComponent.isAbstract());
       if (markerInfo != null) {
         result.add(markerInfo);
       }
@@ -79,9 +73,7 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
     return new LineMarkerInfo<PsiElement>(
       componentName,
       componentName.getTextRange(),
-      dartClass instanceof DartInterfaceDefinition
-      ? AllIcons.Gutter.ImplementedMethod
-      : AllIcons.Gutter.OverridenMethod,
+      AllIcons.Gutter.OverridenMethod,
       Pass.UPDATE_ALL,
       new Function<PsiElement, String>() {
         @Override

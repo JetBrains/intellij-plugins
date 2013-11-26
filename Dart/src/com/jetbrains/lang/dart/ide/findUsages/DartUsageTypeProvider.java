@@ -9,9 +9,6 @@ import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartUsageTypeProvider implements UsageTypeProvider {
   @Override
   public UsageType getUsageType(PsiElement element) {
@@ -32,11 +29,10 @@ public class DartUsageTypeProvider implements UsageTypeProvider {
     }
     final PsiElement target = ((DartReference)element).resolve();
     final DartComponentType targetType = DartComponentType.typeOf(target == null ? null : target.getParent());
-    final boolean isTargetClassOrInterface = targetType == DartComponentType.CLASS || targetType == DartComponentType.INTERFACE;
 
     final DartReference[] references = PsiTreeUtil.getChildrenOfType(parent, DartReference.class);
     final boolean isFirstChild = references != null && references.length > 0 && references[0] == element;
-    if (isFirstChild && references.length == 2 && isTargetClassOrInterface) {
+    if (isFirstChild && references.length == 2 && targetType == DartComponentType.CLASS) {
       return UsageType.CLASS_STATIC_MEMBER_ACCESS;
     }
 

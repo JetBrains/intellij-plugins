@@ -14,9 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl implements DartClass {
   public AbstractDartPsiClass(@NotNull ASTNode node) {
     super(node);
@@ -36,10 +33,6 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     if (interfaces != null) {
       return DartResolveUtil.getTypes(interfaces.getTypeList());
     }
-    final DartSuperinterfaces superinterfaces = PsiTreeUtil.getChildOfType(this, DartSuperinterfaces.class);
-    if (superinterfaces != null) {
-      return DartResolveUtil.getTypes(superinterfaces.getTypeList());
-    }
     return Collections.emptyList();
   }
 
@@ -51,11 +44,6 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
       return DartResolveUtil.getTypes(mixins.getTypeList());
     }
     return Collections.emptyList();
-  }
-
-  @Override
-  public boolean isInterface() {
-    return DartComponentType.typeOf(this) == DartComponentType.INTERFACE;
   }
 
   @Override

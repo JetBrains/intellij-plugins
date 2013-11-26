@@ -13,9 +13,6 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.COMMENTS;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.EMBEDDED_CONTENT;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartIndentProcessor {
   private final CommonCodeStyleSettings settings;
 
@@ -40,9 +37,7 @@ public class DartIndentProcessor {
     if (COMMENTS.contains(elementType) && settings.KEEP_FIRST_COLUMN_COMMENT) {
       return Indent.getAbsoluteNoneIndent();
     }
-    if (COMMENTS.contains(elementType) &&
-        prevSiblingType == LBRACE &&
-        (parentType == CLASS_BODY || parentType == INTERFACE_BODY)) {
+    if (COMMENTS.contains(elementType) && prevSiblingType == LBRACE && parentType == CLASS_BODY) {
       return Indent.getNormalIndent();
     }
     if (elementType == LBRACE || elementType == RBRACE) {
@@ -76,7 +71,7 @@ public class DartIndentProcessor {
       }
       return Indent.getContinuationIndent();
     }
-    if (elementType == CLASS_MEMBERS || elementType == INTERFACE_MEMBERS) {
+    if (elementType == CLASS_MEMBERS) {
       return Indent.getNormalIndent();
     }
     if (needIndent(parentType)) {
