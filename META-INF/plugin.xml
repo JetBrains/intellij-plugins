@@ -60,9 +60,8 @@
         <typedHandler implementation="org.angularjs.AngularBracesInterpolationTypedHandler"/>
         <!--<completion.contributor language="HTML" implementationClass="org.angularjs.DirectiveCompletionContributor"/>-->
         <intentionAction>
-            <className>org.angularjs.OpenInDocsIntention</className>
+            <className>org.angularjs.intentions.OpenAngularJSDocsIntention</className>
             <category>HTML</category>
-            <descriptionDirectoryName>HTML</descriptionDirectoryName>
         </intentionAction>
         <applicationService serviceInterface="org.angularjs.settings.AngularJSConfig"
                             serviceImplementation="org.angularjs.settings.AngularJSConfig"/>
