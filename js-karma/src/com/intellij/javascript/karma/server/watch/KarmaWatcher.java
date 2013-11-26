@@ -1,8 +1,10 @@
-package com.intellij.javascript.karma.server;
+package com.intellij.javascript.karma.server.watch;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.karma.server.StreamEventHandler;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
