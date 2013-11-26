@@ -10,6 +10,7 @@ import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.coverage.KarmaCoveragePeer;
 import com.intellij.javascript.karma.execution.KarmaRunSettings;
 import com.intellij.javascript.karma.execution.KarmaServerSettings;
+import com.intellij.javascript.karma.server.watch.KarmaWatcher;
 import com.intellij.javascript.karma.util.ProcessOutputArchive;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.Disposable;
@@ -149,7 +150,7 @@ public class KarmaServer {
     commandLine.setWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
     commandLine.setExePath(serverSettings.getNodeInterpreterPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
-    //commandLine.addParameter("--debug=34598");
+//    commandLine.addParameter("--debug-brk=34598");
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaJsSourcesLocator.getKarmaPackageDir().getAbsolutePath());
     commandLine.addParameter("--configFile=" + serverSettings.getConfigurationFilePath());

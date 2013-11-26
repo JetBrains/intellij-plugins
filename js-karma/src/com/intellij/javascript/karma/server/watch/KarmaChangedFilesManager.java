@@ -1,6 +1,6 @@
-package com.intellij.javascript.karma.server;
+package com.intellij.javascript.karma.server.watch;
 
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.javascript.karma.server.KarmaServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.OutputStream;
@@ -20,25 +20,21 @@ public class KarmaChangedFilesManager {
     myServerProcessInput = new PrintWriter(outputStream, false);
   }
 
-  public void onFileChanged(@NotNull VirtualFile file) {
-    synchronized (LOCK) {
-      myServerProcessInput.print("changed-file:");
-      myServerProcessInput.print(file.getPath());
-      myServerProcessInput.print("\n");
-    }
+  public void onFileChanged(@NotNull String path) {
+    sendEvent("changed-file:", path);
   }
 
   public void onFileAdded(@NotNull String path) {
-    synchronized (LOCK) {
-      myServerProcessInput.print("added-file:");
-      myServerProcessInput.print(path);
-      myServerProcessInput.print("\n");
-    }
+    sendEvent("added-file:", path);
   }
 
   public void onFileRemoved(@NotNull String path) {
+    sendEvent("removed-file:", path);
+  }
+
+  private void sendEvent(@NotNull String prefix, @NotNull String path) {
     synchronized (LOCK) {
-      myServerProcessInput.print("removed-file:");
+      myServerProcessInput.print(prefix);
       myServerProcessInput.print(path);
       myServerProcessInput.print("\n");
     }
