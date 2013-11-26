@@ -59,25 +59,17 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!--<applicationConfigurable instance="org.angularjs.AngularJSConfigTemp.UIImpl" id="settings.angularjs"-->
-                                 <!--displayName="AngularJS"/>-->
         <xml.attributeDescriptorsProvider implementation="org.angularjs.AngularJSCustomAttributeDescriptorsProvider"/>
 
         <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
 
         <typedHandler implementation="org.angularjs.AngularBracesInterpolationTypedHandler"/>
-        <!--<applicationConfigurable instance="org.angularjs.AngularJSConfig"/>-->
         <!--<completion.contributor language="HTML" implementationClass="org.angularjs.DirectiveCompletionContributor"/>-->
         <intentionAction>
             <className>org.angularjs.OpenInDocsIntention</className>
             <category>HTML</category>
             <descriptionDirectoryName>HTML</descriptionDirectoryName>
         </intentionAction>
-<!--
-        <localInspection language="JavaScript" groupPath="JavaScript" displayName="AngularDisplayName" groupName="AngularGroup" shortName="AngularShortName"
-        enabledByDefault="true" level="WARNING"
-        implementationClass="org.angularjs.AngularInspection"/>
--->
         <applicationConfigurable instance="org.angularjs.AngularJSConfigurationPage"/>
     </extensions>
 </idea-plugin>
