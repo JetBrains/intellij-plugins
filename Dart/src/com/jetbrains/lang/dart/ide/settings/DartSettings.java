@@ -104,6 +104,20 @@ public class DartSettings {
     return VfsUtilCore.findRelativeFile(relativeLibPath, libRoot);
   }
 
+  @Nullable
+  public VirtualFile findSdkLibrary(@NotNull String libraryName, @NotNull Project project) {
+    VirtualFile libRoot = getLib();
+    if (libRoot == null) {
+      return null;
+    }
+
+    String relativeLibPath = getLibrariesMap(PsiManager.getInstance(project)).get(libraryName);
+    if (relativeLibPath == null) {
+      return null;
+    }
+    return VfsUtilCore.findRelativeFile(relativeLibPath, libRoot);
+  }
+
   public Collection<String> getLibraries(PsiElement context) {
     return getLibrariesMap(context).keySet();
   }
@@ -123,7 +137,7 @@ public class DartSettings {
   }
 
   @NotNull
-  public Map<String, String> getLibrariesMap(@NotNull PsiManager psiManager) {
+  private Map<String, String> getLibrariesMap(@NotNull PsiManager psiManager) {
     VirtualFile configFile = getConfigFile();
     if (configFile == null) {
       return Collections.emptyMap();

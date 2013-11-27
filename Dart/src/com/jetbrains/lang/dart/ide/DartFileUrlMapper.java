@@ -2,14 +2,11 @@ package com.jetbrains.lang.dart.ide;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.Url;
 import com.jetbrains.javascript.debugger.FileUrlMapper;
 import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 final class DartFileUrlMapper extends FileUrlMapper {
   private static final String SCHEME = "dart";
@@ -37,9 +34,11 @@ final class DartFileUrlMapper extends FileUrlMapper {
         libraryFilePath = null;
       }
 
-
-      Map<String,String> map = DartSettingsUtil.getSettings().getLibrariesMap(PsiManager.getInstance(project));
-      return null;
+      VirtualFile file = DartSettingsUtil.getSettings().findSdkLibrary(libraryName, project);
+      if (file == null) {
+        return null;
+      }
+      return libraryFilePath == null ? file : file.getParent().findFileByRelativePath(libraryFilePath);
     }
     return null;
   }
