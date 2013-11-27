@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
@@ -13,11 +12,11 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.net.NetUtils;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import com.jetbrains.lang.dart.util.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -48,7 +47,7 @@ public class DartCommandLineDebugRunner extends DefaultProgramRunner {
     final String filePath = configuration.getFilePath();
     assert filePath != null;
 
-    final int debuggingPort = DartSdkUtil.findFreePortForDebugging();
+    final int debuggingPort = NetUtils.tryToFindAvailableSocketPort();
 
     final DartCommandLineRunningState dartCommandLineRunningState = new DartCommandLineRunningState(
       env,
