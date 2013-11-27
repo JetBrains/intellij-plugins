@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
@@ -118,8 +119,13 @@ public class DartSettings {
 
   @NotNull
   Map<String, String> getLibrariesMap(@Nullable PsiElement context) {
+    return context == null ? Collections.<String, String>emptyMap() : getLibrariesMap(context.getManager());
+  }
+
+  @NotNull
+  public Map<String, String> getLibrariesMap(@NotNull PsiManager psiManager) {
     VirtualFile configFile = getConfigFile();
-    if (configFile == null || context == null) {
+    if (configFile == null) {
       return Collections.emptyMap();
     }
 
@@ -127,7 +133,7 @@ public class DartSettings {
     final Long cachedTimestamp = data == null ? null : data.first;
     long modificationCount = configFile.getModificationCount();
     if (cachedTimestamp == null || !cachedTimestamp.equals(modificationCount)) {
-      PsiFile psiFile = context.getManager().findFile(configFile);
+      PsiFile psiFile = psiManager.findFile(configFile);
       data = Pair.create(modificationCount, computeData(psiFile));
       configFile.putUserData(LIBRARIES_TIME_AND_MAP_KEY, data);
     }
