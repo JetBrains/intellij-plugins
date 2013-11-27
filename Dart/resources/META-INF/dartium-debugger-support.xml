@@ -1,6 +1,7 @@
 <idea-plugin version="2">
   <extensions defaultExtensionNs="com.jetbrains">
     <javaScriptBreakpointAwareFileType fileType="Dart"/>
+    <fileUrlMapper implementation="com.jetbrains.lang.dart.ide.DartFileUrlMapper" order="first"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <project.converterProvider implementation="com.jetbrains.lang.dart.ide.DartRunConfigurationConverterProvider"/>
