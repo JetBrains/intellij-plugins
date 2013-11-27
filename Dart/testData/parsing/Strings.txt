@@ -4,6 +4,164 @@ Dart File
       PsiElement(var)('var')
       COMPONENT_NAME
         ID
+          PsiElement(IDENTIFIER)('a')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('not closed')
+        PsiElement(REGULAR_STRING_PART)('\n')
+        PsiErrorElement:CLOSING_QUOTE, LONG_TEMPLATE_ENTRY_START, REGULAR_STRING_PART or SHORT_TEMPLATE_ENTRY_START expected, got 'var'
+          <empty list>
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('not closed')
+        PsiElement(REGULAR_STRING_PART)('\n')
+        PsiErrorElement:CLOSING_QUOTE, LONG_TEMPLATE_ENTRY_START, REGULAR_STRING_PART or SHORT_TEMPLATE_ENTRY_START expected, got 'var'
+          <empty list>
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('not closed')
+        PsiErrorElement:CLOSING_QUOTE, LONG_TEMPLATE_ENTRY_START, REGULAR_STRING_PART or SHORT_TEMPLATE_ENTRY_START expected, got '\'
+          <empty list>
+      PsiElement(BAD_CHARACTER)('\')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('not closed')
+        PsiErrorElement:CLOSING_QUOTE, LONG_TEMPLATE_ENTRY_START, REGULAR_STRING_PART or SHORT_TEMPLATE_ENTRY_START expected, got '\'
+          <empty list>
+      PsiElement(BAD_CHARACTER)('\')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('not closed \xFF\uFFFF\u{FFFFFF}\"')
+        PsiElement(REGULAR_STRING_PART)('\n')
+        PsiErrorElement:CLOSING_QUOTE, LONG_TEMPLATE_ENTRY_START, REGULAR_STRING_PART or SHORT_TEMPLATE_ENTRY_START expected, got 'var'
+          <empty list>
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('not closed \xFF\uFFFF\u{FFFFFF}\'')
+        PsiElement(REGULAR_STRING_PART)('\n')
+        PsiErrorElement:CLOSING_QUOTE, LONG_TEMPLATE_ENTRY_START, REGULAR_STRING_PART or SHORT_TEMPLATE_ENTRY_START expected, got 'var'
+          <empty list>
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''')
+        PsiElement(REGULAR_STRING_PART)('\'')
+        PsiElement(CLOSING_QUOTE)(''')
+  PsiElement(;)(';')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('\"')
+        PsiElement(CLOSING_QUOTE)('"')
+  PsiElement(;)(';')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('raw')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(RAW_TRIPLE_QUOTED_STRING)('r'''${\}\\n$\'''')
+        PsiElement(OPEN_QUOTE)(''''')
+        PsiElement(REGULAR_STRING_PART)('''')
+        PsiElement(REGULAR_STRING_PART)('\$')
+        PsiElement(REGULAR_STRING_PART)('\\n')
+        PsiElement(CLOSING_QUOTE)(''''')
+  PsiElement(;)(';')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('raw')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(RAW_TRIPLE_QUOTED_STRING)('r"""${\}$\\n\"""')
+        PsiElement(OPEN_QUOTE)('"""')
+        PsiElement(REGULAR_STRING_PART)('""')
+        PsiElement(REGULAR_STRING_PART)('\$')
+        PsiElement(REGULAR_STRING_PART)('\\n')
+        PsiElement(CLOSING_QUOTE)('"""')
+  PsiElement(;)(';')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('not_closed')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          PsiErrorElement:<prefix expression> expected, got '\'
+            PsiElement(BAD_CHARACTER)('\')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(REGULAR_STRING_PART)('\n')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
           PsiElement(IDENTIFIER)('s1')
     VAR_INIT
       PsiElement(=)('=')
@@ -86,7 +244,7 @@ Dart File
     VAR_INIT
       PsiElement(=)('=')
       STRING_LITERAL_EXPRESSION
-        PsiElement(RAW_TRIPLE_QUOTED_STRING)('@'''\nlong string with $"text"\n'''')
+        PsiElement(RAW_TRIPLE_QUOTED_STRING)('r'''\nlong string with $"text"\n'''')
   PsiElement(;)(';')
   VAR_DECLARATION_LIST
     VAR_ACCESS_DECLARATION
@@ -97,7 +255,7 @@ Dart File
     VAR_INIT
       PsiElement(=)('=')
       STRING_LITERAL_EXPRESSION
-        PsiElement(RAW_TRIPLE_QUOTED_STRING)('@"""\nlong string with $'text'\n"""')
+        PsiElement(RAW_TRIPLE_QUOTED_STRING)('r"""\nlong string with $'text'\n"""')
   PsiElement(;)(';')
   VAR_DECLARATION_LIST
     VAR_ACCESS_DECLARATION

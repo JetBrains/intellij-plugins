@@ -799,7 +799,7 @@ Dart File
           PsiElement(()('(')
           ARGUMENT_LIST
             STRING_LITERAL_EXPRESSION
-              PsiElement(RAW_SINGLE_QUOTED_STRING)('@'^(#{1,6})(.*?)#*$'')
+              PsiElement(RAW_SINGLE_QUOTED_STRING)('r'^(#{1,6})(.*?)#*$'')
           PsiElement())(')')
   PsiElement(;)(';')
   CLASS_DEFINITION

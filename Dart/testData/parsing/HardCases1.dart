@@ -71,7 +71,7 @@ abstract class Map<K, V> {
   bool get isNotEmpty;
 }
 
-final _RE_HEADER = const RegExp(@'^(#{1,6})(.*?)#*$');
+final _RE_HEADER = const RegExp(r'^(#{1,6})(.*?)#*$');
 
 abstract class Exception {
   factory Exception([var message]) => new _ExceptionImplementation(message);

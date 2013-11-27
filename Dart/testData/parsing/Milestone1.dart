@@ -30,7 +30,7 @@ class SomeClass {
 }
 
 main() {
-  var on = @"set";
+  var on = r"set";
   on.split(" ");
 
   var class = r"class";
