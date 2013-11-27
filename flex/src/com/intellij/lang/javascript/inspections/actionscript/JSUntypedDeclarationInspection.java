@@ -23,9 +23,9 @@ import com.intellij.codeInsight.template.impl.MacroCallNode;
 import com.intellij.codeInsight.template.macro.MacroFactory;
 import com.intellij.codeInspection.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.inspections.JSInspection;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 public class JSUntypedDeclarationInspection extends JSInspection {
   @NotNull
   public String getDisplayName() {
-    return JSBundle.message("js.untyped.declaration.inspection.name");
+    return FlexBundle.message("js.untyped.declaration.inspection.name");
   }
 
   @NotNull
@@ -85,7 +85,7 @@ public class JSUntypedDeclarationInspection extends JSInspection {
       LocalQuickFix[] fixes = holder.isOnTheFly() ? new LocalQuickFix[]{new AddTypeToDclFix()} : LocalQuickFix.EMPTY_ARRAY;
       holder.registerProblem(
         (nameIdentifier != null ? nameIdentifier:node.getNode().findChildByType(JSTokenTypes.FUNCTION_KEYWORD)).getPsi(),
-        JSBundle.message(
+        FlexBundle.message(
           node instanceof JSFunction ? "js.untyped.function.problem":"js.untyped.variable.problem",
           nameIdentifier != null ? nameIdentifier.getText():"anonymous"
         ),
@@ -99,7 +99,7 @@ public class JSUntypedDeclarationInspection extends JSInspection {
 
     @NotNull
     public String getName() {
-      return JSBundle.message("js.untyped.declaration.problem.addtype.fix");
+      return FlexBundle.message("js.untyped.declaration.problem.addtype.fix");
     }
 
     @NotNull

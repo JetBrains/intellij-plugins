@@ -22,8 +22,8 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.DialectDetector;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.inspections.JSInspection;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
   @NotNull
   public String getDisplayName() {
-    return JSBundle.message("js.implicitly.internal.declaration.inspection.name");
+    return FlexBundle.message("js.implicitly.internal.declaration.inspection.name");
   }
 
   @NotNull
@@ -69,8 +69,7 @@ public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
   }
 
   private static void process(final JSNamedElement node, final ProblemsHolder holder) {
-    PsiFile containingFile = node.getContainingFile();
-    if (containingFile.getLanguage() != JavaScriptSupportLoader.ECMA_SCRIPT_L4) return;
+    if (!DialectDetector.isActionScript(node)) return;
     JSFunction fun = PsiTreeUtil.getParentOfType(node, JSFunction.class);
     if (fun != null) return;
     ASTNode nameIdentifier = node.findNameIdentifier();
@@ -89,12 +88,12 @@ public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
         !(node instanceof JSFunction && ((JSFunction)node).isConstructor())) {
       holder.registerProblem(
         nameIdentifier.getPsi(),
-        JSBundle.message("js.implicitly.internal.declaration.problem"),
+        FlexBundle.message("js.implicitly.internal.declaration.problem"),
         new LocalQuickFix() {
           @NotNull
           @Override
           public String getName() {
-            return JSBundle.message("js.implicitly.internal.declaration.problem.add.internal.fix");
+            return FlexBundle.message("js.implicitly.internal.declaration.problem.add.internal.fix");
           }
 
           @NotNull
