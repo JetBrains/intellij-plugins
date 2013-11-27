@@ -66,4 +66,8 @@
                             serviceImplementation="org.angularjs.settings.AngularJSConfig"/>
         <editorSmartKeysConfigurable instance="org.angularjs.settings.AngularJSConfigurationPage"/>
     </extensions>
+
+    <extensions defaultExtensionNs="JavaScript">
+        <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSDirectiveIndexingHandler" />
+    </extensions>
 </idea-plugin>
