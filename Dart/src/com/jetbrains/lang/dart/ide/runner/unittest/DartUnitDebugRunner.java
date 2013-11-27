@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.ide.runner.unittest;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
@@ -15,13 +14,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.net.NetUtils;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
-import com.jetbrains.lang.dart.util.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -62,7 +61,7 @@ public class DartUnitDebugRunner extends DefaultProgramRunner {
     final Module module = ModuleUtilCore.findModuleForFile(virtualFile, project);
     final DartSettings dartSettings = DartSettings.getSettingsForModule(module);
 
-    final int debuggingPort = DartSdkUtil.findFreePortForDebugging();
+    final int debuggingPort = NetUtils.tryToFindAvailableSocketPort();
 
     final DartUnitRunningState dartUnitRunningState = new DartUnitRunningState(env, parameters, dartSettings, debuggingPort);
     final ExecutionResult executionResult = dartUnitRunningState.execute(env.getExecutor(), this);
