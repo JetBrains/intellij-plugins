@@ -2,31 +2,31 @@ part "frog/natives.js";
 
 var lives = new Set<HInstruction>.from(other.lives);
 
-int getOne() native @""" return 1;""";
+int getOne() native r""" return 1;""";
 int getTwo() native """ return 2;""";
-int getThree() native @" return 3;";
+int getThree() native r" return 3;";
 int getFour() native " return 4;";
 
 
-int getOne() native @''' return 1;''';
+int getOne() native r''' return 1;''';
 int getTwo() native ''' return 2;''';
-int getThree() native @' return 3;';
+int getThree() native r' return 3;';
 int getFour() native ' return 4;';
 
 var a = '''
-this is legal string with 'quoted' word
+this is legal string with 'quoted' ''word''
 ''';
 
-var b = @'''
-this is legal raw string with 'quoted' word
+var b = r'''
+this is legal raw string with 'quoted' ''word''
 ''';
 
 var c = """
-this is legal string with "quoted" word
+this is legal string with "quoted" ""word""
 """;
 
-var d = @"""
-this is legal raw string with "quoted" word
+var d = r"""
+this is legal raw string with "quoted" ""word""
 """;
 
 class Foo {

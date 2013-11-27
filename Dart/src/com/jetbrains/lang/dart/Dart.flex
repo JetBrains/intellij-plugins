@@ -57,45 +57,26 @@ import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 %xstate QUO_STRING THREE_QUO_STRING APOS_STRING THREE_APOS_STRING SHORT_TEMPLATE_ENTRY LONG_TEMPLATE_ENTRY
 
 DIGIT=[0-9]
+HEX_DIGIT=[0-9a-fA-F]
 LETTER=[a-z]|[A-Z]
-WHITE_SPACE=[ \n\r\t\f]+
-PROGRAM_COMMENT="#""!"[^\r\n]*
-SINGLE_LINE_COMMENT="/""/"[^\r\n]*
-SINGLE_LINE_DOC_COMMENT="/""/""/"[^\r\n]*
+WHITE_SPACE=[ \n\t\f]+
+PROGRAM_COMMENT="#""!"[^\n]*
+SINGLE_LINE_COMMENT="/""/"[^\n]*
+SINGLE_LINE_DOC_COMMENT="/""/""/"[^\n]*
 MULTI_LINE_STYLE_COMMENT=("/*"[^"*"]{COMMENT_TAIL})|"/*"  //TODO doccomment may nest
 COMMENT_TAIL=([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
 DOC_COMMENT="/*""*"+("/"|([^"/""*"]{COMMENT_TAIL}))?  // TODO brackets
 
-/*
-    Raw strings + common
-*/
-RAW_SINGLE_QUOTED_STRING=(@|"r")({QUOTED_LITERAL} | {DOUBLE_QUOTED_LITERAL})
-RAW_TRIPLE_QUOTED_STRING=(@|"r")({TRIPLE_QUOTED_LITERAL}|{TRIPLE_APOS_LITERAL})
+RAW_SINGLE_QUOTED_STRING= "r" ((\" ([^\"\n])* \"?) | ("'" ([^\'\n])* \'?))
+RAW_TRIPLE_QUOTED_STRING= "r" ({RAW_TRIPLE_QUOTED_LITERAL} | {RAW_TRIPLE_APOS_LITERAL})
 
-QUOTED_LITERAL="'" ([^\\\'\r\n] | {ESCAPE_SEQUENCE} | (\\[\r\n]))* ("'"|\\)?
-DOUBLE_QUOTED_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE}|(\\[\r\n]))*?(\"|\\)?
-ESCAPE_SEQUENCE=\\[^\r\n]
+RAW_TRIPLE_QUOTED_LITERAL = {THREE_QUO}  ([^\"] | \"[^\"] | \"\"[^\"])* {THREE_QUO}?
+RAW_TRIPLE_APOS_LITERAL   = {THREE_APOS} ([^\'] | \'[^\'] | \'\'[^\'])* {THREE_APOS}?
 
-ANY_ESCAPE_SEQUENCE = \\[^]
-
-THREE_QUO = (\"\"\")
-ONE_TWO_QUO = (\"[^\"]) | (\"\\[^]) | (\"\"[^\"]) | (\"\"\\[^])
-QUO_STRING_CHAR = [^\\\"] | {ANY_ESCAPE_SEQUENCE} | {ONE_TWO_QUO}
-TRIPLE_QUOTED_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
-
+THREE_QUO =  (\"\"\")
 THREE_APOS = (\'\'\')
-ONE_TWO_APOS = ('[^']) | ('\\[^]) | (''[^']) | (''\\[^])
-APOS_STRING_CHAR = [^\\'] | {ANY_ESCAPE_SEQUENCE} | {ONE_TWO_APOS}
-TRIPLE_APOS_LITERAL = {THREE_APOS} {APOS_STRING_CHAR}* {THREE_APOS}?
 
-/*
-    Strings with templates
-*/
-
-REGULAR_QUO_STRING_PART=[^\\\"\$]+
-REGULAR_APOS_STRING_PART=[^\\\'\$]+
 SHORT_TEMPLATE_ENTRY=\${IDENTIFIER_NO_DOLLAR}
-LONELY_DOLLAR=\$
 LONG_TEMPLATE_ENTRY_START=\$\{
 
 IDENTIFIER_START_NO_DOLLAR={LETTER}|"_"
@@ -107,7 +88,7 @@ IDENTIFIER_NO_DOLLAR={IDENTIFIER_START_NO_DOLLAR}{IDENTIFIER_PART_NO_DOLLAR}*
 
 INTEGER_LITERAL={DECIMAL_INTEGER_LITERAL}|{HEX_INTEGER_LITERAL}
 DECIMAL_INTEGER_LITERAL=(0|([1-9]({DIGIT})*))
-HEX_INTEGER_LITERAL=0[Xx]([0-9A-Fa-f])*
+HEX_INTEGER_LITERAL = 0 [Xx] {HEX_DIGIT}*
 
 EXPONENT_PART=[Ee]["+""-"]?({DIGIT})*
 FLOATING_POINT_LITERAL1=({DIGIT})+("."({DIGIT})+)?({EXPONENT_PART})?
@@ -242,56 +223,41 @@ FLOAT_LITERAL=(({FLOATING_POINT_LITERAL1})|({FLOATING_POINT_LITERAL2}))
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "&&"               { return AND_AND; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "@"                { return AT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "#"                { return HASH; }
+
+// raw strings
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {RAW_TRIPLE_QUOTED_STRING} { return RAW_TRIPLE_QUOTED_STRING; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {RAW_SINGLE_QUOTED_STRING} { return RAW_SINGLE_QUOTED_STRING; }
 
-// String templates
-
-// ", """
-
-<YYINITIAL, LONG_TEMPLATE_ENTRY> {THREE_QUO}          { pushState(THREE_QUO_STRING); return OPEN_QUOTE; }
-<THREE_QUO_STRING> \n                  { return REGULAR_STRING_PART; }
-<THREE_QUO_STRING> \"                  { return REGULAR_STRING_PART; }
-<THREE_QUO_STRING> \\                  { return REGULAR_STRING_PART; }
-<THREE_QUO_STRING> {THREE_QUO}         { popState(); return CLOSING_QUOTE; }
-
-<YYINITIAL, LONG_TEMPLATE_ENTRY> \"                          { pushState(QUO_STRING); return OPEN_QUOTE; }
-<QUO_STRING> \"                 { popState(); return CLOSING_QUOTE; }
-<QUO_STRING> {ESCAPE_SEQUENCE}  { return REGULAR_STRING_PART; }
-
-<QUO_STRING, THREE_QUO_STRING> {REGULAR_QUO_STRING_PART}     { return REGULAR_STRING_PART; }
-<QUO_STRING, THREE_QUO_STRING> {SHORT_TEMPLATE_ENTRY}        {
-                                                                  pushState(SHORT_TEMPLATE_ENTRY);
-                                                                  yypushback(yylength() - 1);
-                                                                  return SHORT_TEMPLATE_ENTRY_START;
-                                                             }
-
-<QUO_STRING, THREE_QUO_STRING> {LONELY_DOLLAR}               { return REGULAR_STRING_PART; }
-<QUO_STRING, THREE_QUO_STRING> {LONG_TEMPLATE_ENTRY_START}   { pushState(LONG_TEMPLATE_ENTRY); return LONG_TEMPLATE_ENTRY_START; }
-
-// ', '''
-
-<YYINITIAL, LONG_TEMPLATE_ENTRY> {THREE_APOS}          { pushState(THREE_APOS_STRING); return OPEN_QUOTE; }
-<THREE_APOS_STRING> \n                  { return REGULAR_STRING_PART; }
-<THREE_APOS_STRING> \'                  { return REGULAR_STRING_PART; }
-<THREE_APOS_STRING> \\                  { return REGULAR_STRING_PART; }
-<THREE_APOS_STRING> {THREE_APOS}        { popState(); return CLOSING_QUOTE; }
-
-<YYINITIAL, LONG_TEMPLATE_ENTRY> \'     { pushState(APOS_STRING); return OPEN_QUOTE; }
-<APOS_STRING> \'                 { popState(); return CLOSING_QUOTE; }
-<APOS_STRING> {ESCAPE_SEQUENCE}  { return REGULAR_STRING_PART; }
-
-<APOS_STRING, THREE_APOS_STRING> {REGULAR_APOS_STRING_PART}    { return REGULAR_STRING_PART; }
-<APOS_STRING, THREE_APOS_STRING> {SHORT_TEMPLATE_ENTRY}        {
-                                                                  pushState(SHORT_TEMPLATE_ENTRY);
-                                                                  yypushback(yylength() - 1);
-                                                                  return SHORT_TEMPLATE_ENTRY_START;
-                                                             }
-
-<APOS_STRING, THREE_APOS_STRING> {LONELY_DOLLAR}               { return REGULAR_STRING_PART; }
-<APOS_STRING, THREE_APOS_STRING> {LONG_TEMPLATE_ENTRY_START}   { pushState(LONG_TEMPLATE_ENTRY); return LONG_TEMPLATE_ENTRY_START; }
-
-
+// string start
+<YYINITIAL, LONG_TEMPLATE_ENTRY>      \"                  { pushState(QUO_STRING);        return OPEN_QUOTE;    }
+<YYINITIAL, LONG_TEMPLATE_ENTRY>      \'                  { pushState(APOS_STRING);       return OPEN_QUOTE;    }
+<YYINITIAL, LONG_TEMPLATE_ENTRY>      {THREE_QUO}         { pushState(THREE_QUO_STRING);  return OPEN_QUOTE;    }
+<YYINITIAL, LONG_TEMPLATE_ENTRY>      {THREE_APOS}        { pushState(THREE_APOS_STRING); return OPEN_QUOTE;    }
+// correct string end
+<QUO_STRING>                          \"                  { popState();                   return CLOSING_QUOTE; }
+<APOS_STRING>                         \'                  { popState();                   return CLOSING_QUOTE; }
+<THREE_QUO_STRING>                    {THREE_QUO}         { popState();                   return CLOSING_QUOTE; }
+<THREE_APOS_STRING>                   {THREE_APOS}        { popState();                   return CLOSING_QUOTE; }
+// incorrect line end: not closed single-line string literal
+<QUO_STRING, APOS_STRING>             \\                  { popState();                   return BAD_CHARACTER; }       // '\' is the last symbol on the line
+<QUO_STRING, APOS_STRING>             \n                  { popState();                   return REGULAR_STRING_PART; } // do not return BAD_CHARACTER here because red highlighting of bad \n looks awful
+// string content
+<QUO_STRING>                          ([^\\\"\n\$] | (\\ [^\n]))*   {                return REGULAR_STRING_PART; }
+<APOS_STRING>                         ([^\\\'\n\$] | (\\ [^\n]))*   {                return REGULAR_STRING_PART; }
+<THREE_QUO_STRING>                    ([^\\\"\$])*                  {                return REGULAR_STRING_PART; }
+<THREE_QUO_STRING>                    (\"[^\"]) | (\"\"[^\"])       { yypushback(1); return REGULAR_STRING_PART; } // pushback because we could capture '\' that escapes something
+<THREE_APOS_STRING>                   ([^\\\'\$])*                  {                return REGULAR_STRING_PART; }
+<THREE_APOS_STRING>                   (\'[^\']) | (\'\'[^\'])       { yypushback(1); return REGULAR_STRING_PART; } // pushback because we could capture '\' that escapes something
+<THREE_QUO_STRING, THREE_APOS_STRING> (\\[^])                       {                return REGULAR_STRING_PART; } // escape sequence
+// bad string interpolation (no identifier after '$')
+<QUO_STRING, APOS_STRING, THREE_QUO_STRING, THREE_APOS_STRING> \$   { return SHORT_TEMPLATE_ENTRY_START; }
+// short string interpolation
+<QUO_STRING, APOS_STRING, THREE_QUO_STRING, THREE_APOS_STRING> {SHORT_TEMPLATE_ENTRY}      { pushState(SHORT_TEMPLATE_ENTRY);
+                                                                                             yypushback(yylength() - 1);
+                                                                                             return SHORT_TEMPLATE_ENTRY_START;}
+// long string interpolation
+<QUO_STRING, APOS_STRING, THREE_QUO_STRING, THREE_APOS_STRING> {LONG_TEMPLATE_ENTRY_START} { pushState(LONG_TEMPLATE_ENTRY);
+                                                                                             return LONG_TEMPLATE_ENTRY_START; }
 // Only *this* keyword is itself an expression valid in this position
 // *null*, *true* and *false* are also keywords and expression, but it does not make sense to put them
 // in a string template for it'd be easier to just type them in without a dollar
@@ -299,4 +265,5 @@ FLOAT_LITERAL=(({FLOATING_POINT_LITERAL1})|({FLOATING_POINT_LITERAL2}))
 <SHORT_TEMPLATE_ENTRY> {IDENTIFIER_NO_DOLLAR}    { popState(); return IDENTIFIER; }
 
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {INTEGER_LITERAL} | {FLOAT_LITERAL} { return NUMBER; }
-.                              { yybegin(YYINITIAL); return BAD_CHARACTER; }
+
+<YYINITIAL, LONG_TEMPLATE_ENTRY> . { return BAD_CHARACTER; }

@@ -60,7 +60,7 @@ Dart File
       PsiElement())(')')
     PsiElement(native)('native')
     STRING_LITERAL_EXPRESSION
-      PsiElement(RAW_TRIPLE_QUOTED_STRING)('@""" return 1;"""')
+      PsiElement(RAW_TRIPLE_QUOTED_STRING)('r""" return 1;"""')
     PsiElement(;)(';')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     RETURN_TYPE
@@ -94,7 +94,7 @@ Dart File
       PsiElement())(')')
     PsiElement(native)('native')
     STRING_LITERAL_EXPRESSION
-      PsiElement(RAW_SINGLE_QUOTED_STRING)('@" return 3;"')
+      PsiElement(RAW_SINGLE_QUOTED_STRING)('r" return 3;"')
     PsiElement(;)(';')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     RETURN_TYPE
@@ -128,7 +128,7 @@ Dart File
       PsiElement())(')')
     PsiElement(native)('native')
     STRING_LITERAL_EXPRESSION
-      PsiElement(RAW_TRIPLE_QUOTED_STRING)('@''' return 1;'''')
+      PsiElement(RAW_TRIPLE_QUOTED_STRING)('r''' return 1;'''')
     PsiElement(;)(';')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     RETURN_TYPE
@@ -162,7 +162,7 @@ Dart File
       PsiElement())(')')
     PsiElement(native)('native')
     STRING_LITERAL_EXPRESSION
-      PsiElement(RAW_SINGLE_QUOTED_STRING)('@' return 3;'')
+      PsiElement(RAW_SINGLE_QUOTED_STRING)('r' return 3;'')
     PsiElement(;)(';')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     RETURN_TYPE
@@ -196,7 +196,11 @@ Dart File
         PsiElement(REGULAR_STRING_PART)(''')
         PsiElement(REGULAR_STRING_PART)('quoted')
         PsiElement(REGULAR_STRING_PART)(''')
-        PsiElement(REGULAR_STRING_PART)(' word\n')
+        PsiElement(REGULAR_STRING_PART)(' ')
+        PsiElement(REGULAR_STRING_PART)('''')
+        PsiElement(REGULAR_STRING_PART)('word')
+        PsiElement(REGULAR_STRING_PART)('''')
+        PsiElement(REGULAR_STRING_PART)('\n')
         PsiElement(CLOSING_QUOTE)(''''')
   PsiElement(;)(';')
   VAR_DECLARATION_LIST
@@ -208,7 +212,7 @@ Dart File
     VAR_INIT
       PsiElement(=)('=')
       STRING_LITERAL_EXPRESSION
-        PsiElement(RAW_TRIPLE_QUOTED_STRING)('@'''\nthis is legal raw string with 'quoted' word\n'''')
+        PsiElement(RAW_TRIPLE_QUOTED_STRING)('r'''\nthis is legal raw string with 'quoted' ''word''\n'''')
   PsiElement(;)(';')
   VAR_DECLARATION_LIST
     VAR_ACCESS_DECLARATION
@@ -224,7 +228,11 @@ Dart File
         PsiElement(REGULAR_STRING_PART)('"')
         PsiElement(REGULAR_STRING_PART)('quoted')
         PsiElement(REGULAR_STRING_PART)('"')
-        PsiElement(REGULAR_STRING_PART)(' word\n')
+        PsiElement(REGULAR_STRING_PART)(' ')
+        PsiElement(REGULAR_STRING_PART)('""')
+        PsiElement(REGULAR_STRING_PART)('word')
+        PsiElement(REGULAR_STRING_PART)('""')
+        PsiElement(REGULAR_STRING_PART)('\n')
         PsiElement(CLOSING_QUOTE)('"""')
   PsiElement(;)(';')
   VAR_DECLARATION_LIST
@@ -236,7 +244,7 @@ Dart File
     VAR_INIT
       PsiElement(=)('=')
       STRING_LITERAL_EXPRESSION
-        PsiElement(RAW_TRIPLE_QUOTED_STRING)('@"""\nthis is legal raw string with "quoted" word\n"""')
+        PsiElement(RAW_TRIPLE_QUOTED_STRING)('r"""\nthis is legal raw string with "quoted" ""word""\n"""')
   PsiElement(;)(';')
   CLASS_DEFINITION
     PsiElement(class)('class')

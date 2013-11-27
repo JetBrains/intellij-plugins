@@ -144,7 +144,7 @@ Dart File
             VAR_INIT
               PsiElement(=)('=')
               STRING_LITERAL_EXPRESSION
-                PsiElement(RAW_SINGLE_QUOTED_STRING)('@"set"')
+                PsiElement(RAW_SINGLE_QUOTED_STRING)('r"set"')
           PsiElement(;)(';')
           CALL_EXPRESSION
             REFERENCE_EXPRESSION
