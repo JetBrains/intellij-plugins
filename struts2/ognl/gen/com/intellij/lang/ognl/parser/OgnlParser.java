@@ -17,16 +17,16 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.parser;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
+import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
+
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
-import com.intellij.lang.LighterASTNode;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class OgnlParser implements PsiParser {
@@ -34,53 +34,52 @@ public class OgnlParser implements PsiParser {
   public static final Logger LOG_ = Logger.getInstance("com.intellij.lang.ognl.parser.OgnlParser");
 
   public ASTNode parse(IElementType root_, PsiBuilder builder_) {
-    int level_ = 0;
     boolean result_;
     builder_ = adapt_builder_(root_, builder_, this, EXTENDS_SETS_);
+    Marker marker_ = enter_section_(builder_, 0, _COLLAPSE_, null);
     if (root_ == BINARY_EXPRESSION) {
-      result_ = expression(builder_, level_ + 1, 3);
+      result_ = expression(builder_, 0, 3);
     }
     else if (root_ == CONDITIONAL_EXPRESSION) {
-      result_ = expression(builder_, level_ + 1, 2);
+      result_ = expression(builder_, 0, 2);
     }
     else if (root_ == EXPRESSION) {
-      result_ = expression(builder_, level_ + 1, -1);
+      result_ = expression(builder_, 0, -1);
     }
     else if (root_ == INDEXED_EXPRESSION) {
-      result_ = indexedExpression(builder_, level_ + 1);
+      result_ = indexedExpression(builder_, 0);
     }
     else if (root_ == LITERAL_EXPRESSION) {
-      result_ = literalExpression(builder_, level_ + 1);
+      result_ = literalExpression(builder_, 0);
     }
     else if (root_ == METHOD_CALL_EXPRESSION) {
-      result_ = methodCallExpression(builder_, level_ + 1);
+      result_ = methodCallExpression(builder_, 0);
     }
     else if (root_ == NEW_EXPRESSION) {
-      result_ = newExpression(builder_, level_ + 1);
+      result_ = newExpression(builder_, 0);
     }
     else if (root_ == PARENTHESIZED_EXPRESSION) {
-      result_ = parenthesizedExpression(builder_, level_ + 1);
+      result_ = parenthesizedExpression(builder_, 0);
     }
     else if (root_ == REFERENCE_EXPRESSION) {
-      result_ = referenceExpression(builder_, level_ + 1);
+      result_ = referenceExpression(builder_, 0);
     }
     else if (root_ == SEQUENCE_EXPRESSION) {
-      result_ = sequenceExpression(builder_, level_ + 1);
+      result_ = sequenceExpression(builder_, 0);
     }
     else if (root_ == UNARY_EXPRESSION) {
-      result_ = unaryExpression(builder_, level_ + 1);
+      result_ = unaryExpression(builder_, 0);
     }
     else if (root_ == VARIABLE_ASSIGNMENT_EXPRESSION) {
-      result_ = variableAssignmentExpression(builder_, level_ + 1);
+      result_ = variableAssignmentExpression(builder_, 0);
     }
     else if (root_ == VARIABLE_EXPRESSION) {
-      result_ = variableExpression(builder_, level_ + 1);
+      result_ = variableExpression(builder_, 0);
     }
     else {
-      Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
-      result_ = parse_root_(root_, builder_, level_);
-      exit_section_(builder_, level_, marker_, root_, result_, true, TOKEN_ADVANCER);
+      result_ = parse_root_(root_, builder_, 0);
     }
+    exit_section_(builder_, 0, marker_, root_, result_, true, TRUE_CONDITION);
     return builder_.getTreeBuilt();
   }
 
@@ -171,7 +170,7 @@ public class OgnlParser implements PsiParser {
   // NEGATE | NOT
   static boolean bitwiseOperations(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "bitwiseOperations")) return false;
-    if (!nextTokenIs(builder_, NEGATE) && !nextTokenIs(builder_, NOT)) return false;
+    if (!nextTokenIs(builder_, "", NEGATE, NOT)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, NEGATE);
@@ -184,7 +183,7 @@ public class OgnlParser implements PsiParser {
   // TRUE_KEYWORD | FALSE_KEYWORD
   static boolean booleanLiteralExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "booleanLiteralExpression")) return false;
-    if (!nextTokenIs(builder_, FALSE_KEYWORD) && !nextTokenIs(builder_, TRUE_KEYWORD)) return false;
+    if (!nextTokenIs(builder_, "", FALSE_KEYWORD, TRUE_KEYWORD)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, TRUE_KEYWORD);
@@ -272,15 +271,11 @@ public class OgnlParser implements PsiParser {
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = expressionSequenceRequired_1_0(builder_, level_ + 1);
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (result_) {
       if (!expressionSequenceRequired_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "expressionSequenceRequired_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "expressionSequenceRequired_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -327,15 +322,11 @@ public class OgnlParser implements PsiParser {
   // (',' expression)*
   private static boolean methodCallParameters_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "methodCallParameters_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!methodCallParameters_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "methodCallParameters_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "methodCallParameters_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -369,7 +360,7 @@ public class OgnlParser implements PsiParser {
   // '+' | '-'
   static boolean plusMinusOperations(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "plusMinusOperations")) return false;
-    if (!nextTokenIs(builder_, PLUS) && !nextTokenIs(builder_, MINUS)) return false;
+    if (!nextTokenIs(builder_, "", PLUS, MINUS)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, PLUS);
@@ -439,7 +430,7 @@ public class OgnlParser implements PsiParser {
   // NOT_IN_KEYWORD | IN_KEYWORD
   static boolean setOperations(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "setOperations")) return false;
-    if (!nextTokenIs(builder_, IN_KEYWORD) && !nextTokenIs(builder_, NOT_IN_KEYWORD)) return false;
+    if (!nextTokenIs(builder_, "", IN_KEYWORD, NOT_IN_KEYWORD)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, NOT_IN_KEYWORD);
@@ -469,7 +460,7 @@ public class OgnlParser implements PsiParser {
   // STRING_LITERAL | CHARACTER_LITERAL
   static boolean textLiteralExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "textLiteralExpression")) return false;
-    if (!nextTokenIs(builder_, CHARACTER_LITERAL) && !nextTokenIs(builder_, STRING_LITERAL)) return false;
+    if (!nextTokenIs(builder_, "", CHARACTER_LITERAL, STRING_LITERAL)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, STRING_LITERAL);
@@ -748,15 +739,11 @@ public class OgnlParser implements PsiParser {
   // ('.' IDENTIFIER)*
   private static boolean referenceExpression_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "referenceExpression_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!referenceExpression_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "referenceExpression_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "referenceExpression_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
