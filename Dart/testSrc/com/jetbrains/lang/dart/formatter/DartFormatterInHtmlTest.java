@@ -58,7 +58,7 @@ public class DartFormatterInHtmlTest extends DartCodeInsightFixtureTestCase {
 
   private void doTest() throws Exception {
     myFixture.configureByFile(getTestName(false) + ".html");
-    WriteCommandAction.runWriteCommandAction(new Runnable() {
+    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
       @Override
       public void run() {
         CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());

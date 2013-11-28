@@ -77,7 +77,7 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
     assertNotNull("Can't find fixes", quickFixInfo);
     assertTrue("Fix not available", quickFixInfo.quickFix.isAvailable(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile()));
 
-    WriteCommandAction.runWriteCommandAction(new Runnable() {
+    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
       @Override
       public void run() {
         quickFixInfo.quickFix.invoke(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile());

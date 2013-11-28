@@ -56,7 +56,7 @@ public class OsgiPsiUtilTest extends AbstractOsgiTestCase {
   private void doTest(String original, String expected, final boolean replace) {
     myFixture.configureByText("MANIFEST.MF", original);
 
-    WriteCommandAction.runWriteCommandAction(new Runnable() {
+    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
           @Override
           public void run() {
         ManifestFile manifestFile = (ManifestFile)myFixture.getFile();

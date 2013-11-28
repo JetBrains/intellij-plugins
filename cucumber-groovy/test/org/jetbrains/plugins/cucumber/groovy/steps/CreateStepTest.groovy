@@ -1,6 +1,5 @@
 package org.jetbrains.plugins.cucumber.groovy.steps
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
@@ -59,7 +58,7 @@ this.metaClass.mixin(cucumber.api.groovy.Hooks)
 this.metaClass.mixin(cucumber.api.groovy.EN)
 ''')
 
-    WriteCommandAction.runWriteCommandAction {
+    WriteCommandAction.runWriteCommandAction project, {
       PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
       final at = file.findElementAt(myFixture.editor.caretModel.offset)
       final step = PsiTreeUtil.getParentOfType(at, GherkinStep)

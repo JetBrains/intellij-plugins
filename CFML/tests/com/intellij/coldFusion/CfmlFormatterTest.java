@@ -193,7 +193,7 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
 
   private void doTest() throws Exception {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
-    WriteCommandAction.runWriteCommandAction(new Runnable() {
+    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
       @Override
       public void run() {
         CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());

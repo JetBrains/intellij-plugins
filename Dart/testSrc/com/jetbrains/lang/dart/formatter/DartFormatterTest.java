@@ -58,7 +58,7 @@ public class DartFormatterTest extends DartCodeInsightFixtureTestCase {
 
   private void doTest() throws Exception {
     myFixture.configureByFile(getTestName(false) + "." + DartFileType.DEFAULT_EXTENSION);
-    WriteCommandAction.runWriteCommandAction(new Runnable() {
+    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
       @Override
       public void run() {
         CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());
