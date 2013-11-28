@@ -8,7 +8,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CssDialect;
 import com.intellij.lang.css.CssDialectMappings;
-import com.intellij.lang.css.CssDialectsConfigurable;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -298,7 +297,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   private static boolean containsGlobalSelectors(@NotNull List<CssSimpleSelector> selectors) {
     for (CssSimpleSelector selector : selectors) {
       final String elementName = selector.getElementName();
-      if ("".equals(elementName) || "global".equals(elementName) || "*".equals(elementName)) {
+      if (elementName != null && (elementName.isEmpty() || "global".equals(elementName) || "*".equals(elementName))) {
         return  true;
       }
     }
@@ -586,7 +585,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
 
     final VirtualFile vFile = file.getOriginalFile().getVirtualFile();
-    if (vFile == null || !CssDialectsConfigurable.canBeConfigured(vFile)) {
+    if (vFile == null || !canBeConfigured(vFile)) {
       return null;
     }
 
@@ -596,5 +595,9 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
 
     return vFile;
+  }
+
+  private static boolean canBeConfigured(@NotNull VirtualFile file) {
+    return file.getFileType() == CssFileType.INSTANCE;
   }
 }
