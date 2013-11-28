@@ -171,8 +171,7 @@ class MulticastPingThread extends Thread {
     if (LOG.isDebugEnabled()) {
       LOG.debug(getName() + ": Add self to " + remoteAddress);
     }
-    AddOnlineUserP2PCommand.addSelfTo(targetPort, remoteAddress,
-        mySelfAddress, myUserMonitorClient.getPort(), Arrays.asList(projects), myUserMonitorClient.getOwnPresence());
+    AddOnlineUserP2PCommand.addSelfTo(targetPort, remoteAddress, mySelfAddress, myUserMonitorClient.getPort(), Arrays.asList(projects), myUserMonitorClient.getOwnPresence());
   }
 
   private boolean shouldAddSelf(DatagramPacket datagramPacket, int targetPort) {

@@ -63,7 +63,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   static final int XML_RPC_PORT = MulticastPingThread.MULTICAST_PORT + 1;
 
-  private UserMonitorThread myUserMonitorThread;
+  private final UserMonitorThread myUserMonitorThread;
 
   private final Map<User, OnlineUserInfo> myUser2Info = new THashMap<User, OnlineUserInfo>();
   private final Map<User, OnlineUserInfo> myUser2InfoNew = new THashMap<User, OnlineUserInfo>();
@@ -99,7 +99,17 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
     myOwnPresence = new UserPresence(true);
 
-    startup(waitUserResponsesTimeout);
+    myUserMonitorThread = new UserMonitorThread(this, waitUserResponsesTimeout);
+
+    Map<String, Object> handlers = CustomPortServerManager.EP_NAME.findExtension(P2PCustomPortServerManager.class).handlers;
+    for (P2PCommand command : new P2PCommand[]{
+      new SendXmlMessageP2PCommand(myEventBroadcaster, this),
+      new AddOnlineUserP2PCommand(myUserMonitorThread),
+    }) {
+      handlers.put(command.getXmlRpcId(), command);
+    }
+
+    startup();
 
     Runtime.getRuntime().addShutdownHook(new IDETalkShutdownHook());
   }
@@ -146,25 +156,23 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     }
   }
 
-  private void startup(final long waitUserResponsesTimeout) {
+  private void startup() {
     Application application = ApplicationManager.getApplication();
     if (application.isUnitTestMode() || !application.isDispatchThread()) {
-      doStart(waitUserResponsesTimeout);
+      doStart();
     }
     else {
       application.executeOnPooledThread(new Runnable() {
         @Override
         public void run() {
-          doStart(waitUserResponsesTimeout);
+          doStart();
         }
       });
     }
   }
 
-  private void doStart(long waitUserResponsesTimeout) {
+  private void doStart() {
     BuiltInServerManager.getInstance().waitForStart();
-
-    myUserMonitorThread = new UserMonitorThread(this, waitUserResponsesTimeout);
     myUserMonitorThread.start();
     myUserMonitorThread.triggerFindNow();
     new WaitFor() {
@@ -175,16 +183,6 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     };
 
     myEventBroadcaster.addListener(myUserAddedCallbackListener);
-
-    P2PCommand[] commands = {
-      new SendXmlMessageP2PCommand(myEventBroadcaster, this),
-      new AddOnlineUserP2PCommand(myUserMonitorThread),
-    };
-
-    Map<String, Object> handlers = CustomPortServerManager.EP_NAME.findExtension(P2PCustomPortServerManager.class).handlers;
-    for (P2PCommand command : commands) {
-      handlers.put(command.getXmlRpcId(), command);
-    }
   }
 
   IDEFacade getIdeFacade() {
@@ -340,7 +338,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   @Override
   public void setOwnPresence(UserPresence userPresence) {
     if (!myOwnPresence.isOnline() && userPresence.isOnline()) {
-      startup(myUserMonitorThread.getWaitUserResponsesTimeout());
+      startup();
     }
     else if (myOwnPresence.isOnline() && !userPresence.isOnline()) {
       dispose();

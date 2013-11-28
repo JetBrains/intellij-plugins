@@ -73,7 +73,7 @@ public class NetworkUtil {
   private static Object sendMessage(XmlRpcTarget target, String xmlRpcId, String method, List<Object> parameters) {
     checkParameters(parameters, method);
 
-    String url = "http://" + target.getAddress().getHostAddress() + ':' + target.getPort() + '/';
+    String url = "http://" + target.getAddress().getHostAddress() + ':' + target.getPort() + "/rpc2";
     String fullMethodName = xmlRpcId + '.' + method;
 
     String logLine = "Call [" + url + "] " + fullMethodName;

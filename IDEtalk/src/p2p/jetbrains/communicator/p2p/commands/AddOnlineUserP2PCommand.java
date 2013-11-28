@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2006 JetBrains s.r.o.
+ * Copyright 2000-2013 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,11 +28,8 @@ import java.util.Collection;
 import java.util.Vector;
 
 /**
- * @author Kir Maximov
- *         <p/>
- *         notification about existence of a user in network
+ * notification about existence of a user in network
  */
-@SuppressWarnings({"HardCodedStringLiteral"})
 public class AddOnlineUserP2PCommand implements P2PCommand {
   private static final String ID = "AddOnlineUser";
 
