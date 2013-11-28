@@ -23,6 +23,12 @@ class NumberSyntax {
 
     1.1234e+444;
 
+    // incorrect, but anyway parsed as numbers
+    1e;
+    1e+;
+    1e-;
+    0x;
+
     o.d();
   }
 }
