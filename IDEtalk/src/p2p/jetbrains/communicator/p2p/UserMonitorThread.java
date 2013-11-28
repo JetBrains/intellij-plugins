@@ -64,6 +64,7 @@ public class UserMonitorThread extends Thread {
 
   UserMonitorThread(MulticastPingThread[] multicastPingThread, UserMonitorClient client, long waitUserResponsesTimeout) {
     super("User Monitor Thread");
+
     setDaemon(true);
     assert multicastPingThread != null;
     myClient = client;
@@ -72,13 +73,14 @@ public class UserMonitorThread extends Thread {
 
     String timeout = System.getProperty(SCAN_TIMEOUT_PROPERTY);
 
-    if(com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(timeout)) {
+    if (com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(timeout)) {
       myScansTimeout = TIMEOUT_BETWEEN_SCANS;
     }
     else {
       try {
         myScansTimeout = Long.parseLong(timeout) * MSECS_IN_SEC;
-      } catch (NumberFormatException e) {
+      }
+      catch (NumberFormatException e) {
         LOG.error("Invalid timeout for interval between scans: " + SCAN_TIMEOUT_PROPERTY + '=' + timeout);
         throw e;
       }
