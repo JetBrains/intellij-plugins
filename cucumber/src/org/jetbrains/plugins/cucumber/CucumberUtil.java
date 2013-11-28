@@ -1,15 +1,15 @@
 package org.jetbrains.plugins.cucumber;
 
-import com.intellij.openapi.util.text.StringUtil;
-import org.apache.oro.text.regex.Pattern;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * User: Andrey.Vokin
  * Date: 7/11/12
  */
 public class CucumberUtil {
+  @NonNls public static final String STEP_DEFINITIONS_DIR_NAME = "step_definitions";
+
   public static final char LEFT_PAR = '(';
   public static final char RIGHT_PAR = ')';
   public static final char LEFT_SQUARE_BRACE = '[';
