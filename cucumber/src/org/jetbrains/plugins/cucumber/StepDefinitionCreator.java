@@ -33,13 +33,13 @@ public interface StepDefinitionCreator {
    * @param fileName name of file to check
    * @return true if name is valid, false otherwise
    */
-  public boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String fileName);
+  boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String fileName);
 
   @NotNull
   PsiDirectory getDefaultStepDefinitionFolder(@NotNull final GherkinStep step);
 
   @NotNull
-  public String getStepDefinitionFilePath(@NotNull final PsiFile file);
+  String getStepDefinitionFilePath(@NotNull final PsiFile file);
 
   /**
    * Provides default name of step definition file
