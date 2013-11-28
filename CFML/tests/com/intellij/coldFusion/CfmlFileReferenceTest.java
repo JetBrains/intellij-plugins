@@ -15,7 +15,7 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import org.jetbrains.annotations.NonNls;
 
 /**
@@ -62,7 +62,7 @@ public class CfmlFileReferenceTest extends CfmlCodeInsightFixtureTestCase {
   private void doRenameFileTest(final String newName, String fileTextWithReference) throws Exception {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
     myFixture.addFileToProject("fileWithReference.test.cfml", fileTextWithReference);
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+    WriteCommandAction.runWriteCommandAction(new Runnable() {
       @Override
       public void run() {
         myFixture.renameElement(myFixture.getFile(), newName);

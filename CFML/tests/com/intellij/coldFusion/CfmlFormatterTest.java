@@ -17,13 +17,12 @@ package com.intellij.coldFusion;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.coldFusion.model.files.CfmlFileType;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import junit.framework.Assert;
 
 /**
@@ -194,7 +193,7 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
 
   private void doTest() throws Exception {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+    WriteCommandAction.runWriteCommandAction(new Runnable() {
       @Override
       public void run() {
         CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());

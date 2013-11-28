@@ -17,7 +17,7 @@ package com.intellij.lang.ognl.formatting;
 
 import com.intellij.lang.ognl.OgnlFileType;
 import com.intellij.lang.ognl.OgnlTestUtils;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 
@@ -101,7 +101,7 @@ public class OgnlFormattingTest extends LightPlatformCodeInsightFixtureTestCase 
   private void doTest(final String before,
                       final String after) {
     myFixture.configureByText(OgnlFileType.INSTANCE, OgnlTestUtils.createExpression(before));
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+    WriteCommandAction.runWriteCommandAction(new Runnable() {
       @Override
       public void run() {
         CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());

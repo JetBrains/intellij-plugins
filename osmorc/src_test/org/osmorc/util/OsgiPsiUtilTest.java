@@ -1,7 +1,6 @@
 package org.osmorc.util;
 
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.command.WriteCommandAction;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.osmorc.AbstractOsgiTestCase;
 
@@ -57,9 +56,9 @@ public class OsgiPsiUtilTest extends AbstractOsgiTestCase {
   private void doTest(String original, String expected, final boolean replace) {
     myFixture.configureByText("MANIFEST.MF", original);
 
-    new WriteAction() {
-      @Override
-      protected void run(Result result) throws Throwable {
+    WriteCommandAction.runWriteCommandAction(new Runnable() {
+          @Override
+          public void run() {
         ManifestFile manifestFile = (ManifestFile)myFixture.getFile();
         if (replace) {
           OsgiPsiUtil.setHeader(manifestFile, "TestHeader", "TestValue");
@@ -68,7 +67,7 @@ public class OsgiPsiUtilTest extends AbstractOsgiTestCase {
           OsgiPsiUtil.appendToHeader(manifestFile, "TestHeader", "TestValue");
         }
       }
-    }.execute().throwException();
+    });
 
     myFixture.checkResult(expected);
   }
