@@ -1,17 +1,12 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
-import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
-import com.intellij.codeInsight.template.TemplateManager;
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
-import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -34,7 +29,7 @@ import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Comment;
 import gherkin.formatter.model.Step;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
+import org.jetbrains.plugins.cucumber.AbstractStepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
@@ -44,7 +39,7 @@ import java.util.ArrayList;
  * User: Andrey.Vokin
  * Date: 8/1/12
  */
-public class JavaStepDefinitionCreator implements StepDefinitionCreator {
+public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   public static final String STEP_DEFINITION_SUFFIX = "MyStepdefs";
 
   @NotNull
@@ -60,20 +55,10 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
     if (!(file instanceof PsiJavaFile)) return false;
 
     final Project project = file.getProject();
-    final VirtualFile vFile = ObjectUtils.assertNotNull(file.getVirtualFile());
-    final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vFile);
-    FileEditorManager.getInstance(project).getAllEditors(vFile);
-    FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
     final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-
     assert editor != null;
-    // ToDo: duplication of code with Ruby analog
-    final TemplateManager templateManager = TemplateManager.getInstance(file.getProject());
-    final TemplateState templateState = TemplateManagerImpl.getTemplateState(editor);
-    final Template template = templateManager.getActiveTemplate(editor);
-    if (templateState != null && template != null) {
-      templateState.gotoEnd(false);
-    }
+
+    closeActiveTemplateBuilders(file);
 
     // snippet text
     final PsiMethod element = buildStepDefinitionByStep(step);
@@ -166,7 +151,7 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
           // ToDo: I shouldn't create directories, only create VirtualFile object.
           final Ref<PsiDirectory> resultRef = new Ref<PsiDirectory>();
           new WriteAction() {
-            protected void run(Result result) throws Throwable {
+            protected void run(@NotNull Result result) throws Throwable {
               final VirtualFile packageFile = VfsUtil.createDirectoryIfMissing(path + '/' + packagePath);
               if (packageFile != null) {
                 resultRef.set(PsiDirectoryFactory.getInstance(step.getProject()).createDirectory(packageFile));
