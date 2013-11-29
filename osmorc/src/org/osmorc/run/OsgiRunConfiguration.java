@@ -298,9 +298,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
         if (module != null) {
           modules.add(module);
         }
-        else {
-          LOG.error("no module [" + selectedBundle.getName() + "]");
-        }
       }
     }
 
