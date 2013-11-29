@@ -95,9 +95,9 @@ public class DartSettings {
   }
 
   @Nullable
-  public VirtualFile findSdkLibrary(PsiElement context, String libName) {
+  public VirtualFile findSdkLibrary(@NotNull PsiElement context, String libName) {
     VirtualFile libRoot = getLib();
-    String relativeLibPath = getLibrariesMap(context).get(libName);
+    String relativeLibPath = getLibrariesMap(context.getManager()).get(libName);
     if (relativeLibPath == null) {
       return null;
     }
@@ -118,8 +118,8 @@ public class DartSettings {
     return VfsUtilCore.findRelativeFile(relativeLibPath, libRoot);
   }
 
-  public Collection<String> getLibraries(PsiElement context) {
-    return getLibrariesMap(context).keySet();
+  public Collection<String> getLibraries(@NotNull PsiElement context) {
+    return getLibrariesMap(context.getManager()).keySet();
   }
 
   @Nullable
@@ -129,11 +129,6 @@ public class DartSettings {
 
   public String getLibUrl() {
     return sdkUrl + "/lib/";
-  }
-
-  @NotNull
-  Map<String, String> getLibrariesMap(@Nullable PsiElement context) {
-    return context == null ? Collections.<String, String>emptyMap() : getLibrariesMap(context.getManager());
   }
 
   @NotNull

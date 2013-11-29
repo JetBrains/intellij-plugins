@@ -67,7 +67,7 @@ public class DartLibraryNameCompletionContributor extends CompletionContributor 
            });
   }
 
-  private static Collection<? extends String> getStdLibraries(PsiElement context) {
+  private static Collection<? extends String> getStdLibraries(@NotNull PsiElement context) {
     DartSettings settings = DartSettings.getSettingsForModule(ModuleUtilCore.findModuleForPsiElement(context));
     return settings != null ? settings.getLibraries(context) : Collections.<String>emptyList();
   }
