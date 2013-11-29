@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.io;
 
+import com.intellij.util.containers.ObjectIntHashMap;
 import gnu.trove.TObjectIntIterator;
 
 class TransactionableStringIntHashMap extends ObjectIntHashMap<String> {

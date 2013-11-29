@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.abc;
 
-import com.intellij.flex.uiDesigner.io.ObjectIntHashMap;
+import com.intellij.util.containers.ObjectIntHashMap;
 
 import java.nio.ByteBuffer;
 
