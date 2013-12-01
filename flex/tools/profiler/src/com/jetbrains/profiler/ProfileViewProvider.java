@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ProfileViewProvider implements FileEditorProvider, DumbAware {
 
+  @Override
   public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
     for(ProfilerSnapshotProvider provider:ProfilerSnapshotProvider.ProfileSnapshotProvider_EP.getExtensions()) {
       if (provider.accepts(virtualFile)) return true;
@@ -22,6 +23,7 @@ public class ProfileViewProvider implements FileEditorProvider, DumbAware {
     return false;
   }
 
+  @Override
   @NotNull
   public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile virtualFile) {
     for(ProfilerSnapshotProvider provider:ProfilerSnapshotProvider.ProfileSnapshotProvider_EP.getExtensions()) {
@@ -31,27 +33,28 @@ public class ProfileViewProvider implements FileEditorProvider, DumbAware {
     return null;
   }
 
+  @Override
   public void disposeEditor(@NotNull FileEditor fileEditor) {
     Disposer.dispose(fileEditor);
   }
 
+  @Override
   @NotNull
   public FileEditorState readState(@NotNull Element element, @NotNull Project project, @NotNull VirtualFile virtualFile) {
-    return new FileEditorState() {
-      public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
-        return false;
-      }
-    };
+    return new NullFileEditorState();
   }
 
+  @Override
   public void writeState(@NotNull FileEditorState fileEditorState, @NotNull Project project, @NotNull Element element) {
   }
 
+  @Override
   @NotNull
   public String getEditorTypeId() {
     return "profile.view.provider";
   }
 
+  @Override
   @NotNull
   public FileEditorPolicy getPolicy() {
     return FileEditorPolicy.HIDE_DEFAULT_EDITOR;
