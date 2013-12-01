@@ -117,7 +117,8 @@ TypoScript File
       PsiElement(.)('.')
       PsiElement(object path entity)('menu')
   PsiWhiteSpace('\n')
-  PsiElement(BAD_CHARACTER)('&')
+  PsiErrorElement:<assignment>, <code block>, <copying>, <multiline value assignment>, <unsetting>, <value modification>, CONDITION or INCLUDE expected, got '&'
+    PsiElement(BAD_CHARACTER)('&')
   PsiElement(object path entity)('test')
   PsiWhiteSpace(' ')
   PsiElement(=)('=')

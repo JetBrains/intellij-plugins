@@ -17,16 +17,16 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.parser;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
-
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
+import com.intellij.lang.LighterASTNode;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class OgnlParser implements PsiParser {

@@ -17,8 +17,6 @@
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.typoscript.lang;
 
-import org.jetbrains.annotations.*;
-import com.intellij.lang.LighterASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
 import com.intellij.openapi.diagnostic.Logger;
@@ -33,48 +31,43 @@ import static com.jetbrains.typoscript.lang.TypoScriptTokenTypes.*;
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class TypoScriptGeneratedParser implements PsiParser {
 
-  public static Logger LOG_ = Logger.getInstance("com.jetbrains.typoscript.lang.TypoScriptGeneratedParser");
+  public static final Logger LOG_ = Logger.getInstance("com.jetbrains.typoscript.lang.TypoScriptGeneratedParser");
 
-  @NotNull
   public ASTNode parse(IElementType root_, PsiBuilder builder_) {
-    int level_ = 0;
     boolean result_;
-    builder_ = adapt_builder_(root_, builder_, this);
+    builder_ = adapt_builder_(root_, builder_, this, null);
+    Marker marker_ = enter_section_(builder_, 0, _COLLAPSE_, null);
     if (root_ == ASSIGNMENT) {
-      result_ = assignment(builder_, level_ + 1);
+      result_ = assignment(builder_, 0);
     }
     else if (root_ == CODE_BLOCK) {
-      result_ = code_block(builder_, level_ + 1);
+      result_ = code_block(builder_, 0);
     }
     else if (root_ == CONDITION_ELEMENT) {
-      result_ = condition_element(builder_, level_ + 1);
+      result_ = condition_element(builder_, 0);
     }
     else if (root_ == COPYING) {
-      result_ = copying(builder_, level_ + 1);
+      result_ = copying(builder_, 0);
     }
     else if (root_ == INCLUDE_STATEMENT_ELEMENT) {
-      result_ = include_statement_element(builder_, level_ + 1);
+      result_ = include_statement_element(builder_, 0);
     }
     else if (root_ == MULTILINE_VALUE_ASSIGNMENT) {
-      result_ = multiline_value_assignment(builder_, level_ + 1);
+      result_ = multiline_value_assignment(builder_, 0);
     }
     else if (root_ == OBJECT_PATH) {
-      result_ = object_path(builder_, level_ + 1);
+      result_ = object_path(builder_, 0);
     }
     else if (root_ == UNSETTING) {
-      result_ = unsetting(builder_, level_ + 1);
+      result_ = unsetting(builder_, 0);
     }
     else if (root_ == VALUE_MODIFICATION) {
-      result_ = value_modification(builder_, level_ + 1);
+      result_ = value_modification(builder_, 0);
     }
     else {
-      Marker marker_ = builder_.mark();
-      result_ = parse_root_(root_, builder_, level_);
-      while (builder_.getTokenType() != null) {
-        builder_.advanceLexer();
-      }
-      marker_.done(root_);
+      result_ = parse_root_(root_, builder_, 0);
     }
+    exit_section_(builder_, 0, marker_, root_, result_, true, TRUE_CONDITION);
     return builder_.getTreeBuilt();
   }
 
@@ -88,19 +81,12 @@ public class TypoScriptGeneratedParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "assignment")) return false;
     boolean result_ = false;
     boolean pinned_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<assignment>");
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<assignment>");
     result_ = object_path(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, ASSIGNMENT_OPERATOR);
     pinned_ = result_; // pin = 2
     result_ = result_ && assignment_2(builder_, level_ + 1);
-    if (result_ || pinned_) {
-      marker_.done(ASSIGNMENT);
-    }
-    else {
-      marker_.rollbackTo();
-    }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    exit_section_(builder_, level_, marker_, ASSIGNMENT, result_, pinned_, null);
     return result_ || pinned_;
   }
 
@@ -117,8 +103,7 @@ public class TypoScriptGeneratedParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "code_block")) return false;
     boolean result_ = false;
     boolean pinned_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<code block>");
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<code block>");
     result_ = object_path(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, CODE_BLOCK_OPERATOR_BEGIN);
     pinned_ = result_; // pin = 2
@@ -126,13 +111,7 @@ public class TypoScriptGeneratedParser implements PsiParser {
     result_ = pinned_ && report_error_(builder_, code_block_3(builder_, level_ + 1)) && result_;
     result_ = pinned_ && report_error_(builder_, consumeToken(builder_, CODE_BLOCK_OPERATOR_END)) && result_;
     result_ = pinned_ && code_block_5(builder_, level_ + 1) && result_;
-    if (result_ || pinned_) {
-      marker_.done(CODE_BLOCK);
-    }
-    else {
-      marker_.rollbackTo();
-    }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    exit_section_(builder_, level_, marker_, CODE_BLOCK, result_, pinned_, null);
     return result_ || pinned_;
   }
 
@@ -146,15 +125,11 @@ public class TypoScriptGeneratedParser implements PsiParser {
   // expression*
   private static boolean code_block_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "code_block_3")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!expression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "code_block_3");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "code_block_3", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -172,14 +147,9 @@ public class TypoScriptGeneratedParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "condition_element")) return false;
     if (!nextTokenIs(builder_, CONDITION)) return false;
     boolean result_ = false;
-    Marker marker_ = builder_.mark();
+    Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, CONDITION);
-    if (result_) {
-      marker_.done(CONDITION_ELEMENT);
-    }
-    else {
-      marker_.rollbackTo();
-    }
+    exit_section_(builder_, marker_, CONDITION_ELEMENT, result_);
     return result_;
   }
 
@@ -189,19 +159,12 @@ public class TypoScriptGeneratedParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "copying")) return false;
     boolean result_ = false;
     boolean pinned_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<copying>");
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<copying>");
     result_ = object_path(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, COPYING_OPERATOR);
     pinned_ = result_; // pin = 2
     result_ = result_ && isObjectPathOnSameLine(builder_, level_ + 1);
-    if (result_ || pinned_) {
-      marker_.done(COPYING);
-    }
-    else {
-      marker_.rollbackTo();
-    }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    exit_section_(builder_, level_, marker_, COPYING, result_, pinned_, null);
     return result_ || pinned_;
   }
 
@@ -211,8 +174,7 @@ public class TypoScriptGeneratedParser implements PsiParser {
   static boolean expression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expression")) return false;
     boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_RECOVER_, null);
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = condition_element(builder_, level_ + 1);
     if (!result_) result_ = include_statement_element(builder_, level_ + 1);
     if (!result_) result_ = value_modification(builder_, level_ + 1);
@@ -221,13 +183,7 @@ public class TypoScriptGeneratedParser implements PsiParser {
     if (!result_) result_ = unsetting(builder_, level_ + 1);
     if (!result_) result_ = code_block(builder_, level_ + 1);
     if (!result_) result_ = assignment(builder_, level_ + 1);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_RECOVER_, top_expression_recover_parser_);
+    exit_section_(builder_, level_, marker_, null, result_, false, top_expression_recover_parser_);
     return result_;
   }
 
@@ -235,15 +191,11 @@ public class TypoScriptGeneratedParser implements PsiParser {
   // (expression)*
   static boolean file(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "file")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!file_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "file");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "file", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -252,14 +204,9 @@ public class TypoScriptGeneratedParser implements PsiParser {
   private static boolean file_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "file_0")) return false;
     boolean result_ = false;
-    Marker marker_ = builder_.mark();
+    Marker marker_ = enter_section_(builder_);
     result_ = expression(builder_, level_ + 1);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
+    exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
@@ -269,14 +216,9 @@ public class TypoScriptGeneratedParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "include_statement_element")) return false;
     if (!nextTokenIs(builder_, INCLUDE_STATEMENT)) return false;
     boolean result_ = false;
-    Marker marker_ = builder_.mark();
+    Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, INCLUDE_STATEMENT);
-    if (result_) {
-      marker_.done(INCLUDE_STATEMENT_ELEMENT);
-    }
-    else {
-      marker_.rollbackTo();
-    }
+    exit_section_(builder_, marker_, INCLUDE_STATEMENT_ELEMENT, result_);
     return result_;
   }
 
@@ -286,8 +228,7 @@ public class TypoScriptGeneratedParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "multiline_value_assignment")) return false;
     boolean result_ = false;
     boolean pinned_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<multiline value assignment>");
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<multiline value assignment>");
     result_ = object_path(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, MULTILINE_VALUE_OPERATOR_BEGIN);
     pinned_ = result_; // pin = 2
@@ -295,13 +236,7 @@ public class TypoScriptGeneratedParser implements PsiParser {
     result_ = pinned_ && report_error_(builder_, multiline_value_assignment_3(builder_, level_ + 1)) && result_;
     result_ = pinned_ && report_error_(builder_, consumeToken(builder_, MULTILINE_VALUE_OPERATOR_END)) && result_;
     result_ = pinned_ && multiline_value_assignment_5(builder_, level_ + 1) && result_;
-    if (result_ || pinned_) {
-      marker_.done(MULTILINE_VALUE_ASSIGNMENT);
-    }
-    else {
-      marker_.rollbackTo();
-    }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    exit_section_(builder_, level_, marker_, MULTILINE_VALUE_ASSIGNMENT, result_, pinned_, null);
     return result_ || pinned_;
   }
 
@@ -315,32 +250,13 @@ public class TypoScriptGeneratedParser implements PsiParser {
   // (MULTILINE_VALUE)*
   private static boolean multiline_value_assignment_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "multiline_value_assignment_3")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
-      if (!multiline_value_assignment_3_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "multiline_value_assignment_3");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!consumeToken(builder_, MULTILINE_VALUE)) break;
+      if (!empty_element_parsed_guard_(builder_, "multiline_value_assignment_3", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
-  }
-
-  // (MULTILINE_VALUE)
-  private static boolean multiline_value_assignment_3_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "multiline_value_assignment_3_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = consumeToken(builder_, MULTILINE_VALUE);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    return result_;
   }
 
   // IGNORED_TEXT?
@@ -356,19 +272,12 @@ public class TypoScriptGeneratedParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "object_path")) return false;
     boolean result_ = false;
     boolean pinned_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<object path>");
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<object path>");
     result_ = object_path_0(builder_, level_ + 1);
     result_ = result_ && object_path_1(builder_, level_ + 1);
     pinned_ = result_; // pin = 2
     result_ = result_ && consumeToken(builder_, OBJECT_PATH_ENTITY);
-    if (result_ || pinned_) {
-      marker_.done(OBJECT_PATH);
-    }
-    else {
-      marker_.rollbackTo();
-    }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    exit_section_(builder_, level_, marker_, OBJECT_PATH, result_, pinned_, null);
     return result_ || pinned_;
   }
 
@@ -382,15 +291,11 @@ public class TypoScriptGeneratedParser implements PsiParser {
   // (OBJECT_PATH_ENTITY '.')*
   private static boolean object_path_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "object_path_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!object_path_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "object_path_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "object_path_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -399,20 +304,11 @@ public class TypoScriptGeneratedParser implements PsiParser {
   private static boolean object_path_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "object_path_1_0")) return false;
     boolean result_ = false;
-    boolean pinned_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
+    Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, OBJECT_PATH_ENTITY);
     result_ = result_ && consumeToken(builder_, OBJECT_PATH_SEPARATOR);
-    pinned_ = result_; // pin = 2
-    if (!result_ && !pinned_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
-    return result_ || pinned_;
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -420,11 +316,9 @@ public class TypoScriptGeneratedParser implements PsiParser {
   static boolean top_expression_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "top_expression_recover")) return false;
     boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_NOT_, null);
+    Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !isAfterNewLine(builder_, level_ + 1);
-    marker_.rollbackTo();
-    result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_NOT_, null);
+    exit_section_(builder_, level_, marker_, null, result_, false, null);
     return result_;
   }
 
@@ -434,19 +328,12 @@ public class TypoScriptGeneratedParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "unsetting")) return false;
     boolean result_ = false;
     boolean pinned_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<unsetting>");
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<unsetting>");
     result_ = object_path(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, UNSETTING_OPERATOR);
     pinned_ = result_; // pin = 2
     result_ = result_ && unsetting_2(builder_, level_ + 1);
-    if (result_ || pinned_) {
-      marker_.done(UNSETTING);
-    }
-    else {
-      marker_.rollbackTo();
-    }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    exit_section_(builder_, level_, marker_, UNSETTING, result_, pinned_, null);
     return result_ || pinned_;
   }
 
@@ -464,19 +351,12 @@ public class TypoScriptGeneratedParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "value_modification")) return false;
     boolean result_ = false;
     boolean pinned_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<value modification>");
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<value modification>");
     result_ = object_path(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, MODIFICATION_OPERATOR);
     pinned_ = result_; // pin = 2
     result_ = result_ && report_error_(builder_, consumeTokens(builder_, -1, MODIFICATION_OPERATOR_FUNCTION, MODIFICATION_OPERATOR_FUNCTION_PARAM_BEGIN, MODIFICATION_OPERATOR_FUNCTION_ARGUMENT, MODIFICATION_OPERATOR_FUNCTION_PARAM_END));
-    if (result_ || pinned_) {
-      marker_.done(VALUE_MODIFICATION);
-    }
-    else {
-      marker_.rollbackTo();
-    }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    exit_section_(builder_, level_, marker_, VALUE_MODIFICATION, result_, pinned_, null);
     return result_ || pinned_;
   }
 

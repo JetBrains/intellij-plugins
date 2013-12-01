@@ -7,6 +7,7 @@
   elementTypeHolderClass="com.jetbrains.typoscript.lang.TypoScriptElementTypes"
   generateTokens=false
   parserImports="static com.jetbrains.typoscript.lang.TypoScriptTokenTypes.*"
+  classHeader="header.txt"
 
   generatePsi=true
   implements="com.jetbrains.typoscript.lang.psi.TypoScriptCompositeElement"
@@ -27,7 +28,7 @@
 
 file ::= (expression)*
 private expression ::=  condition_element | include_statement_element | value_modification | multiline_value_assignment
-| copying | unsetting | code_block | assignment {recoverUntil="top_expression_recover"}
+| copying | unsetting | code_block | assignment {recoverWhile="top_expression_recover"}
 private top_expression_recover ::= ! new_line_white_space
 external new_line_white_space ::= isAfterNewLine
 

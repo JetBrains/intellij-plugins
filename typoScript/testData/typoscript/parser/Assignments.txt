@@ -43,7 +43,8 @@ TypoScript File
     PsiWhiteSpace('   ')
     PsiElement(assignment value)('<strong> HTML - code </strong>')
   PsiWhiteSpace('\n')
-  PsiElement(BAD_CHARACTER)('=')
+  PsiErrorElement:<assignment>, <code block>, <copying>, <multiline value assignment>, <unsetting>, <value modification>, CONDITION or INCLUDE expected, got '='
+    PsiElement(BAD_CHARACTER)('=')
   PsiWhiteSpace(' ')
   PsiElement(object path entity)('value')
   PsiWhiteSpace('\n')

@@ -114,7 +114,7 @@
 
 root ::= EXPRESSION_START rootElement EXPRESSION_END { pin=1 }
 private rootRecover ::= !(EXPRESSION_END)
-private rootElement ::= expression {recoverUntil="rootRecover"}
+private rootElement ::= expression {recoverWhile="rootRecover"}
 
 expression ::= sequenceExpression |
                parenthesizedExpression |
