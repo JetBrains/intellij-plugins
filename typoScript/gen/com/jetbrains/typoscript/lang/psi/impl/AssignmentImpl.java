@@ -33,15 +33,15 @@ public class AssignmentImpl extends TypoScriptCompositeElementImpl implements As
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof Visitor) ((Visitor)visitor).visitAssignment(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public ObjectPath getObjectPath() {
     return findNotNullChildByClass(ObjectPath.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitAssignment(this);
-    else super.accept(visitor);
   }
 
 }

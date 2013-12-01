@@ -33,6 +33,11 @@ public class CodeBlockImpl extends TypoScriptCompositeElementImpl implements Cod
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof Visitor) ((Visitor)visitor).visitCodeBlock(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<Assignment> getAssignmentList() {
@@ -85,11 +90,6 @@ public class CodeBlockImpl extends TypoScriptCompositeElementImpl implements Cod
   @NotNull
   public List<ValueModification> getValueModificationList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, ValueModification.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof Visitor) ((Visitor)visitor).visitCodeBlock(this);
-    else super.accept(visitor);
   }
 
 }
