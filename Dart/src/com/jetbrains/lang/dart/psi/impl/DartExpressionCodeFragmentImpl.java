@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderFactory;
+import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
@@ -121,13 +122,9 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
       final PsiBuilder psiBuilder = factory.createBuilder(getProject(), chameleon);
       final PsiBuilder builder = adapt_builder_(DartTokenTypes.STATEMENTS, psiBuilder, new DartParser(), DartParser.EXTENDS_SETS_);
 
-      final PsiBuilder.Marker marker = builder.mark();
-      enterErrorRecordingSection(builder, 0, _SECTION_GENERAL_, "<code fragment>");
-      DartParser.expression(builder, 1);
-      while (builder.getTokenType() != null) {
-        builder.advanceLexer();
-      }
-      marker.done(DartTokenTypes.STATEMENTS);
+      PsiBuilder.Marker marker = enter_section_(builder, 0, _COLLAPSE_, "<code fragment>");
+      boolean result = DartParser.expression(builder, 0);
+      exit_section_(builder, 0, marker, DartTokenTypes.STATEMENTS, result, true, TRUE_CONDITION);
       return builder.getTreeBuilt();
     }
   }

@@ -9,9 +9,7 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.*;
 import com.intellij.util.diff.FlyweightCapableTreeStructure;
 
-import static com.intellij.lang.parser.GeneratedParserUtilBase._SECTION_GENERAL_;
-import static com.intellij.lang.parser.GeneratedParserUtilBase.adapt_builder_;
-import static com.intellij.lang.parser.GeneratedParserUtilBase.enterErrorRecordingSection;
+import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 
 public interface DartTokenTypesSets {
@@ -160,14 +158,9 @@ public interface DartTokenTypesSets {
 
       final PsiBuilder builder = adapt_builder_(EMBEDDED_CONTENT, psiBuilder, new DartParser(), DartParser.EXTENDS_SETS_);
 
-      final PsiBuilder.Marker marker = builder.mark();
-      enterErrorRecordingSection(builder, 0, _SECTION_GENERAL_, "<code fragment>");
-      DartParser.dartUnit(builder, 1);
-      while (builder.getTokenType() != null) {
-        builder.advanceLexer();
-      }
-      marker.done(EMBEDDED_CONTENT);
-
+      PsiBuilder.Marker marker = enter_section_(builder, 0, _COLLAPSE_, "<code fragment>");
+      boolean result = DartParser.dartUnit(builder, 0);
+      exit_section_(builder, 0, marker, EMBEDDED_CONTENT, result, true, TRUE_CONDITION);
       return builder.getLightTree();
     }
   }
