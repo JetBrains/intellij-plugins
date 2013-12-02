@@ -9,12 +9,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="javascript-openapi" />
     <orderEntry type="module" module-name="indexing-api" />
-    <orderEntry type="module" module-name="javascript-psi-impl" />
     <orderEntry type="module" module-name="xml-psi-impl" />
     <orderEntry type="module" module-name="lang-api" />
     <orderEntry type="module" module-name="lang-impl" />
+    <orderEntry type="module" module-name="JavaScriptLanguage" />
   </component>
 </module>
 
