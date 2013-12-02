@@ -124,6 +124,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(final String attrName, XmlTag xmlTag) {
+    final String attributeName = normalizeAttributeName(attrName);
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final Ref<XmlAttributeDescriptor> result = new Ref<XmlAttributeDescriptor>();
@@ -132,7 +133,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
                                                    @Override
                                                    public boolean process(VirtualFile file, TObjectIntHashMap<String> descriptorNames) {
                                                      for (Object o : descriptorNames.keys()) {
-                                                       if (attrName.equals(o)) {
+                                                       if (attributeName.equals(o)) {
                                                          AngularAttributeDescriptor descriptor =
                                                            new AngularAttributeDescriptor(project, (String)o, file,
                                                                                           descriptorNames.get((String)o));
@@ -148,6 +149,18 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
         return result.get();
       }
     }
-    return ATTRIBUTE_BY_NAME.get(attrName);
+    return ATTRIBUTE_BY_NAME.get(attributeName);
+  }
+
+  private static String normalizeAttributeName(String name) {
+    if (name == null) return null;
+    if (name.startsWith("data-")) {
+      name = name.substring(5);
+    } else if (name.startsWith("x-")) {
+      name = name.substring(2);
+    }
+    name = name.replace(':', '-');
+    name = name.replace('_', '-');
+    return name;
   }
 }

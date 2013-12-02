@@ -32,6 +32,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static String getAttributeName(PsiElement argument) {
-    return StringUtil.unquoteString(argument.getText());
+    final String[] split = StringUtil.unquoteString(argument.getText()).split("(?=[A-Z])");
+    for (int i = 0; i < split.length; i++) {
+      split[i] = StringUtil.decapitalize(split[i]);
+    }
+    return StringUtil.join(split, "-");
   }
 }

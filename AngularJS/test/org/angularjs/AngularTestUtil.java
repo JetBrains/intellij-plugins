@@ -2,7 +2,6 @@ package org.angularjs;
 
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiFile;
-import org.angularjs.codeInsight.AttributesTest;
 
 import static org.junit.Assert.assertTrue;
 
@@ -11,7 +10,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class AngularTestUtil {
 
-  public static String getBaseTestDataPath(Class<? extends AttributesTest> clazz) {
+  public static String getBaseTestDataPath(Class clazz) {
     return PathManager.getJarPathForClass(clazz) + "/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
   }
 

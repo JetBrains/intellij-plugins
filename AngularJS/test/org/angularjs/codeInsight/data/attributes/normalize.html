@@ -1,0 +1,18 @@
+<!doctype html>
+<html ng-app="docsBindExample">
+<head>
+  <script src="http://code.angularjs.org/1.2.2/angular.min.js"></script>
+  <script src="script.js"></script>
+</head>
+<body>
+<div ng-controller="Ctrl1">
+  Hello <input ng-model='name'>
+  <hr/>
+  <span ng-bind="name"></span> <br/>
+  <span ng:bind="name"></span> <br/>
+  <span ng_bind="name"></span> <br/>
+  <span data-ng-bind="name"></span> <br/>
+  <span x-ng-bind="name"></span> <br/>
+</div>
+</body>
+</html>

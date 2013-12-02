@@ -1,12 +1,13 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectionBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
 /**
- * Created by denofevil on 27/11/13.
+ * @author Dennis.Ushakov
  */
 public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
@@ -14,7 +15,12 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "attributes";
   }
 
-  public void testStandartAttributesCompletion() {
+  @Override
+  protected boolean isWriteActionRequired() {
+    return getTestName(true).contains("Completion");
+  }
+
+  public void testStandardAttributesCompletion() {
     myFixture.testCompletion("simple.html", "simple.after.html");
   }
 
@@ -24,11 +30,17 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testCustomAttributesResolve() {
     myFixture.configureByFiles("custom.after.html", "custom.js");
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature("my<caret>Customer", myFixture.getFile());
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
     assertNotNull(ref);
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
+  }
+
+  public void testNormalization() {
+    myFixture.configureByFiles("normalize.html");
+    myFixture.enableInspections(HtmlUnknownAttributeInspectionBase.class);
+    myFixture.checkHighlighting();
   }
 }
