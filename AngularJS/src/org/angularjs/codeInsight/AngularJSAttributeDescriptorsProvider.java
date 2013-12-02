@@ -1,16 +1,11 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.javascript.index.AngularJSIndex;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
-import gnu.trove.TObjectIntHashMap;
 import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
+import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,19 +95,9 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
-      FileBasedIndex.getInstance().processValues(AngularJSIndex.INDEX_ID, AngularJSIndexingHandler.DIRECTIVE_KEY, null,
-                                                 new FileBasedIndex.ValueProcessor<TObjectIntHashMap<String>>() {
-                                                   @Override
-                                                   public boolean process(VirtualFile file, TObjectIntHashMap<String> descriptorNames) {
-                                                     for (Object o : descriptorNames.keys()) {
-                                                       AngularAttributeDescriptor descriptor =
-                                                         createDescriptor(project, (String)o, file, descriptorNames.get((String)o));
-                                                       result.put(descriptor.getName(), descriptor);
-                                                     }
-                                                     return true;
-                                                   }
-                                                 }, GlobalSearchScope.allScope(project)
-      );
+      for (AngularIndexUtil.Entry entry : AngularIndexUtil.collect(project, AngularJSIndexingHandler.DIRECTIVE_KEY)) {
+        result.put(entry.name, createDescriptor(project, entry.name, entry.file, entry.offset));
+      }
       // marker entry: if ng-model is present then angular.js file was indexed and there's no need to add all
       // predefined entries
       if (!result.containsKey("ng-model")) {
@@ -131,23 +116,9 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     final String attributeName = normalizeAttributeName(attrName);
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      final Ref<XmlAttributeDescriptor> result = new Ref<XmlAttributeDescriptor>();
-      FileBasedIndex.getInstance().processValues(AngularJSIndex.INDEX_ID, AngularJSIndexingHandler.DIRECTIVE_KEY, null,
-                                                 new FileBasedIndex.ValueProcessor<TObjectIntHashMap<String>>() {
-                                                   @Override
-                                                   public boolean process(VirtualFile file, TObjectIntHashMap<String> descriptorNames) {
-                                                     for (Object o : descriptorNames.keys()) {
-                                                       if (attributeName.equals(o)) {
-                                                         result.set(createDescriptor(project, (String)o, file, descriptorNames.get((String)o)));
-                                                         break;
-                                                       }
-                                                     }
-                                                     return result.get() == null;
-                                                   }
-                                                 }, GlobalSearchScope.allScope(project)
-      );
-      if (result.get() != null) {
-        return result.get();
+      final AngularIndexUtil.Entry resolve = AngularIndexUtil.resolve(project, AngularJSIndexingHandler.DIRECTIVE_KEY, attributeName);
+      if (resolve != null) {
+        return createDescriptor(project, attributeName, resolve.file, resolve.offset);
       }
       // fallback for predefined entries
       if (ATTRIBUTE_BY_NAME.containsKey(attributeName)) {
