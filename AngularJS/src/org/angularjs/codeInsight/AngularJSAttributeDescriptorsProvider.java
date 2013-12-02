@@ -97,7 +97,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
-      FileBasedIndex.getInstance().processValues(AngularJSIndex.INDEX_ID, AngularJSIndexingHandler.DIRECTIVE, null,
+      FileBasedIndex.getInstance().processValues(AngularJSIndex.INDEX_ID, AngularJSIndexingHandler.DIRECTIVE_KEY, null,
                                                  new FileBasedIndex.ValueProcessor<TObjectIntHashMap<String>>() {
                                                    @Override
                                                    public boolean process(VirtualFile file, TObjectIntHashMap<String> descriptorNames) {
@@ -128,7 +128,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final Ref<XmlAttributeDescriptor> result = new Ref<XmlAttributeDescriptor>();
-      FileBasedIndex.getInstance().processValues(AngularJSIndex.INDEX_ID, AngularJSIndexingHandler.DIRECTIVE, null,
+      FileBasedIndex.getInstance().processValues(AngularJSIndex.INDEX_ID, AngularJSIndexingHandler.DIRECTIVE_KEY, null,
                                                  new FileBasedIndex.ValueProcessor<TObjectIntHashMap<String>>() {
                                                    @Override
                                                    public boolean process(VirtualFile file, TObjectIntHashMap<String> descriptorNames) {
