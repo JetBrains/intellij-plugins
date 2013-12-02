@@ -1,6 +1,9 @@
 package com.jetbrains.profiler;
 
-import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorPolicy;
+import com.intellij.openapi.fileEditor.FileEditorProvider;
+import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -41,7 +44,7 @@ public class ProfileViewProvider implements FileEditorProvider, DumbAware {
   @Override
   @NotNull
   public FileEditorState readState(@NotNull Element element, @NotNull Project project, @NotNull VirtualFile virtualFile) {
-    return new NullFileEditorState();
+    return FileEditorState.INSTANCE;
   }
 
   @Override

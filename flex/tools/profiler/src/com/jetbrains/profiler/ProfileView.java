@@ -18,12 +18,12 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 /**
-* Created by IntelliJ IDEA.
-* User: Maxim
-* Date: 02.09.2010
-* Time: 13:42:28
-* To change this template use File | Settings | File Templates.
-*/
+ * Created by IntelliJ IDEA.
+ * User: Maxim
+ * Date: 02.09.2010
+ * Time: 13:42:28
+ * To change this template use File | Settings | File Templates.
+ */
 public abstract class ProfileView extends UserDataHolderBase implements FileEditor, ProfilerActionGroup {
   private PropertyChangeSupport myPropertyChangeSupport = new PropertyChangeSupport(this);
   private final VirtualFile myFile;
@@ -48,59 +48,68 @@ public abstract class ProfileView extends UserDataHolderBase implements FileEdit
     return myProject;
   }
 
+  @Override
   @NotNull
   public String getName() {
     return myFile.getNameWithoutExtension();
   }
 
+  @Override
   @NotNull
   public FileEditorState getState(@NotNull FileEditorStateLevel fileEditorStateLevel) {
     // TODO:
-    return new FileEditorState() {
-      public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
-        return false;
-      }
-    };
+    return FileEditorState.INSTANCE;
   }
 
+  @Override
   public void setState(@NotNull FileEditorState fileEditorState) {
     // TODO:
   }
 
+  @Override
   public boolean isModified() {
     return false;
   }
 
+  @Override
   public boolean isValid() {
     return true;
   }
 
+  @Override
   public void selectNotify() {
   }
 
+  @Override
   public void deselectNotify() {
   }
 
+  @Override
   public void addPropertyChangeListener(@NotNull PropertyChangeListener propertyChangeListener) {
     myPropertyChangeSupport.addPropertyChangeListener(propertyChangeListener);
   }
 
+  @Override
   public void removePropertyChangeListener(@NotNull PropertyChangeListener propertyChangeListener) {
     myPropertyChangeSupport.removePropertyChangeListener(propertyChangeListener);
   }
 
+  @Override
   public BackgroundEditorHighlighter getBackgroundHighlighter() {
     return null;
   }
 
+  @Override
   public FileEditorLocation getCurrentLocation() {
     return null;
   }
 
+  @Override
   public StructureViewBuilder getStructureViewBuilder() {
     return null;
   }
 
+  @Override
   public void dispose() {
     myPropertyChangeSupport = null;
   }
