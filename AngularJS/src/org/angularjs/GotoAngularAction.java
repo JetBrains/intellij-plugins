@@ -49,148 +49,153 @@ import java.util.Collection;
 import java.util.List;
 
 public class GotoAngularAction extends GotoActionBase {
-    private static final int MODULE_METHODS = 0;
-    private static final int CTRL_CONVENTIONS = 1;
-    private static final int NG_CONTROLLER = 2;
+  private static final int MODULE_METHODS = 0;
+  private static final int CTRL_CONVENTIONS = 1;
+  private static final int NG_CONTROLLER = 2;
 
-    public GotoAngularAction() {
-        getTemplatePresentation().setText(IdeBundle.message("goto.inspection.action.text"));
-    }
+  public GotoAngularAction() {
+    getTemplatePresentation().setText(IdeBundle.message("goto.inspection.action.text"));
+  }
 
-    @Override
-    protected void gotoActionPerformed(final AnActionEvent e) {
-        final Project project = e.getData(PlatformDataKeys.PROJECT);
-        if (project == null) return;
+  @Override
+  protected void gotoActionPerformed(final AnActionEvent e) {
+    final Project project = e.getData(PlatformDataKeys.PROJECT);
+    if (project == null) return;
 
-        PsiDocumentManager.getInstance(project).commitAllDocuments();
+    PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-        final DataContext dataContext = e.getDataContext();
+    final DataContext dataContext = e.getDataContext();
 
-        final FindManager findManager = FindManager.getInstance(project);
-        final FindModel findModel = (FindModel) findManager.getFindInFileModel().clone();
-
-
-        final List<AngularItem> validResults = new ArrayList<AngularItem>();
-
-        findModel.setRegularExpressions(true);
-        findModel.setFileFilter("*.js, *.html");
-
-        findModel.setStringToFind("\\.(controller|filter|service|factory|module|value|constant|directive|provider)\\(\\s*(\"|')([^(\"|')]+)(\"|')");
-        findModel.setStringToReplace("$3");
-        final Collection<Usage> moduleMethodUsages = getAngularUsages(project, dataContext, findModel);
-        List<AngularItem> moduleMethodResults = getValidResults(project, findModel, moduleMethodUsages, MODULE_METHODS);
-        validResults.addAll(moduleMethodResults);
-
-        findModel.setStringToFind("Ctrl\\(\\s*\\$scope");
-        findModel.setStringToReplace("$0");
-        final Collection<Usage> ctrlByConventionUsages = getAngularUsages(project, dataContext, findModel);
-        List<AngularItem> ctrlByConventionResults = getValidResults(project, findModel, ctrlByConventionUsages, CTRL_CONVENTIONS);
-        validResults.addAll(ctrlByConventionResults);
+    final FindManager findManager = FindManager.getInstance(project);
+    final FindModel findModel = (FindModel)findManager.getFindInFileModel().clone();
 
 
-        findModel.setStringToFind("ng\\-controller\\=\"([^(\"]+)\"");
-        findModel.setStringToReplace("$1");
-        final Collection<Usage> ngControllerUsages = getAngularUsages(project, dataContext, findModel);
-        List<AngularItem> ngControllerResults = getValidResults(project, findModel, ngControllerUsages, NG_CONTROLLER);
-        validResults.addAll(ngControllerResults);
+    final List<AngularItem> validResults = new ArrayList<AngularItem>();
+
+    findModel.setRegularExpressions(true);
+    findModel.setFileFilter("*.js, *.html");
+
+    findModel
+      .setStringToFind("\\.(controller|filter|service|factory|module|value|constant|directive|provider)\\(\\s*(\"|')([^(\"|')]+)(\"|')");
+    findModel.setStringToReplace("$3");
+    final Collection<Usage> moduleMethodUsages = getAngularUsages(project, dataContext, findModel);
+    List<AngularItem> moduleMethodResults = getValidResults(project, findModel, moduleMethodUsages, MODULE_METHODS);
+    validResults.addAll(moduleMethodResults);
+
+    findModel.setStringToFind("Ctrl\\(\\s*\\$scope");
+    findModel.setStringToReplace("$0");
+    final Collection<Usage> ctrlByConventionUsages = getAngularUsages(project, dataContext, findModel);
+    List<AngularItem> ctrlByConventionResults = getValidResults(project, findModel, ctrlByConventionUsages, CTRL_CONVENTIONS);
+    validResults.addAll(ctrlByConventionResults);
 
 
+    findModel.setStringToFind("ng\\-controller\\=\"([^(\"]+)\"");
+    findModel.setStringToReplace("$1");
+    final Collection<Usage> ngControllerUsages = getAngularUsages(project, dataContext, findModel);
+    List<AngularItem> ngControllerResults = getValidResults(project, findModel, ngControllerUsages, NG_CONTROLLER);
+    validResults.addAll(ngControllerResults);
 
 
-        final GotoAngularModel model = new GotoAngularModel(project, validResults);
-        showNavigationPopup(e, model, new GotoActionBase.GotoActionCallback<Object>() {
-            @Override
-            protected ChooseByNameFilter<Object> createFilter(@NotNull ChooseByNamePopup popup) {
-                popup.setSearchInAnyPlace(true);
-                popup.setShowListForEmptyPattern(true);
-                popup.setMaximumListSizeLimit(255);
-                return super.createFilter(popup);
-            }
+    final GotoAngularModel model = new GotoAngularModel(project, validResults);
+    showNavigationPopup(e, model, new GotoActionBase.GotoActionCallback<Object>() {
+      @Override
+      protected ChooseByNameFilter<Object> createFilter(@NotNull ChooseByNamePopup popup) {
+        popup.setSearchInAnyPlace(true);
+        popup.setShowListForEmptyPattern(true);
+        popup.setMaximumListSizeLimit(255);
+        return super.createFilter(popup);
+      }
 
-            @Override
-            public void elementChosen(ChooseByNamePopup popup, final Object element) {
-                ApplicationManager.getApplication().invokeLater(new Runnable() {
-                    public void run() {
-                        PsiElement psi = ((AngularItem) element).getElement();
-                        NavigationUtil.activateFileWithPsiElement(psi.getNavigationElement());
-                    }
-                });
-            }
+      @Override
+      public void elementChosen(ChooseByNamePopup popup, final Object element) {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+          public void run() {
+            PsiElement psi = ((AngularItem)element).getElement();
+            NavigationUtil.activateFileWithPsiElement(psi.getNavigationElement());
+          }
         });
-    }
+      }
+    });
+  }
 
-    private List<AngularItem> getValidResults(final Project project, final FindModel findModel, final Collection<Usage> usages, final int type) {
-        final List<AngularItem> validResults = new ArrayList<AngularItem>();
+  private List<AngularItem> getValidResults(final Project project,
+                                            final FindModel findModel,
+                                            final Collection<Usage> usages,
+                                            final int type) {
+    final List<AngularItem> validResults = new ArrayList<AngularItem>();
 
-        //todo: needs code review. There must be a better way to do this
-        Runnable runnable = new Runnable() {
-            public void run() {
-                for (final Usage result : usages) {
+    //todo: needs code review. There must be a better way to do this
+    Runnable runnable = new Runnable() {
+      public void run() {
+        for (final Usage result : usages) {
 
-                    final UsageInfo2UsageAdapter usage = (UsageInfo2UsageAdapter) result;
-                    //avoid angular source files. Is there a better way to do this?
-                    if (usage.getFile().getName().startsWith("angular")) continue;
+          final UsageInfo2UsageAdapter usage = (UsageInfo2UsageAdapter)result;
+          //avoid angular source files. Is there a better way to do this?
+          if (usage.getFile().getName().startsWith("angular")) continue;
 
-                    usage.processRangeMarkers(new Processor<Segment>() {
-                        @Override
-                        public boolean process(Segment segment) {
-                            try {
-                                final int textOffset = segment.getStartOffset();
+          usage.processRangeMarkers(new Processor<Segment>() {
+            @Override
+            public boolean process(Segment segment) {
+              try {
+                final int textOffset = segment.getStartOffset();
 
-                                final int textEndOffset = segment.getEndOffset();
-                                Document document = usage.getDocument();
-                                CharSequence charsSequence = document.getCharsSequence();
-                                final CharSequence foundString = charsSequence.subSequence(textOffset, textEndOffset);
-                                String s = foundString.toString();
-                                String regExMatch = FindManager.getInstance(project).getStringToReplace(s, findModel, textOffset, document.getText());
-                                System.out.println(regExMatch);
-                                PsiElement element = PsiUtilBase.getElementAtOffset(((UsageInfo2UsageAdapter) result).getUsageInfo().getFile(), textOffset + 1);
-                                String elementText = element.getText();
-                                System.out.println(elementText + ": " + regExMatch + " - " + s);
-                                //hack to block weird css matches (I have no idea how many edge cases I'll have :/ )
-//                                if(regExMatch.length() > 20) return true;
+                final int textEndOffset = segment.getEndOffset();
+                Document document = usage.getDocument();
+                CharSequence charsSequence = document.getCharsSequence();
+                final CharSequence foundString = charsSequence.subSequence(textOffset, textEndOffset);
+                String s = foundString.toString();
+                String regExMatch = FindManager.getInstance(project).getStringToReplace(s, findModel, textOffset, document.getText());
+                System.out.println(regExMatch);
+                PsiElement element =
+                  PsiUtilBase.getElementAtOffset(((UsageInfo2UsageAdapter)result).getUsageInfo().getFile(), textOffset + 1);
+                String elementText = element.getText();
+                System.out.println(elementText + ": " + regExMatch + " - " + s);
+                //hack to block weird css matches (I have no idea how many edge cases I'll have :/ )
+                //                                if(regExMatch.length() > 20) return true;
 
-                                switch (type) {
-                                    case CTRL_CONVENTIONS:
-                                        validResults.add(new AngularItem(s, elementText, result, element, "controller"));
-                                        break;
+                switch (type) {
+                  case CTRL_CONVENTIONS:
+                    validResults.add(new AngularItem(s, elementText, result, element, "controller"));
+                    break;
 
-                                    case MODULE_METHODS:
-                                        validResults.add(new AngularItem(s, regExMatch, result, element, element.getText()));
-                                        break;
+                  case MODULE_METHODS:
+                    validResults.add(new AngularItem(s, regExMatch, result, element, element.getText()));
+                    break;
 
-                                    case NG_CONTROLLER:
-                                        validResults.add(new AngularItem(s, regExMatch, result, element, "ng-controller"));
-                                        break;
-                                }
-
-                                return true;
-                            } catch (FindManager.MalformedReplacementStringException e1) {
-                                e1.printStackTrace();
-                            }
-
-                            return false;
-                        }
-                    });
+                  case NG_CONTROLLER:
+                    validResults.add(new AngularItem(s, regExMatch, result, element, "ng-controller"));
+                    break;
                 }
+
+                return true;
+              }
+              catch (FindManager.MalformedReplacementStringException e1) {
+                e1.printStackTrace();
+              }
+
+              return false;
             }
-        };
+          });
+        }
+      }
+    };
 
-        ApplicationManager.getApplication().runReadAction(runnable);
-        return validResults;
-    }
+    ApplicationManager.getApplication().runReadAction(runnable);
+    return validResults;
+  }
 
-    private Collection<Usage> getAngularUsages(Project project, DataContext dataContext, FindModel findModel) {
+  private Collection<Usage> getAngularUsages(Project project, DataContext dataContext, FindModel findModel) {
 
-        FindInProjectUtil.setDirectoryName(findModel, dataContext);
+    FindInProjectUtil.setDirectoryName(findModel, dataContext);
 
-        CommonProcessors.CollectProcessor<Usage> collectProcessor = new CommonProcessors.CollectProcessor<Usage>();
+    CommonProcessors.CollectProcessor<Usage> collectProcessor = new CommonProcessors.CollectProcessor<Usage>();
 
-        PsiDirectory directory = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
-        FindInProjectUtil.findUsages(findModel, directory, project,
-                true, new AdapterProcessor<UsageInfo, Usage>(collectProcessor, UsageInfo2UsageAdapter.CONVERTER), new FindUsagesProcessPresentation());
+    PsiDirectory directory = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
+    FindInProjectUtil.findUsages(findModel, directory, project,
+                                 true, new AdapterProcessor<UsageInfo, Usage>(collectProcessor, UsageInfo2UsageAdapter.CONVERTER),
+                                 new FindUsagesProcessPresentation());
 
 
-        return collectProcessor.getResults();
-    }
+    return collectProcessor.getResults();
+  }
 }

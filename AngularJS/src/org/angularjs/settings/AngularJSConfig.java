@@ -8,27 +8,27 @@ import org.jetbrains.annotations.Nullable;
  * Created by denofevil on 26/11/13.
  */
 @State(
-    name="AngularJSConfig",
-    storages = {
-            @Storage(
-                    file = StoragePathMacros.APP_CONFIG + "/other.xml"
-            )}
+  name = "AngularJSConfig",
+  storages = {
+    @Storage(
+      file = StoragePathMacros.APP_CONFIG + "/other.xml"
+    )}
 )
 public class AngularJSConfig implements PersistentStateComponent<AngularJSConfig> {
-    public boolean INSERT_WHITESPACE = false;
+  public boolean INSERT_WHITESPACE = false;
 
-    public static AngularJSConfig getInstance() {
-        return ServiceManager.getService(AngularJSConfig.class);
-    }
+  public static AngularJSConfig getInstance() {
+    return ServiceManager.getService(AngularJSConfig.class);
+  }
 
-    @Nullable
-    @Override
-    public AngularJSConfig getState() {
-        return this;
-    }
+  @Nullable
+  @Override
+  public AngularJSConfig getState() {
+    return this;
+  }
 
-    @Override
-    public void loadState(AngularJSConfig state) {
-        XmlSerializerUtil.copyBean(state, this);
-    }
+  @Override
+  public void loadState(AngularJSConfig state) {
+    XmlSerializerUtil.copyBean(state, this);
+  }
 }
