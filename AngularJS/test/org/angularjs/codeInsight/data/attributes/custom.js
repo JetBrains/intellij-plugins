@@ -1,5 +1,5 @@
 angular.module('docsSimpleDirective', [])
-    .controller('Ctrl', function($scope) {
+    .controller('SupaController', function($scope) {
         $scope.customer = {
             name: 'Naomi',
             address: '1600 Amphitheatre'

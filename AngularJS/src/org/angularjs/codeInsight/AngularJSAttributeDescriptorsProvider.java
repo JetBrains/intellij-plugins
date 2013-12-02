@@ -10,12 +10,15 @@ import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import gnu.trove.TObjectIntHashMap;
+import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
 import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.angularjs.codeInsight.AngularAttributesRegistry.createDescriptor;
 
 /**
  * @author Dennis.Ushakov
@@ -86,7 +89,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   static {
     for (int i = 0; i < DIRECTIVE_NAMES.length; i++) {
       final String directiveName = DIRECTIVE_NAMES[i];
-      AngularAttributeDescriptor desc = new AngularAttributeDescriptor("ng-" + directiveName);
+      AngularAttributeDescriptor desc = createDescriptor(null, "ng-" + directiveName, null, -1);
       DESCRIPTORS[i] = desc;
       ATTRIBUTE_BY_NAME.put(desc.getName(), desc);
     }
@@ -103,8 +106,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
                                                    public boolean process(VirtualFile file, TObjectIntHashMap<String> descriptorNames) {
                                                      for (Object o : descriptorNames.keys()) {
                                                        AngularAttributeDescriptor descriptor =
-                                                         new AngularAttributeDescriptor(project, (String)o, file,
-                                                                                        descriptorNames.get((String)o));
+                                                         createDescriptor(project, (String)o, file, descriptorNames.get((String)o));
                                                        result.put(descriptor.getName(), descriptor);
                                                      }
                                                      return true;
@@ -114,7 +116,9 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       // marker entry: if ng-model is present then angular.js file was indexed and there's no need to add all
       // predefined entries
       if (!result.containsKey("ng-model")) {
-        result.putAll(ATTRIBUTE_BY_NAME);
+        for (String name : DIRECTIVE_NAMES) {
+          result.put(name, createDescriptor(project, name, null, -1));
+        }
       }
       return result.values().toArray(new XmlAttributeDescriptor[result.size()]);
     }
@@ -134,10 +138,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
                                                    public boolean process(VirtualFile file, TObjectIntHashMap<String> descriptorNames) {
                                                      for (Object o : descriptorNames.keys()) {
                                                        if (attributeName.equals(o)) {
-                                                         AngularAttributeDescriptor descriptor =
-                                                           new AngularAttributeDescriptor(project, (String)o, file,
-                                                                                          descriptorNames.get((String)o));
-                                                         result.set(descriptor);
+                                                         result.set(createDescriptor(project, (String)o, file, descriptorNames.get((String)o)));
                                                          break;
                                                        }
                                                      }
@@ -147,6 +148,10 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       );
       if (result.get() != null) {
         return result.get();
+      }
+      // fallback for predefined entries
+      if (ATTRIBUTE_BY_NAME.containsKey(attributeName)) {
+        return createDescriptor(project, attributeName, null, -1);
       }
     }
     return ATTRIBUTE_BY_NAME.get(attributeName);

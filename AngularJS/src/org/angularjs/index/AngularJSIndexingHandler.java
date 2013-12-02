@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static final String DIRECTIVE_KEY = "AngularJS.Directive";
+  public static final String CONTROLLER_KEY = "AngularJS.Controller";
   public static final String DIRECTIVE = "directive";
 
   @Override
@@ -24,12 +25,22 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     JSReferenceExpression callee = (JSReferenceExpression)callExpression.getMethodExpression();
     JSExpression qualifier = callee.getQualifier();
 
-    if (DIRECTIVE.equals(callee.getReferencedName()) && qualifier != null) {
+    if (qualifier == null) return;
+
+    if (DIRECTIVE.equals(callee.getReferencedName())) {
       JSExpression[] arguments = callExpression.getArguments();
       if (arguments.length > 0) {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
           visitor.storeAdditionalData(DIRECTIVE_KEY, getAttributeName(argument.getText()), argument.getTextOffset());
+        }
+      }
+    } else if ("controller".equals(callee.getReferencedName())) {
+      JSExpression[] arguments = callExpression.getArguments();
+      if (arguments.length > 0) {
+        JSExpression argument = arguments[0];
+        if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
+          visitor.storeAdditionalData(CONTROLLER_KEY, StringUtil.unquoteString(argument.getText()), argument.getTextOffset());
         }
       }
     }

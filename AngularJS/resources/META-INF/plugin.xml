@@ -68,6 +68,7 @@
 
 
     <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularJSIndex"/>
+    <psi.referenceContributor implementation="org.angularjs.codeInsight.AngularReferenceContributor"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
