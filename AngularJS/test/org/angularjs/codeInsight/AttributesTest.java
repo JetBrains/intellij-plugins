@@ -46,6 +46,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
+    assertEquals("'myCustomer'", resolve.getText());
   }
 
   public void testControllerCompletion() {
@@ -60,6 +61,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
+    assertEquals("'SupaController'", resolve.getText());
   }
 
   public void testNormalization() {
