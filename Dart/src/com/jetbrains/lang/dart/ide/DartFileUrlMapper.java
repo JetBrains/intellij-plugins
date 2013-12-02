@@ -8,13 +8,16 @@ import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 final class DartFileUrlMapper extends FileUrlMapper {
   private static final String SCHEME = "dart";
 
-  @Nullable
+  @NotNull
   @Override
-  public Url getUrl(@NotNull VirtualFile file, @NotNull Project project, @Nullable String currentAuthority) {
-    return null;
+  public List<Url> getUrls(@NotNull VirtualFile file, @NotNull Project project, @Nullable String currentAuthority) {
+    return Collections.emptyList();
   }
 
   @Nullable
