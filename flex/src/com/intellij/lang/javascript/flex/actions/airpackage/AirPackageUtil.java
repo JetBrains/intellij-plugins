@@ -462,7 +462,7 @@ public class AirPackageUtil {
 
         final String adtOptions = packagingOptions.getSigningOptions().getADTOptions();
         if (!adtOptions.isEmpty()) {
-          final String undocumentedOptions = FlexCommonUtils.removeOptions(adtOptions, "sampler", "hideAneLibSymbols");
+          final String undocumentedOptions = FlexCommonUtils.removeOptions(adtOptions, "sampler", "hideAneLibSymbols", "useLegacyAOT");
           command.addAll(StringUtil.split(undocumentedOptions, " "));
         }
 
@@ -502,10 +502,16 @@ public class AirPackageUtil {
           command.add("-sampler");
         }
 
-        final List<String> optionValues = FlexCommonUtils.getOptionValues(adtOptions, "hideAneLibSymbols");
-        if (!optionValues.isEmpty()) {
+        final List<String> hideAneLibSymbols = FlexCommonUtils.getOptionValues(adtOptions, "hideAneLibSymbols");
+        if (!hideAneLibSymbols.isEmpty()) {
           command.add("-hideAneLibSymbols");
-          command.add(optionValues.get(0)); // has one parameter: "yes" or "no"
+          command.add(hideAneLibSymbols.get(0)); // has one parameter: "yes" or "no"
+        }
+
+        final List<String> useLegacyAOT = FlexCommonUtils.getOptionValues(adtOptions, "useLegacyAOT");
+        if (!useLegacyAOT.isEmpty()) {
+          command.add("-useLegacyAOT");
+          command.add(useLegacyAOT.get(0)); // has one parameter: "yes" or "no"
         }
 
         if (simulator) {
