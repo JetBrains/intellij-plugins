@@ -11,7 +11,6 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import gnu.trove.TObjectIntHashMap;
 import org.angularjs.index.AngularJSIndexingHandler;
-import org.codehaus.groovy.runtime.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
