@@ -1,12 +1,20 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.index.AngularJSIndex;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
+import gnu.trove.TObjectIntHashMap;
+import org.angularjs.index.AngularJSIndexingHandler;
+import org.codehaus.groovy.runtime.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by denofevil on 26/11/13.
@@ -86,12 +94,54 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
 
     @Override
     public XmlAttributeDescriptor[] getAttributeDescriptors(XmlTag xmlTag) {
+        if (xmlTag != null) {
+            final Project project = xmlTag.getProject();
+            final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
+            FileBasedIndex.getInstance().processValues(AngularJSIndex.INDEX_ID, AngularJSIndexingHandler.DIRECTIVE, null,
+                    new FileBasedIndex.ValueProcessor<TObjectIntHashMap<String>>() {
+                        @Override
+                        public boolean process(VirtualFile file, TObjectIntHashMap<String> descriptorNames) {
+                            for (Object o : descriptorNames.keys()) {
+                                AngularAttributeDescriptor descriptor = new AngularAttributeDescriptor(project, (String)o, file, descriptorNames.get((String)o));
+                                result.put(descriptor.getName(), descriptor);
+                            }
+                            return true;
+                        }
+                    }, GlobalSearchScope.allScope(project));
+            // marker entry: if ng-model is present then angular.js file was indexed and there's no need to add all
+            // predefined entries
+            if (!result.containsKey("ng-model")) {
+                result.putAll(ATTRIBUTE_BY_NAME);
+            }
+            return result.values().toArray(new XmlAttributeDescriptor[result.size()]);
+        }
         return DESCRIPTORS;
     }
 
     @Nullable
     @Override
-    public XmlAttributeDescriptor getAttributeDescriptor(String attrName, XmlTag xmlTag) {
+    public XmlAttributeDescriptor getAttributeDescriptor(final String attrName, XmlTag xmlTag) {
+        if (xmlTag != null) {
+            final Project project = xmlTag.getProject();
+            final Ref<XmlAttributeDescriptor> result = new Ref<XmlAttributeDescriptor>();
+            FileBasedIndex.getInstance().processValues(AngularJSIndex.INDEX_ID, AngularJSIndexingHandler.DIRECTIVE, null,
+                    new FileBasedIndex.ValueProcessor<TObjectIntHashMap<String>>() {
+                        @Override
+                        public boolean process(VirtualFile file, TObjectIntHashMap<String> descriptorNames) {
+                            for (Object o : descriptorNames.keys()) {
+                                if (attrName.equals(o)) {
+                                    AngularAttributeDescriptor descriptor = new AngularAttributeDescriptor(project, (String)o, file, descriptorNames.get((String)o));
+                                    result.set(descriptor);
+                                    break;
+                                }
+                            }
+                            return result.get() == null;
+                        }
+                    }, GlobalSearchScope.allScope(project));
+            if (result.get() != null) {
+                return result.get();
+            }
+        }
         return ATTRIBUTE_BY_NAME.get(attrName);
     }
 }

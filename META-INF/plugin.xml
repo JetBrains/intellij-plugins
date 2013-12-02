@@ -65,9 +65,12 @@
         <applicationService serviceInterface="org.angularjs.settings.AngularJSConfig"
                             serviceImplementation="org.angularjs.settings.AngularJSConfig"/>
         <editorSmartKeysConfigurable instance="org.angularjs.settings.AngularJSConfigurationPage"/>
+
+
+        <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularJSIndex"/>
     </extensions>
 
     <extensions defaultExtensionNs="JavaScript">
-        <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSDirectiveIndexingHandler" />
+        <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler" />
     </extensions>
 </idea-plugin>
