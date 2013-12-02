@@ -10,7 +10,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 
 /**
- * Created by denofevil on 27/11/13.
+ * @author Dennis.Ushakov
  */
 public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static final String DIRECTIVE = "AngularJS.Directive";

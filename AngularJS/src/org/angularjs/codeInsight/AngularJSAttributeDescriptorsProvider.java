@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by denofevil on 26/11/13.
+ * @author Dennis.Ushakov
  */
 public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
   private static final String[] DIRECTIVE_NAMES = new String[]{

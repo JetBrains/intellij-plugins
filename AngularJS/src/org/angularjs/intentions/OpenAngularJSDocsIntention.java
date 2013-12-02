@@ -14,7 +14,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by denofevil on 26/11/13.
+ * @author Dennis.Ushakov
  */
 public class OpenAngularJSDocsIntention extends AbstractIntentionAction implements LowPriorityAction {
   @NotNull

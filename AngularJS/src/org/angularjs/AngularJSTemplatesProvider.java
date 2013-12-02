@@ -4,7 +4,7 @@ import com.intellij.codeInsight.template.impl.DefaultLiveTemplatesProvider;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Created by denofevil on 26/11/13.
+ * @author Dennis.Ushakov
  */
 public class AngularJSTemplatesProvider implements DefaultLiveTemplatesProvider {
   @Override

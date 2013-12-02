@@ -5,7 +5,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Created by denofevil on 26/11/13.
+ * @author Dennis.Ushakov
  */
 @State(
   name = "AngularJSConfig",

@@ -7,7 +7,7 @@ import com.intellij.ui.IdeBorderFactory;
 import javax.swing.*;
 
 /**
- * Created by denofevil on 26/11/13.
+ * @author Dennis.Ushakov
  */
 public class AngularJSConfigurationPage extends BeanConfigurable<AngularJSConfig> implements UnnamedConfigurable {
   protected AngularJSConfigurationPage() {

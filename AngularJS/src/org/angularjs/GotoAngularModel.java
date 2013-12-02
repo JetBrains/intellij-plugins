@@ -67,7 +67,7 @@ public class GotoAngularModel extends SimpleChooseByNameModel {
     return "Element name!";
   }
 
-  protected class GotoAngularCellRenderer implements ListCellRenderer {
+  protected static class GotoAngularCellRenderer implements ListCellRenderer {
     private final SimpleTextAttributes SELECTED;
     private final SimpleTextAttributes PLAIN;
 

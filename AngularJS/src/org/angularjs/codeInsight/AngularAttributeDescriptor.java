@@ -8,7 +8,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 
 /**
- * Created by denofevil on 26/11/13.
+ * @author Dennis.Ushakov
  */
 public class AngularAttributeDescriptor extends AnyXmlAttributeDescriptor {
   private final Project myProject;

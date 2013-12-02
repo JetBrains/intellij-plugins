@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile;
 import org.angularjs.settings.AngularJSConfig;
 
 /**
- * Created by denofevil on 26/11/13.
+ * @author Dennis.Ushakov
  */
 public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate {
   @Override

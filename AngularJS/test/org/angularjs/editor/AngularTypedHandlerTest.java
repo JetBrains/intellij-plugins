@@ -5,7 +5,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.angularjs.settings.AngularJSConfig;
 
 /**
- * Created by denofevil on 27/11/13.
+ * @author Dennis.Ushakov
  */
 public class AngularTypedHandlerTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testBracketsClosing() {

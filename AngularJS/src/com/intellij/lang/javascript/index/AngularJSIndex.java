@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 /**
- * Created by denofevil on 29/11/13.
+ * @author Dennis.Ushakov
  */
 public class AngularJSIndex extends FileBasedIndexExtension<String, TObjectIntHashMap<String>> {
   public static final ID<String, TObjectIntHashMap<String>> INDEX_ID = ID.create("angular.index");
@@ -24,7 +24,7 @@ public class AngularJSIndex extends FileBasedIndexExtension<String, TObjectIntHa
     };
 
   private static final int BASE_VERSION = 2;
-  private KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();
+  private final KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();
 
   @NotNull
   @Override

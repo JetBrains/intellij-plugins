@@ -24,8 +24,8 @@ import com.intellij.ide.actions.GotoActionBase;
 import com.intellij.ide.util.gotoByName.ChooseByNameFilter;
 import com.intellij.ide.util.gotoByName.ChooseByNamePopup;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
@@ -34,7 +34,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.FindUsagesProcessPresentation;
 import com.intellij.usages.Usage;
@@ -59,7 +59,7 @@ public class GotoAngularAction extends GotoActionBase {
 
   @Override
   protected void gotoActionPerformed(final AnActionEvent e) {
-    final Project project = e.getData(PlatformDataKeys.PROJECT);
+    final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
 
     PsiDocumentManager.getInstance(project).commitAllDocuments();
@@ -118,10 +118,10 @@ public class GotoAngularAction extends GotoActionBase {
     });
   }
 
-  private List<AngularItem> getValidResults(final Project project,
-                                            final FindModel findModel,
-                                            final Collection<Usage> usages,
-                                            final int type) {
+  private static List<AngularItem> getValidResults(final Project project,
+                                                   final FindModel findModel,
+                                                   final Collection<Usage> usages,
+                                                   final int type) {
     final List<AngularItem> validResults = new ArrayList<AngularItem>();
 
     //todo: needs code review. There must be a better way to do this
@@ -147,7 +147,7 @@ public class GotoAngularAction extends GotoActionBase {
                 String regExMatch = FindManager.getInstance(project).getStringToReplace(s, findModel, textOffset, document.getText());
                 System.out.println(regExMatch);
                 PsiElement element =
-                  PsiUtilBase.getElementAtOffset(((UsageInfo2UsageAdapter)result).getUsageInfo().getFile(), textOffset + 1);
+                  PsiUtilCore.getElementAtOffset(((UsageInfo2UsageAdapter)result).getUsageInfo().getFile(), textOffset + 1);
                 String elementText = element.getText();
                 System.out.println(elementText + ": " + regExMatch + " - " + s);
                 //hack to block weird css matches (I have no idea how many edge cases I'll have :/ )
@@ -184,7 +184,7 @@ public class GotoAngularAction extends GotoActionBase {
     return validResults;
   }
 
-  private Collection<Usage> getAngularUsages(Project project, DataContext dataContext, FindModel findModel) {
+  private static Collection<Usage> getAngularUsages(Project project, DataContext dataContext, FindModel findModel) {
 
     FindInProjectUtil.setDirectoryName(findModel, dataContext);
 
