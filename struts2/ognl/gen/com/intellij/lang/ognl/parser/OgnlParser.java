@@ -101,13 +101,15 @@ public class OgnlParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "arrayConstructorExpression")) return false;
     if (!nextTokenIs(builder_, LBRACKET)) return false;
     boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, LBRACKET);
-    result_ = result_ && arrayConstructorExpression_1(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, RBRACKET);
-    result_ = result_ && arrayConstructorExpression_3(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, arrayConstructorExpression_1(builder_, level_ + 1));
+    result_ = pinned_ && report_error_(builder_, consumeToken(builder_, RBRACKET)) && result_;
+    result_ = pinned_ && arrayConstructorExpression_3(builder_, level_ + 1) && result_;
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   // expression?
@@ -211,17 +213,34 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // COLON expression
+  static boolean conditinoalExpressionTail(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "conditinoalExpressionTail")) return false;
+    if (!nextTokenIs(builder_, COLON)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, COLON);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && expression(builder_, level_ + 1, -1);
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
   // '(' methodCallParameters ')'
   static boolean constructorExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constructorExpression")) return false;
     if (!nextTokenIs(builder_, LPARENTH)) return false;
     boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, LPARENTH);
-    result_ = result_ && methodCallParameters(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, RPARENTH);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, methodCallParameters(builder_, level_ + 1));
+    result_ = pinned_ && consumeToken(builder_, RPARENTH) && result_;
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   /* ********************************************************** */
@@ -541,7 +560,7 @@ public class OgnlParser implements PsiParser {
       Marker marker_ = builder_.mark();
       if (priority_ < 3 && consumeToken(builder_, QUESTION)) {
         result_ = report_error_(builder_, expression(builder_, level_, 3));
-        result_ = conditionalExpression_1(builder_, level_ + 1) && result_;
+        result_ = conditinoalExpressionTail(builder_, level_ + 1) && result_;
         marker_.drop();
         left_marker_.precede().done(CONDITIONAL_EXPRESSION);
       }
@@ -602,17 +621,6 @@ public class OgnlParser implements PsiParser {
     result_ = result_ && expression(builder_, level_ + 1, -1);
     exit_section_(builder_, level_, marker_, VARIABLE_ASSIGNMENT_EXPRESSION, result_, pinned_, null);
     return result_ || pinned_;
-  }
-
-  // COLON expression
-  private static boolean conditionalExpression_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "conditionalExpression_1")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, COLON);
-    result_ = result_ && expression(builder_, level_ + 1, -1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
   }
 
   // NEW_KEYWORD referenceExpression (arrayConstructorExpression | constructorExpression)
