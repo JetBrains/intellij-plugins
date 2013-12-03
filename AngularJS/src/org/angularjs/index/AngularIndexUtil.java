@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
 
@@ -23,21 +22,15 @@ public class AngularIndexUtil {
     final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     for (VirtualFile file : FileBasedIndex.getInstance().getContainingFiles(index, lookupKey, scope)) {
       final int id = FileBasedIndex.getFileId(file);
-      FileBasedIndex.getInstance().processValues(JSEntryIndex.INDEX_ID, id, null, new FileBasedIndex.ValueProcessor<JSIndexEntry>() {
+      if (FileBasedIndex.getInstance().processValues(JSEntryIndex.INDEX_ID, id, null, new FileBasedIndex.ValueProcessor<JSIndexEntry>() {
         @Override
         public boolean process(VirtualFile file, JSIndexEntry value) {
-          return value.processAdditionalData(JavaScriptIndex.getInstance(project), index.toString(), lookupKey, new Processor<JSNamedElementProxy>() {
-            @Override
-            public boolean process(JSNamedElementProxy proxy) {
-              if (lookupKey.equals(proxy.getName())) {
-                result.set(proxy);
-              }
-              return result.isNull();
-            }
-          });
+          result.set(value.resolveAdditionalData(JavaScriptIndex.getInstance(project), index.toString(), lookupKey));
+          return result.isNull();
         }
-      }, scope);
-      if (!result.isNull()) break;
+      }, scope)) {
+        break;
+      }
     }
     return result.get();
   }
