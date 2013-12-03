@@ -10,30 +10,26 @@ function setBasePath(config) {
   config.basePath = path.resolve(path.dirname(originalConfigPath), basePath);
 }
 
+function removeAll(elements, elementsToRemove) {
+  return elements.filter(function (element) {
+    return elementsToRemove.indexOf(element) < 0;
+  });
+}
+
 module.exports = function(config) {
   var originalConfigModule = require(originalConfigPath);
   originalConfigModule(config);
 
-  var originalReporters = config.reporters || [];
-  var coverageEnabled = originalReporters.indexOf('coverage') >= 0;
-  var junitEnabled = originalReporters.indexOf('junit') >= 0;
-  var htmlEnabled = originalReporters.indexOf('html') >= 0;
-  // Is resetting 'reporters' list safe?
-  var reporters = [IntellijReporter.reporterName];
-  if (coverageEnabled) {
-    reporters.push('coverage');
-    reporters.push(IntellijCoverageReporter.reporterName);
+  var filteredReporters = removeAll(config.reporters || [], ['dots', 'progress']);
+  filteredReporters.push(IntellijReporter.reporterName);
+  if (filteredReporters.indexOf('coverage') >= 0) {
+    filteredReporters.push(IntellijCoverageReporter.reporterName);
   }
   else {
     IntellijCoverageReporter.reportCoverageStartupStatus(false);
   }
-  if (junitEnabled) {
-    reporters.push('junit');
-  }
-  if (htmlEnabled) {
-    reporters.push('html');
-  }
-  config.reporters = reporters;
+  console.log("Reporters:" + filteredReporters);
+  config.reporters = filteredReporters;
 
   var plugins = config.plugins || [];
   plugins.push(require.resolve('./intellijPlugin.js'));
