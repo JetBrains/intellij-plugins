@@ -31,6 +31,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.psi.types.primitives.JSObjectType;
@@ -126,7 +127,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   protected static ChangeSignatureFix createChangeBaseMethodSignatureFix(final JSFunction superMethod, final JSFunction override) {
-    String s = StringUtil.notNullize(override.getReturnType().getResolvedTypeText());
+    JSType type = override.getReturnType();
+    String s = StringUtil.notNullize(type != null ? type.getResolvedTypeText() : null);
     ChangeSignatureFix fix = new ChangeSignatureFix(superMethod, JSMethodDescriptor.getParameters(superMethod));
     fix.setOverriddenReturnType(s);
     return fix;
@@ -275,7 +277,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           }
           else if (incompatibleSignature == SignatureMatchResult.RETURN_TYPE_DIFFERS) {
             PsiElement implementationReturnTypeExpr = implementationFunction.getReturnTypeElement();
-            final String interfaceReturnType = interfaceFunction.getReturnType().getResolvedTypeText();
+            JSType type = interfaceFunction.getReturnType();
+            final String interfaceReturnType = type != null ? type.getResolvedTypeText() : null;
             String msg = JSBundle
               .message("javascript.validation.message.interface.method.invalid.signature2", StringUtil.notNullize(interfaceReturnType));
             reportingClient.reportError(
@@ -441,7 +444,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           }
           else if (incompatibleSignature == SignatureMatchResult.RETURN_TYPE_DIFFERS) {
             PsiElement returnTypeExpr = node.getReturnTypeElement();
-            final String baseReturnType = override.getReturnType().getResolvedTypeText();
+            JSType type = override.getReturnType();
+            final String baseReturnType = type != null ? type.getResolvedTypeText() : null;
             String msg = JSBundle
               .message("javascript.validation.message.function.override.incompatible.signature2", StringUtil.notNullize(baseReturnType));
             final Annotation annotation =
@@ -1123,7 +1127,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                                                        @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey,
                                                        boolean allowChangeVariableTypeFix) {
     final JSType type = p.getType();
-    final String parameterTypeResolved = type.getResolvedTypeText();
     Pair<Annotation, String> annotationAndExprType =
       ValidateTypesUtil.checkExpressionIsAssignableToType(expr, type, myHolder, containingFile, problemKey,
                                                           allowChangeVariableTypeFix ? p : null);
@@ -1139,7 +1142,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
     PsiElement _fun;
     if (annotationAndExprType == null &&
-        FUNCTION_CLASS_NAME.equals(parameterTypeResolved) &&
+        type != null && FUNCTION_CLASS_NAME.equals(type.getResolvedTypeText()) &&
         p instanceof JSParameter &&
         "addEventListener".equals(((JSFunction)p.getParent().getParent()).getName()) &&
         (( expr instanceof JSReferenceExpression &&
@@ -1512,7 +1515,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  protected boolean isCallableType(boolean inNewExpression, JSType type) {
+  protected boolean isCallableType(boolean inNewExpression, @NotNull JSType type) {
     final String typeText = type.getTypeText();
     return "Class".equals(typeText) ||
            inNewExpression && type instanceof JSObjectType ||
@@ -1538,7 +1541,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
     final JSArgumentList argumentList = callExpression.getArgumentList();
     if (argumentList instanceof JSE4XFilterQueryArgumentList &&
-        (type != JSType.NO_TYPE && type != JSType.ANY || resolveResult instanceof JSFunction && ((JSFunction)resolveResult).isGetProperty())) {
+        (type != null && !(type instanceof JSAnyType) || resolveResult instanceof JSFunction && ((JSFunction)resolveResult).isGetProperty())) {
       checkE4XFilterQuery(callExpression, type.getTypeText(), myHolder, argumentList);
       return false;
     }
@@ -1572,6 +1575,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
   }
 
+  @Nullable
   @Override
   protected JSType getResolveResultType(JSExpression qualifier, PsiElement resultElement) {
     if (resultElement instanceof JSVariable) { // do not evaluate initializer
@@ -1586,7 +1590,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
     if (qualifier != null) {
       final PsiFile containingFile = node.getContainingFile();
-      JSType type = JSType.NO_TYPE;
+      JSType type = null;
       boolean checkType = false;
 
       if (qualifier instanceof JSReferenceExpression) {
@@ -1603,10 +1607,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         type = JSResolveUtil.getExpressionJSType(qualifier, containingFile);
         checkType = true;
       }
-      if (checkType) {
-        if (type == JSType.NO_TYPE || type == JSType.ANY) {
-          return ProblemHighlightType.LIKE_UNKNOWN_SYMBOL;
-        }
+      if (checkType && (type instanceof JSAnyType || type == null)) {
+        return ProblemHighlightType.LIKE_UNKNOWN_SYMBOL;
       }
 
       JSClass jsClass = JSResolveUtil.findClassOfQualifier(qualifier, containingFile);

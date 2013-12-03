@@ -78,12 +78,12 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
           JSTypeEvaluator.evaluateTypes(methodExpr, myContext.targetFile, subProcessor);
 
           JSType type = subProcessor.getType();
-          if (type != JSType.ANY && JSTypeUtils.hasFunctionType(type)) {
-            type = JSType.ANY;
+          if (type != null && !(type instanceof JSAnyType) && JSTypeUtils.hasFunctionType(type)) {
+            type = JSAnyType.get(methodExpr, false);
             text = "*";
           }
 
-          if (type != JSType.NO_TYPE && (type != JSType.ANY || isNotValidType(text))) {
+          if (type != null && (!(type instanceof JSAnyType) || isNotValidType(text))) {
             text = "Class".equals(type.getTypeText())? "*": type.getTypeText();
           }
 

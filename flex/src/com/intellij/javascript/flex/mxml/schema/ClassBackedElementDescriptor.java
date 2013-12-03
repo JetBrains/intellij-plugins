@@ -756,7 +756,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
     else {
       JSType type = JSResolveUtil.getTypeFromSetAccessor(jsNamedElement);
-      return type != JSType.NO_TYPE ? type.getTypeText() : null;
+      return type != null ? type.getTypeText() : null;
     }
   }
 

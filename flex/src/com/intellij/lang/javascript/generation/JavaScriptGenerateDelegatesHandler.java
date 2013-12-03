@@ -65,7 +65,10 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
       field = (JSVariable)targetChooser.getSelectedElements().get(0).getPsiElement();
     }
 
-    JSClass fieldClass = field.getType().resolveClass();
+    JSType fieldType = field.getType();
+    if (fieldType == null) return;
+    JSClass fieldClass = fieldType.resolveClass();
+    if (fieldClass == null) return;
 
     final boolean allowPackageLocal = !JSPsiImplUtils.differentPackageName(StringUtil.getPackageName(fieldClass.getQualifiedName()),
                                                                            StringUtil.getPackageName(jsClass.getQualifiedName()));
@@ -267,7 +270,8 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
   private static Collection<JSVariable> findCandidateFields(JSClass clazz) {
     Collection<JSVariable> result = new ArrayList<JSVariable>();
     for (JSVariable field : clazz.getFields()) {
-      JSClass fieldType = field.getType().resolveClass();
+      JSType type = field.getType();
+      JSClass fieldType = type != null ? type.resolveClass() : null;
       if (fieldType != null &&
           !ArrayUtil.contains(fieldType.getQualifiedName(), PRIMITIVE_TYPES) &&
           !JSInheritanceUtil.isParentClass(clazz, fieldType, false)) {

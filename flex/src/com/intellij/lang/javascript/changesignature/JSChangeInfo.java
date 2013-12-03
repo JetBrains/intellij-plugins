@@ -24,7 +24,7 @@ public class JSChangeInfo implements ChangeInfo {
     myNewName = method.getName();
     myNewVisibility = method.getAttributeList().getAccessType();
     final JSType returnType = method.getReturnType();
-    myNewReturnType = returnType != JSType.NO_TYPE ? null : returnType.getResolvedTypeText();
+    myNewReturnType = returnType == null ? null : returnType.getResolvedTypeText();
     myNewParameters = JSMethodDescriptor.getParameters(method);
   }
 
