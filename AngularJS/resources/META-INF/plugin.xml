@@ -66,8 +66,9 @@
                         serviceImplementation="org.angularjs.settings.AngularJSConfig"/>
     <editorSmartKeysConfigurable instance="org.angularjs.settings.AngularJSConfigurationPage"/>
 
+    <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularDirectivesIndex"/>
+    <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularControllerIndex"/>
 
-    <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularJSIndex"/>
     <psi.referenceContributor implementation="org.angularjs.codeInsight.AngularReferenceContributor"/>
   </extensions>
 

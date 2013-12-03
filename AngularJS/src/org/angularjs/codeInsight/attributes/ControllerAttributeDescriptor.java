@@ -1,38 +1,29 @@
 package org.angularjs.codeInsight.attributes;
 
+import com.intellij.lang.javascript.index.AngularControllerIndex;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.indexing.FileBasedIndex;
 import org.angularjs.index.AngularIndexUtil;
-import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Dennis.Ushakov
  */
 public class ControllerAttributeDescriptor extends AngularAttributeDescriptor {
-  public ControllerAttributeDescriptor(Project project, VirtualFile file, int offset) {
-    super(project, "ng-controller", file, offset);
+  public ControllerAttributeDescriptor(final Project project) {
+    super(project, "ng-controller");
   }
 
   @Override
   public String[] getEnumeratedValues() {
     if (myProject == null) return ArrayUtil.EMPTY_STRING_ARRAY;
-
-    final Set<String> result = new HashSet<String>();
-    for (AngularIndexUtil.Entry entry : AngularIndexUtil.collect(myProject, AngularJSIndexingHandler.CONTROLLER_KEY)) {
-      result.add(entry.name);
-    }
-    return ArrayUtil.toStringArray(result);
+    return ArrayUtil.toStringArray(FileBasedIndex.getInstance().getAllKeys(AngularControllerIndex.INDEX_ID, myProject));
   }
 
   @Override
@@ -52,11 +43,7 @@ public class ControllerAttributeDescriptor extends AngularAttributeDescriptor {
     public PsiElement resolve() {
       final XmlAttributeValue element = getElement();
       final String key = element.getValue();
-      final AngularIndexUtil.Entry entry = AngularIndexUtil.resolve(element.getProject(), AngularJSIndexingHandler.CONTROLLER_KEY, key);
-      if (entry == null) return null;
-
-      PsiFile psiFile = element.getManager().findFile(entry.file);
-      return psiFile != null ? psiFile.findElementAt(entry.offset) : null;
+      return AngularIndexUtil.resolve(element.getProject(), AngularControllerIndex.INDEX_ID, key);
     }
 
     @NotNull

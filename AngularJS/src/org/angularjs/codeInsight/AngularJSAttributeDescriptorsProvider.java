@@ -1,12 +1,12 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.index.AngularDirectivesIndex;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
-import org.angularjs.index.AngularIndexUtil;
-import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -84,7 +84,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   static {
     for (int i = 0; i < DIRECTIVE_NAMES.length; i++) {
       final String directiveName = DIRECTIVE_NAMES[i];
-      AngularAttributeDescriptor desc = createDescriptor(null, "ng-" + directiveName, null, -1);
+      AngularAttributeDescriptor desc = createDescriptor(null, "ng-" + directiveName);
       DESCRIPTORS[i] = desc;
       ATTRIBUTE_BY_NAME.put(desc.getName(), desc);
     }
@@ -95,14 +95,14 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
-      for (AngularIndexUtil.Entry entry : AngularIndexUtil.collect(project, AngularJSIndexingHandler.DIRECTIVE_KEY)) {
-        result.put(entry.name, createDescriptor(project, entry.name, entry.file, entry.offset));
+      for (String directiveName : FileBasedIndex.getInstance().getAllKeys(AngularDirectivesIndex.INDEX_ID, project)) {
+        result.put(directiveName, createDescriptor(project, directiveName));
       }
       // marker entry: if ng-model is present then angular.js file was indexed and there's no need to add all
       // predefined entries
       if (!result.containsKey("ng-model")) {
         for (String name : DIRECTIVE_NAMES) {
-          result.put(name, createDescriptor(project, name, null, -1));
+          result.put(name, createDescriptor(project, name));
         }
       }
       return result.values().toArray(new XmlAttributeDescriptor[result.size()]);
@@ -116,13 +116,10 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     final String attributeName = normalizeAttributeName(attrName);
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      final AngularIndexUtil.Entry resolve = AngularIndexUtil.resolve(project, AngularJSIndexingHandler.DIRECTIVE_KEY, attributeName);
-      if (resolve != null) {
-        return createDescriptor(project, attributeName, resolve.file, resolve.offset);
-      }
-      // fallback for predefined entries
-      if (ATTRIBUTE_BY_NAME.containsKey(attributeName)) {
-        return createDescriptor(project, attributeName, null, -1);
+      if (FileBasedIndex.getInstance().getAllKeys(AngularDirectivesIndex.INDEX_ID, project).contains(attributeName) ||
+          // fallback for predefined entries
+          ATTRIBUTE_BY_NAME.containsKey(attributeName)) {
+        return createDescriptor(project, attributeName);
       }
     }
     return ATTRIBUTE_BY_NAME.get(attributeName);

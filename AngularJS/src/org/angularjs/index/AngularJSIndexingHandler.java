@@ -1,6 +1,8 @@
 package org.angularjs.index;
 
 import com.intellij.lang.javascript.documentation.JSDocumentationProcessor;
+import com.intellij.lang.javascript.index.AngularControllerIndex;
+import com.intellij.lang.javascript.index.AngularDirectivesIndex;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.index.JSSymbolVisitor;
 import com.intellij.lang.javascript.psi.JSCallExpression;
@@ -16,8 +18,6 @@ import org.jetbrains.annotations.Nullable;
  * @author Dennis.Ushakov
  */
 public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
-  public static final String DIRECTIVE_KEY = "AngularJS.Directive";
-  public static final String CONTROLLER_KEY = "AngularJS.Controller";
   public static final String DIRECTIVE = "directive";
 
   @Override
@@ -32,7 +32,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       if (arguments.length > 0) {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-          visitor.storeAdditionalData(DIRECTIVE_KEY, getAttributeName(argument.getText()), argument.getTextOffset());
+          visitor.storeAdditionalData(AngularDirectivesIndex.INDEX_ID.toString(),
+                                      getAttributeName(argument.getText()), argument.getTextOffset());
         }
       }
     } else if ("controller".equals(callee.getReferencedName())) {
@@ -40,7 +41,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       if (arguments.length > 0) {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-          visitor.storeAdditionalData(CONTROLLER_KEY, StringUtil.unquoteString(argument.getText()), argument.getTextOffset());
+          visitor.storeAdditionalData(AngularControllerIndex.INDEX_ID.toString(),
+                                      StringUtil.unquoteString(argument.getText()), argument.getTextOffset());
         }
       }
     }
@@ -58,7 +60,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (type == JSDocumentationProcessor.MetaDocType.NAME &&
         matchName != null && matchName.contains(DIRECTIVE) && hasDirectiveName(remainingLineContent)) {
       assert remainingLineContent != null;
-      visitor.storeAdditionalData(DIRECTIVE_KEY, getAttributeName(remainingLineContent.substring(1)),
+      visitor.storeAdditionalData(AngularDirectivesIndex.INDEX_ID.toString(), getAttributeName(remainingLineContent.substring(1)),
                                   comment.getTextOffset() + comment.getText().indexOf(matchName));
     }
   }

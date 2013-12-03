@@ -1,63 +1,44 @@
 package org.angularjs.index;
 
-import com.intellij.lang.javascript.index.AngularJSIndex;
+import com.intellij.lang.javascript.index.JSEntryIndex;
+import com.intellij.lang.javascript.index.JSIndexEntry;
+import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
-import gnu.trove.TObjectIntHashMap;
-
-import java.util.LinkedList;
-import java.util.List;
+import com.intellij.util.indexing.ID;
 
 /**
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static class Entry {
-    public final VirtualFile file;
-    public final String name;
-    public final int offset;
+  public static final int BASE_VERSION = 2;
 
-    public Entry(final VirtualFile _file, final String _name, final int _offset) {
-      file = _file;
-      name = _name;
-      offset = _offset;
+  public static JSNamedElementProxy resolve(final Project project, final ID<String, Void> index, final String lookupKey) {
+    final Ref<JSNamedElementProxy> result = Ref.create();
+    final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+    for (VirtualFile file : FileBasedIndex.getInstance().getContainingFiles(index, lookupKey, scope)) {
+      final int id = FileBasedIndex.getFileId(file);
+      FileBasedIndex.getInstance().processValues(JSEntryIndex.INDEX_ID, id, null, new FileBasedIndex.ValueProcessor<JSIndexEntry>() {
+        @Override
+        public boolean process(VirtualFile file, JSIndexEntry value) {
+          return value.processAdditionalData(JavaScriptIndex.getInstance(project), index.toString(), lookupKey, new Processor<JSNamedElementProxy>() {
+            @Override
+            public boolean process(JSNamedElementProxy proxy) {
+              if (lookupKey.equals(proxy.getName())) {
+                result.set(proxy);
+              }
+              return result.isNull();
+            }
+          });
+        }
+      }, scope);
+      if (!result.isNull()) break;
     }
-  }
-
-  public static List<Entry> collect(final Project project, final String indexKey) {
-    final List<Entry> result = new LinkedList<Entry>();
-    FileBasedIndex.getInstance().processValues(AngularJSIndex.INDEX_ID, indexKey, null,
-                                               new FileBasedIndex.ValueProcessor<TObjectIntHashMap<String>>() {
-                                                 @Override
-                                                 public boolean process(VirtualFile file, TObjectIntHashMap<String> descriptorNames) {
-                                                   for (Object o : descriptorNames.keys()) {
-                                                     result.add(new Entry(file, (String)o, descriptorNames.get((String)o)));
-                                                   }
-                                                   return true;
-                                                 }
-                                               }, GlobalSearchScope.allScope(project)
-    );
-    return result;
-  }
-
-  public static Entry resolve(final Project project, final String indexKey, final String lookupKey) {
-    final Ref<Entry> result = Ref.create();
-    FileBasedIndex.getInstance().processValues(AngularJSIndex.INDEX_ID, indexKey, null,
-                                               new FileBasedIndex.ValueProcessor<TObjectIntHashMap<String>>() {
-                                                 @Override
-                                                 public boolean process(VirtualFile file, TObjectIntHashMap<String> descriptorNames) {
-                                                   for (Object o : descriptorNames.keys()) {
-                                                     if (lookupKey.equals(o)) {
-                                                       result.set(new Entry(file, lookupKey, descriptorNames.get(lookupKey)));
-                                                     }
-                                                   }
-                                                   return result.isNull();
-                                                 }
-                                               }, GlobalSearchScope.allScope(project)
-    );
     return result.get();
   }
 }

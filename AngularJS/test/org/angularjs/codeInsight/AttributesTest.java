@@ -1,6 +1,7 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectionBase;
+import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
@@ -46,7 +47,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'myCustomer'", resolve.getText());
+    assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
   }
 
   public void testControllerCompletion() {
@@ -61,7 +62,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'SupaController'", resolve.getText());
+    assertEquals("'SupaController'", ((JSNamedElementProxy)resolve).getElement().getText());
   }
 
   public void testNormalization() {
