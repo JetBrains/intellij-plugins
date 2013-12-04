@@ -8,25 +8,38 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
+import com.intellij.util.Function;
+import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Dennis.Ushakov
  */
 public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
-  public static final String MARKER = "!!!";
+  private static final Map<String, ID<String, Void>> INDEXERS = new HashMap<String, ID<String, Void>>();
+  private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<String, Function<String, String>>();
+
   public static Set<String> INTERESTING_METHODS = new HashSet<String>();
   public static final String CONTROLLER = "controller";
   public static final String DIRECTIVE = "directive";
+  public static final String MODULE = "module";
 
   static {
-    Collections.addAll(INTERESTING_METHODS, CONTROLLER, DIRECTIVE, "filter", "service",
-                       "factory", "module", "value", "constant", "provider");
+    Collections.addAll(INTERESTING_METHODS, "filter", "service", "factory", "value", "constant", "provider");
+
+    INDEXERS.put(DIRECTIVE, AngularDirectivesIndex.INDEX_ID);
+    NAME_CONVERTERS.put(DIRECTIVE, new Function<String, String>() {
+      @Override
+      public String fun(String s) {
+        return getAttributeName(s);
+      }
+    });
+
+    INDEXERS.put(CONTROLLER, AngularControllerIndex.INDEX_ID);
+    INDEXERS.put(MODULE, AngularModuleIndex.INDEX_ID);
   }
 
   @Override
@@ -37,26 +50,24 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (qualifier == null) return;
 
     final String command = callee.getReferencedName();
-    if (DIRECTIVE.equals(command)) {
+    final ID<String, Void> index = INDEXERS.get(command);
+    if (index != null) {
       JSExpression[] arguments = callExpression.getArguments();
       if (arguments.length > 0) {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-          final String attributeName = getAttributeName(argument.getText());
-          visitor.storeAdditionalData(argument, AngularDirectivesIndex.INDEX_ID.toString(), attributeName, argument.getTextOffset());
-          visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), attributeName, argument.getTextOffset());
-        }
-      }
-    } else if (CONTROLLER.equals(command)) {
-      JSExpression[] arguments = callExpression.getArguments();
-      if (arguments.length > 0) {
-        JSExpression argument = arguments[0];
-        if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-          visitor.storeAdditionalData(argument, AngularControllerIndex.INDEX_ID.toString(),
-                                      StringUtil.unquoteString(argument.getText()), argument.getTextOffset());
+          final Function<String, String> converter = NAME_CONVERTERS.get(command);
+          final String defaultName = StringUtil.unquoteString(argument.getText());
+          final String name = converter != null ? converter.fun(argument.getText()) : defaultName;
+          visitor.storeAdditionalData(argument, index.toString(), name, argument.getTextOffset());
+          visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), name, argument.getTextOffset());
+          if (!StringUtil.equals(defaultName, name)) {
+            visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), defaultName, argument.getTextOffset());
+          }
         }
       }
     }
+
     if (INTERESTING_METHODS.contains(command)) {
       JSExpression[] arguments = callExpression.getArguments();
       if (arguments.length > 0) {
@@ -85,6 +96,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       final String attributeName = getAttributeName(remainingLineContent.substring(1));
       visitor.storeAdditionalData(comment, AngularDirectivesIndex.INDEX_ID.toString(), attributeName, offset);
       visitor.storeAdditionalData(comment, AngularSymbolIndex.INDEX_ID.toString(), attributeName, offset);
+      visitor.storeAdditionalData(comment, AngularSymbolIndex.INDEX_ID.toString(), remainingLineContent.substring(1), offset);
     }
   }
 
