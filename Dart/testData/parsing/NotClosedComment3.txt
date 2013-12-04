@@ -1,0 +1,19 @@
+Dart File
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"""')
+        PsiElement(REGULAR_STRING_PART)(' ')
+        LONG_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          LITERAL_EXPRESSION
+            PsiElement(NUMBER)('1')
+        PsiErrorElement:LONG_TEMPLATE_ENTRY_END expected, unexpected end of file
+          <empty list>
+  PsiComment(MULTI_LINE_COMMENT)('/* /* /************/\n*')

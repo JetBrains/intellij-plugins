@@ -6,12 +6,6 @@ import com.intellij.psi.tree.IElementType;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Maxim.Mossienko
- * Date: 10/13/11
- * Time: 11:50 AM
- */
 public class DartCommenter implements CodeDocumentationAwareCommenter {
   public String getLineCommentPrefix() {
     return "//";
@@ -56,11 +50,12 @@ public class DartCommenter implements CodeDocumentationAwareCommenter {
   }
 
   public boolean isDocumentationComment(final PsiComment element) {
-    return element.getTokenType() == DartTokenTypesSets.DOC_COMMENT;
+    return element.getTokenType() == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT ||
+           element.getTokenType() == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT;
   }
 
   @Nullable
   public IElementType getDocumentationCommentTokenType() {
-    return DartTokenTypesSets.DOC_COMMENT;
+    return DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT;
   }
 }
