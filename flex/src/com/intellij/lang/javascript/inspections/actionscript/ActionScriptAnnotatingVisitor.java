@@ -1201,7 +1201,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           );
         } else {
           final JSClass expectedEventClass = calcNontrivialExpectedEventType(expr);
-          final String actualParameterType = parameters[0].getType().getResolvedTypeText();
+          JSType paramType = parameters[0].getType();
+          final String actualParameterType = paramType != null ? paramType.getResolvedTypeText() : null;
 
           if (expectedEventClass == null) {
             if (!JSResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_EVENT_FQN, actualParameterType, parameters[0]) &&
