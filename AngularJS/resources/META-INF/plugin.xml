@@ -62,6 +62,8 @@
     <psi.referenceContributor implementation="org.angularjs.codeInsight.AngularReferenceContributor"/>
 
     <gotoSymbolContributor implementation="org.angularjs.navigation.AngularGotoSymbolContributor"/>
+
+    <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
