@@ -25,7 +25,7 @@ public class AngularReferenceContributor extends PsiReferenceContributor {
       final PsiElement parent = element.getParent();
       final XmlAttributeDescriptor descriptor = parent instanceof XmlAttribute ? ((XmlAttribute)parent).getDescriptor() : null;
       return descriptor instanceof AngularAttributeDescriptor ? ((AngularAttributeDescriptor)descriptor).getReferences(element) :
-             new PsiReference[0];
+             PsiReference.EMPTY_ARRAY;
     }
   }
 }
