@@ -6,7 +6,7 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
-import com.jetbrains.lang.dart.DartLexer;
+import com.jetbrains.lang.dart.lexer.DartLexer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -48,9 +48,10 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
     ATTRIBUTES.put(DOT, DartSyntaxHighlighterColors.DOT);
     ATTRIBUTES.put(SEMICOLON, DartSyntaxHighlighterColors.SEMICOLON);
 
-    ATTRIBUTES.put(MULTI_LINE_COMMENT, DartSyntaxHighlighterColors.BLOCK_COMMENT);
     ATTRIBUTES.put(SINGLE_LINE_COMMENT, DartSyntaxHighlighterColors.LINE_COMMENT);
-    ATTRIBUTES.put(DOC_COMMENT, DartSyntaxHighlighterColors.DOC_COMMENT);
+    ATTRIBUTES.put(SINGLE_LINE_DOC_COMMENT, DartSyntaxHighlighterColors.DOC_COMMENT);
+    ATTRIBUTES.put(MULTI_LINE_COMMENT, DartSyntaxHighlighterColors.BLOCK_COMMENT);
+    ATTRIBUTES.put(MULTI_LINE_DOC_COMMENT, DartSyntaxHighlighterColors.DOC_COMMENT);
 
     ATTRIBUTES.put(BAD_CHARACTER, DartSyntaxHighlighterColors.BAD_CHARACTER);
 

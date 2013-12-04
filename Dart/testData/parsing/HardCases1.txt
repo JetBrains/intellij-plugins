@@ -183,7 +183,7 @@ Dart File
       PsiElement(>)('>')
     CLASS_BODY
       PsiElement({)('{')
-      PsiComment(DOC_COMMENT)('/**\n   * Creates a Map instance with the default implementation.\n   */')
+      PsiComment(MULTI_LINE_DOC_COMMENT)('/**\n   * Creates a Map instance with the default implementation.\n   */')
       CLASS_MEMBERS
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
@@ -212,7 +212,7 @@ Dart File
                       PsiElement(IDENTIFIER)('V')
               PsiElement(>)('>')
           PsiElement(;)(';')
-        PsiComment(DOC_COMMENT)('/**\n   * Creates a Map instance that contains all key-value pairs of [other].\n   */')
+        PsiComment(MULTI_LINE_DOC_COMMENT)('/**\n   * Creates a Map instance that contains all key-value pairs of [other].\n   */')
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
           REFERENCE_EXPRESSION
@@ -271,7 +271,7 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('from')
           PsiElement(;)(';')
-        PsiComment(DOC_COMMENT)('/**\n   * Creates an identity map with the default implementation.\n   */')
+        PsiComment(MULTI_LINE_DOC_COMMENT)('/**\n   * Creates an identity map with the default implementation.\n   */')
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
           REFERENCE_EXPRESSION
@@ -307,7 +307,7 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('identity')
           PsiElement(;)(';')
-        PsiComment(DOC_COMMENT)('/**\n   * Creates a Map instance in which the keys and values are computed from the [iterable].\n   */')
+        PsiComment(MULTI_LINE_DOC_COMMENT)('/**\n   * Creates a Map instance in which the keys and values are computed from the [iterable].\n   */')
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
           REFERENCE_EXPRESSION
@@ -394,7 +394,7 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('fromIterable')
           PsiElement(;)(';')
-        PsiComment(DOC_COMMENT)('/**\n   * Creates a Map instance associating the given [keys] to [values].\n   */')
+        PsiComment(MULTI_LINE_DOC_COMMENT)('/**\n   * Creates a Map instance associating the given [keys] to [values].\n   */')
         FACTORY_CONSTRUCTOR_DECLARATION
           PsiElement(factory)('factory')
           REFERENCE_EXPRESSION
@@ -467,7 +467,7 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('fromIterables')
           PsiElement(;)(';')
-        PsiComment(DOC_COMMENT)('/**\n   * Returns true if this map contains the given value.\n   */')
+        PsiComment(MULTI_LINE_DOC_COMMENT)('/**\n   * Returns true if this map contains the given value.\n   */')
         METHOD_DECLARATION
           RETURN_TYPE
             TYPE
@@ -491,7 +491,7 @@ Dart File
                       PsiElement(IDENTIFIER)('value')
             PsiElement())(')')
           PsiElement(;)(';')
-        PsiComment(DOC_COMMENT)('/**\n   * Returns the value for the given [key] or null if [key] is not in the map.\n   */')
+        PsiComment(MULTI_LINE_DOC_COMMENT)('/**\n   * Returns the value for the given [key] or null if [key] is not in the map.\n   */')
         OPERATOR_DECLARATION
           RETURN_TYPE
             TYPE
@@ -516,7 +516,7 @@ Dart File
                       PsiElement(IDENTIFIER)('key')
             PsiElement())(')')
           PsiElement(;)(';')
-        PsiComment(DOC_COMMENT)('/**\n   * Associates the [key] with the given [value].\n   */')
+        PsiComment(MULTI_LINE_DOC_COMMENT)('/**\n   * Associates the [key] with the given [value].\n   */')
         OPERATOR_DECLARATION
           RETURN_TYPE
             TYPE

@@ -1,0 +1,15 @@
+Dart File
+  FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('foo')
+    FORMAL_PARAMETER_LIST
+      PsiElement(()('(')
+      PsiElement())(')')
+    FUNCTION_BODY
+      BLOCK
+        PsiElement({)('{')
+        STATEMENTS
+          <empty list>
+        PsiElement(})('}')
+  PsiComment(MULTI_LINE_COMMENT)('/*')

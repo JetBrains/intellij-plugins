@@ -1,10 +1,11 @@
-package com.jetbrains.lang.dart;
+package com.jetbrains.lang.dart.lexer;
 
 import java.util.*;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
+import static com.jetbrains.lang.dart.lexer.DartLexer.*;
 
 %%
 %{
@@ -23,21 +24,18 @@ import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
         }
     }
 
-    private final Stack<State> states = new Stack<State>();
-    private int lBraceCount;
-
-    private int commentStart;
-    private int commentDepth;
+    protected final Stack<State> myStateStack = new Stack<State>();
+    protected int myLeftBraceCount;
 
     private void pushState(int state) {
-        states.push(new State(yystate(), lBraceCount));
-        lBraceCount = 0;
+        myStateStack.push(new State(yystate(), myLeftBraceCount));
+        myLeftBraceCount = 0;
         yybegin(state);
     }
 
     private void popState() {
-        State state = states.pop();
-        lBraceCount = state.lBraceCount;
+        State state = myStateStack.pop();
+        myLeftBraceCount = state.lBraceCount;
         yybegin(state.state);
     }
 
@@ -51,10 +49,12 @@ import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 %unicode
 %function advance
 %type IElementType
-%eof{  return;
+%eof{
+  myLeftBraceCount = 0;
+  myStateStack.clear();
 %eof}
 
-%xstate QUO_STRING THREE_QUO_STRING APOS_STRING THREE_APOS_STRING SHORT_TEMPLATE_ENTRY LONG_TEMPLATE_ENTRY
+%xstate MULTI_LINE_COMMENT_STATE QUO_STRING THREE_QUO_STRING APOS_STRING THREE_APOS_STRING SHORT_TEMPLATE_ENTRY LONG_TEMPLATE_ENTRY
 
 DIGIT=[0-9]
 HEX_DIGIT=[0-9a-fA-F]
@@ -63,9 +63,11 @@ WHITE_SPACE=[ \n\t\f]+
 PROGRAM_COMMENT="#""!"[^\n]*
 SINGLE_LINE_COMMENT="/""/"[^\n]*
 SINGLE_LINE_DOC_COMMENT="/""/""/"[^\n]*
-MULTI_LINE_STYLE_COMMENT=("/*"[^"*"]{COMMENT_TAIL})|"/*"  //TODO doccomment may nest
-COMMENT_TAIL=([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
-DOC_COMMENT="/*""*"+("/"|([^"/""*"]{COMMENT_TAIL}))?  // TODO brackets
+
+MULTI_LINE_DEGENERATE_COMMENT = "/*" "*"+ "/"
+MULTI_LINE_COMMENT_START      = "/*"
+MULTI_LINE_DOC_COMMENT_START  = "/**"
+MULTI_LINE_COMMENT_END        = "*/"
 
 RAW_SINGLE_QUOTED_STRING= "r" ((\" ([^\"\n])* \"?) | ("'" ([^\'\n])* \'?))
 RAW_TRIPLE_QUOTED_STRING= "r" ({RAW_TRIPLE_QUOTED_LITERAL} | {RAW_TRIPLE_APOS_LITERAL})
@@ -95,22 +97,35 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 
 <YYINITIAL> "{"                { return LBRACE; }
 <YYINITIAL> "}"                { return RBRACE; }
-<LONG_TEMPLATE_ENTRY> "{"              { lBraceCount++; return LBRACE; }
-<LONG_TEMPLATE_ENTRY> "}"              {
-                                           if (lBraceCount == 0) {
-                                             popState();
-                                             return LONG_TEMPLATE_ENTRY_END;
-                                           }
-                                           lBraceCount--;
-                                           return RBRACE;
-                                       }
+<LONG_TEMPLATE_ENTRY> "{"      { myLeftBraceCount++; return LBRACE; }
+<LONG_TEMPLATE_ENTRY> "}"      {
+                                   if (myLeftBraceCount == 0) {
+                                     popState();
+                                     return LONG_TEMPLATE_ENTRY_END;
+                                   }
+                                   myLeftBraceCount--;
+                                   return RBRACE;
+                               }
 
-<YYINITIAL, LONG_TEMPLATE_ENTRY> {WHITE_SPACE}                  { return WHITE_SPACE; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> {MULTI_LINE_STYLE_COMMENT}     { return MULTI_LINE_COMMENT; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> {DOC_COMMENT}                  { return DOC_COMMENT; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> {SINGLE_LINE_DOC_COMMENT}      { return DOC_COMMENT; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> {SINGLE_LINE_COMMENT}          { return SINGLE_LINE_COMMENT; }
-<YYINITIAL>                      {PROGRAM_COMMENT}              { return SINGLE_LINE_COMMENT; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> {WHITE_SPACE}                   { return WHITE_SPACE;             }
+
+// single-line comments
+<YYINITIAL, LONG_TEMPLATE_ENTRY> {SINGLE_LINE_DOC_COMMENT}       { return SINGLE_LINE_DOC_COMMENT; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> {SINGLE_LINE_COMMENT}           { return SINGLE_LINE_COMMENT;     }
+<YYINITIAL>                      {PROGRAM_COMMENT}               { return SINGLE_LINE_COMMENT;     }
+
+// multi-line comments
+<YYINITIAL, LONG_TEMPLATE_ENTRY> {MULTI_LINE_DEGENERATE_COMMENT} { return MULTI_LINE_COMMENT;      } // without this rule /*****/ is parsed as doc comment and /**/ is parsed as not closed doc comment
+
+// next rules return temporary IElementType's that are rplaced with DartTokenTypesSets#MULTI_LINE_COMMENT or DartTokenTypesSets#MULTI_LINE_DOC_COMMENT in com.jetbrains.lang.dart.lexer.DartLexer
+<YYINITIAL, LONG_TEMPLATE_ENTRY> {MULTI_LINE_DOC_COMMENT_START}  { pushState(MULTI_LINE_COMMENT_STATE); return MULTI_LINE_DOC_COMMENT_START;                                                             }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> {MULTI_LINE_COMMENT_START}      { pushState(MULTI_LINE_COMMENT_STATE); return MULTI_LINE_COMMENT_START;                                                                 }
+
+<MULTI_LINE_COMMENT_STATE>       {MULTI_LINE_COMMENT_START}      { pushState(MULTI_LINE_COMMENT_STATE); return MULTI_LINE_COMMENT_BODY;                                                                  }
+<MULTI_LINE_COMMENT_STATE>       [^]                             {                                      return MULTI_LINE_COMMENT_BODY;                                                                  }
+<MULTI_LINE_COMMENT_STATE>       {MULTI_LINE_COMMENT_END}        { popState();                          return yystate() == MULTI_LINE_COMMENT_STATE
+                                                                                                               ? MULTI_LINE_COMMENT_BODY // inner comment closed
+                                                                                                               : MULTI_LINE_COMMENT_END; }
 
 // reserved words
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "assert"               { return ASSERT; }
