@@ -296,7 +296,8 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
 
     Set<JSClass> visited = new HashSet<JSClass>();
     for (String className : myClassNames) {
-      Collection<JSQualifiedNamedElement> candidates = stubIndex.get(JSQualifiedElementIndex.KEY, className.hashCode(), project, scope);
+      Collection<JSQualifiedNamedElement> candidates = stubIndex.getElements(JSQualifiedElementIndex.KEY, className.hashCode(), project,
+                                                                             scope, JSQualifiedNamedElement.class);
       findStyleAttributes(candidates, visited, navElement2pairInfo);
       // search in MXML files
       PsiElement jsClass = ActionScriptClassResolver.findClassByQNameStatic(className, scope);

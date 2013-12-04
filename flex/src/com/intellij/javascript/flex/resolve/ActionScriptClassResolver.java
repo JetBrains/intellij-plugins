@@ -93,8 +93,9 @@ public class ActionScriptClassResolver extends JSClassResolver {
       // object from swf do not contain necessary members!
       searchScope = new AdditionalIndexedRootsScope(searchScope, JSIndexedRootProvider.class);
     }
-    final Collection<JSQualifiedNamedElement> candidates = StubIndex.getInstance().get(JSQualifiedElementIndex.KEY, link.hashCode(),
-                                                                                       project, searchScope);
+    final Collection<JSQualifiedNamedElement> candidates = StubIndex.getElements(JSQualifiedElementIndex.KEY, link.hashCode(),
+                                                                                 project, searchScope,
+                                                                                 JSQualifiedNamedElement.class);
     ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     JSQualifiedNamedElement resultFromSourceContent = null;
     JSQualifiedNamedElement resultFromLibraries = null;

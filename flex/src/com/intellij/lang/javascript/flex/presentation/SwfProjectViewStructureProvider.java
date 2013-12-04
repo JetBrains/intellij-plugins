@@ -119,7 +119,8 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
 
     GlobalSearchScope searchScope = JSResolveUtil.getResolveScope(mainElement);
     Collection<JSQualifiedNamedElement> candidates =
-      StubIndex.getInstance().get(JSQualifiedElementIndex.KEY, qName.hashCode(), mainElement.getProject(), searchScope);
+      StubIndex.getElements(JSQualifiedElementIndex.KEY, qName.hashCode(), mainElement.getProject(), searchScope,
+                            JSQualifiedNamedElement.class);
     List<OrderEntry> sourceFileEntries = projectFileIndex.getOrderEntriesForFile(elementVFile);
 
     for (JSQualifiedNamedElement candidate : candidates) {

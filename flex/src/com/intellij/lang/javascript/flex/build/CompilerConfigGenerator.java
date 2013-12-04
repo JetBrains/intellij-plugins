@@ -851,7 +851,8 @@ public class CompilerConfigGenerator {
                // we include file in compilation if it has (or intended to have) some public declaration (class, namespace, function) which is equivalent to having JSPackageStatement declaration.
                // But first we try to find it in JSQualifiedElementIndex because it is faster.
                final Collection<JSQualifiedNamedElement> elements = StubIndex.getInstance()
-                 .get(JSQualifiedElementIndex.KEY, qName.hashCode(), module.getProject(), GlobalSearchScope.moduleScope(module));
+                 .getElements(JSQualifiedElementIndex.KEY, qName.hashCode(), module.getProject(), GlobalSearchScope.moduleScope(module),
+                              JSQualifiedNamedElement.class);
                if (elements.isEmpty()) {
                  // If SomeClass.as contains IncorrectClass definition - we want to include this class into compilation so that compilation fails.
                  final PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(file);
