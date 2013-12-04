@@ -1,10 +1,7 @@
 package org.angularjs.index;
 
 import com.intellij.lang.javascript.documentation.JSDocumentationProcessor;
-import com.intellij.lang.javascript.index.AngularControllerIndex;
-import com.intellij.lang.javascript.index.AngularDirectivesIndex;
-import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
-import com.intellij.lang.javascript.index.JSSymbolVisitor;
+import com.intellij.lang.javascript.index.*;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
@@ -14,11 +11,23 @@ import com.intellij.psi.PsiComment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author Dennis.Ushakov
  */
 public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
+  public static final String MARKER = "!!!";
+  public static Set<String> INTERESTING_METHODS = new HashSet<String>();
+  public static final String CONTROLLER = "controller";
   public static final String DIRECTIVE = "directive";
+
+  static {
+    Collections.addAll(INTERESTING_METHODS, CONTROLLER, DIRECTIVE, "filter", "service",
+                       "factory", "module", "value", "constant", "provider");
+  }
 
   @Override
   public void processCallExpression(JSCallExpression callExpression, JSSymbolVisitor visitor) {
@@ -27,22 +36,34 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
     if (qualifier == null) return;
 
-    if (DIRECTIVE.equals(callee.getReferencedName())) {
+    final String command = callee.getReferencedName();
+    if (DIRECTIVE.equals(command)) {
       JSExpression[] arguments = callExpression.getArguments();
       if (arguments.length > 0) {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-          visitor.storeAdditionalData(AngularDirectivesIndex.INDEX_ID.toString(),
-                                      getAttributeName(argument.getText()), argument.getTextOffset());
+          final String attributeName = getAttributeName(argument.getText());
+          visitor.storeAdditionalData(argument, AngularDirectivesIndex.INDEX_ID.toString(), attributeName, argument.getTextOffset());
+          visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), attributeName, argument.getTextOffset());
         }
       }
-    } else if ("controller".equals(callee.getReferencedName())) {
+    } else if (CONTROLLER.equals(command)) {
       JSExpression[] arguments = callExpression.getArguments();
       if (arguments.length > 0) {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-          visitor.storeAdditionalData(AngularControllerIndex.INDEX_ID.toString(),
+          visitor.storeAdditionalData(argument, AngularControllerIndex.INDEX_ID.toString(),
                                       StringUtil.unquoteString(argument.getText()), argument.getTextOffset());
+        }
+      }
+    }
+    if (INTERESTING_METHODS.contains(command)) {
+      JSExpression[] arguments = callExpression.getArguments();
+      if (arguments.length > 0) {
+        JSExpression argument = arguments[0];
+        if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
+          visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), StringUtil.unquoteString(argument.getText()),
+                                      argument.getTextOffset());
         }
       }
     }
@@ -60,8 +81,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (type == JSDocumentationProcessor.MetaDocType.NAME &&
         matchName != null && matchName.contains(DIRECTIVE) && hasDirectiveName(remainingLineContent)) {
       assert remainingLineContent != null;
-      visitor.storeAdditionalData(AngularDirectivesIndex.INDEX_ID.toString(), getAttributeName(remainingLineContent.substring(1)),
-                                  comment.getTextOffset() + comment.getText().indexOf(matchName));
+      final int offset = comment.getTextOffset() + comment.getText().indexOf(matchName);
+      final String attributeName = getAttributeName(remainingLineContent.substring(1));
+      visitor.storeAdditionalData(comment, AngularDirectivesIndex.INDEX_ID.toString(), attributeName, offset);
+      visitor.storeAdditionalData(comment, AngularSymbolIndex.INDEX_ID.toString(), attributeName, offset);
     }
   }
 

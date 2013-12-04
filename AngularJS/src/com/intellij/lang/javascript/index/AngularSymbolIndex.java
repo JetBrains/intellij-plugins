@@ -6,8 +6,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularDirectivesIndex extends AngularIndexBase {
-  public static final ID<String, Void> INDEX_ID = ID.create("angularjs.directives.index");
+public class AngularSymbolIndex extends AngularIndexBase {
+  public static final ID<String, Void> INDEX_ID = ID.create("angularjs.symbol.index");
 
   @NotNull
   @Override

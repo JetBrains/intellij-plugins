@@ -40,18 +40,6 @@
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
 
-  <actions>
-    <action id="GotoAngularAction"
-            class="org.angularjs.GotoAngularAction"
-            text="Go to Angular"
-            description="Navigate to Angular code">
-      <keyboard-shortcut keymap="$default"
-                         first-keystroke="ctrl l"/>
-      <keyboard-shortcut keymap="Mac OS X" first-keystroke="ctrl l"/>
-      <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="ctrl l"/>
-    </action>
-  </actions>
-
   <extensions defaultExtensionNs="com.intellij">
     <xml.attributeDescriptorsProvider implementation="org.angularjs.codeInsight.AngularJSAttributeDescriptorsProvider"/>
 
@@ -68,8 +56,11 @@
 
     <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularDirectivesIndex"/>
     <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularControllerIndex"/>
+    <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularSymbolIndex"/>
 
     <psi.referenceContributor implementation="org.angularjs.codeInsight.AngularReferenceContributor"/>
+
+    <gotoSymbolContributor implementation="org.angularjs.navigation.AngularGotoSymbolContributor"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
