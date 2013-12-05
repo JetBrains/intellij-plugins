@@ -322,6 +322,13 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     dataObject.myUpdateQueue.flush();
   }
 
+  public List<AbstractStepDefinition> getAllStepDefinitions(Project project) {
+    final DataObject dataObject = (DataObject)CucumberStepsIndex.getInstance(project).getExtensionDataObject(this);
+    synchronized (dataObject.myStepDefinitions) {
+      return new ArrayList<AbstractStepDefinition>(dataObject.myStepDefinitions);
+    }
+  }
+
   public static class DataObject {
     final List<AbstractStepDefinition> myStepDefinitions = new ArrayList<AbstractStepDefinition>();
 
