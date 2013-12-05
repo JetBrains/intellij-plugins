@@ -46,10 +46,7 @@
     <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
 
     <typedHandler implementation="org.angularjs.editor.AngularBracesInterpolationTypedHandler"/>
-    <intentionAction>
-      <className>org.angularjs.intentions.OpenAngularJSDocsIntention</className>
-      <category>HTML</category>
-    </intentionAction>
+
     <applicationService serviceInterface="org.angularjs.settings.AngularJSConfig"
                         serviceImplementation="org.angularjs.settings.AngularJSConfig"/>
     <editorSmartKeysConfigurable instance="org.angularjs.settings.AngularJSConfigurationPage"/>
@@ -60,6 +57,7 @@
     <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularSymbolIndex"/>
 
     <gotoSymbolContributor implementation="org.angularjs.navigation.AngularGotoSymbolContributor"/>
+    <lang.documentationProvider language="JavaScript" implementationClass="org.angularjs.AngularJSDocumentationProvider" />
 
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector"/>
   </extensions>
