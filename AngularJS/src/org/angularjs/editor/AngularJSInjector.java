@@ -8,8 +8,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl;
 import com.intellij.psi.impl.source.xml.XmlTextImpl;
-import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlText;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -41,6 +39,6 @@ public class AngularJSInjector implements MultiHostInjector {
   @NotNull
   @Override
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
-    return Arrays.asList(XmlText.class, XmlAttributeValue.class);
+    return Arrays.asList(XmlTextImpl.class, XmlAttributeValueImpl.class);
   }
 }
