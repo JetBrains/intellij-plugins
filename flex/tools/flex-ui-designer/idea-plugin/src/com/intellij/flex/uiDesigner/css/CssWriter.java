@@ -22,7 +22,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.css.*;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.CssTermTypes;
-import com.intellij.psi.css.impl.util.CssUtil;
+import com.intellij.psi.css.impl.util.CssPsiColorUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlToken;
@@ -291,7 +291,7 @@ public class CssWriter {
   }
 
   private void writeColor(PsiElement value) {
-    Color color = CssUtil.getColor(value);
+    Color color = CssPsiColorUtil.getColor(value);
     assert color != null;
     propertyOut.writeAmfUInt(color.getRGB());
   }

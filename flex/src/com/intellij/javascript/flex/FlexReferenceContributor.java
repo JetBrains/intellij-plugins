@@ -39,7 +39,7 @@ import com.intellij.patterns.StandardPatterns;
 import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.css.*;
-import com.intellij.psi.css.util.CssConstants;
+import com.intellij.psi.css.impl.util.CssReferenceProviderUtil;
 import com.intellij.psi.filters.*;
 import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.psi.filters.position.NamespaceFilter;
@@ -292,7 +292,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       }
     });
 
-    final PsiReferenceProvider cssReferenceProvider = CssConstants.CSS_CLASS_OR_ID_KEY_PROVIDER.getProvider();
+    final PsiReferenceProvider cssReferenceProvider = CssReferenceProviderUtil.CSS_CLASS_OR_ID_KEY_PROVIDER.getProvider();
 
     registrar.registerReferenceProvider(
       XmlPatterns.xmlAttributeValue().withLocalName(StandardPatterns.or(StandardPatterns.string().endsWith(STYLE_NAME_ATTR_SUFFIX),

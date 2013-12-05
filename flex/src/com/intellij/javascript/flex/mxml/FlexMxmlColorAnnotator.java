@@ -13,19 +13,18 @@ import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.css.impl.util.CssColorUtil;
+import com.intellij.psi.css.impl.util.CssPsiColorUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.ui.ColorChooser;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.util.ColorIconCache;
-import com.intellij.xml.util.ColorSampleLookupValue;
+import com.intellij.xml.util.ColorMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,8 +98,8 @@ public class FlexMxmlColorAnnotator implements Annotator {
       return "#" + colorValue.substring(2);
     }
     colorValue = colorValue.toLowerCase();
-    if (ColorSampleLookupValue.isStandardColor(colorValue)) {
-      String hex = ColorSampleLookupValue.getHexCodeForColorName(colorValue);
+    if (ColorMap.isStandardColor(colorValue)) {
+      String hex = ColorMap.getHexCodeForColorName(colorValue);
       if (hex != null) {
         return toCannonicalHex(hex, cssStyle);
       }
@@ -172,7 +171,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
               final PsiFile psiFile = myAttribute.getContainingFile();
               if (!FileModificationService.getInstance().prepareFileForWrite(psiFile)) return;
 
-              final String hex = CssColorUtil.toHexColor(color);
+              final String hex = CssPsiColorUtil.toHexColor(color);
               final String mxmlStyleHex = toCannonicalHex(hex, false);
               ApplicationManager.getApplication().runWriteAction(new Runnable() {
                 @Override

@@ -2,7 +2,7 @@ package com.intellij.javascript.flex.css;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.impl.util.table.CssColorValue;
-import com.intellij.xml.util.ColorSampleLookupValue;
+import com.intellij.xml.util.ColorMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,13 +50,13 @@ public class FlexCssColorValue extends CssColorValue {
           return isInteger(text.substring(2));
         }
         else if (containsOnlyLetters(text)) {
-          return ColorSampleLookupValue.isStandardColor(text.toLowerCase());
+          return ColorMap.isStandardColor(text.toLowerCase());
         }
       }
       return false;
     }
     if (containsOnlyLetters(text)) {
-      return ColorSampleLookupValue.isStandardColor(text.toLowerCase());
+      return ColorMap.isStandardColor(text.toLowerCase());
     }
     return true;
   }

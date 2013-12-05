@@ -9,7 +9,7 @@ import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.psi.xml.XmlElement;
-import com.intellij.xml.util.ColorSampleLookupValue;
+import com.intellij.xml.util.ColorMap;
 import org.jetbrains.annotations.Nullable;
 
 public class PrimitiveWriter {
@@ -55,7 +55,7 @@ public class PrimitiveWriter {
     }
     else {
       final String colorName = value.toLowerCase();
-      String hexCodeForColorName = ColorSampleLookupValue.getHexCodeForColorName(colorName);
+      String hexCodeForColorName = ColorMap.getHexCodeForColorName(colorName);
       if (hexCodeForColorName == null) {
         try {
           long v = Long.parseLong(colorName);
