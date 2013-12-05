@@ -17,16 +17,16 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.parser;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
+import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
+
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
-import com.intellij.lang.LighterASTNode;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class OgnlParser implements PsiParser {
@@ -213,8 +213,8 @@ public class OgnlParser implements PsiParser {
 
   /* ********************************************************** */
   // COLON expression
-  static boolean conditinoalExpressionTail(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "conditinoalExpressionTail")) return false;
+  static boolean conditionalExpressionTail(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "conditionalExpressionTail")) return false;
     if (!nextTokenIs(builder_, COLON)) return false;
     boolean result_ = false;
     boolean pinned_ = false;
@@ -551,7 +551,7 @@ public class OgnlParser implements PsiParser {
       Marker marker_ = builder_.mark();
       if (priority_ < 3 && consumeToken(builder_, QUESTION)) {
         result_ = report_error_(builder_, expression(builder_, level_, 3));
-        result_ = conditinoalExpressionTail(builder_, level_ + 1) && result_;
+        result_ = conditionalExpressionTail(builder_, level_ + 1) && result_;
         marker_.drop();
         left_marker_.precede().done(CONDITIONAL_EXPRESSION);
       }
