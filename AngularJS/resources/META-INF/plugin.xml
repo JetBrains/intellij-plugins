@@ -59,7 +59,7 @@
     <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularModuleIndex"/>
     <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularSymbolIndex"/>
 
-    <psi.referenceContributor implementation="org.angularjs.codeInsight.AngularReferenceContributor"/>
+    <!--<psi.referenceContributor implementation="org.angularjs.codeInsight.AngularReferenceContributor"/>-->
 
     <gotoSymbolContributor implementation="org.angularjs.navigation.AngularGotoSymbolContributor"/>
 
