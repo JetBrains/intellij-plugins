@@ -1,4 +1,5 @@
 Dart File
+  PsiComment(SINGLE_LINE_COMMENT)('#! program comment')
   LIBRARY_STATEMENT
     PsiElement(library)('library')
     QUALIFIED_COMPONENT_NAME
@@ -6,9 +7,50 @@ Dart File
         PsiElement(IDENTIFIER)('test')
     PsiElement(;)(';')
   PsiComment(SINGLE_LINE_COMMENT)('// line comment')
-  PsiComment(DOC_COMMENT)('/// line doc comment')
-  PsiComment(MULTI_LINE_COMMENT)('/*\n    multi line comment\n */')
-  PsiComment(DOC_COMMENT)('/**\n*\n*/')
+  PsiComment(SINGLE_LINE_DOC_COMMENT)('/// line doc comment')
+  PsiComment(MULTI_LINE_COMMENT)('/**/')
+  PsiComment(MULTI_LINE_COMMENT)('/***/')
+  PsiComment(MULTI_LINE_COMMENT)('/***************/')
+  PsiComment(MULTI_LINE_DOC_COMMENT)('/******\n********/')
+  PsiComment(MULTI_LINE_COMMENT)('/* * / * / * * * / / / ** // ** // ** ** ** // // // */')
+  PsiComment(MULTI_LINE_DOC_COMMENT)('/**\n * doc\n */')
+  PsiComment(MULTI_LINE_COMMENT)('/*\n comment\n*/')
+  PsiComment(MULTI_LINE_COMMENT)('/*//////*/\n*/*/')
+  PsiComment(MULTI_LINE_COMMENT)('/*/**//******//*/*\n*/****/*/')
+  PsiComment(MULTI_LINE_DOC_COMMENT)('/**  /*   */*  */')
+  PsiComment(MULTI_LINE_COMMENT)('/*\n/*/ * /*/ * * * / / / * / * /////*/\n*/*/****////\n*/')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"')
+        LONG_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          MAP_LITERAL_EXPRESSION
+            PsiElement({)('{')
+            PsiComment(SINGLE_LINE_COMMENT)('// line comment')
+            PsiComment(SINGLE_LINE_DOC_COMMENT)('/// line doc comment')
+            PsiComment(MULTI_LINE_COMMENT)('/**/')
+            PsiComment(MULTI_LINE_COMMENT)('/***/')
+            PsiComment(MULTI_LINE_COMMENT)('/***************/')
+            PsiComment(MULTI_LINE_DOC_COMMENT)('/******\n********/')
+            PsiComment(MULTI_LINE_COMMENT)('/* * / * / * * * / / / ** // ** // ** ** ** // // // */')
+            PsiComment(MULTI_LINE_DOC_COMMENT)('/**\n * doc\n */')
+            PsiComment(MULTI_LINE_COMMENT)('/*\n comment\n*/')
+            PsiComment(MULTI_LINE_COMMENT)('/*//////*/\n*/*/')
+            PsiElement(})('}')
+          PsiComment(MULTI_LINE_COMMENT)('/*/**//******//*/*\n*/****/*/')
+          PsiComment(MULTI_LINE_DOC_COMMENT)('/**  /*   */*  */')
+          PsiComment(MULTI_LINE_COMMENT)('/*\n/*/ * /*/ * * * / / / * / * /////*/\n*/*/****////\n*/')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        PsiElement(REGULAR_STRING_PART)('}}')
+        PsiElement(CLOSING_QUOTE)('"')
+  PsiElement(;)(';')
   CLASS_DEFINITION
     PsiElement(class)('class')
     COMPONENT_NAME

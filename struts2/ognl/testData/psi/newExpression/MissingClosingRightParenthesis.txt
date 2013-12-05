@@ -6,7 +6,8 @@ OgnlFile:MissingClosingRightParenthesis.ognl
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('Integer')
     PsiElement(()('(')
-    PsiElement(INTEGER_LITERAL)('1')
+    LITERAL_EXPRESSION
+      PsiElement(INTEGER_LITERAL)('1')
     PsiErrorElement:')', ',', <operator> or '?' expected, got '}'
       <empty list>
   PsiElement(EXPRESSION_END)('}')

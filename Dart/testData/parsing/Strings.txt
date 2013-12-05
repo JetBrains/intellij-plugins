@@ -40,7 +40,7 @@ Dart File
         PsiElement(REGULAR_STRING_PART)('not closed')
         PsiErrorElement:CLOSING_QUOTE, LONG_TEMPLATE_ENTRY_START, REGULAR_STRING_PART or SHORT_TEMPLATE_ENTRY_START expected, got '\'
           <empty list>
-      PsiElement(BAD_CHARACTER)('\')
+        PsiElement(BAD_CHARACTER)('\')
   VAR_DECLARATION_LIST
     VAR_ACCESS_DECLARATION
       PsiElement(var)('var')
@@ -54,7 +54,7 @@ Dart File
         PsiElement(REGULAR_STRING_PART)('not closed')
         PsiErrorElement:CLOSING_QUOTE, LONG_TEMPLATE_ENTRY_START, REGULAR_STRING_PART or SHORT_TEMPLATE_ENTRY_START expected, got '\'
           <empty list>
-      PsiElement(BAD_CHARACTER)('\')
+        PsiElement(BAD_CHARACTER)('\')
   VAR_DECLARATION_LIST
     VAR_ACCESS_DECLARATION
       PsiElement(var)('var')

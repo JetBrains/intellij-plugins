@@ -10,23 +10,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.jetbrains.lang.dart.lexer.DartLexer;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.psi.impl.DartEmbeddedContentImpl;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Maxim.Mossienko
- * Date: 10/13/11
- * Time: 2:08 PM
- */
 public class DartParserDefinition implements ParserDefinition {
-  private static final IFileElementType FILE = new IFileElementType(DartLanguage.INSTANCE);
 
   @NotNull
   @Override
   public Lexer createLexer(Project project) {
-    return new DartFlexLexer();
+    return new DartLexer();
   }
 
   @Override

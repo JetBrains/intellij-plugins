@@ -226,17 +226,17 @@ unaryExpression ::= unaryOperator expression {
   ]
 }
 
-conditionalExpression ::= expression QUESTION expression COLON expression {
+conditionalExpression ::= expression QUESTION expression conditinoalExpressionTail {
   methods=[
     condition="expression[0]"
     then="expression[1]"
     else="expression[2]"
   ]
-  pin=2
 }
+private conditinoalExpressionTail ::= COLON expression {pin=1}
 
-private arrayConstructorExpression ::= '[' expression? ']' sequenceExpression?
-private constructorExpression ::= '(' methodCallParameters ')'
+private arrayConstructorExpression ::= '[' expression? ']' sequenceExpression? {pin=1}
+private constructorExpression ::= '(' methodCallParameters ')' {pin=1}
 newExpression ::= NEW_KEYWORD referenceExpression (arrayConstructorExpression | constructorExpression) {
   pin(".*")=1
 }

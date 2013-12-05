@@ -19,8 +19,9 @@ public interface DartTokenTypesSets {
   IElementType BAD_CHARACTER = TokenType.BAD_CHARACTER;
 
   IElementType SINGLE_LINE_COMMENT = new DartElementType("SINGLE_LINE_COMMENT");
+  IElementType SINGLE_LINE_DOC_COMMENT = new DartElementType("SINGLE_LINE_DOC_COMMENT");
   IElementType MULTI_LINE_COMMENT = new DartElementType("MULTI_LINE_COMMENT");
-  IElementType DOC_COMMENT = new DartElementType("DOC_COMMENT");
+  IElementType MULTI_LINE_DOC_COMMENT = new DartElementType("MULTI_LINE_DOC_COMMENT");
 
   TokenSet STRINGS = TokenSet.create(RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING, OPEN_QUOTE, CLOSING_QUOTE, REGULAR_STRING_PART);
   TokenSet WHITE_SPACES = TokenSet.create(WHITE_SPACE);
@@ -121,9 +122,7 @@ public interface DartTokenTypesSets {
     SETTER_DECLARATION
   );
 
-  TokenSet COMMENTS = TokenSet.create(
-    SINGLE_LINE_COMMENT, MULTI_LINE_COMMENT, DOC_COMMENT
-  );
+  TokenSet COMMENTS = TokenSet.create(SINGLE_LINE_COMMENT, SINGLE_LINE_DOC_COMMENT, MULTI_LINE_COMMENT, MULTI_LINE_DOC_COMMENT);
 
   IElementType EMBEDDED_CONTENT = new DartEmbeddedContentElementType();
 

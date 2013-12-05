@@ -85,14 +85,16 @@ public abstract class CfmlIndex implements Disposable {
   @NotNull
   public Collection<CfmlComponent> getComponentsByNameInScope(@Nullable final String name, GlobalSearchScope scope) {
     if (name == null) return Collections.emptyList();
-    Collection<CfmlComponent> cfmlComponents = StubIndex.getInstance().get(CfmlComponentIndex.KEY, name.toLowerCase(), project, scope);
+    Collection<CfmlComponent> cfmlComponents = StubIndex.getElements(CfmlComponentIndex.KEY, name.toLowerCase(), project, scope,
+                                                                     CfmlComponent.class);
     return workaroundIndexBug(cfmlComponents, CfmlComponent.class, CfmlComponentIndex.KEY);
   }
 
   @NotNull
   public Collection<CfmlComponent> getInterfacesByNameInScope(@Nullable final String name, GlobalSearchScope scope) {
     if (name == null) return Collections.emptyList();
-    Collection<CfmlComponent> cfmlComponents = StubIndex.getInstance().get(CfmlInterfaceIndex.KEY, name.toLowerCase(), project, scope);
+    Collection<CfmlComponent> cfmlComponents = StubIndex.getElements(CfmlInterfaceIndex.KEY, name.toLowerCase(), project, scope,
+                                                                     CfmlComponent.class);
     return workaroundIndexBug(cfmlComponents, CfmlComponent.class, CfmlInterfaceIndex.KEY);
   }
 

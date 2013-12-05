@@ -23,7 +23,9 @@ public class GherkinBrokenTableInspection extends GherkinInspection {
       public void visitScenarioOutline(GherkinScenarioOutline outline) {
         final List<GherkinExamplesBlock> examples = outline.getExamplesBlocks();
         for (GherkinExamplesBlock block : examples) {
-          checkTable(block.getTable(), holder);
+          if (block.getTable() != null) {
+            checkTable(block.getTable(), holder);
+          }
         }
       }
 
