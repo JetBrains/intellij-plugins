@@ -226,14 +226,14 @@ unaryExpression ::= unaryOperator expression {
   ]
 }
 
-conditionalExpression ::= expression QUESTION expression conditinoalExpressionTail {
+conditionalExpression ::= expression QUESTION expression conditionalExpressionTail {
   methods=[
     condition="expression[0]"
     then="expression[1]"
     else="expression[2]"
   ]
 }
-private conditinoalExpressionTail ::= COLON expression {pin=1}
+private conditionalExpressionTail ::= COLON expression {pin=1}
 
 private arrayConstructorExpression ::= '[' expression? ']' sequenceExpression? {pin=1}
 private constructorExpression ::= '(' methodCallParameters ')' {pin=1}
