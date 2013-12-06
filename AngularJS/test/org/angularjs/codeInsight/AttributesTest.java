@@ -51,7 +51,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testControllerCompletion() {
-    myFixture.testCompletion("controller.html", "controller.after.html", "custom.js");
+    myFixture.testCompletion("controller.html", "controller.after.html", "custom.js", "angular.js");
   }
 
   public void testControllerResolve() {
