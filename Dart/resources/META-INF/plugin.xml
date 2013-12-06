@@ -146,6 +146,7 @@
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer"/>
 
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugRunner"/>
+    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunner"/>
 
     <!--unit test-->
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationType"/>
