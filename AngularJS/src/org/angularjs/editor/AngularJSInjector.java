@@ -4,6 +4,7 @@ import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl;
@@ -19,6 +20,8 @@ import java.util.List;
 public class AngularJSInjector implements MultiHostInjector {
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
+    // inject only in non-template languages, because otherwise we can get conflict with other templating mechanisms (e.g. Handlebars)
+    if (context.getContainingFile().getViewProvider() instanceof MultiplePsiFilesPerDocumentFileViewProvider) return;
     if (context instanceof XmlTextImpl || context instanceof XmlAttributeValueImpl) {
       final String text = context.getText();
       int startIndex;
