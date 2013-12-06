@@ -66,38 +66,20 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
         addType(type, methodExpr);
       }
       else {
-        String text = methodExpr.getText();
-        JSResolveUtil.GenericSignature signature = JSResolveUtil.extractGenericSignature(text);
-        if (signature != null) {
-          text = signature.elementType;
-        }
-        if (methodExpr instanceof JSReferenceExpression && ((JSReferenceExpression)methodExpr).resolve() instanceof JSVariable) {
-          text = "*";
-        } else {
-          BaseJSSymbolProcessor.SimpleTypeProcessor subProcessor = new BaseJSSymbolProcessor.SimpleTypeProcessor();
-          JSTypeEvaluator.evaluateTypes(methodExpr, myContext.targetFile, subProcessor);
-
-          JSType type = subProcessor.getType();
-          if (type != null && !(type instanceof JSAnyType) && JSTypeUtils.hasFunctionType(type)) {
-            type = JSAnyType.get(methodExpr, false);
-            text = "*";
+        JSType type = JSAnyType.get(methodExpr, false);
+        if (methodExpr instanceof JSReferenceExpression) {
+          PsiElement resolve = ((JSReferenceExpression)methodExpr).resolve();
+          if (resolve instanceof JSFunction && ((JSFunction)resolve).isConstructor() && resolve.getParent() instanceof JSClass) {
+            resolve = resolve.getParent();
           }
-
-          if (type != null && (!(type instanceof JSAnyType) || isNotValidType(text))) {
-            text = "Class".equals(type.getTypeText())? "*": type.getTypeText();
-          }
-
-          if(!"*".equals(text)) {
-            text = JSImportHandlingUtil.resolveTypeName(text, methodExpr);
+          if (resolve instanceof JSClass || resolve == null) {
+            JSType typeFromText = JSTypeUtils.createType(methodExpr.getText(), JSTypeSourceFactory.createTypeSource(methodExpr, false));
+            if (typeFromText != null) type = typeFromText;
           }
         }
-        addType(JSTypeUtils.createType(text, JSTypeSourceFactory.createTypeSource(methodExpr, false)), methodExpr);
+        addType(type, methodExpr);
       }
     }
-  }
-
-  private static boolean isNotValidType(String text) {
-    return text.indexOf('[') != -1 || text.indexOf('(') != -1 || text.indexOf('{') != -1;
   }
 
   @Override
