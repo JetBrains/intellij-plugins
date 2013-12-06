@@ -174,10 +174,6 @@
   </extensions>
 
   <actions>
-    <action class="com.jetbrains.lang.dart.ide.actions.ShowDartSettingsAction"
-            id="ShowDartSettingsAction" text="Dart Settings">
-      <add-to-group group-id="MainToolBarSettings" anchor="last"/>
-    </action>
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
             text="Dart File" description="Create new Dart file/class/interface">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
