@@ -28,7 +28,6 @@ module.exports = function(config) {
   else {
     IntellijCoverageReporter.reportCoverageStartupStatus(false);
   }
-  console.log("Reporters:" + filteredReporters);
   config.reporters = filteredReporters;
 
   var plugins = config.plugins || [];
