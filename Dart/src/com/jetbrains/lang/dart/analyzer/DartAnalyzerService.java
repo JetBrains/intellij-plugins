@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.*;
+import com.intellij.reference.SoftReference;
 import com.intellij.util.Function;
 import com.jetbrains.lang.dart.DartFileType;
 import gnu.trove.THashMap;
@@ -97,7 +98,7 @@ public class DartAnalyzerService {
   public AnalysisContext getAnalysisContext(final @NotNull VirtualFile annotatedFile,
                                             final @NotNull String sdkPath,
                                             final @Nullable VirtualFile packagesFolder) {
-    AnalysisContext analysisContext = myAnalysisContextRef == null ? null : myAnalysisContextRef.get();
+    AnalysisContext analysisContext = SoftReference.dereference(myAnalysisContextRef);
 
     if (analysisContext != null && Comparing.equal(sdkPath, mySdkPath) && Comparing.equal(packagesFolder, myDartPackagesFolder)) {
       applyChangeSet(analysisContext, annotatedFile);

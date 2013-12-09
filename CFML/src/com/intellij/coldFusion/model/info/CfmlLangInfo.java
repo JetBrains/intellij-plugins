@@ -83,15 +83,12 @@ public class CfmlLangInfo {
 
   private CfmlLangDictionary getProjectDictionary() {
     String languageLevel = getLanguageLevel();
-    Reference<CfmlLangDictionary> ref;
     CfmlLangDictionary dictionary;
     if (languageLevel.equals(CfmlLanguage.CF8)) {
-      ref = myCF8Dictionary;
-      dictionary = ref == null ? null : ref.get();
+      dictionary = SoftReference.dereference(myCF8Dictionary);
       if (dictionary == null) {
         synchronized (CfmlLangInfo.class) {
-          ref = myCF8Dictionary;
-          dictionary = ref == null ? null : ref.get();
+          dictionary = SoftReference.dereference(myCF8Dictionary);
           if (dictionary == null) {
             dictionary = new CfmlLangDictionary("scopes.txt", "cf8_tags.xml");
             myCF8Dictionary = new SoftReference<CfmlLangDictionary>(dictionary);
@@ -100,12 +97,10 @@ public class CfmlLangInfo {
       }
     }
     else if (languageLevel.equals(CfmlLanguage.RAILO)) {
-      ref = myRailoDictionary;
-      dictionary = ref == null ? null : ref.get();
+      dictionary = SoftReference.dereference(myRailoDictionary);
       if (dictionary == null) {
         synchronized (CfmlLangInfo.class) {
-          ref = myRailoDictionary;
-          dictionary = ref == null ? null : ref.get();
+          dictionary = SoftReference.dereference(myRailoDictionary);
           if (dictionary == null) {
             dictionary = new CfmlLangDictionary("scopes.txt", "Railo_tags.xml");
             myRailoDictionary = new SoftReference<CfmlLangDictionary>(dictionary);
@@ -114,12 +109,10 @@ public class CfmlLangInfo {
       }
     }
     else /*if (languageLevel.equals(CfmlLanguage.CF9))*/ {
-      ref = myCF9Dictionary;
-      dictionary = ref == null ? null : ref.get();
+      dictionary = SoftReference.dereference(myCF9Dictionary);
       if (dictionary == null) {
         synchronized (CfmlLangInfo.class) {
-          ref = myCF9Dictionary;
-          dictionary = ref == null ? null : ref.get();
+          dictionary = SoftReference.dereference(myCF9Dictionary);
           if (dictionary == null) {
             dictionary = new CfmlLangDictionary("scopes.txt", "tags.xml");
             myCF9Dictionary = new SoftReference<CfmlLangDictionary>(dictionary);

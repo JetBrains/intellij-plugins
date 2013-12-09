@@ -22,8 +22,7 @@ public class HbBundle {
   }
 
   private static ResourceBundle getBundle() {
-    ResourceBundle bundle = null;
-    if (ourBundle != null) bundle = ourBundle.get();
+    ResourceBundle bundle = com.intellij.reference.SoftReference.dereference(ourBundle);
     if (bundle == null) {
       bundle = ResourceBundle.getBundle(PATH_TO_BUNDLE);
       ourBundle = new SoftReference<ResourceBundle>(bundle);

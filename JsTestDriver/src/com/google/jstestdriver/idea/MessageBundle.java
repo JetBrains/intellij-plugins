@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class MessageBundle {
-  private static Reference<ResourceBundle> bundle;
+  private static Reference<ResourceBundle> ourBundle;
 
   @NonNls
   private static final String BUNDLE = "com.google.jstestdriver.idea.MessageBundle";
@@ -43,13 +43,10 @@ public class MessageBundle {
   }
 
   private static ResourceBundle getBundle() {
-    ResourceBundle bundle = null;
-    if (MessageBundle.bundle != null) {
-      bundle = MessageBundle.bundle.get();
-    }
+    ResourceBundle bundle = com.intellij.reference.SoftReference.dereference(ourBundle);
     if (bundle == null) {
       bundle = ResourceBundle.getBundle(BUNDLE);
-      MessageBundle.bundle = new SoftReference<ResourceBundle>(bundle);
+      ourBundle = new SoftReference<ResourceBundle>(bundle);
     }
     return bundle;
   }
