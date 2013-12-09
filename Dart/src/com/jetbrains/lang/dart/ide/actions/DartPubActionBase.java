@@ -75,7 +75,7 @@ abstract public class DartPubActionBase extends AnAction {
     final Pair<Module, VirtualFile> moduleAndPubspecYamlFile = getModuleAndPubspecYamlFile(e);
     if (moduleAndPubspecYamlFile == null) return;
 
-    File sdkRoot = getSdkRoot(moduleAndPubspecYamlFile);
+    File sdkRoot = getSdkRoot();
     if (sdkRoot == null) {
       final int answer = Messages.showDialog(moduleAndPubspecYamlFile.first.getProject(), "Dart SDK is not configured",
                                              getPresentableText(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
@@ -83,7 +83,7 @@ abstract public class DartPubActionBase extends AnAction {
 
       ShowSettingsUtil.getInstance().showSettingsDialog(moduleAndPubspecYamlFile.first.getProject(), DartBundle.message("dart.title"));
 
-      sdkRoot = getSdkRoot(moduleAndPubspecYamlFile);
+      sdkRoot = getSdkRoot();
       if (sdkRoot == null) return;
     }
 
@@ -96,7 +96,7 @@ abstract public class DartPubActionBase extends AnAction {
 
       ShowSettingsUtil.getInstance().showSettingsDialog(moduleAndPubspecYamlFile.first.getProject(), DartBundle.message("dart.title"));
 
-      sdkRoot = getSdkRoot(moduleAndPubspecYamlFile);
+      sdkRoot = getSdkRoot();
       if (sdkRoot == null) return;
 
       pubFile = new File(sdkRoot, SystemInfo.isWindows ? "bin/pub.bat" : "bin/pub");
@@ -159,10 +159,9 @@ abstract public class DartPubActionBase extends AnAction {
   }
 
   @Nullable
-  private static File getSdkRoot(final Pair<Module, VirtualFile> moduleAndPubspecYamlFile) {
-    final DartSettings settings = DartSettings.getSettingsForModule(moduleAndPubspecYamlFile.first);
-    final String sdkPath = settings == null ? null : settings.getSdkPath();
-    final File sdkRoot = sdkPath == null || StringUtil.isEmptyOrSpaces(sdkPath) ? null : new File(sdkPath);
+  private static File getSdkRoot() {
+    final String sdkPath = DartSettings.getSettings().getSdkPath();
+    final File sdkRoot = StringUtil.isEmptyOrSpaces(sdkPath) ? null : new File(sdkPath);
     return sdkRoot == null || !sdkRoot.isDirectory() ? null : sdkRoot;
   }
 }

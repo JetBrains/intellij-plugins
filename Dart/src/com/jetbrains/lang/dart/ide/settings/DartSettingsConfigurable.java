@@ -11,10 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * @author: Fedor.Korotkov
- */
-public class DartSettingsConfigurable  implements SearchableConfigurable, Configurable.NoScroll {
+public class DartSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
   private DartSettingsUI mySettingsUI;
   private Project myProject;
 
@@ -49,7 +46,7 @@ public class DartSettingsConfigurable  implements SearchableConfigurable, Config
   @Override
   public boolean isModified() {
     final DartSettings dartSettings = getSettingsUI().getSettings();
-    return !DartSettingsUtil.getSettings().equals(dartSettings);
+    return !DartSettings.getSettings().equals(dartSettings);
   }
 
   @Override
@@ -61,7 +58,7 @@ public class DartSettingsConfigurable  implements SearchableConfigurable, Config
 
   @Override
   public void reset() {
-    final DartSettings dartSettings = DartSettingsUtil.getSettings();
+    final DartSettings dartSettings = DartSettings.getSettings();
     getSettingsUI().setSettings(dartSettings);
   }
 

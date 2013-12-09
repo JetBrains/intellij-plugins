@@ -41,13 +41,6 @@ public class DartSettingsUtil {
     propertiesComponent.setValue(DART_SDK_PATH_PROPERTY_NAME, settings.getSdkPath());
   }
 
-  @NotNull
-  public static DartSettings getSettings() {
-    final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
-    final String value = propertiesComponent.getValue(DART_SDK_PATH_PROPERTY_NAME);
-    return new DartSettings(value == null ? "" : value);
-  }
-
   public static boolean isDartSDKConfigured(Project project) {
     final JSLibraryMappings mappings = ServiceManager.getService(project, JSLibraryMappings.class);
     return ContainerUtil.exists(mappings.getSingleLibraries(), new Condition<ScriptingLibraryModel>() {
@@ -70,7 +63,7 @@ public class DartSettingsUtil {
 
   @NotNull
   public static String getDartiumPathOrThrowErrorWithQuickFix(final @Nullable Project project) throws RuntimeConfigurationError {
-    final String sdkPath = getSettings().getSdkPath();
+    final String sdkPath = DartSettings.getSettings().getSdkPath();
     if (StringUtil.isEmptyOrSpaces(sdkPath)) {
       throwErrorWithQuickFix(project, DartBundle.message("dart.sdk.not.configured"));
     }

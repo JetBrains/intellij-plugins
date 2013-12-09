@@ -3,8 +3,6 @@ package com.jetbrains.lang.dart.ide.inspections;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInspection.*;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -43,21 +41,23 @@ public class DartSdkInspection extends LocalInspectionTool {
   @Nullable
   @Override
   public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
-    final Module module = ModuleUtilCore.findModuleForPsiElement(file);
-    if (!DartSettings.shouldTakeWebSettings(module)) return ProblemDescriptor.EMPTY_ARRAY;
-
-    final DartSettings dartSettings = DartSettings.getSettingsForModule(module);
-    if (dartSettings == null || StringUtil.isEmpty(dartSettings.getSdkPath())) {
+    final DartSettings dartSettings = DartSettings.getSettings();
+    if (StringUtil.isEmpty(dartSettings.getSdkPath())) {
       return getDescriptors(file, manager, isOnTheFly, DartBundle.message("inspections.dart.sdk.message"),
                             DartBundle.message("dart.setup.sdk"));
-    } else if (!DartSettingsUtil.isDartSDKConfigured(file.getProject())) {
+    }
+    else if (!DartSettingsUtil.isDartSDKConfigured(file.getProject())) {
       return getDescriptors(file, manager, isOnTheFly, DartBundle.message("inspections.dart.sdk.disabled.message"),
                             DartBundle.message("dart.enable.sdk"));
     }
     return ProblemDescriptor.EMPTY_ARRAY;
   }
 
-  private ProblemDescriptor[] getDescriptors(PsiFile file, InspectionManager manager, boolean isOnTheFly, String message, String fixMessage) {
+  private ProblemDescriptor[] getDescriptors(PsiFile file,
+                                             InspectionManager manager,
+                                             boolean isOnTheFly,
+                                             String message,
+                                             String fixMessage) {
     return new ProblemDescriptor[]{
       manager.createProblemDescriptor(
         file,

@@ -10,14 +10,11 @@ import com.intellij.plugins.watcher.config.BackgroundTaskConsumer;
 import com.intellij.plugins.watcher.model.TaskOptions;
 import com.intellij.psi.PsiBundle;
 import com.intellij.psi.PsiFile;
-import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
+import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.psi.DartFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartWebUITaskConsumer extends BackgroundTaskConsumer {
   private static final String BUILD_FILE_NAME = "build.dart";
 
@@ -25,7 +22,7 @@ public class DartWebUITaskConsumer extends BackgroundTaskConsumer {
   public boolean isAvailable(PsiFile file) {
     return BUILD_FILE_NAME.equalsIgnoreCase(file.getName()) &&
            file instanceof DartFile &&
-           DartSettingsUtil.getSettings().getCompiler() != null;
+           DartSettings.getSettings().getCompiler() != null;
   }
 
   @NotNull
@@ -33,7 +30,7 @@ public class DartWebUITaskConsumer extends BackgroundTaskConsumer {
   public TaskOptions getOptionsTemplate() {
     TaskOptions options = new TaskOptions();
     options.setName("dwc");
-    final VirtualFile dartExecutable = DartSettingsUtil.getSettings().getCompiler();
+    final VirtualFile dartExecutable = DartSettings.getSettings().getCompiler();
     if (dartExecutable != null) {
       options.setProgram(dartExecutable.getPath());
     }

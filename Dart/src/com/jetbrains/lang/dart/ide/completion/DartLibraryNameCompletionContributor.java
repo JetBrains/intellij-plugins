@@ -5,7 +5,6 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
@@ -16,17 +15,14 @@ import com.jetbrains.lang.dart.psi.DartId;
 import com.jetbrains.lang.dart.psi.DartLibraryId;
 import com.jetbrains.lang.dart.psi.DartPathOrLibraryReference;
 import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
+import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartLibraryNameCompletionContributor extends CompletionContributor {
   public DartLibraryNameCompletionContributor() {
     extend(CompletionType.BASIC,
@@ -68,8 +64,7 @@ public class DartLibraryNameCompletionContributor extends CompletionContributor 
   }
 
   private static Collection<? extends String> getStdLibraries(@NotNull PsiElement context) {
-    DartSettings settings = DartSettings.getSettingsForModule(ModuleUtilCore.findModuleForPsiElement(context));
-    return settings != null ? settings.getLibraries(context) : Collections.<String>emptyList();
+    return DartSettings.getSettings().getLibraries(context);
   }
 
   public static class QuotedStringLookupElement extends LookupElement {
@@ -88,7 +83,7 @@ public class DartLibraryNameCompletionContributor extends CompletionContributor 
     @Override
     public void renderElement(LookupElementPresentation presentation) {
       super.renderElement(presentation);
-      presentation.setIcon(icons.DartIcons.Dart_16);
+      presentation.setIcon(DartIcons.Dart_16);
     }
 
     @Override

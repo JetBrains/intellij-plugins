@@ -1,12 +1,10 @@
 package com.jetbrains.lang.dart.ide.settings;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.WebModuleTypeBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
@@ -189,17 +187,11 @@ public class DartSettings {
     return VirtualFileManager.getInstance().findFileByUrl(path);
   }
 
-  @Nullable
-  public static DartSettings getSettingsForModule(@Nullable Module module) {
-    // todo: check file path
-    if (shouldTakeWebSettings(module) || ApplicationManager.getApplication().isUnitTestMode()) {
-      return DartSettingsUtil.getSettings();
-    }
-    return null;
-  }
-
-  public static boolean shouldTakeWebSettings(@Nullable Module module) {
-    return module == null || ModuleType.get(module) instanceof WebModuleTypeBase;
+  @NotNull
+  public static DartSettings getSettings() {
+    final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+    final String value = propertiesComponent.getValue(DartSettingsUtil.DART_SDK_PATH_PROPERTY_NAME);
+    return new DartSettings(value == null ? "" : value);
   }
 
   public static ScriptingLibraryModel setUpDartLibrary(final Project myProject, final String sdkPath) {
