@@ -49,9 +49,9 @@ public class DartCommandLineRunningState extends CommandLineState {
   }
 
   public GeneralCommandLine getCommand() throws ExecutionException {
-    DartSettings dartSettings = DartSettings.getSettingsForModule(module);
-    String dartExecutablePath = DartSdkUtil.getCompilerPathByFolderPath(dartSettings != null ? dartSettings.getSdkPath() : null);
-    if (dartSettings == null || dartExecutablePath == null) {
+    DartSettings dartSettings = DartSettings.getSettings();
+    String dartExecutablePath = DartSdkUtil.getCompilerPathByFolderPath(dartSettings.getSdkPath());
+    if (dartExecutablePath == null) {
       throw new ExecutionException(DartBundle.message("bad.home.for.sdk", module.getName()));
     }
     final VirtualFile libraryFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(filePath));

@@ -12,7 +12,6 @@ import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.DartSdkData;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
-import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,17 +28,17 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     mySdkPath.getButton().addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), null, mySdkPath, null, new Consumer<VirtualFile>() {
-          @Override
-          public void consume(@NotNull VirtualFile file) {
-            mySdkPath.setText(FileUtil.toSystemDependentName(file.getPath()));
-          }
-        });
+        FileChooser
+          .chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), null, mySdkPath, null, new Consumer<VirtualFile>() {
+            @Override
+            public void consume(@NotNull VirtualFile file) {
+              mySdkPath.setText(FileUtil.toSystemDependentName(file.getPath()));
+            }
+          });
       }
     });
 
-    DartSettings dartSettings = DartSettingsUtil.getSettings();
-    mySdkPath.setText(FileUtil.toSystemDependentName(dartSettings.getSdkPath()));
+    mySdkPath.setText(FileUtil.toSystemDependentName(DartSettings.getSettings().getSdkPath()));
   }
 
   @NotNull

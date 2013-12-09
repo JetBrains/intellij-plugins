@@ -22,7 +22,6 @@ import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.actions.ui.Dart2JSSettingsDialog;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
-import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import icons.DartIcons;
@@ -56,7 +55,7 @@ public class Dart2JSAction extends AnAction {
     if (virtualFile == null) {
       return;
     }
-    final DartSettings settings = DartSettingsUtil.getSettings();
+    final DartSettings settings = DartSettings.getSettings();
     final VirtualFile dart2js = settings.getDart2JS();
     if (dart2js == null) {
       Messages.showOkCancelDialog(e.getProject(), DartBundle.message("dart.sdk.bad.dart2js.path", settings.getDart2JSUrl()),

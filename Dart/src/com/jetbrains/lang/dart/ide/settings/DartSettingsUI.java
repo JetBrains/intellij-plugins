@@ -46,30 +46,31 @@ public class DartSettingsUI {
     myPathChooser.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), null, myMainPanel, null, new Consumer<VirtualFile>() {
-          @Override
-          public void consume(@NotNull VirtualFile sdkFolder) {
-            if (getExecutablePathByFolderPath(sdkFolder.getPath(), "dart") == null) {
-              final VirtualFile child = sdkFolder.findChild("dart-sdk");
-              if (child != null && child.isDirectory()) {
-                sdkFolder = child;
+        FileChooser
+          .chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), null, myMainPanel, null, new Consumer<VirtualFile>() {
+            @Override
+            public void consume(@NotNull VirtualFile sdkFolder) {
+              if (getExecutablePathByFolderPath(sdkFolder.getPath(), "dart") == null) {
+                final VirtualFile child = sdkFolder.findChild("dart-sdk");
+                if (child != null && child.isDirectory()) {
+                  sdkFolder = child;
+                }
+              }
+
+              if (getExecutablePathByFolderPath(sdkFolder.getPath(), "dart") == null) {
+                Messages.showOkCancelDialog(
+                  myProject,
+                  DartBundle.message("dart.sdk.bad.path", FileUtil.toSystemDependentName(sdkFolder.getPath())),
+                  DartBundle.message("dart.sdk.name"),
+                  DartIcons.Dart_16
+                );
+              }
+              else {
+                myPathChooser.setText(FileUtil.toSystemDependentName(sdkFolder.getPath()));
+                updateUI();
               }
             }
-
-            if (getExecutablePathByFolderPath(sdkFolder.getPath(), "dart") == null) {
-              Messages.showOkCancelDialog(
-                myProject,
-                DartBundle.message("dart.sdk.bad.path", FileUtil.toSystemDependentName(sdkFolder.getPath())),
-                DartBundle.message("dart.sdk.name"),
-                DartIcons.Dart_16
-              );
-            }
-            else {
-              myPathChooser.setText(FileUtil.toSystemDependentName(sdkFolder.getPath()));
-              updateUI();
-            }
-          }
-        });
+          });
       }
     });
 
@@ -179,7 +180,7 @@ public class DartSettingsUI {
 
   public DartSettings getSettings() {
     if (!isDartSDKPathValid()) {
-      return DartSettingsUtil.getSettings();
+      return DartSettings.getSettings();
     }
     return new DartSettings(FileUtil.toSystemIndependentName(myPathChooser.getText()));
   }

@@ -9,12 +9,9 @@ import com.intellij.plugins.watcher.model.TaskOptions;
 import com.intellij.psi.PsiBundle;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
+import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class Dart2JSTaskConsumer extends BackgroundTaskConsumer {
   @Override
   public boolean isAvailable(PsiFile file) {
@@ -27,7 +24,7 @@ public class Dart2JSTaskConsumer extends BackgroundTaskConsumer {
   public TaskOptions getOptionsTemplate() {
     TaskOptions options = new TaskOptions();
     options.setName("Dart2JS");
-    final VirtualFile dart2JS = DartSettingsUtil.getSettings().getDart2JS();
+    final VirtualFile dart2JS = DartSettings.getSettings().getDart2JS();
     if (dart2JS != null) {
       options.setProgram(dart2JS.getPath());
     }

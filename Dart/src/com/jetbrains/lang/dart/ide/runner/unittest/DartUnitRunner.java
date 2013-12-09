@@ -7,8 +7,6 @@ import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -16,9 +14,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartUnitRunner extends DefaultProgramRunner {
   public static final String DART_UNIT_RUNNER_ID = "DartUnitRunner";
 
@@ -49,10 +44,7 @@ public class DartUnitRunner extends DefaultProgramRunner {
       throw new ExecutionException("Can't find file: " + filePath);
     }
 
-    final Module module = ModuleUtilCore.findModuleForFile(virtualFile, project);
-    final DartSettings dartSettings = DartSettings.getSettingsForModule(module);
-
-    final DartUnitRunningState dartCommandLineRunningState = new DartUnitRunningState(env, parameters, dartSettings);
+    final DartUnitRunningState dartCommandLineRunningState = new DartUnitRunningState(env, parameters, DartSettings.getSettings());
     return super.doExecute(project, dartCommandLineRunningState, contentToReuse, env);
   }
 }

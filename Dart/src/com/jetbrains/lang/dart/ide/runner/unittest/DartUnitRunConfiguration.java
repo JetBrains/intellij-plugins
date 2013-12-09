@@ -21,9 +21,6 @@ import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartUnitRunConfiguration extends LocatableConfigurationBase {
   private final DartUnitRunnerParameters myRunnerParameters = new DartUnitRunnerParameters();
 
@@ -54,8 +51,7 @@ public class DartUnitRunConfiguration extends LocatableConfigurationBase {
     if (module == null) {
       throw new ExecutionException("Can't find module for file");
     }
-    final DartSettings settingsForModule = DartSettings.getSettingsForModule(module);
-    return new DartUnitRunningState(env, myRunnerParameters, settingsForModule);
+    return new DartUnitRunningState(env, myRunnerParameters, DartSettings.getSettings());
   }
 
   @Override

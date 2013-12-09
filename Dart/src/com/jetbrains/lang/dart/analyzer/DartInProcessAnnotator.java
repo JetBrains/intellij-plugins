@@ -50,10 +50,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
     final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
     if (module == null) return null;
 
-    final DartSettings settings = DartSettings.getSettingsForModule(module);
-    if (settings == null) return null;
-
-    final String sdkPath = settings.getSdkPath();
+    final String sdkPath = DartSettings.getSettings().getSdkPath();
     if (StringUtil.isEmptyOrSpaces(sdkPath)) return null;
 
     final File sdkDir = new File(sdkPath);

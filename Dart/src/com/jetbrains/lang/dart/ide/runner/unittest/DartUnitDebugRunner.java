@@ -8,8 +8,6 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,9 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartUnitDebugRunner extends DefaultProgramRunner {
   public static final String DART_UNIT_DEBUG_RUNNER_ID = "DartUnitDebugRunner";
 
@@ -58,12 +53,9 @@ public class DartUnitDebugRunner extends DefaultProgramRunner {
       throw new ExecutionException("Can't find file: " + filePath);
     }
 
-    final Module module = ModuleUtilCore.findModuleForFile(virtualFile, project);
-    final DartSettings dartSettings = DartSettings.getSettingsForModule(module);
-
     final int debuggingPort = NetUtils.tryToFindAvailableSocketPort();
 
-    final DartUnitRunningState dartUnitRunningState = new DartUnitRunningState(env, parameters, dartSettings, debuggingPort);
+    final DartUnitRunningState dartUnitRunningState = new DartUnitRunningState(env, parameters, DartSettings.getSettings(), debuggingPort);
     final ExecutionResult executionResult = dartUnitRunningState.execute(env.getExecutor(), this);
 
     final XDebugSession debugSession =
