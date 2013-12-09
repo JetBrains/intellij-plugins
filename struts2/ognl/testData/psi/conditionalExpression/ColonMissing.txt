@@ -8,6 +8,6 @@ OgnlFile:ColonMissing.ognl
     PsiWhiteSpace(' ')
     LITERAL_EXPRESSION
       PsiElement(false)('false')
-  PsiErrorElement:':', <operator> or '?' expected, got '}'
-    <empty list>
+    PsiErrorElement:':' or <operator> expected, got '}'
+      <empty list>
   PsiElement(EXPRESSION_END)('}')
