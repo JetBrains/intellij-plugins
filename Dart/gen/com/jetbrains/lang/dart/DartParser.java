@@ -17,401 +17,400 @@ public class DartParser implements PsiParser {
   public static final Logger LOG_ = Logger.getInstance("com.jetbrains.lang.dart.DartParser");
 
   public ASTNode parse(IElementType root_, PsiBuilder builder_) {
-    int level_ = 0;
     boolean result_;
     builder_ = adapt_builder_(root_, builder_, this, EXTENDS_SETS_);
+    Marker marker_ = enter_section_(builder_, 0, _COLLAPSE_, null);
     if (root_ == ABSTRACT_OPERATOR_DECLARATION) {
-      result_ = abstractOperatorDeclaration(builder_, level_ + 1);
+      result_ = abstractOperatorDeclaration(builder_, 0);
     }
     else if (root_ == ADDITIVE_EXPRESSION) {
-      result_ = additiveExpression(builder_, level_ + 1);
+      result_ = additiveExpression(builder_, 0);
     }
     else if (root_ == ADDITIVE_OPERATOR) {
-      result_ = additiveOperator(builder_, level_ + 1);
+      result_ = additiveOperator(builder_, 0);
     }
     else if (root_ == ARGUMENT_LIST) {
-      result_ = argumentList(builder_, level_ + 1);
+      result_ = argumentList(builder_, 0);
     }
     else if (root_ == ARGUMENTS) {
-      result_ = arguments(builder_, level_ + 1);
+      result_ = arguments(builder_, 0);
     }
     else if (root_ == ARRAY_ACCESS_EXPRESSION) {
-      result_ = arrayAccessExpression(builder_, level_ + 1);
+      result_ = arrayAccessExpression(builder_, 0);
     }
     else if (root_ == AS_EXPRESSION) {
-      result_ = asExpression(builder_, level_ + 1);
+      result_ = asExpression(builder_, 0);
     }
     else if (root_ == ASSERT_STATEMENT) {
-      result_ = assertStatement(builder_, level_ + 1);
+      result_ = assertStatement(builder_, 0);
     }
     else if (root_ == ASSIGN_EXPRESSION) {
-      result_ = assignExpression(builder_, level_ + 1);
+      result_ = assignExpression(builder_, 0);
     }
     else if (root_ == ASSIGNMENT_OPERATOR) {
-      result_ = assignmentOperator(builder_, level_ + 1);
+      result_ = assignmentOperator(builder_, 0);
     }
     else if (root_ == BITWISE_EXPRESSION) {
-      result_ = bitwiseExpression(builder_, level_ + 1);
+      result_ = bitwiseExpression(builder_, 0);
     }
     else if (root_ == BITWISE_OPERATOR) {
-      result_ = bitwiseOperator(builder_, level_ + 1);
+      result_ = bitwiseOperator(builder_, 0);
     }
     else if (root_ == BLOCK) {
-      result_ = block(builder_, level_ + 1);
+      result_ = block(builder_, 0);
     }
     else if (root_ == BREAK_STATEMENT) {
-      result_ = breakStatement(builder_, level_ + 1);
+      result_ = breakStatement(builder_, 0);
     }
     else if (root_ == CALL_EXPRESSION) {
-      result_ = callExpression(builder_, level_ + 1);
+      result_ = callExpression(builder_, 0);
     }
     else if (root_ == CASCADE_REFERENCE_EXPRESSION) {
-      result_ = cascadeReferenceExpression(builder_, level_ + 1);
+      result_ = cascadeReferenceExpression(builder_, 0);
     }
     else if (root_ == CATCH_PART) {
-      result_ = catchPart(builder_, level_ + 1);
+      result_ = catchPart(builder_, 0);
     }
     else if (root_ == CLASS_BODY) {
-      result_ = classBody(builder_, level_ + 1);
+      result_ = classBody(builder_, 0);
     }
     else if (root_ == CLASS_DEFINITION) {
-      result_ = classDefinition(builder_, level_ + 1);
+      result_ = classDefinition(builder_, 0);
     }
     else if (root_ == CLASS_MEMBERS) {
-      result_ = classMembers(builder_, level_ + 1);
+      result_ = classMembers(builder_, 0);
     }
     else if (root_ == CLASS_TYPE_ALIAS) {
-      result_ = classTypeAlias(builder_, level_ + 1);
+      result_ = classTypeAlias(builder_, 0);
     }
     else if (root_ == COMPARE_EXPRESSION) {
-      result_ = compareExpression(builder_, level_ + 1);
+      result_ = compareExpression(builder_, 0);
     }
     else if (root_ == COMPONENT_NAME) {
-      result_ = componentName(builder_, level_ + 1);
+      result_ = componentName(builder_, 0);
     }
     else if (root_ == COMPOUND_LITERAL_EXPRESSION) {
-      result_ = compoundLiteralExpression(builder_, level_ + 1);
+      result_ = compoundLiteralExpression(builder_, 0);
     }
     else if (root_ == CONST_CONSTRUCTOR_EXPRESSION) {
-      result_ = constConstructorExpression(builder_, level_ + 1);
+      result_ = constConstructorExpression(builder_, 0);
     }
     else if (root_ == CONTINUE_STATEMENT) {
-      result_ = continueStatement(builder_, level_ + 1);
+      result_ = continueStatement(builder_, 0);
     }
     else if (root_ == DEFAULT_CASE) {
-      result_ = defaultCase(builder_, level_ + 1);
+      result_ = defaultCase(builder_, 0);
     }
     else if (root_ == DEFAULT_FORMAL_NAMED_PARAMETER) {
-      result_ = defaultFormalNamedParameter(builder_, level_ + 1);
+      result_ = defaultFormalNamedParameter(builder_, 0);
     }
     else if (root_ == DO_WHILE_STATEMENT) {
-      result_ = doWhileStatement(builder_, level_ + 1);
+      result_ = doWhileStatement(builder_, 0);
     }
     else if (root_ == EQUALITY_OPERATOR) {
-      result_ = equalityOperator(builder_, level_ + 1);
+      result_ = equalityOperator(builder_, 0);
     }
     else if (root_ == EXPORT_STATEMENT) {
-      result_ = exportStatement(builder_, level_ + 1);
+      result_ = exportStatement(builder_, 0);
     }
     else if (root_ == EXPRESSION) {
-      result_ = expression(builder_, level_ + 1);
+      result_ = expression(builder_, 0);
     }
     else if (root_ == EXPRESSION_LIST) {
-      result_ = expressionList(builder_, level_ + 1);
+      result_ = expressionList(builder_, 0);
     }
     else if (root_ == FACTORY_CONSTRUCTOR_DECLARATION) {
-      result_ = factoryConstructorDeclaration(builder_, level_ + 1);
+      result_ = factoryConstructorDeclaration(builder_, 0);
     }
     else if (root_ == FIELD_FORMAL_PARAMETER) {
-      result_ = fieldFormalParameter(builder_, level_ + 1);
+      result_ = fieldFormalParameter(builder_, 0);
     }
     else if (root_ == FIELD_INITIALIZER) {
-      result_ = fieldInitializer(builder_, level_ + 1);
+      result_ = fieldInitializer(builder_, 0);
     }
     else if (root_ == FINAL_VAR_OR_TYPE) {
-      result_ = finalVarOrType(builder_, level_ + 1);
+      result_ = finalVarOrType(builder_, 0);
     }
     else if (root_ == FINALLY_PART) {
-      result_ = finallyPart(builder_, level_ + 1);
+      result_ = finallyPart(builder_, 0);
     }
     else if (root_ == FOR_IN_PART) {
-      result_ = forInPart(builder_, level_ + 1);
+      result_ = forInPart(builder_, 0);
     }
     else if (root_ == FOR_LOOP_PARTS) {
-      result_ = forLoopParts(builder_, level_ + 1);
+      result_ = forLoopParts(builder_, 0);
     }
     else if (root_ == FOR_LOOP_PARTS_IN_BRACES) {
-      result_ = forLoopPartsInBraces(builder_, level_ + 1);
+      result_ = forLoopPartsInBraces(builder_, 0);
     }
     else if (root_ == FOR_STATEMENT) {
-      result_ = forStatement(builder_, level_ + 1);
+      result_ = forStatement(builder_, 0);
     }
     else if (root_ == FORMAL_PARAMETER_LIST) {
-      result_ = formalParameterList(builder_, level_ + 1);
+      result_ = formalParameterList(builder_, 0);
     }
     else if (root_ == FUNCTION_BODY) {
-      result_ = functionBody(builder_, level_ + 1);
+      result_ = functionBody(builder_, 0);
     }
     else if (root_ == FUNCTION_DECLARATION) {
-      result_ = functionDeclaration(builder_, level_ + 1);
+      result_ = functionDeclaration(builder_, 0);
     }
     else if (root_ == FUNCTION_DECLARATION_WITH_BODY) {
-      result_ = functionDeclarationWithBody(builder_, level_ + 1);
+      result_ = functionDeclarationWithBody(builder_, 0);
     }
     else if (root_ == FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE) {
-      result_ = functionDeclarationWithBodyOrNative(builder_, level_ + 1);
+      result_ = functionDeclarationWithBodyOrNative(builder_, 0);
     }
     else if (root_ == FUNCTION_EXPRESSION) {
-      result_ = functionExpression(builder_, level_ + 1);
+      result_ = functionExpression(builder_, 0);
     }
     else if (root_ == FUNCTION_EXPRESSION_BODY) {
-      result_ = functionExpressionBody(builder_, level_ + 1);
+      result_ = functionExpressionBody(builder_, 0);
     }
     else if (root_ == FUNCTION_TYPE_ALIAS) {
-      result_ = functionTypeAlias(builder_, level_ + 1);
+      result_ = functionTypeAlias(builder_, 0);
     }
     else if (root_ == GETTER_DECLARATION) {
-      result_ = getterDeclaration(builder_, level_ + 1);
+      result_ = getterDeclaration(builder_, 0);
     }
     else if (root_ == HIDE_COMBINATOR) {
-      result_ = hideCombinator(builder_, level_ + 1);
+      result_ = hideCombinator(builder_, 0);
     }
     else if (root_ == ID) {
-      result_ = id(builder_, level_ + 1);
+      result_ = id(builder_, 0);
     }
     else if (root_ == IF_STATEMENT) {
-      result_ = ifStatement(builder_, level_ + 1);
+      result_ = ifStatement(builder_, 0);
     }
     else if (root_ == IMPORT_STATEMENT) {
-      result_ = importStatement(builder_, level_ + 1);
+      result_ = importStatement(builder_, 0);
     }
     else if (root_ == INITIALIZERS) {
-      result_ = initializers(builder_, level_ + 1);
+      result_ = initializers(builder_, 0);
     }
     else if (root_ == INTERFACES) {
-      result_ = interfaces(builder_, level_ + 1);
+      result_ = interfaces(builder_, 0);
     }
     else if (root_ == IS_EXPRESSION) {
-      result_ = isExpression(builder_, level_ + 1);
+      result_ = isExpression(builder_, 0);
     }
     else if (root_ == ITERATOR_EXPRESSION) {
-      result_ = iteratorExpression(builder_, level_ + 1);
+      result_ = iteratorExpression(builder_, 0);
     }
     else if (root_ == LABEL) {
-      result_ = label(builder_, level_ + 1);
+      result_ = label(builder_, 0);
     }
     else if (root_ == LIBRARY_COMPONENT_REFERENCE_EXPRESSION) {
-      result_ = libraryComponentReferenceExpression(builder_, level_ + 1);
+      result_ = libraryComponentReferenceExpression(builder_, 0);
     }
     else if (root_ == LIBRARY_ID) {
-      result_ = libraryId(builder_, level_ + 1);
+      result_ = libraryId(builder_, 0);
     }
     else if (root_ == LIBRARY_REFERENCE_LIST) {
-      result_ = libraryReferenceList(builder_, level_ + 1);
+      result_ = libraryReferenceList(builder_, 0);
     }
     else if (root_ == LIBRARY_STATEMENT) {
-      result_ = libraryStatement(builder_, level_ + 1);
+      result_ = libraryStatement(builder_, 0);
     }
     else if (root_ == LIST_LITERAL_EXPRESSION) {
-      result_ = listLiteralExpression(builder_, level_ + 1);
+      result_ = listLiteralExpression(builder_, 0);
     }
     else if (root_ == LITERAL_EXPRESSION) {
-      result_ = literalExpression(builder_, level_ + 1);
+      result_ = literalExpression(builder_, 0);
     }
     else if (root_ == LOGIC_AND_EXPRESSION) {
-      result_ = logicAndExpression(builder_, level_ + 1);
+      result_ = logicAndExpression(builder_, 0);
     }
     else if (root_ == LOGIC_OR_EXPRESSION) {
-      result_ = logicOrExpression(builder_, level_ + 1);
+      result_ = logicOrExpression(builder_, 0);
     }
     else if (root_ == LONG_TEMPLATE_ENTRY) {
-      result_ = longTemplateEntry(builder_, level_ + 1);
+      result_ = longTemplateEntry(builder_, 0);
     }
     else if (root_ == MAP_LITERAL_ENTRY) {
-      result_ = mapLiteralEntry(builder_, level_ + 1);
+      result_ = mapLiteralEntry(builder_, 0);
     }
     else if (root_ == MAP_LITERAL_EXPRESSION) {
-      result_ = mapLiteralExpression(builder_, level_ + 1);
+      result_ = mapLiteralExpression(builder_, 0);
     }
     else if (root_ == METADATA) {
-      result_ = metadata(builder_, level_ + 1);
+      result_ = metadata(builder_, 0);
     }
     else if (root_ == METHOD_DECLARATION) {
-      result_ = methodDeclaration(builder_, level_ + 1);
+      result_ = methodDeclaration(builder_, 0);
     }
     else if (root_ == MIXINS) {
-      result_ = mixins(builder_, level_ + 1);
+      result_ = mixins(builder_, 0);
     }
     else if (root_ == MULTIPLICATIVE_EXPRESSION) {
-      result_ = multiplicativeExpression(builder_, level_ + 1);
+      result_ = multiplicativeExpression(builder_, 0);
     }
     else if (root_ == MULTIPLICATIVE_OPERATOR) {
-      result_ = multiplicativeOperator(builder_, level_ + 1);
+      result_ = multiplicativeOperator(builder_, 0);
     }
     else if (root_ == NAMED_ARGUMENT) {
-      result_ = namedArgument(builder_, level_ + 1);
+      result_ = namedArgument(builder_, 0);
     }
     else if (root_ == NAMED_CONSTRUCTOR_DECLARATION) {
-      result_ = namedConstructorDeclaration(builder_, level_ + 1);
+      result_ = namedConstructorDeclaration(builder_, 0);
     }
     else if (root_ == NAMED_FORMAL_PARAMETERS) {
-      result_ = namedFormalParameters(builder_, level_ + 1);
+      result_ = namedFormalParameters(builder_, 0);
     }
     else if (root_ == NEW_EXPRESSION) {
-      result_ = newExpression(builder_, level_ + 1);
+      result_ = newExpression(builder_, 0);
     }
     else if (root_ == NORMAL_FORMAL_PARAMETER) {
-      result_ = normalFormalParameter(builder_, level_ + 1);
+      result_ = normalFormalParameter(builder_, 0);
     }
     else if (root_ == ON_PART) {
-      result_ = onPart(builder_, level_ + 1);
+      result_ = onPart(builder_, 0);
     }
     else if (root_ == OPERATOR_DECLARATION) {
-      result_ = operatorDeclaration(builder_, level_ + 1);
+      result_ = operatorDeclaration(builder_, 0);
     }
     else if (root_ == PARAMETER_NAME_REFERENCE_EXPRESSION) {
-      result_ = parameterNameReferenceExpression(builder_, level_ + 1);
+      result_ = parameterNameReferenceExpression(builder_, 0);
     }
     else if (root_ == PARENTHESIZED_EXPRESSION) {
-      result_ = parenthesizedExpression(builder_, level_ + 1);
+      result_ = parenthesizedExpression(builder_, 0);
     }
     else if (root_ == PART_OF_STATEMENT) {
-      result_ = partOfStatement(builder_, level_ + 1);
+      result_ = partOfStatement(builder_, 0);
     }
     else if (root_ == PART_STATEMENT) {
-      result_ = partStatement(builder_, level_ + 1);
+      result_ = partStatement(builder_, 0);
     }
     else if (root_ == PATH_OR_LIBRARY_REFERENCE) {
-      result_ = pathOrLibraryReference(builder_, level_ + 1);
+      result_ = pathOrLibraryReference(builder_, 0);
     }
     else if (root_ == PREFIX_EXPRESSION) {
-      result_ = prefixExpression(builder_, level_ + 1);
+      result_ = prefixExpression(builder_, 0);
     }
     else if (root_ == PREFIX_OPERATOR) {
-      result_ = prefixOperator(builder_, level_ + 1);
+      result_ = prefixOperator(builder_, 0);
     }
     else if (root_ == QUALIFIED_COMPONENT_NAME) {
-      result_ = qualifiedComponentName(builder_, level_ + 1);
+      result_ = qualifiedComponentName(builder_, 0);
     }
     else if (root_ == REDIRECTION) {
-      result_ = redirection(builder_, level_ + 1);
+      result_ = redirection(builder_, 0);
     }
     else if (root_ == REFERENCE_EXPRESSION) {
-      result_ = referenceExpression(builder_, level_ + 1);
+      result_ = referenceExpression(builder_, 0);
     }
     else if (root_ == RELATIONAL_OPERATOR) {
-      result_ = relationalOperator(builder_, level_ + 1);
+      result_ = relationalOperator(builder_, 0);
     }
     else if (root_ == RETHROW_STATEMENT) {
-      result_ = rethrowStatement(builder_, level_ + 1);
+      result_ = rethrowStatement(builder_, 0);
     }
     else if (root_ == RETURN_STATEMENT) {
-      result_ = returnStatement(builder_, level_ + 1);
+      result_ = returnStatement(builder_, 0);
     }
     else if (root_ == RETURN_TYPE) {
-      result_ = returnType(builder_, level_ + 1);
+      result_ = returnType(builder_, 0);
     }
     else if (root_ == SETTER_DECLARATION) {
-      result_ = setterDeclaration(builder_, level_ + 1);
+      result_ = setterDeclaration(builder_, 0);
     }
     else if (root_ == SHIFT_EXPRESSION) {
-      result_ = shiftExpression(builder_, level_ + 1);
+      result_ = shiftExpression(builder_, 0);
     }
     else if (root_ == SHIFT_OPERATOR) {
-      result_ = shiftOperator(builder_, level_ + 1);
+      result_ = shiftOperator(builder_, 0);
     }
     else if (root_ == SHIFT_RIGHT_OPERATOR) {
-      result_ = shiftRightOperator(builder_, level_ + 1);
+      result_ = shiftRightOperator(builder_, 0);
     }
     else if (root_ == SHORT_TEMPLATE_ENTRY) {
-      result_ = shortTemplateEntry(builder_, level_ + 1);
+      result_ = shortTemplateEntry(builder_, 0);
     }
     else if (root_ == SHOW_COMBINATOR) {
-      result_ = showCombinator(builder_, level_ + 1);
+      result_ = showCombinator(builder_, 0);
     }
     else if (root_ == STATEMENTS) {
-      result_ = statements(builder_, level_ + 1);
+      result_ = statements(builder_, 0);
     }
     else if (root_ == STRING_LITERAL_EXPRESSION) {
-      result_ = stringLiteralExpression(builder_, level_ + 1);
+      result_ = stringLiteralExpression(builder_, 0);
     }
     else if (root_ == SUFFIX_EXPRESSION) {
-      result_ = suffixExpression(builder_, level_ + 1);
+      result_ = suffixExpression(builder_, 0);
     }
     else if (root_ == SUPER_CALL_OR_FIELD_INITIALIZER) {
-      result_ = superCallOrFieldInitializer(builder_, level_ + 1);
+      result_ = superCallOrFieldInitializer(builder_, 0);
     }
     else if (root_ == SUPER_EXPRESSION) {
-      result_ = superExpression(builder_, level_ + 1);
+      result_ = superExpression(builder_, 0);
     }
     else if (root_ == SUPERCLASS) {
-      result_ = superclass(builder_, level_ + 1);
+      result_ = superclass(builder_, 0);
     }
     else if (root_ == SWITCH_CASE) {
-      result_ = switchCase(builder_, level_ + 1);
+      result_ = switchCase(builder_, 0);
     }
     else if (root_ == SWITCH_STATEMENT) {
-      result_ = switchStatement(builder_, level_ + 1);
+      result_ = switchStatement(builder_, 0);
     }
     else if (root_ == SYMBOL_LITERAL_EXPRESSION) {
-      result_ = symbolLiteralExpression(builder_, level_ + 1);
+      result_ = symbolLiteralExpression(builder_, 0);
     }
     else if (root_ == TERNARY_EXPRESSION) {
-      result_ = ternaryExpression(builder_, level_ + 1);
+      result_ = ternaryExpression(builder_, 0);
     }
     else if (root_ == THIS_EXPRESSION) {
-      result_ = thisExpression(builder_, level_ + 1);
+      result_ = thisExpression(builder_, 0);
     }
     else if (root_ == THROW_STATEMENT) {
-      result_ = throwStatement(builder_, level_ + 1);
+      result_ = throwStatement(builder_, 0);
     }
     else if (root_ == TRY_STATEMENT) {
-      result_ = tryStatement(builder_, level_ + 1);
+      result_ = tryStatement(builder_, 0);
     }
     else if (root_ == TYPE) {
-      result_ = type(builder_, level_ + 1);
+      result_ = type(builder_, 0);
     }
     else if (root_ == TYPE_ARGUMENTS) {
-      result_ = typeArguments(builder_, level_ + 1);
+      result_ = typeArguments(builder_, 0);
     }
     else if (root_ == TYPE_LIST) {
-      result_ = typeList(builder_, level_ + 1);
+      result_ = typeList(builder_, 0);
     }
     else if (root_ == TYPE_PARAMETER) {
-      result_ = typeParameter(builder_, level_ + 1);
+      result_ = typeParameter(builder_, 0);
     }
     else if (root_ == TYPE_PARAMETERS) {
-      result_ = typeParameters(builder_, level_ + 1);
+      result_ = typeParameters(builder_, 0);
     }
     else if (root_ == USER_DEFINABLE_OPERATOR) {
-      result_ = userDefinableOperator(builder_, level_ + 1);
+      result_ = userDefinableOperator(builder_, 0);
     }
     else if (root_ == VALUE_EXPRESSION) {
-      result_ = valueExpression(builder_, level_ + 1);
+      result_ = valueExpression(builder_, 0);
     }
     else if (root_ == VAR_ACCESS_DECLARATION) {
-      result_ = varAccessDeclaration(builder_, level_ + 1);
+      result_ = varAccessDeclaration(builder_, 0);
     }
     else if (root_ == VAR_DECLARATION) {
-      result_ = varDeclaration(builder_, level_ + 1);
+      result_ = varDeclaration(builder_, 0);
     }
     else if (root_ == VAR_DECLARATION_LIST) {
-      result_ = varDeclarationList(builder_, level_ + 1);
+      result_ = varDeclarationList(builder_, 0);
     }
     else if (root_ == VAR_DECLARATION_LIST_PART) {
-      result_ = varDeclarationListPart(builder_, level_ + 1);
+      result_ = varDeclarationListPart(builder_, 0);
     }
     else if (root_ == VAR_INIT) {
-      result_ = varInit(builder_, level_ + 1);
+      result_ = varInit(builder_, 0);
     }
     else if (root_ == WHILE_STATEMENT) {
-      result_ = whileStatement(builder_, level_ + 1);
+      result_ = whileStatement(builder_, 0);
     }
     else {
-      Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
-      result_ = parse_root_(root_, builder_, level_);
-      exit_section_(builder_, level_, marker_, root_, result_, true, TOKEN_ADVANCER);
+      result_ = parse_root_(root_, builder_, 0);
     }
+    exit_section_(builder_, 0, marker_, root_, result_, true, TRUE_CONDITION);
     return builder_.getTreeBuilt();
   }
 
@@ -475,8 +474,7 @@ public class DartParser implements PsiParser {
   // additiveOperator multiplicativeExpressionWrapper
   public static boolean additiveExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "additiveExpression")) return false;
-    if (!nextTokenIs(builder_, PLUS) && !nextTokenIs(builder_, MINUS)
-        && replaceVariants(builder_, 2, "<additive expression>")) return false;
+    if (!nextTokenIs(builder_, "<additive expression>", PLUS, MINUS)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<additive expression>");
     result_ = additiveOperator(builder_, level_ + 1);
@@ -500,15 +498,11 @@ public class DartParser implements PsiParser {
   // additiveExpression*
   private static boolean additiveExpressionWrapper_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "additiveExpressionWrapper_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!additiveExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "additiveExpressionWrapper_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "additiveExpressionWrapper_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -517,8 +511,7 @@ public class DartParser implements PsiParser {
   // '+' | '-'
   public static boolean additiveOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "additiveOperator")) return false;
-    if (!nextTokenIs(builder_, PLUS) && !nextTokenIs(builder_, MINUS)
-        && replaceVariants(builder_, 2, "<additive operator>")) return false;
+    if (!nextTokenIs(builder_, "<additive operator>", PLUS, MINUS)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<additive operator>");
     result_ = consumeToken(builder_, PLUS);
@@ -542,15 +535,11 @@ public class DartParser implements PsiParser {
   // (',' argumentListPart)*
   private static boolean argumentList_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "argumentList_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!argumentList_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "argumentList_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "argumentList_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -753,13 +742,9 @@ public class DartParser implements PsiParser {
   // assignmentOperator iteratorExpressionWrapper
   public static boolean assignExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "assignExpression")) return false;
-    if (!nextTokenIs(builder_, REM_EQ) && !nextTokenIs(builder_, AND_EQ)
-        && !nextTokenIs(builder_, MUL_EQ) && !nextTokenIs(builder_, PLUS_EQ)
-        && !nextTokenIs(builder_, MINUS_EQ) && !nextTokenIs(builder_, DIV_EQ)
-        && !nextTokenIs(builder_, LT_LT_EQ) && !nextTokenIs(builder_, EQ)
-        && !nextTokenIs(builder_, GT_GT_EQ) && !nextTokenIs(builder_, XOR_EQ)
-        && !nextTokenIs(builder_, OR_EQ) && !nextTokenIs(builder_, INT_DIV_EQ)
-        && replaceVariants(builder_, 12, "<assign expression>")) return false;
+    if (!nextTokenIs(builder_, "<assign expression>", REM_EQ, AND_EQ,
+      MUL_EQ, PLUS_EQ, MINUS_EQ, DIV_EQ, LT_LT_EQ, EQ,
+      GT_GT_EQ, XOR_EQ, OR_EQ, INT_DIV_EQ)) return false;
     boolean result_ = false;
     boolean pinned_ = false;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<assign expression>");
@@ -785,15 +770,11 @@ public class DartParser implements PsiParser {
   // assignExpression*
   private static boolean assignExpressionWrapper_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "assignExpressionWrapper_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!assignExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "assignExpressionWrapper_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "assignExpressionWrapper_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -802,13 +783,9 @@ public class DartParser implements PsiParser {
   // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '^=' | '|='
   public static boolean assignmentOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "assignmentOperator")) return false;
-    if (!nextTokenIs(builder_, REM_EQ) && !nextTokenIs(builder_, AND_EQ)
-        && !nextTokenIs(builder_, MUL_EQ) && !nextTokenIs(builder_, PLUS_EQ)
-        && !nextTokenIs(builder_, MINUS_EQ) && !nextTokenIs(builder_, DIV_EQ)
-        && !nextTokenIs(builder_, LT_LT_EQ) && !nextTokenIs(builder_, EQ)
-        && !nextTokenIs(builder_, GT_GT_EQ) && !nextTokenIs(builder_, XOR_EQ)
-        && !nextTokenIs(builder_, OR_EQ) && !nextTokenIs(builder_, INT_DIV_EQ)
-        && replaceVariants(builder_, 12, "<assignment operator>")) return false;
+    if (!nextTokenIs(builder_, "<assignment operator>", REM_EQ, AND_EQ,
+      MUL_EQ, PLUS_EQ, MINUS_EQ, DIV_EQ, LT_LT_EQ, EQ,
+      GT_GT_EQ, XOR_EQ, OR_EQ, INT_DIV_EQ)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<assignment operator>");
     result_ = consumeToken(builder_, EQ);
@@ -831,8 +808,7 @@ public class DartParser implements PsiParser {
   // bitwiseOperator shiftExpressionWrapper
   public static boolean bitwiseExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "bitwiseExpression")) return false;
-    if (!nextTokenIs(builder_, AND) && !nextTokenIs(builder_, XOR)
-        && !nextTokenIs(builder_, OR) && replaceVariants(builder_, 3, "<bitwise expression>")) return false;
+    if (!nextTokenIs(builder_, "<bitwise expression>", AND, XOR, OR)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<bitwise expression>");
     result_ = bitwiseOperator(builder_, level_ + 1);
@@ -856,15 +832,11 @@ public class DartParser implements PsiParser {
   // bitwiseExpression*
   private static boolean bitwiseExpressionWrapper_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "bitwiseExpressionWrapper_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!bitwiseExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "bitwiseExpressionWrapper_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "bitwiseExpressionWrapper_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -873,8 +845,7 @@ public class DartParser implements PsiParser {
   // '&' | '^' | '|'
   public static boolean bitwiseOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "bitwiseOperator")) return false;
-    if (!nextTokenIs(builder_, AND) && !nextTokenIs(builder_, XOR)
-        && !nextTokenIs(builder_, OR) && replaceVariants(builder_, 3, "<bitwise operator>")) return false;
+    if (!nextTokenIs(builder_, "<bitwise operator>", AND, XOR, OR)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<bitwise operator>");
     result_ = consumeToken(builder_, AND);
@@ -963,15 +934,11 @@ public class DartParser implements PsiParser {
   // (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
   private static boolean callOrArrayAccess_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "callOrArrayAccess_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!callOrArrayAccess_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "callOrArrayAccess_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "callOrArrayAccess_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -1051,8 +1018,7 @@ public class DartParser implements PsiParser {
   // 'abstract'? 'class' componentName typeParameters? (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody
   public static boolean classDefinition(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classDefinition")) return false;
-    if (!nextTokenIs(builder_, ABSTRACT) && !nextTokenIs(builder_, CLASS)
-        && replaceVariants(builder_, 2, "<class definition>")) return false;
+    if (!nextTokenIs(builder_, "<class definition>", ABSTRACT, CLASS)) return false;
     boolean result_ = false;
     boolean pinned_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<class definition>");
@@ -1168,15 +1134,11 @@ public class DartParser implements PsiParser {
   public static boolean classMembers(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classMembers")) return false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<class members>");
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!classMembers_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "classMembers");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "classMembers", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     exit_section_(builder_, level_, marker_, CLASS_MEMBERS, true, false, simple_scope_recover_parser_);
     return true;
@@ -1196,15 +1158,11 @@ public class DartParser implements PsiParser {
   // metadata*
   private static boolean classMembers_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classMembers_0_0")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!metadata(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "classMembers_0_0");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "classMembers_0_0", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -1290,7 +1248,7 @@ public class DartParser implements PsiParser {
   // showCombinator | hideCombinator
   static boolean combinator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "combinator")) return false;
-    if (!nextTokenIs(builder_, HIDE) && !nextTokenIs(builder_, SHOW)) return false;
+    if (!nextTokenIs(builder_, "", HIDE, SHOW)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = showCombinator(builder_, level_ + 1);
@@ -1303,11 +1261,8 @@ public class DartParser implements PsiParser {
   // (relationalOperator | equalityOperator) bitwiseExpressionWrapper
   public static boolean compareExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "compareExpression")) return false;
-    if (!nextTokenIs(builder_, NEQ) && !nextTokenIs(builder_, NEQ_EQ)
-        && !nextTokenIs(builder_, LT) && !nextTokenIs(builder_, LT_EQ)
-        && !nextTokenIs(builder_, EQ_EQ) && !nextTokenIs(builder_, EQ_EQ_EQ)
-        && !nextTokenIs(builder_, GT) && !nextTokenIs(builder_, GT_EQ)
-        && replaceVariants(builder_, 8, "<compare expression>")) return false;
+    if (!nextTokenIs(builder_, "<compare expression>", NEQ, NEQ_EQ,
+      LT, LT_EQ, EQ_EQ, EQ_EQ_EQ, GT, GT_EQ)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<compare expression>");
     result_ = compareExpression_0(builder_, level_ + 1);
@@ -1342,15 +1297,11 @@ public class DartParser implements PsiParser {
   // compareExpression*
   private static boolean compareExpressionWrapper_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "compareExpressionWrapper_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!compareExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "compareExpressionWrapper_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "compareExpressionWrapper_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -1370,9 +1321,7 @@ public class DartParser implements PsiParser {
   // 'const'? typeArguments? (listLiteralExpression | mapLiteralExpression)
   public static boolean compoundLiteralExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "compoundLiteralExpression")) return false;
-    if (!nextTokenIs(builder_, LT) && !nextTokenIs(builder_, LBRACKET)
-        && !nextTokenIs(builder_, CONST) && !nextTokenIs(builder_, LBRACE)
-        && replaceVariants(builder_, 4, "<compound literal expression>")) return false;
+    if (!nextTokenIs(builder_, "<compound literal expression>", LT, LBRACKET, CONST, LBRACE)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<compound literal expression>");
     result_ = compoundLiteralExpression_0(builder_, level_ + 1);
@@ -1469,15 +1418,11 @@ public class DartParser implements PsiParser {
   // (metadata* topLevelDefinition)*
   static boolean dartUnit(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "dartUnit")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!dartUnit_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "dartUnit");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "dartUnit", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -1496,15 +1441,11 @@ public class DartParser implements PsiParser {
   // metadata*
   private static boolean dartUnit_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "dartUnit_0_0")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!metadata(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "dartUnit_0_0");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "dartUnit_0_0", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -1534,15 +1475,11 @@ public class DartParser implements PsiParser {
   // ('case' expression ':')*
   private static boolean defaultCase_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "defaultCase_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!defaultCase_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "defaultCase_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "defaultCase_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -1648,9 +1585,7 @@ public class DartParser implements PsiParser {
   // '==' | '!=' | '===' | '!=='
   public static boolean equalityOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "equalityOperator")) return false;
-    if (!nextTokenIs(builder_, NEQ) && !nextTokenIs(builder_, NEQ_EQ)
-        && !nextTokenIs(builder_, EQ_EQ) && !nextTokenIs(builder_, EQ_EQ_EQ)
-        && replaceVariants(builder_, 4, "<equality operator>")) return false;
+    if (!nextTokenIs(builder_, "<equality operator>", NEQ, NEQ_EQ, EQ_EQ, EQ_EQ_EQ)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<equality operator>");
     result_ = consumeToken(builder_, EQ_EQ);
@@ -1698,15 +1633,11 @@ public class DartParser implements PsiParser {
   // combinator*
   private static boolean exportStatement_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "exportStatement_3")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!combinator(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "exportStatement_3");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "exportStatement_3", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -1749,15 +1680,11 @@ public class DartParser implements PsiParser {
   // (',' expression)*
   private static boolean expressionList_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expressionList_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!expressionList_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "expressionList_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "expressionList_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -1931,8 +1858,7 @@ public class DartParser implements PsiParser {
   // ('external' | 'const')* 'factory' referenceExpression ('.' componentName)? formalParameterList factoryTail?
   public static boolean factoryConstructorDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factoryConstructorDeclaration")) return false;
-    if (!nextTokenIs(builder_, CONST) && !nextTokenIs(builder_, EXTERNAL)
-        && !nextTokenIs(builder_, FACTORY) && replaceVariants(builder_, 3, "<factory constructor declaration>")) return false;
+    if (!nextTokenIs(builder_, "<factory constructor declaration>", CONST, EXTERNAL, FACTORY)) return false;
     boolean result_ = false;
     boolean pinned_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<factory constructor declaration>");
@@ -1950,15 +1876,11 @@ public class DartParser implements PsiParser {
   // ('external' | 'const')*
   private static boolean factoryConstructorDeclaration_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factoryConstructorDeclaration_0")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!factoryConstructorDeclaration_0_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "factoryConstructorDeclaration_0");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "factoryConstructorDeclaration_0", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -2003,9 +1925,8 @@ public class DartParser implements PsiParser {
   // varFactoryDeclaration ';' | functionBodyOrNative | ';'
   static boolean factoryTail(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factoryTail")) return false;
-    if (!nextTokenIs(builder_, SEMICOLON) && !nextTokenIs(builder_, EQ)
-        && !nextTokenIs(builder_, EXPRESSION_BODY_DEF) && !nextTokenIs(builder_, NATIVE)
-        && !nextTokenIs(builder_, LBRACE)) return false;
+    if (!nextTokenIs(builder_, "", SEMICOLON, EQ,
+      EXPRESSION_BODY_DEF, NATIVE, LBRACE)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = factoryTail_0(builder_, level_ + 1);
@@ -2087,7 +2008,7 @@ public class DartParser implements PsiParser {
   // 'final' | 'const'
   static boolean finalOrConst(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finalOrConst")) return false;
-    if (!nextTokenIs(builder_, CONST) && !nextTokenIs(builder_, FINAL)) return false;
+    if (!nextTokenIs(builder_, "", CONST, FINAL)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, FINAL);
@@ -2316,15 +2237,11 @@ public class DartParser implements PsiParser {
   // (',' normalFormalParameter)*
   private static boolean formalParameterList_0_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "formalParameterList_0_2")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!formalParameterList_0_2_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "formalParameterList_0_2");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "formalParameterList_0_2", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -2381,8 +2298,7 @@ public class DartParser implements PsiParser {
   // arrowBodyWithSemi | block
   public static boolean functionBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionBody")) return false;
-    if (!nextTokenIs(builder_, EXPRESSION_BODY_DEF) && !nextTokenIs(builder_, LBRACE)
-        && replaceVariants(builder_, 2, "<function body>")) return false;
+    if (!nextTokenIs(builder_, "<function body>", EXPRESSION_BODY_DEF, LBRACE)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function body>");
     result_ = arrowBodyWithSemi(builder_, level_ + 1);
@@ -2397,8 +2313,7 @@ public class DartParser implements PsiParser {
   //                                | functionBody
   static boolean functionBodyOrNative(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionBodyOrNative")) return false;
-    if (!nextTokenIs(builder_, EXPRESSION_BODY_DEF) && !nextTokenIs(builder_, NATIVE)
-        && !nextTokenIs(builder_, LBRACE)) return false;
+    if (!nextTokenIs(builder_, "", EXPRESSION_BODY_DEF, NATIVE, LBRACE)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = functionBodyOrNative_0(builder_, level_ + 1);
@@ -2640,8 +2555,7 @@ public class DartParser implements PsiParser {
   // arrowBody | block
   public static boolean functionExpressionBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionExpressionBody")) return false;
-    if (!nextTokenIs(builder_, EXPRESSION_BODY_DEF) && !nextTokenIs(builder_, LBRACE)
-        && replaceVariants(builder_, 2, "<function expression body>")) return false;
+    if (!nextTokenIs(builder_, "<function expression body>", EXPRESSION_BODY_DEF, LBRACE)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function expression body>");
     result_ = arrowBody(builder_, level_ + 1);
@@ -2766,15 +2680,11 @@ public class DartParser implements PsiParser {
   // ('external' | 'static' | 'const' | 'abstract')*
   private static boolean getterDeclaration_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "getterDeclaration_0")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!getterDeclaration_0_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "getterDeclaration_0");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "getterDeclaration_0", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -2930,15 +2840,11 @@ public class DartParser implements PsiParser {
   // combinator*
   private static boolean importStatement_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "importStatement_3")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!combinator(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "importStatement_3");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "importStatement_3", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -2960,15 +2866,11 @@ public class DartParser implements PsiParser {
   // (',' superCallOrFieldInitializer)*
   private static boolean initializers_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "initializers_2")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!initializers_2_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "initializers_2");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "initializers_2", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -3089,15 +2991,11 @@ public class DartParser implements PsiParser {
   // ('.' <<nonStrictID>>)*
   private static boolean libraryId_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "libraryId_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!libraryId_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "libraryId_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "libraryId_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -3128,15 +3026,11 @@ public class DartParser implements PsiParser {
   // (',' libraryComponentReferenceExpression)*
   private static boolean libraryReferenceList_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "libraryReferenceList_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!libraryReferenceList_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "libraryReferenceList_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "libraryReferenceList_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -3211,12 +3105,9 @@ public class DartParser implements PsiParser {
   // NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | mapLiteralExpression | listLiteralExpression
   public static boolean literalExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "literalExpression")) return false;
-    if (!nextTokenIs(builder_, LBRACKET) && !nextTokenIs(builder_, LBRACE)
-        && !nextTokenIs(builder_, FALSE) && !nextTokenIs(builder_, HASH)
-        && !nextTokenIs(builder_, HEX_NUMBER) && !nextTokenIs(builder_, NULL)
-        && !nextTokenIs(builder_, NUMBER) && !nextTokenIs(builder_, OPEN_QUOTE)
-        && !nextTokenIs(builder_, RAW_SINGLE_QUOTED_STRING) && !nextTokenIs(builder_, RAW_TRIPLE_QUOTED_STRING)
-        && !nextTokenIs(builder_, TRUE) && replaceVariants(builder_, 11, "<literal expression>")) return false;
+    if (!nextTokenIs(builder_, "<literal expression>", LBRACKET, LBRACE,
+      FALSE, HASH, HEX_NUMBER, NULL, NUMBER, OPEN_QUOTE,
+      RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING, TRUE)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<literal expression>");
     result_ = consumeToken(builder_, NULL);
@@ -3260,15 +3151,11 @@ public class DartParser implements PsiParser {
   // logicAndExpression*
   private static boolean logicAndExpressionWrapper_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "logicAndExpressionWrapper_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!logicAndExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "logicAndExpressionWrapper_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "logicAndExpressionWrapper_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -3301,15 +3188,11 @@ public class DartParser implements PsiParser {
   // logicOrExpression*
   private static boolean logicOrExpressionWrapper_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "logicOrExpressionWrapper_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!logicOrExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "logicOrExpressionWrapper_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "logicOrExpressionWrapper_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -3390,15 +3273,11 @@ public class DartParser implements PsiParser {
   // (',' mapLiteralEntry)*
   private static boolean mapLiteralExpression_1_0_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "mapLiteralExpression_1_0_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!mapLiteralExpression_1_0_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "mapLiteralExpression_1_0_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "mapLiteralExpression_1_0_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -3532,15 +3411,11 @@ public class DartParser implements PsiParser {
   // ('external' | 'static' | 'const' | 'abstract')*
   private static boolean methodDeclaration_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "methodDeclaration_0")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!methodDeclaration_0_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "methodDeclaration_0");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "methodDeclaration_0", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -3603,9 +3478,7 @@ public class DartParser implements PsiParser {
   // multiplicativeOperator prefixExpression
   public static boolean multiplicativeExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "multiplicativeExpression")) return false;
-    if (!nextTokenIs(builder_, REM) && !nextTokenIs(builder_, MUL)
-        && !nextTokenIs(builder_, DIV) && !nextTokenIs(builder_, INT_DIV)
-        && replaceVariants(builder_, 4, "<multiplicative expression>")) return false;
+    if (!nextTokenIs(builder_, "<multiplicative expression>", REM, MUL, DIV, INT_DIV)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<multiplicative expression>");
     result_ = multiplicativeOperator(builder_, level_ + 1);
@@ -3629,15 +3502,11 @@ public class DartParser implements PsiParser {
   // multiplicativeExpression*
   private static boolean multiplicativeExpressionWrapper_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "multiplicativeExpressionWrapper_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!multiplicativeExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "multiplicativeExpressionWrapper_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "multiplicativeExpressionWrapper_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -3646,9 +3515,7 @@ public class DartParser implements PsiParser {
   // '*' | '/' | '%' | '~/'
   public static boolean multiplicativeOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "multiplicativeOperator")) return false;
-    if (!nextTokenIs(builder_, REM) && !nextTokenIs(builder_, MUL)
-        && !nextTokenIs(builder_, DIV) && !nextTokenIs(builder_, INT_DIV)
-        && replaceVariants(builder_, 4, "<multiplicative operator>")) return false;
+    if (!nextTokenIs(builder_, "<multiplicative operator>", REM, MUL, DIV, INT_DIV)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<multiplicative operator>");
     result_ = consumeToken(builder_, MUL);
@@ -3694,15 +3561,11 @@ public class DartParser implements PsiParser {
   // ('external' | 'const')*
   private static boolean namedConstructorDeclaration_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedConstructorDeclaration_0")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!namedConstructorDeclaration_0_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "namedConstructorDeclaration_0");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "namedConstructorDeclaration_0", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -3749,8 +3612,7 @@ public class DartParser implements PsiParser {
   //                           '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* '}'
   public static boolean namedFormalParameters(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedFormalParameters")) return false;
-    if (!nextTokenIs(builder_, LBRACKET) && !nextTokenIs(builder_, LBRACE)
-        && replaceVariants(builder_, 2, "<named formal parameters>")) return false;
+    if (!nextTokenIs(builder_, "<named formal parameters>", LBRACKET, LBRACE)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<named formal parameters>");
     result_ = namedFormalParameters_0(builder_, level_ + 1);
@@ -3775,15 +3637,11 @@ public class DartParser implements PsiParser {
   // (',' defaultFormalNamedParameter)*
   private static boolean namedFormalParameters_0_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedFormalParameters_0_2")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!namedFormalParameters_0_2_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "namedFormalParameters_0_2");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "namedFormalParameters_0_2", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -3815,15 +3673,11 @@ public class DartParser implements PsiParser {
   // (',' defaultFormalNamedParameter)*
   private static boolean namedFormalParameters_1_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedFormalParameters_1_2")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!namedFormalParameters_1_2_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "namedFormalParameters_1_2");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "namedFormalParameters_1_2", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -3878,7 +3732,7 @@ public class DartParser implements PsiParser {
   // (newExpression | constConstructorExpression) qualifiedReferenceTail?
   static boolean newExpressionOrConstOrCall(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "newExpressionOrConstOrCall")) return false;
-    if (!nextTokenIs(builder_, CONST) && !nextTokenIs(builder_, NEW)) return false;
+    if (!nextTokenIs(builder_, "", CONST, NEW)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = newExpressionOrConstOrCall_0(builder_, level_ + 1);
@@ -3961,15 +3815,11 @@ public class DartParser implements PsiParser {
   // metadata*
   private static boolean nonLabelledStatement_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement_1_0")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!metadata(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "nonLabelledStatement_1_0");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "nonLabelledStatement_1_0", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -4232,8 +4082,7 @@ public class DartParser implements PsiParser {
   // stringLiteralExpression
   public static boolean pathOrLibraryReference(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "pathOrLibraryReference")) return false;
-    if (!nextTokenIs(builder_, OPEN_QUOTE) && !nextTokenIs(builder_, RAW_SINGLE_QUOTED_STRING)
-        && !nextTokenIs(builder_, RAW_TRIPLE_QUOTED_STRING) && replaceVariants(builder_, 3, "<path or library reference>")) return false;
+    if (!nextTokenIs(builder_, "<path or library reference>", OPEN_QUOTE, RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<path or library reference>");
     result_ = stringLiteralExpression(builder_, level_ + 1);
@@ -4268,10 +4117,8 @@ public class DartParser implements PsiParser {
   // '-' | '+' | '--' | '++' | '!' | '~' | '?'
   public static boolean prefixOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "prefixOperator")) return false;
-    if (!nextTokenIs(builder_, NOT) && !nextTokenIs(builder_, PLUS)
-        && !nextTokenIs(builder_, PLUS_PLUS) && !nextTokenIs(builder_, MINUS)
-        && !nextTokenIs(builder_, MINUS_MINUS) && !nextTokenIs(builder_, QUEST)
-        && !nextTokenIs(builder_, BIN_NOT) && replaceVariants(builder_, 7, "<prefix operator>")) return false;
+    if (!nextTokenIs(builder_, "<prefix operator>", NOT, PLUS,
+      PLUS_PLUS, MINUS, MINUS_MINUS, QUEST, BIN_NOT)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<prefix operator>");
     result_ = consumeToken(builder_, MINUS);
@@ -4300,15 +4147,11 @@ public class DartParser implements PsiParser {
   // ('.' << nonStrictID >>)*
   private static boolean qualifiedComponentName_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "qualifiedComponentName_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!qualifiedComponentName_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "qualifiedComponentName_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "qualifiedComponentName_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -4353,15 +4196,11 @@ public class DartParser implements PsiParser {
   // (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
   private static boolean qualifiedReferenceTail_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "qualifiedReferenceTail_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!qualifiedReferenceTail_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "qualifiedReferenceTail_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "qualifiedReferenceTail_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -4428,9 +4267,7 @@ public class DartParser implements PsiParser {
   // '>=' | '>' | '<=' | '<'
   public static boolean relationalOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "relationalOperator")) return false;
-    if (!nextTokenIs(builder_, LT) && !nextTokenIs(builder_, LT_EQ)
-        && !nextTokenIs(builder_, GT) && !nextTokenIs(builder_, GT_EQ)
-        && replaceVariants(builder_, 4, "<relational operator>")) return false;
+    if (!nextTokenIs(builder_, "<relational operator>", LT, LT_EQ, GT, GT_EQ)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<relational operator>");
     result_ = consumeToken(builder_, GT_EQ);
@@ -4533,15 +4370,11 @@ public class DartParser implements PsiParser {
   // ('external' | 'static' | 'const' | 'abstract')*
   private static boolean setterDeclaration_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "setterDeclaration_0")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!setterDeclaration_0_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "setterDeclaration_0");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "setterDeclaration_0", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -4581,8 +4414,7 @@ public class DartParser implements PsiParser {
   // shiftOperator additiveExpressionWrapper
   public static boolean shiftExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "shiftExpression")) return false;
-    if (!nextTokenIs(builder_, LT_LT) && !nextTokenIs(builder_, GT)
-        && replaceVariants(builder_, 2, "<shift expression>")) return false;
+    if (!nextTokenIs(builder_, "<shift expression>", LT_LT, GT)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<shift expression>");
     result_ = shiftOperator(builder_, level_ + 1);
@@ -4606,15 +4438,11 @@ public class DartParser implements PsiParser {
   // shiftExpression*
   private static boolean shiftExpressionWrapper_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "shiftExpressionWrapper_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!shiftExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "shiftExpressionWrapper_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "shiftExpressionWrapper_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -4623,8 +4451,7 @@ public class DartParser implements PsiParser {
   // '<<' | shiftRightOperator
   public static boolean shiftOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "shiftOperator")) return false;
-    if (!nextTokenIs(builder_, LT_LT) && !nextTokenIs(builder_, GT)
-        && replaceVariants(builder_, 2, "<shift operator>")) return false;
+    if (!nextTokenIs(builder_, "<shift operator>", LT_LT, GT)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<shift operator>");
     result_ = consumeToken(builder_, LT_LT);
@@ -4700,15 +4527,11 @@ public class DartParser implements PsiParser {
   // qualifiedReferenceExpression*
   private static boolean simpleQualifiedReferenceExpression_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "simpleQualifiedReferenceExpression_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!qualifiedReferenceExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "simpleQualifiedReferenceExpression_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "simpleQualifiedReferenceExpression_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -4729,27 +4552,21 @@ public class DartParser implements PsiParser {
   static boolean statement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement")) return false;
     boolean result_ = false;
-    boolean pinned_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = statement_0(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement(builder_, level_ + 1);
-    pinned_ = result_; // pin = 2
-    exit_section_(builder_, level_, marker_, null, result_, pinned_, statement_recover_parser_);
-    return result_ || pinned_;
+    exit_section_(builder_, level_, marker_, null, result_, false, statement_recover_parser_);
+    return result_;
   }
 
   // label*
   private static boolean statement_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement_0")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!label(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "statement_0");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "statement_0", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -4793,15 +4610,11 @@ public class DartParser implements PsiParser {
   // metadata*
   private static boolean statementFollowedBySemiColon_0_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statementFollowedBySemiColon_0_0_0")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!metadata(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "statementFollowedBySemiColon_0_0_0");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "statementFollowedBySemiColon_0_0_0", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -4903,15 +4716,11 @@ public class DartParser implements PsiParser {
   public static boolean statements(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statements")) return false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<statements>");
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!statement(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "statements");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "statements", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     exit_section_(builder_, level_, marker_, STATEMENTS, true, false, null);
     return true;
@@ -4921,20 +4730,15 @@ public class DartParser implements PsiParser {
   // (RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | stringTemplate)+
   public static boolean stringLiteralExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "stringLiteralExpression")) return false;
-    if (!nextTokenIs(builder_, OPEN_QUOTE) && !nextTokenIs(builder_, RAW_SINGLE_QUOTED_STRING)
-        && !nextTokenIs(builder_, RAW_TRIPLE_QUOTED_STRING) && replaceVariants(builder_, 3, "<string literal expression>")) return false;
+    if (!nextTokenIs(builder_, "<string literal expression>", OPEN_QUOTE, RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<string literal expression>");
     result_ = stringLiteralExpression_0(builder_, level_ + 1);
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (result_) {
       if (!stringLiteralExpression_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "stringLiteralExpression");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "stringLiteralExpression", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     exit_section_(builder_, level_, marker_, STRING_LITERAL_EXPRESSION, result_, false, null);
     return result_;
@@ -4971,15 +4775,11 @@ public class DartParser implements PsiParser {
   // (REGULAR_STRING_PART | shortTemplateEntry | longTemplateEntry)*
   private static boolean stringTemplate_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "stringTemplate_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!stringTemplate_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "stringTemplate_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "stringTemplate_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -5000,8 +4800,7 @@ public class DartParser implements PsiParser {
   // '--' | '++'
   public static boolean suffixExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "suffixExpression")) return false;
-    if (!nextTokenIs(builder_, PLUS_PLUS) && !nextTokenIs(builder_, MINUS_MINUS)
-        && replaceVariants(builder_, 2, "<suffix expression>")) return false;
+    if (!nextTokenIs(builder_, "<suffix expression>", PLUS_PLUS, MINUS_MINUS)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<suffix expression>");
     result_ = consumeToken(builder_, MINUS_MINUS);
@@ -5025,15 +4824,11 @@ public class DartParser implements PsiParser {
   // suffixExpression*
   private static boolean suffixExpressionWrapper_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "suffixExpressionWrapper_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!suffixExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "suffixExpressionWrapper_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "suffixExpressionWrapper_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -5189,15 +4984,11 @@ public class DartParser implements PsiParser {
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = switchCase_1_0(builder_, level_ + 1);
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (result_) {
       if (!switchCase_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "switchCase_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "switchCase_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -5239,15 +5030,11 @@ public class DartParser implements PsiParser {
   // switchCase*
   private static boolean switchStatement_5(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "switchStatement_5")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!switchCase(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "switchStatement_5");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "switchStatement_5", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -5507,15 +5294,11 @@ public class DartParser implements PsiParser {
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = tryStatement_2_0_0_0(builder_, level_ + 1);
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (result_) {
       if (!tryStatement_2_0_0_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "tryStatement_2_0_0");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "tryStatement_2_0_0", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -5589,15 +5372,11 @@ public class DartParser implements PsiParser {
   // (',' type)*
   private static boolean typeList_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typeList_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!typeList_1_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "typeList_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "typeList_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -5663,15 +5442,11 @@ public class DartParser implements PsiParser {
   // (',' typeParameter)*
   private static boolean typeParameters_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typeParameters_2")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!typeParameters_2_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "typeParameters_2");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "typeParameters_2", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -5726,15 +5501,10 @@ public class DartParser implements PsiParser {
   //                         | '[' ']' '='?
   public static boolean userDefinableOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "userDefinableOperator")) return false;
-    if (!nextTokenIs(builder_, REM) && !nextTokenIs(builder_, AND)
-        && !nextTokenIs(builder_, MUL) && !nextTokenIs(builder_, PLUS)
-        && !nextTokenIs(builder_, MINUS) && !nextTokenIs(builder_, DIV)
-        && !nextTokenIs(builder_, LT) && !nextTokenIs(builder_, LT_LT)
-        && !nextTokenIs(builder_, LT_EQ) && !nextTokenIs(builder_, EQ_EQ)
-        && !nextTokenIs(builder_, GT) && !nextTokenIs(builder_, GT_EQ)
-        && !nextTokenIs(builder_, LBRACKET) && !nextTokenIs(builder_, XOR)
-        && !nextTokenIs(builder_, OR) && !nextTokenIs(builder_, BIN_NOT)
-        && !nextTokenIs(builder_, INT_DIV) && replaceVariants(builder_, 17, "<user definable operator>")) return false;
+    if (!nextTokenIs(builder_, "<user definable operator>", REM, AND,
+      MUL, PLUS, MINUS, DIV, LT, LT_LT,
+      LT_EQ, EQ_EQ, GT, GT_EQ, LBRACKET, XOR,
+      OR, BIN_NOT, INT_DIV)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<user definable operator>");
     result_ = multiplicativeOperator(builder_, level_ + 1);
@@ -5821,15 +5591,11 @@ public class DartParser implements PsiParser {
   // cascadeReferenceExpression*
   private static boolean valueExpression_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "valueExpression_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!cascadeReferenceExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "valueExpression_1");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "valueExpression_1", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }
@@ -5953,14 +5719,12 @@ public class DartParser implements PsiParser {
   public static boolean varDeclarationList(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varDeclarationList")) return false;
     boolean result_ = false;
-    boolean pinned_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<var declaration list>");
     result_ = varAccessDeclaration(builder_, level_ + 1);
     result_ = result_ && varDeclarationList_1(builder_, level_ + 1);
     result_ = result_ && varDeclarationList_2(builder_, level_ + 1);
-    pinned_ = result_; // pin = 3
-    exit_section_(builder_, level_, marker_, VAR_DECLARATION_LIST, result_, pinned_, null);
-    return result_ || pinned_;
+    exit_section_(builder_, level_, marker_, VAR_DECLARATION_LIST, result_, false, null);
+    return result_;
   }
 
   // varInit?
@@ -5973,15 +5737,11 @@ public class DartParser implements PsiParser {
   // (',' varDeclarationListPart)*
   private static boolean varDeclarationList_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varDeclarationList_2")) return false;
-    int offset_ = builder_.getCurrentOffset();
+    int pos_ = current_position_(builder_);
     while (true) {
       if (!varDeclarationList_2_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "varDeclarationList_2");
-        break;
-      }
-      offset_ = next_offset_;
+      if (!empty_element_parsed_guard_(builder_, "varDeclarationList_2", pos_)) break;
+      pos_ = current_position_(builder_);
     }
     return true;
   }

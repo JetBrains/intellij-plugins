@@ -144,7 +144,7 @@ private topLevelDefinition ::= libraryStatement
                              | functionDeclarationWithBodyOrNative
                              | getterOrSetterDeclaration
                              | varDeclarationListWithSemicolon
-                             {recoverUntil="top_level_recover"}
+                             {recoverWhile="top_level_recover"}
 private top_level_recover ::= !('#' | '@' | 'import' | 'library' | 'native' | 'class' | 'const' | 'final' | 'get'
                               | 'set' | 'static' | 'typedef' | 'var' | <<nonStrictID>> | 'abstract' | 'part'| 'export' | 'external')
 
@@ -187,7 +187,7 @@ pathOrLibraryReference ::= stringLiteralExpression
 
 libraryId ::= <<nonStrictID>> ('.' <<nonStrictID>>)*
 {mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"
-recoverUntil="semicolon_recover"}
+recoverWhile="semicolon_recover"}
 
 private semicolon_recover ::= !(';')
 
@@ -210,7 +210,7 @@ classDefinition ::= 'abstract'? 'class' componentName typeParameters? (superclas
 
 classBody ::= '{' classMembers '}' {pin=1}
 classMembers ::= (metadata* classMemberDefinition)*
-{recoverUntil="simple_scope_recover" implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
+{recoverWhile="simple_scope_recover" implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 private simple_scope_recover ::= !'}'
 
 private getterOrSetterDeclaration ::= getterDeclaration | setterDeclaration
@@ -221,7 +221,7 @@ setterDeclaration ::= ('external' | 'static' | 'const' | 'abstract')* returnType
 
 typeParameters ::= '<' typeParameter (',' typeParameter)* '>' {pin=1}
 typeParameter ::= componentName ('extends' type)?
-{recoverUntil="type_parameter_recover" mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+{recoverWhile="type_parameter_recover" mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
 private type_parameter_recover ::= !('(' | ',' | '.' | '>' | 'extends' | 'factory' | 'implements' | '{')
 superclass ::= 'extends' type {pin=1}
@@ -235,7 +235,7 @@ private classMemberDefinition ::= factoryConstructorDeclaration
                                 | operatorDeclaration
                                 | getterOrSetterDeclaration
                                 | varDeclarationListWithSemicolon
-                                {recoverUntil="class_member_recover"}
+                                {recoverWhile="class_member_recover"}
 private class_member_recover ::= !('abstract' | 'const' | 'factory' | 'final' | 'get' | 'operator'
                                  | 'set' | 'static' | 'var' | <<nonStrictID>> | '}' | '@' | 'external')
 
@@ -258,7 +258,7 @@ fieldInitializer ::= ('this' '.')? referenceExpression '=' expression {pin=2}
 
 superCallOrFieldInitializer ::= ('super' | 'this') ('.' referenceExpression)? arguments
                               | fieldInitializer
-                              {recoverUntil="super_call_or_field_initializer_recover"}
+                              {recoverWhile="super_call_or_field_initializer_recover"}
 private super_call_or_field_initializer_recover ::= !(')' | ',' | ':' | ';' | '=' | '=>' | ']' | 'abstract' | 'const' | 'factory'
                                                     | 'final' | 'get' | 'native' | 'operator' | 'set' | 'static' | 'var' | '{' | '}'
                                                     | <<nonStrictID>>)
@@ -300,7 +300,7 @@ fieldFormalParameter ::= finalVarOrType? 'this' '.' referenceExpression
 namedFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ']' |
                           '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* '}'
 
-defaultFormalNamedParameter ::= normalFormalParameter (('=' | ':') expression)? {recoverUntil="default_formal_parameter_recover"}
+defaultFormalNamedParameter ::= normalFormalParameter (('=' | ':') expression)? {recoverWhile="default_formal_parameter_recover"}
 private default_formal_parameter_recover ::= !(')' | ',' | ']' | '}')
 
 normalFormalParameter ::= functionDeclaration
@@ -336,7 +336,7 @@ typeList ::= type (',' type)*
 block ::= '{' statements '}' {pin=1}
 
 statements ::= statement* {implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
-private statement ::= label* nonLabelledStatement {pin=2 recoverUntil="statement_recover"}
+private statement ::= label* nonLabelledStatement {pin=2 recoverWhile="statement_recover"}
 private statement_recover ::= !('!' | '(' | ')' | '+' | '++' | '-' | '--' | ';' | '<' | '[' | 'assert' | 'break' | 'case' | 'const'
                               | 'continue' | 'default' | 'do' | 'else' | 'false' | 'final' | 'for' | 'if' | 'new' | 'null' | 'rethrow' | 'return'
                               | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'var' | 'while' | '{' | '}' | '~'
@@ -365,7 +365,7 @@ private statementFollowedBySemiColon ::= (metadata* varDeclarationList | express
 label::= componentName ':'
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
-private expressionWithRecoverUntilParen ::= expression {recoverUntil="not_paren_recover"}
+private expressionWithRecoverUntilParen ::= expression {recoverWhile="not_paren_recover"}
 private not_paren_recover ::= !')'
 
 whileStatement ::= 'while' '(' expressionWithRecoverUntilParen ')' statement {pin=1}
@@ -384,7 +384,7 @@ forLoopPartsInBraces::= '(' forLoopParts ')'
 forLoopParts::= varDeclarationList ';' expression? ';' expressionList?
               | forInPart
               | expressionList? ';' expression? ';' expressionList?
-              {recoverUntil="for_loops_parts_recover"}
+              {recoverWhile="for_loops_parts_recover"}
 
 forInPart ::= (varAccessDeclaration | componentName) 'in' expression
 
@@ -393,7 +393,7 @@ private for_loops_parts_recover ::= !')'
 ifStatement ::= 'if' '(' expressionWithRecoverUntilParen ')' statement ('else' statement)?  {pin=1}
 switchStatement ::= 'switch' '(' expressionWithRecoverUntilParen ')' '{' switchCase* defaultCase? '}' {pin=1}
 
-switchCase ::= label? ('case' expression ':')+ statements {recoverUntil="switch_case_recover"}
+switchCase ::= label? ('case' expression ':')+ statements {recoverWhile="switch_case_recover"}
 private switch_case_recover ::= !('case' | 'default' | '}' | <<nonStrictID>>)
 defaultCase::= label? ('case' expression ':')* 'default' ':' statements
 
@@ -407,9 +407,9 @@ varInit ::= '=' expression {pin=1}
 expressionList ::= expression (',' expression)*
 arguments ::= '(' argumentList? ')'
 
-argumentList ::= argumentListPart (',' argumentListPart)* {recoverUntil="argument_list_recover"}
+argumentList ::= argumentListPart (',' argumentListPart)* {recoverWhile="argument_list_recover"}
 private argument_list_recover ::= !(')')
-private argumentListPart ::= namedArgument | expression {recoverUntil="argument_list_part_recover"}
+private argumentListPart ::= namedArgument | expression {recoverWhile="argument_list_part_recover"}
 private argument_list_part_recover ::= !(')' | ',')
 
 namedArgument ::= parameterNameReferenceExpression ':' expression {
@@ -422,7 +422,7 @@ namedArgument ::= parameterNameReferenceExpression ':' expression {
 parameterNameReferenceExpression ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-expression ::= assignExpressionWrapper {recoverUntil="expression_recover"}
+expression ::= assignExpressionWrapper {recoverWhile="expression_recover"}
 private expression_recover ::= !('!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
                                | '+=' | ',' | '-' | '--' | '-=' | '...' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
@@ -492,7 +492,7 @@ private value ::=  (literalExpression qualifiedReferenceTail?)
 
 parenthesizedExpression ::= '(' expressionInParentheses ')'
 {pin=1 mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
-private expressionInParentheses ::= expression | statement {recoverUntil=parenthesesRecovery}
+private expressionInParentheses ::= expression | statement {recoverWhile=parenthesesRecovery}
 private parenthesesRecovery ::= !')'
 
 private newExpressionOrConstOrCall ::= (newExpression | constConstructorExpression) qualifiedReferenceTail?
@@ -549,7 +549,7 @@ listLiteralExpression ::= '[' (expressionList ','?)? ']'
 mapLiteralExpression ::= '{' (mapLiteralEntry (',' mapLiteralEntry)* ','? )? '}'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-mapLiteralEntry ::= (stringLiteralExpression | referenceExpression) ':' expression {recoverUntil="map_literal_entry_recover"}
+mapLiteralEntry ::= (stringLiteralExpression | referenceExpression) ':' expression {recoverWhile="map_literal_entry_recover"}
 private map_literal_entry_recover ::= !('!=' | '!==' | 'is' | '%' | '&&' | '&' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<'
                                       | '<<' | '<=' | '==' | '===' | '=>' | '>' | '>=' | '?' | '[' | ']' | '^'
                                       | 'native' | '{' | '|' | '||' | '}' | '~/' | shiftRightOperator | ('.' '.'))
