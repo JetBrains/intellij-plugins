@@ -26,7 +26,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
     PsiElement element = JSResolveUtil.findParent(fun);
 
     JSType classType = element instanceof JSClass ?
-                       JSNamedType.createType(((JSClass)element).getQualifiedName(), null, JSNamedType.StaticOrInstance.INSTANCE) :
+                       JSNamedType.createType(((JSClass)element).getQualifiedName(), JSTypeSource.EMPTY, JSNamedType.StaticOrInstance.INSTANCE) :
                        null;
     if (classType != null && JSTypeUtils.isActionScriptVectorType(classType)) {
       String name = fun.getName();
