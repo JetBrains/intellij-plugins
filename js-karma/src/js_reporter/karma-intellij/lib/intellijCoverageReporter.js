@@ -28,27 +28,44 @@ function findLcovInfoFile(coverageDir, callback) {
   });
 }
 
-function findKarmaCoverageReporterConstructor(injector) {
+function createKarmaCoverageReporter(injector, emitter, config) {
   try {
-    var someKarmaCoverageReporter = injector.get('reporter:coverage');
-    return someKarmaCoverageReporter.constructor;
+    var karmaCoverageReporterName = 'reporter:coverage';
+    var locals = {
+      emitter: ['value', emitter],
+      config:  ['value', config]
+    };
+    var childInjector = injector.createChild([locals], [karmaCoverageReporterName]);
+    return childInjector.get(karmaCoverageReporterName);
   }
   catch (ex) {
     return null;
   }
 }
 
-function IntellijCoverageReporter(injector, config, helper, logger) {
-  var KarmaCoverageReporterConstructor = findKarmaCoverageReporterConstructor(injector);
-  if (KarmaCoverageReporterConstructor != null) {
-    init.call(this, KarmaCoverageReporterConstructor, config, helper, logger);
+function IntellijCoverageReporter(injector, config) {
+  var that = this;
+  var emitter = new EventEmitter();
+  var newConfig = {
+    coverageReporter : {
+      type : 'lcovonly',
+      dir : cli.getCoverageTempDirPath()
+    },
+    basePath : config.basePath
+  };
+
+  var karmaCoverageReporter = createKarmaCoverageReporter(injector, emitter, newConfig);
+  if (karmaCoverageReporter != null) {
+    that = karmaCoverageReporter;
+    init.call(karmaCoverageReporter, emitter, newConfig);
   }
   else {
     console.warn("IDE coverage reporter is disabled");
     this.adapters = [];
   }
   var coveragePreprocessorSpecifiedInConfig = isCoveragePreprocessorSpecified(config.preprocessors);
-  IntellijCoverageReporter.reportCoverageStartupStatus(true, coveragePreprocessorSpecifiedInConfig, KarmaCoverageReporterConstructor != null);
+  IntellijCoverageReporter.reportCoverageStartupStatus(true, coveragePreprocessorSpecifiedInConfig, karmaCoverageReporter != null);
+  return that;
 }
 
 function isCoveragePreprocessorSpecified(preprocessors) {
@@ -80,18 +97,8 @@ IntellijCoverageReporter.reportCoverageStartupStatus = function (coverageReporte
   intellijUtil.sendIntellijEvent('coverageStartupStatus', event);
 };
 
-function init(KarmaCoverageReporter, config, helper, logger) {
-  var rootConfig = {
-    coverageReporter : {
-      type : 'lcovonly',
-      dir : cli.getCoverageTempDirPath()
-    },
-    basePath : config.basePath
-  };
-
-  var emitter = new EventEmitter();
-  KarmaCoverageReporter.call(this, rootConfig, emitter, helper, logger);
-
+// invoked in context of original karmaCoverageReporter
+function init(emitter, rootConfig) {
   var currentBrowser = null;
 
   var superOnRunStart = this.onRunStart.bind(this);
@@ -135,11 +142,19 @@ function init(KarmaCoverageReporter, config, helper, logger) {
         superOnBrowserComplete.apply(this, currentBrowser.argumentsForOnBrowserComplete);
       }
       superOnRunComplete([currentBrowser]);
-      emitter.emit('exit', function() {
+
+      var done = function() {
         findLcovInfoFile(rootConfig.coverageReporter.dir, function(lcovFilePath) {
           intellijUtil.sendIntellijEvent('coverageFinished', lcovFilePath);
         });
-      });
+      };
+      if (typeof this.onExit === 'function') {
+        this.onExit(done);
+      }
+      else {
+        // to keep backward compatibility
+        emitter.emit('exit', done);
+      }
     }
   };
 }
@@ -190,7 +205,7 @@ function findBrowserByName(browsers, browserNamePrefix) {
   return result;
 }
 
-IntellijCoverageReporter.$inject = ['injector', 'config', 'helper', 'logger'];
+IntellijCoverageReporter.$inject = ['injector', 'config'];
 IntellijCoverageReporter.reporterName = 'intellijCoverage_33e284dac2b015a9da50d767dc3fa58a';
 
 module.exports = IntellijCoverageReporter;
