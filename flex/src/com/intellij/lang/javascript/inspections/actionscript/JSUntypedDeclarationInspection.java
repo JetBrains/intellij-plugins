@@ -23,8 +23,8 @@ import com.intellij.codeInsight.template.impl.MacroCallNode;
 import com.intellij.codeInsight.template.macro.MacroFactory;
 import com.intellij.codeInspection.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.inspections.JSInspection;
 import com.intellij.lang.javascript.psi.*;
@@ -69,7 +69,7 @@ public class JSUntypedDeclarationInspection extends JSInspection {
   }
 
   private static void process(final JSNamedElement node, final ProblemsHolder holder) {
-    if (node.getContainingFile().getLanguage() != JavaScriptSupportLoader.ECMA_SCRIPT_L4) return;
+    if (!DialectDetector.isActionScript(node)) return;
     ASTNode nameIdentifier = node.findNameIdentifier();
 
     if ((nameIdentifier != null || node instanceof JSFunction) &&

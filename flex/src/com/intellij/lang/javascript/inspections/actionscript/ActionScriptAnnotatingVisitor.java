@@ -14,12 +14,13 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
-import com.intellij.lang.javascript.flex.*;
+import com.intellij.lang.javascript.flex.AddImportECMAScriptClassOrFunctionAction;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.ImportUtils;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
-import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
 import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
-import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
@@ -28,13 +29,14 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
-import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
-import com.intellij.lang.javascript.psi.types.primitives.JSObjectType;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.lang.javascript.validation.*;
@@ -70,7 +72,8 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.*;
 
-import static com.intellij.lang.javascript.psi.JSCommonTypeNames.*;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.BOOLEAN_CLASS_NAME;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.NUMBER_CLASS_NAME;
 
 /**
  * @author Konstantin.Ulitin
@@ -83,6 +86,12 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     JavaScriptSupportLoader.MXML_FILE_EXTENSION,
     JavaScriptSupportLoader.FXG_FILE_EXTENSION
   };
+
+  @Override
+  protected void initTypeCheckers() {
+    myTypeChecker = new ActionScriptTypeChecker(myHolder);
+    myFunctionSignatureChecker = new ActionScriptFunctionSignatureChecker(myTypeChecker, myHolder);
+  }
 
   public static void checkFileUnderSourceRoot(final JSNamedElement aClass, ErrorReportingClient client) {
     PsiElement nameIdentifier = aClass.getNameIdentifier();
@@ -1115,179 +1124,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     checkFileUnderSourceRoot(aClass, new SimpleErrorReportingClient());
   }
 
-  @Override
-  protected void checkCallArgumentType(JSParameter p, JSExpression expression, JSCallExpression node, JSFunction resolveResult) {
-    checkExpressionIsAssignableToVariable(p, expression, node.getContainingFile(), "javascript.argument.type.mismatch", false);
-  }
-
-  @Override
-  protected void checkExpressionIsAssignableToVariable(JSVariable p,
-                                                       final JSExpression expr,
-                                                       PsiFile containingFile,
-                                                       @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey,
-                                                       boolean allowChangeVariableTypeFix) {
-    final JSType type = p.getType();
-    Pair<Annotation, String> annotationAndExprType =
-      ValidateTypesUtil.checkExpressionIsAssignableToType(expr, type, myHolder, containingFile, problemKey,
-                                                          allowChangeVariableTypeFix ? p : null);
-
-    if (annotationAndExprType != null &&
-        p.getParent() instanceof JSParameterList &&
-        expr.getParent() instanceof JSArgumentList &&
-        !JSCommonTypeNames.VOID_TYPE_NAME.equals(annotationAndExprType.second)) {
-      JSFunction method = (JSFunction)p.getParent().getParent();
-      JSFunction topMethod = JSInheritanceUtil.findTopMethods(method).iterator().next();
-      annotationAndExprType.first.registerFix(new ChangeSignatureFix(topMethod, ((JSArgumentList)expr.getParent()).getArguments()));
-    }
-
-    PsiElement _fun;
-    if (annotationAndExprType == null &&
-        type != null && FUNCTION_CLASS_NAME.equals(type.getResolvedTypeText()) &&
-        p instanceof JSParameter &&
-        "addEventListener".equals(((JSFunction)p.getParent().getParent()).getName()) &&
-        (( expr instanceof JSReferenceExpression &&
-           (_fun = ((JSReferenceExpression)expr).resolve()) instanceof JSFunction
-         ) ||
-         (
-           expr instanceof JSFunctionExpression &&
-           (_fun = ((JSFunctionExpression)expr).getFunction()) != null
-         )
-        )) {
-      JSFunction fun = (JSFunction)_fun;
-      JSParameterList parameterList = fun.getParameterList();
-
-      if (parameterList != null) {
-        JSParameter[] parameters = parameterList.getParameters();
-        boolean invalidArgs = parameters.length == 0;
-
-        if (!invalidArgs && parameters.length > 1) {
-          for(int i = parameters.length - 1; i > 0; --i) {
-            if (!parameters[i].isRest() && parameters[i].getInitializer() == null) {
-              invalidArgs = true;
-              break;
-            }
-          }
-        }
-
-        Computable.NotNullCachedComputable<JSParameterList> expectedParameterListForEventListener =
-          new Computable.NotNullCachedComputable<JSParameterList>() {
-            @NotNull
-            @Override
-            protected JSParameterList internalCompute() {
-              JSClass jsClass = calcNontrivialExpectedEventType(expr);
-              ASTNode treeFromText =
-                JSChangeUtil.createJSTreeFromText(
-                  expr.getProject(),
-                  "function f(event:" + (jsClass != null ? jsClass.getQualifiedName() : FlexCommonTypeNames.FLASH_EVENT_FQN) + ") {}",
-                  JavaScriptSupportLoader.ECMA_SCRIPT_L4
-                );
-              return ((JSFunction)treeFromText.getPsi()).getParameterList();
-            }
-          };
-
-        if (invalidArgs) {
-          PsiElement expr_;
-          if (expr instanceof JSFunctionExpression) {
-            expr_ = ((JSFunctionExpression)expr).getParameterList();
-          }
-          else {
-            expr_ = expr;
-          }
-          JSProblemUtil.registerProblem(
-            expr_,
-            JSBundle.message("javascript.callback.signature.mismatch"),
-            ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myHolder, JSValidateTypesInspection.SHORT_NAME,
-            new ChangeSignatureFix(fun, expectedParameterListForEventListener)
-          );
-        } else {
-          final JSClass expectedEventClass = calcNontrivialExpectedEventType(expr);
-          JSType paramType = parameters[0].getType();
-          final String actualParameterType = paramType != null ? paramType.getResolvedTypeText() : null;
-
-          if (expectedEventClass == null) {
-            if (!JSResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_EVENT_FQN, actualParameterType, parameters[0]) &&
-                !JSResolveUtil.isAssignableType(FlexCommonTypeNames.STARLING_EVENT_FQN, actualParameterType, parameters[0])) {
-              JSProblemUtil.registerProblem(
-                expr instanceof JSFunctionExpression ? parameters[0] : expr,
-                JSBundle.message("javascript.callback.signature.mismatch"),
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myHolder, JSValidateTypesInspection.SHORT_NAME,
-                new ChangeSignatureFix(fun, expectedParameterListForEventListener)
-              );
-            }
-          }
-          else {
-            if (!JSResolveUtil.isAssignableType(actualParameterType, expectedEventClass.getQualifiedName(), parameters[0])) {
-              JSProblemUtil.registerProblem(
-                expr instanceof JSFunctionExpression ? parameters[0] : expr,
-                JSBundle.message("javascript.callback.signature.mismatch.event.class", expectedEventClass.getQualifiedName()),
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myHolder, JSValidateTypesInspection.SHORT_NAME,
-                new ChangeSignatureFix(fun, expectedParameterListForEventListener)
-              );
-            }
-          }
-        }
-      }
-    }
-  }
-
-  private static @Nullable JSClass calcNontrivialExpectedEventType(JSExpression expr) {
-    JSExpression prevExpr = PsiTreeUtil.findChildOfAnyType(expr.getParent(), JSExpression.class);
-
-    String type = null;
-    JSExpression adHocQualifierExpr = null;
-
-    if (prevExpr instanceof JSReferenceExpression && prevExpr != expr) {
-      PsiElement constantRef = ((JSReferenceExpression)prevExpr).resolve();
-
-      if (constantRef instanceof JSVariable) {
-        final String initializerText = ((JSVariable)constantRef).getInitializerText();
-        if (initializerText != null &&
-            (StringUtil.startsWith(initializerText, "\'") ||
-             StringUtil.startsWith(initializerText, "\"")
-            )) {
-          type = StringUtil.stripQuotesAroundValue(initializerText);
-        }
-      }
-
-      adHocQualifierExpr = ((JSReferenceExpression)prevExpr).getQualifier();
-    } else if (prevExpr instanceof JSLiteralExpression) {
-      type = StringUtil.stripQuotesAroundValue(prevExpr.getText());
-    }
-
-    if (type != null) {
-      JSExpression methodExpression = ((JSCallExpression)expr.getParent().getParent()).getMethodExpression();
-      if (methodExpression instanceof JSReferenceExpression) {
-        JSClass clazz = ActionScriptSmartCompletionContributor.findClassOfQualifier((JSReferenceExpression)methodExpression);
-
-        if (clazz != null) {
-          Map<String,String> eventsMap = ActionScriptSmartCompletionContributor.getEventsMap(clazz);
-          String qName = eventsMap.get(type);
-          if (qName != null) {
-            PsiElement classFromNamespace = JSClassResolver.findClassFromNamespace(qName, clazz);
-            if (classFromNamespace instanceof JSClass) return (JSClass)classFromNamespace;
-            // if uncomment next 2 lines then the following event listener parameter won't be highlighted with warning
-            // new Sprite().addEventListener(ErrorEvent.ERROR, function(e:AccelerometerEvent):void{})
-            //} else if (JSInheritanceUtil.isParentClass(clazz, "flash.events.EventDispatcher", true)) {
-            //  adHocQualifierExpr = null;
-          }
-        }
-      }
-    }
-
-    if (adHocQualifierExpr instanceof JSReferenceExpression) {
-      PsiElement resolve = ((JSReferenceExpression)adHocQualifierExpr).resolve();
-      if (resolve instanceof JSClass) {
-        JSClass clazz = (JSClass)resolve;
-        if (ActionScriptClassResolver.isParentClass((JSClass)resolve, FlexCommonTypeNames.FLASH_EVENT_FQN, false) ||
-            ActionScriptClassResolver.isParentClass((JSClass)resolve, FlexCommonTypeNames.STARLING_EVENT_FQN, false)) {
-          return clazz;
-        }
-      }
-    }
-
-    return null;
-  }
-
   protected void validateGetPropertyReturnType(ASTNode nameIdentifier, JSFunction function, String typeString) {
     if (VOID_TYPE_NAME.equals(typeString)) {
       // TODO: fix!
@@ -1443,30 +1279,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  protected void checkFunction(JSCallExpression node, PsiElement element) {
-    super.checkFunction(node, element);
-    if (element instanceof JSClass) {
-      if (node instanceof JSNewExpression || node.getMethodExpression() instanceof JSSuperExpression) {
-        final JSArgumentList argumentList = node.getArgumentList();
-        final JSExpression[] expressions = argumentList != null ? argumentList.getArguments() : JSExpression.EMPTY_ARRAY;
-        if (expressions.length > 0) {
-          final CreateConstructorFix fix = CreateConstructorFix.createIfApplicable(node);
-          JSProblemUtil.registerProblem(
-            ValidateTypesUtil.getPlaceForSignatureProblem(node, argumentList),
-            JSBundle.message("javascript.invalid.number.of.parameters", "0"),
-            ValidateTypesUtil.getHighlightTypeForTypeOrSignatureProblem(node), myHolder, JSCheckFunctionSignaturesInspection.SHORT_NAME,
-            fix != null ? new LocalQuickFix[]{fix} : LocalQuickFix.EMPTY_ARRAY);
-          return;
-        }
-        checkCallParameters(node, null);
-      }
-      else {
-        ValidateTypesUtil.reportProblemIfNotOneParameter(node, myHolder);
-      }
-    }
-  }
-
-  @Override
   public void visitJSBinaryExpression(JSBinaryExpression node) {
     super.visitJSBinaryExpression(node);
 
@@ -1494,10 +1306,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       final PsiFile containingFile = node.getContainingFile();
       final JSType numberType = JSNamedType.createType(NUMBER_CLASS_NAME, JSTypeSourceFactory.createTypeSource(lOperand, true),
                                                        JSNamedType.StaticOrInstance.INSTANCE);
-      ValidateTypesUtil.checkExpressionIsAssignableToType(lOperand, numberType, myHolder, containingFile,
-                                                          "javascript.expression.type.implicitly.coerced.to.unrelated.type", null);
-      ValidateTypesUtil.checkExpressionIsAssignableToType(rOperand, numberType, myHolder, containingFile,
-                                                          "javascript.expression.type.implicitly.coerced.to.unrelated.type", null);
+      myTypeChecker.checkExpressionIsAssignableToType(lOperand, numberType, containingFile,
+                                                      "javascript.expression.type.implicitly.coerced.to.unrelated.type", null);
+      myTypeChecker.checkExpressionIsAssignableToType(rOperand, numberType, containingFile,
+                                                      "javascript.expression.type.implicitly.coerced.to.unrelated.type", null);
     }
   }
 
@@ -1513,14 +1325,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
   public void visitJSThisExpression(final JSThisExpression node) {
     checkClassReferenceInStaticContext(node, "javascript.validation.message.this.referenced.from.static.context");
-  }
-
-  @Override
-  protected boolean isCallableType(boolean inNewExpression, @NotNull JSType type) {
-    final String typeText = type.getTypeText();
-    return "Class".equals(typeText) ||
-           inNewExpression && type instanceof JSObjectType ||
-           JSTypeUtils.hasFunctionType(type);
   }
 
   @Override
@@ -1543,33 +1347,31 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     final JSArgumentList argumentList = callExpression.getArgumentList();
     if (argumentList instanceof JSE4XFilterQueryArgumentList &&
         (type != null && !(type instanceof JSAnyType) || resolveResult instanceof JSFunction && ((JSFunction)resolveResult).isGetProperty())) {
-      checkE4XFilterQuery(callExpression, type.getTypeText(), myHolder, argumentList);
+      checkE4XFilterQuery(callExpression, type.getTypeText(), argumentList);
       return false;
     }
     return true;
   }
 
-  private static void checkE4XFilterQuery(JSCallExpression node, String type, AnnotationHolder holder, JSArgumentList argumentList) {
+  private void checkE4XFilterQuery(JSCallExpression node, String type, JSArgumentList argumentList) {
     if (!JSResolveUtil.isAssignableType("XML", type, argumentList) &&
         !JSResolveUtil.isAssignableType("XMLList", type, argumentList)
       ) {
-      JSProblemUtil.registerProblem(
+      myTypeChecker.registerProblem(
         node.getMethodExpression(),
         JSBundle.message("javascript.invalid.e4x.filter.query.receiver", type),
-        ValidateTypesUtil.getHighlightTypeForTypeOrSignatureProblem(node),
-        holder,
-        JSValidateTypesInspection.SHORT_NAME
+        ProblemHighlightType.GENERIC_ERROR,
+        null
       );
       return;
     }
-    ValidateTypesUtil.reportProblemIfNotOneParameter(node, holder);
+    myFunctionSignatureChecker.reportProblemIfNotExpectedCountOfParameters(node, 1, "one");
     JSExpression[] arguments = argumentList.getArguments();
 
     if (arguments.length >= 1) {
-      ValidateTypesUtil.checkExpressionIsAssignableToType(
+      myTypeChecker.checkExpressionIsAssignableToType(
         arguments[0],
         BOOLEAN_CLASS_NAME,
-        holder,
         argumentList.getContainingFile(),
         "javascript.argument.type.mismatch",
         null);
@@ -1663,11 +1465,5 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   @Override
   public void visitJSSuperExpression(final JSSuperExpression node) {
     checkClassReferenceInStaticContext(node, "javascript.validation.message.super.referenced.from.static.context");
-  }
-
-
-  @Override
-  protected boolean obtainNextMatchedParams(int[] matchedParams, JSParameter[] parameters) {
-    return false;
   }
 }
