@@ -1,7 +1,6 @@
 package com.intellij.javascript.karma.debug;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RunProfile;
@@ -101,7 +100,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     if (!debugEngine.prepareDebugger(project)) {
       return null;
     }
-    final Connection connection = debugEngine.openConnection(true);
+    final Connection connection = debugEngine.openConnection();
     final Url url = Urls.newFromEncoded(karmaServer.formatUrl("/debug.html"));
 
     final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
@@ -113,7 +112,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) {
-          JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
+          JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult, true);
           debugProcess.setElementsInspectorEnabled(false);
           debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
           return debugProcess;
@@ -124,7 +123,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
   }
 
   private static DebuggableFileFinder getDebuggableFileFinder(@NotNull KarmaServer karmaServer) {
-    BiMap<String, VirtualFile> mappings = HashBiMap.create();
+    ImmutableBiMap.Builder<String, VirtualFile> mappings = ImmutableBiMap.builder();
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
     if (karmaConfig != null) {
       @SuppressWarnings("ConstantConditions")
@@ -146,7 +145,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
       String url = karmaServer.formatUrlWithoutUrlRoot("/absolute");
       mappings.put(url, root);
     }
-    return new RemoteDebuggingFileFinder(mappings, false);
+    return new RemoteDebuggingFileFinder(mappings.build(), false);
   }
 
   @Nullable

@@ -1,7 +1,6 @@
 package com.google.jstestdriver.idea.debug;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.config.ParsedConfiguration;
 import com.google.jstestdriver.config.ResolvedConfiguration;
@@ -15,6 +14,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.UriUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -36,10 +36,10 @@ public class JstdDebuggableFileFinderProvider {
   @NotNull
   public RemoteDebuggingFileFinder provideFileFinder() throws ExecutionException {
     ResolvedConfiguration resolvedConfiguration = resolveConfiguration();
-    BiMap<String, VirtualFile> mappings = HashBiMap.create();
+    ImmutableBiMap.Builder<String, VirtualFile> mappings = ImmutableBiMap.builder();
     addAllRemoteUrlMappings(resolvedConfiguration.getTests(), mappings);
     addAllRemoteUrlMappings(resolvedConfiguration.getFilesList(), mappings);
-    return new RemoteDebuggingFileFinder(mappings, false);
+    return new RemoteDebuggingFileFinder(mappings.build(), false);
   }
 
   @NotNull
@@ -77,7 +77,7 @@ public class JstdDebuggableFileFinderProvider {
     }
   }
 
-  private static void addAllRemoteUrlMappings(@NotNull Collection<FileInfo> filesInfo, @NotNull BiMap<String, VirtualFile> mappings) {
+  private static void addAllRemoteUrlMappings(@NotNull Collection<FileInfo> filesInfo, @NotNull ImmutableBiMap.Builder<String, VirtualFile> builder) {
     LocalFileSystem fileSystem = LocalFileSystem.getInstance();
     for (FileInfo fileInfo : filesInfo) {
       String displayPath = fileInfo.getDisplayPath();
@@ -85,8 +85,7 @@ public class JstdDebuggableFileFinderProvider {
       if (StringUtil.isNotEmpty(displayPath) && file.isFile()) {
         VirtualFile virtualFile = fileSystem.findFileByIoFile(file);
         if (virtualFile != null) {
-          String remotePath = "http://127.0.0.1:9876/test/" + StringUtil.trimStart(displayPath, "/");
-          mappings.put(remotePath, virtualFile);
+          builder.put("http://127.0.0.1:9876/test/" + UriUtil.trimLeadingSlashes(displayPath), virtualFile);
         }
       }
     }

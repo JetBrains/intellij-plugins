@@ -97,8 +97,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   public DartCommandLineDebugProcess(@NotNull XDebugSession session,
                                      int debuggingPort,
-                                     ExecutionResult executionResult)
-    throws IOException {
+                                     ExecutionResult executionResult) {
     super(session);
 
     myBreakpointsHandler = new DartCommandLineBreakpointsHandler(this);
@@ -108,6 +107,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   private void startCommandProcessingThread(final int debuggingPort) {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
       public void run() {
         myConnection.connect(debuggingPort);
         myConnection.registerHandler(new AbstractResponseHandler<JsonResponse>() {
@@ -150,7 +150,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     final Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>> command = commandsToWrite.removeFirst();
     JsonObject commandObject = command.getFirst();
     assert commandObject != null;
-    JsonObject params = null;
+    JsonObject params;
     if (commandObject.has("params")) {
       params = commandObject.get("params").getAsJsonObject();
     }
@@ -316,6 +316,8 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     return new DartDebuggerEditorsProvider();
   }
 
+  @Override
+  @NotNull
   public XBreakpointHandler<?>[] getBreakpointHandlers() {
     return myBreakpointsHandler.getBreakpointHandlers();
   }

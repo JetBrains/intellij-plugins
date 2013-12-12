@@ -21,8 +21,6 @@ import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-
 public class DartUnitDebugRunner extends DefaultProgramRunner {
   public static final String DART_UNIT_DEBUG_RUNNER_ID = "DartUnitDebugRunner";
 
@@ -60,14 +58,10 @@ public class DartUnitDebugRunner extends DefaultProgramRunner {
 
     final XDebugSession debugSession =
       XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
+        @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
-          try {
-            return new DartCommandLineDebugProcess(session, debuggingPort, executionResult);
-          }
-          catch (IOException e) {
-            throw new ExecutionException(e.getMessage(), e);
-          }
+          return new DartCommandLineDebugProcess(session, debuggingPort, executionResult);
         }
       });
 
