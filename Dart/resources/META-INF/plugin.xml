@@ -3,7 +3,7 @@
   <description>Support for Dart programming language</description>
   <version>999.999</version>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="132.0"/>
+  <idea-version since-build="134.297"/>
   <depends>com.intellij.modules.xml</depends>
   <depends>JavaScript</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
