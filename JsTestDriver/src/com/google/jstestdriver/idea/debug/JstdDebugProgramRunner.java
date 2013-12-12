@@ -19,6 +19,7 @@ import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.JSDebugProcess;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Url;
@@ -117,7 +118,19 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     ((JSDebugProcess)session.getDebugProcess()).getConnection().executeOnStart(new Runnable() {
       @Override
       public void run() {
-        resumeJstdClientRunning(executionResult.getProcessHandler());
+        Runnable runnable = new Runnable() {
+          @Override
+          public void run() {
+            resumeJstdClientRunning(executionResult.getProcessHandler());
+          }
+        };
+
+        if (ApplicationManager.getApplication().isReadAccessAllowed()) {
+          ApplicationManager.getApplication().executeOnPooledThread(runnable);
+        }
+        else {
+          runnable.run();
+        }
       }
     });
     return session.getRunContentDescriptor();
