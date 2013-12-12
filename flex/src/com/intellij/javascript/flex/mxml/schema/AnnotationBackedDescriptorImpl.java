@@ -25,6 +25,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
 import com.intellij.lang.refactoring.NamesValidator;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -58,6 +59,9 @@ import java.util.Set;
  */
 public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   implements Validator<XmlElement>, AnnotationBackedDescriptor, XmlElementDescriptorAwareAboutChildren {
+
+  enum OriginatingElementType {Metadata, VarOrFunction, IdAttribute, Other}
+
   private static final String[] DEFERRED_IMMEDIATE = {"deferred", "immediate"};
   private static final String[] AUTO_NEVER = {"auto", "never"};
   private static final String[] E4X_XML = {"e4x", "xml"};
@@ -87,8 +91,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   private boolean myScriptable;
   private boolean myProperty = false;
   private String myAnnotationName;
-  private boolean myDefinedByMetadata = false;
-  private boolean myDefinedByIdAttribute = false;
+  private final @NotNull OriginatingElementType myOriginatingElementType;
 
   private boolean myRichTextContent;
   private boolean myCollapseWhiteSpace;
@@ -111,12 +114,13 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     myDeferredInstance = deferredInstance;
 
     if (originatingElement instanceof JSAttributeNameValuePair) {
-      myDefinedByMetadata = true;
+      myOriginatingElementType = OriginatingElementType.Metadata;
       final JSAttribute attribute = (JSAttribute)originatingElement.getParent();
 
       initFromAttribute(attribute);
     }
     else if (originatingElement instanceof JSAttributeListOwner) {
+      myOriginatingElementType = OriginatingElementType.VarOrFunction;
       myProperty = originatingElement instanceof JSFunction || originatingElement instanceof JSVariable;
       JSAttribute attribute = findInspectableAttr(originatingElement);
       initFromAttribute(attribute);
@@ -136,7 +140,10 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     }
     else if (originatingElement instanceof XmlAttribute &&
              FlexMxmlLanguageAttributeNames.ID.equals(((XmlAttribute)originatingElement).getName())) {
-      myDefinedByIdAttribute = true;
+      myOriginatingElementType = OriginatingElementType.IdAttribute;
+    }
+    else {
+      myOriginatingElementType = OriginatingElementType.Other; // dead branch?
     }
 
     if (predefined) {
@@ -173,6 +180,11 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   protected AnnotationBackedDescriptorImpl(String _name,
                                            ClassBackedElementDescriptor _parentDescriptor,
                                            AnnotationBackedDescriptorImpl originalDescriptor, JSNamedElement originatingElement) {
+    if (originalDescriptor.myOriginatingElementType != OriginatingElementType.VarOrFunction) {
+      Logger.getInstance(AnnotationBackedDescriptorImpl.class.getName()).error(originalDescriptor.myOriginatingElementType);
+    }
+    myOriginatingElementType = originalDescriptor.myOriginatingElementType;
+
     name = _name;
     parentDescriptor = _parentDescriptor;
     predefined = originalDescriptor.predefined;
@@ -222,6 +234,11 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     return format;
   }
 
+  @NotNull
+  OriginatingElementType getOriginatingElementType() {
+    return myOriginatingElementType;
+  }
+
   boolean isPreferredTo(@NotNull AnnotationBackedDescriptorImpl other) {
     // if there's event and function/variable with the same name then event is preferred
     // in case of style or effect and function/variable with the same name - function/variable is preferred
@@ -229,7 +246,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     if (FlexAnnotationNames.EVENT.equals(myAnnotationName) && !FlexAnnotationNames.EVENT.equals(other.myAnnotationName)) {
       return true;
     }
-    if (!myDefinedByMetadata && other.myDefinedByMetadata) {
+    if (myOriginatingElementType != OriginatingElementType.Metadata && other.myOriginatingElementType == OriginatingElementType.Metadata) {
       return true;
     }
     return false;
@@ -243,7 +260,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     PsiElement element = parentDescriptorDeclaration;
     if (predefined) return element;
 
-    if (myDefinedByIdAttribute) {
+    if (myOriginatingElementType == OriginatingElementType.IdAttribute) {
       return findDeclarationByIdAttributeValue(parentDescriptorDeclaration, new THashSet<JSClass>());
     }
 
@@ -260,7 +277,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     final ClassBackedElementDescriptor.AttributedItemsProcessor itemsProcessor =
       new ClassBackedElementDescriptor.AttributedItemsProcessor() {
         public boolean process(final JSNamedElement jsNamedElement, final boolean isPackageLocalVisibility) {
-          if (!myDefinedByMetadata && name.equals(jsNamedElement.getName())) {
+          if (myOriginatingElementType != OriginatingElementType.Metadata && name.equals(jsNamedElement.getName())) {
             result[0] = jsNamedElement;
             return false;
           }
@@ -268,7 +285,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
         }
 
         public boolean process(final JSAttributeNameValuePair pair, final String annotationName, final boolean included) {
-          if (myDefinedByMetadata && name.equals(pair.getSimpleValue()) && included) {
+          if (myOriginatingElementType == OriginatingElementType.Metadata && name.equals(pair.getSimpleValue()) && included) {
             result[0] = pair;
             return false;
           }

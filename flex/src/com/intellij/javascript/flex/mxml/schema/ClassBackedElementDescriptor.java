@@ -724,6 +724,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
     if (previousDescriptor != null &&
         previousDescriptor.parentDescriptor != this &&
+        previousDescriptor.getOriginatingElementType() == AnnotationBackedDescriptorImpl.OriginatingElementType.VarOrFunction &&
         jsNamedElement instanceof JSAttributeListOwner &&
         AnnotationBackedDescriptorImpl.findInspectableAttr(jsNamedElement) == null
        ) {
