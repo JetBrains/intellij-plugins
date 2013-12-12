@@ -49,7 +49,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.io.LocalFileFinder;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
@@ -75,6 +74,7 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.io.LocalFileFinder;
 
 import javax.swing.event.HyperlinkEvent;
 import java.io.File;
@@ -128,7 +128,7 @@ public class FlexDebugProcess extends XDebugProcess {
   private final FlexBreakpointsHandler myBreakpointsHandler;
   @NonNls private static final String FAULT_MARKER = "[Fault] ";
   private static final Logger LOG = Logger.getInstance(FlexDebugProcess.class.getName());
-  private static boolean doSimpleTracing = ((ApplicationEx)ApplicationManager.getApplication()).isInternal();
+  private static final boolean doSimpleTracing = ((ApplicationEx)ApplicationManager.getApplication()).isInternal();
 
   private Object myStackFrameEqualityObject;
   private Map<String, String> myQName2IdMap;
@@ -344,16 +344,19 @@ public class FlexDebugProcess extends XDebugProcess {
 
       myFlexUnitConnection = new FlexUnitConnection();
       myFlexUnitConnection.addListener(new FlexUnitConnection.Listener() {
+        @Override
         public void statusChanged(FlexUnitConnection.ConnectionStatus status) {
           if (status == FlexUnitConnection.ConnectionStatus.CONNECTION_FAILED) {
             getSession().stop();
           }
         }
 
+        @Override
         public void onData(String line) {
           getProcessHandler().notifyTextAvailable(line + "\n", ProcessOutputTypes.STDOUT);
         }
 
+        @Override
         public void onFinish() {
           getProcessHandler().detachProcess();
         }
@@ -375,6 +378,7 @@ public class FlexDebugProcess extends XDebugProcess {
   private Process launchFdb(final List<String> fdbLaunchCommand) throws IOException {
     ensureExecutable(fdbLaunchCommand.get(0));
     myFdbLaunchCommand = StringUtil.join(fdbLaunchCommand, new Function<String, String>() {
+      @Override
       public String fun(final String s) {
         return s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s;
       }
@@ -387,6 +391,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private void startCommandProcessingThread() {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
       public void run() {
         myDebuggerManagerThread = Thread.currentThread();
         synchronized (FlexDebugProcess.this) {
@@ -845,6 +850,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private static Collection<VirtualFile> getFilesByName(final Project project, final GlobalSearchScope scope, final String fileName) {
     return ApplicationManager.getApplication().runReadAction(new NullableComputable<Collection<VirtualFile>>() {
+      @Override
       public Collection<VirtualFile> compute() {
         return FilenameIndex.getVirtualFilesByName(project, fileName, scope);
       }
@@ -978,18 +984,23 @@ public class FlexDebugProcess extends XDebugProcess {
     LOG.error(ex);
   }
 
+  @Override
   public void startStepOver() {
     sendCommand(new DebuggerCommand("next"));
   }
 
+  @Override
   public void startStepInto() {
     sendCommand(new DebuggerCommand("step"));
   }
 
+  @Override
+  @NotNull
   public XBreakpointHandler<?>[] getBreakpointHandlers() {
     return myBreakpointsHandler.getBreakpointHandlers();
   }
 
+  @Override
   public void sessionInitialized() {
     super.sessionInitialized();
 
@@ -1022,6 +1033,7 @@ public class FlexDebugProcess extends XDebugProcess {
     if (myOutputAlarm.isDisposed()) return;
 
     Runnable action = new Runnable() {
+      @Override
       public void run() {
         try {
           if (reader.hasSomeDataPending()) {
@@ -1041,6 +1053,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   void addPendingCommand(final DebuggerCommand command, int delay) {
     myOutputAlarm.addRequest(new Runnable() {
+      @Override
       public void run() {
         sendCommand(command);
       }
@@ -1049,6 +1062,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private void scheduleFdbErrorStreamReading() {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
       public void run() {
         InputStreamReader myErrorStreamReader = new InputStreamReader(fdbProcess.getErrorStream());
         try {
@@ -1073,14 +1087,17 @@ public class FlexDebugProcess extends XDebugProcess {
     });
   }
 
+  @Override
   public void startPausing() {
     sendCommand(new SuspendDebuggerCommand(new DumpSourceLocationCommand(this)));
   }
 
+  @Override
   public void startStepOut() {
     sendCommand(new DebuggerCommand("finish"));
   }
 
+  @Override
   public void stop() {
     if (myFlexUnitConnection != null) {
       myFlexUnitConnection.close();
@@ -1103,6 +1120,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private void reportProblem(final String s) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
       public void run() {
         Notifications.Bus
           .notify(new Notification(DEBUGGER_GROUP_ID, FlexBundle.message("flex.debugger.startup.error"), s.replace("\n", "<br>"),
@@ -1119,10 +1137,12 @@ public class FlexDebugProcess extends XDebugProcess {
     commandsToWrite.addLast(command);
   }
 
+  @Override
   public void resume() {
     sendCommand(new ContinueCommand());
   }
 
+  @Override
   public void runToPosition(@NotNull final XSourcePosition position) {
     myBreakpointsHandler.handleRunToPosition(position, this);
   }
@@ -1255,12 +1275,15 @@ public class FlexDebugProcess extends XDebugProcess {
     }
   }
 
+  @Override
   public XValueMarkerProvider<FlexValue, String> createValueMarkerProvider() {
     return new XValueMarkerProvider<FlexValue, String>(FlexValue.class) {
+      @Override
       public boolean canMark(@NotNull final FlexValue value) {
         return getObjectId(value) != null;
       }
 
+      @Override
       public String getMarker(@NotNull final FlexValue value) {
         return getObjectId(value);
       }
@@ -1298,13 +1321,16 @@ public class FlexDebugProcess extends XDebugProcess {
       super("does not matter because post() is empty", CommandOutputProcessingType.SPECIAL_PROCESSING);
     }
 
+    @Override
     public String read(final FlexDebugProcess flexDebugProcess) throws IOException {
       return reader.readLine(true);
     }
 
+    @Override
     public void post(FlexDebugProcess flexDebugProcess) throws IOException {
     }
 
+    @Override
     CommandOutputProcessingMode onTextAvailable(@NonNls String s) {
       myConsoleView.print(s + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
       return CommandOutputProcessingMode.DONE;
@@ -1321,6 +1347,7 @@ public class FlexDebugProcess extends XDebugProcess {
       myTempDirToDeleteWhenProcessFinished = tempDirToDeleteWhenProcessFinished;
     }
 
+    @Override
     void launchDebuggedApplication() throws IOException {
       launchAdl();
     }
@@ -1335,6 +1362,7 @@ public class FlexDebugProcess extends XDebugProcess {
       }
 
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+        @Override
         public void run() {
           InputStreamReader reader = new InputStreamReader(adlProcess.getInputStream());
           try {
@@ -1376,6 +1404,7 @@ public class FlexDebugProcess extends XDebugProcess {
       });
 
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+        @Override
         public void run() {
           InputStreamReader reader = new InputStreamReader(adlProcess.getErrorStream());
           try {
@@ -1412,8 +1441,10 @@ public class FlexDebugProcess extends XDebugProcess {
       myAppId = appId;
     }
 
+    @Override
     void launchDebuggedApplication() throws IOException {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
         public void run() {
           FlexBaseRunner.launchOnAndroidDevice(getSession().getProject(), myFlexSdk, myDevice, myAppId, true);
         }
@@ -1433,8 +1464,10 @@ public class FlexDebugProcess extends XDebugProcess {
       myIOSSdkPath = iOSSdkPath;
     }
 
+    @Override
     void launchDebuggedApplication() throws IOException {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
         public void run() {
           FlexBaseRunner.launchOnIosSimulator(getSession().getProject(), myFlexSdk, myAppId, myIOSSdkPath, true);
         }
@@ -1449,8 +1482,10 @@ public class FlexDebugProcess extends XDebugProcess {
       myAppName = appName;
     }
 
+    @Override
     void launchDebuggedApplication() throws IOException {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
         public void run() {
           final String adtVersion = AirPackageUtil.getAdtVersion(myModule.getProject(), myBC.getSdk());
           if (StringUtil.compareVersionNumbers(adtVersion, "3.4") >= 0) {
@@ -1464,6 +1499,7 @@ public class FlexDebugProcess extends XDebugProcess {
             final String message = FlexBundle.message("ios.application.packaged.to.debug", ipaName);
             ToolWindowManager.getInstance(myModule.getProject())
               .notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message, null, new HyperlinkAdapter() {
+                @Override
                 protected void hyperlinkActivated(final HyperlinkEvent e) {
                   ShowFilePathAction.openFile(new File(outputFolder + "/" + ipaName));
                 }
@@ -1483,6 +1519,7 @@ public class FlexDebugProcess extends XDebugProcess {
       myLauncherParameters = launcherParameters;
     }
 
+    @Override
     void launchDebuggedApplication() {
       FlexBaseRunner.launchWithSelectedApplication(myUrl, myLauncherParameters);
     }
@@ -1506,6 +1543,7 @@ public class FlexDebugProcess extends XDebugProcess {
                   : FlexBundle.message("remote.flash.debug.mobile.usb", device, String.valueOf(usbDebugPort));
       }
       ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
         public void run() {
           ToolWindowManager.getInstance(getSession().getProject()).notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message);
         }
