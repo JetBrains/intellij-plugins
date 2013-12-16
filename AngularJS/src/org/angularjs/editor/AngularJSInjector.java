@@ -3,12 +3,14 @@ package org.angularjs.editor;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JavascriptLanguage;
+import com.intellij.lang.javascript.index.AngularDirectivesIndex;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl;
 import com.intellij.psi.impl.source.xml.XmlTextImpl;
+import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -22,6 +24,10 @@ public class AngularJSInjector implements MultiHostInjector {
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
     // inject only in non-template languages, because otherwise we can get conflict with other templating mechanisms (e.g. Handlebars)
     if (context.getContainingFile().getViewProvider() instanceof MultiplePsiFilesPerDocumentFileViewProvider) return;
+
+    // check that we have angular directives indexed before injecting
+    if (AngularIndexUtil.resolve(context.getProject(), AngularDirectivesIndex.INDEX_ID, "ng-model") == null) return;
+
     if (context instanceof XmlTextImpl || context instanceof XmlAttributeValueImpl) {
       final String text = context.getText();
       int startIndex;
