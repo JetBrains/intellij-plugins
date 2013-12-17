@@ -10,6 +10,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
@@ -20,6 +21,7 @@ import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.CapturedBrowser;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
@@ -28,7 +30,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
@@ -38,12 +39,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * @author Sergey Simonchik
  */
 public class KarmaDebugProgramRunner extends GenericProgramRunner {
+
+  private static final Logger LOG = Logger.getInstance(KarmaDebugProgramRunner.class);
 
   @NotNull
   @Override
@@ -149,22 +151,29 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
   }
 
   @Nullable
-  private static <C> JSDebugEngine<C> getDebugEngine(@NotNull Collection<CapturedBrowser> browsers) {
+  private static <C> JSDebugEngine<C> getDebugEngine(@NotNull Collection<CapturedBrowser> browsers) throws ExecutionException {
     //noinspection unchecked
     JSDebugEngine<C>[] engines = (JSDebugEngine<C>[])JSDebugEngine.getEngines();
-    Set<JSDebugEngine<C>> capturedEngines = ContainerUtil.newHashSet();
     for (JSDebugEngine<C> engine : engines) {
       for (CapturedBrowser browser : browsers) {
         if (browser.getName().contains(engine.getWebBrowser().getName())) {
-          capturedEngines.add(engine);
-          break;
+          return engine;
         }
       }
     }
-    if (capturedEngines.isEmpty()) {
-      return null;
+    JSDebugEngine<C> defaultEngine = null;
+    for (JSDebugEngine<C> engine : engines) {
+      if (engine.getWebBrowser() == WebBrowser.CHROME) {
+        defaultEngine = engine;
+        break;
+      }
     }
-    return capturedEngines.iterator().next();
+    String message = "No captured browsers with debugging capabilities found!";
+    if (defaultEngine != null) {
+      LOG.warn(message + " Trying " + defaultEngine.getId());
+      return defaultEngine;
+    }
+    throw new ExecutionException(message);
   }
 
 }
