@@ -1,6 +1,8 @@
 package com.jetbrains.lang.dart;
 
 import com.intellij.lang.Language;
+import com.intellij.openapi.fileTypes.LanguageFileType;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,5 +15,11 @@ public class DartLanguage extends Language {
 
   private DartLanguage() {
     super("Dart", "application/dart");
+  }
+
+  @Nullable
+  @Override
+  public LanguageFileType getAssociatedFileType() {
+    return DartFileType.INSTANCE;
   }
 }
