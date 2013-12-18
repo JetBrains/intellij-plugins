@@ -26,7 +26,6 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.*;
@@ -38,7 +37,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -765,16 +763,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       }
     }
     if (delimiterIndex != -1 && attributeType == null) {
-      final int delimiterIndex2 = link.lastIndexOf(':', delimiterIndex - 1);
-      if (delimiterIndex2 == -1) return null;
-      String fileName = link.substring(0, delimiterIndex2).replace(File.separatorChar, '/');
-      String name = link.substring(delimiterIndex2 + 1, delimiterIndex);
-      int offset = Integer.parseInt(link.substring(delimiterIndex + 1));
-      VirtualFile relativeFile = VfsUtil.findRelativeFile(fileName, null);
-      if (relativeFile == null) {
-        relativeFile = JSResolveUtil.findPredefinedOrLibraryFile(psiManager.getProject(), fileName);
-      }
-      return index.findSymbolByFileAndNameAndOffset(relativeFile, name, offset, psiManager.findFile(relativeFile));
+      return resolveDocumentLink(psiManager, link, delimiterIndex);
     }
     else if (attributeType != null) {
       PsiElement clazz = ActionScriptClassResolver.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
