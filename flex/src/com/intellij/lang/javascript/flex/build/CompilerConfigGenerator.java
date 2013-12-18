@@ -692,7 +692,9 @@ public class CompilerConfigGenerator {
       });
     }
 
-    if (noClasses.get() && !ApplicationManager.getApplication().isUnitTestMode()) {
+    if (noClasses.get() &&
+        myBC.getCompilerOptions().getFilesToIncludeInSWC().isEmpty() &&
+        !ApplicationManager.getApplication().isUnitTestMode()) {
       throw new IOException(FlexCommonBundle.message("nothing.to.compile.in.library", myModule.getName(), myBC.getName()));
     }
   }
