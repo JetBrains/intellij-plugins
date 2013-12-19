@@ -16,8 +16,6 @@ import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.event.InputEvent;
-
 /*
   This action is a temporary solution for Google announcement at Devoxx.
   In future this action, 'Open in Browser' (OpenFileInDefaultBrowserAction) and 'Preview file in' (WebOpenInAction) actions need to be merged into one.
@@ -42,11 +40,16 @@ public class OpenInDartiumAction extends AnAction {
   @Override
   public void actionPerformed(final AnActionEvent e) {
     final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
-    if (!(psiFile instanceof XmlFile)) return;
-    final String dartiumPath = DartSettingsUtil.getDartiumPath();
-    if (dartiumPath == null || !isHtmlFileWithDartScript(((XmlFile)psiFile))) return;
+    if (!(psiFile instanceof XmlFile)) {
+      return;
+    }
 
-    OpenFileInDefaultBrowserAction.doOpen(psiFile, (e.getModifiers() & InputEvent.SHIFT_MASK) != 0, DartSettingsUtil.DARTIUM);
+    final String dartiumPath = DartSettingsUtil.getDartiumPath();
+    if (dartiumPath == null || !isHtmlFileWithDartScript(((XmlFile)psiFile))) {
+      return;
+    }
+
+    OpenFileInDefaultBrowserAction.open(e, DartSettingsUtil.DARTIUM);
   }
 
   public static boolean isHtmlFileWithDartScript(final @NotNull XmlFile psiFile) {
