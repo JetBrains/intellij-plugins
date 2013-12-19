@@ -13,23 +13,23 @@
  * limitations under the License.
  */
 
-package com.intellij.lang.ognl.psi.impl;
-
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.ognl.psi.OgnlPsiCompositeElement;
-import org.jetbrains.annotations.NotNull;
+package com.intellij.lang.ognl.parsing;
 
 /**
  * @author Yann C&eacute;bron
  */
-abstract class OgnlPsiCompositeElementImpl extends ASTWrapperPsiElement implements OgnlPsiCompositeElement {
+public class UnaryExpressionParsingTest extends OgnlParsingTestCase {
 
-  protected OgnlPsiCompositeElementImpl(@NotNull ASTNode node) {
-    super(node);
+  public UnaryExpressionParsingTest() {
+    super("unaryExpression");
   }
 
-  public String toString() {
-    return getNode().getElementType().toString();
+  public void testMissingAfterBitwiseNegate() {
+    doTest(true);
   }
+
+  public void testMissingAfterNotKeyword() {
+    doTest(true);
+  }
+
 }

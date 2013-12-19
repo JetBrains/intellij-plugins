@@ -21,7 +21,7 @@
   parserUtilClass="com.intellij.lang.parser.GeneratedParserUtilBase"
 
   implements="com.intellij.lang.ognl.psi.OgnlPsiCompositeElement"
-  extends="com.intellij.lang.ognl.psi.impl.OgnlPsiCompositeElementImpl"
+  extends="com.intellij.lang.ognl.psi.impl.OgnlPsiCompositeElementBase"
 
   psiClassPrefix="Ognl"
   psiImplClassSuffix="Impl"
@@ -220,7 +220,6 @@ private unaryOperator ::= bitwiseOperations |
                           '+' | '-' |
                           '!' | "not" | '~'
 unaryExpression ::= unaryOperator expression {
-  pin=1
   methods=[
     getUnaryOperator
   ]

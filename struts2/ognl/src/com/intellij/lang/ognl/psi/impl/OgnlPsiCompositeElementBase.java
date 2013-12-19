@@ -13,32 +13,23 @@
  * limitations under the License.
  */
 
-
-// Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.psi.impl;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.ognl.psi.OgnlExpression;
-import com.intellij.lang.ognl.psi.OgnlVisitor;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiType;
+import com.intellij.lang.ognl.psi.OgnlPsiCompositeElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class OgnlExpressionImpl extends OgnlPsiCompositeElementBase implements OgnlExpression {
+/**
+ * @author Yann C&eacute;bron
+ */
+abstract class OgnlPsiCompositeElementBase extends ASTWrapperPsiElement implements OgnlPsiCompositeElement {
 
-  public OgnlExpressionImpl(ASTNode node) {
+  protected OgnlPsiCompositeElementBase(@NotNull ASTNode node) {
     super(node);
   }
 
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitExpression(this);
-    else super.accept(visitor);
+  public String toString() {
+    return getNode().getElementType().toString();
   }
-
-  @Nullable
-  public PsiType getType() {
-    return OgnlPsiUtil.getType(this);
-  }
-
 }

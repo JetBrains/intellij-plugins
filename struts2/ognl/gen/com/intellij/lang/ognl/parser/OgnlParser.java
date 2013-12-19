@@ -17,16 +17,16 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.parser;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
+import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
+
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
-import com.intellij.lang.LighterASTNode;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class OgnlParser implements PsiParser {
@@ -519,7 +519,7 @@ public class OgnlParser implements PsiParser {
   // 7: ATOM(indexedExpression)
   // 8: ATOM(referenceExpression)
   // 9: ATOM(variableExpression)
-  // 10: ATOM(unaryExpression)
+  // 10: PREFIX(unaryExpression)
   // 11: ATOM(literalExpression)
   public static boolean expression(PsiBuilder builder_, int level_, int priority_) {
     if (!recursion_guard_(builder_, level_, "expression")) return false;
@@ -785,15 +785,14 @@ public class OgnlParser implements PsiParser {
     return result_;
   }
 
-  // unaryOperator expression
   public static boolean unaryExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "unaryExpression")) return false;
     boolean result_ = false;
     boolean pinned_ = false;
-    Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<unary expression>");
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = unaryOperator(builder_, level_ + 1);
-    pinned_ = result_; // pin = 1
-    result_ = result_ && expression(builder_, level_ + 1, -1);
+    pinned_ = result_;
+    result_ = pinned_ && expression(builder_, level_, 10);
     exit_section_(builder_, level_, marker_, UNARY_EXPRESSION, result_, pinned_, null);
     return result_ || pinned_;
   }
