@@ -34,4 +34,8 @@ public class DartKeywordCompletionTest extends DartCompletionTestBase {
   public void testWI14153() throws Throwable {
     doTest();
   }
+
+  public void testInComments() throws Throwable {
+    doTest();
+  }
 }

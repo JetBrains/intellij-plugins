@@ -45,8 +45,10 @@ public class DartKeywordCompletionContributor extends CompletionContributor {
       psiElement().withSuperParent(1, DartId.class).withSuperParent(2, DartReference.class);
     final PsiElementPattern.Capture<PsiElement> inComplexExpression = psiElement().withSuperParent(3, DartReference.class);
     final PsiElementPattern.Capture<PsiElement> inStringLiteral = psiElement().inside(DartStringLiteralExpression.class);
+    final PsiElementPattern.Capture<PsiElement> inComment = psiElement().withElementType(DartTokenTypesSets.COMMENTS);
 
     final PsiElementPattern.Capture<PsiElement> elementCapture = psiElement()
+      .andNot(inComment)
       .andNot(idInExpression.and(inComplexExpression))
       .andNot(inStringLiteral);
 
