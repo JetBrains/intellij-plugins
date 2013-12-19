@@ -42,7 +42,6 @@
     DOT="."
     COMMA=","
     COLON=":"
-    SEMICOLON=";"
 
     LPARENTH="("
     RPARENTH=")"
@@ -135,12 +134,12 @@ expression ::= sequenceExpression |
 }
 
 private numberLiteralExpression ::= INTEGER_LITERAL | BIG_INTEGER_LITERAL | DOUBLE_LITERAL | BIG_DECIMAL_LITERAL
-private booleanLiteralExpression ::= TRUE_KEYWORD | FALSE_KEYWORD
+private booleanLiteralExpression ::= "true" | "false"
 private textLiteralExpression ::= STRING_LITERAL | CHARACTER_LITERAL  // TODO detect missing closing quote/tick
 literalExpression ::= numberLiteralExpression |
                       textLiteralExpression |
                       booleanLiteralExpression |
-                      NULL_KEYWORD {
+                      "null" {
   methods=[
     getConstantValue
   ]
@@ -183,19 +182,19 @@ parenthesizedExpression ::= '(' expression ')' { pin=1 }
 // binary ----------------------------------------------------------------
 private plusMinusOperations ::= '+' | '-'
 private divideMultiplyOperations ::=  '*' | '/' | '%'
-private bitwiseOperations ::= NEGATE | NOT
+private bitwiseOperations ::= '!' | "~"
 private booleanOperations ::= "&&" | "||" |
                               "and" | "or" |
                               "not"
-private bitwiseBooleanOperations ::=  OR | XOR | AND | BAND_KEYWORD | BOR_KEYWORD | XOR_KEYWORD
+private bitwiseBooleanOperations ::=  "|" | "^" | "&" | "band" | "bor" | "xor"
 private equalityOperations ::= "==" | "!=" |
                                "eq" | "neq"
 private relationalOperations ::= '<'  | "<="  | '>'  | ">=" |
                                  "lt" | "lte" | "gt" | "gte"
-private shiftOperations ::= SHIFT_LEFT | SHIFT_RIGHT | SHIFT_RIGHT_LOGICAL |
-                            SHIFT_LEFT_KEYWORD | SHIFT_RIGHT_KEYWORD | SHIFT_RIGHT_LOGICAL_KEYWORD
-private instanceOfOperation ::= INSTANCEOF_KEYWORD
-private setOperations ::= NOT_IN_KEYWORD | IN_KEYWORD
+private shiftOperations ::= "<<" | ">>" | ">>>" |
+                            "shl" | "shr" | "ushr"
+private instanceOfOperation ::= "instanceof"
+private setOperations ::= "not in" | "in"
 private binaryOperations ::=
                            plusMinusOperations |
                            divideMultiplyOperations |
@@ -217,26 +216,25 @@ binaryExpression ::= expression binaryOperations expression {
 }
 
 private unaryOperator ::= bitwiseOperations |
-                          '+' | '-' |
-                          '!' | "not" | '~'
+                          '+' | '-' | "not"
 unaryExpression ::= unaryOperator expression {
   methods=[
     getUnaryOperator
   ]
 }
 
-conditionalExpression ::= expression QUESTION expression conditionalExpressionTail {
+conditionalExpression ::= expression '?' expression conditionalExpressionTail {
   methods=[
     condition="expression[0]"
     then="expression[1]"
     else="expression[2]"
   ]
 }
-private conditionalExpressionTail ::= COLON expression {pin=1}
+private conditionalExpressionTail ::= ':' expression {pin=1}
 
 private arrayConstructorExpression ::= '[' expression? ']' sequenceExpression? {pin=1}
 private constructorExpression ::= '(' methodCallParameters ')' {pin=1}
-newExpression ::= NEW_KEYWORD referenceExpression (arrayConstructorExpression | constructorExpression) {
+newExpression ::= "new" referenceExpression (arrayConstructorExpression | constructorExpression) {
   pin(".*")=1
 }
 

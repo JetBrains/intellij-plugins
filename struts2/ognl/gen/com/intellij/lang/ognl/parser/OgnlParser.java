@@ -153,7 +153,7 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // OR | XOR | AND | BAND_KEYWORD | BOR_KEYWORD | XOR_KEYWORD
+  // "|" | "^" | "&" | "band" | "bor" | "xor"
   static boolean bitwiseBooleanOperations(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "bitwiseBooleanOperations")) return false;
     boolean result_ = false;
@@ -169,7 +169,7 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // NEGATE | NOT
+  // '!' | "~"
   static boolean bitwiseOperations(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "bitwiseOperations")) return false;
     if (!nextTokenIs(builder_, "", NEGATE, NOT)) return false;
@@ -182,7 +182,7 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TRUE_KEYWORD | FALSE_KEYWORD
+  // "true" | "false"
   static boolean booleanLiteralExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "booleanLiteralExpression")) return false;
     if (!nextTokenIs(builder_, "", FALSE_KEYWORD, TRUE_KEYWORD)) return false;
@@ -212,7 +212,7 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // COLON expression
+  // ':' expression
   static boolean conditionalExpressionTail(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "conditionalExpressionTail")) return false;
     if (!nextTokenIs(builder_, COLON)) return false;
@@ -314,7 +314,7 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // INSTANCEOF_KEYWORD
+  // "instanceof"
   static boolean instanceOfOperation(PsiBuilder builder_, int level_) {
     return consumeToken(builder_, INSTANCEOF_KEYWORD);
   }
@@ -446,7 +446,7 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // NOT_IN_KEYWORD | IN_KEYWORD
+  // "not in" | "in"
   static boolean setOperations(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "setOperations")) return false;
     if (!nextTokenIs(builder_, "", IN_KEYWORD, NOT_IN_KEYWORD)) return false;
@@ -459,8 +459,8 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // SHIFT_LEFT | SHIFT_RIGHT | SHIFT_RIGHT_LOGICAL |
-  //                             SHIFT_LEFT_KEYWORD | SHIFT_RIGHT_KEYWORD | SHIFT_RIGHT_LOGICAL_KEYWORD
+  // "<<" | ">>" | ">>>" |
+  //                             "shl" | "shr" | "ushr"
   static boolean shiftOperations(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "shiftOperations")) return false;
     boolean result_ = false;
@@ -490,8 +490,7 @@ public class OgnlParser implements PsiParser {
 
   /* ********************************************************** */
   // bitwiseOperations |
-  //                           '+' | '-' |
-  //                           '!' | "not" | '~'
+  //                           '+' | '-' | "not"
   static boolean unaryOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "unaryOperator")) return false;
     boolean result_ = false;
@@ -499,9 +498,7 @@ public class OgnlParser implements PsiParser {
     result_ = bitwiseOperations(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, PLUS);
     if (!result_) result_ = consumeToken(builder_, MINUS);
-    if (!result_) result_ = consumeToken(builder_, NEGATE);
     if (!result_) result_ = consumeToken(builder_, NOT_KEYWORD);
-    if (!result_) result_ = consumeToken(builder_, NOT);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -614,7 +611,7 @@ public class OgnlParser implements PsiParser {
     return result_ || pinned_;
   }
 
-  // NEW_KEYWORD referenceExpression (arrayConstructorExpression | constructorExpression)
+  // "new" referenceExpression (arrayConstructorExpression | constructorExpression)
   public static boolean newExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "newExpression")) return false;
     if (!nextTokenIs(builder_, NEW_KEYWORD)) return false;
@@ -800,7 +797,7 @@ public class OgnlParser implements PsiParser {
   // numberLiteralExpression |
   //                       textLiteralExpression |
   //                       booleanLiteralExpression |
-  //                       NULL_KEYWORD
+  //                       "null"
   public static boolean literalExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "literalExpression")) return false;
     boolean result_ = false;

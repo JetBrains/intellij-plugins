@@ -95,7 +95,6 @@ public interface OgnlTypes {
   IElementType RBRACE = new OgnlTokenType("}");
   IElementType RBRACKET = new OgnlTokenType("]");
   IElementType RPARENTH = new OgnlTokenType(")");
-  IElementType SEMICOLON = new OgnlTokenType(";");
   IElementType SHIFT_LEFT = new OgnlTokenType("<<");
   IElementType SHIFT_LEFT_KEYWORD = new OgnlTokenType("shl");
   IElementType SHIFT_RIGHT = new OgnlTokenType(">>");

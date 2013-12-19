@@ -29,27 +29,25 @@ import org.intellij.lang.annotations.Language;
 public class UnaryExpressionPsiTest extends PsiTestCase {
 
   public void testMinusInteger() {
-    final OgnlUnaryExpression expression = parse("-3");
-    assertEquals(OgnlTypes.MINUS, expression.getUnaryOperator());
-
-    final OgnlExpression operand = expression.getExpression();
-    assertElementType(OgnlTypes.LITERAL_EXPRESSION, operand);
-    final OgnlLiteralExpression literalExpression = assertInstanceOf(operand, OgnlLiteralExpression.class);
-    assertEquals(PsiType.INT, literalExpression.getType());
+    assertConstantUnaryExpression("-3", OgnlTypes.MINUS, PsiType.INT, 3);
   }
+
+  public void testPlusInteger() {
+    assertConstantUnaryExpression("+3", OgnlTypes.PLUS, PsiType.INT, 3);
+  }
+
+  public void testNegate() {
+    assertConstantUnaryExpression("!true", OgnlTypes.NEGATE, PsiType.BOOLEAN, true);
+  }
+
 
   // not  ====================
-
-  public void testNot() {
-    assertConstantUnaryExpression("!true", OgnlTypes.NEGATE, true);
-  }
-
   public void testNotKeyword() {
-    assertConstantUnaryExpression("not true", OgnlTypes.NOT_KEYWORD, true);
+    assertConstantUnaryExpression("not true", OgnlTypes.NOT_KEYWORD, PsiType.BOOLEAN, true);
   }
 
   public void testBitwiseNot() {
-    assertConstantUnaryExpression("~true", OgnlTypes.NOT, true);
+    assertConstantUnaryExpression("~true", OgnlTypes.NOT, PsiType.BOOLEAN, true);
   }
 
 
@@ -57,7 +55,8 @@ public class UnaryExpressionPsiTest extends PsiTestCase {
                                                        prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                        suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression,
                                              final IElementType operationSign,
-                                             final Object constantValue) {
+                                             final PsiType operandType,
+                                             final Object operandConstantValue) {
     final OgnlUnaryExpression unaryExpression = parse(expression);
     assertNotNull(unaryExpression);
 
@@ -65,8 +64,12 @@ public class UnaryExpressionPsiTest extends PsiTestCase {
     assertEquals(operationSign, operation);
 
     final OgnlExpression operand = unaryExpression.getExpression();
+    assertNotNull(operand);
+    assertEquals(operandType, operand.getType());
+
     if (operand instanceof OgnlLiteralExpression) {
-      assertEquals(constantValue, ((OgnlLiteralExpression)operand).getConstantValue());
+      final OgnlLiteralExpression literalExpression = (OgnlLiteralExpression)operand;
+      assertEquals(operandConstantValue, literalExpression.getConstantValue());
     }
   }
 
