@@ -517,8 +517,8 @@ public class OgnlParser implements PsiParser {
   // 5: ATOM(newExpression)
   // 6: ATOM(methodCallExpression)
   // 7: ATOM(indexedExpression)
-  // 8: ATOM(variableExpression)
-  // 9: ATOM(referenceExpression)
+  // 8: ATOM(referenceExpression)
+  // 9: ATOM(variableExpression)
   // 10: ATOM(unaryExpression)
   // 11: ATOM(literalExpression)
   public static boolean expression(PsiBuilder builder_, int level_, int priority_) {
@@ -532,8 +532,8 @@ public class OgnlParser implements PsiParser {
     if (!result_) result_ = newExpression(builder_, level_ + 1);
     if (!result_) result_ = methodCallExpression(builder_, level_ + 1);
     if (!result_) result_ = indexedExpression(builder_, level_ + 1);
-    if (!result_) result_ = variableExpression(builder_, level_ + 1);
     if (!result_) result_ = referenceExpression(builder_, level_ + 1);
+    if (!result_) result_ = variableExpression(builder_, level_ + 1);
     if (!result_) result_ = unaryExpression(builder_, level_ + 1);
     if (!result_) result_ = literalExpression(builder_, level_ + 1);
     pinned_ = result_;
@@ -681,18 +681,6 @@ public class OgnlParser implements PsiParser {
     return result_;
   }
 
-  // '#' IDENTIFIER
-  public static boolean variableExpression(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "variableExpression")) return false;
-    if (!nextTokenIs(builder_, HASH)) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, HASH);
-    result_ = result_ && consumeToken(builder_, IDENTIFIER);
-    exit_section_(builder_, marker_, VARIABLE_EXPRESSION, result_);
-    return result_;
-  }
-
   // (variableExpression | ('@')? IDENTIFIER) ('.' IDENTIFIER)* ('@' IDENTIFIER)?
   public static boolean referenceExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "referenceExpression")) return false;
@@ -782,6 +770,18 @@ public class OgnlParser implements PsiParser {
     result_ = consumeToken(builder_, AT);
     result_ = result_ && consumeToken(builder_, IDENTIFIER);
     exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // '#' IDENTIFIER
+  public static boolean variableExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "variableExpression")) return false;
+    if (!nextTokenIs(builder_, HASH)) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, HASH);
+    result_ = result_ && consumeToken(builder_, IDENTIFIER);
+    exit_section_(builder_, marker_, VARIABLE_EXPRESSION, result_);
     return result_;
   }
 
