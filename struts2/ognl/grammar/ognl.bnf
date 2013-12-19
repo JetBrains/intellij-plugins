@@ -124,8 +124,8 @@ expression ::= sequenceExpression |
                newExpression |
                methodCallExpression |
                indexedExpression |
-               variableExpression |
                referenceExpression |
+               variableExpression |
                unaryExpression |
                literalExpression
 {

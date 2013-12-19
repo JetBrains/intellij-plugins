@@ -52,7 +52,15 @@ public class VariableExpressionPsiTest extends PsiTestCase {
   }
 
   public void testReferenceAfterVariable() {
+    parseSingleExpression("#root.something.property");
+  }
+
+  public void testMethodCallAfterVariable() {
     parseSingleExpression("#root.something.method()");
+  }
+
+  public void testMethodCallWithParamsAfterVariable() {
+    parseSingleExpression("#root.something.method(1, 'a')");
   }
 
   private OgnlVariableExpression parse(@Language(value = OgnlLanguage.ID,
