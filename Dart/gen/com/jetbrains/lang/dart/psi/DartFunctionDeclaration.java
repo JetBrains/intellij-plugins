@@ -14,9 +14,6 @@ public interface DartFunctionDeclaration extends DartComponent {
   DartFormalParameterList getFormalParameterList();
 
   @Nullable
-  DartInitializers getInitializers();
-
-  @Nullable
   DartReturnType getReturnType();
 
 }

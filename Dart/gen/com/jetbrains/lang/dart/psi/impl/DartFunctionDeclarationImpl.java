@@ -36,12 +36,6 @@ public class DartFunctionDeclarationImpl extends AbstractDartComponentImpl imple
 
   @Override
   @Nullable
-  public DartInitializers getInitializers() {
-    return findChildByClass(DartInitializers.class);
-  }
-
-  @Override
-  @Nullable
   public DartReturnType getReturnType() {
     return findChildByClass(DartReturnType.class);
   }

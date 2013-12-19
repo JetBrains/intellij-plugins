@@ -558,7 +558,7 @@ functionExpression ::= (returnType componentName | componentName)? formalParamet
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 functionDeclaration ::= functionDeclarationPrivate
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
-private functionDeclarationPrivate ::= (returnType componentName formalParameterList | componentName formalParameterList) initializers?
+private functionDeclarationPrivate ::= (returnType componentName formalParameterList | componentName formalParameterList)
 functionDeclarationWithBodyOrNative ::= 'external'? (returnType componentName formalParameterList | componentName formalParameterList) ( ';' | functionBodyOrNative)
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 functionDeclarationWithBody ::= (returnType componentName formalParameterList | componentName formalParameterList) functionBody
