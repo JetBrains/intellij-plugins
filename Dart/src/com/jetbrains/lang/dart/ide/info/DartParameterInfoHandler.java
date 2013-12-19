@@ -41,19 +41,19 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
   }
 
   @Override
-  public PsiElement findElementForParameterInfo(CreateParameterInfoContext context) {
+  public PsiElement findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
     final PsiElement at = context.getFile().findElementAt(context.getEditor().getCaretModel().getOffset());
     final DartArguments arguments = PsiTreeUtil.getParentOfType(at, DartArguments.class);
     return arguments == null ? null : PsiTreeUtil.getParentOfType(arguments, DartCallExpression.class, DartNewExpression.class);
   }
 
   @Override
-  public PsiElement findElementForUpdatingParameterInfo(UpdateParameterInfoContext context) {
+  public PsiElement findElementForUpdatingParameterInfo(@NotNull UpdateParameterInfoContext context) {
     return context.getFile().findElementAt(context.getEditor().getCaretModel().getOffset());
   }
 
   @Override
-  public void showParameterInfo(@NotNull PsiElement element, CreateParameterInfoContext context) {
+  public void showParameterInfo(@NotNull PsiElement element, @NotNull CreateParameterInfoContext context) {
     DartFunctionDescription functionDescription = null;
     if (element instanceof DartCallExpression) {
       functionDescription = DartFunctionDescription.tryGetDescription((DartCallExpression)element);
@@ -77,7 +77,7 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
   }
 
   @Override
-  public void updateParameterInfo(@NotNull PsiElement place, UpdateParameterInfoContext context) {
+  public void updateParameterInfo(@NotNull PsiElement place, @NotNull UpdateParameterInfoContext context) {
     int parameterIndex = DartResolveUtil.getArgumentIndex(place);
     context.setCurrentParameter(parameterIndex);
 
@@ -106,7 +106,7 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
   }
 
   @Override
-  public void updateUI(DartFunctionDescription p, ParameterInfoUIContext context) {
+  public void updateUI(DartFunctionDescription p, @NotNull ParameterInfoUIContext context) {
     if (p == null) {
       context.setUIComponentEnabled(false);
       return;
