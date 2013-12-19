@@ -17,13 +17,15 @@
   psiPackage="com.jetbrains.typoscript.lang.psi"
   psiImplPackage="com.jetbrains.typoscript.lang.psi.impl"
 
-  CODE_BLOCK_OPERATOR_BEGIN = '{'
-  CODE_BLOCK_OPERATOR_END = '}'
-  MODIFICATION_OPERATOR = ':='
-  ASSIGNMENT_OPERATOR = '='
-  UNSETTING_OPERATOR = '>'
-  COPYING_OPERATOR = '<'
-  OBJECT_PATH_SEPARATOR = '.'
+  tokens = [
+    CODE_BLOCK_OPERATOR_BEGIN = '{'
+    CODE_BLOCK_OPERATOR_END = '}'
+    MODIFICATION_OPERATOR = ':='
+    ASSIGNMENT_OPERATOR = '='
+    UNSETTING_OPERATOR = '>'
+    COPYING_OPERATOR = '<'
+    OBJECT_PATH_SEPARATOR = '.'
+  ]
 }
 
 file ::= (expression)*

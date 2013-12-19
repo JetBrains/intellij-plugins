@@ -21,6 +21,7 @@
 
   generateFirstCheck=50
 
+  tokens = [
 // reserved words
   ASSERT="assert"
   BREAK="break"
@@ -128,6 +129,7 @@
   AND_AND="&&"
   HASH="#"
   AT="@"
+  ]
 
   extends(".*Expression")="expression"
 }
