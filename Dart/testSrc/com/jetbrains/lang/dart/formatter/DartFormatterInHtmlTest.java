@@ -1,29 +1,24 @@
 package com.jetbrains.lang.dart.formatter;
 
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
-import com.jetbrains.lang.dart.DartFileType;
+import com.intellij.psi.formatter.FormatterTestCase;
 import com.jetbrains.lang.dart.DartLanguage;
-import junit.framework.Assert;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
+public class DartFormatterInHtmlTest extends FormatterTestCase {
 
-/**
- * @author: Fedor.Korotkov
- */
-public class DartFormatterInHtmlTest extends DartCodeInsightFixtureTestCase {
-  protected CommonCodeStyleSettings myTestStyleSettings;
+  protected String getFileExtension() {
+    return "html";
+  }
+
+  protected String getTestDataPath() {
+    return DartTestUtils.BASE_TEST_DATA_PATH;
+  }
 
   @Override
   protected String getBasePath() {
-    return "/formatter/html";
+    return "formatter/html";
   }
 
   @Override
@@ -32,55 +27,20 @@ public class DartFormatterInHtmlTest extends DartCodeInsightFixtureTestCase {
     setTestStyleSettings();
   }
 
-  private void setTestStyleSettings() {
-    Project project = getProject();
-    CodeStyleSettings currSettings = CodeStyleSettingsManager.getSettings(project);
-    Assert.assertNotNull(currSettings);
-    CodeStyleSettings tempSettings = currSettings.clone();
-    CodeStyleSettings.IndentOptions indentOptions = tempSettings.getIndentOptions(DartFileType.INSTANCE);
+  private static void setTestStyleSettings() {
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    CodeStyleSettings.IndentOptions indentOptions = settings.getIndentOptions();
+    assertNotNull(indentOptions);
     indentOptions.INDENT_SIZE = 2;
     indentOptions.CONTINUATION_INDENT_SIZE = 2;
     indentOptions.TAB_SIZE = 2;
-    Assert.assertNotNull(indentOptions);
-    defineStyleSettings(tempSettings);
-    CodeStyleSettingsManager.getInstance(project).setTemporarySettings(tempSettings);
-  }
 
-  protected void defineStyleSettings(CodeStyleSettings tempSettings) {
-    myTestStyleSettings = tempSettings.getCommonSettings(DartLanguage.INSTANCE);
-    myTestStyleSettings.KEEP_BLANK_LINES_IN_CODE = 2;
-    myTestStyleSettings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
-    myTestStyleSettings.BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
-    myTestStyleSettings.ALIGN_MULTILINE_PARAMETERS = false;
-    myTestStyleSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = false;
-    myTestStyleSettings.KEEP_FIRST_COLUMN_COMMENT = false;
-  }
-
-  private void doTest() throws Exception {
-    myFixture.configureByFile(getTestName(false) + ".html");
-    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-      @Override
-      public void run() {
-        CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());
-      }
-    });
-    try {
-      myFixture.checkResultByFile(getTestName(false) + ".txt");
-    }
-    catch (RuntimeException e) {
-      if (!(e.getCause() instanceof FileNotFoundException)) {
-        throw e;
-      }
-      final String path = getTestDataPath() + getTestName(false) + ".txt";
-      FileWriter writer = new FileWriter(FileUtil.toSystemDependentName(path));
-      try {
-        writer.write(myFixture.getFile().getText().trim());
-      }
-      finally {
-        writer.close();
-      }
-      fail("No output text found. File " + path + " created.");
-    }
+    settings.KEEP_BLANK_LINES_IN_CODE = 2;
+    settings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
+    settings.BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
+    settings.ALIGN_MULTILINE_PARAMETERS = false;
+    settings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = false;
+    settings.KEEP_FIRST_COLUMN_COMMENT = false;
   }
 
   public void testDefault() throws Exception {

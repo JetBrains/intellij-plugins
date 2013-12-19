@@ -1,29 +1,25 @@
 package com.jetbrains.lang.dart.formatter;
 
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
+import com.intellij.psi.formatter.FormatterTestCase;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
-import junit.framework.Assert;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
+public class DartFormatterTest extends FormatterTestCase {
 
-/**
- * @author: Fedor.Korotkov
- */
-public class DartFormatterTest extends DartCodeInsightFixtureTestCase {
-  protected CommonCodeStyleSettings myTestStyleSettings;
+  protected String getFileExtension() {
+    return DartFileType.DEFAULT_EXTENSION;
+  }
+
+  protected String getTestDataPath() {
+    return DartTestUtils.BASE_TEST_DATA_PATH;
+  }
 
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/formatter/");
+    return "formatter";
   }
 
   @Override
@@ -32,77 +28,44 @@ public class DartFormatterTest extends DartCodeInsightFixtureTestCase {
     setTestStyleSettings();
   }
 
-  private void setTestStyleSettings() {
-    Project project = getProject();
-    CodeStyleSettings currSettings = CodeStyleSettingsManager.getSettings(project);
-    Assert.assertNotNull(currSettings);
-    CodeStyleSettings tempSettings = currSettings.clone();
-    CodeStyleSettings.IndentOptions indentOptions = tempSettings.getIndentOptions(DartFileType.INSTANCE);
+  private static void setTestStyleSettings() {
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    CodeStyleSettings.IndentOptions indentOptions = settings.getIndentOptions();
+    assertNotNull(indentOptions);
     indentOptions.INDENT_SIZE = 4;
     indentOptions.CONTINUATION_INDENT_SIZE = 4;
     indentOptions.TAB_SIZE = 4;
-    Assert.assertNotNull(indentOptions);
-    defineStyleSettings(tempSettings);
-    CodeStyleSettingsManager.getInstance(project).setTemporarySettings(tempSettings);
-  }
 
-  protected void defineStyleSettings(CodeStyleSettings tempSettings) {
-    myTestStyleSettings = tempSettings.getCommonSettings(DartLanguage.INSTANCE);
-    myTestStyleSettings.KEEP_BLANK_LINES_IN_CODE = 2;
-    myTestStyleSettings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
-    myTestStyleSettings.BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
-    myTestStyleSettings.ALIGN_MULTILINE_PARAMETERS = false;
-    myTestStyleSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = false;
-    myTestStyleSettings.KEEP_FIRST_COLUMN_COMMENT = false;
-  }
-
-  private void doTest() throws Exception {
-    myFixture.configureByFile(getTestName(false) + "." + DartFileType.DEFAULT_EXTENSION);
-    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-      @Override
-      public void run() {
-        CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());
-      }
-    });
-    try {
-      myFixture.checkResultByFile(getTestName(false) + ".txt");
-    }
-    catch (RuntimeException e) {
-      if (!(e.getCause() instanceof FileNotFoundException)) {
-        throw e;
-      }
-      final String path = getTestDataPath() + getTestName(false) + ".txt";
-      FileWriter writer = new FileWriter(FileUtil.toSystemDependentName(path));
-      try {
-        writer.write(myFixture.getFile().getText().trim());
-      }
-      finally {
-        writer.close();
-      }
-      fail("No output text found. File " + path + " created.");
-    }
+    settings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
+    settings.BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
+    settings.ALIGN_MULTILINE_PARAMETERS = false;
+    settings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = false;
+    settings.KEEP_FIRST_COLUMN_COMMENT = false;
   }
 
   public void testAlignment() throws Exception {
-    myTestStyleSettings.ALIGN_MULTILINE_PARAMETERS = true;
-    myTestStyleSettings.ALIGN_MULTILINE_BINARY_OPERATION = true;
-    myTestStyleSettings.ALIGN_MULTILINE_TERNARY_OPERATION = true;
-    myTestStyleSettings.ALIGN_MULTILINE_BINARY_OPERATION = true;
-    myTestStyleSettings.KEEP_LINE_BREAKS = true;
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.ALIGN_MULTILINE_PARAMETERS = true;
+    settings.ALIGN_MULTILINE_BINARY_OPERATION = true;
+    settings.ALIGN_MULTILINE_TERNARY_OPERATION = true;
+    settings.ALIGN_MULTILINE_BINARY_OPERATION = true;
+    settings.KEEP_LINE_BREAKS = true;
     doTest();
   }
 
   public void testBracePlacement1() throws Exception {
-    myTestStyleSettings.KEEP_LINE_BREAKS = false;
-    myTestStyleSettings.BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE_SHIFTED2;
-    myTestStyleSettings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.KEEP_LINE_BREAKS = false;
+    settings.BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE_SHIFTED2;
+    settings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
     doTest();
   }
 
   public void testBracePlacement2() throws Exception {
-    myTestStyleSettings.KEEP_LINE_BREAKS = false;
-    myTestStyleSettings.BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
-    myTestStyleSettings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE_SHIFTED;
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.KEEP_LINE_BREAKS = false;
+    settings.BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
+    settings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE_SHIFTED;
     doTest();
   }
 
@@ -127,93 +90,99 @@ public class DartFormatterTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testSpaceAroundOperators() throws Exception {
-    myTestStyleSettings.KEEP_LINE_BREAKS = false;
-    myTestStyleSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS = false;
-    myTestStyleSettings.SPACE_AROUND_LOGICAL_OPERATORS = false;
-    myTestStyleSettings.SPACE_AROUND_EQUALITY_OPERATORS = false;
-    myTestStyleSettings.SPACE_AROUND_RELATIONAL_OPERATORS = false;
-    myTestStyleSettings.SPACE_AROUND_ADDITIVE_OPERATORS = false;
-    myTestStyleSettings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS = false;
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.KEEP_LINE_BREAKS = false;
+    settings.SPACE_AROUND_ASSIGNMENT_OPERATORS = false;
+    settings.SPACE_AROUND_LOGICAL_OPERATORS = false;
+    settings.SPACE_AROUND_EQUALITY_OPERATORS = false;
+    settings.SPACE_AROUND_RELATIONAL_OPERATORS = false;
+    settings.SPACE_AROUND_ADDITIVE_OPERATORS = false;
+    settings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS = false;
     doTest();
   }
 
   public void testSpaceBeforeParentheses() throws Exception {
-    myTestStyleSettings.KEEP_LINE_BREAKS = false;
-    myTestStyleSettings.SPACE_BEFORE_METHOD_CALL_PARENTHESES = true;
-    myTestStyleSettings.SPACE_BEFORE_METHOD_PARENTHESES = true;
-    myTestStyleSettings.SPACE_BEFORE_IF_PARENTHESES = false;
-    myTestStyleSettings.SPACE_BEFORE_FOR_PARENTHESES = false;
-    myTestStyleSettings.SPACE_BEFORE_WHILE_PARENTHESES = false;
-    myTestStyleSettings.SPACE_BEFORE_SWITCH_PARENTHESES = false;
-    myTestStyleSettings.SPACE_BEFORE_CATCH_PARENTHESES = false;
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.KEEP_LINE_BREAKS = false;
+    settings.SPACE_BEFORE_METHOD_CALL_PARENTHESES = true;
+    settings.SPACE_BEFORE_METHOD_PARENTHESES = true;
+    settings.SPACE_BEFORE_IF_PARENTHESES = false;
+    settings.SPACE_BEFORE_FOR_PARENTHESES = false;
+    settings.SPACE_BEFORE_WHILE_PARENTHESES = false;
+    settings.SPACE_BEFORE_SWITCH_PARENTHESES = false;
+    settings.SPACE_BEFORE_CATCH_PARENTHESES = false;
     doTest();
   }
 
   public void testSpaceLeftBraces() throws Exception {
-    myTestStyleSettings.KEEP_LINE_BREAKS = false;
-    myTestStyleSettings.SPACE_BEFORE_METHOD_LBRACE = false;
-    myTestStyleSettings.SPACE_BEFORE_IF_LBRACE = false;
-    myTestStyleSettings.SPACE_BEFORE_ELSE_LBRACE = false;
-    myTestStyleSettings.SPACE_BEFORE_FOR_LBRACE = false;
-    myTestStyleSettings.SPACE_BEFORE_WHILE_LBRACE = false;
-    myTestStyleSettings.SPACE_BEFORE_SWITCH_LBRACE = false;
-    myTestStyleSettings.SPACE_BEFORE_TRY_LBRACE = false;
-    myTestStyleSettings.SPACE_BEFORE_CATCH_LBRACE = false;
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.KEEP_LINE_BREAKS = false;
+    settings.SPACE_BEFORE_METHOD_LBRACE = false;
+    settings.SPACE_BEFORE_IF_LBRACE = false;
+    settings.SPACE_BEFORE_ELSE_LBRACE = false;
+    settings.SPACE_BEFORE_FOR_LBRACE = false;
+    settings.SPACE_BEFORE_WHILE_LBRACE = false;
+    settings.SPACE_BEFORE_SWITCH_LBRACE = false;
+    settings.SPACE_BEFORE_TRY_LBRACE = false;
+    settings.SPACE_BEFORE_CATCH_LBRACE = false;
     doTest();
   }
 
   public void testSpaceOthers() throws Exception {
-    myTestStyleSettings.KEEP_LINE_BREAKS = false;
-    myTestStyleSettings.SPACE_BEFORE_WHILE_KEYWORD = false;
-    myTestStyleSettings.SPACE_BEFORE_CATCH_KEYWORD = false;
-    myTestStyleSettings.SPACE_BEFORE_ELSE_KEYWORD = false;
-    myTestStyleSettings.SPACE_BEFORE_QUEST = false;
-    myTestStyleSettings.SPACE_AFTER_QUEST = false;
-    myTestStyleSettings.SPACE_BEFORE_COLON = false;
-    myTestStyleSettings.SPACE_AFTER_COLON = false;
-    myTestStyleSettings.SPACE_BEFORE_COMMA = true;
-    myTestStyleSettings.SPACE_AFTER_COMMA = false;
-    myTestStyleSettings.SPACE_BEFORE_SEMICOLON = true;
-    myTestStyleSettings.SPACE_AFTER_SEMICOLON = false;
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.KEEP_LINE_BREAKS = false;
+    settings.SPACE_BEFORE_WHILE_KEYWORD = false;
+    settings.SPACE_BEFORE_CATCH_KEYWORD = false;
+    settings.SPACE_BEFORE_ELSE_KEYWORD = false;
+    settings.SPACE_BEFORE_QUEST = false;
+    settings.SPACE_AFTER_QUEST = false;
+    settings.SPACE_BEFORE_COLON = false;
+    settings.SPACE_AFTER_COLON = false;
+    settings.SPACE_BEFORE_COMMA = true;
+    settings.SPACE_AFTER_COMMA = false;
+    settings.SPACE_BEFORE_SEMICOLON = true;
+    settings.SPACE_AFTER_SEMICOLON = false;
     doTest();
   }
 
   public void testSpaceWithin() throws Exception {
-    myTestStyleSettings.KEEP_LINE_BREAKS = false;
-    myTestStyleSettings.SPACE_WITHIN_METHOD_CALL_PARENTHESES = true;
-    myTestStyleSettings.SPACE_WITHIN_METHOD_PARENTHESES = true;
-    myTestStyleSettings.SPACE_WITHIN_IF_PARENTHESES = true;
-    myTestStyleSettings.SPACE_WITHIN_FOR_PARENTHESES = true;
-    myTestStyleSettings.SPACE_WITHIN_WHILE_PARENTHESES = true;
-    myTestStyleSettings.SPACE_WITHIN_SWITCH_PARENTHESES = true;
-    myTestStyleSettings.SPACE_WITHIN_CATCH_PARENTHESES = true;
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.KEEP_LINE_BREAKS = false;
+    settings.SPACE_WITHIN_METHOD_CALL_PARENTHESES = true;
+    settings.SPACE_WITHIN_METHOD_PARENTHESES = true;
+    settings.SPACE_WITHIN_IF_PARENTHESES = true;
+    settings.SPACE_WITHIN_FOR_PARENTHESES = true;
+    settings.SPACE_WITHIN_WHILE_PARENTHESES = true;
+    settings.SPACE_WITHIN_SWITCH_PARENTHESES = true;
+    settings.SPACE_WITHIN_CATCH_PARENTHESES = true;
     doTest();
   }
 
   public void testWrappingMeth() throws Exception {
-    myTestStyleSettings.METHOD_ANNOTATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    myTestStyleSettings.METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE = true;
-    myTestStyleSettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE = true;
-    myTestStyleSettings.CALL_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    myTestStyleSettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE = true;
-    myTestStyleSettings.CALL_PARAMETERS_RPAREN_ON_NEXT_LINE = true;
-    myTestStyleSettings.ELSE_ON_NEW_LINE = true;
-    myTestStyleSettings.SPECIAL_ELSE_IF_TREATMENT = true;
-    myTestStyleSettings.FOR_STATEMENT_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    myTestStyleSettings.FOR_STATEMENT_LPAREN_ON_NEXT_LINE = true;
-    myTestStyleSettings.FOR_STATEMENT_RPAREN_ON_NEXT_LINE = true;
-    myTestStyleSettings.WHILE_ON_NEW_LINE = true;
-    myTestStyleSettings.CATCH_ON_NEW_LINE = true;
-    myTestStyleSettings.BINARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    myTestStyleSettings.BINARY_OPERATION_SIGN_ON_NEXT_LINE = true;
-    myTestStyleSettings.PARENTHESES_EXPRESSION_LPAREN_WRAP = true;
-    myTestStyleSettings.PARENTHESES_EXPRESSION_RPAREN_WRAP = true;
-    myTestStyleSettings.ASSIGNMENT_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    myTestStyleSettings.PLACE_ASSIGNMENT_SIGN_ON_NEXT_LINE = true;
-    myTestStyleSettings.TERNARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    myTestStyleSettings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE = true;
-    myTestStyleSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = true;
-    myTestStyleSettings.KEEP_LINE_BREAKS = true;
+    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
+    settings.METHOD_ANNOTATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    settings.METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE = true;
+    settings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE = true;
+    settings.CALL_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    settings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE = true;
+    settings.CALL_PARAMETERS_RPAREN_ON_NEXT_LINE = true;
+    settings.ELSE_ON_NEW_LINE = true;
+    settings.SPECIAL_ELSE_IF_TREATMENT = true;
+    settings.FOR_STATEMENT_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    settings.FOR_STATEMENT_LPAREN_ON_NEXT_LINE = true;
+    settings.FOR_STATEMENT_RPAREN_ON_NEXT_LINE = true;
+    settings.WHILE_ON_NEW_LINE = true;
+    settings.CATCH_ON_NEW_LINE = true;
+    settings.BINARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    settings.BINARY_OPERATION_SIGN_ON_NEXT_LINE = true;
+    settings.PARENTHESES_EXPRESSION_LPAREN_WRAP = true;
+    settings.PARENTHESES_EXPRESSION_RPAREN_WRAP = true;
+    settings.ASSIGNMENT_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    settings.PLACE_ASSIGNMENT_SIGN_ON_NEXT_LINE = true;
+    settings.TERNARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    settings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE = true;
+    settings.BLOCK_COMMENT_AT_FIRST_COLUMN = true;
+    settings.KEEP_LINE_BREAKS = true;
     doTest();
   }
 }
