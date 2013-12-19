@@ -16,8 +16,8 @@ public interface DartMethodDeclaration extends DartComponent {
   @Nullable
   DartFunctionBody getFunctionBody();
 
-  @NotNull
-  List<DartInitializers> getInitializersList();
+  @Nullable
+  DartInitializers getInitializers();
 
   @Nullable
   DartRedirection getRedirection();
