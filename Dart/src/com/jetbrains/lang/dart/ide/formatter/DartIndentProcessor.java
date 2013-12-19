@@ -10,8 +10,7 @@ import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
-import static com.jetbrains.lang.dart.DartTokenTypesSets.COMMENTS;
-import static com.jetbrains.lang.dart.DartTokenTypesSets.EMBEDDED_CONTENT;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
 public class DartIndentProcessor {
   private final CommonCodeStyleSettings settings;
@@ -34,9 +33,14 @@ public class DartIndentProcessor {
     if (parent == null || parent.getTreeParent() == null || parentType == EMBEDDED_CONTENT) {
       return Indent.getNoneIndent();
     }
-    if (COMMENTS.contains(elementType) && settings.KEEP_FIRST_COLUMN_COMMENT) {
-      return Indent.getAbsoluteNoneIndent();
+
+    if (settings.KEEP_FIRST_COLUMN_COMMENT && (elementType == SINGLE_LINE_COMMENT || elementType == MULTI_LINE_COMMENT)) {
+      final ASTNode previousNode = node.getTreePrev();
+      if (previousNode != null && previousNode.getElementType() == WHITE_SPACE && previousNode.getText().endsWith("\n")) {
+        return Indent.getAbsoluteNoneIndent();
+      }
     }
+
     if (COMMENTS.contains(elementType) && prevSiblingType == LBRACE && parentType == CLASS_BODY) {
       return Indent.getNormalIndent();
     }

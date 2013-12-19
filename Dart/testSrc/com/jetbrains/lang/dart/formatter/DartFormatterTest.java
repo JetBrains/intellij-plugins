@@ -185,5 +185,15 @@ public class DartFormatterTest extends FormatterTestCase {
     settings.KEEP_LINE_BREAKS = true;
     doTest();
   }
+
+  public void testComments() throws Exception {
+    getSettings(DartLanguage.INSTANCE).KEEP_FIRST_COLUMN_COMMENT = false;
+    doTest();
+  }
+
+  public void testLineCommentsAtFirstColumn() throws Exception {
+    getSettings(DartLanguage.INSTANCE).KEEP_FIRST_COLUMN_COMMENT = true;
+    doTest();
+  }
 }
 
