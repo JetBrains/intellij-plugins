@@ -63,9 +63,8 @@ public class DartSpacingProcessor {
     }
     if (type2 != SEMICOLON && BLOCKS.contains(elementType)) {
       boolean topLevel = elementType == DART_FILE || elementType == EMBEDDED_CONTENT;
-      int lineFeeds = elementType == BLOCK || topLevel ? 1 : 2;
-      if (topLevel && DECLARATIONS.contains(type2)) {
-        // additional
+      int lineFeeds = 1;
+      if (!COMMENTS.contains(type1) && (elementType == CLASS_MEMBERS || topLevel && DECLARATIONS.contains(type2))) {
         lineFeeds = 2;
       }
       return Spacing.createSpacing(0, 0, lineFeeds, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
