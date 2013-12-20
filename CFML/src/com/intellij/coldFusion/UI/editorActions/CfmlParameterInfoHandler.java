@@ -98,15 +98,15 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
     return null;
   }
 
-  public PsiElement findElementForParameterInfo(CreateParameterInfoContext context) {
+  public PsiElement findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
     return findAnchorElement(context.getEditor().getCaretModel().getOffset(), context.getFile());
   }
 
-  public PsiElement findElementForUpdatingParameterInfo(UpdateParameterInfoContext context) {
+  public PsiElement findElementForUpdatingParameterInfo(@NotNull UpdateParameterInfoContext context) {
     return findAnchorElement(context.getEditor().getCaretModel().getOffset(), context.getFile());
   }
 
-  public void showParameterInfo(@NotNull PsiElement element, CreateParameterInfoContext context) {
+  public void showParameterInfo(@NotNull PsiElement element, @NotNull CreateParameterInfoContext context) {
     ResolveResult[] variants = ResolveResult.EMPTY_ARRAY;
     if (element instanceof PsiPolyVariantReference) {
       variants = ((PsiPolyVariantReference)element).multiResolve(true);
@@ -151,7 +151,7 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
     }
   }
 
-  public void updateParameterInfo(@NotNull PsiElement place, UpdateParameterInfoContext context) {
+  public void updateParameterInfo(@NotNull PsiElement place, @NotNull UpdateParameterInfoContext context) {
     if (context.getParameterOwner() == null) {
       context.setParameterOwner(place);
     }
@@ -175,7 +175,7 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
     return false;
   }
 
-  public void updateUI(CfmlFunctionDescription p, ParameterInfoUIContext context) {
+  public void updateUI(CfmlFunctionDescription p, @NotNull ParameterInfoUIContext context) {
     if (p == null) {
       context.setUIComponentEnabled(false);
       return;
