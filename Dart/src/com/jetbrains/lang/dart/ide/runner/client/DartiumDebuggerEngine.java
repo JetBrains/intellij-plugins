@@ -22,7 +22,7 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
   }
 
   @Override
-  public void checkAvailability(final Project project) throws RuntimeConfigurationError {
+  public void checkAvailability(@NotNull final Project project) throws RuntimeConfigurationError {
     DartSettingsUtil.getDartiumPathOrThrowErrorWithQuickFix(project);
   }
 

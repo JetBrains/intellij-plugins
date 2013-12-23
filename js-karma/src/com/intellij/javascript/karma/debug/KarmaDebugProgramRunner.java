@@ -95,16 +95,15 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
                                                     @NotNull final ExecutionResult executionResult,
                                                     @Nullable RunContentDescriptor contentToReuse,
                                                     @NotNull ExecutionEnvironment env) throws ExecutionException {
-    final JSDebugEngine<Connection> debugEngine = getDebugEngine(karmaServer.getCapturedBrowsers());
+    final JSDebugEngine debugEngine = getDebugEngine(karmaServer.getCapturedBrowsers());
     if (debugEngine == null) {
       throw new ExecutionException("No debuggable browser found");
     }
     if (!debugEngine.prepareDebugger(project)) {
       return null;
     }
-    final Connection connection = debugEngine.openConnection();
-    final Url url = Urls.newFromEncoded(karmaServer.formatUrl("/debug.html"));
 
+    final Url url = Urls.newFromEncoded(karmaServer.formatUrl("/debug.html"));
     final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
     XDebugSession session = XDebuggerManager.getInstance(project).startSession(
       this,
@@ -114,7 +113,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) {
-          JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult, true);
+          JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, url, executionResult, true);
           debugProcess.setElementsInspectorEnabled(false);
           debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
           return debugProcess;
@@ -151,18 +150,18 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
   }
 
   @Nullable
-  private static <C> JSDebugEngine<C> getDebugEngine(@NotNull Collection<CapturedBrowser> browsers) throws ExecutionException {
+  private static <C> JSDebugEngine getDebugEngine(@NotNull Collection<CapturedBrowser> browsers) throws ExecutionException {
     //noinspection unchecked
-    JSDebugEngine<C>[] engines = (JSDebugEngine<C>[])JSDebugEngine.getEngines();
-    for (JSDebugEngine<C> engine : engines) {
+    JSDebugEngine[] engines = (JSDebugEngine[])JSDebugEngine.getEngines();
+    for (JSDebugEngine engine : engines) {
       for (CapturedBrowser browser : browsers) {
         if (browser.getName().contains(engine.getWebBrowser().getName())) {
           return engine;
         }
       }
     }
-    JSDebugEngine<C> defaultEngine = null;
-    for (JSDebugEngine<C> engine : engines) {
+    JSDebugEngine defaultEngine = null;
+    for (JSDebugEngine engine : engines) {
       if (engine.getWebBrowser() == WebBrowser.CHROME) {
         defaultEngine = engine;
         break;

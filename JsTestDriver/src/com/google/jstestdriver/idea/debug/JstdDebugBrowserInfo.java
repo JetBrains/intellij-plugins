@@ -22,11 +22,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 */
 public class JstdDebugBrowserInfo<Connection> {
 
-  private final JSDebugEngine<Connection> myDebugEngine;
+  private final JSDebugEngine myDebugEngine;
   private final String myCapturedBrowserUrl;
   private final SlaveBrowser mySlaveBrowser;
 
-  private JstdDebugBrowserInfo(@NotNull JSDebugEngine<Connection> debugEngine,
+  private JstdDebugBrowserInfo(@NotNull JSDebugEngine debugEngine,
                                @NotNull String capturedBrowserUrl,
                                @NotNull SlaveBrowser slaveBrowser) {
     myCapturedBrowserUrl = capturedBrowserUrl;
@@ -35,7 +35,7 @@ public class JstdDebugBrowserInfo<Connection> {
   }
 
   @NotNull
-  public JSDebugEngine<Connection> getDebugEngine() {
+  public JSDebugEngine getDebugEngine() {
     return myDebugEngine;
   }
 
@@ -78,11 +78,11 @@ public class JstdDebugBrowserInfo<Connection> {
     if (browsers == null) {
       return null;
     }
-    JSDebugEngine<Connection>[] engines = listDebugEngines();
+    JSDebugEngine[] engines = listDebugEngines();
     List<JstdDebugBrowserInfo<Connection>> debugBrowserInfos = Lists.newArrayList();
     for (SlaveBrowser slaveBrowser : browsers.getSlaveBrowsers()) {
       String browserName = slaveBrowser.getBrowserInfo().getName();
-      for (JSDebugEngine<Connection> engine : engines) {
+      for (JSDebugEngine engine : engines) {
         if (engine.getWebBrowser().getName().equalsIgnoreCase(browserName)) {
           debugBrowserInfos.add(new JstdDebugBrowserInfo<Connection>(engine, slaveBrowser.getCaptureUrl(), slaveBrowser));
         }
@@ -103,8 +103,8 @@ public class JstdDebugBrowserInfo<Connection> {
   }
 
   @SuppressWarnings("unchecked")
-  private static <C> JSDebugEngine<C>[] listDebugEngines() {
-    return (JSDebugEngine<C>[])JSDebugEngine.getEngines();
+  private static <C> JSDebugEngine[] listDebugEngines() {
+    return (JSDebugEngine[])JSDebugEngine.getEngines();
   }
 
 }

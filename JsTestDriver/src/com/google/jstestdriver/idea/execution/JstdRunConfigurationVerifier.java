@@ -2,8 +2,6 @@ package com.google.jstestdriver.idea.execution;
 
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.idea.assertFramework.JstdTestMethodNameRefiner;
-import com.intellij.javascript.testFramework.TestFileStructureManager;
-import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
@@ -15,6 +13,8 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.execution.configurations.RuntimeConfigurationWarning;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
+import com.intellij.javascript.testFramework.TestFileStructureManager;
+import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -179,12 +179,12 @@ public class JstdRunConfigurationVerifier {
                                               "<a href=\"\">Start a local server</a>, capture " + browserMessage + " and try again.");
     }
     if (debug) {
-      JSDebugEngine<?>[] engines = JSDebugEngine.getEngines();
+      JSDebugEngine[] engines = JSDebugEngine.getEngines();
       Collection<BrowserInfo> capturedBrowsers = jstdServerState.getCapturedBrowsers();
       boolean ok = false;
       for (BrowserInfo browser : capturedBrowsers) {
         String browserName = browser.getName();
-        for (JSDebugEngine<?> engine : engines) {
+        for (JSDebugEngine engine : engines) {
           if (engine.getWebBrowser().getName().equalsIgnoreCase(browserName)) {
             ok = true;
             break;

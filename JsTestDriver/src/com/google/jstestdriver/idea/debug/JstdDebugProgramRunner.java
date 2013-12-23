@@ -87,11 +87,10 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     }
     FileDocumentManager.getInstance().saveAllDocuments();
 
-    final JSDebugEngine<Connection> debugEngine = debugBrowserInfo.getDebugEngine();
+    final JSDebugEngine debugEngine = debugBrowserInfo.getDebugEngine();
     if (!debugEngine.prepareDebugger(project)) return null;
 
     final Url url;
-    final Connection connection = debugEngine.openConnection();
     if (debugEngine.getBrowserFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME)) {
       url = Urls.newHttpUrl("127.0.0.1:" + JstdToolWindowPanel.serverPort, debugBrowserInfo.getCapturedBrowserUrl());
     }
@@ -108,7 +107,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
       @Override
       @NotNull
       public XDebugProcess start(@NotNull XDebugSession session) {
-        JSDebugProcess process = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult, false);
+        JSDebugProcess process = debugEngine.createDebugProcess(session, fileFinder, url, executionResult, false);
         process.setElementsInspectorEnabled(false);
         return process;
       }
