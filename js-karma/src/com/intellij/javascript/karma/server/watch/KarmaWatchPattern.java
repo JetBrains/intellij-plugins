@@ -16,7 +16,22 @@ import java.util.regex.Pattern;
 public class KarmaWatchPattern {
 
   private static final Logger LOG = Logger.getInstance(KarmaWatchPattern.class);
-  private static final Pattern BASE_DIR_PATTERN = Pattern.compile("/[^/]*[*(].*$");
+  private static final Pattern[] BASE_DIR_PATTERNS = new Pattern[] {
+    // /path/to/{,model/}*.js',
+    Pattern.compile("/[^/]*\\{.*\\}.*$"),
+
+    // /path/to/*.js
+    Pattern.compile("/[^/]*\\*.*$"),
+
+    // /path/to/!(...)
+    Pattern.compile("/[^/]*!\\(.*$"),
+
+    // /path/to/+(...)
+    Pattern.compile("/[^/]*\\+\\(.*$"),
+
+    // /path/to/(...)?
+    Pattern.compile("/[^/]*\\)\\?.*$"),
+  };
 
   private final LocalFileSystem myFileSystem;
   private final KarmaChangedFilesManager myChangedFileManager;
@@ -35,7 +50,7 @@ public class KarmaWatchPattern {
     myFileSystem = fileSystem;
     myChangedFileManager = changedFilesManager;
     myVfsPath = pattern.replace(File.separatorChar, KarmaWatchSession.SEPARATOR_CHAR);
-    String baseDirPath = BASE_DIR_PATTERN.matcher(myVfsPath).replaceFirst("");
+    String baseDirPath = extractBaseDir(myVfsPath);
     if (baseDirPath.isEmpty()) {
       baseDirPath = KarmaWatchSession.SEPARATOR;
     }
@@ -43,6 +58,14 @@ public class KarmaWatchPattern {
     myCheckBasePathDir = !myVfsPath.equals(myBasePathDir);
 
     update(false);
+  }
+
+  @NotNull
+  public static String extractBaseDir(@NotNull String filePattern) {
+    for (Pattern pattern : BASE_DIR_PATTERNS) {
+      filePattern = pattern.matcher(filePattern).replaceFirst("");
+    }
+    return filePattern;
   }
 
   public void update(boolean rescan) {
