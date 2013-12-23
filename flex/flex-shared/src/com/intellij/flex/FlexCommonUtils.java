@@ -32,6 +32,7 @@ import org.jetbrains.jps.incremental.Utils;
 import org.jetbrains.jps.model.JpsElement;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.JpsSimpleElement;
+import org.jetbrains.jps.model.java.JdkVersionDetector;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
@@ -739,37 +740,12 @@ public class FlexCommonUtils {
   }
 
   public static boolean is64BitJava6(final String javaExecutablePath) {
-    try {
-      final Ref<Boolean> is64Bit = Ref.create(false);
-      final Ref<Boolean> isJava6 = Ref.create(false);
-
-      final Process process = Runtime.getRuntime().exec(new String[]{javaExecutablePath, "-version"});
-      final BaseOSProcessHandler handler = new BaseOSProcessHandler(process, "doesn't matter", Charset.defaultCharset());
-
-      handler.addProcessListener(new ProcessAdapter() {
-        public void onTextAvailable(ProcessEvent event, Key outputType) {
-          if (outputType != ProcessOutputTypes.SYSTEM) {
-            if (event.getText().contains("64-Bit")) {
-              is64Bit.set(true);
-            }
-            if (event.getText().contains("version \"1.6.")) {
-              isJava6.set(true);
-            }
-          }
-        }
-      });
-
-      handler.startNotify();
-      handler.waitFor(3000);
-
-      if (!handler.isProcessTerminated()) {
-        handler.destroyProcess();
-      }
-
-      return is64Bit.get() && isJava6.get();
+    JdkVersionDetector.JdkVersionInfo info = JdkVersionDetector.getInstance().detectJdkVersionInfo(javaExecutablePath);
+    if (info != null) {
+      boolean is64Bit = info.getBitness() == Bitness.x64;
+      boolean isJava6 = info.getVersion().contains("version \"1.6.");
+      return is64Bit && isJava6;
     }
-    catch (IOException e) {/*ignore*/}
-
     return false;
   }
 
