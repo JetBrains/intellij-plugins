@@ -47,7 +47,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myProject = project;
     int verticalSpace = 7;
     JPanel panel = new JPanel(new GridBagLayout());
-    panel.add(new JLabel("Node.js interpreter:"), new GridBagConstraints(
+    panel.add(new JLabel("Node interpreter:"), new GridBagConstraints(
       0, 0,
       1, 1,
       0.0, 0.0,
