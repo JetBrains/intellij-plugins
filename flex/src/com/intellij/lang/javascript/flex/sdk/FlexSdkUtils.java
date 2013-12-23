@@ -374,7 +374,7 @@ public class FlexSdkUtils {
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 
-    final String d32 = FlexCommonUtils.getD32IfNeed(customJavaHomeSet, javaExecutable);
+    final String d32 = FlexCommonUtils.getD32IfNeed(customJavaHomeSet, javaHome);
 
     final List<String> result = new ArrayList<String>();
 

@@ -739,8 +739,8 @@ public class FlexCommonUtils {
     return nature.pureAS ? ".as" : ".mxml";
   }
 
-  public static boolean is64BitJava6(final String javaExecutablePath) {
-    JdkVersionDetector.JdkVersionInfo info = JdkVersionDetector.getInstance().detectJdkVersionInfo(javaExecutablePath);
+  public static boolean is64BitJava6(final String javaHome) {
+    JdkVersionDetector.JdkVersionInfo info = JdkVersionDetector.getInstance().detectJdkVersionInfo(javaHome);
     if (info != null) {
       boolean is64Bit = info.getBitness() == Bitness.x64;
       boolean isJava6 = info.getVersion().contains("version \"1.6.");
@@ -815,7 +815,7 @@ public class FlexCommonUtils {
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 
-    final String d32 = getD32IfNeed(customJavaHomeSet, javaExecutable);
+    final String d32 = getD32IfNeed(customJavaHomeSet, javaHome);
 
     final List<String> result = new ArrayList<String>();
 
@@ -850,8 +850,8 @@ public class FlexCommonUtils {
     return result;
   }
 
-  public static String getD32IfNeed(boolean customJavaHomeSet, String javaExecutable) {
-    return (!customJavaHomeSet && SystemInfo.isMac && is64BitJava6(javaExecutable)) ? "-d32" : null;
+  public static String getD32IfNeed(boolean customJavaHomeSet, String javaHome) {
+    return (!customJavaHomeSet && SystemInfo.isMac && is64BitJava6(javaHome)) ? "-d32" : null;
   }
 
   @Nullable
