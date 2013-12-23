@@ -65,7 +65,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
 
   @Override
   protected RunContentDescriptor doExecute(@NotNull Project project,
-                                           RunProfileState state,
+                                           @NotNull RunProfileState state,
                                            @Nullable RunContentDescriptor contentToReuse,
                                            @NotNull ExecutionEnvironment env) throws ExecutionException {
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
@@ -77,11 +77,11 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
   }
 
   @Nullable
-  private <Connection> RunContentDescriptor startSession(@NotNull Project project,
-                                                         @Nullable RunContentDescriptor contentToReuse,
-                                                         @NotNull ExecutionEnvironment env,
-                                                         @NotNull JstdRunConfiguration runConfiguration) throws ExecutionException {
-    JstdDebugBrowserInfo<Connection> debugBrowserInfo = JstdDebugBrowserInfo.build(runConfiguration.getRunSettings());
+  private RunContentDescriptor startSession(@NotNull Project project,
+                                            @Nullable RunContentDescriptor contentToReuse,
+                                            @NotNull ExecutionEnvironment env,
+                                            @NotNull JstdRunConfiguration runConfiguration) throws ExecutionException {
+    JstdDebugBrowserInfo debugBrowserInfo = JstdDebugBrowserInfo.build(runConfiguration.getRunSettings());
     if (debugBrowserInfo == null) {
       throw new ExecutionException("Can not find a browser that supports debugging.");
     }
@@ -107,7 +107,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
       @Override
       @NotNull
       public XDebugProcess start(@NotNull XDebugSession session) {
-        JSDebugProcess process = debugEngine.createDebugProcess(session, fileFinder, url, executionResult, false);
+        JSDebugProcess<?> process = debugEngine.createDebugProcess(session, fileFinder, url, executionResult, false);
         process.setElementsInspectorEnabled(false);
         return process;
       }

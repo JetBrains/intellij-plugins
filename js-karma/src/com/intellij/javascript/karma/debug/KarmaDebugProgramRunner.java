@@ -60,10 +60,10 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
 
   @Nullable
   @Override
-  protected RunContentDescriptor doExecute(final Project project,
-                                           RunProfileState state,
+  protected RunContentDescriptor doExecute(@NotNull Project project,
+                                           @NotNull RunProfileState state,
                                            RunContentDescriptor contentToReuse,
-                                           ExecutionEnvironment env) throws ExecutionException {
+                                           @NotNull ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
     final ExecutionResult executionResult = state.execute(env.getExecutor(), this);
     if (executionResult == null) {
@@ -89,7 +89,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     return descriptor;
   }
 
-  private <Connection> RunContentDescriptor doStart(@NotNull final Project project,
+  private RunContentDescriptor doStart(@NotNull final Project project,
                                                     @NotNull KarmaServer karmaServer,
                                                     @NotNull final KarmaConsoleView consoleView,
                                                     @NotNull final ExecutionResult executionResult,
@@ -113,7 +113,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) {
-          JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, url, executionResult, true);
+          JSDebugProcess<?> debugProcess = debugEngine.createDebugProcess(session, fileFinder, url, executionResult, true);
           debugProcess.setElementsInspectorEnabled(false);
           debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
           return debugProcess;
@@ -127,7 +127,6 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     ImmutableBiMap.Builder<String, VirtualFile> mappings = ImmutableBiMap.builder();
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
     if (karmaConfig != null) {
-      @SuppressWarnings("ConstantConditions")
       File basePath = new File(karmaConfig.getBasePath());
       VirtualFile vBasePath = VfsUtil.findFileByIoFile(basePath, false);
       if (vBasePath != null && vBasePath.isValid()) {
@@ -138,21 +137,18 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     VirtualFile root = LocalFileSystem.getInstance().getRoot();
     if (SystemInfo.isWindows) {
       for (VirtualFile child : root.getChildren()) {
-        String url = karmaServer.formatUrlWithoutUrlRoot("/absolute" + child.getName());
-        mappings.put(url, child);
+        mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute" + child.getName()), child);
       }
     }
     else {
-      String url = karmaServer.formatUrlWithoutUrlRoot("/absolute");
-      mappings.put(url, root);
+      mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute"), root);
     }
     return new RemoteDebuggingFileFinder(mappings.build(), false);
   }
 
   @Nullable
-  private static <C> JSDebugEngine getDebugEngine(@NotNull Collection<CapturedBrowser> browsers) throws ExecutionException {
-    //noinspection unchecked
-    JSDebugEngine[] engines = (JSDebugEngine[])JSDebugEngine.getEngines();
+  private static JSDebugEngine getDebugEngine(@NotNull Collection<CapturedBrowser> browsers) throws ExecutionException {
+    JSDebugEngine[] engines = JSDebugEngine.getEngines();
     for (JSDebugEngine engine : engines) {
       for (CapturedBrowser browser : browsers) {
         if (browser.getName().contains(engine.getWebBrowser().getName())) {

@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
 * @author Sergey Simonchik
 */
-public class JstdDebugBrowserInfo<Connection> {
+public class JstdDebugBrowserInfo {
 
   private final JSDebugEngine myDebugEngine;
   private final String myCapturedBrowserUrl;
@@ -72,19 +72,19 @@ public class JstdDebugBrowserInfo<Connection> {
   }
 
   @Nullable
-  public static <Connection> JstdDebugBrowserInfo<Connection> build(@NotNull JstdRunSettings settings) {
+  public static JstdDebugBrowserInfo build(@NotNull JstdRunSettings settings) {
     JstdServerState jstdServerState = JstdServerState.getInstance();
     CapturedBrowsers browsers = jstdServerState.getCaptured();
     if (browsers == null) {
       return null;
     }
-    JSDebugEngine[] engines = listDebugEngines();
-    List<JstdDebugBrowserInfo<Connection>> debugBrowserInfos = Lists.newArrayList();
+    JSDebugEngine[] engines = JSDebugEngine.getEngines();
+    List<JstdDebugBrowserInfo> debugBrowserInfos = Lists.newArrayList();
     for (SlaveBrowser slaveBrowser : browsers.getSlaveBrowsers()) {
       String browserName = slaveBrowser.getBrowserInfo().getName();
       for (JSDebugEngine engine : engines) {
         if (engine.getWebBrowser().getName().equalsIgnoreCase(browserName)) {
-          debugBrowserInfos.add(new JstdDebugBrowserInfo<Connection>(engine, slaveBrowser.getCaptureUrl(), slaveBrowser));
+          debugBrowserInfos.add(new JstdDebugBrowserInfo(engine, slaveBrowser.getCaptureUrl(), slaveBrowser));
         }
       }
     }
@@ -93,7 +93,7 @@ public class JstdDebugBrowserInfo<Connection> {
     }
     if (debugBrowserInfos.size() > 1) {
       BrowsersConfiguration.BrowserFamily preferredBrowser = settings.getPreferredDebugBrowser();
-      for (JstdDebugBrowserInfo<Connection> info : debugBrowserInfos) {
+      for (JstdDebugBrowserInfo info : debugBrowserInfos) {
         if (info.getDebugEngine().getBrowserFamily() == preferredBrowser) {
           return info;
         }
@@ -101,10 +101,4 @@ public class JstdDebugBrowserInfo<Connection> {
     }
     return null;
   }
-
-  @SuppressWarnings("unchecked")
-  private static <C> JSDebugEngine[] listDebugEngines() {
-    return (JSDebugEngine[])JSDebugEngine.getEngines();
-  }
-
 }
