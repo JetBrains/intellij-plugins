@@ -124,6 +124,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     TextFieldWithHistoryWithBrowseButton karmaPackageDirPathComponent = new TextFieldWithHistoryWithBrowseButton();
     final TextFieldWithHistory textFieldWithHistory = karmaPackageDirPathComponent.getChildComponent();
     textFieldWithHistory.setHistorySize(-1);
+    textFieldWithHistory.setMinimumAndPreferredWidth(0);
     SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new NotNullProducer<List<String>>() {
       @NotNull
       @Override
@@ -168,6 +169,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     TextFieldWithHistoryWithBrowseButton textFieldWithHistoryWithBrowseButton = new TextFieldWithHistoryWithBrowseButton();
     final TextFieldWithHistory textFieldWithHistory = textFieldWithHistoryWithBrowseButton.getChildComponent();
     textFieldWithHistory.setHistorySize(-1);
+    textFieldWithHistory.setMinimumAndPreferredWidth(0);
     SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new NotNullProducer<List<String>>() {
       @NotNull
       @Override
