@@ -18,6 +18,7 @@ package com.google.jstestdriver.idea;
 import com.intellij.CommonBundle;
 
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 import java.lang.ref.Reference;
@@ -26,20 +27,20 @@ import java.util.ResourceBundle;
 
 /**
  * Provides localized messages via the appropriate Idea message bundle loader.
+ *
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class MessageBundle {
-  private static Reference<ResourceBundle> ourBundle;
 
+  public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull Object... params) {
+    return CommonBundle.message(getBundle(), key, params);
+  }
+
+  private static Reference<ResourceBundle> ourBundle;
   @NonNls
   private static final String BUNDLE = "com.google.jstestdriver.idea.MessageBundle";
 
   private MessageBundle() {
-  }
-
-  public static String message(@NonNls @PropertyKey(resourceBundle = BUNDLE) String key,
-                               Object... params) {
-    return CommonBundle.message(getBundle(), key, params);
   }
 
   private static ResourceBundle getBundle() {
@@ -58,5 +59,4 @@ public class MessageBundle {
   public static String getCaptureUrlMessage() {
     return message("captureLabel");
   }
-
 }

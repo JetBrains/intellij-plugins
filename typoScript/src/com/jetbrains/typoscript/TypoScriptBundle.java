@@ -17,6 +17,7 @@ package com.jetbrains.typoscript;
 
 import com.intellij.CommonBundle;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 import java.lang.ref.Reference;
@@ -25,16 +26,16 @@ import java.util.ResourceBundle;
 
 
 public class TypoScriptBundle {
+
+  public static String message(@NotNull @PropertyKey(resourceBundle = TYPOSCRIPT_BUNDLE) String key, @NotNull Object... params) {
+    return CommonBundle.message(getBundle(), key, params);
+  }
+
   @NonNls public static String NOTIFICATION_ID = "TypoScript";
   private static Reference<ResourceBundle> ourBundle;
-
   @NonNls public static final String TYPOSCRIPT_BUNDLE = "messages.TypoScriptBundle";
 
   private TypoScriptBundle() {
-  }
-
-  public static String message(@PropertyKey(resourceBundle = TYPOSCRIPT_BUNDLE) String key, Object... params) {
-    return CommonBundle.message(getBundle(), key, params);
   }
 
   private static ResourceBundle getBundle() {
