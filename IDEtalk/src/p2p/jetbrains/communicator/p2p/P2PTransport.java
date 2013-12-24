@@ -68,8 +68,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   private final Map<User, OnlineUserInfo> myUserToInfo = new THashMap<User, OnlineUserInfo>();
   private final Map<User, OnlineUserInfo> myUserTOInfoNew = new THashMap<User, OnlineUserInfo>();
 
-  private final Collection<User> myOnlineUsers =
-      Collections.synchronizedCollection(new HashSet<User>());
+  private final Collection<User> myOnlineUsers = Collections.synchronizedCollection(new HashSet<User>());
 
   private final EventBroadcaster myEventBroadcaster;
   private final IDEtalkListener myUserAddedCallbackListener;
