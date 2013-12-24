@@ -144,12 +144,12 @@ public abstract class BaseUserImpl implements User {
 
     final BaseUserImpl baseUser = (BaseUserImpl) o;
 
-    return !(myName != null ? !myName.equals(baseUser.myName) : baseUser.myName != null);
+    return myName.equals(baseUser.myName);
 
   }
 
   public int hashCode() {
-    return (myName != null ? myName.hashCode() : 0);
+    return (myName.hashCode());
   }
 
 }

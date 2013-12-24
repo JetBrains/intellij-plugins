@@ -51,7 +51,8 @@ public class EventBroadcasterImpl implements EventBroadcaster {
     try {
       fireBeforeChange(event);
       action.run();
-    } finally {
+    }
+    finally {
       fireAfterChange(event);
     }
   }

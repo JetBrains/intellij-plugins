@@ -21,5 +21,6 @@ package jetbrains.communicator.core;
  */
 public interface IDEtalkListener {
   void beforeChange(IDEtalkEvent event);
+
   void afterChange(IDEtalkEvent event);
 }

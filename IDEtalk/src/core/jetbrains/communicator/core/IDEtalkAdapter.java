@@ -19,5 +19,7 @@ package jetbrains.communicator.core;
  * @author kir
  */
 public abstract class IDEtalkAdapter implements IDEtalkListener {
-  public void beforeChange(IDEtalkEvent event) { }
+  @Override
+  public void beforeChange(IDEtalkEvent event) {
+  }
 }

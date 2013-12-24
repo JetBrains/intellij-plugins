@@ -56,6 +56,7 @@ public abstract class TransportEvent implements IDEtalkEvent {
     return userModel.createUser(getRemoteUser(), getTransport().getName());
   }
 
+  @Override
   public void accept(EventVisitor visitor) {
     visitor.visitTransportEvent(this);
   }

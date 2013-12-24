@@ -57,64 +57,78 @@ public final class UserImpl extends BaseUserImpl {
     return new UserImpl(name, transportCode);
   }
 
+  @Override
   public String getTransportCode() {
     return myTransportCode;
   }
 
+  @Override
   public UserPresence getPresence() {
     updateVars();
     return myUserPresenceCache.getValue();
   }
 
+  @Override
   public boolean isOnline() {
     if (isSelf()) return getTransport().isOnline();
     
     return getTransport().getUserPresence(this).isOnline();
   }
 
+  @Override
   public boolean isSelf() {
     return getTransport().isSelf(this);
   }
 
+  @Override
   public Icon getIcon() {
     updateVars();
     return myIconCache.getValue();
   }
 
+  @Override
   public String[] getProjects() {
     return getTransport().getProjects(this);
   }
 
+  @Override
   public ProjectsData getProjectsData(IDEFacade ideFacade) {
     return Helper.doGetProjectsData(getTransport(), this, ideFacade);
   }
 
+  @Override
   public String getVFile(VFile vFile, IDEFacade ideFacade) {
     Helper.fillVFileContent(getTransport(), this, vFile, ideFacade);
     return vFile.getContents(); 
   }
 
+  @Override
   public void sendMessage(final String message, EventBroadcaster eventBroadcaster) {
     eventBroadcaster.doChange(new SendMessageEvent(message, this), new Runnable() {
+      @Override
       public void run() {
         sendXmlMessage(new TextXmlMessage(message));
       }
     });
   }
 
-  public void sendCodeIntervalPointer(final VFile file, final CodePointer pointer, 
+  @Override
+  public void sendCodeIntervalPointer(final VFile file, final CodePointer pointer,
                                       final String comment, EventBroadcaster eventBroadcaster) {
     eventBroadcaster.doChange(new SendCodePointerEvent(comment, file, pointer, this), new Runnable() {
+      @Override
       public void run() {
         sendXmlMessage(new CodePointerXmlMessage(comment, pointer, file));
       }
     });
   }
 
+  @Override
   public void sendXmlMessage(XmlMessage message) {
     getTransport().sendXmlMessage(this, message);
   }
 
+  @Override
   public boolean hasIDEtalkClient() {
     return getTransport().hasIdeTalkClient(this);
   }
@@ -140,11 +154,13 @@ public final class UserImpl extends BaseUserImpl {
   private void updateVars() {
     if (myUserPresenceCache == null) {
       myUserPresenceCache = new TimeoutCachedValue<UserPresence>(CACHE_TIMEOUT) {
+        @Override
         protected UserPresence calculate() {
           return getTransport().getUserPresence(UserImpl.this);
         }
       };
       myIconCache = new TimeoutCachedValue<Icon>(CACHE_TIMEOUT) {
+        @Override
         protected Icon calculate() {
           return getTransport().getIcon(getPresence());
         }

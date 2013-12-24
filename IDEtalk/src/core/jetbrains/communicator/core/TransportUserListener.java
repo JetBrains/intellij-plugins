@@ -28,10 +28,12 @@ public abstract class TransportUserListener extends IDEtalkAdapter {
     myTransport = transport;
   }
 
+  @Override
   public final void beforeChange(IDEtalkEvent event) {
     super.beforeChange(event);
     event.accept(new EventVisitor() {
-      @Override public void visitUserEvent(UserEvent event) {
+      @Override
+      public void visitUserEvent(UserEvent event) {
         super.visitUserEvent(event);
         if (event.getUser().getTransportCode().equals(myTransport.getName())) {
           processBeforeChange(event);
@@ -40,9 +42,11 @@ public abstract class TransportUserListener extends IDEtalkAdapter {
     });
   }
 
+  @Override
   public final void afterChange(IDEtalkEvent event) {
     event.accept(new EventVisitor() {
-      @Override public void visitUserEvent(UserEvent event) {
+      @Override
+      public void visitUserEvent(UserEvent event) {
         super.visitUserEvent(event);
         if (event.getUser().getTransportCode().equals(myTransport.getName())) {
           processAfterChange(event);
@@ -51,7 +55,8 @@ public abstract class TransportUserListener extends IDEtalkAdapter {
     });
   }
 
-  protected void processBeforeChange(UserEvent event){}
-  protected abstract void processAfterChange(UserEvent event);
+  protected void processBeforeChange(UserEvent event) {
+  }
 
+  protected abstract void processAfterChange(UserEvent event);
 }

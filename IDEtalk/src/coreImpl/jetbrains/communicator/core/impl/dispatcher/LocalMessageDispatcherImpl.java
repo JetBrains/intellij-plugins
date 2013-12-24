@@ -17,8 +17,8 @@ package jetbrains.communicator.core.impl.dispatcher;
 
 import jetbrains.communicator.core.EventBroadcaster;
 import jetbrains.communicator.core.EventVisitor;
+import jetbrains.communicator.core.IDEtalkAdapter;
 import jetbrains.communicator.core.IDEtalkEvent;
-import jetbrains.communicator.core.IDEtalkListener;
 import jetbrains.communicator.core.dispatcher.LocalMessage;
 import jetbrains.communicator.core.dispatcher.LocalMessageDispatcher;
 import jetbrains.communicator.core.dispatcher.Message;
@@ -55,21 +55,25 @@ public class LocalMessageDispatcherImpl extends AbstractMessageDispatcher implem
     load();
   }
 
+  @Override
   public void dispose() {
     myHistory.dispose();
     myListener.dispose();
     super.dispose();
   }
 
+  @Override
   protected String getEventsFileName() {
     return FILE_NAME;
   }
 
 
+  @Override
   public void addPendingMessage(User user, LocalMessage message) {
     super.addPendingMessage(user, message);
   }
 
+  @Override
   public Icon getBlinkingIcon() {
     LocalMessage localMessage = getMessageWhichRequireIconBlinking();
     if (localMessage != null) {
@@ -78,6 +82,7 @@ public class LocalMessageDispatcherImpl extends AbstractMessageDispatcher implem
     return null;
   }
 
+  @Override
   public int countPendingMessages() {
     int result = 0;
     for (User usersWithMessage : getUsersWithMessages()) {
@@ -89,59 +94,63 @@ public class LocalMessageDispatcherImpl extends AbstractMessageDispatcher implem
   private LocalMessage getMessageWhichRequireIconBlinking() {
     User[] usersWithMessages = getUsersWithMessages();
     if (usersWithMessages.length > 0) {
-      return (LocalMessage) getPendingMessages(usersWithMessages[0])[0];
+      return (LocalMessage)getPendingMessages(usersWithMessages[0])[0];
     }
     return null;
   }
 
 
+  @Override
   protected boolean performDispatch(User user, Message message) {
     boolean result = super.performDispatch(user, message);
     if (result) {
-      myHistory.addMessage(user, (LocalMessage) message);
+      myHistory.addMessage(user, (LocalMessage)message);
     }
     return result;
   }
 
+  @Override
   public LocalMessage[] getHistory(User user, Date since) {
     return myHistory.getHistory(user, since);
   }
 
+  @Override
   public void clearHistory() {
     myHistory.clear();
   }
 
+  @Override
   public boolean isHistoryEmpty() {
     return myHistory.isEmpty();
   }
 
-  private class MyEventsListener implements IDEtalkListener {
+  private class MyEventsListener extends IDEtalkAdapter {
     private final EventBroadcaster myEventBroadcaster;
 
     MyEventsListener(EventBroadcaster eventBroadcaster) {
       myEventBroadcaster = eventBroadcaster;
       myEventBroadcaster.addListener(this);
     }
+
     public void dispose() {
       myEventBroadcaster.removeListener(this);
     }
 
-    public void beforeChange(IDEtalkEvent event) { }
-
+    @Override
     public void afterChange(IDEtalkEvent event) {
       //noinspection RefusedBequest
-      event.accept(new EventVisitor(){
-
-        @Override public void visitTransportEvent(TransportEvent event) {
+      event.accept(new EventVisitor() {
+        @Override
+        public void visitTransportEvent(TransportEvent event) {
           User user = event.createUser(myUserModel);
           addPendingMessage(user, myFacade.createLocalMessageForIncomingEvent(event));
         }
 
-        @Override public void visitOwnMessageEvent(OwnMessageEvent event) {
+        @Override
+        public void visitOwnMessageEvent(OwnMessageEvent event) {
           sendNow(event.getTargetUser(), myFacade.createLocalMessageForOutgoingEvent(event));
         }
       });
     }
-
   }
 }

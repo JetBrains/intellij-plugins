@@ -575,7 +575,8 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     protected void processBeforeChange(UserEvent event) {
       super.processBeforeChange(event);
       event.accept(new EventVisitor() {
-        @Override public void visitUserAdded(UserEvent.Added event) {
+        @Override
+        public void visitUserAdded(UserEvent.Added event) {
           event.getUser().setCanAccessMyFiles(false, myUserModel);
         }
       });
