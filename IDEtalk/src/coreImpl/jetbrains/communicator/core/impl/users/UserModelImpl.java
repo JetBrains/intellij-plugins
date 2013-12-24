@@ -119,18 +119,14 @@ public class UserModelImpl implements UserModel, Disposable {
   public User[] getAllUsers() {
     synchronized (myCachedUsersLock) {
       if (myCachedUsers == null) {
-        Collection<User> _users = _getUsers();
-        myCachedUsers = _users.toArray(new User[_users.size()]);
-
+        Collection<User> users = _getUsers();
+        myCachedUsers = users.toArray(new User[users.size()]);
         Arrays.sort(myCachedUsers, new Comparator<User>() {
           @Override
           public int compare(User u1, User u2) {
-
             if (u1.getGroup().equals(u2.getGroup())) {
-
               return UIUtil.compareUsers(u1, u2);
             }
-
             return u1.getGroup().compareTo(u2.getGroup());
           }
         });
