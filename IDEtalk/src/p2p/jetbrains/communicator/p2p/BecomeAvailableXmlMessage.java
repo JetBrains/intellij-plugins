@@ -24,29 +24,32 @@ import org.jdom.Element;
  * @author Kir
  */
 public class BecomeAvailableXmlMessage extends XmlResponseProvider implements XmlMessage {
+  @Override
   public void fillRequest(Element element) {
   }
 
+  @Override
   public String getTagName() {
     return "becomeAvailable";
   }
 
+  @Override
   public String getTagNamespace() {
     return Transport.NAMESPACE;
   }
 
+  @Override
   public boolean processAndFillResponse(Element response, Element requestRoot, Transport transport, String remoteUser) {
-    ((P2PTransport) transport).setAvailable(remoteUser);
+    ((P2PTransport)transport).setAvailable(remoteUser);
     return false;
   }
 
-
-
-
+  @Override
   public void processResponse(Element responseElement) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public boolean needsResponse() {
     return false;
   }
