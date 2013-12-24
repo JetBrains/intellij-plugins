@@ -93,7 +93,7 @@ public class PersistentUserModelImpl extends UserModelImpl {
   }
 
   void saveAll() {
-    synchronized(myUsersGroupsLock) {
+    synchronized (myUsersGroupsLock) {
       XMLUtil.toXml(myXStream, getUsersFileName(), this);
     }
     mySaved = true;
@@ -103,8 +103,8 @@ public class PersistentUserModelImpl extends UserModelImpl {
     Object persistentModel = XMLUtil.fromXml(myXStream, getUsersFileName(), false);
     if (persistentModel instanceof PersistentUserModelImpl) {
       PersistentUserModelImpl model = (PersistentUserModelImpl) persistentModel;
-      if (model.myGroups != null) myGroups.addAll(model.myGroups);
-      if (model.myUsers  != null) myUsers.addAll(model.myUsers);
+      myGroups.addAll(model.myGroups);
+      myUsers.addAll(model.myUsers);
     }
   }
 

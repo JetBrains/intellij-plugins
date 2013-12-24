@@ -17,6 +17,7 @@
 package jetbrains.communicator.core.users;
 
 import jetbrains.communicator.core.EventBroadcaster;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Kir Maximov
@@ -40,7 +41,10 @@ public interface UserModel {
   String renameGroup(String oldGroup, String newGroup);
 
   User[] getUsers(String groupName);
+
+  @NotNull
   User[] getAllUsers();
+
   boolean hasUser(User user);
   String getGroup(User user);
 
