@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.p2p;
 
+import com.intellij.util.Time;
 import gnu.trove.THashSet;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
@@ -42,8 +43,7 @@ public class UserMonitorThread extends Thread {
 
   static final long WAIT_USER_RESPONSES_TIMEOUT = 3000;
   static final String SCAN_TIMEOUT_PROPERTY = "ideTalk.scanTimeout";
-  public static final int MSECS_IN_SEC = 1000;
-  static final long TIMEOUT_BETWEEN_SCANS = 3 * 60 * MSECS_IN_SEC;
+  static final long TIMEOUT_BETWEEN_SCANS = 3 * Time.MINUTE;
 
   private final MulticastPingThread[] myMulticastThreads;
   private final UserMonitorClient myClient;
@@ -77,7 +77,7 @@ public class UserMonitorThread extends Thread {
     }
     else {
       try {
-        myScansTimeout = Long.parseLong(timeout) * MSECS_IN_SEC;
+        myScansTimeout = Long.parseLong(timeout) * Time.SECOND;
       }
       catch (NumberFormatException e) {
         LOG.error("Invalid timeout for interval between scans: " + SCAN_TIMEOUT_PROPERTY + '=' + timeout);
@@ -200,7 +200,7 @@ public class UserMonitorThread extends Thread {
     for (MulticastPingThread multicastThread : myMulticastThreads) {
       multicastThread.start();
     }
-    new WaitFor(MSECS_IN_SEC) {
+    new WaitFor(Time.SECOND) {
       @Override
       protected boolean condition() {
         for (MulticastPingThread multicastThread : myMulticastThreads) {
