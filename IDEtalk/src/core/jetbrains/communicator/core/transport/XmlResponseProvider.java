@@ -28,24 +28,31 @@ import java.util.List;
 public abstract class XmlResponseProvider {
 
   public static XmlResponseProvider getProvider(Element rootElement, EventBroadcaster eventBroadcaster) {
+    //noinspection unchecked
     List<XmlResponseProvider> responseProviders = (List<XmlResponseProvider>)
-        Pico.getInstance().getComponentInstancesOfType(XmlResponseProvider.class);
+      Pico.getInstance().getComponentInstancesOfType(XmlResponseProvider.class);
     for (XmlResponseProvider responseProvider : responseProviders) {
       if (responseProvider.getTagName().equals(rootElement.getName()) &&
           responseProvider.getTagNamespace().equals(rootElement.getNamespaceURI())) {
         return responseProvider;
       }
     }
-    
+
     return new TextMessageEventProvider(eventBroadcaster);
   }
 
-  /** @return tagName, which is processed by this provider */
+  /**
+   * @return tagName, which is processed by this provider
+   */
   public abstract String getTagName();
 
-  /** @return namespace for #getTagName */
+  /**
+   * @return namespace for #getTagName
+   */
   public abstract String getTagNamespace();
 
-  /** @return true if response should be sent */
+  /**
+   * @return true if response should be sent
+   */
   public abstract boolean processAndFillResponse(Element response, Element requestRoot, Transport transport, String remoteUser);
 }
