@@ -65,8 +65,8 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   private final UserMonitorThread myUserMonitorThread;
 
-  private final Map<User, OnlineUserInfo> myUser2Info = new THashMap<User, OnlineUserInfo>();
-  private final Map<User, OnlineUserInfo> myUser2InfoNew = new THashMap<User, OnlineUserInfo>();
+  private final Map<User, OnlineUserInfo> myUserToInfo = new THashMap<User, OnlineUserInfo>();
+  private final Map<User, OnlineUserInfo> myUserTOInfoNew = new THashMap<User, OnlineUserInfo>();
 
   private final Collection<User> myOnlineUsers =
       Collections.synchronizedCollection(new HashSet<User>());
@@ -307,7 +307,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   @NotNull
   private OnlineUserInfo getNotNullOnlineInfo(User user) {
-    OnlineUserInfo result = myUser2Info.get(user);
+    OnlineUserInfo result = myUserToInfo.get(user);
     if (result == null) {
       result = new OnlineUserInfo(null, -1, new HashSet<String>(), new UserPresence(false));
     }
@@ -369,7 +369,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   public synchronized void setOnlineUsers(@NotNull Collection<User> onlineUsers) {
     removeOfflineUsers_And_UpdateOldOnlineUsers(onlineUsers);
     addNewOnlineUsers(onlineUsers);
-    myUser2InfoNew.clear();
+    myUserTOInfoNew.clear();
   }
 
   public void setAvailable(String remoteUser) {
@@ -382,7 +382,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
         public void run() {
           OnlineUserInfo onlineInfo = getNotNullOnlineInfo(user);
           onlineInfo.setPresence(new UserPresence(true));
-          myUser2Info.put(user, onlineInfo);
+          myUserToInfo.put(user, onlineInfo);
         }
       });
     }
@@ -391,7 +391,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   @Override
   public synchronized User createUser(String remoteUsername, @NotNull OnlineUserInfo onlineUserInfo) {
     User user = myUserModel.createUser(remoteUsername, CODE);
-    myUser2InfoNew.put(user, onlineUserInfo);
+    myUserTOInfoNew.put(user, onlineUserInfo);
     return user;
   }
 
@@ -412,14 +412,14 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     return XML_RPC_PORT;
   }
 
-  private void addNewOnlineUsers(Collection<User> onlineUsers) {
+  private void addNewOnlineUsers(@NotNull Collection<User> onlineUsers) {
     for (final User user : onlineUsers) {
-      if (!myOnlineUsers.contains(user) && myUser2InfoNew.containsKey(user)) {
+      if (!myOnlineUsers.contains(user) && myUserTOInfoNew.containsKey(user)) {
         myEventBroadcaster.doChange(new UserEvent.Online(user), new Runnable() {
           @Override
           public void run() {
             myOnlineUsers.add(user);
-            myUser2Info.put(user, myUser2InfoNew.get(user));
+            myUserToInfo.put(user, myUserTOInfoNew.get(user));
           }
         });
       }
@@ -434,13 +434,13 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
               @Override
               public void run() {
                 it.remove();
-                myUser2Info.remove(user);
+                myUserToInfo.remove(user);
               }
             });
       }
       else { // User already exists
         UserPresence oldPresence = getNotNullOnlineInfo(user).getPresence();
-        final OnlineUserInfo onlineUserInfo = myUser2InfoNew.get(user);
+        final OnlineUserInfo onlineUserInfo = myUserTOInfoNew.get(user);
         if (onlineUserInfo == null) return;
         UserPresence newPresence = onlineUserInfo.getPresence();
 
@@ -448,12 +448,12 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
           myEventBroadcaster.doChange(new UserEvent.Updated(user, "presence", oldPresence, newPresence), new Runnable() {
             @Override
             public void run() {
-              myUser2Info.put(user, onlineUserInfo);
+              myUserToInfo.put(user, onlineUserInfo);
             }
           });
         }
         else {
-          myUser2Info.put(user, onlineUserInfo);
+          myUserToInfo.put(user, onlineUserInfo);
         }
       }
     }
