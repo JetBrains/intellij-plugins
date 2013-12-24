@@ -50,8 +50,7 @@ public class UserMonitorThread extends Thread {
   private final long myWaitUserResponsesTimeout;
   private final long myScansTimeout;
 
-  private final Object myAvailableUsersLock = new Object();
-  private final Set<User> myAvailableUsers = new THashSet<User>();
+  private final Set<User> myAvailableUsers = Collections.synchronizedSet(new THashSet<User>());
 
   private Thread myThread;
   private long myStartFindingAt;
@@ -193,9 +192,7 @@ public class UserMonitorThread extends Thread {
   private void startFindingUsers() {
     synchronized (myLock) {
       myStartFindingAt = System.currentTimeMillis();
-      synchronized (myAvailableUsersLock) {
-        myAvailableUsers.clear();
-      }
+      myAvailableUsers.clear();
     }
   }
 
@@ -235,10 +232,7 @@ public class UserMonitorThread extends Thread {
       }
       OnlineUserInfo onlineUserInfo = new OnlineUserInfo(InetAddress.getByName(remoteAddress), remotePort.intValue(), projects, presence);
       if (!onlineUserInfo.getAddress().isLoopbackAddress() || Pico.isUnitTest()) {
-        User user = myClient.createUser(remoteUsername, onlineUserInfo);
-        synchronized (myAvailableUsersLock) {
-          myAvailableUsers.add(user);
-        }
+        myAvailableUsers.add(myClient.createUser(remoteUsername, onlineUserInfo));
       }
     }
     catch (UnknownHostException ignored) {
@@ -253,12 +247,14 @@ public class UserMonitorThread extends Thread {
   }
 
   void flushOnlineUsers() {
-    synchronized (myAvailableUsersLock) {
-      if (LOG.isDebugEnabled()) {
-        LOG.debug("Setting online users: \n" + Arrays.toString(myAvailableUsers.toArray()));
-      }
-      myClient.setOnlineUsers(new THashSet<User>(myAvailableUsers));
+    Set<User> users;
+    synchronized (myAvailableUsers) {
+      users = new THashSet<User>(myAvailableUsers);
     }
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Setting online users: \n" + Arrays.toString(users.toArray()));
+    }
+    myClient.setOnlineUsers(users);
   }
 
   public long getWaitUserResponsesTimeout() {
@@ -299,13 +295,8 @@ public class UserMonitorThread extends Thread {
   }
 
   private void setIndicatorText(ProgressIndicator progressIndicator) {
-    int size;
-    synchronized (myAvailableUsersLock) {
-      size = myAvailableUsers.size();
-    }
-    progressIndicator.setText(StringUtil.getMsg("p2p.finder.progressText",
-        String.valueOf(size),
-        StringUtil.getText("user", size)));
+    int size = myAvailableUsers.size();
+    progressIndicator.setText(StringUtil.getMsg("p2p.finder.progressText", String.valueOf(size), StringUtil.getText("user", size)));
   }
 
   boolean _isAlive() {
