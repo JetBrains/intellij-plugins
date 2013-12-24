@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.CommonBundle;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 import java.lang.ref.Reference;
@@ -9,16 +10,16 @@ import java.lang.ref.SoftReference;
 import java.util.ResourceBundle;
 
 public final class FlashUIDesignerBundle {
-  private static Reference<ResourceBundle> ourBundle;
 
+  public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull Object... params) {
+    return CommonBundle.message(getBundle(), key, params);
+  }
+
+  private static Reference<ResourceBundle> ourBundle;
   @NonNls
   public static final String BUNDLE = "messages.FlashUIDesignerBundle";
 
   private FlashUIDesignerBundle() {
-  }
-
-  public static String message(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
-    return CommonBundle.message(getBundle(), key, params);
   }
 
   private static ResourceBundle getBundle() {
