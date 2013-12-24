@@ -138,6 +138,7 @@ public class UserMonitorThread extends Thread {
         try {
           sendMulticastRequests(getListeningThreads());
 
+          //noinspection BusyWait
           Thread.sleep(myWaitUserResponsesTimeout);
 
           flushOnlineUsers();
@@ -275,6 +276,7 @@ public class UserMonitorThread extends Thread {
       }
 
       try {
+        //noinspection BusyWait
         Thread.sleep(50);
       }
       catch (InterruptedException ignored) {
