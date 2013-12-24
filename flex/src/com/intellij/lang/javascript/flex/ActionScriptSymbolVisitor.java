@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.index.JSNamedElementIndexItem;
 import com.intellij.lang.javascript.index.JSNamespace;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.index.JSSymbolVisitor;
@@ -10,6 +11,7 @@ import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassProvider;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 
 /**
  * @author Konstantin.Ulitin
@@ -43,5 +45,16 @@ public class ActionScriptSymbolVisitor extends JSSymbolVisitor {
       myAccessType = attributeList.getAccessType();
     }
     return true;
+  }
+
+  @Override
+  protected void processXmlTag(XmlTag element) {
+    String id = element.getAttributeValue("id");
+    if (id != null) {
+      myAttributeName = JSNamedElementIndexItem.AttributeName.Id;
+      mySymbolVisitor.processTag(myFileNamespace, id, element, "id");
+    }
+
+    element.acceptChildren(this);
   }
 }
