@@ -39,7 +39,7 @@ public class PsiClassTypeMock extends PsiClassType {
     @Override
     @NotNull
     public PsiType[] getParameters() {
-        return new PsiType[0];
+        return EMPTY_ARRAY;
     }
 
     @Override
@@ -72,19 +72,22 @@ public class PsiClassTypeMock extends PsiClassType {
         return this;
     }
 
+    @NotNull
     @Override
     public String getPresentableText() {
-        return null;
+        return "?";
     }
 
+    @NotNull
     @Override
     public String getCanonicalText() {
-        return null;
+        return "?";
     }
 
+    @NotNull
     @Override
     public String getInternalCanonicalText() {
-        return null;
+        return "?";
     }
 
     @Override
@@ -93,7 +96,7 @@ public class PsiClassTypeMock extends PsiClassType {
     }
 
     @Override
-    public boolean equalsToText(@NonNls String text) {
+    public boolean equalsToText(@NotNull @NonNls String text) {
         return false;
     }
 }
