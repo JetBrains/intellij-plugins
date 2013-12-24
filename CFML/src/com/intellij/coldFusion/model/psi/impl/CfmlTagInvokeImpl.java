@@ -34,10 +34,12 @@ public class CfmlTagInvokeImpl extends CfmlTagImpl implements CfmlFunctionCall {
     super(node);
   }
 
+  @Override
   public PsiType getPsiType() {
     return null;
   }
 
+  @Override
   public CfmlReference getReferenceExpression() {
     return findNotNullChildByClass(CfmlReferenceExpression.class);
   }
@@ -48,12 +50,14 @@ public class CfmlTagInvokeImpl extends CfmlTagImpl implements CfmlFunctionCall {
     return getReferenceExpression();
   }
 
+  @Override
   public CfmlArgumentList findArgumentList() {
     return null;
   }
 
+  @Override
   public PsiType[] getArgumentTypes() {
-    return new PsiType[0];
+    return PsiType.EMPTY_ARRAY;
   }
 
   @Override
@@ -62,6 +66,8 @@ public class CfmlTagInvokeImpl extends CfmlTagImpl implements CfmlFunctionCall {
     return name != null ? name.getName() : null;
   }
 
+  @NotNull
+  @Override
   public String getTagName() {
     return TAG_NAME;
   }

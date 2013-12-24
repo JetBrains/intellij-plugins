@@ -52,18 +52,22 @@ public class CfmlJavaLoaderClassType extends PsiType {
       myModule = myVirtualFile != null ? fileIndex.getModuleForFile(myVirtualFile) : null;
     }
 
+    @Override
     public boolean contains(@NotNull VirtualFile file) {
       return VfsUtil.isAncestor(myVirtualFile, file, true);
     }
 
+    @Override
     public int compare(@NotNull VirtualFile file1, @NotNull VirtualFile file2) {
       return 0;
     }
 
+    @Override
     public boolean isSearchInModuleContent(@NotNull Module aModule) {
       return aModule == myModule;
     }
 
+    @Override
     public boolean isSearchInLibraries() {
       return myModule == null;
     }
@@ -94,36 +98,47 @@ public class CfmlJavaLoaderClassType extends PsiType {
     return mySearchScope;
   }
 
+  @Override
+  @NotNull
   public String getPresentableText() {
     return "JavaLoader";
   }
 
+  @Override
+  @NotNull
   public String getCanonicalText() {
     return "JavaLoader";
   }
 
+  @Override
+  @NotNull
   public String getInternalCanonicalText() {
     return "JavaLoader";
   }
 
+  @Override
   public boolean isValid() {
     return true;
   }
 
-  public boolean equalsToText(@NonNls String text) {
+  @Override
+  public boolean equalsToText(@NotNull @NonNls String text) {
     return false;
   }
 
+  @Override
   public <A> A accept(@NotNull PsiTypeVisitor<A> visitor) {
     return visitor.visitType(this);
   }
 
+  @Override
   public GlobalSearchScope getResolveScope() {
     return null;
   }
 
+  @Override
   @NotNull
   public PsiType[] getSuperTypes() {
-    return new PsiType[0];
+    return EMPTY_ARRAY;
   }
 }

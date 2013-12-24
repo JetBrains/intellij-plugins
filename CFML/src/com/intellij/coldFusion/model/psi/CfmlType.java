@@ -27,23 +27,26 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CfmlType extends PsiType {
 
-  private String myName;
+  private final String myName;
 
-  public CfmlType(String name) {
+  public CfmlType(@NotNull String name) {
     super(PsiAnnotation.EMPTY_ARRAY);
     myName = name;
   }
 
+  @NotNull
   @Override
   public String getPresentableText() {
     return myName;
   }
 
+  @NotNull
   @Override
   public String getCanonicalText() {
     return myName;
   }
 
+  @NotNull
   @Override
   public String getInternalCanonicalText() {
     return myName;
@@ -55,7 +58,7 @@ public class CfmlType extends PsiType {
   }
 
   @Override
-  public boolean equalsToText(@NonNls String text) {
+  public boolean equalsToText(@NotNull @NonNls String text) {
     return text.endsWith(myName);
   }
 
@@ -72,6 +75,6 @@ public class CfmlType extends PsiType {
   @NotNull
   @Override
   public PsiType[] getSuperTypes() {
-    return new PsiType[0];
+    return EMPTY_ARRAY;
   }
 }
