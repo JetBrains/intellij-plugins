@@ -22,8 +22,11 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
+import gnu.trove.THashSet;
 import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.commands.NamedUserCommand;
@@ -65,10 +68,10 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   private final UserMonitorThread myUserMonitorThread;
 
+  private final Object myLock = new Object();
   private final Map<User, OnlineUserInfo> myUserToInfo = new THashMap<User, OnlineUserInfo>();
   private final Map<User, OnlineUserInfo> myUserToInfoNew = new THashMap<User, OnlineUserInfo>();
-
-  private final Collection<User> myOnlineUsers = Collections.synchronizedCollection(new HashSet<User>());
+  private final Collection<User> myOnlineUsers = new THashSet<User>();
 
   private final EventBroadcaster myEventBroadcaster;
   private final IDEtalkListener myUserAddedCallbackListener;
@@ -98,7 +101,6 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     };
 
     myOwnPresence = new UserPresence(true);
-
     myUserMonitorThread = new UserMonitorThread(this, waitUserResponsesTimeout);
 
     Map<String, Object> handlers = CustomPortServerManager.EP_NAME.findExtension(P2PCustomPortServerManager.class).handlers;
@@ -273,9 +275,12 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   @Override
   public UserPresence getUserPresence(User user) {
-    boolean online = myOnlineUsers.contains(user);
-    if (online) {
-      return getNotNullOnlineInfo(user).getPresence();
+    boolean online;
+    synchronized (myLock) {
+      online = myOnlineUsers.contains(user);
+      if (online) {
+        return getNotNullOnlineInfo(user).getPresence();
+      }
     }
     return new UserPresence(false);
   }
@@ -301,15 +306,17 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   @Override
   public String[] getProjects(User user) {
-    Collection<String> projects = getNotNullOnlineInfo(user).getProjects();
-    return ArrayUtil.toStringArray(projects);
+    return ArrayUtil.toStringArray(getNotNullOnlineInfo(user).getProjects());
   }
 
   @NotNull
   private OnlineUserInfo getNotNullOnlineInfo(User user) {
-    OnlineUserInfo result = myUserToInfo.get(user);
+    OnlineUserInfo result;
+    synchronized (myLock) {
+      result = myUserToInfo.get(user);
+    }
     if (result == null) {
-      result = new OnlineUserInfo(null, -1, new HashSet<String>(), new UserPresence(false));
+      result = new OnlineUserInfo(null, -1, new THashSet<String>(), new UserPresence(false));
     }
     return result;
   }
@@ -366,20 +373,22 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   }
 
   @Override
-  public synchronized void setOnlineUsers(@NotNull Collection<User> onlineUsers) {
+  public void setOnlineUsers(@NotNull Collection<User> onlineUsers) {
     removeOfflineUsersAndUpdateOldOnlineUsers(onlineUsers);
     addNewOnlineUsers(onlineUsers);
-    myUserToInfoNew.clear();
+    synchronized (myLock) {
+      myUserToInfoNew.clear();
+    }
   }
 
   public void setAvailable(String remoteUser) {
     final User user = myUserModel.findUser(remoteUser, getName());
     if (user != null) {
       UserPresence oldPresence = getNotNullOnlineInfo(user).getPresence();
-      final UserPresence newPresence = new UserPresence(true);
-      myEventBroadcaster.doChange(new UserEvent.Updated(user, "presence", oldPresence, newPresence), new Runnable() {
+      UserPresence newPresence = new UserPresence(true);
+      myEventBroadcaster.doChange(new UserEvent.Updated(user, "presence", oldPresence, newPresence), new MySyncRunnable() {
         @Override
-        public void run() {
+        protected void execute() {
           OnlineUserInfo onlineInfo = getNotNullOnlineInfo(user);
           onlineInfo.setPresence(new UserPresence(true));
           myUserToInfo.put(user, onlineInfo);
@@ -388,11 +397,24 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     }
   }
 
+  private abstract class MySyncRunnable implements Runnable {
+    @Override
+    public final void run() {
+      synchronized (myLock) {
+        execute();
+      }
+    }
+
+    protected abstract void execute();
+  }
+
   @Override
-  public synchronized User createUser(String remoteUsername, @NotNull OnlineUserInfo onlineUserInfo) {
-    User user = myUserModel.createUser(remoteUsername, CODE);
-    myUserToInfoNew.put(user, onlineUserInfo);
-    return user;
+  public User createUser(String remoteUsername, @NotNull OnlineUserInfo onlineUserInfo) {
+    synchronized (myLock) {
+      User user = myUserModel.createUser(remoteUsername, CODE);
+      myUserToInfoNew.put(user, onlineUserInfo);
+      return user;
+    }
   }
 
   void flushCurrentUsers() {
@@ -413,52 +435,72 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   }
 
   private void addNewOnlineUsers(@NotNull Collection<User> onlineUsers) {
-    for (final User user : onlineUsers) {
-      if (!myOnlineUsers.contains(user) && myUserToInfoNew.containsKey(user)) {
-        myEventBroadcaster.doChange(new UserEvent.Online(user), new Runnable() {
-          @Override
-          public void run() {
-            myOnlineUsers.add(user);
-            myUserToInfo.put(user, myUserToInfoNew.get(user));
-          }
-        });
+    List<Pair<IDEtalkEvent, Runnable>> events = new SmartList<Pair<IDEtalkEvent, Runnable>>();
+    synchronized (myLock) {
+      for (final User user : onlineUsers) {
+        if (!myOnlineUsers.contains(user) && myUserToInfoNew.containsKey(user)) {
+          events.add(new Pair<IDEtalkEvent, Runnable>(new UserEvent.Online(user), new MySyncRunnable() {
+            @Override
+            protected void execute() {
+              myOnlineUsers.add(user);
+              myUserToInfo.put(user, myUserToInfoNew.get(user));
+            }
+          }));
+        }
       }
     }
+
+    dispatchEvents(events);
   }
 
   private void removeOfflineUsersAndUpdateOldOnlineUsers(@NotNull Collection onlineUsers) {
-    for (final Iterator<User> it = myOnlineUsers.iterator(); it.hasNext(); ) {
-      final User user = it.next();
-      if (!onlineUsers.contains(user)) {
-        // User was removed
-        myEventBroadcaster.doChange(new UserEvent.Offline(user), new Runnable() {
-          @Override
-          public void run() {
-            it.remove();
-            myUserToInfo.remove(user);
-          }
-        });
-      }
-      else {
-        // User already exists
-        UserPresence oldPresence = getNotNullOnlineInfo(user).getPresence();
-        final OnlineUserInfo onlineUserInfo = myUserToInfoNew.get(user);
-        if (onlineUserInfo == null) {
-          return;
-        }
-
-        UserPresence newPresence = onlineUserInfo.getPresence();
-        if (!newPresence.equals(oldPresence)) {
-          myEventBroadcaster.doChange(new UserEvent.Updated(user, "presence", oldPresence, newPresence), new Runnable() {
+    List<Pair<IDEtalkEvent, Runnable>> events = new SmartList<Pair<IDEtalkEvent, Runnable>>();
+    synchronized (myLock) {
+      for (final User user : myOnlineUsers) {
+        if (!onlineUsers.contains(user)) {
+          // User was removed
+          events.add(new Pair<IDEtalkEvent, Runnable>(new UserEvent.Offline(user), new MySyncRunnable() {
             @Override
-            public void run() {
-              myUserToInfo.put(user, onlineUserInfo);
+            protected void execute() {
+              myOnlineUsers.remove(user);
+              myUserToInfo.remove(user);
             }
-          });
+          }));
         }
         else {
-          myUserToInfo.put(user, onlineUserInfo);
+          // User already exists
+          UserPresence oldPresence = getNotNullOnlineInfo(user).getPresence();
+          final OnlineUserInfo onlineUserInfo = myUserToInfoNew.get(user);
+          if (onlineUserInfo == null) {
+            return;
+          }
+
+          UserPresence newPresence = onlineUserInfo.getPresence();
+          if (!newPresence.equals(oldPresence)) {
+            events.add(new Pair<IDEtalkEvent, Runnable>(new UserEvent.Updated(user, "presence", oldPresence, newPresence), new MySyncRunnable() {
+              @Override
+              protected void execute() {
+                myUserToInfo.put(user, onlineUserInfo);
+              }
+            }));
+          }
+          else {
+            myUserToInfo.put(user, onlineUserInfo);
+          }
         }
+      }
+    }
+
+    dispatchEvents(events);
+  }
+
+  private void dispatchEvents(List<Pair<IDEtalkEvent, Runnable>> events) {
+    for (Pair<IDEtalkEvent, Runnable> event : events) {
+      try {
+        myEventBroadcaster.doChange(event.first, event.second);
+      }
+      catch (Throwable e) {
+        LOG.error(e);
       }
     }
   }
