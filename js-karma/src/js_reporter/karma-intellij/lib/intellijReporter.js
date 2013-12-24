@@ -132,7 +132,36 @@ function clearOtherAdapters(injector, intellijReporter) {
   });
 }
 
+function LogManager() {
+  this.postponedLog = null;
+}
+
+LogManager.prototype.postponeLog = function (log) {
+  if (this.postponedLog == null) {
+    this.postponedLog = log;
+  }
+  else {
+    this.postponedLog = this.postponedLog + '\n' + log;
+  }
+};
+
+LogManager.prototype.attachTo = function (specNode) {
+  if (this.postponedLog != null) {
+    var tree = specNode.tree;
+    tree.write('##teamcity[testStdOut nodeId=\'' + specNode.id + '\' out=\'' + intellijUtil.attributeValueEscape(this.postponedLog + '\n') + '\']\n');
+    this.postponedLog = null;
+  }
+};
+
+LogManager.prototype.attachToAnything = function (tree) {
+  if (this.postponedLog != null) {
+    tree.write(this.postponedLog + '\n');
+    this.postponedLog = null;
+  }
+};
+
 function IntellijReporter(config, fileList, formatError, globalEmitter, injector) {
+  var logManager = new LogManager();
   new FileListUpdater(config, fileList);
   startBrowsersTracking(globalEmitter);
   this.adapters = [];
@@ -166,8 +195,7 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
     if (!intellijUtil.isString(log)) {
       log = util.inspect(log, false, null, false);
     }
-
-    write(log + '\n');
+    logManager.postponeLog(log);
   };
 
   this.onSpecComplete = function (browser, result) {
@@ -202,10 +230,12 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
       failureMsg += formatError(log, '\t');
     });
     specNode.setStatus(status, result.time, failureMsg);
+    logManager.attachTo(specNode);
     specNode.writeFinishMessage();
   };
 
   this.onRunComplete = function (browsers, results) {
+    logManager.attachToAnything(tree);
     tree.configFileNode.finishIfStarted();
     tree = null;
   };
