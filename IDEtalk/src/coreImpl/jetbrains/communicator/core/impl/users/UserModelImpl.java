@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.core.impl.users;
 
+import gnu.trove.THashSet;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.transport.TransportEvent;
 import jetbrains.communicator.core.users.*;
@@ -267,7 +268,7 @@ public class UserModelImpl implements UserModel, Disposable {
 
   private Collection<User> _getUsers() {
     synchronized (myUsersGroupsLock) {
-      return new HashSet<User>(myUsers);
+      return new THashSet<User>(myUsers);
     }
   }
 
