@@ -15,15 +15,16 @@
  */
 package jetbrains.communicator.core.impl.users;
 
-import gnu.trove.THashSet;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.transport.TransportEvent;
 import jetbrains.communicator.core.users.*;
 import jetbrains.communicator.util.StringUtil;
 import jetbrains.communicator.util.UIUtil;
+import org.jetbrains.annotations.NotNull;
 import org.picocontainer.Disposable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Kir Maximov
@@ -35,10 +36,9 @@ public class UserModelImpl implements UserModel, Disposable {
   protected final transient EventBroadcaster myBroadcaster;
   private final transient MyListener myEventListener;
 
-  private final transient Object myCachedUsersLock = new Object();
   protected final transient Object myUsersGroupsLock = new Object();
 
-  private transient User[] myCachedUsers;
+  private final transient AtomicReference<User[]> myCachedUsers = new AtomicReference<User[]>();
 
   public UserModelImpl(EventBroadcaster eventBroadcaster) {
     myBroadcaster = eventBroadcaster;
@@ -59,8 +59,14 @@ public class UserModelImpl implements UserModel, Disposable {
 
   @Override
   public void addUser(final User user) {
-    if (_getUsers().contains(user)) return;
-    if (user.isSelf() && !Pico.isUnitTest()) return;
+    synchronized (myUsersGroupsLock) {
+      if (myUsers.contains(user)) {
+        return;
+      }
+    }
+    if (user.isSelf() && !Pico.isUnitTest()) {
+      return;
+    }
 
     myBroadcaster.doChange(new UserEvent.Added(user), new Runnable() {
       @Override
@@ -75,7 +81,11 @@ public class UserModelImpl implements UserModel, Disposable {
 
   @Override
   public void removeUser(final User user) {
-    if (!_getUsers().contains(user)) return;
+    synchronized (myUsersGroupsLock) {
+      if (!myUsers.contains(user)) {
+        return;
+      }
+    }
 
     myBroadcaster.doChange(new UserEvent.Removed(user), new Runnable() {
       @Override
@@ -115,37 +125,41 @@ public class UserModelImpl implements UserModel, Disposable {
     return result.toArray(new User[result.size()]);
   }
 
+  @NotNull
   @Override
   public User[] getAllUsers() {
-    synchronized (myCachedUsersLock) {
-      if (myCachedUsers == null) {
-        Collection<User> users = _getUsers();
-        myCachedUsers = users.toArray(new User[users.size()]);
-        Arrays.sort(myCachedUsers, new Comparator<User>() {
-          @Override
-          public int compare(User u1, User u2) {
-            if (u1.getGroup().equals(u2.getGroup())) {
-              return UIUtil.compareUsers(u1, u2);
-            }
-            return u1.getGroup().compareTo(u2.getGroup());
-          }
-        });
-      }
-      return myCachedUsers;
+    User[] usersList = myCachedUsers.get();
+    if (usersList != null) {
+      return usersList;
     }
+
+    usersList = getUsersList();
+    Arrays.sort(usersList, new Comparator<User>() {
+      @Override
+      public int compare(User u1, User u2) {
+        if (u1.getGroup().equals(u2.getGroup())) {
+          return UIUtil.compareUsers(u1, u2);
+        }
+        return u1.getGroup().compareTo(u2.getGroup());
+      }
+    });
+
+    return myCachedUsers.compareAndSet(null, usersList) ? usersList : getAllUsers();
   }
 
   @Override
   public boolean hasUser(User user) {
     synchronized (myUsersGroupsLock) {
-      return _getUsers().contains(user);
+      return myUsers.contains(user);
     }
   }
 
   @Override
   public String getGroup(User user) {
-    for (User user1 : _getUsers()) {
-      if (user1.equals(user)) return user1.getGroup();
+    for (User user1 : getUsersList()) {
+      if (user1.equals(user)) {
+        return user1.getGroup();
+      }
     }
     return null;
   }
@@ -201,7 +215,7 @@ public class UserModelImpl implements UserModel, Disposable {
 
   @Override
   public User findUser(String userName, String transportCode) {
-    for (User user : _getUsers()) {
+    for (User user : getUsersList()) {
       if (user.getName().equals(userName) && user.getTransportCode().equals(transportCode)) {
         return user;
       }
@@ -262,9 +276,9 @@ public class UserModelImpl implements UserModel, Disposable {
     return newName;
   }
 
-  private Collection<User> _getUsers() {
+  private User[] getUsersList() {
     synchronized (myUsersGroupsLock) {
-      return new THashSet<User>(myUsers);
+      return myUsers.toArray(new User[myUsers.size()]);
     }
   }
 
@@ -280,9 +294,7 @@ public class UserModelImpl implements UserModel, Disposable {
         @Override
         public void visitUserEvent(UserEvent event) {
           super.visitUserEvent(event);
-          synchronized (myCachedUsersLock) {
-            myCachedUsers = null;
-          }
+          myCachedUsers.set(null);
         }
       });
     }
