@@ -18,6 +18,7 @@ package com.intellij.coldFusion.model.psi;
 import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
@@ -25,11 +26,11 @@ import java.util.Collection;
  * @author vnikolaenko
  */
 public class CfmlComponentType extends CfmlType {
-  private String myComponentQualifiedPath;
-  private Project myProject;
-  private CfmlFile myContainingFile;
+  private final String myComponentQualifiedPath;
+  private final Project myProject;
+  private final CfmlFile myContainingFile;
 
-  public CfmlComponentType(String componentQualifiedPath, CfmlFile containingFile, Project project) {
+  public CfmlComponentType(@NotNull String componentQualifiedPath, CfmlFile containingFile, Project project) {
     super(componentQualifiedPath);
     myComponentQualifiedPath = componentQualifiedPath;
     myProject = project;
@@ -43,7 +44,7 @@ public class CfmlComponentType extends CfmlType {
 
   @Override
   public boolean isValid() {
-    return resolve().size() != 0;
+    return !resolve().isEmpty();
   }
 
   @Override
