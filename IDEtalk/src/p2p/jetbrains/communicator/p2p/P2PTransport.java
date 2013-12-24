@@ -66,7 +66,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   private final UserMonitorThread myUserMonitorThread;
 
   private final Map<User, OnlineUserInfo> myUserToInfo = new THashMap<User, OnlineUserInfo>();
-  private final Map<User, OnlineUserInfo> myUserTOInfoNew = new THashMap<User, OnlineUserInfo>();
+  private final Map<User, OnlineUserInfo> myUserToInfoNew = new THashMap<User, OnlineUserInfo>();
 
   private final Collection<User> myOnlineUsers = Collections.synchronizedCollection(new HashSet<User>());
 
@@ -368,7 +368,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   public synchronized void setOnlineUsers(@NotNull Collection<User> onlineUsers) {
     removeOfflineUsers_And_UpdateOldOnlineUsers(onlineUsers);
     addNewOnlineUsers(onlineUsers);
-    myUserTOInfoNew.clear();
+    myUserToInfoNew.clear();
   }
 
   public void setAvailable(String remoteUser) {
@@ -390,7 +390,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   @Override
   public synchronized User createUser(String remoteUsername, @NotNull OnlineUserInfo onlineUserInfo) {
     User user = myUserModel.createUser(remoteUsername, CODE);
-    myUserTOInfoNew.put(user, onlineUserInfo);
+    myUserToInfoNew.put(user, onlineUserInfo);
     return user;
   }
 
@@ -413,12 +413,12 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   private void addNewOnlineUsers(@NotNull Collection<User> onlineUsers) {
     for (final User user : onlineUsers) {
-      if (!myOnlineUsers.contains(user) && myUserTOInfoNew.containsKey(user)) {
+      if (!myOnlineUsers.contains(user) && myUserToInfoNew.containsKey(user)) {
         myEventBroadcaster.doChange(new UserEvent.Online(user), new Runnable() {
           @Override
           public void run() {
             myOnlineUsers.add(user);
-            myUserToInfo.put(user, myUserTOInfoNew.get(user));
+            myUserToInfo.put(user, myUserToInfoNew.get(user));
           }
         });
       }
@@ -439,7 +439,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
       }
       else { // User already exists
         UserPresence oldPresence = getNotNullOnlineInfo(user).getPresence();
-        final OnlineUserInfo onlineUserInfo = myUserTOInfoNew.get(user);
+        final OnlineUserInfo onlineUserInfo = myUserToInfoNew.get(user);
         if (onlineUserInfo == null) return;
         UserPresence newPresence = onlineUserInfo.getPresence();
 
