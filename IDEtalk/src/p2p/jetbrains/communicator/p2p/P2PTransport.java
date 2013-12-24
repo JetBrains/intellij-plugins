@@ -88,7 +88,8 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
       @Override
       protected void processAfterChange(UserEvent event) {
         event.accept(new EventVisitor() {
-          @Override public void visitUserAdded(UserEvent.Added event) {
+          @Override
+          public void visitUserAdded(UserEvent.Added event) {
             super.visitUserAdded(event);
             sendUserAddedCallback(event.getUser());
           }
@@ -366,7 +367,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   @Override
   public synchronized void setOnlineUsers(@NotNull Collection<User> onlineUsers) {
-    removeOfflineUsers_And_UpdateOldOnlineUsers(onlineUsers);
+    removeOfflineUsersAndUpdateOldOnlineUsers(onlineUsers);
     addNewOnlineUsers(onlineUsers);
     myUserToInfoNew.clear();
   }
@@ -425,24 +426,28 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     }
   }
 
-  private void removeOfflineUsers_And_UpdateOldOnlineUsers(Collection onlineUsers) {
-    for (final Iterator<User> it = myOnlineUsers.iterator(); it.hasNext();) {
+  private void removeOfflineUsersAndUpdateOldOnlineUsers(@NotNull Collection onlineUsers) {
+    for (final Iterator<User> it = myOnlineUsers.iterator(); it.hasNext(); ) {
       final User user = it.next();
-      if (!onlineUsers.contains(user)) {  // User was removed
+      if (!onlineUsers.contains(user)) {
+        // User was removed
         myEventBroadcaster.doChange(new UserEvent.Offline(user), new Runnable() {
-              @Override
-              public void run() {
-                it.remove();
-                myUserToInfo.remove(user);
-              }
-            });
+          @Override
+          public void run() {
+            it.remove();
+            myUserToInfo.remove(user);
+          }
+        });
       }
-      else { // User already exists
+      else {
+        // User already exists
         UserPresence oldPresence = getNotNullOnlineInfo(user).getPresence();
         final OnlineUserInfo onlineUserInfo = myUserToInfoNew.get(user);
-        if (onlineUserInfo == null) return;
-        UserPresence newPresence = onlineUserInfo.getPresence();
+        if (onlineUserInfo == null) {
+          return;
+        }
 
+        UserPresence newPresence = onlineUserInfo.getPresence();
         if (!newPresence.equals(oldPresence)) {
           myEventBroadcaster.doChange(new UserEvent.Updated(user, "presence", oldPresence, newPresence), new Runnable() {
             @Override
@@ -461,6 +466,5 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   public static P2PTransport getInstance() {
     return (P2PTransport) Pico.getInstance().getComponentInstanceOfType(P2PTransport.class);
   }
-
 }
 
