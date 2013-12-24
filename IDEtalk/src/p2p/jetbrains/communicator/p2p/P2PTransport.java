@@ -377,20 +377,15 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     if (user != null) {
       UserPresence oldPresence = getNotNullOnlineInfo(user).getPresence();
       final UserPresence newPresence = new UserPresence(true);
-
       myEventBroadcaster.doChange(new UserEvent.Updated(user, "presence", oldPresence, newPresence), new Runnable() {
         @Override
         public void run() {
-          makeUserOnline(user);
+          OnlineUserInfo onlineInfo = getNotNullOnlineInfo(user);
+          onlineInfo.setPresence(new UserPresence(true));
+          myUser2Info.put(user, onlineInfo);
         }
       });
     }
-  }
-
-  private void makeUserOnline(User user) {
-    OnlineUserInfo onlineInfo = getNotNullOnlineInfo(user);
-    onlineInfo.setPresence(new UserPresence(true));
-    myUser2Info.put(user, onlineInfo);
   }
 
   @Override
