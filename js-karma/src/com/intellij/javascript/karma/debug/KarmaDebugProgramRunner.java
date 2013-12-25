@@ -10,7 +10,6 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
@@ -18,10 +17,8 @@ import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
-import com.intellij.javascript.karma.server.CapturedBrowser;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
@@ -38,14 +35,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collection;
 
 /**
  * @author Sergey Simonchik
  */
 public class KarmaDebugProgramRunner extends GenericProgramRunner {
-
-  private static final Logger LOG = Logger.getInstance(KarmaDebugProgramRunner.class);
 
   @NotNull
   @Override
@@ -89,15 +83,17 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     return descriptor;
   }
 
+  @Nullable
   private RunContentDescriptor doStart(@NotNull final Project project,
-                                                    @NotNull KarmaServer karmaServer,
-                                                    @NotNull final KarmaConsoleView consoleView,
-                                                    @NotNull final ExecutionResult executionResult,
-                                                    @Nullable RunContentDescriptor contentToReuse,
-                                                    @NotNull ExecutionEnvironment env) throws ExecutionException {
-    final JSDebugEngine debugEngine = getDebugEngine(karmaServer.getCapturedBrowsers());
+                                       @NotNull KarmaServer karmaServer,
+                                       @NotNull final KarmaConsoleView consoleView,
+                                       @NotNull final ExecutionResult executionResult,
+                                       @Nullable RunContentDescriptor contentToReuse,
+                                       @NotNull ExecutionEnvironment env) throws ExecutionException {
+    KarmaDebugBrowserSelector browserSelector = new KarmaDebugBrowserSelector(project, karmaServer.getCapturedBrowsers(), env.getExecutor());
+    final JSDebugEngine debugEngine = browserSelector.selectDebugEngine();
     if (debugEngine == null) {
-      throw new ExecutionException("No debuggable browser found");
+      return null;
     }
     if (!debugEngine.prepareDebugger(project)) {
       return null;
@@ -144,31 +140,6 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
       mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute"), root);
     }
     return new RemoteDebuggingFileFinder(mappings.build(), false);
-  }
-
-  @Nullable
-  private static JSDebugEngine getDebugEngine(@NotNull Collection<CapturedBrowser> browsers) throws ExecutionException {
-    JSDebugEngine[] engines = JSDebugEngine.getEngines();
-    for (JSDebugEngine engine : engines) {
-      for (CapturedBrowser browser : browsers) {
-        if (browser.getName().contains(engine.getWebBrowser().getName())) {
-          return engine;
-        }
-      }
-    }
-    JSDebugEngine defaultEngine = null;
-    for (JSDebugEngine engine : engines) {
-      if (engine.getWebBrowser() == WebBrowser.CHROME) {
-        defaultEngine = engine;
-        break;
-      }
-    }
-    String message = "No captured browsers with debugging capabilities found!";
-    if (defaultEngine != null) {
-      LOG.warn(message + " Trying " + defaultEngine.getId());
-      return defaultEngine;
-    }
-    throw new ExecutionException(message);
   }
 
 }
