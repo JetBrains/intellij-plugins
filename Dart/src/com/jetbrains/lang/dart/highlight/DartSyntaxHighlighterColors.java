@@ -6,14 +6,10 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartSyntaxHighlighterColors {
   public static final String DART_KEYWORD = "DART_KEYWORD";
   public static final String DART_CLASS = "DART_CLASS";
   public static final String DART_BUILTIN = "DART_BUILTIN";
-  public static final String DART_INTERFACE = "DART_INTERFACE";
   public static final String DART_FUNCTION = "DART_FUNCTION";
   public static final String DART_STATIC_MEMBER_FUNCTION = "DART_STATIC_MEMBER_FUNCTION";
   public static final String DART_INSTANCE_MEMBER_FUNCTION = "DART_INSTANCE_MEMBER_FUNCTION";
@@ -29,6 +25,8 @@ public class DartSyntaxHighlighterColors {
 
   private static final String DART_NUMBER = "DART_NUMBER";
   private static final String DART_STRING = "DART_STRING";
+  private static final String DART_VALID_STRING_ESCAPE = "DART_VALID_STRING_ESCAPE";
+  private static final String DART_INVALID_STRING_ESCAPE = "DART_INVALID_STRING_ESCAPE";
   private static final String DART_OPERATION_SIGN = "DART_OPERATION_SIGN";
   private static final String DART_PARENTH = "DART_PARENTH";
   private static final String DART_BRACKETS = "DART_BRACKETS";
@@ -52,6 +50,10 @@ public class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_NUMBER, DefaultLanguageHighlighterColors.NUMBER);
   public static final TextAttributesKey STRING =
     createTextAttributesKey(DART_STRING, DefaultLanguageHighlighterColors.STRING);
+  public static final TextAttributesKey VALID_STRING_ESCAPE =
+    createTextAttributesKey(DART_VALID_STRING_ESCAPE, DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE);
+  public static final TextAttributesKey INVALID_STRING_ESCAPE =
+    createTextAttributesKey(DART_INVALID_STRING_ESCAPE, DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
   public static final TextAttributesKey OPERATION_SIGN =
     createTextAttributesKey(DART_OPERATION_SIGN, DefaultLanguageHighlighterColors.OPERATION_SIGN);
   public static final TextAttributesKey PARENTHS =
@@ -68,8 +70,6 @@ public class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_BAD_CHARACTER, HighlighterColors.BAD_CHARACTER);
   public static final TextAttributesKey CLASS =
     createTextAttributesKey(DART_CLASS, DefaultLanguageHighlighterColors.CLASS_NAME);
-  public static final TextAttributesKey INTERFACE =
-    createTextAttributesKey(DART_INTERFACE, DefaultLanguageHighlighterColors.INTERFACE_NAME);
   public static final TextAttributesKey STATIC_MEMBER_FUNCTION =
     createTextAttributesKey(DART_STATIC_MEMBER_FUNCTION, DefaultLanguageHighlighterColors.STATIC_METHOD);
   public static final TextAttributesKey INSTANCE_MEMBER_FUNCTION =
