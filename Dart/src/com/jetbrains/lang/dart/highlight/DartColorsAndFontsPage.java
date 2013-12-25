@@ -16,12 +16,6 @@ import java.util.Map;
 
 import static com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors.*;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Maxim.Mossienko
- * Date: 10/13/11
- * Time: 2:38 PM
- */
 public class DartColorsAndFontsPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRS;
 
@@ -35,6 +29,8 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.keyword"), KEYWORD),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.number"), NUMBER),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.string"), STRING),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.valid.string.escape"), VALID_STRING_ESCAPE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.invalid.string.escape"), INVALID_STRING_ESCAPE),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.operator"), OPERATION_SIGN),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.parenths"), PARENTHS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.brackets"), BRACKETS),
@@ -49,7 +45,6 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.label"), LABEL),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.class"), CLASS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.builtin"), BUILTIN),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.interface"), INTERFACE),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.function"), INSTANCE_MEMBER_FUNCTION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.member.function"), STATIC_MEMBER_FUNCTION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.variable"), INSTANCE_MEMBER_VARIABLE),
@@ -62,11 +57,12 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     ourTags.put("label", LABEL);
     ourTags.put("class", CLASS);
     ourTags.put("builtin", BUILTIN);
-    ourTags.put("interface", INTERFACE);
     ourTags.put("instance.member.function", INSTANCE_MEMBER_FUNCTION);
     ourTags.put("static.member.function", STATIC_MEMBER_FUNCTION);
     ourTags.put("instance.member.variable", INSTANCE_MEMBER_VARIABLE);
     ourTags.put("static.member.variable", STATIC_MEMBER_VARIABLE);
+    ourTags.put("escape", VALID_STRING_ESCAPE);
+    ourTags.put("bad.escape", INVALID_STRING_ESCAPE);
   }
 
   @NotNull
@@ -95,28 +91,27 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
 
   @NotNull
   public String getDemoText() {
-    return "/* Block comment */\n" +
+    return "/**\n" +
+           " * documentation\n" +
+           " */\n" +
+           "class <class>SomeClass</class> implements <class>OtherClass</class> {\n" +
+           "  /// documentation\n" +
+           "  var <instance.member.variable>someField</instance.member.variable> = null; // line comment\n" +
+           "  var <instance.member.variable>someString</instance.member.variable> = \"Escape sequences: <escape>\\n</escape> <escape>\\xFF</escape> <escape>\\u1234</escape> <escape>\\u{2F}</escape>\"\n" +
+           "  <class>String</class> <instance.member.variable>otherString</instance.member.variable> = \"Invalid escape sequences: <bad.escape>\\xZZ</bad.escape> <bad.escape>\\uXYZZ</bad.escape> <bad.escape>\\u{XYZ}</bad.escape>\"\n" +
+           "  static <builtin>num</builtin> <static.member.variable>staticField</static.member.variable> = 12345.67890;\n" +
            "\n" +
-           "/**\n" +
-           " Document comment\n" +
-           "**/\n" +
-           "class <class>SomeClass</class> implements <interface>IOther</interface> { // some comment\n" +
-           "  var <instance.member.variable>field</instance.member.variable> = null;\n" +
-           "  <builtin>num</builtin> <instance.member.variable>unusedField</instance.member.variable> = 12345.67890;\n" +
-           "  <builtin>String</builtin> <instance.member.variable>anotherString</instance.member.variable> = \"Another\\nStrin\\g\";\n" +
-           "  static var <static.member.variable>staticField</static.member.variable> = 0;\n" +
-           "\n" +
-           "  static <static.member.function>inc</static.member.function>() {\n" +
-           "    <static.member.variable>staticField</static.member.variable>++;\n" +
+           "  static <static.member.function>staticFunction</static.member.function>() {\n" +
+           "    <label>label</label>: <static.member.variable>staticField</static.member.variable>++; /* block comment */\n" +
            "  }\n" +
-           "  <instance.member.function>foo</instance.member.function>(<interface>AnInterface</interface> <parameter>param</parameter>) {\n" +
-           "    print(<instance.member.variable>anotherString</instance.member.variable> + <parameter>param</parameter>);\n" +
-           "    var <local.variable>reassignedValue</local.variable> = <class>SomeClass</class>.<static.member.variable>staticField</static.member.variable>; \n" +
-           "    <local.variable>reassignedValue</local.variable> ++; \n" +
+           "\n" +
+           "  <instance.member.function>foo</instance.member.function>(<builtin>dynamic</builtin> <parameter>param</parameter>) {\n" +
+           "    print(<instance.member.variable>someString</instance.member.variable> + <parameter>param</parameter>);\n" +
+           "    var <local.variable>localVar</local.variable> = <class>SomeClass</class>.<static.member.variable>staticField</static.member.variable>; \n" +
+           "    <local.variable>localVar</local.variable>++; \n" +
            "    <function>localFunction</function>() {\n" +
-           "      var <local.variable>a</local.variable> = @@@;// bad character\n" +
+           "      <local.variable>localVar</local.variable> = ```; // bad character\n" +
            "    };\n" +
-           "    parseData(<label>fileName</label>:'file.txt');\n" +
            "  }\n" +
            "}";
   }

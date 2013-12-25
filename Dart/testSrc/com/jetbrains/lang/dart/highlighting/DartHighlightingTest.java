@@ -23,9 +23,13 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testSpelling() {
-    final String testName = getTestName(false);
     myFixture.enableInspections(SpellCheckingInspection.class);
-    myFixture.configureByFile(testName + ".dart");
+    myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting(true, false, true);
+  }
+
+  public void testEscapeSequences() {
+    myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.checkHighlighting(true, true, true);
   }
 }
