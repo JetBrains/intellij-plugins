@@ -8,3 +8,6 @@ error2() {
   // WI-14572
   throw new F
 }
+
+`
+var a = """\
