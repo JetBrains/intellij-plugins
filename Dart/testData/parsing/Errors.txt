@@ -52,3 +52,18 @@ Dart File
               PsiErrorElement:'(', '.' or < expected, got '}'
                 <empty list>
         PsiElement(})('}')
+  PsiErrorElement:'`' unexpected
+    PsiElement(BAD_CHARACTER)('`')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+    VAR_INIT
+      PsiElement(=)('=')
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"""')
+        PsiErrorElement:CLOSING_QUOTE, LONG_TEMPLATE_ENTRY_START, REGULAR_STRING_PART or SHORT_TEMPLATE_ENTRY_START expected, got '\'
+          <empty list>
+        PsiElement(BAD_CHARACTER)('\')

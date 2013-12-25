@@ -251,9 +251,7 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <APOS_STRING>                         \'                  { popState();                   return CLOSING_QUOTE; }
 <THREE_QUO_STRING>                    {THREE_QUO}         { popState();                   return CLOSING_QUOTE; }
 <THREE_APOS_STRING>                   {THREE_APOS}        { popState();                   return CLOSING_QUOTE; }
-// incorrect line end: not closed single-line string literal
-<QUO_STRING, APOS_STRING>             \\                  { popState();                   return BAD_CHARACTER; }       // '\' is the last symbol on the line
-<QUO_STRING, APOS_STRING>             \n                  { popState();                   return REGULAR_STRING_PART; } // do not return BAD_CHARACTER here because red highlighting of bad \n looks awful
+<QUO_STRING, APOS_STRING>             \n                  { popState();                   return WHITE_SPACE;   } // not closed single-line string literal. Do not return BAD_CHARACTER here because red highlighting of bad \n looks awful
 // string content
 <QUO_STRING>                          ([^\\\"\n\$] | (\\ [^\n]))*   {                return REGULAR_STRING_PART; }
 <APOS_STRING>                         ([^\\\'\n\$] | (\\ [^\n]))*   {                return REGULAR_STRING_PART; }
@@ -277,4 +275,4 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <SHORT_TEMPLATE_ENTRY> "this"          { popState(); return THIS; }
 <SHORT_TEMPLATE_ENTRY> {IDENTIFIER_NO_DOLLAR}    { popState(); return IDENTIFIER; }
 
-<YYINITIAL, LONG_TEMPLATE_ENTRY> . { return BAD_CHARACTER; }
+<YYINITIAL, MULTI_LINE_COMMENT_STATE, QUO_STRING, THREE_QUO_STRING, APOS_STRING, THREE_APOS_STRING, SHORT_TEMPLATE_ENTRY, LONG_TEMPLATE_ENTRY> [^] { return BAD_CHARACTER; }
