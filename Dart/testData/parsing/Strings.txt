@@ -116,9 +116,7 @@ Dart File
       STRING_LITERAL_EXPRESSION
         PsiElement(RAW_TRIPLE_QUOTED_STRING)('r'''${\}\\n$\'''')
         PsiElement(OPEN_QUOTE)(''''')
-        PsiElement(REGULAR_STRING_PART)('''')
-        PsiElement(REGULAR_STRING_PART)('\$')
-        PsiElement(REGULAR_STRING_PART)('\\n')
+        PsiElement(REGULAR_STRING_PART)('''\$\\n')
         PsiElement(CLOSING_QUOTE)(''''')
   PsiElement(;)(';')
   VAR_DECLARATION_LIST
@@ -132,9 +130,7 @@ Dart File
       STRING_LITERAL_EXPRESSION
         PsiElement(RAW_TRIPLE_QUOTED_STRING)('r"""${\}$\\n\"""')
         PsiElement(OPEN_QUOTE)('"""')
-        PsiElement(REGULAR_STRING_PART)('""')
-        PsiElement(REGULAR_STRING_PART)('\$')
-        PsiElement(REGULAR_STRING_PART)('\\n')
+        PsiElement(REGULAR_STRING_PART)('""\$\\n')
         PsiElement(CLOSING_QUOTE)('"""')
   PsiElement(;)(';')
   VAR_DECLARATION_LIST
