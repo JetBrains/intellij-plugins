@@ -192,15 +192,7 @@ Dart File
       PsiElement(=)('=')
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''''')
-        PsiElement(REGULAR_STRING_PART)('\nthis is legal string with ')
-        PsiElement(REGULAR_STRING_PART)(''')
-        PsiElement(REGULAR_STRING_PART)('quoted')
-        PsiElement(REGULAR_STRING_PART)(''')
-        PsiElement(REGULAR_STRING_PART)(' ')
-        PsiElement(REGULAR_STRING_PART)('''')
-        PsiElement(REGULAR_STRING_PART)('word')
-        PsiElement(REGULAR_STRING_PART)('''')
-        PsiElement(REGULAR_STRING_PART)('\n')
+        PsiElement(REGULAR_STRING_PART)('\nthis is legal string with 'quoted' ''word''\n')
         PsiElement(CLOSING_QUOTE)(''''')
   PsiElement(;)(';')
   VAR_DECLARATION_LIST
@@ -224,15 +216,7 @@ Dart File
       PsiElement(=)('=')
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)('"""')
-        PsiElement(REGULAR_STRING_PART)('\nthis is legal string with ')
-        PsiElement(REGULAR_STRING_PART)('"')
-        PsiElement(REGULAR_STRING_PART)('quoted')
-        PsiElement(REGULAR_STRING_PART)('"')
-        PsiElement(REGULAR_STRING_PART)(' ')
-        PsiElement(REGULAR_STRING_PART)('""')
-        PsiElement(REGULAR_STRING_PART)('word')
-        PsiElement(REGULAR_STRING_PART)('""')
-        PsiElement(REGULAR_STRING_PART)('\n')
+        PsiElement(REGULAR_STRING_PART)('\nthis is legal string with "quoted" ""word""\n')
         PsiElement(CLOSING_QUOTE)('"""')
   PsiElement(;)(';')
   VAR_DECLARATION_LIST

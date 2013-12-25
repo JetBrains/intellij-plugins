@@ -5,7 +5,11 @@ import com.intellij.lexer.Lexer;
 import com.intellij.lexer.MergingLexerAdapterBase;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.lang.dart.DartElementType;
-import com.jetbrains.lang.dart.DartTokenTypesSets;
+
+import static com.jetbrains.lang.dart.DartTokenTypes.REGULAR_STRING_PART;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.MULTI_LINE_COMMENT;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.MULTI_LINE_DOC_COMMENT;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.WHITE_SPACE;
 
 public class DartLexer extends MergingLexerAdapterBase {
 
@@ -30,26 +34,37 @@ public class DartLexer extends MergingLexerAdapterBase {
   }
 
   /**
-   * Collapses sequence like <code>{MULTI_LINE_COMMENT_START MULTI_LINE_COMMENT_BODY* MULTI_LINE_COMMENT_END}</code> into a single <code>DartTokenTypesSets.MULTI_LINE_COMMENT</code>
+   * Merges WHITE_SPACE and REGULAR_STRING_PART tokens,
+   * collapses sequence like <code>{MULTI_LINE_COMMENT_START MULTI_LINE_COMMENT_BODY* MULTI_LINE_COMMENT_END}</code> into a single <code>DartTokenTypesSets.MULTI_LINE_COMMENT</code>
    */
   private static final MergingLexerAdapterBase.MergeFunction MERGE_FUNCTION = new MergingLexerAdapterBase.MergeFunction() {
     public IElementType merge(final IElementType firstTokenType, final Lexer originalLexer) {
-      if (firstTokenType != MULTI_LINE_COMMENT_START && firstTokenType != MULTI_LINE_DOC_COMMENT_START) {
+      if (firstTokenType == REGULAR_STRING_PART || firstTokenType == WHITE_SPACE) {
+        // merge consequent tokens of the same type
+        while (true) {
+          final IElementType nextTokenType = originalLexer.getTokenType();
+          if (nextTokenType != firstTokenType) break;
+          originalLexer.advance();
+        }
         return firstTokenType;
       }
+      else if (firstTokenType == MULTI_LINE_COMMENT_START || firstTokenType == MULTI_LINE_DOC_COMMENT_START) {
+        // merge multiline comments that are parsed in parts into single element
+        while (true) {
+          final IElementType nextTokenType = originalLexer.getTokenType();
+          if (nextTokenType == null) break; // EOF reached, multi-line comment is not closed
 
-      while (true) {
-        final IElementType nextTokenType = originalLexer.getTokenType();
-        if (nextTokenType == null) break; // EOF reached, multi-line comment is not closed
+          originalLexer.advance();
+          if (nextTokenType == MULTI_LINE_COMMENT_END) break;
 
-        originalLexer.advance();
-        if (nextTokenType == MULTI_LINE_COMMENT_END) break;
+          assert nextTokenType == MULTI_LINE_COMMENT_BODY : nextTokenType;
+        }
 
-        assert nextTokenType == MULTI_LINE_COMMENT_BODY;
+        return firstTokenType == MULTI_LINE_DOC_COMMENT_START ? MULTI_LINE_DOC_COMMENT
+                                                              : MULTI_LINE_COMMENT;
       }
 
-      return firstTokenType == MULTI_LINE_DOC_COMMENT_START ? DartTokenTypesSets.MULTI_LINE_DOC_COMMENT
-                                                            : DartTokenTypesSets.MULTI_LINE_COMMENT;
+      return firstTokenType;
     }
   };
 }
