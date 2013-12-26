@@ -90,7 +90,12 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
                                        @NotNull final ExecutionResult executionResult,
                                        @Nullable RunContentDescriptor contentToReuse,
                                        @NotNull ExecutionEnvironment env) throws ExecutionException {
-    KarmaDebugBrowserSelector browserSelector = new KarmaDebugBrowserSelector(project, karmaServer.getCapturedBrowsers(), env.getExecutor());
+    KarmaDebugBrowserSelector browserSelector = new KarmaDebugBrowserSelector(
+      project,
+      karmaServer.getCapturedBrowsers(),
+      env,
+      this
+    );
     final JSDebugEngine debugEngine = browserSelector.selectDebugEngine();
     if (debugEngine == null) {
       return null;
