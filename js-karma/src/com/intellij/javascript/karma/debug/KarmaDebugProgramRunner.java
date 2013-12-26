@@ -94,9 +94,15 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
                                                     @NotNull final ExecutionResult executionResult,
                                                     @Nullable RunContentDescriptor contentToReuse,
                                                     @NotNull ExecutionEnvironment env) throws ExecutionException {
-    final JSDebugEngine<Connection> debugEngine = getDebugEngine(karmaServer.getCapturedBrowsers());
+    KarmaDebugBrowserSelector browserSelector = new KarmaDebugBrowserSelector(
+      project,
+      karmaServer.getCapturedBrowsers(),
+      env,
+      this
+    );
+    final JSDebugEngine<Connection> debugEngine = browserSelector.selectDebugEngine();
     if (debugEngine == null) {
-      throw new ExecutionException("No debuggable browser found");
+      return null;
     }
     if (!debugEngine.prepareDebugger(project)) {
       return null;
