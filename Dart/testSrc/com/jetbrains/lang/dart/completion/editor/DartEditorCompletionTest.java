@@ -23,6 +23,14 @@ public class DartEditorCompletionTest extends DartCompletionTestBase {
     doTest('\n');
   }
 
+  public void testDocComment2() throws Throwable {
+    doTest('\n');
+  }
+
+  public void testDocComment3() throws Throwable {
+    doTest('\n');
+  }
+
   public void testGenericBrace1() throws Throwable {
     doTest('<');
   }

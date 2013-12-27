@@ -12,6 +12,7 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.lang.dart.lexer.DartLexer;
 import com.jetbrains.lang.dart.psi.DartFile;
+import com.jetbrains.lang.dart.psi.impl.DartDocCommentImpl;
 import com.jetbrains.lang.dart.psi.impl.DartEmbeddedContentImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,6 +63,9 @@ public class DartParserDefinition implements ParserDefinition {
   public PsiElement createElement(ASTNode node) {
     if (node.getElementType() == DartTokenTypesSets.EMBEDDED_CONTENT) {
       return new DartEmbeddedContentImpl(node);
+    }
+    else if (node.getElementType() == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT) {
+      return new DartDocCommentImpl(node);
     }
     return DartTokenTypes.Factory.createElement(node);
   }

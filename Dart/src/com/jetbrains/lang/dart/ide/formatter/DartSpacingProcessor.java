@@ -13,7 +13,7 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
 public class DartSpacingProcessor {
-  TokenSet KEYWORDS_WITH_SPACE_AFTER = TokenSet.create(
+  private static final TokenSet KEYWORDS_WITH_SPACE_AFTER = TokenSet.create(
     VAR,
     FINAL,
     STATIC,
@@ -30,7 +30,8 @@ public class DartSpacingProcessor {
     SHOW,
     HIDE
   );
-  TokenSet KEYWORDS_WITH_SPACE_BEFORE = TokenSet.create(
+
+  private static final TokenSet KEYWORDS_WITH_SPACE_BEFORE = TokenSet.create(
     GET,
     SET,
     EXTENDS,
@@ -46,7 +47,7 @@ public class DartSpacingProcessor {
     mySettings = settings;
   }
 
-  public Spacing getSpacing(Block child1, Block child2) {
+  public Spacing getSpacing(final Block child1, final Block child2) {
     if (!(child1 instanceof AbstractBlock) || !(child2 instanceof AbstractBlock)) {
       return null;
     }
@@ -60,6 +61,9 @@ public class DartSpacingProcessor {
 
     if (FUNCTION_DEFINITION.contains(type2)) {
       return Spacing.createSpacing(0, 0, 2, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
+    if (DOC_COMMENT_CONTENTS.contains(type2)) {
+      return Spacing.createSpacing(0, Integer.MAX_VALUE, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
     if (type2 != SEMICOLON && BLOCKS.contains(elementType)) {
       boolean topLevel = elementType == DART_FILE || elementType == EMBEDDED_CONTENT;

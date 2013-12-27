@@ -12,4 +12,7 @@ Dart File
         STATEMENTS
           <empty list>
         PsiElement(})('}')
-  PsiComment(MULTI_LINE_DOC_COMMENT)('/**\n/*\n*/')
+  DartDocCommentImpl(MULTI_LINE_DOC_COMMENT)
+    PsiElement(MULTI_LINE_DOC_COMMENT_START)('/**')
+    PsiElement(MULTI_LINE_COMMENT_BODY)('/*')
+    PsiElement(MULTI_LINE_COMMENT_END)('*/')
