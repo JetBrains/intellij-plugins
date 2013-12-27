@@ -4,20 +4,11 @@ import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.Lexer;
 import com.intellij.lexer.MergingLexerAdapterBase;
 import com.intellij.psi.tree.IElementType;
-import com.jetbrains.lang.dart.DartElementType;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.REGULAR_STRING_PART;
-import static com.jetbrains.lang.dart.DartTokenTypesSets.MULTI_LINE_COMMENT;
-import static com.jetbrains.lang.dart.DartTokenTypesSets.MULTI_LINE_DOC_COMMENT;
-import static com.jetbrains.lang.dart.DartTokenTypesSets.WHITE_SPACE;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
 public class DartLexer extends MergingLexerAdapterBase {
-
-  // temporary elements, finally replaced with DartTokenTypesSets#MULTI_LINE_COMMENT or DartTokenTypesSets#MULTI_LINE_DOC_COMMENT
-  static final IElementType MULTI_LINE_COMMENT_START = new DartElementType("MULTI_LINE_COMMENT_START");
-  static final IElementType MULTI_LINE_DOC_COMMENT_START = new DartElementType("MULTI_LINE_DOC_COMMENT_START");
-  static final IElementType MULTI_LINE_COMMENT_BODY = new DartElementType("MULTI_LINE_COMMENT_BODY");
-  static final IElementType MULTI_LINE_COMMENT_END = new DartElementType("MULTI_LINE_COMMENT_END");
 
   public DartLexer() {
     super(createLexer(), MERGE_FUNCTION);
@@ -35,7 +26,8 @@ public class DartLexer extends MergingLexerAdapterBase {
 
   /**
    * Merges WHITE_SPACE and REGULAR_STRING_PART tokens,
-   * collapses sequence like <code>{MULTI_LINE_COMMENT_START MULTI_LINE_COMMENT_BODY* MULTI_LINE_COMMENT_END}</code> into a single <code>DartTokenTypesSets.MULTI_LINE_COMMENT</code>
+   * collapses sequence like <code>{MULTI_LINE_(DOC_)COMMENT_START MULTI_LINE_COMMENT_BODY* MULTI_LINE_COMMENT_END}</code> into a single <code>DartTokenTypesSets.MULTI_LINE_(DOC_)COMMENT</code>.
+   * Doc comment content is lazily parsed separately
    */
   private static final MergingLexerAdapterBase.MergeFunction MERGE_FUNCTION = new MergingLexerAdapterBase.MergeFunction() {
     public IElementType merge(final IElementType firstTokenType, final Lexer originalLexer) {

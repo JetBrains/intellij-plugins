@@ -591,7 +591,11 @@ Dart File
                         PsiElement(;)(';')
                       PsiElement(})('}')
               PsiElement(})('}')
-        PsiComment(MULTI_LINE_DOC_COMMENT)('/**\n   * A pseudo-keyword.\n   */')
+        DartDocCommentImpl(MULTI_LINE_DOC_COMMENT)
+          PsiElement(MULTI_LINE_DOC_COMMENT_START)('/**')
+          PsiElement(DOC_COMMENT_LEADING_ASTERISK)('*')
+          PsiElement(MULTI_LINE_COMMENT_BODY)(' A pseudo-keyword.')
+          PsiElement(MULTI_LINE_COMMENT_END)('*/')
         METHOD_DECLARATION
           COMPONENT_NAME
             ID

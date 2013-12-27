@@ -16,4 +16,6 @@ Dart File
               PsiElement(IDENTIFIER)('z')
         PsiErrorElement:LONG_TEMPLATE_ENTRY_END expected, unexpected end of file
           <empty list>
-  PsiComment(MULTI_LINE_DOC_COMMENT)('/** * /')
+  DartDocCommentImpl(MULTI_LINE_DOC_COMMENT)
+    PsiElement(MULTI_LINE_DOC_COMMENT_START)('/**')
+    PsiElement(MULTI_LINE_COMMENT_BODY)(' * /')

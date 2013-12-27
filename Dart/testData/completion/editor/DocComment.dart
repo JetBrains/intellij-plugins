@@ -1,8 +1,3 @@
-//WEB-7429
-void function1() {
-  // do stuff
-}
+class A {
 /**<caret>
-void function2() {
-  //do other stuff
 }

@@ -19,7 +19,7 @@ public class DartIndentProcessor {
     this.settings = settings;
   }
 
-  public Indent getChildIndent(ASTNode node) {
+  public Indent getChildIndent(final ASTNode node) {
     final IElementType elementType = node.getElementType();
     final ASTNode prevSibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(node);
     final IElementType prevSiblingType = prevSibling == null ? null : prevSibling.getElementType();
@@ -32,6 +32,13 @@ public class DartIndentProcessor {
 
     if (parent == null || parent.getTreeParent() == null || parentType == EMBEDDED_CONTENT) {
       return Indent.getNoneIndent();
+    }
+
+    if (elementType == MULTI_LINE_COMMENT_BODY) {
+      return Indent.getContinuationIndent();
+    }
+    if (elementType == DOC_COMMENT_LEADING_ASTERISK || elementType == MULTI_LINE_COMMENT_END) {
+      return Indent.getSpaceIndent(1, true);
     }
 
     if (settings.KEEP_FIRST_COLUMN_COMMENT && (elementType == SINGLE_LINE_COMMENT || elementType == MULTI_LINE_COMMENT)) {
