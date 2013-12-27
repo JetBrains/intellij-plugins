@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.analyzer;
 import com.google.dart.engine.context.AnalysisContext;
 import com.google.dart.engine.context.AnalysisException;
 import com.google.dart.engine.error.AnalysisError;
+import com.google.dart.engine.error.TodoCode;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -110,6 +111,8 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
     if (messages == null || !psiFile.isValid()) return;
 
     for (AnalysisError message : messages) {
+      if (message.getErrorCode() == TodoCode.TODO) continue; // already done using IDE engine
+
       if (source != message.getSource()) {
         LOG.warn("Unexpected Source: " + message.getSource() + ",\nfile: " + annotatedFile.getPath());
         continue;
