@@ -1,18 +1,22 @@
 <idea-plugin version="2">
-  <id>CloudFormation</id>
+  <id>AWSCloudFormation</id>
   <name>AWS CloudFormation support</name>
-  <version>1.0</version>
-  <vendor>JetBrains</vendor>
+  <version>0.1</version>
+
+  <vendor url="https://github.com/shalupov/idea-cloudformation">Leonid Shalupov</vendor>
 
   <description><![CDATA[
-    Amazon CloudFormation language support
+    Amazon AWS CloudFormation language support
+
+    <ul>
+      <li>Registers *.template as CloudFormation files</li>
+      <li>Highlights wrong values in Ref</lib>
+      <li>Provides Goto Declaration, Find Usages on resource, mapping and parameter names</li>
+      <li>Renames resources, mapping and parameters</lib>
+    </ul>
   ]]></description>
 
-  <change-notes><![CDATA[
-      ]]>
-  </change-notes>
-
-  <idea-version since-build="107.105"/>
+  <idea-version since-build="133.193"/>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>JavaScript</depends>
