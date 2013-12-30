@@ -24,6 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -78,7 +79,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
     while ((i = text.indexOf("application/dart", i + 1)) != -1) {
       final PsiElement element = file.findElementAt(i);
       final XmlTag tag = element == null ? null : PsiTreeUtil.getParentOfType(element, XmlTag.class);
-      if (tag != null && "script".equalsIgnoreCase(tag.getName()) && PsiTreeUtil.getChildOfType(tag, DartEmbeddedContent.class) != null) {
+      if (tag != null && HtmlUtil.isScriptTag(tag) && PsiTreeUtil.getChildOfType(tag, DartEmbeddedContent.class) != null) {
         return true;
       }
     }

@@ -61,7 +61,7 @@ public class OpenInDartiumAction extends AnAction {
       final PsiElement element = psiFile.findElementAt(i);
       if (element != null && element.getParent() instanceof XmlAttributeValue) {
         final XmlTag tag = PsiTreeUtil.getParentOfType(element, XmlTag.class);
-        if (tag != null && "script".equalsIgnoreCase(tag.getName())) {
+        if (tag != null && HtmlUtil.isScriptTag(tag)) {
           return true;
         }
       }

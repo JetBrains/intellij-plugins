@@ -11,6 +11,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Function;
+import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +25,7 @@ import java.util.List;
  */
 public class HtmlScriptSrcToDartPackagesPathReferenceProvider implements PathReferenceProvider {
 
+  @Override
   public boolean createReferences(@NotNull final PsiElement psiElement, final @NotNull List<PsiReference> references, final boolean soft) {
     if (!(psiElement instanceof XmlAttributeValue)) return false;
 
@@ -31,7 +33,7 @@ public class HtmlScriptSrcToDartPackagesPathReferenceProvider implements PathRef
     if (!(parent instanceof XmlAttribute) || !"src".equalsIgnoreCase(((XmlAttribute)parent).getName())) return false;
 
     final XmlTag tag = (XmlTag)parent.getParent();
-    if (tag == null || !"script".equalsIgnoreCase(tag.getName())) return false;
+    if (tag == null || !HtmlUtil.isScriptTag(tag)) return false;
 
     final TextRange range = ElementManipulators.getValueTextRange(psiElement);
     int offset = range.getStartOffset();
@@ -43,6 +45,7 @@ public class HtmlScriptSrcToDartPackagesPathReferenceProvider implements PathRef
     FileReferenceSet set = new FileReferenceSet(text, psiElement, offset, null, true, false, null);
 
     set.addCustomization(FileReferenceSet.DEFAULT_PATH_EVALUATOR_OPTION, new Function<PsiFile, Collection<PsiFileSystemItem>>() {
+      @Override
       public Collection<PsiFileSystemItem> fun(final PsiFile psiFile) {
         final VirtualFile file = DartResolveUtil.getRealVirtualFile(psiFile);
         final VirtualFile packagesFolder = DartResolveUtil.getDartPackagesFolder(psiFile.getProject(), file);
@@ -60,6 +63,7 @@ public class HtmlScriptSrcToDartPackagesPathReferenceProvider implements PathRef
     return allReferences.length > 0;
   }
 
+  @Override
   @Nullable
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
     return null;
