@@ -3,7 +3,7 @@
   <problem>
     <file>wrongSyntax.template</file>
     <line>2</line>
-    <description>Template version should be a quoted string</description>
+    <description>A quoted string is expected</description>
   </problem>
   <problem>
     <file>wrongVersion.template</file>

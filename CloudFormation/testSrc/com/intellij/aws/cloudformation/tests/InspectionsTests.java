@@ -4,7 +4,7 @@ import com.intellij.aws.cloudformation.inspections.FormatViolationInspection;
 import com.intellij.testFramework.InspectionTestCase;
 
 public class InspectionsTests extends InspectionTestCase {
-  public void testUnknownTemplateVersionInspection() {
+  public void testFormatViolationInspection() {
     final FormatViolationInspection inspection = new FormatViolationInspection();
     doTest(inspection.getShortName(), inspection);
   }
