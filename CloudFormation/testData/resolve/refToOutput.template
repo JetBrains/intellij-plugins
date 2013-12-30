@@ -1,0 +1,32 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+  },
+
+  "Resources": {
+    "WebServerUser": {
+      "Type": "AWS::IAM::User",
+    },
+
+    "WebServerKeys": {
+      "Type": "AWS::IAM::AccessKey",
+      "Properties": {
+        "UserName": {
+          "Ref": "Websi<ref>teURL"
+        }
+      }
+    }
+  },
+
+  "Outputs": {
+    "WebsiteURL": {
+      "Value": {
+        "Fn::Join": ["", ["http://", {
+          "Ref": "En<ref>dpoint"
+        } ]]
+      },
+      "Description": "Application URL"
+    }
+  }
+}

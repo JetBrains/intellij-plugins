@@ -1,0 +1,38 @@
+<idea-plugin version="2">
+  <id>AWSCloudFormation</id>
+  <name>AWS CloudFormation support</name>
+  <version>0.1</version>
+  <vendor>JetBrains</vendor>
+
+  <description><![CDATA[
+    Amazon AWS CloudFormation language support
+  ]]></description>
+
+  <change-notes><![CDATA[
+      ]]>
+  </change-notes>
+
+  <idea-version since-build="133.193"/>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends>JavaScript</depends>
+
+  <application-components>
+  </application-components>
+
+  <project-components>
+  </project-components>
+
+  <actions>
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileTypeFactory implementation="com.intellij.aws.cloudformation.CloudFormationFileType"/>
+    <psi.referenceContributor implementation="com.intellij.aws.cloudformation.CloudFormationReferenceContributor"/>
+
+    <localInspection language="JavaScript" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
+                     key="aws.cloudformation.inspections.formatViolation"
+                     groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="com.intellij.aws.cloudformation.inspections.FormatViolationInspection"/>
+  </extensions>
+</idea-plugin>

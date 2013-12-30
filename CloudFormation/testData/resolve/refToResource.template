@@ -1,0 +1,24 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+  },
+
+  "Resources": {
+    "WebServerUser": {
+      "Type": "AWS::IAM::User",
+    },
+
+    "WebServerKeys": {
+      "Type": "AWS::IAM::AccessKey",
+      "Properties": {
+        "UserName": {
+          "Ref": "WebSer<ref>verUser"
+        }
+      }
+    }
+  },
+
+  "Outputs": {
+  }
+}

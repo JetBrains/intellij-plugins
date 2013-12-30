@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <file>wrongSyntax.template</file>
+    <line>2</line>
+    <description>Template version should be a quoted string</description>
+  </problem>
+  <problem>
+    <file>wrongVersion.template</file>
+    <line>2</line>
+    <description>Unknown AWS CloudFormation template version &quot;2010-09-09 + 1&quot;. Supported versions: 2010-09-09</description>
+  </problem>
+</problems>

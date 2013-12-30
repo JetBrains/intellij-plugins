@@ -1,6 +1,4 @@
-*.class
-
-# Package Files #
+out
+.idea/workspace.xml
+.idea/dictionaries
 *.jar
-*.war
-*.ear
