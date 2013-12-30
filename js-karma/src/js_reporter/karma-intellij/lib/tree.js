@@ -212,9 +212,6 @@ TestNode.prototype.setStatus = function (status, duration, failureMsg) {
   this.status = status;
   this.duration = duration;
   this.failureMsg = failureMsg;
-  if (this.status === 1 && !this.failureMsg) {
-    this.failureMsg = 'Test ignored.';
-  }
 };
 
 TestNode.prototype.getStartCommandName = function () {
