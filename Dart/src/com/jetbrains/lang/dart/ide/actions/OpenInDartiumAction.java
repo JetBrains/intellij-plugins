@@ -1,6 +1,6 @@
 package com.jetbrains.lang.dart.ide.actions;
 
-import com.intellij.ide.browsers.OpenFileInDefaultBrowserAction;
+import com.intellij.ide.browsers.actions.OpenFileInDefaultBrowserAction;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
