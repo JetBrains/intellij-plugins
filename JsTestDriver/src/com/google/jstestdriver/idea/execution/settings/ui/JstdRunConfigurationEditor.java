@@ -6,6 +6,7 @@ import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTabbedPane;
@@ -173,7 +174,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
 
     @NotNull
     private JComboBox createTestTypeComboBox(@NotNull List<TestTypeListItem> testTypeListItems) {
-      JComboBox comboBox = new JComboBox(testTypeListItems.toArray());
+      JComboBox comboBox = new ComboBox(testTypeListItems.toArray());
       comboBox.setRenderer(new ListCellRendererWrapper<TestTypeListItem>() {
         @Override
         public void customize(JList list, TestTypeListItem value, int index, boolean selected, boolean hasFocus) {
