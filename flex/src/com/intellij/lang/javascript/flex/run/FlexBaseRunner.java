@@ -96,10 +96,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   @Override
   @Nullable
-  protected RunContentDescriptor doExecute(final Project project,
-                                           final RunProfileState state,
+  protected RunContentDescriptor doExecute(@NotNull final Project project,
+                                           @NotNull final RunProfileState state,
                                            final RunContentDescriptor contentToReuse,
-                                           final ExecutionEnvironment env) throws ExecutionException {
+                                           @NotNull final ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
 
     final RunProfile runProfile = env.getRunProfile();
@@ -300,8 +300,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         final Runnable runnable1 = new Runnable() {
           @Override
           public void run() {
-            UrlOpener.launchBrowser(launcherParams.getBrowserFamily(),
-                                    BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtilCore.pathToUrl(urlOrPath));
+            UrlOpener.launchBrowser(BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtilCore.pathToUrl(urlOrPath), launcherParams.getBrowser());
           }
         };
 
@@ -407,6 +406,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   @Nullable
   public static String getApplicationId(final String airDescriptorPath) {
     final VirtualFile descriptorFile = ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>() {
+      @Override
       public VirtualFile compute() {
         final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
         if (file != null) {
@@ -428,6 +428,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   @Nullable
   public static String getApplicationName(final String airDescriptorPath) {
     final VirtualFile descriptorFile = ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>() {
+      @Override
       public VirtualFile compute() {
         final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(airDescriptorPath);
         if (file != null) {
@@ -646,7 +647,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   private static String getDescriptorForEmulatorPath(final FlexBuildConfiguration bc,
-                                                     final AppDescriptorForEmulator appDescriptorForEmulator) throws CantRunException {
+                                                     final AppDescriptorForEmulator appDescriptorForEmulator) {
     final String airDescriptorPath;
     switch (appDescriptorForEmulator) {
       case Android:

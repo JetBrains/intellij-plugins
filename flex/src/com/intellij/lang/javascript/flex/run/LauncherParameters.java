@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.flex.run;
 
-import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -13,7 +13,7 @@ public class LauncherParameters implements Cloneable {
   }
 
   private @NotNull LauncherType myLauncherType = LauncherType.OSDefault;
-  private @NotNull BrowsersConfiguration.BrowserFamily myBrowserFamily = BrowsersConfiguration.BrowserFamily.FIREFOX;
+  private @NotNull WebBrowser myBrowser = WebBrowser.FIREFOX;
   private @NotNull String myPlayerPath = SystemInfo.isMac ? "/Applications/Flash Player Debugger.app"
                                                           : SystemInfo.isWindows ? "FlashPlayerDebugger.exe"
                                                                                  : "/usr/bin/flashplayerdebugger";
@@ -23,11 +23,11 @@ public class LauncherParameters implements Cloneable {
   }
 
   public LauncherParameters(@NotNull final LauncherType launcherType,
-                            @NotNull final BrowsersConfiguration.BrowserFamily browserFamily,
+                            @NotNull final WebBrowser browser,
                             @NotNull final String playerPath,
                             final boolean isNewPlayerInstance) {
     myLauncherType = launcherType;
-    myBrowserFamily = browserFamily;
+    myBrowser = browser;
     myPlayerPath = playerPath;
     myNewPlayerInstance = isNewPlayerInstance;
   }
@@ -37,7 +37,7 @@ public class LauncherParameters implements Cloneable {
       case OSDefault:
         return FlexBundle.message("system.default.application");
       case Browser:
-        return myBrowserFamily.getName();
+        return myBrowser.getName();
       case Player:
         return FileUtil.toSystemDependentName(myPlayerPath);
       default:
@@ -57,13 +57,13 @@ public class LauncherParameters implements Cloneable {
   }
 
   @NotNull
-  public BrowsersConfiguration.BrowserFamily getBrowserFamily() {
-    return myBrowserFamily;
+  public WebBrowser getBrowser() {
+    return myBrowser;
   }
 
   @SuppressWarnings("UnusedDeclaration")
-  public void setBrowserFamily(@NotNull final BrowsersConfiguration.BrowserFamily browserFamily) {
-    myBrowserFamily = browserFamily;
+  public void setBrowser(@NotNull final WebBrowser browser) {
+    myBrowser = browser;
   }
 
   @NotNull
@@ -85,6 +85,7 @@ public class LauncherParameters implements Cloneable {
     myNewPlayerInstance = newPlayerInstance;
   }
 
+  @Override
   public LauncherParameters clone() {
     try {
       return (LauncherParameters)super.clone();
@@ -100,7 +101,7 @@ public class LauncherParameters implements Cloneable {
 
     final LauncherParameters that = (LauncherParameters)o;
 
-    if (myBrowserFamily != that.myBrowserFamily) return false;
+    if (myBrowser != that.myBrowser) return false;
     if (myLauncherType != that.myLauncherType) return false;
     if (!myPlayerPath.equals(that.myPlayerPath)) return false;
 

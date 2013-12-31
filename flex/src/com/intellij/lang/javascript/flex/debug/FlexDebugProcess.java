@@ -593,7 +593,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
               if (breakpoint != null) {
                 FlexSuspendContext suspendContext = new FlexSuspendContext(new FlexStackFrame(this, breakpoint.getSourcePosition()));
-                boolean suspend = getSession().breakpointReached(breakpoint, suspendContext);
+                boolean suspend = getSession().breakpointReached(breakpoint, null, suspendContext);
 
                 if (!suspend) {
                   encounteredNonsuspendableBreakpoint = true;
@@ -922,7 +922,7 @@ public class FlexDebugProcess extends XDebugProcess {
     }
   }
 
-  private DebuggerCommand postCommand() throws InterruptedException, IOException {
+  private DebuggerCommand postCommand() throws IOException {
     DebuggerCommand command = commandsToWrite.removeFirst();
     final boolean currentlyExecuting = !suspended && startupDone;
 

@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.ide.browsers.BrowserSelector;
-import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
@@ -25,7 +25,7 @@ public class FlexLauncherDialog extends DialogWrapper {
 
   private JRadioButton myBrowserRadioButton;
   private JPanel myBrowserSelectorPanel;
-  private BrowserSelector myBrowserSelector;
+  private final BrowserSelector myBrowserSelector;
 
   private JRadioButton myPlayerRadioButton;
   private TextFieldWithBrowseButton myPlayerTextWithBrowse;
@@ -49,17 +49,20 @@ public class FlexLauncherDialog extends DialogWrapper {
 
   private void initRadioButtons() {
     myDefaultOSApplicationRadioButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         updateControls();
       }
     });
     myBrowserRadioButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         updateControls();
         IdeFocusManager.getInstance(myProject).requestFocus(myBrowserSelector.getMainComponent(), true);
       }
     });
     myPlayerRadioButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         updateControls();
         IdeFocusManager.getInstance(myProject).requestFocus(myPlayerTextWithBrowse.getTextField(), true);
@@ -73,7 +76,7 @@ public class FlexLauncherDialog extends DialogWrapper {
     myBrowserRadioButton.setSelected(launcherType == LauncherParameters.LauncherType.Browser);
     myPlayerRadioButton.setSelected(launcherType == LauncherParameters.LauncherType.Player);
 
-    myBrowserSelector.setSelectedBrowser(launcherParameters.getBrowserFamily());
+    myBrowserSelector.setSelected(launcherParameters.getBrowser());
 
     myPlayerTextWithBrowse.setText(FileUtil.toSystemDependentName(launcherParameters.getPlayerPath()));
     myPlayerTextWithBrowse
@@ -95,6 +98,7 @@ public class FlexLauncherDialog extends DialogWrapper {
     myNewPlayerInstanceCheckBox.setEnabled(myPlayerRadioButton.isSelected());
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
@@ -105,8 +109,8 @@ public class FlexLauncherDialog extends DialogWrapper {
                                                          : myBrowserRadioButton.isSelected()
                                                            ? LauncherParameters.LauncherType.Browser
                                                            : LauncherParameters.LauncherType.OSDefault;
-    final BrowsersConfiguration.BrowserFamily browser = myBrowserSelector.getSelectedBrowser();
-    final BrowsersConfiguration.BrowserFamily notNullBrowser = browser == null ? BrowsersConfiguration.BrowserFamily.FIREFOX : browser;
+    final WebBrowser browser = myBrowserSelector.getSelected();
+    final WebBrowser notNullBrowser = browser == null ? WebBrowser.FIREFOX : browser;
     final String playerPath = FileUtil.toSystemIndependentName(myPlayerTextWithBrowse.getText().trim());
     final boolean isNewPlayerInstance = myNewPlayerInstanceCheckBox.isSelected();
     return new LauncherParameters(launcherType, notNullBrowser, playerPath, isNewPlayerInstance);
