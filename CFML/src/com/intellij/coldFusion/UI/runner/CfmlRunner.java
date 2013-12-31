@@ -29,6 +29,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class CfmlRunner extends DefaultProgramRunner {
+  @Override
   protected RunContentDescriptor doExecute(Project project,
                                            RunProfileState state,
                                            RunContentDescriptor contentToReuse,
@@ -38,7 +39,7 @@ public class CfmlRunner extends DefaultProgramRunner {
       FileDocumentManager.getInstance().saveAllDocuments();
       final CfmlRunConfiguration runProfile = (CfmlRunConfiguration)runProfileRaw;
       final CfmlRunnerParameters params = runProfile.getRunnerParameters();
-      UrlOpener.launchBrowser(params.getNonDefaultBrowser(), params.getUrl());
+      UrlOpener.launchBrowser(params.getUrl(), params.getNonDefaultBrowser());
       return null;
     }
     else {
@@ -46,11 +47,13 @@ public class CfmlRunner extends DefaultProgramRunner {
     }
   }
 
+  @Override
   @NotNull
   public String getRunnerId() {
     return "CfmlRunner";
   }
 
+  @Override
   public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
     return DefaultRunExecutor.EXECUTOR_ID.equals(executorId) &&
            (profile instanceof CfmlRunConfiguration || profile instanceof CfmlUnitRunConfiguration);

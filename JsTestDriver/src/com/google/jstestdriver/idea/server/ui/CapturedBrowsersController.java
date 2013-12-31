@@ -22,9 +22,8 @@ import com.google.jstestdriver.browser.BrowserCaptureEvent;
 import com.google.jstestdriver.hooks.ServerListener;
 import com.google.jstestdriver.idea.util.SwingUtils;
 import com.intellij.ide.BrowserSettings;
-import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.ide.browsers.UrlOpener;
-import com.intellij.ide.browsers.WebBrowserSettings;
+import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -236,7 +235,7 @@ public class CapturedBrowsersController implements ServerListener {
       update(false, false);
       boolean success;
       try {
-        success = tryCapture();
+        success = tryCapture(e.getProject());
       }
       catch (Exception ex) {
         LOG.debug(ex);
@@ -258,21 +257,16 @@ public class CapturedBrowsersController implements ServerListener {
       }
     }
 
-    private boolean tryCapture() {
+    private boolean tryCapture(Project project) {
       String captureUrl = myCaptureUrlTextField.getText();
       if (StringUtil.isEmptyOrSpaces(captureUrl)) {
         Messages.showErrorDialog("Please start a local JsTestDriver server before capturing a browser.", "JsTestDriver Browser Capturing Failed");
         return false;
       }
-      BrowsersConfiguration browsersConfiguration = BrowsersConfiguration.getInstance();
-      if (browsersConfiguration == null) {
-        return false;
-      }
-      WebBrowserSettings browserSettings = browsersConfiguration.getBrowserSettings(myBrowser.getBrowserFamily());
-      String browserPath = browserSettings.getPath();
+
+      String browserPath = myBrowser.getBrowser().getPath();
       if (StringUtil.isEmptyOrSpaces(browserPath)) {
         String message = "Path to " + myBrowser.getName() + " is not specified.";
-        Project project = null;
         int exitCode = Messages.showOkCancelDialog(project, message, "JsTestDriver Browser Capturing Failed",
             "Specify path", "Cancel", Messages.getWarningIcon());
         if (exitCode == Messages.OK) {
@@ -282,7 +276,7 @@ public class CapturedBrowsersController implements ServerListener {
         return false;
       }
 
-      UrlOpener.launchBrowser(myBrowser.getBrowserFamily(), captureUrl);
+      UrlOpener.launchBrowser(captureUrl, myBrowser.getBrowser());
       return true;
     }
 
@@ -295,20 +289,20 @@ public class CapturedBrowsersController implements ServerListener {
   }
 
   private enum Browser {
-    CHROME("Chrome", JsTestDriverIcons.Browsers.Chrome, BrowsersConfiguration.BrowserFamily.CHROME),
-    IE("Microsoft Internet Explorer", JsTestDriverIcons.Browsers.IE, BrowsersConfiguration.BrowserFamily.EXPLORER),
-    FIREFOX("Firefox", JsTestDriverIcons.Browsers.Firefox, BrowsersConfiguration.BrowserFamily.FIREFOX),
-    OPERA("Opera", JsTestDriverIcons.Browsers.Opera, BrowsersConfiguration.BrowserFamily.OPERA),
-    SAFARI("Safari", JsTestDriverIcons.Browsers.Safari, BrowsersConfiguration.BrowserFamily.SAFARI);
+    CHROME("Chrome", JsTestDriverIcons.Browsers.Chrome, WebBrowser.CHROME),
+    IE("Microsoft Internet Explorer", JsTestDriverIcons.Browsers.IE, WebBrowser.EXPLORER),
+    FIREFOX("Firefox", JsTestDriverIcons.Browsers.Firefox, WebBrowser.FIREFOX),
+    OPERA("Opera", JsTestDriverIcons.Browsers.Opera, WebBrowser.OPERA),
+    SAFARI("Safari", JsTestDriverIcons.Browsers.Safari, WebBrowser.SAFARI);
 
     private final String myName;
     private final Icon myIcon;
-    private final BrowsersConfiguration.BrowserFamily myBrowserFamily;
+    private final WebBrowser myBrowser;
 
-    Browser(@NotNull String name, Icon icon, @NotNull BrowsersConfiguration.BrowserFamily browserFamily) {
+    Browser(@NotNull String name, Icon icon, @NotNull WebBrowser browser) {
       myName = name;
       myIcon = icon;
-      myBrowserFamily = browserFamily;
+      myBrowser = browser;
     }
 
     public String getName() {
@@ -320,8 +314,8 @@ public class CapturedBrowsersController implements ServerListener {
     }
 
     @NotNull
-    public BrowsersConfiguration.BrowserFamily getBrowserFamily() {
-      return myBrowserFamily;
+    public WebBrowser getBrowser() {
+      return myBrowser;
     }
 
     @Nullable

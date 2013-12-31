@@ -15,17 +15,15 @@
  */
 package com.intellij.coldFusion.UI.runner;
 
-import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CfmlRunnerParameters implements Cloneable {
-  private static final String DEFAULT = "DEFAULT";
-
   private String myUrl = "";
-  @Nullable private BrowsersConfiguration.BrowserFamily myNonDefaultBrowser;
+  private WebBrowser myNonDefaultBrowser;
 
   @Attribute("web_path")
   public String getUrl() {
@@ -38,11 +36,11 @@ public class CfmlRunnerParameters implements Cloneable {
 
   @Transient
   @Nullable
-  public BrowsersConfiguration.BrowserFamily getNonDefaultBrowser() {
+  public WebBrowser getNonDefaultBrowser() {
     return myNonDefaultBrowser;
   }
 
-  public void setNonDefaultBrowser(@Nullable BrowsersConfiguration.BrowserFamily nonDefaultBrowser) {
+  public void setNonDefaultBrowser(@Nullable WebBrowser nonDefaultBrowser) {
     myNonDefaultBrowser = nonDefaultBrowser;
   }
 
