@@ -1,23 +1,29 @@
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.xmlb.annotations.OptionTag;
+import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
 
 public class LauncherParameters implements Cloneable {
-
   public enum LauncherType {
     OSDefault, Browser, Player
   }
 
   private @NotNull LauncherType myLauncherType = LauncherType.OSDefault;
-  private @NotNull WebBrowser myBrowser = WebBrowser.FIREFOX;
+
   private @NotNull String myPlayerPath = SystemInfo.isMac ? "/Applications/Flash Player Debugger.app"
                                                           : SystemInfo.isWindows ? "FlashPlayerDebugger.exe"
                                                                                  : "/usr/bin/flashplayerdebugger";
   private boolean myNewPlayerInstance = false;
+
+  @NotNull
+  @Transient
+  private WebBrowser myBrowser = WebBrowser.FIREFOX;
 
   public LauncherParameters() {
   }
@@ -56,14 +62,24 @@ public class LauncherParameters implements Cloneable {
     myLauncherType = launcherType;
   }
 
-  @NotNull
-  public WebBrowser getBrowser() {
-    return myBrowser;
+  @SuppressWarnings("UnusedDeclaration")
+  @OptionTag(value = "browser")
+  public String getBrowserName() {
+    return myBrowser.getName();
   }
 
   @SuppressWarnings("UnusedDeclaration")
-  public void setBrowser(@NotNull final WebBrowser browser) {
-    myBrowser = browser;
+  public void setBrowserName(String name) {
+    WebBrowser browser = WebBrowserManager.getInstance().findBrowserByName(name);
+    if (browser != null) {
+      myBrowser = browser;
+    }
+  }
+
+  @NotNull
+  @Transient
+  public WebBrowser getBrowser() {
+    return myBrowser;
   }
 
   @NotNull
