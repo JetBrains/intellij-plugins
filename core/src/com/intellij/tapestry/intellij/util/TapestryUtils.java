@@ -5,7 +5,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.*;
@@ -21,6 +21,7 @@ import com.intellij.tapestry.core.util.PathUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.facet.TapestryFacetType;
+import com.intellij.tapestry.lang.TmlFileType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +51,7 @@ public class TapestryUtils {
    * Finds all module with Tapestry support in a project.
    *
    * @param project the project to look for Tapestry modules in.
-   * @return all modules in the given projecto with Tapestry support.
+   * @return all modules in the given project with Tapestry support.
    */
   public static Module[] getAllTapestryModules(Project project) {
     final Module[] modules = ModuleManager.getInstance(project).getModules();
@@ -68,7 +69,7 @@ public class TapestryUtils {
   /**
    * Finds the element in a Tapestry component tag that identifies the type of component.
    *
-   * @param tag the compontent tag.
+   * @param tag the component tag.
    * @return the attribute that identifies the type of component.
    */
   @Nullable
@@ -160,7 +161,7 @@ public class TapestryUtils {
 
   @Nullable
   public static TapestryProject getTapestryProject(PsiElement psiElement) {
-    Module module = ModuleUtil.findModuleForPsiElement(psiElement);
+    Module module = ModuleUtilCore.findModuleForPsiElement(psiElement);
     if (module == null) return null;
     return TapestryModuleSupportLoader.getTapestryProject(module);
   }
@@ -197,7 +198,7 @@ public class TapestryUtils {
       }
     }
     catch (IncorrectOperationException ex) {
-      errorMsg = "An error occured creating the component!\n\n";
+      errorMsg = "An error occurred creating the component!\n\n";
 
       _logger.error(ex);
     }
@@ -236,7 +237,7 @@ public class TapestryUtils {
       }
     }
     catch (IncorrectOperationException ex) {
-      errorMsg = "An error occured creating the page!\n\n";
+      errorMsg = "An error occurred creating the page!\n\n";
 
       _logger.error(ex);
     }
@@ -267,7 +268,7 @@ public class TapestryUtils {
                   replaceExistingFiles, TapestryConstants.MIXIN_CLASS_TEMPLATE_NAME);
     }
     catch (IncorrectOperationException ex) {
-      errorMsg = "An error occured creating the mixin!\n\n";
+      errorMsg = "An error occurred creating the mixin!\n\n";
 
       _logger.error(ex);
     }
@@ -293,9 +294,10 @@ public class TapestryUtils {
 
   private static final PsiElementBasedCachedUserDataCache<Component, XmlTag> outTagToComponentMap =
     new PsiElementBasedCachedUserDataCache<Component, XmlTag>("TapestryTagToComponentMap") {
+      @Override
       @Nullable
       protected Component computeValue(XmlTag tag) {
-        Module module = ModuleUtil.findModuleForPsiElement(tag);
+        Module module = ModuleUtilCore.findModuleForPsiElement(tag);
         return module == null ? null : getTypeOfTag(module, tag);
       }
     };
@@ -420,7 +422,7 @@ public class TapestryUtils {
     }
 
     PsiFile pageTemplate = PsiFileFactory.getInstance(module.getProject())
-      .createFileFromText(fileName, FileTemplateManager.getInstance().getInternalTemplate(template).getText());
+      .createFileFromText(fileName, TmlFileType.INSTANCE, FileTemplateManager.getInstance().getInternalTemplate(template).getText());
     templateDirectory.add(pageTemplate);
   }
 
