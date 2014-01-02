@@ -2,13 +2,13 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
@@ -96,7 +96,7 @@ public class ReferenceSupport {
         }
 
         if (lookupOptions.IN_ROOTS_OF_MODULE_DEPENDENCIES) {
-          appendRootsOfModuleDependencies(dirs, ModuleUtil.findModuleForPsiElement(psiFile));
+          appendRootsOfModuleDependencies(dirs, ModuleUtilCore.findModuleForPsiElement(psiFile));
         }
 
         final Collection<PsiFileSystemItem> result = new ArrayList<PsiFileSystemItem>();
@@ -135,21 +135,21 @@ public class ReferenceSupport {
       final PsiElement context = psiFile.getContext();
       if (context != null) psiFile = context.getContainingFile();
       final VirtualFile vFile = psiFile.getVirtualFile();
-      if (vFile != null && VfsUtil.findRelativeFile(path, vFile) != null) {
+      if (vFile != null && VfsUtilCore.findRelativeFile(path, vFile) != null) {
         return RelativeToWhat.CurrentFile;
       }
     }
 
-    if (lookupOptions.RELATIVE_TO_PROJECT_BASE_DIR && VfsUtil.findRelativeFile(path, psiElement.getProject().getBaseDir()) != null) {
+    if (lookupOptions.RELATIVE_TO_PROJECT_BASE_DIR && VfsUtilCore.findRelativeFile(path, psiElement.getProject().getBaseDir()) != null) {
       return RelativeToWhat.ProjectRoot;
     }
 
     if ((lookupOptions.RELATIVE_TO_SOURCE_ROOTS_START_WITH_SLASH && path.startsWith("/"))
         || lookupOptions.RELATIVE_TO_SOURCE_ROOTS_START_WITHOUT_SLASH && !path.startsWith("/")) {
-      final Module module = ModuleUtil.findModuleForPsiElement(psiElement);
+      final Module module = ModuleUtilCore.findModuleForPsiElement(psiElement);
       if (module != null) {
         for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(module).getSourceRoots()) {
-          if (VfsUtil.findRelativeFile(path, sourceRoot) != null) {
+          if (VfsUtilCore.findRelativeFile(path, sourceRoot) != null) {
             return RelativeToWhat.SourceRoot;
           }
         }
@@ -170,7 +170,7 @@ public class ReferenceSupport {
   private static void appendSourceRoots(final Collection<VirtualFile> dirs, final PsiFile psiFile) {
     final VirtualFile file = psiFile.getVirtualFile();
     if (file != null && ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().getSourceRootForFile(file) != null) {
-      appendSourceRoots(dirs, ModuleUtil.findModuleForPsiElement(psiFile));
+      appendSourceRoots(dirs, ModuleUtilCore.findModuleForPsiElement(psiFile));
     }
   }
 
