@@ -28,7 +28,6 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.params.Param;
 import com.intellij.util.Function;
-import com.intellij.util.ReflectionCache;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
@@ -117,7 +116,7 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
                                             final Class... kinds) {
     final DomElement domElement = ((DomStructureTreeElement)element).getElement();
     for (final Class clazz : kinds) {
-      if (ReflectionCache.isInstance(domElement, clazz)) {
+      if (clazz.isInstance(domElement)) {
         return true;
       }
     }
