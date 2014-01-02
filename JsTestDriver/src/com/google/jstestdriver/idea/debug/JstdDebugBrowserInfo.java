@@ -1,6 +1,5 @@
 package com.google.jstestdriver.idea.debug;
 
-import com.google.common.collect.Lists;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
@@ -9,8 +8,10 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,23 +79,21 @@ public class JstdDebugBrowserInfo {
     if (browsers == null) {
       return null;
     }
-    JSDebugEngine[] engines = JSDebugEngine.getEngines();
-    List<JstdDebugBrowserInfo> debugBrowserInfos = Lists.newArrayList();
+
+    List<JstdDebugBrowserInfo> debugBrowserInfos = new SmartList<JstdDebugBrowserInfo>();
     for (SlaveBrowser slaveBrowser : browsers.getSlaveBrowsers()) {
-      String browserName = slaveBrowser.getBrowserInfo().getName();
-      for (JSDebugEngine engine : engines) {
-        if (engine.getWebBrowser().getName().equalsIgnoreCase(browserName)) {
-          debugBrowserInfos.add(new JstdDebugBrowserInfo(engine, slaveBrowser.getCaptureUrl(), slaveBrowser));
-        }
+      JSDebugEngine engine = JSDebugEngine.findByBrowserName(slaveBrowser.getBrowserInfo().getName());
+      if (engine != null) {
+        debugBrowserInfos.add(new JstdDebugBrowserInfo(engine, slaveBrowser.getCaptureUrl(), slaveBrowser));
       }
     }
     if (debugBrowserInfos.size() == 1) {
       return debugBrowserInfos.get(0);
     }
     if (debugBrowserInfos.size() > 1) {
-      BrowsersConfiguration.BrowserFamily preferredBrowser = settings.getPreferredDebugBrowser();
+      WebBrowser preferredBrowser = settings.getPreferredDebugBrowser();
       for (JstdDebugBrowserInfo info : debugBrowserInfos) {
-        if (info.getDebugEngine().getBrowserFamily() == preferredBrowser) {
+        if (info.getDebugEngine().getWebBrowser().equals(preferredBrowser)) {
           return info;
         }
       }

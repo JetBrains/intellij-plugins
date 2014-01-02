@@ -1,9 +1,10 @@
 package com.google.jstestdriver.idea.execution.settings.ui;
 
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
-import com.intellij.ide.browsers.BrowsersConfiguration;
-import com.intellij.ui.ListCellRendererWrapper;
-import com.intellij.util.ObjectUtils;
+import com.intellij.javascript.debugger.engine.JSDebugEngine;
+import com.intellij.javascript.debugger.execution.JavaScriptDebugSettingsEditorBase;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.webcore.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,25 +16,11 @@ import java.awt.*;
  */
 public class JstdDebugSection extends AbstractRunSettingsSection {
 
-  private final JComboBox myPreferredDebugBrowserComboBox;
+  private final ComboBox myPreferredDebugBrowserComboBox;
 
-  public JstdDebugSection() {
-    BrowsersConfiguration.BrowserFamily[] supportedBrowsers = new BrowsersConfiguration.BrowserFamily[] {
-      BrowsersConfiguration.BrowserFamily.CHROME,
-      BrowsersConfiguration.BrowserFamily.FIREFOX
-    };
-    myPreferredDebugBrowserComboBox = new JComboBox(supportedBrowsers);
-    myPreferredDebugBrowserComboBox.setRenderer(new ListCellRendererWrapper<BrowsersConfiguration.BrowserFamily>() {
-      @Override
-      public void customize(JList list,
-                            BrowsersConfiguration.BrowserFamily value,
-                            int index,
-                            boolean selected,
-                            boolean hasFocus) {
-        setIcon(value.getIcon());
-        setText(value.getName());
-      }
-    });
+  public JstdDebugSection(@NotNull Project project) {
+    myPreferredDebugBrowserComboBox = new ComboBox(JavaScriptDebugSettingsEditorBase.getEngines(project).toArray());
+    JavaScriptDebugSettingsEditorBase.setupBrowserComboboxRenderer(myPreferredDebugBrowserComboBox);
   }
 
   @NotNull
@@ -58,17 +45,14 @@ public class JstdDebugSection extends AbstractRunSettingsSection {
 
   @Override
   public void resetFrom(@NotNull JstdRunSettings runSettings) {
-    myPreferredDebugBrowserComboBox.setSelectedItem(runSettings.getPreferredDebugBrowser());
+    myPreferredDebugBrowserComboBox.setSelectedItem(JSDebugEngine.findByBrowserName(runSettings.getPreferredDebugBrowser().getName()));
   }
 
   @Override
   public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
-    BrowsersConfiguration.BrowserFamily selectedBrowser = ObjectUtils.tryCast(
-      myPreferredDebugBrowserComboBox.getSelectedItem(),
-      BrowsersConfiguration.BrowserFamily.class
-    );
+    JSDebugEngine selectedBrowser = (JSDebugEngine)myPreferredDebugBrowserComboBox.getSelectedItem();
     if (selectedBrowser != null) {
-      runSettingsBuilder.setPreferredDebugBrowser(selectedBrowser);
+      runSettingsBuilder.setPreferredDebugBrowser(selectedBrowser.getWebBrowser());
     }
   }
 

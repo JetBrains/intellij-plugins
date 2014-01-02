@@ -1,16 +1,16 @@
 package com.google.jstestdriver.idea.execution.settings;
 
 import com.google.common.collect.Lists;
+import com.google.jstestdriver.idea.util.EnumUtils;
 import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-
-import com.google.jstestdriver.idea.util.EnumUtils;
-import com.intellij.openapi.util.JDOMExternalizer;
 
 import java.util.List;
 
@@ -72,8 +72,8 @@ public class JstdRunSettingsSerializationUtils {
     builder.setFilesExcludedFromCoverage(filesExcludedFromCoverage);
 
     BrowsersConfiguration.BrowserFamily browser = readEnumByName(element, Key.PREFERRED_DEBUG_BROWSER,
-                                                                 JstdRunSettings.DEFAULT_PREFERRED_DEBUG_BROWSER);
-    builder.setPreferredDebugBrowser(browser);
+                                                                 WebBrowser.CHROME.getFamily());
+    builder.setPreferredDebugBrowser(WebBrowser.getStandardBrowser(browser));
     return builder.build();
   }
 
@@ -165,7 +165,7 @@ public class JstdRunSettingsSerializationUtils {
       writeString(element, Key.SERVER_ADDRESS, runSettings.getServerAddress());
     }
     writeFilesExcludedFromCoverage(element, runSettings.getFilesExcludedFromCoverage());
-    writeString(element, Key.PREFERRED_DEBUG_BROWSER, runSettings.getPreferredDebugBrowser().name());
+    writeString(element, Key.PREFERRED_DEBUG_BROWSER, runSettings.getPreferredDebugBrowser().getName());
   }
 
   private static void writeTestMethod(@NotNull Element element, @NotNull JstdRunSettings runSettings) {

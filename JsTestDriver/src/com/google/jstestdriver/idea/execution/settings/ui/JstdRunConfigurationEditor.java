@@ -32,7 +32,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
   public JstdRunConfigurationEditor(@NotNull Project project) {
     myTabSections = ContainerUtil.newLinkedHashMap();
     myTabSections.put("Configuration", new RootSection());
-    myTabSections.put("Debug", new JstdDebugSection());
+    myTabSections.put("Debug", new JstdDebugSection(project));
     myTabSections.put("Coverage", new JstdCoverageSection(project));
     myRootComponent = createTabbedPane(project, myTabSections);
   }

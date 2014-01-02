@@ -1,7 +1,7 @@
 package com.google.jstestdriver.idea.execution.settings;
 
 import com.google.common.collect.ImmutableList;
-import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.WebBrowser;
 import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,9 +9,6 @@ import java.util.List;
 
 @Immutable
 public class JstdRunSettings {
-
-  public static final BrowsersConfiguration.BrowserFamily DEFAULT_PREFERRED_DEBUG_BROWSER = BrowsersConfiguration.BrowserFamily.CHROME;
-
   private final TestType myTestType;
   private final String myConfigFile;
   private final String myDirectory;
@@ -21,7 +18,7 @@ public class JstdRunSettings {
   private final String myTestCaseName;
   private final String myTestMethodName;
   private final ImmutableList<String> myFilesExcludedFromCoverage;
-  private final BrowsersConfiguration.BrowserFamily myPreferredDebugBrowser;
+  private final WebBrowser myPreferredDebugBrowser;
 
 
   public JstdRunSettings(
@@ -34,7 +31,7 @@ public class JstdRunSettings {
     @NotNull String testCaseName,
     @NotNull String testMethodName,
     @NotNull ImmutableList<String> filesExcludedFromCoverage,
-    @NotNull BrowsersConfiguration.BrowserFamily preferredDebugBrowser) {
+    @NotNull WebBrowser preferredDebugBrowser) {
     myTestType = testType;
     myConfigFile = configFile;
     myDirectory = directory;
@@ -97,7 +94,7 @@ public class JstdRunSettings {
   }
 
   @NotNull
-  public BrowsersConfiguration.BrowserFamily getPreferredDebugBrowser() {
+  public WebBrowser getPreferredDebugBrowser() {
     return myPreferredDebugBrowser;
   }
 
@@ -112,7 +109,7 @@ public class JstdRunSettings {
     private String myTestCaseName = "";
     private String myTestMethodName = "";
     private ImmutableList<String> myFilesExcludedFromCoverage = ImmutableList.of();
-    private BrowsersConfiguration.BrowserFamily myPreferredDebugBrowser = DEFAULT_PREFERRED_DEBUG_BROWSER;
+    private WebBrowser myPreferredDebugBrowser = WebBrowser.CHROME;
 
     public Builder() {
     }
@@ -134,7 +131,7 @@ public class JstdRunSettings {
     }
 
     public Builder setConfigFile(@NotNull String configFile) {
-      this.myConfigFile = configFile;
+      myConfigFile = configFile;
       return this;
     }
 
@@ -173,7 +170,7 @@ public class JstdRunSettings {
       return this;
     }
 
-    public void setPreferredDebugBrowser(@NotNull BrowsersConfiguration.BrowserFamily preferredDebugBrowser) {
+    public void setPreferredDebugBrowser(@NotNull WebBrowser preferredDebugBrowser) {
       myPreferredDebugBrowser = preferredDebugBrowser;
     }
 
