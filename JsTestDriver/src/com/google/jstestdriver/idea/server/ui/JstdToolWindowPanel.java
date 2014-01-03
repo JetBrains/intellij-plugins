@@ -16,10 +16,9 @@
 package com.google.jstestdriver.idea.server.ui;
 
 import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.ServerStartupAction;
 import com.google.jstestdriver.hooks.ServerListener;
 import com.google.jstestdriver.idea.server.JstdServerState;
-import com.intellij.ide.BrowserSettings;
+import com.intellij.ide.browsers.BrowserSettings;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;

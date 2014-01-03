@@ -21,7 +21,7 @@ import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.browser.BrowserCaptureEvent;
 import com.google.jstestdriver.hooks.ServerListener;
 import com.google.jstestdriver.idea.util.SwingUtils;
-import com.intellij.ide.BrowserSettings;
+import com.intellij.ide.browsers.BrowserSettings;
 import com.intellij.ide.browsers.UrlOpener;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.openapi.actionSystem.AnAction;
