@@ -58,7 +58,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
 
   @Override
   protected RunContentDescriptor doExecute(@NotNull final Project project,
-                                           RunProfileState state,
+                                           @NotNull RunProfileState state,
                                            @Nullable RunContentDescriptor contentToReuse,
                                            @NotNull final ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
@@ -70,7 +70,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     if (server == null) {
       return null;
     }
-    KarmaCoveragePeer coveragePeer = server.getCoveragePeer();
+    KarmaCoveragePeer coveragePeer = getCoveragePeer(server);
     KarmaCoverageStartupStatus status = coveragePeer.getStartupStatus();
     if (status != null) {
       if (status.isSuccessful()) {
@@ -78,9 +78,9 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
       }
       return showWarningConsole(status, server, env, contentToReuse);
     }
-    coveragePeer.doWhenCoverageInitialized(new KarmaCoverageInitializationListener() {
+    coveragePeer.onCoverageInitialized(new KarmaCoverageInitializationCallback() {
       @Override
-      public void onCoverageInitialized(@NotNull KarmaCoverageStartupStatus initStatus) {
+      public void onCoverageInitialized(@NotNull KarmaCoverageStartupStatus startupStatus) {
         RunnerAndConfigurationSettings configuration = env.getRunnerAndConfigurationSettings();
         if (configuration != null) {
           ProgramRunnerUtil.executeConfiguration(project, configuration, env.getExecutor());
@@ -88,6 +88,15 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
       }
     });
     return showWarningConsole(null, server, env, contentToReuse);
+  }
+
+  @NotNull
+  private static KarmaCoveragePeer getCoveragePeer(@NotNull KarmaServer server) {
+    KarmaCoveragePeer coveragePeer = server.getCoveragePeer();
+    if (coveragePeer == null) {
+      throw new RuntimeException("Coverage peer should be initialized");
+    }
+    return coveragePeer;
   }
 
   private RunContentDescriptor showWarningConsole(@Nullable KarmaCoverageStartupStatus status,
@@ -134,9 +143,9 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
   @NotNull
   private RunContentDescriptor doCoverage(@NotNull final Project project,
                                           @NotNull ExecutionResult executionResult,
-                                          RunContentDescriptor contentToReuse,
+                                          @Nullable RunContentDescriptor contentToReuse,
                                           @NotNull final ExecutionEnvironment env,
-                                          @NotNull final KarmaServer karmaServer) {
+                                          @NotNull final KarmaServer server) {
     final KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration) env.getRunProfile();
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     CoverageHelper.resetCoverageSuit(runConfiguration);
@@ -144,7 +153,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
     if (coverageFilePath != null) {
-      KarmaCoveragePeer coveragePeer = karmaServer.getCoveragePeer();
+      KarmaCoveragePeer coveragePeer = getCoveragePeer(server);
       coveragePeer.startCoverageSession(new KarmaCoverageSession() {
         public void onCoverageSessionFinished(@NotNull final File lcovFile) {
           UIUtil.invokeLaterIfNeeded(new Runnable() {
@@ -160,7 +169,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
               RunnerSettings runnerSettings = env.getRunnerSettings();
               if (runnerSettings != null) {
                 KarmaCoverageRunner coverageRunner = CoverageRunner.getInstance(KarmaCoverageRunner.class);
-                coverageRunner.setKarmaServer(karmaServer);
+                coverageRunner.setKarmaServer(server);
                 CoverageDataManager.getInstance(project).processGatheredCoverage(runConfiguration, runnerSettings);
               }
             }

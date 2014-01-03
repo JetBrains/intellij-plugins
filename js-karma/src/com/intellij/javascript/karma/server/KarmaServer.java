@@ -42,7 +42,7 @@ public class KarmaServer {
   private final ProcessOutputArchive myProcessOutputArchive;
   private final KarmaJsSourcesLocator myKarmaJsSourcesLocator;
   private final KarmaServerState myState;
-  private final KarmaCoveragePeer myCoveragePeer = new KarmaCoveragePeer();
+  private final KarmaCoveragePeer myCoveragePeer;
   private final KarmaWatcher myWatcher;
 
   private final AtomicBoolean myOnPortBoundFired = new AtomicBoolean(false);
@@ -60,10 +60,9 @@ public class KarmaServer {
   private final int myProcessHashCode;
 
   public KarmaServer(@NotNull Project project, @NotNull KarmaServerSettings serverSettings) throws IOException {
-    /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
-        are already checked in KarmaRunConfiguration.checkConfiguration */
     myServerSettings = serverSettings;
     myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(serverSettings.getKarmaPackageDir());
+    myCoveragePeer = serverSettings.isWithCoverage() ? new KarmaCoveragePeer() : null;
     KillableColoredProcessHandler processHandler = startServer(serverSettings);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     File configurationFile = myServerSettings.getConfigurationFile();
@@ -79,7 +78,9 @@ public class KarmaServer {
   }
 
   private void registerStreamEventHandlers() {
-    myCoveragePeer.registerEventHandlers(this);
+    if (myCoveragePeer != null) {
+      myCoveragePeer.registerEventHandlers(this);
+    }
 
     registerStreamEventHandler(myWatcher.getEventHandler());
 
@@ -123,7 +124,7 @@ public class KarmaServer {
     return myServerSettings.getKarmaPackageDir();
   }
 
-  @NotNull
+  @Nullable
   public KarmaCoveragePeer getCoveragePeer() {
     return myCoveragePeer;
   }
@@ -150,11 +151,13 @@ public class KarmaServer {
     commandLine.setWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
     commandLine.setExePath(serverSettings.getNodeInterpreterPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
-//    commandLine.addParameter("--debug-brk=34598");
+    //commandLine.addParameter("--debug-brk=34598");
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaJsSourcesLocator.getKarmaPackageDir().getAbsolutePath());
     commandLine.addParameter("--configFile=" + serverSettings.getConfigurationFilePath());
-    commandLine.addParameter("--coverageTempDir=" + myCoveragePeer.getCoverageTempDir());
+    if (myCoveragePeer != null) {
+      commandLine.addParameter("--coverageTempDir=" + myCoveragePeer.getCoverageTempDir());
+    }
 
     final Process process;
     try {
@@ -197,7 +200,7 @@ public class KarmaServer {
   private void shutdown() {
     ProcessHandler processHandler = myProcessOutputArchive.getProcessHandler();
     if (!processHandler.isProcessTerminated()) {
-      ScriptRunnerUtil.terminateProcessHandler(processHandler, 500, null);
+      ScriptRunnerUtil.terminateProcessHandler(processHandler, 1000, null);
     }
   }
 
@@ -362,8 +365,10 @@ public class KarmaServer {
       }
       LOG.info("Disposing Karma server " + myProcessHashCode);
       myWatcher.stop();
-      myCoveragePeer.dispose();
-      FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
+      if (myCoveragePeer != null) {
+        myCoveragePeer.dispose();
+        FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
+      }
       if (myOnPortBoundCallbacks != null) {
         myOnPortBoundCallbacks.clear();
       }

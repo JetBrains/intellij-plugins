@@ -12,13 +12,16 @@ public class KarmaServerSettings {
   private final String myNodeInterpreterPath;
   private final String myKarmaPackageDirPath;
   private final KarmaRunSettings myRunSettings;
+  private final boolean myWithCoverage;
 
-  public KarmaServerSettings(@NotNull String nodeInterpreterPath,
-                             @NotNull String karmaPackageDirPath,
-                             @NotNull KarmaRunSettings runSettings) {
+  private KarmaServerSettings(@NotNull String nodeInterpreterPath,
+                              @NotNull String karmaPackageDirPath,
+                              @NotNull KarmaRunSettings runSettings,
+                              boolean withCoverage) {
     myNodeInterpreterPath = nodeInterpreterPath;
     myKarmaPackageDirPath = karmaPackageDirPath;
     myRunSettings = runSettings;
+    myWithCoverage = withCoverage;
   }
 
   @NotNull
@@ -34,6 +37,10 @@ public class KarmaServerSettings {
   @NotNull
   public KarmaRunSettings getRunSettings() {
     return myRunSettings;
+  }
+
+  public boolean isWithCoverage() {
+    return myWithCoverage;
   }
 
   @NotNull
@@ -55,7 +62,8 @@ public class KarmaServerSettings {
 
     return myKarmaPackageDirPath.equals(that.myKarmaPackageDirPath) &&
            myNodeInterpreterPath.equals(that.myNodeInterpreterPath) &&
-           myRunSettings.equals(that.myRunSettings);
+           myRunSettings.equals(that.myRunSettings) &&
+           myWithCoverage == that.myWithCoverage;
   }
 
   @Override
@@ -63,6 +71,7 @@ public class KarmaServerSettings {
     int result = myNodeInterpreterPath.hashCode();
     result = 31 * result + myKarmaPackageDirPath.hashCode();
     result = 31 * result + myRunSettings.hashCode();
+    result = 31 * result + (myWithCoverage ? 1 : 0);
     return result;
   }
 
@@ -70,6 +79,7 @@ public class KarmaServerSettings {
     private String myNodeInterpreterPath;
     private String myKarmaPackageDirPath;
     private KarmaRunSettings myRunSettings;
+    private boolean myWithCoverage;
 
     @NotNull
     public Builder setNodeInterpreterPath(@NotNull String nodeInterpreterPath) {
@@ -90,6 +100,12 @@ public class KarmaServerSettings {
     }
 
     @NotNull
+    public Builder setWithCoverage(boolean withCoverage) {
+      myWithCoverage = withCoverage;
+      return this;
+    }
+
+    @NotNull
     public KarmaServerSettings build() {
       if (myNodeInterpreterPath == null) {
         throw new RuntimeException("Path to node interpreter isn't set!");
@@ -100,7 +116,7 @@ public class KarmaServerSettings {
       if (myRunSettings == null) {
         throw new RuntimeException("Run settings aren't set!");
       }
-      return new KarmaServerSettings(myNodeInterpreterPath, myKarmaPackageDirPath, myRunSettings);
+      return new KarmaServerSettings(myNodeInterpreterPath, myKarmaPackageDirPath, myRunSettings, myWithCoverage);
     }
   }
 

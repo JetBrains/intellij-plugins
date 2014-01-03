@@ -5,27 +5,20 @@ package com.intellij.javascript.karma.coverage;
  */
 public class KarmaCoverageStartupStatus {
 
-  private final boolean myCoverageReporterSpecifiedInConfig;
   private final boolean myCoveragePreprocessorSpecifiedInConfig;
   private final boolean myCoverageReportFound;
   private final boolean myCoveragePluginInstalled;
 
-  public KarmaCoverageStartupStatus(boolean coverageReporterSpecifiedInConfig,
-                                    boolean coveragePreprocessorSpecifiedInConfig,
+  public KarmaCoverageStartupStatus(boolean coveragePreprocessorSpecifiedInConfig,
                                     boolean coverageReportFound,
                                     boolean coveragePluginInstalled) {
-    myCoverageReporterSpecifiedInConfig = coverageReporterSpecifiedInConfig;
     myCoveragePreprocessorSpecifiedInConfig = coveragePreprocessorSpecifiedInConfig;
     myCoverageReportFound = coverageReportFound;
     myCoveragePluginInstalled = coveragePluginInstalled;
   }
 
-  public boolean isCoverageReporterSpecifiedInConfig() {
-    return myCoverageReporterSpecifiedInConfig;
-  }
-
-  public boolean isCoveragePreprocessorNeededToBeSpecified() {
-    return myCoverageReporterSpecifiedInConfig && !myCoveragePreprocessorSpecifiedInConfig;
+  public boolean isCoveragePreprocessorSpecifiedInConfig() {
+    return myCoveragePreprocessorSpecifiedInConfig;
   }
 
   public boolean isCoverageReportFound() {
@@ -33,11 +26,11 @@ public class KarmaCoverageStartupStatus {
   }
 
   public boolean isSuccessful() {
-    return myCoverageReporterSpecifiedInConfig && myCoveragePreprocessorSpecifiedInConfig && myCoverageReportFound;
+    return myCoveragePreprocessorSpecifiedInConfig && myCoverageReportFound;
   }
 
   public boolean isKarmaCoveragePackageNeededToBeInstalled() {
-    return myCoverageReporterSpecifiedInConfig && (!myCoverageReportFound && !myCoveragePluginInstalled);
+    return !myCoverageReportFound && !myCoveragePluginInstalled;
   }
 
 }

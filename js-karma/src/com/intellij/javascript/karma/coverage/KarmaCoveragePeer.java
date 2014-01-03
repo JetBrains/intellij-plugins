@@ -36,11 +36,13 @@ public class KarmaCoveragePeer {
   private final File myCoverageTempDir;
   private volatile KarmaCoverageSession myActiveCoverageSession;
   private KarmaCoverageStartupStatus myStartupStatus;
-  private List<KarmaCoverageInitializationListener> myInitListeners = Lists.newCopyOnWriteArrayList();
+  private List<KarmaCoverageInitializationCallback> myListeners = Lists.newCopyOnWriteArrayList();
   private volatile boolean myDisposed = false;
 
   public KarmaCoveragePeer() throws IOException {
     myCoverageTempDir = FileUtil.createTempDirectory("karma-intellij-coverage-", null);
+    File subDir = new File(myCoverageTempDir, "original");
+    FileUtil.createDirectory(subDir);
   }
 
   @NotNull
@@ -74,9 +76,9 @@ public class KarmaCoveragePeer {
   /**
    * Should be called in EDT
    */
-  public void doWhenCoverageInitialized(@NotNull KarmaCoverageInitializationListener listener) {
+  public void onCoverageInitialized(@NotNull KarmaCoverageInitializationCallback callback) {
     if (myStartupStatus != null) {
-      listener.onCoverageInitialized(myStartupStatus);
+      callback.onCoverageInitialized(myStartupStatus);
     }
     else {
       final int timeoutMillis = 10000;
@@ -90,36 +92,35 @@ public class KarmaCoveragePeer {
             }
             else {
               LOG.error("Karma coverage hasn't been initialized in " + timeoutMillis + " ms");
-              myInitListeners.clear();
+              myListeners.clear();
             }
           }
           Disposer.dispose(alarm);
         }
       }, timeoutMillis, ModalityState.any());
-      myInitListeners.add(listener);
+      myListeners.add(callback);
     }
   }
 
-  private void fireOnCoverageInitialized(@NotNull final KarmaCoverageStartupStatus initStatus) {
+  private void fireOnCoverageInitialized(@NotNull final KarmaCoverageStartupStatus startupStatus) {
     UIUtil.invokeLaterIfNeeded(new Runnable() {
       @Override
       public void run() {
-        myStartupStatus = initStatus;
-        for (KarmaCoverageInitializationListener listener : myInitListeners) {
-          listener.onCoverageInitialized(initStatus);
+        myStartupStatus = startupStatus;
+        for (KarmaCoverageInitializationCallback listener : myListeners) {
+          listener.onCoverageInitialized(startupStatus);
         }
-        myInitListeners.clear();
+        myListeners.clear();
       }
     });
   }
 
   private void onCoverageInitialized(@NotNull final KarmaServer server,
-                                     boolean coverageReporterSpecifiedInConfig,
                                      boolean coveragePreprocessorSpecifiedInConfig,
                                      boolean coverageReporterFound) {
-    if (!coverageReporterSpecifiedInConfig || !coveragePreprocessorSpecifiedInConfig || coverageReporterFound) {
-      fireOnCoverageInitialized(new KarmaCoverageStartupStatus(coverageReporterSpecifiedInConfig,
-                                                               coveragePreprocessorSpecifiedInConfig,
+    // optimization: if 'coveragePreprocessorSpecifiedInConfig' is false, report about it and skip karma-coverage plugin checking
+    if (!coveragePreprocessorSpecifiedInConfig || coverageReporterFound) {
+      fireOnCoverageInitialized(new KarmaCoverageStartupStatus(coveragePreprocessorSpecifiedInConfig,
                                                                coverageReporterFound,
                                                                true));
     }
@@ -142,7 +143,7 @@ public class KarmaCoveragePeer {
     NodeInstalledPackagesLocator locator = NodeInstalledPackagesLocator.getInstance();
     NodeSettings nodeSettings = new NodeSettings(server.getNodeInterpreterPath());
     NodeInstalledPackage pkg = locator.findInstalledPackages("karma-coverage", server.getKarmaPackageDir(), nodeSettings);
-    fireOnCoverageInitialized(new KarmaCoverageStartupStatus(true, true, false, pkg != null));
+    fireOnCoverageInitialized(new KarmaCoverageStartupStatus(true, false, pkg != null));
   }
 
   public void registerEventHandlers(@NotNull final KarmaServer server) {
@@ -159,14 +160,15 @@ public class KarmaCoveragePeer {
         myActiveCoverageSession = null;
         if (coverageSession != null) {
           String path = GsonUtil.getAsString(eventBody);
-          coverageSession.onCoverageSessionFinished(new File(path));
+          if (path != null) {
+            coverageSession.onCoverageSessionFinished(new File(path));
+          }
         }
       }
     });
     server.registerStreamEventHandler(new StreamEventHandler() {
 
       private AtomicBoolean myCoverageInitialized = new AtomicBoolean(true);
-      private static final String COVERAGE_REPORTER_SPECIFIED_IN_CONFIG = "coverageReporterSpecifiedInConfig";
       private static final String COVERAGE_PREPROCESSOR_SPECIFIED_IN_CONFIG = "coveragePreprocessorSpecifiedInConfig";
       private static final String COVERAGE_REPORTER_FOUND = "coverageReporterFound";
 
@@ -180,31 +182,21 @@ public class KarmaCoveragePeer {
       public void handle(@NotNull JsonElement eventBody) {
         if (myCoverageInitialized.compareAndSet(true, false)) {
           Boolean coverageReporterFound = null;
-          Boolean coverageReporterSpecifiedInConfig = null;
           Boolean coveragePreprocessorSpecifiedInConfig = null;
           if (eventBody.isJsonObject()) {
             JsonObject eventObj = eventBody.getAsJsonObject();
-            coverageReporterSpecifiedInConfig = GsonUtil.getBooleanProperty(eventObj, COVERAGE_REPORTER_SPECIFIED_IN_CONFIG);
             coveragePreprocessorSpecifiedInConfig = GsonUtil.getBooleanProperty(eventObj, COVERAGE_PREPROCESSOR_SPECIFIED_IN_CONFIG);
             coverageReporterFound = GsonUtil.getBooleanProperty(eventObj, COVERAGE_REPORTER_FOUND);
           }
-          if (coverageReporterSpecifiedInConfig == null) {
-            warnAboutMissingProperty(COVERAGE_REPORTER_SPECIFIED_IN_CONFIG);
-            coverageReporterSpecifiedInConfig = true;
-          }
           if (coveragePreprocessorSpecifiedInConfig == null) {
-            if (coverageReporterSpecifiedInConfig) {
-              warnAboutMissingProperty(COVERAGE_PREPROCESSOR_SPECIFIED_IN_CONFIG);
-            }
+            warnAboutMissingProperty(COVERAGE_PREPROCESSOR_SPECIFIED_IN_CONFIG);
             coveragePreprocessorSpecifiedInConfig = true;
           }
           if (coverageReporterFound == null) {
-            if (coverageReporterSpecifiedInConfig) {
-              warnAboutMissingProperty(COVERAGE_REPORTER_FOUND);
-            }
+            warnAboutMissingProperty(COVERAGE_REPORTER_FOUND);
             coverageReporterFound = true;
           }
-          onCoverageInitialized(server, coverageReporterSpecifiedInConfig, coveragePreprocessorSpecifiedInConfig, coverageReporterFound);
+          onCoverageInitialized(server, coveragePreprocessorSpecifiedInConfig, coverageReporterFound);
         }
       }
 

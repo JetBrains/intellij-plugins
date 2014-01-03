@@ -66,6 +66,7 @@ public class KarmaServerRegistry {
           startServer(serverSettings, consumer);
         }
       }, 100, TimeUnit.MILLISECONDS);
+      return;
     }
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override

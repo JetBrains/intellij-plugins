@@ -138,10 +138,7 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
     if (myStatus == null) {
       return getCommonWarning();
     }
-    if (!myStatus.isCoverageReporterSpecifiedInConfig()) {
-      return getWarningAboutMissingCoverageReporterInConfigFile();
-    }
-    if (myStatus.isCoveragePreprocessorNeededToBeSpecified()) {
+    if (!myStatus.isCoveragePreprocessorSpecifiedInConfig()) {
       return getWarningAboutMissingCoveragePreprocessorInConfigFile();
     }
     if (!myStatus.isCoverageReportFound()) {
@@ -205,25 +202,6 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
            + "</tr>"
            + "</table>"
            + "</div>";
-  }
-
-  @NotNull
-  private static String getWarningAboutMissingCoverageReporterInConfigFile() {
-    return "<html><body>"
-           + TITLE
-           + SEE_KARMA_SERVER_TAB
-           + "<div style='padding-top:3px'>Make sure <code>'coverage'</code> reporter is specified like this:</div>"
-           + formatHtmlCode(new String[]{
-              "module.exports = function (config) {",
-              "  config.set({",
-              "    ...",
-              "    reporters: [..., 'coverage'],",
-              "    ...",
-              "  });",
-              "};"
-             })
-           + "As the reporter is specified, run with coverage again."
-           + "</body></html>";
   }
 
   @NotNull
