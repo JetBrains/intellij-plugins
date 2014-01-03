@@ -221,7 +221,7 @@ public class CfmlMappingsForm {
 
     @Override
     public TableCellEditor getEditor(Item o) {
-      return new LocalPathCellEditor(null, myProject);
+      return new LocalPathCellEditor(myProject);
     }
 
     public int getRowHeight() {
