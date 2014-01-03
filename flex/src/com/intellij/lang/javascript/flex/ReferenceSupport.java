@@ -10,14 +10,16 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,9 +40,7 @@ public class ReferenceSupport {
     return getFileRefs(elt, offset, str, lookupOptions);
   }
 
-  public static PsiReference[] getFileRefs(final PsiElement elt, final int offset, String str,
-                                           final LookupOptions lookupOptions) {
-
+  public static PsiReference[] getFileRefs(final PsiElement elt, final int offset, String str, final LookupOptions lookupOptions) {
     if (lookupOptions.IGNORE_TEXT_AFTER_HASH) {
       int hashIndex = str.indexOf('#');
       if (hashIndex != -1) str = str.substring(0, hashIndex);
@@ -50,26 +50,29 @@ public class ReferenceSupport {
     final boolean startsWithSlash = str.startsWith("/");
 
     final FileReferenceSet base = new FileReferenceSet(str, elt, offset, null, SystemInfo.isFileSystemCaseSensitive) {
+      @Override
       public boolean isAbsolutePathReference() {
         return relativeToWhat == RelativeToWhat.Absolute;
       }
 
+      @Override
       public boolean couldBeConvertedTo(final boolean relative) {
-        if ((relative && lookupOptions.RELATIVE_TO_FILE)
-            || (!relative && lookupOptions.ABSOLUTE)) {
-          return super.couldBeConvertedTo(relative);
-        }
-        return false;
+        return ((relative && lookupOptions.RELATIVE_TO_FILE) || (!relative && lookupOptions.ABSOLUTE)) &&
+               super.couldBeConvertedTo(relative);
       }
 
+      @Override
       public FileReference createFileReference(final TextRange range, final int index, final String text) {
         return new JSFileReference(this, range, index, text, relativeToWhat);
       }
-    };
 
-    base.addCustomization(FileReferenceSet.DEFAULT_PATH_EVALUATOR_OPTION, new Function<PsiFile, Collection<PsiFileSystemItem>>() {
-      public Collection<PsiFileSystemItem> fun(PsiFile psiFile) {
-        final PsiElement context = psiFile.getContext();
+      @NotNull
+      @Override
+      public Collection<PsiFileSystemItem> computeDefaultContexts() {
+        PsiFile psiFile = getContainingFile();
+        if (psiFile == null) return Collections.emptyList();
+
+        PsiElement context = psiFile.getContext();
         if (context instanceof PsiLanguageInjectionHost) {
           psiFile = context.getContainingFile();
         }
@@ -88,7 +91,7 @@ public class ReferenceSupport {
         }
 
         if (lookupOptions.ABSOLUTE) {
-          appendFileSystemRoot(dirs);
+          appendFileSystemRoots(dirs);
         }
 
         if (lookupOptions.RELATIVE_TO_PROJECT_BASE_DIR) {
@@ -99,19 +102,10 @@ public class ReferenceSupport {
           appendRootsOfModuleDependencies(dirs, ModuleUtilCore.findModuleForPsiElement(psiFile));
         }
 
-        final Collection<PsiFileSystemItem> result = new ArrayList<PsiFileSystemItem>();
-        final PsiManager psiManager = psiFile.getManager();
-        for (final VirtualFile dir : dirs) {
-          if (dir != null) {
-            final PsiDirectory psiDir = psiManager.findDirectory(dir);
-            if (psiDir != null) {
-              result.add(psiDir);
-            }
-          }
-        }
-        return result;
+        return toFileSystemItems(dirs);
       }
-    });
+    };
+
     return base.getAllReferences();
   }
 
@@ -180,8 +174,8 @@ public class ReferenceSupport {
     }
   }
 
-  private static void appendFileSystemRoot(final Collection<VirtualFile> dirs) {
-    dirs.add(LocalFileSystem.getInstance().getRoot());
+  private static void appendFileSystemRoots(final Collection<VirtualFile> dirs) {
+    ContainerUtil.addAll(dirs, ManagingFS.getInstance().getLocalRoots());
   }
 
   private static void appendRootsOfModuleDependencies(final List<VirtualFile> dirs, final Module module) {
