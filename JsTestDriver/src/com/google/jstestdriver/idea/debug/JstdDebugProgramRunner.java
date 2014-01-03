@@ -91,7 +91,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     if (!debugEngine.prepareDebugger(project)) return null;
 
     final Url url;
-    if (debugEngine.getBrowserFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME)) {
+    if (debugEngine.getWebBrowser().getFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME)) {
       url = Urls.newHttpUrl("127.0.0.1:" + JstdToolWindowPanel.serverPort, debugBrowserInfo.getCapturedBrowserUrl());
     }
     else {

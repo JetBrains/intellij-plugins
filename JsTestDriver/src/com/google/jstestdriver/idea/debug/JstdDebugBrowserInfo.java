@@ -46,7 +46,7 @@ public class JstdDebugBrowserInfo {
   }
 
   public void fixIfChrome(@NotNull ProcessHandler processHandler) {
-    if (!(myDebugEngine.getBrowserFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME))) {
+    if (!(myDebugEngine.getWebBrowser().getFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME))) {
       return;
     }
     final AtomicBoolean done = new AtomicBoolean(false);
