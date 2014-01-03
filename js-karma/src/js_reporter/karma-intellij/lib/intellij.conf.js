@@ -1,4 +1,5 @@
-var cli = require('./intellijCli')
+var path = require('path')
+  , cli = require('./intellijCli')
   , intellijUtil = require('./intellijUtil')
   , originalConfigPath = cli.getConfigFile()
   , IntellijReporter = require('./intellijReporter')
@@ -10,24 +11,13 @@ function setBasePath(config) {
   config.basePath = path.resolve(path.dirname(originalConfigPath), basePath);
 }
 
-function removeAll(elements, elementsToRemove) {
-  return elements.filter(function (element) {
-    return elementsToRemove.indexOf(element) < 0;
-  });
-}
-
 module.exports = function(config) {
   var originalConfigModule = require(originalConfigPath);
   originalConfigModule(config);
 
-  var filteredReporters = removeAll(config.reporters || [], ['dots', 'progress']);
+  IntellijCoverageReporter.configureCoverage(config);
+  var filteredReporters = intellijUtil.removeAll(config.reporters || [], ['dots', 'progress']);
   filteredReporters.push(IntellijReporter.reporterName);
-  if (filteredReporters.indexOf('coverage') >= 0) {
-    filteredReporters.push(IntellijCoverageReporter.reporterName);
-  }
-  else {
-    IntellijCoverageReporter.reportCoverageStartupStatus(false);
-  }
   config.reporters = filteredReporters;
 
   var plugins = config.plugins || [];

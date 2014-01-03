@@ -70,9 +70,17 @@ function getCoverageTempDirPath() {
   return options[COVERAGE_TEMP_DIR];
 }
 
+/**
+ * @returns {boolean} true, if run with coverage was requested
+ */
+function isWithCoverage() {
+  return options.hasOwnProperty(COVERAGE_TEMP_DIR);
+}
+
 exports.requireKarmaModule = requireKarmaModule;
 exports.getConfigFile = getConfigFile;
 exports.getServerPort = getServerPort;
 exports.isDebug = isDebug;
 exports.getUrlRoot = getUrlRoot;
 exports.getCoverageTempDirPath = getCoverageTempDirPath;
+exports.isWithCoverage = isWithCoverage;

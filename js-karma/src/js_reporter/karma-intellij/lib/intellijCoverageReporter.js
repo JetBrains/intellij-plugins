@@ -2,7 +2,8 @@ var cli = require('./intellijCli.js')
   , intellijUtil = require('./intellijUtil.js')
   , fs = require('fs')
   , path = require('path')
-  , EventEmitter = require('events').EventEmitter;
+  , EventEmitter = require('events').EventEmitter
+  , coveragePreprocessorName = 'coverage';
 
 function findLcovInfoFile(coverageDir, callback) {
   var first = true;
@@ -64,37 +65,60 @@ function IntellijCoverageReporter(injector, config) {
     this.adapters = [];
   }
   var coveragePreprocessorSpecifiedInConfig = isCoveragePreprocessorSpecified(config.preprocessors);
-  IntellijCoverageReporter.reportCoverageStartupStatus(true, coveragePreprocessorSpecifiedInConfig, karmaCoverageReporter != null);
+  IntellijCoverageReporter.reportCoverageStartupStatus(coveragePreprocessorSpecifiedInConfig, karmaCoverageReporter != null);
   return that;
 }
 
+/**
+ * @param {Object} preprocessors
+ */
 function isCoveragePreprocessorSpecified(preprocessors) {
-  if (!preprocessors) {
-    return false;
-  }
-  for (var key in preprocessors) {
-    if (Object.prototype.hasOwnProperty.call(preprocessors, key)) {
-      if (preprocessors[key] == 'coverage') {
-        return true;
+  if (preprocessors != null) {
+    for (var key in preprocessors) {
+      if (Object.prototype.hasOwnProperty.call(preprocessors, key)) {
+        var value = preprocessors[key];
+        if (value === coveragePreprocessorName) {
+          return true;
+        }
+        if (Array.isArray(value)) {
+          return value.indexOf(coveragePreprocessorName) >= 0;
+        }
       }
     }
   }
   return false;
 }
 
-IntellijCoverageReporter.reportCoverageStartupStatus = function (coverageReporterSpecifiedInConfig,
-                                                                 coveragePreprocessorSpecifiedInConfig,
+/**
+ * @param {Object} preprocessors
+ */
+function clearCoveragePreprocessors(preprocessors) {
+  if (preprocessors != null) {
+    for (var key in preprocessors) {
+      if (Object.prototype.hasOwnProperty.call(preprocessors, key)) {
+        var value = preprocessors[key];
+        if (value === coveragePreprocessorName) {
+          delete preprocessors[key];
+        }
+        if (Array.isArray(value)) {
+          preprocessors[key] = intellijUtil.removeAll(value, coveragePreprocessorName);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Informs IDE about code coverage configuration correctness.
+ * @param {boolean} coveragePreprocessorSpecifiedInConfig
+ * @param {boolean} coverageReporterFound
+ */
+IntellijCoverageReporter.reportCoverageStartupStatus = function (coveragePreprocessorSpecifiedInConfig,
                                                                  coverageReporterFound) {
-  var event = {
-    coverageReporterSpecifiedInConfig : coverageReporterSpecifiedInConfig
-  };
-  if (coveragePreprocessorSpecifiedInConfig != null) {
-    event.coveragePreprocessorSpecifiedInConfig = coveragePreprocessorSpecifiedInConfig;
-  }
-  if (coverageReporterFound != null) {
-    event.coverageReporterFound = coverageReporterFound;
-  }
-  intellijUtil.sendIntellijEvent('coverageStartupStatus', event);
+  intellijUtil.sendIntellijEvent('coverageStartupStatus', {
+    coveragePreprocessorSpecifiedInConfig : coveragePreprocessorSpecifiedInConfig,
+    coverageReporterFound : coverageReporterFound
+  });
 };
 
 // invoked in context of original karmaCoverageReporter
@@ -205,7 +229,36 @@ function findBrowserByName(browsers, browserNamePrefix) {
   return result;
 }
 
+/**
+ * Modifies passed config in order to turn on or turn off configure.
+ * If 'Run' was requested, coverage is turned off.
+ * If 'Run with coverage' was requested, coverage is turned on.
+ * @param {Object} config
+ */
+function configureCoverage(config) {
+  var karmaCoverageReporterName = 'coverage';
+  var reporters = config.reporters || [];
+  if (cli.isWithCoverage()) {
+    if (reporters.indexOf(karmaCoverageReporterName) < 0) {
+      // we need to add 'coverage' reporter to make coverage preprocessor working
+      reporters.push(karmaCoverageReporterName);
+      config.coverageReporter = {
+        type : 'lcovonly',
+        dir : path.join(cli.getCoverageTempDirPath(), 'original'),
+        reporters: []
+      };
+    }
+    reporters.push(IntellijCoverageReporter.reporterName);
+  }
+  else {
+    clearCoveragePreprocessors(config.preprocessors);
+    reporters = intellijUtil.removeAll(reporters, karmaCoverageReporterName);
+  }
+  config.reporters = reporters;
+}
+
 IntellijCoverageReporter.$inject = ['injector', 'config'];
 IntellijCoverageReporter.reporterName = 'intellijCoverage_33e284dac2b015a9da50d767dc3fa58a';
+IntellijCoverageReporter.configureCoverage = configureCoverage;
 
 module.exports = IntellijCoverageReporter;

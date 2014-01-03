@@ -150,8 +150,30 @@ function processStdInput(processor) {
   process.stdin.on('data', listener);
 }
 
+/**
+ * Removes from the passed 'elements' array all elements from 'elementsToRemove' and returns it.
+ * Doesn't modify 'elements' array.
+ *
+ * @param elements
+ * @param {Array|string} elementsToRemove
+ * @returns {Array}
+ */
+function removeAll(elements, elementsToRemove) {
+  if (Array.isArray(elementsToRemove)) {
+    return elements.filter(function (element) {
+      return elementsToRemove.indexOf(element) < 0;
+    });
+  }
+  else {
+    return elements.filter(function (element) {
+      return elementsToRemove !== element;
+    });
+  }
+}
+
 exports.attributeValueEscape = attributeValueEscape;
 exports.joinList = joinList;
 exports.sendIntellijEvent = sendIntellijEvent;
 exports.isString = isString;
 exports.processStdInput = processStdInput;
+exports.removeAll = removeAll;
