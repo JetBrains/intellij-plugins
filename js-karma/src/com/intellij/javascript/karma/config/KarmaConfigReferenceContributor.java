@@ -1,13 +1,16 @@
 package com.intellij.javascript.karma.config;
 
 import com.intellij.javascript.testFramework.util.JsPsiUtils;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSArrayLiteralExpression;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
@@ -31,7 +34,8 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
   private static final String FILE_NAME_SUFFIX = ".conf.js";
   private static final String FILES_VAR_NAME = "files";
 
-  public static final ElementPattern<JSLiteralExpression> STRING_LITERAL_INSIDE_KARMA_CONFIG_FILE = PlatformPatterns.psiElement(JSLiteralExpression.class)
+  public static final ElementPattern<JSLiteralExpression> STRING_LITERAL_INSIDE_KARMA_CONFIG_FILE =
+    PlatformPatterns.psiElement(JSLiteralExpression.class)
     .and(new FilterPattern(new ElementFilter() {
       public boolean isAcceptable(Object element, PsiElement context) {
         PsiFile psiFile = context.getContainingFile();
@@ -79,11 +83,7 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
   }
 
   private static class BasePathFileReferenceSet extends FileReferenceSet {
-
-    private final JSLiteralExpression myLiteralExpression;
-
-    public BasePathFileReferenceSet(@NotNull JSLiteralExpression literalExpression,
-                                    @NotNull PsiReferenceProvider psiReferenceProvider) {
+    public BasePathFileReferenceSet(@NotNull JSLiteralExpression literalExpression, @NotNull PsiReferenceProvider psiReferenceProvider) {
       super(getString(literalExpression),
             literalExpression,
             1,
@@ -92,7 +92,6 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
             false,
             null,
             false);
-      myLiteralExpression = literalExpression;
       setEmptyPathAllowed(true);
       super.reparse();
     }
@@ -107,12 +106,9 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
     @Override
     public Collection<PsiFileSystemItem> computeDefaultContexts() {
       if (isAbsolutePathReference()) {
-        VirtualFile vFile = LocalFileSystem.getInstance().getRoot();
-        final PsiDirectory directory = myLiteralExpression.getManager().findDirectory(vFile);
-        if (directory != null) {
-          return Collections.<PsiFileSystemItem>singleton(directory);
-        }
+        return toFileSystemItems(ManagingFS.getInstance().getLocalRoots());
       }
+
       return super.computeDefaultContexts();
     }
 
@@ -133,12 +129,9 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
   }
 
   private static class FilesFileReferenceSet extends FileReferenceSet {
-
-    private final JSLiteralExpression myLiteralExpression;
     private boolean myPatternUsed = false;
 
-    public FilesFileReferenceSet(@NotNull JSLiteralExpression literalExpression,
-                                 @NotNull PsiReferenceProvider psiReferenceProvider) {
+    public FilesFileReferenceSet(@NotNull JSLiteralExpression literalExpression, @NotNull PsiReferenceProvider psiReferenceProvider) {
       super(StringUtil.stripQuotesAroundValue(literalExpression.getText()),
             literalExpression,
             1,
@@ -147,7 +140,6 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
             false,
             null,
             false);
-      myLiteralExpression = literalExpression;
       setEmptyPathAllowed(true);
       super.addCustomization(FileReferenceSet.DEFAULT_PATH_EVALUATOR_OPTION, new Function<PsiFile, Collection<PsiFileSystemItem>>() {
         @Override
@@ -181,12 +173,9 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
     @Override
     public Collection<PsiFileSystemItem> computeDefaultContexts() {
       if (isAbsolutePathReference()) {
-        VirtualFile vFile = LocalFileSystem.getInstance().getRoot();
-        final PsiDirectory directory = myLiteralExpression.getManager().findDirectory(vFile);
-        if (directory != null) {
-          return Collections.<PsiFileSystemItem>singleton(directory);
-        }
+        return toFileSystemItems(ManagingFS.getInstance().getLocalRoots());
       }
+
       return super.computeDefaultContexts();
     }
 

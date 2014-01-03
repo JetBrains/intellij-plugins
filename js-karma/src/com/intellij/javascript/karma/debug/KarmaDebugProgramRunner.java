@@ -21,10 +21,9 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
 import com.intellij.xdebugger.XDebugProcess;
@@ -135,13 +134,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
         mappings.put(baseUrl, vBasePath);
       }
     }
-    VirtualFile root = LocalFileSystem.getInstance().getRoot();
-    if (SystemInfo.isWindows) {
-      for (VirtualFile child : root.getChildren()) {
-        mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute" + child.getName()), child);
-      }
-    }
-    else {
+    for (VirtualFile root : ManagingFS.getInstance().getLocalRoots()) {
       mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute"), root);
     }
     return new RemoteDebuggingFileFinder(mappings.build(), false);
