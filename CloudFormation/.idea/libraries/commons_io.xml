@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="commons-io">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/metadata-crawler/lib/commons-io-2.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/metadata-crawler/lib/commons-io-2.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
