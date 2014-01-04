@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,11 +31,14 @@ public class StrutsHighlightingTest extends StrutsLightHighlightingTestCase {
   }
 
   public void testSimpleStruts() throws Throwable {
-    performHighlightingTest("struts-simple.xml");
+    performHighlightingTest("struts-simple.xml",
+                            "MyAbstractClass.java", "MyClass.java",
+                            "MyInterface.java", "MyInterfaceImpl.java");
   }
 
   public void testParam() throws Throwable {
-    performHighlightingTest("struts-param.xml");
+    performHighlightingTest("struts-param.xml",
+                            "MyClass.java", "MyNestedClass.java");
   }
 
   public void testConstants() throws Throwable {
@@ -43,7 +46,8 @@ public class StrutsHighlightingTest extends StrutsLightHighlightingTestCase {
   }
 
   public void testExceptionMapping() throws Throwable {
-    performHighlightingTest("struts-exceptionmapping.xml");
+    performHighlightingTest("struts-exceptionmapping.xml",
+                            "MyException.java", "MyInterface.java");
   }
 
   public void testInterceptorRef() throws Throwable {
@@ -59,15 +63,18 @@ public class StrutsHighlightingTest extends StrutsLightHighlightingTestCase {
   }
 
   public void testStrutsDefault231() throws Throwable {
-    performHighlightingTest("struts-default-2_3_1.xml");
+    performHighlightingTest("struts-default-2_3_1.xml",
+                            "MyClass.java");
   }
 
   public void testUnknownHandlerStack() throws Throwable {
-    performHighlightingTest("struts-unknownhandlerstack.xml");
+    performHighlightingTest("struts-unknownhandlerstack.xml",
+                            "MyClass.java");
   }
 
   public void testActionAllowedMethods() throws Throwable {
-    performHighlightingTest("struts-action-allowedMethods.xml");
+    performHighlightingTest("struts-action-allowedMethods.xml",
+                            "MyClass.java");
   }
 
   public void testStrutsWithErrorsNotInFilesetNoHighlighting() throws Throwable {

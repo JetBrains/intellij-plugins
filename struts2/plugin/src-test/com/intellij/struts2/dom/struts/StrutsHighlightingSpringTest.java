@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,8 +58,9 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
   @Override
   protected void performTearDown() throws Exception {
     final SpringFacet springFacet = SpringFacet.getInstance(myModule);
-    assertNotNull(springFacet);
-    springFacet.removeFileSets();
+    if (springFacet != null) {
+      springFacet.removeFileSets();
+    }
   }
 
   public void testStrutsSpringHighlighting() throws Throwable {
@@ -69,12 +70,14 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
   }
 
   public void testStrutsSpringCompletionVariantsNoSpringFacet() throws Throwable {
+    myFixture.copyFileToProject("MyClass.java");
+
     @NonNls final String strutsXml = "struts-completionvariants-spring.xml";
     createStrutsFileSet(strutsXml);
 
     final List<String> variants = myFixture.getCompletionVariants(strutsXml);
     assertNotNull(variants);
-    assertTrue(variants.contains("MyClass"));
+    assertTrue(toString(variants), variants.contains("MyClass"));
   }
 
   public void testStrutsSpringCompletionVariants() throws Throwable {
@@ -83,7 +86,7 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
 
     createSpringFileSet(SPRING_XML);
 
-    // TODO <alias> does not appear here, see com.intellij.spring.impl.SpringModelImpl#myOwnBeans
+    // TODO <alias> does not appear here
     final List<String> variants = myFixture.getCompletionVariants(strutsXml);
     assert variants != null;
 
@@ -120,6 +123,10 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
     }
 
     springFacet.getConfiguration().setModified();
+
+    myFixture.copyFileToProject("MyAbstractClass.java");
+    myFixture.copyFileToProject("MyClass.java");
+    myFixture.copyFileToProject("MyInterface.java");
   }
 
   @NotNull
@@ -131,7 +138,7 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
 
     return new WriteCommandAction<SpringFacet>(myFixture.getProject()) {
       @Override
-      protected void run(final Result<SpringFacet> result) throws Throwable {
+      protected void run(@NotNull final Result<SpringFacet> result) throws Throwable {
         final SpringFacet facet = FacetManager.getInstance(myModule)
           .addFacet(SpringFacet.getSpringFacetType(), "spring", null);
         result.setResult(facet);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,26 +32,26 @@ public class ActionPropertyReferenceProviderTest extends BasicLightHighlightingT
   }
 
   public void testActionPropertyParamHighlighting() throws Throwable {
-    myFixture.copyFileToProject("src/MyAction.java");
+    myFixture.copyFileToProject("MyAction.java");
     createStrutsFileSet("struts-actionproperty.xml");
     myFixture.testHighlighting(true, false, false, "/jsp/actionproperty-param-highlighting.jsp");
   }
 
   public void testActionPropertyFormInputHighlighting() throws Throwable {
-    myFixture.copyFileToProject("src/MyAction.java");
+    myFixture.copyFileToProject("MyAction.java");
     createStrutsFileSet("struts-actionproperty.xml");
     myFixture.testHighlighting(true, false, false, "/jsp/actionproperty-forminput-highlighting.jsp");
   }
 
   public void testActionPropertyFormInputCompletionVariants() {
-    myFixture.copyFileToProject("src/MyAction.java");
+    myFixture.copyFileToProject("MyAction.java");
     createStrutsFileSet("struts-actionproperty.xml");
     myFixture.testCompletionVariants("/jsp/actionproperty-forminput-completionvariants.jsp",
                                      "myBooleanField", "myField", "mySetterOnlyField", "readonlyList", "user");
   }
 
   public void testActionPropertyFormInputReadOnlyCompletionVariants() {
-    myFixture.copyFileToProject("src/MyAction.java");
+    myFixture.copyFileToProject("MyAction.java");
     createStrutsFileSet("struts-actionproperty.xml");
     myFixture.testCompletionVariants("/jsp/actionproperty-forminput-readonly-completionvariants.jsp",
                                      "myField", "myBooleanField", "mySetterOnlyField", "readonlyList", "user");

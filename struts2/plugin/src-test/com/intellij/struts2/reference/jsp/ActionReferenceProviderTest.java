@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,29 +46,39 @@ public class ActionReferenceProviderTest extends BasicLightHighlightingTestCase 
 
   public void testActionHighlighting() throws Throwable {
     createStrutsFileSet("struts-action.xml");
+    myFixture.copyFileToProject("ActionMethods.java");
+
     myFixture.testHighlighting(true, false, false, "/jsp/action-highlighting.jsp");
   }
 
   public void testActionCompletionVariants() throws Throwable {
     createStrutsFileSet("struts-action.xml");
+    myFixture.copyFileToProject("ActionMethods.java");
+
     myFixture.testCompletionVariants("/jsp/action-completionvariants.jsp",
                                      "bangAction", "namespace1Action", "namespace2Action", "myWildCard*");
   }
 
   public void testActionCompletionVariantsBang() throws Throwable {
     createStrutsFileSet("struts-action.xml");
+    myFixture.copyFileToProject("ActionMethods.java");
+
     myFixture.testCompletionVariants("/jsp/action-completionvariants-bang.jsp",
                                      "methodA", "methodB");
   }
 
   public void testActionCompletionVariantsNamespace() throws Throwable {
     createStrutsFileSet("struts-action.xml");
+    myFixture.copyFileToProject("ActionMethods.java");
+
     myFixture.testCompletionVariants("/jsp/action-completionvariants_namespace.jsp",
                                      "myWildCard*");
   }
 
   public void testActionCompletionVariantsMethod() throws Throwable {
     createStrutsFileSet("struts-action.xml");
+    myFixture.copyFileToProject("ActionMethods.java");
+
     myFixture.testCompletionVariants("/jsp/action-completionvariants_method.jsp",
                                      "methodA", "methodB");
   }

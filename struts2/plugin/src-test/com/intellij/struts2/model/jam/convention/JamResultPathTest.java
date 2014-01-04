@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,7 +50,9 @@ public class JamResultPathTest extends JamConventionLightTestCase {
    * "property" variants from struts.properties.
    */
   public void testCompletionActionProperty() throws Exception {
-    myFixture.testCompletionVariants("/src/testcompletion/ActionProperty.java",
+    myFixture.copyFileToProject("struts.properties");
+
+    myFixture.testCompletionVariants("/testcompletion/ActionProperty.java",
                                      "myProperty1", "myProperty2");
   }
 
@@ -58,6 +60,9 @@ public class JamResultPathTest extends JamConventionLightTestCase {
    * "property" resolving to key in struts.properties.
    */
   public void testResolveActionProperty() throws Exception {
+    myFixture.copyFileToProject("jam/ActionProperty.java");
+    myFixture.copyFileToProject("struts.properties");
+
     final JamResultPath jamResultPath = getClassJam("jam.ActionProperty", JamResultPath.META_CLASS);
     final IProperty property = jamResultPath.getProperty().getValue();
     assertNotNull(property);
@@ -68,7 +73,8 @@ public class JamResultPathTest extends JamConventionLightTestCase {
    * "value" resolving to web-dir.
    */
   public void testResolveActionValue() throws Exception {
-    myFixture.configureByFile("/WEB-INF/customContent/test.jsp");
+    myFixture.copyFileToProject("/WEB-INF/customContent/test.jsp");
+    myFixture.copyFileToProject("jam/ActionValue.java");
 
     final JamResultPath jamResultPath = getClassJam("jam.ActionValue", JamResultPath.META_CLASS);
     final WebDirectoryElement webDirectoryElement = jamResultPath.getValue().getValue();

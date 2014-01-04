@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,7 +32,6 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.Set;
 
 /**
@@ -87,14 +86,6 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
     super.setUp();
 
     myFixture.enableInspections(getHighlightingInspections());
-
-    if (!getTestDataLocation().isEmpty()) {
-      final File srcDir = new File(getTestDataPath() + "/src");
-      if (srcDir.exists()) {
-        myFixture.copyDirectoryToProject("src", "");
-      }
-    }
-
     myFixture.allowTreeAccessForAllFiles();
 
     performSetUp();

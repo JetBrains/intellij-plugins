@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -70,8 +70,6 @@ abstract class JamConventionLightTestCase extends BasicLightHighlightingTestCase
   @NotNull
   protected <Jam extends JamElement> Jam getClassJam(final String clazzName,
                                                      final JamClassMeta<Jam> meta) {
-    myFixture.copyDirectoryToProject("src", "src");
-
     final PsiClass myClass = myFixture.findClass(clazzName);
     assertNotNull(clazzName, myClass);
 
@@ -91,8 +89,6 @@ abstract class JamConventionLightTestCase extends BasicLightHighlightingTestCase
   @NotNull
   protected <Jam extends JamElement> Jam getPackageJam(final String packageName,
                                                        final JamPackageMeta<Jam> meta) {
-    myFixture.copyDirectoryToProject("src", "src");
-
     final PsiPackage myPackage = myFixture.findPackage(packageName);
     assertNotNull(packageName, myPackage);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,8 @@ public class StrutsConfigsSearcherTest extends BasicLightHighlightingTestCase {
   }
 
   public void testSearch() throws Exception {
+    myFixture.copyFileToProject("struts.xml");
+
     final StrutsConfigsSearcher configsSearcher = new StrutsConfigsSearcher(myModule);
     configsSearcher.search();
 

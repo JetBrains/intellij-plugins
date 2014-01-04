@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,8 +32,6 @@ public class JamDefaultInterceptorRefTest extends JamConventionLightTestCase {
   }
 
 /* TODO test does not work
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testCompletion() throws Exception {
     createStrutsFileSet(STRUTS_XML);
     myFixture.testCompletionVariants("/src/testcompletion/package-info.java",
@@ -43,6 +41,7 @@ public class JamDefaultInterceptorRefTest extends JamConventionLightTestCase {
 
   public void testResolve() throws Exception {
     createStrutsFileSet(STRUTS_XML);
+    myFixture.copyFileToProject("jam/package-info.java");
 
     final JamDefaultInterceptorRef jamElement = getPackageJam("jam", JamDefaultInterceptorRef.META_PACKAGE);
     checkResolve(jamElement, "myCustomInterceptor");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,6 @@
 package com.intellij.struts2.annotators;
 
 import com.intellij.codeInsight.daemon.GutterMark;
-import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlTag;
@@ -63,20 +62,20 @@ public class ActionJavaAnnotatorTest extends BasicLightHighlightingTestCase {
 
   public void testGutterMyAction() {
     createStrutsFileSet("struts-actionClass.xml");
-    checkGutterTargetElements("/src/MyAction.java", ACTION_NAME_RESOLVE, "myActionPath");
+    checkGutterTargetElements("MyAction.java", ACTION_NAME_RESOLVE, "myActionPath");
   }
 
   public void testGutterMyActionMultipleMappings() {
     createStrutsFileSet("struts-actionClass-multiple_mappings.xml");
-    checkGutterTargetElements("/src/MyAction.java", ACTION_NAME_RESOLVE,
+    checkGutterTargetElements("MyAction.java", ACTION_NAME_RESOLVE,
                               "myActionPath1", "myActionPath2", "myActionPath3");
   }
 
   public void testGutterValidationXml() {
     createStrutsFileSet("struts-validation.xml");
-    myFixture.copyFileToProject("/src/com/MyValidationAction-validation.xml");
+    myFixture.copyFileToProject("/com/MyValidationAction-validation.xml");
 
-    checkGutterTargetElements("/src/com/MyValidationAction.java", new Function<PsiElement, String>() {
+    checkGutterTargetElements("/com/MyValidationAction.java", new Function<PsiElement, String>() {
       @Override
       public String fun(final PsiElement psiElement) {
         return ((PsiFile)psiElement).getName();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,12 +33,14 @@ public class JamInterceptorRefTest extends JamConventionLightTestCase {
 
   public void testCompletionActionSingle() throws Exception {
     createStrutsFileSet(STRUTS_XML);
-    myFixture.testCompletionVariants("/src/completion/ActionSingle.java",
+    myFixture.testCompletionVariants("/completion/ActionSingle.java",
                                      "myCustomInterceptor", "myInterceptorStack");
   }
 
   public void testResolveActionSingle() throws Exception {
     createStrutsFileSet(STRUTS_XML);
+    myFixture.copyFileToProject("jam/ActionSingle.java");
+
     final JamInterceptorRef jamInterceptorRef = getClassJam("jam.ActionSingle", JamInterceptorRef.META_CLASS);
     checkResolve(jamInterceptorRef, "myCustomInterceptor");
   }
