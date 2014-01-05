@@ -4,8 +4,7 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.testframework.TestConsoleProperties;
-import com.intellij.execution.testframework.TestTreeView;
+import com.intellij.execution.testframework.*;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMRootTestProxyFormatter;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
@@ -91,10 +90,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         @Override
         public void run() {
           if (myServer.isPortBound() && !myServer.areBrowsersReady()) {
-            print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
-            String url = myServer.formatUrl("/");
-            printHyperlink(url, new OpenUrlHyperlinkInfo(url));
-            print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+            printBrowserCapturingSuggestion();
           }
           Disposer.dispose(alarm);
         }
@@ -110,7 +106,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         public void onTerminated(int exitCode) {
           alarm.cancelAllRequests();
           rootFormatter.onServerProcessTerminated();
-          print("Karma server finished with exit code " + exitCode + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+          printServerFinishedInfo(exitCode);
         }
       });
     }
@@ -121,6 +117,24 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       }
     });
     return consoleContent;
+  }
+
+  private void printBrowserCapturingSuggestion() {
+    SMTestProxy.SMRootTestProxy rootNode = getResultsViewer().getTestsRootNode();
+    rootNode.addLast(new Printable() {
+      @Override
+      public void printOn(Printer printer) {
+        printer.print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
+        String url = myServer.formatUrl("/");
+        printer.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
+        printer.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+      }
+    });
+  }
+
+  private void printServerFinishedInfo(int exitCode) {
+    SMTestProxy.SMRootTestProxy rootNode = getResultsViewer().getTestsRootNode();
+    rootNode.addSystemOutput("Karma server finished with exit code " + exitCode + "\n");
   }
 
   private void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
@@ -144,7 +158,6 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   private static class KarmaRootTestProxyFormatter implements SMRootTestProxyFormatter {
 
-    private final TestTreeRenderer myRenderer;
     private final KarmaServer myServer;
     private final TestTreeView myTreeView;
     private final boolean myDebug;
@@ -155,25 +168,37 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
                                         @NotNull KarmaServer server,
                                         boolean debug) {
       myTreeView = consoleView.getResultsViewer().getTreeView();
-      myRenderer = ObjectUtils.tryCast(myTreeView.getCellRenderer(), TestTreeRenderer.class);
-      if (myRenderer != null) {
-        myRenderer.setAdditionalRootFormatter(this);
+      TestTreeRenderer originalRenderer = ObjectUtils.tryCast(myTreeView.getCellRenderer(), TestTreeRenderer.class);
+      if (originalRenderer != null) {
+        originalRenderer.setAdditionalRootFormatter(this);
       }
       myServer = server;
       myDebug = debug;
     }
 
+    private static void render(@NotNull TestTreeRenderer renderer, @NotNull String msg, boolean error) {
+      renderer.clear();
+      if (error) {
+        renderer.setIcon(PoolOfTestIcons.TERMINATED_ICON);
+      }
+      renderer.append(msg);
+    }
+
     @Override
     public void format(@NotNull SMTestProxy.SMRootTestProxy testProxy, @NotNull TestTreeRenderer renderer) {
       if (testProxy.isLeaf()) {
-        if (myDebug) {
-          renderer.clear();
-          renderer.append("Test tree is not available in a debug session");
+        if (myServerProcessTerminated) {
+          render(renderer, "Server is dead", true);
         }
-        if (!myTestRunProcessTerminated && !myServerProcessTerminated) {
-          if (myServer.isPortBound() && !myServer.areBrowsersReady()) {
-            renderer.clear();
-            renderer.append("Waiting for browser capturing...");
+        else {
+          if (myDebug) {
+            render(renderer, "Test tree is not available in a debug session", false);
+          }
+          else if (myTestRunProcessTerminated) {
+            render(renderer, "Aborted", true);
+          }
+          else if (myServer.isPortBound() && !myServer.areBrowsersReady()) {
+            render(renderer, "Waiting for browser capturing...", false);
           }
         }
       }
