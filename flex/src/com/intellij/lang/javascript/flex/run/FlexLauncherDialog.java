@@ -1,7 +1,9 @@
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.ide.browsers.BrowserSelector;
+import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
@@ -110,7 +112,8 @@ public class FlexLauncherDialog extends DialogWrapper {
                                                            ? LauncherParameters.LauncherType.Browser
                                                            : LauncherParameters.LauncherType.OSDefault;
     final WebBrowser browser = myBrowserSelector.getSelected();
-    final WebBrowser notNullBrowser = browser == null ? WebBrowser.FIREFOX : browser;
+    final WebBrowser notNullBrowser = browser == null ? WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.FIREFOX)
+                                                      : browser;
     final String playerPath = FileUtil.toSystemIndependentName(myPlayerTextWithBrowse.getText().trim());
     final boolean isNewPlayerInstance = myNewPlayerInstanceCheckBox.isSelected();
     return new LauncherParameters(launcherType, notNullBrowser, playerPath, isNewPlayerInstance);

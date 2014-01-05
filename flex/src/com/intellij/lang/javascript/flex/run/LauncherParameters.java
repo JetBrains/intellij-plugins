@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.run;
 
+import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -23,7 +24,7 @@ public class LauncherParameters implements Cloneable {
 
   @NotNull
   @Transient
-  private WebBrowser myBrowser = WebBrowser.FIREFOX;
+  private WebBrowser myBrowser = WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.FIREFOX);
 
   public LauncherParameters() {
   }
@@ -65,12 +66,12 @@ public class LauncherParameters implements Cloneable {
   @SuppressWarnings("UnusedDeclaration")
   @OptionTag(value = "browser")
   public String getBrowserName() {
-    return myBrowser.getName();
+    return myBrowser.getId().toString();
   }
 
   @SuppressWarnings("UnusedDeclaration")
   public void setBrowserName(String name) {
-    WebBrowser browser = WebBrowserManager.getInstance().findBrowserByName(name);
+    WebBrowser browser = WebBrowserManager.getInstance().findBrowserById(name);
     if (browser != null) {
       myBrowser = browser;
     }
