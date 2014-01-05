@@ -93,7 +93,6 @@ public class CloudFormationEntityReference extends PsiReferenceBase<JSLiteralExp
         CloudFormationSections.Resources);
     }
 
-
     if (isInDependsOnMultiple(element)) {
       return new CloudFormationEntityReference(
         literalExpression,

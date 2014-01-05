@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/CloudFormation.iml" filepath="$PROJECT_DIR$/CloudFormation.iml" />
       <module fileurl="file://$PROJECT_DIR$/metadata-crawler/metadata-crawler.iml" filepath="$PROJECT_DIR$/metadata-crawler/metadata-crawler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/metadata-model/metadata-model.iml" filepath="$PROJECT_DIR$/metadata-model/metadata-model.iml" />
     </modules>
   </component>
 </project>

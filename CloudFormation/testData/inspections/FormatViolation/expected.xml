@@ -10,4 +10,14 @@
     <line>2</line>
     <description>Unknown AWS CloudFormation template version &quot;2010-09-09 + 1&quot;. Supported versions: 2010-09-09</description>
   </problem>
+  <problem>
+    <file>noResourceType.template</file>
+    <line>6</line>
+    <description>Type property is required for resource</description>
+  </problem>
+  <problem>
+    <file>unknownResourceType.template</file>
+    <line>7</line>
+    <description>Unknown CloudFormation resource type: &quot;ZZZ&quot;</description>
+  </problem>
 </problems>

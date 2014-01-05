@@ -1,5 +1,6 @@
 package com.intellij.aws.cloudformation;
 
+import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -147,7 +148,44 @@ public class CloudFormationFormatChecker {
       return;
     }
 
-    // TODO
+    for (JSProperty property : obj.getProperties()) {
+      final String resourceName = property.getName();
+      final JSExpression resourceObj = property.getValue();
+      if (resourceName == null || resourceObj == null) {
+        continue;
+      }
+
+      checkKeyName(property);
+      resource(property);
+    }
+  }
+
+  private void resource(JSProperty resourceProperty) {
+    final JSObjectLiteralExpression obj = checkAndGetObject(resourceProperty.getValue());
+    if (obj == null) {
+      return;
+    }
+
+    final JSProperty typeProperty = obj.findProperty(CloudFormationConstants.TypePropertyName);
+    if (typeProperty == null) {
+      addProblemOnNameElement(resourceProperty, CloudFormationBundle.getString("format.type.property.required"));
+      return;
+    }
+
+    final String value = checkAndGetQuotedStringText(typeProperty.getValue());
+    if (value == null) {
+      return;
+    }
+
+    final String unquotedValue = StringUtil.stripQuotesAroundValue(value);
+
+    for (CloudFormationResourceType resourceType : CloudFormationMetadataProvider.METADATA.resourceTypes) {
+      if (unquotedValue.equals(resourceType.name)) {
+        return;
+      }
+    }
+
+    addProblem(typeProperty, CloudFormationBundle.getString("format.unknown.type", value));
   }
 
   private JSObjectLiteralExpression checkAndGetObject(JSExpression expression) {
