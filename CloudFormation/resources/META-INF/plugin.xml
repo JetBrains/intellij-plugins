@@ -10,9 +10,10 @@
 
     <ul>
       <li>Registers *.template as CloudFormation files</li>
-      <li>Highlights wrong values in Ref</lib>
+      <li>Highlights wrong values in Ref</li>
       <li>Provides Goto Declaration, Find Usages on resource, mapping and parameter names</li>
-      <li>Renames resources, mapping and parameters</lib>
+      <li>Renames resources, mapping and parameters</li>
+      <li>Provides completion on Refs and resource types</li>
     </ul>
   ]]></description>
 
