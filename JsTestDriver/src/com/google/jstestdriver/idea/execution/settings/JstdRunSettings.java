@@ -1,7 +1,9 @@
 package com.google.jstestdriver.idea.execution.settings;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.WebBrowserManager;
 import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 
@@ -109,7 +111,7 @@ public class JstdRunSettings {
     private String myTestCaseName = "";
     private String myTestMethodName = "";
     private ImmutableList<String> myFilesExcludedFromCoverage = ImmutableList.of();
-    private WebBrowser myPreferredDebugBrowser = WebBrowser.CHROME;
+    private WebBrowser myPreferredDebugBrowser = WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.CHROME);
 
     public Builder() {
     }

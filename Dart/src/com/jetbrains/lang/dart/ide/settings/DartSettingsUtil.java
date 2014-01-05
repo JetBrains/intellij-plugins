@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.settings;
 
 import com.intellij.CommonBundle;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
@@ -24,8 +25,7 @@ import java.io.File;
 
 public class DartSettingsUtil {
 
-  public static final WebBrowser DARTIUM = WebBrowser
-    .createCustomBrowser(WebBrowser.CHROME.getFamily(), "Dartium", DartIcons.Dartium_16, new NullableComputable<String>() {
+  public static final WebBrowser DARTIUM = WebBrowser.createCustomBrowser(BrowsersConfiguration.BrowserFamily.CHROME, "Dartium", DartIcons.Dartium_16, new NullableComputable<String>() {
       @Override
       @Nullable
       public String compute() {

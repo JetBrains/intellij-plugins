@@ -21,9 +21,7 @@ import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.browser.BrowserCaptureEvent;
 import com.google.jstestdriver.hooks.ServerListener;
 import com.google.jstestdriver.idea.util.SwingUtils;
-import com.intellij.ide.browsers.BrowserSettings;
-import com.intellij.ide.browsers.UrlOpener;
-import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.*;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -289,11 +287,15 @@ public class CapturedBrowsersController implements ServerListener {
   }
 
   private enum Browser {
-    CHROME("Chrome", JsTestDriverIcons.Browsers.Chrome, WebBrowser.CHROME),
-    IE("Microsoft Internet Explorer", JsTestDriverIcons.Browsers.IE, WebBrowser.EXPLORER),
-    FIREFOX("Firefox", JsTestDriverIcons.Browsers.Firefox, WebBrowser.FIREFOX),
-    OPERA("Opera", JsTestDriverIcons.Browsers.Opera, WebBrowser.OPERA),
-    SAFARI("Safari", JsTestDriverIcons.Browsers.Safari, WebBrowser.SAFARI);
+    CHROME("Chrome", JsTestDriverIcons.Browsers.Chrome,
+           WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.CHROME)),
+    IE("Microsoft Internet Explorer", JsTestDriverIcons.Browsers.IE,
+       WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.EXPLORER)),
+    FIREFOX("Firefox", JsTestDriverIcons.Browsers.Firefox,
+            WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.FIREFOX)),
+    OPERA("Opera", JsTestDriverIcons.Browsers.Opera, WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.OPERA)),
+    SAFARI("Safari", JsTestDriverIcons.Browsers.Safari,
+           WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.SAFARI));
 
     private final String myName;
     private final Icon myIcon;
