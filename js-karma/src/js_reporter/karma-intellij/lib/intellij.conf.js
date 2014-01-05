@@ -7,7 +7,7 @@ var path = require('path')
 
 function setBasePath(config) {
   var path = require('path');
-  var basePath = config.basePath || '';
+  var basePath = config.basePath || '.';
   config.basePath = path.resolve(path.dirname(originalConfigPath), basePath);
 }
 

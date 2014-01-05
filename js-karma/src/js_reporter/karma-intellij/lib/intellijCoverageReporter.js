@@ -5,6 +5,45 @@ var cli = require('./intellijCli.js')
   , EventEmitter = require('events').EventEmitter
   , coveragePreprocessorName = 'coverage';
 
+/**
+ * Modifies passed config in order to turn on or turn off configure.
+ * If 'Run' was requested, coverage is turned off.
+ * If 'Run with coverage' was requested, coverage is turned on.
+ * @param {Object} config
+ */
+function configureCoverage(config) {
+  var karmaCoverageReporterName = 'coverage';
+  var reporters = config.reporters || [];
+  if (cli.isWithCoverage()) {
+    if (reporters.indexOf(karmaCoverageReporterName) < 0) {
+      // we need to add 'coverage' reporter to make coverage preprocessor working
+      reporters.push(karmaCoverageReporterName);
+      config.coverageReporter = {
+        type : 'lcovonly',
+        dir : path.join(cli.getCoverageTempDirPath(), 'original'),
+        reporters: []
+      };
+    }
+    reporters.push(IntellijCoverageReporter.reporterName);
+
+    // 'Run with coverage' should serve *.js files preprocessed by coverage preprocessor.
+    // Unfortunately if 'Run' was executed previously, browser cache is reused for 'Run with coverage' also.
+    // Thus, served *.js files aren't preprocessed by coverage.
+    // Workaround: start 'Run with coverage' on different port.
+    if (typeof config.port == 'undefined') {
+      config.port = 9877;
+    }
+    else if (typeof config.port === 'number') {
+      config.port++;
+    }
+  }
+  else {
+    clearCoveragePreprocessors(config.preprocessors);
+    reporters = intellijUtil.removeAll(reporters, karmaCoverageReporterName);
+  }
+  config.reporters = reporters;
+}
+
 function findLcovInfoFile(coverageDir, callback) {
   var first = true;
   fs.readdir(coverageDir, function(err, files) {
@@ -227,34 +266,6 @@ function findBrowserByName(browsers, browserNamePrefix) {
     }
   });
   return result;
-}
-
-/**
- * Modifies passed config in order to turn on or turn off configure.
- * If 'Run' was requested, coverage is turned off.
- * If 'Run with coverage' was requested, coverage is turned on.
- * @param {Object} config
- */
-function configureCoverage(config) {
-  var karmaCoverageReporterName = 'coverage';
-  var reporters = config.reporters || [];
-  if (cli.isWithCoverage()) {
-    if (reporters.indexOf(karmaCoverageReporterName) < 0) {
-      // we need to add 'coverage' reporter to make coverage preprocessor working
-      reporters.push(karmaCoverageReporterName);
-      config.coverageReporter = {
-        type : 'lcovonly',
-        dir : path.join(cli.getCoverageTempDirPath(), 'original'),
-        reporters: []
-      };
-    }
-    reporters.push(IntellijCoverageReporter.reporterName);
-  }
-  else {
-    clearCoveragePreprocessors(config.preprocessors);
-    reporters = intellijUtil.removeAll(reporters, karmaCoverageReporterName);
-  }
-  config.reporters = reporters;
 }
 
 IntellijCoverageReporter.$inject = ['injector', 'config'];
