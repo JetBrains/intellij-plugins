@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.UserActivityWatcher;
 
 import javax.swing.*;
@@ -16,7 +17,7 @@ public class TableAwareUserActivityWatcher extends UserActivityWatcher {
 
   protected void processComponent(final Component component) {
     if (component instanceof JTable) {
-      component.addPropertyChangeListener("tableCellEditor", new PropertyChangeListener() {
+      component.addPropertyChangeListener(ComboBox.TABLE_CELL_EDITOR_PROPERTY, new PropertyChangeListener() {
         public void propertyChange(final PropertyChangeEvent e) {
           if (e.getOldValue() != null && e.getNewValue() == null) {
             // cell editing stopped
