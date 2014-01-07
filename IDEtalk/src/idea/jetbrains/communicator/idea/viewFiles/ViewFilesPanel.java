@@ -20,7 +20,6 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.treeStructure.Tree;
@@ -146,7 +145,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
     actionGroup.add(new ToggleAction(
         StringUtil.getMsg("idea.show_read_only.text"),
         StringUtil.getMsg("idea.show_read_only.description"),
-        IconLoader.getIcon(StringUtil.getMsg("idea.show_read_only.icon"))
+        AllIcons.Ide.Readonly
         ) {
       public boolean isSelected(AnActionEvent e) {
         return myShowReadOnly;
