@@ -7,8 +7,8 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.xmlb.annotations.OptionTag;
-import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class LauncherParameters implements Cloneable {
   public enum LauncherType {
@@ -23,7 +23,6 @@ public class LauncherParameters implements Cloneable {
   private boolean myNewPlayerInstance = false;
 
   @NotNull
-  @Transient
   private WebBrowser myBrowser = WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.FIREFOX);
 
   public LauncherParameters() {
@@ -63,24 +62,14 @@ public class LauncherParameters implements Cloneable {
     myLauncherType = launcherType;
   }
 
-  @SuppressWarnings("UnusedDeclaration")
-  @OptionTag(value = "browser")
-  public String getBrowserName() {
-    return myBrowser.getId().toString();
-  }
-
-  @SuppressWarnings("UnusedDeclaration")
-  public void setBrowserName(String name) {
-    WebBrowser browser = WebBrowserManager.getInstance().findBrowserById(name);
-    if (browser != null) {
-      myBrowser = browser;
-    }
-  }
-
   @NotNull
-  @Transient
+  @OptionTag(converter = WebBrowser.ReferenceConverter.class)
   public WebBrowser getBrowser() {
     return myBrowser;
+  }
+
+  public void setBrowser(@Nullable WebBrowser browser) {
+    myBrowser = browser == null ? WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.FIREFOX) : browser;
   }
 
   @NotNull
