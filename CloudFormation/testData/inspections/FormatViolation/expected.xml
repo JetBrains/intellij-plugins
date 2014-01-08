@@ -17,7 +17,7 @@
   </problem>
   <problem>
     <file>unknownResourceType.template</file>
-    <line>7</line>
+    <line>10</line>
     <description>Unknown CloudFormation resource type: &quot;ZZZ&quot;</description>
   </problem>
 </problems>

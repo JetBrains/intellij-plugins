@@ -71,6 +71,9 @@ public class CloudFormationFormatChecker {
       else if (CloudFormationSections.Resources.equals(name)) {
         resources(value);
       }
+      else if (CloudFormationSections.Conditions.equals(name)) {
+        // TODO
+      }
       else if (CloudFormationSections.Outputs.equals(name)) {
         outputs(value);
       }
