@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.flex.model.bc.CompilerOptionInfo;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -15,16 +15,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
-import java.util.List;
 
 public class LocalesDialog extends DialogWrapper {
   private JPanel myMainPanel;
   private JLabel myLabel;
-  private CheckBoxList myCheckBoxList;
+  private CheckBoxList<String> myCheckBoxList;
 
   private final Collection<String> mySdkLocales;
 
@@ -64,19 +62,22 @@ public class LocalesDialog extends DialogWrapper {
 
   private static boolean containsSwc(final File dir) {
     return dir.list(new FilenameFilter() {
+      @Override
       public boolean accept(final File dir, final String name) {
         return name.toLowerCase().endsWith(".swc");
       }
     }).length > 0;
   }
 
+  @Override
   @Nullable
   public JComponent getPreferredFocusedComponent() {
     return myCheckBoxList;
   }
 
   private void createUIComponents() {
-    myCheckBoxList = new CheckBoxList() {
+    myCheckBoxList = new CheckBoxList<String>() {
+      @Override
       protected void adjustRendering(final JCheckBox checkBox, final boolean selected, final boolean hasFocus) {
         final String locale = checkBox.getText();
         checkBox.setForeground(mySdkLocales.contains(locale) ? UIUtil.getListForeground(selected) : JBColor.RED);
@@ -86,12 +87,14 @@ public class LocalesDialog extends DialogWrapper {
     myCheckBoxList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
     new ListSpeedSearch(myCheckBoxList, new Function<Object, String>() {
+      @Override
       public String fun(final Object o) {
         return ((JCheckBox)o).getText();
       }
     });
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
