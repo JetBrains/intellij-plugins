@@ -27,7 +27,6 @@ import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -41,7 +40,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.Alarm;
 import com.intellij.util.Function;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.StringTokenizer;
@@ -183,9 +181,6 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       compilerManager.addAfterTask(new FlexUnitAfterCompileTask());
 
       compilerManager.setValidationEnabled(FlexModuleType.getInstance(), false);
-      if (PlatformUtils.isFlexIde()) {
-        compilerManager.setValidationEnabled(StdModuleTypes.JAVA, false);
-      }
     }
 
     myWidget = new ActiveBuildConfigurationWidget(myProject);
