@@ -1,0 +1,7 @@
+JS:TRUE_KEYWORD ('true')
+WHITE_SPACE ('\n')
+JS:FALSE_KEYWORD ('false')
+WHITE_SPACE ('\n')
+JS:NULL_KEYWORD ('null')
+WHITE_SPACE ('\n')
+JS:UNDEFINED_KEYWORD ('undefined')
