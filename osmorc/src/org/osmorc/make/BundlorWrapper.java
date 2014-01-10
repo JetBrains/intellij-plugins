@@ -32,24 +32,27 @@ public class BundlorWrapper {
                             @NotNull String inputJar,
                             @NotNull String outputJar,
                             @NotNull String manifestTemplateFile) {
-    Properties properties = MavenIntegrationUtil.getMavenProjectProperties(context.getProject(), context.getCompileScope().getAffectedModules());
-    PropertiesSource propertiesSource = new PropertiesPropertiesSource(properties);
-
-    ManifestGenerator generator = new StandardManifestGenerator(DefaultManifestGeneratorContributorsFactory.create(propertiesSource));
-    ClassPath classPath = new StandardClassPathFactory().create(inputJar);
-    ManifestContents contents = new StandardManifestTemplateFactory().create(manifestTemplateFile, null, null, null);
-    ManifestContents manifest = generator.generate(contents, classPath);
-
-    ManifestWriter manifestWriter = new StandardManifestWriterFactory().create(inputJar, outputJar);
+    ManifestContents manifest;
     try {
-      manifestWriter.write(manifest);
+      Properties properties = MavenIntegrationUtil.getMavenProjectProperties(context.getProject(), context.getCompileScope().getAffectedModules());
+      PropertiesSource propertiesSource = new PropertiesPropertiesSource(properties);
+
+      ManifestGenerator generator = new StandardManifestGenerator(DefaultManifestGeneratorContributorsFactory.create(propertiesSource));
+      ClassPath classPath = new StandardClassPathFactory().create(inputJar);
+      ManifestContents contents = new StandardManifestTemplateFactory().create(manifestTemplateFile, null, null, null);
+      manifest = generator.generate(contents, classPath);
+
+      ManifestWriter manifestWriter = new StandardManifestWriterFactory().create(inputJar, outputJar);
+      try {
+        manifestWriter.write(manifest);
+      }
+      finally {
+        manifestWriter.close();
+      }
     }
     catch (Exception e) {
-      context.addMessage(CompilerMessageCategory.ERROR, "Error writing manifest: " + e.getMessage(), null, 0, 0);
+      context.addMessage(CompilerMessageCategory.ERROR, "Error generating manifest: " + e.getMessage(), null, 0, 0);
       return false;
-    }
-    finally {
-      manifestWriter.close();
     }
 
     List<String> warningsList = new StandardManifestValidator(DefaultManifestValidatorContributorsFactory.create()).validate(manifest);
