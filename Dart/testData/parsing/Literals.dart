@@ -81,5 +81,12 @@ class MapLiteralSyntax {
     var o6 = {"foo bar":null, "while":17};
     var o7 = const <String,int> { "a": 12, "b": 18 };
     var o8 = <String,int> { "a": 12, "b": 18 };
+    var o9 = {x + y : z + q,
+              null: () => 5,
+              {1:1}: {((2)):2},
+              false: true,
+              (a,String b,c){if (false){var a;}} : (d,int e,f){if (false){var a;}},
+              1 : 2,
+             };
   }
 }
