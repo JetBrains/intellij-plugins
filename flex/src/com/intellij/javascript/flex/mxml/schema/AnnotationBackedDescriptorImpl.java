@@ -559,9 +559,8 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     final PsiElement parent = context instanceof XmlAttributeValue ? context.getParent() : null;
     if (parent instanceof XmlAttribute && FlexMxmlLanguageAttributeNames.ID.equals(((XmlAttribute)parent).getName())) {
       final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage());
-      if (!namesValidator.isIdentifier(value, context.getProject())) {
-        return JSBundle.message("invalid.identifier.value");
-      }
+      return namesValidator.isIdentifier(value, context.getProject()) ? null // ok
+                                                                      : JSBundle.message("invalid.identifier.value");
     }
 
     if (value.indexOf('{') != -1) return null; // dynamic values
