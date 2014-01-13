@@ -6,6 +6,8 @@ class Shifting {
   }
 }
 
+var x = a ? b : c ? d : e ? f : g;
+
 class Operators {
 
   operator ~() { }

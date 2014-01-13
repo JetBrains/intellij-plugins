@@ -248,10 +248,6 @@ public class DartVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
-  public void visitIteratorExpression(@NotNull DartIteratorExpression o) {
-    visitExpression(o);
-  }
-
   public void visitLabel(@NotNull DartLabel o) {
     visitComponent(o);
   }

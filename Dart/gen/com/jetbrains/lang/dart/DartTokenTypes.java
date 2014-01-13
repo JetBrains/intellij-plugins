@@ -66,7 +66,6 @@ public interface DartTokenTypes {
   IElementType INITIALIZERS = new DartElementType("INITIALIZERS");
   IElementType INTERFACES = new DartElementType("INTERFACES");
   IElementType IS_EXPRESSION = new DartElementType("IS_EXPRESSION");
-  IElementType ITERATOR_EXPRESSION = new DartElementType("ITERATOR_EXPRESSION");
   IElementType LABEL = new DartElementType("LABEL");
   IElementType LIBRARY_COMPONENT_REFERENCE_EXPRESSION = new DartElementType("LIBRARY_COMPONENT_REFERENCE_EXPRESSION");
   IElementType LIBRARY_ID = new DartElementType("LIBRARY_ID");
@@ -426,9 +425,6 @@ public interface DartTokenTypes {
       }
       else if (type == IS_EXPRESSION) {
         return new DartIsExpressionImpl(node);
-      }
-      else if (type == ITERATOR_EXPRESSION) {
-        return new DartIteratorExpressionImpl(node);
       }
       else if (type == LABEL) {
         return new DartLabelImpl(node);
