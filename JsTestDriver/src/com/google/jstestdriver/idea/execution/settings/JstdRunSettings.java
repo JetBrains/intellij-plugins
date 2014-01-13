@@ -22,7 +22,6 @@ public class JstdRunSettings {
   private final ImmutableList<String> myFilesExcludedFromCoverage;
   private final WebBrowser myPreferredDebugBrowser;
 
-
   public JstdRunSettings(
     @NotNull TestType testType,
     @NotNull String configFile,

@@ -262,7 +262,8 @@ public class CapturedBrowsersController implements ServerListener {
         return false;
       }
 
-      String browserPath = myBrowser.getBrowser().getPath();
+      WebBrowser browser = WebBrowserManager.getInstance().getBrowser(myBrowser.getBrowserFamily());
+      String browserPath = browser.getPath();
       if (StringUtil.isEmptyOrSpaces(browserPath)) {
         String message = "Path to " + myBrowser.getName() + " is not specified.";
         int exitCode = Messages.showOkCancelDialog(project, message, "JsTestDriver Browser Capturing Failed",
@@ -274,7 +275,7 @@ public class CapturedBrowsersController implements ServerListener {
         return false;
       }
 
-      UrlOpener.launchBrowser(captureUrl, myBrowser.getBrowser());
+      UrlOpener.launchBrowser(captureUrl, browser);
       return true;
     }
 
@@ -287,24 +288,20 @@ public class CapturedBrowsersController implements ServerListener {
   }
 
   private enum Browser {
-    CHROME("Chrome", JsTestDriverIcons.Browsers.Chrome,
-           WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.CHROME)),
-    IE("Microsoft Internet Explorer", JsTestDriverIcons.Browsers.IE,
-       WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.EXPLORER)),
-    FIREFOX("Firefox", JsTestDriverIcons.Browsers.Firefox,
-            WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.FIREFOX)),
-    OPERA("Opera", JsTestDriverIcons.Browsers.Opera, WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.OPERA)),
-    SAFARI("Safari", JsTestDriverIcons.Browsers.Safari,
-           WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.SAFARI));
+    CHROME("Chrome", JsTestDriverIcons.Browsers.Chrome, BrowsersConfiguration.BrowserFamily.CHROME),
+    IE("Microsoft Internet Explorer", JsTestDriverIcons.Browsers.IE, BrowsersConfiguration.BrowserFamily.EXPLORER),
+    FIREFOX("Firefox", JsTestDriverIcons.Browsers.Firefox, BrowsersConfiguration.BrowserFamily.FIREFOX),
+    OPERA("Opera", JsTestDriverIcons.Browsers.Opera, BrowsersConfiguration.BrowserFamily.OPERA),
+    SAFARI("Safari", JsTestDriverIcons.Browsers.Safari, BrowsersConfiguration.BrowserFamily.SAFARI);
 
     private final String myName;
     private final Icon myIcon;
-    private final WebBrowser myBrowser;
+    private final BrowsersConfiguration.BrowserFamily myBrowserFamily;
 
-    Browser(@NotNull String name, Icon icon, @NotNull WebBrowser browser) {
+    Browser(@NotNull String name, Icon icon, @NotNull BrowsersConfiguration.BrowserFamily browserFamily) {
       myName = name;
       myIcon = icon;
-      myBrowser = browser;
+      myBrowserFamily = browserFamily;
     }
 
     public String getName() {
@@ -316,8 +313,8 @@ public class CapturedBrowsersController implements ServerListener {
     }
 
     @NotNull
-    public WebBrowser getBrowser() {
-      return myBrowser;
+    public BrowsersConfiguration.BrowserFamily getBrowserFamily() {
+      return myBrowserFamily;
     }
 
     @Nullable
