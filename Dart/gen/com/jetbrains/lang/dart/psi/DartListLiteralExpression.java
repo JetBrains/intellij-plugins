@@ -10,4 +10,7 @@ public interface DartListLiteralExpression extends DartExpression, DartReference
   @Nullable
   DartExpressionList getExpressionList();
 
+  @Nullable
+  DartTypeArguments getTypeArguments();
+
 }

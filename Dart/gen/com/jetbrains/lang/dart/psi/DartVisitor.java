@@ -105,11 +105,6 @@ public class DartVisitor extends PsiElementVisitor {
     visitNamedElement(o);
   }
 
-  public void visitCompoundLiteralExpression(@NotNull DartCompoundLiteralExpression o) {
-    visitExpression(o);
-    // visitReference(o);
-  }
-
   public void visitConstConstructorExpression(@NotNull DartConstConstructorExpression o) {
     visitExpression(o);
     // visitReference(o);

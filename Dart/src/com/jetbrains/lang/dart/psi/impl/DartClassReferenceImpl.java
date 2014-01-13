@@ -13,9 +13,6 @@ import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartClassReferenceImpl extends DartExpressionImpl implements DartReference {
   public DartClassReferenceImpl(ASTNode node) {
     super(node);
@@ -104,22 +101,14 @@ public class DartClassReferenceImpl extends DartExpressionImpl implements DartRe
     }
 
     if (this instanceof DartListLiteralExpression) {
-      return DartResolveUtil.findCoreClass(this, "List");
+      final DartClassResolveResult classResolveResult = DartResolveUtil.findCoreClass(this, "List");
+      classResolveResult.specializeByParameters(((DartListLiteralExpression)this).getTypeArguments());
+      return classResolveResult;
     }
 
     if (this instanceof DartMapLiteralExpression) {
-      return DartResolveUtil.findCoreClass(this, "Map");
-    }
-
-    if (this instanceof DartCompoundLiteralExpression) {
-      final DartTypeArguments typeArguments = ((DartCompoundLiteralExpression)this).getTypeArguments();
-      final DartReference dartReference = PsiTreeUtil.getChildOfType(this, DartReference.class);
-      final DartClassResolveResult classResolveResult =
-        dartReference == null ? DartClassResolveResult.EMPTY : dartReference.resolveDartClass();
-      if (typeArguments == null) {
-        return classResolveResult;
-      }
-      classResolveResult.specializeByParameters(typeArguments);
+      final DartClassResolveResult classResolveResult = DartResolveUtil.findCoreClass(this, "Map");
+      classResolveResult.specializeByParameters(((DartMapLiteralExpression)this).getTypeArguments());
       return classResolveResult;
     }
 

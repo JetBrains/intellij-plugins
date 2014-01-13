@@ -66,7 +66,12 @@ class ArrayLiteralSyntax {
     var a5 = [()=>42,o2];
     var a6 = const <int> [ 12, 18 ];
     var a7 = <int> [ 12, 18 ];
+    var q0 = "abc"[1];
+    var q1 = [[]][index][subindex];
+    var q2 = const [1, 2][getIndex()]();
+    var q3 = <String> [][1];
   }
+  String toString() => const<String>['',[]][index];
 }
 
 class MapLiteralSyntax {

@@ -31,7 +31,6 @@ public interface DartTokenTypes {
   IElementType CLASS_TYPE_ALIAS = new DartElementType("CLASS_TYPE_ALIAS");
   IElementType COMPARE_EXPRESSION = new DartElementType("COMPARE_EXPRESSION");
   IElementType COMPONENT_NAME = new DartElementType("COMPONENT_NAME");
-  IElementType COMPOUND_LITERAL_EXPRESSION = new DartElementType("COMPOUND_LITERAL_EXPRESSION");
   IElementType CONST_CONSTRUCTOR_EXPRESSION = new DartElementType("CONST_CONSTRUCTOR_EXPRESSION");
   IElementType CONTINUE_STATEMENT = new DartElementType("CONTINUE_STATEMENT");
   IElementType DEFAULT_CASE = new DartElementType("DEFAULT_CASE");
@@ -320,9 +319,6 @@ public interface DartTokenTypes {
       }
       else if (type == COMPONENT_NAME) {
         return new DartComponentNameImpl(node);
-      }
-      else if (type == COMPOUND_LITERAL_EXPRESSION) {
-        return new DartCompoundLiteralExpressionImpl(node);
       }
       else if (type == CONST_CONSTRUCTOR_EXPRESSION) {
         return new DartConstConstructorExpressionImpl(node);
