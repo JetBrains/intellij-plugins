@@ -29,7 +29,7 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
 
   @Override
   @NotNull
-  public WebBrowser getWebBrowser() {
+  public WebBrowser getBrowser() {
     return DartSettingsUtil.DARTIUM;
   }
 
@@ -74,5 +74,10 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
         }
       });
     }
+  }
+
+  @Override
+  public boolean isBrowserSupported(@NotNull WebBrowser browser) {
+    return DartSettingsUtil.getDartiumPath() != null && DartSettingsUtil.DARTIUM.equals(browser);
   }
 }

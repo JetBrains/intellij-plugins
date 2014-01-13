@@ -1,9 +1,8 @@
 package com.google.jstestdriver.idea.execution.settings.ui;
 
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
-import com.intellij.javascript.debugger.engine.JSDebugEngine;
-import com.intellij.javascript.debugger.execution.JavaScriptDebugSettingsEditorBase;
-import com.intellij.openapi.project.Project;
+import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.javascript.debugger.execution.JavaScriptDebugSettingsEditor;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.webcore.ui.SwingHelper;
@@ -19,9 +18,9 @@ public class JstdDebugSection extends AbstractRunSettingsSection {
 
   private final ComboBox myPreferredDebugBrowserComboBox;
 
-  public JstdDebugSection(@NotNull Project project) {
-    myPreferredDebugBrowserComboBox = new ComboBox(new CollectionComboBoxModel(JavaScriptDebugSettingsEditorBase.getEngines(project)));
-    JavaScriptDebugSettingsEditorBase.setupBrowserComboboxRenderer(myPreferredDebugBrowserComboBox);
+  public JstdDebugSection() {
+    myPreferredDebugBrowserComboBox = new ComboBox(new CollectionComboBoxModel(JavaScriptDebugSettingsEditor.getDebuggableBrowsers()));
+    JavaScriptDebugSettingsEditor.setupBrowserComboboxRenderer(myPreferredDebugBrowserComboBox);
   }
 
   @NotNull
@@ -46,14 +45,14 @@ public class JstdDebugSection extends AbstractRunSettingsSection {
 
   @Override
   public void resetFrom(@NotNull JstdRunSettings runSettings) {
-    myPreferredDebugBrowserComboBox.setSelectedItem(JSDebugEngine.findByBrowserName(runSettings.getPreferredDebugBrowser().getName()));
+    myPreferredDebugBrowserComboBox.setSelectedItem(runSettings.getPreferredDebugBrowser());
   }
 
   @Override
   public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
-    JSDebugEngine selectedBrowser = (JSDebugEngine)myPreferredDebugBrowserComboBox.getSelectedItem();
+    WebBrowser selectedBrowser = (WebBrowser)myPreferredDebugBrowserComboBox.getSelectedItem();
     if (selectedBrowser != null) {
-      runSettingsBuilder.setPreferredDebugBrowser(selectedBrowser.getWebBrowser());
+      runSettingsBuilder.setPreferredDebugBrowser(selectedBrowser);
     }
   }
 

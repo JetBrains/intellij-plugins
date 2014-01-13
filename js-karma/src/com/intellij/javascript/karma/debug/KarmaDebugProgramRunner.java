@@ -10,6 +10,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
@@ -21,6 +22,7 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
@@ -95,11 +97,11 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
       env,
       this
     );
-    final JSDebugEngine debugEngine = browserSelector.selectDebugEngine();
+    final Pair<JSDebugEngine, WebBrowser> debugEngine = browserSelector.selectDebugEngine();
     if (debugEngine == null) {
       return null;
     }
-    if (!debugEngine.prepareDebugger(project, debugEngine.getWebBrowser())) {
+    if (!debugEngine.first.prepareDebugger(project, debugEngine.second)) {
       return null;
     }
 
@@ -113,7 +115,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) {
-          JSDebugProcess<?> debugProcess = debugEngine.createDebugProcess(session, fileFinder, url, executionResult, true);
+          JSDebugProcess<?> debugProcess = debugEngine.first.createDebugProcess(session, debugEngine.second, fileFinder, url, executionResult, true);
           debugProcess.setElementsInspectorEnabled(false);
           debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
           return debugProcess;

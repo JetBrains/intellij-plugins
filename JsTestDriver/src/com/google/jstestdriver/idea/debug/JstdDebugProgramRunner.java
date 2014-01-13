@@ -16,6 +16,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.JSDebugProcess;
@@ -88,12 +89,13 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     FileDocumentManager.getInstance().saveAllDocuments();
 
     final JSDebugEngine debugEngine = debugBrowserInfo.getDebugEngine();
-    if (!debugEngine.prepareDebugger(project, debugEngine.getWebBrowser())) {
+    final WebBrowser browser = debugBrowserInfo.getBrowser();
+    if (!debugEngine.prepareDebugger(project, browser)) {
       return null;
     }
 
     final Url url;
-    if (debugEngine.getBrowserFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME)) {
+    if (browser.getFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME)) {
       url = Urls.newHttpUrl("127.0.0.1:" + JstdToolWindowPanel.serverPort, debugBrowserInfo.getCapturedBrowserUrl());
     }
     else {
@@ -109,7 +111,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
       @Override
       @NotNull
       public XDebugProcess start(@NotNull XDebugSession session) {
-        JSDebugProcess<?> process = debugEngine.createDebugProcess(session, fileFinder, url, executionResult, false);
+        JSDebugProcess<?> process = debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, false);
         process.setElementsInspectorEnabled(false);
         return process;
       }

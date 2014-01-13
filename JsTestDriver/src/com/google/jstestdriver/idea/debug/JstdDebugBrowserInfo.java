@@ -11,6 +11,7 @@ import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,11 +24,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 */
 public class JstdDebugBrowserInfo {
 
-  private final JSDebugEngine myDebugEngine;
+  private final Pair<JSDebugEngine, WebBrowser> myDebugEngine;
   private final String myCapturedBrowserUrl;
   private final SlaveBrowser mySlaveBrowser;
 
-  private JstdDebugBrowserInfo(@NotNull JSDebugEngine debugEngine,
+  private JstdDebugBrowserInfo(@NotNull Pair<JSDebugEngine, WebBrowser> debugEngine,
                                @NotNull String capturedBrowserUrl,
                                @NotNull SlaveBrowser slaveBrowser) {
     myCapturedBrowserUrl = capturedBrowserUrl;
@@ -37,7 +38,12 @@ public class JstdDebugBrowserInfo {
 
   @NotNull
   public JSDebugEngine getDebugEngine() {
-    return myDebugEngine;
+    return myDebugEngine.first;
+  }
+
+  @NotNull
+  public WebBrowser getBrowser() {
+    return myDebugEngine.second;
   }
 
   @NotNull
@@ -46,7 +52,7 @@ public class JstdDebugBrowserInfo {
   }
 
   public void fixIfChrome(@NotNull ProcessHandler processHandler) {
-    if (!(myDebugEngine.getBrowserFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME))) {
+    if (!(myDebugEngine.second.getFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME))) {
       return;
     }
     final AtomicBoolean done = new AtomicBoolean(false);
@@ -82,7 +88,7 @@ public class JstdDebugBrowserInfo {
 
     List<JstdDebugBrowserInfo> debugBrowserInfos = new SmartList<JstdDebugBrowserInfo>();
     for (SlaveBrowser slaveBrowser : browsers.getSlaveBrowsers()) {
-      JSDebugEngine engine = JSDebugEngine.findByBrowserName(slaveBrowser.getBrowserInfo().getName());
+      Pair<JSDebugEngine, WebBrowser> engine = JSDebugEngine.findByBrowserName(slaveBrowser.getBrowserInfo().getName());
       if (engine != null) {
         debugBrowserInfos.add(new JstdDebugBrowserInfo(engine, slaveBrowser.getCaptureUrl(), slaveBrowser));
       }
@@ -93,7 +99,7 @@ public class JstdDebugBrowserInfo {
     if (debugBrowserInfos.size() > 1) {
       WebBrowser preferredBrowser = settings.getPreferredDebugBrowser();
       for (JstdDebugBrowserInfo info : debugBrowserInfos) {
-        if (info.getDebugEngine().getWebBrowser().equals(preferredBrowser)) {
+        if (preferredBrowser.equals(info.getBrowser())) {
           return info;
         }
       }

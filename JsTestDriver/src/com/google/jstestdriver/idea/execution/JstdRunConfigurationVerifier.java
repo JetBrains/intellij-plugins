@@ -179,18 +179,13 @@ public class JstdRunConfigurationVerifier {
                                               "<a href=\"\">Start a local server</a>, capture " + browserMessage + " and try again.");
     }
     if (debug) {
-      JSDebugEngine[] engines = JSDebugEngine.getEngines();
       Collection<BrowserInfo> capturedBrowsers = jstdServerState.getCapturedBrowsers();
       boolean ok = false;
-      for (BrowserInfo browser : capturedBrowsers) {
-        String browserName = browser.getName();
-        for (JSDebugEngine engine : engines) {
-          if (engine.getWebBrowser().getName().equalsIgnoreCase(browserName)) {
-            ok = true;
-            break;
-          }
+      for (BrowserInfo browserInfo : capturedBrowsers) {
+        if (JSDebugEngine.findByBrowserName(browserInfo.getName()) != null) {
+          ok = true;
+          break;
         }
-        if (ok) break;
       }
       if (!ok) {
         throw new JstdSlaveBrowserIsNotReadyExecutionException(
