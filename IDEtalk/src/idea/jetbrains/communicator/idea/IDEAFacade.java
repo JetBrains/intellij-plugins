@@ -19,7 +19,6 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.editor.Document;
@@ -40,6 +39,7 @@ import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.diff.Diff;
 import com.intellij.util.ui.tree.TreeUtil;
+import com.intellij.xml.util.XmlStringUtil;
 import jetbrains.communicator.commands.FindUsersCommand;
 import jetbrains.communicator.commands.SendMessageInvoker;
 import jetbrains.communicator.core.EventVisitor;
@@ -87,7 +87,7 @@ public class IDEAFacade implements IDEFacade {
   public boolean askQuestion(String title, String question) {
     //noinspection HardCodedStringLiteral
     int result = JOptionPane.showOptionDialog(null,
-        new JLabel("<html><body>"+question.replaceAll("\n","<br>")+"</body></html>"), title,
+        new JLabel(XmlStringUtil.wrapInHtml(question.replaceAll("\n","<br>"))), title,
         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
         null, null, null);
 
