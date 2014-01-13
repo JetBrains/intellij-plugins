@@ -87,10 +87,7 @@ public class AngularJSParser extends JavaScriptParser<ExpressionParser, Statemen
         builder.advanceLexer();
         try {
           builder.putUserData(IN_FILTER, true);
-          if (!parseExpressionOptional()) {
-            mark.drop();
-            return false;
-          }
+          parseExpression();
         } finally {
           builder.putUserData(IN_FILTER, null);
         }

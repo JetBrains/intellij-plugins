@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.impl.DebugUtil;
-import com.intellij.testFramework.FileBasedTestCaseHelper;
+import com.intellij.testFramework.FileBasedTestCaseHelperEx;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import com.intellij.testFramework.PlatformTestCase;
 import org.angularjs.AngularTestUtil;
@@ -23,7 +23,7 @@ import java.io.File;
  * @author Dennis.Ushakov
  */
 @RunWith(com.intellij.testFramework.Parameterized.class)
-public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implements FileBasedTestCaseHelper {
+public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implements FileBasedTestCaseHelperEx {
   { PlatformTestCase.initPlatformPrefix(IDEA_MARKER_CLASS, "UltimateLangXml"); }
 
   @NotNull
@@ -73,5 +73,10 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
     }    
 
     assertEquals(FileUtil.loadFile(new File(path, suffix.replace("js", "txt")), true), result.toString());
+  }
+
+  @Override
+  public String getRelativeBasePath() {
+    return "";
   }
 }
