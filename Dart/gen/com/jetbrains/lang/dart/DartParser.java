@@ -194,9 +194,6 @@ public class DartParser implements PsiParser {
     else if (root_ == IS_EXPRESSION) {
       result_ = isExpression(builder_, 0);
     }
-    else if (root_ == ITERATOR_EXPRESSION) {
-      result_ = iteratorExpression(builder_, 0);
-    }
     else if (root_ == LABEL) {
       result_ = label(builder_, 0);
     }
@@ -422,12 +419,12 @@ public class DartParser implements PsiParser {
     create_token_set_(ADDITIVE_EXPRESSION, ARRAY_ACCESS_EXPRESSION, ASSIGN_EXPRESSION, AS_EXPRESSION,
       BITWISE_EXPRESSION, CALL_EXPRESSION, CASCADE_REFERENCE_EXPRESSION, COMPARE_EXPRESSION,
       COMPOUND_LITERAL_EXPRESSION, CONST_CONSTRUCTOR_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION,
-      IS_EXPRESSION, ITERATOR_EXPRESSION, LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION,
-      LITERAL_EXPRESSION, LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION,
-      MULTIPLICATIVE_EXPRESSION, NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION,
-      PREFIX_EXPRESSION, REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION,
-      SUFFIX_EXPRESSION, SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION,
-      THIS_EXPRESSION, VALUE_EXPRESSION),
+      IS_EXPRESSION, LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION,
+      LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION,
+      NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION,
+      REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION,
+      SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION,
+      VALUE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -739,7 +736,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // assignmentOperator iteratorExpressionWrapper
+  // assignmentOperator ternaryExpressionWrapper
   public static boolean assignExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "assignExpression")) return false;
     if (!nextTokenIs(builder_, "<assign expression>", REM_EQ, AND_EQ,
@@ -750,18 +747,18 @@ public class DartParser implements PsiParser {
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<assign expression>");
     result_ = assignmentOperator(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
-    result_ = result_ && iteratorExpressionWrapper(builder_, level_ + 1);
+    result_ = result_ && ternaryExpressionWrapper(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, ASSIGN_EXPRESSION, result_, pinned_, null);
     return result_ || pinned_;
   }
 
   /* ********************************************************** */
-  // iteratorExpressionWrapper assignExpression*
+  // ternaryExpressionWrapper assignExpression*
   static boolean assignExpressionWrapper(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "assignExpressionWrapper")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = iteratorExpressionWrapper(builder_, level_ + 1);
+    result_ = ternaryExpressionWrapper(builder_, level_ + 1);
     result_ = result_ && assignExpressionWrapper_1(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -1713,7 +1710,7 @@ public class DartParser implements PsiParser {
 
   /* ********************************************************** */
   // !('!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
-  //                                | '+=' | ',' | '-' | '--' | '-=' | '...' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
+  //                                | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
   //                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
   //                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
   //                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
@@ -1732,7 +1729,7 @@ public class DartParser implements PsiParser {
   }
 
   // '!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
-  //                                | '+=' | ',' | '-' | '--' | '-=' | '...' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
+  //                                | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
   //                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
   //                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
   //                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
@@ -1765,7 +1762,6 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, MINUS);
     if (!result_) result_ = consumeToken(builder_, MINUS_MINUS);
     if (!result_) result_ = consumeToken(builder_, MINUS_EQ);
-    if (!result_) result_ = consumeToken(builder_, "...");
     if (!result_) result_ = consumeToken(builder_, DIV);
     if (!result_) result_ = consumeToken(builder_, DIV_EQ);
     if (!result_) result_ = consumeToken(builder_, COLON);
@@ -1838,14 +1834,14 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, RAW_TRIPLE_QUOTED_STRING);
     if (!result_) result_ = consumeToken(builder_, LONG_TEMPLATE_ENTRY_END);
     if (!result_) result_ = shiftRightOperator(builder_, level_ + 1);
-    if (!result_) result_ = expression_recover_0_93(builder_, level_ + 1);
+    if (!result_) result_ = expression_recover_0_92(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // '.' '.'
-  private static boolean expression_recover_0_93(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "expression_recover_0_93")) return false;
+  private static boolean expression_recover_0_92(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "expression_recover_0_92")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
@@ -2901,37 +2897,6 @@ public class DartParser implements PsiParser {
   private static boolean isExpression_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "isExpression_1")) return false;
     consumeToken(builder_, NOT);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '...' ternaryExpressionWrapper
-  public static boolean iteratorExpression(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "iteratorExpression")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<iterator expression>");
-    result_ = consumeToken(builder_, "...");
-    result_ = result_ && ternaryExpressionWrapper(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, ITERATOR_EXPRESSION, result_, false, null);
-    return result_;
-  }
-
-  /* ********************************************************** */
-  // ternaryExpressionWrapper iteratorExpression?
-  static boolean iteratorExpressionWrapper(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "iteratorExpressionWrapper")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = ternaryExpressionWrapper(builder_, level_ + 1);
-    result_ = result_ && iteratorExpressionWrapper_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // iteratorExpression?
-  private static boolean iteratorExpressionWrapper_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "iteratorExpressionWrapper_1")) return false;
-    iteratorExpression(builder_, level_ + 1);
     return true;
   }
 

@@ -426,7 +426,7 @@ parameterNameReferenceExpression ::= << nonStrictID >>
 
 expression ::= assignExpressionWrapper {recoverWhile="expression_recover"}
 private expression_recover ::= !('!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
-                               | '+=' | ',' | '-' | '--' | '-=' | '...' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
+                               | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
@@ -436,11 +436,8 @@ private expression_recover ::= !('!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | 
                                | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
                                | LONG_TEMPLATE_ENTRY_END | shiftRightOperator | ('.' '.'))
 
-private assignExpressionWrapper ::= iteratorExpressionWrapper assignExpression*
-left assignExpression ::= assignmentOperator iteratorExpressionWrapper {pin=1 extends="expression"}
-
-private iteratorExpressionWrapper ::= ternaryExpressionWrapper iteratorExpression?
-left iteratorExpression ::= '...' ternaryExpressionWrapper
+private assignExpressionWrapper ::= ternaryExpressionWrapper assignExpression*
+left assignExpression ::= assignmentOperator ternaryExpressionWrapper {pin=1} // todo right associate
 
 private ternaryExpressionWrapper ::= logicOrExpressionWrapper ternaryExpression?
 left ternaryExpression ::= '?' expression ':' ternaryExpressionWrapper
