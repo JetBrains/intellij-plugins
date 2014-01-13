@@ -99,7 +99,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     if (debugEngine == null) {
       return null;
     }
-    if (!debugEngine.prepareDebugger(project)) {
+    if (!debugEngine.prepareDebugger(project, debugEngine.getWebBrowser())) {
       return null;
     }
 

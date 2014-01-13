@@ -5,6 +5,7 @@ import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.JavaScriptDebugSettingsEditorBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.webcore.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +20,7 @@ public class JstdDebugSection extends AbstractRunSettingsSection {
   private final ComboBox myPreferredDebugBrowserComboBox;
 
   public JstdDebugSection(@NotNull Project project) {
-    myPreferredDebugBrowserComboBox = new ComboBox(JavaScriptDebugSettingsEditorBase.getEngines(project).toArray());
+    myPreferredDebugBrowserComboBox = new ComboBox(new CollectionComboBoxModel(JavaScriptDebugSettingsEditorBase.getEngines(project)));
     JavaScriptDebugSettingsEditorBase.setupBrowserComboboxRenderer(myPreferredDebugBrowserComboBox);
   }
 
