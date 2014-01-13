@@ -32,11 +32,6 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
     return AngularTestUtil.getBaseTestDataPath(AngularJSParserTest.class);
   }
 
-  @Override
-  public String getRelativeBasePath() {
-    return "/";
-  }
-
   @Nullable
   @Override
   public String getFileSuffix(String fileName) {
