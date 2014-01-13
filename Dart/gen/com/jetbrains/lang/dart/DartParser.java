@@ -89,9 +89,6 @@ public class DartParser implements PsiParser {
     else if (root_ == COMPONENT_NAME) {
       result_ = componentName(builder_, 0);
     }
-    else if (root_ == COMPOUND_LITERAL_EXPRESSION) {
-      result_ = compoundLiteralExpression(builder_, 0);
-    }
     else if (root_ == CONST_CONSTRUCTOR_EXPRESSION) {
       result_ = constConstructorExpression(builder_, 0);
     }
@@ -418,13 +415,12 @@ public class DartParser implements PsiParser {
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(ADDITIVE_EXPRESSION, ARRAY_ACCESS_EXPRESSION, ASSIGN_EXPRESSION, AS_EXPRESSION,
       BITWISE_EXPRESSION, CALL_EXPRESSION, CASCADE_REFERENCE_EXPRESSION, COMPARE_EXPRESSION,
-      COMPOUND_LITERAL_EXPRESSION, CONST_CONSTRUCTOR_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION,
-      IS_EXPRESSION, LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION,
-      LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION,
-      NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION,
-      REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION,
-      SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION,
-      VALUE_EXPRESSION),
+      CONST_CONSTRUCTOR_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION, IS_EXPRESSION,
+      LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION, LOGIC_AND_EXPRESSION,
+      LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION, NEW_EXPRESSION,
+      PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION, REFERENCE_EXPRESSION,
+      SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION, SUPER_EXPRESSION,
+      SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION, VALUE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -1311,45 +1307,6 @@ public class DartParser implements PsiParser {
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<component name>");
     result_ = nonStrictID(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, COMPONENT_NAME, result_, false, null);
-    return result_;
-  }
-
-  /* ********************************************************** */
-  // 'const'? typeArguments? (listLiteralExpression | mapLiteralExpression)
-  public static boolean compoundLiteralExpression(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "compoundLiteralExpression")) return false;
-    if (!nextTokenIs(builder_, "<compound literal expression>", LT, LBRACKET, CONST, LBRACE)) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<compound literal expression>");
-    result_ = compoundLiteralExpression_0(builder_, level_ + 1);
-    result_ = result_ && compoundLiteralExpression_1(builder_, level_ + 1);
-    result_ = result_ && compoundLiteralExpression_2(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, COMPOUND_LITERAL_EXPRESSION, result_, false, null);
-    return result_;
-  }
-
-  // 'const'?
-  private static boolean compoundLiteralExpression_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "compoundLiteralExpression_0")) return false;
-    consumeToken(builder_, CONST);
-    return true;
-  }
-
-  // typeArguments?
-  private static boolean compoundLiteralExpression_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "compoundLiteralExpression_1")) return false;
-    typeArguments(builder_, level_ + 1);
-    return true;
-  }
-
-  // listLiteralExpression | mapLiteralExpression
-  private static boolean compoundLiteralExpression_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "compoundLiteralExpression_2")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = listLiteralExpression(builder_, level_ + 1);
-    if (!result_) result_ = mapLiteralExpression(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
@@ -3010,40 +2967,56 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '[' (expressionList ','?)? ']'
+  // 'const'? typeArguments? '[' (expressionList ','?)? ']'
   public static boolean listLiteralExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "listLiteralExpression")) return false;
-    if (!nextTokenIs(builder_, LBRACKET)) return false;
+    if (!nextTokenIs(builder_, "<list literal expression>", LT, LBRACKET, CONST)) return false;
     boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, LBRACKET);
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<list literal expression>");
+    result_ = listLiteralExpression_0(builder_, level_ + 1);
     result_ = result_ && listLiteralExpression_1(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, LBRACKET);
+    result_ = result_ && listLiteralExpression_3(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, RBRACKET);
-    exit_section_(builder_, marker_, LIST_LITERAL_EXPRESSION, result_);
+    exit_section_(builder_, level_, marker_, LIST_LITERAL_EXPRESSION, result_, false, null);
     return result_;
   }
 
-  // (expressionList ','?)?
+  // 'const'?
+  private static boolean listLiteralExpression_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "listLiteralExpression_0")) return false;
+    consumeToken(builder_, CONST);
+    return true;
+  }
+
+  // typeArguments?
   private static boolean listLiteralExpression_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "listLiteralExpression_1")) return false;
-    listLiteralExpression_1_0(builder_, level_ + 1);
+    typeArguments(builder_, level_ + 1);
+    return true;
+  }
+
+  // (expressionList ','?)?
+  private static boolean listLiteralExpression_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "listLiteralExpression_3")) return false;
+    listLiteralExpression_3_0(builder_, level_ + 1);
     return true;
   }
 
   // expressionList ','?
-  private static boolean listLiteralExpression_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "listLiteralExpression_1_0")) return false;
+  private static boolean listLiteralExpression_3_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "listLiteralExpression_3_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = expressionList(builder_, level_ + 1);
-    result_ = result_ && listLiteralExpression_1_0_1(builder_, level_ + 1);
+    result_ = result_ && listLiteralExpression_3_0_1(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // ','?
-  private static boolean listLiteralExpression_1_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "listLiteralExpression_1_0_1")) return false;
+  private static boolean listLiteralExpression_3_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "listLiteralExpression_3_0_1")) return false;
     consumeToken(builder_, COMMA);
     return true;
   }
@@ -3052,9 +3025,9 @@ public class DartParser implements PsiParser {
   // NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | mapLiteralExpression | listLiteralExpression
   public static boolean literalExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "literalExpression")) return false;
-    if (!nextTokenIs(builder_, "<literal expression>", LBRACKET, LBRACE,
-      FALSE, HASH, HEX_NUMBER, NULL, NUMBER, OPEN_QUOTE,
-      RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING, TRUE)) return false;
+    if (!nextTokenIs(builder_, "<literal expression>", LT, LBRACKET,
+      CONST, LBRACE, FALSE, HASH, HEX_NUMBER, NULL,
+      NUMBER, OPEN_QUOTE, RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING, TRUE)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<literal expression>");
     result_ = consumeToken(builder_, NULL);
@@ -3174,53 +3147,69 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '{' (mapLiteralEntry (',' mapLiteralEntry)* ','? )? '}'
+  // 'const'? typeArguments? '{' (mapLiteralEntry (',' mapLiteralEntry)* ','? )? '}'
   public static boolean mapLiteralExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "mapLiteralExpression")) return false;
-    if (!nextTokenIs(builder_, LBRACE)) return false;
+    if (!nextTokenIs(builder_, "<map literal expression>", LT, CONST, LBRACE)) return false;
     boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, LBRACE);
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<map literal expression>");
+    result_ = mapLiteralExpression_0(builder_, level_ + 1);
     result_ = result_ && mapLiteralExpression_1(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, LBRACE);
+    result_ = result_ && mapLiteralExpression_3(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, RBRACE);
-    exit_section_(builder_, marker_, MAP_LITERAL_EXPRESSION, result_);
+    exit_section_(builder_, level_, marker_, MAP_LITERAL_EXPRESSION, result_, false, null);
     return result_;
   }
 
-  // (mapLiteralEntry (',' mapLiteralEntry)* ','? )?
+  // 'const'?
+  private static boolean mapLiteralExpression_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapLiteralExpression_0")) return false;
+    consumeToken(builder_, CONST);
+    return true;
+  }
+
+  // typeArguments?
   private static boolean mapLiteralExpression_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "mapLiteralExpression_1")) return false;
-    mapLiteralExpression_1_0(builder_, level_ + 1);
+    typeArguments(builder_, level_ + 1);
+    return true;
+  }
+
+  // (mapLiteralEntry (',' mapLiteralEntry)* ','? )?
+  private static boolean mapLiteralExpression_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapLiteralExpression_3")) return false;
+    mapLiteralExpression_3_0(builder_, level_ + 1);
     return true;
   }
 
   // mapLiteralEntry (',' mapLiteralEntry)* ','?
-  private static boolean mapLiteralExpression_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "mapLiteralExpression_1_0")) return false;
+  private static boolean mapLiteralExpression_3_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapLiteralExpression_3_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = mapLiteralEntry(builder_, level_ + 1);
-    result_ = result_ && mapLiteralExpression_1_0_1(builder_, level_ + 1);
-    result_ = result_ && mapLiteralExpression_1_0_2(builder_, level_ + 1);
+    result_ = result_ && mapLiteralExpression_3_0_1(builder_, level_ + 1);
+    result_ = result_ && mapLiteralExpression_3_0_2(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // (',' mapLiteralEntry)*
-  private static boolean mapLiteralExpression_1_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "mapLiteralExpression_1_0_1")) return false;
+  private static boolean mapLiteralExpression_3_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapLiteralExpression_3_0_1")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
-      if (!mapLiteralExpression_1_0_1_0(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "mapLiteralExpression_1_0_1", pos_)) break;
+      if (!mapLiteralExpression_3_0_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "mapLiteralExpression_3_0_1", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;
   }
 
   // ',' mapLiteralEntry
-  private static boolean mapLiteralExpression_1_0_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "mapLiteralExpression_1_0_1_0")) return false;
+  private static boolean mapLiteralExpression_3_0_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapLiteralExpression_3_0_1_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
@@ -3230,8 +3219,8 @@ public class DartParser implements PsiParser {
   }
 
   // ','?
-  private static boolean mapLiteralExpression_1_0_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "mapLiteralExpression_1_0_2")) return false;
+  private static boolean mapLiteralExpression_3_0_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapLiteralExpression_3_0_2")) return false;
     consumeToken(builder_, COMMA);
     return true;
   }
@@ -4027,7 +4016,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // prefixOperator prefixExpression | suffixExpressionWrapper
+  // (prefixOperator prefixExpression) | suffixExpressionWrapper
   public static boolean prefixExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "prefixExpression")) return false;
     boolean result_ = false;
@@ -5475,9 +5464,8 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (literalExpression qualifiedReferenceTail?)
+  // (literalExpression (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*)
   //                  | functionExpression
-  //                  | compoundLiteralExpression
   //                  | newExpressionOrConstOrCall
   //                  | callOrArrayAccess
   static boolean value(PsiBuilder builder_, int level_) {
@@ -5486,14 +5474,13 @@ public class DartParser implements PsiParser {
     Marker marker_ = enter_section_(builder_);
     result_ = value_0(builder_, level_ + 1);
     if (!result_) result_ = functionExpression(builder_, level_ + 1);
-    if (!result_) result_ = compoundLiteralExpression(builder_, level_ + 1);
     if (!result_) result_ = newExpressionOrConstOrCall(builder_, level_ + 1);
     if (!result_) result_ = callOrArrayAccess(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
-  // literalExpression qualifiedReferenceTail?
+  // literalExpression (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
   private static boolean value_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "value_0")) return false;
     boolean result_ = false;
@@ -5504,11 +5491,28 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // qualifiedReferenceTail?
+  // (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
   private static boolean value_0_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "value_0_1")) return false;
-    qualifiedReferenceTail(builder_, level_ + 1);
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!value_0_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "value_0_1", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
     return true;
+  }
+
+  // callExpression | arrayAccessExpression | qualifiedReferenceExpression
+  private static boolean value_0_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "value_0_1_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = callExpression(builder_, level_ + 1);
+    if (!result_) result_ = arrayAccessExpression(builder_, level_ + 1);
+    if (!result_) result_ = qualifiedReferenceExpression(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   /* ********************************************************** */

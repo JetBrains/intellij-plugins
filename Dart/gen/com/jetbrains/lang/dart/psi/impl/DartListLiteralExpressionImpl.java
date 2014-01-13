@@ -28,4 +28,10 @@ public class DartListLiteralExpressionImpl extends DartClassReferenceImpl implem
     return findChildByClass(DartExpressionList.class);
   }
 
+  @Override
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
+  }
+
 }

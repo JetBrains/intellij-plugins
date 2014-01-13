@@ -183,15 +183,14 @@ Dart File
                 PsiElement(IDENTIFIER)('aConstList')
           VAR_INIT
             PsiElement(=)('=')
-            COMPOUND_LITERAL_EXPRESSION
+            LIST_LITERAL_EXPRESSION
               PsiElement(const)('const')
-              LIST_LITERAL_EXPRESSION
-                PsiElement([)('[')
-                EXPRESSION_LIST
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('someConstant')
-                PsiElement(])(']')
+              PsiElement([)('[')
+              EXPRESSION_LIST
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('someConstant')
+              PsiElement(])(']')
         PsiElement(;)(';')
       PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE

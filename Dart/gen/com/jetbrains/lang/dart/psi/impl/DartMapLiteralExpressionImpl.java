@@ -28,4 +28,10 @@ public class DartMapLiteralExpressionImpl extends DartClassReferenceImpl impleme
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMapLiteralEntry.class);
   }
 
+  @Override
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
+  }
+
 }

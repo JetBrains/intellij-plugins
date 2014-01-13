@@ -10,4 +10,7 @@ public interface DartMapLiteralExpression extends DartExpression, DartReference 
   @NotNull
   List<DartMapLiteralEntry> getMapLiteralEntryList();
 
+  @Nullable
+  DartTypeArguments getTypeArguments();
+
 }

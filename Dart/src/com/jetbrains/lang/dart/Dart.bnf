@@ -470,7 +470,7 @@ private multiplicativeExpressionWrapper ::= prefixExpression multiplicativeExpre
 left multiplicativeExpression ::= multiplicativeOperator prefixExpression
 {mixin="com.jetbrains.lang.dart.psi.impl.DartOperatorExpressionImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-prefixExpression ::= prefixOperator prefixExpression | suffixExpressionWrapper
+prefixExpression ::= (prefixOperator prefixExpression) | suffixExpressionWrapper
 {mixin="com.jetbrains.lang.dart.psi.impl.DartOperatorExpressionImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 prefixOperator ::= '-' | '+' | '--' | '++' | '!' | '~' | '?'
 
@@ -483,9 +483,8 @@ left isExpression ::= 'is' '!'? type
 left asExpression ::= 'as' type
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-private value ::=  (literalExpression qualifiedReferenceTail?)
+private value ::=  (literalExpression (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*)
                  | functionExpression
-                 | compoundLiteralExpression
                  | newExpressionOrConstOrCall
                  | callOrArrayAccess
 
@@ -533,9 +532,6 @@ literalExpression ::= NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralE
 
 symbolLiteralExpression ::= HASH (userDefinableOperator | simpleQualifiedReferenceExpression) {pin=1}
 
-compoundLiteralExpression ::= 'const'? typeArguments? (listLiteralExpression | mapLiteralExpression)
-{mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
-
 stringLiteralExpression ::= (RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | stringTemplate)+
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
@@ -543,9 +539,9 @@ private stringTemplate ::= OPEN_QUOTE (REGULAR_STRING_PART | shortTemplateEntry 
 shortTemplateEntry ::= SHORT_TEMPLATE_ENTRY_START (thisExpression | referenceExpression) {pin=1}
 longTemplateEntry ::= LONG_TEMPLATE_ENTRY_START expression LONG_TEMPLATE_ENTRY_END {pin=1}
 
-listLiteralExpression ::= '[' (expressionList ','?)? ']'
+listLiteralExpression ::= 'const'? typeArguments? '[' (expressionList ','?)? ']'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
-mapLiteralExpression ::= '{' (mapLiteralEntry (',' mapLiteralEntry)* ','? )? '}'
+mapLiteralExpression ::= 'const'? typeArguments? '{' (mapLiteralEntry (',' mapLiteralEntry)* ','? )? '}'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 mapLiteralEntry ::= expression ':' expression {recoverWhile="map_literal_entry_recover"}
