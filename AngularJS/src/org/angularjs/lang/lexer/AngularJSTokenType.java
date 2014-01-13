@@ -1,7 +1,7 @@
 package org.angularjs.lang.lexer;
 
-import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.psi.tree.IElementType;
+import org.angularjs.lang.AngularJSLanguage;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +10,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AngularJSTokenType extends IElementType {
   public AngularJSTokenType(@NotNull @NonNls String debugName) {
-    super(debugName, JavascriptLanguage.INSTANCE);
+    super(debugName, AngularJSLanguage.INSTANCE);
   }
 }

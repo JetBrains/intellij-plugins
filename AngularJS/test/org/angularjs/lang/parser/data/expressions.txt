@@ -1,0 +1,168 @@
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSPrefixExpression
+      PsiElement(JS:MINUS)('-')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('1')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSBinaryExpression
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:PLUS)('+')
+      PsiWhiteSpace(' ')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('2.5')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSBinaryExpression
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('1')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:PLUS)('+')
+      PsiWhiteSpace(' ')
+      JSPrefixExpression
+        PsiElement(JS:MINUS)('-')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2.5')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSBinaryExpression
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('1')
+      PsiElement(JS:PLUS)('+')
+      JSBinaryExpression
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+          PsiElement(JS:MULT)('*')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('3')
+        PsiElement(JS:DIV)('/')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('4')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSBinaryExpression
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:MINUS)('-')
+        JSPrefixExpression
+          PsiElement(JS:MINUS)('-')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+      PsiElement(JS:PLUS)('+')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('1.5')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSBinaryExpression
+      JSBinaryExpression
+        JSPrefixExpression
+          PsiElement(JS:MINUS)('-')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:MINUS)('-')
+        JSPrefixExpression
+          PsiElement(JS:MINUS)('-')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+      PsiElement(JS:PLUS)('+')
+      JSBinaryExpression
+        JSBinaryExpression
+          JSPrefixExpression
+            PsiElement(JS:PLUS)('+')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('2')
+          PsiElement(JS:MULT)('*')
+          JSPrefixExpression
+            PsiElement(JS:MINUS)('-')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('3')
+        PsiElement(JS:DIV)('/')
+        JSPrefixExpression
+          PsiElement(JS:MINUS)('-')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('4')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSBinaryExpression
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
+        PsiElement(JS:DIV)('/')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+      PsiElement(JS:MULT)('*')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('3')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSBinaryExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:PLUS)('+')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+        PsiElement(JS:RPAR)(')')
+      PsiElement(JS:MULT)('*')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('3')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiElement(JS:EQ)('=')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('12')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('x')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('y')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('z')
+      PsiElement(JS:EQ)('=')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('123')
+    PsiElement(JS:SEMICOLON)(';')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiElement(JS:EQ)('=')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('123')
+    PsiElement(JS:SEMICOLON)(';')
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('b')
+      PsiElement(JS:EQ)('=')
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('234')
