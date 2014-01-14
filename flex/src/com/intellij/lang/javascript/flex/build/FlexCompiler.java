@@ -7,7 +7,6 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
-import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -66,7 +65,6 @@ import java.util.*;
 
 import static com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions.FilePathAndPathInPackage;
 import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions.ResourceFilesMode;
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
 import static com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureProblemType.Severity;
 
 public class FlexCompiler implements SourceProcessingCompiler {
@@ -359,24 +357,43 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
       checkConfiguration(module, bc, false, errorConsumer);
 
-      if (bc.getNature().isMobilePlatform() && bc.getNature().isApp()) {
-        final RunConfiguration runConfig = CompileStepBeforeRun.getRunConfiguration(scope);
-        if (runConfig instanceof FlashRunConfiguration) {
-          final FlashRunnerParameters params = ((FlashRunConfiguration)runConfig).getRunnerParameters();
-          if (module.getName().equals(params.getModuleName()) &&
-              bc.getName().equals(params.getBCName())) {
-            if (params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
-              checkPackagingOptions(module.getProject(), bc.getSdk(), bc.getAndroidPackagingOptions(),
-                                    PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
-            }
-            else if (params.getMobileRunTarget() == AirMobileRunTarget.iOSDevice) {
-              checkPackagingOptions(module.getProject(), bc.getSdk(), bc.getIosPackagingOptions(),
-                                    PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
+      final RunConfiguration runConfig = CompileStepBeforeRun.getRunConfiguration(scope);
+      if (bc.getNature().isApp() && runConfig instanceof FlashRunConfiguration) {
+        final FlashRunnerParameters params = ((FlashRunConfiguration)runConfig).getRunnerParameters();
+        if (module.getName().equals(params.getModuleName()) && bc.getName().equals(params.getBCName())) {
+          if (bc.getNature().isDesktopPlatform()) {
+            checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getAirDesktopPackagingOptions(), errorConsumer, false,
+                                              "does not matter");
+          }
+          else if (bc.getNature().isMobilePlatform()) {
+            switch (params.getMobileRunTarget()) {
+              case Emulator:
+                switch (params.getAppDescriptorForEmulator()) {
+                  case Android:
+                    checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getAndroidPackagingOptions(), errorConsumer, false,
+                                                      "does not matter");
+                    break;
+                  case IOS:
+                    checkAirVersionIfCustomDescriptor(module, bc.getSdk(), bc.getIosPackagingOptions(), errorConsumer, false,
+                                                      "does not matter");
+                    break;
+                }
+                break;
+              case AndroidDevice:
+                checkPackagingOptions(module, bc.getSdk(), bc.getAndroidPackagingOptions(),
+                                      PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
+                break;
+              case iOSSimulator:
+              case iOSDevice:
+                checkPackagingOptions(module, bc.getSdk(), bc.getIosPackagingOptions(),
+                                      PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
+                break;
             }
           }
         }
       }
     }
+
     checkSimilarOutputFiles(modulesAndBCsToCompile,
                             new Consumer<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>>() {
                               public void consume(final Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem> trinity) {
@@ -796,22 +813,22 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (bc.getOutputType() != OutputType.Application) return;
 
     if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
-      checkPackagingOptions(module.getProject(), bc.getSdk(), bc.getAirDesktopPackagingOptions(),
+      checkPackagingOptions(module, bc.getSdk(), bc.getAirDesktopPackagingOptions(),
                             PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
     }
     else if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
       if (bc.getAndroidPackagingOptions().isEnabled()) {
-        checkPackagingOptions(module.getProject(), bc.getSdk(), bc.getAndroidPackagingOptions(),
+        checkPackagingOptions(module, bc.getSdk(), bc.getAndroidPackagingOptions(),
                               PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
       }
       if (bc.getIosPackagingOptions().isEnabled()) {
-        checkPackagingOptions(module.getProject(), bc.getSdk(), bc.getIosPackagingOptions(),
+        checkPackagingOptions(module, bc.getSdk(), bc.getIosPackagingOptions(),
                               PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
       }
     }
   }
 
-  private static void checkPackagingOptions(final Project project,
+  private static void checkPackagingOptions(final Module module,
                                             final @Nullable Sdk sdk,
                                             final AirPackagingOptions packagingOptions,
                                             final String outputFolderPath,
@@ -838,20 +855,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                                                  AirPackagingConfigurableBase.Location.CustomDescriptor));
         }
         else if (sdk != null && sdk.getSdkType() != FlexmojosSdkType.getInstance()) {
-          final PsiFile file = PsiManager.getInstance(project).findFile(descriptorFile);
-          final XmlTag rootTag = file instanceof XmlFile ? ((XmlFile)file).getRootTag() : null;
-          final String ns = rootTag == null ? null : rootTag.getNamespace();
-          final String nsVersion = ns != null && ns.startsWith(FlexCommonUtils.AIR_NAMESPACE_BASE)
-                                   ? ns.substring(FlexCommonUtils.AIR_NAMESPACE_BASE.length())
-                                   : null;
-          final String airSdkVersion = FlexCommonUtils.getAirVersion(sdk.getHomePath(), sdk.getVersionString());
-
-          if (nsVersion != null && airSdkVersion != null && !nsVersion.equals(airSdkVersion)) {
-            errorConsumer.consume(FlashProjectStructureProblem
-                                    .createPackagingOptionsProblem(Severity.WARNING, packagingOptions, FlexBundle
-                                      .message("air.version.mismatch.warning", device, descriptorFile.getName(), nsVersion, airSdkVersion),
-                                                                   AirPackagingConfigurableBase.Location.CustomDescriptor));
-          }
+          checkAirVersionIfCustomDescriptor(module, sdk, packagingOptions, errorConsumer, false, "does not matter");
         }
       }
     }
@@ -947,6 +951,47 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                                                  AirPackagingConfigurableBase.Location.Keystore));
         }
       }
+    }
+  }
+
+  public static void checkAirVersionIfCustomDescriptor(final Module module,
+                                                       final Sdk sdk,
+                                                       final AirPackagingOptions packagingOptions,
+                                                       final Consumer<FlashProjectStructureProblem> errorConsumer,
+                                                       final boolean errorMessageForRunConfigValidation,
+                                                       final String bcName) {
+    if (packagingOptions.isUseGeneratedDescriptor()) return;
+    if (packagingOptions.getCustomDescriptorPath().isEmpty()) return;
+    final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(packagingOptions.getCustomDescriptorPath());
+    if (descriptorFile == null || descriptorFile.isDirectory()) return;
+    if (sdk.getSdkType() == FlexmojosSdkType.getInstance()) return;
+
+
+    final PsiFile file = PsiManager.getInstance(module.getProject()).findFile(descriptorFile);
+    final XmlTag rootTag = file instanceof XmlFile ? ((XmlFile)file).getRootTag() : null;
+    final String ns = rootTag == null ? null : rootTag.getNamespace();
+    final String nsVersion = ns != null && ns.startsWith(FlexCommonUtils.AIR_NAMESPACE_BASE)
+                             ? ns.substring(FlexCommonUtils.AIR_NAMESPACE_BASE.length())
+                             : null;
+    final String airSdkVersion = FlexCommonUtils.getAirVersion(sdk.getHomePath(), sdk.getVersionString());
+
+    if (nsVersion != null && airSdkVersion != null && !nsVersion.equals(airSdkVersion)) {
+      final String message;
+      if (errorMessageForRunConfigValidation) {
+        message = FlexBundle.message("bc.0.module.1.air.version.mismatch.warning", bcName, module.getName(), nsVersion, airSdkVersion,
+                                     FileUtil.toSystemDependentName(descriptorFile.getPath()));
+      }
+      else {
+        final String device = packagingOptions instanceof AndroidPackagingOptions
+                              ? "Android"
+                              : packagingOptions instanceof IosPackagingOptions
+                                ? "iOS"
+                                : "";
+        message = FlexBundle.message("air.version.mismatch.warning", device, descriptorFile.getName(), nsVersion, airSdkVersion);
+      }
+      errorConsumer.consume(FlashProjectStructureProblem
+                              .createPackagingOptionsProblem(Severity.WARNING, packagingOptions, message,
+                                                             AirPackagingConfigurableBase.Location.CustomDescriptor));
     }
   }
 

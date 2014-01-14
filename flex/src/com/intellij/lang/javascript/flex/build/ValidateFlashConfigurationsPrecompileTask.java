@@ -22,6 +22,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureProblemType;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Trinity;
@@ -64,8 +65,24 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
         });
 
       if (!problems.isEmpty()) {
+        boolean hasErrors = false;
+        for (Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem> problem : problems) {
+          if (problem.getThird().severity == ProjectStructureProblemType.Severity.ERROR) {
+            hasErrors = true;
+            break;
+          }
+        }
+
+        if (hasErrors) {
+          // todo remove this senseless error message when 'show first error in editor' functionality respect canNavigateToSource()
+          context.addMessage(CompilerMessageCategory.ERROR,
+                             "Flash build configurations contain errors. " +
+                             "Double-click error message below to navigate to the corresponding field in the Project Structure dialog",
+                             null, -1, -1);
+        }
+
         reportProblems(context, problems);
-        return false;
+        return !hasErrors;
       }
     }
     catch (ConfigurationException e) {
@@ -142,12 +159,6 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
 
   private static void reportProblems(final CompileContext context,
                                      final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems) {
-    // todo remove this senseless error message when 'show first error in editor' functionality respect canNavigateToSource()
-    context.addMessage(CompilerMessageCategory.ERROR,
-                       "Flash build configurations contain errors. " +
-                       "Double-click error message below to navigate to the corresponding field in the Project Structure dialog",
-                       null, -1, -1);
-
     for (Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem> trinity : problems) {
       final Module module = trinity.getFirst();
       final FlexBuildConfiguration bc = trinity.getSecond();
@@ -156,7 +167,10 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
       final String message = problem instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem
                              ? problem.errorMessage
                              : FlexBundle.message("bc.0.module.1.problem.2", bc.getName(), module.getName(), problem.errorMessage);
-      context.addMessage(CompilerMessageCategory.ERROR, message, null, -1, -1, new BCProblemNavigatable(module, bc.getName(), problem));
+      final CompilerMessageCategory severity = problem.severity == ProjectStructureProblemType.Severity.ERROR
+                                               ? CompilerMessageCategory.ERROR
+                                               : CompilerMessageCategory.WARNING;
+      context.addMessage(severity, message, null, -1, -1, new BCProblemNavigatable(module, bc.getName(), problem));
     }
   }
 
