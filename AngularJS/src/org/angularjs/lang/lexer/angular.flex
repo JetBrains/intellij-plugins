@@ -44,6 +44,7 @@ IDENT =[_$a-zA-Z][0-9a-zA-Z]*
   "false"                     { return FALSE_KEYWORD; }
   "null"                      { return NULL_KEYWORD; }
   "undefined"                 { return UNDEFINED_KEYWORD; }
+  "in"                        { return IN_KEYWORD; }
 
   {IDENT}                     { return IDENTIFIER;}
 
