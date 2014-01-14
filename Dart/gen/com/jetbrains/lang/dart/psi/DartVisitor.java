@@ -305,6 +305,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitComponent(o);
   }
 
+  public void visitMixinApplication(@NotNull DartMixinApplication o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitMixins(@NotNull DartMixins o) {
     visitPsiCompositeElement(o);
   }

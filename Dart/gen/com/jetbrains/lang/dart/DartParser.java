@@ -233,6 +233,9 @@ public class DartParser implements PsiParser {
     else if (root_ == METHOD_DECLARATION) {
       result_ = methodDeclaration(builder_, 0);
     }
+    else if (root_ == MIXIN_APPLICATION) {
+      result_ = mixinApplication(builder_, 0);
+    }
     else if (root_ == MIXINS) {
       result_ = mixins(builder_, 0);
     }
@@ -1008,7 +1011,8 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // 'abstract'? 'class' componentName typeParameters? (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody
+  // 'abstract'? 'class' componentName typeParameters? ((superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody |
+  //                                                                        '=' mixinApplication ';')
   public static boolean classDefinition(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classDefinition")) return false;
     if (!nextTokenIs(builder_, "<class definition>", ABSTRACT, CLASS)) return false;
@@ -1020,10 +1024,7 @@ public class DartParser implements PsiParser {
     result_ = result_ && componentName(builder_, level_ + 1);
     pinned_ = result_; // pin = 3
     result_ = result_ && report_error_(builder_, classDefinition_3(builder_, level_ + 1));
-    result_ = pinned_ && report_error_(builder_, classDefinition_4(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && report_error_(builder_, classDefinition_5(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && report_error_(builder_, classDefinition_6(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && classBody(builder_, level_ + 1) && result_;
+    result_ = pinned_ && classDefinition_4(builder_, level_ + 1) && result_;
     exit_section_(builder_, level_, marker_, CLASS_DEFINITION, result_, pinned_, null);
     return result_ || pinned_;
   }
@@ -1042,61 +1043,98 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // (superclass mixins?)?
+  // (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody |
+  //                                                                        '=' mixinApplication ';'
   private static boolean classDefinition_4(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classDefinition_4")) return false;
-    classDefinition_4_0(builder_, level_ + 1);
-    return true;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = classDefinition_4_0(builder_, level_ + 1);
+    if (!result_) result_ = classDefinition_4_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
-  // superclass mixins?
+  // (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody
   private static boolean classDefinition_4_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classDefinition_4_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = superclass(builder_, level_ + 1);
+    result_ = classDefinition_4_0_0(builder_, level_ + 1);
     result_ = result_ && classDefinition_4_0_1(builder_, level_ + 1);
+    result_ = result_ && classDefinition_4_0_2(builder_, level_ + 1);
+    result_ = result_ && classBody(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // (superclass mixins?)?
+  private static boolean classDefinition_4_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDefinition_4_0_0")) return false;
+    classDefinition_4_0_0_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // superclass mixins?
+  private static boolean classDefinition_4_0_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDefinition_4_0_0_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = superclass(builder_, level_ + 1);
+    result_ = result_ && classDefinition_4_0_0_0_1(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // mixins?
-  private static boolean classDefinition_4_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_4_0_1")) return false;
+  private static boolean classDefinition_4_0_0_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDefinition_4_0_0_0_1")) return false;
     mixins(builder_, level_ + 1);
     return true;
   }
 
   // interfaces?
-  private static boolean classDefinition_5(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_5")) return false;
+  private static boolean classDefinition_4_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDefinition_4_0_1")) return false;
     interfaces(builder_, level_ + 1);
     return true;
   }
 
   // ('native' stringLiteralExpression?)?
-  private static boolean classDefinition_6(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_6")) return false;
-    classDefinition_6_0(builder_, level_ + 1);
+  private static boolean classDefinition_4_0_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDefinition_4_0_2")) return false;
+    classDefinition_4_0_2_0(builder_, level_ + 1);
     return true;
   }
 
   // 'native' stringLiteralExpression?
-  private static boolean classDefinition_6_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_6_0")) return false;
+  private static boolean classDefinition_4_0_2_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDefinition_4_0_2_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, NATIVE);
-    result_ = result_ && classDefinition_6_0_1(builder_, level_ + 1);
+    result_ = result_ && classDefinition_4_0_2_0_1(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // stringLiteralExpression?
-  private static boolean classDefinition_6_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_6_0_1")) return false;
+  private static boolean classDefinition_4_0_2_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDefinition_4_0_2_0_1")) return false;
     stringLiteralExpression(builder_, level_ + 1);
     return true;
+  }
+
+  // '=' mixinApplication ';'
+  private static boolean classDefinition_4_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDefinition_4_1")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, EQ);
+    result_ = result_ && mixinApplication(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, SEMICOLON);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -3382,6 +3420,33 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = redirection(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
+  }
+
+  /* ********************************************************** */
+  // type mixins? interfaces?
+  public static boolean mixinApplication(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mixinApplication")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<mixin application>");
+    result_ = type(builder_, level_ + 1);
+    result_ = result_ && mixinApplication_1(builder_, level_ + 1);
+    result_ = result_ && mixinApplication_2(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, MIXIN_APPLICATION, result_, false, null);
+    return result_;
+  }
+
+  // mixins?
+  private static boolean mixinApplication_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mixinApplication_1")) return false;
+    mixins(builder_, level_ + 1);
+    return true;
+  }
+
+  // interfaces?
+  private static boolean mixinApplication_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mixinApplication_2")) return false;
+    interfaces(builder_, level_ + 1);
+    return true;
   }
 
   /* ********************************************************** */
