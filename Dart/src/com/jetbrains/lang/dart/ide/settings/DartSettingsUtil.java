@@ -22,16 +22,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.UUID;
 
 public class DartSettingsUtil {
+  private static final UUID DEFAULT_DARTIUM_ID = UUID.fromString("BFEE1B69-A97D-4338-8BA4-25170ADCBAA6");
 
-  public static final WebBrowser DARTIUM = WebBrowser.createCustomBrowser(BrowsersConfiguration.BrowserFamily.CHROME, "Dartium", DartIcons.Dartium_16, new NullableComputable<String>() {
-      @Override
-      @Nullable
-      public String compute() {
-        return getDartiumPath();
-      }
-    }, DartBundle.message("dartium.not.configured", CommonBundle.settingsActionPath()));
+  public static final WebBrowser DARTIUM = WebBrowser
+    .createCustomBrowser(BrowsersConfiguration.BrowserFamily.CHROME, "Dartium", DEFAULT_DARTIUM_ID, DartIcons.Dartium_16,
+                         new NullableComputable<String>() {
+                           @Override
+                           @Nullable
+                           public String compute() {
+                             return getDartiumPath();
+                           }
+                         }, DartBundle.message("dartium.not.configured", CommonBundle.settingsActionPath()));
 
   public static final String DART_SDK_PATH_PROPERTY_NAME = "dart_sdk_path";
 
