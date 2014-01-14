@@ -11,6 +11,7 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl;
 import com.intellij.psi.impl.source.xml.XmlTextImpl;
 import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.lang.AngularJSLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -37,12 +38,16 @@ public class AngularJSInjector implements MultiHostInjector {
         endIndex = startIndex >= 0 ? text.indexOf("}}", startIndex) : -1;
         endIndex = endIndex > 0 ? endIndex : text.length();
         if (startIndex >= 0) {
-          registrar.startInjecting(JavascriptLanguage.INSTANCE).
+          registrar.startInjecting(injectJavaScript() ? JavascriptLanguage.INSTANCE : AngularJSLanguage.INSTANCE).
                     addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(startIndex + 2, endIndex)).
                     doneInjecting();
         }
       } while (startIndex >= 0);
     }
+  }
+
+  private static boolean injectJavaScript() {
+    return "true".equals(System.getProperty("angularjs.inject.javascript"));
   }
 
   @NotNull
