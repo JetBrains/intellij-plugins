@@ -45,7 +45,7 @@ public class OgnlIndexedExpressionImpl extends OgnlExpressionImpl implements Ogn
 
   @Override
   @Nullable
-  public OgnlExpression getExpression() {
+  public OgnlExpression getIndexExpression() {
     List<OgnlExpression> p1 = getExpressionList();
     return p1.size() < 2 ? null : p1.get(1);
   }

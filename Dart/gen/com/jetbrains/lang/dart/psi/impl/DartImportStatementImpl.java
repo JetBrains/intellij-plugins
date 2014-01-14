@@ -36,12 +36,6 @@ public class DartImportStatementImpl extends DartPsiCompositeElementImpl impleme
 
   @Override
   @NotNull
-  public DartPathOrLibraryReference getPathOrLibraryReference() {
-    return findNotNullChildByClass(DartPathOrLibraryReference.class);
-  }
-
-  @Override
-  @NotNull
   public List<DartShowCombinator> getShowCombinatorList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartShowCombinator.class);
   }
@@ -54,7 +48,7 @@ public class DartImportStatementImpl extends DartPsiCompositeElementImpl impleme
   @Override
   @NotNull
   public DartPathOrLibraryReference getLibraryExpression() {
-    return getPathOrLibraryReference();
+    return findNotNullChildByClass(DartPathOrLibraryReference.class);
   }
 
   @Nullable

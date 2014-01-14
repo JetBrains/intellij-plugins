@@ -27,6 +27,6 @@ public interface OgnlIndexedExpression extends OgnlExpression {
   List<OgnlExpression> getExpressionList();
 
   @Nullable
-  OgnlExpression getExpression();
+  OgnlExpression getIndexExpression();
 
 }

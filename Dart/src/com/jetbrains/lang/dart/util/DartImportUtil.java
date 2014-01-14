@@ -33,7 +33,7 @@ public class DartImportUtil {
       final DartImportStatement[] importStatements = PsiTreeUtil.getChildrenOfType(file, DartImportStatement.class);
       if (importStatements != null) {
         for (DartImportStatement importStatement : importStatements) {
-          final PsiElement importTarget = importStatement.getPathOrLibraryReference().resolve();
+          final PsiElement importTarget = importStatement.getLibraryExpression().resolve();
           if (importTarget != null && DartResolver.resolveSimpleReference(importTarget, componentName) != null) {
             addShowOrRemoveHide(importStatement, componentName);
             continue libraryRootLoop;

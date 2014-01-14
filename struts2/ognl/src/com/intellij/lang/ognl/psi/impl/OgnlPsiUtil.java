@@ -63,7 +63,7 @@ class OgnlPsiUtil {
     }
 
     if (expression instanceof OgnlIndexedExpression) {
-      OgnlExpression indexExpression = ((OgnlIndexedExpression)expression).getExpression();
+      OgnlExpression indexExpression = ((OgnlIndexedExpression)expression).getIndexExpression();
       return getType(indexExpression);
     }
 

@@ -154,7 +154,7 @@ variableExpression ::= '#' IDENTIFIER {
 }
 
 variableAssignmentExpression ::= '#' IDENTIFIER '=' expression {
-  methodRenames("getExpression")="getAssignment"
+  methods=[assignment="expression"]
   pin=3
 }
 
@@ -172,7 +172,7 @@ sequenceExpression ::= '{' expressionSequenceRequired '}' { pin=1 }
 
 indexedExpression ::= (referenceExpression | variableExpression) '[' expression ']' {
   methods=[
-    expression="expression[1]"
+    indexExpression="expression[1]"
   ]
   pin=2
 }
