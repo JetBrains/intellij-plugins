@@ -80,6 +80,7 @@ public interface DartTokenTypes {
   IElementType METADATA = new DartElementType("METADATA");
   IElementType METHOD_DECLARATION = new DartElementType("METHOD_DECLARATION");
   IElementType MIXINS = new DartElementType("MIXINS");
+  IElementType MIXIN_APPLICATION = new DartElementType("MIXIN_APPLICATION");
   IElementType MULTIPLICATIVE_EXPRESSION = new DartElementType("MULTIPLICATIVE_EXPRESSION");
   IElementType MULTIPLICATIVE_OPERATOR = new DartElementType("MULTIPLICATIVE_OPERATOR");
   IElementType NAMED_ARGUMENT = new DartElementType("NAMED_ARGUMENT");
@@ -466,6 +467,9 @@ public interface DartTokenTypes {
       }
       else if (type == MIXINS) {
         return new DartMixinsImpl(node);
+      }
+      else if (type == MIXIN_APPLICATION) {
+        return new DartMixinApplicationImpl(node);
       }
       else if (type == MULTIPLICATIVE_EXPRESSION) {
         return new DartMultiplicativeExpressionImpl(node);
