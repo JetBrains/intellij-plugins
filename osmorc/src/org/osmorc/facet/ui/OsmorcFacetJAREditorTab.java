@@ -54,6 +54,7 @@ import com.intellij.ui.*;
 import com.intellij.ui.table.JBTable;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.osmorc.model.OutputPathType;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.MyErrorText;
@@ -70,7 +71,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
-import static org.osmorc.facet.OsmorcFacetConfiguration.OutputPathType.*;
+import static org.jetbrains.jps.osmorc.model.OutputPathType.*;
 
 /**
  * The facet editor tab which is used to set up Osmorc facet settings concerning the bundle JAR created by Osmorc.
@@ -368,7 +369,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     String jarFileName = getJarFileName();
 
 
-    OsmorcFacetConfiguration.OutputPathType pathType = getSelectedOutputPathType();
+    OutputPathType pathType = getSelectedOutputPathType();
     // Build a complete path if the user wants to put the file into some specific path.
     if (pathType == SpecificOutputPath) {
       String completeOutputPath = new File(fileLocation, jarFileName).getPath();
@@ -392,7 +393,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     return myJarOutputPathChooser.getText();
   }
 
-  OsmorcFacetConfiguration.OutputPathType getSelectedOutputPathType() {
+  OutputPathType getSelectedOutputPathType() {
     return myPlaceInProjectWideRadioButton.isSelected()
            ? OsgiOutputPath
            : myPlaceInCompilerOutputPathRadioButton.isSelected()
@@ -402,7 +403,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
 
   public void reset() {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
-    OsmorcFacetConfiguration.OutputPathType outputPathType = configuration.getOutputPathType();
+    OutputPathType outputPathType = configuration.getOutputPathType();
     myPlaceInCompilerOutputPathRadioButton.setSelected(outputPathType == CompilerOutputPath);
     myPlaceInProjectWideRadioButton.setSelected(outputPathType == OsgiOutputPath);
     myPlaceInThisPathRadioButton.setSelected(outputPathType == SpecificOutputPath);

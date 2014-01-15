@@ -33,6 +33,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.osmorc.model.OutputPathType;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ProjectSettings;
 
@@ -76,12 +77,12 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
       String jarFileName = module.getName().replaceAll("[\\s]", "_") + ".jar";
 
       // by default put stuff into the compiler output path.
-      OsmorcFacetConfiguration.OutputPathType outputPathType = OsmorcFacetConfiguration.OutputPathType.CompilerOutputPath;
+      OutputPathType outputPathType = OutputPathType.CompilerOutputPath;
       ProjectSettings projectSettings = ProjectSettings.getInstance(module.getProject());
       if (projectSettings != null) {
         String bundlesOutputPath = projectSettings.getBundlesOutputPath();
         if (StringUtil.isNotEmpty(bundlesOutputPath)) {
-          outputPathType = OsmorcFacetConfiguration.OutputPathType.OsgiOutputPath;
+          outputPathType = OutputPathType.OsgiOutputPath;
         }
       }
 

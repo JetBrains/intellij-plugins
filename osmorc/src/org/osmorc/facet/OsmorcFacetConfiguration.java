@@ -45,6 +45,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.osmorc.model.OutputPathType;
 import org.osgi.framework.Constants;
 import org.osmorc.OsmorcProjectComponent;
 import org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab;
@@ -680,24 +681,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
    */
   public void setFacet(OsmorcFacet facet) {
     myFacet = facet;
-  }
-
-  /**
-   * The type of output path, where to put the resulting jar.
-   */
-  public enum OutputPathType {
-    /**
-     * Use the default compiler output path.
-     */
-    CompilerOutputPath,
-    /**
-     * Use the OSGi output path specified in the facet settings.
-     */
-    OsgiOutputPath,
-    /**
-     * Use a specific output path for this facet.
-     */
-    SpecificOutputPath
   }
 
   /**

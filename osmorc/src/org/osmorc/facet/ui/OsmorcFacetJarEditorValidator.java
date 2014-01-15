@@ -9,6 +9,7 @@ import com.intellij.facet.ui.ValidationResult;
 import com.intellij.openapi.roots.ui.configuration.FacetsProvider;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.osmorc.model.OutputPathType;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 
@@ -33,8 +34,8 @@ public class OsmorcFacetJarEditorValidator extends FacetEditorValidator {
 
   @Override
   public ValidationResult check() {
-    OsmorcFacetConfiguration.OutputPathType type = myJarEditorTab.getSelectedOutputPathType();
-    if (type == OsmorcFacetConfiguration.OutputPathType.SpecificOutputPath) {
+    OutputPathType type = myJarEditorTab.getSelectedOutputPathType();
+    if (type == OutputPathType.SpecificOutputPath) {
       String path = myJarEditorTab.getSelectedOutputPath();
       if (path.length() == 0) {
         return new ValidationResult("You need to specify an output path for your bundle.", new FacetConfigurationQuickFix() {

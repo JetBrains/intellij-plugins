@@ -35,6 +35,7 @@ import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.*;
+import org.jetbrains.jps.osmorc.model.OutputPathType;
 import org.osgi.framework.Constants;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
@@ -189,14 +190,13 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
       // FiX for IDEA-67088, preserve existing output path settings on reimport.
       switch (conf.getOutputPathType()) {
         case OsgiOutputPath:
-          conf.setJarFileLocation(jarFileName, OsmorcFacetConfiguration.OutputPathType.OsgiOutputPath);
+          conf.setJarFileLocation(jarFileName, OutputPathType.OsgiOutputPath);
           break;
         case SpecificOutputPath:
-          conf.setJarFileLocation(new File(conf.getJarFilePath(), jarFileName).getPath(),
-                                  OsmorcFacetConfiguration.OutputPathType.SpecificOutputPath);
+          conf.setJarFileLocation(new File(conf.getJarFilePath(), jarFileName).getPath(), OutputPathType.SpecificOutputPath);
           break;
         default:
-          conf.setJarFileLocation(jarFileName, OsmorcFacetConfiguration.OutputPathType.CompilerOutputPath);
+          conf.setJarFileLocation(jarFileName, OutputPathType.CompilerOutputPath);
       }
     }
   }

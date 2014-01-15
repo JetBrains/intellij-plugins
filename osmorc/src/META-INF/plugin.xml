@@ -139,6 +139,8 @@
 
     <compiler implementation="org.osmorc.make.BundleCompiler"/>
 
+    <compileServer.plugin classpath="osmorc-jps-plugin.jar"/>
+
     <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
 
     <projectConfigurable instance="org.osmorc.settings.ProjectSettingsEditor" id="reference.settings.project.osgi.project.settings"

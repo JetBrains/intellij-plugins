@@ -39,6 +39,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.osmorc.model.OutputPathType;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
@@ -115,7 +116,7 @@ public class ProjectSettingsEditorComponent {
               OsmorcFacet facet = OsmorcFacet.getInstance(module);
               if (facet != null) {
                 OsmorcFacetConfiguration configuration = facet.getConfiguration();
-                configuration.setJarFileLocation(configuration.getJarFileName(), OsmorcFacetConfiguration.OutputPathType.OsgiOutputPath);
+                configuration.setJarFileLocation(configuration.getJarFileName(), OutputPathType.OsgiOutputPath);
               }
             }
           }
