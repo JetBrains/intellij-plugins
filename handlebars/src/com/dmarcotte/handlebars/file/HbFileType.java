@@ -65,7 +65,7 @@ public class HbFileType extends LanguageFileType implements TemplateLanguageFile
       return null;
     }
 
-    return associatedFileType.extractCharsetFromFileContent(project, file, content);
+    return CharsetUtil.extractCharsetFromFileContent(project, file, associatedFileType, content);
   }
 
   private static LanguageFileType getAssociatedFileType(VirtualFile file, Project project) {
