@@ -1,18 +1,14 @@
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSAssignmentExpression
-      JSDefinitionExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('a')
+  JSVarStatement
+    JSVariable
+      PsiElement(JS:IDENTIFIER)('a')
       PsiElement(JS:EQ)('=')
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('1')
     PsiElement(JS:SEMICOLON)(';')
-  JSExpressionStatement
-    JSAssignmentExpression
-      JSDefinitionExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('b')
+  JSVarStatement
+    JSVariable
+      PsiElement(JS:IDENTIFIER)('b')
       PsiElement(JS:EQ)('=')
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('3')

@@ -2,6 +2,7 @@ package org.angularjs.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.parsing.ExpressionParser;
@@ -25,6 +26,14 @@ public class AngularJSParser extends JavaScriptParser<ExpressionParser, Statemen
         final IElementType firstToken = builder.getTokenType();
         if (firstToken == JSTokenTypes.LBRACE) {
           parseExpressionStatement();
+          checkForSemicolon();
+          return;
+        }
+        if (isIdentifierToken(firstToken) && builder.lookAhead(1) == JSTokenTypes.EQ) {
+          PsiBuilder.Marker marker = builder.mark();
+          parseVarDeclaration(false);
+          checkForSemicolon();
+          marker.done(JSStubElementTypes.VAR_STATEMENT);
           return;
         }
         super.doParseStatement(canHaveClasses);

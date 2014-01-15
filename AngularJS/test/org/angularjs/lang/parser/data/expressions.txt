@@ -122,11 +122,9 @@ ASTWrapperPsiElement(FILE)
         PsiElement(JS:NUMERIC_LITERAL)('3')
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSAssignmentExpression
-      JSDefinitionExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('a')
+  JSVarStatement
+    JSVariable
+      PsiElement(JS:IDENTIFIER)('a')
       PsiElement(JS:EQ)('=')
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('12')
@@ -149,20 +147,16 @@ ASTWrapperPsiElement(FILE)
     PsiElement(JS:SEMICOLON)(';')
 ------
 ASTWrapperPsiElement(FILE)
-  JSExpressionStatement
-    JSAssignmentExpression
-      JSDefinitionExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('a')
+  JSVarStatement
+    JSVariable
+      PsiElement(JS:IDENTIFIER)('a')
       PsiElement(JS:EQ)('=')
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('123')
     PsiElement(JS:SEMICOLON)(';')
-  JSExpressionStatement
-    JSAssignmentExpression
-      JSDefinitionExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('b')
+  JSVarStatement
+    JSVariable
+      PsiElement(JS:IDENTIFIER)('b')
       PsiElement(JS:EQ)('=')
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('234')
