@@ -1,15 +1,20 @@
 package org.angularjs.lang;
 
-import com.intellij.lang.Language;
-import com.intellij.lang.javascript.JavascriptLanguage;
+import com.intellij.lang.javascript.DialectOptionHolder;
+import com.intellij.lang.javascript.JSLanguageDialect;
 
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSLanguage extends Language {
+public class AngularJSLanguage extends JSLanguageDialect {
   public static AngularJSLanguage INSTANCE = new AngularJSLanguage();
 
   protected AngularJSLanguage() {
-    super(JavascriptLanguage.INSTANCE, "AngularJS");
+    super("AngularJS", DialectOptionHolder.OTHER);
+  }
+
+  @Override
+  public String getFileExtension() {
+    return "js";
   }
 }
