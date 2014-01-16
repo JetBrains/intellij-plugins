@@ -17,3 +17,11 @@
 /**
  * @name ng.directive:ngController
  */
+
+/**
+ * @name ng.directive:ngInclude
+ */
+
+/**
+ * @name ng.directive:ngInclude#$includeContentRequested
+ */

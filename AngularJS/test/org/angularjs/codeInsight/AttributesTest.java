@@ -25,6 +25,10 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("standard.html", "standard.after.html", "angular.js");
   }
 
+  public void testNgInclude() {
+    myFixture.testCompletion("ng-include.html", "ng-include.after.html", "angular.js");
+  }
+
   public void testStandardAttributesResolve() {
     myFixture.configureByFiles("standard.after.html", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-mo<caret>del", myFixture.getFile());

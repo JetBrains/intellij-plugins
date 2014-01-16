@@ -59,10 +59,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           final Function<String, String> converter = NAME_CONVERTERS.get(command);
           final String defaultName = StringUtil.unquoteString(argument.getText());
           final String name = converter != null ? converter.fun(argument.getText()) : defaultName;
-          visitor.storeAdditionalData(argument, index.toString(), name, argument.getTextOffset());
-          visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), name, argument.getTextOffset());
-          if (!StringUtil.equals(defaultName, name)) {
-            visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), defaultName, argument.getTextOffset());
+          if (name != null) {
+            visitor.storeAdditionalData(argument, index.toString(), name, argument.getTextOffset());
+            visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), name, argument.getTextOffset());
+            if (!StringUtil.equals(defaultName, name)) {
+              visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), defaultName, argument.getTextOffset());
+            }
           }
         }
       }
@@ -94,9 +96,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       assert remainingLineContent != null;
       final int offset = comment.getTextOffset() + comment.getText().indexOf(matchName);
       final String attributeName = getAttributeName(remainingLineContent.substring(1));
-      visitor.storeAdditionalData(comment, AngularDirectivesIndex.INDEX_ID.toString(), attributeName, offset);
-      visitor.storeAdditionalData(comment, AngularSymbolIndex.INDEX_ID.toString(), attributeName, offset);
-      visitor.storeAdditionalData(comment, AngularSymbolIndex.INDEX_ID.toString(), remainingLineContent.substring(1), offset);
+      if (attributeName != null) {
+        visitor.storeAdditionalData(comment, AngularDirectivesIndex.INDEX_ID.toString(), attributeName, offset);
+        visitor.storeAdditionalData(comment, AngularSymbolIndex.INDEX_ID.toString(), attributeName, offset);
+        visitor.storeAdditionalData(comment, AngularSymbolIndex.INDEX_ID.toString(), remainingLineContent.substring(1), offset);
+      }
     }
   }
 
@@ -105,6 +109,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static String getAttributeName(final String text) {
+    if (text.contains("#")) return null;
     final String[] split = StringUtil.unquoteString(text).split("(?=[A-Z])");
     for (int i = 0; i < split.length; i++) {
       split[i] = StringUtil.decapitalize(split[i]);

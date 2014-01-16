@@ -15,7 +15,7 @@ import com.intellij.util.indexing.ID;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 2;
+  public static final int BASE_VERSION = 4;
 
   public static JSNamedElementProxy resolve(final Project project, final ID<String, Void> index, final String lookupKey) {
     final Ref<JSNamedElementProxy> result = Ref.create();
