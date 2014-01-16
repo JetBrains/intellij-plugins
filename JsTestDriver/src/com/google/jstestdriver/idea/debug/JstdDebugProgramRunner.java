@@ -12,17 +12,17 @@ import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.runners.BaseProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.ide.browsers.WebBrowser;
-import com.intellij.javascript.debugger.engine.JSDebugEngine;
+import com.intellij.javascript.debugger.execution.JsRunners;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
 import com.intellij.xdebugger.XDebugProcess;
@@ -38,7 +38,7 @@ import java.io.PrintWriter;
 /**
  * @author Sergey Simonchik
  */
-public class JstdDebugProgramRunner extends GenericProgramRunner {
+public class JstdDebugProgramRunner extends BaseProgramRunner {
   private static final String DEBUG_RUNNER_ID = JstdDebugProgramRunner.class.getSimpleName();
   private static Boolean IS_AVAILABLE = null;
 
@@ -50,7 +50,12 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
 
   @Override
   public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-    return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) && profile instanceof JstdRunConfiguration;
+    if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) && profile instanceof JstdRunConfiguration) {
+      return !((JstdRunConfiguration) profile).getRunSettings().isExternalServerType();
+    }
+    else {
+      return false;
+    }
   }
 
   public static boolean isAvailable() {
@@ -65,35 +70,34 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
   }
 
   @Override
-  protected RunContentDescriptor doExecute(@NotNull Project project,
-                                           @NotNull RunProfileState state,
-                                           @Nullable RunContentDescriptor contentToReuse,
-                                           @NotNull ExecutionEnvironment env) throws ExecutionException {
-    JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
-    if (runConfiguration.getRunSettings().isExternalServerType()) {
-      throw new ExecutionException("Debug is available only for local browsers captured by a local JsTestDriver server.");
-    }
+  protected void startRunProfile(@NotNull final ExecutionEnvironment environment,
+                                 @Nullable Callback callback,
+                                 @NotNull final Project project,
+                                 @NotNull RunProfileState state) throws ExecutionException {
+    final JstdRunConfiguration runConfiguration = (JstdRunConfiguration) environment.getRunProfile();
     JstdRunConfigurationVerifier.checkJstdServerAndBrowserEnvironment(project, runConfiguration.getRunSettings(), true);
-    return startSession(project, contentToReuse, env, runConfiguration);
+
+    final JstdDebugBrowserInfo debugBrowserInfo = JstdDebugBrowserInfo.build(runConfiguration.getRunSettings());
+    if (debugBrowserInfo == null) {
+      throw new ExecutionException("Cannot find a browser that supports debugging.");
+    }
+
+    JsRunners.start(environment, callback, project, state, Pair.create(debugBrowserInfo.getDebugEngine(), debugBrowserInfo.getBrowser()), new JsRunners.Starter() {
+      @Nullable
+      @Override
+      public RunContentDescriptor start(@Nullable RunContentDescriptor contentToReuse) throws ExecutionException {
+        return startSession(project, contentToReuse, environment, runConfiguration, debugBrowserInfo);
+      }
+    });
   }
 
   @Nullable
   private RunContentDescriptor startSession(@NotNull Project project,
                                             @Nullable RunContentDescriptor contentToReuse,
                                             @NotNull ExecutionEnvironment env,
-                                            @NotNull JstdRunConfiguration runConfiguration) throws ExecutionException {
-    JstdDebugBrowserInfo debugBrowserInfo = JstdDebugBrowserInfo.build(runConfiguration.getRunSettings());
-    if (debugBrowserInfo == null) {
-      throw new ExecutionException("Can not find a browser that supports debugging.");
-    }
-    FileDocumentManager.getInstance().saveAllDocuments();
-
-    final JSDebugEngine debugEngine = debugBrowserInfo.getDebugEngine();
+                                            @NotNull JstdRunConfiguration runConfiguration,
+                                            @NotNull final JstdDebugBrowserInfo debugBrowserInfo) throws ExecutionException {
     final WebBrowser browser = debugBrowserInfo.getBrowser();
-    if (!debugEngine.prepareDebugger(project, browser)) {
-      return null;
-    }
-
     final Url url;
     if (browser.getFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME)) {
       url = Urls.newHttpUrl("127.0.0.1:" + JstdToolWindowPanel.serverPort, debugBrowserInfo.getCapturedBrowserUrl());
@@ -111,7 +115,8 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
       @Override
       @NotNull
       public XDebugProcess start(@NotNull XDebugSession session) {
-        JSDebugProcess<?> process = debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, false);
+        JSDebugProcess<?> process = debugBrowserInfo.getDebugEngine().createDebugProcess(session, browser, fileFinder, url, executionResult,
+                                                                                         false);
         process.setElementsInspectorEnabled(false);
         return process;
       }
