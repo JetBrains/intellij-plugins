@@ -322,4 +322,17 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
       "<caret>{{foo}}"
     );
   }
+
+  public void testFinishingClosingTag() {
+    doCharTest(
+      '/',
+      "<div class=\"entry\">\n" +
+      "    {{#if}}test{{<caret>\n" +
+      "</div>",
+
+      "<div class=\"entry\">\n" +
+      "    {{#if}}test{{/if}}<caret>\n" +
+      "</div>"
+    );
+  }
 }

@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HbTypedHandler extends TypedHandlerDelegate {
 
+  public static final String CLOSE_BRACES = "}}";
+
   @Override
   public Result beforeCharTyped(char c, Project project, Editor editor, PsiFile file, FileType fileType) {
     int offset = editor.getCaretModel().getOffset();
@@ -61,6 +63,10 @@ public class HbTypedHandler extends TypedHandlerDelegate {
   public Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file) {
     int offset = editor.getCaretModel().getOffset();
     FileViewProvider provider = file.getViewProvider();
+
+    if (provider.getBaseLanguage() != HbLanguage.INSTANCE) {
+      return Result.CONTINUE;
+    }
 
     if (offset < 2 || offset > editor.getDocument().getTextLength()) {
       return Result.CONTINUE;
@@ -108,9 +114,29 @@ public class HbTypedHandler extends TypedHandlerDelegate {
     if (closeBraceCompleted || (c == '}' && previousChar.equals("}"))) {
       autoInsertCloseTag(project, offset, editor, provider);
       adjustMustacheFormatting(project, offset, editor, file, provider);
+    } else if (c == '/' && previousChar.equals("{")) {
+      finishCloseTag(offset, editor, provider);
     }
 
     return Result.CONTINUE;
+  }
+
+  private static void finishCloseTag(int offset, Editor editor, FileViewProvider provider) {
+    PsiElement elementAtCaret = provider.findElementAt(offset - 1, HbLanguage.class);
+    if (elementAtCaret != null) {
+      HbBlockWrapper block = PsiTreeUtil.getParentOfType(elementAtCaret, HbBlockWrapper.class);
+      if (block != null) {
+        final HbOpenBlockMustache open = PsiTreeUtil.findChildOfType(block, HbOpenBlockMustache.class);
+        final HbCloseBlockMustache close = PsiTreeUtil.findChildOfType(block, HbCloseBlockMustache.class);
+        if (open != null && close == null) {
+          final HbMustacheName mustacheName = PsiTreeUtil.findChildOfType(open, HbMustacheName.class);
+          if (mustacheName != null) {
+            editor.getDocument().insertString(offset, mustacheName.getText() + CLOSE_BRACES);
+            editor.getCaretModel().moveToOffset(offset + mustacheName.getText().length() + CLOSE_BRACES.length());
+          }
+        }
+      }
+    }
   }
 
   /**
