@@ -17,7 +17,7 @@ import static com.intellij.psi.TokenType.WHITE_SPACE;
 
 %function advance
 
-WHITE_SPACE     = ([ \t\n\r\v\u00A0]|\\\n)+
+WHITE_SPACE     = ([ \t\n\r\u000B\u00A0]|\\\n)+
 
 DIGIT = [0-9]
 NUMBER=({DIGIT}+)|({FP_LITERAL1})|({FP_LITERAL2})|({FP_LITERAL3})|({FP_LITERAL4})

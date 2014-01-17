@@ -13,6 +13,10 @@ public class AngularJSLexerTest extends LexerTestCase {
     doFileTest("js");
   }
 
+  public void testKey_value() {
+    doFileTest("js");
+  }
+
   public void testExpr() {
     doFileTest("js");
   }
