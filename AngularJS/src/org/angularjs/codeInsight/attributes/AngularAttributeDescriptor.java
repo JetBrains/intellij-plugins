@@ -1,6 +1,6 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.index.AngularDirectivesIndex;
+import org.angularjs.index.AngularDirectivesIndex;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlElement;

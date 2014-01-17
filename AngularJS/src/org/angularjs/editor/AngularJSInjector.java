@@ -3,7 +3,7 @@ package org.angularjs.editor;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSTargetedInjector;
-import com.intellij.lang.javascript.index.AngularDirectivesIndex;
+import org.angularjs.index.AngularDirectivesIndex;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;

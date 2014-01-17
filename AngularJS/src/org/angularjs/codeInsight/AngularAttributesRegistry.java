@@ -1,7 +1,7 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.javascript.index.AngularControllerIndex;
-import com.intellij.lang.javascript.index.AngularModuleIndex;
+import org.angularjs.index.AngularControllerIndex;
+import org.angularjs.index.AngularModuleIndex;
 import com.intellij.openapi.project.Project;
 import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
 import org.jetbrains.annotations.NotNull;

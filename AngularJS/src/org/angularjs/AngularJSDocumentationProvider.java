@@ -1,7 +1,7 @@
 package org.angularjs;
 
 import com.intellij.lang.documentation.DocumentationProviderEx;
-import com.intellij.lang.javascript.index.AngularDirectivesIndex;
+import org.angularjs.index.AngularDirectivesIndex;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;

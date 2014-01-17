@@ -51,10 +51,10 @@
                         serviceImplementation="org.angularjs.settings.AngularJSConfig"/>
     <editorSmartKeysConfigurable instance="org.angularjs.settings.AngularJSConfigurationPage"/>
 
-    <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularDirectivesIndex"/>
-    <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularControllerIndex"/>
-    <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularModuleIndex"/>
-    <fileBasedIndex implementation="com.intellij.lang.javascript.index.AngularSymbolIndex"/>
+    <fileBasedIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
+    <fileBasedIndex implementation="org.angularjs.index.AngularControllerIndex"/>
+    <fileBasedIndex implementation="org.angularjs.index.AngularModuleIndex"/>
+    <fileBasedIndex implementation="org.angularjs.index.AngularSymbolIndex"/>
 
     <gotoSymbolContributor implementation="org.angularjs.navigation.AngularGotoSymbolContributor"/>
     <lang.documentationProvider language="JavaScript" implementationClass="org.angularjs.AngularJSDocumentationProvider" />

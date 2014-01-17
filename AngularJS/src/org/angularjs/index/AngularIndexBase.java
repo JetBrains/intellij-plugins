@@ -1,5 +1,7 @@
-package com.intellij.lang.javascript.index;
+package org.angularjs.index;
 
+import com.intellij.lang.javascript.index.JSEntryIndex;
+import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;

@@ -1,6 +1,6 @@
 package org.angularjs.navigation;
 
-import com.intellij.lang.javascript.index.AngularSymbolIndex;
+import org.angularjs.index.AngularSymbolIndex;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.navigation.ChooseByNameContributor;
 import com.intellij.navigation.NavigationItem;
