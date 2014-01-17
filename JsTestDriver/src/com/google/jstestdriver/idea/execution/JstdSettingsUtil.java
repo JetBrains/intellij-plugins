@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScopes;
+import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -108,7 +108,7 @@ public class JstdSettingsUtil {
     if (module == null) {
       return null;
     }
-    GlobalSearchScope directorySearchScope = GlobalSearchScopes.directoryScope(project, directory, true);
+    GlobalSearchScope directorySearchScope = GlobalSearchScopesCore.directoryScope(project, directory, true);
     return module.getModuleContentWithDependenciesScope().intersectWith(directorySearchScope);
   }
 
