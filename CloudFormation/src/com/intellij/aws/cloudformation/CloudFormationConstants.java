@@ -8,7 +8,9 @@ import java.util.Set;
 public class CloudFormationConstants {
   public static final Set<String> PredefinedParameters = new HashSet<String>(
     Arrays.asList(
+      "AWS::AccountId",
       "AWS::NotificationARNs",
+      "AWS::NoValue",
       "AWS::Region",
       "AWS::StackId",
       "AWS::StackName"
