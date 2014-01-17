@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface DartLibraryStatement extends DartPsiCompositeElement {
 
   @NotNull
+  List<DartMetadata> getMetadataList();
+
+  @NotNull
   DartQualifiedComponentName getQualifiedComponentName();
 
   @NotNull

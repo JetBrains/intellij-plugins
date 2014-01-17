@@ -29,6 +29,12 @@ public class DartClassTypeAliasImpl extends TypedefDartPsiClass implements DartC
   }
 
   @Override
+  @NotNull
+  public List<DartMetadata> getMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  }
+
+  @Override
   @Nullable
   public DartMixins getMixins() {
     return findChildByClass(DartMixins.class);

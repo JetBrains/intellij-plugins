@@ -96,7 +96,7 @@ public class DartResolveUtil {
     for (int size = namedFormalParameters.getDefaultFormalNamedParameterList().size(); i - normalFormalParameterList.size() < size; ++i) {
       final DartDefaultFormalNamedParameter defaultFormalParameter =
         namedFormalParameters.getDefaultFormalNamedParameterList().get(i - normalFormalParameterList.size());
-      final DartType dartType = findType(defaultFormalParameter);
+      final DartType dartType = findType(defaultFormalParameter.getNormalFormalParameter());
       if (dartType != null && !canAssign(resolveClassByType(dartType).getDartClass(), classes[i])) {
         return false;
       }
@@ -128,13 +128,15 @@ public class DartResolveUtil {
       return findType(((DartDefaultFormalNamedParameter)element).getNormalFormalParameter());
     }
     if (element instanceof DartNormalFormalParameter) {
-      return findType(((DartNormalFormalParameter)element).getVarDeclaration());
-    }
-    if (element instanceof DartVarDeclaration) {
-      return findType(((DartVarDeclaration)element).getVarAccessDeclaration());
-    }
-    if (element instanceof DartVarAccessDeclaration) {
-      return ((DartVarAccessDeclaration)element).getType();
+      final DartFunctionSignature functionSignature = ((DartNormalFormalParameter)element).getFunctionSignature();
+      final DartFieldFormalParameter fieldFormalParameter = ((DartNormalFormalParameter)element).getFieldFormalParameter();
+      final DartSimpleFormalParameter simpleFormalParameter = ((DartNormalFormalParameter)element).getSimpleFormalParameter();
+
+      if (functionSignature != null) {
+        // todo return some FUNCTION type?
+      }
+      if (fieldFormalParameter != null) return fieldFormalParameter.getType();
+      if (simpleFormalParameter != null) return simpleFormalParameter.getType();
     }
     return null;
   }
@@ -804,8 +806,9 @@ public class DartResolveUtil {
     if (element == null) {
       return DartClassResolveResult.create(null);
     }
+    final PsiElement parentElement = element.getParent();
     if (element instanceof DartComponentName) {
-      return getDartClassResolveResult(element.getParent(), specialization);
+      return getDartClassResolveResult(parentElement, specialization);
     }
     if (element instanceof DartClass) {
       final DartClass dartClass = (DartClass)element;
@@ -830,8 +833,8 @@ public class DartResolveUtil {
       return specialization.get(null, element.getText());
     }
 
-    if (element instanceof DartVarAccessDeclaration && element.getParent() instanceof DartForInPart) {
-      final DartForInPart forInPart = (DartForInPart)element.getParent();
+    if (element instanceof DartVarAccessDeclaration && parentElement instanceof DartForInPart) {
+      final DartForInPart forInPart = (DartForInPart)parentElement;
       return resolveForInPartClass(forInPart);
     }
 
@@ -840,18 +843,19 @@ public class DartResolveUtil {
       return resolveForInPartClass(forInPart);
     }
 
-    if (element instanceof DartNormalFormalParameter &&
-        element.getParent() instanceof DartFormalParameterList &&
-        element.getParent().getParent() instanceof DartFunctionExpression &&
-        element.getParent().getParent().getParent() instanceof DartArgumentList) {
-      final int parameterIndex = getParameterIndex(element, ((DartFormalParameterList)element.getParent()));
-      final int argumentIndex = getArgumentIndex(element.getParent().getParent());
+    if (element instanceof DartSimpleFormalParameter &&
+        parentElement instanceof DartNormalFormalParameter &&
+        parentElement.getParent() instanceof DartFormalParameterList &&
+        parentElement.getParent().getParent() instanceof DartFunctionExpression &&
+        parentElement.getParent().getParent().getParent() instanceof DartArgumentList) {
+      final int parameterIndex = getParameterIndex(parentElement, ((DartFormalParameterList)parentElement.getParent()));
+      final int argumentIndex = getArgumentIndex(parentElement.getParent().getParent());
       final DartCallExpression callExpression = PsiTreeUtil.getParentOfType(element, DartCallExpression.class);
       final DartReference callReference = callExpression == null ? null : (DartReference)callExpression.getExpression();
       final PsiElement target = callReference == null ? null : callReference.resolve();
       final PsiElement argument = target == null ? null : findParameter(target.getParent(), argumentIndex);
       if (argument instanceof DartNormalFormalParameter) {
-        final DartType dartType = findParameterType(((DartNormalFormalParameter)argument).getFunctionDeclaration(), parameterIndex);
+        final DartType dartType = findParameterType(((DartNormalFormalParameter)argument).getFunctionSignature(), parameterIndex);
         final DartClassResolveResult callClassResolveResult = getLeftClassResolveResult(callReference);
         return getDartClassResolveResult(dartType, callClassResolveResult.getSpecialization());
       }
@@ -859,7 +863,7 @@ public class DartResolveUtil {
     }
 
     final DartVarInit varInit = PsiTreeUtil.getChildOfType(
-      element instanceof DartVarDeclarationListPart ? element : element.getParent(),
+      element instanceof DartVarDeclarationListPart ? element : parentElement,
       DartVarInit.class
     );
     final DartExpression initExpression = varInit == null ? null : varInit.getExpression();
@@ -884,18 +888,11 @@ public class DartResolveUtil {
     if (parameterList == null) {
       return null;
     }
-    final DartNormalFormalParameter parameter = ContainerUtil.find(
-      parameterList.getNormalFormalParameterList(),
-      new Condition<DartNormalFormalParameter>() {
-        @Override
-        public boolean value(DartNormalFormalParameter parameter) {
-          final DartComponentName componentName = parameter.findComponentName();
-          return componentName != null && name.equals(componentName.getText());
-        }
-      }
-    );
 
-    if (parameter != null) return parameter.getComponentName();
+    for (DartNormalFormalParameter parameter : parameterList.getNormalFormalParameterList()) {
+      final DartComponentName componentName = parameter.findComponentName();
+      if (componentName != null && name.equals(componentName.getText())) return componentName;
+    }
 
     final DartNamedFormalParameters namedFormalParameters = parameterList.getNamedFormalParameters();
     if (namedFormalParameters == null) return null;

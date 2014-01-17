@@ -29,6 +29,12 @@ public class DartAbstractOperatorDeclarationImpl extends AbstractDartOperator im
   }
 
   @Override
+  @NotNull
+  public List<DartMetadata> getMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  }
+
+  @Override
   @Nullable
   public DartReturnType getReturnType() {
     return findChildByClass(DartReturnType.class);

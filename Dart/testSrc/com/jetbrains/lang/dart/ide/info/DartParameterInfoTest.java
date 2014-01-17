@@ -63,11 +63,11 @@ public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
     doTest("int x, int y", 1);
   }
 
-  public void testParamInfo6() throws Throwable {
+  public void _testParamInfo6() throws Throwable {
     doTest("int x, int y = 239", 1);
   }
 
-  public void testParamInfo7() throws Throwable {
+  public void _testParamInfo7() throws Throwable {
     doTest("int x, int y = 239", 0);
   }
 

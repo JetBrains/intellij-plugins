@@ -29,6 +29,12 @@ public class DartTypeParameterImpl extends AbstractDartComponentImpl implements 
   }
 
   @Override
+  @NotNull
+  public List<DartMetadata> getMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  }
+
+  @Override
   @Nullable
   public DartType getType() {
     return findChildByClass(DartType.class);

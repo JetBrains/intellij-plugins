@@ -22,6 +22,9 @@ public interface DartNamedConstructorDeclaration extends DartComponent {
   @Nullable
   DartInitializers getInitializers();
 
+  @NotNull
+  List<DartMetadata> getMetadataList();
+
   @Nullable
   DartRedirection getRedirection();
 

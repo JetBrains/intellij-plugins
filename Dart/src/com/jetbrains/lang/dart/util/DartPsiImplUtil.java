@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartPsiImplUtil {
   @NotNull
   public static String normalizeLibraryName(@NotNull String libraryName) {
@@ -96,16 +93,17 @@ public class DartPsiImplUtil {
   }
 
   @Nullable
-  public static DartComponentName findComponentName(@NotNull DartNormalFormalParameter namedFormalParameters) {
-    final DartVarDeclaration varDeclaration = namedFormalParameters.getVarDeclaration();
-    if (varDeclaration != null) {
-      return varDeclaration.getVarAccessDeclaration().getComponentName();
-    }
-    final DartFunctionDeclaration functionDeclaration = namedFormalParameters.getFunctionDeclaration();
-    if (functionDeclaration != null) {
-      return functionDeclaration.getComponentName();
-    }
-    return namedFormalParameters.getComponentName();
+  public static DartComponentName findComponentName(final @NotNull DartNormalFormalParameter normalFormalParameter) {
+    final DartFunctionSignature functionDeclaration = normalFormalParameter.getFunctionSignature();
+    final DartFieldFormalParameter fieldFormalParameter = normalFormalParameter.getFieldFormalParameter();
+    final DartSimpleFormalParameter simpleFormalParameter = normalFormalParameter.getSimpleFormalParameter();
+
+    if (functionDeclaration != null) return functionDeclaration.getComponentName();
+    if (fieldFormalParameter != null) return null;
+    if (simpleFormalParameter != null) return simpleFormalParameter.getComponentName();
+
+    assert false : normalFormalParameter.getText();
+    return null;
   }
 
   public static DartExpression getParameterReferenceExpression(DartNamedArgument argument) {

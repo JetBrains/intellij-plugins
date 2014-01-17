@@ -19,6 +19,9 @@ public interface DartFactoryConstructorDeclaration extends DartComponent {
   @Nullable
   DartFunctionBody getFunctionBody();
 
+  @NotNull
+  List<DartMetadata> getMetadataList();
+
   @Nullable
   DartType getType();
 

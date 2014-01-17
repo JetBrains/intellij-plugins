@@ -8,16 +8,13 @@ import com.intellij.psi.PsiElement;
 public interface DartNormalFormalParameter extends DartPsiCompositeElement {
 
   @Nullable
-  DartComponentName getComponentName();
-
-  @Nullable
   DartFieldFormalParameter getFieldFormalParameter();
 
   @Nullable
-  DartFunctionDeclaration getFunctionDeclaration();
+  DartFunctionSignature getFunctionSignature();
 
   @Nullable
-  DartVarDeclaration getVarDeclaration();
+  DartSimpleFormalParameter getSimpleFormalParameter();
 
   @Nullable
   DartComponentName findComponentName();

@@ -11,6 +11,9 @@ public interface DartPartOfStatement extends DartPsiCompositeElement {
   DartLibraryId getLibraryId();
 
   @NotNull
+  List<DartMetadata> getMetadataList();
+
+  @NotNull
   String getLibraryName();
 
 }

@@ -1386,25 +1386,26 @@ Dart File
                           FORMAL_PARAMETER_LIST
                             PsiElement(()('(')
                             NORMAL_FORMAL_PARAMETER
-                              COMPONENT_NAME
-                                ID
-                                  PsiElement(IDENTIFIER)('a')
+                              SIMPLE_FORMAL_PARAMETER
+                                COMPONENT_NAME
+                                  ID
+                                    PsiElement(IDENTIFIER)('a')
                             PsiElement(,)(',')
                             NORMAL_FORMAL_PARAMETER
-                              VAR_DECLARATION
-                                VAR_ACCESS_DECLARATION
-                                  TYPE
-                                    REFERENCE_EXPRESSION
-                                      ID
-                                        PsiElement(IDENTIFIER)('String')
-                                  COMPONENT_NAME
+                              SIMPLE_FORMAL_PARAMETER
+                                TYPE
+                                  REFERENCE_EXPRESSION
                                     ID
-                                      PsiElement(IDENTIFIER)('b')
+                                      PsiElement(IDENTIFIER)('String')
+                                COMPONENT_NAME
+                                  ID
+                                    PsiElement(IDENTIFIER)('b')
                             PsiElement(,)(',')
                             NORMAL_FORMAL_PARAMETER
-                              COMPONENT_NAME
-                                ID
-                                  PsiElement(IDENTIFIER)('c')
+                              SIMPLE_FORMAL_PARAMETER
+                                COMPONENT_NAME
+                                  ID
+                                    PsiElement(IDENTIFIER)('c')
                             PsiElement())(')')
                           FUNCTION_EXPRESSION_BODY
                             BLOCK
@@ -1433,25 +1434,26 @@ Dart File
                           FORMAL_PARAMETER_LIST
                             PsiElement(()('(')
                             NORMAL_FORMAL_PARAMETER
-                              COMPONENT_NAME
-                                ID
-                                  PsiElement(IDENTIFIER)('d')
+                              SIMPLE_FORMAL_PARAMETER
+                                COMPONENT_NAME
+                                  ID
+                                    PsiElement(IDENTIFIER)('d')
                             PsiElement(,)(',')
                             NORMAL_FORMAL_PARAMETER
-                              VAR_DECLARATION
-                                VAR_ACCESS_DECLARATION
-                                  TYPE
-                                    REFERENCE_EXPRESSION
-                                      ID
-                                        PsiElement(IDENTIFIER)('int')
-                                  COMPONENT_NAME
+                              SIMPLE_FORMAL_PARAMETER
+                                TYPE
+                                  REFERENCE_EXPRESSION
                                     ID
-                                      PsiElement(IDENTIFIER)('e')
+                                      PsiElement(IDENTIFIER)('int')
+                                COMPONENT_NAME
+                                  ID
+                                    PsiElement(IDENTIFIER)('e')
                             PsiElement(,)(',')
                             NORMAL_FORMAL_PARAMETER
-                              COMPONENT_NAME
-                                ID
-                                  PsiElement(IDENTIFIER)('f')
+                              SIMPLE_FORMAL_PARAMETER
+                                COMPONENT_NAME
+                                  ID
+                                    PsiElement(IDENTIFIER)('f')
                             PsiElement())(')')
                           FUNCTION_EXPRESSION_BODY
                             BLOCK

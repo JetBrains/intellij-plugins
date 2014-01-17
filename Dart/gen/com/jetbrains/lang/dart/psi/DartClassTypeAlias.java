@@ -10,6 +10,9 @@ public interface DartClassTypeAlias extends DartComponent {
   @NotNull
   DartComponentName getComponentName();
 
+  @NotNull
+  List<DartMetadata> getMetadataList();
+
   @Nullable
   DartMixins getMixins();
 

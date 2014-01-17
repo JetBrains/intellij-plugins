@@ -18,9 +18,10 @@ Dart File
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('x')
+                  SIMPLE_FORMAL_PARAMETER
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('x')
                 PsiElement(=)('=')
                 LITERAL_EXPRESSION
                   PsiElement(NUMBER)('42')
@@ -42,19 +43,17 @@ Dart File
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  VAR_DECLARATION
-                    VAR_ACCESS_DECLARATION
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('int')
-                      COMPONENT_NAME
+                  SIMPLE_FORMAL_PARAMETER
+                    TYPE
+                      REFERENCE_EXPRESSION
                         ID
-                          PsiElement(IDENTIFIER)('x')
-                    VAR_INIT
-                      PsiElement(=)('=')
-                      LITERAL_EXPRESSION
-                        PsiElement(NUMBER)('42')
+                          PsiElement(IDENTIFIER)('int')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('x')
+                PsiElement(=)('=')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('42')
               PsiElement(])(']')
             PsiElement())(')')
           FUNCTION_BODY
@@ -70,17 +69,19 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('x')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('x')
             PsiElement(,)(',')
             NAMED_FORMAL_PARAMETERS
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('y')
+                  SIMPLE_FORMAL_PARAMETER
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('y')
                 PsiElement(=)('=')
                 LITERAL_EXPRESSION
                   PsiElement(NUMBER)('42')
@@ -99,27 +100,26 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('x')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('x')
             PsiElement(,)(',')
             NAMED_FORMAL_PARAMETERS
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  VAR_DECLARATION
-                    VAR_ACCESS_DECLARATION
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('int')
-                      COMPONENT_NAME
+                  SIMPLE_FORMAL_PARAMETER
+                    TYPE
+                      REFERENCE_EXPRESSION
                         ID
-                          PsiElement(IDENTIFIER)('y')
-                    VAR_INIT
-                      PsiElement(=)('=')
-                      LITERAL_EXPRESSION
-                        PsiElement(NUMBER)('42')
+                          PsiElement(IDENTIFIER)('int')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('y')
+                PsiElement(=)('=')
+                LITERAL_EXPRESSION
+                  PsiElement(NUMBER)('42')
               PsiElement(])(']')
             PsiElement())(')')
           FUNCTION_BODY

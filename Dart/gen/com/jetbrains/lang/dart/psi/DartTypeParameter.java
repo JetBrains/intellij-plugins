@@ -10,6 +10,9 @@ public interface DartTypeParameter extends DartComponent {
   @NotNull
   DartComponentName getComponentName();
 
+  @NotNull
+  List<DartMetadata> getMetadataList();
+
   @Nullable
   DartType getType();
 

@@ -24,14 +24,26 @@ public class DartFieldFormalParameterImpl extends DartPsiCompositeElementImpl im
 
   @Override
   @Nullable
-  public DartFinalVarOrType getFinalVarOrType() {
-    return findChildByClass(DartFinalVarOrType.class);
+  public DartFormalParameterList getFormalParameterList() {
+    return findChildByClass(DartFormalParameterList.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartMetadata> getMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
   }
 
   @Override
   @NotNull
   public DartReferenceExpression getReferenceExpression() {
     return findNotNullChildByClass(DartReferenceExpression.class);
+  }
+
+  @Override
+  @Nullable
+  public DartType getType() {
+    return findChildByClass(DartType.class);
   }
 
 }

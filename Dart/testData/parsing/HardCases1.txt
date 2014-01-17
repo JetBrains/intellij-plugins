@@ -233,28 +233,27 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Map')
-                    TYPE_ARGUMENTS
-                      PsiElement(<)('<')
-                      TYPE_LIST
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('K')
-                        PsiElement(,)(',')
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('V')
-                      PsiElement(>)('>')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('other')
+                      PsiElement(IDENTIFIER)('Map')
+                  TYPE_ARGUMENTS
+                    PsiElement(<)('<')
+                    TYPE_LIST
+                      TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('K')
+                      PsiElement(,)(',')
+                      TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('V')
+                    PsiElement(>)('>')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('other')
             PsiElement())(')')
           PsiElement(=)('=')
           TYPE
@@ -336,21 +335,20 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Iterable')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('iterable')
+                      PsiElement(IDENTIFIER)('Iterable')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('iterable')
             PsiElement(,)(',')
             NAMED_FORMAL_PARAMETERS
               PsiElement({)('{')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  FUNCTION_DECLARATION
+                  FUNCTION_SIGNATURE
                     RETURN_TYPE
                       TYPE
                         REFERENCE_EXPRESSION
@@ -362,14 +360,15 @@ Dart File
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
                       NORMAL_FORMAL_PARAMETER
-                        COMPONENT_NAME
-                          ID
-                            PsiElement(IDENTIFIER)('element')
+                        SIMPLE_FORMAL_PARAMETER
+                          COMPONENT_NAME
+                            ID
+                              PsiElement(IDENTIFIER)('element')
                       PsiElement())(')')
               PsiElement(,)(',')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  FUNCTION_DECLARATION
+                  FUNCTION_SIGNATURE
                     RETURN_TYPE
                       TYPE
                         REFERENCE_EXPRESSION
@@ -381,9 +380,10 @@ Dart File
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
                       NORMAL_FORMAL_PARAMETER
-                        COMPONENT_NAME
-                          ID
-                            PsiElement(IDENTIFIER)('element')
+                        SIMPLE_FORMAL_PARAMETER
+                          COMPONENT_NAME
+                            ID
+                              PsiElement(IDENTIFIER)('element')
                       PsiElement())(')')
               PsiElement(})('}')
             PsiElement())(')')
@@ -427,42 +427,40 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Iterable')
-                    TYPE_ARGUMENTS
-                      PsiElement(<)('<')
-                      TYPE_LIST
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('K')
-                      PsiElement(>)('>')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('keys')
+                      PsiElement(IDENTIFIER)('Iterable')
+                  TYPE_ARGUMENTS
+                    PsiElement(<)('<')
+                    TYPE_LIST
+                      TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('K')
+                    PsiElement(>)('>')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('keys')
             PsiElement(,)(',')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Iterable')
-                    TYPE_ARGUMENTS
-                      PsiElement(<)('<')
-                      TYPE_LIST
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('V')
-                      PsiElement(>)('>')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('values')
+                      PsiElement(IDENTIFIER)('Iterable')
+                  TYPE_ARGUMENTS
+                    PsiElement(<)('<')
+                    TYPE_LIST
+                      TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('V')
+                    PsiElement(>)('>')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('values')
             PsiElement())(')')
           PsiElement(=)('=')
           TYPE
@@ -504,15 +502,14 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Object')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('value')
+                      PsiElement(IDENTIFIER)('Object')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('value')
             PsiElement())(')')
           PsiElement(;)(';')
         DartDocCommentImpl(MULTI_LINE_DOC_COMMENT)
@@ -533,15 +530,14 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Object')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('key')
+                      PsiElement(IDENTIFIER)('Object')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('key')
             PsiElement())(')')
           PsiElement(;)(';')
         DartDocCommentImpl(MULTI_LINE_DOC_COMMENT)
@@ -563,26 +559,24 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('K')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('key')
+                      PsiElement(IDENTIFIER)('K')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('key')
             PsiElement(,)(',')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('V')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('value')
+                      PsiElement(IDENTIFIER)('V')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('value')
             PsiElement())(')')
           PsiElement(;)(';')
         METHOD_DECLARATION
@@ -597,18 +591,17 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('K')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('key')
+                      PsiElement(IDENTIFIER)('K')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('key')
             PsiElement(,)(',')
             NORMAL_FORMAL_PARAMETER
-              FUNCTION_DECLARATION
+              FUNCTION_SIGNATURE
                 RETURN_TYPE
                   TYPE
                     REFERENCE_EXPRESSION
@@ -634,28 +627,27 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Map')
-                    TYPE_ARGUMENTS
-                      PsiElement(<)('<')
-                      TYPE_LIST
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('K')
-                        PsiElement(,)(',')
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('V')
-                      PsiElement(>)('>')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('other')
+                      PsiElement(IDENTIFIER)('Map')
+                  TYPE_ARGUMENTS
+                    PsiElement(<)('<')
+                    TYPE_LIST
+                      TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('K')
+                      PsiElement(,)(',')
+                      TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('V')
+                    PsiElement(>)('>')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('other')
             PsiElement())(')')
           PsiElement(;)(';')
         METHOD_DECLARATION
@@ -670,15 +662,14 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Object')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('key')
+                      PsiElement(IDENTIFIER)('Object')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('key')
             PsiElement())(')')
           PsiElement(;)(';')
         METHOD_DECLARATION
@@ -706,7 +697,7 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              FUNCTION_DECLARATION
+              FUNCTION_SIGNATURE
                 RETURN_TYPE
                   TYPE
                     REFERENCE_EXPRESSION
@@ -718,26 +709,24 @@ Dart File
                 FORMAL_PARAMETER_LIST
                   PsiElement(()('(')
                   NORMAL_FORMAL_PARAMETER
-                    VAR_DECLARATION
-                      VAR_ACCESS_DECLARATION
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('K')
-                        COMPONENT_NAME
+                    SIMPLE_FORMAL_PARAMETER
+                      TYPE
+                        REFERENCE_EXPRESSION
                           ID
-                            PsiElement(IDENTIFIER)('key')
+                            PsiElement(IDENTIFIER)('K')
+                      COMPONENT_NAME
+                        ID
+                          PsiElement(IDENTIFIER)('key')
                   PsiElement(,)(',')
                   NORMAL_FORMAL_PARAMETER
-                    VAR_DECLARATION
-                      VAR_ACCESS_DECLARATION
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('V')
-                        COMPONENT_NAME
+                    SIMPLE_FORMAL_PARAMETER
+                      TYPE
+                        REFERENCE_EXPRESSION
                           ID
-                            PsiElement(IDENTIFIER)('value')
+                            PsiElement(IDENTIFIER)('V')
+                      COMPONENT_NAME
+                        ID
+                          PsiElement(IDENTIFIER)('value')
                   PsiElement())(')')
             PsiElement())(')')
           PsiElement(;)(';')
@@ -854,12 +843,11 @@ Dart File
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  VAR_DECLARATION
-                    VAR_ACCESS_DECLARATION
-                      PsiElement(var)('var')
-                      COMPONENT_NAME
-                        ID
-                          PsiElement(IDENTIFIER)('message')
+                  SIMPLE_FORMAL_PARAMETER
+                    PsiElement(var)('var')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('message')
               PsiElement(])(']')
             PsiElement())(')')
           FUNCTION_BODY

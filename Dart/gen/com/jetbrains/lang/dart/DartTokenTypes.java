@@ -44,18 +44,17 @@ public interface DartTokenTypes {
   IElementType FIELD_FORMAL_PARAMETER = new DartElementType("FIELD_FORMAL_PARAMETER");
   IElementType FIELD_INITIALIZER = new DartElementType("FIELD_INITIALIZER");
   IElementType FINALLY_PART = new DartElementType("FINALLY_PART");
-  IElementType FINAL_VAR_OR_TYPE = new DartElementType("FINAL_VAR_OR_TYPE");
   IElementType FORMAL_PARAMETER_LIST = new DartElementType("FORMAL_PARAMETER_LIST");
   IElementType FOR_IN_PART = new DartElementType("FOR_IN_PART");
   IElementType FOR_LOOP_PARTS = new DartElementType("FOR_LOOP_PARTS");
   IElementType FOR_LOOP_PARTS_IN_BRACES = new DartElementType("FOR_LOOP_PARTS_IN_BRACES");
   IElementType FOR_STATEMENT = new DartElementType("FOR_STATEMENT");
   IElementType FUNCTION_BODY = new DartElementType("FUNCTION_BODY");
-  IElementType FUNCTION_DECLARATION = new DartElementType("FUNCTION_DECLARATION");
   IElementType FUNCTION_DECLARATION_WITH_BODY = new DartElementType("FUNCTION_DECLARATION_WITH_BODY");
   IElementType FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE = new DartElementType("FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE");
   IElementType FUNCTION_EXPRESSION = new DartElementType("FUNCTION_EXPRESSION");
   IElementType FUNCTION_EXPRESSION_BODY = new DartElementType("FUNCTION_EXPRESSION_BODY");
+  IElementType FUNCTION_SIGNATURE = new DartElementType("FUNCTION_SIGNATURE");
   IElementType FUNCTION_TYPE_ALIAS = new DartElementType("FUNCTION_TYPE_ALIAS");
   IElementType GETTER_DECLARATION = new DartElementType("GETTER_DECLARATION");
   IElementType HIDE_COMBINATOR = new DartElementType("HIDE_COMBINATOR");
@@ -110,6 +109,7 @@ public interface DartTokenTypes {
   IElementType SHIFT_RIGHT_OPERATOR = new DartElementType("SHIFT_RIGHT_OPERATOR");
   IElementType SHORT_TEMPLATE_ENTRY = new DartElementType("SHORT_TEMPLATE_ENTRY");
   IElementType SHOW_COMBINATOR = new DartElementType("SHOW_COMBINATOR");
+  IElementType SIMPLE_FORMAL_PARAMETER = new DartElementType("SIMPLE_FORMAL_PARAMETER");
   IElementType STATEMENTS = new DartElementType("STATEMENTS");
   IElementType STRING_LITERAL_EXPRESSION = new DartElementType("STRING_LITERAL_EXPRESSION");
   IElementType SUFFIX_EXPRESSION = new DartElementType("SUFFIX_EXPRESSION");
@@ -131,7 +131,6 @@ public interface DartTokenTypes {
   IElementType USER_DEFINABLE_OPERATOR = new DartElementType("USER_DEFINABLE_OPERATOR");
   IElementType VALUE_EXPRESSION = new DartElementType("VALUE_EXPRESSION");
   IElementType VAR_ACCESS_DECLARATION = new DartElementType("VAR_ACCESS_DECLARATION");
-  IElementType VAR_DECLARATION = new DartElementType("VAR_DECLARATION");
   IElementType VAR_DECLARATION_LIST = new DartElementType("VAR_DECLARATION_LIST");
   IElementType VAR_DECLARATION_LIST_PART = new DartElementType("VAR_DECLARATION_LIST_PART");
   IElementType VAR_INIT = new DartElementType("VAR_INIT");
@@ -360,9 +359,6 @@ public interface DartTokenTypes {
       else if (type == FINALLY_PART) {
         return new DartFinallyPartImpl(node);
       }
-      else if (type == FINAL_VAR_OR_TYPE) {
-        return new DartFinalVarOrTypeImpl(node);
-      }
       else if (type == FORMAL_PARAMETER_LIST) {
         return new DartFormalParameterListImpl(node);
       }
@@ -381,9 +377,6 @@ public interface DartTokenTypes {
       else if (type == FUNCTION_BODY) {
         return new DartFunctionBodyImpl(node);
       }
-      else if (type == FUNCTION_DECLARATION) {
-        return new DartFunctionDeclarationImpl(node);
-      }
       else if (type == FUNCTION_DECLARATION_WITH_BODY) {
         return new DartFunctionDeclarationWithBodyImpl(node);
       }
@@ -395,6 +388,9 @@ public interface DartTokenTypes {
       }
       else if (type == FUNCTION_EXPRESSION_BODY) {
         return new DartFunctionExpressionBodyImpl(node);
+      }
+      else if (type == FUNCTION_SIGNATURE) {
+        return new DartFunctionSignatureImpl(node);
       }
       else if (type == FUNCTION_TYPE_ALIAS) {
         return new DartFunctionTypeAliasImpl(node);
@@ -558,6 +554,9 @@ public interface DartTokenTypes {
       else if (type == SHOW_COMBINATOR) {
         return new DartShowCombinatorImpl(node);
       }
+      else if (type == SIMPLE_FORMAL_PARAMETER) {
+        return new DartSimpleFormalParameterImpl(node);
+      }
       else if (type == STATEMENTS) {
         return new DartStatementsImpl(node);
       }
@@ -620,9 +619,6 @@ public interface DartTokenTypes {
       }
       else if (type == VAR_ACCESS_DECLARATION) {
         return new DartVarAccessDeclarationImpl(node);
-      }
-      else if (type == VAR_DECLARATION) {
-        return new DartVarDeclarationImpl(node);
       }
       else if (type == VAR_DECLARATION_LIST) {
         return new DartVarDeclarationListImpl(node);

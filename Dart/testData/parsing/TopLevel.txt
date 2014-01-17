@@ -25,15 +25,14 @@ Dart File
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       NORMAL_FORMAL_PARAMETER
-        VAR_DECLARATION
-          VAR_ACCESS_DECLARATION
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('int')
-            COMPONENT_NAME
+        SIMPLE_FORMAL_PARAMETER
+          TYPE
+            REFERENCE_EXPRESSION
               ID
-                PsiElement(IDENTIFIER)('a')
+                PsiElement(IDENTIFIER)('int')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('a')
       PsiElement())(')')
     FUNCTION_BODY
       BLOCK
@@ -236,9 +235,10 @@ Dart File
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       NORMAL_FORMAL_PARAMETER
-        COMPONENT_NAME
-          ID
-            PsiElement(IDENTIFIER)('a')
+        SIMPLE_FORMAL_PARAMETER
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('a')
       PsiElement())(')')
     FUNCTION_BODY
       BLOCK
@@ -286,23 +286,22 @@ Dart File
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       NORMAL_FORMAL_PARAMETER
-        VAR_DECLARATION
-          VAR_ACCESS_DECLARATION
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Foo')
-              TYPE_ARGUMENTS
-                PsiElement(<)('<')
-                TYPE_LIST
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('int')
-                PsiElement(>)('>')
-            COMPONENT_NAME
+        SIMPLE_FORMAL_PARAMETER
+          TYPE
+            REFERENCE_EXPRESSION
               ID
-                PsiElement(IDENTIFIER)('a')
+                PsiElement(IDENTIFIER)('Foo')
+            TYPE_ARGUMENTS
+              PsiElement(<)('<')
+              TYPE_LIST
+                TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('int')
+              PsiElement(>)('>')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('a')
       PsiElement())(')')
     FUNCTION_BODY
       BLOCK

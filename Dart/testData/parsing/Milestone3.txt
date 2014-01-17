@@ -33,15 +33,14 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Node')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('node')
+                      PsiElement(IDENTIFIER)('Node')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('node')
             PsiElement())(')')
           PsiElement(;)(';')
       PsiElement(})('}')
@@ -52,15 +51,14 @@ Dart File
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       NORMAL_FORMAL_PARAMETER
-        VAR_DECLARATION
-          VAR_ACCESS_DECLARATION
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Element')
-            COMPONENT_NAME
+        SIMPLE_FORMAL_PARAMETER
+          TYPE
+            REFERENCE_EXPRESSION
               ID
-                PsiElement(IDENTIFIER)('e')
+                PsiElement(IDENTIFIER)('Element')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('e')
       PsiElement())(')')
     FUNCTION_BODY
       BLOCK
@@ -95,15 +93,14 @@ Dart File
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       NORMAL_FORMAL_PARAMETER
-        VAR_DECLARATION
-          VAR_ACCESS_DECLARATION
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('Element')
-            COMPONENT_NAME
+        SIMPLE_FORMAL_PARAMETER
+          TYPE
+            REFERENCE_EXPRESSION
               ID
-                PsiElement(IDENTIFIER)('e')
+                PsiElement(IDENTIFIER)('Element')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('e')
       PsiElement())(')')
     FUNCTION_BODY
       BLOCK

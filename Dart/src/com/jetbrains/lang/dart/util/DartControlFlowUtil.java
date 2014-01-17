@@ -7,9 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartControlFlowUtil {
   public static Set<DartComponentName> getSimpleDeclarations(PsiElement[] children,
                                                              @Nullable PsiElement lastParent,
@@ -23,9 +20,6 @@ public class DartControlFlowUtil {
 
       if (addComponentsFlag && child instanceof DartVarDeclarationList) {
         addFromVarDeclarationList(result, (DartVarDeclarationList)child);
-      }
-      else if (addComponentsFlag && child instanceof DartVarDeclaration) {
-        result.add(((DartVarDeclaration)child).getVarAccessDeclaration().getComponentName());
       }
       else if (child instanceof DartComponent) {
         boolean isFieldOrVar = child instanceof DartVarAccessDeclaration || child instanceof DartVarDeclarationListPart;
