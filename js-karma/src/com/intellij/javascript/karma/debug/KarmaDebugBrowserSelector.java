@@ -20,14 +20,12 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.SmartHashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class KarmaDebugBrowserSelector {
 
@@ -50,14 +48,18 @@ public class KarmaDebugBrowserSelector {
 
   @Nullable
   public Pair<JSDebugEngine, WebBrowser> selectDebugEngine() {
-    Set<WebBrowser> result = new SmartHashSet<WebBrowser>();
+    List<WebBrowser> result = ContainerUtil.newArrayList();
     List<WebBrowser> browsers = WebBrowserManager.getInstance().getActiveBrowsers();
-    for (CapturedBrowser capturedBrowser : myCapturedBrowsers) {
-      for (WebBrowser browser : browsers) {
-        if (StringUtil.containsIgnoreCase(browser.getName(), capturedBrowser.getName()) ||
-            StringUtil.containsIgnoreCase(browser.getFamily().getName(), capturedBrowser.getName())) {
-          result.add(browser);
+    for (WebBrowser browser : browsers) {
+      boolean matched = false;
+      for (CapturedBrowser capturedBrowser : myCapturedBrowsers) {
+        if (StringUtil.containsIgnoreCase(capturedBrowser.getName(), browser.getFamily().getName())) {
+          matched = true;
+          break;
         }
+      }
+      if (matched) {
+        result.add(browser);
       }
     }
 
