@@ -36,7 +36,7 @@ public enum DartComponentType {
 
   @Nullable
   public static DartComponentType valueOf(int key) {
-    return  key >= 0 && key < values().length ? values()[key] : null;
+    return key >= 0 && key < values().length ? values()[key] : null;
   }
 
   @Nullable
@@ -58,7 +58,7 @@ public enum DartComponentType {
         || element instanceof DartFactoryConstructorDeclaration) {
       return CONSTRUCTOR;
     }
-    if (element instanceof DartFunctionDeclaration
+    if (element instanceof DartFunctionSignature
         || element instanceof DartFunctionDeclarationWithBody
         || element instanceof DartFunctionDeclarationWithBodyOrNative
         || element instanceof DartFunctionExpression) {
@@ -77,8 +77,7 @@ public enum DartComponentType {
       final String dartClassName = dartClass != null ? dartClass.getName() : null;
       return dartClassName != null && dartClassName.equals(((DartComponent)element).getName()) ? CONSTRUCTOR : METHOD;
     }
-    if (element instanceof DartVarDeclaration
-        || element instanceof DartVarAccessDeclaration
+    if (element instanceof DartVarAccessDeclaration
         || element instanceof DartVarDeclarationListPart) {
       return PsiTreeUtil.getParentOfType(element, DartComponent.class, DartOperator.class) instanceof DartClass ? FIELD : VARIABLE;
     }

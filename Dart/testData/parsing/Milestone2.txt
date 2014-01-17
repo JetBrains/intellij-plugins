@@ -208,15 +208,14 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('x')
+                      PsiElement(IDENTIFIER)('int')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           PsiElement(=)('=')
           TYPE
@@ -250,15 +249,14 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('x')
+                      PsiElement(IDENTIFIER)('int')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           PsiElement(=)('=')
           TYPE
@@ -332,28 +330,27 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Map')
-                    TYPE_ARGUMENTS
-                      PsiElement(<)('<')
-                      TYPE_LIST
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('K')
-                        PsiElement(,)(',')
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('V')
-                      PsiElement(>)('>')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('other')
+                      PsiElement(IDENTIFIER)('Map')
+                  TYPE_ARGUMENTS
+                    PsiElement(<)('<')
+                    TYPE_LIST
+                      TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('K')
+                      PsiElement(,)(',')
+                      TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('V')
+                    PsiElement(>)('>')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('other')
             PsiElement())(')')
           PsiElement(=)('=')
           TYPE
@@ -544,9 +541,10 @@ Dart File
               FORMAL_PARAMETER_LIST
                 PsiElement(()('(')
                 NORMAL_FORMAL_PARAMETER
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('p')
+                  SIMPLE_FORMAL_PARAMETER
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('p')
                 PsiElement())(')')
               FUNCTION_EXPRESSION_BODY
                 BLOCK
@@ -878,9 +876,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('arg')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('arg')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -896,9 +895,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('arg')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('arg')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -915,14 +915,16 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('arg')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('arg')
             PsiElement(,)(',')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('arg')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('arg')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1394,9 +1396,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1412,9 +1415,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1430,9 +1434,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1448,9 +1453,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1465,9 +1471,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1497,9 +1504,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1515,9 +1523,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1533,9 +1542,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1551,9 +1561,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1569,9 +1580,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1587,9 +1599,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1605,9 +1618,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1623,9 +1637,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1641,9 +1656,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1659,9 +1675,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1679,9 +1696,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1697,9 +1715,10 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('i')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('i')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1716,14 +1735,16 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('i')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('i')
             PsiElement(,)(',')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('v')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('v')
             PsiElement())(')')
           FUNCTION_BODY
             BLOCK
@@ -1760,15 +1781,14 @@ Dart File
         PsiElement([)('[')
         DEFAULT_FORMAL_NAMED_PARAMETER
           NORMAL_FORMAL_PARAMETER
-            VAR_DECLARATION
-              VAR_ACCESS_DECLARATION
-                TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('String')
-                COMPONENT_NAME
+            SIMPLE_FORMAL_PARAMETER
+              TYPE
+                REFERENCE_EXPRESSION
                   ID
-                    PsiElement(IDENTIFIER)('cssValue')
+                    PsiElement(IDENTIFIER)('String')
+              COMPONENT_NAME
+                ID
+                  PsiElement(IDENTIFIER)('cssValue')
         PsiElement(])(']')
       PsiElement())(')')
     FUNCTION_BODY
@@ -1891,9 +1911,10 @@ Dart File
                       FORMAL_PARAMETER_LIST
                         PsiElement(()('(')
                         NORMAL_FORMAL_PARAMETER
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('i')
+                          SIMPLE_FORMAL_PARAMETER
+                            COMPONENT_NAME
+                              ID
+                                PsiElement(IDENTIFIER)('i')
                         PsiElement())(')')
                       FUNCTION_EXPRESSION_BODY
                         PsiElement(=>)('=>')
@@ -1963,15 +1984,14 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('length')
+                      PsiElement(IDENTIFIER)('int')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('length')
             PsiElement())(')')
           PsiElement(;)(';')
         FACTORY_CONSTRUCTOR_DECLARATION
@@ -1987,41 +2007,38 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('ByteArray')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('array')
+                      PsiElement(IDENTIFIER)('ByteArray')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('array')
             PsiElement(,)(',')
             NAMED_FORMAL_PARAMETERS
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  VAR_DECLARATION
-                    VAR_ACCESS_DECLARATION
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('int')
-                      COMPONENT_NAME
+                  SIMPLE_FORMAL_PARAMETER
+                    TYPE
+                      REFERENCE_EXPRESSION
                         ID
-                          PsiElement(IDENTIFIER)('start')
+                          PsiElement(IDENTIFIER)('int')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('start')
               PsiElement(,)(',')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  VAR_DECLARATION
-                    VAR_ACCESS_DECLARATION
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('int')
-                      COMPONENT_NAME
+                  SIMPLE_FORMAL_PARAMETER
+                    TYPE
+                      REFERENCE_EXPRESSION
                         ID
-                          PsiElement(IDENTIFIER)('length')
+                          PsiElement(IDENTIFIER)('int')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('length')
               PsiElement(])(']')
             PsiElement())(')')
           PsiElement(;)(';')

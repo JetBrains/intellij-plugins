@@ -17,25 +17,25 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('ObservableMixin')
     PsiElement(;)(';')
-  METADATA
-    PsiElement(@)('@')
-    REFERENCE_EXPRESSION
-      ID
-        PsiElement(IDENTIFIER)('DocsEditable')
-  METADATA
-    PsiElement(@)('@')
-    REFERENCE_EXPRESSION
-      ID
-        PsiElement(IDENTIFIER)('DomName')
-    ARGUMENTS
-      PsiElement(()('(')
-      ARGUMENT_LIST
-        STRING_LITERAL_EXPRESSION
-          PsiElement(OPEN_QUOTE)(''')
-          PsiElement(REGULAR_STRING_PART)('AbstractWorker')
-          PsiElement(CLOSING_QUOTE)(''')
-      PsiElement())(')')
   CLASS_DEFINITION
+    METADATA
+      PsiElement(@)('@')
+      REFERENCE_EXPRESSION
+        ID
+          PsiElement(IDENTIFIER)('DocsEditable')
+    METADATA
+      PsiElement(@)('@')
+      REFERENCE_EXPRESSION
+        ID
+          PsiElement(IDENTIFIER)('DomName')
+      ARGUMENTS
+        PsiElement(()('(')
+        ARGUMENT_LIST
+          STRING_LITERAL_EXPRESSION
+            PsiElement(OPEN_QUOTE)(''')
+            PsiElement(REGULAR_STRING_PART)('AbstractWorker')
+            PsiElement(CLOSING_QUOTE)(''')
+        PsiElement())(')')
     PsiElement(class)('class')
     COMPONENT_NAME
       ID
@@ -116,25 +116,25 @@ Dart File
                     PsiElement(CLOSING_QUOTE)(''')
                 PsiElement())(')')
         PsiElement(;)(';')
-        METADATA
-          PsiElement(@)('@')
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('DocsEditable')
-        METADATA
-          PsiElement(@)('@')
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('DomName')
-          ARGUMENTS
-            PsiElement(()('(')
-            ARGUMENT_LIST
-              STRING_LITERAL_EXPRESSION
-                PsiElement(OPEN_QUOTE)(''')
-                PsiElement(REGULAR_STRING_PART)('EventTarget.addEventListener, EventTarget.removeEventListener, EventTarget.dispatchEvent')
-                PsiElement(CLOSING_QUOTE)(''')
-            PsiElement())(')')
         GETTER_DECLARATION
+          METADATA
+            PsiElement(@)('@')
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('DocsEditable')
+          METADATA
+            PsiElement(@)('@')
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('DomName')
+            ARGUMENTS
+              PsiElement(()('(')
+              ARGUMENT_LIST
+                STRING_LITERAL_EXPRESSION
+                  PsiElement(OPEN_QUOTE)(''')
+                  PsiElement(REGULAR_STRING_PART)('EventTarget.addEventListener, EventTarget.removeEventListener, EventTarget.dispatchEvent')
+                  PsiElement(CLOSING_QUOTE)(''')
+              PsiElement())(')')
           RETURN_TYPE
             TYPE
               REFERENCE_EXPRESSION
@@ -159,25 +159,25 @@ Dart File
                     PsiElement(this)('this')
                 PsiElement())(')')
             PsiElement(;)(';')
-        METADATA
-          PsiElement(@)('@')
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('DocsEditable')
-        METADATA
-          PsiElement(@)('@')
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('DomName')
-          ARGUMENTS
-            PsiElement(()('(')
-            ARGUMENT_LIST
-              STRING_LITERAL_EXPRESSION
-                PsiElement(OPEN_QUOTE)(''')
-                PsiElement(REGULAR_STRING_PART)('AbstractWorker.addEventListener')
-                PsiElement(CLOSING_QUOTE)(''')
-            PsiElement())(')')
         METHOD_DECLARATION
+          METADATA
+            PsiElement(@)('@')
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('DocsEditable')
+          METADATA
+            PsiElement(@)('@')
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('DomName')
+            ARGUMENTS
+              PsiElement(()('(')
+              ARGUMENT_LIST
+                STRING_LITERAL_EXPRESSION
+                  PsiElement(OPEN_QUOTE)(''')
+                  PsiElement(REGULAR_STRING_PART)('AbstractWorker.addEventListener')
+                  PsiElement(CLOSING_QUOTE)(''')
+              PsiElement())(')')
           RETURN_TYPE
             TYPE
               REFERENCE_EXPRESSION
@@ -189,40 +189,37 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('String')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('type')
+                      PsiElement(IDENTIFIER)('String')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('type')
             PsiElement(,)(',')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('EventListener')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('listener')
+                      PsiElement(IDENTIFIER)('EventListener')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('listener')
             PsiElement(,)(',')
             NAMED_FORMAL_PARAMETERS
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  VAR_DECLARATION
-                    VAR_ACCESS_DECLARATION
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('bool')
-                      COMPONENT_NAME
+                  SIMPLE_FORMAL_PARAMETER
+                    TYPE
+                      REFERENCE_EXPRESSION
                         ID
-                          PsiElement(IDENTIFIER)('useCapture')
+                          PsiElement(IDENTIFIER)('bool')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('useCapture')
               PsiElement(])(']')
             PsiElement())(')')
           PsiElement(native)('native')
@@ -231,25 +228,25 @@ Dart File
             PsiElement(REGULAR_STRING_PART)('AbstractWorker_addEventListener_Callback')
             PsiElement(CLOSING_QUOTE)('"')
           PsiElement(;)(';')
-        METADATA
-          PsiElement(@)('@')
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('DocsEditable')
-        METADATA
-          PsiElement(@)('@')
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('DomName')
-          ARGUMENTS
-            PsiElement(()('(')
-            ARGUMENT_LIST
-              STRING_LITERAL_EXPRESSION
-                PsiElement(OPEN_QUOTE)(''')
-                PsiElement(REGULAR_STRING_PART)('AbstractWorker.dispatchEvent')
-                PsiElement(CLOSING_QUOTE)(''')
-            PsiElement())(')')
         METHOD_DECLARATION
+          METADATA
+            PsiElement(@)('@')
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('DocsEditable')
+          METADATA
+            PsiElement(@)('@')
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('DomName')
+            ARGUMENTS
+              PsiElement(()('(')
+              ARGUMENT_LIST
+                STRING_LITERAL_EXPRESSION
+                  PsiElement(OPEN_QUOTE)(''')
+                  PsiElement(REGULAR_STRING_PART)('AbstractWorker.dispatchEvent')
+                  PsiElement(CLOSING_QUOTE)(''')
+              PsiElement())(')')
           RETURN_TYPE
             TYPE
               REFERENCE_EXPRESSION
@@ -261,15 +258,14 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('Event')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('evt')
+                      PsiElement(IDENTIFIER)('Event')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('evt')
             PsiElement())(')')
           PsiElement(native)('native')
           STRING_LITERAL_EXPRESSION
@@ -277,25 +273,25 @@ Dart File
             PsiElement(REGULAR_STRING_PART)('AbstractWorker_dispatchEvent_Callback')
             PsiElement(CLOSING_QUOTE)('"')
           PsiElement(;)(';')
-        METADATA
-          PsiElement(@)('@')
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('DocsEditable')
-        METADATA
-          PsiElement(@)('@')
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('DomName')
-          ARGUMENTS
-            PsiElement(()('(')
-            ARGUMENT_LIST
-              STRING_LITERAL_EXPRESSION
-                PsiElement(OPEN_QUOTE)(''')
-                PsiElement(REGULAR_STRING_PART)('AbstractWorker.removeEventListener')
-                PsiElement(CLOSING_QUOTE)(''')
-            PsiElement())(')')
         METHOD_DECLARATION
+          METADATA
+            PsiElement(@)('@')
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('DocsEditable')
+          METADATA
+            PsiElement(@)('@')
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('DomName')
+            ARGUMENTS
+              PsiElement(()('(')
+              ARGUMENT_LIST
+                STRING_LITERAL_EXPRESSION
+                  PsiElement(OPEN_QUOTE)(''')
+                  PsiElement(REGULAR_STRING_PART)('AbstractWorker.removeEventListener')
+                  PsiElement(CLOSING_QUOTE)(''')
+              PsiElement())(')')
           RETURN_TYPE
             TYPE
               REFERENCE_EXPRESSION
@@ -307,40 +303,37 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('String')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('type')
+                      PsiElement(IDENTIFIER)('String')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('type')
             PsiElement(,)(',')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('EventListener')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('listener')
+                      PsiElement(IDENTIFIER)('EventListener')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('listener')
             PsiElement(,)(',')
             NAMED_FORMAL_PARAMETERS
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
-                  VAR_DECLARATION
-                    VAR_ACCESS_DECLARATION
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('bool')
-                      COMPONENT_NAME
+                  SIMPLE_FORMAL_PARAMETER
+                    TYPE
+                      REFERENCE_EXPRESSION
                         ID
-                          PsiElement(IDENTIFIER)('useCapture')
+                          PsiElement(IDENTIFIER)('bool')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('useCapture')
               PsiElement(])(']')
             PsiElement())(')')
           PsiElement(native)('native')

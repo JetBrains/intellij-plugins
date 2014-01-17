@@ -26,14 +26,16 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('x')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('x')
             PsiElement(,)(',')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('y')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('y')
             PsiElement())(')')
           INITIALIZERS
             PsiElement(:)(':')
@@ -83,14 +85,16 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('x')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('x')
             PsiElement(,)(',')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('y')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('y')
             PsiElement())(')')
           INITIALIZERS
             PsiElement(:)(':')
@@ -136,14 +140,16 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('x')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('x')
             PsiElement(,)(',')
             NORMAL_FORMAL_PARAMETER
-              COMPONENT_NAME
-                ID
-                  PsiElement(IDENTIFIER)('y')
+              SIMPLE_FORMAL_PARAMETER
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('y')
             PsiElement())(')')
           INITIALIZERS
             PsiElement(:)(':')
@@ -383,7 +389,7 @@ Dart File
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
                       NORMAL_FORMAL_PARAMETER
-                        FUNCTION_DECLARATION
+                        FUNCTION_SIGNATURE
                           COMPONENT_NAME
                             ID
                               PsiElement(IDENTIFIER)('foo')
@@ -425,7 +431,7 @@ Dart File
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
                       NORMAL_FORMAL_PARAMETER
-                        FUNCTION_DECLARATION
+                        FUNCTION_SIGNATURE
                           COMPONENT_NAME
                             ID
                               PsiElement(IDENTIFIER)('foo')
@@ -465,7 +471,7 @@ Dart File
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
                       NORMAL_FORMAL_PARAMETER
-                        FUNCTION_DECLARATION
+                        FUNCTION_SIGNATURE
                           COMPONENT_NAME
                             ID
                               PsiElement(IDENTIFIER)('foo')
@@ -506,7 +512,7 @@ Dart File
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
                       NORMAL_FORMAL_PARAMETER
-                        FUNCTION_DECLARATION
+                        FUNCTION_SIGNATURE
                           COMPONENT_NAME
                             ID
                               PsiElement(IDENTIFIER)('foo')
@@ -550,7 +556,7 @@ Dart File
                         FORMAL_PARAMETER_LIST
                           PsiElement(()('(')
                           NORMAL_FORMAL_PARAMETER
-                            FUNCTION_DECLARATION
+                            FUNCTION_SIGNATURE
                               COMPONENT_NAME
                                 ID
                                   PsiElement(IDENTIFIER)('foo')
@@ -597,7 +603,7 @@ Dart File
                         FORMAL_PARAMETER_LIST
                           PsiElement(()('(')
                           NORMAL_FORMAL_PARAMETER
-                            FUNCTION_DECLARATION
+                            FUNCTION_SIGNATURE
                               COMPONENT_NAME
                                 ID
                                   PsiElement(IDENTIFIER)('foo')
@@ -642,7 +648,7 @@ Dart File
                         FORMAL_PARAMETER_LIST
                           PsiElement(()('(')
                           NORMAL_FORMAL_PARAMETER
-                            FUNCTION_DECLARATION
+                            FUNCTION_SIGNATURE
                               COMPONENT_NAME
                                 ID
                                   PsiElement(IDENTIFIER)('foo')
@@ -688,7 +694,7 @@ Dart File
                         FORMAL_PARAMETER_LIST
                           PsiElement(()('(')
                           NORMAL_FORMAL_PARAMETER
-                            FUNCTION_DECLARATION
+                            FUNCTION_SIGNATURE
                               COMPONENT_NAME
                                 ID
                                   PsiElement(IDENTIFIER)('foo')
@@ -728,7 +734,7 @@ Dart File
                       FORMAL_PARAMETER_LIST
                         PsiElement(()('(')
                         NORMAL_FORMAL_PARAMETER
-                          FUNCTION_DECLARATION
+                          FUNCTION_SIGNATURE
                             COMPONENT_NAME
                               ID
                                 PsiElement(IDENTIFIER)('foo')
@@ -771,7 +777,7 @@ Dart File
                       FORMAL_PARAMETER_LIST
                         PsiElement(()('(')
                         NORMAL_FORMAL_PARAMETER
-                          FUNCTION_DECLARATION
+                          FUNCTION_SIGNATURE
                             COMPONENT_NAME
                               ID
                                 PsiElement(IDENTIFIER)('foo')
@@ -812,7 +818,7 @@ Dart File
                       FORMAL_PARAMETER_LIST
                         PsiElement(()('(')
                         NORMAL_FORMAL_PARAMETER
-                          FUNCTION_DECLARATION
+                          FUNCTION_SIGNATURE
                             COMPONENT_NAME
                               ID
                                 PsiElement(IDENTIFIER)('foo')
@@ -854,7 +860,7 @@ Dart File
                       FORMAL_PARAMETER_LIST
                         PsiElement(()('(')
                         NORMAL_FORMAL_PARAMETER
-                          FUNCTION_DECLARATION
+                          FUNCTION_SIGNATURE
                             COMPONENT_NAME
                               ID
                                 PsiElement(IDENTIFIER)('foo')
@@ -899,7 +905,7 @@ Dart File
                       FORMAL_PARAMETER_LIST
                         PsiElement(()('(')
                         NORMAL_FORMAL_PARAMETER
-                          FUNCTION_DECLARATION
+                          FUNCTION_SIGNATURE
                             COMPONENT_NAME
                               ID
                                 PsiElement(IDENTIFIER)('foo')
@@ -947,7 +953,7 @@ Dart File
                       FORMAL_PARAMETER_LIST
                         PsiElement(()('(')
                         NORMAL_FORMAL_PARAMETER
-                          FUNCTION_DECLARATION
+                          FUNCTION_SIGNATURE
                             COMPONENT_NAME
                               ID
                                 PsiElement(IDENTIFIER)('foo')
@@ -993,7 +999,7 @@ Dart File
                       FORMAL_PARAMETER_LIST
                         PsiElement(()('(')
                         NORMAL_FORMAL_PARAMETER
-                          FUNCTION_DECLARATION
+                          FUNCTION_SIGNATURE
                             COMPONENT_NAME
                               ID
                                 PsiElement(IDENTIFIER)('foo')
@@ -1040,7 +1046,7 @@ Dart File
                       FORMAL_PARAMETER_LIST
                         PsiElement(()('(')
                         NORMAL_FORMAL_PARAMETER
-                          FUNCTION_DECLARATION
+                          FUNCTION_SIGNATURE
                             COMPONENT_NAME
                               ID
                                 PsiElement(IDENTIFIER)('foo')

@@ -12,9 +12,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartPresentableUtil {
   public static String setterGetterName(String name) {
     return name.startsWith("_") ? name.substring(1) : name;
@@ -69,63 +66,41 @@ public class DartPresentableUtil {
   }
 
   public static String getPresentableNormalFormalParameter(DartNormalFormalParameter parameter, DartGenericSpecialization specialization) {
-    DartComponentName componentName = parameter.getComponentName();
-    DartFunctionDeclaration functionDeclaration = parameter.getFunctionDeclaration();
-    DartVarDeclaration varDeclaration = parameter.getVarDeclaration();
-    if (componentName != null) {
-      return componentName.getText();
-    }
-    else if (varDeclaration != null) {
-      return buildPresentableVarDeclaration(varDeclaration, specialization);
-    }
-    else if (functionDeclaration != null) {
-      final StringBuilder result = new StringBuilder();
-      final DartReturnType returnType = functionDeclaration.getReturnType();
-      if (returnType != null) {
-        result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), returnType.getType(), specialization));
+    final StringBuilder result = new StringBuilder();
+
+    final DartFunctionSignature functionSignature = parameter.getFunctionSignature();
+    final DartFieldFormalParameter fieldFormalParameter = parameter.getFieldFormalParameter();
+    final DartSimpleFormalParameter simpleFormalParameter = parameter.getSimpleFormalParameter();
+
+    if (functionSignature != null) {
+      final DartReturnType returnType = functionSignature.getReturnType();
+      final DartType type = returnType == null ? null : returnType.getType();
+      if (type != null) {
+        result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
         result.append(" ");
       }
-      result.append(functionDeclaration.getName());
+      result.append(functionSignature.getName());
       result.append("(");
-      result.append(getPresentableParameterList(functionDeclaration, specialization));
+      result.append(getPresentableParameterList(functionSignature, specialization));
       result.append(")");
-      return result.toString();
     }
-    return "";
-  }
+    else if (fieldFormalParameter != null) {
+      final DartType type = fieldFormalParameter.getType();
+      if (type != null) {
+        result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
+        result.append(" ");
+      }
+      result.append(fieldFormalParameter.getReferenceExpression().getText());
+    }
+    else if (simpleFormalParameter != null) {
+      final DartType type = simpleFormalParameter.getType();
+      if (type != null) {
+        result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
+        result.append(" ");
+      }
+      result.append(simpleFormalParameter.getComponentName().getText());
+    }
 
-  @Nullable
-  public static String getParameterName(DartNormalFormalParameter parameter) {
-    DartComponentName componentName = parameter.getComponentName();
-    DartFunctionDeclaration functionDeclaration = parameter.getFunctionDeclaration();
-    DartVarDeclaration varDeclaration = parameter.getVarDeclaration();
-    if (componentName != null) {
-      return componentName.getName();
-    }
-    else if (varDeclaration != null) {
-      return varDeclaration.getVarAccessDeclaration().getComponentName().getName();
-    }
-    else if (functionDeclaration != null) {
-      return functionDeclaration.getComponentName().getName();
-    }
-    return null;
-  }
-
-  private static String buildPresentableVarDeclaration(@NotNull DartVarDeclaration varDeclaration,
-                                                       DartGenericSpecialization specialization) {
-    final StringBuilder result = new StringBuilder();
-    final DartType type = varDeclaration.getVarAccessDeclaration().getType();
-    if (type != null) {
-      result.append(buildTypeText(PsiTreeUtil.getParentOfType(varDeclaration, DartClass.class), type, specialization));
-      result.append(" ");
-    }
-    result.append(varDeclaration.getVarAccessDeclaration().getName());
-    final DartVarInit varInit = varDeclaration.getVarInit();
-    final DartExpression varInitExpression = varInit == null ? null : varInit.getExpression();
-    if (varInitExpression != null) {
-      result.append(" = ");
-      result.append(varInitExpression.getText());
-    }
     return result.toString();
   }
 

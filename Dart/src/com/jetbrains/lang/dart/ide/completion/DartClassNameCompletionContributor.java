@@ -25,7 +25,7 @@ public class DartClassNameCompletionContributor extends CompletionContributor {
     final PsiElementPattern.Capture<PsiElement> idInComponentName =
       psiElement().withSuperParent(1, DartId.class).withSuperParent(2, DartComponentName.class);
     extend(CompletionType.BASIC,
-           idInComponentName.withSuperParent(3, DartNormalFormalParameter.class),
+           idInComponentName.withSuperParent(4, DartNormalFormalParameter.class),
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull CompletionParameters parameters,

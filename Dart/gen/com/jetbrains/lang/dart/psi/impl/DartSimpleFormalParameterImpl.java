@@ -11,15 +11,27 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartFinalVarOrTypeImpl extends DartPsiCompositeElementImpl implements DartFinalVarOrType {
+public class DartSimpleFormalParameterImpl extends AbstractDartComponentImpl implements DartSimpleFormalParameter {
 
-  public DartFinalVarOrTypeImpl(ASTNode node) {
+  public DartSimpleFormalParameterImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFinalVarOrType(this);
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSimpleFormalParameter(this);
     else super.accept(visitor);
+  }
+
+  @Override
+  @NotNull
+  public DartComponentName getComponentName() {
+    return findNotNullChildByClass(DartComponentName.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartMetadata> getMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
   }
 
   @Override

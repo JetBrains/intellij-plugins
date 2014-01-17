@@ -249,15 +249,14 @@ Dart File
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
-              VAR_DECLARATION
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('int')
-                  COMPONENT_NAME
+              SIMPLE_FORMAL_PARAMETER
+                TYPE
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('type')
+                      PsiElement(IDENTIFIER)('int')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('type')
             PsiElement())(')')
           INITIALIZERS
             PsiElement(:)(':')

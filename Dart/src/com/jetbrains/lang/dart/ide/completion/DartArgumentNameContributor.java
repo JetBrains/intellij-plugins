@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.psi.*;
-import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,9 +15,6 @@ import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartArgumentNameContributor extends CompletionContributor {
   public DartArgumentNameContributor() {
     final PsiElementPattern.Capture<PsiElement> idInExpression =
@@ -36,8 +32,10 @@ public class DartArgumentNameContributor extends CompletionContributor {
                DartFormalParameterList parameterList = PsiTreeUtil.getChildOfType(targetComponent, DartFormalParameterList.class);
                if (parameterList != null) {
                  for (DartNormalFormalParameter parameter : parameterList.getNormalFormalParameterList()) {
-                   String parameterName = DartPresentableUtil.getParameterName(parameter);
-                   addParameterName(result, parameterName);
+                   final DartComponentName componentName = parameter.findComponentName();
+                   if (componentName != null) {
+                     addParameterName(result, componentName.getName());
+                   }
                  }
                  DartNamedFormalParameters namedFormalParameters = parameterList.getNamedFormalParameters();
                  List<DartDefaultFormalNamedParameter> namedParameterList =
@@ -45,8 +43,10 @@ public class DartArgumentNameContributor extends CompletionContributor {
                    ? namedFormalParameters.getDefaultFormalNamedParameterList()
                    : Collections.<DartDefaultFormalNamedParameter>emptyList();
                  for (DartDefaultFormalNamedParameter parameterDescription : namedParameterList) {
-                   String parameterName = DartPresentableUtil.getParameterName(parameterDescription.getNormalFormalParameter());
-                   addParameterName(result, parameterName);
+                   final DartComponentName componentName = parameterDescription.getNormalFormalParameter().findComponentName();
+                   if (componentName != null) {
+                     addParameterName(result, componentName.getName());
+                   }
                  }
                }
              }

@@ -154,10 +154,6 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
-  public void visitFinalVarOrType(@NotNull DartFinalVarOrType o) {
-    visitPsiCompositeElement(o);
-  }
-
   public void visitFinallyPart(@NotNull DartFinallyPart o) {
     visitPsiCompositeElement(o);
   }
@@ -186,10 +182,6 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
-  public void visitFunctionDeclaration(@NotNull DartFunctionDeclaration o) {
-    visitComponent(o);
-  }
-
   public void visitFunctionDeclarationWithBody(@NotNull DartFunctionDeclarationWithBody o) {
     visitComponent(o);
   }
@@ -205,6 +197,10 @@ public class DartVisitor extends PsiElementVisitor {
 
   public void visitFunctionExpressionBody(@NotNull DartFunctionExpressionBody o) {
     visitPsiCompositeElement(o);
+  }
+
+  public void visitFunctionSignature(@NotNull DartFunctionSignature o) {
+    visitComponent(o);
   }
 
   public void visitFunctionTypeAlias(@NotNull DartFunctionTypeAlias o) {
@@ -436,6 +432,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitSimpleFormalParameter(@NotNull DartSimpleFormalParameter o) {
+    visitComponent(o);
+  }
+
   public void visitStatements(@NotNull DartStatements o) {
     visitExecutionScope(o);
   }
@@ -522,10 +522,6 @@ public class DartVisitor extends PsiElementVisitor {
 
   public void visitVarAccessDeclaration(@NotNull DartVarAccessDeclaration o) {
     visitComponent(o);
-  }
-
-  public void visitVarDeclaration(@NotNull DartVarDeclaration o) {
-    visitPsiCompositeElement(o);
   }
 
   public void visitVarDeclarationList(@NotNull DartVarDeclarationList o) {

@@ -47,6 +47,12 @@ public class DartMethodDeclarationImpl extends AbstractDartComponentImpl impleme
   }
 
   @Override
+  @NotNull
+  public List<DartMetadata> getMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  }
+
+  @Override
   @Nullable
   public DartRedirection getRedirection() {
     return findChildByClass(DartRedirection.class);

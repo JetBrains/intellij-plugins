@@ -17,9 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements DartPsiCompositeElement {
   public DartPsiCompositeElementImpl(@NotNull ASTNode node) {
     super(node);
@@ -78,16 +75,9 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
           );
         }
         for (DartNormalFormalParameter parameter : normalFormalParameterList) {
-          if (parameter.getComponentName() != null) {
-            result.add(parameter.getComponentName());
-          }
-          final DartVarDeclaration declaration = parameter.getVarDeclaration();
-          if (declaration != null) {
-            result.add(declaration.getVarAccessDeclaration().getComponentName());
-          }
-          final DartFunctionDeclaration functionDeclaration = parameter.getFunctionDeclaration();
-          if (functionDeclaration != null) {
-            result.add(functionDeclaration.getComponentName());
+          final DartComponentName componentName = parameter.findComponentName();
+          if (componentName != null) {
+            result.add(componentName);
           }
         }
       }

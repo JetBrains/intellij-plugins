@@ -10,6 +10,9 @@ public interface DartVarAccessDeclaration extends DartComponent {
   @NotNull
   DartComponentName getComponentName();
 
+  @NotNull
+  List<DartMetadata> getMetadataList();
+
   @Nullable
   DartType getType();
 

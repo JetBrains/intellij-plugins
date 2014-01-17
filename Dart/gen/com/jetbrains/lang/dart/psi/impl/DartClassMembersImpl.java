@@ -42,12 +42,6 @@ public class DartClassMembersImpl extends DartPsiCompositeElementImpl implements
 
   @Override
   @NotNull
-  public List<DartMetadata> getMetadataList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
-  }
-
-  @Override
-  @NotNull
   public List<DartMethodDeclaration> getMethodDeclarationList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMethodDeclaration.class);
   }

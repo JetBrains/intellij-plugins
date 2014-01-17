@@ -24,26 +24,20 @@ public class DartNormalFormalParameterImpl extends DartPsiCompositeElementImpl i
 
   @Override
   @Nullable
-  public DartComponentName getComponentName() {
-    return findChildByClass(DartComponentName.class);
-  }
-
-  @Override
-  @Nullable
   public DartFieldFormalParameter getFieldFormalParameter() {
     return findChildByClass(DartFieldFormalParameter.class);
   }
 
   @Override
   @Nullable
-  public DartFunctionDeclaration getFunctionDeclaration() {
-    return findChildByClass(DartFunctionDeclaration.class);
+  public DartFunctionSignature getFunctionSignature() {
+    return findChildByClass(DartFunctionSignature.class);
   }
 
   @Override
   @Nullable
-  public DartVarDeclaration getVarDeclaration() {
-    return findChildByClass(DartVarDeclaration.class);
+  public DartSimpleFormalParameter getSimpleFormalParameter() {
+    return findChildByClass(DartSimpleFormalParameter.class);
   }
 
   @Nullable

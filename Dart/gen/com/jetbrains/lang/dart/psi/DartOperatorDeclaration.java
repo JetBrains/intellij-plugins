@@ -13,6 +13,9 @@ public interface DartOperatorDeclaration extends DartOperator {
   @Nullable
   DartFunctionBody getFunctionBody();
 
+  @NotNull
+  List<DartMetadata> getMetadataList();
+
   @Nullable
   DartReturnType getReturnType();
 

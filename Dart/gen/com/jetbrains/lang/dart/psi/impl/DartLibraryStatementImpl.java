@@ -24,6 +24,12 @@ public class DartLibraryStatementImpl extends DartPsiCompositeElementImpl implem
 
   @Override
   @NotNull
+  public List<DartMetadata> getMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  }
+
+  @Override
+  @NotNull
   public DartQualifiedComponentName getQualifiedComponentName() {
     return findNotNullChildByClass(DartQualifiedComponentName.class);
   }

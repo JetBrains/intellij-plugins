@@ -10,6 +10,9 @@ public interface DartAbstractOperatorDeclaration extends DartOperator {
   @Nullable
   DartFormalParameterList getFormalParameterList();
 
+  @NotNull
+  List<DartMetadata> getMetadataList();
+
   @Nullable
   DartReturnType getReturnType();
 

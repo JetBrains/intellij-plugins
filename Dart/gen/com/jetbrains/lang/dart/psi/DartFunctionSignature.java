@@ -5,13 +5,16 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartFunctionDeclaration extends DartComponent {
+public interface DartFunctionSignature extends DartComponent {
 
   @NotNull
   DartComponentName getComponentName();
 
   @NotNull
   DartFormalParameterList getFormalParameterList();
+
+  @NotNull
+  List<DartMetadata> getMetadataList();
 
   @Nullable
   DartReturnType getReturnType();
