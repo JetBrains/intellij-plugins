@@ -61,26 +61,19 @@ public class CloudFormationFormatChecker {
 
       if (CloudFormationSections.FormatVersion.equals(name)) {
         formatVersion(value);
-      }
-      else if (CloudFormationSections.Description.equals(name)) {
+      } else if (CloudFormationSections.Description.equals(name)) {
         description(value);
-      }
-      else if (CloudFormationSections.Parameters.equals(name)) {
+      } else if (CloudFormationSections.Parameters.equals(name)) {
         // TODO
-      }
-      else if (CloudFormationSections.Resources.equals(name)) {
+      } else if (CloudFormationSections.Resources.equals(name)) {
         resources(value);
-      }
-      else if (CloudFormationSections.Conditions.equals(name)) {
+      } else if (CloudFormationSections.Conditions.equals(name)) {
         // TODO
-      }
-      else if (CloudFormationSections.Outputs.equals(name)) {
+      } else if (CloudFormationSections.Outputs.equals(name)) {
         outputs(value);
-      }
-      else if (CloudFormationSections.Mappings.equals(name)) {
+      } else if (CloudFormationSections.Mappings.equals(name)) {
         // TODO
-      }
-      else {
+      } else {
         addProblemOnNameElement(
           property,
           CloudFormationBundle.getString("format.unknown.section", property.getName()));

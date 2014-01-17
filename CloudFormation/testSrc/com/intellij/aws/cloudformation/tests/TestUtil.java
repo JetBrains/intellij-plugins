@@ -24,8 +24,7 @@ public class TestUtil {
     if (!expectedFile.isFile()) {
       Files.write(content, actualFile, Charsets.UTF_8);
       fail("No .expected file " + expectedFile);
-    }
-    else {
+    } else {
       final String goldContent = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
       try {
         assertEquals(goldContent, content);

@@ -68,8 +68,7 @@ public abstract class ResolveTestsBase extends ResolveTestCase {
         if (resolved != null) {
           Assert.fail("Ref #" + (i + 1) + " should be unresolved, but resolved to " + resolved.getText());
         }
-      }
-      else {
+      } else {
         if (resolved == null) {
           Assert.fail("Ref #" + (i + 1) + " is unresolved");
         }
@@ -90,8 +89,7 @@ public abstract class ResolveTestsBase extends ResolveTestCase {
 
     if (visitor.myResult.size() > entities.length) {
       Assert.fail("More references found in file");
-    }
-    else if (visitor.myResult.size() < entities.length) {
+    } else if (visitor.myResult.size() < entities.length) {
       Assert.fail("Less references found in file?");
     }
   }
