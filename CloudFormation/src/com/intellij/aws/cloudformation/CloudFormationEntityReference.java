@@ -119,7 +119,7 @@ public class CloudFormationEntityReference extends PsiReferenceBase<JSLiteralExp
     }
 
     final String targetName = getTargetName(element);
-    return !CloudFormationConstants.PredefinedParameters.contains(targetName);
+    return !CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(targetName);
   }
 
   private static boolean isInDependsOnSingle(PsiElement element) {

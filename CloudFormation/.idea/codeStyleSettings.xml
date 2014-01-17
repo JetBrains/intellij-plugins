@@ -169,7 +169,6 @@
           <option name="LINE_COMMENT_AT_FIRST_COLUMN" value="false" />
           <option name="BLOCK_COMMENT_AT_FIRST_COLUMN" value="false" />
           <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="0" />
-          <option name="ELSE_ON_NEW_LINE" value="true" />
           <option name="WHILE_ON_NEW_LINE" value="true" />
           <option name="CATCH_ON_NEW_LINE" value="true" />
           <option name="FINALLY_ON_NEW_LINE" value="true" />

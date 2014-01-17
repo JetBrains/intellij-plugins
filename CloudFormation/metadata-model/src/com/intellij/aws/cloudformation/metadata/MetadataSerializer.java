@@ -22,6 +22,7 @@ public class MetadataSerializer {
     final XStream xstream = new XStream(new StaxDriver());
     xstream.alias("Metadata", CloudFormationMetadata.class);
     xstream.alias("ResourceType", CloudFormationResourceType.class);
+    xstream.alias("ResourceProperty", CloudFormationResourceProperty.class);
 
     return xstream;
   }

@@ -2,207 +2,2298 @@
   <resourceTypes>
     <ResourceType>
       <name>AWS::AutoScaling::AutoScalingGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>AvailabilityZones</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Cooldown</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DesiredCapacity</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>HealthCheckGracePeriod</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>HealthCheckType</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>InstanceId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LaunchConfigurationName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LoadBalancerNames</name>
+          <description></description>
+          <type>List of Strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MaxSize</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MinSize</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NotificationConfiguration</name>
+          <description></description>
+          <type>NotificationConfiguration</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>List of Auto Scaling Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>TerminationPolicies</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VPCZoneIdentifier</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::AutoScaling::LaunchConfiguration</name>
+      <properties>
+        <ResourceProperty>
+          <name>AssociatePublicIpAddress</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>BlockDeviceMappings</name>
+          <description></description>
+          <type>A list of BlockDeviceMappings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EbsOptimized</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>IamInstanceProfile</name>
+          <description></description>
+          <type>String. (1–1600 chars)</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ImageId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>InstanceId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>InstanceMonitoring</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>InstanceType</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>KernelId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>KeyName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>RamDiskId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SecurityGroups</name>
+          <description></description>
+          <type>A list of EC2 security groups</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SpotPrice</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>UserData</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::AutoScaling::ScalingPolicy</name>
+      <properties>
+        <ResourceProperty>
+          <name>AdjustmentType</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>AutoScalingGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Cooldown</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ScalingAdjustment</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::AutoScaling::Trigger</name>
+      <properties>
+        <ResourceProperty>
+          <name>AutoScalingGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>BreachDuration</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Dimensions</name>
+          <description></description>
+          <type>List of CloudWatch dimensions</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LowerBreachScaleIncrement</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LowerThreshold</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MetricName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Namespace</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Period</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Statistic</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Unit</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>UpperBreachScaleIncrement</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>UpperThreshold</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::CloudFormation::Authentication</name>
+      <properties>
+        <ResourceProperty>
+          <name>accessKeyId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>buckets</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>password</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>secretKey</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>type</name>
+          <description></description>
+          <type>String. Valid values are &quot;basic&quot; or &quot;S3&quot;</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>uris</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>username</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>roleName</name>
+          <description></description>
+          <type>String.</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::CloudFormation::CustomResource</name>
+      <properties>
+        <ResourceProperty>
+          <name>ServiceToken</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::CloudFormation::Stack</name>
+      <properties>
+        <ResourceProperty>
+          <name>TemplateURL</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>TimeoutInMinutes</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Parameters</name>
+          <description></description>
+          <type>CloudFormation Stack Parameters Property Type</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::CloudFormation::WaitCondition</name>
+      <properties>
+        <ResourceProperty>
+          <name>Count</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Handle</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Timeout</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::CloudFormation::WaitConditionHandle</name>
+      <properties/>
     </ResourceType>
     <ResourceType>
       <name>AWS::CloudFront::Distribution</name>
+      <properties>
+        <ResourceProperty>
+          <name>DistributionConfig</name>
+          <description></description>
+          <type>DistributionConfig type</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::CloudWatch::Alarm</name>
+      <properties/>
     </ResourceType>
     <ResourceType>
       <name>AWS::DynamoDB::Table</name>
+      <properties>
+        <ResourceProperty>
+          <name>KeySchema</name>
+          <description></description>
+          <type>DynamoDB Primary Key</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ProvisionedThroughput</name>
+          <description></description>
+          <type>DynamoDB Provisioned Throughput</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>TableName</name>
+          <description></description>
+          <type>Name Type</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::CustomerGateway</name>
+      <properties>
+        <ResourceProperty>
+          <name>BgpAsn</name>
+          <description></description>
+          <type>Number. BgpAsn is always an integer value</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>IpAddress</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>AWS CloudFormation Resource Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Type</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::DHCPOptions</name>
+      <properties>
+        <ResourceProperty>
+          <name>DomainName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DomainNameServers</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NetbiosNameServers</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NetbiosNodeType</name>
+          <description></description>
+          <type>A list of numbers</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NtpServers</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>A list of EC2 Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::EIP</name>
+      <properties>
+        <ResourceProperty>
+          <name>InstanceId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Domain</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::EIPAssociation</name>
+      <properties>
+        <ResourceProperty>
+          <name>AllocationId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EIP</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>InstanceId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NetworkInterfaceId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PrivateIpAddress</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::Instance</name>
+      <properties>
+        <ResourceProperty>
+          <name>AvailabilityZone</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>BlockDeviceMappings</name>
+          <description></description>
+          <type>A list of EC2 Block Device Mapping</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DisableApiTermination</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EbsOptimized</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>IamInstanceProfile</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ImageId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>InstanceType</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>KernelId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>KeyName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Monitoring</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NetworkInterfaces</name>
+          <description></description>
+          <type>A list of NetworkInterface objects</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PlacementGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PrivateIpAddress</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>RamdiskId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SecurityGroupIds</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SecurityGroups</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SourceDestCheck</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SubnetId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>A list of EC2 Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tenancy</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>UserData</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Volumes</name>
+          <description></description>
+          <type>A list of EC2 MountPoints</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::InternetGateway</name>
+      <properties>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>A list of EC2 Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::NetworkAcl</name>
+      <properties>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>List of EC2 Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VpcId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::NetworkAclEntry</name>
+      <properties>
+        <ResourceProperty>
+          <name>CidrBlock</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Egress</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Icmp</name>
+          <description></description>
+          <type>EC2 ICMP Property Type</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NetworkAclId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PortRange</name>
+          <description></description>
+          <type>EC2 PortRange Property Type</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Protocol</name>
+          <description></description>
+          <type>Number</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>RuleAction</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>RuleNumber</name>
+          <description></description>
+          <type>Number</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::NetworkInterface</name>
+      <properties>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>GroupSet</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PrivateIpAddress</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PrivateIpAddresses</name>
+          <description></description>
+          <type>list of PrivateIpAddressSpecification</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SecondaryPrivateIpAddressCount</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SourceDestCheck</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SubnetId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>List of EC2 Tag</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::NetworkInterfaceAttachment</name>
+      <properties>
+        <ResourceProperty>
+          <name>DeleteOnTermination</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DeviceIndex</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>InstanceId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NetworkInterfaceId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::Route</name>
+      <properties>
+        <ResourceProperty>
+          <name>DestinationCidrBlock</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>GatewayId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>InstanceId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NetworkInterfaceId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>RouteTableId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::RouteTable</name>
+      <properties>
+        <ResourceProperty>
+          <name>VpcId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>List of EC2 Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::SecurityGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>GroupDescription</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SecurityGroupEgress</name>
+          <description></description>
+          <type>EC2 Security Group Rule</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SecurityGroupIngress</name>
+          <description></description>
+          <type>EC2 Security Group Rule</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>AWS CloudFormation Resource Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VpcId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::SecurityGroupEgress</name>
+      <properties>
+        <ResourceProperty>
+          <name>CidrIp</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DestinationSecurityGroupId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>FromPort</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>GroupId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>IpProtocol</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ToPort</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::SecurityGroupIngress</name>
+      <properties>
+        <ResourceProperty>
+          <name>GroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>GroupId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>IpProtocol</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CidrIp</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SourceSecurityGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SourceSecurityGroupId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SourceSecurityGroupOwnerId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>FromPort</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ToPort</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::Subnet</name>
+      <properties>
+        <ResourceProperty>
+          <name>AvailabilityZone</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CidrBlock</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>A list of EC2 Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VpcId</name>
+          <description></description>
+          <type>Ref ID</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::SubnetNetworkAclAssociation</name>
+      <properties>
+        <ResourceProperty>
+          <name>SubnetId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NetworkAclId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::SubnetRouteTableAssociation</name>
+      <properties>
+        <ResourceProperty>
+          <name>RouteTableId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SubnetId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::VPC</name>
+      <properties>
+        <ResourceProperty>
+          <name>CidrBlock</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EnableDnsSupport</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EnableDnsHostnames</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>InstanceTenancy</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>List of EC2 Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::VPCDHCPOptionsAssociation</name>
+      <properties>
+        <ResourceProperty>
+          <name>DhcpOptionsId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VpcId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::VPCGatewayAttachment</name>
+      <properties>
+        <ResourceProperty>
+          <name>InternetGatewayId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VpcId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VpnGatewayId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::VPNConnection</name>
+      <properties>
+        <ResourceProperty>
+          <name>Type</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CustomerGatewayId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>StaticRoutesOnly</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>AWS CloudFormation Resource Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VpnGatewayId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::VPNConnectionRoute</name>
+      <properties>
+        <ResourceProperty>
+          <name>DestinationCidrBlock</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VpnConnectionId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::VPNGateway</name>
+      <properties>
+        <ResourceProperty>
+          <name>Type</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>List of EC2 Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::VPNGatewayRoutePropagation</name>
+      <properties>
+        <ResourceProperty>
+          <name>RouteTableIds</name>
+          <description></description>
+          <type>List of route table IDs</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VpnGatewayId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::Volume</name>
+      <properties>
+        <ResourceProperty>
+          <name>AvailabilityZone</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Iops</name>
+          <description></description>
+          <type>Number</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Size</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SnapshotId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>List of EC2 Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VolumeType</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::VolumeAttachment</name>
+      <properties>
+        <ResourceProperty>
+          <name>Device</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>InstanceId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VolumeId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::ElastiCache::CacheCluster</name>
+      <properties>
+        <ResourceProperty>
+          <name>AutoMinorVersionUpgrade</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CacheNodeType</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CacheParameterGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CacheSecurityGroupNames</name>
+          <description></description>
+          <type>List of Strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CacheSubnetGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ClusterName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Engine</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EngineVersion</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NotificationTopicArn</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NumCacheNodes</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Port</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PreferredAvailabilityZone</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PreferredMaintenanceWindow</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SnapshotArns</name>
+          <description></description>
+          <type>String list</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VpcSecurityGroupIds</name>
+          <description></description>
+          <type>List of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::ElastiCache::ParameterGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>CacheParameterGroupFamily</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Properties</name>
+          <description></description>
+          <type>JSON object</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::ElastiCache::SecurityGroup</name>
+      <properties/>
     </ResourceType>
     <ResourceType>
       <name>AWS::ElastiCache::SecurityGroupIngress</name>
+      <properties/>
     </ResourceType>
     <ResourceType>
       <name>AWS::ElastiCache::SubnetGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SubnetIds</name>
+          <description></description>
+          <type>String list</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::ElasticBeanstalk::Application</name>
+      <properties>
+        <ResourceProperty>
+          <name>ApplicationName</name>
+          <description></description>
+          <type>Name Type</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ApplicationVersions</name>
+          <description></description>
+          <type>A list of ApplicationVersions</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ConfigurationTemplates</name>
+          <description></description>
+          <type>A list of ConfigurationTemplates</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::ElasticBeanstalk::Environment</name>
+      <properties>
+        <ResourceProperty>
+          <name>ApplicationName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CNAMEPrefix</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EnvironmentName</name>
+          <description></description>
+          <type>Name Type</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>OptionSettings</name>
+          <description></description>
+          <type>A list of OptionSettings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>OptionsToRemove</name>
+          <description></description>
+          <type>A list of OptionSettings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SolutionStackName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>TemplateName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tier</name>
+          <description></description>
+          <type>AWS Elastic Beanstalk Environment Tier Property Type</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VersionLabel</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::ElasticLoadBalancing::LoadBalancer</name>
+      <properties>
+        <ResourceProperty>
+          <name>AppCookieStickinessPolicy</name>
+          <description></description>
+          <type>A list of AppCookieStickinessPolicy objects</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>AvailabilityZones</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CrossZone</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>HealthCheck</name>
+          <description></description>
+          <type>ElasticLoadBalancing HealthCheck Type</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Instances</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LBCookieStickinessPolicy</name>
+          <description></description>
+          <type>A list of LBCookieStickinessPolicy objects</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LoadBalancerName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Listeners</name>
+          <description></description>
+          <type>A list of ElasticLoadBalancing Listener Property Type objects</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Policies</name>
+          <description></description>
+          <type>A list of ElasticLoadBalancing policy objects</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Scheme</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SecurityGroups</name>
+          <description></description>
+          <type>A list of security groups assigned to your load balancer within your virtual private cloud (VPC)</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Subnets</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::IAM::AccessKey</name>
+      <properties>
+        <ResourceProperty>
+          <name>Serial</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Status</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>UserName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::IAM::Group</name>
+      <properties>
+        <ResourceProperty>
+          <name>Path</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Policies</name>
+          <description></description>
+          <type>List of AWS::IAM::Policy types</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::IAM::InstanceProfile</name>
+      <properties>
+        <ResourceProperty>
+          <name>Path</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Roles</name>
+          <description></description>
+          <type>List of references to AWS::IAM::Roles. Currently, a maximum of one role can be assigned to an instance profile</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::IAM::Policy</name>
+      <properties>
+        <ResourceProperty>
+          <name>Groups</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PolicyDocument</name>
+          <description></description>
+          <type>JSON object</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PolicyName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Roles</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Users</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::IAM::Role</name>
+      <properties>
+        <ResourceProperty>
+          <name>AssumeRolePolicyDocument</name>
+          <description></description>
+          <type>A JSON policy document</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Path</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Policies</name>
+          <description></description>
+          <type>A list of IAM policies</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::IAM::User</name>
+      <properties>
+        <ResourceProperty>
+          <name>Path</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Groups</name>
+          <description></description>
+          <type>List of Groups</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LoginProfile</name>
+          <description></description>
+          <type>LoginProfile type</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Policies</name>
+          <description></description>
+          <type>List of AWS::IAM::Policy types</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::IAM::UserToGroupAddition</name>
+      <properties>
+        <ResourceProperty>
+          <name>GroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Users</name>
+          <description></description>
+          <type>List of users</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::RDS::DBInstance</name>
+      <properties>
+        <ResourceProperty>
+          <name>AllocatedStorage</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>AllowMajorVersionUpgrade</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>AutoMinorVersionUpgrade</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>AvailabilityZone</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>BackupRetentionPeriod</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DBInstanceClass</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DBInstanceIdentifier</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DBName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DBParameterGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DBSecurityGroups</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DBSnapshotIdentifier</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DBSubnetGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Engine</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EngineVersion</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Iops</name>
+          <description></description>
+          <type>Number</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LicenseModel</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MasterUsername</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MasterUserPassword</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MultiAZ</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Port</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PreferredBackupWindow</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PreferredMaintenanceWindow</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SourceDBInstanceIdentifier</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>AWS CloudFormation Resource Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VPCSecurityGroups</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::RDS::DBParameterGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Family</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Parameters</name>
+          <description></description>
+          <type>DBParameters, a JSON object consisting of key/value pairs of Strings. For example:</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>A list of resource tags</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::RDS::DBSecurityGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>EC2VpcId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DBSecurityGroupIngress</name>
+          <description></description>
+          <type>List of RDS Security Group Rules</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>GroupDescription</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>A list of resource tags</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::RDS::DBSecurityGroupIngress</name>
+      <properties>
+        <ResourceProperty>
+          <name>CIDRIP</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DBSecurityGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EC2SecurityGroupId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EC2SecurityGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EC2SecurityGroupOwnerId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::RDS::DBSubnetGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>DBSubnetGroupDescription</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SubnetIds</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>A list of resource tags</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::Route53::RecordSet</name>
+      <properties>
+        <ResourceProperty>
+          <name>AliasTarget</name>
+          <description></description>
+          <type>AliasTarget</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Comment</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>HostedZoneId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>HostedZoneName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Name</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Region</name>
+          <description></description>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ResourceRecords</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SetIdentifier</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>TTL</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Type</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Weight</name>
+          <description></description>
+          <type>Number. Weight expects integer values</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::Route53::RecordSetGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>HostedZoneId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>HostedZoneName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>RecordSets</name>
+          <description></description>
+          <type>list of AWS::Route53::RecordSet</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Comment</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::S3::Bucket</name>
+      <properties>
+        <ResourceProperty>
+          <name>AccessControl</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>BucketName</name>
+          <description></description>
+          <type>Name Type</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>AWS CloudFormation Resource Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>WebsiteConfiguration</name>
+          <description></description>
+          <type>Website Configuration Type</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::S3::BucketPolicy</name>
+      <properties/>
     </ResourceType>
     <ResourceType>
       <name>AWS::SDB::Domain</name>
+      <properties/>
     </ResourceType>
     <ResourceType>
       <name>AWS::SNS::Topic</name>
+      <properties>
+        <ResourceProperty>
+          <name>DisplayName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Subscription</name>
+          <description></description>
+          <type>List of SNS Subscriptions</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>TopicName</name>
+          <description></description>
+          <type>Name Type</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::SNS::TopicPolicy</name>
+      <properties/>
     </ResourceType>
     <ResourceType>
       <name>AWS::SQS::Queue</name>
+      <properties>
+        <ResourceProperty>
+          <name>DelaySeconds</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MaximumMessageSize</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MessageRetentionPeriod</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>QueueName</name>
+          <description></description>
+          <type>Name Type</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ReceiveMessageWaitTimeSeconds</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VisibilityTimeout</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::SQS::QueuePolicy</name>
+      <properties/>
     </ResourceType>
   </resourceTypes>
+  <predefinedParameters>
+    <string>AWS::AccountId</string>
+    <string>AWS::NoValue</string>
+    <string>AWS::NotificationARNs</string>
+    <string>AWS::Region</string>
+    <string>AWS::StackId</string>
+    <string>AWS::StackName</string>
+  </predefinedParameters>
 </Metadata>

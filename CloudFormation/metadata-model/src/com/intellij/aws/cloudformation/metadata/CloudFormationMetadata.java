@@ -5,4 +5,5 @@ import java.util.List;
 
 public class CloudFormationMetadata {
   public List<CloudFormationResourceType> resourceTypes = new ArrayList<CloudFormationResourceType>();
+  public List<String> predefinedParameters = new ArrayList<String>();
 }
