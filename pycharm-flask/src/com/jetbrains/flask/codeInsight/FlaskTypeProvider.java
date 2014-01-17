@@ -48,7 +48,7 @@ public class FlaskTypeProvider extends PyTypeProviderBase {
         return getClassType(function, FlaskNames.ENVIRONMENT_CLASS);
       }
     }
-    return super.getReferenceType(referenceTarget, context, anchor);
+    return null;
   }
 
   @Nullable
