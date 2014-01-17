@@ -13,10 +13,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HbTypedHandler extends TypedHandlerDelegate {
 
+  public static final String OPEN_BRACE = "{";
   public static final String CLOSE_BRACES = "}}";
 
   @Override
@@ -115,13 +113,13 @@ public class HbTypedHandler extends TypedHandlerDelegate {
       autoInsertCloseTag(project, offset, editor, provider);
       adjustMustacheFormatting(project, offset, editor, file, provider);
     } else if (c == '/' && previousChar.equals("{")) {
-      finishCloseTag(offset, editor, provider);
+      finishClosingTag(offset, editor, provider);
     }
 
     return Result.CONTINUE;
   }
 
-  private static void finishCloseTag(int offset, Editor editor, FileViewProvider provider) {
+  private static void finishClosingTag(int offset, Editor editor, FileViewProvider provider) {
     PsiElement elementAtCaret = provider.findElementAt(offset - 1, HbLanguage.class);
     if (elementAtCaret != null) {
       HbBlockWrapper block = PsiTreeUtil.getParentOfType(elementAtCaret, HbBlockWrapper.class);
@@ -131,8 +129,14 @@ public class HbTypedHandler extends TypedHandlerDelegate {
         if (open != null && close == null) {
           final HbMustacheName mustacheName = PsiTreeUtil.findChildOfType(open, HbMustacheName.class);
           if (mustacheName != null) {
-            editor.getDocument().insertString(offset, mustacheName.getText() + CLOSE_BRACES);
-            editor.getCaretModel().moveToOffset(offset + mustacheName.getText().length() + CLOSE_BRACES.length());
+            final String prePreviousChar = editor.getDocument().getText(new TextRange(offset - 3, offset - 2));
+            if (prePreviousChar.equals("{")) {
+              editor.getDocument().insertString(offset, mustacheName.getText() + CLOSE_BRACES);
+              editor.getCaretModel().moveToOffset(offset + mustacheName.getText().length() + CLOSE_BRACES.length());
+            } else {
+              editor.getDocument().replaceString(offset - 1, offset, OPEN_BRACE + '/' + mustacheName.getText() + CLOSE_BRACES);
+              editor.getCaretModel().moveToOffset(offset + mustacheName.getText().length() + CLOSE_BRACES.length() + 1);
+            }
           }
         }
       }

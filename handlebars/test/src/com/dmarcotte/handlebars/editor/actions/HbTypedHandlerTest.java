@@ -334,5 +334,16 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
       "    {{#if}}test{{/if}}<caret>\n" +
       "</div>"
     );
+
+    doCharTest(
+      '/',
+      "<div class=\"entry\">\n" +
+      "    {{#if}}test{<caret>\n" +
+      "</div>",
+
+      "<div class=\"entry\">\n" +
+      "    {{#if}}test{{/if}}<caret>\n" +
+      "</div>"
+    );
   }
 }
