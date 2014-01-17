@@ -2,7 +2,6 @@ package com.intellij.tapestry.tests;
 
 import com.intellij.javaee.ExternalResourceManagerEx;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.MappingDataCache;
@@ -11,6 +10,7 @@ import com.intellij.tapestry.psi.TmlFile;
 import com.intellij.xml.Html5SchemaProvider;
 import com.intellij.xml.util.XmlUtil;
 import junit.framework.Assert;
+import org.intellij.plugins.relaxNG.compact.RncElementTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -56,8 +56,9 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     try {
       addComponentToProject("Count");
       initByComponent();
-      LeafElement ref = resolveReferenceAtCaretPosition(LeafElement.class);
-      Assert.assertEquals("body.inner", ref.getText());
+      PsiElement ref = resolveReferenceAtCaretPosition(PsiElement.class);
+      assertEquals(RncElementTypes.NAME_CLASS, ref.getNode().getElementType());
+      assertEquals("body", ref.getText());
     }
     finally {
       manager.setDefaultHtmlDoctype(doctype, myFixture.getProject());
