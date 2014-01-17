@@ -66,7 +66,8 @@ public class KarmaExecutionSession {
     TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(
       runConfiguration,
       FRAMEWORK_NAME,
-      myExecutor
+      myExecutor,
+      false
     );
     testConsoleProperties.setUsePredefinedMessageFilter(false);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
