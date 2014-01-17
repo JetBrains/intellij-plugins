@@ -45,6 +45,7 @@ IDENT =[_$a-zA-Z][0-9a-zA-Z]*
   "null"                      { return NULL_KEYWORD; }
   "undefined"                 { return UNDEFINED_KEYWORD; }
   "in"                        { return IN_KEYWORD; }
+  "track by"                  { return TRACK_BY_KEYWORD; }
 
   {IDENT}                     { return IDENTIFIER;}
 
