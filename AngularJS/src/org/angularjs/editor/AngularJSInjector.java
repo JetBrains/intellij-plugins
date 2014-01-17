@@ -36,7 +36,7 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
 
     if (context instanceof XmlAttributeValueImpl) {
       final XmlAttribute attribute = (XmlAttribute)context.getParent();
-      if (isAngularAttribute(attribute, "ng-init")) {
+      if (isAngularAttribute(attribute, "ng-init") || isAngularAttribute(attribute, "ng-repeat")) {
         registrar.startInjecting(AngularJSLanguage.INSTANCE).
           addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(1, context.getTextLength() - 1)).
           doneInjecting();

@@ -21,3 +21,7 @@
 /**
  * @name ng.directive:ngInit
  */
+
+/**
+ * @name ng.directive:ngRepeat
+ */

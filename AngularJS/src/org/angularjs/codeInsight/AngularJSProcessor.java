@@ -2,8 +2,8 @@ package org.angularjs.codeInsight;
 
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSRecursiveElementVisitor;
 import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -12,23 +12,48 @@ import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
+import org.angularjs.lang.psi.AngularJSRecursiveVisitor;
+import org.angularjs.lang.psi.AngularJSRepeatExpression;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Dennis.Ushakov
  */
 public class AngularJSProcessor {
+  private static final Map<String, String> NG_REPEAT_IMPLICITS = new HashMap<String, String>();
+  static {
+    NG_REPEAT_IMPLICITS.put("$index", "Number");
+    NG_REPEAT_IMPLICITS.put("$first", "Boolean");
+    NG_REPEAT_IMPLICITS.put("$middle", "Boolean");
+    NG_REPEAT_IMPLICITS.put("$last", "Boolean");
+    NG_REPEAT_IMPLICITS.put("$even", "Boolean");
+    NG_REPEAT_IMPLICITS.put("$odd", "Boolean");
+  }
+
   public static void process(final PsiElement element, final Consumer<JSVariable> consumer) {
     final XmlFile file = (XmlFile)InjectedLanguageUtil.getTopLevelFile(element);
     final JSResolveUtil.JSInjectedFilesVisitor visitor = new JSResolveUtil.JSInjectedFilesVisitor() {
       @Override
       protected void process(JSFile file) {
-        file.accept(new JSRecursiveElementVisitor() {
+        file.accept(new AngularJSRecursiveVisitor() {
           @Override
           public void visitJSVariable(JSVariable node) {
             if (scopeMatches(element, node)) {
               consumer.consume(node);
             }
             super.visitJSVariable(node);
+          }
+
+          @Override
+          public void visitAngularJSRepeatExpression(AngularJSRepeatExpression repeatExpression) {
+            if (scopeMatches(element, repeatExpression)) {
+              for (Map.Entry<String, String> entry : NG_REPEAT_IMPLICITS.entrySet()) {
+                consumer.consume(new ImplicitJSVariableImpl(entry.getKey(), entry.getValue(), repeatExpression));
+              }
+            }
+            super.visitAngularJSRepeatExpression(repeatExpression);
           }
         });
       }
