@@ -3,9 +3,9 @@ package org.angularjs.codeInsight;
 import com.intellij.lang.javascript.index.AngularDirectivesIndex;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
+import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
@@ -22,7 +22,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
-      for (String directiveName : FileBasedIndex.getInstance().getAllKeys(AngularDirectivesIndex.INDEX_ID, project)) {
+      for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project)) {
         result.put(directiveName, createDescriptor(project, directiveName));
       }
       return result.values().toArray(new XmlAttributeDescriptor[result.size()]);
@@ -36,7 +36,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     final String attributeName = normalizeAttributeName(attrName);
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      return FileBasedIndex.getInstance().getAllKeys(AngularDirectivesIndex.INDEX_ID, project).contains(attributeName) ?
+      return AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project).contains(attributeName) ?
              createDescriptor(project, attributeName) : null;
     }
     return null;

@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import org.angularjs.index.AngularIndexUtil;
@@ -76,7 +75,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor {
   @Override
   public String[] getEnumeratedValues() {
     if (myProject == null || myIndex == null) return ArrayUtil.EMPTY_STRING_ARRAY;
-    return ArrayUtil.toStringArray(FileBasedIndex.getInstance().getAllKeys(myIndex, myProject));
+    return ArrayUtil.toStringArray(AngularIndexUtil.getAllKeys(myIndex, myProject));
   }
 
   @Override

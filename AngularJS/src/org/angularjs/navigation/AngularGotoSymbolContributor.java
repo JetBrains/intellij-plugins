@@ -6,7 +6,6 @@ import com.intellij.navigation.ChooseByNameContributor;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.indexing.FileBasedIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +16,7 @@ public class AngularGotoSymbolContributor implements ChooseByNameContributor {
   @NotNull
   @Override
   public String[] getNames(Project project, boolean includeNonProjectItems) {
-    return ArrayUtil.toStringArray(FileBasedIndex.getInstance().getAllKeys(AngularSymbolIndex.INDEX_ID, project));
+    return ArrayUtil.toStringArray(AngularIndexUtil.getAllKeys(AngularSymbolIndex.INDEX_ID, project));
   }
 
   @NotNull
