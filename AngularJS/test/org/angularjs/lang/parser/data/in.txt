@@ -1,6 +1,6 @@
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
-    JSBinaryExpression
+    AngularJSRepeatExpression
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('name')
       PsiWhiteSpace(' ')
@@ -11,7 +11,7 @@ ASTWrapperPsiElement(FILE)
 ------
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
-    JSBinaryExpression
+    AngularJSRepeatExpression
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('name')
       PsiWhiteSpace(' ')

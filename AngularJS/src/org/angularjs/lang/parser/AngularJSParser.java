@@ -1,10 +1,7 @@
 package org.angularjs.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.javascript.JSElementTypes;
-import com.intellij.lang.javascript.JSStubElementTypes;
-import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.ExpressionParser;
 import com.intellij.lang.javascript.parsing.FunctionParser;
 import com.intellij.lang.javascript.parsing.JavaScriptParser;
@@ -16,7 +13,7 @@ import org.angularjs.lang.lexer.AngularJSTokenTypes;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSParser extends JavaScriptParser<ExpressionParser, StatementParser, FunctionParser> {
+public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSExpressionParser, StatementParser, FunctionParser> {
   public AngularJSParser(PsiBuilder builder) {
     super(JavaScriptSupportLoader.JAVASCRIPT_1_5, builder);
     myExpressionParser = new AngularJSExpressionParser();
@@ -29,14 +26,35 @@ public class AngularJSParser extends JavaScriptParser<ExpressionParser, Statemen
           checkForSemicolon();
           return;
         }
-        if (isIdentifierToken(firstToken) && builder.lookAhead(1) == JSTokenTypes.EQ) {
-          PsiBuilder.Marker marker = builder.mark();
-          parseVarDeclaration(false);
-          checkForSemicolon();
-          marker.done(JSStubElementTypes.VAR_STATEMENT);
-          return;
+        if (isIdentifierToken(firstToken)) {
+          final IElementType nextToken = builder.lookAhead(1);
+          if (nextToken == JSTokenTypes.EQ) {
+            PsiBuilder.Marker marker = builder.mark();
+            parseVarDeclaration(false);
+            checkForSemicolon();
+            marker.done(JSStubElementTypes.VAR_STATEMENT);
+            return;
+          } else if (nextToken == JSTokenTypes.IN_KEYWORD) {
+            parseInStatement();
+            return;
+          }
+        }
+        if (builder.getTokenType() == JSTokenTypes.LPAR) {
+          if (parseInStatement()) {
+            return;
+          }
         }
         super.doParseStatement(canHaveClasses);
+      }
+
+      private boolean parseInStatement() {
+        PsiBuilder.Marker statement = builder.mark();
+        if (!getExpressionParser().parseInExpression()) {
+          statement.drop();
+          return false;
+        }
+        statement.done(JSElementTypes.EXPRESSION_STATEMENT);
+        return true;
       }
     };
   }
@@ -49,7 +67,7 @@ public class AngularJSParser extends JavaScriptParser<ExpressionParser, Statemen
     rootMarker.done(root);
   }
 
-  private class AngularJSExpressionParser extends ExpressionParser<AngularJSParser> {
+  protected class AngularJSExpressionParser extends ExpressionParser<AngularJSParser> {
     private Key<Boolean> IN_FILTER = Key.create("angular.filter.started");
 
     public AngularJSExpressionParser() {
@@ -125,6 +143,56 @@ public class AngularJSParser extends JavaScriptParser<ExpressionParser, Statemen
         builder.error(errorMessage);
       }
       return true;
+    }
+
+    public boolean parseInExpression() {
+      final PsiBuilder.Marker expr = builder.mark();
+      if (isIdentifierToken(builder.getTokenType())) {
+        buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+      } else {
+        final PsiBuilder.Marker keyValue = builder.mark();
+        parseKeyValue();
+        if (builder.getTokenType() != JSTokenTypes.IN_KEYWORD) {
+          expr.rollbackTo();
+          return false;
+        } else {
+          keyValue.done(JSElementTypes.PARENTHESIZED_EXPRESSION);
+        }
+      }
+      builder.advanceLexer();
+      parseExpression();
+      if (builder.getTokenType() == AngularJSTokenTypes.TRACK_BY_KEYWORD) {
+        builder.advanceLexer();
+        parseExpression();
+      }
+      expr.done(AngularJSElementTypes.REPEAT_EXPRESSION);
+      return true;
+    }
+
+    private void parseKeyValue() {
+      builder.advanceLexer();
+      final PsiBuilder.Marker comma = builder.mark();
+      if (isIdentifierToken(builder.getTokenType())) {
+        buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+      } else {
+        builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
+      }
+      if (builder.getTokenType() == JSTokenTypes.COMMA) {
+        builder.advanceLexer();
+      } else {
+        builder.error(JSBundle.message("javascript.parser.message.expected.comma"));
+      }
+      if (isIdentifierToken(builder.getTokenType())) {
+        buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+      } else {
+        builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
+      }
+      comma.done(JSElementTypes.COMMA_EXPRESSION);
+      if (builder.getTokenType() == JSTokenTypes.RPAR) {
+        builder.advanceLexer();
+      } else {
+        builder.error(JSBundle.message("javascript.parser.message.expected.rparen"));
+      }
     }
   }
 }
