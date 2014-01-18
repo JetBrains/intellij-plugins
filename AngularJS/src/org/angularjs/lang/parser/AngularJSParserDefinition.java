@@ -7,9 +7,11 @@ import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.angularjs.lang.AngularJSLanguage;
 import org.angularjs.lang.lexer.AngularJSLexer;
+import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,8 +36,11 @@ public class AngularJSParserDefinition extends JavascriptParserDefinition {
   @NotNull
   @Override
   public PsiElement createElement(ASTNode node) {
-    if (node.getElementType() == AngularJSElementTypes.REPEAT_EXPRESSION) {
+    final IElementType type = node.getElementType();
+    if (type == AngularJSElementTypes.REPEAT_EXPRESSION) {
       return new AngularJSRepeatExpression(node);
+    } else if (type == AngularJSElementTypes.FILTER_EXPRESSION) {
+      return new AngularJSFilterExpression(node);
     }
     return super.createElement(node);
   }

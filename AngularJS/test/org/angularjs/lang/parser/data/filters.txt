@@ -6,7 +6,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      JSCallExpression
+      AngularJSFilterExpression
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('nonexistent')
 ------
@@ -18,7 +18,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      JSCallExpression
+      AngularJSFilterExpression
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('substring')
         JSArgumentList
@@ -38,7 +38,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        JSCallExpression
+        AngularJSFilterExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('substring')
           JSArgumentList
@@ -51,7 +51,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      JSCallExpression
+      AngularJSFilterExpression
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('uppercase')
 ------
@@ -70,7 +70,7 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
-          JSCallExpression
+          AngularJSFilterExpression
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('lowercase')
         PsiElement(JS:RPAR)(')')
@@ -83,7 +83,7 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
-      JSCallExpression
+      AngularJSFilterExpression
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('uppercase')
         JSArgumentList

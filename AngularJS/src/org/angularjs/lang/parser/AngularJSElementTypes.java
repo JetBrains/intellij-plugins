@@ -8,4 +8,5 @@ import org.angularjs.lang.AngularJSLanguage;
  */
 public interface AngularJSElementTypes {
   IElementType REPEAT_EXPRESSION = new IElementType("REPEAT_EXPRESSION", AngularJSLanguage.INSTANCE);
+  IElementType FILTER_EXPRESSION = new IElementType("FILTER_EXPRESSION", AngularJSLanguage.INSTANCE);
 }

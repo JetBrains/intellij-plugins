@@ -156,7 +156,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        JSCallExpression
+        AngularJSFilterExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('some')
 ------
@@ -175,7 +175,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        JSCallExpression
+        AngularJSFilterExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('some')
           JSArgumentList
@@ -207,7 +207,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        JSCallExpression
+        AngularJSFilterExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('some')
 ------
@@ -235,7 +235,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        JSCallExpression
+        AngularJSFilterExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('some')
           JSArgumentList
@@ -275,7 +275,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
-        JSCallExpression
+        AngularJSFilterExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('some')
       PsiWhiteSpace(' ')

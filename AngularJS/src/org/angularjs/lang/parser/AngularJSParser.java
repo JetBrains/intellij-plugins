@@ -122,7 +122,7 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
       if (arguments != null) {
         arguments.done(JSElementTypes.ARGUMENT_LIST);
       }
-      mark.done(JSElementTypes.CALL_EXPRESSION);
+      mark.done(AngularJSElementTypes.FILTER_EXPRESSION);
       return true;
     }
 
