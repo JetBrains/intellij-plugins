@@ -1,8 +1,9 @@
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('foo')
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
       PsiWhiteSpace(' ')
@@ -15,12 +16,14 @@ ASTWrapperPsiElement(FILE)
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
         JSCommaExpression
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('key')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('key')
           PsiElement(JS:COMMA)(',')
           PsiWhiteSpace(' ')
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('value')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('value')
         PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
@@ -31,8 +34,9 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('foo')
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
       PsiErrorElement:expression expected
@@ -44,12 +48,14 @@ ASTWrapperPsiElement(FILE)
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
         JSCommaExpression
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('key')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('key')
           PsiElement(JS:COMMA)(',')
           PsiWhiteSpace(' ')
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('value')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('value')
         PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
@@ -62,13 +68,15 @@ ASTWrapperPsiElement(FILE)
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
         JSCommaExpression
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('key')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('key')
           PsiErrorElement:, expected
             <empty list>
           PsiWhiteSpace(' ')
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('value')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('value')
         PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
@@ -82,8 +90,9 @@ ASTWrapperPsiElement(FILE)
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
         JSCommaExpression
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('key')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('key')
           PsiErrorElement:, expected
             <empty list>
         PsiElement(JS:RPAR)(')')
@@ -99,8 +108,9 @@ ASTWrapperPsiElement(FILE)
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
         JSCommaExpression
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('key')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('key')
           PsiElement(JS:COMMA)(',')
           PsiErrorElement:Expected identifier
             <empty list>
@@ -121,8 +131,9 @@ ASTWrapperPsiElement(FILE)
             <empty list>
           PsiElement(JS:COMMA)(',')
           PsiWhiteSpace(' ')
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('value')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('value')
         PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
@@ -133,8 +144,9 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('foo')
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
       PsiWhiteSpace(' ')
@@ -151,8 +163,9 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('foo')
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
       PsiWhiteSpace(' ')
@@ -176,12 +189,14 @@ ASTWrapperPsiElement(FILE)
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
         JSCommaExpression
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('key')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('key')
           PsiElement(JS:COMMA)(',')
           PsiWhiteSpace(' ')
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('value')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('value')
         PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
@@ -202,12 +217,14 @@ ASTWrapperPsiElement(FILE)
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
         JSCommaExpression
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('key')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('key')
           PsiElement(JS:COMMA)(',')
           PsiWhiteSpace(' ')
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('value')
+          JSDefinitionExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('value')
         PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
@@ -229,8 +246,9 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('foo')
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
       PsiWhiteSpace(' ')
@@ -245,8 +263,9 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('foo')
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
       PsiWhiteSpace(' ')
@@ -268,8 +287,9 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     AngularJSRepeatExpression
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('foo')
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(JS:IN_KEYWORD)('in')
       PsiWhiteSpace(' ')

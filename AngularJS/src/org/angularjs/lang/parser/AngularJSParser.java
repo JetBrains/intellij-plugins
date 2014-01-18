@@ -148,7 +148,9 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
     public boolean parseInExpression() {
       final PsiBuilder.Marker expr = builder.mark();
       if (isIdentifierToken(builder.getTokenType())) {
+        final PsiBuilder.Marker def = builder.mark();
         buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+        def.done(JSElementTypes.DEFINITION_EXPRESSION);
       } else {
         final PsiBuilder.Marker keyValue = builder.mark();
         parseKeyValue();
@@ -173,7 +175,9 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
       builder.advanceLexer();
       final PsiBuilder.Marker comma = builder.mark();
       if (isIdentifierToken(builder.getTokenType())) {
+        final PsiBuilder.Marker def = builder.mark();
         buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+        def.done(JSElementTypes.DEFINITION_EXPRESSION);
       } else {
         builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
       }
@@ -183,7 +187,9 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
         builder.error(JSBundle.message("javascript.parser.message.expected.comma"));
       }
       if (isIdentifierToken(builder.getTokenType())) {
+        final PsiBuilder.Marker def = builder.mark();
         buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+        def.done(JSElementTypes.DEFINITION_EXPRESSION);
       } else {
         builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
       }
