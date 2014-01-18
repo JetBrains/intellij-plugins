@@ -59,7 +59,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testControllerResolve() {
-    myFixture.configureByFiles("controller.after.html", "custom.js");
+    myFixture.configureByFiles("controller.after.html", "custom.js", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("Supa<caret>Controller", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
     assertNotNull(ref);
@@ -70,11 +70,11 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testAppCompletion() {
-    myFixture.testCompletion("app.html", "app.after.html", "custom.js");
+    myFixture.testCompletion("app.html", "app.after.html", "custom.js", "angular.js");
   }
 
   public void testAppResolve() {
-    myFixture.configureByFiles("app.after.html", "custom.js");
+    myFixture.configureByFiles("app.after.html", "custom.js", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("docs<caret>SimpleDirective", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
     assertNotNull(ref);
@@ -85,7 +85,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testNormalization() {
-    myFixture.configureByFiles("normalize.html");
+    myFixture.configureByFiles("normalize.html", "angular.js");
     myFixture.enableInspections(HtmlUnknownAttributeInspectionBase.class);
     myFixture.checkHighlighting();
   }
