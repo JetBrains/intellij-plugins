@@ -1,6 +1,6 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
@@ -22,11 +22,11 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
     super(expression, file);
   }
 
-  public static Collection<JSVariable> getItemsByName(final String name, PsiElement element) {
-    final Collection<JSVariable> result = new ArrayList<JSVariable>();
-    AngularJSProcessor.process(element, new Consumer<JSVariable>() {
+  public static Collection<JSNamedElement> getItemsByName(final String name, PsiElement element) {
+    final Collection<JSNamedElement> result = new ArrayList<JSNamedElement>();
+    AngularJSProcessor.process(element, new Consumer<JSNamedElement>() {
       @Override
-      public void consume(JSVariable element) {
+      public void consume(JSNamedElement element) {
         if (name.equals(element.getName())) {
           result.add(element);
         }
@@ -39,11 +39,11 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
   public ResolveResult[] doResolve() {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
 
-    final Collection<JSVariable> localVariables = getItemsByName(myReferencedName, myRef);
+    final Collection<JSNamedElement> localVariables = getItemsByName(myReferencedName, myRef);
     if (!localVariables.isEmpty()) {
-      return ContainerUtil.map2Array(localVariables, JSResolveResult.class, new Function<JSVariable, JSResolveResult>() {
+      return ContainerUtil.map2Array(localVariables, JSResolveResult.class, new Function<JSNamedElement, JSResolveResult>() {
         @Override
-        public JSResolveResult fun(JSVariable item) {
+        public JSResolveResult fun(JSNamedElement item) {
           return new JSResolveResult(item);
         }
       });

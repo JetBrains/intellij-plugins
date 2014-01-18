@@ -1,6 +1,9 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.psi.JSDefinitionExpression;
+import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
@@ -26,12 +29,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgInitResolve() {
     myFixture.configureByFiles("ngInit.resolve.html", "angular.js");
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature("fri<caret>ends", myFixture.getFile());
-    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-    assertNotNull(ref);
-    PsiElement resolve = ref.resolve();
-    assertInstanceOf(resolve, JSVariable.class);
-    assertEquals("friends", ((JSVariable)resolve).getName());
+    checkVariableResolve("fri<caret>ends", "friends", JSVariable.class);
   }
 
   public void testNgRepeatImplicitCompletion() {
@@ -41,12 +39,44 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgRepeatImplicitResolve() {
     myFixture.configureByFiles("ngRepeatImplicitType.html", "angular.js");
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature("ind<caret>ex", myFixture.getFile());
+    final PsiElement resolve = checkVariableResolve("ind<caret>ex", "$index", ImplicitJSVariableImpl.class);
+    assertEquals("Number", ((JSVariable)resolve).getTypeString());
+  }
+
+  public void testNgRepeatExplicitCompletion() {
+    myFixture.testCompletion("ngRepeatExplicit.html", "ngRepeatExplicit.after.html", "angular.js");
+  }
+
+  public void testNgRepeatExplicitResolve() {
+    myFixture.configureByFiles("ngRepeatExplicit.resolve.html", "angular.js");
+    checkVariableResolve("per<caret>son", "person", JSDefinitionExpression.class);
+  }
+
+  public void testNgRepeatExplicitKeyCompletion() {
+    myFixture.testCompletion("ngRepeatExplicitHashKey.html", "ngRepeatExplicitHashKey.after.html", "angular.js");
+  }
+
+  public void testNgRepeatExplicitKeyResolve() {
+    myFixture.configureByFiles("ngRepeatExplicitHashKey.resolve.html", "angular.js");
+    checkVariableResolve("ke<caret>y", "key", JSDefinitionExpression.class);
+  }
+
+  public void testNgRepeatExplicitValueCompletion() {
+    myFixture.testCompletion("ngRepeatExplicitHashValue.html", "ngRepeatExplicitHashValue.after.html", "angular.js");
+  }
+
+  public void testNgRepeatExplicitValueResolve() {
+    myFixture.configureByFiles("ngRepeatExplicitHashValue.resolve.html", "angular.js");
+    checkVariableResolve("val<caret>ue", "value", JSDefinitionExpression.class);
+  }
+
+  private PsiElement checkVariableResolve(final String signature, final String varName, final Class<? extends JSNamedElement> varClass) {
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
     assertNotNull(ref);
     PsiElement resolve = ref.resolve();
-    assertInstanceOf(resolve, JSVariable.class);
-    assertEquals("$index", ((JSVariable)resolve).getName());
-    assertEquals("Number", ((JSVariable)resolve).getTypeString());
+    assertInstanceOf(resolve, varClass);
+    assertEquals(varName, varClass.cast(resolve).getName());
+    return resolve;
   }
 }

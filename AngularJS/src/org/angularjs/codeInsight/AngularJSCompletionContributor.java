@@ -6,7 +6,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JavaScriptCompletionData;
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
@@ -26,9 +26,9 @@ public class AngularJSCompletionContributor extends CompletionContributor {
 
     if (ref instanceof JSReferenceExpressionImpl) {
       final JavaScriptCompletionData.JSInsertHandler insertHandler = new JavaScriptCompletionData.JSInsertHandler();
-      AngularJSProcessor.process(parameters.getPosition(), new Consumer<JSVariable>() {
+      AngularJSProcessor.process(parameters.getPosition(), new Consumer<JSNamedElement>() {
         @Override
-        public void consume(JSVariable element) {
+        public void consume(JSNamedElement element) {
           result.consume(LookupElementBuilder.createWithIcon(element).withInsertHandler(insertHandler));
         }
       });

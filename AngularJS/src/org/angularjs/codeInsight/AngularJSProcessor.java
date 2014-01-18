@@ -1,7 +1,9 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -32,7 +34,7 @@ public class AngularJSProcessor {
     NG_REPEAT_IMPLICITS.put("$odd", "Boolean");
   }
 
-  public static void process(final PsiElement element, final Consumer<JSVariable> consumer) {
+  public static void process(final PsiElement element, final Consumer<JSNamedElement> consumer) {
     final XmlFile file = (XmlFile)InjectedLanguageUtil.getTopLevelFile(element);
     final JSResolveUtil.JSInjectedFilesVisitor visitor = new JSResolveUtil.JSInjectedFilesVisitor() {
       @Override
@@ -49,6 +51,9 @@ public class AngularJSProcessor {
           @Override
           public void visitAngularJSRepeatExpression(AngularJSRepeatExpression repeatExpression) {
             if (scopeMatches(element, repeatExpression)) {
+              for (JSDefinitionExpression def : repeatExpression.getDefinitions()) {
+                consumer.consume(def);
+              }
               for (Map.Entry<String, String> entry : NG_REPEAT_IMPLICITS.entrySet()) {
                 consumer.consume(new ImplicitJSVariableImpl(entry.getKey(), entry.getValue(), repeatExpression));
               }
