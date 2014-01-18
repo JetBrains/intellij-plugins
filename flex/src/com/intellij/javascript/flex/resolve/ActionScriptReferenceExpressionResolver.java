@@ -121,17 +121,16 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
         return localProcessor.getResultsAsResolveResults();
       }
     } else {
-      final JSReferenceExpressionImpl.QualifiedItemProcessor processor = new JSReferenceExpressionImpl.QualifiedItemProcessor(
-        myReferencedName, myContainingFile, myRef);
+      final QualifiedItemProcessor processor = new QualifiedItemProcessor(myReferencedName, myContainingFile, myRef);
       processor.setTypeContext(JSResolveUtil.isExprInTypeContext(myRef));
       JSTypeEvaluator.evaluateTypes(myQualifier, myContainingFile, processor);
 
-      if (processor.resolved == JSReferenceExpressionImpl.QualifiedItemProcessor.TypeResolveState.PrefixUnknown) {
+      if (processor.resolved == QualifiedItemProcessor.TypeResolveState.PrefixUnknown) {
         return dummyResult(myRef);
       }
 
-      if (processor.resolved == JSReferenceExpressionImpl.QualifiedItemProcessor.TypeResolveState.Resolved ||
-          processor.resolved == JSReferenceExpressionImpl.QualifiedItemProcessor.TypeResolveState.Undefined ||
+      if (processor.resolved == QualifiedItemProcessor.TypeResolveState.Resolved ||
+          processor.resolved == QualifiedItemProcessor.TypeResolveState.Undefined ||
           processor.getResult() != null
         ) {
         return processor.getResultsAsResolveResults();
