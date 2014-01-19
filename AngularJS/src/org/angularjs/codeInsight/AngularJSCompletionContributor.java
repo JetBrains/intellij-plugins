@@ -10,10 +10,14 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.VariantsProcessor;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.Consumer;
+import org.angularjs.index.AngularFilterIndex;
+import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.lang.AngularJSLanguage;
+import org.angularjs.lang.psi.AngularJSFilterExpression;
 
 /**
  * @author Dennis.Ushakov
@@ -27,6 +31,8 @@ public class AngularJSCompletionContributor extends CompletionContributor {
     PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
 
     if (ref instanceof JSReferenceExpressionImpl) {
+      final PsiElement parent = ((JSReferenceExpressionImpl)ref).getParent();
+      if (addFilterVariants(result, ref, parent)) return;
       AngularJSProcessor.process(parameters.getPosition(), new Consumer<JSNamedElement>() {
         @Override
         public void consume(JSNamedElement element) {
@@ -34,6 +40,16 @@ public class AngularJSCompletionContributor extends CompletionContributor {
         }
       });
     }
+  }
+
+  private static boolean addFilterVariants(CompletionResultSet result, PsiReference ref, PsiElement parent) {
+    if (AngularJSFilterExpression.isFilterNameRef(ref, parent)) {
+      for (String filter : AngularIndexUtil.getAllKeys(AngularFilterIndex.INDEX_ID, parent.getProject())) {
+        result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(null, filter, NG_VARIABLE_PRIORITY, false, false));
+      }
+      return true;
+    }
+    return false;
   }
 
   private static Language getElementLanguage(final CompletionParameters parameters) {

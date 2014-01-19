@@ -54,6 +54,7 @@
     <fileBasedIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularControllerIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularModuleIndex"/>
+    <fileBasedIndex implementation="org.angularjs.index.AngularFilterIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularSymbolIndex"/>
 
     <gotoSymbolContributor implementation="org.angularjs.navigation.AngularGotoSymbolContributor"/>

@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
@@ -10,6 +11,9 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import org.angularjs.index.AngularFilterIndex;
+import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.lang.psi.AngularJSFilterExpression;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,14 +43,21 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
   public ResolveResult[] doResolve() {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
 
-    final Collection<JSNamedElement> localVariables = getItemsByName(myReferencedName, myRef);
-    if (!localVariables.isEmpty()) {
-      return ContainerUtil.map2Array(localVariables, JSResolveResult.class, new Function<JSNamedElement, JSResolveResult>() {
-        @Override
-        public JSResolveResult fun(JSNamedElement item) {
-          return new JSResolveResult(item);
-        }
-      });
+    if (AngularJSFilterExpression.isFilterNameRef(myRef, myParent)) {
+      final JSNamedElementProxy resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.INDEX_ID, myReferencedName);
+      if (resolve != null) {
+        return new JSResolveResult[] {new JSResolveResult(resolve)};
+      }
+    } else {
+      final Collection<JSNamedElement> localVariables = getItemsByName(myReferencedName, myRef);
+      if (!localVariables.isEmpty()) {
+        return ContainerUtil.map2Array(localVariables, JSResolveResult.class, new Function<JSNamedElement, JSResolveResult>() {
+          @Override
+          public JSResolveResult fun(JSNamedElement item) {
+            return new JSResolveResult(item);
+          }
+        });
+      }
     }
     return super.doResolve();
   }

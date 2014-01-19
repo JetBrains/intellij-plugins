@@ -1,13 +1,15 @@
 package org.angularjs.index;
 
 import com.intellij.lang.javascript.documentation.JSDocumentationProcessor;
-import com.intellij.lang.javascript.index.*;
+import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
+import com.intellij.lang.javascript.index.JSSymbolVisitor;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
@@ -26,9 +28,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static final String CONTROLLER = "controller";
   public static final String DIRECTIVE = "directive";
   public static final String MODULE = "module";
+  public static final String FILTER = "filter";
 
   static {
-    Collections.addAll(INTERESTING_METHODS, "filter", "service", "factory", "value", "constant", "provider");
+    Collections.addAll(INTERESTING_METHODS, "service", "factory", "value", "constant", "provider");
 
     INDEXERS.put(DIRECTIVE, AngularDirectivesIndex.INDEX_ID);
     NAME_CONVERTERS.put(DIRECTIVE, new Function<String, String>() {
@@ -40,6 +43,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
     INDEXERS.put(CONTROLLER, AngularControllerIndex.INDEX_ID);
     INDEXERS.put(MODULE, AngularModuleIndex.INDEX_ID);
+    INDEXERS.put(FILTER, AngularFilterIndex.INDEX_ID);
   }
 
   @Override
@@ -56,16 +60,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       if (arguments.length > 0) {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-          final Function<String, String> converter = NAME_CONVERTERS.get(command);
-          final String defaultName = StringUtil.unquoteString(argument.getText());
-          final String name = converter != null ? converter.fun(argument.getText()) : defaultName;
-          if (name != null) {
-            visitor.storeAdditionalData(argument, index.toString(), name, argument.getTextOffset());
-            visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), name, argument.getTextOffset());
-            if (!StringUtil.equals(defaultName, name)) {
-              visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), defaultName, argument.getTextOffset());
-            }
-          }
+          final String argumentText = argument.getText();
+          storeAdditionalData(visitor, index, argument, command, argumentText, argument.getTextOffset());
         }
       }
     }
@@ -82,6 +78,22 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     }
   }
 
+  private static void storeAdditionalData(final JSSymbolVisitor visitor,
+                                          final ID<String, Void> index,
+                                          final PsiElement declaration,
+                                          final String command,
+                                          final String argumentText,
+                                          final int offset) {
+    final Function<String, String> converter = NAME_CONVERTERS.get(command);
+    final String defaultName = StringUtil.unquoteString(argumentText);
+    final String name = converter != null ? converter.fun(argumentText) : defaultName;
+    visitor.storeAdditionalData(declaration, index.toString(), name, offset);
+    visitor.storeAdditionalData(declaration, AngularSymbolIndex.INDEX_ID.toString(), name, offset);
+    if (!StringUtil.equals(defaultName, name)) {
+      visitor.storeAdditionalData(declaration, AngularSymbolIndex.INDEX_ID.toString(), defaultName, offset);
+    }
+  }
+
   @Override
   public void processCommentMatch(@NotNull final PsiComment comment,
                                   @NotNull JSDocumentationProcessor.MetaDocType type,
@@ -91,25 +103,23 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                                   @NotNull String line,
                                   String patternMatched,
                                   JSSymbolVisitor visitor) {
-    if (type == JSDocumentationProcessor.MetaDocType.NAME &&
-        matchName != null && matchName.contains(DIRECTIVE) && hasDirectiveName(remainingLineContent)) {
-      assert remainingLineContent != null;
-      final int offset = comment.getTextOffset() + comment.getText().indexOf(matchName);
-      final String attributeName = getAttributeName(remainingLineContent.substring(1));
-      if (attributeName != null) {
-        visitor.storeAdditionalData(comment, AngularDirectivesIndex.INDEX_ID.toString(), attributeName, offset);
-        visitor.storeAdditionalData(comment, AngularSymbolIndex.INDEX_ID.toString(), attributeName, offset);
-        visitor.storeAdditionalData(comment, AngularSymbolIndex.INDEX_ID.toString(), remainingLineContent.substring(1), offset);
-      }
+    if (type != JSDocumentationProcessor.MetaDocType.NAME || matchName == null || !hasDirectiveName(remainingLineContent)) return;
+    assert remainingLineContent != null;
+
+    final int offset = comment.getTextOffset() + comment.getText().indexOf(matchName);
+    if (matchName.contains(DIRECTIVE)) {
+      storeAdditionalData(visitor, AngularDirectivesIndex.INDEX_ID, comment, DIRECTIVE, remainingLineContent.substring(1), offset);
+    } else if (matchName.contains(FILTER)) {
+      storeAdditionalData(visitor, AngularFilterIndex.INDEX_ID, comment, FILTER, remainingLineContent.substring(1), offset);
     }
   }
 
   private static boolean hasDirectiveName(String remainingLineContent) {
-    return remainingLineContent != null && remainingLineContent.startsWith(":") && !remainingLineContent.contains(".");
+    return remainingLineContent != null && remainingLineContent.startsWith(":") &&
+           !remainingLineContent.contains(".") && !remainingLineContent.contains("#");
   }
 
   private static String getAttributeName(final String text) {
-    if (text.contains("#")) return null;
     final String[] split = StringUtil.unquoteString(text).split("(?=[A-Z])");
     for (int i = 0; i < split.length; i++) {
       split[i] = StringUtil.decapitalize(split[i]);
