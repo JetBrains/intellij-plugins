@@ -7,6 +7,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.CatchingConsumer;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,7 +82,6 @@ public class KarmaServerRegistry {
           finally {
             myStartingServers.remove(serverSettings);
           }
-          consumer.consume(server);
           server.onTerminated(new KarmaServerTerminatedListener() {
             @Override
             public void onTerminated(int exitCode) {
@@ -89,9 +89,20 @@ public class KarmaServerRegistry {
               myServerByConfigFile.remove(serverSettings.getConfigurationFilePath(), server);
             }
           });
+          UIUtil.invokeLaterIfNeeded(new Runnable() {
+            @Override
+            public void run() {
+              consumer.consume(server);
+            }
+          });
         }
-        catch (Exception e) {
-          consumer.consume(e);
+        catch (final Exception e) {
+          UIUtil.invokeLaterIfNeeded(new Runnable() {
+            @Override
+            public void run() {
+              consumer.consume(e);
+            }
+          });
         }
       }
     });

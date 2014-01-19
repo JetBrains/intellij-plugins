@@ -11,10 +11,10 @@ import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.util.CatchingConsumer;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
  * @author Sergey Simonchik
  */
 public class KarmaRunProfileState implements RunProfileState {
+
+  private static final Logger LOG = Logger.getInstance(KarmaRunProfileState.class);
 
   private final Project myProject;
   private final ExecutionEnvironment myExecutionEnvironment;
@@ -74,21 +76,17 @@ public class KarmaRunProfileState implements RunProfileState {
         serverSettings,
         new CatchingConsumer<KarmaServer, Exception>() {
           @Override
-          public void consume(final Exception e) {
-            showServerStartupError(e);
+          public void consume(KarmaServer server) {
+            RunnerAndConfigurationSettings configuration = myExecutionEnvironment.getRunnerAndConfigurationSettings();
+            if (configuration != null) {
+              ProgramRunnerUtil.executeConfiguration(myProject, configuration, executor);
+            }
           }
 
           @Override
-          public void consume(KarmaServer server) {
-            UIUtil.invokeLaterIfNeeded(new Runnable() {
-              @Override
-              public void run() {
-                RunnerAndConfigurationSettings configuration = myExecutionEnvironment.getRunnerAndConfigurationSettings();
-                if (configuration != null) {
-                  ProgramRunnerUtil.executeConfiguration(myProject, configuration, executor);
-                }
-              }
-            });
+          public void consume(final Exception e) {
+            LOG.error(e);
+            showServerStartupError(e);
           }
         }
       );
@@ -127,26 +125,21 @@ public class KarmaRunProfileState implements RunProfileState {
   }
 
   private void showServerStartupError(@NotNull final Exception serverException) {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        StringBuilder errorMessage = new StringBuilder("Karma server launching failed.");
-        Throwable e = serverException;
-        String prevMessage = null;
-        while (e != null) {
-          String message = e.getMessage();
-          if (message != null && !message.equals(prevMessage)) {
-            errorMessage.append("\n\nCaused by:\n");
-            errorMessage.append(message);
-            prevMessage = message;
-          }
-          e = e.getCause();
-        }
-        Messages.showErrorDialog(myProject,
-                                 errorMessage.toString(),
-                                 "Karma Server Launching");
+    StringBuilder errorMessage = new StringBuilder("Karma server launching failed");
+    Throwable e = serverException;
+    String prevMessage = null;
+    while (e != null) {
+      String message = e.getMessage();
+      if (message != null && !message.equals(prevMessage)) {
+        errorMessage.append("\n\nCaused by:\n");
+        errorMessage.append(message);
+        prevMessage = message;
       }
-    });
+      e = e.getCause();
+    }
+    Messages.showErrorDialog(myProject,
+                             errorMessage.toString(),
+                             "Karma Server");
   }
 
 }
