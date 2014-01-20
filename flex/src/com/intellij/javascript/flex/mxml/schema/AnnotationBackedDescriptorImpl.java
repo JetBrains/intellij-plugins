@@ -20,10 +20,7 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
-import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
+import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
@@ -526,7 +523,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
         String propName = attributeListOwner.getName();
         if (grandParent instanceof JSClass && propName != null) {
-          final SinkResolveProcessor processor = new SinkResolveProcessor(propName);
+          final SinkResolveProcessor processor = new SinkResolveProcessor(propName, new ResolveResultSink(null, propName));
           processor.setToProcessHierarchy(false);
           grandParent.processDeclarations(processor, ResolveState.initial(), grandParent, attributeListOwner);
 

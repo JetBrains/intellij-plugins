@@ -69,10 +69,10 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
       return ResolveResult.EMPTY_ARRAY;
     }
 
-    SinkResolveProcessor localProcessor;
+    SinkResolveProcessor<?> localProcessor;
     if (myLocalResolve) {
       final PsiElement topParent = JSResolveUtil.getTopReferenceParent(myParent);
-      localProcessor = new SinkResolveProcessor(myReferencedName, myRef) {
+      localProcessor = new SinkResolveProcessor<ResultSink>(myReferencedName, myRef, new ResolveResultSink(myRef, myReferencedName)) {
         @Override
         public boolean needPackages() {
           if (myParent instanceof JSReferenceExpression && topParent instanceof JSImportStatement) {
