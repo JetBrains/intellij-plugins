@@ -7,6 +7,7 @@ import com.dmarcotte.handlebars.parsing.HbTokenTypes;
 import com.dmarcotte.handlebars.psi.*;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
  * on Enter.
  */
 public class HbTypedHandler extends TypedHandlerDelegate {
+  private static final Logger LOG = Logger.getInstance("#com.dmarcotte.handlebars.editor.actions.HbTypedHandler");
 
   public static final String OPEN_BRACE = "{";
   public static final String CLOSE_BRACES = "}}";
@@ -129,13 +131,17 @@ public class HbTypedHandler extends TypedHandlerDelegate {
         if (open != null && close == null) {
           final HbMustacheName mustacheName = PsiTreeUtil.findChildOfType(open, HbMustacheName.class);
           if (mustacheName != null) {
-            final String prePreviousChar = editor.getDocument().getText(new TextRange(offset - 3, offset - 2));
-            if (prePreviousChar.equals("{")) {
-              editor.getDocument().insertString(offset, mustacheName.getText() + CLOSE_BRACES);
-              editor.getCaretModel().moveToOffset(offset + mustacheName.getText().length() + CLOSE_BRACES.length());
+            if (offset > 3) {
+              final String prePreviousChar = editor.getDocument().getText(new TextRange(offset - 3, offset - 2));
+              if (prePreviousChar.equals("{")) {
+                editor.getDocument().insertString(offset, mustacheName.getText() + CLOSE_BRACES);
+                editor.getCaretModel().moveToOffset(offset + mustacheName.getText().length() + CLOSE_BRACES.length());
+              } else {
+                editor.getDocument().replaceString(offset - 1, offset, OPEN_BRACE + '/' + mustacheName.getText() + CLOSE_BRACES);
+                editor.getCaretModel().moveToOffset(offset + mustacheName.getText().length() + CLOSE_BRACES.length() + 1);
+              }
             } else {
-              editor.getDocument().replaceString(offset - 1, offset, OPEN_BRACE + '/' + mustacheName.getText() + CLOSE_BRACES);
-              editor.getCaretModel().moveToOffset(offset + mustacheName.getText().length() + CLOSE_BRACES.length() + 1);
+              LOG.warn("Unexpected offset inside HbBlockWrapper element");
             }
           }
         }
