@@ -34,8 +34,9 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
     final Project project = context.getProject();
     if (AngularIndexUtil.resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-model") == null) return;
 
-    if (context instanceof XmlAttributeValueImpl) {
-      final XmlAttribute attribute = (XmlAttribute)context.getParent();
+    final PsiElement parent = context.getParent();
+    if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {
+      final XmlAttribute attribute = (XmlAttribute)parent;
       if (isAngularAttribute(attribute, "ng-init") || isAngularAttribute(attribute, "ng-repeat")) {
         registrar.startInjecting(AngularJSLanguage.INSTANCE).
           addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(1, context.getTextLength() - 1)).
