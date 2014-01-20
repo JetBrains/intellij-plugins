@@ -18,6 +18,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Konstantin.Ulitin
@@ -69,10 +70,10 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
       return ResolveResult.EMPTY_ARRAY;
     }
 
-    SinkResolveProcessor<?> localProcessor;
+    SinkResolveProcessor<ResolveResultSink> localProcessor;
     if (myLocalResolve) {
       final PsiElement topParent = JSResolveUtil.getTopReferenceParent(myParent);
-      localProcessor = new SinkResolveProcessor<ResultSink>(myReferencedName, myRef, new ResolveResultSink(myRef, myReferencedName)) {
+      localProcessor = new SinkResolveProcessor<ResolveResultSink>(myReferencedName, myRef, new ResolveResultSink(myRef, myReferencedName)) {
         @Override
         public boolean needPackages() {
           if (myParent instanceof JSReferenceExpression && topParent instanceof JSImportStatement) {
@@ -121,7 +122,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
         return localProcessor.getResultsAsResolveResults();
       }
     } else {
-      final QualifiedItemProcessor processor = new QualifiedItemProcessor(myReferencedName, myContainingFile, myRef);
+      final QualifiedItemProcessor<ResolveResultSink> processor = new QualifiedItemProcessor<ResolveResultSink>(new ResolveResultSink(myRef, myReferencedName), myContainingFile);
       processor.setTypeContext(JSResolveUtil.isExprInTypeContext(myRef));
       JSTypeEvaluator.evaluateTypes(myQualifier, myContainingFile, processor);
 
@@ -149,7 +150,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
   }
 
   @Override
-  protected void prepareProcessor(WalkUpResolveProcessor processor, SinkResolveProcessor localProcessor) {
+  protected void prepareProcessor(WalkUpResolveProcessor processor, @NotNull SinkResolveProcessor<ResolveResultSink> localProcessor) {
     boolean inDefinition = false;
     boolean allowOnlyCompleteMatches = myLocalResolve && localProcessor.isEncounteredDynamicClasses();
 
@@ -165,7 +166,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
       processor.setAddOnlyCompleteMatches(allowOnlyCompleteMatches);
     }
     processor.setSkipDefinitions(inDefinition);
-    if (localProcessor != null) processor.addLocalResults(localProcessor.getResultsAsResolveResults());
+    processor.addLocalResults(localProcessor);
   }
 
   @Override
