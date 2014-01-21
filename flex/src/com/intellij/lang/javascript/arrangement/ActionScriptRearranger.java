@@ -16,9 +16,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.codeStyle.arrangement.ArrangementSettings;
-import com.intellij.psi.codeStyle.arrangement.ArrangementUtil;
-import com.intellij.psi.codeStyle.arrangement.Rearranger;
+import com.intellij.psi.codeStyle.arrangement.*;
 import com.intellij.psi.codeStyle.arrangement.group.ArrangementGroupingRule;
 import com.intellij.psi.codeStyle.arrangement.match.*;
 import com.intellij.psi.codeStyle.arrangement.std.*;
@@ -52,6 +50,17 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
   private static final Set<ArrangementSettingsToken> SUPPORTED_MODIFIERS = ContainerUtilRt.newLinkedHashSet(
     PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE, STATIC, FINAL, OVERRIDE
   );
+
+  private static final StdArrangementSettings DEFAULT_SETTINGS;
+
+  static {
+    final List<ArrangementGroupingRule> groupingRules =
+      Collections.singletonList(new ArrangementGroupingRule(GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER));
+    final List<StdArrangementMatchRule> matchRules = getDefaultMatchRules();
+    DEFAULT_SETTINGS = new StdRulePriorityAwareSettings(groupingRules, matchRules);
+  }
+
+  private static final DefaultArrangementSettingsSerializer SETTINGS_SERIALIZER = new DefaultArrangementSettingsSerializer(DEFAULT_SETTINGS);
 
   private static void addRule(final List<StdArrangementMatchRule> rules, @NotNull ArrangementSettingsToken... conditions) {
     if (conditions.length == 1) {
@@ -211,14 +220,16 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     }
   }
 
+  @NotNull
+  @Override
+  public ArrangementSettingsSerializer getSerializer() {
+    return SETTINGS_SERIALIZER;
+  }
+
   @Nullable
   @Override
   public StdArrangementSettings getDefaultSettings() {
-    final List<ArrangementGroupingRule> groupingRules =
-      Collections.singletonList(new ArrangementGroupingRule(GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER));
-    final List<StdArrangementMatchRule> matchRules = getDefaultMatchRules();
-
-    return new StdRulePriorityAwareSettings(groupingRules, matchRules);
+    return DEFAULT_SETTINGS;
   }
 
   public static List<StdArrangementMatchRule> getDefaultMatchRules() {
