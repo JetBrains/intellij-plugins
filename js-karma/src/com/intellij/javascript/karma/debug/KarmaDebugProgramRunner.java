@@ -3,16 +3,17 @@ package com.intellij.javascript.karma.debug;
 import com.google.common.collect.ImmutableBiMap;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
+import com.intellij.execution.Executor;
+import com.intellij.execution.RunProfileStarter;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
-import com.intellij.execution.runners.BaseProgramRunner;
+import com.intellij.execution.runners.AsyncGenericProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
-import com.intellij.javascript.debugger.execution.JsRunners;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
 import com.intellij.javascript.debugger.impl.JSDebugProcess;
@@ -22,6 +23,7 @@ import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -40,7 +42,7 @@ import java.io.File;
 /**
  * @author Sergey Simonchik
  */
-public class KarmaDebugProgramRunner extends BaseProgramRunner {
+public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
 
   @NotNull
   @Override
@@ -54,13 +56,12 @@ public class KarmaDebugProgramRunner extends BaseProgramRunner {
   }
 
   @Override
-  protected void startRunProfile(@NotNull final ExecutionEnvironment environment,
-                                 @Nullable final Callback callback,
-                                 @NotNull final Project project,
-                                 @NotNull final RunProfileState state) throws ExecutionException {
-    final ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
+  protected void prepare(@NotNull Project project,
+                         @NotNull ExecutionEnvironment env,
+                         @NotNull RunProfileState state,
+                         @NotNull RunProfileStarterConsumer consumer) throws ExecutionException {
+    final ExecutionResult executionResult = state.execute(env.getExecutor(), this);
     if (executionResult == null) {
-      JsRunners.start(environment, callback, project, state, null, null);
       return;
     }
 
@@ -72,10 +73,15 @@ public class KarmaDebugProgramRunner extends BaseProgramRunner {
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (karmaServer.areBrowsersReady()) {
       final Pair<JSDebugEngine, WebBrowser> engineAndBrowser =
-        new KarmaDebugBrowserSelector(project, karmaServer.getCapturedBrowsers(), environment, this).selectDebugEngine();
-      JsRunners.start(environment, callback, project, state, engineAndBrowser, new JsRunners.Starter() {
+        new KarmaDebugBrowserSelector(project, karmaServer.getCapturedBrowsers(), env, this).selectDebugEngine();
+      prepareDebugger(project, engineAndBrowser, consumer, new RunProfileStarter() {
+        @Nullable
         @Override
-        public RunContentDescriptor start(RunContentDescriptor contentToReuse) throws ExecutionException {
+        public RunContentDescriptor execute(@NotNull Project project,
+                                            @NotNull Executor executor,
+                                            @NotNull RunProfileState state,
+                                            @Nullable RunContentDescriptor contentToReuse,
+                                            @NotNull ExecutionEnvironment env) throws ExecutionException {
           if (engineAndBrowser == null) {
             return null;
           }
@@ -84,7 +90,7 @@ public class KarmaDebugProgramRunner extends BaseProgramRunner {
           final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
           XDebugSession session = XDebuggerManager.getInstance(project).startSession(
             KarmaDebugProgramRunner.this,
-            environment,
+            env,
             contentToReuse,
             new XDebugProcessStarter() {
               @Override
@@ -99,15 +105,20 @@ public class KarmaDebugProgramRunner extends BaseProgramRunner {
             }
           );
           return session.getRunContentDescriptor();
+
         }
       });
     }
     else {
-      JsRunners.start(environment, callback, project, state, null, new JsRunners.Starter() {
-        @NotNull
+      consumer.consume(new RunProfileStarter() {
+        @Nullable
         @Override
-        public RunContentDescriptor start(@Nullable RunContentDescriptor contentToReuse) {
-          RunContentBuilder contentBuilder = new RunContentBuilder(KarmaDebugProgramRunner.this, executionResult, environment);
+        public RunContentDescriptor execute(@NotNull Project project,
+                                            @NotNull Executor executor,
+                                            @NotNull RunProfileState state,
+                                            @Nullable RunContentDescriptor contentToReuse,
+                                            @NotNull ExecutionEnvironment env) throws ExecutionException {
+          RunContentBuilder contentBuilder = new RunContentBuilder(KarmaDebugProgramRunner.this, executionResult, env);
           final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
           karmaServer.onBrowsersReady(new Runnable() {
             @Override
@@ -136,6 +147,24 @@ public class KarmaDebugProgramRunner extends BaseProgramRunner {
       mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute"), root);
     }
     return new RemoteDebuggingFileFinder(mappings.build(), false);
+  }
+
+  public static void prepareDebugger(@NotNull final Project project,
+                                     @Nullable final Pair<JSDebugEngine, WebBrowser> engineAndBrowser,
+                                     @NotNull final RunProfileStarterConsumer consumer,
+                                     @NotNull final RunProfileStarter starter) {
+    if (engineAndBrowser == null) {
+      consumer.consume(starter);
+    }
+    else {
+      ActionCallback checkResult = engineAndBrowser.first.prepareDebugger(project, engineAndBrowser.second);
+      checkResult.doWhenProcessed(new Runnable() {
+        @Override
+        public void run() {
+          consumer.consume(starter);
+        }
+      });
+    }
   }
 
 }
