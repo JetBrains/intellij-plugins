@@ -195,5 +195,9 @@ public class DartFormatterTest extends FormatterTestCase {
     getSettings(DartLanguage.INSTANCE).KEEP_FIRST_COLUMN_COMMENT = true;
     doTest();
   }
+
+  public void testMetadata() throws Exception {
+    doTest();
+  }
 }
 
