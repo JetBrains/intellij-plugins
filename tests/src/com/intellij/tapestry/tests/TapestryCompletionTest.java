@@ -33,7 +33,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     initByComponent();
     addComponentToProject("subpackage.Count");
     doTestBasicCompletionVariants(
-      mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "command", "link", "meta", "noscript", "p:clientId",
+      mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "link", "meta", "noscript", "p:clientId",
                   "p:element", "p:mixins", "script", "style", "title", "t:subpackage.count",
                   getElementTagName()));
   }
