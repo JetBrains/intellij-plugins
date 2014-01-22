@@ -23,7 +23,6 @@ public class DartSpacingProcessor {
     SET,
     FACTORY,
     OPERATOR,
-    METADATA,
     PART,
     EXPORT,
     AS,
@@ -59,6 +58,9 @@ public class DartSpacingProcessor {
     final ASTNode node2 = ((AbstractBlock)child2).getNode();
     final IElementType type2 = node2.getElementType();
 
+    if (AT == type1) return Spacing.createSpacing(0, 0, 0, false, 0);
+    if (METADATA == type1) return Spacing.createSpacing(1, 1, 0, true, 0);
+
     if (FUNCTION_DEFINITION.contains(type2)) {
       return Spacing.createSpacing(0, 0, 2, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
@@ -69,7 +71,15 @@ public class DartSpacingProcessor {
       boolean topLevel = elementType == DART_FILE || elementType == EMBEDDED_CONTENT;
       int lineFeeds = 1;
       if (!COMMENTS.contains(type1) && (elementType == CLASS_MEMBERS || topLevel && DECLARATIONS.contains(type2))) {
-        lineFeeds = 2;
+        if (type1 == SEMICOLON && type2 == VAR_DECLARATION_LIST) {
+          final ASTNode node1TreePrev = node1.getTreePrev();
+          if (node1TreePrev == null || node1TreePrev.getElementType() != VAR_DECLARATION_LIST) {
+            lineFeeds = 2;
+          }
+        }
+        else {
+          lineFeeds = 2;
+        }
       }
       return Spacing.createSpacing(0, 0, lineFeeds, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
