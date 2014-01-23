@@ -913,45 +913,21 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (referenceExpression | thisExpression | superExpression | << parenthesizedExpressionWrapper >>) (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
-  static boolean callOrArrayAccess(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "callOrArrayAccess")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = callOrArrayAccess_0(builder_, level_ + 1);
-    result_ = result_ && callOrArrayAccess_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // referenceExpression | thisExpression | superExpression | << parenthesizedExpressionWrapper >>
-  private static boolean callOrArrayAccess_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "callOrArrayAccess_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = referenceExpression(builder_, level_ + 1);
-    if (!result_) result_ = thisExpression(builder_, level_ + 1);
-    if (!result_) result_ = superExpression(builder_, level_ + 1);
-    if (!result_) result_ = parenthesizedExpressionWrapper(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
   // (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
-  private static boolean callOrArrayAccess_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "callOrArrayAccess_1")) return false;
+  static boolean callOrArrayAccessOrQualifiedRefExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "callOrArrayAccessOrQualifiedRefExpression")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
-      if (!callOrArrayAccess_1_0(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "callOrArrayAccess_1", pos_)) break;
+      if (!callOrArrayAccessOrQualifiedRefExpression_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "callOrArrayAccessOrQualifiedRefExpression", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;
   }
 
   // callExpression | arrayAccessExpression | qualifiedReferenceExpression
-  private static boolean callOrArrayAccess_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "callOrArrayAccess_1_0")) return false;
+  private static boolean callOrArrayAccessOrQualifiedRefExpression_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "callOrArrayAccessOrQualifiedRefExpression_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = callExpression(builder_, level_ + 1);
@@ -962,7 +938,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '.''.' << cascadeStopper >> (arrayAccess | callOrArrayAccess) << varInitWrapper >>
+  // '.''.' << cascadeStopper >> (arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression) << varInitWrapper >>
   public static boolean cascadeReferenceExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cascadeReferenceExpression")) return false;
     if (!nextTokenIs(builder_, DOT)) return false;
@@ -977,13 +953,24 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // arrayAccess | callOrArrayAccess
+  // arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression
   private static boolean cascadeReferenceExpression_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cascadeReferenceExpression_3")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = arrayAccess(builder_, level_ + 1);
-    if (!result_) result_ = callOrArrayAccess(builder_, level_ + 1);
+    if (!result_) result_ = cascadeReferenceExpression_3_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression
+  private static boolean cascadeReferenceExpression_3_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "cascadeReferenceExpression_3_1")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = refOrThisOrSuperOrParenExpression(builder_, level_ + 1);
+    result_ = result_ && callOrArrayAccessOrQualifiedRefExpression(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -2656,44 +2643,15 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (returnType componentName | componentName)? formalParameterList functionExpressionBody
+  // formalParameterList functionExpressionBody
   public static boolean functionExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionExpression")) return false;
+    if (!nextTokenIs(builder_, LPAREN)) return false;
     boolean result_ = false;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function expression>");
-    result_ = functionExpression_0(builder_, level_ + 1);
-    result_ = result_ && formalParameterList(builder_, level_ + 1);
+    Marker marker_ = enter_section_(builder_);
+    result_ = formalParameterList(builder_, level_ + 1);
     result_ = result_ && functionExpressionBody(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, FUNCTION_EXPRESSION, result_, false, null);
-    return result_;
-  }
-
-  // (returnType componentName | componentName)?
-  private static boolean functionExpression_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "functionExpression_0")) return false;
-    functionExpression_0_0(builder_, level_ + 1);
-    return true;
-  }
-
-  // returnType componentName | componentName
-  private static boolean functionExpression_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "functionExpression_0_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = functionExpression_0_0_0(builder_, level_ + 1);
-    if (!result_) result_ = componentName(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // returnType componentName
-  private static boolean functionExpression_0_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "functionExpression_0_0_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = returnType(builder_, level_ + 1);
-    result_ = result_ && componentName(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
+    exit_section_(builder_, marker_, FUNCTION_EXPRESSION, result_);
     return result_;
   }
 
@@ -3994,37 +3952,6 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (newExpression | constConstructorExpression) qualifiedReferenceTail?
-  static boolean newExpressionOrConstOrCall(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "newExpressionOrConstOrCall")) return false;
-    if (!nextTokenIs(builder_, "", CONST, NEW)) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = newExpressionOrConstOrCall_0(builder_, level_ + 1);
-    result_ = result_ && newExpressionOrConstOrCall_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // newExpression | constConstructorExpression
-  private static boolean newExpressionOrConstOrCall_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "newExpressionOrConstOrCall_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = newExpression(builder_, level_ + 1);
-    if (!result_) result_ = constConstructorExpression(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // qualifiedReferenceTail?
-  private static boolean newExpressionOrConstOrCall_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "newExpressionOrConstOrCall_1")) return false;
-    qualifiedReferenceTail(builder_, level_ + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
   // block // Guard to break tie with map literal.
   //                                | metadata* functionDeclarationWithBody ';'?
   //                                | forStatement ';'?
@@ -4435,6 +4362,25 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // literalExpression |
+  //                      functionExpression |
+  //                      newExpression |
+  //                      constConstructorExpression |
+  //                      refOrThisOrSuperOrParenExpression
+  static boolean primary(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "primary")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = literalExpression(builder_, level_ + 1);
+    if (!result_) result_ = functionExpression(builder_, level_ + 1);
+    if (!result_) result_ = newExpression(builder_, level_ + 1);
+    if (!result_) result_ = constConstructorExpression(builder_, level_ + 1);
+    if (!result_) result_ = refOrThisOrSuperOrParenExpression(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
   // << nonStrictID >> ('.' << nonStrictID >>)*
   public static boolean qualifiedComponentName(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "qualifiedComponentName")) return false;
@@ -4483,43 +4429,6 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // qualifiedReferenceExpression (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
-  static boolean qualifiedReferenceTail(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "qualifiedReferenceTail")) return false;
-    if (!nextTokenIs(builder_, DOT)) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = qualifiedReferenceExpression(builder_, level_ + 1);
-    result_ = result_ && qualifiedReferenceTail_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
-  private static boolean qualifiedReferenceTail_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "qualifiedReferenceTail_1")) return false;
-    int pos_ = current_position_(builder_);
-    while (true) {
-      if (!qualifiedReferenceTail_1_0(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "qualifiedReferenceTail_1", pos_)) break;
-      pos_ = current_position_(builder_);
-    }
-    return true;
-  }
-
-  // callExpression | arrayAccessExpression | qualifiedReferenceExpression
-  private static boolean qualifiedReferenceTail_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "qualifiedReferenceTail_1_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = callExpression(builder_, level_ + 1);
-    if (!result_) result_ = arrayAccessExpression(builder_, level_ + 1);
-    if (!result_) result_ = qualifiedReferenceExpression(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  /* ********************************************************** */
   // ':' 'this' ('.' referenceExpression)? arguments
   public static boolean redirection(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "redirection")) return false;
@@ -4550,6 +4459,20 @@ public class DartParser implements PsiParser {
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
     result_ = result_ && referenceExpression(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // referenceExpression | thisExpression | superExpression | << parenthesizedExpressionWrapper >>
+  static boolean refOrThisOrSuperOrParenExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "refOrThisOrSuperOrParenExpression")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = referenceExpression(builder_, level_ + 1);
+    if (!result_) result_ = thisExpression(builder_, level_ + 1);
+    if (!result_) result_ = superExpression(builder_, level_ + 1);
+    if (!result_) result_ = parenthesizedExpressionWrapper(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -5902,92 +5825,41 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (literalExpression (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*)
-  //                  | functionExpression
-  //                  | newExpressionOrConstOrCall
-  //                  | callOrArrayAccess
-  static boolean value(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "value")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = value_0(builder_, level_ + 1);
-    if (!result_) result_ = functionExpression(builder_, level_ + 1);
-    if (!result_) result_ = newExpressionOrConstOrCall(builder_, level_ + 1);
-    if (!result_) result_ = callOrArrayAccess(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // literalExpression (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
-  private static boolean value_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "value_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = literalExpression(builder_, level_ + 1);
-    result_ = result_ && value_0_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
-  private static boolean value_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "value_0_1")) return false;
-    int pos_ = current_position_(builder_);
-    while (true) {
-      if (!value_0_1_0(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "value_0_1", pos_)) break;
-      pos_ = current_position_(builder_);
-    }
-    return true;
-  }
-
-  // callExpression | arrayAccessExpression | qualifiedReferenceExpression
-  private static boolean value_0_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "value_0_1_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = callExpression(builder_, level_ + 1);
-    if (!result_) result_ = arrayAccessExpression(builder_, level_ + 1);
-    if (!result_) result_ = qualifiedReferenceExpression(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  /* ********************************************************** */
-  // value cascadeReferenceExpression* (isExpression | asExpression)?
+  // primary callOrArrayAccessOrQualifiedRefExpression cascadeReferenceExpression* (isExpression | asExpression)?
   public static boolean valueExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "valueExpression")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<value expression>");
-    result_ = value(builder_, level_ + 1);
-    result_ = result_ && valueExpression_1(builder_, level_ + 1);
+    result_ = primary(builder_, level_ + 1);
+    result_ = result_ && callOrArrayAccessOrQualifiedRefExpression(builder_, level_ + 1);
     result_ = result_ && valueExpression_2(builder_, level_ + 1);
+    result_ = result_ && valueExpression_3(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, VALUE_EXPRESSION, result_, false, null);
     return result_;
   }
 
   // cascadeReferenceExpression*
-  private static boolean valueExpression_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "valueExpression_1")) return false;
+  private static boolean valueExpression_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "valueExpression_2")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
       if (!cascadeReferenceExpression(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "valueExpression_1", pos_)) break;
+      if (!empty_element_parsed_guard_(builder_, "valueExpression_2", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;
   }
 
   // (isExpression | asExpression)?
-  private static boolean valueExpression_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "valueExpression_2")) return false;
-    valueExpression_2_0(builder_, level_ + 1);
+  private static boolean valueExpression_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "valueExpression_3")) return false;
+    valueExpression_3_0(builder_, level_ + 1);
     return true;
   }
 
   // isExpression | asExpression
-  private static boolean valueExpression_2_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "valueExpression_2_0")) return false;
+  private static boolean valueExpression_3_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "valueExpression_3_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = isExpression(builder_, level_ + 1);

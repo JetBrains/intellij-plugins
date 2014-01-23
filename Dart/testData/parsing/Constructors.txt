@@ -256,46 +256,18 @@ Dart File
                   ID
                     PsiElement(IDENTIFIER)('x')
                 PsiElement(=)('=')
-                FUNCTION_EXPRESSION
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('foo')
-                  FORMAL_PARAMETER_LIST
-                    PsiElement(()('(')
-                    PsiElement())(')')
-                  FUNCTION_EXPRESSION_BODY
-                    PsiElement(=>)('=>')
-                    LITERAL_EXPRESSION
-                      PsiElement(NUMBER)('42')
+                PARENTHESIZED_EXPRESSION
+                  PsiElement(()('(')
+                  FUNCTION_EXPRESSION
+                    FORMAL_PARAMETER_LIST
+                      PsiElement(()('(')
+                      PsiElement())(')')
+                    FUNCTION_EXPRESSION_BODY
+                      PsiElement(=>)('=>')
+                      LITERAL_EXPRESSION
+                        PsiElement(NUMBER)('42')
+                  PsiElement())(')')
           PsiElement(;)(';')
-        METHOD_DECLARATION
-          COMPONENT_NAME
-            ID
-              PsiElement(IDENTIFIER)('A')
-          FORMAL_PARAMETER_LIST
-            PsiElement(()('(')
-            PsiElement())(')')
-          INITIALIZERS
-            PsiElement(:)(':')
-            SUPER_CALL_OR_FIELD_INITIALIZER
-              FIELD_INITIALIZER
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('x')
-                PsiElement(=)('=')
-                FUNCTION_EXPRESSION
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('foo')
-                  FORMAL_PARAMETER_LIST
-                    PsiElement(()('(')
-                    PsiElement())(')')
-                  FUNCTION_EXPRESSION_BODY
-                    BLOCK
-                      PsiElement({)('{')
-                      STATEMENTS
-                        <empty list>
-                      PsiElement(})('}')
         METHOD_DECLARATION
           COMPONENT_NAME
             ID
@@ -314,19 +286,42 @@ Dart File
                 PARENTHESIZED_EXPRESSION
                   PsiElement(()('(')
                   FUNCTION_EXPRESSION
-                    COMPONENT_NAME
-                      ID
-                        PsiElement(IDENTIFIER)('foo')
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
                       PsiElement())(')')
                     FUNCTION_EXPRESSION_BODY
-                      BLOCK
-                        PsiElement({)('{')
-                        STATEMENTS
-                          <empty list>
-                        PsiElement(})('}')
+                      PsiElement(=>)('=>')
+                      LITERAL_EXPRESSION
+                        PsiElement(NUMBER)('42')
                   PsiElement())(')')
+          FUNCTION_BODY
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+        METHOD_DECLARATION
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('A')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            PsiElement())(')')
+          INITIALIZERS
+            PsiElement(:)(':')
+            SUPER_CALL_OR_FIELD_INITIALIZER
+              FIELD_INITIALIZER
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('x')
+                PsiElement(=)('=')
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('foo')
+                  ARGUMENTS
+                    PsiElement(()('(')
+                    PsiElement())(')')
           FUNCTION_BODY
             BLOCK
               PsiElement({)('{')
@@ -351,16 +346,15 @@ Dart File
                 PARENTHESIZED_EXPRESSION
                   PsiElement(()('(')
                   FUNCTION_EXPRESSION
-                    COMPONENT_NAME
-                      ID
-                        PsiElement(IDENTIFIER)('foo')
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
                       PsiElement())(')')
                     FUNCTION_EXPRESSION_BODY
-                      PsiElement(=>)('=>')
-                      LITERAL_EXPRESSION
-                        PsiElement(NUMBER)('42')
+                      BLOCK
+                        PsiElement({)('{')
+                        STATEMENTS
+                          <empty list>
+                        PsiElement(})('}')
                   PsiElement())(')')
           FUNCTION_BODY
             BLOCK

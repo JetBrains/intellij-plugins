@@ -11,7 +11,7 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartFunctionExpressionImpl extends AbstractDartComponentImpl implements DartFunctionExpression {
+public class DartFunctionExpressionImpl extends DartExpressionImpl implements DartFunctionExpression {
 
   public DartFunctionExpressionImpl(ASTNode node) {
     super(node);
@@ -20,12 +20,6 @@ public class DartFunctionExpressionImpl extends AbstractDartComponentImpl implem
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFunctionExpression(this);
     else super.accept(visitor);
-  }
-
-  @Override
-  @Nullable
-  public DartComponentName getComponentName() {
-    return findChildByClass(DartComponentName.class);
   }
 
   @Override
@@ -38,12 +32,6 @@ public class DartFunctionExpressionImpl extends AbstractDartComponentImpl implem
   @NotNull
   public DartFunctionExpressionBody getFunctionExpressionBody() {
     return findNotNullChildByClass(DartFunctionExpressionBody.class);
-  }
-
-  @Override
-  @Nullable
-  public DartReturnType getReturnType() {
-    return findChildByClass(DartReturnType.class);
   }
 
 }
