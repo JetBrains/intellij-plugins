@@ -26,7 +26,6 @@ import gherkin.formatter.model.Step;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
-import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.groovy.GroovyFileType;
 import org.jetbrains.plugins.groovy.actions.GroovyTemplatesFactory;
@@ -49,14 +48,13 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
 
   public static final String GROOVY_STEP_DEFINITION_FILE_TMPL_1_0 = "GroovyStepDefinitionFile.groovy";
   public static final String GROOVY_STEP_DEFINITION_FILE_TMPL_1_1 = "GroovyStepDefinitionFile1_1.groovy";
-  public static final String VERSION1_1 = "1.1";
+
 
   @NotNull
   @Override
   public PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
     String fileName = name + '.' + GroovyFileType.DEFAULT_EXTENSION;
-    final String version = CucumberConfigUtil.getCucumberCoreVersion(dir);
-    if (version != null && version.compareTo(VERSION1_1) >= 0) {
+    if (GrCucumberUtil.isCucumber_1_1_orAbove(dir)) {
       return GroovyTemplatesFactory.createFromTemplate(dir, name, fileName, GROOVY_STEP_DEFINITION_FILE_TMPL_1_1, true);
     }
     else {
@@ -176,7 +174,13 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     final Step cucumberStep = new Step(Collections.<Comment>emptyList(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
 
     SnippetGenerator generator = new SnippetGenerator(new GroovySnippet());
-    StringBuilder snippet = escapePattern( generator.getSnippet(cucumberStep).replace("PendingException", "cucumber.runtime.PendingException"));
+    final String fqnPendingException;
+    if (GrCucumberUtil.isCucumber_1_1_orAbove(step)) {
+      fqnPendingException = "cucumber.api.PendingException";
+    } else {
+      fqnPendingException = "cucumber.runtime.PendingException";
+    }
+    StringBuilder snippet = escapePattern( generator.getSnippet(cucumberStep).replace("PendingException", fqnPendingException));
 
     return (GrMethodCall)factory.createStatementFromText(snippet, step);
   }
