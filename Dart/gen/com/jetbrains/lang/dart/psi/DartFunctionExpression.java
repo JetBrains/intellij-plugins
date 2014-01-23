@@ -5,18 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartFunctionExpression extends DartExpression, DartComponent {
-
-  @Nullable
-  DartComponentName getComponentName();
+public interface DartFunctionExpression extends DartExpression {
 
   @NotNull
   DartFormalParameterList getFormalParameterList();
 
   @NotNull
   DartFunctionExpressionBody getFunctionExpressionBody();
-
-  @Nullable
-  DartReturnType getReturnType();
 
 }

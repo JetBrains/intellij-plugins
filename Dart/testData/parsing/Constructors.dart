@@ -14,10 +14,10 @@ class CompileTimeConstructorSyntax {
 class NastyConstructor {
 
   // NOTE: These examples aren't pretty but they illustrate what's legal.
-  A() : x = foo() => 42;
-  A() : x = foo() { }
-  A() : x = (foo() { }) { }
-  A() : x = (foo() => 42) { }
+  A() : x = (() => 42);
+  A() : x = (() => 42) {}
+  A() : x = foo() {}
+  A() : x = ((){}) {}
 
   A() : x = ((foo()) { }) { }
   A() : x = ((foo()) => 42) { }

@@ -58,8 +58,6 @@ class FunctionBody {
     int biz() => 87;
 
     var f = () => 42;
-    var g = int _() => 87;
-    var h = fugl() => 99;
 
     2.isOdd();
     return () => throw new Exception();

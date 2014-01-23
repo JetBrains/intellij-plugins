@@ -554,51 +554,6 @@ Dart File
                         LITERAL_EXPRESSION
                           PsiElement(NUMBER)('42')
                 PsiElement(;)(';')
-                VAR_DECLARATION_LIST
-                  VAR_ACCESS_DECLARATION
-                    PsiElement(var)('var')
-                    COMPONENT_NAME
-                      ID
-                        PsiElement(IDENTIFIER)('g')
-                  VAR_INIT
-                    PsiElement(=)('=')
-                    FUNCTION_EXPRESSION
-                      RETURN_TYPE
-                        TYPE
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('int')
-                      COMPONENT_NAME
-                        ID
-                          PsiElement(IDENTIFIER)('_')
-                      FORMAL_PARAMETER_LIST
-                        PsiElement(()('(')
-                        PsiElement())(')')
-                      FUNCTION_EXPRESSION_BODY
-                        PsiElement(=>)('=>')
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('87')
-                PsiElement(;)(';')
-                VAR_DECLARATION_LIST
-                  VAR_ACCESS_DECLARATION
-                    PsiElement(var)('var')
-                    COMPONENT_NAME
-                      ID
-                        PsiElement(IDENTIFIER)('h')
-                  VAR_INIT
-                    PsiElement(=)('=')
-                    FUNCTION_EXPRESSION
-                      COMPONENT_NAME
-                        ID
-                          PsiElement(IDENTIFIER)('fugl')
-                      FORMAL_PARAMETER_LIST
-                        PsiElement(()('(')
-                        PsiElement())(')')
-                      FUNCTION_EXPRESSION_BODY
-                        PsiElement(=>)('=>')
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('99')
-                PsiElement(;)(';')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     LITERAL_EXPRESSION

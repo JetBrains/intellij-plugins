@@ -489,25 +489,25 @@ private suffixExpressionWrapper ::= valueExpression suffixExpression*
 left suffixExpression ::= ('--' | '++')
 {mixin="com.jetbrains.lang.dart.psi.impl.DartOperatorExpressionImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-valueExpression ::= value cascadeReferenceExpression* (isExpression | asExpression)?
+valueExpression ::= primary callOrArrayAccessOrQualifiedRefExpression cascadeReferenceExpression* (isExpression | asExpression)?
 left isExpression ::= 'is' '!'? type
 left asExpression ::= 'as' type
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-private value ::=  (literalExpression (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*)
-                 | functionExpression
-                 | newExpressionOrConstOrCall
-                 | callOrArrayAccess
+private primary ::=  literalExpression |
+                     functionExpression |
+                     newExpression |
+                     constConstructorExpression |
+                     refOrThisOrSuperOrParenExpression
 
 parenthesizedExpression ::= '(' expressionInParentheses ')'
 {pin=1 mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 private expressionInParentheses ::= expression | statement {recoverWhile=parenthesesRecovery}
 private parenthesesRecovery ::= !')'
 
-private newExpressionOrConstOrCall ::= (newExpression | constConstructorExpression) qualifiedReferenceTail?
-private qualifiedReferenceTail ::= qualifiedReferenceExpression (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
+private callOrArrayAccessOrQualifiedRefExpression ::= (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
 
-private callOrArrayAccess ::= (referenceExpression | thisExpression | superExpression | << parenthesizedExpressionWrapper >>) (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
+private refOrThisOrSuperOrParenExpression ::= (referenceExpression | thisExpression | superExpression | << parenthesizedExpressionWrapper >>)
 
 left callExpression ::= arguments
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
@@ -523,7 +523,7 @@ referenceExpression ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 left qualifiedReferenceExpression ::= '.' referenceExpression {elementType="referenceExpression"}
-left cascadeReferenceExpression ::= '.''.' << cascadeStopper >> (arrayAccess | callOrArrayAccess) << varInitWrapper >>
+left cascadeReferenceExpression ::= '.''.' << cascadeStopper >> (arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression) << varInitWrapper >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 simpleQualifiedReferenceExpression ::= referenceExpression qualifiedReferenceExpression* {elementType="referenceExpression"}
@@ -560,8 +560,7 @@ private map_literal_entry_recover ::= !('!=' | '!==' | 'is' | '%' | '&&' | '&' |
                                       | '<<' | '<=' | '==' | '===' | '=>' | '>' | '>=' | '?' | '[' | ']' | '^'
                                       | 'native' | '{' | '|' | '||' | '}' | '~/' | shiftRightOperator | ('.' '.'))
 
-functionExpression ::= (returnType componentName | componentName)? formalParameterList functionExpressionBody
-{mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+functionExpression ::= formalParameterList functionExpressionBody
 functionSignature ::= metadata* functionDeclarationPrivate
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private functionDeclarationPrivate ::= returnType componentName formalParameterList | componentName formalParameterList // todo remove, use functionSignature as in spec

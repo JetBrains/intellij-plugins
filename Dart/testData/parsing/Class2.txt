@@ -622,9 +622,6 @@ Dart File
                         VAR_INIT
                           PsiElement(=)('=')
                           FUNCTION_EXPRESSION
-                            COMPONENT_NAME
-                              ID
-                                PsiElement(IDENTIFIER)('hest')
                             FORMAL_PARAMETER_LIST
                               PsiElement(()('(')
                               PsiElement())(')')
@@ -643,24 +640,23 @@ Dart File
                               PsiElement(IDENTIFIER)('f')
                         VAR_INIT
                           PsiElement(=)('=')
-                          FUNCTION_EXPRESSION
-                            RETURN_TYPE
-                              TYPE
-                                REFERENCE_EXPRESSION
-                                  ID
-                                    PsiElement(IDENTIFIER)('int')
-                            COMPONENT_NAME
-                              ID
-                                PsiElement(IDENTIFIER)('horse')
-                            FORMAL_PARAMETER_LIST
-                              PsiElement(()('(')
-                              PsiElement())(')')
-                            FUNCTION_EXPRESSION_BODY
-                              BLOCK
-                                PsiElement({)('{')
-                                STATEMENTS
-                                  <empty list>
-                                PsiElement(})('}')
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('int')
+                      PsiElement(;)(';')
+                      FUNCTION_DECLARATION_WITH_BODY
+                        COMPONENT_NAME
+                          ID
+                            PsiElement(IDENTIFIER)('horse')
+                        FORMAL_PARAMETER_LIST
+                          PsiElement(()('(')
+                          PsiElement())(')')
+                        FUNCTION_BODY
+                          BLOCK
+                            PsiElement({)('{')
+                            STATEMENTS
+                              <empty list>
+                            PsiElement(})('}')
                       PsiElement(;)(';')
                       ASSERT_STATEMENT
                         PsiElement(assert)('assert')
@@ -726,4 +722,54 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
+        VAR_DECLARATION_LIST
+          VAR_ACCESS_DECLARATION
+            PsiElement(static)('static')
+            PsiElement(final)('final')
+            TYPE
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('int')
+            COMPONENT_NAME
+              ID
+                PsiElement(IDENTIFIER)('operatorOrderMap')
+          VAR_INIT
+            PsiElement(=)('=')
+            CALL_EXPRESSION
+              FUNCTION_EXPRESSION
+                FORMAL_PARAMETER_LIST
+                  PsiElement(()('(')
+                  PsiElement())(')')
+                FUNCTION_EXPRESSION_BODY
+                  BLOCK
+                    PsiElement({)('{')
+                    STATEMENTS
+                      RETURN_STATEMENT
+                        PsiElement(return)('return')
+                        CALL_EXPRESSION
+                          NEW_EXPRESSION
+                            PsiElement(new)('new')
+                            TYPE
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('Whatever')
+                            ARGUMENTS
+                              PsiElement(()('(')
+                              PsiElement())(')')
+                          ARGUMENTS
+                            PsiElement(()('(')
+                            ARGUMENT_LIST
+                              LITERAL_EXPRESSION
+                                PsiElement(NUMBER)('3')
+                              PsiElement(,)(',')
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('param')
+                            PsiElement())(')')
+                        PsiElement(;)(';')
+                    PsiElement(})('}')
+              ARGUMENTS
+                PsiElement(()('(')
+                PsiElement())(')')
+        PsiElement(;)(';')
       PsiElement(})('}')

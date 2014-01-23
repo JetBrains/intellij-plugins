@@ -35,11 +35,16 @@ class Baz extends Kuk implements A, B, C {
       (kuk);
       id(x) { return x; }
       int id(x) { return x; }
-      var f = hest() { };
-      var f = int horse() { };
+      var f = () { };
+      var f = int;
+      horse() { };
       assert(x == 12);
     }
   }
 
   Baz(x, y, z) : super(x, y, z) {}
+
+  static final int operatorOrderMap = (){
+    return new Whatever()(3, param);
+  }();
 }
