@@ -18,7 +18,7 @@
  *
  * Modified for usage within IntelliJ IDEA.
  */
-package org.osmorc.make;
+package org.jetbrains.jps.osmorc.build;
 
 import aQute.bnd.osgi.Analyzer;
 import aQute.bnd.osgi.Constants;
@@ -44,7 +44,7 @@ public class LocalPackageCollector {
    * @param currentManifest the currently calculated manifest contents.
    */
   public static void addLocalPackages(File outputDirectory, Map<String, String> currentManifest) {
-    Analyzer fakeAnalyzer = BndWrapper.makeFakeAnalyzer(currentManifest);
+    Analyzer fakeAnalyzer = new FakeAnalyzer(currentManifest);
     addLocalPackages(outputDirectory, fakeAnalyzer);
   }
 

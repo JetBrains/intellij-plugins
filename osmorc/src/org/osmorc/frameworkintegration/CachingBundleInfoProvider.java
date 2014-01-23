@@ -24,165 +24,42 @@
  */
 package org.osmorc.frameworkintegration;
 
-import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.osgi.framework.Constants;
+import org.jetbrains.jps.osmorc.model.JpsCachingBundleInfoProvider;
 import org.osmorc.util.OsgiFileUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
-/**
- * This is a helper class which helps providing information about bundles that do not necessarily belong to the
- * project.
- * <p/>
- * XXX: I am aware that we have BundleManifestImpl already for this, but this one depends on PsiFiles, which do not work
- * for stuff outside the project.
- *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- */
-public class CachingBundleInfoProvider {
-  private static final Logger LOG = Logger.getInstance(CachingBundleInfoProvider.class);
+public class CachingBundleInfoProvider extends JpsCachingBundleInfoProvider {
 
-  // todo: check timestamp
-  private static final Map<String, Manifest> ourCache = new WeakHashMap<String, Manifest>();
-
-  private CachingBundleInfoProvider() { }
-
-  /**
-   * Returns true if the file at the given url is a bundle, false otherwise.
-   *
-   * @param bundleUrl the url of the bundle
-   * @return true if the file at the url is a bundle, false otherwise.
-   */
-  public static boolean isBundle(@Nullable String bundleUrl) {
-    return getBundleSymbolicName(bundleUrl) != null;
+  public static String getBundleSymbolicName(String bundleUrl) {
+    return getBundleSymbolicName(urlToFile(bundleUrl));
   }
 
-  /**
-   * Returns true if the object at the given URI can be bundlified. This is only true for jar files which are not already bundles.
-   *
-   * @param bundleUrl the url to the object to be bundlified.
-   * @return true if the object can be bundlified, false otherwise.
-   */
-  public static boolean canBeBundlified(@NotNull String bundleUrl) {
-    if (isBundle(bundleUrl)) {
-      return false;
-    }
-
-    File sourceFile = new File(OsgiFileUtil.urlToPath(bundleUrl));
-    if (sourceFile.isDirectory()) {
-      // it's an exploded directory, we cannot bundle these.
-      return false;
-    }
-    if (!sourceFile.getName().endsWith(".jar")) {
-      // it's no jar, so we won't bundlify it either.
-      return false;
-    }
-
-    return true;
+  public static String getBundleVersion(String bundleUrl) {
+    return getBundleVersion(urlToFile(bundleUrl));
   }
 
-  /**
-   * Returns the symbolic name of the bundle at the given url. If the file at the given url is no bundle, returns null.
-   *
-   * @param bundleUrl the url of the bundle
-   * @return the symbolic name of the bundle or null if the file is no bundle.
-   */
-  @Nullable
-  public static String getBundleSymbolicName(@Nullable String bundleUrl) {
-    String symbolicName = getBundleAttribute(bundleUrl, Constants.BUNDLE_SYMBOLICNAME);
-    return symbolicName != null ? symbolicName.split(";", 2)[0] : null; // Only take the name and leave the parameters
+  public static boolean canBeBundlified(String url) {
+    return canBeBundlified(urlToFile(url));
   }
 
-  /**
-   * Returns the version of the bundle at the given url.
-   *
-   * @param bundleUrl the url of the bundle to search
-   * @return the version of the bundle or null if the file is no bundle
-   */
-  @Nullable
-  public static String getBundleVersion(@Nullable String bundleUrl) {
-    return getBundleAttribute(bundleUrl, Constants.BUNDLE_VERSION);
+  public static boolean isBundle(String url) {
+    return isBundle(urlToFile(url));
   }
 
-  /** deprecated (to remove in IDEA 14) */
-  @SuppressWarnings("UnusedDeclaration")
-  public static String getBundleVersions(@Nullable String bundleUrl) {
-    return getBundleVersion(bundleUrl);
+  public static String getBundleAttribute(String bundleUrl, String attribute) {
+    return getBundleAttribute(urlToFile(bundleUrl), attribute);
   }
 
-  /**
-   * Returns boolean status if the given bundle is a fragment bundle.
-   *
-   * @param bundleUrl the url of the bundle
-   * @return true if the given bundle is a fragment bundle, false if it is not or if the state could not be determined.
-   */
-  public static boolean isFragmentBundle(@NotNull String bundleUrl) {
-    return getBundleAttribute(bundleUrl, Constants.FRAGMENT_HOST) != null;
+  public static boolean isFragmentBundle(String bundleUrl) {
+    return isFragmentBundle(urlToFile(bundleUrl));
   }
 
-  /**
-   * Returns the attribute of the bundle located at the given url. If the bundle cannot be found there or the jar at
-   * that location isn't a bundle, this returns null.
-   *
-   * @param bundleUrl the url of the bundle
-   * @param attribute the attribute to resolve
-   * @return the attribute's value or null if there is no such bundle or no such attribute
-   */
-  @Nullable
-  public synchronized static String getBundleAttribute(@Nullable String bundleUrl, @NotNull String attribute) {
-    if (bundleUrl == null) return null;
-
-    bundleUrl = normalize(bundleUrl);
-
-    if (!ourCache.containsKey(bundleUrl)) {
-      try {
-        File bundleFile = new File(OsgiFileUtil.urlToPath(bundleUrl));
-        if (bundleFile.isDirectory()) {
-          File manifestFile = new File(bundleFile, "META-INF/MANIFEST.MF");
-          if (manifestFile.exists() && !manifestFile.isDirectory()) {
-            FileInputStream fileInputStream = new FileInputStream(manifestFile);
-            try {
-              Manifest manifest = new Manifest(fileInputStream);
-              ourCache.put(bundleUrl, manifest);
-            }
-            finally {
-              fileInputStream.close();
-            }
-          }
-        }
-        else {
-          JarFile file = new JarFile(bundleFile);
-          try {
-            ourCache.put(bundleUrl, file.getManifest());
-          }
-          finally {
-            file.close();
-          }
-        }
-      }
-      catch (IOException e) {
-        LOG.debug(e);
-        return null;
-      }
-    }
-
-    Manifest manifest = ourCache.get(bundleUrl);
-    return manifest != null ? manifest.getMainAttributes().getValue(attribute) : null;
+  private static File urlToFile(String bundleUrl) {
+    return new File(OsgiFileUtil.urlToPath(normalize(bundleUrl)));
   }
 
   private static String normalize(String bundleUrl) {
     return bundleUrl.replaceAll("file:/([^/]+)", "file:///$1");
-  }
-
-  public static boolean isExploded(@NotNull String bundleUrl) {
-    return new File(OsgiFileUtil.urlToPath(bundleUrl)).isDirectory();
   }
 }

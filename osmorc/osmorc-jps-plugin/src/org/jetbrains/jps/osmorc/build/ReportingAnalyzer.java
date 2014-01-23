@@ -22,10 +22,48 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.frameworkintegration;
 
-import org.jetbrains.jps.osmorc.model.JpsFrameworkInstanceDefinition;
+package org.jetbrains.jps.osmorc.build;
 
-public class FrameworkInstanceDefinition extends JpsFrameworkInstanceDefinition {
+import aQute.bnd.osgi.Analyzer;
 
+import java.io.File;
+import java.text.MessageFormat;
+
+/**
+ * Created by IntelliJ IDEA. User: kork Date: Jul 20, 2009 Time: 9:51:04 PM
+ */
+class ReportingAnalyzer extends Analyzer {
+
+  private final File mySourceFile;
+  private final OsmorcBuildSession mySession;
+
+  public ReportingAnalyzer(OsmorcBuildSession session, File sourceFile) {
+    super();
+    mySession = session;
+    mySourceFile = sourceFile;
+  }
+
+  @Override
+  public SetLocation error(String s, Object... objects) {
+    mySession.processException(new OsmorcBuildException(MessageFormat.format(s, objects), mySourceFile));
+    return super.error(s, objects);
+  }
+
+  @Override
+  public SetLocation error(String s, Throwable throwable, Object... objects) {
+    mySession.processException(new OsmorcBuildException(MessageFormat.format(s, objects), throwable, mySourceFile));
+    return super.error(s, throwable, objects);
+  }
+
+  @Override
+  public SetLocation warning(String s, Object... objects) {
+    mySession.processException(new OsmorcBuildException(MessageFormat.format(s, objects), mySourceFile).setWarning());
+    return super.warning(s, objects);
+  }
+
+  @Override
+  public void progress(String s, Object... objects) {
+    mySession.progressMessage(MessageFormat.format(s, objects));
+  }
 }

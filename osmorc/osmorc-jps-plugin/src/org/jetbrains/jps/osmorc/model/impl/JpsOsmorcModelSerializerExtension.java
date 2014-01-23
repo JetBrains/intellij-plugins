@@ -1,6 +1,7 @@
 package org.jetbrains.jps.osmorc.model.impl;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.model.serialization.JpsGlobalExtensionSerializer;
 import org.jetbrains.jps.model.serialization.JpsModelSerializerExtension;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
 import org.jetbrains.jps.model.serialization.facet.JpsFacetConfigurationSerializer;
@@ -23,5 +24,11 @@ public class JpsOsmorcModelSerializerExtension extends JpsModelSerializerExtensi
   @Override
   public List<? extends JpsFacetConfigurationSerializer<?>> getFacetConfigurationSerializers() {
     return Collections.singletonList(new JpsOsmorcModuleExtensionSerializer());
+  }
+
+  @NotNull
+  @Override
+  public List<? extends JpsGlobalExtensionSerializer> getGlobalExtensionSerializers() {
+    return Collections.singletonList(new JpsOsmorcGlobalExtensionSerializer());
   }
 }

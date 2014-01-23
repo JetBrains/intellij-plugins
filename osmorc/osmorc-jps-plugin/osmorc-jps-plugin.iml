@@ -10,6 +10,62 @@
     <orderEntry type="module" module-name="jps-model-api" />
     <orderEntry type="module" module-name="jps-model-serialization" />
     <orderEntry type="module" module-name="jps-builders" />
+    <orderEntry type="module-library" exported="">
+      <library name="org.apache.felix.framework">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/org.apache.felix.framework-4.2.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/org.apache.felix.framework-4.2.1.jar!/OSGI-OPT/src/java" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/bndlib-2.1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/bndlib-2.1.0.jar!/OSGI-OPT/src" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/plexus-utils-3.0.10.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="maven-jps-plugin" />
+    <orderEntry type="module-library" exported="">
+      <library name="bundlor-1.0.0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.ant-1.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.blint-1.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor-1.0.0.RELEASE.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.ant-sources-1.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.blint-sources-1.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor-sources-1.0.0.RELEASE.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/com.springsource.util.parser.manifest-2.0.0.RELEASE.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

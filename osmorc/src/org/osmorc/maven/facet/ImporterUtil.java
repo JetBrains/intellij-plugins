@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.jps.osmorc.build.FakeAnalyzer;
 import org.osmorc.OsmorcProjectComponent;
-import org.osmorc.make.BndWrapper;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -154,7 +154,7 @@ public class ImporterUtil {
    * @param project the maven project.
    */
   static void postProcessAdditionalProperties(@NotNull Map<String, String> props, @NotNull MavenProject project) {
-    Analyzer myFakeAnalyzer = BndWrapper.makeFakeAnalyzer(props);
+    Analyzer myFakeAnalyzer = new FakeAnalyzer(props);
     Collection<MavenArtifact> dependencies = collectDependencies(props, project);
 
     DependencyEmbedder embedder = new DependencyEmbedder(dependencies);

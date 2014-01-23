@@ -40,6 +40,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.osmorc.build.LocalPackageCollector;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
