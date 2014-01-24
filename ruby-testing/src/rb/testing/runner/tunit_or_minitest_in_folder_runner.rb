@@ -77,7 +77,7 @@ def drb_launch_tests(drb_runner, test_scripts)
   # drb runner
   cmdline << drb_runner
 
-  if drb_runner.end_with?('zeus')
+  if drb_runner.end_with?('zeus') ||drb_runner.end_with?('spring')
     cmdline << 'test'
   else
     load_path = cmdline.find_all{ |param|
