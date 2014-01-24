@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class KarmaConfigurationType extends ConfigurationTypeBase {
 
   public KarmaConfigurationType() {
-    super("JavaScriptTestRunnerKarma", "Karma", "Karma", JSKarmaIcons.Karma);
+    super("JavaScriptTestRunnerKarma", "Karma", "Karma", JSKarmaIcons.Karma2);
     addFactory(new ConfigurationFactory(this) {
       @Override
       public RunConfiguration createTemplateConfiguration(Project project) {

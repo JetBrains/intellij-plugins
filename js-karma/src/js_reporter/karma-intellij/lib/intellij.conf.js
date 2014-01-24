@@ -15,10 +15,21 @@ module.exports = function(config) {
   var originalConfigModule = require(originalConfigPath);
   originalConfigModule(config);
 
-  IntellijCoverageReporter.configureCoverage(config);
-  var filteredReporters = intellijUtil.removeAll(config.reporters || [], ['dots', 'progress']);
+  var reporters = config.reporters;
+  if (intellijUtil.isString(reporters)) {
+    // logic from 'normalizeConfig' in config.js
+    reporters = reporters.length === 0 ? [] : reporters.split(',');
+  }
+  else {
+    if (!Array.isArray(reporters)) {
+      throw Error("'reporters' is expected to be an array");
+    }
+  }
+  var filteredReporters = intellijUtil.removeAll(reporters, ['dots', 'progress']);
   filteredReporters.push(IntellijReporter.reporterName);
   config.reporters = filteredReporters;
+
+  IntellijCoverageReporter.configureCoverage(config);
 
   var plugins = config.plugins || [];
   plugins.push(require.resolve('./intellijPlugin.js'));
