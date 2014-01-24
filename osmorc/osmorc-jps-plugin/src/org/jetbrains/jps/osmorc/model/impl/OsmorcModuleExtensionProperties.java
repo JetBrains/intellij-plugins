@@ -42,7 +42,7 @@ public class OsmorcModuleExtensionProperties {
   public String myManifestLocation;
 
   @Tag("additionalJARContents")
-  @AbstractCollection(surroundWithTag = true)
+  @AbstractCollection(surroundWithTag = false)
   public List<OsmorcJarContentEntry> myAdditionalJARContents = new ArrayList<OsmorcJarContentEntry>();
 
   @Attribute("ignoreFilePattern")
