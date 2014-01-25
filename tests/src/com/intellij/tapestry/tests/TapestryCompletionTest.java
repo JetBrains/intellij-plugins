@@ -25,7 +25,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
 
   public void testTagNameInHtmlParent() throws Throwable {
     initByComponent();
-    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "head", "body", getElementTagName()));
+    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "head", "frameset", "body", getElementTagName()));
   }
 
   public void testTagNameInTmlParent() throws Throwable {
@@ -34,7 +34,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     addComponentToProject("subpackage.Count");
     doTestBasicCompletionVariants(
       mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "link", "meta", "noscript", "p:clientId",
-                  "p:element", "p:mixins", "script", "style", "title", "t:subpackage.count",
+                  "p:element", "p:mixins", "rdf:RDF", "script", "style", "title", "template", "t:subpackage.count",
                   getElementTagName()));
   }
 
@@ -58,7 +58,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   public void testAttrNameInHtmlParent1() throws Throwable {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     initByComponent();
-    doTestBasicCompletionVariants("t:id", "t:type", "tabindex", "target", "title", "translate", "type");
+    doTestBasicCompletionVariants("t:id", "t:type", "tabindex", "target", "title", "translate", "type", "typeof");
   }
 
   public void testAttrNameInTmlParent() throws Throwable {
@@ -82,7 +82,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     initByComponent();
     addComponentToProject("Count");
-    doTestBasicCompletionVariants("class", "contenteditable", "contextmenu");
+    doTestBasicCompletionVariants("class", "content", "contenteditable", "contextmenu");
   }
 
   public void testRootTagName() throws Throwable {
@@ -176,12 +176,12 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
 
   public void testTagNameWithDoctypePresent() throws Throwable {
     initByComponent();
-    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "head", getElementTagName()));
+    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "frameset", "head", getElementTagName()));
   }
 
   public void testTagNameWithDoctypeAndExplicitHtmlNSPresent() throws Throwable {
     initByComponent();
-    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "head", getElementTagName()));
+    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "frameset", "head", getElementTagName()));
   }
 
   public void testTelSecondSegmentAfterProp() throws Throwable {
