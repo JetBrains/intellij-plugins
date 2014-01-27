@@ -22,53 +22,6 @@
     <orderEntry type="module" module-name="execution-impl" />
     <orderEntry type="module" module-name="debugger-impl" />
     <orderEntry type="module" module-name="manifest" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.org.apache.commons.cli-1.2.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library name="springsource-asm-3.1.0">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.org.objectweb.asm-3.1.0.jar!/" />
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.org.objectweb.asm.commons-3.1.0.jar!/" />
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.org.objectweb.asm.tree-3.1.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.util.common-2.0.0.RELEASE.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.util.math-2.0.0.RELEASE.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.util.osgi-2.0.0.RELEASE.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
     <orderEntry type="module" module-name="osmorc-jps-plugin" exported="" />
