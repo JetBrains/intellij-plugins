@@ -50,4 +50,7 @@ public class OsmorcModuleExtensionProperties {
 
   @Attribute("bundlorFileLocation")
   public String myBundlorFileLocation;
+
+  @Attribute("useProjectDefaultManifestFileLocation")
+  public boolean myUseProjectDefaultManifestFileLocation = true;
 }

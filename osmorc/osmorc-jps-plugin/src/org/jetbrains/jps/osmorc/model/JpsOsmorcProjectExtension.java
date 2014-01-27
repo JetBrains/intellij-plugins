@@ -8,4 +8,6 @@ import org.jetbrains.jps.model.JpsElement;
 public interface JpsOsmorcProjectExtension extends JpsElement {
 
   String getBundlesOutputPath();
+
+  String getDefaultManifestFileLocation();
 }

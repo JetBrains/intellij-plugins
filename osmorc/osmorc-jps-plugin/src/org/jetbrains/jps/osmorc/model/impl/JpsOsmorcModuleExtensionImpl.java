@@ -92,7 +92,7 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
         }
       case OsgiOutputPath:
         JpsProject project = module.getProject();
-        JpsOsmorcProjectExtension projectExtension = JpsOsmorcProjectExtensionImpl.getExtension(project);
+        JpsOsmorcProjectExtension projectExtension = getProjectExtension();
         String bundlesOutputPath = projectExtension == null ? null : projectExtension.getBundlesOutputPath();
         if (bundlesOutputPath != null && bundlesOutputPath.trim().length() != 0) {
           return bundlesOutputPath + "/" + nullSafeLocation;
@@ -233,11 +233,28 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
     }
   }
 
+  private JpsOsmorcProjectExtension getProjectExtension() {
+    return JpsOsmorcProjectExtensionImpl.getExtension(getModule().getProject());
+  }
+
+  @NotNull
+  public String getManifestLocation() {
+    if (isUseProjectDefaultManifestFileLocation()) {
+      JpsOsmorcProjectExtension projectExtension = getProjectExtension();
+      return projectExtension == null
+             ? OsmorcProjectExtensionProperties.DEFAULT_MANIFEST_LOCATION
+             : projectExtension.getDefaultManifestFileLocation();
+    }
+    else {
+      return doGetManifestLocation();
+    }
+  }
+
   /**
    * @return the manifest location, relative to the module's content roots.
    */
   @NotNull
-  public String getManifestLocation() {
+  public String doGetManifestLocation() {
     return StringUtil.notNullize(myProperties.myManifestLocation);
   }
 
@@ -289,5 +306,9 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
 
   public void processAffectedModules(Consumer<JpsModule> consumer) {
     JpsJavaExtensionService.dependencies(getModule()).recursively().productionOnly().processModules(consumer);
+  }
+
+  public boolean isUseProjectDefaultManifestFileLocation() {
+    return myProperties.myUseProjectDefaultManifestFileLocation;
   }
 }

@@ -47,6 +47,11 @@ public class JpsOsmorcProjectExtensionImpl extends JpsElementBase<JpsOsmorcProje
     return myProperties.myBundlesOutputPath;
   }
 
+  @Override
+  public String getDefaultManifestFileLocation() {
+    return myProperties.myDefaultManifestFileLocation;
+  }
+
   @Nullable
   public static JpsOsmorcProjectExtension getExtension(@NotNull JpsProject project) {
     return project.getContainer().getChild(ROLE);
