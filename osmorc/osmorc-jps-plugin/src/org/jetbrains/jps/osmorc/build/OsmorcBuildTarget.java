@@ -26,18 +26,18 @@ import java.util.List;
 /**
  * @author michael.golubev
  */
-public class OsmorcBuildTarget extends BuildTarget<BuildRootDescriptor> {
+public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
 
   private final JpsOsmorcModuleExtension myExtension;
 
   public OsmorcBuildTarget(JpsOsmorcModuleExtension extension) {
-    super(OsmorcBuildTargetType.INSTANCE);
+    super(OsmorcBuildTargetType.INSTANCE, extension.getModule());
     myExtension = extension;
   }
 
   @Override
   public String getId() {
-    return myExtension.getModule().getName();
+    return myModule.getName();
   }
 
   @Override
@@ -99,6 +99,11 @@ public class OsmorcBuildTarget extends BuildTarget<BuildRootDescriptor> {
 
   public JpsOsmorcModuleExtension getExtension() {
     return myExtension;
+  }
+
+  @Override
+  public boolean isTests() {
+    return false;
   }
 
   @Override

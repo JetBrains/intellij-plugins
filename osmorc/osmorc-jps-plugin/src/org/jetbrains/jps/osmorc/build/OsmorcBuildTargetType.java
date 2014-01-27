@@ -3,7 +3,7 @@ package org.jetbrains.jps.osmorc.build;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.BuildTargetLoader;
-import org.jetbrains.jps.builders.BuildTargetType;
+import org.jetbrains.jps.builders.ModuleBasedBuildTargetType;
 import org.jetbrains.jps.model.JpsModel;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.osmorc.model.JpsOsmorcExtensionService;
@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * @author michael.golubev
  */
-public class OsmorcBuildTargetType extends BuildTargetType<OsmorcBuildTarget> {
+public class OsmorcBuildTargetType extends ModuleBasedBuildTargetType<OsmorcBuildTarget> {
 
   public static final OsmorcBuildTargetType INSTANCE = new OsmorcBuildTargetType();
   public static final String TYPE_ID = "osmorc";
