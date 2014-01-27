@@ -248,6 +248,7 @@
 
     <javaee.web.customServletReferenceProvider
         implementation="com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider"/>
+    <referenceInjector implementation="com.intellij.struts2.reference.jsp.ActionReferenceInjector"/>
     <javaee.web.deployedFileUrlConverter implementation="com.intellij.struts2.preview.Struts2UrlConverter"/>
 
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibCssInlineStyleInjector"/>
