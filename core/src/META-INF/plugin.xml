@@ -106,7 +106,7 @@
       <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
     </group>
 
-    <group id="TapestryGroup" popup="true" text="Tapestry" class="com.intellij.ide.actions.NonEmptyActionGroup">
+    <group id="TapestryGroup" popup="true" text="Tapestry" class="com.intellij.ide.actions.NonTrivialActionGroup">
       <separator/>
       <action id="AddNewPageAction"
               class="com.intellij.tapestry.intellij.actions.createnew.AddNewPageAction"
