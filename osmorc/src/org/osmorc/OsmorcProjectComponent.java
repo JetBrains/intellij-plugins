@@ -106,8 +106,6 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
     MessageBusConnection projectBus = myProject.getMessageBus().connect(myProject);
     projectBus.subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
     projectBus.subscribe(ProjectTopics.MODULES, new MyModuleRenameHandler());
-
-    myCompilerManager.addAfterTask(new FileProcessingCompilerAdapterTask(new BundleCompiler()));
   }
 
   @Override
