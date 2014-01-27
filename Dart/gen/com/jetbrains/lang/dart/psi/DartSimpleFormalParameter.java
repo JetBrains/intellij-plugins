@@ -5,12 +5,15 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartVarDeclaration extends DartPsiCompositeElement {
+public interface DartSimpleFormalParameter extends DartComponent {
 
   @NotNull
-  DartVarAccessDeclaration getVarAccessDeclaration();
+  DartComponentName getComponentName();
+
+  @NotNull
+  List<DartMetadata> getMetadataList();
 
   @Nullable
-  DartVarInit getVarInit();
+  DartType getType();
 
 }
