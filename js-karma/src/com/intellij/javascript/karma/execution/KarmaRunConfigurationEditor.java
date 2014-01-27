@@ -143,7 +143,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
                                                  requester,
                                                  nodeSettings,
                                                  true);
-        List<String> moduleDirs = ContainerUtil.newArrayListWithExpectedSize(modules.size());
+        List<String> moduleDirs = ContainerUtil.newArrayListWithCapacity(modules.size());
         for (CompletionModuleInfo module : modules) {
           VirtualFile dir = module.getVirtualFile();
           if (dir != null && dir.isDirectory()) {

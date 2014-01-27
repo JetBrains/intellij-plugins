@@ -35,7 +35,7 @@ public class KarmaWatcher {
       @Override
       public void handle(@NotNull JsonElement eventBody) {
         JsonArray patterns = eventBody.getAsJsonArray();
-        final List<String> paths = ContainerUtil.newArrayListWithExpectedSize(patterns.size());
+        final List<String> paths = ContainerUtil.newArrayListWithCapacity(patterns.size());
         for (JsonElement pattern : patterns) {
           JsonPrimitive p = pattern.getAsJsonPrimitive();
           paths.add(p.getAsString());

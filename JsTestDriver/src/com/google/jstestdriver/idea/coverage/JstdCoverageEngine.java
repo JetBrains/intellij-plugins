@@ -216,7 +216,7 @@ public class JstdCoverageEngine extends CoverageEngine {
 
   private static List<CoverageReport.LineHits> convertClassDataToLineHits(@NotNull ClassData classData) {
     int lineCount = classData.getLines().length;
-    List<CoverageReport.LineHits> lineHitsList = ContainerUtil.newArrayListWithExpectedSize(lineCount);
+    List<CoverageReport.LineHits> lineHitsList = ContainerUtil.newArrayListWithCapacity(lineCount);
     for (int lineInd = 0; lineInd < lineCount; lineInd++) {
       LineData lineData = classData.getLineData(lineInd);
       if (lineData != null) {
