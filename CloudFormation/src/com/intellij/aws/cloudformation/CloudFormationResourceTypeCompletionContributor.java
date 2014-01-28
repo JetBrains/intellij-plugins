@@ -28,9 +28,15 @@ public class CloudFormationResourceTypeCompletionContributor extends CompletionC
                  return;
                }
 
+               PrefixMatcher oldPrefixMatcher = resultSet.getPrefixMatcher();
+               CompletionResultSet rs = resultSet.withPrefixMatcher(new PlainPrefixMatcher(oldPrefixMatcher.getPrefix()));
+
                for (CloudFormationResourceType resourceType : CloudFormationMetadataProvider.METADATA.resourceTypes) {
-                 resultSet.addElement(LookupElementBuilder.create(resourceType.name));
+                 rs.addElement(LookupElementBuilder.create(resourceType.name));
                }
+
+               // Disable all other items from JavaScript
+               rs.stopHere();
              }
            }
     );

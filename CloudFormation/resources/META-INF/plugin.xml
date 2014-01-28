@@ -40,6 +40,7 @@
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="com.intellij.aws.cloudformation.inspections.FormatViolationInspection"/>
     <completion.contributor language="JavaScript"
+                            order="first"
                             implementationClass="com.intellij.aws.cloudformation.CloudFormationResourceTypeCompletionContributor"/>
   </extensions>
 </idea-plugin>
