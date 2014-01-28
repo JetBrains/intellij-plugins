@@ -196,6 +196,14 @@ abstract class int extends num {
    */
   int abs();
 
+  /**
+   * Returns the sign of this integer.
+   *
+   * Returns 0 for zero, -1 for values less than zero and
+   * +1 for values greater than zero.
+   */
+  int get sign;
+
   /** Returns `this`. */
   int round();
 
@@ -246,8 +254,9 @@ abstract class int extends num {
    * first the decimal digits 0..9, and then the letters 'a'..'z'.
    * Accepts capital letters as well.
    *
-   * If no [radix] is given then it defaults to 16 if the string starts
-   * with "0x", "-0x" or "+0x" and 10 otherwise.
+   * If no [radix] is given then it defaults to 10, unless the string starts
+   * with "0x", "-0x" or "+0x", in which case the radix is set to 16 and the
+   * "0x" is ignored.
    *
    * The [source] must be a non-empty sequence of base-[radix] digits,
    * optionally prefixed with a minus or plus sign ('-' or '+').

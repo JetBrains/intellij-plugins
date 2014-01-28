@@ -13,11 +13,11 @@ part of dart.core;
  * Set implementations may consider some elements indistinguishable. These
  * elements are treated as being the same for any operation on the set.
  *
- * The default `Set` implementation, [HashSet], considers objects
+ * The default `Set` implementation, [LinkedHashSet], considers objects
  * indistinguishable if they are equal with regard to [Object.operator==].
  *
- * Sets may be either ordered or unordered. [HashSet] is unordered and doesn't
- * guarantee anything about the order that elements are accessed in by
+ * Sets may be either ordered or unordered. [HashSet] is unordered and
+ * doesn't guarantee anything about the order that elements are accessed in by
  * iteration. [LinkedHashSet] iterates in the insertion order of its elements.
  *
  * It is generally not allowed to modify the set (add or remove elements) while
@@ -47,7 +47,7 @@ abstract class Set<E> extends IterableBase<E> implements EfficientLength {
   /**
    * Creates a [Set] that contains all elements of [other].
    *
-   * The created `Set` is a [HashSet]. As such, it considers elements that
+   * The created `Set` is a [LinkedHashSet]. As such, it considers elements that
    * are equal (using `==`) to be undistinguishable, and requires them to
    * have a compatible [Object.hashCode] implementation.
    */
@@ -95,6 +95,11 @@ abstract class Set<E> extends IterableBase<E> implements EfficientLength {
 
   /**
    * Removes all elements of this set that are not elements in [elements].
+   *
+   * Checks for each element of [elements] whether there is an element in this
+   * set that is equal to it (according to `this.contains`), and if so, the
+   * equal element in this set is retained, and elements that are not equal
+   * to any element in `elements` are removed.
    */
   void retainAll(Iterable<Object> elements);
 
@@ -117,7 +122,7 @@ abstract class Set<E> extends IterableBase<E> implements EfficientLength {
    * Returns a new set which is the intersection between this set and [other].
    *
    * That is, the returned set contains all the elements of this `Set` that
-   * are also elements of [other].
+   * are also elements of `other` according to `other.contains`.
    */
   Set<E> intersection(Set<Object> other);
 
@@ -133,7 +138,7 @@ abstract class Set<E> extends IterableBase<E> implements EfficientLength {
    * Returns a new set with the the elements of this that are not in [other].
    *
    * That is, the returned set contains all the elements of this `Set` that
-   * are not elements of [other].
+   * are not elements of [other] according to `other.contains`.
    */
   Set<E> difference(Set<E> other);
 

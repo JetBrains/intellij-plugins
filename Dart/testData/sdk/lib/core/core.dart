@@ -73,9 +73,9 @@
  * You cannot get an item by index (position).
  * Adding a duplicate item has no effect.
  *
- *     Set villians = new Set();
- *     villians.add('Joker');
- *     villians.addAll( ['Lex Luther', 'Voldemort'] );
+ *     Set villains = new Set();
+ *     villains.add('Joker');
+ *     villains.addAll( ['Lex Luther', 'Voldemort'] );
  *
  * A Map is an unordered collection of key-value pairs.
  * Maps are sometimes called associative arrays because
@@ -155,7 +155,7 @@ library dart.core;
 import "dart:collection";
 import "dart:_collection-dev" hide Symbol;
 import "dart:_collection-dev" as _collection_dev;
-import "dart:convert" show UTF8, Encoding;
+import "dart:convert" show UTF8, LATIN1, Encoding;
 import "dart:math" show Random;  // Used by List.shuffle.
 
 part "annotations.dart";

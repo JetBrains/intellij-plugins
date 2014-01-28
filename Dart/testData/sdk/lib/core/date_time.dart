@@ -37,7 +37,7 @@ part of dart.core;
  * You can use these constants to improve code readibility:
  *
  *     DateTime berlinWallFell = new DateTime(1989, DateTime.NOVEMBER, 9);
- *     assert(berlinWallFell.month == DateTime.SATURDAY);
+ *     assert(berlinWallFell.weekday == DateTime.THURSDAY);
  *
  * Day and month values begin at 1, and the week starts on Monday.
  * That is, the constants [JANUARY] and [MONDAY] are both 1.
@@ -79,8 +79,8 @@ part of dart.core;
  * To find out how much time is between two DateTime objects use
  * [difference], which returns a [Duration] object:
  *
- *     Duration difference = berlinWallFell.difference(dDay);
- *     assert(difference.inDays == 16592);
+ *     Duration difference = berlinWallFell.difference(moonLanding)
+ *     assert(difference.inDays == 7416);
  *
  * ## Other resources
  *
@@ -190,6 +190,8 @@ class DateTime implements Comparable {
   /**
    * Constructs a new [DateTime] instance based on [formattedString].
    *
+   * Throws a [FormatException] if the input cannot be parsed.
+   *
    * The function parses a subset of ISO 8601. Examples of accepted strings:
    *
    * * `"2012-02-27 13:27:00"`
@@ -254,13 +256,13 @@ class DateTime implements Comparable {
       int millisecondsSinceEpoch = _brokenDownDateToMillisecondsSinceEpoch(
           years, month, day, hour, minute, second, millisecond, isUtc);
       if (millisecondsSinceEpoch == null) {
-        throw new ArgumentError(formattedString);
+        throw new FormatException(formattedString);
       }
       if (addOneMillisecond) millisecondsSinceEpoch++;
       return new DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch,
                                                      isUtc: isUtc);
     } else {
-      throw new ArgumentError(formattedString);
+      throw new FormatException(formattedString);
     }
   }
 
@@ -276,7 +278,6 @@ class DateTime implements Comparable {
    * 1970-01-01T00:00:00Z + [millisecondsSinceEpoch] ms in the given
    * time zone (local or UTC).
    */
-  // TODO(lrn): Have two constructors instead of taking an optional bool.
   DateTime.fromMillisecondsSinceEpoch(int millisecondsSinceEpoch,
                                       {bool isUtc: false})
       : this.millisecondsSinceEpoch = millisecondsSinceEpoch,
