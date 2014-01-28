@@ -152,7 +152,7 @@ public class ResourceTypesSaver {
         continue;
       }
 
-      result.add(new Pair<>(new URL(url, href), name));
+      result.add(new Pair<>(new URL(url, href.trim()), name.trim()));
     }
 
     Collections.sort(result, new Comparator<Pair<URL, String>>() {

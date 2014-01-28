@@ -1525,7 +1525,7 @@
       <properties/>
     </ResourceType>
     <ResourceType>
-      <name>AWS::ElastiCache::SubnetGroup </name>
+      <name>AWS::ElastiCache::SubnetGroup</name>
       <properties>
         <ResourceProperty>
           <name>Description</name>
