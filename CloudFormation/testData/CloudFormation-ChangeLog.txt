@@ -103,6 +103,7 @@ Search: [Go]
                 + AWS::AutoScaling::AutoScalingGroup
                 + AWS::AutoScaling::LaunchConfiguration
                 + AWS::AutoScaling::ScalingPolicy
+                + AWS::AutoScaling::ScheduledAction
                 + AWS::AutoScaling::Trigger
                 + AWS::CloudFormation::Authentication
                 + AWS::CloudFormation::CustomResource
@@ -184,7 +185,11 @@ Search: [Go]
                 + CloudFront Origin Type
                 + CloudFront S3Origin Type
                 + CloudWatch Metric Dimension
-                + DynamoDB Primary Key
+                + DynamoDB Attribute Definitions
+                + DynamoDB Global Secondary Indexes
+                + DynamoDB Key Schema
+                + DynamoDB Local Secondary Indexes
+                + DynamoDB Projection Object
                 + DynamoDB Provisioned Throughput
                 + EC2 Block Device Mapping
                 + EC2 EBS Block Device
@@ -267,9 +272,27 @@ since the last release of AWS CloudFormation.
 
     * API Version: 2010-05-15
 
-    * Latest documentation update: December 30, 2013
+    * Latest documentation update: January 27, 2014
 
 Change 	Description 	Release Date
+
+Auto Scaling scheduled actions
+
+You can scale the number of Amazon EC2 instances in an Auto Scaling group 
+based on a schedule. By using a schedule, you can scale applications in 
+response to predictable load changes. For more information, see 
+AWS::AutoScaling::ScheduledAction.
+
+January 27, 2014
+
+DynamoDB secondary indexes
+
+You can create local and global secondary indexes for DynamoDB databases. 
+By using secondary indexes, you can efficiently access data with attributes 
+other than the primary key. For more information, see AWS::DynamoDB::Table
+.
+
+January 27, 2014
 
 Auto Scaling update
 
@@ -278,21 +301,21 @@ configuration. You can also specify additional Auto Scaling block device
 properties. For more information, see AWS::AutoScaling::AutoScalingGroup 
 or AWS::AutoScaling::LaunchConfiguration.
 
-December 30, 2013
+January 02, 2014
 
 Amazon SQS update
 
 You can update Amazon SQS queues and specify additional properties. For 
 more information, see AWS::SQS::Queue.
 
-December 30, 2013
+January 02, 2014
 
 Limit increases
 
 You can specify up to 60 parameters and 60 outputs in your AWS 
 CloudFormation templates
 
-December 30, 2013
+January 02, 2014
 
 New console
 
@@ -547,10 +570,9 @@ December 21, 2012
 New Documentation
 
 Custom resources are special AWS CloudFormation resources that provide a 
-way for a template developer to include resources in an AWS CloudFormation 
-stack that are provided by a source other than Amazon Web Services. The 
-custom resource provider can be either a template developer or a separate 
-third-party resource provider.
+way for a template developer to include non-AWS resources in an AWS 
+CloudFormation stack. The custom resource provider can be either a template 
+developer or a separate third-party resource provider.
 
 Information about custom resources is provided in the following topics:
 
@@ -656,10 +678,6 @@ AWS CloudFormation now allows you to add or remove elements from a stack
 when updating it. AWS CloudFormation Stacks Updates has been updated, and a 
 new section has been added to the walkthrough: Change the Stack's Resources
 , which describes how to add and remove resources when updating the stack.
-
-The reference topics: ElasticBeanstalk ConfigurationTemplate, and 
-ElasticBeanstalk OptionSettings Property Type, have been significantly 
-updated in response to developer requests for more information.
 
 April 13, 2012
 

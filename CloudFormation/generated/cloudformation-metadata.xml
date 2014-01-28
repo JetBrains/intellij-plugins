@@ -113,7 +113,7 @@
         <ResourceProperty>
           <name>IamInstanceProfile</name>
           <description></description>
-          <type>String. (1–1600 chars)</type>
+          <type>String (1–1600 chars)</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -204,6 +204,53 @@
           <description></description>
           <type>String</type>
           <required>true</required>
+        </ResourceProperty>
+      </properties>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::AutoScaling::ScheduledAction</name>
+      <properties>
+        <ResourceProperty>
+          <name>AutoScalingGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DesiredCapacity</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EndTime</name>
+          <description></description>
+          <type>Time stamp</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MaxSize</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MinSize</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Recurrence</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>StartTime</name>
+          <description></description>
+          <type>Time stamp</type>
+          <required>false</required>
         </ResourceProperty>
       </properties>
     </ResourceType>
@@ -314,7 +361,7 @@
         <ResourceProperty>
           <name>type</name>
           <description></description>
-          <type>String. Valid values are &quot;basic&quot; or &quot;S3&quot;</type>
+          <type>String Valid values are &quot;basic&quot; or &quot;S3&quot;</type>
           <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -332,7 +379,7 @@
         <ResourceProperty>
           <name>roleName</name>
           <description></description>
-          <type>String.</type>
+          <type>String</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -417,10 +464,28 @@
       <name>AWS::DynamoDB::Table</name>
       <properties>
         <ResourceProperty>
+          <name>AttributeDefinitions</name>
+          <description></description>
+          <type>DynamoDB Attribute Definitions</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>GlobalSecondaryIndexes</name>
+          <description></description>
+          <type>DynamoDB Global Secondary Indexes</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>KeySchema</name>
           <description></description>
-          <type>DynamoDB Primary Key</type>
+          <type>DynamoDB Key Schema</type>
           <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LocalSecondaryIndexes</name>
+          <description></description>
+          <type>DynamoDB Local Secondary Indexes</type>
+          <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>ProvisionedThroughput</name>
@@ -442,7 +507,7 @@
         <ResourceProperty>
           <name>BgpAsn</name>
           <description></description>
-          <type>Number. BgpAsn is always an integer value</type>
+          <type>Number BgpAsn is always an integer value</type>
           <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -1460,7 +1525,7 @@
       <properties/>
     </ResourceType>
     <ResourceType>
-      <name>AWS::ElastiCache::SubnetGroup</name>
+      <name>AWS::ElastiCache::SubnetGroup </name>
       <properties>
         <ResourceProperty>
           <name>Description</name>
@@ -2144,7 +2209,7 @@
         <ResourceProperty>
           <name>Weight</name>
           <description></description>
-          <type>Number. Weight expects integer values</type>
+          <type>Number Weight expects integer values</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
