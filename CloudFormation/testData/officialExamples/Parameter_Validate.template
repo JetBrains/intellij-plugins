@@ -1,77 +1,67 @@
 {
-  "AWSTemplateFormatVersion": "2010-09-09",
+  "AWSTemplateFormatVersion" : "2010-09-09",
+ 
+  "Description" : "AWS CloudFormation Sample Template Parameter_Validate: Sample template showing how to validate string and numeric parameters. This template does not create any billable AWS Resources.",
 
-  "Description": "AWS CloudFormation Sample Template Parameter_Validate: Sample template showing how to validate string and numeric parameters. This template does not create any billable AWS Resources.",
+  "Parameters" : {
 
-  "Parameters": {
-
-    "NumberWithRange": {
-      "Type": "Number",
-      "MinValue": "1",
-      "MaxValue": "10",
-      "Default": "2",
-      "Description": "Enter a number between 1 and 10, default is 2"
+    "NumberWithRange" : {
+      "Type" : "Number",
+      "MinValue" : "1",
+      "MaxValue" : "10",
+      "Default"  : "2",
+      "Description" : "Enter a number between 1 and 10, default is 2"
     },
-    "NumberWithAllowedValues": {
-      "Type": "Number",
-      "Default": "2",
-      "AllowedValues": ["1", "2", "3", "10", "20"],
-      "Description": "Enter 1,2,3,10 or 20, default is 2"
+    "NumberWithAllowedValues" : {
+      "Type" : "Number",
+      "Default"  : "2", 
+      "AllowedValues" : ["1", "2", "3", "10", "20"],
+      "Description" : "Enter 1,2,3,10 or 20, default is 2"
     },
-    "StringWithLength": {
-      "Type": "String",
-      "Default": "Hello World",
-      "MaxLength": "20",
-      "MinLength": "5",
-      "Description": "Enter a string, between 5 and 20 characters in length",
-      "ConstraintDescription": "must have beteen 5 and 20 characters"
+    "StringWithLength" : {
+      "Type" : "String",
+      "Default" : "Hello World",
+      "MaxLength" : "20",
+      "MinLength" : "5",
+      "Description" : "Enter a string, between 5 and 20 characters in length",
+      "ConstraintDescription" : "must have beteen 5 and 20 characters"
     },
-    "StringWithAllowedValues": {
-      "Type": "String",
-      "Default": "t1.micro",
-      "AllowedValues": ["t1.micro", "m1.small"],
-      "Description": "Enter t1.micro, m1.small, default is t1.micro"
+    "StringWithAllowedValues" : {
+      "Type" : "String",
+      "Default" : "t1.micro",
+      "AllowedValues" : ["t1.micro", "m1.small"],
+      "Description" : "Enter t1.micro, m1.small, default is t1.micro"
     },
-    "StringWithRegex": {
-      "Type": "String",
-      "Default": "Hello",
-      "AllowedPattern": "[A-Za-z0-9]+",
-      "MaxLength": "10",
-      "Description": "Enter a string with alpha-numeric characters only",
-      "ConstraintDescription": "must only contain upper and lower case letters and numbers"
+    "StringWithRegex" : {
+      "Type" : "String",
+      "Default" : "Hello",
+      "AllowedPattern" : "[A-Za-z0-9]+",
+      "MaxLength" : "10",
+      "Description" : "Enter a string with alpha-numeric characters only",
+      "ConstraintDescription" : "must only contain upper and lower case letters and numbers"
     }
   },
 
-  "Resources": {
-    "myWaitHandle": {
-      "Type": "AWS::CloudFormation::WaitConditionHandle"
+  "Resources" : {
+    "myWaitHandle" : {
+      "Type" : "AWS::CloudFormation::WaitConditionHandle"
     }
   },
-  "Outputs": {
-    "NumberWithRange": {
-      "Value": {
-        "Ref": "NumberWithRange"
-      }
+  "Outputs" : {
+    "NumberWithRange" : {
+      "Value" : {"Ref" : "NumberWithRange" }
     },
-    "NumberWithAllowedValues": {
-      "Value": {
-        "Ref": "NumberWithAllowedValues"
-      }
+    "NumberWithAllowedValues" : {
+      "Value" : {"Ref" : "NumberWithAllowedValues" }
     },
-    "StringWithLength": {
-      "Value": {
-        "Ref": "StringWithLength"
-      }
+    "StringWithLength" : {
+      "Value" : {"Ref" : "StringWithLength" }
     },
-    "StringWithAllowedValue": {
-      "Value": {
-        "Ref": "StringWithAllowedValues"
-      }
+    "StringWithAllowedValue" : {
+      "Value" : {"Ref" : "StringWithAllowedValues" }
     },
-    "StringWithRegex": {
-      "Value": {
-        "Ref": "StringWithRegex"
-      }
+    "StringWithRegex" : {
+      "Value" : {"Ref" : "StringWithRegex" }
     }
   }
 }

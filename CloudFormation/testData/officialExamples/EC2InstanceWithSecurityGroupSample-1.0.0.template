@@ -1,89 +1,71 @@
 {
-  "AWSTemplateFormatVersion": "2010-09-09",
+  "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description": "Create an EC2 instance running the Amazon Linux 32 bit AMI. The AMI is chosen based on the region in which the stack is run. This example creates an EC2 security group for the instance to give you SSH access. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "Create an EC2 instance running the Amazon Linux 32 bit AMI. The AMI is chosen based on the region in which the stack is run. This example creates an EC2 security group for the instance to give you SSH access. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
 
-  "Parameters": {
-    "KeyName": {
-      "Description": "Name of and existing EC2 KeyPair to enable SSH access to the instance",
-      "Type": "String"
+  "Parameters" : {
+    "KeyName" : {
+      "Description" : "Name of and existing EC2 KeyPair to enable SSH access to the instance",
+      "Type" : "String"
     }
   },
 
-  "Mappings": {
-    "RegionMap": {
-      "us-east-1": {
-        "AMI": "ami-76f0061f"
+  "Mappings" : {
+    "RegionMap" : {
+      "us-east-1" : {
+          "AMI" : "ami-76f0061f"
       },
-      "us-west-1": {
-        "AMI": "ami-655a0a20"
+      "us-west-1" : {
+          "AMI" : "ami-655a0a20"
       },
-      "eu-west-1": {
-        "AMI": "ami-7fd4e10b"
+      "eu-west-1" : {
+          "AMI" : "ami-7fd4e10b"
       },
-      "ap-southeast-1": {
-        "AMI": "ami-72621c20"
+      "ap-southeast-1" : {
+          "AMI" : "ami-72621c20"
       },
-      "ap-northeast-1": {
-        "AMI": "ami-8e08a38f"
-      }
-    }
-  },
-
-  "Resources": {
-    "Ec2Instance": {
-      "Type": "AWS::EC2::Instance",
-      "Properties": {
-        "SecurityGroups": [
-          {
-            "Ref": "InstanceSecurityGroup"
-          }
-        ],
-        "KeyName": {
-          "Ref": "KeyName"
-        },
-        "ImageId": {
-          "Fn::FindInMap": [ "RegionMap", {
-            "Ref": "AWS::Region"
-          }, "AMI" ]
-        }
-      }
-    },
-
-    "InstanceSecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "GroupDescription": "Enable SSH access via port 22",
-        "SecurityGroupIngress": [
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "22",
-            "ToPort": "22",
-            "CidrIp": "0.0.0.0/0"
-          }
-        ]
+      "ap-northeast-1" : {
+          "AMI" : "ami-8e08a38f"
       }
     }
   },
 
-  "Outputs": {
-    "InstanceId": {
-      "Description": "InstanceId of the newly created EC2 instance",
-      "Value": {
-        "Ref": "Ec2Instance"
+  "Resources" : {
+    "Ec2Instance" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+        "KeyName" : { "Ref" : "KeyName" },
+        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]}
       }
     },
-    "AZ": {
-      "Description": "Availability Zone of the newly created EC2 instance",
-      "Value": {
-        "Fn::GetAtt": [ "Ec2Instance", "AvailabilityZone" ]
+
+    "InstanceSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable SSH access via port 22",
+        "SecurityGroupIngress" : [ {
+          "IpProtocol" : "tcp",
+          "FromPort" : "22",
+          "ToPort" : "22",
+          "CidrIp" : "0.0.0.0/0"
+        } ]
       }
+    }
+  },
+
+  "Outputs" : {
+    "InstanceId" : {
+      "Description" : "InstanceId of the newly created EC2 instance",
+      "Value" : { "Ref" : "Ec2Instance" }
     },
-    "PublicIP": {
-      "Description": "Public IP address of the newly created EC2 instance",
-      "Value": {
-        "Fn::GetAtt": [ "Ec2Instance", "PublicIp" ]
-      }
+    "AZ" : {
+      "Description" : "Availability Zone of the newly created EC2 instance",
+      "Value" : { "Fn::GetAtt" : [ "Ec2Instance", "AvailabilityZone" ] }
+    },
+    "PublicIP" : {
+      "Description" : "Public IP address of the newly created EC2 instance",
+      "Value" : { "Fn::GetAtt" : [ "Ec2Instance", "PublicIp" ] }
     }
   }
 }

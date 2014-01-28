@@ -6,55 +6,54 @@
   "Parameters": {
     "KeyName": {
       "Type": "String",
-      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the web server"
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the web server"
     },
     "EC2SecurityGroup": {
       "Default": "default",
-      "Description": "The EC2 security group that contains instances that need access to the database",
+      "Description" : "The EC2 security group that contains instances that need access to the database",
       "Type": "String"
     },
     "InstanceType": {
       "Default": "m1.small",
-      "Description": "Type of EC2 instance for web server",
+      "Description" : "Type of EC2 instance for web server",
       "Type": "String",
-      "AllowedValues": [ "t1.micro", "m1.small", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.medium", "c1.xlarge",
-        "cc1.4xlarge" ],
-      "ConstraintDescription": "must be a valid EC2 instance type."
+      "AllowedValues" : [ "t1.micro", "m1.small", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.medium", "c1.xlarge", "cc1.4xlarge" ],
+      "ConstraintDescription" : "must be a valid EC2 instance type."
     },
     "WebServerPort": {
-      "Default": "8888",
+      "Default" : "8888",
       "Type": "Number",
       "MinValue": "1150",
       "MaxValue": "65535",
-      "Description": "Port for web servers to listen on"
+      "Description" : "Port for web servers to listen on"
     },
     "DatabaseEndpoint": {
       "Type": "String",
-      "Description": "RDS database instance endpoint"
+      "Description" : "RDS database instance endpoint"
     },
     "DatabasePort": {
       "Type": "Number",
       "MinValue": "1150",
       "MaxValue": "65535",
-      "Description": "RDS database instance TCP/IP port"
+      "Description" : "RDS database instance TCP/IP port"
     },
     "DatabaseUser": {
       "NoEcho": "true",
       "Type": "String",
-      "Description": "Test database admin account name",
+      "Description" : "Test database admin account name",
       "MinLength": "1",
       "MaxLength": "16",
-      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
-      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
     },
     "DatabasePassword": {
       "NoEcho": "true",
       "Type": "String",
-      "Description": "Test database admin account password",
+      "Description" : "Test database admin account password",
       "MinLength": "1",
       "MaxLength": "41",
-      "AllowedPattern": "[a-zA-Z0-9]*",
-      "ConstraintDescription": "must contain only alphanumeric characters."
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
     },
     "AlarmTopic": {
       "Description": "SNS topic to notify if there are operational issues",
@@ -62,119 +61,60 @@
     }
   },
 
-  "Mappings": {
-    "AWSInstanceType2Arch": {
-      "t1.micro": {
-        "Arch": "64"
-      },
-      "m1.small": {
-        "Arch": "32"
-      },
-      "m1.large": {
-        "Arch": "64"
-      },
-      "m1.xlarge": {
-        "Arch": "64"
-      },
-      "m2.xlarge": {
-        "Arch": "64"
-      },
-      "m2.2xlarge": {
-        "Arch": "64"
-      },
-      "m2.4xlarge": {
-        "Arch": "64"
-      },
-      "c1.medium": {
-        "Arch": "32"
-      },
-      "c1.xlarge": {
-        "Arch": "64"
-      },
-      "cc1.4xlarge": {
-        "Arch": "64"
-      }
+  "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "32" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "32" },
+      "c1.xlarge"   : { "Arch" : "64" },
+      "cc1.4xlarge" : { "Arch" : "64" }
     },
-    "AWSRegionArch2AMI": {
-      "us-east-1": {
-        "32": "ami-adf334c4",
-        "64": "ami-1ff33476"
-      },
-      "us-west-1": {
-        "32": "ami-2b1e436e",
-        "64": "ami-0f1e434a"
-      },
-      "eu-west-1": {
-        "32": "ami-d83707ac",
-        "64": "ami-de3707aa"
-      },
-      "ap-southeast-1": {
-        "32": "ami-42ee9610",
-        "64": "ami-40ee9612"
-      },
-      "ap-northeast-1": {
-        "32": "ami-78da6f79",
-        "64": "ami-7ada6f7b"
-      }
+    "AWSRegionArch2AMI" : {
+      "us-east-1" :      { "32" : "ami-adf334c4", "64" : "ami-1ff33476" },
+      "us-west-1" :      { "32" : "ami-2b1e436e", "64" : "ami-0f1e434a" },
+      "eu-west-1" :      { "32" : "ami-d83707ac", "64" : "ami-de3707aa" },
+      "ap-southeast-1" : { "32" : "ami-42ee9610", "64" : "ami-40ee9612" },
+      "ap-northeast-1" : { "32" : "ami-78da6f79", "64" : "ami-7ada6f7b" }
     }
   },
 
-  "Resources": {
+  "Resources" : {
 
     "ElasticLoadBalancer": {
       "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties": {
-        "Listeners": [
-          {
-            "InstancePort": {
-              "Ref": "WebServerPort"
-            },
+        "Listeners": [ {
+            "InstancePort": { "Ref": "WebServerPort" },
             "PolicyNames": [ "p1" ],
             "Protocol": "HTTP",
             "LoadBalancerPort": "80"
-          }
-        ],
+        } ],
         "HealthCheck": {
           "HealthyThreshold": "2",
           "Timeout": "5",
           "Interval": "10",
           "UnhealthyThreshold": "5",
-          "Target": {
-            "Fn::Join": [ "", [ "HTTP:", {
-              "Ref": "WebServerPort"
-            }, "/" ] ]
-          }
+          "Target": { "Fn::Join": [ "", [ "HTTP:", { "Ref": "WebServerPort" }, "/" ] ] }
         },
-        "AvailabilityZones": {
-          "Fn::GetAZs": {
-            "Ref": "AWS::Region"
-          }
-        },
-        "LBCookieStickinessPolicy": [
-          {
+        "AvailabilityZones": { "Fn::GetAZs" : { "Ref" : "AWS::Region" } },
+        "LBCookieStickinessPolicy": [ {
             "CookieExpirationPeriod": "30",
             "PolicyName": "p1"
-          }
-        ]
+        } ]
       }
     },
 
     "WebServerGroup": {
       "Type": "AWS::AutoScaling::AutoScalingGroup",
       "Properties": {
-        "LoadBalancerNames": [
-          {
-            "Ref": "ElasticLoadBalancer"
-          }
-        ],
-        "LaunchConfigurationName": {
-          "Ref": "LaunchConfig"
-        },
-        "AvailabilityZones": {
-          "Fn::GetAZs": {
-            "Ref": "AWS::Region"
-          }
-        },
+        "LoadBalancerNames": [ { "Ref": "ElasticLoadBalancer" } ],
+        "LaunchConfigurationName": { "Ref": "LaunchConfig" },
+        "AvailabilityZones": { "Fn::GetAZs" : { "Ref" : "AWS::Region" } },
         "MinSize": "1",
         "MaxSize": "3"
       }
@@ -183,94 +123,49 @@
     "LaunchConfig": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Properties": {
-        "SecurityGroups": [
-          {
-            "Ref": "EC2SecurityGroup"
-          }
-        ],
-        "ImageId": {
-          "Fn::FindInMap": [ "AWSRegionArch2AMI", {
-            "Ref": "AWS::Region"
-          }, {
-            "Fn::FindInMap": [ "AWSInstanceType2Arch", {
-              "Ref": "InstanceType"
-            }, "Arch" ]
-          } ]
+        "SecurityGroups": [ { "Ref": "EC2SecurityGroup" } ],
+        "ImageId": { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" }, { "Fn::FindInMap": [ "AWSInstanceType2Arch", { "Ref": "InstanceType" }, "Arch" ] } ]
         },
         "UserData": {
-          "Fn::Base64": {
-            "Fn::Join": [ "", [
-              "Database=", {
-                "Ref": "DatabaseEndpoint"
-              }, ":", {
-                "Ref": "DatabasePort"
-              },
-              "&DBUser=", {
-                "Ref": "DatabaseUser"
-              },
-              "&DBPassword=", {
-                "Ref": "DatabasePassword"
-              },
-              "&WSPort=", {
-                "Ref": "WebServerPort"
-              } ] ]
-          }
-        },
-        "KeyName": {
-          "Ref": "KeyName"
-        },
-        "InstanceType": {
-          "Ref": "InstanceType"
-        }
+          "Fn::Base64": { "Fn::Join": [ "", [ 
+                "Database=",    { "Ref": "DatabaseEndpoint" }, ":", { "Ref": "DatabasePort" },
+                "&DBUser=",     { "Ref": "DatabaseUser" },
+                "&DBPassword=", { "Ref": "DatabasePassword" },
+                "&WSPort=",     { "Ref": "WebServerPort" } ] ]
+        } },
+        "KeyName": { "Ref": "KeyName" },
+        "InstanceType": { "Ref": "InstanceType" }
       }
     },
 
-    "LockInstancesDown": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupName": {
-          "Ref": "EC2SecurityGroup"
-        },
-        "IpProtocol": "tcp",
-        "FromPort": {
-          "Ref": "WebServerPort"
-        },
-        "ToPort": {
-          "Ref": "WebServerPort"
-        },
-        "SourceSecurityGroupOwnerId": {
-          "Fn::GetAtt": ["ElasticLoadBalancer", "SourceSecurityGroup.OwnerAlias"]
-        },
-        "SourceSecurityGroupName": {
-          "Fn::GetAtt": ["ElasticLoadBalancer", "SourceSecurityGroup.GroupName"]
-        }
+    "LockInstancesDown" : {
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupName" : { "Ref": "EC2SecurityGroup" },
+        "IpProtocol" : "tcp",
+        "FromPort" : { "Ref" : "WebServerPort" },
+        "ToPort" : { "Ref" : "WebServerPort" },
+        "SourceSecurityGroupOwnerId" : {"Fn::GetAtt" : ["ElasticLoadBalancer", "SourceSecurityGroup.OwnerAlias"]},
+        "SourceSecurityGroupName" : {"Fn::GetAtt" : ["ElasticLoadBalancer", "SourceSecurityGroup.GroupName"]}
       }
     },
 
     "CPUAlarmHigh": {
-      "Type": "AWS::CloudWatch::Alarm",
+      "Type" : "AWS::CloudWatch::Alarm",
       "Properties": {
         "AlarmDescription": "Alarm if aggregate CPU too high ie. > 90% for 5 minutes",
         "Namespace": "AWS/EC2",
         "MetricName": "CPUUtilization",
         "Statistic": "Average",
-        "Dimensions": [
-          {
+        "Dimensions": [ {
             "Name": "AutoScalingGroupName",
-            "Value": {
-              "Ref": "WebServerGroup"
-            }
-          }
-        ],
+            "Value": { "Ref": "WebServerGroup" }
+        } ],
         "Period": "60",
         "Threshold": "90",
         "ComparisonOperator": "GreaterThanThreshold",
         "EvaluationPeriods": "1",
-        "AlarmActions": [
-          {
-            "Ref": "AlarmTopic"
-          }
-        ]
+        "AlarmActions": [ { "Ref": "AlarmTopic" } ]
       }
     },
 
@@ -281,23 +176,15 @@
         "Namespace": "AWS/ELB",
         "MetricName": "UnHealthyHostCount",
         "Statistic": "Average",
-        "Dimensions": [
-          {
+        "Dimensions": [ {
             "Name": "LoadBalancerName",
-            "Value": {
-              "Ref": "ElasticLoadBalancer"
-            }
-          }
-        ],
+            "Value": { "Ref": "ElasticLoadBalancer" }
+        } ],
         "Period": "300",
         "EvaluationPeriods": "1",
         "Threshold": "0",
         "ComparisonOperator": "GreaterThanThreshold",
-        "AlarmActions": [
-          {
-            "Ref": "AlarmTopic"
-          }
-        ]
+        "AlarmActions": [ { "Ref": "AlarmTopic" } ]
       }
     },
 
@@ -307,36 +194,24 @@
         "AlarmDescription": "Alarm if request latency > ",
         "Namespace": "AWS/ELB",
         "MetricName": "Latency",
-        "Dimensions": [
-          {
+        "Dimensions": [ {
             "Name": "LoadBalancerName",
-            "Value": {
-              "Ref": "ElasticLoadBalancer"
-            }
-          }
-        ],
+            "Value": { "Ref": "ElasticLoadBalancer" }
+        } ],
         "Statistic": "Average",
         "Period": "300",
         "EvaluationPeriods": "1",
         "Threshold": "1",
         "ComparisonOperator": "GreaterThanThreshold",
-        "AlarmActions": [
-          {
-            "Ref": "AlarmTopic"
-          }
-        ]
+        "AlarmActions": [ { "Ref": "AlarmTopic" } ]
       }
     }
   },
 
   "Outputs": {
     "URL": {
-      "Value": {
-        "Fn::Join": [ "", [ "http://", {
-          "Fn::GetAtt": [ "ElasticLoadBalancer", "DNSName" ]
-        }, "/" ] ]
-      },
-      "Description": "URL of the website"
+      "Value": { "Fn::Join": [ "", [ "http://", { "Fn::GetAtt": [ "ElasticLoadBalancer", "DNSName" ] }, "/" ] ] },
+      "Description" : "URL of the website"
     }
   }
 }

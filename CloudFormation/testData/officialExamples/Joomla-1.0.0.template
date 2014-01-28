@@ -227,14 +227,8 @@
         "DBName": {
           "Ref": "JoomlaDBName"
         },
-        "Port": {
-          "Ref": "JoomlaDBPort"
-        },
-        "MultiAZ": {
-          "Fn::FindInMap": [ "AWSRegionCapabilities", {
-            "Ref": "AWS::Region"
-          }, "RDSMultiAZ"]
-        },
+        "Port": { "Ref": "JoomlaDBPort" },
+        "MultiAZ" : { "Fn::FindInMap" : [ "AWSRegionCapabilities", { "Ref" : "AWS::Region" }, "RDSMultiAZ"] },
         "MasterUsername": {
           "Ref": "JoomlaDBUser"
         },
@@ -356,76 +350,31 @@
   },
 
   "Mappings": {
-    "AWSInstanceType2Arch": {
-      "t1.micro": {
-        "Arch": "64"
-      },
-      "m1.small": {
-        "Arch": "32"
-      },
-      "m1.large": {
-        "Arch": "64"
-      },
-      "m1.xlarge": {
-        "Arch": "64"
-      },
-      "m2.xlarge": {
-        "Arch": "64"
-      },
-      "m2.2xlarge": {
-        "Arch": "64"
-      },
-      "m2.4xlarge": {
-        "Arch": "64"
-      },
-      "c1.medium": {
-        "Arch": "32"
-      },
-      "c1.xlarge": {
-        "Arch": "64"
-      },
-      "cc1.4xlarge": {
-        "Arch": "64"
-      }
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "32" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "32" },
+      "c1.xlarge"   : { "Arch" : "64" },
+      "cc1.4xlarge" : { "Arch" : "64" }
     },
-    "AWSRegionArch2AMI": {
-      "us-east-1": {
-        "32": "ami-8e11e2e7",
-        "64": "ami-8211e2eb"
-      },
-      "us-west-1": {
-        "32": "ami-efc797aa",
-        "64": "ami-edc797a8"
-      },
-      "eu-west-1": {
-        "32": "ami-0fc2f67b",
-        "64": "ami-03c2f677"
-      },
-      "ap-southeast-1": {
-        "32": "ami-00f28c52",
-        "64": "ami-1cf28c4e"
-      },
-      "ap-northeast-1": {
-        "32": "ami-c003a8c1",
-        "64": "ami-c603a8c7"
-      }
+    "AWSRegionArch2AMI" : {
+      "us-east-1" : { "32" : "ami-8e11e2e7", "64" : "ami-8211e2eb" },
+      "us-west-1" : { "32" : "ami-efc797aa", "64" : "ami-edc797a8" },
+      "eu-west-1" : { "32" : "ami-0fc2f67b", "64" : "ami-03c2f677" },
+      "ap-southeast-1" : { "32" : "ami-00f28c52", "64" : "ami-1cf28c4e" },
+      "ap-northeast-1" : { "32" : "ami-c003a8c1", "64" : "ami-c603a8c7" }
     },
-    "AWSRegionCapabilities": {
-      "us-east-1": {
-        "RDSMultiAZ": "true"
-      },
-      "us-west-1": {
-        "RDSMultiAZ": "true"
-      },
-      "eu-west-1": {
-        "RDSMultiAZ": "true"
-      },
-      "ap-southeast-1": {
-        "RDSMultiAZ": "true"
-      },
-      "ap-northeast-1": {
-        "RDSMultiAZ": "true"
-      }
+    "AWSRegionCapabilities" : {
+      "us-east-1" :      { "RDSMultiAZ" : "true" },
+      "us-west-1" :      { "RDSMultiAZ" : "true" },
+      "eu-west-1" :      { "RDSMultiAZ" : "true" },
+      "ap-southeast-1" : { "RDSMultiAZ" : "true" },
+      "ap-northeast-1" : { "RDSMultiAZ" : "true" }
     }
   },
   "Outputs": {
@@ -433,26 +382,22 @@
       "Value": {
         "Fn::Join": [
           "",
-          [ "http://", {
-            "Fn::GetAtt": [ "ElasticLoadBalancer", "DNSName" ]
-          }
+          [ "http://", { "Fn::GetAtt": [ "ElasticLoadBalancer", "DNSName" ] }
           ]
         ]
       },
-      "Description": "URL of the Joomla! content management site"
+      "Description" : "URL of the Joomla! content management site"
     },
     "AdminURL": {
       "Value": {
         "Fn::Join": [
           "",
           [
-            "http://", {
-            "Fn::GetAtt": [ "ElasticLoadBalancer", "DNSName" ]
-          }, "/administrator"
+            "http://", { "Fn::GetAtt": [ "ElasticLoadBalancer", "DNSName" ] }, "/administrator"
           ]
         ]
       },
-      "Description": "URL of the Joomla! administrator site"
+      "Description" : "URL of the Joomla! administrator site"
     }
   }
 }

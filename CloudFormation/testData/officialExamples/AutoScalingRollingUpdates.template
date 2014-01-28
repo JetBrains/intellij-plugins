@@ -1,7 +1,15 @@
 {
 
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "AWS",
+    "Description": "AWS CloudFormation Sample Template AutoScalingRollingUpdates: Create a load balanced, Auto Scaled sample 
+
+website. This example creates an Auto Scaling group behind a load balancer with a simple health check using a basic getting start 
+
+AMI that has a simple Apache Web Server-based PHP page. The autoscaling launch configuration includes an update policy that will 
+
+keep 2 instances running while doing an autoscaling rolling upgrade. **WARNING** This template creates one or more Amazon EC2 
+
+instances and an Elastic Load Balancer. You will be billed for the AWS resources used if you create a stack from this template.",
     "Parameters": {
         "InstanceType": {
             "Description": "WebServer EC2 instance type",

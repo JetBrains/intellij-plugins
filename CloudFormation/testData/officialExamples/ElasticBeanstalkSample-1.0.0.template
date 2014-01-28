@@ -1,77 +1,61 @@
 {
-  "AWSTemplateFormatVersion": "2010-09-09",
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  
+  "Description" : "Configure and launch the AWS Elastic Beanstalk sample application. Note, since Elastic Beanstalk is only available in US-East-1, this template can only be used to create stacks in the US-East-1 region. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
 
-  "Description": "Configure and launch the AWS Elastic Beanstalk sample application. Note, since Elastic Beanstalk is only available in US-East-1, this template can only be used to create stacks in the US-East-1 region. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
-
-  "Parameters": {
-    "KeyName": {
-      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the AWS Elastic Beanstalk instance",
-      "Type": "String"
+  "Parameters" : {
+    "KeyName" : {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the AWS Elastic Beanstalk instance",
+      "Type" : "String"
     }
   },
 
-  "Mappings": {
-    "RegionMap": {
-      "us-east-1": {
-        "S3Bucket": "elasticbeanstalk-us-east-1"
+  "Mappings" : {
+    "RegionMap" : {
+      "us-east-1" : {
+          "S3Bucket" : "elasticbeanstalk-us-east-1"
       }
     }
   },
 
-  "Resources": {
-    "sampleApplication": {
-      "Type": "AWS::ElasticBeanstalk::Application",
-      "Properties": {
-        "Description": "AWS Elastic Beanstalk Sample Application",
-        "ApplicationVersions": [
-          {
-            "VersionLabel": "Initial Version",
-            "Description": "Version 1.0",
-            "SourceBundle": {
-              "S3Bucket": {
-                "Fn::FindInMap": [ "RegionMap", {
-                  "Ref": "AWS::Region"
-                }, "S3Bucket" ]
-              },
-              "S3Key": "resources/elasticbeanstalk-sampleapp.war"
-            }
+  "Resources" : {
+    "sampleApplication" : {
+      "Type" : "AWS::ElasticBeanstalk::Application",
+      "Properties" : {
+        "Description" : "AWS Elastic Beanstalk Sample Application",
+        "ApplicationVersions" : [{
+          "VersionLabel" : "Initial Version",
+          "Description" : "Version 1.0",
+          "SourceBundle" : {
+            "S3Bucket" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "S3Bucket" ]},
+            "S3Key" : "resources/elasticbeanstalk-sampleapp.war"
           }
-        ],
-        "ConfigurationTemplates": [
-          {
-            "TemplateName": "DefaultConfiguration",
-            "Description": "Default Configuration Version 1.0 - with SSH access",
-            "OptionSettings": [
-              {
-                "Namespace": "aws:autoscaling:launchconfiguration",
-                "OptionName": "EC2KeyName",
-                "Value": {
-                  "Ref": "KeyName"
-                }
-              }
-            ]
-          }
-        ]
+        }],
+        "ConfigurationTemplates" : [{
+          "TemplateName" : "DefaultConfiguration",
+          "Description" : "Default Configuration Version 1.0 - with SSH access",
+          "OptionSettings" : [{
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "EC2KeyName",
+            "Value" : { "Ref" : "KeyName" }
+          }]
+        }]
       }
     },
-    "sampleEnvironment": {
-      "Type": "AWS::ElasticBeanstalk::Environment",
-      "Properties": {
-        "ApplicationName": {
-          "Ref": "sampleApplication"
-        },
-        "Description": "AWS Elastic Beanstalk Environment running Sample Application",
-        "TemplateName": "DefaultConfiguration",
-        "VersionLabel": "Initial Version"
+    "sampleEnvironment" : {
+      "Type" : "AWS::ElasticBeanstalk::Environment",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "sampleApplication" },
+         "Description" :  "AWS Elastic Beanstalk Environment running Sample Application",
+         "TemplateName" : "DefaultConfiguration",
+         "VersionLabel" : "Initial Version"
       }
     }
   },
-  "Outputs": {
-    "URL": {
-      "Description": "URL of the AWS Elastic Beanstalk Environment",
-      "Value": {
-        "Fn::GetAtt": ["sampleEnvironment", "EndpointURL"]
-      }
+  "Outputs" : {
+    "URL" : {
+      "Description" : "URL of the AWS Elastic Beanstalk Environment",
+      "Value" : { "Fn::GetAtt" : ["sampleEnvironment", "EndpointURL"] }
     }
   }
 }

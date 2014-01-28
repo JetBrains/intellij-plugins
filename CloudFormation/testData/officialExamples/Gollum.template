@@ -100,82 +100,41 @@
     },
     "DataVolume": {
       "Properties": {
-        "AvailabilityZone": {
-          "Fn::GetAtt": [ "EC2Instance", "AvailabilityZone" ]
-        },
+        "AvailabilityZone" : { "Fn::GetAtt" : [ "EC2Instance", "AvailabilityZone" ]},
         "Size": {
           "Ref": "VolSize"
         }
       },
       "Type": "AWS::EC2::Volume"
     },
-    "MountPoint": {
-      "Type": "AWS::EC2::VolumeAttachment",
-      "Properties": {
-        "InstanceId": {
-          "Ref": "EC2Instance"
-        },
-        "VolumeId": {
-          "Ref": "DataVolume"
-        },
-        "Device": "/dev/sdh"
+    "MountPoint" : {
+      "Type" : "AWS::EC2::VolumeAttachment",
+      "Properties" : {
+        "InstanceId" : { "Ref" : "EC2Instance" },
+        "VolumeId"  : { "Ref" : "DataVolume" },
+        "Device" : "/dev/sdh"
       }
     }
   },
   "Mappings": {
-    "AWSInstanceType2Arch": {
-      "t1.micro": {
-        "Arch": "64"
-      },
-      "m1.small": {
-        "Arch": "32"
-      },
-      "m1.large": {
-        "Arch": "64"
-      },
-      "m1.xlarge": {
-        "Arch": "64"
-      },
-      "m2.xlarge": {
-        "Arch": "64"
-      },
-      "m2.2xlarge": {
-        "Arch": "64"
-      },
-      "m2.4xlarge": {
-        "Arch": "64"
-      },
-      "c1.medium": {
-        "Arch": "32"
-      },
-      "c1.xlarge": {
-        "Arch": "64"
-      },
-      "cc1.4xlarge": {
-        "Arch": "64"
-      }
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "32" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "32" },
+      "c1.xlarge"   : { "Arch" : "64" },
+      "cc1.4xlarge" : { "Arch" : "64" }
     },
-    "AWSRegionArch2AMI": {
-      "us-east-1": {
-        "32": "ami-2613e04f",
-        "64": "ami-2213e04b"
-      },
-      "us-west-1": {
-        "32": "ami-07c79742",
-        "64": "ami-01c79744"
-      },
-      "eu-west-1": {
-        "32": "ami-79c2f60d",
-        "64": "ami-7fc2f60b"
-      },
-      "ap-southeast-1": {
-        "32": "ami-4cf28c1e",
-        "64": "ami-4ef28c1c"
-      },
-      "ap-northeast-1": {
-        "32": "ami-a803a8a9",
-        "64": "ami-ae03a8af"
-      }
+    "AWSRegionArch2AMI" : {
+      "us-east-1" : { "32" : "ami-2613e04f", "64" : "ami-2213e04b" },
+      "us-west-1" : { "32" : "ami-07c79742", "64" : "ami-01c79744" },
+      "eu-west-1" : { "32" : "ami-79c2f60d", "64" : "ami-7fc2f60b" },
+      "ap-southeast-1" : { "32" : "ami-4cf28c1e", "64" : "ami-4ef28c1c" },
+      "ap-northeast-1" : { "32" : "ami-a803a8a9", "64" : "ami-ae03a8af" }
     }
   },
   "Outputs": {

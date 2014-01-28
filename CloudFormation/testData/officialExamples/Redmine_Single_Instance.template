@@ -1,10 +1,10 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
-  
+
   "Description" : "AWS CloudFormation Sample Template Redmine_Single_instance: Redmine is a  flexible project management web application which includes a gantt chart, calendar, wiki, forums, multiple roles, and email notification. This template installs a Redmine stack using a single EC2 instance with a local MySQL database for storage. It demonstrates using the AWS CloudFormation bootstrap scripts to install the packages and files necessary to deploy the Redmine, Rails, MySQL and all dependent packages at instance launch time. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
-  
+
   "Parameters" : {
-      
+
     "KeyName": {
       "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
       "Type": "String",
@@ -12,7 +12,7 @@
       "MaxLength": "255",
       "AllowedPattern" : "[\\x20-\\x7E]*",
       "ConstraintDescription" : "can contain only ASCII characters."
-    },    
+    },
 
     "DBName": {
       "Default": "redmine",
@@ -71,7 +71,7 @@
       "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
     }
   },
-  
+
   "Mappings" : {
     "AWSInstanceType2Arch" : {
       "t1.micro"    : { "Arch" : "64" },
@@ -102,10 +102,10 @@
       "sa-east-1"      : { "32" : "ami-3e3be423", "64" : "ami-3c3be421", "64HVM" : "NOT_YET_SUPPORTED" }
     }
   },
-    
-  "Resources" : {     
-    
-    "WebServer": {  
+
+  "Resources" : {
+
+    "WebServer": {
       "Type": "AWS::EC2::Instance",
       "Metadata" : {
         "AWS::CloudFormation::Init" : {
@@ -140,7 +140,7 @@
             },
 
             "sources" : {
-              "/home/ec2-user/redmine"     : "http://rubyforge.org/frs/download.php/76189/redmine-2.0.2.tar.gz"
+              "/home/ec2-user/redmine"     : "http://rubyforge.org/frs/download.php/77242/redmine-2.4.0.tar.gz"
             },
 
             "files" : {
@@ -149,7 +149,7 @@
                 "content" : { "Fn::Join" : ["", [
                   "#!/bin/bash -v\n",
                   "#Install and run Redmine\n",
-                  "cd /home/ec2-user/redmine/redmine-2.0.2\n",
+                  "cd /home/ec2-user/redmine/redmine-2.4.0\n",
                   "bundle install --without development test postgresql sqlite\n",
                   "rake generate_secret_token\n",
                   "RAILS_ENV=production rake db:migrate\n",
@@ -163,7 +163,7 @@
                 "group" : "root"
               },
 
-              "/home/ec2-user/redmine/redmine-2.0.2/config/database.yml" : {
+              "/home/ec2-user/redmine/redmine-2.4.0/config/database.yml" : {
                 "content" : { "Fn::Join" : ["", [
                   "production:\n",
                   "  adapter: mysql\n",
@@ -180,10 +180,10 @@
             },
 
             "services" : {
-              "sysvinit" : {  
+              "sysvinit" : {
                 "mysqld" : {
                   "enabled"       : "true",
-                  "ensureRunning" : "true"                
+                  "ensureRunning" : "true"
                 }
               }
             }
@@ -241,7 +241,7 @@
 
           "# Install packages\n",
           "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r WebServer ",
-          "    --region ", { "Ref" : "AWS::Region" }, 
+          "    --region ", { "Ref" : "AWS::Region" },
           "    --configset fullinstall || error_exit 'Failed to run cfn-init'\n",
 
           "# Startup Redmine\n",
@@ -249,7 +249,7 @@
 
           "# All is well so signal success\n",
           "/opt/aws/bin/cfn-signal -e 0 -r \"Redmine setup complete\" '", { "Ref" : "WaitHandle" }, "'\n"
-        ]]}}        
+        ]]}}
       }
     },
 
@@ -265,7 +265,7 @@
         "Timeout" : "900"
       }
     },
-    
+
     "WebServerSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
@@ -274,10 +274,10 @@
           {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"},
           {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation"}}
         ]
-      }      
-    }          
+      }
+    }
   },
-  
+
   "Outputs" : {
     "WebsiteURL" : {
       "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServer", "PublicDnsName" ]}]]},
@@ -286,4 +286,3 @@
   }
 }
 
-          

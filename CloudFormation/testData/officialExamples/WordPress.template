@@ -1,51 +1,51 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
 
-  "Description": "WordPress is web software you can use to create a beautiful website or blog. This template creates a scalable WordPress installation using an Auto Scaling group behind an Elastic Load Balancer along with an Amazon Relational Database Service database instance to store the content. **WARNING** This template creates one or more Amazon EC2 instances and an Amazon Relational Database Service database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "WordPress is web software you can use to create a beautiful website or blog. This template creates a scalable WordPress installation using an Auto Scaling group behind an Elastic Load Balancer along with an Amazon Relational Database Service database instance to store the content. **WARNING** This template creates one or more Amazon EC2 instances and an Amazon Relational Database Service database instance. You will be billed for the AWS resources used if you create a stack from this template.",
 
   "Parameters": {
     "KeyName": {
-      "Description": "Name of an existing EC2 KeyPair to enable SSH access into the WordPress web server",
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access into the WordPress web server",
       "Type": "String"
     },
     "WordPressDBName": {
       "Default": "wordpress",
-      "Description": "The WordPress database name",
+      "Description" : "The WordPress database name",
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "64",
-      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
-      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
     },
     "WordPressUser": {
       "Default": "admin",
       "NoEcho": "true",
-      "Description": "The WordPress database admin account username",
+      "Description" : "The WordPress database admin account username",
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "16",
-      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
-      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
     },
     "WordPressPwd": {
       "Default": "admin",
       "NoEcho": "true",
-      "Description": "The WordPress database admin account password",
+      "Description" : "The WordPress database admin account password",
       "Type": "String",
       "MinLength": "1",
       "MaxLength": "41",
-      "AllowedPattern": "[a-zA-Z0-9]*",
-      "ConstraintDescription": "must contain only alphanumeric characters."
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
     },
     "GroupSize": {
       "Default": "1",
-      "Description": "The initial number of EC2 instances for the WordPress web server",
+      "Description" : "The initial number of EC2 instances for the WordPress web server",
       "Type": "Number",
       "MinValue": "0"
     },
     "InstanceType": {
       "Default": "m1.small",
-      "Description": "The type of EC2 instances used for the WordPress web server",
+      "Description" : "The type of EC2 instances used for the WordPress web server",
       "Type": "String"
     },
     "OperatorEmail": {
@@ -55,14 +55,14 @@
     },
     "WordPressDBPort": {
       "Default": "3306",
-      "Description": "TCP/IP port for the WordPress database",
+      "Description" : "TCP/IP port for the WordPress database",
       "Type": "Number",
       "MinValue": "1150",
       "MaxValue": "65535"
     },
     "WebServerPort": {
       "Default": "8888",
-      "Description": "TCP/IP port for the WordPress web server",
+      "Description" : "TCP/IP port for the WordPress web server",
       "Type": "Number",
       "MinValue": "1",
       "MaxValue": "65535"
@@ -249,14 +249,8 @@
         "DBName": {
           "Ref": "WordPressDBName"
         },
-        "Port": {
-          "Ref": "WordPressDBPort"
-        },
-        "MultiAZ": {
-          "Fn::FindInMap": [ "AWSRegionCapabilities", {
-            "Ref": "AWS::Region"
-          }, "RDSMultiAZ"]
-        },
+        "Port": { "Ref": "WordPressDBPort" },
+        "MultiAZ" : { "Fn::FindInMap" : [ "AWSRegionCapabilities", { "Ref" : "AWS::Region" }, "RDSMultiAZ"] },
         "MasterUsername": {
           "Ref": "WordPressUser"
         },
@@ -290,7 +284,7 @@
         },
         "MinSize": "0",
         "MaxSize": "3",
-        "DesiredCapacity": "1"
+        "DesiredCapacity" : "1"
       },
       "Type": "AWS::AutoScaling::AutoScalingGroup"
     },
@@ -379,76 +373,31 @@
   },
   "Description": "WordPress is web software you can use to create a beautiful website or blog.",
   "Mappings": {
-    "AWSInstanceType2Arch": {
-      "t1.micro": {
-        "Arch": "64"
-      },
-      "m1.small": {
-        "Arch": "32"
-      },
-      "m1.large": {
-        "Arch": "64"
-      },
-      "m1.xlarge": {
-        "Arch": "64"
-      },
-      "m2.xlarge": {
-        "Arch": "64"
-      },
-      "m2.2xlarge": {
-        "Arch": "64"
-      },
-      "m2.4xlarge": {
-        "Arch": "64"
-      },
-      "c1.medium": {
-        "Arch": "32"
-      },
-      "c1.xlarge": {
-        "Arch": "64"
-      },
-      "cc1.4xlarge": {
-        "Arch": "64"
-      }
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "32" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "32" },
+      "c1.xlarge"   : { "Arch" : "64" },
+      "cc1.4xlarge" : { "Arch" : "64" }
     },
-    "AWSRegionArch2AMI": {
-      "us-east-1": {
-        "32": "ami-f417e49d",
-        "64": "ami-f617e49f"
-      },
-      "us-west-1": {
-        "32": "ami-bdc797f8",
-        "64": "ami-bfc797fa"
-      },
-      "eu-west-1": {
-        "32": "ami-a1c2f6d5",
-        "64": "ami-a3c2f6d7"
-      },
-      "ap-southeast-1": {
-        "32": "ami-2cf28c7e",
-        "64": "ami-2ef28c7c"
-      },
-      "ap-northeast-1": {
-        "32": "ami-cc03a8cd",
-        "64": "ami-d203a8d3"
-      }
+    "AWSRegionArch2AMI" : {
+      "us-east-1" : { "32" : "ami-f417e49d", "64" : "ami-f617e49f" },
+      "us-west-1" : { "32" : "ami-bdc797f8", "64" : "ami-bfc797fa" },
+      "eu-west-1" : { "32" : "ami-a1c2f6d5", "64" : "ami-a3c2f6d7" },
+      "ap-southeast-1" : { "32" : "ami-2cf28c7e", "64" : "ami-2ef28c7c" },
+      "ap-northeast-1" : { "32" : "ami-cc03a8cd", "64" : "ami-d203a8d3" }
     },
-    "AWSRegionCapabilities": {
-      "us-east-1": {
-        "RDSMultiAZ": "true"
-      },
-      "us-west-1": {
-        "RDSMultiAZ": "true"
-      },
-      "eu-west-1": {
-        "RDSMultiAZ": "true"
-      },
-      "ap-southeast-1": {
-        "RDSMultiAZ": "true"
-      },
-      "ap-northeast-1": {
-        "RDSMultiAZ": "true"
-      }
+    "AWSRegionCapabilities" : {
+      "us-east-1" :      { "RDSMultiAZ" : "true" },
+      "us-west-1" :      { "RDSMultiAZ" : "true" },
+      "eu-west-1" :      { "RDSMultiAZ" : "true" },
+      "ap-southeast-1" : { "RDSMultiAZ" : "true" },
+      "ap-northeast-1" : { "RDSMultiAZ" : "true" }
     }
   },
   "Outputs": {
@@ -468,7 +417,7 @@
           ]
         ]
       },
-      "Description": "URL of the WordPress website"
+      "Description" : "URL of the WordPress website"
     }
   }
 }

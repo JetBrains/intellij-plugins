@@ -1,124 +1,89 @@
 {
-  "AWSTemplateFormatVersion": "2010-09-09",
+ "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description": "This sample template shows how to use AWS CloudFormation with the Amazon Linux AMI Cloud-init feature to instantiate an application at runtime. The sample uses the WaitCondition resource to synchronize creation of the stack with the application becoming healthy. **WARNING** This template creates an Amazon EC2 instance and an Elastic IP Address. You will be billed for the AWS resources used if you create a stack from this template.",
+ "Description" : "This sample template shows how to use AWS CloudFormation with the Amazon Linux AMI Cloud-init feature to instantiate an application at runtime. The sample uses the WaitCondition resource to synchronize creation of the stack with the application becoming healthy. **WARNING** This template creates an Amazon EC2 instance and an Elastic IP Address. You will be billed for the AWS resources used if you create a stack from this template.",
 
-  "Parameters": {
-    "KeyName": {
-      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
-      "Type": "String"
+ "Parameters" : {
+    "KeyName" : {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+      "Type" : "String"
     }
   },
 
-  "Mappings": {
-    "RegionMap": {
-      "us-east-1": {
-        "AMI": "ami-8c1fece5"
-      },
-      "us-west-1": {
-        "AMI": "ami-3bc9997e"
-      },
-      "eu-west-1": {
-        "AMI": "ami-47cefa33"
-      },
-      "ap-southeast-1": {
-        "AMI": "ami-6af08e38"
-      },
-      "ap-northeast-1": {
-        "AMI": "ami-300ca731"
-      }
+  "Mappings" : {
+    "RegionMap" : {
+      "us-east-1" : {"AMI" : "ami-8c1fece5"},
+      "us-west-1" : {"AMI" : "ami-3bc9997e"},
+      "eu-west-1" : {"AMI" : "ami-47cefa33"},
+      "ap-southeast-1" : {"AMI" : "ami-6af08e38"},
+      "ap-northeast-1" : {"AMI" : "ami-300ca731"}
     }
   },
 
-  "Resources": {
-    "Ec2Instance": {
-      "Type": "AWS::EC2::Instance",
-      "Properties": {
-        "KeyName": {
-          "Ref": "KeyName"
-        },
-        "SecurityGroups": [
-          {
-            "Ref": "InstanceSecurityGroup"
-          }
-        ],
-        "ImageId": {
-          "Fn::FindInMap": [ "RegionMap", {
-            "Ref": "AWS::Region"
-          }, "AMI" ]
-        },
-        "UserData": {
-          "Fn::Base64": {
-            "Fn::Join": ["", [
-              "#!/bin/bash -ex", "\n",
-              "yum -y install gcc-c++ make", "\n",
-              "yum -y install mysql-devel sqlite-devel", "\n",
-              "yum -y install ruby-rdoc rubygems ruby-mysql ruby-devel", "\n",
-              "gem install --no-ri --no-rdoc rails", "\n",
-              "gem install --no-ri --no-rdoc mysql", "\n",
-              "gem install --no-ri --no-rdoc sqlite3", "\n",
-              "rails new myapp", "\n",
-              "cd myapp", "\n",
-              "rails server -d", "\n",
-              "curl -X PUT -H 'Content-Type:' --data-binary '{\"Status\" : \"SUCCESS\",",
-              "\"Reason\" : \"The application myapp is ready\",",
-              "\"UniqueId\" : \"myapp\",",
-              "\"Data\" : \"Done\"}' ",
-              "\"", {
-                "Ref": "WaitForInstanceWaitHandle"
-              }, "\"\n" ]]
-          }
-        }
+  "Resources" : {
+    "Ec2Instance" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "KeyName" : { "Ref" : "KeyName" },
+        "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["",[
+            "#!/bin/bash -ex","\n",
+            "yum -y install gcc-c++ make","\n",
+            "yum -y install mysql-devel sqlite-devel","\n",
+            "yum -y install ruby-rdoc rubygems ruby-mysql ruby-devel","\n",
+            "gem install --no-ri --no-rdoc rails","\n",
+            "gem install --no-ri --no-rdoc mysql","\n",
+            "gem install --no-ri --no-rdoc sqlite3","\n",
+            "rails new myapp","\n",
+            "cd myapp","\n",
+            "rails server -d","\n",
+            "curl -X PUT -H 'Content-Type:' --data-binary '{\"Status\" : \"SUCCESS\",",
+                                                           "\"Reason\" : \"The application myapp is ready\",",
+                                                           "\"UniqueId\" : \"myapp\",",
+                                                           "\"Data\" : \"Done\"}' ",
+                  "\"", {"Ref" : "WaitForInstanceWaitHandle"},"\"\n" ]]}}
       }
     },
 
-    "InstanceSecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "GroupDescription": "Enable Access to Rails application via port 3000 and SSH access via port 22",
-        "SecurityGroupIngress": [
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "22",
-            "ToPort": "22",
-            "CidrIp": "0.0.0.0/0"
-          },
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "3000",
-            "ToPort": "3000",
-            "CidrIp": "0.0.0.0/0"
-          }
-        ]
+    "InstanceSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable Access to Rails application via port 3000 and SSH access via port 22",
+        "SecurityGroupIngress" : [ {
+          "IpProtocol" : "tcp",
+          "FromPort" : "22",
+          "ToPort" : "22",
+          "CidrIp" : "0.0.0.0/0"
+        }, {
+          "IpProtocol" : "tcp",
+          "FromPort" : "3000",
+          "ToPort" : "3000",
+          "CidrIp" : "0.0.0.0/0"
+        } ]
       }
     },
 
-    "WaitForInstanceWaitHandle": {
-      "Type": "AWS::CloudFormation::WaitConditionHandle",
-      "Properties": {
+    "WaitForInstanceWaitHandle" : {
+      "Type" : "AWS::CloudFormation::WaitConditionHandle",
+      "Properties" : {
       }
     },
 
-    "WaitForInstance": {
-      "Type": "AWS::CloudFormation::WaitCondition",
-      "DependsOn": "Ec2Instance",
-      "Properties": {
-        "Handle": {
-          "Ref": "WaitForInstanceWaitHandle"
-        },
-        "Timeout": "600"
+    "WaitForInstance" : {
+      "Type" : "AWS::CloudFormation::WaitCondition",
+      "DependsOn" : "Ec2Instance",
+      "Properties" : {
+        "Handle" : {"Ref" : "WaitForInstanceWaitHandle"},
+        "Timeout" : "600"
       }
     }
   },
 
-  "Outputs": {
-    "WebsiteURL": {
-      "Description": "The URL for the newly created Rails application",
-      "Value": {
-        "Fn::Join": ["", [ "http://", {
-          "Fn::GetAtt": [ "Ec2Instance", "PublicIp" ]
-        }, ":3000" ]]
-      }
+  "Outputs" : {
+    "WebsiteURL" : {
+      "Description" : "The URL for the newly created Rails application",
+      "Value" : { "Fn::Join" : ["", [ "http://", { "Fn::GetAtt" : [ "Ec2Instance", "PublicIp" ] }, ":3000" ]]}
     }
   }
 }
