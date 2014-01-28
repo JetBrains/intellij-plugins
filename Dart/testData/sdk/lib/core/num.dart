@@ -124,9 +124,9 @@ abstract class num implements Comparable<num> {
  /**
    * Returns the remainder of the truncating division of `this` by [other].
    *
-   * The result `r` of this operation satisfies: `this == this ~/ other + r`.
-   * As a consequence the remainder `r` has the same sign as the dividend
-   * `this`.
+   * The result `r` of this operation satisfies:
+   * `this == (this ~/ other) * other + r`.
+   * As a consequence the remainder `r` has the same sign as the divider `this`.
    */
   num remainder(num other);
 
@@ -168,6 +168,27 @@ abstract class num implements Comparable<num> {
 
   /** Returns the absolute value of this [num]. */
   num abs();
+
+  /**
+   * Returns minus one, zero or plus one depending on the sign and
+   * numerical value of the number.
+   *
+   * Returns minus one if the number is less than zero,
+   * plus one if the number is greater than zero,
+   * and zero if the number is equal to zero.
+   *
+   * Returns NaN if the number is the double NaN value.
+   *
+   * Returns a number of the same type as this number.
+   * For doubles, `-0.0.sign == -0.0`.
+
+   * The result satisfies:
+   *
+   *     n == n.sign * n.abs()
+   *
+   * for all numbers `n` (except NaN, because NaN isn't `==` to itself).
+   */
+  num get sign;
 
   /**
    * Returns the integer closest to `this`.
@@ -359,4 +380,33 @@ abstract class num implements Comparable<num> {
    *
    */
   String toString();
+
+  /**
+   * Parses a string containing a number literal into a number.
+   *
+   * The method first tries to read the [input] as integer (similar to
+   * [int.parse] without a radix).
+   * If that fails, it tries to parse the [input] as a double (similar to
+   * [double.parse]).
+   * If that fails, too, it invokes [onError] with [input].
+   *
+   * If no [onError] is supplied, it defaults to a function that throws a
+   * [FormatException].
+   *
+   * For any number `n`, this function satisfies
+   * `identical(n, num.parse(n.toString()))`.
+   */
+  static num parse(String input, [num onError(String input)]) {
+    String source = input.trim();
+    // TODO(lrn): Optimize to detect format and result type in one check.
+    num result = int.parse(source, onError: _returnNull);
+    if (result != null) return result;
+    result = double.parse(source, _returnNull);
+    if (result != null) return result;
+    if (onError == null) throw new FormatException(input);
+    return onError(input);
+  }
+
+  /** Helper function for [parse]. */
+  static _returnNull(_) => null;
 }
