@@ -1,0 +1,42 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template IAM_Policies_for_S3: Sample template showing how to create an IAM user with access to an S3 bucket via an IAM policy. Note that you will need to specify the CAPABILITY_IAM flag when you create the stack to allow this template to execute. You can do this through the AWS management console by clicking on the check box acknowledging that you understand this template creates IAM resources or by specifying the CAPABILITY_IAM flag to the cfn-create-stack command line tool or CreateStack API call. **WARNING** This template creates an Amazon S3 bucket. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Resources" : {
+
+    "S3Bucket" : {
+      "Type" : "AWS::S3::Bucket"
+    },
+
+    "S3User" : {
+      "Type" : "AWS::IAM::User"
+    },
+
+    "BucketPolicy" : {
+      "Type" : "AWS::S3::BucketPolicy",
+      "Properties" : {
+        "PolicyDocument": {
+          "Version"      : "2008-10-17",
+          "Id"           : "MyPolicy",
+          "Statement"    : [{
+            "Sid"        : "ReadAccess",
+            "Action"     : ["s3:GetObject"],
+            "Effect"     : "Allow",
+            "Resource"   : { "Fn::Join" : ["", ["arn:aws:s3:::", {"Ref" : "S3Bucket"} , "/*"]]},
+            "Principal"  : { "AWS": {"Fn::GetAtt" : ["S3User", "Arn"]} }
+          }]
+        },
+        "Bucket" : {"Ref" : "S3Bucket"}
+      }
+    }
+  },
+
+  "Outputs" : {
+    "BucketName" : {
+      "Value" : { "Ref" : "S3Bucket" },
+      "Description" : "Name of newly created S3 bucket"
+    }
+  }
+}
+

@@ -1,0 +1,20 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template RDS_Version: Sample template showing how to create an RDS DBInstance using a specific engine version - in this case the latest of the V5.5 family. **WARNING** This template creates an Amazon Relational Database Service database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Resources" : {
+    "MyDB" : {
+      "Type" : "AWS::RDS::DBInstance",
+      "Properties" : {
+        "AllocatedStorage" : "5",
+        "DBInstanceClass" : "db.m1.small",
+        "Engine" : "MySQL",
+        "EngineVersion" : "5.5",
+        "MasterUsername" : "MyName",
+        "MasterUserPassword" : "MyPassword"
+      }
+    }
+  }
+}
+

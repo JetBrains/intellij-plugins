@@ -1,0 +1,182 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  
+  "Description" : "Configure and launch an AWS Elastic Beanstalk application that connects to an RDS database instance. Monitoring is setup on the database. Note, since Elastic Beanstalk is only available in US-East-1, this template can only be used to create stacks in the US-East-1 region. **WARNING** This template creates one or more Amazon EC2 instances and an Amazon Relational Database Service database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "DatabaseName": {
+      "Default": "BeanstalkDB",
+      "Type": "String",
+      "Description" : "Test database name"
+    },
+    "DatabaseUser": {
+      "Default": "admin",
+      "NoEcho": "true",
+      "Type": "String",
+      "Description" : "Test database admin account name"
+    },
+    "DatabasePassword": {
+      "Default": "admin",
+      "NoEcho": "true",
+      "Type": "String",
+      "Description" : "Test database admin account password"
+    },
+    "DatabasePort": {
+      "Default": "3306",
+      "Type": "String",
+      "Description" : "TCP/IP port for the RDS database"
+    },
+    "OperatorEmail": {
+      "Default": "nobody@amazon.com",
+      "Description": "Email address to notify if there are any operational issues",
+      "Type": "String"
+    }
+  },
+
+  "Mappings" : {
+    "RegionMap" : {
+      "us-east-1" : {
+          "S3Bucket" : "cloudformation-samples-us-east-1"
+      },
+      "us-west-1" : {
+          "S3Bucket" : "cloudformation-samples-us-west-1"
+      },
+      "eu-west-1" : {
+          "S3Bucket" : "cloudformation-samples-eu-west-1"
+      },
+      "ap-southeast-1" : {
+          "S3Bucket" : "cloudformation-samples-ap-southeast-1"
+      },
+      "ap-northeast-1" : {
+          "S3Bucket" : "cloudformation-samples-ap-northeast-1"
+      }
+    },
+    "AWSRegionCapabilities" : {
+      "us-east-1" :      { "RDSMultiAZ" : "true" },
+      "us-west-1" :      { "RDSMultiAZ" : "true" },
+      "eu-west-1" :      { "RDSMultiAZ" : "true" },
+      "ap-southeast-1" : { "RDSMultiAZ" : "true" },
+      "ap-northeast-1" : { "RDSMultiAZ" : "true" }
+    }
+  },
+
+  "Resources" : {
+    "SampleApplication" : {
+      "Type" : "AWS::ElasticBeanstalk::Application",
+      "Properties" : {
+        "Description" : "AWS Elastic Beanstalk Sample Application",
+        "ApplicationVersions" : [{
+          "VersionLabel" : "Initial Version",
+          "Description" : "Version 1.0",
+          "SourceBundle" : {
+            "S3Bucket" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "S3Bucket" ]},
+            "S3Key" : "CloudFormationBeanstalkRDSExample.war"
+          }
+        }],
+        "ConfigurationTemplates" : [{
+          "TemplateName" : "DefaultConfiguration",
+          "Description" : "Default Configuration Version 1.0 - with SSH access",
+          "OptionSettings" : [{
+            "Namespace" : "aws:elasticbeanstalk:application:environment",
+            "OptionName" : "JDBC_CONNECTION_STRING",
+            "Value" : { "Fn::Join": [ "", [ "jdbc:mysql://",
+                                          { "Fn::GetAtt": [ "SampleDB", "Endpoint.Address" ] },
+                                          ":",
+                                          { "Ref": "DatabasePort" },
+                                          "/",
+                                          { "Ref": "DatabaseName" }]]}
+          },{
+            "Namespace" : "aws:elasticbeanstalk:application:environment",
+            "OptionName" : "PARAM1",
+            "Value" : { "Ref" : "DatabaseUser" }
+          },{
+            "Namespace" : "aws:elasticbeanstalk:application:environment",
+            "OptionName" : "PARAM2",
+            "Value" : { "Ref" : "DatabasePassword" }
+          }]
+        }]
+      }
+    },
+    "SampleEnvironment" : {
+      "Type" : "AWS::ElasticBeanstalk::Environment",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "SampleApplication" },
+         "Description" :  "AWS Elastic Beanstalk Environment running Sample Application",
+         "TemplateName" : "DefaultConfiguration",
+         "VersionLabel" : "Initial Version"
+      }
+    },
+    "DBSecurityGroup": {
+      "Properties": {
+        "DBSecurityGroupIngress": {
+          "EC2SecurityGroupName": "elasticbeanstalk-default"
+        },
+        "GroupDescription": "database access"
+      },
+      "Type": "AWS::RDS::DBSecurityGroup"
+    },
+    "SampleDB": {
+      "Properties": {
+        "Engine": "MySQL",
+        "DBName": {
+          "Ref": "DatabaseName"
+        },
+        "Port": { "Ref": "DatabasePort" },
+        "MultiAZ" : { "Fn::FindInMap" : [ "AWSRegionCapabilities", { "Ref" : "AWS::Region" }, "RDSMultiAZ"] },
+        "MasterUsername": {
+          "Ref": "DatabaseUser"
+        },
+        "DBInstanceClass": "db.m1.small",
+        "DBSecurityGroups": [
+          {
+            "Ref": "DBSecurityGroup"
+          }
+        ],
+        "AllocatedStorage": "5",
+        "MasterUserPassword": {
+          "Ref": "DatabasePassword"
+        }
+      },
+      "Type": "AWS::RDS::DBInstance"
+    },
+    "AlarmTopic": {
+      "Properties": {
+        "Subscription": [
+          {
+            "Endpoint": {
+              "Ref": "OperatorEmail"
+            },
+            "Protocol": "email"
+          }
+        ]
+      },
+      "Type": "AWS::SNS::Topic"
+    },
+    "CPUAlarmHigh": {
+      "Type" : "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "10",
+        "Statistic": "Average",
+        "Threshold": "50",
+        "AlarmDescription": "Alarm if CPU too high or metric disappears indicating the RDS database instance is having issues",
+        "Period": "60",
+        "Namespace": "AWS/RDS",
+        "MetricName": "CPUUtilization",
+        "Dimensions": [ {
+            "Name": "DBInstanceIdentifier",
+            "Value": { "Ref": "SampleDB" }
+        } ],
+        "ComparisonOperator": "GreaterThanThreshold",
+        "AlarmActions": [ { "Ref": "AlarmTopic" } ],
+        "InsufficientDataActions": [ { "Ref": "AlarmTopic" } ]
+      }
+    }
+  },
+
+  "Outputs" : {
+    "URL" : {
+      "Description" : "URL of the AWS Elastic Beanstalk Environment",
+      "Value" : { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : [ "SampleEnvironment", "EndpointURL" ] }]]} 
+    }
+  }
+}

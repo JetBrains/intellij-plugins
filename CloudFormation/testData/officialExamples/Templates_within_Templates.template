@@ -1,0 +1,147 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "AWS CloudFormation Sample Template Templates_within_Templates: This template demonstrates using embedded templates to build an end to end solution from basic building blocks. It builds a PHP Hello World sample application that connects to an Amazon Relational Database Service database instance and displays information about the web server. **WARNING** This template creates one or more Amazon EC2 instances and CloudWatch alarms. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters": {
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the web server",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+    "InstanceType" : {
+      "Description" : "WebServer EC2 instance type",
+      "Type" : "String",
+      "Default" : "m1.small",
+      "AllowedValues" : [ "t1.micro","m1.small","m1.medium","m1.large","m1.xlarge","m2.xlarge","m2.2xlarge","m2.4xlarge","m3.xlarge","m3.2xlarge","c1.medium","c1.xlarge","cc1.4xlarge","cc2.8xlarge","cg1.4xlarge"],
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+    "DatabaseType": {
+      "Default": "db.m1.small",
+      "Description" : "The database instance type",
+      "Type": "String",
+      "AllowedValues" : [ "db.m1.small", "db.m1.large", "db.m1.xlarge", "db.m2.xlarge", "db.m2.2xlarge", "db.m2.4xlarge" ],
+      "ConstraintDescription" : "must be a valid RDS DB Instance type."
+    },
+    "DatabaseUser": {
+      "NoEcho": "true",
+      "Type": "String",
+      "Description" : "Test database admin account name",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+    "DatabasePassword": {
+      "NoEcho": "true",
+      "Type": "String",
+      "Description" : "Test database admin account password",
+      "MinLength": "1",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+    "OperatorEmail": {
+      "Description": "EMail address to notify if there are operational issues",
+      "Type": "String"
+    },
+    "SSHLocation" : {
+      "Description" : " The IP address range that can be used to SSH to the EC2 instances",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+    }      
+  },
+
+  "Mappings" : {
+    "RegionMap" : {
+      "us-east-1" :      { "s3Bucket" : "https://s3.amazonaws.com/@@@CFN_TEMPLATES_USEAST1_DIR@@@" },
+      "us-west-1" :      { "s3Bucket" : "https://s3.amazonaws.com/cloudformation-templates-us-west-1" },
+      "us-west-2" :      { "s3Bucket" : "https://s3.amazonaws.com/cloudformation-templates-us-west-2" },
+      "eu-west-1" :      { "s3Bucket" : "https://s3.amazonaws.com/cloudformation-templates-eu-west-1" },
+      "sa-east-1" :      { "s3Bucket" : "https://s3.amazonaws.com/cloudformation-templates-sa-east-1" },
+      "ap-northeast-1" : { "s3Bucket" : "https://s3.amazonaws.com/cloudformation-templates-ap-northeast-1" },
+      "ap-southeast-1" : { "s3Bucket" : "https://s3.amazonaws.com/cloudformation-templates-ap-southeast-1" },
+      "ap-southeast-2" : { "s3Bucket" : "https://s3.amazonaws.com/cloudformation-templates-ap-southeast-2" }
+    }
+  },
+
+  "Resources" : {
+
+    "AlarmTopic" : {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "Subscription" : [ {
+            "Endpoint" : { "Ref": "OperatorEmail" },
+            "Protocol" : "email"
+        } ]
+      }
+    },
+
+    "EC2SecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Open up SSH access",
+        "SecurityGroupIngress" : [ {
+          "IpProtocol": "tcp",
+          "FromPort": "22",
+          "ToPort": "22",
+          "CidrIp": { "Ref" : "SSHLocation"}
+        } ]
+      }
+    },
+
+    "WebServer" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Metadata" : {
+          "Comment" : "Create web server farm attached to database."
+      },
+      "Properties" : {
+        "TemplateURL" : { "Fn::Join" : ["/", [{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "s3Bucket" ]},
+                          "PHP_Database_Application.template" ]]},
+        "Parameters" : {
+          "KeyName" :          { "Ref" : "KeyName" },
+          "InstanceType" :     { "Ref" : "InstanceType"},
+          "EC2SecurityGroup" : { "Ref" : "EC2SecurityGroup" },
+          "AlarmTopic" :       { "Ref" : "AlarmTopic" },
+          "WebServerPort" :    "8888",
+          "DatabaseUser" :     { "Ref" : "DatabaseUser" },
+          "DatabasePassword" : { "Ref" : "DatabasePassword" },
+          "DatabaseEndpoint" : { "Fn::GetAtt" : [ "AppDatabase", "Outputs.DBAddress" ] },
+          "DatabasePort" :     { "Fn::GetAtt" : [ "AppDatabase", "Outputs.DBPort" ] }
+        }
+      }
+    },
+
+    "AppDatabase" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Metadata" : {
+          "Comment" : "Application database."
+      },
+      "Properties" : {
+        "TemplateURL" : { "Fn::Join" : ["/", [{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "s3Bucket" ]},
+                          "RDS_MySQL_55.template" ]]},
+        "Parameters" : {
+          "DBUser" :           { "Ref" : "DatabaseUser" },
+          "DBPassword" :       { "Ref" : "DatabasePassword" },
+          "DBInstanceClass" :  { "Ref" : "DatabaseType" },
+          "AlarmTopic" :       { "Ref" : "AlarmTopic" },
+          "EC2SecurityGroup" : { "Ref" : "EC2SecurityGroup" }
+        }
+      }
+    }
+  },
+
+  "Outputs": {
+    "URL": {
+      "Value": { "Fn::GetAtt": [ "WebServer", "Outputs.URL" ] },
+      "Description" : "URL of the website"
+    }
+  }
+}

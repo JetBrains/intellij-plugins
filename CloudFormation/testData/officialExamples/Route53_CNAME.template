@@ -1,0 +1,31 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template Route53_CNAME: Sample template showing how to create an Amazon Route 53 CNAME record.  It assumes that you already have a Hosted Zone registered with Amazon Route 53. **WARNING** This template creates one or more AWS resources. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "HostedZone" : {
+      "Type" : "String",
+      "Description" : "The DNS name of an existing Amazon Route 53 hosted zone"
+    }
+  },
+
+  "Resources" : {
+    "myDNSRecord" : {
+      "Type" : "AWS::Route53::RecordSet",
+      "Properties" : {
+        "HostedZoneName" : { "Fn::Join" : [ "", [{"Ref" : "HostedZone"}, "." ]]},
+        "Comment" : "CNAME redirect to aws.amazon.com.",
+        "Name" : { "Fn::Join" : [ "", [{"Ref" : "AWS::StackName"}, ".", {"Ref" : "AWS::Region"}, ".", {"Ref" : "HostedZone"}, "."]]},
+        "Type" : "CNAME",
+        "TTL" : "900",
+        "ResourceRecords" : ["aws.amazon.com"]
+      }
+    }
+  },
+  "Outputs" : {
+    "CNAME" : {
+      "Value" : { "Ref" : "myDNSRecord" }
+    }
+  }
+}

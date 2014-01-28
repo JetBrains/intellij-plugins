@@ -1,0 +1,66 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template S3_Website_With_CloudFront_Distribution: Sample template showing how to create a website with a custom DNS name, hosted on Amazon S3 and served via Amazone CloudFront. It assumes you already have a Hosted Zone registered with Amazon Route 53. **WARNING** This template creates an Amazon Route 53 DNS record, an S3 bucket and a CloudFront distribution. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "HostedZone" : {
+      "Type" : "String",
+      "Description" : "The DNS name of an existing Amazon Route 53 hosted zone"
+    }
+  },
+
+  "Resources" : {
+    "S3BucketForWebsiteContent" : {
+      "Type" : "AWS::S3::Bucket",
+      "Properties" : {
+        "AccessControl" : "PublicRead",
+        "WebsiteConfiguration" : {
+           "IndexDocument" : "index.html",
+           "ErrorDocument" : "error.html"
+        }
+      }
+    },
+
+    "WebsiteCDN" : {
+      "Type" : "AWS::CloudFront::Distribution",
+      "Properties" : {
+         "DistributionConfig" : {
+           "Comment" : "CDN for S3-backed website",
+           "CustomOrigin" : {
+             "DNSName": { "Fn::Join" : ["", [{"Ref" : "S3BucketForWebsiteContent"}, ".s3-website-", {"Ref" : "AWS::Region"}, ".amazonaws.com"]]},
+             "HTTPPort" : "80",
+             "HTTPSPort" : "443",
+             "OriginProtocolPolicy" : "http-only"
+           },
+           "Enabled" : "true",
+           "DefaultRootObject" : "index.html",
+           "CNAMEs" : [{ "Fn::Join" : [ "", [{"Ref" : "AWS::StackId"}, ".", {"Ref" : "AWS::Region"}, ".", { "Ref" : "HostedZone" }]]}]
+         }
+      }
+    },
+
+    "WebsiteDNSName" : {
+      "Type" : "AWS::Route53::RecordSet",
+      "Properties" : {
+        "HostedZoneName" : { "Fn::Join" : [ "", [{ "Ref" : "HostedZone" }, "."]]},
+        "Comment" : "CNAME redirect custom name to CloudFront distribution",
+        "Name" : { "Fn::Join" : [ "", [{"Ref" : "AWS::StackId"}, ".", {"Ref" : "AWS::Region"}, ".", { "Ref" : "HostedZone" }]]},
+        "Type" : "CNAME",
+        "TTL" : "900",
+        "ResourceRecords" : [{ "Fn::Join" : [ "", ["http://", {"Fn::GetAtt" : ["WebsiteCDN", "DomainName"]} ]]}]
+      }
+    }
+  },
+
+  "Outputs" : {
+    "WebsiteURL" : {
+      "Value" : {"Fn::Join" : [ "", ["http://", {"Ref" : "WebsiteDNSName"} ]] },
+      "Description" : "The URL of the newly created website"
+    },
+    "BucketName" : {
+      "Value" : { "Ref" : "S3BucketForWebsiteContent" },
+      "Description" : "Name of S3 bucket to hold website content"
+    }
+  }
+}

@@ -1,0 +1,143 @@
+{
+ "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Amigo is a utility to automate cross-region migrations of EBS backed AMIs and snapshots. You can launch instances of Amigo either using CloudFormation or manually in each region and use them to initiate AMI transfers. The utility takes care of all the mechanics involved in doing image transfers and sends email notifications once the transfer is complete. For the moment, this is available for you to use as an unsupported tool undergoing a public Beta on an as-is basis. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+
+ "Parameters" : {
+    "AmiId" : {
+      "Description" : "Snapshot, AMI and Instance IDs to be transferred out of this source region",
+      "Type" : "String",
+      "AllowedPattern" : "-?|([amisnap]+-[a-z0-9]+[, ]?)+"
+    },
+    "KeyName" : {
+      "Description" : "EC2 KeyPair name to enable SSH access to the Amigo instance in this source region",
+      "Type" : "String"
+    },
+    "VolSize" : {
+      "Description" : "Size of EBS Volume to attach to the Amigo Instance",
+      "Type" : "String",
+      "AllowedPattern" : "[0-9]+",
+      "Default" : "50"
+    },
+    "EmailId" : {
+      "Description" : "Email Address for SNS Notifications",
+      "Type" : "String",
+      "AllowedPattern" : "-?|.+@.+",
+      "Default" : "-"
+    },
+    "AccessKey" : {
+      "Description" : "EC2 Access Key ID",
+      "AllowedPattern" : "[A-Z0-9]+",
+      "Type" : "String"
+    },
+    "SecretKey" : {
+      "Description" : "EC2 Secret Access Key",
+      "Type" : "String"
+    },
+    "509Cert" : {
+      "Description" : "Paste your X.509 Certificate here",
+      "Type" : "String"
+    },
+    "PvtKey" : {
+      "Description" : "Paste your X.509 Private Key here",
+      "Type" : "String"
+    },
+    "OtherRegions" : {
+      "Description" : "Names of destination regions to deploy Amigo, in same order as KeyPairs",
+      "Type" : "String",
+      "AllowedPattern" : "-?|([a-z][a-z]-[a-z]+-[0-9][, ]?)+",
+      "Default" : "-"
+    },
+    "KeyPairs" : {
+      "Description" : "SSH Login KeyPair Names for destination regions, in same order as OtherRegions",
+      "Type" : "String",
+      "Default" : "-"
+    }
+  },
+
+  "Mappings" : {
+    "RegionMap" : {
+      "eu-west-1" : {"AMI" : "ami-c6b083b2"},
+      "us-east-1" : {"AMI" : "ami-f342819a"},
+      "ap-northeast-1" : {"AMI" : "ami-7c299c7d"},
+      "us-west-1" : {"AMI" : "ami-7dd68b38"},
+      "ap-southeast-1" : {"AMI" : "ami-dc94ef8e"}
+    }
+  },
+
+  "Resources" : {
+
+    "AmigoInstance" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "KeyName" : { "Ref" : "KeyName" },
+        "SecurityGroups" : [ { "Ref" : "SecGrp" } ],
+        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
+        "InstanceType" :  "m1.large",
+        "Tags" : [ {
+            "Key" : "Name",
+            "Value" : "Amigo Instance"
+        } ],
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["",[
+            "#!/bin/bash -ex","\n",
+            "/root/bin/InitImageCFN ",                 " \"",
+                            {"Ref":"AccessKey"},     "\" \"",
+                            {"Ref":"SecretKey"},     "\" \"",
+                            {"Ref":"PvtKey"},        "\" \"",
+                            {"Ref":"509Cert"},       "\" \"",
+                            {"Ref":"VolSize"},       "\" \"",
+                            {"Ref":"AmiId"},         "\" \"",
+                            {"Ref":"EmailId"},       "\" \"",
+                            {"Ref":"OtherRegions"},  "\" \"",
+                            {"Ref":"KeyPairs"},      "\" &> /root/logs/init.log \n"
+             ]]}}
+      }
+    },
+
+    "AmiVolume" : {
+      "Type" : "AWS::EC2::Volume",
+      "Properties" : {
+        "Size" : { "Ref" : "VolSize" },
+        "AvailabilityZone" :  { "Fn::GetAtt" : [ "AmigoInstance", "AvailabilityZone" ]}
+      }
+    },
+    "MountPoint" : {
+      "Type" : "AWS::EC2::VolumeAttachment",
+      "Properties" : {
+        "InstanceId" : { "Ref" : "AmigoInstance" },
+        "VolumeId"  : { "Ref" : "AmiVolume" },
+        "Device" : "/dev/sdc"
+      }
+    },
+    "AmigoEIP" : {
+      "Type" : "AWS::EC2::EIP",
+      "Properties" : {
+          "InstanceId" : { "Ref" : "AmigoInstance" }
+      }
+    },
+
+    "SecGrp" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Amigo Security Group",
+        "SecurityGroupIngress" : [ {
+          "IpProtocol" : "tcp",
+          "FromPort" : "22",
+          "ToPort" : "22",
+          "CidrIp" : "0.0.0.0/0"
+        } ]
+      }
+    }
+
+  },
+
+  "Outputs" : {
+    "InstanceId" : {
+      "Description" : "InstanceId of the newly created Amigo instance",
+      "Value" : { "Ref" : "AmigoInstance" }
+    },
+    "ElasticIP" : {
+      "Description" : "Elastic IP address of the newly created Amigo instance",
+      "Value" : { "Ref" : "AmigoEIP" }
+    }
+  }
+}

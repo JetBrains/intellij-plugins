@@ -1,0 +1,98 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "AWS CloudFormation Sample Template Route53_A: Sample template showing how to create an Amazon Route 53 A record that maps to the public IP address of an EC2 instance. It assumes that you already have a Hosted Zone registered with Amazon Route 53. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters": {
+    "HostedZone": {
+      "Type": "String",
+      "Description": "The DNS name of an existing Amazon Route 53 hosted zone"
+    }
+  },
+
+  "Mappings": {
+    "RegionMap": {
+      "us-east-1": {
+        "AMI": "ami-7f418316"
+      },
+      "us-west-1": {
+        "AMI": "ami-951945d0"
+      },
+      "us-west-2": {
+        "AMI": "ami-16fd7026"
+      },
+      "eu-west-1": {
+        "AMI": "ami-24506250"
+      },
+      "sa-east-1": {
+        "AMI": "ami-3e3be423"
+      },
+      "ap-southeast-1": {
+        "AMI": "ami-74dda626"
+      },
+      "ap-southeast-2": {
+        "AMI": "ami-b3990e89"
+      },
+      "ap-northeast-1": {
+        "AMI": "ami-dcfa4edd"
+      }
+    }
+  },
+
+  "Resources": {
+    "Ec2Instance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": {
+          "Fn::FindInMap": [ "RegionMap", {
+            "Ref": "AWS::Region"
+          }, "AMI" ]
+        }
+      }
+    },
+    "myDNSRecord": {
+      "Type": "AWS::Route53::RecordSet",
+      "Properties": {
+        "HostedZoneName": {
+          "Fn::Join": [ "", [
+            {
+              "Ref": "HostedZone"
+            },
+            "."
+          ]]
+        },
+        "Comment": "DNS name for my instance.",
+        "Name": {
+          "Fn::Join": [ "", [
+            {
+              "Ref": "Ec2Instance"
+            },
+            ".",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".",
+            {
+              "Ref": "HostedZone"
+            } ,
+            "."
+          ]]
+        },
+        "Type": "A",
+        "TTL": "900",
+        "ResourceRecords": [
+          {
+            "Fn::GetAtt": [ "Ec2Instance", "PublicIp" ]
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "DomainName": {
+      "Value": {
+        "Ref": "myDNSRecord"
+      }
+    }
+  }
+}

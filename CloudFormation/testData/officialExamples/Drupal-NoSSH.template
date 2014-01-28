@@ -1,0 +1,430 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Drupal is an open source content management platform powering millions of websites and applications. This template creates an auto-scaled, highly available Drupal deployment behind an Elastic Load Balancer. **WARNING** This template creates one or more Amazon EC2 instances and an Amazon Relational Database Service database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters": {
+    "DrupalDBName": {
+      "Default": "drupalDB",
+      "Description": "Name of Drupal database",
+      "Type": "String",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+    "DrupalDBUser": {
+      "Default": "drupal",
+      "NoEcho": "true",
+      "Description": "Drupal database admin account username",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+    "DrupalDBPwd": {
+      "Default": "drupal",
+      "NoEcho": "true",
+      "Description": "Drupal database admin account password",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+    "DrupalSiteName": {
+      "Default": "MySite",
+      "Description": "Name of Drupal site to create",
+      "Type": "String"
+    },
+    "DrupalEmail": {
+      "Default": "nobody@amazon.com",
+      "Description": "Email alias of Drupal site owner",
+      "Type": "String"
+    },
+    "DrupalSiteAdmin": {
+      "Description": "Drupal administrator account username",
+      "Type": "String"
+    },
+    "DrupalSitePwd": {
+      "NoEcho": "true",
+      "Description": "Drupal administrator account password",
+      "Type": "String"
+    },
+    "OperatorEmail": {
+      "Default": "nobody@amazon.com",
+      "Description": "Email address to notify if there are any operational issues",
+      "Type": "String"
+    },
+    "InstanceType": {
+      "Default": "m1.small",
+      "Description": "Type of EC2 instances for web servers",
+      "Type": "String"
+    },
+    "DrupalDBPort": {
+      "Default": "3306",
+      "Description": "TCP/IP port for Drupal database",
+      "Type": "Number",
+      "MinValue": "1150",
+      "MaxValue": "65535"
+    },
+    "WebServerPort": {
+      "Default": "8888",
+      "Description": "TCP/IP port for web servers",
+      "Type": "Number",
+      "MinValue": "1",
+      "MaxValue": "65535"
+    }
+  },
+  "Resources": {
+    "CPUAlarmHigh": {
+      "Properties": {
+        "EvaluationPeriods": "1",
+        "Statistic": "Average",
+        "Threshold": "10",
+        "AlarmDescription": "Alarm if CPU too high or metric disappears indicating instance is down",
+        "Period": "60",
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Namespace": "AWS/EC2",
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": {
+              "Ref": "WebServerGroup"
+            }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold",
+        "MetricName": "CPUUtilization"
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "TooManyUnhealthyHostsAlarm": {
+      "Properties": {
+        "EvaluationPeriods": "1",
+        "Statistic": "Average",
+        "Threshold": "0",
+        "AlarmDescription": "Alarm if there are too many unhealthy hosts.",
+        "Period": "60",
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Namespace": "AWS/ELB",
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "LoadBalancerName",
+            "Value": {
+              "Ref": "ElasticLoadBalancer"
+            }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold",
+        "MetricName": "UnHealthyHostCount"
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "EC2SecurityGroup": {
+      "Properties": {
+        "SecurityGroupIngress": [
+          {
+            "FromPort": "22",
+            "CidrIp": "0.0.0.0/0",
+            "ToPort": "22",
+            "IpProtocol": "tcp"
+          },
+          {
+            "FromPort": {
+              "Ref": "WebServerPort"
+            },
+            "CidrIp": "0.0.0.0/0",
+            "ToPort": {
+              "Ref": "WebServerPort"
+            },
+            "IpProtocol": "tcp"
+          }
+        ],
+        "GroupDescription": "HTTP and SSH access"
+      },
+      "Type": "AWS::EC2::SecurityGroup"
+    },
+    "RequestLatencyAlarmHigh": {
+      "Properties": {
+        "EvaluationPeriods": "1",
+        "Statistic": "Average",
+        "Threshold": "1",
+        "AlarmDescription": "Alarm if there aren't any requests coming through",
+        "Period": "60",
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Namespace": "AWS/ELB",
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "LoadBalancerName",
+            "Value": {
+              "Ref": "ElasticLoadBalancer"
+            }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold",
+        "MetricName": "Latency"
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "ElasticLoadBalancer": {
+      "Properties": {
+        "Listeners": [
+          {
+            "InstancePort": {
+              "Ref": "WebServerPort"
+            },
+            "PolicyNames": [
+              "p1"
+            ],
+            "Protocol": "HTTP",
+            "LoadBalancerPort": "80"
+          }
+        ],
+        "HealthCheck": {
+          "HealthyThreshold": "2",
+          "Timeout": "5",
+          "Interval": "10",
+          "UnhealthyThreshold": "5",
+          "Target": {
+            "Fn::Join": [
+              "",
+              [
+                "HTTP:",
+                {
+                  "Ref": "WebServerPort"
+                },
+                "/"
+              ]
+            ]
+          }
+        },
+        "AvailabilityZones": {
+          "Fn::GetAZs": {
+            "Ref": "AWS::Region"
+          }
+        },
+        "LBCookieStickinessPolicy": [
+          {
+            "CookieExpirationPeriod": "30",
+            "PolicyName": "p1"
+          }
+        ]
+      },
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer"
+    },
+    "DBSecurityGroup": {
+      "Properties": {
+        "DBSecurityGroupIngress": {
+          "EC2SecurityGroupName": {
+            "Ref": "EC2SecurityGroup"
+          }
+        },
+        "GroupDescription": "database access"
+      },
+      "Type": "AWS::RDS::DBSecurityGroup"
+    },
+    "DrupalDB": {
+      "Properties": {
+        "Engine": "MySQL",
+        "DBName": {
+          "Ref": "DrupalDBName"
+        },
+        "Port": { "Ref": "DrupalDBPort" },
+        "MultiAZ" : { "Fn::FindInMap" : [ "AWSRegionCapabilities", { "Ref" : "AWS::Region" }, "RDSMultiAZ"] },
+        "MasterUsername": {
+          "Ref": "DrupalDBUser"
+        },
+        "DBInstanceClass": "db.m1.small",
+        "DBSecurityGroups": [
+          {
+            "Ref": "DBSecurityGroup"
+          }
+        ],
+        "AllocatedStorage": "5",
+        "MasterUserPassword": {
+          "Ref": "DrupalDBPwd"
+        }
+      },
+      "Type": "AWS::RDS::DBInstance"
+    },
+    "WebServerGroup": {
+      "Properties": {
+        "LoadBalancerNames": [
+          {
+            "Ref": "ElasticLoadBalancer"
+          }
+        ],
+        "MinSize": "2",
+        "LaunchConfigurationName": {
+          "Ref": "LaunchConfig"
+        },
+        "AvailabilityZones": {
+          "Fn::GetAZs": {
+            "Ref": "AWS::Region"
+          }
+        },
+        "MaxSize": "3"
+      },
+      "Type": "AWS::AutoScaling::AutoScalingGroup"
+    },
+    "AlarmTopic": {
+      "Properties": {
+        "Subscription": [
+          {
+            "Endpoint": {
+              "Ref": "OperatorEmail"
+            },
+            "Protocol": "email"
+          }
+        ]
+      },
+      "Type": "AWS::SNS::Topic"
+    },
+    "LaunchConfig": {
+      "Properties": {
+        "SecurityGroups": [
+          {
+            "Ref": "EC2SecurityGroup"
+          }
+        ],
+        "ImageId": {
+          "Fn::FindInMap": [
+            "AWSRegionArch2AMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            {
+              "Fn::FindInMap": [
+                "AWSInstanceType2Arch",
+                {
+                  "Ref": "InstanceType"
+                },
+                "Arch"
+              ]
+            }
+          ]
+        },
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              ":",
+              [
+                {
+                  "Ref": "DrupalDBName"
+                },
+                {
+                  "Ref": "DrupalDBUser"
+                },
+                {
+                  "Ref": "DrupalDBPwd"
+                },
+                {
+                  "Ref": "DrupalDBPort"
+                },
+                {
+                  "Fn::GetAtt": [
+                    "DrupalDB",
+                    "Endpoint.Address"
+                  ]
+                },
+                {
+                  "Ref": "DrupalSiteName"
+                },
+                {
+                  "Ref": "DrupalSiteAdmin"
+                },
+                {
+                  "Ref": "DrupalSitePwd"
+                },
+                {
+                  "Ref": "DrupalEmail"
+                },
+                {
+                  "Ref": "WebServerPort"
+                }
+              ]
+            ]
+          }
+        },
+        "InstanceType": {
+          "Ref": "InstanceType"
+        }
+      },
+      "Type": "AWS::AutoScaling::LaunchConfiguration"
+    }
+  },
+  "Mappings": {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "32" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "32" },
+      "c1.xlarge"   : { "Arch" : "64" },
+      "cc1.4xlarge" : { "Arch" : "64" }
+    },
+    "AWSRegionArch2AMI" : {
+      "us-east-1" : { "32" : "ami-20639049", "64" : "ami-2463904d" },
+      "us-west-1" : { "32" : "ami-a5ce9ee0", "64" : "ami-9bce9ede" },
+      "eu-west-1" : { "32" : "ami-25b08451", "64" : "ami-27b08453" },
+      "ap-southeast-1" : { "32" : "ami-d2ec9280", "64" : "ami-d0ec9282" },
+      "ap-northeast-1" : { "32" : "ami-3a02a93b", "64" : "ami-3802a939" }
+    },
+    "AWSRegionCapabilities" : {
+      "us-east-1" :      { "RDSMultiAZ" : "true" },
+      "us-west-1" :      { "RDSMultiAZ" : "true" },
+      "eu-west-1" :      { "RDSMultiAZ" : "true" },
+      "ap-southeast-1" : { "RDSMultiAZ" : "true" },
+      "ap-northeast-1" : { "RDSMultiAZ" : "true" }
+    }
+  },
+  "Outputs": {
+    "URL": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "http://",
+            {
+              "Fn::GetAtt": [
+                "ElasticLoadBalancer",
+                "DNSName"
+              ]
+            }
+          ]
+        ]
+      },
+      "Description" : "URL of the Drupal site"
+    }
+  }
+}

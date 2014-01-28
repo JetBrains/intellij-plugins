@@ -1,0 +1,99 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template SampleRailsApp: This sample template shows how to use AWS CloudFormation with the Amazon Linux AMI Cloud-init feature to instantiate an application at runtime. The sample uses the WaitCondition resource to synchronize creation of the stack with the application becoming healthy. **WARNING** This template creates an Amazon EC2 instance and an Elastic IP Address. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+    "SSHLocation" : {
+      "Description" : " The IP address range that can be used to SSH to the EC2 instances",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+    }  
+  },
+
+  "Mappings" : {
+    "RegionMap" : {
+      "us-east-1"      : { "AMI" : "ami-7f418316" },
+      "us-west-1"      : { "AMI" : "ami-951945d0" },
+      "us-west-2"      : { "AMI" : "ami-16fd7026" },
+      "eu-west-1"      : { "AMI" : "ami-24506250" },
+      "sa-east-1"      : { "AMI" : "ami-3e3be423" },
+      "ap-southeast-1" : { "AMI" : "ami-74dda626" },
+      "ap-southeast-2" : { "AMI" : "ami-b3990e89" },
+      "ap-northeast-1" : { "AMI" : "ami-dcfa4edd" }
+    }
+  },
+
+  "Resources" : {
+    "Ec2Instance" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "KeyName" : { "Ref" : "KeyName" },
+        "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["",[
+            "#!/bin/bash -ex","\n",
+            "yum -y install gcc-c++ make","\n",
+            "yum -y install mysql-devel sqlite-devel","\n",
+            "yum -y install ruby-rdoc rubygems ruby-mysql ruby-devel","\n",
+            "gem install --no-ri --no-rdoc rails","\n",
+            "gem install --no-ri --no-rdoc mysql","\n",
+            "gem install --no-ri --no-rdoc sqlite3","\n",
+            "rails new myapp","\n",
+            "cd myapp","\n",
+            "rails server -d","\n",
+            "curl -X PUT -H 'Content-Type:' --data-binary '{\"Status\" : \"SUCCESS\",",
+                                                           "\"Reason\" : \"The application myapp is ready\",",
+                                                           "\"UniqueId\" : \"myapp\",",
+                                                           "\"Data\" : \"Done\"}' ",
+                  "\"", {"Ref" : "WaitForInstanceWaitHandle"},"\"\n" ]]}}
+      }
+    },
+
+    "InstanceSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable Access to Rails application via port 3000 and SSH access via port 22",
+        "SecurityGroupIngress" : [ 
+          {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation"}},
+          {"IpProtocol" : "tcp", "FromPort" : "3000", "ToPort" : "3000", "CidrIp" : "0.0.0.0/0"}
+        ]
+      }
+    },
+
+    "WaitForInstanceWaitHandle" : {
+      "Type" : "AWS::CloudFormation::WaitConditionHandle",
+      "Properties" : {
+      }
+    },
+
+    "WaitForInstance" : {
+      "Type" : "AWS::CloudFormation::WaitCondition",
+      "DependsOn" : "Ec2Instance",
+      "Properties" : {
+        "Handle" : {"Ref" : "WaitForInstanceWaitHandle"},
+        "Timeout" : "600"
+      }
+    }
+  },
+
+  "Outputs" : {
+    "WebsiteURL" : {
+      "Description" : "The URL for the newly created Rails application",
+      "Value" : { "Fn::Join" : ["", [ "http://", { "Fn::GetAtt" : [ "Ec2Instance", "PublicDnsName" ] }, ":3000" ]]}
+    }
+  }
+}
+

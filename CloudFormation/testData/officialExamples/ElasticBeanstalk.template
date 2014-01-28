@@ -1,0 +1,161 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template ElasticBeanstalk: Configure and launch an AWS Elastic Beanstalk application that connects to an Amazon RDS database instance. Monitoring is setup on the database. Note, since AWS Elastic Beanstalk is only available in US-East-1, this template can only be used to create stacks in the US-East-1 region. **WARNING** This template creates one or more Amazon EC2 instances and an Amazon Relational Database Service database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "DatabaseName": {
+      "Default": "BeanstalkDB",
+      "Type": "String",
+      "Description" : "Test database name",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+    "DatabaseUser": {
+      "Default": "admin",
+      "NoEcho": "true",
+      "Type": "String",
+      "Description" : "Test database admin account name",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+    "DatabasePassword": {
+      "Default": "password",
+      "NoEcho": "true",
+      "Type": "String",
+      "Description" : "Test database admin account password",
+      "MinLength": "8",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+    "DatabasePort": {
+      "Default": "3306",
+      "Type": "Number",
+      "MinValue": "1150",
+      "MaxValue": "65535",
+      "Description" : "TCP/IP port for the RDS database"
+    },
+    "MultiAZ" : {
+      "Description" : "Create a highly available, multi-AZ RDS instance",
+      "Type" : "String",
+      "Default" : "false",
+      "AllowedValues" : ["true", "false"],
+      "Description" : "enter true or false."
+    },
+    "OperatorEmail": {
+      "Default": "nobody@amazon.com",
+      "Description": "Email address to notify if there are any operational issues",
+      "Type": "String"
+    }
+  },
+
+  "Resources" : {
+    "SampleApplication" : {
+      "Type" : "AWS::ElasticBeanstalk::Application",
+      "Properties" : {
+        "Description" : "AWS Elastic Beanstalk Sample Application",
+        "ApplicationVersions" : [{
+          "VersionLabel" : "Initial Version",
+          "Description" : "Version 1.0",
+          "SourceBundle" : {
+            "S3Bucket" : { "Fn::Join" : ["-", ["cloudformation-samples", { "Ref" : "AWS::Region" }]]},
+            "S3Key" : "CloudFormationBeanstalkRDSExample.war"
+          }
+        }],
+        "ConfigurationTemplates" : [{
+          "TemplateName" : "DefaultConfiguration",
+          "Description" : "Default Configuration Version 1.0 - with SSH access",
+          "SolutionStackName" : "64bit Amazon Linux running Tomcat 7",
+          "OptionSettings" : [{
+            "Namespace" : "aws:elasticbeanstalk:application:environment",
+            "OptionName" : "JDBC_CONNECTION_STRING",
+            "Value" : { "Fn::Join": [ "", [ "jdbc:mysql://",
+                                          { "Fn::GetAtt": [ "SampleDB", "Endpoint.Address" ] },
+                                          ":",
+                                          { "Ref": "DatabasePort" },
+                                          "/",
+                                          { "Ref": "DatabaseName" }]]}
+          },{
+            "Namespace" : "aws:elasticbeanstalk:application:environment",
+            "OptionName" : "PARAM1",
+            "Value" : { "Ref" : "DatabaseUser" }
+          },{
+            "Namespace" : "aws:elasticbeanstalk:application:environment",
+            "OptionName" : "PARAM2",
+            "Value" : { "Ref" : "DatabasePassword" }
+          }]
+        }]
+      }
+    },
+    "SampleEnvironment" : {
+      "Type" : "AWS::ElasticBeanstalk::Environment",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "SampleApplication" },
+         "Description" :  "AWS Elastic Beanstalk Environment running Sample Application",
+         "TemplateName" : "DefaultConfiguration",
+         "VersionLabel" : "Initial Version"
+      }
+    },
+    "DBSecurityGroup": {
+      "Properties": {
+        "DBSecurityGroupIngress": {
+          "EC2SecurityGroupName": "elasticbeanstalk-default"
+        },
+        "GroupDescription": "database access"
+      },
+      "Type": "AWS::RDS::DBSecurityGroup"
+    },
+    "SampleDB": {
+      "Properties": {
+        "Engine": "MySQL",
+        "DBName": { "Ref": "DatabaseName" },
+        "Port": { "Ref": "DatabasePort" },
+        "MultiAZ" : { "Ref" : "MultiAZ" },
+        "MasterUsername": { "Ref": "DatabaseUser" },
+        "DBInstanceClass": "db.m1.small",
+        "DBSecurityGroups": [ { "Ref": "DBSecurityGroup" } ],
+        "AllocatedStorage": "5",
+        "MasterUserPassword": { "Ref": "DatabasePassword" }
+      },
+      "Type": "AWS::RDS::DBInstance"
+    },
+    "AlarmTopic": {
+      "Properties": {
+        "Subscription": [{
+          "Endpoint": { "Ref": "OperatorEmail" },
+          "Protocol": "email"
+        } ]
+      },
+      "Type": "AWS::SNS::Topic"
+    },
+    "CPUAlarmHigh": {
+      "Type" : "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "10",
+        "Statistic": "Average",
+        "Threshold": "50",
+        "AlarmDescription": "Alarm if CPU too high or metric disappears indicating the RDS database instance is having issues",
+        "Period": "60",
+        "Namespace": "AWS/RDS",
+        "MetricName": "CPUUtilization",
+        "Dimensions": [ {
+            "Name": "DBInstanceIdentifier",
+            "Value": { "Ref": "SampleDB" }
+        } ],
+        "ComparisonOperator": "GreaterThanThreshold",
+        "AlarmActions": [ { "Ref": "AlarmTopic" } ],
+        "InsufficientDataActions": [ { "Ref": "AlarmTopic" } ]
+      }
+    }
+  },
+
+  "Outputs" : {
+    "URL" : {
+      "Description" : "URL of the AWS Elastic Beanstalk Environment",
+      "Value" : { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : [ "SampleEnvironment", "EndpointURL" ] }]]}
+    }
+  }
+}

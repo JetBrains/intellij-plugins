@@ -1,0 +1,309 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Sample template to bring up an Opscode Chef Server using the BootStrap Chef RubyGems installation. This configuration creates and starts the Chef Server with the WebUI enabled, initializes knife and uploads specified cookbooks and roles to the chef server. A WaitCondition is used to hold up the stack creation until the application is deployed. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters": {
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the web server",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+    "CookbookLocation": {
+      "Type": "String",
+      "Default" : "https://github.com/opscode/cookbooks/tarball/master",
+      "Description" : "Location of chef cookbooks to upload to server"
+    },
+    "RoleLocation": {
+      "Type": "String",
+      "Default" : "https://s3.amazonaws.com/@@@CFN_EXAMPLES_DIR@@@/example_chef_roles.tar.gz",
+      "Description" : "Location of client roles to upload to server"
+    },
+    "InstanceType" : {
+      "Description" : "WebServer EC2 instance type",
+      "Type" : "String",
+      "Default" : "m1.small",
+      "AllowedValues" : [ "t1.micro","m1.small","m1.medium","m1.large","m1.xlarge","m2.xlarge","m2.2xlarge","m2.4xlarge","m3.xlarge","m3.2xlarge","c1.medium","c1.xlarge","cc1.4xlarge","cc2.8xlarge","cg1.4xlarge"],
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+    "SSHLocation" : {
+      "Description" : "The IP address range that can be used to SSH to the EC2 instances",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+   }
+  },
+
+  "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "64" },
+      "m1.medium"   : { "Arch" : "64" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "m3.xlarge"   : { "Arch" : "64" },
+      "m3.2xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "64" },
+      "c1.xlarge"   : { "Arch" : "64" }
+    },
+
+    "AWSRegionArch2AMI" : {
+      "us-east-1" :      { "32" : "ami-06ad526f", "64" : "ami-1aad5273" },
+      "us-west-1" :      { "32" : "ami-116f3c54", "64" : "ami-136f3c56" },
+      "us-west-2" :      { "32" : "ami-7ef9744e", "64" : "ami-60f97450" },
+      "eu-west-1" :      { "32" : "ami-359ea941", "64" : "ami-379ea943" },
+      "sa-east-1"      : { "32" : "ami-e23ae5ff", "64" : "ami-1e39e603" },
+      "ap-southeast-1" : { "32" : "ami-62582130", "64" : "ami-60582132" },
+      "ap-southeast-2" : { "32" : "ami-858611bf", "64" : "ami-fb8611c1" },
+      "ap-northeast-1" : { "32" : "ami-d8b812d9", "64" : "ami-dab812db" }
+    }
+  },
+
+  "Resources" : {
+
+    "ChefServerUser" : {
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "root",
+          "PolicyDocument": { "Statement":[{
+            "Effect":"Allow",
+            "Action": [
+              "cloudformation:DescribeStackResource",
+              "s3:Put"
+            ],
+            "Resource":"*"
+          }]}
+        }]
+      }
+    },
+
+    "HostKeys" : {
+      "Type" : "AWS::IAM::AccessKey",
+      "Properties" : {
+        "UserName" : {"Ref": "ChefServerUser"}
+      }
+    },
+
+    "ChefServer": {
+      "Type": "AWS::EC2::Instance",
+      "Metadata" : {
+        "AWS::CloudFormation::Init" : {
+          "configSets" : {
+          		"orderby"	: ["gems","chefversion"]
+          	},
+          	
+          	"gems" : {
+          		"packages" : {
+          			"apt" : {
+                		"ruby"            : [],
+                		"ruby-dev"        : [],
+                		"libopenssl-ruby" : [],
+                		"rdoc"            : [],
+                		"ri"              : [],
+                		"irb"             : [],
+                		"build-essential" : [],
+                		"wget"            : [],
+                		"ssl-cert"        : [],
+                		"rubygems"        : [],
+                		"git"             : [],
+                		"s3cmd"           : []
+              		},
+          		
+          			  "rubygems" : {
+                		"net-ssh"			: ["2.2.2"],
+                		"net-ssh-gateway"   : ["1.1.0"]
+                	}
+                }
+          	},
+          	
+          	           
+            "chefversion" : {
+          		"packages" : {
+          	  		"rubygems" : {
+                		"chef" 	: ["10.18.2"],
+                		"ohai" : []
+                	}
+                    
+           		  },
+           		 "sources" : {
+               		 "/home/ubuntu/chef-repo"           : "https://github.com/opscode/chef-repo/tarball/master",
+               		 "/home/ubuntu/chef-repo/cookbooks" : { "Ref" : "CookbookLocation" },
+               		 "/home/ubuntu/chef-repo/roles"     : { "Ref" : "RoleLocation" }
+          		  },
+           		 "files" : {
+              		"/home/ubuntu/setup_environment" : {
+               		 "source" : "https://s3.amazonaws.com/@@@CFN_EXAMPLES_DIR@@@/setup-chef-server-with-knife",
+               		 "mode"   : "000755",
+               		 "owner"  : "ubuntu",
+               		 "group"  : "ubuntu"
+             	 	},
+              		"/home/ubuntu/.s3cfg" : {
+               		 "content" : { "Fn::Join" : ["", [
+                 	 "[default]\n",
+                  	"access_key = ", { "Ref" : "HostKeys" }, "\n",
+                  	"secret_key = ", {"Fn::GetAtt": ["HostKeys", "SecretAccessKey"]}, "\n",
+                  	"use_https = True\n"
+                  	]]},
+                	"mode"   : "000644",
+                	"owner"  : "ubuntu",
+                	"group"  : "ubuntu"
+              		},
+              		"/etc/chef/solo.rb" : {
+                	"content" : { "Fn::Join" : ["\n", [
+                  	"file_cache_path \"/tmp/chef-solo\"",
+                  	"cookbook_path \"/tmp/chef-solo/cookbooks\""
+                  	]]},
+                	"mode"  : "000644",
+                	"owner" : "root",
+                	"group" : "root"
+              		},
+              		"/etc/chef/chef.json" : {
+                	"content" : {
+                  	"chef_server": {
+                    "server_url": "http://localhost:4000",
+                    "webui_enabled": true
+                 	},
+                 	 "run_list": [ "recipe[chef-server::rubygems-install]" ]
+                	},
+                	"mode"  : "000644",
+                	"owner" : "root",
+                	"group" : "root"
+              		}
+            	}
+            }	
+         }
+      },
+      "Properties": {
+        "SecurityGroups": [ { "Ref": "ChefServerSecurityGroup" } ],
+        "ImageId": { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" }, { "Fn::FindInMap": [ "AWSInstanceType2Arch", { "Ref": "InstanceType" }, "Arch" ] } ]
+        },
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+            "#!/bin/bash\n",
+
+            "function error_exit\n",
+            "{\n",
+            "  cfn-signal -e 1 -r \"$1\" '", { "Ref" : "ChefServerWaitHandle" }, "'\n",
+            "  exit 1\n",
+            "}\n",
+
+            "apt-get -y install python-setuptools\n",
+            "easy_install https://s3.amazonaws.com/@@@CFN_EXAMPLES_DIR@@@/aws-cfn-bootstrap-latest.tar.gz\n",
+            "cfn-init --region ", { "Ref" : "AWS::Region" },
+            "    -s ", { "Ref" : "AWS::StackId" }, " -r ChefServer ", " -c orderby ",
+            "         --access-key ", { "Ref" : "HostKeys" },
+            "         --secret-key ", {"Fn::GetAtt": ["HostKeys", "SecretAccessKey"]}, " || error_exit 'Failed to run cfn-init'\n",
+
+            "# Bootstrap chef\n",
+            "export PATH=$PATH:/var/lib/gems/1.8/bin\n",
+            "ln -s /var/lib/gems/1.8/bin/chef-solo /usr/bin/chef-solo\n",
+            "ln -s /var/lib/gems/1.8/bin/chef-server /usr/bin/chef-server\n",
+            "ln -s /var/lib/gems/1.8/bin/chef-server-webui /usr/bin/chef-server-webui\n",
+            "ln -s /var/lib/gems/1.8/bin/chef-solr /usr/bin/chef-solr\n",
+            "ln -s /var/lib/gems/1.8/bin/chef-expander /usr/bin/chef-expander\n",
+            "ln -s /var/lib/gems/1.8/bin/knife /usr/bin/knife\n",
+            "ln -s /var/lib/gems/1.8/bin/rake /usr/bin/rake\n",
+            "chef-solo -c /etc/chef/solo.rb -j /etc/chef/chef.json -r http://s3.amazonaws.com/chef-solo/bootstrap-latest.tar.gz  > /tmp/chef_solo.log 2>&1 || error_exit 'Failed to bootstrap chef server'\n",
+
+            "# Setup development environment in ubuntu user\n",
+            "sudo -u ubuntu /home/ubuntu/setup_environment > /tmp/setup_environment.log 2>&1 || error_exit 'Failed to bootstrap chef server'\n",
+
+            "# copy validation key to S3 bucket\n",
+            "s3cmd -c /home/ubuntu/.s3cfg put /etc/chef/validation.pem s3://", {"Ref" : "PrivateKeyBucket" } ,"/validation.pem > /tmp/put_validation_key.log 2>&1 || error_exit 'Failed to put Chef Server validation key'\n",
+
+            "# If all went well, signal success\n",
+            "cfn-signal -e $? -r 'Chef Server configuration' '", { "Ref" : "ChefServerWaitHandle" }, "'\n"
+        ]]}},
+        "KeyName": { "Ref": "KeyName" },
+        "InstanceType": { "Ref": "InstanceType" }
+      }
+    },
+
+    "ChefServerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Open up SSH access plus Chef Server required ports",
+        "SecurityGroupIngress" : [
+          { "IpProtocol": "tcp", "FromPort": "22",   "ToPort": "22",   "CidrIp": { "Ref" : "SSHLocation"} },
+          { "IpProtocol": "tcp", "FromPort": "4000", "ToPort": "4000", "SourceSecurityGroupName": { "Ref" :"ChefClientSecurityGroup" }},
+          { "IpProtocol": "tcp", "FromPort": "4040", "ToPort": "4040", "CidrIp": "0.0.0.0/0"}
+        ]
+      }
+    },
+
+    "ChefClientSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Group with access to Chef Server"
+      }
+    },
+
+    "PrivateKeyBucket" : {
+      "Type" : "AWS::S3::Bucket",
+      "Properties" : {
+        "AccessControl" : "Private"
+      },
+      "DeletionPolicy" : "Delete"
+    },
+
+    "BucketPolicy" : {
+      "Type" : "AWS::S3::BucketPolicy",
+      "Properties" : {
+        "PolicyDocument": {
+          "Version"      : "2008-10-17",
+          "Id"           : "WritePolicy",
+          "Statement"    : [{
+            "Sid"        : "WriteAccess",
+            "Action"     : ["s3:PutObject"],
+            "Effect"     : "Allow",
+            "Resource"   : { "Fn::Join" : ["", ["arn:aws:s3:::", {"Ref" : "PrivateKeyBucket"} , "/*"]]},
+            "Principal"  : { "AWS": {"Fn::GetAtt" : ["ChefServerUser", "Arn"]} }
+          }]
+        },
+        "Bucket" : {"Ref" : "PrivateKeyBucket"}
+      }
+    },
+
+    "ChefServerWaitHandle" : {
+      "Type" : "AWS::CloudFormation::WaitConditionHandle"
+    },
+
+    "ChefServerWaitCondition" : {
+      "Type" : "AWS::CloudFormation::WaitCondition",
+      "DependsOn" : "ChefServer",
+      "Properties" : {
+        "Handle"  : { "Ref" : "ChefServerWaitHandle" },
+        "Timeout" : "1200"
+      }
+    }
+  },
+
+  "Outputs" : {
+     "WebUI" : {
+       "Description" : "URL of Opscode chef server WebUI",
+       "Value" : { "Fn::Join" : ["", ["http://", {"Fn::GetAtt" : [ "ChefServer", "PublicDnsName" ]}, ":4040"]]}
+     },
+     "ServerURL" : {
+       "Description" : "URL of newly created Opscode chef server",
+       "Value" : { "Fn::Join" : ["", ["http://", {"Fn::GetAtt" : [ "ChefServer", "PublicDnsName" ]}, ":4000"]]}
+     },
+     "ChefSecurityGroup" : {
+       "Description" : "EC2 Security Group with access to Opscode chef server",
+       "Value" : { "Ref" :"ChefClientSecurityGroup" }
+     },
+     "ValidationKeyBucket" : {
+       "Description" : "Location of validation key",
+       "Value" : {"Ref" : "PrivateKeyBucket" }
+     }
+  }
+}

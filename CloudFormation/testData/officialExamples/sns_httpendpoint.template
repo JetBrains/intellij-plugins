@@ -1,0 +1,135 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "This sample template creates an HTTP endpoint using AWS Elastic Beanstalk, creates an Amazon SNS topic, and subscribes the HTTP endpoint to that topic. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the Amazon EC2 instance(s) in the environment deployed for the AWS Elastic Beanstalk application in this template.",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+    "MyPublishUserPassword": {
+      "NoEcho": "true",
+      "Type": "String",
+      "Description" : "Password for the IAM user MyPublishUser",
+      "MinLength": "1",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    }
+  },
+
+  "Resources" : {
+    "MySNSTopic" : {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "Subscription" : [ {
+          "Endpoint" : {
+            "Fn::Join" : ["/",
+              ["http:/", { "Fn::GetAtt" : ["MyEndpointEnvironment", "EndpointURL"] }, "myendpoint"]]},
+          "Protocol" : "http"
+        } ]
+      }
+    },
+    "MyEndpointApplication" : {
+      "Type" : "AWS::ElasticBeanstalk::Application",
+      "Properties" : {
+        "Description" : "HTTP endpoint to receive messages from Amazon SNS subscription.",
+        "ApplicationVersions" : [{
+          "VersionLabel" : "Initial Version",
+          "Description" : "Version 1.0",
+          "SourceBundle" : {
+            "S3Bucket" : "@@@CFN_EXAMPLES_DIR@@@",
+            "S3Key" : "sns-http-example.war"
+          }
+        }],
+        "ConfigurationTemplates" : [{
+          "TemplateName" : "DefaultConfiguration",
+          "Description" : "Default Configuration Version 1.0 - with SSH access",
+          "SolutionStackName" : "32bit Amazon Linux running Tomcat 7",
+          "OptionSettings" : [{
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "EC2KeyName",
+            "Value" : { "Ref" : "KeyName" }
+          }]
+        }]
+      }
+    },
+    "MyEndpointEnvironment" : {
+      "Type" : "AWS::ElasticBeanstalk::Environment",
+      "Properties" : {
+      "ApplicationName" : { "Ref" : "MyEndpointApplication" },
+      "Description" :  "AWS Elastic Beanstalk Environment running HTTP endpoint for Amazon SNS subscription.",
+      "TemplateName" : "DefaultConfiguration",
+      "VersionLabel" : "Initial Version"
+      }
+    },
+    "MyPublishUser" : {
+     "Type" : "AWS::IAM::User",
+     "Properties" : {
+       "LoginProfile": {
+         "Password": {"Ref" : "MyPublishUserPassword"}
+       }
+     }
+    },
+    "MyPublishUserKey" : {
+     "Type" : "AWS::IAM::AccessKey",
+     "Properties" : {
+          "UserName" : {"Ref": "MyPublishUser"}
+      }
+    },
+    "MyPublishTopicGroup" : {
+      "Type" : "AWS::IAM::Group",
+      "Properties" : {
+        "Policies": [
+          {
+            "PolicyName": "MyTopicGroupPolicy",
+            "PolicyDocument": {"Statement":[
+              {
+                "Effect":"Allow",
+ 	        "Action":[
+                  "sns:Publish"
+                ],
+                "Resource": {"Ref" : "MySNSTopic"}
+              }
+            ]}
+          }
+        ]
+      }
+    },
+    "AddUserToMyPublishTopicGroup" : {
+      "Type" : "AWS::IAM::UserToGroupAddition",
+      "Properties" : {
+        "GroupName": {"Ref" : "MyPublishTopicGroup"},
+        "Users" : [{ "Ref" : "MyPublishUser" }]
+      }
+    }
+  },
+  "Outputs" : {
+      "MySNSTopicTopicARN" : {
+      "Description" : "ARN for MySNSTopic.",
+      "Value" : { "Ref" : "MySNSTopic" }
+    },
+    "MyPublishUserInfo" : {
+      "Description" : "Information about MyPublishUser.",
+      "Value" : {"Fn::Join" : [
+        " ",
+        [
+          "ARN:",
+          { "Fn::GetAtt" : [ "MyPublishUser", "Arn" ] },
+          "Access Key:",
+          {"Ref" : "MyPublishUserKey"},
+          "Secret Key:",
+          {"Fn::GetAtt" : ["MyPublishUserKey", "SecretAccessKey"]}
+        ]
+      ]}
+    },
+    "URL" : {
+      "Description" : "URL of the HTTP endpoint hosted on AWS Elastic Beanstalk and subscribed to topic.",
+      "Value" : { "Fn::Join" : ["/", ["http:/", { "Fn::GetAtt" : ["MyEndpointEnvironment", "EndpointURL"] }, "myendpoint"]]}
+    }
+  }
+}

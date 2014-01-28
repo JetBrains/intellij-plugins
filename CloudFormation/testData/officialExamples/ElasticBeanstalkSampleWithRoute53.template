@@ -1,0 +1,73 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  
+  "Description" : "AWS CloudFormation Sample Template ElasticBeanstalkSampleWithRoute53: Configure and launch the AWS Elastic Beanstalk sample application, specifying a custom DNS name using Amazon Route 53. Note, since AWS Elastic Beanstalk is only available in US-East-1, this template can only be used to create stacks in the US-East-1 region. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "KeyName" : {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the AWS Elastic Beanstalk instance",
+      "Type" : "String"
+    },
+    "DNSName" : {
+      "Description" : "DNS name for the running environment. The fully qualified DNS name of the environment is created using the DNSName and the DNSZone parameters.",
+      "Type" : "String"
+    },
+    "DNSZone" : {
+      "Description" : "The name of an existing Amazon Route 53 hosted zone. The fully qualified DNS name of the environment is created using the DNSName and the DNSZone parameters.",
+      "Type" : "String"
+    }
+  },
+
+  "Resources" : {
+    "sampleApplication" : {
+      "Type" : "AWS::ElasticBeanstalk::Application",
+      "Properties" : {
+        "Description" : "AWS Elastic Beanstalk Sample Application",
+        "ApplicationVersions" : [{
+          "VersionLabel" : "Initial Version",
+          "Description" : "Version 1.0",
+          "SourceBundle" : {
+            "S3Bucket" : { "Fn::Join" : ["-", ["elasticbeanstalk", { "Ref" : "AWS::Region" }]]},
+            "S3Key" : "resources/elasticbeanstalk-sampleapp.war"
+          }
+        }],
+        "ConfigurationTemplates" : [{
+          "TemplateName" : "DefaultConfiguration",
+          "Description" : "Default Configuration Version 1.0 - with SSH access",
+          "SolutionStackName" : "64bit Amazon Linux running Tomcat 7",
+          "OptionSettings" : [{
+            "Namespace" : "aws:autoscaling:launchconfiguration",
+            "OptionName" : "EC2KeyName",
+            "Value" : { "Ref" : "KeyName" }
+          }]
+        }]
+      }
+    },
+    "sampleEnvironment" : {
+      "Type" : "AWS::ElasticBeanstalk::Environment",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "sampleApplication" },
+         "Description" :  "AWS Elastic Beanstalk Environment running Sample Application",
+         "TemplateName" : "DefaultConfiguration",
+         "VersionLabel" : "Initial Version"
+      }
+    },
+    "environmentDNSRecord" : {
+        "Type" : "AWS::Route53::RecordSet",
+        "Properties" : {
+            "HostedZoneName" : { "Fn::Join" : [ "", [{"Ref" : "DNSZone"}, "." ]]},
+            "Comment" : "CNAME redirect to aws.amazon.com.",
+            "Name" : { "Fn::Join" : [ "", [{"Ref" : "DNSName"}, ".", {"Ref" : "AWS::Region"}, ".", {"Ref" : "DNSZone"}]]},
+            "Type" : "CNAME",
+            "TTL" : "900",
+            "ResourceRecords" : [{ "Fn::GetAtt" : ["sampleEnvironment", "EndpointURL"] }]
+        }
+    }
+  },
+  "Outputs" : {
+    "URL" : {
+      "Description" : "URL of the AWS Elastic Beanstalk Environment",
+      "Value" : { "Fn::Join" : [ "", [ "http://", { "Ref" : "environmentDNSRecord" } ]]}
+    }
+  }
+}

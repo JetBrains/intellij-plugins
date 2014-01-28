@@ -1,0 +1,319 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Sample template to bring up an Auto Scaling group running an application deployed via Opscode Chef solo. This template is a building block template, designed to be called from a parent template. A WaitCondition is used to hold up the stack creation until the application is deployed. **WARNING** This template creates one or more Amazon EC2 instances and CloudWatch alarms. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters": {
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the web server",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+    "RecipeURL" : {
+      "Description" : "The location of the recipe tarball",
+      "Type": "String"
+    },
+    "EC2SecurityGroup": {
+      "Default": "default",
+      "Description" : "The EC2 security group that contains instances that need access to the database",
+      "Type": "String"
+    },
+    "StackNameOrId" : {
+      "Description" : "The StackName or StackId containing the resource with the Chef configuration metadata",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "128"
+    },
+    "ResourceName" : {
+      "Description" : "The Logical Resource Name in the stack defined by StackName containing the resource with the Chef configuration metadata",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "128",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*"
+    },
+    "InstanceType" : {
+      "Description" : "WebServer EC2 instance type",
+      "Type" : "String",
+      "Default" : "m1.small",
+      "AllowedValues" : [ "t1.micro","m1.small","m1.medium","m1.large","m1.xlarge","m2.xlarge","m2.2xlarge","m2.4xlarge","m3.xlarge","m3.2xlarge","c1.medium","c1.xlarge","cc1.4xlarge","cc2.8xlarge","cg1.4xlarge"],
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+    "WebServerPort": {
+      "Default" : "8888",
+      "Type": "Number",
+      "Description" : "Port for web servers to listen on"
+    },
+    "AlarmTopic": {
+      "Description": "SNS topic to notify if there are operational issues",
+      "Type": "String"
+    },
+    "DesiredCapacity": {
+      "Default" : "1",
+      "Type": "Number",
+      "MinValue": "1",
+      "MaxValue": "6",
+      "Description" : "Port for web servers to listen on"
+    },
+    "HealthCheckPath" : {
+      "Default" : "/",
+      "Type" : "String",
+      "Description" : "Elastic Load Balancing HealthCheck path"
+    }
+  },
+
+  "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "64" },
+      "m1.medium"   : { "Arch" : "64" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "m3.xlarge"   : { "Arch" : "64" },
+      "m3.2xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "64" },
+      "c1.xlarge"   : { "Arch" : "64" },
+      "cc1.4xlarge" : { "Arch" : "64HVM" },
+      "cc2.8xlarge" : { "Arch" : "64HVM" },
+      "cg1.4xlarge" : { "Arch" : "64HVM" }
+    },
+
+    "AWSRegionArch2AMI" : {
+      "us-east-1"      : { "32" : "ami-31814f58", "64" : "ami-1b814f72", "64HVM" : "ami-0da96764" },
+      "us-west-2"      : { "32" : "ami-38fe7308", "64" : "ami-30fe7300", "64HVM" : "NOT_YET_SUPPORTED" },
+      "us-west-1"      : { "32" : "ami-11d68a54", "64" : "ami-1bd68a5e", "64HVM" : "NOT_YET_SUPPORTED" },
+      "eu-west-1"      : { "32" : "ami-973b06e3", "64" : "ami-953b06e1", "64HVM" : "NOT_YET_SUPPORTED" },
+      "ap-southeast-1" : { "32" : "ami-b4b0cae6", "64" : "ami-beb0caec", "64HVM" : "NOT_YET_SUPPORTED" },
+      "ap-southeast-2" : { "32" : "ami-b3990e89", "64" : "ami-bd990e87", "64HVM" : "NOT_YET_SUPPORTED" },
+      "ap-northeast-1" : { "32" : "ami-0644f007", "64" : "ami-0a44f00b", "64HVM" : "NOT_YET_SUPPORTED" },
+      "sa-east-1"      : { "32" : "ami-3e3be423", "64" : "ami-3c3be421", "64HVM" : "NOT_YET_SUPPORTED" }
+    }
+  },
+
+  "Resources" : {
+ 
+    "CfnUser" : {
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "root",
+          "PolicyDocument": { "Statement":[{
+            "Effect":"Allow",
+            "Action":"cloudformation:DescribeStackResource",
+            "Resource":"*"
+          }]}
+        }]
+      }
+    },
+ 
+    "ElasticLoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties": {
+        "Listeners": [ {
+            "InstancePort": { "Ref": "WebServerPort" },
+            "PolicyNames": [ "p1" ],
+            "Protocol": "HTTP",
+            "LoadBalancerPort": "80"
+        } ],
+        "HealthCheck": {
+          "HealthyThreshold": "2",
+          "Timeout": "5",
+          "Interval": "10",
+          "UnhealthyThreshold": "5",
+          "Target": { "Fn::Join": [ "", [ "HTTP:", { "Ref": "WebServerPort" }, { "Ref" : "HealthCheckPath" } ] ] }
+        },
+        "AvailabilityZones": { "Fn::GetAZs" : { "Ref" : "AWS::Region" } },
+        "LBCookieStickinessPolicy": [ {
+            "CookieExpirationPeriod": "30",
+            "PolicyName": "p1"
+        } ]
+      }
+    },
+
+    "WebServerGroup": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "LoadBalancerNames": [ { "Ref": "ElasticLoadBalancer" } ],
+        "LaunchConfigurationName": { "Ref": "LaunchConfig" },
+        "AvailabilityZones": { "Fn::GetAZs" : { "Ref" : "AWS::Region" } },
+        "MinSize": "1",
+        "MaxSize": "6",
+        "DesiredCapacity" : { "Ref" : "DesiredCapacity" }
+      }
+    },
+
+    "LaunchConfig": {
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Metadata" : {
+        "AWS::CloudFormation::Init" : {
+          "configSets" : {
+          		"orderby"	: ["gems","chefversion"]
+          	},
+          	
+          	"gems" : {
+          		"packages" : {
+          			  "rubygems" : {
+                		"net-ssh": ["2.2.2"],
+                		"net-ssh-gateway"   : ["1.1.0"]
+                	}
+                }
+          	},
+          	
+          	           
+             "chefversion" : {
+          		"packages" : {
+          	  		"rubygems" : {
+                		"chef" 	: ["10.18.2"]
+                	},
+             	                          
+              		"yum" : {
+                		"gcc-c++"    : [],
+                		"ruby-devel" : [],
+                		"make"       : [],
+                		"autoconf"   : [],
+                		"automake"   : [],
+                		"rubygems"   : []
+              		}
+            	},
+            	"files" : {
+              		"/etc/chef/solo.rb" : {
+                	"content" : { "Fn::Join" : ["", [
+                  	"log_level :info\n",
+                  	"log_location STDOUT\n",
+                  	"file_cache_path \"/var/chef-solo\"\n",
+                  	"cookbook_path \"/var/chef-solo/cookbooks\"\n",
+                  	"json_attribs \"/etc/chef/node.json\"\n",
+                  	"recipe_url \"", { "Ref" : "RecipeURL" }, "\"\n"
+                	]] },
+                	"mode"  : "000644",
+                	"owner" : "root",
+                	"group" : "wheel"
+              		}
+            	 }  
+          	 }
+          }
+       },
+      "Properties": {
+        "SecurityGroups": [ { "Ref": "EC2SecurityGroup" } ],
+        "ImageId": { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" }, 
+                   { "Fn::FindInMap": [ "AWSInstanceType2Arch", { "Ref": "InstanceType" }, "Arch" ] } ]},
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash\n",
+          "yum update -y aws-cfn-bootstrap\n",
+
+          "function error_exit\n",
+          "{\n",
+          "  /opt/aws/bin/cfn-signal -e 1 -r \"$1\" '", { "Ref" : "WaitHandle" }, "'\n",
+          "  exit 1\n",
+          "}\n",
+
+          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r LaunchConfig "," -c order ",
+          "         --region ", { "Ref" : "AWS::Region" }, " || error_exit 'Failed to initialize Chef Solo'\n",
+          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r ", { "Ref" : "ResourceName" },
+          "         --region ", { "Ref" : "AWS::Region" }, " || error_exit 'Failed to configure the application'\n",
+
+          "chef-solo\n",
+          "/opt/aws/bin/cfn-signal -e $? '", { "Ref" : "WaitHandle" }, "'\n"
+        ]]}},
+        "KeyName": { "Ref": "KeyName" },
+        "InstanceType": { "Ref": "InstanceType" }
+      }
+    },
+
+   "WaitHandle" : {
+      "Type" : "AWS::CloudFormation::WaitConditionHandle"
+    },
+
+    "WaitCondition" : {
+      "Type" : "AWS::CloudFormation::WaitCondition",
+      "DependsOn" : "WebServerGroup",
+      "Properties" : {
+        "Handle"  : { "Ref" : "WaitHandle" },
+        "Count"   : { "Ref" : "DesiredCapacity" },
+        "Timeout" : "600"
+      }
+    },
+
+    "LockInstancesDown" : {
+      "Type" : "AWS::EC2::SecurityGroupIngress",
+      "Properties" : {
+        "GroupName" : { "Ref": "EC2SecurityGroup" },
+        "IpProtocol" : "tcp",
+        "FromPort" : { "Ref" : "WebServerPort" },
+        "ToPort" : { "Ref" : "WebServerPort" },
+        "SourceSecurityGroupOwnerId" : {"Fn::GetAtt" : ["ElasticLoadBalancer", "SourceSecurityGroup.OwnerAlias"]},
+        "SourceSecurityGroupName" : {"Fn::GetAtt" : ["ElasticLoadBalancer", "SourceSecurityGroup.GroupName"]}
+      }
+    },
+
+    "CPUAlarmHigh": {
+      "Type" : "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Alarm if aggregate CPU too high ie. > 90% for 5 minutes",
+        "Namespace": "AWS/EC2",
+        "MetricName": "CPUUtilization",
+        "Statistic": "Average",
+        "Dimensions": [ {
+            "Name": "AutoScalingGroupName",
+            "Value": { "Ref": "WebServerGroup" }
+        } ],
+        "Period": "60",
+        "Threshold": "90",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": "1",
+        "AlarmActions": [ { "Ref": "AlarmTopic" } ]
+      }
+    },
+
+    "TooManyUnhealthyHostsAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Alarm if there are any unhealthy hosts.",
+        "Namespace": "AWS/ELB",
+        "MetricName": "UnHealthyHostCount",
+        "Statistic": "Average",
+        "Dimensions": [ {
+            "Name": "LoadBalancerName",
+            "Value": { "Ref": "ElasticLoadBalancer" }
+        } ],
+        "Period": "300",
+        "EvaluationPeriods": "1",
+        "Threshold": "0",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "AlarmActions": [ { "Ref": "AlarmTopic" } ]
+      }
+    },
+
+    "RequestLatencyAlarmHigh": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Alarm if request latency > ",
+        "Namespace": "AWS/ELB",
+        "MetricName": "Latency",
+        "Dimensions": [ {
+            "Name": "LoadBalancerName",
+            "Value": { "Ref": "ElasticLoadBalancer" }
+        } ],
+        "Statistic": "Average",
+        "Period": "300",
+        "EvaluationPeriods": "1",
+        "Threshold": "1",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "AlarmActions": [ { "Ref": "AlarmTopic" } ]
+      }
+    }
+  },
+
+  "Outputs": {
+    "URL": {
+      "Value": { "Fn::Join": [ "", [ "http://", { "Fn::GetAtt": [ "ElasticLoadBalancer", "DNSName" ] }, "/" ] ] },
+      "Description" : "Website URL"
+    }
+  }
+}

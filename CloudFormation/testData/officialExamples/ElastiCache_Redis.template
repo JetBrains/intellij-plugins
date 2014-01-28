@@ -1,0 +1,296 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  
+  "Description" : "AWS CloudFormation Sample Template ElastiCache_Redis: Sample template showing how to create an Amazon ElastiCache Cache Redis Cluster. **WARNING** This template creates an Amazon Ec2 Instance and an Amazon ElastiCache Cluster. You will be billed for the AWS resources used if you create a stack from this template.",
+  
+  "Parameters" : {
+
+    "ClusterNodeType" : {
+      "Default" : "cache.m1.small",
+      "Description" : "The compute and memory capacity of the nodes in the  Redis Cluster",
+      "Type" : "String",
+      "AllowedValues" : [ "cache.t1.micro", "cache.m1.small", "cache.m1.medium", "cache.m1.large", "cache.m1.xlarge", "cache.m2.xlarge", "cache.m2.2xlarge", "cache.m2.4xlarge", "cache.m3.xlarge", "cache.m3.2xlarge", "cache.c1.xlarge" ],
+      "ConstraintDescription" : "must select a valid Cache Node type."
+    },
+
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the web server",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+          
+    "InstanceType" : {
+      "Description" : "WebServer EC2 instance type",
+      "Type" : "String",
+      "Default" : "m1.small",
+      "AllowedValues" : [ "t1.micro","m1.small","m1.medium","m1.large","m1.xlarge", "m3.xlarge", "m3.2xlarge", "m2.xlarge","m2.2xlarge","m2.4xlarge","c1.medium","c1.xlarge","cc1.4xlarge","cc2.8xlarge","cg1.4xlarge", "hi1.4xlarge", "hs1.8xlarge"],
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+
+    "SSHLocation" : {
+      "Description" : "The IP address range that can be used to SSH to the EC2 instances",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+    }  
+  },
+  
+  "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "PV64" },
+      "m1.small"    : { "Arch" : "PV64" },
+      "m1.medium"   : { "Arch" : "PV64" },
+      "m1.large"    : { "Arch" : "PV64" },
+      "m1.xlarge"   : { "Arch" : "PV64" },
+      "m3.xlarge"   : { "Arch" : "PV64" },
+      "m3.2xlarge"  : { "Arch" : "PV64" },
+      "m2.xlarge"   : { "Arch" : "PV64" },
+      "m2.2xlarge"  : { "Arch" : "PV64" },
+      "m2.4xlarge"  : { "Arch" : "PV64" },
+      "c1.medium"   : { "Arch" : "PV64" },
+      "c1.xlarge"   : { "Arch" : "PV64" },
+      "cc1.4xlarge" : { "Arch" : "CLU64" },
+      "cc2.8xlarge" : { "Arch" : "CLU64" },
+      "cg1.4xlarge" : { "Arch" : "GPU64" },
+      "hi1.4xlarge" : { "Arch" : "PV64" },
+      "hs1.8xlarge" : { "Arch" : "PV64" }
+    },
+
+    "AWSRegionArch2AMI" : {
+      "us-east-1"      : { "PV64" : "ami-05355a6c", "CLU64" : "ami-a73758ce", "GPU64" : "ami-cf3758a6" },
+      "us-west-2"      : { "PV64" : "ami-0358ce33", "CLU64" : "ami-d75bcde7", "GPU64" : "NOT_YET_SUPPORTED" },
+      "us-west-1"      : { "PV64" : "ami-3ffed17a", "CLU64" : "ami-47fed102", "GPU64" : "NOT_YET_SUPPORTED" },
+      "eu-west-1"      : { "PV64" : "ami-c7c0d6b3", "CLU64" : "ami-d1c0d6a5", "GPU64" : "ami-45c0d631" },
+      "ap-southeast-1" : { "PV64" : "ami-fade91a8", "CLU64" : "ami-18de914a", "GPU64" : "NOT_YET_SUPPORTED" },
+      "ap-southeast-2" : { "PV64" : "ami-d16bfbeb", "CLU64" : "ami-876bfbbd", "GPU64" : "NOT_YET_SUPPORTED" },
+      "ap-northeast-1" : { "PV64" : "ami-39b23d38", "CLU64" : "ami-2db33c2c", "GPU64" : "NOT_YET_SUPPORTED" },
+      "sa-east-1"      : { "PV64" : "ami-5253894f", "CLU64" : "ami-38538925", "GPU64" : "NOT_YET_SUPPORTED" }
+    }
+  },
+
+  "Resources" : {   
+
+    "RedisCluster" : {
+      "Type": "AWS::ElastiCache::CacheCluster",
+      "Properties": {
+        "CacheNodeType"           : { "Ref" : "ClusterNodeType" },
+        "CacheSecurityGroupNames" : [ { "Ref" : "RedisClusterSecurityGroup" } ],
+        "Engine"                  : "redis",
+        "NumCacheNodes"           : "1"
+      }
+    },
+
+    "RedisClusterSecurityGroup": {
+      "Type": "AWS::ElastiCache::SecurityGroup",
+      "Properties": {
+        "Description"  : "Lock the cluster down"
+      }
+    },
+
+    "RedisClusterSecurityGroupIngress": {
+      "Type": "AWS::ElastiCache::SecurityGroupIngress",
+      "Properties": {
+        "CacheSecurityGroupName"  : { "Ref" : "RedisClusterSecurityGroup" },
+        "EC2SecurityGroupName"    : { "Ref" : "WebServerSecurityGroup" }
+      }        
+    },
+
+    "WebServerRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties" : {
+        "AssumeRolePolicyDocument" : {
+          "Statement"  : [{
+            "Effect"   : "Allow",
+            "Principal": { "Service": [ "ec2.amazonaws.com" ] },
+            "Action"   : [ "sts:AssumeRole" ]
+          } ]
+        },
+        "Path": "/"
+      }
+    },
+
+    "WebServerRolePolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName" : "WebServerRole",
+        "PolicyDocument" : {
+          "Statement"  : [ {
+            "Effect"   : "Allow",
+            "Action"   : "*",
+            "Resource" : "*"
+          } ]
+        },
+        "Roles": [ { "Ref": "WebServerRole" } ]
+      }
+    },
+
+    "WebServerInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [ { "Ref": "WebServerRole" } ]
+      }
+    },
+
+    "WebServerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable HTTP and SSH access",
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation"} },
+          {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"}
+        ]
+      }      
+    },  
+      
+    "WebServerHost": {  
+      "Type" : "AWS::EC2::Instance",
+      "Metadata" : {
+        "AWS::CloudFormation::Init" : {
+          "config" : {
+            "packages" : {
+              "yum" : {
+                "httpd"             : [],
+                "php"               : [],
+                "php-devel"         : [],
+                "gcc"               : [],
+                "make"              : []
+              }
+            },
+
+            "files" : {
+              "/var/www/html/index.php" : {
+                "content" : { "Fn::Join" : ["", [
+                  "<?php\n",
+                  "echo \"<h1>AWS CloudFormation sample application for Amazon ElastiCache Redis Cluster</h1>\";\n",
+                  "\n",
+                  "$cluster_config = json_decode(file_get_contents('/tmp/cacheclusterconfig'), true);\n",
+                  "$endpoint = $cluster_config['CacheClusters'][0]['CacheNodes'][0]['Endpoint']['Address'];\n",
+                  "$port = $cluster_config['CacheClusters'][0]['CacheNodes'][0]['Endpoint']['Port'];\n",
+                  "\n",
+                  "echo \"<p>Connecting to Redis Cache Cluster node '{$endpoint}' on port {$port}</p>\";\n",
+                  "\n",
+                  "$redis=new Redis();\n",
+                  "$redis->connect($endpoint, $port);\n",
+                  "$redis->set('testkey', 'Hello World!');\n",
+                  "$return = $redis->get('testkey');\n",
+                  "\n",
+                  "echo \"<p>Retrieved value: $return</p>\";\n",
+                  "?>\n"
+                ]]},
+                "mode"    : "000644",
+                "owner"   : "apache",
+                "group"   : "apache"
+              },
+              "/etc/cron.d/get_cluster_config" : {
+                "content" : "*/5 * * * * root /usr/local/bin/get_cluster_config",
+                "mode"    : "000644",
+                "owner"   : "root",
+                "group"   : "root"
+              },
+              "/usr/local/bin/get_cluster_config" : {
+                "content" : { "Fn::Join" : ["", [
+                  "#! /bin/bash\n",
+                  "aws elasticache describe-cache-clusters ",
+                  "         --cache-cluster-id ", {"Ref" : "RedisCluster"},
+                  "         --show-cache-node-info --region ", { "Ref" : "AWS::Region" }, " > /tmp/cacheclusterconfig\n"
+                ]]},
+                "mode"    : "000755",
+                "owner"   : "root",
+                "group"   : "root"
+              },
+              "/usr/local/bin/install_phpredis" : {
+                "content" : { "Fn::Join" : ["", [
+                  "#! /bin/bash\n",
+                  "cd /tmp\n",
+                  "wget https://github.com/nicolasff/phpredis/zipball/master -O phpredis.zip\n",
+                  "unzip phpredis.zip\n",
+                  "cd nicolasff-phpredis-*\n",
+                  "phpize\n",
+                  "./configure\n",
+                  "make && make install\n",
+                  "touch /etc/php.d/redis.ini\n",
+                  "echo extension=redis.so > /etc/php.d/redis.ini\n"
+                ]]},
+                "mode"    : "000755",
+                "owner"   : "root",
+                "group"   : "root"
+              }
+            },
+
+            "commands" : {
+              "00-uninstall-default-cli" : {
+                "command" : "yum remove -y aws-cli"
+              },
+              "01-install-aws-cli" : {
+                "command" : "easy_install awscli"
+              },
+              "02-install_phpredis" : {
+                "command" : "/usr/local/bin/install_phpredis"
+              },
+              "03-get-cluster-config" : {
+                "command" : "/usr/local/bin/get_cluster_config"
+              }
+            },
+
+            "services" : {
+              "sysvinit" : {
+                "httpd"    : { "enabled" : "true", "ensureRunning" : "true" },
+                "sendmail" : { "enabled" : "false", "ensureRunning" : "false" }
+              }
+            }
+          }
+        }
+      },
+      "Properties": {
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" }, 
+                       { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch"  ]}]},
+        "InstanceType"   : { "Ref" : "InstanceType" },
+        "SecurityGroups" : [ {"Ref" : "WebServerSecurityGroup"} ],
+        "KeyName"        : { "Ref" : "KeyName" },
+        "IamInstanceProfile": { "Ref": "WebServerInstanceProfile" },
+        "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -v\n",
+          "yum update -y aws-cfn-bootstrap\n",
+
+          "# Setup the PHP sample application\n",
+          "/opt/aws/bin/cfn-init ",
+          "         --stack ", { "Ref" : "AWS::StackName" }, 
+          "         --resource WebServerHost ",
+          "         --region ", { "Ref" : "AWS::Region" }, "\n",
+
+          "# Signal the status of cfn-init\n",
+          "/opt/aws/bin/cfn-signal -e $? '", { "Ref" : "WebServerWaitHandle" }, "'\n"
+        ]]}}        
+      }
+    },
+
+    "WebServerWaitHandle" : {
+      "Type" : "AWS::CloudFormation::WaitConditionHandle"
+    },
+
+    "WebServerWaitCondition" : {
+      "Type" : "AWS::CloudFormation::WaitCondition",
+      "DependsOn" : "WebServerHost",
+      "Properties" : {
+        "Handle" : {"Ref" : "WebServerWaitHandle"},
+        "Timeout" : "600"
+      }
+    }
+
+
+  },
+  
+  "Outputs" : {
+    "WebsiteURL" : {
+      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServerHost", "PublicDnsName" ]} ]] },
+      "Description" : "Application URL"
+    }
+  }
+}

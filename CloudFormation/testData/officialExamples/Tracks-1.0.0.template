@@ -1,0 +1,423 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Tracks project management application. This template creates a highly available, auto-scaled Tracks application backed by a highly available Amazon Relational Database Service database instance. CloudWatch Alarms are configured to notify you of operational issues. **WARNING** This template creates one or more Amazon EC2 instances and an Amazon Relational Database Service database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters": {
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair enabling SSH access to the web servers",
+      "Type": "String"
+    },
+    "OperatorEmail": {
+      "Default": "nobody@amazon.com",
+      "Description": "Email address to notify if there are any operational issues",
+      "Type": "String"
+    },
+    "TracksDatabaseName": {
+      "Default": "tracks",
+      "Description" : "Name of Tracks database",
+      "Type": "String"
+    },
+    "TracksDatabaseUser": {
+      "Default": "admin",
+      "NoEcho": "true",
+      "Description" : "Tracks database admin account username",
+      "Type": "String"
+    },
+    "TracksDatabasePwd": {
+      "Default": "admin",
+      "NoEcho": "true",
+      "Description" : "Tracks database admin account password",
+      "Type": "String"
+    },
+    "InstanceType": {
+      "Default": "m1.small",
+      "Description" : "Web server EC2 instance type",
+      "Type": "String"
+    },
+    "WebServerPort": {
+      "Default": "8888",
+      "Description" : "TCP/IP port for web servers",
+      "Type": "String"
+    },
+    "TracksDatabasePort": {
+      "Default": "3306",
+      "Description" : "TCP/IP port for Tracks database",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "CPUAlarmHigh": {
+      "Properties": {
+        "EvaluationPeriods": "1",
+        "Statistic": "Average",
+        "Threshold": "10",
+        "AlarmDescription": "Alarm if CPU too high or metric disappears indicating instance is down",
+        "Period": "60",
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Namespace": "AWS/EC2",
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": {
+              "Ref": "WebServerGroup"
+            }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold",
+        "MetricName": "CPUUtilization"
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "TooManyUnhealthyHostsAlarm": {
+      "Properties": {
+        "EvaluationPeriods": "1",
+        "Statistic": "Average",
+        "Threshold": "0",
+        "AlarmDescription": "Alarm if there are too many unhealthy hosts.",
+        "Period": "60",
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Namespace": "AWS/ELB",
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "LoadBalancerName",
+            "Value": {
+              "Ref": "ElasticLoadBalancer"
+            }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold",
+        "MetricName": "UnHealthyHostCount"
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "EC2SecurityGroup": {
+      "Properties": {
+        "SecurityGroupIngress": [
+          {
+            "FromPort": "22",
+            "CidrIp": "0.0.0.0/0",
+            "ToPort": "22",
+            "IpProtocol": "tcp"
+          },
+          {
+            "FromPort": {
+              "Ref": "WebServerPort"
+            },
+            "CidrIp": "0.0.0.0/0",
+            "ToPort": {
+              "Ref": "WebServerPort"
+            },
+            "IpProtocol": "tcp"
+          }
+        ],
+        "GroupDescription": "HTTP and SSH access"
+      },
+      "Type": "AWS::EC2::SecurityGroup"
+    },
+    "RequestLatencyAlarmHigh": {
+      "Properties": {
+        "EvaluationPeriods": "1",
+        "Statistic": "Average",
+        "Threshold": "1",
+        "AlarmDescription": "Alarm if there aren't any requests coming through",
+        "Period": "60",
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Namespace": "AWS/ELB",
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "LoadBalancerName",
+            "Value": {
+              "Ref": "ElasticLoadBalancer"
+            }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold",
+        "MetricName": "Latency"
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "ElasticLoadBalancer": {
+      "Properties": {
+        "Listeners": [
+          {
+            "InstancePort": {
+              "Ref": "WebServerPort"
+            },
+            "PolicyNames": [
+              "p1"
+            ],
+            "Protocol": "HTTP",
+            "LoadBalancerPort": "80"
+          }
+        ],
+        "HealthCheck": {
+          "HealthyThreshold": "2",
+          "Timeout": "5",
+          "Interval": "10",
+          "UnhealthyThreshold": "5",
+          "Target": {
+            "Fn::Join": [
+              "",
+              [
+                "HTTP:",
+                {
+                  "Ref": "WebServerPort"
+                },
+                "/users/new"
+              ]
+            ]
+          }
+        },
+        "AvailabilityZones": {
+          "Fn::GetAZs": {
+            "Ref": "AWS::Region"
+          }
+        },
+        "LBCookieStickinessPolicy": [
+          {
+            "CookieExpirationPeriod": "30",
+            "PolicyName": "p1"
+          }
+        ]
+      },
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer"
+    },
+    "DBSecurityGroup": {
+      "Properties": {
+        "DBSecurityGroupIngress": {
+          "EC2SecurityGroupName": {
+            "Ref": "EC2SecurityGroup"
+          }
+        },
+        "GroupDescription": "database access"
+      },
+      "Type": "AWS::RDS::DBSecurityGroup"
+    },
+    "RequestRateAlarmLow": {
+      "Properties": {
+        "EvaluationPeriods": "1",
+        "Statistic": "Average",
+        "Threshold": "1",
+        "AlarmDescription": "Alarm if there aren't any requests coming through",
+        "Period": "60",
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Namespace": "AWS/ELB",
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "LoadBalancerName",
+            "Value": {
+              "Ref": "ElasticLoadBalancer"
+            }
+          }
+        ],
+        "ComparisonOperator": "LessThanThreshold",
+        "MetricName": "RequestCount"
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "TracksDB": {
+      "Properties": {
+        "Engine": "MySQL",
+        "DBName": {
+          "Ref": "TracksDatabaseName"
+        },
+        "Port": { "Ref": "TracksDatabasePort" },
+        "MultiAZ" : { "Fn::FindInMap" : [ "AWSRegionCapabilities", { "Ref" : "AWS::Region" }, "RDSMultiAZ"] },
+        "MasterUsername": {
+          "Ref": "TracksDatabaseUser"
+        },
+        "DBInstanceClass": "db.m1.small",
+        "DBSecurityGroups": [
+          {
+            "Ref": "DBSecurityGroup"
+          }
+        ],
+        "AllocatedStorage": "5",
+        "MasterUserPassword": {
+          "Ref": "TracksDatabasePwd"
+        }
+      },
+      "Type": "AWS::RDS::DBInstance"
+    },
+    "WebServerGroup": {
+      "Properties": {
+        "LoadBalancerNames": [
+          {
+            "Ref": "ElasticLoadBalancer"
+          }
+        ],
+        "MinSize": "1",
+        "LaunchConfigurationName": {
+          "Ref": "LaunchConfig"
+        },
+        "AvailabilityZones": {
+          "Fn::GetAZs": {
+            "Ref": "AWS::Region"
+          }
+        },
+        "MaxSize": "3"
+      },
+      "Type": "AWS::AutoScaling::AutoScalingGroup"
+    },
+    "AlarmTopic": {
+      "Properties": {
+        "Subscription": [
+          {
+            "Endpoint": {
+              "Ref": "OperatorEmail"
+            },
+            "Protocol": "email"
+          }
+        ]
+      },
+      "Type": "AWS::SNS::Topic"
+    },
+    "LaunchConfig": {
+      "Properties": {
+        "SecurityGroups": [
+          {
+            "Ref": "EC2SecurityGroup"
+          }
+        ],
+        "ImageId": {
+          "Fn::FindInMap": [
+            "AWSRegionArch2AMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            {
+              "Fn::FindInMap": [
+                "AWSInstanceType2Arch",
+                {
+                  "Ref": "InstanceType"
+                },
+                "Arch"
+              ]
+            }
+          ]
+        },
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              ":",
+              [
+                {
+                  "Ref": "TracksDatabaseName"
+                },
+                {
+                  "Ref": "TracksDatabaseUser"
+                },
+                {
+                  "Ref": "TracksDatabasePwd"
+                },
+                {
+                  "Ref": "TracksDatabasePort"
+                },
+                {
+                  "Fn::GetAtt": [
+                    "TracksDB",
+                    "Endpoint.Address"
+                  ]
+                },
+                {
+                  "Ref": "WebServerPort"
+                }
+              ]
+            ]
+          }
+        },
+        "KeyName": {
+          "Ref": "KeyName"
+        },
+        "InstanceType": {
+          "Ref": "InstanceType"
+        }
+      },
+      "Type": "AWS::AutoScaling::LaunchConfiguration"
+    }
+  },
+  "Mappings": {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "32" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "32" },
+      "c1.xlarge"   : { "Arch" : "64" },
+      "cc1.4xlarge" : { "Arch" : "64" }
+    },
+    "AWSRegionArch2AMI" : {
+      "us-east-1" : { "32" : "ami-7017e419", "64" : "ami-6e17e407" },
+      "us-west-1" : { "32" : "ami-9bc797de", "64" : "ami-99c797dc" },
+      "eu-west-1" : { "32" : "ami-d9c2f6ad", "64" : "ami-dfc2f6ab" },
+      "ap-southeast-1" : { "32" : "ami-3cf28c6e", "64" : "ami-3ef28c6c" },
+      "ap-northeast-1" : { "32" : "ami-c803a8c9", "64" : "ami-ce03a8cf" }
+    },
+    "AWSRegionCapabilities" : {
+      "us-east-1" :      { "RDSMultiAZ" : "true" },
+      "us-west-1" :      { "RDSMultiAZ" : "true" },
+      "eu-west-1" :      { "RDSMultiAZ" : "true" },
+      "ap-southeast-1" : { "RDSMultiAZ" : "true" },
+      "ap-northeast-1" : { "RDSMultiAZ" : "true" }
+    }
+  },
+  "Outputs": {
+    "URL": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "http://",
+            {
+              "Fn::GetAtt": [
+                "ElasticLoadBalancer",
+                "DNSName"
+              ]
+            }
+          ]
+        ]
+      },
+      "Description": "URL of Tracks web site"
+    }
+  }
+}

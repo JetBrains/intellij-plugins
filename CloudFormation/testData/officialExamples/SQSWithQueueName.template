@@ -1,0 +1,37 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+
+    "Description": "AWS CloudFormation Sample Template SQSWithQueueName: Sample template showing how to create an SQS queue with a specific name. **WARNING** This template creates an Amazon SQS Queue. You will be billed for the AWS resources used if you create a stack from this template.",
+
+    "Parameters" : {
+      "QueueName" : {
+        "Description" : "Name of queue to create",
+        "Type" : "String",
+        "MinLength": "1",
+        "MaxLength": "80",
+        "AllowedPattern": "[a-zA-Z0-9_-]+",
+        "ConstraintDescription": "must be a valid queue name."
+      }
+    },
+
+    "Resources": {
+        "MyQueue": {
+            "Type": "AWS::SQS::Queue",
+            "Properties" : {
+              "QueueName" :  { "Ref" : "QueueName" } 
+            }
+        }
+    },
+
+    "Outputs": {
+        "QueueURL": {
+            "Description": "URL of newly created SQS Queue",
+            "Value": { "Ref": "MyQueue" }
+        },
+        "QueueARN": {
+            "Description": "ARN of newly created SQS Queue",
+            "Value": { "Fn::GetAtt": [ "MyQueue", "Arn" ] }
+        }
+    }
+
+}

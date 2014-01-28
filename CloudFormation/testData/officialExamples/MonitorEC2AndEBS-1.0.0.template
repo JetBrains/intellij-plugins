@@ -1,0 +1,154 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Create an EC2 instance running the Amazon Linux 32 bit AMI with a new EBS volume attached. The Instance is configured for detailed monitoring. Both the instance and the volume have CloudWatch alarms configured to notify an email address of an operational issues. The AMI is chosen based on the region in which the stack is run. You will get a notification to the email address you specify indicating that a new email subscription has been created. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "InstanceType" : {
+      "Description" : "Type of EC2 instance to launch",
+      "Type" : "String",
+      "Default" : "m1.small"
+    },
+    "OperatorEmail" : {
+      "Default" : "nobody@amazon.com",
+      "Description" : "EMail address to notify if there are any operational issues",
+      "Type" : "String"
+    },
+    "KeyName" : {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+      "Type" : "String"
+    }
+  },
+
+  "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "32" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "32" },
+      "c1.xlarge"   : { "Arch" : "64" },
+      "cc1.4xlarge" : { "Arch" : "64" }
+    },
+    "AWSRegionArch2AMI" : {
+      "us-east-1" : { "32" : "ami-6411e20d", "64" : "ami-7a11e213" },
+      "us-west-1" : { "32" : "ami-c9c7978c", "64" : "ami-cfc7978a" },
+      "eu-west-1" : { "32" : "ami-37c2f643", "64" : "ami-31c2f645" },
+      "ap-southeast-1" : { "32" : "ami-66f28c34", "64" : "ami-60f28c32" },
+      "ap-northeast-1" : { "32" : "ami-9c03a89d", "64" : "ami-a003a8a1" }
+    },
+    "RegionMap" : {
+      "us-east-1" : { "TestAZ" : "us-east-1a" },
+      "us-west-1" : { "TestAZ" : "us-west-1a" },
+      "eu-west-1" : { "TestAZ" : "eu-west-1a" },
+      "ap-southeast-1" : { "TestAZ" : "ap-southeast-1a" },
+      "ap-northeast-1" : { "TestAZ" : "ap-southeast-1a" }
+    }
+  },
+
+  "Resources" : {
+    "Ec2Instance" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "AvailabilityZone" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "TestAZ" ]},
+        "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+        "KeyName" : { "Ref" : "KeyName" },
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
+                                          { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" },
+                                          "Arch" ] } ] },
+        "Monitoring" : "true",
+        "Volumes" : [ 
+          { "VolumeId" : { "Ref" : "NewVolume" },
+            "Device" : "/dev/sdk"
+          }
+        ]
+      }
+    },
+
+    "InstanceSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable SSH access via port 22",
+        "SecurityGroupIngress" : [ {
+          "IpProtocol" : "tcp",
+          "FromPort" : "22",
+          "ToPort" : "22",
+          "CidrIp" : "0.0.0.0/0"
+        } ]
+      }
+    },
+
+    "NewVolume" : {
+      "Type" : "AWS::EC2::Volume",
+      "Properties" : {
+        "Size" : "100",
+        "AvailabilityZone" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "TestAZ" ]}
+      }
+    },
+
+    "CPUAlarm" : {
+      "Type" : "AWS::CloudWatch::Alarm",
+      "Properties" : {
+        "AlarmDescription" : "Alarm if CPU too high or metric disappears indicating instance is down",
+        "AlarmActions" : [ { "Ref" : "AlarmTopic" } ],
+        "InsufficientDataActions" : [ { "Ref" : "AlarmTopic" } ],
+        "MetricName" : "CPUUtilization",
+        "Namespace" : "AWS/EC2",
+        "Statistic" : "Average",
+        "Period" : "60",
+        "EvaluationPeriods" : "3",
+        "Threshold" : "90",
+        "ComparisonOperator" : "GreaterThanThreshold",
+        "Dimensions" : [ {
+          "Name" : "InstanceId",
+          "Value" : { "Ref" : "Ec2Instance" }
+        } ]
+      }
+    },
+
+    "DiskIOBoundAlarm" : {
+      "Type" : "AWS::CloudWatch::Alarm",
+      "Properties" : {
+        "AlarmDescription" : "Alarm if disk is running at IO capacity",
+        "AlarmActions" : [ { "Ref" : "AlarmTopic" } ],
+        "InsufficientDataActions" : [ { "Ref" : "AlarmTopic" } ],
+        "MetricName" : "VolumeIdleTime",
+        "Namespace" : "AWS/EBS",
+        "Statistic" : "Average",
+        "Period" : "60",
+        "EvaluationPeriods" : "3",
+        "Threshold" : "5",
+        "ComparisonOperator" : "LessThanOrEqualToThreshold",
+        "Dimensions" : [ {
+          "Name" : "VolumeId",
+          "Value" : { "Ref" : "NewVolume" }
+        } ]
+      }
+    },
+
+    "AlarmTopic" : {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "Subscription" : [ {
+          "Endpoint" : { "Ref" : "OperatorEmail" },
+          "Protocol" : "email"
+        } ]
+      }
+    }
+
+  },
+
+  "Outputs" : {
+    "InstanceId" : {
+      "Description" : "InstanceId of the newly created EC2 instance",
+      "Value" : { "Ref" : "Ec2Instance" }
+    },
+    "PublicIP" : {
+      "Description" : "Public IP address of the newly created EC2 instance",
+      "Value" : { "Fn::GetAtt" : [ "Ec2Instance", "PublicIp" ] }
+    }
+  }
+}

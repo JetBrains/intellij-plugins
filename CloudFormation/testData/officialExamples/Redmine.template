@@ -1,0 +1,329 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Redmine is a web-based project management application running on EC2 and storing data in an Amazon Relational Database Service database instance. Login with admin/admin and change the password. **WARNING** This template creates one or more Amazon EC2 instances and an Amazon Relational Database Service database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters": {
+    "KeyName": {
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the web server",
+      "Type": "String"
+    },
+    "RedmineDBName": {
+      "Default": "redmine",
+      "Description": "Redmine database name",
+      "Type": "String",
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+    },
+    "RedmineDBUser": {
+      "Default": "admin",
+      "NoEcho": "true",
+      "Description": "Redmine database admin account username",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
+    },
+    "RedmineDBPassword": {
+      "Default": "admin",
+      "NoEcho": "true",
+      "Description": "Redmine database admin account password",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "41",
+      "AllowedPattern": "[a-zA-Z0-9]*",
+      "ConstraintDescription": "must contain only alphanumeric characters."
+    },
+    "InstanceType": {
+      "Default": "m1.small",
+      "Description": "Web server instance type",
+      "Type": "String"
+    },
+    "WebServerPort": {
+      "Default": "8888",
+      "Description": "TCP/IP port for web server",
+      "Type": "Number",
+      "MinValue": "1",
+      "MaxValue": "65535"
+    },
+    "DatabasePort": {
+      "Default": "3306",
+      "Description": "TCP/IP port for Redmine database",
+      "Type": "Number",
+      "MinValue": "1150",
+      "MaxValue": "65535"
+    }
+  },
+  "Resources": {
+    "LoadBalancer": {
+      "Properties": {
+        "Listeners": [
+          {
+            "InstancePort": {
+              "Ref": "WebServerPort"
+            },
+            "Protocol": "HTTP",
+            "LoadBalancerPort": "80"
+          }
+        ],
+        "HealthCheck": {
+          "HealthyThreshold": "3",
+          "Timeout": "5",
+          "Interval": "10",
+          "UnhealthyThreshold": "2",
+          "Target": {
+            "Fn::Join": [
+              "",
+              [
+                "TCP:",
+                {
+                  "Ref": "WebServerPort"
+                }
+              ]
+            ]
+          }
+        },
+        "AvailabilityZones": {
+          "Fn::GetAZs": {
+            "Ref": "AWS::Region"
+          }
+        },
+        "Instances": [
+          {
+            "Ref": "EC2Instance"
+          }
+        ]
+      },
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer"
+    },
+    "ElasticIP": {
+      "Properties": {
+        "InstanceId": {
+          "Ref": "EC2Instance"
+        }
+      },
+      "Type": "AWS::EC2::EIP"
+    },
+    "EC2SecurityGroup": {
+      "Properties": {
+        "SecurityGroupIngress": [
+          {
+            "FromPort": "22",
+            "CidrIp": "0.0.0.0/0",
+            "ToPort": "22",
+            "IpProtocol": "tcp"
+          },
+          {
+            "FromPort": {
+              "Ref": "WebServerPort"
+            },
+            "CidrIp": "0.0.0.0/0",
+            "ToPort": {
+              "Ref": "WebServerPort"
+            },
+            "IpProtocol": "tcp"
+          }
+        ],
+        "GroupDescription": "HTTP and SSH access"
+      },
+      "Type": "AWS::EC2::SecurityGroup"
+    },
+    "EC2Instance": {
+      "Properties": {
+        "SecurityGroups": [
+          {
+            "Ref": "EC2SecurityGroup"
+          }
+        ],
+        "ImageId": {
+          "Fn::FindInMap": [
+            "AWSRegionArch2AMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            {
+              "Fn::FindInMap": [
+                "AWSInstanceType2Arch",
+                {
+                  "Ref": "InstanceType"
+                },
+                "Arch"
+              ]
+            }
+          ]
+        },
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              ":",
+              [
+                {
+                  "Ref": "RedmineDBName"
+                },
+                {
+                  "Ref": "RedmineDBUser"
+                },
+                {
+                  "Ref": "RedmineDBPassword"
+                },
+                {
+                  "Ref": "DatabasePort"
+                },
+                {
+                  "Fn::GetAtt": [
+                    "RedmineDB",
+                    "Endpoint.Address"
+                  ]
+                },
+                {
+                  "Ref": "WebServerPort"
+                }
+              ]
+            ]
+          }
+        },
+        "KeyName": {
+          "Ref": "KeyName"
+        },
+        "InstanceType": {
+          "Ref": "InstanceType"
+        }
+      },
+      "Type": "AWS::EC2::Instance"
+    },
+    "DBSecurityGroup": {
+      "Properties": {
+        "DBSecurityGroupIngress": {
+          "EC2SecurityGroupName": {
+            "Ref": "EC2SecurityGroup"
+          }
+        },
+        "GroupDescription": "database access"
+      },
+      "Type": "AWS::RDS::DBSecurityGroup"
+    },
+    "RedmineDB": {
+      "Properties": {
+        "Engine": "MySQL",
+        "DBName": {
+          "Ref": "RedmineDBName"
+        },
+        "Port": {
+          "Ref": "DatabasePort"
+        },
+        "MultiAZ": {
+          "Fn::FindInMap": [ "AWSRegionCapabilities", {
+            "Ref": "AWS::Region"
+          }, "RDSMultiAZ"]
+        },
+        "MasterUsername": {
+          "Ref": "RedmineDBUser"
+        },
+        "DBInstanceClass": "db.m1.small",
+        "DBSecurityGroups": [
+          {
+            "Ref": "DBSecurityGroup"
+          }
+        ],
+        "AllocatedStorage": "5",
+        "MasterUserPassword": {
+          "Ref": "RedmineDBPassword"
+        }
+      },
+      "Type": "AWS::RDS::DBInstance"
+    }
+  },
+  "Mappings": {
+    "AWSInstanceType2Arch": {
+      "t1.micro": {
+        "Arch": "64"
+      },
+      "m1.small": {
+        "Arch": "32"
+      },
+      "m1.large": {
+        "Arch": "64"
+      },
+      "m1.xlarge": {
+        "Arch": "64"
+      },
+      "m2.xlarge": {
+        "Arch": "64"
+      },
+      "m2.2xlarge": {
+        "Arch": "64"
+      },
+      "m2.4xlarge": {
+        "Arch": "64"
+      },
+      "c1.medium": {
+        "Arch": "32"
+      },
+      "c1.xlarge": {
+        "Arch": "64"
+      },
+      "cc1.4xlarge": {
+        "Arch": "64"
+      }
+    },
+    "AWSRegionArch2AMI": {
+      "us-east-1": {
+        "32": "ami-b210e3db",
+        "64": "ami-ac10e3c5"
+      },
+      "us-west-1": {
+        "32": "ami-95c797d0",
+        "64": "ami-8bc797ce"
+      },
+      "eu-west-1": {
+        "32": "ami-e9c2f69d",
+        "64": "ami-efc2f69b"
+      },
+      "ap-southeast-1": {
+        "32": "ami-3af28c68",
+        "64": "ami-34f28c66"
+      },
+      "ap-northeast-1": {
+        "32": "ami-5ee74d5f",
+        "64": "ami-6ee74d6f"
+      }
+    },
+    "AWSRegionCapabilities": {
+      "us-east-1": {
+        "RDSMultiAZ": "true"
+      },
+      "us-west-1": {
+        "RDSMultiAZ": "true"
+      },
+      "eu-west-1": {
+        "RDSMultiAZ": "true"
+      },
+      "ap-southeast-1": {
+        "RDSMultiAZ": "true"
+      },
+      "ap-northeast-1": {
+        "RDSMultiAZ": "true"
+      }
+    }
+  },
+  "Outputs": {
+    "URL": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "http://",
+            {
+              "Fn::GetAtt": [
+                "LoadBalancer",
+                "DNSName"
+              ]
+            }
+          ]
+        ]
+      },
+      "Description": "URL of the Redmine project management system"
+    }
+  }
+}

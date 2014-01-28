@@ -1,0 +1,61 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template VPC_Instance_With_Association: Sample template showing how to create an instance in a VPC and associate is with an existing VPC-based Elastic IP Address and VPC-based security group. It assumes you already have a VPC with an EIP and a Security Group associated with the VPC. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "AllocationId" : {
+      "Type" : "String",
+      "Description" : "AllocationId of existing Elastic IP (EIP) in your Virtual Private Cloud (VPC)"
+    },
+    "SubnetId" : {
+      "Type" : "String",
+      "Description" : "SubnetId of an existing subnet in your Virtual Private Cloud (VPC)"
+    },
+    "SecurityGroupId" : {
+      "Type" : "String",
+      "Description" : "The SecurityGroupId of an existing EC2 SecurityGroup in your Virtual Private Cloud (VPC)"
+    }
+  },
+
+  "Mappings" : {
+    "RegionMap" : {
+      "us-east-1"      : { "AMI" : "ami-7f418316" },
+      "us-west-1"      : { "AMI" : "ami-951945d0" },
+      "us-west-2"      : { "AMI" : "ami-16fd7026" },
+      "eu-west-1"      : { "AMI" : "ami-24506250" },
+      "sa-east-1"      : { "AMI" : "ami-3e3be423" },
+      "ap-southeast-1" : { "AMI" : "ami-74dda626" },
+      "ap-southeast-2" : { "AMI" : "ami-b3990e89" },
+      "ap-northeast-1" : { "AMI" : "ami-dcfa4edd" }
+    }
+  },
+
+  "Resources" : {
+    "Ec2Instance" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
+        "SecurityGroupIds" : [{ "Ref" : "SecurityGroupId" }],
+        "SubnetId" : { "Ref" : "SubnetId" }
+      }
+    },
+    "IPAssoc" : {
+      "Type" : "AWS::EC2::EIPAssociation",
+      "Properties" : {
+        "InstanceId" : { "Ref" : "Ec2Instance" },
+        "AllocationId" : { "Ref" : "AllocationId" }
+      }
+    }
+  },
+  "Outputs" : {
+    "InstanceId" : {
+      "Value" : { "Ref" : "Ec2Instance" },
+      "Description" : "Instance Id of newly created instance"
+    },
+    "InstanceIPAddress" : {
+      "Value" : { "Fn::GetAtt" : ["Ec2Instance", "PublicIp"] },
+      "Description" : "Public IP address of instance"
+    }
+  }
+}

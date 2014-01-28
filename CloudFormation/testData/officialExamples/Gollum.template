@@ -1,0 +1,215 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Gollum is a Git-powered wiki with a sweet API and local frontend. The stack contains an EC2 instance attached to a newly formatted EBS volume to store the content. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters": {
+    "KeyName": {
+      "Description": "Name of an existing EC2 KeyName to enable SSH access to the web server",
+      "Type": "String"
+    },
+    "VolSize": {
+      "Default": "5",
+      "Description": "Size of the content storage volume in GB",
+      "Type": "Number",
+      "MinValue": "1",
+      "MaxValue": "1024"
+    },
+    "InstanceType": {
+      "Default": "m1.small",
+      "Description": "EC2 instance type, e.g. m1.small, m1.large, etc.",
+      "Type": "String"
+    },
+    "WebServerPort": {
+      "Default": "80",
+      "Description": "TCP/IP port for the web server",
+      "Type": "Number",
+      "MinValue": "1",
+      "MaxValue": "65535"
+    }
+  },
+  "Resources": {
+    "EC2SecurityGroup": {
+      "Properties": {
+        "SecurityGroupIngress": [
+          {
+            "FromPort": "22",
+            "CidrIp": "0.0.0.0/0",
+            "ToPort": "22",
+            "IpProtocol": "tcp"
+          },
+          {
+            "FromPort": {
+              "Ref": "WebServerPort"
+            },
+            "CidrIp": "0.0.0.0/0",
+            "ToPort": {
+              "Ref": "WebServerPort"
+            },
+            "IpProtocol": "tcp"
+          }
+        ],
+        "GroupDescription": "HTTP and SSH access"
+      },
+      "Type": "AWS::EC2::SecurityGroup"
+    },
+    "EC2Instance": {
+      "Properties": {
+        "SecurityGroups": [
+          {
+            "Ref": "EC2SecurityGroup"
+          }
+        ],
+        "ImageId": {
+          "Fn::FindInMap": [
+            "AWSRegionArch2AMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            {
+              "Fn::FindInMap": [
+                "AWSInstanceType2Arch",
+                {
+                  "Ref": "InstanceType"
+                },
+                "Arch"
+              ]
+            }
+          ]
+        },
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              ":",
+              [
+                {
+                  "Ref": "WebServerPort"
+                }
+              ]
+            ]
+          }
+        },
+        "KeyName": {
+          "Ref": "KeyName"
+        },
+        "InstanceType": {
+          "Ref": "InstanceType"
+        }
+      },
+      "Type": "AWS::EC2::Instance"
+    },
+    "DataVolume": {
+      "Properties": {
+        "AvailabilityZone": {
+          "Fn::GetAtt": [ "EC2Instance", "AvailabilityZone" ]
+        },
+        "Size": {
+          "Ref": "VolSize"
+        }
+      },
+      "Type": "AWS::EC2::Volume"
+    },
+    "MountPoint": {
+      "Type": "AWS::EC2::VolumeAttachment",
+      "Properties": {
+        "InstanceId": {
+          "Ref": "EC2Instance"
+        },
+        "VolumeId": {
+          "Ref": "DataVolume"
+        },
+        "Device": "/dev/sdh"
+      }
+    }
+  },
+  "Mappings": {
+    "AWSInstanceType2Arch": {
+      "t1.micro": {
+        "Arch": "64"
+      },
+      "m1.small": {
+        "Arch": "32"
+      },
+      "m1.large": {
+        "Arch": "64"
+      },
+      "m1.xlarge": {
+        "Arch": "64"
+      },
+      "m2.xlarge": {
+        "Arch": "64"
+      },
+      "m2.2xlarge": {
+        "Arch": "64"
+      },
+      "m2.4xlarge": {
+        "Arch": "64"
+      },
+      "c1.medium": {
+        "Arch": "32"
+      },
+      "c1.xlarge": {
+        "Arch": "64"
+      },
+      "cc1.4xlarge": {
+        "Arch": "64"
+      }
+    },
+    "AWSRegionArch2AMI": {
+      "us-east-1": {
+        "32": "ami-2613e04f",
+        "64": "ami-2213e04b"
+      },
+      "us-west-1": {
+        "32": "ami-07c79742",
+        "64": "ami-01c79744"
+      },
+      "eu-west-1": {
+        "32": "ami-79c2f60d",
+        "64": "ami-7fc2f60b"
+      },
+      "ap-southeast-1": {
+        "32": "ami-4cf28c1e",
+        "64": "ami-4ef28c1c"
+      },
+      "ap-northeast-1": {
+        "32": "ami-a803a8a9",
+        "64": "ami-ae03a8af"
+      }
+    }
+  },
+  "Outputs": {
+    "SiteLocation": {
+      "Description": "Availability zone of EC2 instance and EBS volume",
+      "Value": {
+        "Fn::GetAtt": [
+          "EC2Instance",
+          "AvailabilityZone"
+        ]
+      }
+    },
+    "DataLocation": {
+      "Description": "EBS volume storing application data",
+      "Value": {
+        "Ref": "DataVolume"
+      }
+    },
+    "URL": {
+      "Description": "URL of the Gollum website",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "http://",
+            {
+              "Fn::GetAtt": [
+                "EC2Instance",
+                "PublicIp"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "AWS CloudFormation Sample Template RDS_Snapshot_On_Delete: Sample template showing how to create an RDS DBInstance that is snapshotted on stack deletion. **WARNING** This template creates an Amazon RDS database instance. When the stack is deleted a database snpshot will be left in your account. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Resources": {
+    "MyDB": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "AllocatedStorage": "5",
+        "DBInstanceClass": "db.m1.small",
+        "Engine": "MySQL",
+        "MasterUsername": "MyName",
+        "MasterUserPassword": "MyPassword"
+      },
+      "DeletionPolicy": "Snapshot"
+    }
+  }
+}
+
