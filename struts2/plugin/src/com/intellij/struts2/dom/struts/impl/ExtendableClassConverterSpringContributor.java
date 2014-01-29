@@ -24,8 +24,8 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.spring.SpringManager;
 import com.intellij.spring.contexts.model.SpringModel;
 import com.intellij.spring.facet.SpringFacet;
-import com.intellij.spring.model.converters.SpringBeanConverterUtil;
 import com.intellij.spring.model.SpringBeanPointer;
+import com.intellij.spring.model.converters.SpringConverterUtil;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.dom.ExtendableClassConverter;
@@ -141,7 +141,7 @@ public class ExtendableClassConverterSpringContributor
           continue;
         }
 
-        ContainerUtil.addIfNotNull(variants, SpringBeanConverterUtil.createCompletionVariant(bean));
+        ContainerUtil.addIfNotNull(variants, SpringConverterUtil.createCompletionVariant(bean));
       }
 
       return ArrayUtil.toObjectArray(variants, LookupElement.class);
