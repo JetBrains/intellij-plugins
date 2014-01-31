@@ -24,10 +24,6 @@ public class DartParsingTest extends ParsingTestCase {
     doTest(true);
   }
 
-  public void testAbstractMethodSyntax() throws Throwable {
-    doTest();
-  }
-
   public void testCascades() throws Throwable {
     doTest();
   }

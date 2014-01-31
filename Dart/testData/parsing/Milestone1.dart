@@ -78,10 +78,7 @@ class Logger {
   const Logger(this.logCallback);
 }
 
-abstract class A {
-  abstract foo();
-
-}
+abstract class A {}
 
 class SomeClass {
   static final someConstant = 123;
@@ -91,9 +88,6 @@ class SomeClass {
 main() {
   var on = r"set";
   on.split(" ");
-
-  var class = r"class";
-  class.split(" ");
 
   var as = r'not keyword';
   as.split(" ");

@@ -7,7 +7,7 @@ abstract class Persistence {
     print('loading from $filename');
   }
 
-  abstract Object toJson();
+  Object toJson();
 }
 
 abstract class Warrior extends Object with Persistence {

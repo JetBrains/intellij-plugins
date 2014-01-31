@@ -8,9 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface DartClassMembers extends DartExecutionScope {
 
   @NotNull
-  List<DartAbstractOperatorDeclaration> getAbstractOperatorDeclarationList();
-
-  @NotNull
   List<DartFactoryConstructorDeclaration> getFactoryConstructorDeclarationList();
 
   @NotNull

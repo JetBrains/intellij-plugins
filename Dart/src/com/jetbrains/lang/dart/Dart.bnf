@@ -199,11 +199,11 @@ varDeclarationList ::= varAccessDeclaration varInit? (',' varDeclarationListPart
 varDeclarationListPart ::= componentName varInit?
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
-private abstractOperatorDeclarationWithSemicolon ::= abstractOperatorDeclaration ';' {pin=1}
-abstractOperatorDeclaration ::= metadata* 'abstract' returnType? 'operator' userDefinableOperator formalParameterList
-{pin=4 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartOperator" implements="com.jetbrains.lang.dart.psi.DartOperator"}
-operatorDeclaration ::= metadata* returnType? 'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative)
-{pin=4 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartOperator" implements="com.jetbrains.lang.dart.psi.DartOperator"}
+operatorDeclaration ::= operatorDeclarationWithoutReturnType | operatorDeclarationWithReturnType // 'operator' is a valid identifier, but it must not be parsed as returnType in operator declaration
+{mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartOperator" implements="com.jetbrains.lang.dart.psi.DartOperator"}
+private operatorDeclarationWithoutReturnType ::= metadata* 'external'?            'operator' userDefinableOperator formalParameterList (';' | functionBody) {pin=4}
+private operatorDeclarationWithReturnType    ::= metadata* 'external'? returnType 'operator' userDefinableOperator formalParameterList (';' | functionBody) {pin=5}
+
 classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? ((superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody |
                                                                                  '=' mixinApplication ';')
 {pin=4 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
@@ -216,9 +216,9 @@ classMembers ::= classMemberDefinition*
 private simple_scope_recover ::= !'}'
 
 private getterOrSetterDeclaration ::= getterDeclaration | setterDeclaration
-getterDeclaration ::= metadata* ('external' | 'static' | 'const' | 'abstract')* returnType? 'get' componentName formalParameterList? (';' | functionBodyOrNative)
+getterDeclaration ::= metadata* ('external' | 'static' | 'const')* returnType? 'get' componentName formalParameterList? (';' | functionBodyOrNative)
 {pin=5 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
-setterDeclaration ::= metadata* ('external' | 'static' | 'const' | 'abstract')* returnType? 'set' componentName formalParameterList (';' | functionBodyOrNative)
+setterDeclaration ::= metadata* ('external' | 'static' | 'const')* returnType? 'set' componentName formalParameterList (';' | functionBodyOrNative)
 {pin=5 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
 typeParameters ::= '<' typeParameter (',' typeParameter)* '>' {pin=1}
@@ -231,7 +231,6 @@ mixins ::= 'with' typeList {pin=1}
 interfaces ::= 'implements' typeList {pin=1}
 
 private classMemberDefinition ::= factoryConstructorDeclaration
-                                | abstractOperatorDeclarationWithSemicolon
                                 | namedConstructorDeclaration
                                 | methodDeclaration
                                 | operatorDeclaration
@@ -247,7 +246,7 @@ private functionBodyOrNative ::= 'native' functionBody
 
 private functionNative ::= 'native' (stringLiteralExpression ';' | ';' | stringLiteralExpression functionBody)
 
-methodDeclaration ::= metadata* ('external' | 'static' | 'const' | 'abstract')* functionDeclarationPrivate initializers? (';' | functionBodyOrNative | redirection)?
+methodDeclaration ::= metadata* ('external' | 'static' | 'const')* functionDeclarationPrivate initializers? (';' | functionBodyOrNative | redirection)?
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 namedConstructorDeclaration ::= metadata* ('external' | 'const')* referenceExpression '.' componentName formalParameterList initializers? (';' | functionBodyOrNative | redirection)?
 {pin=6 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
@@ -268,7 +267,7 @@ private super_call_or_field_initializer_recover ::= !(')' | ',' | ':' | ';' | '=
 functionTypeAlias ::= metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'
 {pin=5 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
-classTypeAlias ::= metadata* 'typedef' componentName typeParameters? '=' 'abstract'? type mixins? ';'
+classTypeAlias ::= metadata* 'typedef' componentName typeParameters? '=' type mixins? ';'
 {pin=5 mixin="com.jetbrains.lang.dart.psi.impl.TypedefDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
 factoryConstructorDeclaration ::= metadata* ('external' | 'const')* 'factory' referenceExpression ('.' componentName)? formalParameterList factoryTail?
@@ -276,23 +275,25 @@ factoryConstructorDeclaration ::= metadata* ('external' | 'const')* 'factory' re
 private factoryTail ::= varFactoryDeclaration ';' | functionBodyOrNative | ';' {pin(".*")=1}
 private varFactoryDeclaration ::= '=' type ['.' referenceExpression] {pin(".*")=1}
 
-userDefinableOperator ::= multiplicativeOperator
-                        | additiveOperator
-                        | shiftOperator
-                        | relationalOperator
-                        | bitwiseOperator
-                        | '=='
-                        | '~'
-                        | '[' ']' '='?
+userDefinableOperator ::= binaryOperator |
+                          '~' |
+                          '[' ']' '='?
+private binaryOperator ::= multiplicativeOperator |
+                           additiveOperator |
+                           shiftOperator|
+                           relationalOperator|
+                           '==' |
+                           bitwiseOperator
 
 multiplicativeOperator ::= '*' | '/' | '%' | '~/'
-assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '^=' | '|='
 additiveOperator ::= '+' | '-'
 shiftOperator ::= '<<' | shiftRightOperator
 relationalOperator ::= '>=' | '>' | '<=' | '<'
-equalityOperator ::= '==' | '!='
 bitwiseOperator ::= '&' | '^' | '|'
 shiftRightOperator ::= '>' '>'
+
+assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '^=' | '|='
+equalityOperator ::= '==' | '!='
 
 formalParameterList ::= '(' normalFormalParameter (',' normalFormalParameter)* (',' namedFormalParameters)? ')'
                       | '(' namedFormalParameters? ')'

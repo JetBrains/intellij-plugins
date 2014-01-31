@@ -17,9 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementImpl implements DartComponent {
   public AbstractDartComponentImpl(@NotNull ASTNode node) {
     super(node);
@@ -57,7 +54,7 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
 
   @Override
   public boolean isStatic() {
-    return DartResolveUtil.getDeclarationTypes(this).contains(DartTokenTypes.STATIC);
+    return findChildByType(DartTokenTypes.STATIC) != null;
   }
 
   @Override
@@ -68,17 +65,17 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
 
   @Override
   public boolean isSetter() {
-    return DartResolveUtil.getDeclarationTypes(this).contains(DartTokenTypes.SET);
+    return findChildByType(DartTokenTypes.SET) != null;
   }
 
   @Override
   public boolean isGetter() {
-    return DartResolveUtil.getDeclarationTypes(this).contains(DartTokenTypes.GET);
+    return findChildByType(DartTokenTypes.GET) != null;
   }
 
   @Override
   public boolean isAbstract() {
-    return DartResolveUtil.getDeclarationTypes(this).contains(DartTokenTypes.ABSTRACT);
+    return findChildByType(DartTokenTypes.FUNCTION_BODY) == null;
   }
 
   @Override

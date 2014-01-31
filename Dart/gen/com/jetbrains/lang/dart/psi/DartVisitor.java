@@ -6,10 +6,6 @@ import com.intellij.psi.PsiElementVisitor;
 
 public class DartVisitor extends PsiElementVisitor {
 
-  public void visitAbstractOperatorDeclaration(@NotNull DartAbstractOperatorDeclaration o) {
-    visitOperator(o);
-  }
-
   public void visitAdditiveExpression(@NotNull DartAdditiveExpression o) {
     visitExpression(o);
     // visitReference(o);

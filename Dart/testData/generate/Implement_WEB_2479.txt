@@ -1,5 +1,5 @@
-class Animal {
-  abstract void speak(String say);
+abstract class Animal {
+  void speak(String say);
 }
 
 class Dog implements Animal {

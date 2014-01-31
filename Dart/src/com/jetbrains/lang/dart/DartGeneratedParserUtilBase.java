@@ -14,17 +14,6 @@ import static com.jetbrains.lang.dart.DartTokenTypes.IDENTIFIER;
 public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
   private static Key<Boolean> WITHOUT_CASCADE = Key.create("dart.without.cascade");
 
-  // todo: operator is pseudoKeyword
-  private static final Set<String> pseudoKeywords = new THashSet<String>(Arrays.asList(
-    "abstract", "assert", "class", "extends", "factory", "implements", "import", "interface",
-    "is", "as", "on", "library", "native", "source", "static", "typedef", "operator",
-    "set", "get", "of", "part", "show", "hide", "export", "with"
-  ));
-
-  private static final Set<String> operators = new THashSet<String>(Arrays.asList(
-    "%", "&", "*", "+", "-", "/", "<", "<<", "<=", "==", ">", ">=", "[", "^", "|", "~", "~/"
-  ));
-
   public static boolean cascadeStopper(PsiBuilder builder_, int level_) {
     Boolean userData = builder_.getUserData(WITHOUT_CASCADE);
     boolean fail = userData != null && userData;
@@ -55,20 +44,13 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     }
     else if ("get".equals(builder_.getTokenText()) || "set".equals(builder_.getTokenText())) {
       builder_.advanceLexer();
-      final boolean nextIsID = builder_.getTokenType() == IDENTIFIER || pseudoKeywords.contains(builder_.getTokenText());
+      final boolean nextIsID = builder_.getTokenType() == IDENTIFIER || DartTokenTypesSets.BUILT_IN_IDENTIFIERS.contains(builder_.getTokenType());
       if (!nextIsID) {
         marker_.done(ID);
         return true;
       }
     }
-    else if ("operator".equals(builder_.getTokenText())) {
-      builder_.advanceLexer();
-      if (!operators.contains(builder_.getTokenText())) {
-        marker_.done(ID);
-        return true;
-      }
-    }
-    else if (pseudoKeywords.contains(builder_.getTokenText())) {
+    else if (DartTokenTypesSets.BUILT_IN_IDENTIFIERS.contains(builder_.getTokenType())) {
       builder_.advanceLexer();
       marker_.done(ID);
       return true;

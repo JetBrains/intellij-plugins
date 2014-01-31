@@ -10,30 +10,32 @@ var x = a ? b : c ? d : e ? f : g;
 
 class Operators {
 
-  operator ~() { }
+  @Object() external void operator ~(); // void is id
 
-  operator *(x) { }
-  operator /(x) { }
-  operator %(x) { }
-  operator ~/(x) { }
+  @Object() operator operator *(x) => foo(bar(baz)) + 1; // operator is id, not valid, but should be parsed
+  @Object() external operator /(x);
+  external operator operator %(x);
+  @Object() operator ~/(x) {}
 
-  operator +(x) { }
-  operator -(x) { }
+  external operator +(x);
+  operator operator -(x);
 
-  operator <<(x) { }
-  operator >>(x) { }
+  @Foo @Bar static operator <<(x) {} // static is id, not valid, but should be parsed
+  void operator >>(x) {}  // void is id
 
-  operator ==(x) { }
-  operator <=(x) { }
-  operator <(x) { }
-  operator >=(x) { }
-  operator >(x) { }
+  part operator >=(x) {} // part is id
+  show operator >(x) {} // show is id
+  Foo operator <=(x) {}
+  external external operator <(x); // 2nd external is id, not valid, but should be parsed
 
-  operator &(x) { }
-  operator ^(x) { }
-  operator |(x) { }
-  operator []=(x) { }
-  operator [](x) { }
+  operator ==(x) {}
+
+  operator &(x) {}
+  operator ^(x) {}
+  operator |(x) {}
+
+  operator [](x) {}
+  operator []=(x,y) {}
 
   foo() {
     ~super;

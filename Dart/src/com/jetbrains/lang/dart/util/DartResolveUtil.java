@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.util;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -17,8 +16,6 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.BooleanValueHolder;
@@ -27,7 +24,6 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import com.jetbrains.lang.dart.DartComponentType;
-import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.ide.index.*;
 import com.jetbrains.lang.dart.ide.info.DartFunctionDescription;
@@ -191,21 +187,6 @@ public class DartResolveUtil {
       return (PsiComment)candidate;
     }
     return null;
-  }
-
-  public static Set<IElementType> getDeclarationTypes(@Nullable PsiElement element) {
-    if (element == null) {
-      return Collections.emptySet();
-    }
-    final Set<IElementType> resultSet = new THashSet<IElementType>();
-    final TokenSet filter =
-      TokenSet.create(DartTokenTypes.STATIC, DartTokenTypes.CONST, DartTokenTypes.FINAL, DartTokenTypes.SET, DartTokenTypes.GET,
-                      DartTokenTypes.ABSTRACT);
-    final ASTNode[] children = element.getNode().getChildren(filter);
-    for (ASTNode child : children) {
-      resultSet.add(child.getElementType());
-    }
-    return resultSet;
   }
 
   @Nullable

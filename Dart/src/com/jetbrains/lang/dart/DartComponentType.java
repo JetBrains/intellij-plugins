@@ -64,8 +64,7 @@ public enum DartComponentType {
         || element instanceof DartFunctionExpression) {
       return FUNCTION;
     }
-    if (element instanceof DartOperatorDeclaration
-        || element instanceof DartAbstractOperatorDeclaration) {
+    if (element instanceof DartOperatorDeclaration) {
       return OPERATOR;
     }
     if (element instanceof DartGetterDeclaration || element instanceof DartSetterDeclaration) {

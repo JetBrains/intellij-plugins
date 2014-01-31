@@ -47,12 +47,6 @@ public class DartOperatorDeclarationImpl extends AbstractDartOperator implements
   }
 
   @Override
-  @Nullable
-  public DartStringLiteralExpression getStringLiteralExpression() {
-    return findChildByClass(DartStringLiteralExpression.class);
-  }
-
-  @Override
   @NotNull
   public DartUserDefinableOperator getUserDefinableOperator() {
     return findNotNullChildByClass(DartUserDefinableOperator.class);

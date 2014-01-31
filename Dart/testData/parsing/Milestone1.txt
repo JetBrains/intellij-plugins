@@ -144,15 +144,7 @@ Dart File
     CLASS_BODY
       PsiElement({)('{')
       CLASS_MEMBERS
-        METHOD_DECLARATION
-          PsiElement(abstract)('abstract')
-          COMPONENT_NAME
-            ID
-              PsiElement(IDENTIFIER)('foo')
-          FORMAL_PARAMETER_LIST
-            PsiElement(()('(')
-            PsiElement())(')')
-          PsiElement(;)(';')
+        <empty list>
       PsiElement(})('}')
   CLASS_DEFINITION
     PsiElement(class)('class')
@@ -220,35 +212,6 @@ Dart File
               REFERENCE_EXPRESSION
                 ID
                   PsiElement(on)('on')
-              PsiElement(.)('.')
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('split')
-            ARGUMENTS
-              PsiElement(()('(')
-              ARGUMENT_LIST
-                STRING_LITERAL_EXPRESSION
-                  PsiElement(OPEN_QUOTE)('"')
-                  PsiElement(REGULAR_STRING_PART)(' ')
-                  PsiElement(CLOSING_QUOTE)('"')
-              PsiElement())(')')
-          PsiElement(;)(';')
-          VAR_DECLARATION_LIST
-            VAR_ACCESS_DECLARATION
-              PsiElement(var)('var')
-              COMPONENT_NAME
-                ID
-                  PsiElement(class)('class')
-            VAR_INIT
-              PsiElement(=)('=')
-              STRING_LITERAL_EXPRESSION
-                PsiElement(RAW_SINGLE_QUOTED_STRING)('r"class"')
-          PsiElement(;)(';')
-          CALL_EXPRESSION
-            REFERENCE_EXPRESSION
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(class)('class')
               PsiElement(.)('.')
               REFERENCE_EXPRESSION
                 ID

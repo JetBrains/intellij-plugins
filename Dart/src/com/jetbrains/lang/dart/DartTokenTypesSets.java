@@ -78,15 +78,15 @@ public interface DartTokenTypesSets {
                                                   PART,
                                                   SET,
                                                   STATIC,
-                                                  TYPEDEF);
+                                                  TYPEDEF,
 
-  TokenSet TOKENS_HIGHLIGHTED_AS_KEYWORDS = TokenSet.orSet(RESERVED_WORDS,
-                                                           BUILT_IN_IDENTIFIERS,
-                                                           TokenSet.create(ON,
-                                                                           OF,
-                                                                           NATIVE,
-                                                                           SHOW,
-                                                                           HIDE));
+                                                  ON,
+                                                  OF,
+                                                  NATIVE,
+                                                  SHOW,
+                                                  HIDE);
+
+  TokenSet TOKENS_HIGHLIGHTED_AS_KEYWORDS = TokenSet.orSet(RESERVED_WORDS, BUILT_IN_IDENTIFIERS);
 
   TokenSet OPERATORS = TokenSet.create(
     MINUS, MINUS_EQ, MINUS_MINUS, PLUS, PLUS_PLUS, PLUS_EQ, DIV, DIV_EQ, MUL, MUL_EQ, INT_DIV, INT_DIV_EQ, REM_EQ, REM, BIN_NOT, NOT,
