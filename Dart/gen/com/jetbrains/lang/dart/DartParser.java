@@ -1118,9 +1118,9 @@ public class DartParser implements PsiParser {
   /* ********************************************************** */
   // factoryConstructorDeclaration
   //                                 | namedConstructorDeclaration
-  //                                 | methodDeclaration
   //                                 | operatorDeclaration
   //                                 | getterOrSetterDeclaration
+  //                                 | methodDeclaration
   //                                 | varDeclarationListWithSemicolon
   static boolean classMemberDefinition(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classMemberDefinition")) return false;
@@ -1128,9 +1128,9 @@ public class DartParser implements PsiParser {
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = factoryConstructorDeclaration(builder_, level_ + 1);
     if (!result_) result_ = namedConstructorDeclaration(builder_, level_ + 1);
-    if (!result_) result_ = methodDeclaration(builder_, level_ + 1);
     if (!result_) result_ = operatorDeclaration(builder_, level_ + 1);
     if (!result_) result_ = getterOrSetterDeclaration(builder_, level_ + 1);
+    if (!result_) result_ = methodDeclaration(builder_, level_ + 1);
     if (!result_) result_ = varDeclarationListWithSemicolon(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, class_member_recover_parser_);
     return result_;
@@ -2755,77 +2755,153 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* ('external' | 'static' | 'const')* returnType? 'get' componentName formalParameterList? (';' | functionBodyOrNative)
+  // getterDeclarationWithReturnType | getterDeclarationWithoutReturnType
   public static boolean getterDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "getterDeclaration")) return false;
     boolean result_ = false;
-    boolean pinned_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<getter declaration>");
-    result_ = getterDeclaration_0(builder_, level_ + 1);
-    result_ = result_ && getterDeclaration_1(builder_, level_ + 1);
-    result_ = result_ && getterDeclaration_2(builder_, level_ + 1);
+    result_ = getterDeclarationWithReturnType(builder_, level_ + 1);
+    if (!result_) result_ = getterDeclarationWithoutReturnType(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, GETTER_DECLARATION, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // metadata* ('external' | 'static')* returnType 'get' componentName formalParameterList? (';' | functionBodyOrNative)
+  static boolean getterDeclarationWithReturnType(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "getterDeclarationWithReturnType")) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = getterDeclarationWithReturnType_0(builder_, level_ + 1);
+    result_ = result_ && getterDeclarationWithReturnType_1(builder_, level_ + 1);
+    result_ = result_ && returnType(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, GET);
     result_ = result_ && componentName(builder_, level_ + 1);
     pinned_ = result_; // pin = 5
-    result_ = result_ && report_error_(builder_, getterDeclaration_5(builder_, level_ + 1));
-    result_ = pinned_ && getterDeclaration_6(builder_, level_ + 1) && result_;
-    exit_section_(builder_, level_, marker_, GETTER_DECLARATION, result_, pinned_, null);
+    result_ = result_ && report_error_(builder_, getterDeclarationWithReturnType_5(builder_, level_ + 1));
+    result_ = pinned_ && getterDeclarationWithReturnType_6(builder_, level_ + 1) && result_;
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
     return result_ || pinned_;
   }
 
   // metadata*
-  private static boolean getterDeclaration_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "getterDeclaration_0")) return false;
+  private static boolean getterDeclarationWithReturnType_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "getterDeclarationWithReturnType_0")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
       if (!metadata(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "getterDeclaration_0", pos_)) break;
+      if (!empty_element_parsed_guard_(builder_, "getterDeclarationWithReturnType_0", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;
   }
 
-  // ('external' | 'static' | 'const')*
-  private static boolean getterDeclaration_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "getterDeclaration_1")) return false;
+  // ('external' | 'static')*
+  private static boolean getterDeclarationWithReturnType_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "getterDeclarationWithReturnType_1")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
-      if (!getterDeclaration_1_0(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "getterDeclaration_1", pos_)) break;
+      if (!getterDeclarationWithReturnType_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "getterDeclarationWithReturnType_1", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;
   }
 
-  // 'external' | 'static' | 'const'
-  private static boolean getterDeclaration_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "getterDeclaration_1_0")) return false;
+  // 'external' | 'static'
+  private static boolean getterDeclarationWithReturnType_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "getterDeclarationWithReturnType_1_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, STATIC);
-    if (!result_) result_ = consumeToken(builder_, CONST);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
-  // returnType?
-  private static boolean getterDeclaration_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "getterDeclaration_2")) return false;
-    returnType(builder_, level_ + 1);
-    return true;
-  }
-
   // formalParameterList?
-  private static boolean getterDeclaration_5(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "getterDeclaration_5")) return false;
+  private static boolean getterDeclarationWithReturnType_5(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "getterDeclarationWithReturnType_5")) return false;
     formalParameterList(builder_, level_ + 1);
     return true;
   }
 
   // ';' | functionBodyOrNative
-  private static boolean getterDeclaration_6(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "getterDeclaration_6")) return false;
+  private static boolean getterDeclarationWithReturnType_6(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "getterDeclarationWithReturnType_6")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, SEMICOLON);
+    if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // metadata* ('external' | 'static')*            'get' componentName formalParameterList? (';' | functionBodyOrNative)
+  static boolean getterDeclarationWithoutReturnType(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "getterDeclarationWithoutReturnType")) return false;
+    if (!nextTokenIs(builder_, "", AT, EXTERNAL, GET, STATIC)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = getterDeclarationWithoutReturnType_0(builder_, level_ + 1);
+    result_ = result_ && getterDeclarationWithoutReturnType_1(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, GET);
+    result_ = result_ && componentName(builder_, level_ + 1);
+    pinned_ = result_; // pin = 4
+    result_ = result_ && report_error_(builder_, getterDeclarationWithoutReturnType_4(builder_, level_ + 1));
+    result_ = pinned_ && getterDeclarationWithoutReturnType_5(builder_, level_ + 1) && result_;
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  // metadata*
+  private static boolean getterDeclarationWithoutReturnType_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "getterDeclarationWithoutReturnType_0")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!metadata(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "getterDeclarationWithoutReturnType_0", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
+  }
+
+  // ('external' | 'static')*
+  private static boolean getterDeclarationWithoutReturnType_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "getterDeclarationWithoutReturnType_1")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!getterDeclarationWithoutReturnType_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "getterDeclarationWithoutReturnType_1", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
+  }
+
+  // 'external' | 'static'
+  private static boolean getterDeclarationWithoutReturnType_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "getterDeclarationWithoutReturnType_1_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, EXTERNAL);
+    if (!result_) result_ = consumeToken(builder_, STATIC);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // formalParameterList?
+  private static boolean getterDeclarationWithoutReturnType_4(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "getterDeclarationWithoutReturnType_4")) return false;
+    formalParameterList(builder_, level_ + 1);
+    return true;
+  }
+
+  // ';' | functionBodyOrNative
+  private static boolean getterDeclarationWithoutReturnType_5(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "getterDeclarationWithoutReturnType_5")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SEMICOLON);
@@ -4113,13 +4189,13 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // operatorDeclarationWithoutReturnType | operatorDeclarationWithReturnType
+  // operatorDeclarationWithReturnType | operatorDeclarationWithoutReturnType
   public static boolean operatorDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "operatorDeclaration")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<operator declaration>");
-    result_ = operatorDeclarationWithoutReturnType(builder_, level_ + 1);
-    if (!result_) result_ = operatorDeclarationWithReturnType(builder_, level_ + 1);
+    result_ = operatorDeclarationWithReturnType(builder_, level_ + 1);
+    if (!result_) result_ = operatorDeclarationWithoutReturnType(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, OPERATOR_DECLARATION, result_, false, null);
     return result_;
   }
@@ -4587,70 +4663,139 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* ('external' | 'static' | 'const')* returnType? 'set' componentName formalParameterList (';' | functionBodyOrNative)
+  // setterDeclarationWithReturnType | setterDeclarationWithoutReturnType
   public static boolean setterDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "setterDeclaration")) return false;
     boolean result_ = false;
-    boolean pinned_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<setter declaration>");
-    result_ = setterDeclaration_0(builder_, level_ + 1);
-    result_ = result_ && setterDeclaration_1(builder_, level_ + 1);
-    result_ = result_ && setterDeclaration_2(builder_, level_ + 1);
+    result_ = setterDeclarationWithReturnType(builder_, level_ + 1);
+    if (!result_) result_ = setterDeclarationWithoutReturnType(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, SETTER_DECLARATION, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // metadata* ('external' | 'static')* returnType 'set' componentName formalParameterList (';' | functionBodyOrNative)
+  static boolean setterDeclarationWithReturnType(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "setterDeclarationWithReturnType")) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = setterDeclarationWithReturnType_0(builder_, level_ + 1);
+    result_ = result_ && setterDeclarationWithReturnType_1(builder_, level_ + 1);
+    result_ = result_ && returnType(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, SET);
     result_ = result_ && componentName(builder_, level_ + 1);
     pinned_ = result_; // pin = 5
     result_ = result_ && report_error_(builder_, formalParameterList(builder_, level_ + 1));
-    result_ = pinned_ && setterDeclaration_6(builder_, level_ + 1) && result_;
-    exit_section_(builder_, level_, marker_, SETTER_DECLARATION, result_, pinned_, null);
+    result_ = pinned_ && setterDeclarationWithReturnType_6(builder_, level_ + 1) && result_;
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
     return result_ || pinned_;
   }
 
   // metadata*
-  private static boolean setterDeclaration_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "setterDeclaration_0")) return false;
+  private static boolean setterDeclarationWithReturnType_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "setterDeclarationWithReturnType_0")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
       if (!metadata(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "setterDeclaration_0", pos_)) break;
+      if (!empty_element_parsed_guard_(builder_, "setterDeclarationWithReturnType_0", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;
   }
 
-  // ('external' | 'static' | 'const')*
-  private static boolean setterDeclaration_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "setterDeclaration_1")) return false;
+  // ('external' | 'static')*
+  private static boolean setterDeclarationWithReturnType_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "setterDeclarationWithReturnType_1")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
-      if (!setterDeclaration_1_0(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "setterDeclaration_1", pos_)) break;
+      if (!setterDeclarationWithReturnType_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "setterDeclarationWithReturnType_1", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;
   }
 
-  // 'external' | 'static' | 'const'
-  private static boolean setterDeclaration_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "setterDeclaration_1_0")) return false;
+  // 'external' | 'static'
+  private static boolean setterDeclarationWithReturnType_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "setterDeclarationWithReturnType_1_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, STATIC);
-    if (!result_) result_ = consumeToken(builder_, CONST);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
-  // returnType?
-  private static boolean setterDeclaration_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "setterDeclaration_2")) return false;
-    returnType(builder_, level_ + 1);
+  // ';' | functionBodyOrNative
+  private static boolean setterDeclarationWithReturnType_6(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "setterDeclarationWithReturnType_6")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, SEMICOLON);
+    if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // metadata* ('external' | 'static')*            'set' componentName formalParameterList (';' | functionBodyOrNative)
+  static boolean setterDeclarationWithoutReturnType(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "setterDeclarationWithoutReturnType")) return false;
+    if (!nextTokenIs(builder_, "", AT, EXTERNAL, SET, STATIC)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = setterDeclarationWithoutReturnType_0(builder_, level_ + 1);
+    result_ = result_ && setterDeclarationWithoutReturnType_1(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, SET);
+    result_ = result_ && componentName(builder_, level_ + 1);
+    pinned_ = result_; // pin = 4
+    result_ = result_ && report_error_(builder_, formalParameterList(builder_, level_ + 1));
+    result_ = pinned_ && setterDeclarationWithoutReturnType_5(builder_, level_ + 1) && result_;
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  // metadata*
+  private static boolean setterDeclarationWithoutReturnType_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "setterDeclarationWithoutReturnType_0")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!metadata(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "setterDeclarationWithoutReturnType_0", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
     return true;
   }
 
+  // ('external' | 'static')*
+  private static boolean setterDeclarationWithoutReturnType_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "setterDeclarationWithoutReturnType_1")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!setterDeclarationWithoutReturnType_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "setterDeclarationWithoutReturnType_1", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
+  }
+
+  // 'external' | 'static'
+  private static boolean setterDeclarationWithoutReturnType_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "setterDeclarationWithoutReturnType_1_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, EXTERNAL);
+    if (!result_) result_ = consumeToken(builder_, STATIC);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
   // ';' | functionBodyOrNative
-  private static boolean setterDeclaration_6(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "setterDeclaration_6")) return false;
+  private static boolean setterDeclarationWithoutReturnType_5(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "setterDeclarationWithoutReturnType_5")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SEMICOLON);
@@ -5472,8 +5617,8 @@ public class DartParser implements PsiParser {
   //                              | classDefinition
   //                              | classTypeAlias
   //                              | functionTypeAlias
-  //                              | functionDeclarationWithBodyOrNative
   //                              | getterOrSetterDeclaration
+  //                              | functionDeclarationWithBodyOrNative
   //                              | varDeclarationListWithSemicolon
   static boolean topLevelDefinition(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "topLevelDefinition")) return false;
@@ -5487,8 +5632,8 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = classDefinition(builder_, level_ + 1);
     if (!result_) result_ = classTypeAlias(builder_, level_ + 1);
     if (!result_) result_ = functionTypeAlias(builder_, level_ + 1);
-    if (!result_) result_ = functionDeclarationWithBodyOrNative(builder_, level_ + 1);
     if (!result_) result_ = getterOrSetterDeclaration(builder_, level_ + 1);
+    if (!result_) result_ = functionDeclarationWithBodyOrNative(builder_, level_ + 1);
     if (!result_) result_ = varDeclarationListWithSemicolon(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, top_level_recover_parser_);
     return result_;

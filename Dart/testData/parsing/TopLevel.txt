@@ -218,9 +218,6 @@ Dart File
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('topLevelGetter')
-    FORMAL_PARAMETER_LIST
-      PsiElement(()('(')
-      PsiElement())(')')
     FUNCTION_BODY
       BLOCK
         PsiElement({)('{')
@@ -264,9 +261,6 @@ Dart File
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('topLevelGetter3')
-    FORMAL_PARAMETER_LIST
-      PsiElement(()('(')
-      PsiElement())(')')
     FUNCTION_BODY
       BLOCK
         PsiElement({)('{')

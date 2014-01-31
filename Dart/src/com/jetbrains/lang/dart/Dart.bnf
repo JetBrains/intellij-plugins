@@ -141,8 +141,8 @@ private topLevelDefinition ::= libraryStatement
                              | classDefinition
                              | classTypeAlias
                              | functionTypeAlias
-                             | functionDeclarationWithBodyOrNative
                              | getterOrSetterDeclaration
+                             | functionDeclarationWithBodyOrNative
                              | varDeclarationListWithSemicolon
                              {recoverWhile="top_level_recover"}
 private top_level_recover ::= !('#' | '@' | 'import' | 'library' | 'native' | 'class' | 'const' | 'final' | 'get'
@@ -199,10 +199,10 @@ varDeclarationList ::= varAccessDeclaration varInit? (',' varDeclarationListPart
 varDeclarationListPart ::= componentName varInit?
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
-operatorDeclaration ::= operatorDeclarationWithoutReturnType | operatorDeclarationWithReturnType // 'operator' is a valid identifier, but it must not be parsed as returnType in operator declaration
+operatorDeclaration ::= operatorDeclarationWithReturnType | operatorDeclarationWithoutReturnType // 'operator' is a valid identifier, so can be a returnType
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartOperator" implements="com.jetbrains.lang.dart.psi.DartOperator"}
-private operatorDeclarationWithoutReturnType ::= metadata* 'external'?            'operator' userDefinableOperator formalParameterList (';' | functionBody) {pin=4}
 private operatorDeclarationWithReturnType    ::= metadata* 'external'? returnType 'operator' userDefinableOperator formalParameterList (';' | functionBody) {pin=5}
+private operatorDeclarationWithoutReturnType ::= metadata* 'external'?            'operator' userDefinableOperator formalParameterList (';' | functionBody) {pin=4}
 
 classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? ((superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody |
                                                                                  '=' mixinApplication ';')
@@ -216,10 +216,16 @@ classMembers ::= classMemberDefinition*
 private simple_scope_recover ::= !'}'
 
 private getterOrSetterDeclaration ::= getterDeclaration | setterDeclaration
-getterDeclaration ::= metadata* ('external' | 'static' | 'const')* returnType? 'get' componentName formalParameterList? (';' | functionBodyOrNative)
-{pin=5 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
-setterDeclaration ::= metadata* ('external' | 'static' | 'const')* returnType? 'set' componentName formalParameterList (';' | functionBodyOrNative)
-{pin=5 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+
+getterDeclaration ::= getterDeclarationWithReturnType | getterDeclarationWithoutReturnType // 'get' is a valid identifier, so can be a returnType
+{mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+private getterDeclarationWithReturnType    ::= metadata* ('external' | 'static')* returnType 'get' componentName formalParameterList? (';' | functionBodyOrNative) {pin=5}
+private getterDeclarationWithoutReturnType ::= metadata* ('external' | 'static')*            'get' componentName formalParameterList? (';' | functionBodyOrNative) {pin=4}
+
+setterDeclaration ::= setterDeclarationWithReturnType | setterDeclarationWithoutReturnType // 'set' is a valid identifier, so can be a returnType
+{mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+private setterDeclarationWithReturnType    ::= metadata* ('external' | 'static')* returnType 'set' componentName formalParameterList (';' | functionBodyOrNative) {pin=5}
+private setterDeclarationWithoutReturnType ::= metadata* ('external' | 'static')*            'set' componentName formalParameterList (';' | functionBodyOrNative) {pin=4}
 
 typeParameters ::= '<' typeParameter (',' typeParameter)* '>' {pin=1}
 typeParameter ::= metadata* componentName ('extends' type)?
@@ -232,9 +238,9 @@ interfaces ::= 'implements' typeList {pin=1}
 
 private classMemberDefinition ::= factoryConstructorDeclaration
                                 | namedConstructorDeclaration
-                                | methodDeclaration
                                 | operatorDeclaration
                                 | getterOrSetterDeclaration
+                                | methodDeclaration
                                 | varDeclarationListWithSemicolon
                                 {recoverWhile="class_member_recover"}
 private class_member_recover ::= !('abstract' | 'const' | 'factory' | 'final' | 'get' | 'operator'

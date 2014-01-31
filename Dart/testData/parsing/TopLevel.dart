@@ -15,7 +15,7 @@ var topLevelInitializedVariable = 2;
 final topLevelInitializedVariable2 = const Foo();
 
 // Top level setters
-get topLevelGetter() {}
+get topLevelGetter {}
 set topLevelSetter(a) {}
-Foo<int> get topLevelGetter3() {}
+Foo<int> get topLevelGetter3 {}
 void set topLevelSetter3(Foo<int> a) {}

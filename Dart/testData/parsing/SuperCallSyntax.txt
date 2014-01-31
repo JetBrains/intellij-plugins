@@ -373,9 +373,6 @@ Dart File
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('field')
-          FORMAL_PARAMETER_LIST
-            PsiElement(()('(')
-            PsiElement())(')')
           FUNCTION_BODY
             BLOCK
               PsiElement({)('{')

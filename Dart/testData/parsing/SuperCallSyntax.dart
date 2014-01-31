@@ -24,7 +24,7 @@ class SuperCallSyntax {
     var v8 = super.foo(1, 2)(3, 4);
   }
 
-  get field() {
+  get field {
     super.field;
     super.field = 42;
     super.field += 87;

@@ -343,9 +343,6 @@ Dart File
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
-          FORMAL_PARAMETER_LIST
-            PsiElement(()('(')
-            PsiElement())(')')
           FUNCTION_BODY
             PsiElement(=>)('=>')
             REFERENCE_EXPRESSION
@@ -429,9 +426,6 @@ Dart File
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('x')
-          FORMAL_PARAMETER_LIST
-            PsiElement(()('(')
-            PsiElement())(')')
           FUNCTION_BODY
             PsiElement(=>)('=>')
             REFERENCE_EXPRESSION

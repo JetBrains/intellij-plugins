@@ -154,9 +154,6 @@ Dart File
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('_process')
-    FORMAL_PARAMETER_LIST
-      PsiElement(()('(')
-      PsiElement())(')')
     PsiElement(native)('native')
     STRING_LITERAL_EXPRESSION
       PsiElement(OPEN_QUOTE)('"')

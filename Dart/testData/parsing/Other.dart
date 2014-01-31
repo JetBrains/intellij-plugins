@@ -44,12 +44,12 @@ class FunctionBody {
 
   foo() => 99;
   foo1() => throw new Exception();
-  get x() => x;
+  get x => x;
   set y(x) => x + y;  // Setters should be void -- not enforced by syntax.
   operator +(x) => x + 42;
 
   int foo() => 99;
-  int get x() => x;
+  int get x => x;
   void set y(x) => x + y;
   int operator +(x) => x + 42;
 

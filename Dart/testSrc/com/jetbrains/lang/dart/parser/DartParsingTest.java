@@ -88,10 +88,6 @@ public class DartParsingTest extends ParsingTestCase {
     doTest();
   }
 
-  public void testSetGetSyntax() throws Throwable {
-    doTest();
-  }
-
   public void testStrings() throws Throwable {
     doTest();
   }

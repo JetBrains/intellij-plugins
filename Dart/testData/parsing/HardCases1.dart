@@ -13,7 +13,7 @@ main(){
 }
 
 
-var get _process()
+var get _process
   native "return process;";
 
 abstract class Map<K, V> {

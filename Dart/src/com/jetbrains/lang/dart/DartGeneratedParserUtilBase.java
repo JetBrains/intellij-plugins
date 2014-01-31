@@ -3,10 +3,6 @@ package com.jetbrains.lang.dart;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.util.Key;
-import gnu.trove.THashSet;
-
-import java.util.Arrays;
-import java.util.Set;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.ID;
 import static com.jetbrains.lang.dart.DartTokenTypes.IDENTIFIER;
@@ -41,14 +37,6 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     if (result_) {
       marker_.done(ID);
       return true;
-    }
-    else if ("get".equals(builder_.getTokenText()) || "set".equals(builder_.getTokenText())) {
-      builder_.advanceLexer();
-      final boolean nextIsID = builder_.getTokenType() == IDENTIFIER || DartTokenTypesSets.BUILT_IN_IDENTIFIERS.contains(builder_.getTokenType());
-      if (!nextIsID) {
-        marker_.done(ID);
-        return true;
-      }
     }
     else if (DartTokenTypesSets.BUILT_IN_IDENTIFIERS.contains(builder_.getTokenType())) {
       builder_.advanceLexer();
