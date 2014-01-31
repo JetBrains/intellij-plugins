@@ -1292,8 +1292,8 @@ public class DartParser implements PsiParser {
   // (relationalOperator | equalityOperator) bitwiseExpressionWrapper
   public static boolean compareExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "compareExpression")) return false;
-    if (!nextTokenIs(builder_, "<compare expression>", NEQ, NEQ_EQ,
-      LT, LT_EQ, EQ_EQ, EQ_EQ_EQ, GT, GT_EQ)) return false;
+    if (!nextTokenIs(builder_, "<compare expression>", NEQ, LT,
+      LT_EQ, EQ_EQ, GT, GT_EQ)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<compare expression>");
     result_ = compareExpression_0(builder_, level_ + 1);
@@ -1575,16 +1575,14 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '==' | '!=' | '===' | '!=='
+  // '==' | '!='
   public static boolean equalityOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "equalityOperator")) return false;
-    if (!nextTokenIs(builder_, "<equality operator>", NEQ, NEQ_EQ, EQ_EQ, EQ_EQ_EQ)) return false;
+    if (!nextTokenIs(builder_, "<equality operator>", NEQ, EQ_EQ)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<equality operator>");
     result_ = consumeToken(builder_, EQ_EQ);
     if (!result_) result_ = consumeToken(builder_, NEQ);
-    if (!result_) result_ = consumeToken(builder_, EQ_EQ_EQ);
-    if (!result_) result_ = consumeToken(builder_, NEQ_EQ);
     exit_section_(builder_, level_, marker_, EQUALITY_OPERATOR, result_, false, null);
     return result_;
   }
@@ -1720,9 +1718,9 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !('!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
+  // !('!' | '!=' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
   //                                | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
-  //                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
+  //                                | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
   //                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
   //                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
   //                                | 'for' | 'get' | 'if' | 'in' | 'native' | 'new' | 'null' | 'operator' | 'rethrow'
@@ -1739,9 +1737,9 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // '!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
+  // '!' | '!=' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
   //                                | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
-  //                                | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
+  //                                | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
   //                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
   //                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
   //                                | 'for' | 'get' | 'if' | 'in' | 'native' | 'new' | 'null' | 'operator' | 'rethrow'
@@ -1755,7 +1753,6 @@ public class DartParser implements PsiParser {
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, NOT);
     if (!result_) result_ = consumeToken(builder_, NEQ);
-    if (!result_) result_ = consumeToken(builder_, NEQ_EQ);
     if (!result_) result_ = consumeToken(builder_, IS);
     if (!result_) result_ = consumeToken(builder_, REM);
     if (!result_) result_ = consumeToken(builder_, REM_EQ);
@@ -1783,7 +1780,6 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, LT_EQ);
     if (!result_) result_ = consumeToken(builder_, EQ);
     if (!result_) result_ = consumeToken(builder_, EQ_EQ);
-    if (!result_) result_ = consumeToken(builder_, EQ_EQ_EQ);
     if (!result_) result_ = consumeToken(builder_, EXPRESSION_BODY_DEF);
     if (!result_) result_ = consumeToken(builder_, GT);
     if (!result_) result_ = consumeToken(builder_, GT_EQ);
@@ -1845,14 +1841,14 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, RAW_TRIPLE_QUOTED_STRING);
     if (!result_) result_ = consumeToken(builder_, LONG_TEMPLATE_ENTRY_END);
     if (!result_) result_ = shiftRightOperator(builder_, level_ + 1);
-    if (!result_) result_ = expression_recover_0_92(builder_, level_ + 1);
+    if (!result_) result_ = expression_recover_0_90(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // '.' '.'
-  private static boolean expression_recover_0_92(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "expression_recover_0_92")) return false;
+  private static boolean expression_recover_0_90(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "expression_recover_0_90")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
@@ -3471,8 +3467,8 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !('!=' | '!==' | 'is' | '%' | '&&' | '&' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<'
-  //                                       | '<<' | '<=' | '==' | '===' | '=>' | '>' | '>=' | '?' | '[' | ']' | '^'
+  // !('!=' | 'is' | '%' | '&&' | '&' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<'
+  //                                       | '<<' | '<=' | '==' | '=>' | '>' | '>=' | '?' | '[' | ']' | '^'
   //                                       | 'native' | '{' | '|' | '||' | '}' | '~/' | shiftRightOperator | ('.' '.'))
   static boolean map_literal_entry_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "map_literal_entry_recover")) return false;
@@ -3483,15 +3479,14 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // '!=' | '!==' | 'is' | '%' | '&&' | '&' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<'
-  //                                       | '<<' | '<=' | '==' | '===' | '=>' | '>' | '>=' | '?' | '[' | ']' | '^'
+  // '!=' | 'is' | '%' | '&&' | '&' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<'
+  //                                       | '<<' | '<=' | '==' | '=>' | '>' | '>=' | '?' | '[' | ']' | '^'
   //                                       | 'native' | '{' | '|' | '||' | '}' | '~/' | shiftRightOperator | ('.' '.')
   private static boolean map_literal_entry_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "map_literal_entry_recover_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, NEQ);
-    if (!result_) result_ = consumeToken(builder_, NEQ_EQ);
     if (!result_) result_ = consumeToken(builder_, IS);
     if (!result_) result_ = consumeToken(builder_, REM);
     if (!result_) result_ = consumeToken(builder_, AND_AND);
@@ -3510,7 +3505,6 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, LT_LT);
     if (!result_) result_ = consumeToken(builder_, LT_EQ);
     if (!result_) result_ = consumeToken(builder_, EQ_EQ);
-    if (!result_) result_ = consumeToken(builder_, EQ_EQ_EQ);
     if (!result_) result_ = consumeToken(builder_, EXPRESSION_BODY_DEF);
     if (!result_) result_ = consumeToken(builder_, GT);
     if (!result_) result_ = consumeToken(builder_, GT_EQ);
@@ -3525,14 +3519,14 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, RBRACE);
     if (!result_) result_ = consumeToken(builder_, INT_DIV);
     if (!result_) result_ = shiftRightOperator(builder_, level_ + 1);
-    if (!result_) result_ = map_literal_entry_recover_0_35(builder_, level_ + 1);
+    if (!result_) result_ = map_literal_entry_recover_0_33(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // '.' '.'
-  private static boolean map_literal_entry_recover_0_35(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "map_literal_entry_recover_0_35")) return false;
+  private static boolean map_literal_entry_recover_0_33(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "map_literal_entry_recover_0_33")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
@@ -5782,8 +5776,8 @@ public class DartParser implements PsiParser {
   //                         | shiftOperator
   //                         | relationalOperator
   //                         | bitwiseOperator
-  //                         | '=='  // Disallow negative '&' === equality checks.
-  //                         | '~'   // Disallow ! operator.
+  //                         | '=='
+  //                         | '~'
   //                         | '[' ']' '='?
   public static boolean userDefinableOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "userDefinableOperator")) return false;

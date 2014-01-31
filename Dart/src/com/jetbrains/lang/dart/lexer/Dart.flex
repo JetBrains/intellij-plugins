@@ -209,9 +209,7 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "=>"               { return EXPRESSION_BODY_DEF; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "="                { return EQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "=="               { return EQ_EQ; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "==="              { return EQ_EQ_EQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "!="               { return NEQ; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "!=="              { return NEQ_EQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "."                { return DOT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> ","                { return COMMA; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> ":"                { return COLON; }

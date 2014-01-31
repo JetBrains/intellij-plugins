@@ -105,9 +105,7 @@
   EXPRESSION_BODY_DEF="=>"
   EQ="="
   EQ_EQ="=="
-  EQ_EQ_EQ="==="
   NEQ="!="
-  NEQ_EQ="!=="
   DOT="."
   COMMA=","
   COLON=":"
@@ -283,8 +281,8 @@ userDefinableOperator ::= multiplicativeOperator
                         | shiftOperator
                         | relationalOperator
                         | bitwiseOperator
-                        | '=='  // Disallow negative '&' === equality checks.
-                        | '~'   // Disallow ! operator.
+                        | '=='
+                        | '~'
                         | '[' ']' '='?
 
 multiplicativeOperator ::= '*' | '/' | '%' | '~/'
@@ -292,7 +290,7 @@ assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | 
 additiveOperator ::= '+' | '-'
 shiftOperator ::= '<<' | shiftRightOperator
 relationalOperator ::= '>=' | '>' | '<=' | '<'
-equalityOperator ::= '==' | '!=' | '===' | '!=='
+equalityOperator ::= '==' | '!='
 bitwiseOperator ::= '&' | '^' | '|'
 shiftRightOperator ::= '>' '>'
 
@@ -436,9 +434,9 @@ parameterNameReferenceExpression ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 expression ::= assignExpressionWrapper {recoverWhile="expression_recover"}
-private expression_recover ::= !('!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
+private expression_recover ::= !('!' | '!=' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
                                | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
-                               | '=' | '==' | '===' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
+                               | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
                                | 'for' | 'get' | 'if' | 'in' | 'native' | 'new' | 'null' | 'operator' | 'rethrow'
@@ -556,8 +554,8 @@ mapLiteralExpression ::= 'const'? typeArguments? '{' (mapLiteralEntry (',' mapLi
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 mapLiteralEntry ::= expression ':' expression {recoverWhile="map_literal_entry_recover"}
-private map_literal_entry_recover ::= !('!=' | '!==' | 'is' | '%' | '&&' | '&' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<'
-                                      | '<<' | '<=' | '==' | '===' | '=>' | '>' | '>=' | '?' | '[' | ']' | '^'
+private map_literal_entry_recover ::= !('!=' | 'is' | '%' | '&&' | '&' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<'
+                                      | '<<' | '<=' | '==' | '=>' | '>' | '>=' | '?' | '[' | ']' | '^'
                                       | 'native' | '{' | '|' | '||' | '}' | '~/' | shiftRightOperator | ('.' '.'))
 
 functionExpression ::= formalParameterList functionExpressionBody

@@ -650,21 +650,5 @@ Dart File
                   SUPER_EXPRESSION
                     PsiElement(super)('super')
                 PsiElement(;)(';')
-                COMPARE_EXPRESSION
-                  SUPER_EXPRESSION
-                    PsiElement(super)('super')
-                  EQUALITY_OPERATOR
-                    PsiElement(===)('===')
-                  LITERAL_EXPRESSION
-                    PsiElement(NUMBER)('42')
-                PsiElement(;)(';')
-                COMPARE_EXPRESSION
-                  SUPER_EXPRESSION
-                    PsiElement(super)('super')
-                  EQUALITY_OPERATOR
-                    PsiElement(!==)('!==')
-                  LITERAL_EXPRESSION
-                    PsiElement(NUMBER)('42')
-                PsiElement(;)(';')
               PsiElement(})('}')
       PsiElement(})('}')

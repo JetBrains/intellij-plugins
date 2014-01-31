@@ -161,7 +161,6 @@ public interface DartTokenTypes {
   IElementType ELSE = new DartElementType("else");
   IElementType EQ = new DartElementType("=");
   IElementType EQ_EQ = new DartElementType("==");
-  IElementType EQ_EQ_EQ = new DartElementType("===");
   IElementType EXPORT = new DartElementType("export");
   IElementType EXPRESSION_BODY_DEF = new DartElementType("=>");
   IElementType EXTENDS = new DartElementType("extends");
@@ -203,7 +202,6 @@ public interface DartTokenTypes {
   IElementType MUL_EQ = new DartElementType("*=");
   IElementType NATIVE = new DartElementType("native");
   IElementType NEQ = new DartElementType("!=");
-  IElementType NEQ_EQ = new DartElementType("!==");
   IElementType NEW = new DartElementType("new");
   IElementType NOT = new DartElementType("!");
   IElementType NULL = new DartElementType("null");

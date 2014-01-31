@@ -63,7 +63,5 @@ class Operators {
 
     // BUG(4994724): Do we need to allow calling these?
     !super;
-    super === 42;
-    super !== 42;
   }
 }
