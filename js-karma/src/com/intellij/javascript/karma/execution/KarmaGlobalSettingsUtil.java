@@ -1,6 +1,5 @@
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.nodejs.*;
 import com.intellij.openapi.project.Project;
@@ -86,7 +85,7 @@ public class KarmaGlobalSettingsUtil {
   public static String getNodeInterpreterPath() {
     String nodeInterpreterPath = getApplicationSetting(NODE_INTERPRETER_PATH__KEY);
     if (StringUtil.isEmpty(nodeInterpreterPath)) {
-      File nodeInterpreterFile = PathEnvironmentVariableUtil.findInPath(NodeDetectionUtil.NODE_INTERPRETER_BASE_NAME);
+      File nodeInterpreterFile = NodeDetectionUtil.findInterpreterInPath();
       if (nodeInterpreterFile != null) {
         nodeInterpreterPath = nodeInterpreterFile.getAbsolutePath();
       }
