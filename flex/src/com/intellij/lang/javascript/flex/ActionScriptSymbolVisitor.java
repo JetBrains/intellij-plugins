@@ -48,13 +48,13 @@ public class ActionScriptSymbolVisitor extends JSSymbolVisitor {
   }
 
   @Override
-  protected void processXmlTag(XmlTag element) {
+  protected JSNamespace processXmlTag(XmlTag element) {
     String id = element.getAttributeValue("id");
     if (id != null) {
       myAttributeName = JSNamedElementIndexItem.AttributeName.Id;
       mySymbolVisitor.processTag(myFileNamespace, id, element, "id");
     }
 
-    element.acceptChildren(this);
+    return myNamespace;
   }
 }
