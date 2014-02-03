@@ -45,10 +45,10 @@ public class JstdCoverageProgramRunner extends GenericProgramRunner {
   }
 
   @Override
-  protected RunContentDescriptor doExecute(Project project,
-                                           RunProfileState state,
+  protected RunContentDescriptor doExecute(@NotNull Project project,
+                                           @NotNull RunProfileState state,
                                            RunContentDescriptor contentToReuse,
-                                           ExecutionEnvironment env) throws ExecutionException {
+                                           @NotNull ExecutionEnvironment env) throws ExecutionException {
     return executeWithCoverage(project, contentToReuse, env);
   }
 

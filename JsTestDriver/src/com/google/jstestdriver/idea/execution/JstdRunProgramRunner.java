@@ -29,10 +29,10 @@ public class JstdRunProgramRunner extends GenericProgramRunner {
     return DefaultRunExecutor.EXECUTOR_ID.equals(executorId) && profile instanceof JstdRunConfiguration;
   }
 
-  protected RunContentDescriptor doExecute(final Project project,
-                                           final RunProfileState state,
+  protected RunContentDescriptor doExecute(@NotNull final Project project,
+                                           @NotNull final RunProfileState state,
                                            final RunContentDescriptor contentToReuse,
-                                           final ExecutionEnvironment env) throws ExecutionException {
+                                           @NotNull final ExecutionEnvironment env) throws ExecutionException {
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
     JstdRunConfigurationVerifier.checkJstdServerAndBrowserEnvironment(project, runConfiguration.getRunSettings(), false);
 
