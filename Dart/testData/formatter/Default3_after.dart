@@ -25,3 +25,7 @@ abstract class Test3 {
 
     int b;
 }
+
+@Foo
+void foo() {
+}

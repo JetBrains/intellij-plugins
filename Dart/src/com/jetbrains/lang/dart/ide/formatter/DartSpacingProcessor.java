@@ -13,7 +13,7 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
 public class DartSpacingProcessor {
-  private static final TokenSet KEYWORDS_WITH_SPACE_AFTER = TokenSet.create(
+  private static final TokenSet TOKENS_WITH_SPACE_AFTER = TokenSet.create(
     VAR,
     FINAL,
     STATIC,
@@ -27,7 +27,8 @@ public class DartSpacingProcessor {
     EXPORT,
     AS,
     SHOW,
-    HIDE
+    HIDE,
+    RETURN_TYPE
   );
 
   private static final TokenSet KEYWORDS_WITH_SPACE_BEFORE = TokenSet.create(
@@ -357,7 +358,7 @@ public class DartSpacingProcessor {
       return Spacing.createSpacing(0, 1, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
-    if (KEYWORDS_WITH_SPACE_AFTER.contains(type1) || KEYWORDS_WITH_SPACE_BEFORE.contains(type2)) {
+    if (TOKENS_WITH_SPACE_AFTER.contains(type1) || KEYWORDS_WITH_SPACE_BEFORE.contains(type2)) {
       return addSingleSpaceIf(true);
     }
 
