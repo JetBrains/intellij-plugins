@@ -163,7 +163,7 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 // 'void' is not listed as reserved word in spec but it may only be used as the return type of a function
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "void"                 { return VOID; }
 
-// BUILT_IN_IDENTIFIER (todo: can be used as normal identifiers)
+// BUILT_IN_IDENTIFIER (can be used as normal identifiers)
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "abstract"             { return ABSTRACT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "as"                   { return AS; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "export"               { return EXPORT; }
@@ -179,7 +179,7 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "static"               { return STATIC; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "typedef"              { return TYPEDEF; }
 
-// other (todo: can be used as normal identifiers)
+// next are not listed in spec, but they seem to have the same sense as BUILT_IN_IDENTIFIER: somewhere treated as keywords, but can be used as normal identifiers
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "on"                   { return ON; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "of"                   { return OF; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "native"               { return NATIVE; }

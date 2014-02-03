@@ -2,16 +2,22 @@ package com.jetbrains.lang.dart.ide.annotator;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
+import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
+import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.psi.DartReference;
@@ -23,47 +29,69 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class DartColorAnnotator implements Annotator {
-  private static final Set<String> builtinTypes = new THashSet<String>(Arrays.asList(
-    "int", "num", "bool", "double", "dynamic"
+  private static final Set<String> BUILT_IN_TYPES_HIGHLIGHTED_AS_KEYWORDS = new THashSet<String>(Arrays.asList(
+    "int", "num", "bool", "double"
   ));
 
   @Override
-  public void annotate(final @NotNull PsiElement node, final @NotNull AnnotationHolder holder) {
+  public void annotate(final @NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
     if (holder.isBatchMode()) return;
 
-    if (node.getNode().getElementType() == DartTokenTypes.REGULAR_STRING_PART) {
-      highlightEscapeSequences(node, holder);
+    if (DartTokenTypesSets.BUILT_IN_IDENTIFIERS.contains(element.getNode().getElementType())) {
+      if (element.getNode().getTreeParent().getElementType() != DartTokenTypes.ID) {
+        final String message = ApplicationManager.getApplication().isUnitTestMode() ? "highlighted as keyword" : null;
+        holder.createInfoAnnotation(element, message).setTextAttributes(TextAttributesKey.find(DartSyntaxHighlighterColors.DART_KEYWORD));
+        return;
+      }
+    }
+
+    if (element.getNode().getElementType() == DartTokenTypes.REGULAR_STRING_PART) {
+      highlightEscapeSequences(element, holder);
       return;
     }
 
-    PsiElement element = node;
-    if (element instanceof DartReference && element.getParent() instanceof DartType) {
-      final TextAttributesKey attribute = getAttributeByBuiltinType(element.getText());
-      if (attribute != null) {
-        holder.createInfoAnnotation(node, null).setTextAttributes(attribute);
-        return;
-      }
+    if (element instanceof DartReference && element.getParent() instanceof DartType && "dynamic".equals(element.getText())) {
+      holder.createInfoAnnotation(element, null).setTextAttributes(TextAttributesKey.find(DartSyntaxHighlighterColors.DART_BUILTIN));
+      //noinspection UnnecessaryReturnStatement
+      return;
     }
 
-    if (element instanceof DartReference) {
+    highlightIfDeclarationOrReference(element, holder);
+  }
+
+  private static void highlightIfDeclarationOrReference(final PsiElement element, final AnnotationHolder holder) {
+    DartComponentName componentName = null;
+
+    if (element instanceof DartComponentName) {
+      componentName = (DartComponentName)element;
+    }
+    else if (element instanceof DartReference) {
       final DartReference[] references = PsiTreeUtil.getChildrenOfType(element, DartReference.class);
       boolean chain = references != null && references.length > 1;
       if (!chain) {
-        element = ((DartReference)element).resolve(); // todo this takes too much time
+        final PsiElement resolved = ((DartReference)element).resolve(); // todo this takes too much time
+        if (resolved instanceof DartComponentName) componentName = (DartComponentName)resolved;
       }
     }
-    if (element instanceof DartComponentName) {
-      TextAttributesKey attribute = getAttributeByBuiltinType(((DartComponentName)element).getName());
-      if (attribute != null) {
-        holder.createInfoAnnotation(node, null).setTextAttributes(attribute);
+
+    if (componentName != null) {
+      if (BUILT_IN_TYPES_HIGHLIGHTED_AS_KEYWORDS.contains(componentName.getName()) && isInSdkCore(componentName.getContainingFile())) {
+        holder.createInfoAnnotation(element, null).setTextAttributes(TextAttributesKey.find(DartSyntaxHighlighterColors.DART_BUILTIN));
         return;
       }
-      final boolean isStatic = checkStatic(element.getParent());
-      attribute = getAttributeByType(DartComponentType.typeOf(element.getParent()), isStatic);
+
+      final boolean isStatic = isStatic(componentName.getParent());
+      final TextAttributesKey attribute = getAttributeByType(DartComponentType.typeOf(componentName.getParent()), isStatic);
       if (attribute != null) {
-        holder.createInfoAnnotation(node, null).setTextAttributes(attribute);
+        holder.createInfoAnnotation(element, null).setTextAttributes(attribute);
       }
     }
+  }
+
+  private static boolean isInSdkCore(final PsiFile psiFile) {
+    final VirtualFile virtualFile = psiFile.getVirtualFile();
+    return virtualFile != null &&
+           virtualFile.getParent() == LocalFileSystem.getInstance().findFileByPath(DartSettings.getSettings().getSdkPath() + "/lib/core");
   }
 
   private static void highlightEscapeSequences(final PsiElement node, final AnnotationHolder holder) {
@@ -83,20 +111,15 @@ public class DartColorAnnotator implements Annotator {
     }
   }
 
-  private static boolean checkStatic(PsiElement parent) {
-    if (parent instanceof DartComponent) {
-      return ((DartComponent)parent).isStatic();
+  private static boolean isStatic(final PsiElement element) {
+    if (element instanceof DartComponent) {
+      return ((DartComponent)element).isStatic();
     }
     return false;
   }
 
   @Nullable
-  private static TextAttributesKey getAttributeByBuiltinType(String name) {
-    return builtinTypes.contains(name) ? TextAttributesKey.find(DartSyntaxHighlighterColors.DART_BUILTIN) : null;
-  }
-
-  @Nullable
-  private static TextAttributesKey getAttributeByType(@Nullable DartComponentType type, boolean isStatic) {
+  private static TextAttributesKey getAttributeByType(final @Nullable DartComponentType type, boolean isStatic) {
     if (type == null) {
       return null;
     }
