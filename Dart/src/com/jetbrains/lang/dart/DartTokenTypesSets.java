@@ -63,7 +63,9 @@ public interface DartTokenTypesSets {
                                             TRY,
                                             VAR,
                                             WHILE,
-                                            WITH);
+                                            WITH,
+
+                                            VOID);
 
   TokenSet BUILT_IN_IDENTIFIERS = TokenSet.create(ABSTRACT,
                                                   AS,

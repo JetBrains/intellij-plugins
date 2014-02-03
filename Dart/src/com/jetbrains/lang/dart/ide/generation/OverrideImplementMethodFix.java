@@ -9,9 +9,6 @@ import com.jetbrains.lang.dart.psi.DartReturnType;
 import com.jetbrains.lang.dart.psi.DartType;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartComponent> {
   public OverrideImplementMethodFix(final DartClass dartClass) {
     super(dartClass);
@@ -22,8 +19,12 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
     final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);
     template.setToReformat(true);
     final DartReturnType returnType = PsiTreeUtil.getChildOfType(element, DartReturnType.class);
-    final DartType dartType = returnType == null ? PsiTreeUtil.getChildOfType(element, DartType.class) : returnType.getType();
-    if (dartType != null) {
+    final DartType dartType = PsiTreeUtil.getChildOfType(element, DartType.class);
+    if (returnType != null) {
+      template.addTextSegment(DartPresentableUtil.buildTypeText(element, returnType, specializations));
+      template.addTextSegment(" ");
+    }
+    else if (dartType != null) {
       template.addTextSegment(DartPresentableUtil.buildTypeText(element, dartType, specializations));
       template.addTextSegment(" ");
     }

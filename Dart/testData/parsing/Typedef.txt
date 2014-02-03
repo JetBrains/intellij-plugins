@@ -2,10 +2,7 @@ Dart File
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('VoidCallback1')
@@ -25,10 +22,7 @@ Dart File
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('VoidCallback2')
@@ -58,10 +52,7 @@ Dart File
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('VoidCallback3')
@@ -97,10 +88,7 @@ Dart File
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('VoidCallback4')
@@ -753,10 +741,7 @@ Dart File
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('VoidCallbak1')
@@ -776,10 +761,7 @@ Dart File
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('VoidCallbak2')
@@ -809,10 +791,7 @@ Dart File
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('VoidCallbak3')
@@ -848,10 +827,7 @@ Dart File
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('VoidCallbak4')
@@ -888,10 +864,7 @@ Dart File
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('VoidCallbuk1')
@@ -918,10 +891,7 @@ Dart File
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('VoidCallbuk2')
@@ -963,10 +933,7 @@ Dart File
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('VoidCallbuk3')
@@ -1024,10 +991,7 @@ Dart File
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('VoidCallbuk4')

@@ -203,10 +203,7 @@ Dart File
       CLASS_MEMBERS
         METHOD_DECLARATION
           RETURN_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('void')
+            PsiElement(void)('void')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('f')
@@ -641,10 +638,7 @@ Dart File
       CLASS_MEMBERS
         METHOD_DECLARATION
           RETURN_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('void')
+            PsiElement(void)('void')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('f')
@@ -987,10 +981,7 @@ Dart File
       CLASS_MEMBERS
         METHOD_DECLARATION
           RETURN_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('void')
+            PsiElement(void)('void')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('f')

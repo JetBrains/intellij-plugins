@@ -10,7 +10,7 @@ var x = a ? b : c ? d : e ? f : g;
 
 class Operators {
 
-  @Object() external void operator ~(); // void is id
+  @Object() external void operator ~();
 
   @Object() operator operator *(x) => foo(bar(baz)) + 1; // operator is id, not valid, but should be parsed
   @Object() external operator /(x);
@@ -21,7 +21,7 @@ class Operators {
   operator operator -(x);
 
   @Foo @Bar static operator <<(x) {} // static is id, not valid, but should be parsed
-  void operator >>(x) {}  // void is id
+  void operator >>(x) {}
 
   part operator >=(x) {} // part is id
   show operator >(x) {} // show is id

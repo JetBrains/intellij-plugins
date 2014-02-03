@@ -13,9 +13,6 @@ import com.jetbrains.lang.dart.util.DartPresentableUtil;
 
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
   public enum Strategy {
     GETTER {
@@ -63,8 +60,9 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
   @Override
   protected Template buildFunctionsText(TemplateManager templateManager, DartComponent namedComponent) {
     final DartReturnType returnType = PsiTreeUtil.getChildOfType(namedComponent, DartReturnType.class);
-    final DartType dartType = returnType == null ? PsiTreeUtil.getChildOfType(namedComponent, DartType.class) : returnType.getType();
-    final String typeText = DartPresentableUtil.buildTypeText(namedComponent, dartType);
+    final DartType dartType = PsiTreeUtil.getChildOfType(namedComponent, DartType.class);
+    final String typeText = returnType == null ? DartPresentableUtil.buildTypeText(namedComponent, dartType, null)
+                                               : DartPresentableUtil.buildTypeText(namedComponent, returnType, null);
     final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);
     template.setToReformat(true);
     if (myStratagy == Strategy.GETTER || myStratagy == Strategy.GETTERSETTER) {

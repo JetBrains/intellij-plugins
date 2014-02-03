@@ -143,10 +143,7 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               FUNCTION_SIGNATURE
                 RETURN_TYPE
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('void')
+                  PsiElement(void)('void')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('f')
@@ -348,10 +345,7 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               FUNCTION_SIGNATURE
                 RETURN_TYPE
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('void')
+                  PsiElement(void)('void')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('p4')
@@ -413,10 +407,7 @@ Dart File
                 NORMAL_FORMAL_PARAMETER
                   FUNCTION_SIGNATURE
                     RETURN_TYPE
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('void')
+                      PsiElement(void)('void')
                     COMPONENT_NAME
                       ID
                         PsiElement(IDENTIFIER)('p9')
@@ -469,10 +460,7 @@ Dart File
                 NORMAL_FORMAL_PARAMETER
                   FUNCTION_SIGNATURE
                     RETURN_TYPE
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('void')
+                      PsiElement(void)('void')
                     COMPONENT_NAME
                       ID
                         PsiElement(IDENTIFIER)('p13')
@@ -530,10 +518,7 @@ Dart File
             NORMAL_FORMAL_PARAMETER
               FUNCTION_SIGNATURE
                 RETURN_TYPE
-                  TYPE
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('void')
+                  PsiElement(void)('void')
                 COMPONENT_NAME
                   ID
                     PsiElement(IDENTIFIER)('p4')
@@ -595,10 +580,7 @@ Dart File
                 NORMAL_FORMAL_PARAMETER
                   FUNCTION_SIGNATURE
                     RETURN_TYPE
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('void')
+                      PsiElement(void)('void')
                     COMPONENT_NAME
                       ID
                         PsiElement(IDENTIFIER)('p9')
@@ -651,10 +633,7 @@ Dart File
                 NORMAL_FORMAL_PARAMETER
                   FUNCTION_SIGNATURE
                     RETURN_TYPE
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('void')
+                      PsiElement(void)('void')
                     COMPONENT_NAME
                       ID
                         PsiElement(IDENTIFIER)('p13')

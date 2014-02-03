@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.util;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.template.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -74,9 +75,8 @@ public class DartPresentableUtil {
 
     if (functionSignature != null) {
       final DartReturnType returnType = functionSignature.getReturnType();
-      final DartType type = returnType == null ? null : returnType.getType();
-      if (type != null) {
-        result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
+      if (returnType != null) {
+        result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), returnType, specialization));
         result.append(" ");
       }
       result.append(functionSignature.getName());
@@ -104,17 +104,25 @@ public class DartPresentableUtil {
     return result.toString();
   }
 
-  public static String buildTypeText(@Nullable DartComponent component, @Nullable DartType type) {
-    return buildTypeText(component, type, new DartGenericSpecialization());
+
+  public static String buildTypeText(final @Nullable DartComponent element,
+                                     final @Nullable DartReturnType returnType,
+                                     final @Nullable DartGenericSpecialization specializations) {
+    if (returnType == null) return "";
+    return returnType.getNode().findChildByType(DartTokenTypes.VOID) == null
+           ? buildTypeText(element, returnType.getType(), specializations)
+           : "void";
   }
 
-  public static String buildTypeText(@Nullable DartComponent element, @Nullable DartType type, DartGenericSpecialization specializations) {
+  public static String buildTypeText(final @Nullable DartComponent element,
+                                     final @Nullable DartType type,
+                                     final @Nullable DartGenericSpecialization specializations) {
     if (type == null) {
       return "";
     }
     final StringBuilder result = new StringBuilder();
     final String typeText = type.getReferenceExpression().getText();
-    if (specializations.containsKey(element, typeText)) {
+    if (specializations != null && specializations.containsKey(element, typeText)) {
       final DartClass haxeClass = specializations.get(element, typeText).getDartClass();
       result.append(haxeClass == null ? typeText : haxeClass.getName());
     }

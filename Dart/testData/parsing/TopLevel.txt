@@ -15,10 +15,7 @@ Dart File
         PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('topLevelTypedFunction')
@@ -269,10 +266,7 @@ Dart File
         PsiElement(})('}')
   SETTER_DECLARATION
     RETURN_TYPE
-      TYPE
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('void')
+      PsiElement(void)('void')
     PsiElement(set)('set')
     COMPONENT_NAME
       ID

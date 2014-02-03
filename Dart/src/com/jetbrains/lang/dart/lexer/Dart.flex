@@ -160,6 +160,9 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "while"                { return WHILE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "with"                 { return WITH; }
 
+// 'void' is not listed as reserved word in spec but it may only be used as the return type of a function
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "void"                 { return VOID; }
+
 // BUILT_IN_IDENTIFIER (todo: can be used as normal identifiers)
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "abstract"             { return ABSTRACT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "as"                   { return AS; }

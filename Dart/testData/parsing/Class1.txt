@@ -453,10 +453,7 @@ Dart File
             PsiElement(;)(';')
         SETTER_DECLARATION
           RETURN_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('void')
+            PsiElement(void)('void')
           PsiElement(set)('set')
           COMPONENT_NAME
             ID
@@ -526,10 +523,7 @@ Dart File
         SETTER_DECLARATION
           PsiElement(static)('static')
           RETURN_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('void')
+            PsiElement(void)('void')
           PsiElement(set)('set')
           COMPONENT_NAME
             ID
@@ -563,10 +557,7 @@ Dart File
         SETTER_DECLARATION
           PsiElement(external)('external')
           RETURN_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('void')
+            PsiElement(void)('void')
           PsiElement(set)('set')
           COMPONENT_NAME
             ID
@@ -597,10 +588,7 @@ Dart File
           PsiElement(external)('external')
           PsiElement(static)('static')
           RETURN_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('void')
+            PsiElement(void)('void')
           PsiElement(set)('set')
           COMPONENT_NAME
             ID
@@ -661,10 +649,7 @@ Dart File
           PsiElement(external)('external')
           PsiElement(static)('static')
           RETURN_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('void')
+            PsiElement(void)('void')
           PsiElement(set)('set')
           COMPONENT_NAME
             ID

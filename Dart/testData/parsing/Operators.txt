@@ -135,10 +135,7 @@ Dart File
               PsiElement())(')')
           PsiElement(external)('external')
           RETURN_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('void')
+            PsiElement(void)('void')
           PsiElement(operator)('operator')
           USER_DEFINABLE_OPERATOR
             PsiElement(~)('~')
@@ -146,7 +143,6 @@ Dart File
             PsiElement(()('(')
             PsiElement())(')')
           PsiElement(;)(';')
-        PsiComment(SINGLE_LINE_COMMENT)('// void is id')
         OPERATOR_DECLARATION
           METADATA
             PsiElement(@)('@')
@@ -342,10 +338,7 @@ Dart File
         PsiComment(SINGLE_LINE_COMMENT)('// static is id, not valid, but should be parsed')
         OPERATOR_DECLARATION
           RETURN_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('void')
+            PsiElement(void)('void')
           PsiElement(operator)('operator')
           USER_DEFINABLE_OPERATOR
             SHIFT_OPERATOR
@@ -366,7 +359,6 @@ Dart File
               STATEMENTS
                 <empty list>
               PsiElement(})('}')
-        PsiComment(SINGLE_LINE_COMMENT)('// void is id')
         OPERATOR_DECLARATION
           RETURN_TYPE
             TYPE

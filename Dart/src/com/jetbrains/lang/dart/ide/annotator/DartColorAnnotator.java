@@ -64,12 +64,6 @@ public class DartColorAnnotator implements Annotator {
         holder.createInfoAnnotation(node, null).setTextAttributes(attribute);
       }
     }
-    else if (node instanceof DartType) {
-      final TextAttributesKey attribute = getAttributeByTypeName(((DartType)node).getReferenceExpression().getText());
-      if (attribute != null) {
-        holder.createInfoAnnotation(node, null).setTextAttributes(attribute);
-      }
-    }
   }
 
   private static void highlightEscapeSequences(final PsiElement node, final AnnotationHolder holder) {
@@ -87,11 +81,6 @@ public class DartColorAnnotator implements Annotator {
           .setTextAttributes(attribute);
       }
     }
-  }
-
-  @Nullable
-  private static TextAttributesKey getAttributeByTypeName(String type) {
-    return "void".equals(type) ? TextAttributesKey.find(DartSyntaxHighlighterColors.DART_KEYWORD) : null;    // todo dynamic
   }
 
   private static boolean checkStatic(PsiElement parent) {

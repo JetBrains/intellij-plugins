@@ -55,6 +55,9 @@
   WHILE="while"
   WITH="with"
 
+// void
+  VOID="void"
+
 // BUILT_IN_IDENTIFIER
   ABSTRACT="abstract"
   AS="as"
@@ -145,8 +148,7 @@ private topLevelDefinition ::= libraryStatement
                              | functionDeclarationWithBodyOrNative
                              | varDeclarationListWithSemicolon
                              {recoverWhile="top_level_recover"}
-private top_level_recover ::= !('#' | '@' | 'import' | 'library' | 'native' | 'class' | 'const' | 'final' | 'get'
-                              | 'set' | 'static' | 'typedef' | 'var' | <<nonStrictID>> | 'abstract' | 'part'| 'export' | 'external')
+private top_level_recover ::= !(<<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'export' | 'external' | 'final' | 'get' | 'import' | 'library' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void')
 
 partOfStatement ::= metadata* 'part' 'of' libraryId ';' {
   pin=4
@@ -243,8 +245,7 @@ private classMemberDefinition ::= factoryConstructorDeclaration
                                 | methodDeclaration
                                 | varDeclarationListWithSemicolon
                                 {recoverWhile="class_member_recover"}
-private class_member_recover ::= !('abstract' | 'const' | 'factory' | 'final' | 'get' | 'operator'
-                                 | 'set' | 'static' | 'var' | <<nonStrictID>> | '}' | '@' | 'external')
+private class_member_recover ::= !(<<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'export' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'library' | 'operator' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '}' )
 
 private functionBodyOrNative ::= 'native' functionBody
                                | functionNative
@@ -272,6 +273,7 @@ private super_call_or_field_initializer_recover ::= !(')' | ',' | ':' | ';' | '=
 
 functionTypeAlias ::= metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'
 {pin=5 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+private functionPrefix ::= returnType componentName | componentName
 
 classTypeAlias ::= metadata* 'typedef' componentName typeParameters? '=' type mixins? ';'
 {pin=5 mixin="com.jetbrains.lang.dart.psi.impl.TypedefDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartComponent"}
@@ -322,7 +324,7 @@ simpleFormalParameter ::= declaredIdentifier | metadata* componentName
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private declaredIdentifier ::= metadata* finalConstVarOrTypeAndComponentName;
 
-returnType ::= type | 'var'
+returnType ::= 'void' | type
 
 private finalConstVarOrType ::= 'final' type? | 'const' type? | 'var' | type // Be careful on using it! It may erroneously consume 'type?'. See finalConstVarOrTypeAndComponentName
 private finalConstVarOrTypeAndComponentName ::= 'final' type componentName |
@@ -573,7 +575,6 @@ functionDeclarationWithBodyOrNative ::= metadata* 'external'? (returnType compon
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 functionDeclarationWithBody ::= (returnType componentName formalParameterList | componentName formalParameterList) functionBody
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
-private functionPrefix ::= returnType componentName | componentName
 
 functionBody ::= arrowBodyWithSemi | block
 private arrowBodyWithSemi ::= arrowBody ';' {pin=1}

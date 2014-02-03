@@ -179,10 +179,7 @@ Dart File
                   PsiElement(CLOSING_QUOTE)(''')
               PsiElement())(')')
           RETURN_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('void')
+            PsiElement(void)('void')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('$dom_addEventListener')
@@ -293,10 +290,7 @@ Dart File
                   PsiElement(CLOSING_QUOTE)(''')
               PsiElement())(')')
           RETURN_TYPE
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('void')
+            PsiElement(void)('void')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('$dom_removeEventListener')

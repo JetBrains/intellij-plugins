@@ -9,9 +9,6 @@ import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartFunctionDescription {
   private final String name;
   private final String returnType;
@@ -110,11 +107,11 @@ public class DartFunctionDescription {
   }
 
   public static DartFunctionDescription createDescription(DartComponent namedComponent, DartClassResolveResult resolveResult) {
-    String typeText = "";
     final DartReturnType returnType = PsiTreeUtil.getChildOfType(namedComponent, DartReturnType.class);
-    if (returnType != null) {
-      typeText = DartPresentableUtil.buildTypeText(namedComponent, returnType.getType(), resolveResult.getSpecialization());
-    }
+    final DartType dartType = PsiTreeUtil.getChildOfType(namedComponent, DartType.class);
+    final String typeText = returnType == null
+                            ? DartPresentableUtil.buildTypeText(namedComponent, dartType, resolveResult.getSpecialization())
+                            : DartPresentableUtil.buildTypeText(namedComponent, returnType, resolveResult.getSpecialization());
     return new DartFunctionDescription(namedComponent.getName(),
                                        typeText,
                                        DartParameterDescription.getParameters(namedComponent, resolveResult.getSpecialization()),
