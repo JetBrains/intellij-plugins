@@ -80,7 +80,27 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
       if (firstToken == JSTokenTypes.STRING_LITERAL) {
         return parseStringLiteral(firstToken);
       }
+      if (firstToken == JSTokenTypes.IDENTIFIER && builder.lookAhead(1) == JSTokenTypes.AS_KEYWORD) {
+        return parseAsExpression();
+      }
       return super.parsePrimaryExpression();
+    }
+
+    private boolean parseAsExpression() {
+      PsiBuilder.Marker expr = builder.mark();
+      buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+      builder.advanceLexer();
+      parseExplicitIdentifierWithError();
+      expr.done(AngularJSElementTypes.AS_EXPRESSION);
+      return true;
+    }
+
+    private void parseExplicitIdentifierWithError() {
+      if (isIdentifierToken(builder.getTokenType())) {
+        parseExplicitIdentifier();
+      } else {
+        builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
+      }
     }
 
     protected boolean parseBitwiseORExpression(final boolean allowIn) {
@@ -148,9 +168,7 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
     public boolean parseInExpression() {
       final PsiBuilder.Marker expr = builder.mark();
       if (isIdentifierToken(builder.getTokenType())) {
-        final PsiBuilder.Marker def = builder.mark();
-        buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
-        def.done(JSElementTypes.DEFINITION_EXPRESSION);
+        parseExplicitIdentifier();
       } else {
         final PsiBuilder.Marker keyValue = builder.mark();
         parseKeyValue();
@@ -174,31 +192,25 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
     private void parseKeyValue() {
       builder.advanceLexer();
       final PsiBuilder.Marker comma = builder.mark();
-      if (isIdentifierToken(builder.getTokenType())) {
-        final PsiBuilder.Marker def = builder.mark();
-        buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
-        def.done(JSElementTypes.DEFINITION_EXPRESSION);
-      } else {
-        builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
-      }
+      parseExplicitIdentifierWithError();
       if (builder.getTokenType() == JSTokenTypes.COMMA) {
         builder.advanceLexer();
       } else {
         builder.error(JSBundle.message("javascript.parser.message.expected.comma"));
       }
-      if (isIdentifierToken(builder.getTokenType())) {
-        final PsiBuilder.Marker def = builder.mark();
-        buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
-        def.done(JSElementTypes.DEFINITION_EXPRESSION);
-      } else {
-        builder.error(JSBundle.message("javascript.parser.message.expected.identifier"));
-      }
+      parseExplicitIdentifierWithError();
       comma.done(JSElementTypes.COMMA_EXPRESSION);
       if (builder.getTokenType() == JSTokenTypes.RPAR) {
         builder.advanceLexer();
       } else {
         builder.error(JSBundle.message("javascript.parser.message.expected.rparen"));
       }
+    }
+
+    private void parseExplicitIdentifier() {
+      final PsiBuilder.Marker def = builder.mark();
+      buildTokenElement(JSElementTypes.REFERENCE_EXPRESSION);
+      def.done(JSElementTypes.DEFINITION_EXPRESSION);
     }
   }
 }

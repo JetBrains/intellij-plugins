@@ -11,6 +11,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.angularjs.lang.AngularJSLanguage;
 import org.angularjs.lang.lexer.AngularJSLexer;
+import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,8 @@ public class AngularJSParserDefinition extends JavascriptParserDefinition {
       return new AngularJSRepeatExpression(node);
     } else if (type == AngularJSElementTypes.FILTER_EXPRESSION) {
       return new AngularJSFilterExpression(node);
+    } else if (type == AngularJSElementTypes.AS_EXPRESSION) {
+      return new AngularJSAsExpression(node);
     }
     return super.createElement(node);
   }

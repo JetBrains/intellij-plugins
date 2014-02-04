@@ -9,4 +9,8 @@ public class AngularJSElementVisitor extends JSElementVisitor {
   public void visitAngularJSRepeatExpression(AngularJSRepeatExpression repeatExpression) {
     visitJSExpression(repeatExpression);
   }
+
+  public void visitAngularJSAsExpression(AngularJSAsExpression asExpression) {
+    visitJSExpression(asExpression);
+  }
 }
