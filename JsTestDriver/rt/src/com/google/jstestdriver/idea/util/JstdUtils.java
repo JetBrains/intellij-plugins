@@ -5,6 +5,7 @@ import com.google.jstestdriver.config.ResolvedConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.Collection;
 
 /**
  * @author Sergey Simonchik
@@ -19,7 +20,14 @@ public class JstdUtils {
   private JstdUtils() {}
 
   public static boolean isJasmineTests(@NotNull ResolvedConfiguration configuration) {
-    for (FileInfo info : configuration.getFilesList()) {
+    if (containsJasmineAdapter(configuration.getFilesList())) {
+      return true;
+    }
+    return containsJasmineAdapter(configuration.getTests());
+  }
+
+  private static boolean containsJasmineAdapter(@NotNull Collection<FileInfo> fileInfos) {
+    for (FileInfo info : fileInfos) {
       File file = new File(info.getFilePath());
       if (isJasmineAdapter(file)) {
         return true;
