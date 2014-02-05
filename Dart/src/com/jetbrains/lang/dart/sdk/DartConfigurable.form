@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.jetbrains.lang.dart.sdk.DartConfigurable">
+  <grid id="27dc6" binding="myMainPanel" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="573" height="450"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="c3fe3" class="com.intellij.ui.components.JBCheckBox" binding="myEnableDartSupportCheckBox">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="enable.dart.support.for.project.0"/>
+        </properties>
+      </component>
+      <grid id="40511" binding="mySettingsPanel" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="2cf6a" class="com.intellij.ui.components.JBLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font style="1"/>
+              <labelFor value="366bd"/>
+              <text value="&amp;Dart SDK path:"/>
+            </properties>
+          </component>
+          <component id="366bd" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="mySdkPathTextWithBrowse">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="4204" class="com.intellij.ui.components.JBLabel">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font style="1"/>
+              <text value="Version:"/>
+            </properties>
+          </component>
+          <component id="fc231" class="com.intellij.ui.components.JBLabel" binding="myVersionLabel">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font style="1"/>
+              <text value="1.0"/>
+            </properties>
+          </component>
+          <vspacer id="1362a">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="-1" height="20"/>
+              </grid>
+            </constraints>
+          </vspacer>
+          <grid id="c9d97" binding="myModulesPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="edcfd" class="com.intellij.ui.components.JBLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <labelFor value="5d0d5"/>
+                  <text value="E&amp;nable Dart support for the following modules:"/>
+                </properties>
+              </component>
+              <scrollpane id="39c00" class="com.intellij.ui.components.JBScrollPane">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="5d0d5" class="com.intellij.ui.CheckboxTree" binding="myModulesCheckboxTree" custom-create="true">
+                    <constraints/>
+                    <properties>
+                      <rootVisible value="true"/>
+                      <showsRootHandles value="false"/>
+                    </properties>
+                    <clientProperties>
+                      <JTree.lineStyle class="java.lang.String" value="Angled"/>
+                    </clientProperties>
+                  </component>
+                </children>
+              </scrollpane>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <vspacer id="bf758">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="-1" height="15"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <component id="99670" class="com.intellij.ui.components.JBLabel" binding="myErrorLabel">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Error: Path to the Dart SDK is not specified."/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
