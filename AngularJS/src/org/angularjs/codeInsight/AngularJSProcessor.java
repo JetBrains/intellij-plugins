@@ -14,6 +14,7 @@ import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
+import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSRecursiveVisitor;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
 
@@ -46,6 +47,14 @@ public class AngularJSProcessor {
               consumer.consume(node);
             }
             super.visitJSVariable(node);
+          }
+
+          @Override
+          public void visitAngularJSAsExpression(AngularJSAsExpression asExpression) {
+            final JSDefinitionExpression def = asExpression.getDefinition();
+            if (def != null && scopeMatches(element, asExpression)) {
+              consumer.consume(def);
+            }
           }
 
           @Override

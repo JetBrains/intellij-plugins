@@ -2,7 +2,7 @@ package org.angularjs.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
-import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
+import com.intellij.lang.javascript.psi.impl.JSBinaryExpressionImpl;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSAsExpression extends JSExpressionImpl {
+public class AngularJSAsExpression extends JSBinaryExpressionImpl {
   public AngularJSAsExpression(ASTNode node) {
     super(node);
   }

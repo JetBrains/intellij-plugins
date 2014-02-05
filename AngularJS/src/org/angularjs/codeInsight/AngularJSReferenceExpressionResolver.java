@@ -11,8 +11,10 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import org.angularjs.index.AngularControllerIndex;
 import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 
 import java.util.ArrayList;
@@ -43,7 +45,12 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
   public ResolveResult[] doResolve() {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
 
-    if (AngularJSFilterExpression.isFilterNameRef(myRef, myParent)) {
+    if (myRef.getParent() instanceof AngularJSAsExpression) {
+      final JSNamedElementProxy resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularControllerIndex.INDEX_ID, myReferencedName);
+      if (resolve != null) {
+        return new JSResolveResult[]{new JSResolveResult(resolve)};
+      }
+    } else if (AngularJSFilterExpression.isFilterNameRef(myRef, myParent)) {
       final JSNamedElementProxy resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.INDEX_ID, myReferencedName);
       if (resolve != null) {
         return new JSResolveResult[] {new JSResolveResult(resolve)};
