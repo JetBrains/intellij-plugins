@@ -9,6 +9,8 @@ import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
+import java.util.List;
+
 /**
  * @author Dennis.Ushakov
  */
@@ -35,6 +37,12 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testNgRepeatImplicitCompletion() {
     myFixture.configureByFiles("ngRepeatImplicit.html", "angular.js");
     myFixture.testCompletionVariants("ngRepeatImplicit.html", "$index", "$first", "$middle", "$last", "$even", "$odd");
+  }
+
+  public void testNgRepeatAfterDotCompletion() {
+    myFixture.configureByFiles("ngRepeatImplicitAfterDot.html", "angular.js");
+    final List<String> variants = myFixture.getCompletionVariants("ngRepeatImplicitAfterDot.html");
+    assertDoesntContain(variants, "person", "$index", "$first", "$middle", "$last", "$even", "$odd");
   }
 
   public void testNgRepeatImplicitResolve() {

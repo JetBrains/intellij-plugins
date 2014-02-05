@@ -1,10 +1,7 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.psi.JSDefinitionExpression;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSNamedElement;
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiElement;
@@ -60,11 +57,17 @@ public class AngularJSProcessor {
           @Override
           public void visitAngularJSRepeatExpression(AngularJSRepeatExpression repeatExpression) {
             if (scopeMatches(element, repeatExpression)) {
-              for (JSDefinitionExpression def : repeatExpression.getDefinitions()) {
-                consumer.consume(def);
-              }
-              for (Map.Entry<String, String> entry : NG_REPEAT_IMPLICITS.entrySet()) {
-                consumer.consume(new ImplicitJSVariableImpl(entry.getKey(), entry.getValue(), repeatExpression));
+              final PsiElement parent = element.getParent();
+
+              if (!(parent instanceof JSReferenceExpression) ||
+                  ((JSReferenceExpression)parent).getQualifier() == null) {
+                for (JSDefinitionExpression def : repeatExpression.getDefinitions()) {
+                  consumer.consume(def);
+                }
+
+                for (Map.Entry<String, String> entry : NG_REPEAT_IMPLICITS.entrySet()) {
+                  consumer.consume(new ImplicitJSVariableImpl(entry.getKey(), entry.getValue(), repeatExpression));
+                }
               }
             }
             super.visitAngularJSRepeatExpression(repeatExpression);
