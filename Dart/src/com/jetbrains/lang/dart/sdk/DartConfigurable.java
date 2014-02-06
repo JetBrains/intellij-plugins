@@ -198,7 +198,7 @@ public class DartConfigurable implements SearchableConfigurable {
 
     if (mySdkInitial != null) {
       myModulesWithDartSdkLibAttachedInitial.addAll(
-        DartSdkGlobalLibUtil.getModulesWithDartSdkLibAttached(myProject, mySdkInitial.getGlobalLibName()));
+        DartSdkGlobalLibUtil.getModulesWithDartSdkGlobalLibAttached(myProject, mySdkInitial.getGlobalLibName()));
     }
 
     myDartSupportEnabledInitial = !myModulesWithDartSdkLibAttachedInitial.isEmpty();
@@ -251,7 +251,7 @@ public class DartConfigurable implements SearchableConfigurable {
         }
         else {
           if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {
-            DartSdkGlobalLibUtil.detachDartSdkLib(mySdkInitial, myModulesWithDartSdkLibAttachedInitial);
+            DartSdkGlobalLibUtil.detachDartSdkGlobalLib(myModulesWithDartSdkLibAttachedInitial, mySdkInitial.getGlobalLibName());
           }
         }
       }

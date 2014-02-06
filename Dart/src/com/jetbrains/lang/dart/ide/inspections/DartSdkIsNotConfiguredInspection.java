@@ -2,15 +2,11 @@ package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInspection.*;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
@@ -46,7 +42,7 @@ public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
                                       new OpenDartSettingsQuickFix(DartBundle.message("setup.dart.sdk")));
     }
 
-    if (!DartSdkGlobalLibUtil.isDartSdkLibAttached(module, sdk.getGlobalLibName())) {
+    if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
       final String message = DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()
                              ? DartBundle.message("dart.support.is.not.enabled.for.module.0", module.getName())
                              : DartBundle.message("dart.support.is.not.enabled.for.project");
@@ -90,18 +86,18 @@ public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
       return false;
     }
 
-    public void applyFix(final Project project, final PsiFile file, final @Nullable Editor editor) {
+    public void applyFix(final @NotNull Project project, final @NotNull PsiFile file, final @Nullable Editor editor) {
       ShowSettingsUtil.getInstance().showSettingsDialog(project, DartConfigurable.DART_SETTINGS_PAGE_NAME);
     }
   }
 
   private static class EnableDartSupportQuickFix extends IntentionAndQuickFixAction {
     private final @NotNull Module myModule;
-    private final @NotNull String mySdkGlobalLibName;
+    private final @NotNull String myDartSdkGlobalLibName;
 
-    public EnableDartSupportQuickFix(final @NotNull Module module, final @NotNull String sdkGlobalLibName) {
+    public EnableDartSupportQuickFix(final @NotNull Module module, final @NotNull String dartSdkGlobalLibName) {
       myModule = module;
-      mySdkGlobalLibName = sdkGlobalLibName;
+      myDartSdkGlobalLibName = dartSdkGlobalLibName;
     }
 
     @NotNull
@@ -114,16 +110,8 @@ public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
       return getName();
     }
 
-    public void applyFix(final Project project, final PsiFile file, @Nullable final Editor editor) {
-      final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
-      try {
-        modifiableModel.addInvalidLibrary(mySdkGlobalLibName, LibraryTablesRegistrar.APPLICATION_LEVEL);
-        modifiableModel.commit();
-      }
-      catch (Exception e) {
-        Logger.getInstance(getClass().getName()).warn(e);
-        if (!modifiableModel.isDisposed()) modifiableModel.dispose();
-      }
+    public void applyFix(final @NotNull Project project, final @NotNull PsiFile file, @Nullable final Editor editor) {
+      DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(myModule, myDartSdkGlobalLibName);
     }
   }
 }

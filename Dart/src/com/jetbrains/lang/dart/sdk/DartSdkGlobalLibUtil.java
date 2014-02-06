@@ -22,7 +22,11 @@ import java.util.Collection;
 public class DartSdkGlobalLibUtil {
   private static final Logger LOG = Logger.getInstance(DartSdkGlobalLibUtil.class.getName());
 
-  static String createDartSdkGlobalLib(final String sdkHomePath) {
+  public static boolean isIdeWithMultipleModuleSupport() {
+    return PlatformUtils.isIntelliJ();
+  }
+
+  public static String createDartSdkGlobalLib(final String sdkHomePath) {
     final Library library = LibraryUtil.createLibrary(ApplicationLibraryTable.getApplicationTable(), DartSdk.DART_SDK_GLOBAL_LIB_NAME);
     setupDartSdkRoots(library, sdkHomePath);
     return library.getName();
@@ -71,7 +75,7 @@ public class DartSdkGlobalLibUtil {
       final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
       try {
         for (final OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
-          if (isOrderEntryPointingToThisSdk(orderEntry, dartSdkGlobalLibName)) {
+          if (isOrderEntryPointingToThisGlobalLib(orderEntry, dartSdkGlobalLibName)) {
             hasDart = true;
 
             if (!mustHaveDart) {
@@ -99,12 +103,13 @@ public class DartSdkGlobalLibUtil {
     }
   }
 
-  static void detachDartSdkLib(final @NotNull DartSdk sdk, final @NotNull Collection<Module> modules) {
+  static void detachDartSdkGlobalLib(final @NotNull Collection<Module> modules,
+                                     final @NotNull String dartSdkGlobalLibName) {
     for (final Module module : modules) {
       final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
       try {
         for (final OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
-          if (isOrderEntryPointingToThisSdk(orderEntry, sdk.getGlobalLibName())) {
+          if (isOrderEntryPointingToThisGlobalLib(orderEntry, dartSdkGlobalLibName)) {
             modifiableModel.removeOrderEntry(orderEntry);
             break;
           }
@@ -118,12 +123,13 @@ public class DartSdkGlobalLibUtil {
     }
   }
 
-  static Collection<Module> getModulesWithDartSdkLibAttached(final @NotNull Project project, final @NotNull String dartSdkGlobalLibName) {
+  static Collection<Module> getModulesWithDartSdkGlobalLibAttached(final @NotNull Project project,
+                                                                   final @NotNull String dartSdkGlobalLibName) {
     final Collection<Module> result = new ArrayList<Module>();
 
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
       for (final OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
-        if (isOrderEntryPointingToThisSdk(orderEntry, dartSdkGlobalLibName)) {
+        if (isOrderEntryPointingToThisGlobalLib(orderEntry, dartSdkGlobalLibName)) {
           result.add(module);
           break;
         }
@@ -133,9 +139,9 @@ public class DartSdkGlobalLibUtil {
     return result;
   }
 
-  public static boolean isDartSdkLibAttached(final @NotNull Module module, final @NotNull String dartSdkGlobalLibName) {
+  public static boolean isDartSdkGlobalLibAttached(final @NotNull Module module, final @NotNull String dartSdkGlobalLibName) {
     for (final OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
-      if (isOrderEntryPointingToThisSdk(orderEntry, dartSdkGlobalLibName)) {
+      if (isOrderEntryPointingToThisGlobalLib(orderEntry, dartSdkGlobalLibName)) {
         return true;
       }
     }
@@ -143,13 +149,21 @@ public class DartSdkGlobalLibUtil {
     return false;
   }
 
-  private static boolean isOrderEntryPointingToThisSdk(final @NotNull OrderEntry orderEntry, final @NotNull String dartSdkGlobalLibName) {
+  private static boolean isOrderEntryPointingToThisGlobalLib(final @NotNull OrderEntry orderEntry, final @NotNull String globalLibName) {
     return orderEntry instanceof LibraryOrderEntry &&
            ((LibraryOrderEntry)orderEntry).getLibraryLevel() == LibraryTablesRegistrar.APPLICATION_LEVEL &&
-           dartSdkGlobalLibName.equals(((LibraryOrderEntry)orderEntry).getLibraryName());
+           globalLibName.equals(((LibraryOrderEntry)orderEntry).getLibraryName());
   }
 
-  public static boolean isIdeWithMultipleModuleSupport() {
-    return PlatformUtils.isIntelliJ();
+  public static void configureDependencyOnGlobalLib(final @NotNull Module module, final @NotNull String globalLibName) {
+    final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
+    try {
+      modifiableModel.addInvalidLibrary(globalLibName, LibraryTablesRegistrar.APPLICATION_LEVEL);
+      modifiableModel.commit();
+    }
+    catch (Exception e) {
+      LOG.warn(e);
+      if (!modifiableModel.isDisposed()) modifiableModel.dispose();
+    }
   }
 }
