@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.detection;
 import com.intellij.ide.util.importProject.ModuleDescriptor;
 import com.intellij.ide.util.importProject.ModuleInsight;
 import com.intellij.ide.util.projectWizard.importSources.DetectedProjectRoot;
+import com.intellij.ide.util.projectWizard.importSources.DetectedSourceRoot;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -29,7 +30,7 @@ public class FlexModuleInsight extends ModuleInsight {
     super(progress, existingModuleNames, existingProjectLibraryNames);
   }
 
-  protected ModuleDescriptor createModuleDescriptor(final File moduleContentRoot, final Collection<DetectedProjectRoot> sourceRoots) {
+  protected ModuleDescriptor createModuleDescriptor(final File moduleContentRoot, final Collection<DetectedSourceRoot> sourceRoots) {
     return new ModuleDescriptor(moduleContentRoot, FlexModuleType.getInstance(), sourceRoots);
   }
 
