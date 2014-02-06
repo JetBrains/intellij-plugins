@@ -13,12 +13,13 @@ import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-class DartSdkGlobalLibUtil {
+public class DartSdkGlobalLibUtil {
   private static final Logger LOG = Logger.getInstance(DartSdkGlobalLibUtil.class.getName());
 
   static String createDartSdkGlobalLib(final String sdkHomePath) {
@@ -132,9 +133,23 @@ class DartSdkGlobalLibUtil {
     return result;
   }
 
+  public static boolean isDartSdkLibAttached(final @NotNull Module module, final @NotNull String dartSdkGlobalLibName) {
+    for (final OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
+      if (isOrderEntryPointingToThisSdk(orderEntry, dartSdkGlobalLibName)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   private static boolean isOrderEntryPointingToThisSdk(final @NotNull OrderEntry orderEntry, final @NotNull String dartSdkGlobalLibName) {
     return orderEntry instanceof LibraryOrderEntry &&
            ((LibraryOrderEntry)orderEntry).getLibraryLevel() == LibraryTablesRegistrar.APPLICATION_LEVEL &&
            dartSdkGlobalLibName.equals(((LibraryOrderEntry)orderEntry).getLibraryName());
+  }
+
+  public static boolean isIdeWithMultipleModuleSupport() {
+    return PlatformUtils.isIntelliJ();
   }
 }

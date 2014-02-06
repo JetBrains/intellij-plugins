@@ -20,7 +20,6 @@ import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import gnu.trove.THashSet;
@@ -40,6 +39,8 @@ import java.util.Comparator;
 import java.util.Enumeration;
 
 public class DartConfigurable implements SearchableConfigurable {
+
+  public static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
 
   private JPanel myMainPanel;
   private JBCheckBox myEnableDartSupportCheckBox;
@@ -113,7 +114,7 @@ public class DartConfigurable implements SearchableConfigurable {
   }
 
   private void initModulesPanel() {
-    if (!isIdeWithMultipleModuleSupport()) {
+    if (!DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
       myModulesPanel.setVisible(false);
       return;
     }
@@ -149,7 +150,7 @@ public class DartConfigurable implements SearchableConfigurable {
 
   @Nls
   public String getDisplayName() {
-    return DartBundle.message("dart.title");
+    return DART_SETTINGS_PAGE_NAME;
   }
 
   @Nullable
@@ -175,7 +176,7 @@ public class DartConfigurable implements SearchableConfigurable {
     final String initialSdkHomePath = mySdkInitial == null ? "" : mySdkInitial.getHomePath();
     if (sdkSelected && !sdkHomePath.equals(initialSdkHomePath)) return true;
 
-    if (isIdeWithMultipleModuleSupport()) {
+    if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
       final Module[] selectedModules = myModulesCheckboxTree.getCheckedNodes(Module.class, null);
       if (selectedModules.length != myModulesWithDartSdkLibAttachedInitial.size()) return true;
 
@@ -206,7 +207,7 @@ public class DartConfigurable implements SearchableConfigurable {
     myEnableDartSupportCheckBox.setSelected(myDartSupportEnabledInitial);
     mySdkPathTextWithBrowse.setText(mySdkInitial == null ? "" : FileUtilRt.toSystemDependentName(mySdkInitial.getHomePath()));
 
-    if (isIdeWithMultipleModuleSupport()) {
+    if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
       final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTree.getModel().getRoot();
       rootNode.setChecked(false);
       final Enumeration children = rootNode.children();
@@ -242,7 +243,7 @@ public class DartConfigurable implements SearchableConfigurable {
               }
             }
 
-            final Module[] modules = isIdeWithMultipleModuleSupport()
+            final Module[] modules = DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()
                                      ? myModulesCheckboxTree.getCheckedNodes(Module.class, null)
                                      : ModuleManager.getInstance(myProject).getModules();
             DartSdkGlobalLibUtil.updateDependencyOnDartSdkGlobalLib(myProject, modules, dartSdkGlobalLibName);
@@ -293,7 +294,7 @@ public class DartConfigurable implements SearchableConfigurable {
 
     if (!DartSdkUtil.isDartSdkHome(sdkRootPath)) return "Error: Dart SDK is not found in the specified location.";
 
-    if (isIdeWithMultipleModuleSupport() && myModulesCheckboxTree.getCheckedNodes(Module.class, null).length == 0) {
+    if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport() && myModulesCheckboxTree.getCheckedNodes(Module.class, null).length == 0) {
       return "Warning: no modules selected. Dart support will be disabled for the project.";
     }
 
@@ -336,9 +337,5 @@ public class DartConfigurable implements SearchableConfigurable {
         updateErrorLabel();
       }
     };
-  }
-
-  private static boolean isIdeWithMultipleModuleSupport() {
-    return PlatformUtils.isIntelliJ();
   }
 }

@@ -97,6 +97,11 @@
 
     <projectConfigurable instance="com.jetbrains.lang.dart.ide.settings.DartSettingsConfigurable"
                          id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
+    <!--
+    <projectConfigurable instance="com.jetbrains.lang.dart.sdk.DartConfigurable"
+                         id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
+    <library.presentationProvider implementation="com.jetbrains.lang.dart.sdk.DartSdkLibraryPresentationProvider"/>
+    -->
 
     <internalFileTemplate name="Dart Class"/>
     <internalFileTemplate name="Dart Empty File"/>
@@ -169,10 +174,11 @@
                      key="inspections.unresolved.import.name"
                      groupName="Dart" enabledByDefault="true" level="WARNING"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartUnresolvedImportInspection"/>
-    <localInspection language="Dart" shortName="AbsentDartSdk" bundle="com.jetbrains.lang.dart.DartBundle"
-                     key="inspections.dart.sdk"
+    <!--
+    <localInspection language="Dart" bundle="com.jetbrains.lang.dart.DartBundle" key="dart.sdk.is.not.configured"
                      groupName="Dart" enabledByDefault="true" level="WARNING"
-                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartSdkInspection"/>
+                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartSdkIsNotConfiguredInspection"/>
+    -->
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains">
     <openInBrowserAction implementation="com.jetbrains.lang.dart.ide.runner.client.DartiumDebuggerEngine$MyOpenInBrowserActionProducer"/>
