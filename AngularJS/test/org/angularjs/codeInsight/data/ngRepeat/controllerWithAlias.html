@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Egghead.io</title>
+  <link rel="stylesheet" href="bower_components/bootstrap.css/css/bootstrap.css"/>
+</head>
+<body ng-app="app" ng-controller="AppCtrl as app">
+
+<div ng-repeat="person in app.people">
+  {{person.<caret>}}
+</div>
+
+<script src="angular.js"></script>
+<script src="custom.js"></script>
+</body>
+</html>

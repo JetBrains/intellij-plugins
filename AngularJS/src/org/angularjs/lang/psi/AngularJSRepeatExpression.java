@@ -1,8 +1,11 @@
 package org.angularjs.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSCommaExpression;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
+import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSParenthesizedExpression;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.psi.PsiElement;
@@ -32,6 +35,14 @@ public class AngularJSRepeatExpression extends JSExpressionImpl {
       }
     }
     return Collections.emptyList();
+  }
+
+  public JSExpression getCollection() {
+    final ASTNode myNode = getNode();
+    final ASTNode secondExpression = myNode.findChildByType(
+      JSElementTypes.EXPRESSIONS, myNode.findChildByType(JSTokenTypes.IN_KEYWORD)
+    );
+    return secondExpression != null ? (JSExpression)secondExpression.getPsi() : null;
   }
 
   @Override
