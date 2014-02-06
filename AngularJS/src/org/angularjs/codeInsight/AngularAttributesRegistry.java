@@ -1,5 +1,7 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.xml.XmlAttributeDescriptor;
 import org.angularjs.index.AngularControllerIndex;
 import org.angularjs.index.AngularModuleIndex;
 import com.intellij.openapi.project.Project;
@@ -20,5 +22,10 @@ public class AngularAttributesRegistry {
       return new AngularAttributeDescriptor(project, directiveName, AngularModuleIndex.INDEX_ID);
     }
     return new AngularAttributeDescriptor(project, directiveName, null);
+  }
+
+  public static boolean isAngularAttribute(XmlAttribute parent, final String name) {
+    final XmlAttributeDescriptor descriptor = parent.getDescriptor();
+    return descriptor instanceof AngularAttributeDescriptor && name.equals(descriptor.getName());
   }
 }

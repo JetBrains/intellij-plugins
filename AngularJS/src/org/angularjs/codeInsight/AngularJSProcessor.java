@@ -57,17 +57,11 @@ public class AngularJSProcessor {
           @Override
           public void visitAngularJSRepeatExpression(AngularJSRepeatExpression repeatExpression) {
             if (scopeMatches(element, repeatExpression)) {
-              final PsiElement parent = element.getParent();
-
-              if (!(parent instanceof JSReferenceExpression) ||
-                  ((JSReferenceExpression)parent).getQualifier() == null) {
-                for (JSDefinitionExpression def : repeatExpression.getDefinitions()) {
-                  consumer.consume(def);
-                }
-
-                for (Map.Entry<String, String> entry : NG_REPEAT_IMPLICITS.entrySet()) {
-                  consumer.consume(new ImplicitJSVariableImpl(entry.getKey(), entry.getValue(), repeatExpression));
-                }
+              for (JSDefinitionExpression def : repeatExpression.getDefinitions()) {
+                consumer.consume(def);
+              }
+              for (Map.Entry<String, String> entry : NG_REPEAT_IMPLICITS.entrySet()) {
+                consumer.consume(new ImplicitJSVariableImpl(entry.getKey(), entry.getValue(), repeatExpression));
               }
             }
             super.visitAngularJSRepeatExpression(repeatExpression);

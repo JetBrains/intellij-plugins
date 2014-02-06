@@ -45,7 +45,7 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
   public ResolveResult[] doResolve() {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
 
-    if (myRef.getParent() instanceof AngularJSAsExpression) {
+    if (AngularJSAsExpression.isAsControllerRef(myRef, myRef.getParent())) {
       final JSNamedElementProxy resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularControllerIndex.INDEX_ID, myReferencedName);
       if (resolve != null) {
         return new JSResolveResult[]{new JSResolveResult(resolve)};

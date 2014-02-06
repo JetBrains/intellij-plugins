@@ -14,9 +14,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.Consumer;
+import org.angularjs.index.AngularControllerIndex;
 import org.angularjs.index.AngularFilterIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.lang.AngularJSLanguage;
+import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 
 /**
@@ -30,9 +32,10 @@ public class AngularJSCompletionContributor extends CompletionContributor {
     if (!getElementLanguage(parameters).is(AngularJSLanguage.INSTANCE)) return;
     PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
 
-    if (ref instanceof JSReferenceExpressionImpl) {
+    if (ref instanceof JSReferenceExpressionImpl && ((JSReferenceExpressionImpl)ref).getQualifier() == null) {
       final PsiElement parent = ((JSReferenceExpressionImpl)ref).getParent();
       if (addFilterVariants(result, ref, parent)) return;
+      if (addControllerVariants(result, ref, parent)) return;
       AngularJSProcessor.process(parameters.getPosition(), new Consumer<JSNamedElement>() {
         @Override
         public void consume(JSNamedElement element) {
@@ -41,6 +44,17 @@ public class AngularJSCompletionContributor extends CompletionContributor {
       });
     }
   }
+
+  private static boolean addControllerVariants(CompletionResultSet result, PsiReference ref, PsiElement parent) {
+    if (AngularJSAsExpression.isAsControllerRef(ref, parent)) {
+      for (String controller : AngularIndexUtil.getAllKeys(AngularControllerIndex.INDEX_ID, parent.getProject())) {
+        result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(null, controller, NG_VARIABLE_PRIORITY, false, false));
+      }
+      return true;
+    }
+    return false;
+  }
+
 
   private static boolean addFilterVariants(CompletionResultSet result, PsiReference ref, PsiElement parent) {
     if (AngularJSFilterExpression.isFilterNameRef(ref, parent)) {

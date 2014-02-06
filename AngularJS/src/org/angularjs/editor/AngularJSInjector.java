@@ -3,6 +3,7 @@ package org.angularjs.editor;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSTargetedInjector;
+import org.angularjs.codeInsight.AngularAttributesRegistry;
 import org.angularjs.index.AngularDirectivesIndex;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -12,8 +13,6 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl;
 import com.intellij.psi.impl.source.xml.XmlTextImpl;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.xml.XmlAttributeDescriptor;
-import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.lang.AngularJSLanguage;
 import org.jetbrains.annotations.NotNull;
@@ -37,8 +36,9 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
     final PsiElement parent = context.getParent();
     if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {
       final XmlAttribute attribute = (XmlAttribute)parent;
-      if (isAngularAttribute(attribute, "ng-init") || isAngularAttribute(attribute, "ng-repeat") ||
-          isAngularAttribute(attribute, "ng-controller")) {
+      if (AngularAttributesRegistry.isAngularAttribute(attribute, "ng-init") ||
+          AngularAttributesRegistry.isAngularAttribute(attribute, "ng-repeat") ||
+          AngularAttributesRegistry.isAngularAttribute(attribute, "ng-controller")) {
         registrar.startInjecting(AngularJSLanguage.INSTANCE).
           addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(1, context.getTextLength() - 1)).
           doneInjecting();
@@ -61,11 +61,6 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
         }
       } while (startIndex >= 0);
     }
-  }
-
-  private static boolean isAngularAttribute(XmlAttribute parent, final String name) {
-    final XmlAttributeDescriptor descriptor = parent.getDescriptor();
-    return descriptor instanceof AngularAttributeDescriptor && name.equals(descriptor.getName());
   }
 
   @NotNull
