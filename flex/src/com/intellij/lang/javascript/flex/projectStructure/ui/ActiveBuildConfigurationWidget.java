@@ -146,7 +146,7 @@ public class ActiveBuildConfigurationWidget {
 
       ClickListener listener = new ClickListener() {
         @Override
-        public boolean onClick(MouseEvent e, int clickCount) {
+        public boolean onClick(@NotNull MouseEvent e, int clickCount) {
           Module module = findCurrentFlexModule();
           if (module != null) {
             ListPopup popup = ChooseActiveBuildConfigurationAction.createPopup(module);
