@@ -163,15 +163,17 @@ public class DartConfigurable implements SearchableConfigurable {
   }
 
   public boolean isModified() {
-    // was disabled, now disabled => not modified, do not care about other controls
-    if (!myDartSupportEnabledInitial && !myEnableDartSupportCheckBox.isSelected()) return false;
+    final String sdkHomePath = FileUtilRt.toSystemIndependentName(mySdkPathTextWithBrowse.getText().trim());
+    final boolean sdkSelected = DartSdkUtil.isDartSdkHome(sdkHomePath);
+
+    // was disabled, now disabled (or no sdk selected) => not modified, do not care about other controls
+    if (!myDartSupportEnabledInitial && (!myEnableDartSupportCheckBox.isSelected() || !sdkSelected)) return false;
     // was enabled, now disabled => modified
     if (myDartSupportEnabledInitial && !myEnableDartSupportCheckBox.isSelected()) return true;
     // was disabled, now enabled or was enabled, now enabled => need to check further
 
-    final String sdkHomePath = FileUtilRt.toSystemIndependentName(mySdkPathTextWithBrowse.getText().trim());
     final String initialSdkHomePath = mySdkInitial == null ? "" : mySdkInitial.getHomePath();
-    if (DartSdkUtil.isDartSdkHome(sdkHomePath) && !sdkHomePath.equals(initialSdkHomePath)) return true;
+    if (sdkSelected && !sdkHomePath.equals(initialSdkHomePath)) return true;
 
     if (isIdeWithMultipleModuleSupport()) {
       final Module[] selectedModules = myModulesCheckboxTree.getCheckedNodes(Module.class, null);
@@ -204,12 +206,14 @@ public class DartConfigurable implements SearchableConfigurable {
     myEnableDartSupportCheckBox.setSelected(myDartSupportEnabledInitial);
     mySdkPathTextWithBrowse.setText(mySdkInitial == null ? "" : FileUtilRt.toSystemDependentName(mySdkInitial.getHomePath()));
 
-    final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTree.getModel().getRoot();
-    rootNode.setChecked(false);
-    final Enumeration children = rootNode.children();
-    while (children.hasMoreElements()) {
-      final CheckedTreeNode node = (CheckedTreeNode)children.nextElement();
-      node.setChecked(myModulesWithDartSdkLibAttachedInitial.contains((Module)node.getUserObject()));
+    if (isIdeWithMultipleModuleSupport()) {
+      final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTree.getModel().getRoot();
+      rootNode.setChecked(false);
+      final Enumeration children = rootNode.children();
+      while (children.hasMoreElements()) {
+        final CheckedTreeNode node = (CheckedTreeNode)children.nextElement();
+        node.setChecked(myModulesWithDartSdkLibAttachedInitial.contains((Module)node.getUserObject()));
+      }
     }
 
     updateControlsEnabledState();
