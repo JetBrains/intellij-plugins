@@ -275,7 +275,7 @@ public class CapturedBrowsersController implements ServerListener {
         return false;
       }
 
-      UrlOpener.launchBrowser(captureUrl, browser);
+      UrlOpener.launchBrowser(captureUrl, browser, project);
       return true;
     }
 

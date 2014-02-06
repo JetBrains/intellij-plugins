@@ -129,8 +129,7 @@ public class JstdToolWindowPanel extends SimpleToolWindowPanel {
     actionGroup.add(new AnAction("Configure paths to local web browsers", null, PlatformIcons.WEB_ICON) {
       @Override
       public void actionPerformed(AnActionEvent e) {
-        ShowSettingsUtil settingsUtil = ShowSettingsUtil.getInstance();
-        settingsUtil.editConfigurable(e.getProject(), new BrowserSettings());
+        ShowSettingsUtil.getInstance().editConfigurable(e.getProject(), new BrowserSettings());
       }
     });
     return ActionManager.getInstance().createActionToolbar(PLACE, actionGroup, false);
