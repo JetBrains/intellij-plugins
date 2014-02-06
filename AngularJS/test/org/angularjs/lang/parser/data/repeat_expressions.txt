@@ -112,7 +112,7 @@ ASTWrapperPsiElement(FILE)
             JSReferenceExpression
               PsiElement(JS:IDENTIFIER)('key')
           PsiElement(JS:COMMA)(',')
-          PsiErrorElement:Expected identifier
+          PsiErrorElement:identifier expected
             <empty list>
         PsiElement(JS:RPAR)(')')
       PsiWhiteSpace(' ')
@@ -127,7 +127,7 @@ ASTWrapperPsiElement(FILE)
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
         JSCommaExpression
-          PsiErrorElement:Expected identifier
+          PsiErrorElement:identifier expected
             <empty list>
           PsiElement(JS:COMMA)(',')
           PsiWhiteSpace(' ')
