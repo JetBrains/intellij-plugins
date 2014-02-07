@@ -1,11 +1,22 @@
 package com.jetbrains.lang.dart.sdk;
 
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComponentWithBrowseButton;
+import com.intellij.openapi.ui.TextComponentAccessor;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.components.JBLabel;
+import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -54,5 +65,54 @@ public class DartSdkUtil {
   @Contract("null->false")
   public static boolean isDartSdkHome(final String path) {
     return path != null && !path.isEmpty() && new File(path + "/lib/core/core.dart").isFile();
+  }
+
+  public static void initDartSdkPathTextFieldWithBrowseButton(final @Nullable Project project,
+                                                              final @NotNull TextFieldWithBrowseButton dartSdkPathComponent,
+                                                              final @Nullable JBLabel versionLabel) {
+    final TextComponentAccessor<JTextField> textComponentAccessor = new TextComponentAccessor<JTextField>() {
+      public String getText(final JTextField component) {
+        return component.getText();
+      }
+
+      public void setText(final JTextField component, final String text) {
+        if (!text.isEmpty() && !isDartSdkHome(text)) {
+          final String probablySdkPath = text + "/dart-sdk";
+          if (isDartSdkHome(probablySdkPath)) {
+            component.setText(FileUtilRt.toSystemDependentName(probablySdkPath));
+            return;
+          }
+        }
+
+        component.setText(FileUtilRt.toSystemDependentName(text));
+      }
+    };
+
+    final ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> browseFolderListener =
+      new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>("Select Dart SDK path", null, dartSdkPathComponent, project,
+                                                                           FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+                                                                           textComponentAccessor);
+    dartSdkPathComponent.addBrowseFolderListener(project, browseFolderListener);
+
+    if (versionLabel != null) {
+      dartSdkPathComponent.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+        protected void textChanged(final DocumentEvent e) {
+          final String sdkHomePath = dartSdkPathComponent.getText().trim();
+          versionLabel.setText(sdkHomePath.isEmpty() ? "" : getSdkVersion(sdkHomePath));
+        }
+      });
+    }
+  }
+
+  @Nullable
+  public static String getErrorMessageIfWrongSdkRootPath(final @NotNull String sdkRootPath) {
+    if (sdkRootPath.isEmpty()) return DartBundle.message("error.path.to.sdk.not.specified");
+
+    final File sdkRoot = new File(sdkRootPath);
+    if (!sdkRoot.isDirectory()) return DartBundle.message("error.folder.specified.as.sdk.not.exists");
+
+    if (!isDartSdkHome(sdkRootPath)) return DartBundle.message("error.sdk.not.found.in.specified.location");
+
+    return null;
   }
 }

@@ -32,7 +32,7 @@ public class DartSdkGlobalLibUtil {
     return library.getName();
   }
 
-  static void updateDartSdkGlobalLib(final String dartSdkGlobalLibName, final String sdkHomePath) {
+  public static void updateDartSdkGlobalLib(final String dartSdkGlobalLibName, final String sdkHomePath) {
     final Library oldLibrary = ApplicationLibraryTable.getApplicationTable().getLibraryByName(dartSdkGlobalLibName);
     LOG.assertTrue(oldLibrary != null, dartSdkGlobalLibName);
 

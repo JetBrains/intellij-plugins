@@ -31,7 +31,7 @@
             <properties>
               <font style="1"/>
               <labelFor value="366bd"/>
-              <text value="&amp;Dart SDK path:"/>
+              <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="dart.sdk.path.label"/>
             </properties>
           </component>
           <component id="366bd" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="mySdkPathTextWithBrowse">
@@ -46,7 +46,7 @@
             </constraints>
             <properties>
               <font style="1"/>
-              <text value="Version:"/>
+              <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="version.label"/>
             </properties>
           </component>
           <component id="fc231" class="com.intellij.ui.components.JBLabel" binding="myVersionLabel">

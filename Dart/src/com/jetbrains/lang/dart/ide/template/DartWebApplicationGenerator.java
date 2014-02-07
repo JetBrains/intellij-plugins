@@ -6,9 +6,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.DartSdkData;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
-import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
+import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,54 +16,60 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.IOException;
 
-public class DartWebApplicationGenerator extends WebProjectTemplate {
+public class DartWebApplicationGenerator extends WebProjectTemplate<String> {
+
   @NotNull
-  @Override
   public String getName() {
-    return DartBundle.message("dart.module.web.application.name");
+    return DartBundle.message("dart.web.application.title");
   }
 
-  @Nullable
-  @Override
   public String getDescription() {
-    return DartBundle.message("dart.module.web.application.description");
+    return DartBundle.message("dart.web.application.description");
   }
 
-  @Override
   public Icon getIcon() {
     return DartIcons.Dart_16;
   }
 
-  @Override
-  public void generateProject(@NotNull Project project,
-                              @NotNull final VirtualFile baseDir,
-                              @NotNull Object settings,
-                              @NotNull final Module module) {
-    if (!(settings instanceof DartSdkData)) return;
-    final String homePath = ((DartSdkData)settings).getHomePath();
-    DartSettingsUtil.setSettings(new DartSettings(homePath));
-    DartSettings.setUpDartLibrary(project, homePath);
+  public void generateProject(final @NotNull Project project,
+                              final @NotNull VirtualFile baseDir,
+                              final @NotNull String dartSdkPath,
+                              final @NotNull Module module) {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
       public void run() {
+        if (DartSdkUtil.isDartSdkHome(dartSdkPath)) {
+          final DartSdk sdk = DartSdk.getGlobalDartSdk();
+
+          final String dartSdkLibName;
+          if (sdk == null) {
+            dartSdkLibName = DartSdkGlobalLibUtil.createDartSdkGlobalLib(dartSdkPath);
+          }
+          else {
+            dartSdkLibName = sdk.getGlobalLibName();
+
+            if (!dartSdkPath.equals(sdk.getHomePath())) {
+              DartSdkGlobalLibUtil.updateDartSdkGlobalLib(dartSdkLibName, dartSdkPath);
+            }
+          }
+
+          DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(module, dartSdkLibName);
+        }
+
         try {
           baseDir.createChildDirectory(this, "web");
           baseDir.createChildDirectory(this, "lib");
-          VirtualFile pubspec = baseDir.createChildData(this, "pubspec.yaml");
-          pubspec.setBinaryContent(("name: " + module.getName() + "\n" +
-                                    "dependencies:\n" +
-                                    "  browser: any").getBytes());
+          final VirtualFile pubspecYamlFile = baseDir.createChildData(this, "pubspec.yaml");
+          pubspecYamlFile.setBinaryContent(("name: " + module.getName() + "\n" +
+                                            "dependencies:\n" +
+                                            "  browser: any").getBytes());
         }
-        catch (IOException e) {
-          // ignore
-        }
+        catch (IOException ignore) {/* unlucky */}
       }
     });
   }
 
   @NotNull
-  @Override
-  public GeneratorPeer createPeer() {
+  public GeneratorPeer<String> createPeer() {
     return new DartGeneratorPeer();
   }
 }

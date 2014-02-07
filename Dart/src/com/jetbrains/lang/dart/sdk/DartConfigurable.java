@@ -2,15 +2,12 @@ package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComponentWithBrowseButton;
-import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -32,7 +29,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -64,7 +60,14 @@ public class DartConfigurable implements SearchableConfigurable {
     myProject = project;
 
     initEnableDartSupportCheckBox();
-    initSdkPathTextWithBrowse();
+
+    DartSdkUtil.initDartSdkPathTextFieldWithBrowseButton(myProject, mySdkPathTextWithBrowse, myVersionLabel);
+    mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      protected void textChanged(final DocumentEvent e) {
+        updateErrorLabel();
+      }
+    });
+
     initModulesPanel();
 
     myErrorLabel.setIcon(AllIcons.Actions.Lightning);
@@ -75,39 +78,6 @@ public class DartConfigurable implements SearchableConfigurable {
     myEnableDartSupportCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControlsEnabledState();
-        updateErrorLabel();
-      }
-    });
-  }
-
-  private void initSdkPathTextWithBrowse() {
-    final TextComponentAccessor<JTextField> textComponentAccessor = new TextComponentAccessor<JTextField>() {
-      public String getText(final JTextField component) {
-        return component.getText();
-      }
-
-      public void setText(final JTextField component, final String text) {
-        if (!text.isEmpty() && !DartSdkUtil.isDartSdkHome(text)) {
-          final String probablySdkPath = text + "/dart-sdk";
-          if (DartSdkUtil.isDartSdkHome(probablySdkPath)) {
-            component.setText(FileUtilRt.toSystemDependentName(probablySdkPath));
-            return;
-          }
-        }
-
-        component.setText(FileUtilRt.toSystemDependentName(text));
-      }
-    };
-
-    final ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> browseFolderListener =
-      new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>("Select Dart SDK path", null, mySdkPathTextWithBrowse, myProject,
-                                                                           FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                                                                           textComponentAccessor);
-    mySdkPathTextWithBrowse.addBrowseFolderListener(myProject, browseFolderListener);
-
-    mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-      protected void textChanged(final DocumentEvent e) {
-        updateSdkVersionLabel();
         updateErrorLabel();
       }
     });
@@ -218,7 +188,6 @@ public class DartConfigurable implements SearchableConfigurable {
     }
 
     updateControlsEnabledState();
-    updateSdkVersionLabel();
     updateErrorLabel();
   }
 
@@ -269,11 +238,6 @@ public class DartConfigurable implements SearchableConfigurable {
     UIUtil.setEnabled(mySettingsPanel, myEnableDartSupportCheckBox.isSelected(), true);
   }
 
-  private void updateSdkVersionLabel() {
-    final String sdkHomePath = mySdkPathTextWithBrowse.getText().trim();
-    myVersionLabel.setText(sdkHomePath.isEmpty() ? "" : DartSdkUtil.getSdkVersion(sdkHomePath));
-  }
-
   private void updateErrorLabel() {
     final String message = getErrorMessage();
     myErrorLabel.setText(message);
@@ -286,13 +250,8 @@ public class DartConfigurable implements SearchableConfigurable {
       return null;
     }
 
-    final String sdkRootPath = mySdkPathTextWithBrowse.getText().trim();
-    if (sdkRootPath.isEmpty()) return "Error: path to the Dart SDK is not specified.";
-
-    final File sdkRoot = new File(sdkRootPath);
-    if (!sdkRoot.isDirectory()) return "Error: the folder specified as the Dart SDK home does not exist.";
-
-    if (!DartSdkUtil.isDartSdkHome(sdkRootPath)) return "Error: Dart SDK is not found in the specified location.";
+    final String message = DartSdkUtil.getErrorMessageIfWrongSdkRootPath(mySdkPathTextWithBrowse.getText().trim());
+    if (message != null) return message;
 
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport() && myModulesCheckboxTree.getCheckedNodes(Module.class, null).length == 0) {
       return "Warning: no modules selected. Dart support will be disabled for the project.";

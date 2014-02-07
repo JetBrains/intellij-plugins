@@ -1,44 +1,33 @@
 package com.jetbrains.lang.dart.ide.template;
 
 import com.intellij.ide.util.projectWizard.SettingsStep;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.WebProjectGenerator;
-import com.intellij.util.Consumer;
+import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.components.JBLabel;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.DartSdkData;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
-import com.jetbrains.lang.dart.util.DartSdkUtil;
+import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.event.DocumentEvent;
 
-public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<DartSdkData> {
+public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<String> {
   private JPanel myMainPanel;
-  private TextFieldWithBrowseButton mySdkPath;
+  private TextFieldWithBrowseButton mySdkPathTextWithBrowse;
+  private JBLabel myVersionLabel;
 
   public DartGeneratorPeer() {
-    mySdkPath.getButton().addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        FileChooser
-          .chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), null, mySdkPath, null, new Consumer<VirtualFile>() {
-            @Override
-            public void consume(@NotNull VirtualFile file) {
-              mySdkPath.setText(FileUtil.toSystemDependentName(file.getPath()));
-            }
-          });
-      }
-    });
+    DartSdkUtil.initDartSdkPathTextFieldWithBrowseButton(null, mySdkPathTextWithBrowse, myVersionLabel);
 
-    mySdkPath.setText(FileUtil.toSystemDependentName(DartSettings.getSettings().getSdkPath()));
+    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    if (sdk != null) {
+      mySdkPathTextWithBrowse.setText(FileUtil.toSystemDependentName(sdk.getHomePath()));
+    }
   }
 
   @NotNull
@@ -48,29 +37,22 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   }
 
   @Override
-  public void buildUI(@NotNull SettingsStep settingsStep) {
-    settingsStep.addSettingsField(DartBundle.message("dart.choose.sdk.home"), mySdkPath);
+  public void buildUI(final @NotNull SettingsStep settingsStep) {
+    settingsStep.addSettingsField(DartBundle.message("dart.sdk.path.label"), mySdkPathTextWithBrowse);
+    settingsStep.addSettingsField(DartBundle.message("version.label"), myVersionLabel);
   }
 
   @NotNull
   @Override
-  public DartSdkData getSettings() {
-    DartSdkData sdkData = getSdkData();
-    return sdkData != null ? sdkData : new DartSdkData(mySdkPath.getText(), "NA");
+  public String getSettings() {
+    return FileUtil.toSystemIndependentName(mySdkPathTextWithBrowse.getText().trim());
   }
 
   @Nullable
   @Override
   public ValidationInfo validate() {
-    if (getSdkData() == null) {
-      return new ValidationInfo(DartBundle.message("dart.sdk.bad.path", mySdkPath.getText()));
-    }
-    return null;
-  }
-
-  @Nullable
-  private DartSdkData getSdkData() {
-    return DartSdkUtil.testDartSdk(FileUtil.toSystemIndependentName(mySdkPath.getText()));
+    final String message = DartSdkUtil.getErrorMessageIfWrongSdkRootPath(mySdkPathTextWithBrowse.getText().trim());
+    return message == null ? null : new ValidationInfo(message, mySdkPathTextWithBrowse);
   }
 
   @Override
@@ -79,6 +61,11 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   }
 
   @Override
-  public void addSettingsStateListener(@NotNull WebProjectGenerator.SettingsStateListener listener) {
+  public void addSettingsStateListener(final @NotNull WebProjectGenerator.SettingsStateListener stateListener) {
+    mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      protected void textChanged(final DocumentEvent e) {
+        stateListener.stateChanged(validate() == null);
+      }
+    });
   }
 }
