@@ -4,6 +4,7 @@ import com.intellij.CommonBundle;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.WebBrowserBase;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.components.ServiceManager;
@@ -27,7 +28,7 @@ import java.util.UUID;
 public class DartSettingsUtil {
   private static final UUID DEFAULT_DARTIUM_ID = UUID.fromString("BFEE1B69-A97D-4338-8BA4-25170ADCBAA6");
 
-  public static final WebBrowser DARTIUM = WebBrowser
+  public static final WebBrowser DARTIUM = WebBrowserBase
     .createCustomBrowser(BrowserFamily.CHROME, "Dartium", DEFAULT_DARTIUM_ID, DartIcons.Dartium_16,
                          new NullableComputable<String>() {
                            @Override
@@ -35,7 +36,8 @@ public class DartSettingsUtil {
                            public String compute() {
                              return getDartiumPath();
                            }
-                         }, DartBundle.message("dartium.not.configured", CommonBundle.settingsActionPath()));
+                         }, DartBundle.message("dartium.not.configured", CommonBundle.settingsActionPath())
+    );
 
   public static final String DART_SDK_PATH_PROPERTY_NAME = "dart_sdk_path";
 
@@ -59,7 +61,7 @@ public class DartSettingsUtil {
     try {
       return getDartiumPathOrThrowErrorWithQuickFix(null);
     }
-    catch (RuntimeConfigurationError error) {
+    catch (RuntimeConfigurationError ignored) {
       return null;
     }
   }
