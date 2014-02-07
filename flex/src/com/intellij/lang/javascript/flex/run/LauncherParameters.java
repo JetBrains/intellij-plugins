@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.flex.run;
 
-import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -23,7 +23,7 @@ public class LauncherParameters implements Cloneable {
   private boolean myNewPlayerInstance = false;
 
   @NotNull
-  private WebBrowser myBrowser = WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.FIREFOX);
+  private WebBrowser myBrowser = WebBrowserManager.getInstance().getBrowser(BrowserFamily.FIREFOX);
 
   public LauncherParameters() {
   }
@@ -69,7 +69,7 @@ public class LauncherParameters implements Cloneable {
   }
 
   public void setBrowser(@Nullable WebBrowser browser) {
-    myBrowser = browser == null ? WebBrowserManager.getInstance().getBrowser(BrowsersConfiguration.BrowserFamily.FIREFOX) : browser;
+    myBrowser = browser == null ? WebBrowserManager.getInstance().getBrowser(BrowserFamily.FIREFOX) : browser;
   }
 
   @NotNull
