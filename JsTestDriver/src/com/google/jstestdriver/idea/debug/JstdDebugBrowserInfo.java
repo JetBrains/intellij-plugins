@@ -7,7 +7,7 @@ import com.google.jstestdriver.idea.server.JstdServerState;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.openapi.application.ApplicationManager;
@@ -52,7 +52,7 @@ public class JstdDebugBrowserInfo {
   }
 
   public void fixIfChrome(@NotNull ProcessHandler processHandler) {
-    if (!(myDebugEngine.second.getFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME))) {
+    if (!(myDebugEngine.second.getFamily().equals(BrowserFamily.CHROME))) {
       return;
     }
     final AtomicBoolean done = new AtomicBoolean(false);

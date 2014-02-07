@@ -2,7 +2,7 @@ package com.google.jstestdriver.idea.execution.settings;
 
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.util.EnumUtils;
-import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.io.FileUtil;
@@ -71,7 +71,7 @@ public class JstdRunSettingsSerializationUtils {
     List<String> filesExcludedFromCoverage = readFilesExcludedFromCoverage(element);
     builder.setFilesExcludedFromCoverage(filesExcludedFromCoverage);
 
-    builder.setPreferredDebugBrowser(WebBrowserManager.getInstance().getBrowser(readEnumByName(element, Key.PREFERRED_DEBUG_BROWSER, BrowsersConfiguration.BrowserFamily.CHROME)));
+    builder.setPreferredDebugBrowser(WebBrowserManager.getInstance().getBrowser(readEnumByName(element, Key.PREFERRED_DEBUG_BROWSER, BrowserFamily.CHROME)));
     return builder.build();
   }
 

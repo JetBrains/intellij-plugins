@@ -15,7 +15,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.BaseProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.execution.JsRunners;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
@@ -99,7 +99,7 @@ public class JstdDebugProgramRunner extends BaseProgramRunner {
                                             @NotNull final JstdDebugBrowserInfo debugBrowserInfo) throws ExecutionException {
     final WebBrowser browser = debugBrowserInfo.getBrowser();
     final Url url;
-    if (browser.getFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME)) {
+    if (browser.getFamily().equals(BrowserFamily.CHROME)) {
       url = Urls.newHttpUrl("127.0.0.1:" + JstdToolWindowPanel.serverPort, debugBrowserInfo.getCapturedBrowserUrl());
     }
     else {

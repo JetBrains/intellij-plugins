@@ -288,17 +288,17 @@ public class CapturedBrowsersController implements ServerListener {
   }
 
   private enum Browser {
-    CHROME("Chrome", JsTestDriverIcons.Browsers.Chrome, BrowsersConfiguration.BrowserFamily.CHROME),
-    IE("Microsoft Internet Explorer", JsTestDriverIcons.Browsers.IE, BrowsersConfiguration.BrowserFamily.EXPLORER),
-    FIREFOX("Firefox", JsTestDriverIcons.Browsers.Firefox, BrowsersConfiguration.BrowserFamily.FIREFOX),
-    OPERA("Opera", JsTestDriverIcons.Browsers.Opera, BrowsersConfiguration.BrowserFamily.OPERA),
-    SAFARI("Safari", JsTestDriverIcons.Browsers.Safari, BrowsersConfiguration.BrowserFamily.SAFARI);
+    CHROME("Chrome", JsTestDriverIcons.Browsers.Chrome, BrowserFamily.CHROME),
+    IE("Microsoft Internet Explorer", JsTestDriverIcons.Browsers.IE, BrowserFamily.EXPLORER),
+    FIREFOX("Firefox", JsTestDriverIcons.Browsers.Firefox, BrowserFamily.FIREFOX),
+    OPERA("Opera", JsTestDriverIcons.Browsers.Opera, BrowserFamily.OPERA),
+    SAFARI("Safari", JsTestDriverIcons.Browsers.Safari, BrowserFamily.SAFARI);
 
     private final String myName;
     private final Icon myIcon;
-    private final BrowsersConfiguration.BrowserFamily myBrowserFamily;
+    private final BrowserFamily myBrowserFamily;
 
-    Browser(@NotNull String name, Icon icon, @NotNull BrowsersConfiguration.BrowserFamily browserFamily) {
+    Browser(@NotNull String name, Icon icon, @NotNull BrowserFamily browserFamily) {
       myName = name;
       myIcon = icon;
       myBrowserFamily = browserFamily;
@@ -313,7 +313,7 @@ public class CapturedBrowsersController implements ServerListener {
     }
 
     @NotNull
-    public BrowsersConfiguration.BrowserFamily getBrowserFamily() {
+    public BrowserFamily getBrowserFamily() {
       return myBrowserFamily;
     }
 
