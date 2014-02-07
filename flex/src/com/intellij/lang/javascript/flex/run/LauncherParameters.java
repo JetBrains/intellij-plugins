@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.WebBrowserBase;
 import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.util.SystemInfo;
@@ -63,7 +64,7 @@ public class LauncherParameters implements Cloneable {
   }
 
   @NotNull
-  @OptionTag(converter = WebBrowser.ReferenceConverter.class)
+  @OptionTag(converter = WebBrowserBase.ReferenceConverter.class)
   public WebBrowser getBrowser() {
     return myBrowser;
   }
