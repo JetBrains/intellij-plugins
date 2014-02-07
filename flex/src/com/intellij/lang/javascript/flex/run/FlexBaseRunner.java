@@ -22,7 +22,7 @@ import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.browsers.UrlOpener;
+import com.intellij.ide.browsers.BrowserLauncher;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexStackTraceFilter;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -300,7 +300,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         final Runnable runnable1 = new Runnable() {
           @Override
           public void run() {
-            UrlOpener.launchBrowser(BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtilCore.pathToUrl(urlOrPath), launcherParams.getBrowser());
+            BrowserLauncher.getInstance().browse(BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtilCore.pathToUrl(urlOrPath),
+                                                 launcherParams.getBrowser());
           }
         };
 
