@@ -60,6 +60,8 @@
     <gotoSymbolContributor implementation="org.angularjs.navigation.AngularGotoSymbolContributor"/>
     <lang.documentationProvider language="JavaScript" implementationClass="org.angularjs.AngularJSDocumentationProvider" />
     <lang.parserDefinition language="AngularJS" implementationClass="org.angularjs.lang.parser.AngularJSParserDefinition"/>
+    <lang.syntaxHighlighterFactory key="AngularJS" implementationClass="org.angularjs.lang.AngularJSSyntaxHighlighterFactory"/>
+
 
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector"/>
     <completion.contributor language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSCompletionContributor"
