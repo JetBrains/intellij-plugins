@@ -4,7 +4,6 @@ import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSTargetedInjector;
 import org.angularjs.codeInsight.AngularAttributesRegistry;
-import org.angularjs.index.AngularDirectivesIndex;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
@@ -31,7 +30,7 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
 
     // check that we have angular directives indexed before injecting
     final Project project = context.getProject();
-    if (AngularIndexUtil.resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-model") == null) return;
+    if (!AngularIndexUtil.hasAngularJS(project)) return;
 
     final PsiElement parent = context.getParent();
     if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {

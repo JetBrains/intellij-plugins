@@ -57,4 +57,8 @@ public class AngularIndexUtil {
     FileBasedIndex.getInstance().processAllKeys(index, processor, scope, null);
     return allKeys;
   }
+
+  public static boolean hasAngularJS(Project project) {
+    return resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-model") != null;
+  }
 }
