@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.flex.uiDesigner.abc.Decoder.Opcodes;
 import com.intellij.flex.uiDesigner.io.AbstractByteArrayOutputStream;
-import com.intellij.flex.uiDesigner.io.IntIntHashMap;
+import com.intellij.util.containers.IntIntHashMap;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.Nullable;
