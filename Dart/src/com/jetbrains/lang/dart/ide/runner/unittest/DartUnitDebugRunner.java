@@ -18,7 +18,7 @@ import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
 
 public class DartUnitDebugRunner extends DefaultProgramRunner {
@@ -53,7 +53,12 @@ public class DartUnitDebugRunner extends DefaultProgramRunner {
 
     final int debuggingPort = NetUtils.tryToFindAvailableSocketPort();
 
-    final DartUnitRunningState dartUnitRunningState = new DartUnitRunningState(env, parameters, DartSettings.getSettings(), debuggingPort);
+    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    if (sdk == null) {
+      throw new ExecutionException("Dart SDK is not configured");
+    }
+
+    final DartUnitRunningState dartUnitRunningState = new DartUnitRunningState(env, parameters, sdk, debuggingPort);
     final ExecutionResult executionResult = dartUnitRunningState.execute(env.getExecutor(), this);
 
     final XDebugSession debugSession =

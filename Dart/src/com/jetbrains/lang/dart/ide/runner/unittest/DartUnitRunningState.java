@@ -31,14 +31,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ResourceUtil;
 import com.intellij.util.text.StringTokenizer;
-import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartStackTraceMessageFilter;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import com.jetbrains.lang.dart.util.DartSdkUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,21 +48,20 @@ public class DartUnitRunningState extends CommandLineState {
   private static final String DART_FRAMEWORK_NAME = "DartTestRunner";
   private static final String UNIT_CONFIG_FILE_NAME = "jetbrains_unit_config.dart";
   private final DartUnitRunnerParameters myUnitParameters;
-  @Nullable
-  private final DartSettings myDartSettings;
+  private final DartSdk myDartSdk;
   private int myDebuggingPort;
 
-  protected DartUnitRunningState(ExecutionEnvironment environment, DartUnitRunnerParameters parameters, DartSettings dartSettings) {
-    this(environment, parameters, dartSettings, -1);
+  protected DartUnitRunningState(ExecutionEnvironment environment, DartUnitRunnerParameters parameters, DartSdk sdk) {
+    this(environment, parameters, sdk, -1);
   }
 
   public DartUnitRunningState(ExecutionEnvironment environment,
                               DartUnitRunnerParameters parameters,
-                              @Nullable DartSettings dartSettings,
+                              DartSdk sdk,
                               int debuggingPort) {
     super(environment);
     myUnitParameters = parameters;
-    myDartSettings = dartSettings;
+    myDartSdk = sdk;
     myDebuggingPort = debuggingPort;
   }
 
@@ -117,13 +114,6 @@ public class DartUnitRunningState extends CommandLineState {
   public GeneralCommandLine getCommand() throws ExecutionException {
     final GeneralCommandLine commandLine = new GeneralCommandLine();
 
-    final String path = myDartSettings == null ? null : myDartSettings.getSdkPath();
-    final String exePath = path == null ? null : DartSdkUtil.getCompilerPathByFolderPath(path);
-    if (exePath == null) {
-      // todo: fix link
-      throw new ExecutionException(DartBundle.message("dart.invalid.sdk"));
-    }
-
     Project project = getEnvironment().getProject();
     VirtualFile realFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(myUnitParameters.getFilePath()));
     PsiFile psiFile = realFile != null ? PsiManager.getInstance(project).findFile(realFile) : null;
@@ -134,7 +124,7 @@ public class DartUnitRunningState extends CommandLineState {
       }
     }
 
-    commandLine.setExePath(exePath);
+    commandLine.setExePath(DartSdkUtil.getDartExePath(myDartSdk));
     if (realFile != null) {
       commandLine.setWorkDirectory(realFile.getParent().getPath());
     }
@@ -146,10 +136,6 @@ public class DartUnitRunningState extends CommandLineState {
   }
 
   private void setupUserProperties(GeneralCommandLine commandLine) throws ExecutionException {
-    if (myDartSettings != null) {
-      commandLine.getEnvironment().put("com.google.dart.sdk", myDartSettings.getSdkPath());
-    }
-
     commandLine.addParameter("--ignore-unrecognized-flags");
 
     StringTokenizer argumentsTokenizer = new StringTokenizer(StringUtil.notNullize(myUnitParameters.getVMOptions()));
@@ -192,7 +178,7 @@ public class DartUnitRunningState extends CommandLineState {
     final String name = myUnitParameters.getTestName();
 
     String runnerCode = getRunnerCode();
-    runnerCode = runnerCode.replaceFirst("DART_UNITTEST", getUnitPath(myUnitParameters.getFilePath()));
+    runnerCode = runnerCode.replaceFirst("DART_UNITTEST", "package:unittest/unittest.dart");
     runnerCode = runnerCode.replaceFirst("NAME", StringUtil.notNullize(name));
     runnerCode = runnerCode.replaceFirst("SCOPE", scope.toString());
     runnerCode = runnerCode.replaceFirst("TEST_FILE_PATH", pathToDartUrl(myUnitParameters.getFilePath()));
@@ -200,15 +186,6 @@ public class DartUnitRunningState extends CommandLineState {
     FileUtil.writeToFile(file, runnerCode);
 
     return file.getAbsolutePath();
-  }
-
-  private String getUnitPath(String path) {
-    VirtualFile libRoot = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(path));
-    VirtualFile packagesFolder = DartResolveUtil.getDartPackagesFolder(getEnvironment().getProject(), libRoot);
-    if (myDartSettings == null || (packagesFolder != null && packagesFolder.findChild("unittest") != null)) {
-      return "package:unittest/unittest.dart";
-    }
-    return pathToDartUrl(StringUtil.notNullize(myDartSettings.getSdkPath()) + "/pkg/unittest/unittest.dart");
   }
 
   private static String pathToDartUrl(@NonNls @NotNull String path) {

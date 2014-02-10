@@ -2,21 +2,11 @@ package com.jetbrains.lang.dart.refactoring.extract;
 
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.refactoring.extract.DartExtractMethodHandler;
-import com.jetbrains.lang.dart.util.DartSdkTestUtil;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartExtractMethodInHtmlTest extends DartCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
     return "/refactoring/extractMethod/html/";
-  }
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    DartSdkTestUtil.configFakeSdk(myFixture, "sdk");
   }
 
   private void doTest() throws Throwable {

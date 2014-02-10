@@ -15,7 +15,6 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.util.HtmlUtil;
-import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,18 +29,18 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
   @Override
   @NotNull
   public WebBrowser getBrowser() {
-    return DartSettingsUtil.DARTIUM;
+    return DartiumUtil.DARTIUM;
   }
 
   @Override
   public void checkAvailability(@NotNull final Project project) throws RuntimeConfigurationError {
-    DartSettingsUtil.getDartiumPathOrThrowErrorWithQuickFix(project);
+    DartiumUtil.getDartiumPathOrThrowErrorWithQuickFix(project);
   }
 
   @Override
   protected boolean isPreferredEngineForFile(@NotNull PsiFile psiFile) {
     return psiFile instanceof XmlFile &&
-           DartSettingsUtil.getDartiumPath() != null &&
+           DartiumUtil.getDartiumPath() != null &&
            isHtmlFileWithDartScript(psiFile);
   }
 
@@ -66,11 +65,11 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
   final static class MyOpenInBrowserActionProducer extends OpenInBrowserActionProducer {
     @Override
     public List<AnAction> getActions() {
-      return Collections.<AnAction>singletonList(new BaseOpenInBrowserAction(DartSettingsUtil.DARTIUM) {
+      return Collections.<AnAction>singletonList(new BaseOpenInBrowserAction(DartiumUtil.DARTIUM) {
         @Nullable
         @Override
         protected WebBrowser getBrowser(@NotNull AnActionEvent event) {
-          return DartSettingsUtil.getDartiumPath() == null ? null : DartSettingsUtil.DARTIUM;
+          return DartiumUtil.getDartiumPath() == null ? null : DartiumUtil.DARTIUM;
         }
       });
     }
@@ -78,6 +77,6 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
 
   @Override
   public boolean isBrowserSupported(@NotNull WebBrowser browser) {
-    return DartSettingsUtil.getDartiumPath() != null && DartSettingsUtil.DARTIUM.equals(browser);
+    return DartiumUtil.getDartiumPath() != null && DartiumUtil.DARTIUM.equals(browser);
   }
 }

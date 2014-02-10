@@ -22,12 +22,11 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartProjectComponent;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import icons.DartIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -75,19 +74,19 @@ abstract public class DartPubActionBase extends AnAction {
     final Pair<Module, VirtualFile> moduleAndPubspecYamlFile = getModuleAndPubspecYamlFile(e);
     if (moduleAndPubspecYamlFile == null) return;
 
-    File sdkRoot = getSdkRoot();
-    if (sdkRoot == null) {
+    DartSdk sdk = DartSdk.getGlobalDartSdk();
+    if (sdk == null) {
       final int answer = Messages.showDialog(moduleAndPubspecYamlFile.first.getProject(), "Dart SDK is not configured",
                                              getPresentableText(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
       if (answer != 0) return;
 
       ShowSettingsUtil.getInstance().showSettingsDialog(moduleAndPubspecYamlFile.first.getProject(), DartBundle.message("dart.title"));
 
-      sdkRoot = getSdkRoot();
-      if (sdkRoot == null) return;
+      sdk = DartSdk.getGlobalDartSdk();
+      if (sdk == null) return;
     }
 
-    File pubFile = new File(sdkRoot, SystemInfo.isWindows ? "bin/pub.bat" : "bin/pub");
+    File pubFile = new File(sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/pub.bat" : "/bin/pub"));
     if (!pubFile.isFile()) {
       final int answer =
         Messages.showDialog(moduleAndPubspecYamlFile.first.getProject(), DartBundle.message("dart.sdk.bad.dartpub.path", pubFile.getPath()),
@@ -96,14 +95,14 @@ abstract public class DartPubActionBase extends AnAction {
 
       ShowSettingsUtil.getInstance().showSettingsDialog(moduleAndPubspecYamlFile.first.getProject(), DartBundle.message("dart.title"));
 
-      sdkRoot = getSdkRoot();
-      if (sdkRoot == null) return;
+      sdk = DartSdk.getGlobalDartSdk();
+      if (sdk == null) return;
 
-      pubFile = new File(sdkRoot, SystemInfo.isWindows ? "bin/pub.bat" : "bin/pub");
+      pubFile = new File(sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/pub.bat" : "/bin/pub"));
       if (!pubFile.isFile()) return;
     }
 
-    doExecute(moduleAndPubspecYamlFile.first, moduleAndPubspecYamlFile.second, sdkRoot.getPath(), pubFile.getPath());
+    doExecute(moduleAndPubspecYamlFile.first, moduleAndPubspecYamlFile.second, sdk.getHomePath(), pubFile.getPath());
   }
 
   private void doExecute(final Module module, final VirtualFile pubspecYamlFile, final String sdkPath, final String pubPath) {
@@ -156,12 +155,5 @@ abstract public class DartPubActionBase extends AnAction {
     };
 
     task.queue();
-  }
-
-  @Nullable
-  private static File getSdkRoot() {
-    final String sdkPath = DartSettings.getSettings().getSdkPath();
-    final File sdkRoot = StringUtil.isEmptyOrSpaces(sdkPath) ? null : new File(sdkPath);
-    return sdkRoot == null || !sdkRoot.isDirectory() ? null : sdkRoot;
   }
 }

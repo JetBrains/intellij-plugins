@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.resolve;
 
 import com.jetbrains.lang.dart.util.DartHtmlUtil;
-import com.jetbrains.lang.dart.util.DartSdkTestUtil;
 
 import java.io.IOException;
 
@@ -307,7 +306,6 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testReference24() throws Throwable {
-    DartSdkTestUtil.configFakeSdk(myFixture);
     doTest(1);
   }
 

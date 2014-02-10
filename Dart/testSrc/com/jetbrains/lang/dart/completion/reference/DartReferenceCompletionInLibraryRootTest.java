@@ -3,11 +3,7 @@ package com.jetbrains.lang.dart.completion.reference;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.completion.base.DartCompletionTestBase;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import com.jetbrains.lang.dart.util.DartSdkTestUtil;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTestBase {
   public DartReferenceCompletionInLibraryRootTest() {
     super("completion", "references");
@@ -233,17 +229,14 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
   }
 
   public void testTest10() throws Throwable {
-    DartSdkTestUtil.configFakeSdk(myFixture, "../../sdk");
     doTest();
   }
 
   public void testWEB_6447() throws Throwable {
-    DartSdkTestUtil.configFakeSdk(myFixture, "../../sdk");
     doTest();
   }
 
   public void testWEB_6480() throws Throwable {
-    DartSdkTestUtil.configFakeSdk(myFixture, "../../sdk");
     doTest();
   }
 

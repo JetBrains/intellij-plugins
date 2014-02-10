@@ -8,12 +8,9 @@ import com.intellij.lang.annotation.AnnotationSession;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
-import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,25 +21,8 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    final DartSettings settings = getDartSettings();
-    DartSettingsUtil.setSettings(settings);
-
-    System.setProperty(
-      "com.google.dart.sdk",
-      settings.getSdkPath()
-    );
-    // todo: hack to remove
+    DartTestUtils.configureDartSdk(myModule);
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    super.tearDown();
-    System.setProperty("com.google.dart.sdk", "");
-  }
-
-  protected DartSettings getDartSettings() {
-    return new DartSettings(FileUtil.toSystemDependentName(DartTestUtils.BASE_TEST_DATA_PATH + "/sdk"));
   }
 
   void doTest(String message, String... additionalFiles) throws IOException {

@@ -38,4 +38,8 @@ public class DartKeywordCompletionTest extends DartCompletionTestBase {
   public void testInComments() throws Throwable {
     doTest();
   }
+
+  public void testCoreLibNames() throws Throwable {
+    doTest();
+  }
 }

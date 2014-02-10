@@ -5,12 +5,11 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.editor.Document;
-import com.intellij.psi.PsiElement;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.psi.DartId;
 import com.jetbrains.lang.dart.psi.DartLibraryId;
 import com.jetbrains.lang.dart.psi.DartPathOrLibraryReference;
@@ -18,7 +17,6 @@ import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Set;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -33,8 +31,9 @@ public class DartLibraryNameCompletionContributor extends CompletionContributor 
              protected void addCompletions(@NotNull CompletionParameters parameters,
                                            ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
-               final Set<String> names = DartLibraryIndex.getAllLibraryNames(parameters.getPosition().getProject());
-               names.addAll(ContainerUtil.map(getStdLibraries(parameters.getPosition()), new Function<String, String>() {
+               final Project project = parameters.getPosition().getProject();
+               final Set<String> names = DartLibraryIndex.getAllLibraryNames(project);
+               names.addAll(ContainerUtil.map(DartLibraryIndex.getAllStandardLibrariesFromSdk(project), new Function<String, String>() {
                  @Override
                  public String fun(String coreLib) {
                    return "dart:" + coreLib;
@@ -48,7 +47,8 @@ public class DartLibraryNameCompletionContributor extends CompletionContributor 
                  result.addElement(new QuotedStringLookupElement(libraryName));
                }
              }
-           });
+           }
+    );
     extend(CompletionType.BASIC,
            psiElement().withSuperParent(1, DartId.class).withSuperParent(2, DartLibraryId.class),
            new CompletionProvider<CompletionParameters>() {
@@ -60,11 +60,8 @@ public class DartLibraryNameCompletionContributor extends CompletionContributor 
                  result.addElement(LookupElementBuilder.create(libraryName));
                }
              }
-           });
-  }
-
-  private static Collection<? extends String> getStdLibraries(@NotNull PsiElement context) {
-    return DartSettings.getSettings().getLibraries(context);
+           }
+    );
   }
 
   public static class QuotedStringLookupElement extends LookupElement {

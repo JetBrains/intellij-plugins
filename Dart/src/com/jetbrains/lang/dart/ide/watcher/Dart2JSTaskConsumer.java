@@ -3,13 +3,13 @@ package com.jetbrains.lang.dart.ide.watcher;
 import com.intellij.ide.macro.FileDirMacro;
 import com.intellij.ide.macro.FileNameMacro;
 import com.intellij.ide.macro.FilePathMacro;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.plugins.watcher.config.BackgroundTaskConsumer;
 import com.intellij.plugins.watcher.model.TaskOptions;
 import com.intellij.psi.PsiBundle;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class Dart2JSTaskConsumer extends BackgroundTaskConsumer {
@@ -24,9 +24,10 @@ public class Dart2JSTaskConsumer extends BackgroundTaskConsumer {
   public TaskOptions getOptionsTemplate() {
     TaskOptions options = new TaskOptions();
     options.setName("Dart2JS");
-    final VirtualFile dart2JS = DartSettings.getSettings().getDart2JS();
-    if (dart2JS != null) {
-      options.setProgram(dart2JS.getPath());
+
+    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    if (sdk != null) {
+      options.setProgram(DartSdkUtil.getDart2jsPath(sdk));
     }
     options.setDescription("Compiles .dart files into .js files");
     options.setFileExtension(DartFileType.DEFAULT_EXTENSION);

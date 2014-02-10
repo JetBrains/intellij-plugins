@@ -10,8 +10,9 @@ import com.intellij.plugins.watcher.config.BackgroundTaskConsumer;
 import com.intellij.plugins.watcher.model.TaskOptions;
 import com.intellij.psi.PsiBundle;
 import com.intellij.psi.PsiFile;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.psi.DartFile;
+import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +23,7 @@ public class DartWebUITaskConsumer extends BackgroundTaskConsumer {
   public boolean isAvailable(PsiFile file) {
     return BUILD_FILE_NAME.equalsIgnoreCase(file.getName()) &&
            file instanceof DartFile &&
-           DartSettings.getSettings().getCompiler() != null;
+           DartSdk.getGlobalDartSdk() != null;
   }
 
   @NotNull
@@ -30,9 +31,10 @@ public class DartWebUITaskConsumer extends BackgroundTaskConsumer {
   public TaskOptions getOptionsTemplate() {
     TaskOptions options = new TaskOptions();
     options.setName("dwc");
-    final VirtualFile dartExecutable = DartSettings.getSettings().getCompiler();
-    if (dartExecutable != null) {
-      options.setProgram(dartExecutable.getPath());
+
+    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    if (sdk != null) {
+      options.setProgram(DartSdkUtil.getDartExePath(sdk));
     }
     options.setDescription("Executes " + BUILD_FILE_NAME + " on html file changes");
     options.setFileExtension("html");

@@ -18,11 +18,10 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FileTypeIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartFileTemplateUtil;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
@@ -39,9 +38,11 @@ public class CreateDartFileAction extends CreateFromTemplateAction<PsiFile> {
   @Override
   protected boolean isAvailable(DataContext dataContext) {
     final Module module = LangDataKeys.MODULE.getData(dataContext);
-    return super.isAvailable(dataContext) && module != null && !StringUtil.isEmptyOrSpaces(DartSettings.getSettings().getSdkPath()) &&
+    return super.isAvailable(dataContext) &&
+           module != null &&
+           DartSdk.getGlobalDartSdk() != null &&
            (ModuleType.get(module) instanceof WebModuleTypeBase ||
-            FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, GlobalSearchScope.moduleScope(module)));
+            FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, module.getModuleContentScope()));
   }
 
   @Override

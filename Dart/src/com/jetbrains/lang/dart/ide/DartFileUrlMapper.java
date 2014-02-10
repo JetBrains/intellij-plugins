@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Url;
 import com.jetbrains.javascript.debugger.FileUrlMapper;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +37,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
         libraryFilePath = null;
       }
 
-      VirtualFile file = DartSettings.getSettings().findSdkLibrary(libraryName, project);
+      VirtualFile file = DartLibraryIndex.getStandardLibraryFromSdk(project, libraryName);
       if (file == null) {
         return null;
       }

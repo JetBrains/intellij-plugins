@@ -21,7 +21,8 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.actions.Dart2JSAction;
 import com.jetbrains.lang.dart.ide.actions.ui.Dart2JSSettingsDialog;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,10 +97,9 @@ public class Dart2JSBeforeRunTaskProvider extends BeforeRunTaskProvider<Dart2JSB
                              final RunConfiguration configuration,
                              ExecutionEnvironment env,
                              final Dart2JSBeforeRunTask task) {
-    final VirtualFile dart2js = DartSettings.getSettings().getDart2JS();
-    if (dart2js == null) {
-      return false;
-    }
+    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    if (sdk == null) return false;
+
     final BooleanValueHolder result = new BooleanValueHolder(true);
     UIUtil.invokeAndWaitIfNeeded(new Runnable() {
       public void run() {
@@ -108,7 +108,7 @@ public class Dart2JSBeforeRunTaskProvider extends BeforeRunTaskProvider<Dart2JSB
             indicator.setIndeterminate(true);
             indicator.setText(DartBundle.message("dart2js.task.description", VfsUtil.extractFileName(task.getInputFilePath())));
             final GeneralCommandLine command = Dart2JSAction.getCommandLine(
-              dart2js,
+              DartSdkUtil.getDart2jsPath(sdk),
               task.getInputFilePath(),
               task.getOutputFilePath(),
               task.isCheckedMode(),

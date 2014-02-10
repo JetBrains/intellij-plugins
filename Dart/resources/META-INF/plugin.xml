@@ -5,7 +5,6 @@
   <vendor>JetBrains</vendor>
   <idea-version since-build="134.1015"/>
   <depends>com.intellij.modules.xml</depends>
-  <depends>JavaScript</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="dart-file-watcher.xml">com.intellij.plugins.watcher</depends>
@@ -95,13 +94,9 @@
     <projectTemplatesFactory implementation="com.jetbrains.lang.dart.ide.template.DartTemplatesFactory"/>
     <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartWebApplicationGenerator"/>
 
-    <projectConfigurable instance="com.jetbrains.lang.dart.ide.settings.DartSettingsConfigurable"
-                         id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
-    <!--
     <projectConfigurable instance="com.jetbrains.lang.dart.sdk.DartConfigurable"
                          id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
     <library.presentationProvider implementation="com.jetbrains.lang.dart.sdk.DartSdkLibraryPresentationProvider"/>
-    -->
 
     <internalFileTemplate name="Dart Class"/>
     <internalFileTemplate name="Dart Empty File"/>
@@ -151,14 +146,14 @@
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer"/>
 
-    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugRunner"/>
+    <!--<programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugRunner"/> in dartium-debugger-support.xml until dependency of DartCommandLineBreakpointsHandler on JavaScriptBreakpointType removed -->
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunner"/>
 
     <!--unit test-->
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationProducer"/>
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunner"/>
-    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitDebugRunner"/>
+    <!--<programRunner implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitDebugRunner"/> in dartium-debugger-support.xml until dependency of DartCommandLineBreakpointsHandler on JavaScriptBreakpointType removed -->
 
     <!--inspections-->
 
@@ -174,11 +169,9 @@
                      key="inspections.unresolved.import.name"
                      groupName="Dart" enabledByDefault="true" level="WARNING"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartUnresolvedImportInspection"/>
-    <!--
     <localInspection language="Dart" bundle="com.jetbrains.lang.dart.DartBundle" key="dart.sdk.is.not.configured"
                      groupName="Dart" enabledByDefault="true" level="WARNING"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartSdkIsNotConfiguredInspection"/>
-    -->
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains">
     <openInBrowserAction implementation="com.jetbrains.lang.dart.ide.runner.client.DartiumDebuggerEngine$MyOpenInBrowserActionProducer"/>

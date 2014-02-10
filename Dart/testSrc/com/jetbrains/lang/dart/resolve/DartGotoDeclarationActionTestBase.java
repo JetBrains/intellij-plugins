@@ -5,7 +5,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
-import com.jetbrains.lang.dart.util.DartSdkTestUtil;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -17,7 +16,6 @@ abstract public class DartGotoDeclarationActionTestBase extends DartCodeInsightF
   }
 
   public void doTestWithSDK(int expectedSize) throws Throwable {
-    DartSdkTestUtil.configFakeSdk(myFixture);
     doTest(expectedSize);
   }
 

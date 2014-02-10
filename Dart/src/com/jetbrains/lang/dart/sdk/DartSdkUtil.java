@@ -6,6 +6,7 @@ import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.ui.DocumentAdapter;
@@ -114,5 +115,13 @@ public class DartSdkUtil {
     if (!isDartSdkHome(sdkRootPath)) return DartBundle.message("error.sdk.not.found.in.specified.location");
 
     return null;
+  }
+
+  public static String getDart2jsPath(final @NotNull DartSdk sdk) {
+    return sdk.getHomePath() +  (SystemInfo.isWindows ? "/bin/dart2js.bat" : "/bin/dart2js");
+  }
+
+  public static String getDartExePath(final @NotNull DartSdk sdk) {
+    return sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/dart.exe" : "/bin/dart");
   }
 }

@@ -7,7 +7,6 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -17,11 +16,11 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.psi.DartReference;
 import com.jetbrains.lang.dart.psi.DartType;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +35,8 @@ public class DartColorAnnotator implements Annotator {
   @Override
   public void annotate(final @NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
     if (holder.isBatchMode()) return;
+
+    final DartSdk sdk = DartSdk.getGlobalDartSdk();
 
     if (DartTokenTypesSets.BUILT_IN_IDENTIFIERS.contains(element.getNode().getElementType())) {
       if (element.getNode().getTreeParent().getElementType() != DartTokenTypes.ID) {
@@ -56,10 +57,12 @@ public class DartColorAnnotator implements Annotator {
       return;
     }
 
-    highlightIfDeclarationOrReference(element, holder);
+    highlightIfDeclarationOrReference(element, holder, sdk);
   }
 
-  private static void highlightIfDeclarationOrReference(final PsiElement element, final AnnotationHolder holder) {
+  private static void highlightIfDeclarationOrReference(final PsiElement element,
+                                                        final AnnotationHolder holder,
+                                                        final @Nullable DartSdk sdk) {
     DartComponentName componentName = null;
 
     if (element instanceof DartComponentName) {
@@ -75,7 +78,8 @@ public class DartColorAnnotator implements Annotator {
     }
 
     if (componentName != null) {
-      if (BUILT_IN_TYPES_HIGHLIGHTED_AS_KEYWORDS.contains(componentName.getName()) && isInSdkCore(componentName.getContainingFile())) {
+      if (BUILT_IN_TYPES_HIGHLIGHTED_AS_KEYWORDS.contains(componentName.getName()) &&
+          sdk != null && isInSdkCore(sdk, componentName.getContainingFile())) {
         holder.createInfoAnnotation(element, null).setTextAttributes(TextAttributesKey.find(DartSyntaxHighlighterColors.DART_BUILTIN));
         return;
       }
@@ -88,10 +92,9 @@ public class DartColorAnnotator implements Annotator {
     }
   }
 
-  private static boolean isInSdkCore(final PsiFile psiFile) {
+  private static boolean isInSdkCore(final @NotNull DartSdk sdk, final @NotNull PsiFile psiFile) {
     final VirtualFile virtualFile = psiFile.getVirtualFile();
-    return virtualFile != null &&
-           virtualFile.getParent() == LocalFileSystem.getInstance().findFileByPath(DartSettings.getSettings().getSdkPath() + "/lib/core");
+    return virtualFile != null && virtualFile.getParent().getPath().equals(sdk.getHomePath() + "/lib/core");
   }
 
   private static void highlightEscapeSequences(final PsiElement node, final AnnotationHolder holder) {

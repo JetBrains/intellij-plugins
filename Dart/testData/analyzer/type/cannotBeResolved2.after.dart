@@ -1,6 +1,6 @@
 class Object {}
 class A {
-  static set noField(value) {
+  static set noField(int value) {
     <caret>
   }
 

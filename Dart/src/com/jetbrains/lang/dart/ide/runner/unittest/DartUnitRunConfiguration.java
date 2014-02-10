@@ -17,9 +17,10 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.unittest.ui.DartUnitConfigurationEditorForm;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DartUnitRunConfiguration extends LocatableConfigurationBase {
   private final DartUnitRunnerParameters myRunnerParameters = new DartUnitRunnerParameters();
@@ -38,7 +39,7 @@ public class DartUnitRunConfiguration extends LocatableConfigurationBase {
     return new DartUnitConfigurationEditorForm(getProject());
   }
 
-  @Override
+  @Nullable
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
     final Project project = env.getProject();
     final String path = myRunnerParameters.getFilePath();
@@ -51,7 +52,11 @@ public class DartUnitRunConfiguration extends LocatableConfigurationBase {
     if (module == null) {
       throw new ExecutionException("Can't find module for file");
     }
-    return new DartUnitRunningState(env, myRunnerParameters, DartSettings.getSettings());
+    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    if (sdk == null) {
+      throw new ExecutionException("Dart SDK is not configured");
+    }
+    return new DartUnitRunningState(env, myRunnerParameters, sdk);
   }
 
   @Override

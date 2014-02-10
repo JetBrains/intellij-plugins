@@ -43,10 +43,10 @@ public class DartProjectComponent extends AbstractProjectComponent {
   public void projectOpened() {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(new Runnable() {
       public void run() {
-        final boolean dartSdkWasEnabledInOldModel = false; //hasJSLibraryMappingToOldDartSdkGlobalLib(myProject);
-        //deleteDartSdkGlobalLibConfiguredInOldIde();
+        final boolean dartSdkWasEnabledInOldModel = hasJSLibraryMappingToOldDartSdkGlobalLib(myProject);
+        deleteDartSdkGlobalLibConfiguredInOldIde();
 
-        final String dartSdkGlobalLibName = null; //findOrCreateNewDartSdkGlobalLib();
+        final String dartSdkGlobalLibName = findOrCreateNewDartSdkGlobalLib();
 
         final Collection<VirtualFile> pubspecYamlFiles =
           FilenameIndex.getVirtualFilesByName(myProject, "pubspec.yaml", GlobalSearchScope.projectScope(myProject));

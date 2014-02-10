@@ -1,5 +1,5 @@
 class A {
-  static set foo(value) {
+  static set foo(int value) {
     <caret>
   }
 }

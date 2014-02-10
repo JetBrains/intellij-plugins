@@ -5,6 +5,8 @@
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <project.converterProvider implementation="com.jetbrains.lang.dart.ide.DartRunConfigurationConverterProvider"/>
+    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugRunner"/> <!--in dartium-debugger-support.xml until dependency of DartCommandLineBreakpointsHandler on JavaScriptBreakpointType removed-->
+    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitDebugRunner"/> <!--in dartium-debugger-support.xml until dependency of DartCommandLineBreakpointsHandler on JavaScriptBreakpointType removed-->
   </extensions>
   <extensions defaultExtensionNs="JavaScriptDebugger">
     <engine implementation="com.jetbrains.lang.dart.ide.runner.client.DartiumDebuggerEngine" />

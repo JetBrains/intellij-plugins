@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
 
 public class DartUnitRunner extends DefaultProgramRunner {
@@ -44,7 +44,11 @@ public class DartUnitRunner extends DefaultProgramRunner {
       throw new ExecutionException("Can't find file: " + filePath);
     }
 
-    final DartUnitRunningState dartCommandLineRunningState = new DartUnitRunningState(env, parameters, DartSettings.getSettings());
+    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    if (sdk == null) {
+      throw new ExecutionException("Dart SDK is not configured");
+    }
+    final DartUnitRunningState dartCommandLineRunningState = new DartUnitRunningState(env, parameters, sdk);
     return super.doExecute(project, dartCommandLineRunningState, contentToReuse, env);
   }
 }

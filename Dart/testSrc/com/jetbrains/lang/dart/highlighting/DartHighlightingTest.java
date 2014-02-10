@@ -35,6 +35,6 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
 
   public void testBuiltInIdentifiers() {
     myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, true, true);
+    myFixture.checkHighlighting(false, true, true);
   }
 }
