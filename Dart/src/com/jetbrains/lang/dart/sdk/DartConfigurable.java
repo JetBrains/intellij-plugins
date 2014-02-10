@@ -11,13 +11,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.ui.CheckboxTree;
-import com.intellij.ui.CheckboxTreeBase;
-import com.intellij.ui.CheckedTreeNode;
-import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ui.UIUtil;
+import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nls;
@@ -240,7 +238,8 @@ public class DartConfigurable implements SearchableConfigurable {
 
   private void updateErrorLabel() {
     final String message = getErrorMessage();
-    myErrorLabel.setText(message);
+    myErrorLabel.setText(
+      XmlStringUtil.wrapInHtml("<font color='#" + ColorUtil.toHex(JBColor.RED) + "'><left>" + message + "</left></font>"));
     myErrorLabel.setVisible(message != null);
   }
 
