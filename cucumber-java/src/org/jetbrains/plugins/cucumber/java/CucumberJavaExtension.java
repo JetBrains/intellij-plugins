@@ -4,6 +4,7 @@ import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -40,7 +41,16 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
 
   @Override
   public boolean isWritableStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent) {
-    return isStepLikeFile(child, parent);
+    if (child instanceof PsiJavaFile) {
+      final PsiFile file = child.getContainingFile();
+      if (file != null) {
+        final VirtualFile virtualFile = file.getVirtualFile();
+        if (virtualFile != null) {
+          return virtualFile.isWritable();
+        }
+      }
+    }
+    return false;
   }
 
   @NotNull
@@ -134,7 +144,14 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
 
     Set<PsiFile> result = new HashSet<PsiFile>();
     for (AbstractStepDefinition stepDef : stepDefs) {
-      result.add(stepDef.getElement().getContainingFile());
+      PsiElement stepDefElement = stepDef.getElement();
+      if (stepDefElement != null) {
+        final PsiFile psiFile = stepDefElement.getContainingFile();
+
+        if (isWritableStepLikeFile(psiFile, psiFile.getParent())) {
+          result.add(psiFile);
+        }
+      }
     }
     return result;
   }
