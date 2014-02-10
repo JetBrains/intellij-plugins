@@ -8,7 +8,7 @@ import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 
 public class DartSdkTestUtil {
   public static void configFakeSdk(CodeInsightTestFixture fixture) {
-    String sdkHome = FileUtil.toSystemDependentName("../sdk/");
+    String sdkHome = FileUtil.toSystemDependentName("sdk/");
     configFakeSdk(fixture, sdkHome);
   }
 

@@ -16,7 +16,7 @@ public class DartExtractMethodInHtmlTest extends DartCodeInsightFixtureTestCase 
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    DartSdkTestUtil.configFakeSdk(myFixture, "../../../sdk");
+    DartSdkTestUtil.configFakeSdk(myFixture, "sdk");
   }
 
   private void doTest() throws Throwable {
