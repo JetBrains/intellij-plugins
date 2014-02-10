@@ -30,7 +30,7 @@ public class CfmlRunConfigurationEditor extends SettingsEditor<CfmlRunConfigurat
   private final BrowserSelector myBrowserSelector;
 
   public CfmlRunConfigurationEditor() {
-    myBrowserSelector = new BrowserSelector(true);
+    myBrowserSelector = new BrowserSelector();
     myBrowserSelectorPanel.add(BorderLayout.CENTER, myBrowserSelector.getMainComponent());
   }
 
