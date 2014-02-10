@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.ide.runner.client;
 import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.ide.browsers.WebBrowser;
-import com.intellij.ide.browsers.WebBrowserBase;
 import com.intellij.ide.browsers.actions.BaseOpenInBrowserAction;
 import com.intellij.ide.browsers.actions.OpenInBrowserActionProducer;
 import com.intellij.openapi.actionSystem.AnAction;
