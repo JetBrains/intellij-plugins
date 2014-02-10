@@ -133,7 +133,7 @@ class FlexValue extends XValue {
     mySourcePosition = sourcePosition;
     myName = name;
     myExpression = expression;
-    myResult = unescape(result);
+    myResult = unescape(result, flexDebugProcess.isFlexSdk_4_12plus_IdeMode());
     myParentResult = parentResult;
     myValueType = valueType;
   }
@@ -876,7 +876,11 @@ class FlexValue extends XValue {
   /**
    * Looks for IDEA-ESCAPE-START and IDEA-ESCAPE-END markers in input string and unescapes symbols inside these markers. Markers are removed.
    */
-  private static String unescape(String str) {
+  private static String unescape(String str, final boolean flexSdk_4_12plus_IdeMode) {
+    if (flexSdk_4_12plus_IdeMode) {
+      return StringUtil.unescapeStringCharacters(str);
+    }
+
     int escapeEndIndex = 0;
     int escapeStartIndex;
 

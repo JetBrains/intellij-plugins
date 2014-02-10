@@ -202,6 +202,10 @@ public class FlexDebugProcess extends XDebugProcess {
     final List<String> fdbLaunchCommand = FlexSdkUtils
       .getCommandLineForSdkTool(session.getProject(), sdkForDebugger, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
 
+    if (isFlexSdk_4_12plus_IdeMode()) {
+      fdbLaunchCommand.add("-ide");
+    }
+
     if (params instanceof FlashRunnerParameters &&
         bc.getTargetPlatform() == TargetPlatform.Mobile &&
         (((FlashRunnerParameters)params).getMobileRunTarget() == AirMobileRunTarget.AndroidDevice ||
@@ -956,6 +960,11 @@ public class FlexDebugProcess extends XDebugProcess {
 
   boolean isDebuggerFromSdk3() {
     return myDebuggerVersion != null && myDebuggerVersion.startsWith("3.");
+  }
+
+  boolean isFlexSdk_4_12plus_IdeMode() {
+    return !myDebuggerVersion.startsWith(FlexCommonUtils.AIR_SDK_VERSION_PREFIX) &&
+           StringUtil.compareVersionNumbers(myDebuggerVersion, "4.12") > 0;
   }
 
   void doSendCommandText(final DebuggerCommand command) throws IOException {
