@@ -5,6 +5,8 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlDocument;
@@ -33,7 +35,10 @@ public class AngularJSProcessor {
   }
 
   public static void process(final PsiElement element, final Consumer<JSNamedElement> consumer) {
-    final XmlFile file = (XmlFile)InjectedLanguageUtil.getTopLevelFile(element);
+    final PsiFile hostFile = FileContextUtil.getContextFile(element);
+    if (hostFile == null) return;
+
+    final XmlFile file = (XmlFile)hostFile;
     final JSResolveUtil.JSInjectedFilesVisitor visitor = new JSResolveUtil.JSInjectedFilesVisitor() {
       @Override
       protected void process(JSFile file) {
