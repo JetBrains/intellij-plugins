@@ -1,10 +1,7 @@
 package com.intellij.lang.javascript.flex;
 
-import com.intellij.ide.util.projectWizard.ModuleWizardStep;
-import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
-import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import icons.FlexIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -26,13 +23,6 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   @NotNull
   public FlexModuleBuilder createModuleBuilder() {
     return new FlexModuleBuilder();
-  }
-
-  @NotNull
-  public ModuleWizardStep[] createWizardSteps(@NotNull final WizardContext wizardContext,
-                                              @NotNull final FlexModuleBuilder moduleBuilder,
-                                              @NotNull final ModulesProvider modulesProvider) {
-    return new ModuleWizardStep[]{new SetupFlexModuleWizardStep(moduleBuilder)};
   }
 
   @NotNull
