@@ -31,7 +31,7 @@ public class TypoScriptBundle {
     return CommonBundle.message(getBundle(), key, params);
   }
 
-  @NonNls public static String NOTIFICATION_ID = "TypoScript";
+  @NonNls public static final String NOTIFICATION_ID = "TypoScript";
   private static Reference<ResourceBundle> ourBundle;
   @NonNls public static final String TYPOSCRIPT_BUNDLE = "messages.TypoScriptBundle";
 
