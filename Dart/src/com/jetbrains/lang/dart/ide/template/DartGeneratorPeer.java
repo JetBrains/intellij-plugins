@@ -25,9 +25,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Stri
     DartSdkUtil.initDartSdkPathTextFieldWithBrowseButton(null, mySdkPathTextWithBrowse, myVersionLabel);
 
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
-    if (sdk != null) {
-      mySdkPathTextWithBrowse.setText(FileUtil.toSystemDependentName(sdk.getHomePath()));
-    }
+    mySdkPathTextWithBrowse.setText(sdk == null ? "" : FileUtil.toSystemDependentName(sdk.getHomePath()));
   }
 
   @NotNull
