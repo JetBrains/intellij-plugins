@@ -173,9 +173,6 @@
                      groupName="Dart" enabledByDefault="true" level="WARNING"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartSdkIsNotConfiguredInspection"/>
   </extensions>
-  <extensions defaultExtensionNs="org.jetbrains">
-    <openInBrowserAction implementation="com.jetbrains.lang.dart.ide.runner.client.DartiumDebuggerEngine$MyOpenInBrowserActionProducer"/>
-  </extensions>
 
   <actions>
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"

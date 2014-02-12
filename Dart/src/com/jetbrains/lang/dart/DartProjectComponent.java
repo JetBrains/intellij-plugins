@@ -22,6 +22,7 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
@@ -83,6 +84,11 @@ public class DartProjectComponent extends AbstractProjectComponent {
       return sdk.getGlobalLibName();
     }
     else if (DartSdkUtil.isDartSdkHome(oldDartSdkPath)) {
+      final String dartiumPath = DartiumUtil.getDartiumPathForSdk(oldDartSdkPath);
+      if (dartiumPath != null) {
+        DartiumUtil.ensureDartiumBrowserConfigured(dartiumPath);
+      }
+
       return ApplicationManager.getApplication().runWriteAction(new Computable<String>() {
         public String compute() {
           return DartSdkGlobalLibUtil.createDartSdkGlobalLib(oldDartSdkPath);

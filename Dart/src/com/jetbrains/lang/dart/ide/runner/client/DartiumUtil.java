@@ -1,18 +1,10 @@
 package com.jetbrains.lang.dart.ide.runner.client;
 
-import com.intellij.CommonBundle;
-import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
-import com.intellij.ide.browsers.WebBrowserBase;
-import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NullableComputable;
+import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.sdk.DartSdk;
-import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,40 +12,19 @@ import java.io.File;
 import java.util.UUID;
 
 public class DartiumUtil {
-  private static final UUID DEFAULT_DARTIUM_ID = UUID.fromString("BFEE1B69-A97D-4338-8BA4-25170ADCBAA6");
-
-  public static final WebBrowser DARTIUM = WebBrowserBase
-    .createCustomBrowser(BrowserFamily.CHROME, "Dartium", DEFAULT_DARTIUM_ID, DartIcons.Dartium_16,
-                         new NullableComputable<String>() {
-                           @Override
-                           @Nullable
-                           public String compute() {
-                             return getDartiumPath();
-                           }
-                         }, DartBundle.message("dartium.not.configured", CommonBundle.settingsActionPath())
-    );
+  private static final UUID DARTIUM_ID = UUID.fromString("BFEE1B69-A97D-4338-8BA4-25170ADCBAA6");
+  private static final String DARTIUM_NAME = "Dartium";
 
   @Nullable
-  public static String getDartiumPath() {
-    try {
-      return getDartiumPathOrThrowErrorWithQuickFix(null);
-    }
-    catch (RuntimeConfigurationError error) {
-      return null;
-    }
+  public static WebBrowser getDartiumBrowser() {
+    final WebBrowser browser = WebBrowserManager.getInstance().findBrowserById(DARTIUM_ID.toString());
+    return browser != null ? browser : WebBrowserManager.getInstance().findBrowserById(DARTIUM_NAME);
   }
 
-  @NotNull
-  public static String getDartiumPathOrThrowErrorWithQuickFix(final @Nullable Project project) throws RuntimeConfigurationError {
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
-    if (sdk == null) {
-      throw createErrorWithQuickFix(project, DartBundle.message("dart.sdk.not.configured"));
-    }
-
-    final File sdkDir = new File(sdk.getHomePath());
-    if (!sdkDir.isDirectory()) {
-      throw createErrorWithQuickFix(project, DartBundle.message("dart.sdk.bad.path", sdkDir.getPath()));
-    }
+  @Nullable
+  public static String getDartiumPathForSdk(final @NotNull String sdkHomePath) {
+    final File sdkDir = new File(sdkHomePath);
+    if (!sdkDir.isDirectory()) return null;
 
     final File dartDir = sdkDir.getParentFile();
     final String relativePath = SystemInfo.isMac ? "chromium/Chromium.app"
@@ -61,24 +32,17 @@ public class DartiumUtil {
                                                                         : "chromium/chrome";
 
     final File dartiumPath = new File(dartDir, relativePath);
-    if (!dartiumPath.exists()) {
-      throw createErrorWithQuickFix(project, DartBundle.message("dartium.not.found", dartiumPath.getPath()));
-    }
-
-    return FileUtil.toSystemIndependentName(dartiumPath.getPath());
+    return dartiumPath.exists() ? FileUtil.toSystemIndependentName(dartiumPath.getPath()) : null;
   }
 
-  private static RuntimeConfigurationError createErrorWithQuickFix(final @Nullable Project project, final String message) {
-    if (project == null) {
-      return new RuntimeConfigurationError(message);
+  public static void ensureDartiumBrowserConfigured(final @NotNull String dartiumPath) {
+    final WebBrowser browser = getDartiumBrowser();
+    if (browser == null) {
+      WebBrowserManager.getInstance().addBrowser(DARTIUM_ID, BrowserFamily.CHROME, DARTIUM_NAME, dartiumPath, true,
+                                                 BrowserFamily.CHROME.createBrowserSpecificSettings());
     }
-    else {
-      return new RuntimeConfigurationError(message, new Runnable() {
-        @Override
-        public void run() {
-          ShowSettingsUtil.getInstance().showSettingsDialog(project, DartBundle.message("dart.title"));
-        }
-      });
+    else if (!dartiumPath.equals(browser.getPath())) {
+      WebBrowserManager.getInstance().setBrowserPath(browser, dartiumPath, true);
     }
   }
 }
