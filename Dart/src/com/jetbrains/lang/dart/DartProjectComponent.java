@@ -47,7 +47,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
         final boolean dartSdkWasEnabledInOldModel = hasJSLibraryMappingToOldDartSdkGlobalLib(myProject);
         deleteDartSdkGlobalLibConfiguredInOldIde();
 
-        final String dartSdkGlobalLibName = findOrCreateNewDartSdkGlobalLib();
+        final String dartSdkGlobalLibName = importKnowledgeAboutOldDartSdkAndReturnGlobalLibName();
 
         final Collection<VirtualFile> pubspecYamlFiles =
           FilenameIndex.getVirtualFilesByName(myProject, "pubspec.yaml", GlobalSearchScope.projectScope(myProject));
@@ -74,7 +74,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
   }
 
   @Nullable
-  private static String findOrCreateNewDartSdkGlobalLib() {
+  private static String importKnowledgeAboutOldDartSdkAndReturnGlobalLibName() {
     final String oldDartSdkPath = PropertiesComponent.getInstance().getValue("dart_sdk_path");
     PropertiesComponent.getInstance().unsetValue("dart_sdk_path");
 
@@ -84,9 +84,9 @@ public class DartProjectComponent extends AbstractProjectComponent {
       return sdk.getGlobalLibName();
     }
     else if (DartSdkUtil.isDartSdkHome(oldDartSdkPath)) {
-      final String dartiumPath = DartiumUtil.getDartiumPathForSdk(oldDartSdkPath);
-      if (dartiumPath != null) {
-        DartiumUtil.ensureDartiumBrowserConfigured(dartiumPath);
+      if (DartiumUtil.getDartiumBrowser() == null) {
+        // configure even if getDartiumPathForSdk() returns null
+        DartiumUtil.ensureDartiumBrowserConfigured(DartiumUtil.getDartiumPathForSdk(oldDartSdkPath));
       }
 
       return ApplicationManager.getApplication().runWriteAction(new Computable<String>() {

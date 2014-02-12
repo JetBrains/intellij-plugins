@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.runner.client;
 import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.lang.dart.DartBundle;
@@ -38,14 +39,14 @@ public class DartiumUtil {
   }
 
   @NotNull
-  public static WebBrowser ensureDartiumBrowserConfigured(final @NotNull String dartiumPath) {
+  public static WebBrowser ensureDartiumBrowserConfigured(final @Nullable String dartiumPath) {
     final WebBrowser browser = getDartiumBrowser();
     if (browser == null) {
       return WebBrowserManager.getInstance().addBrowser(DARTIUM_ID, BrowserFamily.CHROME, DARTIUM_NAME, dartiumPath, true,
                                                         BrowserFamily.CHROME.createBrowserSpecificSettings());
     }
     else {
-      if (!dartiumPath.equals(browser.getPath())) {
+      if (!Comparing.equal(dartiumPath, browser.getPath())) {
         WebBrowserManager.getInstance().setBrowserPath(browser, dartiumPath, true);
       }
       return browser;
