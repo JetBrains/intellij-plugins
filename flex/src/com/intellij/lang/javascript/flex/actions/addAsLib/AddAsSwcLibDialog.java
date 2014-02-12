@@ -70,6 +70,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
 
     myLibComponentsList.setModel(JBList.createDefaultListModel(roots.toArray(new VirtualFile[roots.size()])));
     myLibComponentsList.setCellRenderer(new DefaultListCellRenderer() {
+      @Override
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         final JLabel component = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
@@ -94,11 +95,13 @@ public class AddAsSwcLibDialog extends DialogWrapper {
     init();
   }
 
+  @Override
   @Nullable
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   @Nullable
   public JComponent getPreferredFocusedComponent() {
     return myBCTree;
@@ -110,6 +113,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
     myBCTree.setVisibleRowCount(Math.min(myBCTree.getRowCount(), 15));
   }
 
+  @Override
   @Nullable
   protected ValidationInfo doValidate() {
     if (myBCTree.getSelectedBCs().isEmpty()) {
@@ -118,6 +122,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
     return null;
   }
 
+  @Override
   protected void doOKAction() {
     final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs = myBCTree.getSelectedBCs();
 
@@ -145,6 +150,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
     }
 
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
       public void run() {
         globalLibsModel.commit();
         projectLibsModel.commit();
@@ -198,6 +204,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
         }
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          @Override
           public void run() {
             libraryModifiableModel.commit();
           }
@@ -246,10 +253,12 @@ public class AddAsSwcLibDialog extends DialogWrapper {
 
   private void openProjectStructure(final Module module, final FlexBuildConfiguration bc) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
       public void run() {
         final ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(myProject);
 
         ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable, new Runnable() {
+          @Override
           public void run() {
             final Place place = FlexBuildConfigurationsExtension.getInstance().getConfigurator()
               .getPlaceFor(module, bc.getName())
