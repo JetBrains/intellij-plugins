@@ -78,6 +78,7 @@ public class DartConfigurable implements SearchableConfigurable {
 
     DartSdkUtil.initDartSdkPathTextFieldWithBrowseButton(myProject, mySdkPathTextWithBrowse, myVersionLabel);
     mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
       protected void textChanged(final DocumentEvent e) {
         final String sdkPath = FileUtilRt.toSystemIndependentName(mySdkPathTextWithBrowse.getText().trim());
         if (!myInReset && DartSdkUtil.isDartSdkHome(sdkPath)) {
@@ -101,6 +102,7 @@ public class DartConfigurable implements SearchableConfigurable {
   private void initEnableDartSupportCheckBox() {
     myEnableDartSupportCheckBox.setText(DartBundle.message("enable.dart.support.for.project.0", myProject.getName()));
     myEnableDartSupportCheckBox.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateControlsEnabledState();
         updateErrorLabel();
@@ -112,12 +114,14 @@ public class DartConfigurable implements SearchableConfigurable {
     myDartiumPathTextWithBrowse.addBrowseFolderListener("Select Dartium browser path", null, myProject,
                                                         FileChooserDescriptorFactory.createSingleFileOrExecutableAppDescriptor());
     myDartiumPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
       protected void textChanged(final DocumentEvent e) {
         updateErrorLabel();
       }
     });
 
     myDartiumSettingsButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         ShowSettingsUtil.getInstance().editConfigurable(myProject, myDartiumSettingsCurrent.createConfigurable());
       }
@@ -132,6 +136,7 @@ public class DartConfigurable implements SearchableConfigurable {
 
     final Module[] modules = ModuleManager.getInstance(myProject).getModules();
     Arrays.sort(modules, new Comparator<Module>() {
+      @Override
       public int compare(final Module module1, final Module module2) {
         return module1.getName().toLowerCase().compareTo(module2.getName().toLowerCase());
       }
@@ -149,31 +154,37 @@ public class DartConfigurable implements SearchableConfigurable {
     ((DefaultTreeModel)myModulesCheckboxTree.getModel()).reload(rootNode);
   }
 
+  @Override
   @NotNull
   public String getId() {
     return "dart.settings";
   }
 
+  @Override
   @Nullable
   public Runnable enableSearch(final String option) {
     return null;
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return DART_SETTINGS_PAGE_NAME;
   }
 
+  @Override
   @Nullable
   public String getHelpTopic() {
     return "settings.dart.settings";
   }
 
+  @Override
   @Nullable
   public JComponent createComponent() {
     return myMainPanel;
   }
 
+  @Override
   public boolean isModified() {
     final String sdkHomePath = FileUtilRt.toSystemIndependentName(mySdkPathTextWithBrowse.getText().trim());
     final boolean sdkSelected = DartSdkUtil.isDartSdkHome(sdkHomePath);
@@ -208,6 +219,7 @@ public class DartConfigurable implements SearchableConfigurable {
     return false;
   }
 
+  @Override
   public void reset() {
     myInReset = true;
 
@@ -254,8 +266,10 @@ public class DartConfigurable implements SearchableConfigurable {
     myInReset = false;
   }
 
+  @Override
   public void apply() throws ConfigurationException {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
       public void run() {
         if (myEnableDartSupportCheckBox.isSelected()) {
           final String sdkHomePath = FileUtilRt.toSystemIndependentName(mySdkPathTextWithBrowse.getText().trim());
@@ -305,6 +319,7 @@ public class DartConfigurable implements SearchableConfigurable {
     reset(); // because we rely on remembering initial state
   }
 
+  @Override
   public void disposeUIResources() {
     mySdkInitial = null;
     myModulesWithDartSdkLibAttachedInitial.clear();
@@ -342,6 +357,7 @@ public class DartConfigurable implements SearchableConfigurable {
 
   private void createUIComponents() {
     final CheckboxTree.CheckboxTreeCellRenderer renderer = new CheckboxTree.CheckboxTreeCellRenderer() {
+      @Override
       public void customizeRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         if (!(value instanceof CheckedTreeNode)) return;
 
@@ -371,6 +387,7 @@ public class DartConfigurable implements SearchableConfigurable {
     };
 
     myModulesCheckboxTree = new CheckboxTree(renderer, null, new CheckboxTreeBase.CheckPolicy(true, true, true, true)) {
+      @Override
       protected void checkNode(final CheckedTreeNode node, final boolean checked) {
         super.checkNode(node, checked);
         updateErrorLabel();

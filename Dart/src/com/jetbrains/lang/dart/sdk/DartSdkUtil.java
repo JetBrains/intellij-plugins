@@ -72,10 +72,12 @@ public class DartSdkUtil {
                                                               final @NotNull TextFieldWithBrowseButton dartSdkPathComponent,
                                                               final @Nullable JBLabel versionLabel) {
     final TextComponentAccessor<JTextField> textComponentAccessor = new TextComponentAccessor<JTextField>() {
+      @Override
       public String getText(final JTextField component) {
         return component.getText();
       }
 
+      @Override
       public void setText(final JTextField component, final String text) {
         if (!text.isEmpty() && !isDartSdkHome(text)) {
           final String probablySdkPath = text + "/dart-sdk";
@@ -97,6 +99,7 @@ public class DartSdkUtil {
 
     if (versionLabel != null) {
       dartSdkPathComponent.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+        @Override
         protected void textChanged(final DocumentEvent e) {
           final String sdkHomePath = dartSdkPathComponent.getText().trim();
           versionLabel.setText(sdkHomePath.isEmpty() ? "" : getSdkVersion(sdkHomePath));
