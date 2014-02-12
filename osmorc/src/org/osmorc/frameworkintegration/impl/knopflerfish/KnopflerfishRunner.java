@@ -55,8 +55,6 @@ public class KnopflerfishRunner extends AbstractFrameworkRunner {
 
     // framework-specific options
 
-    vmParameters.addProperty("org.osgi.framework.dir", vmParameters.getPropertyValue("org.osgi.framework.storage"));
-
     vmParameters.addProperty("org.knopflerfish.framework.debug.errors", "true");
     if (GenericRunProperties.isDebugMode(myAdditionalProperties)) {
       // todo: more detailed settings in the dialog (?)

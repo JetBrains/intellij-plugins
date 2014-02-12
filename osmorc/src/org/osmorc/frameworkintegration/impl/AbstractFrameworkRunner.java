@@ -50,8 +50,7 @@ import java.util.Map;
 import static org.osmorc.frameworkintegration.FrameworkInstanceManager.FrameworkBundleType;
 
 /**
- * This class provides a default implementation for a part of the FrameworkRunner interface useful to any kind of
- * FrameworkRunner.
+ * This class provides a default implementation for a part of the FrameworkRunner interface.
  *
  * @author Robert F. Beeger (robert@beeger.net)
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
@@ -99,7 +98,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
 
     JavaParameters params = new JavaParameters();
 
-    // working directory, framework storage directory and and JVM
+    // working directory and JVM
 
     if (myRunConfiguration.isGenerateWorkingDir()) {
       myWorkingDir = new File(PathManager.getSystemPath(), "osmorc/run." + System.currentTimeMillis());
@@ -111,8 +110,6 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
       throw new CantRunException("Cannot create work directory '" + myWorkingDir.getPath() + "'");
     }
     params.setWorkingDirectory(myWorkingDir);
-
-    params.getVMParametersList().addProperty("org.osgi.framework.storage", myWorkingDir.getAbsolutePath());
 
     // only add JDK classes to the classpath, the rest is to be provided by bundles
     params.configureByProject(myRunConfiguration.getProject(), JavaParameters.JDK_ONLY, jdkForRun);
