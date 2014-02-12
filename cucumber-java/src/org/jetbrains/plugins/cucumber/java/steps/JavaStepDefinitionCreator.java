@@ -55,7 +55,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     if (!(file instanceof PsiJavaFile)) return false;
 
     final Project project = file.getProject();
-    final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+    Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
     assert editor != null;
 
     closeActiveTemplateBuilders(file);
@@ -69,6 +69,9 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
       PsiMethod addedElement = (PsiMethod)clazz.add(element);
       addedElement = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(addedElement);
       JavaCodeStyleManager.getInstance(project).shortenClassReferences(addedElement);
+      editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+      assert editor != null;
+
       final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(addedElement);
 
       final PsiAnnotation annotation = addedElement.getModifierList().getAnnotations()[0];
