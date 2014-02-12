@@ -3,6 +3,10 @@ package com.jetbrains.lang.dart.ide.runner.client;
 import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.actions.BaseOpenInBrowserAction;
+import com.intellij.ide.browsers.actions.OpenInBrowserActionProducer;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -15,16 +19,19 @@ import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
   public DartiumDebuggerEngine() {
     super("dartium");
   }
 
-  //@Override
-  //@NotNull
-  //public WebBrowser getBrowser() {
-  //  return DartSettingsUtil.DARTIUM;
-  //}
+  @Override
+  @NotNull
+  public WebBrowser getBrowser() {
+    return DartSettingsUtil.DARTIUM;
+  }
 
   @Override
   public void checkAvailability(@NotNull final Project project) throws RuntimeConfigurationError {
@@ -54,5 +61,23 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
       }
     }
     return false;
+  }
+
+  final static class MyOpenInBrowserActionProducer extends OpenInBrowserActionProducer {
+    @Override
+    public List<AnAction> getActions() {
+      return Collections.<AnAction>singletonList(new BaseOpenInBrowserAction(DartSettingsUtil.DARTIUM) {
+        @Nullable
+        @Override
+        protected WebBrowser getBrowser(@NotNull AnActionEvent event) {
+          return DartSettingsUtil.getDartiumPath() == null ? null : DartSettingsUtil.DARTIUM;
+        }
+      });
+    }
+  }
+
+  @Override
+  public boolean isBrowserSupported(@NotNull WebBrowser browser) {
+    return DartSettingsUtil.getDartiumPath() != null && DartSettingsUtil.DARTIUM.equals(browser);
   }
 }
