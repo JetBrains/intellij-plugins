@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
  */
 abstract class ValidatorBase extends InspectionValidator {
 
+  @SafeVarargs
   protected ValidatorBase(@NotNull String description,
                           @NotNull String progressIndicatorText,
                           Class<? extends LocalInspectionTool>... inspectionToolClasses) {

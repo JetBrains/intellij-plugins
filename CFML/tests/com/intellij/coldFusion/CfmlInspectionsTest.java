@@ -46,7 +46,8 @@ public class CfmlInspectionsTest extends CfmlCodeInsightFixtureTestCase {
     return "/inspections";
   }
 
-  private void doInspectionTest(boolean infos, Class<? extends LocalInspectionTool>... inspectionClasses) throws Exception {
+  @SafeVarargs
+  private final void doInspectionTest(boolean infos, Class<? extends LocalInspectionTool>... inspectionClasses) throws Exception {
     String inputDataFileName = Util.getInputDataFileName(getTestName(true));
     myFixture.configureByFiles(inputDataFileName);
     myFixture.enableInspections(inspectionClasses);
