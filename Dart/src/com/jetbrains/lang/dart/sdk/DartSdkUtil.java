@@ -78,7 +78,7 @@ public class DartSdkUtil {
       }
 
       @Override
-      public void setText(final JTextField component, final String text) {
+      public void setText(final JTextField component, @NotNull String text) {
         if (!text.isEmpty() && !isDartSdkHome(text)) {
           final String probablySdkPath = text + "/dart-sdk";
           if (isDartSdkHome(probablySdkPath)) {
