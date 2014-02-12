@@ -3,6 +3,7 @@ package org.angularjs.editor;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSTargetedInjector;
+import com.intellij.psi.xml.XmlTokenType;
 import org.angularjs.codeInsight.AngularAttributesRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -53,7 +54,8 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
         startIndex = text.indexOf("{{", endIndex);
         endIndex = startIndex >= 0 ? text.indexOf("}}", startIndex) : -1;
         endIndex = endIndex > 0 ? endIndex : text.length();
-        if (startIndex >= 0) {
+        final PsiElement injectionCandidate = startIndex >= 0 ? context.findElementAt(startIndex) : null;
+        if (injectionCandidate != null && injectionCandidate.getNode().getElementType() != XmlTokenType.XML_COMMENT_CHARACTERS) {
           registrar.startInjecting(AngularJSLanguage.INSTANCE).
                     addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(startIndex + 2, endIndex)).
                     doneInjecting();

@@ -92,6 +92,10 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     checkVariableResolve("ap<caret>p", "app", JSDefinitionExpression.class);
   }
 
+  public void testComment() {
+    myFixture.configureByFiles("comment.html", "angular.js");
+  }
+
   private PsiElement checkVariableResolve(final String signature, final String varName, final Class<? extends JSNamedElement> varClass) {
     int offsetBySignature = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
