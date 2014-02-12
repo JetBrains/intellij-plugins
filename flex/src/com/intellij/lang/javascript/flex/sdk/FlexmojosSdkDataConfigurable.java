@@ -12,6 +12,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -85,7 +86,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
 
       myAdlComponent.getComponent()
         .addBrowseFolderListener("Select ADL executable file", null, null, descriptor, new TextComponentAccessor<JTextField>() {
-          public void setText(final JTextField component, final String text) {
+          public void setText(final JTextField component, @NotNull final String text) {
             component.setText(text);
             final String adlPath = FileUtil.toSystemDependentName(text);
             if (adlPath.endsWith(FlexSdkUtils.ADL_RELATIVE_PATH)) {
