@@ -1,22 +1,30 @@
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.browsers.BrowserSpecificSettings;
+import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.WebBrowserManager;
+import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +35,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -43,16 +52,24 @@ public class DartConfigurable implements SearchableConfigurable {
   private TextFieldWithBrowseButton mySdkPathTextWithBrowse;
   private JBLabel myVersionLabel;
 
-  private JPanel myModulesPanel;
-  private CheckboxTree myModulesCheckboxTree;
+  private TextFieldWithBrowseButton myDartiumPathTextWithBrowse;
+  private JButton myDartiumSettingsButton;
 
+  private JPanel myModulesPanel;
+
+  private CheckboxTree myModulesCheckboxTree;
   private JBLabel myErrorLabel;
 
   private final @NotNull Project myProject;
 
+  private boolean myInReset = false;
+
   private boolean myDartSupportEnabledInitial;
   private @Nullable DartSdk mySdkInitial;
   private final @NotNull Collection<Module> myModulesWithDartSdkLibAttachedInitial = new THashSet<Module>();
+
+  private @Nullable WebBrowser myDartiumInitial;
+  private ChromeSettings myDartiumSettingsCurrent;
 
   public DartConfigurable(final @NotNull Project project) {
     myProject = project;
@@ -62,9 +79,19 @@ public class DartConfigurable implements SearchableConfigurable {
     DartSdkUtil.initDartSdkPathTextFieldWithBrowseButton(myProject, mySdkPathTextWithBrowse, myVersionLabel);
     mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
+        final String sdkPath = FileUtilRt.toSystemIndependentName(mySdkPathTextWithBrowse.getText().trim());
+        if (!myInReset && DartSdkUtil.isDartSdkHome(sdkPath)) {
+          final String dartiumPath = DartiumUtil.getDartiumPathForSdk(sdkPath);
+          if (dartiumPath != null) {
+            myDartiumPathTextWithBrowse.setText(FileUtilRt.toSystemDependentName(dartiumPath));
+          }
+        }
+
         updateErrorLabel();
       }
     });
+
+    initDartiumRelatedControls();
 
     initModulesPanel();
 
@@ -77,6 +104,22 @@ public class DartConfigurable implements SearchableConfigurable {
       public void actionPerformed(final ActionEvent e) {
         updateControlsEnabledState();
         updateErrorLabel();
+      }
+    });
+  }
+
+  private void initDartiumRelatedControls() {
+    myDartiumPathTextWithBrowse.addBrowseFolderListener("Select Dartium browser path", null, myProject,
+                                                        FileChooserDescriptorFactory.createSingleFileOrExecutableAppDescriptor());
+    myDartiumPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      protected void textChanged(final DocumentEvent e) {
+        updateErrorLabel();
+      }
+    });
+
+    myDartiumSettingsButton.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        ShowSettingsUtil.getInstance().editConfigurable(myProject, myDartiumSettingsCurrent.createConfigurable());
       }
     });
   }
@@ -144,6 +187,12 @@ public class DartConfigurable implements SearchableConfigurable {
     final String initialSdkHomePath = mySdkInitial == null ? "" : mySdkInitial.getHomePath();
     if (sdkSelected && !sdkHomePath.equals(initialSdkHomePath)) return true;
 
+    final String dartiumPath = FileUtilRt.toSystemIndependentName(myDartiumPathTextWithBrowse.getText().trim());
+    final String dartiumPathInitial = myDartiumInitial == null ? null : myDartiumInitial.getPath();
+    if (!dartiumPath.isEmpty() && new File(dartiumPath).exists() && !dartiumPath.equals(dartiumPathInitial)) return true;
+
+    if (myDartiumInitial != null && !myDartiumSettingsCurrent.equals(myDartiumInitial.getSpecificSettings())) return true;
+
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
       final Module[] selectedModules = myModulesCheckboxTree.getCheckedNodes(Module.class, null);
       if (selectedModules.length != myModulesWithDartSdkLibAttachedInitial.size()) return true;
@@ -160,6 +209,8 @@ public class DartConfigurable implements SearchableConfigurable {
   }
 
   public void reset() {
+    myInReset = true;
+
     // remember initial state
     mySdkInitial = DartSdk.getGlobalDartSdk();
     myModulesWithDartSdkLibAttachedInitial.clear();
@@ -171,9 +222,21 @@ public class DartConfigurable implements SearchableConfigurable {
 
     myDartSupportEnabledInitial = !myModulesWithDartSdkLibAttachedInitial.isEmpty();
 
+    myDartiumInitial = DartiumUtil.getDartiumBrowser();
+    myDartiumSettingsCurrent = new ChromeSettings();
+    if (myDartiumInitial != null) {
+      final BrowserSpecificSettings browserSpecificSettings = myDartiumInitial.getSpecificSettings();
+      if (browserSpecificSettings instanceof ChromeSettings) {
+        myDartiumSettingsCurrent = (ChromeSettings)browserSpecificSettings.clone();
+      }
+    }
+
     // reset UI
     myEnableDartSupportCheckBox.setSelected(myDartSupportEnabledInitial);
     mySdkPathTextWithBrowse.setText(mySdkInitial == null ? "" : FileUtilRt.toSystemDependentName(mySdkInitial.getHomePath()));
+    myDartiumPathTextWithBrowse.setText(myDartiumInitial == null
+                                        ? ""
+                                        : FileUtilRt.toSystemDependentName(StringUtil.notNullize(myDartiumInitial.getPath())));
 
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
       final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTree.getModel().getRoot();
@@ -187,6 +250,8 @@ public class DartConfigurable implements SearchableConfigurable {
 
     updateControlsEnabledState();
     updateErrorLabel();
+
+    myInReset = false;
   }
 
   public void apply() throws ConfigurationException {
@@ -214,6 +279,19 @@ public class DartConfigurable implements SearchableConfigurable {
                                      ? myModulesCheckboxTree.getCheckedNodes(Module.class, null)
                                      : ModuleManager.getInstance(myProject).getModules();
             DartSdkGlobalLibUtil.updateDependencyOnDartSdkGlobalLib(myProject, modules, dartSdkGlobalLibName);
+          }
+
+          final String dartiumPath = FileUtilRt.toSystemIndependentName(myDartiumPathTextWithBrowse.getText().trim());
+          final String dartiumPathInitial = myDartiumInitial == null ? null : myDartiumInitial.getPath();
+          if (!dartiumPath.isEmpty() && new File(dartiumPath).exists() && !dartiumPath.equals(dartiumPathInitial)) {
+            final WebBrowser browser = DartiumUtil.ensureDartiumBrowserConfigured(dartiumPath);
+            if (!myDartiumSettingsCurrent.equals(browser.getSpecificSettings())) {
+              WebBrowserManager.getInstance().setBrowserSpecificSettings(browser, myDartiumSettingsCurrent);
+            }
+          }
+
+          if (myDartiumInitial != null && !myDartiumSettingsCurrent.equals(myDartiumInitial.getSpecificSettings())) {
+            WebBrowserManager.getInstance().setBrowserSpecificSettings(myDartiumInitial, myDartiumSettingsCurrent);
           }
         }
         else {
@@ -249,7 +327,10 @@ public class DartConfigurable implements SearchableConfigurable {
       return null;
     }
 
-    final String message = DartSdkUtil.getErrorMessageIfWrongSdkRootPath(mySdkPathTextWithBrowse.getText().trim());
+    String message = DartSdkUtil.getErrorMessageIfWrongSdkRootPath(mySdkPathTextWithBrowse.getText().trim());
+    if (message != null) return message;
+
+    message = DartiumUtil.getErrorMessageIfWrongDartiumPath(myDartiumPathTextWithBrowse.getText().trim());
     if (message != null) return message;
 
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport() && myModulesCheckboxTree.getCheckedNodes(Module.class, null).length == 0) {

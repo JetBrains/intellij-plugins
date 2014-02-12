@@ -5,6 +5,7 @@ import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,8 +18,9 @@ public class DartiumUtil {
 
   @Nullable
   public static WebBrowser getDartiumBrowser() {
-    final WebBrowser browser = WebBrowserManager.getInstance().findBrowserById(DARTIUM_ID.toString());
-    return browser != null ? browser : WebBrowserManager.getInstance().findBrowserById(DARTIUM_NAME);
+    WebBrowser browser = WebBrowserManager.getInstance().findBrowserById(DARTIUM_ID.toString());
+    if (browser == null) browser = WebBrowserManager.getInstance().findBrowserById(DARTIUM_NAME);
+    return browser != null && browser.getFamily() == BrowserFamily.CHROME ? browser : null;
   }
 
   @Nullable
@@ -35,14 +37,30 @@ public class DartiumUtil {
     return dartiumPath.exists() ? FileUtil.toSystemIndependentName(dartiumPath.getPath()) : null;
   }
 
-  public static void ensureDartiumBrowserConfigured(final @NotNull String dartiumPath) {
+  @NotNull
+  public static WebBrowser ensureDartiumBrowserConfigured(final @NotNull String dartiumPath) {
     final WebBrowser browser = getDartiumBrowser();
     if (browser == null) {
-      WebBrowserManager.getInstance().addBrowser(DARTIUM_ID, BrowserFamily.CHROME, DARTIUM_NAME, dartiumPath, true,
-                                                 BrowserFamily.CHROME.createBrowserSpecificSettings());
+      return WebBrowserManager.getInstance().addBrowser(DARTIUM_ID, BrowserFamily.CHROME, DARTIUM_NAME, dartiumPath, true,
+                                                        BrowserFamily.CHROME.createBrowserSpecificSettings());
     }
-    else if (!dartiumPath.equals(browser.getPath())) {
-      WebBrowserManager.getInstance().setBrowserPath(browser, dartiumPath, true);
+    else {
+      if (!dartiumPath.equals(browser.getPath())) {
+        WebBrowserManager.getInstance().setBrowserPath(browser, dartiumPath, true);
+      }
+      return browser;
     }
+  }
+
+  @Nullable
+  public static String getErrorMessageIfWrongDartiumPath(final @NotNull String dartiumPath) {
+    if (dartiumPath.isEmpty()) return DartBundle.message("warning.dartium.path.not.specified");
+
+    final File file = new File(dartiumPath);
+    if (SystemInfo.isMac && !file.exists() || !SystemInfo.isMac && !file.isFile()) {
+      return DartBundle.message("warning.invalid.dartium.path");
+    }
+
+    return null;
   }
 }
