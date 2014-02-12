@@ -2,6 +2,7 @@ package org.osmorc.frameworkintegration.impl;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.i18n.OsmorcBundle;
@@ -25,8 +26,11 @@ public class DefaultOsgiRunConfigurationChecker implements OsgiRunConfigurationC
       }
 
       File dir = new File(runConfiguration.getWorkingDir());
-      if (!dir.exists() && !dir.mkdirs()) {
-        throw new RuntimeConfigurationError(OsmorcBundle.message("run.configuration.working.dir.create"));
+      if (!dir.isDirectory()) {
+        if (!dir.mkdirs()) {
+          throw new RuntimeConfigurationError(OsmorcBundle.message("run.configuration.working.dir.create"));
+        }
+        FileUtil.delete(dir);
       }
     }
 
