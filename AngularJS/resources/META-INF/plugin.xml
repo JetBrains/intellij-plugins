@@ -2,7 +2,7 @@
   <name>AngularJS</name>
   <description>Support for AngularJS</description>
   <version>0.1.9</version>
-  <vendor url="http://johnlindquist.com" email="johnlindquist@gmail.com">johnlindquist</vendor>
+  <vendor>johnlindquist, JetBrains</vendor>
   <change-notes><![CDATA[
         <html>
         <dl>
@@ -41,6 +41,8 @@
   <depends>com.intellij.modules.platform</depends>
 
   <extensions defaultExtensionNs="com.intellij">
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+
     <xml.attributeDescriptorsProvider implementation="org.angularjs.codeInsight.AngularJSAttributeDescriptorsProvider"/>
 
     <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
