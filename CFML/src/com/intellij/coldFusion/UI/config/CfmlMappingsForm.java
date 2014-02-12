@@ -67,6 +67,7 @@ public class CfmlMappingsForm {
     setItems(defaultMappings);
   }
 
+  @SuppressWarnings("unchecked")
   public CfmlMappingsForm(Project project) {
     myProject = project;
     myTableEditor = new ValidatingTableEditor<Item>() {
@@ -75,6 +76,7 @@ public class CfmlMappingsForm {
         return new Item(item.myDirectoryPath, item.myLogicalPath);
       }
 
+      @Override
       @Nullable
       protected String validate(Item item) {
         if (StringUtil.isEmpty(item.myDirectoryPath)) {
@@ -102,9 +104,9 @@ public class CfmlMappingsForm {
 
     myTablePanel.add(myTableEditor.getContentPane(), BorderLayout.CENTER);
 
-    myLanguageLevel.setRenderer(new ListCellRendererWrapper() {
+    myLanguageLevel.setRenderer(new ListCellRendererWrapper<String>() {
       @Override
-      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
+      public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
         if (CfmlLanguage.CF8.equals(value)) {
           setText("ColdFusion 8");
         }
@@ -115,6 +117,7 @@ public class CfmlMappingsForm {
           setText("ColdFusion 10");
         }
         else if (CfmlLanguage.RAILO.equals(value)) {
+          //noinspection SpellCheckingInspection
           setText("Railo");
         }
       }
@@ -177,6 +180,7 @@ public class CfmlMappingsForm {
       return true;
     }
 
+    @Override
     public int getRowHeight() {
       return new JTextField().getPreferredSize().height + 1;
     }
@@ -186,10 +190,12 @@ public class CfmlMappingsForm {
       return new AbstractTableCellEditor() {
         JTextField myComponent;
 
+        @Override
         public Object getCellEditorValue() {
           return myComponent.getText();
         }
 
+        @Override
         public Component getTableCellEditorComponent(final JTable table, Object value, boolean isSelected, final int row, int column) {
           myComponent = new JTextField();
           myComponent.setText((String)value);
@@ -224,6 +230,7 @@ public class CfmlMappingsForm {
       return new LocalPathCellEditor(myProject);
     }
 
+    @Override
     public int getRowHeight() {
       return new JTextField().getPreferredSize().height + 1;
     }
