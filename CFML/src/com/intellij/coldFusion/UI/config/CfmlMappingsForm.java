@@ -144,7 +144,9 @@ public class CfmlMappingsForm {
     Map<String, String> result = new HashMap<String, String>();
     for (Item item : items) {
       // TODO: to prettify logical path
-      if (!item.isEmpty()) result.put(item.myLogicalPath, FileUtil.toSystemIndependentName(item.myDirectoryPath));
+      if (!item.isEmpty()) {
+        result.put(item.myLogicalPath, FileUtil.toSystemIndependentName(item.myDirectoryPath));
+      }
     }
     return result;
   }
