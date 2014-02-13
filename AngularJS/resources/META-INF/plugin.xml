@@ -65,7 +65,7 @@
     <lang.parserDefinition language="AngularJS" implementationClass="org.angularjs.lang.parser.AngularJSParserDefinition"/>
     <lang.syntaxHighlighterFactory key="AngularJS" implementationClass="org.angularjs.lang.AngularJSSyntaxHighlighterFactory"/>
     <psi.referenceContributor implementation="org.angularjs.codeInsight.refs.AngularJSReferencesContributor"/>
-
+    <highlightErrorFilter implementation="org.angularjs.lang.AngularJSErrorFilter" />
 
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector"/>
     <completion.contributor language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSCompletionContributor"

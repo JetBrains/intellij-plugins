@@ -20,6 +20,7 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
     if (file.getViewProvider() instanceof MultiplePsiFilesPerDocumentFileViewProvider) return Result.CONTINUE;
 
     if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return TypedHandlerDelegate.Result.DEFAULT;
+    // we should use AngularJSBracesUtil here
     if (file.getFileType() == HtmlFileType.INSTANCE) {
       if (c == '{') {
         boolean addWhiteSpaceBetweenBraces = AngularJSConfig.getInstance().INSERT_WHITESPACE;

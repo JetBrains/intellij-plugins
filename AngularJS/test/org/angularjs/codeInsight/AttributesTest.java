@@ -109,4 +109,9 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.enableInspections(HtmlUnknownAttributeInspectionBase.class);
     myFixture.checkHighlighting();
   }
+
+  public void testInlineStyle() {
+    myFixture.configureByFiles("style.html", "angular.js");
+    myFixture.checkHighlighting();
+  }
 }
