@@ -93,7 +93,7 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
     runnable.run();
   }
 
-  public void print(String s, ConsoleViewContentType contentType) {
+  public void print(@NotNull String s, @NotNull ConsoleViewContentType contentType) {
     if (myLength >= MAX_LENGTH) return;
 
     String updated = updateText(s);
