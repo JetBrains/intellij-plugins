@@ -1,6 +1,7 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.xml.SchemaPrefix;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.HtmlXmlExtension;
@@ -24,5 +25,13 @@ public class AngularJSHtmlExtension extends HtmlXmlExtension {
     }
 
     return super.isRequiredAttributeImplicitlyPresent(tag, attrName);
+  }
+
+  @Override
+  public SchemaPrefix getPrefixDeclaration(XmlTag context, String namespacePrefix) {
+    if ("ng".equals(namespacePrefix)) {
+      return new SchemaPrefix(null, null, namespacePrefix);
+    }
+    return super.getPrefixDeclaration(context, namespacePrefix);
   }
 }
