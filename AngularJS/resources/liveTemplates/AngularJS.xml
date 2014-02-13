@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<templateSet group="AngularJS">
+<templateSet group="AngularJS " replace="AngularJS">
   <!--Contributed by Pawel Kozlowski-->
   <template name="ngdcf"
             value="function compile(tElement, tAttrs, transclude) {    &#10;      $END$&#10;      return function (scope, element, attrs) {                    &#10;      }&#10;}"
@@ -357,7 +357,7 @@
       <option name="OTHER" value="false"/>
     </context>
   </template>
-  <template name="ngro" value="$routeProvider.otherwise(redirectTo : '$url$'});&#10;$END$"
+  <template name="ngro" value="$routeProvider.otherwise({redirectTo : '$url$'});&#10;$END$"
             description="Defines an otherwise condition of an AngularJS route." toReformat="true" toShortenFQNames="true">
     <variable name="url" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
