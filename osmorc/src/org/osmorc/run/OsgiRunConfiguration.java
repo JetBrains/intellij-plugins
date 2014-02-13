@@ -278,7 +278,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     if (isUseAlternativeJre()) {
       String jrePath = this.getAlternativeJrePath();
       if (jrePath == null || jrePath.length() == 0 || !JavaSdk.checkForJre(jrePath)) {
-        throw new RuntimeConfigurationWarning(ExecutionBundle.message("jre.not.valid.error.message", jrePath));
+        throw new RuntimeConfigurationError(ExecutionBundle.message("jre.not.valid.error.message", jrePath));
       }
     }
     if (checker != null) {
