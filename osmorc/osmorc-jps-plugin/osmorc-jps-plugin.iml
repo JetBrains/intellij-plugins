@@ -10,6 +10,7 @@
     <orderEntry type="module" module-name="jps-model-api" />
     <orderEntry type="module" module-name="jps-model-serialization" />
     <orderEntry type="module" module-name="jps-builders" />
+    <orderEntry type="module" module-name="maven-jps-plugin" />
     <orderEntry type="module-library" exported="">
       <library name="org.apache.felix.framework">
         <CLASSES>
@@ -41,7 +42,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="maven-jps-plugin" />
     <orderEntry type="module-library" exported="">
       <library name="bundlor-1.0.0">
         <CLASSES>

@@ -13,18 +13,16 @@
     <orderEntry type="module" module-name="openapi" />
     <orderEntry type="module" module-name="dom-openapi" />
     <orderEntry type="module" module-name="maven" />
-    <orderEntry type="module" module-name="idea" />
-    <orderEntry type="module" module-name="compiler-openapi" />
-    <orderEntry type="module" module-name="execution-openapi" />
-    <orderEntry type="module" module-name="execution-impl" />
+    <orderEntry type="module" module-name="platform-impl" />
+    <orderEntry type="module" module-name="java-impl" />
     <orderEntry type="module" module-name="compiler-openapi" />
     <orderEntry type="module" module-name="execution-openapi" />
     <orderEntry type="module" module-name="execution-impl" />
     <orderEntry type="module" module-name="debugger-impl" />
     <orderEntry type="module" module-name="manifest" />
+    <orderEntry type="module" module-name="osmorc-jps-plugin" exported="" />
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
-    <orderEntry type="module" module-name="osmorc-jps-plugin" exported="" />
   </component>
 </module>
 
