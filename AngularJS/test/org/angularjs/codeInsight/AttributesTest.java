@@ -1,6 +1,7 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectionBase;
+import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspectionBase;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -86,6 +87,13 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNormalization() {
     myFixture.configureByFiles("normalize.html", "angular.js");
+    myFixture.enableInspections(HtmlUnknownAttributeInspectionBase.class);
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgSrc() {
+    myFixture.configureByFiles("ng-src.html", "angular.js");
+    myFixture.enableInspections(RequiredAttributesInspectionBase.class);
     myFixture.enableInspections(HtmlUnknownAttributeInspectionBase.class);
     myFixture.checkHighlighting();
   }

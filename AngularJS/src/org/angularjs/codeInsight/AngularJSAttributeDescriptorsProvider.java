@@ -42,7 +42,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     return null;
   }
 
-  private static String normalizeAttributeName(String name) {
+  public static String normalizeAttributeName(String name) {
     if (name == null) return null;
     if (name.startsWith("data-")) {
       name = name.substring(5);

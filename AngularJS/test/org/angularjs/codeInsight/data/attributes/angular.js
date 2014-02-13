@@ -25,3 +25,7 @@
 /**
  * @name ng.directive:ngInclude#$includeContentRequested
  */
+
+/**
+ * @name ng.directive:ngSrc
+ */
