@@ -20,7 +20,7 @@
   </cfscript>
 </cffunction>
 <cfcomponent>
-  <cffunction name="getDbTyp<caret>e" output="no" returntype="string">
+  <cffunction name="getDbType" output="no" returntype="string">
     <cfargument name="dsn" type="string" default="">
   </cffunction>
 

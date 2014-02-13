@@ -135,7 +135,7 @@
             </constraints>
             <properties>
               <labelFor value="356ae"/>
-              <text value="Da&amp;rtium path:"/>
+              <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="dartium.path.label"/>
             </properties>
           </component>
           <grid id="44559" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -157,7 +157,7 @@
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="&amp;Settings..."/>
+                  <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="dartium.settings.button"/>
                 </properties>
               </component>
             </children>

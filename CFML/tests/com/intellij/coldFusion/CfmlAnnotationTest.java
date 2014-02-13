@@ -32,8 +32,7 @@ public class CfmlAnnotationTest extends CfmlCodeInsightFixtureTestCase {
     return false;
   }
 
-  @SafeVarargs
-  private final void doAnnotationTest(boolean infos, Class<? extends LocalInspectionTool>... inspectionClasses) throws Exception {
+  private void doAnnotationTest(boolean infos, Class<? extends LocalInspectionTool>... inspectionClasses) throws Exception {
     String inputDataFileName = Util.getInputDataFileName(getTestName(true));
     myFixture.configureByFiles(inputDataFileName);
     myFixture.testHighlighting(false, infos, false);
