@@ -14,7 +14,7 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testArrayAccess() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testCascade1() throws Throwable {
@@ -70,11 +70,11 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testGeneric1() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testGeneric2() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testGeneric3() throws Throwable {
@@ -82,27 +82,27 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testGeneric4() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testGeneric5() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testGeneric6() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testGeneric7() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testGeneric8() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testGeneric9() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testGeneric10() throws Throwable {
@@ -122,7 +122,7 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testLibrary4() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testLibrary5() throws Throwable {
@@ -180,19 +180,19 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testOperator1() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testOperator2() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testOperator3() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testOperator4() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testPackage1() throws Throwable {
@@ -262,15 +262,15 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testReference13() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testReference14() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testReference15() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testReference16() throws Throwable {
@@ -278,15 +278,15 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testReference17() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testReference18() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testReference19() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testReference20() throws Throwable {
@@ -294,11 +294,11 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testReference21() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testReference22() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testReference23() throws Throwable {
@@ -310,11 +310,11 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testReference25() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testReference26() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testReference27() throws Throwable {
@@ -322,7 +322,7 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testReference28() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testReference29() throws Throwable {
@@ -362,7 +362,7 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testReference38() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testType1() throws Throwable {
@@ -374,7 +374,7 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testTypedef1() throws Throwable {
-    doTestWithSDK(1);
+    doTest(1);
   }
 
   public void testTypeInExtends1() throws Throwable {

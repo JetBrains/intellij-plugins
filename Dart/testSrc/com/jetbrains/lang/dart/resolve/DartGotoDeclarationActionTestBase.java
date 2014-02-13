@@ -15,10 +15,6 @@ abstract public class DartGotoDeclarationActionTestBase extends DartCodeInsightF
     return FileUtil.toSystemDependentName("/goto/");
   }
 
-  public void doTestWithSDK(int expectedSize) throws Throwable {
-    doTest(expectedSize);
-  }
-
   protected void doTest(int expectedSize) throws IOException {
     doTest(expectedSize, getTestName(false) + ".dart");
   }
