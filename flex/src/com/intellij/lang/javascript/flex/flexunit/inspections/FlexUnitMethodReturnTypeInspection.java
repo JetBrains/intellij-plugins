@@ -9,9 +9,10 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitSupport;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSRecursiveElementVisitor;
 import com.intellij.lang.javascript.psi.JSReturnStatement;
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.lang.javascript.validation.fixes.ChangeTypeFix;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -37,8 +38,8 @@ public class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInspection
       return;
     }
 
-    final String returnType = method.getReturnTypeString();
-    if (StringUtil.isNotEmpty(returnType) && !"void".equals(returnType)) {
+    final JSType returnType = method.getReturnType();
+    if (returnType != null && !(returnType instanceof JSVoidType)) {
 
       final ASTNode nameIdentifier = method.findNameIdentifier();
       if (nameIdentifier != null) {

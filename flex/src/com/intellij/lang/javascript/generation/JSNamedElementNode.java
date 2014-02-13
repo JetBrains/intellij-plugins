@@ -69,9 +69,9 @@ public class JSNamedElementNode extends PsiElementMemberChooserObject implements
       }
 
       text += ")";
-      final String typeString = function.getReturnTypeString();
-      if (typeString != null) {
-        text += ":" + typeString;
+      final JSType type = function.getReturnType();
+      if (type != null) {
+        text += ":" + type.getTypeText(JSType.TypeTextFormat.PRESENTABLE);
       }
     } else if (node instanceof JSVariable) {
       final JSVariable var = (JSVariable)node;

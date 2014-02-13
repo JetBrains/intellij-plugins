@@ -7,19 +7,20 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
@@ -227,8 +228,8 @@ public class FlexUnitSupport {
     else {
       if (!flexUnit4Present) return false;
 
-      final String returnType = method.getReturnTypeString();
-      if (StringUtil.isNotEmpty(returnType) && !"void".equals(returnType)) return false;
+      final JSType returnType = method.getReturnType();
+      if (returnType != null && !(returnType instanceof JSVoidType)) return false;
 
       if (method.getAttributeList().getAttributesByName(IGNORE_ATTRIBUTE).length > 0) return false;
       if (method.getAttributeList().getAttributesByName(TEST_ATTRIBUTE).length == 0) return false;

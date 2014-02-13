@@ -36,7 +36,10 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
+import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
+import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.lang.javascript.validation.*;
@@ -1026,9 +1029,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         JSVariable var = ArrayUtil.getFirstElement(varStatement.getVariables());
 
         if (var != null) {
-          String type = var.getTypeString();
+          JSType type = var.getType();
 
-          if (!"Class".equals(type) && !"String".equals(type)) {
+          if (!(type instanceof JSStringType) &&
+              !(type instanceof JSTypeImpl && "Class".equals(type.getTypeText(JSType.TypeTextFormat.SIMPLE)))) {
             myHolder.createErrorAnnotation(jsAttribute,
                                            JSBundle.message("javascript.validation.message.embed.annotation.used.with.var.of.wrong.type"));
           }
@@ -1124,15 +1128,16 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     checkFileUnderSourceRoot(aClass, new SimpleErrorReportingClient());
   }
 
-  protected void validateGetPropertyReturnType(ASTNode nameIdentifier, JSFunction function, String typeString) {
-    if (VOID_TYPE_NAME.equals(typeString)) {
+  protected void validateGetPropertyReturnType(ASTNode nameIdentifier, JSFunction function, JSType type) {
+    if (type instanceof JSVoidType) {
       // TODO: fix!
+      final String typeString = type != null ? type.getTypeText(JSType.TypeTextFormat.PRESENTABLE) : "empty";
       myHolder.createErrorAnnotation(
-        typeString != null ?
+        type != null ?
         function.getReturnTypeElement() :
         nameIdentifier.getPsi(),
         JSBundle
-          .message("javascript.validation.message.get.method.should.be.valid.type", typeString != null ? typeString : "empty"));
+          .message("javascript.validation.message.get.method.should.be.valid.type", typeString));
     }
     else {
       PsiElement element = JSResolveUtil.findParent(function);
@@ -1145,17 +1150,17 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           JSParameter[] setterParameters = setterParameterList != null ?
                                            setterParameterList.getParameters() : JSParameter.EMPTY_ARRAY;
 
-          String setterType;
+          JSType setterType;
           if (setterParameters.length == 1 &&
-              !JSCommonTypeNames.ANY_TYPE.equals(setterType = setterParameters[0].getTypeString()) &&
-              !JSCommonTypeNames.ANY_TYPE.equals(typeString) &&
-              !compatibleType(setterType, typeString, setterParameters[0], function)) {
+              !((setterType = setterParameters[0].getType()) instanceof JSAnyType) &&
+              !(type instanceof JSAnyType) &&
+              !JSTypeUtils.areTypesCompatible(setterType, type,  null)) {
             PsiElement typeElement = function.getReturnTypeElement();
 
             myHolder.createErrorAnnotation(
               typeElement != null ? typeElement : function.findNameIdentifier().getPsi(),
               JSBundle.message("javascript.validation.message.get.method.type.is.different.from.setter",
-                               setterType != null ? setterType : "empty")
+                               setterType != null ? setterType.getTypeText(JSType.TypeTextFormat.PRESENTABLE) : "empty")
             );
           }
 
