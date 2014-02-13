@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.runner.client;
 import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
+import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -63,5 +64,22 @@ public class DartiumUtil {
     }
 
     return null;
+  }
+
+  public static void applyDartiumSettings(final @NotNull String dartiumPathFromUI, final @NotNull ChromeSettings dartiumSettingsFromUI) {
+    final WebBrowser dartiumInitial = getDartiumBrowser();
+    final String dartiumPathInitial = dartiumInitial == null ? null : dartiumInitial.getPath();
+
+    if (!dartiumPathFromUI.isEmpty() && new File(dartiumPathFromUI).exists() && !dartiumPathFromUI.equals(dartiumPathInitial)) {
+      final WebBrowser browser = ensureDartiumBrowserConfigured(dartiumPathFromUI);
+      if (!dartiumSettingsFromUI.equals(browser.getSpecificSettings())) {
+        WebBrowserManager.getInstance().setBrowserSpecificSettings(browser, dartiumSettingsFromUI);
+      }
+      return;
+    }
+
+    if (dartiumInitial != null && !dartiumSettingsFromUI.equals(dartiumInitial.getSpecificSettings())) {
+      WebBrowserManager.getInstance().setBrowserSpecificSettings(dartiumInitial, dartiumSettingsFromUI);
+    }
   }
 }

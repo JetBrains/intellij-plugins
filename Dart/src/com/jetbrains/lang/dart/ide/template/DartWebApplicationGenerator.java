@@ -4,19 +4,20 @@ import com.intellij.ide.util.projectWizard.WebProjectTemplate;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.IOException;
 
-public class DartWebApplicationGenerator extends WebProjectTemplate<String> {
+public class DartWebApplicationGenerator extends WebProjectTemplate<DartProjectWizardData> {
 
   @NotNull
   public String getName() {
@@ -33,27 +34,30 @@ public class DartWebApplicationGenerator extends WebProjectTemplate<String> {
 
   public void generateProject(final @NotNull Project project,
                               final @NotNull VirtualFile baseDir,
-                              final @NotNull String dartSdkPath,
+                              final @NotNull DartProjectWizardData data,
                               final @NotNull Module module) {
+    // similar to DartConfigurable.apply()
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
-        if (DartSdkUtil.isDartSdkHome(dartSdkPath)) {
+        if (DartSdkUtil.isDartSdkHome(data.dartSdkPath)) {
           final DartSdk sdk = DartSdk.getGlobalDartSdk();
 
           final String dartSdkLibName;
           if (sdk == null) {
-            dartSdkLibName = DartSdkGlobalLibUtil.createDartSdkGlobalLib(dartSdkPath);
+            dartSdkLibName = DartSdkGlobalLibUtil.createDartSdkGlobalLib(data.dartSdkPath);
           }
           else {
             dartSdkLibName = sdk.getGlobalLibName();
 
-            if (!dartSdkPath.equals(sdk.getHomePath())) {
-              DartSdkGlobalLibUtil.updateDartSdkGlobalLib(dartSdkLibName, dartSdkPath);
+            if (!data.dartSdkPath.equals(sdk.getHomePath())) {
+              DartSdkGlobalLibUtil.updateDartSdkGlobalLib(dartSdkLibName, data.dartSdkPath);
             }
           }
 
           DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(module, dartSdkLibName);
         }
+
+        DartiumUtil.applyDartiumSettings(FileUtilRt.toSystemIndependentName(data.dartiumPath), data.dartiumSettings);
 
         try {
           baseDir.createChildDirectory(this, "web");
@@ -69,7 +73,7 @@ public class DartWebApplicationGenerator extends WebProjectTemplate<String> {
   }
 
   @NotNull
-  public GeneratorPeer<String> createPeer() {
+  public GeneratorPeer<DartProjectWizardData> createPeer() {
     return new DartGeneratorPeer();
   }
 }

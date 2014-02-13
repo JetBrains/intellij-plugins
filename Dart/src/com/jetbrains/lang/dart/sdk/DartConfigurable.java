@@ -3,10 +3,8 @@ package com.jetbrains.lang.dart.sdk;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.browsers.BrowserSpecificSettings;
 import com.intellij.ide.browsers.WebBrowser;
-import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -15,6 +13,7 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -73,29 +72,9 @@ public class DartConfigurable implements SearchableConfigurable {
 
   public DartConfigurable(final @NotNull Project project) {
     myProject = project;
-
     initEnableDartSupportCheckBox();
-
-    DartSdkUtil.initDartSdkPathTextFieldWithBrowseButton(myProject, mySdkPathTextWithBrowse, myVersionLabel);
-    mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-      @Override
-      protected void textChanged(final DocumentEvent e) {
-        final String sdkPath = FileUtilRt.toSystemIndependentName(mySdkPathTextWithBrowse.getText().trim());
-        if (!myInReset && DartSdkUtil.isDartSdkHome(sdkPath)) {
-          final String dartiumPath = DartiumUtil.getDartiumPathForSdk(sdkPath);
-          if (dartiumPath != null) {
-            myDartiumPathTextWithBrowse.setText(FileUtilRt.toSystemDependentName(dartiumPath));
-          }
-        }
-
-        updateErrorLabel();
-      }
-    });
-
-    initDartiumRelatedControls();
-
+    initDartSdkAndDartiumControls();
     initModulesPanel();
-
     myErrorLabel.setIcon(AllIcons.Actions.Lightning);
   }
 
@@ -110,15 +89,24 @@ public class DartConfigurable implements SearchableConfigurable {
     });
   }
 
-  private void initDartiumRelatedControls() {
-    myDartiumPathTextWithBrowse.addBrowseFolderListener("Select Dartium browser path", null, myProject,
-                                                        FileChooserDescriptorFactory.createSingleFileOrExecutableAppDescriptor());
-    myDartiumPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-      @Override
+  private void initDartSdkAndDartiumControls() {
+    final Computable<Boolean> isResettingControlsComputable = new Computable<Boolean>() {
+      public Boolean compute() {
+        return myInReset;
+      }
+    };
+
+    DartSdkUtil.initDartSdkAndDartiumControls(myProject, mySdkPathTextWithBrowse, myVersionLabel, myDartiumPathTextWithBrowse,
+                                              isResettingControlsComputable);
+
+    final DocumentAdapter documentListener = new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
         updateErrorLabel();
       }
-    });
+    };
+
+    mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(documentListener);
+    myDartiumPathTextWithBrowse.getTextField().getDocument().addDocumentListener(documentListener);
 
     myDartiumSettingsButton.addActionListener(new ActionListener() {
       @Override
@@ -268,6 +256,7 @@ public class DartConfigurable implements SearchableConfigurable {
 
   @Override
   public void apply() throws ConfigurationException {
+    // similar to DartWebApplicationGenerator.generateProject()
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
@@ -296,17 +285,7 @@ public class DartConfigurable implements SearchableConfigurable {
           }
 
           final String dartiumPath = FileUtilRt.toSystemIndependentName(myDartiumPathTextWithBrowse.getText().trim());
-          final String dartiumPathInitial = myDartiumInitial == null ? null : myDartiumInitial.getPath();
-          if (!dartiumPath.isEmpty() && new File(dartiumPath).exists() && !dartiumPath.equals(dartiumPathInitial)) {
-            final WebBrowser browser = DartiumUtil.ensureDartiumBrowserConfigured(dartiumPath);
-            if (!myDartiumSettingsCurrent.equals(browser.getSpecificSettings())) {
-              WebBrowserManager.getInstance().setBrowserSpecificSettings(browser, myDartiumSettingsCurrent);
-            }
-          }
-
-          if (myDartiumInitial != null && !myDartiumSettingsCurrent.equals(myDartiumInitial.getSpecificSettings())) {
-            WebBrowserManager.getInstance().setBrowserSpecificSettings(myDartiumInitial, myDartiumSettingsCurrent);
-          }
+          DartiumUtil.applyDartiumSettings(dartiumPath, myDartiumSettingsCurrent);
         }
         else {
           if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {
@@ -323,6 +302,8 @@ public class DartConfigurable implements SearchableConfigurable {
   public void disposeUIResources() {
     mySdkInitial = null;
     myModulesWithDartSdkLibAttachedInitial.clear();
+    myDartiumInitial = null;
+    myDartiumSettingsCurrent = null;
   }
 
   private void updateControlsEnabledState() {
@@ -349,7 +330,7 @@ public class DartConfigurable implements SearchableConfigurable {
     if (message != null) return message;
 
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport() && myModulesCheckboxTree.getCheckedNodes(Module.class, null).length == 0) {
-      return "Warning: no modules selected. Dart support will be disabled for the project.";
+      return DartBundle.message("warning.no.modules.selected.dart.support.will.be.disabled");
     }
 
     return null;

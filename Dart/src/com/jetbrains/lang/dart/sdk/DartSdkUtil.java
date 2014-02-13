@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -12,6 +13,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBLabel;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,9 +70,11 @@ public class DartSdkUtil {
     return path != null && !path.isEmpty() && new File(path + "/lib/core/core.dart").isFile();
   }
 
-  public static void initDartSdkPathTextFieldWithBrowseButton(final @Nullable Project project,
-                                                              final @NotNull TextFieldWithBrowseButton dartSdkPathComponent,
-                                                              final @Nullable JBLabel versionLabel) {
+  public static void initDartSdkAndDartiumControls(final @Nullable Project project,
+                                                   final @NotNull TextFieldWithBrowseButton dartSdkPathComponent,
+                                                   final @NotNull JBLabel versionLabel,
+                                                   final @NotNull TextFieldWithBrowseButton dartiumPathComponent,
+                                                   final @NotNull Computable<Boolean> isResettingControlsComputable) {
     final TextComponentAccessor<JTextField> textComponentAccessor = new TextComponentAccessor<JTextField>() {
       @Override
       public String getText(final JTextField component) {
@@ -97,15 +101,23 @@ public class DartSdkUtil {
                                                                            textComponentAccessor);
     dartSdkPathComponent.addBrowseFolderListener(project, browseFolderListener);
 
-    if (versionLabel != null) {
-      dartSdkPathComponent.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-        @Override
-        protected void textChanged(final DocumentEvent e) {
-          final String sdkHomePath = dartSdkPathComponent.getText().trim();
-          versionLabel.setText(sdkHomePath.isEmpty() ? "" : getSdkVersion(sdkHomePath));
+    dartiumPathComponent.addBrowseFolderListener("Select Dartium browser path", null, project,
+                                                 FileChooserDescriptorFactory.createSingleFileOrExecutableAppDescriptor());
+
+    dartSdkPathComponent.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
+      protected void textChanged(final DocumentEvent e) {
+        final String sdkHomePath = dartSdkPathComponent.getText().trim();
+        versionLabel.setText(sdkHomePath.isEmpty() ? "" : getSdkVersion(sdkHomePath));
+
+        if (!isResettingControlsComputable.compute() && isDartSdkHome(sdkHomePath)) {
+          final String dartiumPath = DartiumUtil.getDartiumPathForSdk(sdkHomePath);
+          if (dartiumPath != null) {
+            dartiumPathComponent.setText(FileUtilRt.toSystemDependentName(dartiumPath));
+          }
         }
-      });
-    }
+      }
+    });
   }
 
   @Nullable
@@ -121,7 +133,7 @@ public class DartSdkUtil {
   }
 
   public static String getDart2jsPath(final @NotNull DartSdk sdk) {
-    return sdk.getHomePath() +  (SystemInfo.isWindows ? "/bin/dart2js.bat" : "/bin/dart2js");
+    return sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/dart2js.bat" : "/bin/dart2js");
   }
 
   public static String getDartExePath(final @NotNull DartSdk sdk) {
