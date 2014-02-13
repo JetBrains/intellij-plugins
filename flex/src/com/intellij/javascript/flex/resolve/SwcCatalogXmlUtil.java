@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.resolve;
 
+import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Key;
@@ -130,6 +131,8 @@ public class SwcCatalogXmlUtil {
     }
 
     final PsiFile psiFile = psiElement.getContainingFile();
+    if (JavaScriptIndex.ECMASCRIPT_JS2.equals(psiFile.getName())) return Integer.MIN_VALUE;
+
     final VirtualFile swfFile = psiFile == null ? null : psiFile.getVirtualFile();
     final VirtualFile dir = swfFile != null && "swf".equalsIgnoreCase(swfFile.getExtension()) ? swfFile.getParent() : null;
     final VirtualFile catalogFile = dir == null ? null : dir.findChild("catalog.xml");
