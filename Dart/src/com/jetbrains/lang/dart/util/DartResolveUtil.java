@@ -294,7 +294,7 @@ public class DartResolveUtil {
   }
 
   private static boolean processTopLevelDeclarationsImpl(@NotNull PsiElement context,
-                                                         PsiScopeProcessor processor,
+                                                         final PsiScopeProcessor processor,
                                                          @Nullable VirtualFile virtualFile,
                                                          @Nullable Set<String> fileNames,
                                                          Set<VirtualFile> processedFiles,
@@ -345,17 +345,17 @@ public class DartResolveUtil {
         // all components are prefix.Name
         continue;
       }
-      processor = libraryPathInfo.wrapElementProcessor(processor);
+      final PsiScopeProcessor importShowHideAwareProcessor = libraryPathInfo.wrapElementProcessor(processor);
       final String libraryNameOrPath = libraryPathInfo.getPath();
       List<VirtualFile> libraryRoots = DartLibraryIndex.findLibraryClass(context, libraryNameOrPath);
       for (VirtualFile libraryRoot : libraryRoots) {
-        if (!processTopLevelDeclarationsImpl(context, processor, libraryRoot, fileNames, processedFiles)) {
+        if (!processTopLevelDeclarationsImpl(context, importShowHideAwareProcessor, libraryRoot, fileNames, processedFiles)) {
           return false;
         }
       }
       VirtualFile sourceFile = findFileByPath(context.getProject(), virtualFile, libraryNameOrPath);
       if (sourceFile != null) {
-        if (!processTopLevelDeclarationsImpl(context, processor, sourceFile, fileNames, processedFiles)) {
+        if (!processTopLevelDeclarationsImpl(context, importShowHideAwareProcessor, sourceFile, fileNames, processedFiles)) {
           return false;
         }
       }

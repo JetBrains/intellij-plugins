@@ -1,3 +1,4 @@
+import 'dart:convert' show JSON;
 import 'package:foo/Foo.dart';
 
 main(){
