@@ -48,6 +48,7 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
     myPanel.setOpaque(false);
     myProject = project;
     myPanel.addMouseListener(new MouseAdapter() {
+      @Override
       public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
         IDEtalkMessagesWindow messagesWindow = project.getComponent(IDEtalkMessagesWindow.class);
@@ -57,18 +58,22 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
     });
   }
 
+  @Override
   public void addMessageFilter(Filter filter) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void attachToProcess(ProcessHandler processHandler) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public boolean canPause() {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void clear() {
     myPanel.removeAll();
   }
@@ -77,22 +82,27 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
   public void allowHeavyFilters() {
   }
 
+  @Override
   public int getContentSize() {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public boolean hasDeferredOutput() {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public boolean isOutputPaused() {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void performWhenNoDeferredOutput(Runnable runnable) {
     runnable.run();
   }
 
+  @Override
   public void print(@NotNull String s, @NotNull ConsoleViewContentType contentType) {
     if (myLength >= MAX_LENGTH) return;
 
@@ -107,10 +117,12 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
 
   }
 
+  @Override
   public void printHyperlink(String s, final HyperlinkInfo info) {
     if (myLength >= MAX_LENGTH) return;
 
     LinkLabel linkLabel = new LinkLabel(linkText(s), null, new LinkListener() {
+      @Override
       public void linkSelected(LinkLabel aSource, Object aLinkData) {
         info.navigate(myProject);
       }
@@ -119,14 +131,14 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
     myPanel.add(linkLabel);
   }
 
-  private String linkText(String s) {
+  private static String linkText(String s) {
     if (s.length() > 30) {
       return s.substring(0, 30) + "...";
     }
     return s;
   }
 
-  private String updateText(String s) {
+  private String updateText(@NotNull String s) {
     if (myLength + s.length() > MAX_LENGTH) {
       s = s.substring(0, MAX_LENGTH - myLength) + "...";
     }
@@ -134,24 +146,30 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
     return s;
   }
 
+  @Override
   public void scrollTo(int offset) {
   }
 
+  @Override
   public void setHelpId(String helpId) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void setOutputPaused(boolean value) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void dispose() {
   }
 
+  @Override
   public JComponent getComponent() {
     return myPanel;
   }
 
+  @Override
   public JComponent getPreferredFocusableComponent() {
     return myPanel;
   }
@@ -160,6 +178,7 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
     return null;
   }
 
+  @Override
   public String getPlace() {
     return null;
   }
@@ -167,6 +186,7 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
   public JComponent getSearchComponent() {
     return null;
   }
+  @Override
   @NotNull
 public AnAction[] createConsoleActions() {
   return AnAction.EMPTY_ARRAY;
