@@ -10,9 +10,32 @@ import org.jetbrains.annotations.NotNull;
 public class CucumberUtil {
   @NonNls public static final String STEP_DEFINITIONS_DIR_NAME = "step_definitions";
 
-  public static final String[][] ARR =
-    {{"\\(", "\\\\("}, {"\\)", "\\\\)"}, {"\\+", "\\\\+"}, {"(<[^>]*>)", "(.*)"}, {"\"([^\\\\\"]*)\"", "\"([^\"]*)\""}, {"\\d+[ ]", "(\\\\d+) "}, {"\\d+[,]", "(\\\\d+),"},
-      {"\\d+[.]", "(\\\\d+)."}, {"\\d+$", "(\\\\d+)"}};
+  public static final String[][] ARR = {
+    {"\\\\", "\\\\\\\\"},
+    {"\\|", "\\\\|"},
+    {"\\$", "\\\\\\$"},
+    {"\\^", "\\\\^"},
+    {"\\.", "\\\\."},
+    {"\\+", "\\+"},
+    {"\\-", "\\\\-"},
+    {"\\#", "\\\\#"},
+    {"\\?", "\\\\?"},
+    {"\\*", "\\\\*"},
+    {"\\/", "\\\\/"},
+    {"\\{", "\\\\{"},
+    {"\\}", "\\\\}"},
+    {"\\[", "\\\\["},
+    {"\\]", "\\\\]"},
+    {"\\(", "\\\\("},
+    {"\\)", "\\\\)"},
+    {"\\+", "\\\\+"},
+    {"(<[^>]*>)", "(.*)"},
+    {"\"([^\\\\\"]*)\"", "\"([^\"]*)\""},
+    {"\\d+[ ]", "(\\\\d+) "},
+    {"\\d+[,]", "(\\\\d+),"},
+    {"\\d+[.]", "(\\\\d+)."},
+    {"\\d+$", "(\\\\d+)"}
+  };
 
   public static final char LEFT_PAR = '(';
   public static final char RIGHT_PAR = ')';
@@ -71,7 +94,8 @@ public class CucumberUtil {
             squareBrace--;
           }
         }
-      } else {
+      }
+      else {
         sb = new StringBuilder();
         i++;
       }
@@ -89,7 +113,8 @@ public class CucumberUtil {
             result = sb.toString();
           }
         }
-      } else {
+      }
+      else {
         sb = new StringBuilder();
       }
     }
