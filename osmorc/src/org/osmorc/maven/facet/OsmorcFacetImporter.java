@@ -45,7 +45,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * The OsmorcFacetImporter reads Maven metadata and import OSGi-specific settings as an Osmorc facet.
@@ -54,8 +53,6 @@ import java.util.Set;
  */
 public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetConfiguration, OsmorcFacetType> {
   private static final String INCLUDE_MANIFEST = "_include";
-  private static final Set<String> INSTRUCTIONS_TO_SKIP = ContainerUtil.newHashSet(
-    Constants.BUNDLE_SYMBOLICNAME, Constants.BUNDLE_VERSION, Constants.BUNDLE_ACTIVATOR, INCLUDE_MANIFEST);
 
   public OsmorcFacetImporter() {
     super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.getInstance());
@@ -77,14 +74,13 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
                                List<MavenProjectsProcessorTask> mavenProjectsProcessorPostConfigurationTasks) {
     OsmorcFacetConfiguration conf = osmorcFacet.getConfiguration();
     if (conf.isDoNotSynchronizeWithMaven()) {
-      return; // do nothing.
+      return;
     }
 
     // first off, we get the defaults
     MavenId id = mavenProject.getMavenId();
     conf.setBundleSymbolicName(id.getGroupId() + "." + id.getArtifactId());
-    String defaultVersion = ImporterUtil.cleanupVersion(id.getVersion());
-    conf.setBundleVersion(defaultVersion);
+    conf.setBundleVersion(ImporterUtil.cleanupVersion(id.getVersion()));
 
     MavenPlugin plugin = mavenProject.findPlugin(myPluginGroupID, myPluginArtifactID);
     if (plugin == null) {
@@ -93,8 +89,6 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
 
     // Check if there are any overrides set up in the maven plugin settings
     conf.setBundleSymbolicName(computeSymbolicName(mavenProject)); // IDEA-63243
-    conf.setBundleVersion(findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_VERSION, defaultVersion));
-    conf.setBundleActivator(findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_ACTIVATOR));
 
     Map<String, String> props = ContainerUtil.newLinkedHashMap();  // to preserve the order of elements
     Map<String, String> modelMap = mavenProject.getModelMap();
@@ -126,7 +120,9 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
 
       for (Element child : instructionsNode.getChildren()) {
         String name = child.getName();
-        String value = child.getValue();
+        String value = child.getTextTrim();
+
+        value = value.replaceAll("\\p{Blank}*[\r\n]\\p{Blank}*", "");
 
         if (INCLUDE_MANIFEST.equals(name)) {
           conf.setManifestLocation(value);
@@ -134,17 +130,17 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
           conf.setUseProjectDefaultManifestFileLocation(false);
           useExistingManifest = true;
         }
-
-        // sanitize instructions
-        if (StringUtil.startsWithChar(name, '_')) {
-          name = "-" + name.substring(1);
+        else if (Constants.BUNDLE_VERSION.equals(name)) {
+          conf.setBundleVersion(value);
         }
-
-        if (value != null) {
-          value = value.replaceAll("\\p{Blank}*[\r\n]\\p{Blank}*", "");
+        else if (Constants.BUNDLE_ACTIVATOR.equals(name)) {
+          conf.setBundleActivator(value);
         }
+        else if (!StringUtil.isEmpty(value) && !Constants.BUNDLE_SYMBOLICNAME.equals(name)) {
+          if (StringUtil.startsWithChar(name, '_')) {
+            name = "-" + name.substring(1);  // sanitize instructions
+          }
 
-        if (!StringUtil.isEmpty(value) && !INSTRUCTIONS_TO_SKIP.contains(name)) {
           props.put(name, value);
         }
       }

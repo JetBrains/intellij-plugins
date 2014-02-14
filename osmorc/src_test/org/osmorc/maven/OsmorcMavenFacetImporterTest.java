@@ -60,7 +60,7 @@ public class OsmorcMavenFacetImporterTest extends FacetImporterTestCase<OsmorcFa
 
   public void testDefaultOutputPath() throws IOException {
     String instructions =
-      "<configuration><instructions><instructions.Bundle-Version>2.0.0</instructions.Bundle-Version></instructions></configuration>";
+      "<configuration><instructions><Bundle-Version>2.0.0</Bundle-Version></instructions></configuration>";
     importProject(pomContents("simple", instructions, ""));
     assertModules("simple");
     OsmorcFacetConfiguration configuration = assertConfiguration(getFacet("simple"));
