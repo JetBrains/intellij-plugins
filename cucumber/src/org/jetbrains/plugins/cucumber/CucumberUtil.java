@@ -10,6 +10,10 @@ import org.jetbrains.annotations.NotNull;
 public class CucumberUtil {
   @NonNls public static final String STEP_DEFINITIONS_DIR_NAME = "step_definitions";
 
+  public static final String[][] ARR =
+    {{"\\(", "\\\\("}, {"\\)", "\\\\)"}, {"\\+", "\\\\+"}, {"(<[^>]*>)", "(.*)"}, {"\"([^\\\\\"]*)\"", "\"([^\"]*)\""}, {"\\d+[ ]", "(\\\\d+) "}, {"\\d+[,]", "(\\\\d+),"},
+      {"\\d+[.]", "(\\\\d+)."}, {"\\d+$", "(\\\\d+)"}};
+
   public static final char LEFT_PAR = '(';
   public static final char RIGHT_PAR = ')';
   public static final char LEFT_SQUARE_BRACE = '[';
@@ -93,6 +97,14 @@ public class CucumberUtil {
       if (sb.toString().length() > result.length()) {
         result = sb.toString();
       }
+    }
+    return result;
+  }
+
+  public static String prepareStepRegexp(String stepName) {
+    String result = stepName;
+    for (String[] rule : ARR) {
+      result = result.replaceAll(rule[0], rule[1]);
     }
     return result;
   }
