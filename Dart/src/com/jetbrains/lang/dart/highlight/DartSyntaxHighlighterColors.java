@@ -18,6 +18,7 @@ public class DartSyntaxHighlighterColors {
   public static final String DART_LOCAL_VARIABLE = "DART_LOCAL_VARIABLE";
   public static final String DART_PARAMETER = "DART_PARAMETER";
   public static final String DART_LABEL = "DART_LABEL";
+  public static final String DART_METADATA = "DART_METADATA";
 
   private static final String DART_LINE_COMMENT = "DART_LINE_COMMENT";
   private static final String DART_BLOCK_COMMENT = "DART_BLOCK_COMMENT";
@@ -86,4 +87,6 @@ public class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_PARAMETER, DefaultLanguageHighlighterColors.PARAMETER);
   public static final TextAttributesKey LABEL =
     createTextAttributesKey(DART_LABEL, DefaultLanguageHighlighterColors.LABEL);
+  public static final TextAttributesKey METADATA =
+    createTextAttributesKey(DART_METADATA, DefaultLanguageHighlighterColors.METADATA);
 }

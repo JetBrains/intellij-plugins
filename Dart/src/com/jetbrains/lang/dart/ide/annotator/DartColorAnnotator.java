@@ -16,10 +16,7 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
-import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.psi.DartReference;
-import com.jetbrains.lang.dart.psi.DartType;
+import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -51,9 +48,18 @@ public class DartColorAnnotator implements Annotator {
       return;
     }
 
+    if (element instanceof DartMetadata) {
+      final DartArguments arguments = ((DartMetadata)element).getArguments();
+      final int endOffset = arguments == null ? element.getTextRange().getEndOffset() : arguments.getTextRange().getStartOffset();
+      final TextRange range = TextRange.create(element.getTextRange().getStartOffset(), endOffset);
+
+      final String message = ApplicationManager.getApplication().isUnitTestMode() ? "metadata" : null;
+      holder.createInfoAnnotation(range, message).setTextAttributes(TextAttributesKey.find(DartSyntaxHighlighterColors.DART_METADATA));
+      return;
+    }
+
     if (element instanceof DartReference && element.getParent() instanceof DartType && "dynamic".equals(element.getText())) {
       holder.createInfoAnnotation(element, null).setTextAttributes(TextAttributesKey.find(DartSyntaxHighlighterColors.DART_BUILTIN));
-      //noinspection UnnecessaryReturnStatement
       return;
     }
 

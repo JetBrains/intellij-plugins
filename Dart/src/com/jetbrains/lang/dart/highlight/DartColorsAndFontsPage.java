@@ -44,6 +44,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.variable"), LOCAL_VARIABLE),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.label"), LABEL),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.class"), CLASS),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.metadata"), METADATA),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.builtin"), BUILTIN),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.function"), INSTANCE_MEMBER_FUNCTION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.member.function"), STATIC_MEMBER_FUNCTION),
@@ -56,6 +57,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     ourTags.put("local.variable", LOCAL_VARIABLE);
     ourTags.put("label", LABEL);
     ourTags.put("class", CLASS);
+    ourTags.put("metadata", METADATA);
     ourTags.put("builtin", BUILTIN);
     ourTags.put("instance.member.function", INSTANCE_MEMBER_FUNCTION);
     ourTags.put("static.member.function", STATIC_MEMBER_FUNCTION);
@@ -94,6 +96,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     return "/**\n" +
            " * documentation\n" +
            " */\n" +
+           "<metadata>@Metadata</metadata>('text')\n" +
            "class <class>SomeClass</class> implements <class>OtherClass</class> {\n" +
            "  /// documentation\n" +
            "  var <instance.member.variable>someField</instance.member.variable> = null; // line comment\n" +
