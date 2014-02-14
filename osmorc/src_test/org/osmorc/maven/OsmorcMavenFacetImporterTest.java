@@ -1,4 +1,4 @@
-package org.osmorc.facet.maven;
+package org.osmorc.maven;
 
 import com.intellij.facet.FacetTypeId;
 import org.jetbrains.annotations.NotNull;
