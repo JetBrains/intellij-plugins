@@ -16,7 +16,6 @@
 package com.intellij.struts2.reference.jsp;
 
 import com.intellij.struts2.BasicLightHighlightingTestCase;
-import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,11 +26,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ActionReferenceProviderTest extends BasicLightHighlightingTestCase {
 
-  private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
-    .withStrutsLibrary()
-    .withStrutsFacet()
-    .withWebModuleType(getTestDataPath());
-
   @Override
   @NotNull
   protected String getTestDataLocation() {
@@ -41,7 +35,7 @@ public class ActionReferenceProviderTest extends BasicLightHighlightingTestCase 
   @NotNull
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return WEB;
+    return createWebDescriptor();
   }
 
   public void testActionHighlighting() throws Throwable {

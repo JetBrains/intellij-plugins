@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.BasicLightHighlightingTestCase;
-import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.xml.DomElement;
@@ -29,11 +28,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestCase {
-
-  private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
-    .withStrutsLibrary()
-    .withStrutsFacet()
-    .withWebModuleType(getTestDataPath());
 
   @Override
   @NotNull
@@ -44,7 +38,7 @@ public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestC
   @NotNull
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return WEB;
+    return createWebDescriptor();
   }
 
   public void testActionLinkHighlightingJsp() throws Throwable {

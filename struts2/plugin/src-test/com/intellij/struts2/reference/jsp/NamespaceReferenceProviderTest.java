@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,6 @@
 package com.intellij.struts2.reference.jsp;
 
 import com.intellij.struts2.BasicLightHighlightingTestCase;
-import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,11 +26,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class NamespaceReferenceProviderTest extends BasicLightHighlightingTestCase {
 
-  private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
-    .withStrutsLibrary()
-    .withStrutsFacet()
-    .withWebModuleType(getTestDataPath());
-
   @Override
   @NotNull
   protected String getTestDataLocation() {
@@ -41,7 +35,7 @@ public class NamespaceReferenceProviderTest extends BasicLightHighlightingTestCa
   @NotNull
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return WEB;
+    return createWebDescriptor();
   }
 
   public void testNamespaceHighlighting() throws Throwable {

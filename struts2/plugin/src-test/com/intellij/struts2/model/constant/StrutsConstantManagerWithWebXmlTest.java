@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,6 @@
 package com.intellij.struts2.model.constant;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -31,11 +30,6 @@ import java.util.Arrays;
  */
 public class StrutsConstantManagerWithWebXmlTest extends StrutsConstantManagerTestCase {
 
-  private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
-    .withStrutsLibrary()
-    .withStrutsFacet()
-    .withWebModuleType(getTestDataPath());
-
   @NotNull
   @Override
   protected String getTestDataLocation() {
@@ -45,7 +39,7 @@ public class StrutsConstantManagerWithWebXmlTest extends StrutsConstantManagerTe
   @NotNull
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return WEB;
+    return createWebDescriptor();
   }
 
   public void testWebXml() throws Throwable {

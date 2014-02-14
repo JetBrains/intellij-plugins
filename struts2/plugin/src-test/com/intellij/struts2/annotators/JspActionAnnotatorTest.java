@@ -19,8 +19,6 @@ import com.intellij.codeInsight.daemon.GutterMark;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.BasicLightHighlightingTestCase;
-import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
-import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -32,21 +30,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class JspActionAnnotatorTest extends BasicLightHighlightingTestCase {
 
-  private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
-    .withStrutsLibrary()
-    .withStrutsFacet()
-    .withWebModuleType(getTestDataPath());
-
   @Override
   @NotNull
   protected String getTestDataLocation() {
     return "/gutterJsp/actionClass";
-  }
-
-  @NotNull
-  @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return WEB;
   }
 
   /**

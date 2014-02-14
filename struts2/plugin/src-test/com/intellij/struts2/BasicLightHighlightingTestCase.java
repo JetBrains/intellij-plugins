@@ -123,6 +123,11 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
   private static final String LIBRARY_PATH =
     FileUtil.toSystemIndependentName(PathManager.getHomePath() + TEST_DATA_PATH + "/lib/");
 
+  protected LightProjectDescriptor createWebDescriptor() {
+    return new Struts2ProjectDescriptorBuilder().withStrutsLibrary()
+      .withStrutsFacet().withWebModuleType(getTestDataPath()).build();
+  }
+
   /**
    * Adds the S2 jars.
    *

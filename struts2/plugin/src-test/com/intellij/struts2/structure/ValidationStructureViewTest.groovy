@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,18 +17,17 @@ package com.intellij.struts2.structure
 import com.intellij.ide.structureView.newStructureView.StructureViewComponent
 import com.intellij.struts2.BasicLightHighlightingTestCase
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.util.Consumer
 import com.intellij.util.ui.tree.TreeUtil
 
 /**
  * @author Yann C&eacute;bron
  */
-class ValidationStructureViewTest extends LightCodeInsightFixtureTestCase {
+class ValidationStructureViewTest extends BasicLightHighlightingTestCase {
 
   @Override
-  protected String getBasePath() {
-    return BasicLightHighlightingTestCase.TEST_DATA_PATH + "/structure"
+  protected String getTestDataLocation() {
+    return "structure"
   }
 
   public void testDefaultPresentation() {
@@ -44,7 +43,7 @@ class ValidationStructureViewTest extends LightCodeInsightFixtureTestCase {
   validatorParam
   anything
  -myField
-  -Field Validator
+  -fieldexpression
    expression
    anything
 """)
@@ -64,7 +63,7 @@ class ValidationStructureViewTest extends LightCodeInsightFixtureTestCase {
  -Validator
   anything
  -myField
-  -Field Validator
+  -fieldexpression
    anything
 """)
       }

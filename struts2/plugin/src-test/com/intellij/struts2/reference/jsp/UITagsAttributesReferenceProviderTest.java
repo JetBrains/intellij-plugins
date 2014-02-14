@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,6 @@ package com.intellij.struts2.reference.jsp;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlPathReferenceInspection;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.struts2.BasicLightHighlightingTestCase;
-import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.xml.util.XmlDuplicatedIdInspection;
 import com.intellij.xml.util.XmlInvalidIdInspection;
@@ -30,10 +29,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Yann C&eacute;bron
  */
 public class UITagsAttributesReferenceProviderTest extends BasicLightHighlightingTestCase {
-
-  private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
-    .withStrutsLibrary()
-    .withWebModuleType(getTestDataPath());
 
   @Override
   protected LocalInspectionTool[] getHighlightingInspections() {
@@ -50,7 +45,7 @@ public class UITagsAttributesReferenceProviderTest extends BasicLightHighlightin
   @NotNull
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return WEB;
+    return createWebDescriptor();
   }
 
   public void testPathAttributes() throws Throwable {
