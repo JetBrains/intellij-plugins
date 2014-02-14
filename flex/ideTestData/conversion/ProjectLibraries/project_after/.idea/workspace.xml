@@ -262,7 +262,7 @@
     </key>
   </component>
   <component name="RunManager" selected="Flash App.LibrariesImport">
-    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin" singleton="true">
       <module name="" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m" />
       <option name="PROGRAM_PARAMETERS" />
@@ -275,7 +275,7 @@
         <option name="RakeTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="Remote" factoryName="Remote">
+    <configuration default="true" type="Remote" factoryName="Remote" singleton="true">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
       <option name="SHMEM_ADDRESS" value="javadebug" />
@@ -288,7 +288,7 @@
         <option name="RakeTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="FlexRunConfigurationType" factoryName="Flex" browser_family="FIREFOX" debugger_sdk="Module SDK" html_or_swf_file_path="" launcher_type="OSDefault" main_class_name="" module_name="" player_path="FlashPlayer.exe" run_mode="HtmlOrSwfFile" run_trusted="true" url_to_launch="http://">
+    <configuration default="true" type="FlexRunConfigurationType" factoryName="Flex" browser_family="FIREFOX" debugger_sdk="Module SDK" html_or_swf_file_path="" launcher_type="OSDefault" main_class_name="" module_name="" player_path="FlashPlayer.exe" run_mode="HtmlOrSwfFile" run_trusted="true" url_to_launch="http://" singleton="true">
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -296,7 +296,7 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="TestNG" factoryName="TestNG">
+    <configuration default="true" type="TestNG" factoryName="TestNG" singleton="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -331,7 +331,7 @@
         <option name="RakeTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
+    <configuration default="true" type="Applet" factoryName="Applet" singleton="true">
       <module name="" />
       <option name="MAIN_CLASS_NAME" />
       <option name="HTML_FILE_NAME" />
@@ -351,7 +351,7 @@
         <option name="RakeTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="Application" factoryName="Application">
+    <configuration default="true" type="Application" factoryName="Application" singleton="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="MAIN_CLASS_NAME" />
       <option name="VM_PARAMETERS" />
@@ -373,7 +373,7 @@
         <option name="RakeTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="JUnit" factoryName="JUnit">
+    <configuration default="true" type="JUnit" factoryName="JUnit" singleton="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -401,17 +401,17 @@
         <option name="RakeTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="false" name="flexmodule.html" type="FlexRunConfigurationType" factoryName="Flex" browser_family="FIREFOX" debugger_sdk="Module SDK" html_or_swf_file_path="$PROJECT_DIR$/out/production/flexmodule/flexmodule.html" launcher_type="OSDefault" main_class_name="" module_name="flexmodule" player_path="FlashPlayer.exe" run_mode="HtmlOrSwfFile" run_trusted="true" url_to_launch="http://">
+    <configuration default="false" name="flexmodule.html" type="FlexRunConfigurationType" factoryName="Flex" browser_family="FIREFOX" debugger_sdk="Module SDK" html_or_swf_file_path="$PROJECT_DIR$/out/production/flexmodule/flexmodule.html" launcher_type="OSDefault" main_class_name="" module_name="flexmodule" player_path="FlashPlayer.exe" run_mode="HtmlOrSwfFile" run_trusted="true" url_to_launch="http://" singleton="true">
       <method />
     </configuration>
     <list size="1">
       <item index="0" class="java.lang.String" itemvalue="Flex.flexmodule.html" />
     </list>
-    <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
+    <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false" singleton="true">
       <Host>localhost</Host>
       <Port>5050</Port>
     </configuration>
-    <configuration default="false" name="LibrariesImport" type="FlashRunConfigurationType" factoryName="Flash App">
+    <configuration default="false" name="LibrariesImport" type="FlashRunConfigurationType" factoryName="Flash App" singleton="true">
       <option name="moduleName" value="LibrariesImport" />
       <option name="BCName" value="LibrariesImport" />
     </configuration>
