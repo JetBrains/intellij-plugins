@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -140,8 +140,19 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
   /**
    * Performs custom initialization.
    */
-  public interface Callback {
-    void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry);
+   public abstract static class Callback {
+
+    protected abstract void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry);
+
+    @Override
+    public final int hashCode() {
+      return this.getClass().hashCode();
+    }
+
+    @Override
+    public final boolean equals(Object obj) {
+      return obj instanceof Callback && obj.hashCode() == hashCode();
+    }
   }
 
   @Override
