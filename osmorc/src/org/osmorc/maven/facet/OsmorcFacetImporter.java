@@ -62,11 +62,8 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
   }
 
   @Override
-  public boolean isApplicable(MavenProject mavenProjectModel) {
-    MavenPlugin p = mavenProjectModel.findPlugin(myPluginGroupID, myPluginArtifactID);
-    // fixes: IDEA-56021
-    String packaging = mavenProjectModel.getPackaging();
-    return p != null && "bundle".equals(packaging);
+  public boolean isApplicable(MavenProject mavenProject) {
+    return super.isApplicable(mavenProject) && "bundle".equals(mavenProject.getPackaging());
   }
 
   @Override
