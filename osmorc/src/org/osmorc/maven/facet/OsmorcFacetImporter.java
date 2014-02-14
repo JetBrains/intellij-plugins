@@ -29,12 +29,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.importing.FacetImporter;
 import org.jetbrains.idea.maven.importing.MavenModifiableModelsProvider;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.*;
+import org.jetbrains.idea.maven.utils.MavenJDOMUtil;
 import org.jetbrains.jps.osmorc.model.OutputPathType;
 import org.osgi.framework.Constants;
 import org.osmorc.facet.OsmorcFacet;
@@ -113,6 +115,20 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
       props.put(Constants.BUNDLE_DOCURL, docUrl);
     }
 
+    // load versions if any
+    Map<String, String> versions = null;
+    Element versionsNode = MavenJDOMUtil.findChildByPath(plugin.getGoalConfiguration("cleanVersions"), "versions");
+    if (versionsNode != null) {
+      versions = ContainerUtil.newHashMap();
+      for (Element child : versionsNode.getChildren()) {
+        String name = child.getName();
+        String value = child.getValue();
+        if (!StringUtil.isEmpty(value)) {
+          versions.put(name, ImporterUtil.cleanupVersion(value));
+        }
+      }
+    }
+
     // now find any additional properties that might have been set up:
     Element instructionsNode = getConfig(mavenProject, "instructions");
     if (instructionsNode != null) {
@@ -123,6 +139,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         String value = child.getTextTrim();
 
         value = value.replaceAll("\\p{Blank}*[\r\n]\\p{Blank}*", "");
+        value = substituteVersions(value, versions);
 
         if (INCLUDE_MANIFEST.equals(name)) {
           conf.setManifestLocation(value);
@@ -225,6 +242,16 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     }
 
     return groupId + "." + artifactId;
+  }
+
+  private static String substituteVersions(@NotNull String value, @Nullable Map<String, String> versions) {
+    if (versions != null) {
+      for (Map.Entry<String, String> entry : versions.entrySet()) {
+        String property = "${" + entry.getKey() + "}";
+        value = StringUtil.replace(value, property, entry.getValue());
+      }
+    }
+    return value;
   }
 
   @Override

@@ -74,19 +74,32 @@ public class OsmorcMavenFacetImporterTest extends FacetImporterTestCase<OsmorcFa
     assertTrue(configuration.getJarFileLocation().endsWith("simple-special-1.0.1.jar"));
   }
 
-  private static String pomContents(@NotNull String artifactId, @NotNull String pluginInstructions, @NotNull String buildInstructions) {
+  public void testVersionCleanerSupport() throws IOException {
+    String instructions =
+      "<configuration><instructions><Bundle-Version>${my.version.clean}</Bundle-Version></instructions></configuration>" +
+      "<executions><execution>" +
+      "  <id>versions</id><goals><goal>cleanVersions</goal></goals>" +
+      "  <configuration><versions><my.version.clean>${project.version}</my.version.clean></versions></configuration>" +
+      "</execution></executions>";
+    importProject(pomContents("simple", instructions, ""));
+    assertModules("simple");
+    OsmorcFacetConfiguration configuration = assertConfiguration(getFacet("simple"));
+    assertEquals("1.0.1", configuration.getBundleVersion());
+  }
+
+  private static String pomContents(@NotNull String artifactId, @NotNull String pluginConfig, @NotNull String buildConfig) {
     return "<groupId>org.osmorc</groupId>\n" +
            "<artifactId>" + artifactId + "</artifactId>\n" +
            "<version>1.0.1</version>\n" +
            "<packaging>bundle</packaging>\n" +
            "<build>\n" +
-           (buildInstructions.isEmpty() ? "" : "  " + buildInstructions + "\n") +
+           (buildConfig.isEmpty() ? "" : "  " + buildConfig + "\n") +
            "  <plugins>\n" +
            "    <plugin>\n" +
            "      <groupId>org.apache.felix</groupId>\n" +
            "      <artifactId>maven-bundle-plugin</artifactId>\n" +
            "      <version>2.3.4</version>\n" +
-           (pluginInstructions.isEmpty() ? "" : "      " + pluginInstructions + "\n") +
+           (pluginConfig.isEmpty() ? "" : "      " + pluginConfig + "\n") +
            "    </plugin>\n" +
            "  </plugins>\n" +
            "</build>";
