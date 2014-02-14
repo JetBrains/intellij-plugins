@@ -26,6 +26,12 @@ public class OsmorcMavenFacetImporterTest extends FacetImporterTestCase<OsmorcFa
     assertTrue(configuration.isOsmorcControlsManifest());
   }
 
+  public void testWrongPackaging() throws IOException {
+    importProject(pomContents("simple", "", "").replace("<packaging>bundle</packaging>", "<packaging>pom</packaging>"));
+    assertModules("simple");
+    assertNull(findFacet("simple"));
+  }
+
   public void testSymbolicNameInference() throws IOException {
     importProject(pomContents("osmorc-simple", "", ""));
     assertModules("osmorc-simple");
