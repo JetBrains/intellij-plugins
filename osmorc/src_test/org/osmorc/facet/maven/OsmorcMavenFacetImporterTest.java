@@ -22,7 +22,7 @@ public class OsmorcMavenFacetImporterTest extends FacetImporterTestCase<OsmorcFa
     importProject(pomContents("simple", "", ""));
     assertModules("simple");
     OsmorcFacetConfiguration configuration = assertConfiguration(getFacet("simple"));
-    assertEquals("1.0.0", configuration.getBundleVersion());
+    assertEquals("1.0.1", configuration.getBundleVersion());
     assertTrue(configuration.isOsmorcControlsManifest());
   }
 
@@ -30,7 +30,7 @@ public class OsmorcMavenFacetImporterTest extends FacetImporterTestCase<OsmorcFa
     importProject(pomContents("osmorc-simple", "", ""));
     assertModules("osmorc-simple");
     OsmorcFacetConfiguration configuration = assertConfiguration(getFacet("osmorc-simple"));
-    assertEquals("1.0.0", configuration.getBundleVersion());
+    assertEquals("1.0.1", configuration.getBundleVersion());
     assertTrue(configuration.isOsmorcControlsManifest());
   }
 

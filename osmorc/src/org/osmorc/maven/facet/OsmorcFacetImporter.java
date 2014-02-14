@@ -86,7 +86,8 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     // first off, we get the defaults
     MavenId id = mavenProject.getMavenId();
     conf.setBundleSymbolicName(id.getGroupId() + "." + id.getArtifactId());
-    conf.setBundleVersion(ImporterUtil.cleanupVersion(id.getVersion()));
+    String defaultVersion = ImporterUtil.cleanupVersion(id.getVersion());
+    conf.setBundleVersion(defaultVersion);
 
     MavenPlugin plugin = mavenProject.findPlugin(myPluginGroupID, myPluginArtifactID);
     if (plugin == null) {
@@ -95,7 +96,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
 
     // Check if there are any overrides set up in the maven plugin settings
     conf.setBundleSymbolicName(computeSymbolicName(mavenProject)); // IDEA-63243
-    conf.setBundleVersion(findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_VERSION));
+    conf.setBundleVersion(findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_VERSION, defaultVersion));
     conf.setBundleActivator(findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_ACTIVATOR));
 
     Map<String, String> props = ContainerUtil.newLinkedHashMap();  // to preserve the order of elements
