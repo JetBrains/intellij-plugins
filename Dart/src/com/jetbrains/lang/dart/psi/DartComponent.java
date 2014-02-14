@@ -3,9 +3,6 @@ package com.jetbrains.lang.dart.psi;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public interface DartComponent extends DartPsiCompositeElement, PsiNameIdentifierOwner {
   @Nullable
   DartComponentName getComponentName();
@@ -19,4 +16,6 @@ public interface DartComponent extends DartPsiCompositeElement, PsiNameIdentifie
   boolean isSetter();
 
   boolean isAbstract();
+
+  boolean isDeprecated();
 }

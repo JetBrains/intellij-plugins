@@ -10,7 +10,6 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,7 +74,18 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
 
   @Override
   public boolean isAbstract() {
+    // todo this works correctly for functions only
     return findChildByType(DartTokenTypes.FUNCTION_BODY) == null;
+  }
+
+  @Override
+  public boolean isDeprecated() {
+    for (DartMetadata metadata : PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class)) {
+      if ("deprecated".equals(metadata.getReferenceExpression().getText())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
