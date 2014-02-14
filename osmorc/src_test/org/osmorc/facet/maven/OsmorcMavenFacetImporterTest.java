@@ -13,7 +13,6 @@ import java.io.IOException;
  * Test case for testing the {@link org.osmorc.maven.facet.OsmorcFacetImporter}.
  */
 public class OsmorcMavenFacetImporterTest extends FacetImporterTestCase<OsmorcFacet> {
-
   @Override
   protected FacetTypeId<OsmorcFacet> getFacetTypeId() {
     return OsmorcFacetType.ID;

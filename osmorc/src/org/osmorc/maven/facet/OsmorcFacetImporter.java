@@ -24,9 +24,9 @@
  */
 package org.osmorc.maven.facet;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.importing.FacetImporter;
@@ -43,23 +43,25 @@ import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
- * The OsmorcFacetImporter tries to read maven metadata and import OSGi specific settings as an Osmorc facet.
+ * The OsmorcFacetImporter reads Maven metadata and import OSGi-specific settings as an Osmorc facet.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetConfiguration, OsmorcFacetType> {
-  private static final Logger logger = Logger.getInstance("#org.osmorc.facet.maven.OsmorcFacetImporter");
-  private static final String IncludeExistingManifest = "_include";
+  private static final String INCLUDE_MANIFEST = "_include";
+  private static final Set<String> INSTRUCTIONS_TO_SKIP = ContainerUtil.newHashSet(
+    Constants.BUNDLE_SYMBOLICNAME, Constants.BUNDLE_VERSION, Constants.BUNDLE_ACTIVATOR, INCLUDE_MANIFEST);
 
   public OsmorcFacetImporter() {
     super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.getInstance());
   }
 
+  @Override
   public boolean isApplicable(MavenProject mavenProjectModel) {
     MavenPlugin p = mavenProjectModel.findPlugin(myPluginGroupID, myPluginArtifactID);
     // fixes: IDEA-56021
@@ -67,198 +69,168 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     return p != null && "bundle".equals(packaging);
   }
 
-  protected void setupFacet(OsmorcFacet osmorcFacet, MavenProject mavenProjectModel) {
+  @Override
+  protected void setupFacet(OsmorcFacet osmorcFacet, MavenProject mavenProjectModel) { }
 
-  }
-
+  @Override
   protected void reimportFacet(MavenModifiableModelsProvider modelsProvider, Module module,
                                MavenRootModelAdapter mavenRootModelAdapter, OsmorcFacet osmorcFacet,
                                MavenProjectsTree mavenProjectsTree, MavenProject mavenProject,
                                MavenProjectChanges changes, Map<MavenProject, String> mavenProjectStringMap,
                                List<MavenProjectsProcessorTask> mavenProjectsProcessorPostConfigurationTasks) {
-
     OsmorcFacetConfiguration conf = osmorcFacet.getConfiguration();
     if (conf.isDoNotSynchronizeWithMaven()) {
       return; // do nothing.
     }
 
-
-    MavenPlugin p = mavenProject.findPlugin(myPluginGroupID, myPluginArtifactID);
-    // TODO: check if there is a manifest, in which case use this manifest!
-
-    // first off, we get the defaults, that is
-    // Symbolic name == groupId + "." + artifactId
+    // first off, we get the defaults
     MavenId id = mavenProject.getMavenId();
     conf.setBundleSymbolicName(id.getGroupId() + "." + id.getArtifactId());
     conf.setBundleVersion(ImporterUtil.cleanupVersion(id.getVersion()));
 
-    if (p != null) {
-      logger.debug("Plugin found.");
+    MavenPlugin plugin = mavenProject.findPlugin(myPluginGroupID, myPluginArtifactID);
+    if (plugin == null) {
+      return;
+    }
 
-      // Check if there are any overrides set up in the maven plugin settings
-      conf.setBundleSymbolicName(computeSymbolicName(mavenProject)); // IDEA-63243
-      conf.setBundleVersion(findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_VERSION));
-      conf.setBundleActivator(findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_ACTIVATOR));
+    // Check if there are any overrides set up in the maven plugin settings
+    conf.setBundleSymbolicName(computeSymbolicName(mavenProject)); // IDEA-63243
+    conf.setBundleVersion(findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_VERSION));
+    conf.setBundleActivator(findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_ACTIVATOR));
 
-      if (StringUtil.isEmptyOrSpaces(conf.getBundleVersion())) {  // IDEA-74272
-        // if there is no bundle-version int the instructions, derive it from the maven settings.
-        String version = mavenProject.getMavenId().getVersion();  //that is ${pom.version}
-        conf.setBundleVersion(ImporterUtil.cleanupVersion(version));
-      }
+    Map<String, String> props = ContainerUtil.newLinkedHashMap();  // to preserve the order of elements
+    Map<String, String> modelMap = mavenProject.getModelMap();
 
-      Map<String, String> props = new LinkedHashMap<String, String>(); // linked hash map, because we want to preserve the order of elements.
-      Map<String, String> modelMap = mavenProject.getModelMap();
+    String description = modelMap.get("description");
+    if (!StringUtil.isEmptyOrSpaces(description)) {
+      props.put(Constants.BUNDLE_DESCRIPTION, description);
+    }
 
-      String description = modelMap.get("description");
-      if (!StringUtil.isEmptyOrSpaces(description)) {
-        props.put(Constants.BUNDLE_DESCRIPTION, description);
-      }
+    String licenses = modelMap.get("licenses");
+    if (!StringUtil.isEmptyOrSpaces(licenses)) {
+      props.put("Bundle-License", licenses);
+    }
 
-      String licenses = modelMap.get("licenses");
-      if (!StringUtil.isEmptyOrSpaces(licenses)) {
-        props.put("Bundle-License", licenses);
-      }
+    String vendor = modelMap.get("organization.name");
+    if (!StringUtil.isEmpty(vendor)) {
+      props.put(Constants.BUNDLE_VENDOR, vendor);
+    }
 
-      String vendor = modelMap.get("organization.name");
-      if (!StringUtil.isEmpty(vendor)) {
-        props.put(Constants.BUNDLE_VENDOR, vendor);
-      }
+    String docUrl = modelMap.get("organization.url");
+    if (!StringUtil.isEmptyOrSpaces(docUrl)) {
+      props.put(Constants.BUNDLE_DOCURL, docUrl);
+    }
 
-      String docUrl = modelMap.get("organization.url");
-      if (!StringUtil.isEmptyOrSpaces(docUrl)) {
-        props.put(Constants.BUNDLE_DOCURL, docUrl);
-      }
+    // now find any additional properties that might have been set up:
+    Element instructionsNode = getConfig(mavenProject, "instructions");
+    if (instructionsNode != null) {
+      boolean useExistingManifest = false;
 
-      // now find any additional properties that might have been set up:
-      Element instructionsNode = getConfig(mavenProject, "instructions");
-      // Fix for IDEADEV-38685, NPE when the element is not set.
-      if (instructionsNode != null) {
-        @SuppressWarnings({"unchecked"})
-        List<Element> children = instructionsNode.getChildren();
-        boolean useExistingManifest = false;
-        for (Element child : children) {
-          String name = child.getName();
-          String value = child.getValue();
+      for (Element child : instructionsNode.getChildren()) {
+        String name = child.getName();
+        String value = child.getValue();
 
-          if (IncludeExistingManifest.equals(name)) {
-            conf.setManifestLocation(value);
-            conf.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
-            conf.setUseProjectDefaultManifestFileLocation(false);
-            useExistingManifest = true;
-          }
-
-          // sanitize instructions
-          if (StringUtil.startsWithChar(name, '_')) {
-            name = "-" + name.substring(1);
-          }
-
-          if ( null == value ) {
-            value = "";
-          }
-          else {
-            value = value.replaceAll( "\\p{Blank}*[\r\n]\\p{Blank}*", "" );
-          }
-
-          if (value != null && !value.isEmpty() && !Constants.BUNDLE_SYMBOLICNAME.equals(name) &&
-              !Constants.BUNDLE_VERSION.equals(name) && !Constants.BUNDLE_ACTIVATOR.equals(name) && !IncludeExistingManifest.equals(name)) {
-            // ok its an additional setting:
-            props.put(name, value);
-          }
+        if (INCLUDE_MANIFEST.equals(name)) {
+          conf.setManifestLocation(value);
+          conf.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
+          conf.setUseProjectDefaultManifestFileLocation(false);
+          useExistingManifest = true;
         }
 
-        if (!useExistingManifest) {
-          conf.setManifestLocation("");
-          conf.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
-          conf.setUseProjectDefaultManifestFileLocation(true);
+        // sanitize instructions
+        if (StringUtil.startsWithChar(name, '_')) {
+          name = "-" + name.substring(1);
         }
 
-        // check if bundle name exists, if not compute it (IDEA-63244)
-        if (!props.containsKey(Constants.BUNDLE_NAME)) {
-          props.put(Constants.BUNDLE_NAME, computeBundleName(mavenProject));
+        if (value != null) {
+          value = value.replaceAll("\\p{Blank}*[\r\n]\\p{Blank}*", "");
+        }
+
+        if (!StringUtil.isEmpty(value) && !INSTRUCTIONS_TO_SKIP.contains(name)) {
+          props.put(name, value);
         }
       }
 
-      // now post-process the settings, to make Embed-Dependency work
-      ImporterUtil.postProcessAdditionalProperties(props, mavenProject);
-
-      // Fix for IDEA-63242 - don't merge it with the existing settings, overwrite them
-      conf.importAdditionalProperties(props, true);
-
-      // Fix for IDEA-66235 - inherit jar filename from maven
-      String jarFileName = mavenProject.getFinalName() + ".jar";
-
-      // FiX for IDEA-67088, preserve existing output path settings on reimport.
-      switch (conf.getOutputPathType()) {
-        case OsgiOutputPath:
-          conf.setJarFileLocation(jarFileName, OutputPathType.OsgiOutputPath);
-          break;
-        case SpecificOutputPath:
-          conf.setJarFileLocation(new File(conf.getJarFilePath(), jarFileName).getPath(), OutputPathType.SpecificOutputPath);
-          break;
-        default:
-          conf.setJarFileLocation(jarFileName, OutputPathType.CompilerOutputPath);
+      if (!useExistingManifest) {
+        conf.setManifestLocation("");
+        conf.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
+        conf.setUseProjectDefaultManifestFileLocation(true);
       }
+
+      // check if bundle name exists, if not compute it (IDEA-63244)
+      if (!props.containsKey(Constants.BUNDLE_NAME)) {
+        props.put(Constants.BUNDLE_NAME, computeBundleName(mavenProject));
+      }
+    }
+
+    // now post-process the settings, to make Embed-Dependency work
+    ImporterUtil.postProcessAdditionalProperties(props, mavenProject);
+
+    // Fix for IDEA-63242 - don't merge it with the existing settings, overwrite them
+    conf.importAdditionalProperties(props, true);
+
+    // Fix for IDEA-66235 - inherit jar filename from maven
+    String jarFileName = mavenProject.getFinalName() + ".jar";
+
+    // FiX for IDEA-67088, preserve existing output path settings on reimport.
+    switch (conf.getOutputPathType()) {
+      case OsgiOutputPath:
+        conf.setJarFileLocation(jarFileName, OutputPathType.OsgiOutputPath);
+        break;
+      case SpecificOutputPath:
+        String path = new File(conf.getJarFilePath(), jarFileName).getPath();
+        conf.setJarFileLocation(path, OutputPathType.SpecificOutputPath);
+        break;
+      default:
+        conf.setJarFileLocation(jarFileName, OutputPathType.CompilerOutputPath);
     }
   }
 
   /**
    * Computes the Bundle-Name value from the data given in the maven project.
-   *
-   * @param mavenProject the maven project
-   * @return the bundle's human-readable name
    */
   @NotNull
   private String computeBundleName(MavenProject mavenProject) {
     String bundleName = findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_NAME);
-    if (bundleName == null || bundleName.length() == 0) {
-      String mavenProjectName = mavenProject.getName();
-      if (mavenProjectName != null) {
-        return mavenProjectName;
-      }
-      // when no name is set, use the symbolic name
-      return computeSymbolicName(mavenProject);
+    if (!StringUtil.isEmpty(bundleName)) {
+      return bundleName;
     }
-    return bundleName;
+
+    // when no name is set, use the symbolic name
+    String mavenProjectName = mavenProject.getName();
+    return mavenProjectName != null ? mavenProjectName : computeSymbolicName(mavenProject);
   }
 
   /**
    * Computes the Bundle-SymbolicName value from the data given in the maven project.
-   *
-   * @param mavenProject the maven project
-   * @return the bundle symbolic name.
    */
   @NotNull
   private String computeSymbolicName(MavenProject mavenProject) {
     String bundleSymbolicName = findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_SYMBOLICNAME);
-
-    // if it's not set compute it
-    if (bundleSymbolicName == null || bundleSymbolicName.length() == 0) {
-      // Get the symbolic name as groupId + "." + artifactId, with the following exceptions:
-
-      MavenId mavenId = mavenProject.getMavenId();
-      String groupId = mavenId.getGroupId();
-      String artifactId = mavenId.getArtifactId();
-      if (groupId == null || artifactId == null) {
-        return "";
-      }
-
-      String lastSectionOfGroupId = groupId.substring(groupId.lastIndexOf(".") + 1);
-      // if artifactId is equal to last section of groupId then groupId is returned. eg. org.apache.maven:maven -> org.apache.maven
-      if (lastSectionOfGroupId.endsWith(artifactId)) {
-        return groupId;
-      }
-
-      // if artifactId starts with last section of groupId that portion is removed. eg. org.apache.maven:maven-core -> org.apache.maven.core "
-      String doubledNamePart = lastSectionOfGroupId + "-";
-      if (artifactId.startsWith(doubledNamePart) && artifactId.length() > doubledNamePart.length()) {
-        return groupId + "." + artifactId.substring(doubledNamePart.length());
-      }
-
-      return groupId + "." + artifactId;
-    }
-    else {
+    if (!StringUtil.isEmpty(bundleSymbolicName)) {
       return bundleSymbolicName;
     }
+
+    MavenId mavenId = mavenProject.getMavenId();
+    String groupId = mavenId.getGroupId();
+    String artifactId = mavenId.getArtifactId();
+    if (groupId == null || artifactId == null) {
+      return "";
+    }
+
+    // if artifactId is equal to last section of groupId then groupId is returned (org.apache.maven:maven -> org.apache.maven)
+    String lastSectionOfGroupId = groupId.substring(groupId.lastIndexOf(".") + 1);
+    if (lastSectionOfGroupId.endsWith(artifactId)) {
+      return groupId;
+    }
+
+    // if artifactId starts with last section of groupId that portion is removed (org.apache.maven:maven-core -> org.apache.maven.core)
+    String doubledNamePart = lastSectionOfGroupId + "-";
+    if (artifactId.startsWith(doubledNamePart) && artifactId.length() > doubledNamePart.length()) {
+      return groupId + "." + artifactId.substring(doubledNamePart.length());
+    }
+
+    return groupId + "." + artifactId;
   }
 
   @Override
