@@ -7,12 +7,13 @@ import com.google.jstestdriver.idea.execution.JstdTestRunnerCommandLineState;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
+import com.intellij.execution.RunProfileStarter;
 import com.intellij.execution.RunnerRegistry;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.runners.BaseProgramRunner;
+import com.intellij.execution.runners.AsyncGenericProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.BrowserFamily;
@@ -22,6 +23,7 @@ import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
@@ -38,7 +40,7 @@ import java.io.PrintWriter;
 /**
  * @author Sergey Simonchik
  */
-public class JstdDebugProgramRunner extends BaseProgramRunner {
+public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
   private static final String DEBUG_RUNNER_ID = JstdDebugProgramRunner.class.getSimpleName();
   private static Boolean IS_AVAILABLE = null;
 
@@ -69,11 +71,11 @@ public class JstdDebugProgramRunner extends BaseProgramRunner {
     return isAvailable;
   }
 
+  @NotNull
   @Override
-  protected void startRunProfile(@NotNull final ExecutionEnvironment environment,
-                                 @Nullable Callback callback,
-                                 @NotNull final Project project,
-                                 @NotNull RunProfileState state) throws ExecutionException {
+  protected AsyncResult<RunProfileStarter> prepare(@NotNull final Project project,
+                                                   @NotNull final ExecutionEnvironment environment,
+                                                   @NotNull RunProfileState state) throws ExecutionException {
     final JstdRunConfiguration runConfiguration = (JstdRunConfiguration) environment.getRunProfile();
     JstdRunConfigurationVerifier.checkJstdServerAndBrowserEnvironment(project, runConfiguration.getRunSettings(), true);
 
@@ -82,7 +84,7 @@ public class JstdDebugProgramRunner extends BaseProgramRunner {
       throw new ExecutionException("Cannot find a browser that supports debugging.");
     }
 
-    JsRunners.start(environment, callback, project, state, Pair.create(debugBrowserInfo.getDebugEngine(), debugBrowserInfo.getBrowser()), new JsRunners.Starter() {
+    return JsRunners.start(project, Pair.create(debugBrowserInfo.getDebugEngine(), debugBrowserInfo.getBrowser()), new JsRunners.Starter() {
       @Nullable
       @Override
       public RunContentDescriptor start(@Nullable RunContentDescriptor contentToReuse) throws ExecutionException {

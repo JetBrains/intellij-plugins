@@ -58,9 +58,9 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
   @NotNull
   @Override
   protected AsyncResult<RunProfileStarter> prepare(@NotNull Project project,
-                                                   @NotNull ExecutionEnvironment env,
+                                                   @NotNull ExecutionEnvironment environment,
                                                    @NotNull RunProfileState state) throws ExecutionException {
-    final ExecutionResult executionResult = state.execute(env.getExecutor(), this);
+    final ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) {
       return AsyncResult.rejected();
     }
@@ -73,7 +73,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (karmaServer.areBrowsersReady()) {
       final Pair<JSDebugEngine, WebBrowser> engineAndBrowser =
-        new KarmaDebugBrowserSelector(project, karmaServer.getCapturedBrowsers(), env, this).selectDebugEngine();
+        new KarmaDebugBrowserSelector(project, karmaServer.getCapturedBrowsers(), environment, this).selectDebugEngine();
       return prepareDebugger(project, engineAndBrowser, new RunProfileStarter() {
         @Nullable
         @Override
@@ -117,7 +117,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
                                             @NotNull Executor executor,
                                             @NotNull RunProfileState state,
                                             @Nullable RunContentDescriptor contentToReuse,
-                                            @NotNull ExecutionEnvironment env) throws ExecutionException {
+                                            @NotNull ExecutionEnvironment env) {
           RunContentBuilder contentBuilder = new RunContentBuilder(KarmaDebugProgramRunner.this, executionResult, env);
           final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
           karmaServer.onBrowsersReady(new Runnable() {
