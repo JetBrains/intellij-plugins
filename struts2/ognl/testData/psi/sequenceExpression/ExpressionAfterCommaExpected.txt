@@ -1,0 +1,11 @@
+OgnlFile:ExpressionAfterCommaExpected.ognl
+  PsiElement(%{)('%{')
+  SEQUENCE_EXPRESSION
+    PsiElement({)('{')
+    LITERAL_EXPRESSION
+      PsiElement(INTEGER_LITERAL)('1')
+    PsiElement(,)(',')
+    PsiErrorElement:<expression> expected, got '}'
+      <empty list>
+    PsiElement(})('}')
+  PsiElement(EXPRESSION_END)('}')
