@@ -18,7 +18,6 @@
   psiImplUtilClass="com.intellij.lang.ognl.psi.impl.OgnlPsiUtil"
 
   parserClass="com.intellij.lang.ognl.parser.OgnlParser"
-  parserUtilClass="com.intellij.lang.parser.GeneratedParserUtilBase"
 
   implements="com.intellij.lang.ognl.psi.OgnlPsiCompositeElement"
   extends="com.intellij.lang.ognl.psi.impl.OgnlPsiCompositeElementBase"
@@ -223,6 +222,7 @@ unaryExpression ::= unaryOperator expression {
   ]
 }
 
+private conditionalExpressionTail ::= ':' expression {pin=1}
 conditionalExpression ::= expression '?' expression conditionalExpressionTail {
   methods=[
     condition="expression[0]"
@@ -230,7 +230,6 @@ conditionalExpression ::= expression '?' expression conditionalExpressionTail {
     else="expression[2]"
   ]
 }
-private conditionalExpressionTail ::= ':' expression {pin=1}
 
 private arrayConstructorExpression ::= '[' expression? ']' sequenceExpression? {pin=1}
 private constructorExpression ::= '(' methodCallParameters ')' {pin=1}
