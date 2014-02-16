@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,7 @@ import com.intellij.formatting.FormattingModelBuilder;
 import com.intellij.formatting.FormattingModelProvider;
 import com.intellij.formatting.SpacingBuilder;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.psi.OgnlTokenGroups;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -54,7 +55,7 @@ public class OgnlFormattingModelBuilder implements FormattingModelBuilder {
   }
 
   private static SpacingBuilder createSpacingBuilder(final CodeStyleSettings settings) {
-    return new SpacingBuilder(settings)
+    return new SpacingBuilder(settings, OgnlLanguage.INSTANCE)
       .after(COMMA).spaceIf(settings.SPACE_AFTER_COMMA)
       .before(COMMA).spaceIf(settings.SPACE_BEFORE_COMMA)
 
