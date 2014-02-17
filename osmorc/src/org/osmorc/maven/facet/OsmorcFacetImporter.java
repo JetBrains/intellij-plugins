@@ -116,18 +116,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     }
 
     // load versions if any
-    Map<String, String> versions = null;
-    Element versionsNode = MavenJDOMUtil.findChildByPath(plugin.getGoalConfiguration("cleanVersions"), "versions");
-    if (versionsNode != null) {
-      versions = ContainerUtil.newHashMap();
-      for (Element child : versionsNode.getChildren()) {
-        String name = child.getName();
-        String value = child.getValue();
-        if (!StringUtil.isEmpty(value)) {
-          versions.put(name, ImporterUtil.cleanupVersion(value));
-        }
-      }
-    }
+    Map<String, String> versions = cleanVersions(plugin);
 
     // now find any additional properties that might have been set up:
     Element instructionsNode = getConfig(mavenProject, "instructions");
@@ -244,6 +233,23 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     return groupId + "." + artifactId;
   }
 
+  @Nullable
+  private static Map<String, String> cleanVersions(MavenPlugin plugin) {
+    Element versionsNode = MavenJDOMUtil.findChildByPath(plugin.getGoalConfiguration("cleanVersions"), "versions");
+    if (versionsNode == null) return null;
+
+    Map<String, String> versions = ContainerUtil.newHashMap();
+    for (Element child : versionsNode.getChildren()) {
+      String name = child.getName();
+      String value = child.getValue();
+      if (!StringUtil.isEmpty(value)) {
+        versions.put(name, ImporterUtil.cleanupVersion(value));
+      }
+    }
+    return versions;
+  }
+
+  @NotNull
   private static String substituteVersions(@NotNull String value, @Nullable Map<String, String> versions) {
     if (versions != null) {
       for (Map.Entry<String, String> entry : versions.entrySet()) {
