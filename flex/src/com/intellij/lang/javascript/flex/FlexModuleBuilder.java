@@ -8,6 +8,7 @@ import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
+import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
@@ -278,7 +279,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
 
   @Nullable
   @Override
-  public ModuleWizardStep getCustomOptionsStep(Disposable parentDisposable) {
+  public ModuleWizardStep getCustomOptionsStep(WizardContext context, Disposable parentDisposable) {
     return new SetupFlexModuleWizardStep(this);
   }
 }
