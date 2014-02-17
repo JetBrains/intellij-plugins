@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,7 +60,7 @@ public class Struts2PresentationProvider extends PresentationProvider {
     }
 
     if (o instanceof ExceptionMapping) {
-      return PlatformIcons.EXCEPTION_CLASS_ICON;
+      return AllIcons.Nodes.ExceptionClass;
     }
 
     if (o instanceof StrutsRoot) {

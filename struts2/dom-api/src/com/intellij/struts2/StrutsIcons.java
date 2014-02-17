@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,6 @@ package com.intellij.struts2;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.util.PlatformIcons;
 import icons.Struts2Icons;
 
 import javax.swing.*;
@@ -62,7 +61,7 @@ public final class StrutsIcons {
   /**
    * Overlay icon for "default" elements.
    */
-  private static final Icon OVERLAY_DEFAULT = PlatformIcons.CHECK_ICON;
+  private static final Icon OVERLAY_DEFAULT = AllIcons.Actions.Checked;
 
   public static final LayeredIcon RESULT_TYPE_DEFAULT = new LayeredIcon(2);
 
@@ -83,20 +82,20 @@ public final class StrutsIcons {
     VALIDATION_CONFIG_FILE.setIcon(StdFileTypes.XML.getIcon(), 0);
     VALIDATION_CONFIG_FILE.setIcon(Struts2Icons.Edit_small, 1, 0, OVERLAY_Y_OFFSET);
 
-    ACTION_CLASS.setIcon(PlatformIcons.CLASS_ICON, 0);
+    ACTION_CLASS.setIcon(AllIcons.Nodes.Class, 0);
     ACTION_CLASS.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
 
-    STRUTS_VARIABLE.setIcon(PlatformIcons.VARIABLE_ICON, 0);
+    STRUTS_VARIABLE.setIcon(AllIcons.Nodes.Variable, 0);
     STRUTS_VARIABLE.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
 
     STRUTS_PACKAGE.setIcon(AllIcons.Nodes.Folder, 0);
     STRUTS_PACKAGE.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
 
     createGlobalIcon(GLOBAL_RESULT, AllIcons.Vcs.Arrow_right);
-    createGlobalIcon(GLOBAL_EXCEPTION_MAPPING, PlatformIcons.EXCEPTION_CLASS_ICON);
+    createGlobalIcon(GLOBAL_EXCEPTION_MAPPING, AllIcons.Nodes.ExceptionClass);
 
     createDefaultIcon(DEFAULT_ACTION_REF, Struts2Icons.Action);
-    createDefaultIcon(DEFAULT_CLASS_REF, PlatformIcons.CLASS_ICON);
+    createDefaultIcon(DEFAULT_CLASS_REF, AllIcons.Nodes.Class);
     createDefaultIcon(DEFAULT_INTERCEPTOR_REF, AllIcons.Nodes.Plugin);
     createDefaultIcon(RESULT_TYPE_DEFAULT, AllIcons.Debugger.Console);
   }
