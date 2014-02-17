@@ -136,26 +136,27 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
     }
 
     // obtaining export name of the package from a providing manifest
-    String exportedPackage;
+    String exportedPackage = null;
     BundleManager bundleManager = BundleManager.getInstance(targetClass.getProject());
     ModuleFileIndex index = ModuleRootManager.getInstance(requestorModule).getFileIndex();
     List<OrderEntry> entries = index.getOrderEntriesForFile(targetFile.getVirtualFile());
     OrderEntry entry = !entries.isEmpty() ? entries.get(0) : null;
-    if (entry instanceof ModuleSourceOrderEntry) {
-      BundleManifest manifest = bundleManager.getManifestByObject(((ModuleSourceOrderEntry)entry).getRootModel().getModule());
-      exportedPackage = manifest != null ? manifest.getExportedPackage(packageName) : null;
+    if (entry instanceof ModuleOrderEntry) {
+      Module module = ((ModuleOrderEntry)entry).getModule();
+      if (module != null) {
+        BundleManifest manifest = bundleManager.getManifestByObject(module);
+        exportedPackage = manifest != null ? manifest.getExportedPackage(packageName) : null;
+      }
     }
     else if (entry instanceof LibraryOrderEntry) {
       Library library = ((LibraryOrderEntry)entry).getLibrary();
-      assert library != null : entry;
-      BundleManifest manifest = bundleManager.getManifestByObject(library);
-      exportedPackage = manifest != null ? manifest.getExportedPackage(packageName) : null;
+      if (library != null) {
+        BundleManifest manifest = bundleManager.getManifestByObject(library);
+        exportedPackage = manifest != null ? manifest.getExportedPackage(packageName) : null;
+      }
     }
     else if (entry instanceof JdkOrderEntry) {
       exportedPackage = packageName;
-    }
-    else {
-      return NOT_EXPORTED;
     }
     if (exportedPackage == null) {
       return NOT_EXPORTED;
