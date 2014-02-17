@@ -6,6 +6,7 @@ import com.intellij.execution.actions.ConfigurationFromContext;
 import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -95,7 +96,7 @@ public class KarmaRunConfigurationProducer extends RunConfigurationProducer<Karm
     else {
       jsFile = ObjectUtils.tryCast(element.getContainingFile(), JSFile.class);
     }
-    if (jsFile != null && jsFile.getName().endsWith(".conf.js")) {
+    if (jsFile != null && KarmaUtil.isKarmaConfigFile(jsFile.getName())) {
       return jsFile;
     }
     return null;

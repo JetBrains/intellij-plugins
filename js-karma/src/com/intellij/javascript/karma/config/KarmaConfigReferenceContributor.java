@@ -1,5 +1,6 @@
 package com.intellij.javascript.karma.config;
 
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -31,7 +32,6 @@ import java.util.Collections;
  */
 public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
 
-  private static final String FILE_NAME_SUFFIX = ".conf.js";
   private static final String FILES_VAR_NAME = "files";
 
   public static final ElementPattern<JSLiteralExpression> STRING_LITERAL_INSIDE_KARMA_CONFIG_FILE =
@@ -39,7 +39,7 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
     .and(new FilterPattern(new ElementFilter() {
       public boolean isAcceptable(Object element, PsiElement context) {
         PsiFile psiFile = context.getContainingFile();
-        return psiFile.getName().endsWith(FILE_NAME_SUFFIX);
+        return KarmaUtil.isKarmaConfigFile(psiFile.getName());
       }
 
       public boolean isClassAcceptable(Class hintClass) {

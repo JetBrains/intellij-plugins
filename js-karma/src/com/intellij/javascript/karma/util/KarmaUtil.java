@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class KarmaUtil {
 
+  private static final String[] FILE_NAME_SUFFIXES = new String[] {".conf.js", "-conf.js", ".config.js", "-config.js"};
+
   private KarmaUtil() {
   }
 
@@ -38,4 +40,12 @@ public class KarmaUtil {
     }
   }
 
+  public static boolean isKarmaConfigFile(@NotNull String name) {
+    for (String suffix : FILE_NAME_SUFFIXES) {
+      if (name.endsWith(suffix)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
