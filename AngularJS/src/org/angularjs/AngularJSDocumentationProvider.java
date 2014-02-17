@@ -6,6 +6,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.xml.XmlAttribute;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,14 @@ public class AngularJSDocumentationProvider extends DocumentationProviderEx {
     if (element instanceof JSNamedElementProxy) {
       final String name = ((JSNamedElementProxy)element).getName();
       return AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.INDEX_ID, name);
+    }
+    return null;
+  }
+
+  @Override
+  public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
+    if (element instanceof XmlAttribute) {
+      return AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.INDEX_ID, object.toString());
     }
     return null;
   }
