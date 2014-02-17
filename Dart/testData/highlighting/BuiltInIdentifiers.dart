@@ -12,7 +12,7 @@
   <info descr="highlighted as keyword">operator</info> +(<info descr="null">a</info>){}
 
   <info descr="null">bool</info> <info descr="null">abstract</info>() => false;
-  @<info descr="null">Object</info>() void <info descr="null">as</info>() => null;
+  <info descr="metadata">@<info descr="null">Object</info></info>() void <info descr="null">as</info>() => null;
   void <info descr="null">export</info>() => null;
   <info descr="highlighted as keyword">external</info> void <info descr="null">external</info>();
   void <info descr="null">factory</info>() => null;
@@ -58,7 +58,7 @@
   try{} <info descr="highlighted as keyword">on</info> <error descr="Local variables cannot be referenced before they are declared">on</error>{}
   
   <info descr="null">int</info> <info descr="null">abstract</info> = 1;
-  @<info descr="null">Object</info>() var <info descr="null">as</info> = 2;
+  <info descr="metadata">@<info descr="null">Object</info></info>() var <info descr="null">as</info> = 2;
   <info descr="null">dynamic</info> <info descr="null">export</info> = 3;
   var <info descr="null">external</info> = 4;
   var <info descr="null">factory</info> = 5;
