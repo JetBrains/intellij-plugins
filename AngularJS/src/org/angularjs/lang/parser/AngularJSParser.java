@@ -103,9 +103,16 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
       }
     }
 
-    protected boolean parseBitwiseORExpression(final boolean allowIn) {
+    @Override
+    protected int getCurrentBinarySignPriority(boolean allowIn, boolean advance) {
+      if (builder.getTokenType() == JSTokenTypes.OR) return -1;
+      return super.getCurrentBinarySignPriority(allowIn, advance);
+    }
+
+    @Override
+    protected boolean parseBinaryExpression(boolean allowIn) {
       PsiBuilder.Marker expr = builder.mark();
-      if (!parseBitwiseXORExpression(allowIn)) {
+      if (!super.parseBinaryExpression(allowIn)) {
         expr.drop();
         return false;
       }
