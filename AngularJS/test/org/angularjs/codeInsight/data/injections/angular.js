@@ -25,3 +25,4 @@
 /**
  * @name ng.directive:ngRepeat
  */
+angular.directive({ngModel: ngModelDirective})

@@ -1,10 +1,11 @@
 package org.angularjs.codeInsight;
 
-import org.angularjs.index.AngularDirectivesIndex;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
+import org.angularjs.index.AngularDirectivesDocIndex;
+import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +26,9 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project)) {
         result.put(directiveName, createDescriptor(project, directiveName));
       }
+      for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project)) {
+        result.put(directiveName, createDescriptor(project, directiveName));
+      }
       return result.values().toArray(new XmlAttributeDescriptor[result.size()]);
     }
     return XmlAttributeDescriptor.EMPTY;
@@ -36,7 +40,8 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     final String attributeName = normalizeAttributeName(attrName);
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      return AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project).contains(attributeName) ?
+      return AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project).contains(attributeName) ||
+             AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project).contains(attributeName) ?
              createDescriptor(project, attributeName) : null;
     }
     return null;

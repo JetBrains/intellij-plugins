@@ -55,6 +55,7 @@
     <editorSmartKeysConfigurable instance="org.angularjs.settings.AngularJSConfigurationPage"/>
 
     <fileBasedIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
+    <fileBasedIndex implementation="org.angularjs.index.AngularDirectivesDocIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularControllerIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularModuleIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularFilterIndex"/>

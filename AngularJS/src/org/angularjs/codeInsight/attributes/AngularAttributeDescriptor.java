@@ -1,12 +1,14 @@
 package org.angularjs.codeInsight.attributes;
 
-import org.angularjs.index.AngularDirectivesIndex;
+import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.indexing.ID;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
+import org.angularjs.index.AngularDirectivesDocIndex;
+import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
 
 /**
@@ -18,7 +20,6 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor {
   private final ID<String, Void> myIndex;
 
   public AngularAttributeDescriptor(final Project project, String attributeName, final ID<String, Void> index) {
-
     myProject = project;
     myAttributeName = attributeName;
     myIndex = index;
@@ -26,7 +27,9 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor {
 
   @Override
   public PsiElement getDeclaration() {
-    return AngularIndexUtil.resolve(myProject, AngularDirectivesIndex.INDEX_ID, getName());
+    final JSNamedElementProxy declaration = AngularIndexUtil.resolve(myProject, AngularDirectivesIndex.INDEX_ID, getName());
+    return declaration != null ? declaration :
+           AngularIndexUtil.resolve(myProject, AngularDirectivesDocIndex.INDEX_ID, getName());
   }
 
   @Override

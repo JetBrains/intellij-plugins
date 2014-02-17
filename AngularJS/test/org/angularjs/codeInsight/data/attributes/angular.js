@@ -29,3 +29,5 @@
 /**
  * @name ng.directive:ngSrc
  */
+
+angular.directive({ngModel: ngModelDirective})

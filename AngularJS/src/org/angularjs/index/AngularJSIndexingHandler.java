@@ -3,10 +3,7 @@ package org.angularjs.index;
 import com.intellij.lang.javascript.documentation.JSDocumentationProcessor;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.index.JSSymbolVisitor;
-import com.intellij.lang.javascript.psi.JSCallExpression;
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.JSLiteralExpression;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -62,6 +59,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
           final String argumentText = argument.getText();
           storeAdditionalData(visitor, index, argument, command, argumentText, argument.getTextOffset());
+        } else if (argument instanceof JSObjectLiteralExpression) {
+          for (JSProperty property : ((JSObjectLiteralExpression)argument).getProperties()) {
+            final String argumentText = property.getName();
+            storeAdditionalData(visitor, index, property, command, argumentText, property.getTextOffset());
+          }
         }
       }
     }
@@ -108,7 +110,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
     final int offset = comment.getTextOffset() + comment.getText().indexOf(matchName);
     if (matchName.contains(DIRECTIVE)) {
-      storeAdditionalData(visitor, AngularDirectivesIndex.INDEX_ID, comment, DIRECTIVE, remainingLineContent.substring(1), offset);
+      storeAdditionalData(visitor, AngularDirectivesDocIndex.INDEX_ID, comment, DIRECTIVE, remainingLineContent.substring(1), offset);
     } else if (matchName.contains(FILTER)) {
       storeAdditionalData(visitor, AngularFilterIndex.INDEX_ID, comment, FILTER, remainingLineContent.substring(1), offset);
     }

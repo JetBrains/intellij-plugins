@@ -33,3 +33,4 @@
 /**
  * @name ng.filter:lowercase
  */
+angular.directive({ngModel: ngModelDirective})
