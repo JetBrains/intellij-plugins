@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.index.JSEntryIndex;
 import com.intellij.lang.javascript.index.JSIndexEntry;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -20,7 +21,7 @@ import java.util.Set;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 7;
+  public static final int BASE_VERSION = 8;
 
   public static JSNamedElementProxy resolve(final Project project, final ID<String, Void> index, final String lookupKey) {
     final Ref<JSNamedElementProxy> result = Ref.create();
@@ -59,6 +60,6 @@ public class AngularIndexUtil {
   }
 
   public static boolean hasAngularJS(Project project) {
-    return resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-model") != null;
+    return !DumbService.isDumb(project) && resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-model") != null;
   }
 }
