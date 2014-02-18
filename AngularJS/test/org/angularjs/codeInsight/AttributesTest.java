@@ -110,6 +110,27 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
+  public void testNgSrcCompletion() {
+    myFixture.configureByFiles("ng-src.completion.html", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("img ng-<caret>", myFixture.getFile());
+    myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "ng-src");
+
+    offsetBySignature = AngularTestUtil.findOffsetBySignature("div ng-<caret>", myFixture.getFile());
+    myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+    myFixture.completeBasic();
+    assertDoesntContain(myFixture.getLookupElementStrings(), "ng-src");
+  }
+
+  public void testRestrictE() {
+    myFixture.configureByFiles("form.html", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("div f<caret>", myFixture.getFile());
+    myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+    myFixture.completeBasic();
+    assertDoesntContain(myFixture.getLookupElementStrings(), "form");
+  }
+
   public void testInlineStyle() {
     myFixture.configureByFiles("style.html", "angular.js");
     myFixture.checkHighlighting();

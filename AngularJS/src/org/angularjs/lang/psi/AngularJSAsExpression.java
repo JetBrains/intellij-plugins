@@ -11,7 +11,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
-import org.angularjs.codeInsight.AngularAttributesRegistry;
+import org.angularjs.codeInsight.attributes.AngularAttributesRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

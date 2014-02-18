@@ -28,6 +28,11 @@
 
 /**
  * @name ng.directive:ngSrc
+ * @element IMG
  */
 
+/**
+ * @name ng.directive:form
+ * @restrict E
+ */
 angular.directive({ngModel: ngModelDirective})

@@ -1,4 +1,4 @@
-package org.angularjs.codeInsight;
+package org.angularjs.codeInsight.attributes;
 
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.xml.XmlAttributeDescriptor;

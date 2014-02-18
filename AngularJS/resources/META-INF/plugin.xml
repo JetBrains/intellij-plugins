@@ -43,7 +43,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
-    <xml.attributeDescriptorsProvider implementation="org.angularjs.codeInsight.AngularJSAttributeDescriptorsProvider" order="first"/>
+    <xml.attributeDescriptorsProvider implementation="org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider" order="first"/>
     <xml.xmlExtension implementation="org.angularjs.codeInsight.AngularJSHtmlExtension" order="first"/>
 
     <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>

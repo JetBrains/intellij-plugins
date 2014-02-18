@@ -4,7 +4,7 @@ import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSTargetedInjector;
 import com.intellij.psi.xml.XmlTokenType;
-import org.angularjs.codeInsight.AngularAttributesRegistry;
+import org.angularjs.codeInsight.attributes.AngularAttributesRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
