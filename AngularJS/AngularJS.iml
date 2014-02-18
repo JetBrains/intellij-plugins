@@ -14,6 +14,7 @@
     <orderEntry type="module" module-name="lang-api" />
     <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="JavaScriptLanguage" />
+    <orderEntry type="module" module-name="xml" />
   </component>
 </module>
 
