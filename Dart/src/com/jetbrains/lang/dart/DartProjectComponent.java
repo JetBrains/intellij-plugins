@@ -47,7 +47,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
         final boolean dartSdkWasEnabledInOldModel = hasJSLibraryMappingToOldDartSdkGlobalLib(myProject);
         deleteDartSdkGlobalLibConfiguredInOldIde();
 
-        final String dartSdkGlobalLibName = importKnowledgeAboutOldDartSdkAndReturnGlobalLibName();
+        final String dartSdkGlobalLibName = importKnowledgeAboutOldDartSdkAndReturnGlobalLibName(myProject);
 
         final Collection<VirtualFile> pubspecYamlFiles =
           FilenameIndex.getVirtualFilesByName(myProject, "pubspec.yaml", GlobalSearchScope.projectScope(myProject));
@@ -74,7 +74,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
   }
 
   @Nullable
-  private static String importKnowledgeAboutOldDartSdkAndReturnGlobalLibName() {
+  private static String importKnowledgeAboutOldDartSdkAndReturnGlobalLibName(final @NotNull Project project) {
     final String oldDartSdkPath = PropertiesComponent.getInstance().getValue("dart_sdk_path");
     PropertiesComponent.getInstance().unsetValue("dart_sdk_path");
 
@@ -91,7 +91,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
       return ApplicationManager.getApplication().runWriteAction(new Computable<String>() {
         public String compute() {
-          return DartSdkGlobalLibUtil.createDartSdkGlobalLib(oldDartSdkPath);
+          return DartSdkGlobalLibUtil.createDartSdkGlobalLib(project, oldDartSdkPath);
         }
       });
     }

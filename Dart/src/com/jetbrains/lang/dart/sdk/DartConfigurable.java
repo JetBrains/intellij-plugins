@@ -268,13 +268,13 @@ public class DartConfigurable implements SearchableConfigurable {
             final String dartSdkGlobalLibName;
 
             if (mySdkInitial == null) {
-              dartSdkGlobalLibName = DartSdkGlobalLibUtil.createDartSdkGlobalLib(sdkHomePath);
+              dartSdkGlobalLibName = DartSdkGlobalLibUtil.createDartSdkGlobalLib(myProject, sdkHomePath);
             }
             else {
               dartSdkGlobalLibName = mySdkInitial.getGlobalLibName();
 
               if (!sdkHomePath.equals(initialSdkHomePath)) {
-                DartSdkGlobalLibUtil.updateDartSdkGlobalLib(dartSdkGlobalLibName, sdkHomePath);
+                DartSdkGlobalLibUtil.updateDartSdkGlobalLib(myProject, dartSdkGlobalLibName, sdkHomePath);
               }
             }
 

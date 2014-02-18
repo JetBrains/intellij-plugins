@@ -44,13 +44,13 @@ public class DartWebApplicationGenerator extends WebProjectTemplate<DartProjectW
 
           final String dartSdkLibName;
           if (sdk == null) {
-            dartSdkLibName = DartSdkGlobalLibUtil.createDartSdkGlobalLib(data.dartSdkPath);
+            dartSdkLibName = DartSdkGlobalLibUtil.createDartSdkGlobalLib(project, data.dartSdkPath);
           }
           else {
             dartSdkLibName = sdk.getGlobalLibName();
 
             if (!data.dartSdkPath.equals(sdk.getHomePath())) {
-              DartSdkGlobalLibUtil.updateDartSdkGlobalLib(dartSdkLibName, data.dartSdkPath);
+              DartSdkGlobalLibUtil.updateDartSdkGlobalLib(project, dartSdkLibName, data.dartSdkPath);
             }
           }
 

@@ -25,7 +25,7 @@ public class DartTestUtils {
     else {
       dartSdkGlobalLibName = ApplicationManager.getApplication().runWriteAction(new Computable<String>() {
         public String compute() {
-          return DartSdkGlobalLibUtil.createDartSdkGlobalLib(BASE_TEST_DATA_PATH + "/sdk");
+          return DartSdkGlobalLibUtil.createDartSdkGlobalLib(module.getProject(), BASE_TEST_DATA_PATH + "/sdk");
         }
       });
     }
