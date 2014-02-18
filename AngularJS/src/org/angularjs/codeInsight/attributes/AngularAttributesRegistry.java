@@ -1,11 +1,12 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.xml.XmlAttributeDescriptor;
-import org.angularjs.index.AngularControllerIndex;
-import org.angularjs.index.AngularModuleIndex;
+import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.openapi.project.Project;
-import org.angularjs.codeInsight.attributes.AngularAttributeDescriptor;
+import com.intellij.psi.xml.XmlAttribute;
+import org.angularjs.index.AngularControllerIndex;
+import org.angularjs.index.AngularDirectivesDocIndex;
+import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.index.AngularModuleIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,8 +25,13 @@ public class AngularAttributesRegistry {
     return new AngularAttributeDescriptor(project, directiveName, null);
   }
 
-  public static boolean isAngularAttribute(XmlAttribute parent, final String name) {
-    final XmlAttributeDescriptor descriptor = parent.getDescriptor();
-    return descriptor instanceof AngularAttributeDescriptor && name.equals(descriptor.getName());
+  public static boolean isAngularExpressionAttribute(XmlAttribute parent) {
+    final String attributeName = AngularJSAttributeDescriptorsProvider.normalizeAttributeName(parent.getName());
+    final JSNamedElementProxy directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.INDEX_ID, attributeName);
+    if (directive != null) {
+      final String restrict = directive.getIndexItem().getTypeString();
+      return restrict.split(";", -1)[2].endsWith("expression");
+    }
+    return false;
   }
 }

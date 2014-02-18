@@ -16,6 +16,10 @@
 
 /**
  * @name ng.directive:ngController
+ * @param {expression} ngController Name of a globally accessible constructor function or an
+ *     {@link guide/expression expression} that on the current scope evaluates to a
+ *     constructor function. The controller instance can be published into a scope property
+ *     by specifying `as propertyName`.
  */
 
 /**

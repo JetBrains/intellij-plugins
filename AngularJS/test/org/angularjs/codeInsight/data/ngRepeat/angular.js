@@ -20,9 +20,12 @@
 
 /**
  * @name ng.directive:ngInit
+ * @param {expression} ngInit {@link guide/expression Expression} to eval.
  */
 
 /**
  * @name ng.directive:ngRepeat
+ * @param {repeat_expression} ngRepeat The expression indicating how to enumerate a collection. These
+ *   formats are currently supported:
  */
 angular.directive({ngModel: ngModelDirective})
