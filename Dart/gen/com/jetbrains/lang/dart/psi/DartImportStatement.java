@@ -17,9 +17,6 @@ public interface DartImportStatement extends DartPsiCompositeElement {
   List<DartMetadata> getMetadataList();
 
   @NotNull
-  DartPathOrLibraryReference getPathOrLibraryReference();
-
-  @NotNull
   List<DartShowCombinator> getShowCombinatorList();
 
   @NotNull

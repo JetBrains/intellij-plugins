@@ -19,6 +19,9 @@ public interface DartOperatorDeclaration extends DartOperator {
   @Nullable
   DartReturnType getReturnType();
 
+  @Nullable
+  DartStringLiteralExpression getStringLiteralExpression();
+
   @NotNull
   DartUserDefinableOperator getUserDefinableOperator();
 

@@ -37,6 +37,9 @@ class Operators {
   operator [](x) {}
   operator []=(x,y) {}
 
+  operator[](property) native "JsObject_[]";
+  operator[]=(property, value) native "JsObject_[]=";
+
   foo() {
     ~super;
     -super;

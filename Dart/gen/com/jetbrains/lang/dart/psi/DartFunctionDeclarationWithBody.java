@@ -16,6 +16,9 @@ public interface DartFunctionDeclarationWithBody extends DartComponent {
   @NotNull
   DartFunctionBody getFunctionBody();
 
+  @NotNull
+  List<DartMetadata> getMetadataList();
+
   @Nullable
   DartReturnType getReturnType();
 

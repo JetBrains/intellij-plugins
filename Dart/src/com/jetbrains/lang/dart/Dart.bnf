@@ -203,8 +203,8 @@ varDeclarationListPart ::= componentName varInit?
 
 operatorDeclaration ::= operatorDeclarationWithReturnType | operatorDeclarationWithoutReturnType // 'operator' is a valid identifier, so can be a returnType
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartOperator" implements="com.jetbrains.lang.dart.psi.DartOperator"}
-private operatorDeclarationWithReturnType    ::= metadata* 'external'? returnType 'operator' userDefinableOperator formalParameterList (';' | functionBody) {pin=5}
-private operatorDeclarationWithoutReturnType ::= metadata* 'external'?            'operator' userDefinableOperator formalParameterList (';' | functionBody) {pin=4}
+private operatorDeclarationWithReturnType    ::= metadata* 'external'? returnType 'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative) {pin=5}
+private operatorDeclarationWithoutReturnType ::= metadata* 'external'?            'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative) {pin=4}
 
 classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? ((superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody |
                                                                                  '=' mixinApplication ';')
@@ -364,8 +364,8 @@ private statement_recover ::= !('!' | '(' | ')' | '+' | '++' | '-' | '--' | ';' 
                               | "abstract" | "assert" | "class"  | "extends" | "factory" | "get" | "implements" | "import"
                               | "is" | "@" | "library" | "native" | "as" | "on" | "set" | "static" | "typedef" | "operator")
 
-private nonLabelledStatement ::= block // Guard to break tie with map literal.
-                               | metadata* functionDeclarationWithBody ';'?
+private nonLabelledStatement ::= block // Guard to break tie with map literal.  todo why ';'?
+                               | functionDeclarationWithBody ';'?
                                | forStatement ';'?
                                | whileStatement ';'?
                                | doWhileStatement ';'?
@@ -573,7 +573,7 @@ functionSignature ::= metadata* functionDeclarationPrivate
 private functionDeclarationPrivate ::= returnType componentName formalParameterList | componentName formalParameterList // todo remove, use functionSignature as in spec
 functionDeclarationWithBodyOrNative ::= metadata* 'external'? (returnType componentName formalParameterList | componentName formalParameterList) ( ';' | functionBodyOrNative)
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
-functionDeclarationWithBody ::= (returnType componentName formalParameterList | componentName formalParameterList) functionBody
+functionDeclarationWithBody ::= metadata*  (returnType componentName formalParameterList | componentName formalParameterList) functionBody // todo merge with functionDeclarationWithBodyOrNative
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
 functionBody ::= arrowBodyWithSemi | block
