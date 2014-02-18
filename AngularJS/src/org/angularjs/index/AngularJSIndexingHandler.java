@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Dennis.Ushakov
@@ -43,6 +45,13 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXERS.put(FILTER, AngularFilterIndex.INDEX_ID);
   }
 
+  private static final String RESTRICT = "@restrict";
+  private static final String ELEMENT = "@element";
+  private static final String PARAM = "@param";
+  private static final Pattern RESTRICT_PATTERN = Pattern.compile(RESTRICT + "\\s*(.*)");
+  private static final Pattern ELEMENT_PATTERN = Pattern.compile(ELEMENT + "\\s*(.*)");
+  private static final Pattern PARAM_PATTERN = Pattern.compile(PARAM + "\\s*\\{([^}]*)}");
+
   @Override
   public void processCallExpression(JSCallExpression callExpression, JSSymbolVisitor visitor) {
     JSReferenceExpression callee = (JSReferenceExpression)callExpression.getMethodExpression();
@@ -58,11 +67,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
           final String argumentText = argument.getText();
-          storeAdditionalData(visitor, index, argument, command, argumentText, argument.getTextOffset());
+          storeAdditionalData(visitor, index, argument, command, argumentText, argument.getTextOffset(), null);
         } else if (argument instanceof JSObjectLiteralExpression) {
           for (JSProperty property : ((JSObjectLiteralExpression)argument).getProperties()) {
             final String argumentText = property.getName();
-            storeAdditionalData(visitor, index, property, command, argumentText, property.getTextOffset());
+            storeAdditionalData(visitor, index, property, command, argumentText, property.getTextOffset(), null);
           }
         }
       }
@@ -74,7 +83,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
           visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), StringUtil.unquoteString(argument.getText()),
-                                      argument.getTextOffset());
+                                      argument.getTextOffset(), null);
         }
       }
     }
@@ -85,14 +94,15 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                                           final PsiElement declaration,
                                           final String command,
                                           final String argumentText,
-                                          final int offset) {
+                                          final int offset,
+                                          final String value) {
     final Function<String, String> converter = NAME_CONVERTERS.get(command);
     final String defaultName = StringUtil.unquoteString(argumentText);
     final String name = converter != null ? converter.fun(argumentText) : defaultName;
-    visitor.storeAdditionalData(declaration, index.toString(), name, offset);
-    visitor.storeAdditionalData(declaration, AngularSymbolIndex.INDEX_ID.toString(), name, offset);
+    visitor.storeAdditionalData(declaration, index.toString(), name, offset, value);
+    visitor.storeAdditionalData(declaration, AngularSymbolIndex.INDEX_ID.toString(), name, offset, null);
     if (!StringUtil.equals(defaultName, name)) {
-      visitor.storeAdditionalData(declaration, AngularSymbolIndex.INDEX_ID.toString(), defaultName, offset);
+      visitor.storeAdditionalData(declaration, AngularSymbolIndex.INDEX_ID.toString(), defaultName, offset, null);
     }
   }
 
@@ -110,10 +120,35 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
     final int offset = comment.getTextOffset() + comment.getText().indexOf(matchName);
     if (matchName.contains(DIRECTIVE)) {
-      storeAdditionalData(visitor, AngularDirectivesDocIndex.INDEX_ID, comment, DIRECTIVE, remainingLineContent.substring(1), offset);
+      final String restrictions = calculateRestrictions(comment);
+      storeAdditionalData(visitor, AngularDirectivesDocIndex.INDEX_ID, comment, DIRECTIVE,
+                          remainingLineContent.substring(1), offset, restrictions);
     } else if (matchName.contains(FILTER)) {
-      storeAdditionalData(visitor, AngularFilterIndex.INDEX_ID, comment, FILTER, remainingLineContent.substring(1), offset);
+      storeAdditionalData(visitor, AngularFilterIndex.INDEX_ID, comment, FILTER, remainingLineContent.substring(1), offset, null);
     }
+  }
+
+  private static String calculateRestrictions(PsiComment comment) {
+    final String commentText = comment.getText();
+    String restrict = "A";
+    String tag = "";
+    String param = "";
+    for (String line : StringUtil.splitByLines(commentText)) {
+      restrict = getParamValue(restrict, line, RESTRICT_PATTERN, RESTRICT);
+      tag = getParamValue(tag, line, ELEMENT_PATTERN, ELEMENT);
+      param = getParamValue(param, line, PARAM_PATTERN, PARAM);
+    }
+    return restrict.trim() + ";" + tag.trim() + ";" + param.trim();
+  }
+
+  private static String getParamValue(String previousValue, String line, final Pattern pattern, final String docTag) {
+    if (line.contains(docTag)) {
+      final Matcher matcher = pattern.matcher(line);
+      if (matcher.find()) {
+        previousValue = matcher.group(1);
+      }
+    }
+    return previousValue;
   }
 
   private static boolean hasDirectiveName(String remainingLineContent) {
