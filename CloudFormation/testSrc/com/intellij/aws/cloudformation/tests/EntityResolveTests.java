@@ -19,6 +19,10 @@ public class EntityResolveTests extends ResolveTestsBase {
     assertResolve("findInMapRefToResource", NotResolved);
   }
 
+  public void testFindInMapRefToMapping() throws Exception {
+    assertResolve("findInMapRefToMapping", "AWSInstanceType2Arch");
+  }
+
   public void testGetAttrParameterRef() throws Exception {
     assertResolve("getAttrParameterRef", NotResolved);
   }
