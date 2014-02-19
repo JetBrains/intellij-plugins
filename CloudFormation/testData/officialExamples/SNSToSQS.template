@@ -18,9 +18,7 @@
       "Type": "String",
       "Description" : "Password for the IAM user MyQueueUser",
       "MinLength": "1",
-      "MaxLength": "41",
-      "AllowedPattern" : "[a-zA-Z0-9]*",
-      "ConstraintDescription" : "must contain only alphanumeric characters."
+      "MaxLength": "41"
     }
   },
 
@@ -29,7 +27,7 @@
     "MySNSTopic" : {
       "Type" : "AWS::SNS::Topic",
       "Properties" : {
-        "Subscription" : [ 
+        "Subscription" : [
           {
             "Endpoint" : { "Fn::GetAtt" : ["MyQueue1", "Arn"]},
             "Protocol" : "sqs"
@@ -39,7 +37,7 @@
             "Protocol" : "sqs"
           }
         ]
-      } 
+      }
     },
     "MyQueue1" : {
       "Type" : "AWS::SQS::Queue"
@@ -84,7 +82,7 @@
       "Type" : "AWS::IAM::UserToGroupAddition",
       "Properties" : {
         "GroupName": {"Ref" : "MyPublishTopicGroup"},
-        "Users" : [{ "Ref" : "MyPublishUser" }]            
+        "Users" : [{ "Ref" : "MyPublishUser" }]
       }
     },
     "MyQueueUser" : {
@@ -117,7 +115,7 @@
                 "Resource":[
                   { "Fn::GetAtt" : ["MyQueue1", "Arn"]},
                   { "Fn::GetAtt" : ["MyQueue2", "Arn"]}
-                ] 
+                ]
               }
             ]}
           }
@@ -128,18 +126,18 @@
       "Type" : "AWS::IAM::UserToGroupAddition",
       "Properties" : {
         "GroupName": {"Ref" : "MyRDMessageQueueGroup"},
-        "Users" : [{ "Ref" : "MyQueueUser" }]            
+        "Users" : [{ "Ref" : "MyQueueUser" }]
       }
     },
     "MyQueuePolicy" : {
       "Type" : "AWS::SQS::QueuePolicy",
-      "Properties" : {        
-        "PolicyDocument":  {   
+      "Properties" : {
+        "PolicyDocument":  {
           "Id":"MyQueuePolicy",
           "Statement" : [
             {
               "Sid":"Allow-SendMessage-To-Both-Queues-From-SNS-Topic",
-	      "Effect":"Allow",           
+	      "Effect":"Allow",
 	      "Principal" : {"AWS" : "*"},
  	      "Action":["sqs:SendMessage"],
 	      "Resource": "*",
@@ -157,55 +155,55 @@
   },
   "Outputs" : {
     "MySNSTopicTopicARN" : {
-      "Value" : { "Ref" : "MySNSTopic" }  
+      "Value" : { "Ref" : "MySNSTopic" }
     },
     "MyQueue1Info" : {
-      "Value" : {"Fn::Join" : [ 
-        " ", 
+      "Value" : {"Fn::Join" : [
+        " ",
         [
-          "ARN:", 
-          { "Fn::GetAtt" : [ "MyQueue1", "Arn" ] }, 
-          "URL:", 
+          "ARN:",
+          { "Fn::GetAtt" : [ "MyQueue1", "Arn" ] },
+          "URL:",
           { "Ref" : "MyQueue1" }
         ]
-      ]}  
+      ]}
     },
     "MyQueue2Info" : {
-      "Value" : {"Fn::Join" : [ 
-        " ", 
+      "Value" : {"Fn::Join" : [
+        " ",
         [
-          "ARN:", 
-          { "Fn::GetAtt" : [ "MyQueue2", "Arn" ] }, 
-          "URL:", 
+          "ARN:",
+          { "Fn::GetAtt" : [ "MyQueue2", "Arn" ] },
+          "URL:",
           { "Ref" : "MyQueue2" }
         ]
-      ]}  
+      ]}
     },
     "MyPublishUserInfo" : {
-      "Value" : {"Fn::Join" : [ 
-        " ", 
+      "Value" : {"Fn::Join" : [
+        " ",
         [
-          "ARN:", 
-          { "Fn::GetAtt" : [ "MyPublishUser", "Arn" ] }, 
-          "Access Key:", 
+          "ARN:",
+          { "Fn::GetAtt" : [ "MyPublishUser", "Arn" ] },
+          "Access Key:",
           {"Ref" : "MyPublishUserKey"},
-          "Secret Key:", 
+          "Secret Key:",
           {"Fn::GetAtt" : ["MyPublishUserKey", "SecretAccessKey"]}
         ]
-      ]}  
+      ]}
     },
     "MyQueueUserInfo" : {
-      "Value" : {"Fn::Join" : [ 
-        " ", 
+      "Value" : {"Fn::Join" : [
+        " ",
         [
-          "ARN:", 
-          { "Fn::GetAtt" : [ "MyQueueUser", "Arn" ] }, 
-          "Access Key:", 
+          "ARN:",
+          { "Fn::GetAtt" : [ "MyQueueUser", "Arn" ] },
+          "Access Key:",
           {"Ref" : "MyQueueUserKey"},
-          "Secret Key:", 
+          "Secret Key:",
           {"Fn::GetAtt" : ["MyQueueUserKey", "SecretAccessKey"]}
         ]
-      ]}  
+      ]}
     }
   }
 }

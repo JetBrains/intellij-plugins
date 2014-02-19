@@ -16,9 +16,7 @@
       "Type": "String",
       "Description" : "Password for the IAM user MyPublishUser",
       "MinLength": "1",
-      "MaxLength": "41",
-      "AllowedPattern" : "[a-zA-Z0-9]*",
-      "ConstraintDescription" : "must contain only alphanumeric characters."
+      "MaxLength": "41"
     }
   },
 

@@ -97,7 +97,7 @@
 
   "Resources" : {
  
-    "CfnUser" : {
+     "CfnUser" : {
       "Type" : "AWS::IAM::User",
       "Properties" : {
         "Path": "/",
@@ -111,7 +111,14 @@
         }]
       }
     },
- 
+
+    "HostKeys" : {
+      "Type" : "AWS::IAM::AccessKey",
+        "Properties" : {
+          "UserName" : {"Ref": "CfnUser"}
+        }
+    },
+    
     "ElasticLoadBalancer": {
       "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties": {
@@ -156,21 +163,25 @@
           		"orderby"	: ["gems","chefversion"]
           	},
           	
-          	"gems" : {
-          		"packages" : {
-          			  "rubygems" : {
-                		"net-ssh": ["2.2.2"],
-                		"net-ssh-gateway"   : ["1.1.0"]
-                	}
+            "gems" : {
+              "packages" : {
+                  "rubygems" : {
+                    "net-ssh": ["2.2.2"],
+                    "net-ssh-gateway"   : ["1.1.0"]
+                  },
+                                        
+                  "yum" : {
+                    "rubygems"   : []
+                  }
                 }
-          	},
-          	
-          	           
+            },
+            
+                       
              "chefversion" : {
-          		"packages" : {
-          	  		"rubygems" : {
-                		"chef" 	: ["10.18.2"]
-                	},
+              "packages" : {
+                  "rubygems" : {
+                    "chef"  : []
+                  },
              	                          
               		"yum" : {
                 		"gcc-c++"    : [],
@@ -213,9 +224,11 @@
           "  exit 1\n",
           "}\n",
 
-          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r LaunchConfig "," -c order ",
+          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r LaunchConfig "," -c orderby ",
           "         --region ", { "Ref" : "AWS::Region" }, " || error_exit 'Failed to initialize Chef Solo'\n",
-          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r ", { "Ref" : "ResourceName" },
+          "/opt/aws/bin/cfn-init -s ", { "Ref" : "StackNameOrId" }, " -r ", { "Ref" : "ResourceName" },
+          "         --access-key ", { "Ref" : "HostKeys" },
+          "         --secret-key ", {"Fn::GetAtt": ["HostKeys", "SecretAccessKey"]},
           "         --region ", { "Ref" : "AWS::Region" }, " || error_exit 'Failed to configure the application'\n",
 
           "chef-solo\n",

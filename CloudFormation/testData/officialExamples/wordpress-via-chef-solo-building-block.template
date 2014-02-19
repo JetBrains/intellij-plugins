@@ -29,7 +29,7 @@
     "DatabaseUser": {
       "NoEcho": "true",
       "Type": "String",
-      "Default" :  "admin",
+      "Default" :  "MyUsername",
       "Description" : "Test database admin account name",
       "MinLength": "1",
       "MaxLength": "16",
@@ -39,7 +39,7 @@
     "DatabasePassword": {
       "NoEcho": "true",
       "Type": "String",
-      "Default" :  "admin",
+      "Default" :  "MyPassword",
       "Description" : "Test database admin account password",
       "MinLength": "1",
       "MaxLength": "41",
@@ -70,7 +70,7 @@
 
   "Mappings" : {
     "RegionMap" : {
-      "us-east-1" :      { "TemplateLocation" : "https://s3.amazonaws.com/@@@CFN_TEMPLATES_USEAST1_DIR@@@" },
+      "us-east-1" :      { "TemplateLocation" : "https://s3.amazonaws.com/cloudformation-templates-us-east-1" },
       "us-west-1" :      { "TemplateLocation" : "https://s3.amazonaws.com/cloudformation-templates-us-west-1" },
       "us-west-2" :      { "TemplateLocation" : "https://s3.amazonaws.com/cloudformation-templates-us-west-2" },
       "eu-west-1" :      { "TemplateLocation" : "https://s3.amazonaws.com/cloudformation-templates-eu-west-1" },
@@ -138,10 +138,10 @@
         }
       },
       "Properties" : {
-        "TemplateURL" : { "Fn::Join" : ["/", [{ "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "TemplateLocation" ]},
+        "TemplateURL" : { "Fn::Join" : ["/", ["https://s3.amazonaws.com/cloudformation-templates-us-east-1",
                           "chef-solo-configuration.template" ]]},
         "Parameters" : {
-          "RecipeURL"          : "https://s3.amazonaws.com/@@@CFN_EXAMPLES_DIR@@@/wordpress.tar.gz",
+          "RecipeURL"          : "https://s3.amazonaws.com/cloudformation-examples/wordpress.tar.gz",
           "HealthCheckPath"    : "/wp-admin/install.php",
           "KeyName"            : { "Ref" : "KeyName" },
           "InstanceType"       : { "Ref" : "InstanceType"},

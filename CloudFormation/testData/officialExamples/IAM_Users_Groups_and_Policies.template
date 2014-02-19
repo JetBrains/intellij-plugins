@@ -9,9 +9,7 @@
       "Type": "String",
       "Description" : "New account password",
       "MinLength": "1",
-      "MaxLength": "41",
-      "AllowedPattern" : "[a-zA-Z0-9]*",
-      "ConstraintDescription" : "must contain only alphanumeric characters."
+      "MaxLength": "41"
     }
   },
 
