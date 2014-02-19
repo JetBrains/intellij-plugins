@@ -70,8 +70,10 @@ Search: [Go]
           o Template Snippets
                 + Auto Scaling Snippets
                 + Amazon EC2 Snippets
+                + AWS Elastic Beanstalk Snippets
                 + Elastic Load Balancing Snippets
                 + Identity and Access Management (IAM) Template Snippets
+                + Amazon Redshift Snippets
                 + Amazon RDS Template Snippets
                 + Amazon SimpleDB Snippets
                 + Amazon SNS Snippets
@@ -147,6 +149,8 @@ Search: [Go]
                 + AWS::ElastiCache::SecurityGroupIngress
                 + AWS::ElastiCache::SubnetGroup
                 + AWS::ElasticBeanstalk::Application
+                + AWS::ElasticBeanstalk::ApplicationVersion
+                + AWS::ElasticBeanstalk::ConfigurationTemplate
                 + AWS::ElasticBeanstalk::Environment
                 + AWS::ElasticLoadBalancing::LoadBalancer
                 + AWS::IAM::AccessKey
@@ -156,6 +160,11 @@ Search: [Go]
                 + AWS::IAM::Role
                 + AWS::IAM::User
                 + AWS::IAM::UserToGroupAddition
+                + AWS::Redshift::Cluster
+                + AWS::Redshift::ClusterParameterGroup
+                + AWS::Redshift::ClusterSecurityGroup
+                + AWS::Redshift::ClusterSecurityGroupIngress
+                + AWS::Redshift::ClusterSubnetGroup
                 + AWS::RDS::DBInstance
                 + AWS::RDS::DBParameterGroup
                 + AWS::RDS::DBSubnetGroup
@@ -203,22 +212,23 @@ Search: [Go]
                 + EC2 PortRange
                 + EC2 Security Group Rule
                 + EC2 Tag
-                + ElasticBeanstalk ApplicationVersion
-                + ElasticBeanstalk ConfigurationTemplate
                 + AWS Elastic Beanstalk Environment Tier
-                + ElasticBeanstalk OptionSettings
-                + ElasticBeanstalk SourceBundle
+                + AWS Elastic Beanstalk OptionSettings Property Type
+                + AWS Elastic Beanstalk SourceBundle Property Type
+                + AWS Elastic Beanstalk SourceConfiguration Property Type
                 + AppCookieStickinessPolicy
                 + ElasticLoadBalancing HealthCheck
                 + LBCookieStickinessPolicy
                 + ElasticLoadBalancing Listener
                 + ElasticLoadBalancing Policy
                 + Name Type
+                + Amazon Redshift Parameter Type
                 + AWS CloudFormation Resource Tags
                 + RDS Security Group Rule
                 + Route 53 AliasTarget
                 + Website Configuration
                 + SNS Subscription
+                + Amazon SQS RedrivePolicy
           o Resource Attributes
                 + DeletionPolicy
                 + DependsOn
@@ -272,9 +282,48 @@ since the last release of AWS CloudFormation.
 
     * API Version: 2010-05-15
 
-    * Latest documentation update: January 27, 2014
+    * Latest documentation update: February 18, 2014
 
 Change 	Description 	Release Date
+
+Limit increase
+
+You can specify template sizes up to 460,800 bytes in Amazon S3.
+
+February 18, 2014
+
+Amazon Redshift support
+
+You can provision and manage Amazon Redshift clusters by using AWS 
+CloudFormation. For more information, see Amazon Redshift Snippets or 
+AWS::Redshift::Cluster.
+
+February 10, 2014
+
+Amazon S3 buckets and bucket policies update
+
+You can update some properties of the Amazon S3 bucket and bucket policy 
+resources. For more information, see AWS::S3::Bucket or 
+AWS::S3::BucketPolicy.
+
+February 10, 2014
+
+AWS Elastic Beanstalk environments and application versions update
+
+You can update AWS Elastic Beanstalk environment configurations and 
+application versions. For more information, see 
+AWS::ElasticBeanstalk::Environment, 
+AWS::ElasticBeanstalk::ConfigurationTemplate, or 
+AWS::ElasticBeanstalk::ApplicationVersion.
+
+February 10, 2014
+
+Amazon SQS update
+
+You can specify a dead letter queue for an Amazon SQS queue. For more 
+information, see AWS::SQS::Queue.
+
+January 29, 2014
 
 Auto Scaling scheduled actions
 

@@ -243,7 +243,7 @@
         <ResourceProperty>
           <name>Recurrence</name>
           <description></description>
-          <type>Integer</type>
+          <type>String</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -1547,25 +1547,77 @@
         <ResourceProperty>
           <name>ApplicationName</name>
           <description></description>
-          <type>Name Type</type>
-          <required>false</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>ApplicationVersions</name>
-          <description></description>
-          <type>A list of ApplicationVersions</type>
-          <required>true</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>ConfigurationTemplates</name>
-          <description></description>
-          <type>A list of ConfigurationTemplates</type>
+          <type>String</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>Description</name>
           <description></description>
           <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::ElasticBeanstalk::ApplicationVersion</name>
+      <properties>
+        <ResourceProperty>
+          <name>ApplicationName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SourceBundle</name>
+          <description></description>
+          <type>Source Bundle</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::ElasticBeanstalk::ConfigurationTemplate</name>
+      <properties>
+        <ResourceProperty>
+          <name>ApplicationName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EnvironmentId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>OptionSettings</name>
+          <description></description>
+          <type>A list of OptionSettings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SolutionStackName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SourceConfiguration</name>
+          <description></description>
+          <type>AWS Elastic Beanstalk SourceConfiguration Property Type</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -1594,17 +1646,11 @@
         <ResourceProperty>
           <name>EnvironmentName</name>
           <description></description>
-          <type>Name Type</type>
+          <type>String</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>OptionSettings</name>
-          <description></description>
-          <type>A list of OptionSettings</type>
-          <required>false</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>OptionsToRemove</name>
           <description></description>
           <type>A list of OptionSettings</type>
           <required>false</required>
@@ -2145,6 +2191,235 @@
       </properties>
     </ResourceType>
     <ResourceType>
+      <name>AWS::Redshift::Cluster</name>
+      <properties>
+        <ResourceProperty>
+          <name>AllowVersionUpgrade</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>AutomatedSnapshotRetentionPeriod</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>AvailabilityZone</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ClusterParameterGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ClusterSecurityGroups</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ClusterSubnetGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ClusterType</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ClusterVersion</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>DBName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ElasticIp</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Encrypted</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>HsmClientCertificateIdentifier</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>HsmConfigurationIdentifier</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MasterUsername</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MasterUserPassword</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NodeType</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NumberOfNodes</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>OwnerAccount</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Port</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PreferredMaintenanceWindow</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PubliclyAccessible</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SnapshotClusterIdentifier</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SnapshotIdentifier</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VpcSecurityGroupIds</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::Redshift::ClusterParameterGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ParameterGroupFamily</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Parameters</name>
+          <description></description>
+          <type>Amazon Redshift Parameter Type</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::Redshift::ClusterSecurityGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::Redshift::ClusterSecurityGroupIngress</name>
+      <properties>
+        <ResourceProperty>
+          <name>ClusterSecurityGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>CIDRIP</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EC2SecurityGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EC2SecurityGroupOwnerId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::Redshift::ClusterSubnetGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>SubnetIds</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
+    </ResourceType>
+    <ResourceType>
       <name>AWS::Route53::RecordSet</name>
       <properties>
         <ResourceProperty>
@@ -2274,7 +2549,20 @@
     </ResourceType>
     <ResourceType>
       <name>AWS::S3::BucketPolicy</name>
-      <properties/>
+      <properties>
+        <ResourceProperty>
+          <name>Bucket</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PolicyDocument</name>
+          <description></description>
+          <type>JSON object</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::SDB::Domain</name>
@@ -2338,6 +2626,12 @@
           <name>ReceiveMessageWaitTimeSeconds</name>
           <description></description>
           <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>RedrivePolicy</name>
+          <description></description>
+          <type>Amazon SQS RedrivePolicy</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
