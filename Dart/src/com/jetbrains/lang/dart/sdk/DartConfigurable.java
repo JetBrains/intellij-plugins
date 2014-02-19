@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.tree.DefaultTreeModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -79,6 +80,8 @@ public class DartConfigurable implements SearchableConfigurable {
   }
 
   private void initEnableDartSupportCheckBox() {
+    final Insets margin = myEnableDartSupportCheckBox.getMargin();
+    myEnableDartSupportCheckBox.setMargin(new Insets(margin.top, 0, margin.bottom, margin.right));
     myEnableDartSupportCheckBox.setText(DartBundle.message("enable.dart.support.for.project.0", myProject.getName()));
     myEnableDartSupportCheckBox.addActionListener(new ActionListener() {
       @Override

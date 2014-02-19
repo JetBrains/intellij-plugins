@@ -6,7 +6,6 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.filters.Filter;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
@@ -31,7 +30,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ResourceUtil;
 import com.intellij.util.text.StringTokenizer;
-import com.jetbrains.lang.dart.ide.runner.DartStackTraceMessageFilter;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -93,8 +91,6 @@ public class DartUnitRunningState extends CommandLineState {
       null
     );
     testConsoleProperties.setUsePredefinedMessageFilter(false);
-    Filter filter = new DartStackTraceMessageFilter(testConsoleProperties.getProject(), myUnitParameters.getFilePath());
-    smtConsoleView.addMessageFilter(filter);
 
     final Project project = env.getProject();
     Disposer.register(project, smtConsoleView);

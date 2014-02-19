@@ -44,4 +44,9 @@
  * @name ng.directive:ngForm
  * @restrict EAC
  */
+
+/**
+ * @name ng.directive:script
+ * @restrict E
+ */
 angular.directive({ngModel: ngModelDirective})

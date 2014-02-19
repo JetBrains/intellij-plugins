@@ -4,7 +4,7 @@ class I {
 }
 
 class Foo implements I {
-  get foo() {
+  get foo {
     <spaces>
   }
 

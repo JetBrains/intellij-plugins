@@ -1,17 +1,18 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSDefinitionExpression;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSNamedElement;
+import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlDocument;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.*;
 import com.intellij.util.Consumer;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSRecursiveVisitor;
@@ -81,7 +82,15 @@ public class AngularJSProcessor {
     }
   }
 
-  private static boolean scopeMatches(PsiElement element1, PsiElement element2) {
+  private static boolean scopeMatches(PsiElement element, PsiElement declaration) {
+    final InjectedLanguageManager injector = InjectedLanguageManager.getInstance(element.getProject());
+    final XmlTagChild elementContainer = PsiTreeUtil.getNonStrictParentOfType(injector.getInjectionHost(element),
+                                                                              XmlTag.class, XmlText.class);
+    final XmlTagChild declarationContainer = PsiTreeUtil.getNonStrictParentOfType(injector.getInjectionHost(declaration),
+                                                                                  XmlTag.class, XmlText.class);
+    if (elementContainer != null && declarationContainer != null) {
+      return PsiTreeUtil.isAncestor(declarationContainer, elementContainer, true);
+    }
     return true;
   }
 }
