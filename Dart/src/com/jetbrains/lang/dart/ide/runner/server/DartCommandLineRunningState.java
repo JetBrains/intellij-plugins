@@ -13,7 +13,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.text.StringTokenizer;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.runner.DartStackTraceMessageFilter;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -66,8 +65,6 @@ public class DartCommandLineRunningState extends CommandLineState {
     commandLine.setPassParentEnvironment(true);
 
     setupUserProperties(commandLine, libraryFile);
-
-    addConsoleFilters(new DartStackTraceMessageFilter(module.getProject(), filePath));
 
     return commandLine;
   }
