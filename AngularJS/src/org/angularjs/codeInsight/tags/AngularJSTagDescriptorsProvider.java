@@ -9,7 +9,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlElementDescriptor;
+import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
+import com.intellij.xml.impl.schema.AnyXmlElementDescriptor;
 import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularIndexUtil;
@@ -40,6 +42,12 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
   public XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
     final String attributeName = AngularJSAttributeDescriptorsProvider.normalizeAttributeName(xmlTag.getName());
     if (xmlTag != null) {
+      final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
+      final XmlElementDescriptor descriptor = nsDescriptor != null ? nsDescriptor.getElementDescriptor(xmlTag) : null;
+      if (descriptor != null && !(descriptor instanceof AnyXmlElementDescriptor)) {
+        return null;
+      }
+
       final Project project = xmlTag.getProject();
       final JSNamedElementProxy directive = getTagDirective(project, attributeName);
 

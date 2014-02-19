@@ -3,6 +3,7 @@ package org.angularjs.codeInsight;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.xml.util.CheckValidXmlInScriptBodyInspection;
 import org.angularjs.AngularTestUtil;
 
 /**
@@ -31,5 +32,11 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("angular.js", resolve.getContainingFile().getName());
+  }
+
+  public void testOverride() {
+    myFixture.enableInspections(CheckValidXmlInScriptBodyInspection.class);
+    myFixture.configureByFiles("override.html", "angular.js");
+    myFixture.checkHighlighting();
   }
 }
