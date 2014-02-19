@@ -25,14 +25,12 @@
 package org.osmorc;
 
 import com.intellij.ProjectTopics;
-import com.intellij.compiler.impl.FileProcessingCompilerAdapterTask;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -48,7 +46,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.make.BundleCompiler;
 import org.osmorc.run.OsgiConfigurationType;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
@@ -69,7 +66,6 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   private final Application myApplication;
   private final OsgiConfigurationType myConfigurationType;
   private final Project myProject;
-  private final CompilerManager myCompilerManager;
   private final ProjectSettings myProjectSettings;
   private final BundleManager myBundleManager;
   private final Alarm myAlarm;
@@ -77,13 +73,11 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   public OsmorcProjectComponent(@NotNull Application application,
                                 @NotNull OsgiConfigurationType configurationType,
                                 @NotNull Project project,
-                                @NotNull CompilerManager compilerManager,
                                 @NotNull ProjectSettings projectSettings,
                                 @NotNull BundleManager bundleManager) {
     myApplication = application;
     myConfigurationType = configurationType;
     myProject = project;
-    myCompilerManager = compilerManager;
     myBundleManager = bundleManager;
     myProjectSettings = projectSettings;
 
