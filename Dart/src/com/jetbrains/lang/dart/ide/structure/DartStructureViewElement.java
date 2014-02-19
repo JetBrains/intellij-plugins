@@ -12,6 +12,7 @@ import com.jetbrains.lang.dart.psi.impl.DartPsiCompositeElementImpl;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -49,12 +50,13 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
     return myElement instanceof NavigationItem && ((NavigationItem)myElement).canNavigateToSource();
   }
 
-  @Nullable
+  @NotNull
   @Override
   public ItemPresentation getPresentation() {
     return myElement instanceof NavigationItem ? ((NavigationItem)myElement).getPresentation() : null;
   }
 
+  @NotNull
   @Override
   public TreeElement[] getChildren() {
     final List<TreeElement> result = new ArrayList<TreeElement>();
@@ -90,6 +92,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
     return result.toArray(new TreeElement[result.size()]);
   }
 
+  @NotNull
   @Override
   public String getAlphaSortKey() {
     final String result = myElement instanceof NavigationItem ? ((NavigationItem)myElement).getName() : null;

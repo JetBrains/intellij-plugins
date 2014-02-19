@@ -82,6 +82,7 @@ class StructureViewTreeElement extends DomStructureTreeElement implements Colore
   }
 
 
+  @NotNull
   public TreeElement[] getChildren() {
     final DomElement element = getElement();
     if (!element.isValid()) {

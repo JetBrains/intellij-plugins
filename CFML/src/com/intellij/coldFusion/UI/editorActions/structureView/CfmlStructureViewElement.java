@@ -73,6 +73,7 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
     return result;
   }
 
+  @NotNull
   @Override
   public ItemPresentation getPresentation() {
     return new PresentationData(getPresentableText(), null, getIcon(false), null);

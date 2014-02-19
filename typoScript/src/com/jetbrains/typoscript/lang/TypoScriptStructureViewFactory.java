@@ -101,6 +101,7 @@ public class TypoScriptStructureViewFactory implements PsiStructureViewFactory {
       return ((Navigatable)myElement).canNavigateToSource();
     }
 
+    @NotNull
     @Override
     public ItemPresentation getPresentation() {
       return this;
@@ -146,6 +147,7 @@ public class TypoScriptStructureViewFactory implements PsiStructureViewFactory {
       return TypoScriptIcons.Property_ts;
     }
 
+    @NotNull
     @Override
     public TreeElement[] getChildren() {
       if (myElement instanceof TypoScriptFile || myElement instanceof CodeBlock) {
@@ -157,7 +159,7 @@ public class TypoScriptStructureViewFactory implements PsiStructureViewFactory {
         }
         return result.toArray(new TreeElement[result.size()]);
       }
-      return new TreeElement[0];
+      return EMPTY_ARRAY;
     }
   }
 
