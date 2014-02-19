@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.indexing.ID;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import org.angularjs.index.AngularDirectivesDocIndex;
@@ -28,12 +29,13 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
       final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project);
       for (String directiveName : docDirectives) {
-        if (isApplicable(project, directiveName, xmlTag.getName())) {
+        if (isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesDocIndex.INDEX_ID)) {
           result.put(directiveName, createDescriptor(project, directiveName));
         }
       }
       for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project)) {
-        if (!docDirectives.contains(directiveName)) {
+        if (!docDirectives.contains(directiveName) &&
+            isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesIndex.INDEX_ID)) {
           result.put(directiveName, createDescriptor(project, directiveName));
         }
       }
@@ -42,8 +44,8 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     return XmlAttributeDescriptor.EMPTY;
   }
 
-  private static boolean isApplicable(Project project, String directiveName, String tagName) {
-    final JSNamedElementProxy directive = AngularIndexUtil.resolve(project, AngularDirectivesDocIndex.INDEX_ID, directiveName);
+  private static boolean isApplicable(Project project, String directiveName, String tagName, final ID<String, Void> index) {
+    final JSNamedElementProxy directive = AngularIndexUtil.resolve(project, index, directiveName);
     final String restrictions = directive != null ? directive.getIndexItem().getTypeString() : null;
     if (restrictions != null) {
       final String[] split = restrictions.split(";", -1);
@@ -69,7 +71,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       final Project project = xmlTag.getProject();
       boolean attributeAvailable;
       if (AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project).contains(attributeName)) {
-        attributeAvailable = isApplicable(project, attributeName, xmlTag.getName());
+        attributeAvailable = isApplicable(project, attributeName, xmlTag.getName(), AngularDirectivesDocIndex.INDEX_ID);
       } else {
         attributeAvailable = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project).contains(attributeName);
       }

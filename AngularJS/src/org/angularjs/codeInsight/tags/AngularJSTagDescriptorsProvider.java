@@ -8,12 +8,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.indexing.ID;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
 import com.intellij.xml.impl.schema.AnyXmlElementDescriptor;
 import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider;
 import org.angularjs.index.AngularDirectivesDocIndex;
+import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,17 +32,30 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
     final Project project = xmlTag.getProject();
     final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project);
     for (String directiveName : docDirectives) {
-      final JSNamedElementProxy directive = getTagDirective(project, directiveName);
+      final JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.INDEX_ID);
       if (directive != null) {
-        elements.add(LookupElementBuilder.create(directive).withInsertHandler(XmlTagInsertHandler.INSTANCE));
+        addLookupItem(elements, directive);
       }
     }
+    final Collection<String> directives = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project);
+    for (String directiveName : directives) {
+      if (!docDirectives.contains(directiveName)) {
+        final JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesIndex.INDEX_ID);
+        if (directive != null) {
+          addLookupItem(elements, directive);
+        }
+      }
+    }
+  }
+
+  private void addLookupItem(List<LookupElement> elements, JSNamedElementProxy directive) {
+    elements.add(LookupElementBuilder.create(directive).withInsertHandler(XmlTagInsertHandler.INSTANCE));
   }
 
   @Nullable
   @Override
   public XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
-    final String attributeName = AngularJSAttributeDescriptorsProvider.normalizeAttributeName(xmlTag.getName());
+    final String directiveName = AngularJSAttributeDescriptorsProvider.normalizeAttributeName(xmlTag.getName());
     if (xmlTag != null) {
       final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
       final XmlElementDescriptor descriptor = nsDescriptor != null ? nsDescriptor.getElementDescriptor(xmlTag) : null;
@@ -49,15 +64,16 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
       }
 
       final Project project = xmlTag.getProject();
-      final JSNamedElementProxy directive = getTagDirective(project, attributeName);
+      JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.INDEX_ID);
+      directive = directive == null ? getTagDirective(project, directiveName, AngularDirectivesIndex.INDEX_ID) : directive;
 
-      return directive != null ? new AngularJSTagDescriptor(attributeName, directive) : null;
+      return directive != null ? new AngularJSTagDescriptor(directiveName, directive) : null;
     }
     return null;
   }
 
-  private static JSNamedElementProxy getTagDirective(Project project, String directiveName) {
-    final JSNamedElementProxy directive = AngularIndexUtil.resolve(project, AngularDirectivesDocIndex.INDEX_ID, directiveName);
+  private static JSNamedElementProxy getTagDirective(Project project, String directiveName, final ID<String, Void> index) {
+    final JSNamedElementProxy directive = AngularIndexUtil.resolve(project, index, directiveName);
     final String restrictions = directive != null ? directive.getIndexItem().getTypeString() : null;
     if (restrictions != null) {
       final String[] split = restrictions.split(";", -1);

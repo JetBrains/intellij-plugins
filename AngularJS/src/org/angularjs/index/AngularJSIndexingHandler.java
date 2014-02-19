@@ -4,9 +4,11 @@ import com.intellij.lang.javascript.documentation.JSDocumentationProcessor;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.index.JSSymbolVisitor;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +24,7 @@ import java.util.regex.Pattern;
 public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, ID<String, Void>> INDEXERS = new HashMap<String, ID<String, Void>>();
   private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<String, Function<String, String>>();
+  private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<String, Function<PsiElement, String>>();
 
   public static Set<String> INTERESTING_METHODS = new HashSet<String>();
   public static final String CONTROLLER = "controller";
@@ -37,6 +40,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       @Override
       public String fun(String s) {
         return getAttributeName(s);
+      }
+    });
+    DATA_CALCULATORS.put(DIRECTIVE, new Function<PsiElement, String>() {
+      @Override
+      public String fun(PsiElement element) {
+        return calculateRestrictions(element);
       }
     });
 
@@ -67,7 +76,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
           final String argumentText = argument.getText();
-          storeAdditionalData(visitor, index, argument, command, argumentText, argument.getTextOffset(), null);
+          final Function<PsiElement, String> calculator = DATA_CALCULATORS.get(command);
+          final String data = calculator != null ? calculator.fun(argument) : null;
+          storeAdditionalData(visitor, index, argument, command, argumentText, argument.getTextOffset(), data);
         } else if (argument instanceof JSObjectLiteralExpression) {
           for (JSProperty property : ((JSObjectLiteralExpression)argument).getProperties()) {
             final String argumentText = property.getName();
@@ -149,6 +160,26 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       }
     }
     return previousValue;
+  }
+
+  private static String calculateRestrictions(PsiElement element) {
+    final Ref<String> restrict = Ref.create("A");
+    final JSFunction function = PsiTreeUtil.getNextSiblingOfType(element, JSFunction.class);
+    if (function != null) {
+      function.accept(new JSRecursiveElementVisitor() {
+        @Override
+        public void visitJSProperty(JSProperty node) {
+          final String name = node.getName();
+          if ("restrict".equals(name)) {
+            final JSExpression value = node.getValue();
+            if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
+              restrict.set(StringUtil.unquoteString(value.getText()));
+            }
+          }
+        }
+      });
+    }
+    return restrict.get().trim() + ";;";
   }
 
   private static boolean hasDirectiveName(String remainingLineContent) {

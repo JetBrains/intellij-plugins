@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
@@ -32,6 +33,21 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("angular.js", resolve.getContainingFile().getName());
+  }
+
+  public void testCustomAttributesCompletion() {
+    myFixture.testCompletion("custom.html", "custom.after.html", "custom.js");
+  }
+
+  public void testCustomAttributesResolve() {
+    myFixture.configureByFiles("custom.after.html", "custom.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("custom.js", resolve.getContainingFile().getName());
+    assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
   }
 
   public void testOverride() {
