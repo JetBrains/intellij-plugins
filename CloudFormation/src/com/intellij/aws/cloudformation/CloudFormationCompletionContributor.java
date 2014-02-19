@@ -2,20 +2,22 @@ package com.intellij.aws.cloudformation;
 
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType;
 import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.JavascriptLanguage;
-import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
-public class CloudFormationResourceTypeCompletionContributor extends CompletionContributor {
-  public CloudFormationResourceTypeCompletionContributor() {
+public class CloudFormationCompletionContributor extends CompletionContributor {
+  public CloudFormationCompletionContributor() {
     extend(CompletionType.BASIC,
            PlatformPatterns.psiElement().withLanguage(JavascriptLanguage.INSTANCE),
            new CompletionProvider<CompletionParameters>() {
@@ -24,15 +26,29 @@ public class CloudFormationResourceTypeCompletionContributor extends CompletionC
                                         @NotNull CompletionResultSet resultSet) {
                final PsiElement position = parameters.getPosition();
 
-               if (!CloudFormationPsiUtils.isCloudFormationFile(position) || !isResourceTypeValuePosition(position)) {
+               if (!CloudFormationPsiUtils.isCloudFormationFile(position)) {
                  return;
                }
 
                PrefixMatcher oldPrefixMatcher = resultSet.getPrefixMatcher();
                CompletionResultSet rs = resultSet.withPrefixMatcher(new PlainPrefixMatcher(oldPrefixMatcher.getPrefix()));
 
-               for (CloudFormationResourceType resourceType : CloudFormationMetadataProvider.METADATA.resourceTypes) {
-                 rs.addElement(LookupElementBuilder.create(resourceType.name));
+               PsiElement parent = position.getParent();
+               boolean quoteResult = false; // parent instanceof JSReferenceExpression;
+
+               if (isResourceTypeValuePosition(parent)) {
+                 for (CloudFormationResourceType resourceType : CloudFormationMetadataProvider.METADATA.resourceTypes) {
+                   rs.addElement(createLookupElement(resourceType.name, quoteResult));
+                 }
+               }
+
+               for (PsiReference reference : parent.getReferences()) {
+                 if (reference instanceof CloudFormationEntityReference) {
+                   CloudFormationEntityReference entityRef = (CloudFormationEntityReference)reference;
+                   for (String v : entityRef.getCompletionVariants()) {
+                     rs.addElement(createLookupElement(v, quoteResult));
+                   }
+                 }
                }
 
                // Disable all other items from JavaScript
@@ -42,8 +58,13 @@ public class CloudFormationResourceTypeCompletionContributor extends CompletionC
     );
   }
 
+  private LookupElement createLookupElement(String val, boolean quote) {
+    String id = quote ? ("\"" + val + "\"") : val;
+    return LookupElementBuilder.create(id);
+  }
+
   private boolean isResourceTypeValuePosition(PsiElement position) {
-    final JSLiteralExpression valueExpression = ObjectUtils.tryCast(position.getParent(), JSLiteralExpression.class);
+    final JSExpression valueExpression = ObjectUtils.tryCast(position, JSExpression.class);
     if (valueExpression == null) {
       return false;
     }

@@ -38,10 +38,14 @@ public class CloudFormationEntityReference extends PsiReferenceBase<JSLiteralExp
     return CloudFormationResolve.resolveEntity(myElement.getContainingFile(), entityName, myPossibleSections);
   }
 
+  public String[] getCompletionVariants() {
+    return CloudFormationResolve.getEntities(myElement.getContainingFile(), myPossibleSections);
+  }
+
   @NotNull
   @Override
   public Object[] getVariants() {
-    return CloudFormationResolve.getEntities(myElement.getContainingFile(), myPossibleSections);
+    return getCompletionVariants();
   }
 
   private static String getTargetName(JSLiteralExpression element) {
