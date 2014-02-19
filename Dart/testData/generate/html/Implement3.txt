@@ -3,7 +3,7 @@
 <script type="application/dart">
   class TestMock implements Test {
 
-      get foo() {
+      get foo {
           <caret>
       }
   }

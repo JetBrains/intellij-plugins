@@ -33,9 +33,11 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
     }
     //noinspection ConstantConditions
     template.addTextSegment(element.getName());
-    template.addTextSegment("(");
-    template.addTextSegment(DartPresentableUtil.getPresentableParameterList(element, specializations));
-    template.addTextSegment(")");
+    if (!element.isGetter()) {
+      template.addTextSegment("(");
+      template.addTextSegment(DartPresentableUtil.getPresentableParameterList(element, specializations));
+      template.addTextSegment(")");
+    }
     template.addTextSegment("{\n");
     template.addEndVariable();
     template.addTextSegment("\n}\n");
