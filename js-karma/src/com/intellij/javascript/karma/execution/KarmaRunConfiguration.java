@@ -9,6 +9,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
+import com.intellij.util.text.SemVer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,13 +76,22 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     myGlobalSettingsRef.remove();
     String nodeInterpreterPath = KarmaGlobalSettingsUtil.getNodeInterpreterPath();
     String karmaPackagePath = KarmaGlobalSettingsUtil.getKarmaNodePackageDir(getProject(), myRunSettings.getConfigPath());
-    check(nodeInterpreterPath, karmaPackagePath);
-    if (nodeInterpreterPath != null && karmaPackagePath != null) {
-      myGlobalSettingsRef.set(new GlobalSettings(nodeInterpreterPath, karmaPackagePath));
+    boolean ok = true;
+    try {
+      check(nodeInterpreterPath, karmaPackagePath);
+    }
+    catch (RuntimeConfigurationError e) {
+      ok = false;
+      throw e;
+    }
+    finally {
+      if (ok && nodeInterpreterPath != null && karmaPackagePath != null) {
+        myGlobalSettingsRef.set(new GlobalSettings(nodeInterpreterPath, karmaPackagePath));
+      }
     }
   }
 
-  private void check(@Nullable String nodeInterpreterPath, @Nullable String karmaPackagePath) throws RuntimeConfigurationError {
+  private void check(@Nullable String nodeInterpreterPath, @Nullable String karmaPackagePath) throws RuntimeConfigurationException {
     if (nodeInterpreterPath == null || nodeInterpreterPath.trim().isEmpty()) {
       throw new RuntimeConfigurationError("Please specify Node.js interpreter path");
     }
@@ -108,6 +118,11 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     }
     if (!configFile.isFile()) {
       throw new RuntimeConfigurationError("Please specify config file path correctly");
+    }
+
+    SemVer semVer = NodePackageVersionUtil.getPackageVersion(karmaPackageDir);
+    if (semVer != null && semVer.getMajor() == 0 && semVer.getMinor() <= 8) {
+      throw new RuntimeConfigurationWarning("Karma version 0.10 or higher is required. Specified karma version is " + semVer.getRawVersion());
     }
   }
 
