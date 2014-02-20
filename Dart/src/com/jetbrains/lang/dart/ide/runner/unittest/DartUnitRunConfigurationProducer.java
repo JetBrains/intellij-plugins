@@ -18,9 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<DartUnitRunConfiguration> {
   public DartUnitRunConfigurationProducer() {
     super(DartUnitRunConfigurationType.getInstance());
@@ -30,7 +27,12 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
   protected boolean setupConfigurationFromContext(DartUnitRunConfiguration configuration,
                                                   ConfigurationContext context,
                                                   Ref<PsiElement> sourceElement) {
-    final PsiElement element = findTestElement(context.getPsiLocation());
+    final PsiElement contextElement = context.getPsiLocation();
+    final VirtualFile file = contextElement == null ? null : contextElement.getContainingFile().getVirtualFile();
+    final VirtualFile packagesFolder = file == null ? null : DartResolveUtil.getDartPackagesFolder(context.getProject(), file);
+    if (packagesFolder == null || packagesFolder.findChild("unittest") == null) return false;
+
+    final PsiElement element = findTestElement(contextElement);
     if (element == null || !setupRunConfiguration(configuration, element)) {
       return false;
     }
