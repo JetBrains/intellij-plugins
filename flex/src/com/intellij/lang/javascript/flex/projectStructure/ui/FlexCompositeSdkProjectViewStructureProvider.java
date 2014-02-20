@@ -29,9 +29,10 @@ import java.util.Set;
  */
 public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructureProvider, DumbAware {
 
+  @NotNull
   @Override
-  public Collection<AbstractTreeNode> modify(final AbstractTreeNode parent,
-                                             final Collection<AbstractTreeNode> children,
+  public Collection<AbstractTreeNode> modify(@NotNull final AbstractTreeNode parent,
+                                             @NotNull final Collection<AbstractTreeNode> children,
                                              final ViewSettings settings) {
     if (!(parent instanceof ExternalLibrariesNode)) {
       return children;

@@ -50,8 +50,9 @@ import static com.intellij.lang.javascript.flex.presentation.FlexStructureViewPr
  * Time: 11:13:40
  */
 public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAware {
+  @NotNull
   @Override
-  public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings) {
+  public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent, @NotNull Collection<AbstractTreeNode> children, ViewSettings settings) {
     List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
     if (parent instanceof SwfQualifiedNamedElementNode || parent instanceof FlexFileNode) {
       if (((ProjectViewNode)parent).getSettings().isShowMembers()) {
