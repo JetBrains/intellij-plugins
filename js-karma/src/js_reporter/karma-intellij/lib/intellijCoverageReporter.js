@@ -109,7 +109,12 @@ function IntellijCoverageReporter(injector, config) {
 }
 
 /**
+ * Checks whether coverage preprocessor specified at least once in 'config.preprocessors'.
+ * Missing coverage preprocessor is a common mistake that results in empty coverage reports.
+ * Reporting such a mistake before actually running tests with coverage improves user experience.
+ *
  * @param {Object} preprocessors
+ * @return {boolean} true, if coverage preprocessor specified at least once in 'preprocessors'
  */
 function isCoveragePreprocessorSpecified(preprocessors) {
   if (preprocessors != null) {
@@ -119,8 +124,8 @@ function isCoveragePreprocessorSpecified(preprocessors) {
         if (value === coveragePreprocessorName) {
           return true;
         }
-        if (Array.isArray(value)) {
-          return value.indexOf(coveragePreprocessorName) >= 0;
+        if (Array.isArray(value) && value.indexOf(coveragePreprocessorName) >= 0) {
+          return true;
         }
       }
     }
@@ -201,6 +206,8 @@ function init(emitter, rootConfig) {
   this.onRunComplete = function (browsers/*, results*/) {
     var found = currentBrowser && containsBrowser(browsers, currentBrowser);
     if (found) {
+      // no need in mering 'onBrowserComplete' anymore
+      // get rid of 'argumentsForOnBrowserComplete'
       if (currentBrowser.argumentsForOnBrowserComplete) {
         superOnBrowserComplete.apply(this, currentBrowser.argumentsForOnBrowserComplete);
       }
@@ -211,6 +218,8 @@ function init(emitter, rootConfig) {
           intellijUtil.sendIntellijEvent('coverageFinished', lcovFilePath);
         });
       };
+
+      // we need a better way of setting custom 'fileWritingFinished'
       if (typeof this.onExit === 'function') {
         this.onExit(done);
       }
