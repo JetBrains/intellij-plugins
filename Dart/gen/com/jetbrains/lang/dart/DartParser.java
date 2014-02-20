@@ -176,6 +176,9 @@ public class DartParser implements PsiParser {
     else if (root_ == IMPORT_STATEMENT) {
       result_ = importStatement(builder_, 0);
     }
+    else if (root_ == INCOMPLETE_DECLARATION) {
+      result_ = incompleteDeclaration(builder_, 0);
+    }
     else if (root_ == INITIALIZERS) {
       result_ = initializers(builder_, 0);
     }
@@ -1122,6 +1125,7 @@ public class DartParser implements PsiParser {
   //                                 | getterOrSetterDeclaration
   //                                 | methodDeclaration
   //                                 | varDeclarationListWithSemicolon
+  //                                 | incompleteDeclaration
   static boolean classMemberDefinition(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classMemberDefinition")) return false;
     boolean result_ = false;
@@ -1132,6 +1136,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = getterOrSetterDeclaration(builder_, level_ + 1);
     if (!result_) result_ = methodDeclaration(builder_, level_ + 1);
     if (!result_) result_ = varDeclarationListWithSemicolon(builder_, level_ + 1);
+    if (!result_) result_ = incompleteDeclaration(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, class_member_recover_parser_);
     return result_;
   }
@@ -3061,6 +3066,83 @@ public class DartParser implements PsiParser {
       pos_ = current_position_(builder_);
     }
     return true;
+  }
+
+  /* ********************************************************** */
+  // metadata* ('external' | 'static' | 'final' | 'const')* type | metadata+
+  public static boolean incompleteDeclaration(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "incompleteDeclaration")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<incomplete declaration>");
+    result_ = incompleteDeclaration_0(builder_, level_ + 1);
+    if (!result_) result_ = incompleteDeclaration_1(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, INCOMPLETE_DECLARATION, result_, false, null);
+    return result_;
+  }
+
+  // metadata* ('external' | 'static' | 'final' | 'const')* type
+  private static boolean incompleteDeclaration_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "incompleteDeclaration_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = incompleteDeclaration_0_0(builder_, level_ + 1);
+    result_ = result_ && incompleteDeclaration_0_1(builder_, level_ + 1);
+    result_ = result_ && type(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // metadata*
+  private static boolean incompleteDeclaration_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "incompleteDeclaration_0_0")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!metadata(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "incompleteDeclaration_0_0", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
+  }
+
+  // ('external' | 'static' | 'final' | 'const')*
+  private static boolean incompleteDeclaration_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "incompleteDeclaration_0_1")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!incompleteDeclaration_0_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "incompleteDeclaration_0_1", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
+  }
+
+  // 'external' | 'static' | 'final' | 'const'
+  private static boolean incompleteDeclaration_0_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "incompleteDeclaration_0_1_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, EXTERNAL);
+    if (!result_) result_ = consumeToken(builder_, STATIC);
+    if (!result_) result_ = consumeToken(builder_, FINAL);
+    if (!result_) result_ = consumeToken(builder_, CONST);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // metadata+
+  private static boolean incompleteDeclaration_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "incompleteDeclaration_1")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = metadata(builder_, level_ + 1);
+    int pos_ = current_position_(builder_);
+    while (result_) {
+      if (!metadata(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "incompleteDeclaration_1", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -5625,6 +5707,7 @@ public class DartParser implements PsiParser {
   //                              | getterOrSetterDeclaration
   //                              | functionDeclarationWithBodyOrNative
   //                              | varDeclarationListWithSemicolon
+  //                              | incompleteDeclaration
   static boolean topLevelDefinition(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "topLevelDefinition")) return false;
     boolean result_ = false;
@@ -5640,6 +5723,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = getterOrSetterDeclaration(builder_, level_ + 1);
     if (!result_) result_ = functionDeclarationWithBodyOrNative(builder_, level_ + 1);
     if (!result_) result_ = varDeclarationListWithSemicolon(builder_, level_ + 1);
+    if (!result_) result_ = incompleteDeclaration(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, top_level_recover_parser_);
     return result_;
   }

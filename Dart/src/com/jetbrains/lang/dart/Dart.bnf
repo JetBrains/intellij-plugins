@@ -147,8 +147,11 @@ private topLevelDefinition ::= libraryStatement
                              | getterOrSetterDeclaration
                              | functionDeclarationWithBodyOrNative
                              | varDeclarationListWithSemicolon
+                             | incompleteDeclaration // not valid according to spec, but we'd like it to be parsed in order to have completion
                              {recoverWhile="top_level_recover"}
 private top_level_recover ::= !(<<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'export' | 'external' | 'final' | 'get' | 'import' | 'library' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void')
+
+incompleteDeclaration ::= metadata* ('external' | 'static' | 'final' | 'const')* type | metadata+;
 
 partOfStatement ::= metadata* 'part' 'of' libraryId ';' {
   pin=4
@@ -244,6 +247,7 @@ private classMemberDefinition ::= factoryConstructorDeclaration
                                 | getterOrSetterDeclaration
                                 | methodDeclaration
                                 | varDeclarationListWithSemicolon
+                                | incompleteDeclaration // not valid according to spec, but we'd like it to be parsed in order to have completion
                                 {recoverWhile="class_member_recover"}
 private class_member_recover ::= !(<<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'export' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'library' | 'operator' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '}' )
 

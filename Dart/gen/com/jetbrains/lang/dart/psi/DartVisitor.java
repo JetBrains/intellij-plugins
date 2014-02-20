@@ -222,6 +222,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitIncompleteDeclaration(@NotNull DartIncompleteDeclaration o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitInitializers(@NotNull DartInitializers o) {
     visitPsiCompositeElement(o);
   }

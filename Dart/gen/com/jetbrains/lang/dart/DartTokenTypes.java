@@ -60,6 +60,7 @@ public interface DartTokenTypes {
   IElementType ID = new DartElementType("ID");
   IElementType IF_STATEMENT = new DartElementType("IF_STATEMENT");
   IElementType IMPORT_STATEMENT = new DartElementType("IMPORT_STATEMENT");
+  IElementType INCOMPLETE_DECLARATION = new DartElementType("INCOMPLETE_DECLARATION");
   IElementType INITIALIZERS = new DartElementType("INITIALIZERS");
   IElementType INTERFACES = new DartElementType("INTERFACES");
   IElementType IS_EXPRESSION = new DartElementType("IS_EXPRESSION");
@@ -404,6 +405,9 @@ public interface DartTokenTypes {
       }
       else if (type == IMPORT_STATEMENT) {
         return new DartImportStatementImpl(node);
+      }
+      else if (type == INCOMPLETE_DECLARATION) {
+        return new DartIncompleteDeclarationImpl(node);
       }
       else if (type == INITIALIZERS) {
         return new DartInitializersImpl(node);

@@ -9,6 +9,16 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
     super("completion", "references");
   }
 
+  private void doTestSdkClassesInCompletion(final String text) throws Throwable {
+    myFixture.configureByText("foo.dart", text);
+    doTestVariantsInner("SdkClassesInCompletion.txt");
+  }
+
+  private void doTestNoSdkClassesInCompletion(final String text) throws Throwable {
+    myFixture.configureByText("foo.dart", text);
+    doTestVariantsInner("NoSdkClassesInCompletion.txt");
+  }
+
   public void testCascade1() throws Throwable {
     doTest();
   }
@@ -248,4 +258,41 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
     myFixture.addFileToProject("pubspec.yaml", "");
     doTest("WEB_8100.dart", "packages/foo/Foo.dart");
   }
+
+  public void testTopLevelType() throws Throwable {
+    doTestSdkClassesInCompletion("<caret>");
+    doTestSdkClassesInCompletion("@<caret>");
+    doTestSdkClassesInCompletion("@Object @<caret>");
+    doTestSdkClassesInCompletion("@Object <caret>");
+    doTestSdkClassesInCompletion("static <caret>");
+    doTestSdkClassesInCompletion("final <caret>");
+    doTestSdkClassesInCompletion("const <caret>");
+    doTestSdkClassesInCompletion("@Object static <caret>");
+    doTestSdkClassesInCompletion("@Object final <caret>");
+    doTestSdkClassesInCompletion("@Object const <caret>");
+    doTestNoSdkClassesInCompletion("Foo <caret>");
+    doTestNoSdkClassesInCompletion("@Object Foo <caret>");
+    doTestNoSdkClassesInCompletion("static Foo <caret>");
+    doTestNoSdkClassesInCompletion("final Foo <caret>");
+    doTestNoSdkClassesInCompletion("const Foo <caret>");
+  }
+
+  public void testClassLevelType() throws Throwable {
+    doTestSdkClassesInCompletion("class Foo {<caret>}");
+    doTestSdkClassesInCompletion("class Foo {@<caret>}");
+    doTestSdkClassesInCompletion("class Foo {@Object @<caret>}");
+    doTestSdkClassesInCompletion("class Foo {@Object <caret>}");
+    doTestSdkClassesInCompletion("class Foo {static <caret>}");
+    doTestSdkClassesInCompletion("class Foo {final <caret>}");
+    doTestSdkClassesInCompletion("class Foo {const <caret>}");
+    doTestSdkClassesInCompletion("class Foo {@Object static <caret>}");
+    doTestSdkClassesInCompletion("class Foo {@Object final <caret>}");
+    doTestSdkClassesInCompletion("class Foo {@Object const <caret>}");
+    doTestNoSdkClassesInCompletion("class Foo{Foo <caret>");
+    doTestNoSdkClassesInCompletion("class Foo{@Object Foo <caret>");
+    doTestNoSdkClassesInCompletion("class Foo{static Foo <caret>}");
+    doTestNoSdkClassesInCompletion("class Foo{final Foo <caret>}");
+    doTestNoSdkClassesInCompletion("class Foo{const Foo <caret>}");
+  }
+
 }

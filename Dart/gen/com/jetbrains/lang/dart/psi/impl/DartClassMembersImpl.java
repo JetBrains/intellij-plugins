@@ -36,6 +36,12 @@ public class DartClassMembersImpl extends DartPsiCompositeElementImpl implements
 
   @Override
   @NotNull
+  public List<DartIncompleteDeclaration> getIncompleteDeclarationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartIncompleteDeclaration.class);
+  }
+
+  @Override
+  @NotNull
   public List<DartMethodDeclaration> getMethodDeclarationList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMethodDeclaration.class);
   }

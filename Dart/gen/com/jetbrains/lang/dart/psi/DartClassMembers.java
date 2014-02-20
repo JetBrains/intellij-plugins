@@ -14,6 +14,9 @@ public interface DartClassMembers extends DartExecutionScope {
   List<DartGetterDeclaration> getGetterDeclarationList();
 
   @NotNull
+  List<DartIncompleteDeclaration> getIncompleteDeclarationList();
+
+  @NotNull
   List<DartMethodDeclaration> getMethodDeclarationList();
 
   @NotNull
