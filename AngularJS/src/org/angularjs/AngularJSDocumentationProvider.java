@@ -10,6 +10,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTokenType;
+import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,8 @@ public class AngularJSDocumentationProvider extends DocumentationProviderEx {
                                                   @Nullable PsiElement element) {
     final IElementType elementType = element != null ? element.getNode().getElementType() : null;
     if (elementType == XmlTokenType.XML_NAME || elementType == XmlTokenType.XML_TAG_NAME) {
-      return AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.INDEX_ID, element.getText());
+      return AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.INDEX_ID,
+                                      AngularJSAttributeDescriptorsProvider.normalizeAttributeName(element.getText()));
     }
     return null;
   }
