@@ -94,6 +94,7 @@ public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
   private static class EnableDartSupportQuickFix extends IntentionAndQuickFixAction {
     private final @NotNull Module myModule;
     private final @NotNull String myDartSdkGlobalLibName;
+    private boolean myAvailable = true;
 
     public EnableDartSupportQuickFix(final @NotNull Module module, final @NotNull String dartSdkGlobalLibName) {
       myModule = module;
@@ -110,8 +111,13 @@ public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
       return getName();
     }
 
+    public boolean isAvailable(@NotNull final Project project, @Nullable final Editor editor, final PsiFile file) {
+      return myAvailable;
+    }
+
     public void applyFix(final @NotNull Project project, final @NotNull PsiFile file, @Nullable final Editor editor) {
       DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(myModule, myDartSdkGlobalLibName);
+      myAvailable = false;
     }
   }
 }

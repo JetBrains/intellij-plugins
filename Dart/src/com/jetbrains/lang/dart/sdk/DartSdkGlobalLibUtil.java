@@ -87,7 +87,6 @@ public class DartSdkGlobalLibUtil {
             if (!mustHaveDart) {
               modifiableModel.removeOrderEntry(orderEntry);
             }
-            break;
           }
         }
 
@@ -117,7 +116,6 @@ public class DartSdkGlobalLibUtil {
         for (final OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
           if (isOrderEntryPointingToThisGlobalLib(orderEntry, dartSdkGlobalLibName)) {
             modifiableModel.removeOrderEntry(orderEntry);
-            break;
           }
         }
         modifiableModel.commit();
@@ -162,6 +160,8 @@ public class DartSdkGlobalLibUtil {
   }
 
   public static void configureDependencyOnGlobalLib(final @NotNull Module module, final @NotNull String globalLibName) {
+    if (isDartSdkGlobalLibAttached(module, globalLibName)) return;
+
     final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
     try {
       modifiableModel.addInvalidLibrary(globalLibName, LibraryTablesRegistrar.APPLICATION_LEVEL);
