@@ -30,14 +30,14 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
   @Override
   public void addTagNameVariants(List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
     final Project project = xmlTag.getProject();
-    final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project);
+    final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project, false);
     for (String directiveName : docDirectives) {
       final JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.INDEX_ID);
       if (directive != null) {
         addLookupItem(elements, directive);
       }
     }
-    final Collection<String> directives = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project);
+    final Collection<String> directives = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project, false);
     for (String directiveName : directives) {
       if (!docDirectives.contains(directiveName)) {
         final JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesIndex.INDEX_ID);

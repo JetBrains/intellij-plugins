@@ -6,10 +6,12 @@ import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.CommonProcessors;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
 import gnu.trove.THashSet;
@@ -42,21 +44,30 @@ public class AngularIndexUtil {
   }
 
   public static Collection<String> getAllKeys(final ID<String, Void> index, final Project project) {
+    return getAllKeys(index, project, true);
+  }
+
+  public static Collection<String> getAllKeys(final ID<String, Void> index, final Project project, final boolean checkExisting) {
     Set<String> allKeys = new THashSet<String>();
     final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     final CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<String>(allKeys) {
       @Override
       protected boolean accept(String key) {
-        return !FileBasedIndex.getInstance().processValues(index, key, null, new FileBasedIndex.ValueProcessor<Void>() {
-            @Override
-            public boolean process(VirtualFile file, Void value) {
-              return false;
-            }
-          }, scope);
+        return true;
       }
     };
     FileBasedIndex.getInstance().processAllKeys(index, processor, scope, null);
-    return allKeys;
+    return checkExisting ? ContainerUtil.filter(allKeys, new Condition<String>() {
+      @Override
+      public boolean value(String key) {
+        return !FileBasedIndex.getInstance().processValues(index, key, null, new FileBasedIndex.ValueProcessor<Void>() {
+          @Override
+          public boolean process(VirtualFile file, Void value) {
+            return false;
+          }
+        }, scope);
+      }
+    }) : allKeys;
   }
 
   public static boolean hasAngularJS(Project project) {

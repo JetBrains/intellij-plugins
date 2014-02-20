@@ -27,13 +27,13 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
-      final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project);
+      final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project, false);
       for (String directiveName : docDirectives) {
         if (isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesDocIndex.INDEX_ID)) {
           result.put(directiveName, createDescriptor(project, directiveName));
         }
       }
-      for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project)) {
+      for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project, false)) {
         if (!docDirectives.contains(directiveName) &&
             isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesIndex.INDEX_ID)) {
           result.put(directiveName, createDescriptor(project, directiveName));
@@ -70,10 +70,10 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       boolean attributeAvailable;
-      if (AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project).contains(attributeName)) {
+      if (AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project, false).contains(attributeName)) {
         attributeAvailable = isApplicable(project, attributeName, xmlTag.getName(), AngularDirectivesDocIndex.INDEX_ID);
       } else {
-        attributeAvailable = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project).contains(attributeName);
+        attributeAvailable = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project, false).contains(attributeName);
       }
       return attributeAvailable ? createDescriptor(project, attributeName) : null;
     }
