@@ -97,7 +97,7 @@ public class FlexCommonUtils {
   private static final Logger LOG = Logger.getInstance(FlexCommonUtils.class.getName());
 
   public static final boolean KEEP_TEMP_FILES = Boolean.parseBoolean(System.getProperty("idea.keep.flex.temporary.files"));
-  public static final Pattern AIR_VERSION_PATTERN = Pattern.compile("[1-9]\\.[0-9]{1,2}(\\.[0-9]{1,10})*");
+  public static final Pattern AIR_VERSION_PATTERN = Pattern.compile("[0-9]+\\.[0-9]+(\\.[0-9]+)*");
 
   private static Map<Pair<String, Long>, String> ourAdtJarPathAndTimestampToVersion = new THashMap<Pair<String, Long>, String>();
 
@@ -950,7 +950,7 @@ public class FlexCommonUtils {
 
   public static void parseAirVersionFromAdtOutput(String adtOutput, final Ref<String> versionRef) {
     // adt version "1.5.0.7220"
-    // 2.6.0.19120
+    // 13.0.0.36
 
     final String prefix = "adt version \"";
     final String suffix = "\"";
@@ -1040,6 +1040,12 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForTargetPlayer(final String targetPlayer) {
+    if (StringUtil.compareVersionNumbers(targetPlayer, "20") >= 0) return "31";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "19") >= 0) return "30";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "18") >= 0) return "29";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "17") >= 0) return "28";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "16") >= 0) return "27";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "15") >= 0) return "26";
     if (StringUtil.compareVersionNumbers(targetPlayer, "14") >= 0) return "25";
     if (StringUtil.compareVersionNumbers(targetPlayer, "13") >= 0) return "24";
     if (StringUtil.compareVersionNumbers(targetPlayer, "12") >= 0) return "23";
@@ -1060,6 +1066,12 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForAirVersion(final String airVersion) {
+    if (StringUtil.compareVersionNumbers(airVersion, "20") >= 0) return "31";
+    if (StringUtil.compareVersionNumbers(airVersion, "19") >= 0) return "30";
+    if (StringUtil.compareVersionNumbers(airVersion, "18") >= 0) return "29";
+    if (StringUtil.compareVersionNumbers(airVersion, "17") >= 0) return "28";
+    if (StringUtil.compareVersionNumbers(airVersion, "16") >= 0) return "27";
+    if (StringUtil.compareVersionNumbers(airVersion, "15") >= 0) return "26";
     if (StringUtil.compareVersionNumbers(airVersion, "14") >= 0) return "25";
     if (StringUtil.compareVersionNumbers(airVersion, "13") >= 0) return "24"; // yes, they are going to release 13 after 4
     if (StringUtil.compareVersionNumbers(airVersion, "4") >= 0) return "23";
