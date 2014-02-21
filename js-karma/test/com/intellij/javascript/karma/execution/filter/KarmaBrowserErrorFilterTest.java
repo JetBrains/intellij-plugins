@@ -1,8 +1,8 @@
 package com.intellij.javascript.karma.execution.filter;
 
 import com.intellij.javascript.karma.tree.KarmaBrowserErrorFilter;
-import junit.framework.Assert;
 import junit.framework.TestCase;
+import org.junit.Assert;
 
 /**
  * @author Sergey Simonchik
@@ -27,4 +27,12 @@ public class KarmaBrowserErrorFilterTest extends TestCase {
     Assert.assertEquals(expected, actual);
   }
 
+  public void testAbsolutePathWithoutPath() throws Exception {
+    String s = "at http://localhost:9876/absoluteC:/Users/User/AppData/Roaming/npm/node_modules/karma-commonjs/client/commonjs_bridge.js?1392838273000:21";
+    KarmaBrowserErrorFilter.LinkInfo actual = KarmaBrowserErrorFilter.createLinkInfo(s);
+    KarmaBrowserErrorFilter.LinkInfo expected = new KarmaBrowserErrorFilter.LinkInfo(
+      3, s.length(), "C:/Users/User/AppData/Roaming/npm/node_modules/karma-commonjs/client/commonjs_bridge.js", 21
+    );
+    Assert.assertEquals(expected, actual);
+  }
 }

@@ -21,10 +21,10 @@ public class KarmaBrowserErrorFilter implements Filter {
 
   private static final Pattern[] LINE_PATTERNS = new Pattern[] {
     //at http://localhost:9876/base/spec/personSpec.js?1368878723000:22
-    Pattern.compile("^\\s*at (http://[^:]+:\\d+/base/([^?]+)?.*)$"),
+    Pattern.compile("^\\s*at (http://[^:]+:\\d+/base/([^?]+).*)$"),
 
     //at http://localhost:9876/absolute/home/segrey/WebstormProjects/karma-chai-sample/test/test.js?1378466989000:1
-    Pattern.compile("^\\s*at (http://[^:]+:\\d+/absolute(/[^?]+)?.*)$")
+    Pattern.compile("^\\s*at (http://[^:]+:\\d+/absolute([^?]+).*)$")
   };
 
   private final Project myProject;
@@ -70,7 +70,7 @@ public class KarmaBrowserErrorFilter implements Filter {
   private static Matcher findMatcher(@NotNull String line) {
     for (Pattern pattern : LINE_PATTERNS) {
       Matcher m = pattern.matcher(line);
-      if (m.find()) {
+      if (m.matches()) {
         return m;
       }
     }
