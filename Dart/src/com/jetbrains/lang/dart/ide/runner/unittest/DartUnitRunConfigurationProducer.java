@@ -8,6 +8,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import com.jetbrains.lang.dart.psi.DartArgumentList;
 import com.jetbrains.lang.dart.psi.DartCallExpression;
 import com.jetbrains.lang.dart.psi.DartExpression;
@@ -28,7 +29,7 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
                                                   ConfigurationContext context,
                                                   Ref<PsiElement> sourceElement) {
     final PsiElement contextElement = context.getPsiLocation();
-    final VirtualFile file = contextElement == null ? null : contextElement.getContainingFile().getVirtualFile();
+    final VirtualFile file = contextElement == null ? null : PsiUtilCore.getVirtualFile(contextElement);
     final VirtualFile packagesFolder = file == null ? null : DartResolveUtil.getDartPackagesFolder(context.getProject(), file);
     if (packagesFolder == null || packagesFolder.findChild("unittest") == null) return false;
 
