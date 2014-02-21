@@ -71,7 +71,7 @@ public class KarmaDebugBrowserSelector {
     }
     JSDebugEngine debugEngineToReuse = getDebugEngineToReuse();
     if (debugEngineToReuse != null) {
-      return Pair.create(debugEngineToReuse, WebBrowserManager.getInstance().getBrowser(debugEngineToReuse.getBrowserFamily()));
+      return Pair.create(debugEngineToReuse, WebBrowserManager.getInstance().getFirstBrowser(debugEngineToReuse.getBrowserFamily()));
     }
     showSelectionUI(result);
     return null;

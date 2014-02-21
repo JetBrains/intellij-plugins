@@ -262,7 +262,7 @@ public class CapturedBrowsersController implements ServerListener {
         return false;
       }
 
-      WebBrowser browser = WebBrowserManager.getInstance().getBrowser(myBrowser.getBrowserFamily());
+      WebBrowser browser = WebBrowserManager.getInstance().getFirstBrowser(myBrowser.getBrowserFamily());
       String browserPath = browser.getPath();
       if (StringUtil.isEmptyOrSpaces(browserPath)) {
         String message = "Path to " + myBrowser.getName() + " is not specified.";

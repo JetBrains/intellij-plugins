@@ -71,7 +71,7 @@ public class JstdRunSettingsSerializationUtils {
     List<String> filesExcludedFromCoverage = readFilesExcludedFromCoverage(element);
     builder.setFilesExcludedFromCoverage(filesExcludedFromCoverage);
 
-    builder.setPreferredDebugBrowser(WebBrowserManager.getInstance().getBrowser(readEnumByName(element, Key.PREFERRED_DEBUG_BROWSER, BrowserFamily.CHROME)));
+    builder.setPreferredDebugBrowser(WebBrowserManager.getInstance().getFirstBrowser(readEnumByName(element, Key.PREFERRED_DEBUG_BROWSER, BrowserFamily.CHROME)));
     return builder.build();
   }
 

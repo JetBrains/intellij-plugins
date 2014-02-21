@@ -110,7 +110,7 @@ public class JstdRunSettings {
     private String myTestCaseName = "";
     private String myTestMethodName = "";
     private ImmutableList<String> myFilesExcludedFromCoverage = ImmutableList.of();
-    private WebBrowser myPreferredDebugBrowser = WebBrowserManager.getInstance().getBrowser(BrowserFamily.CHROME);
+    private WebBrowser myPreferredDebugBrowser = WebBrowserManager.getInstance().getFirstBrowser(BrowserFamily.CHROME);
 
     public Builder() {
     }
