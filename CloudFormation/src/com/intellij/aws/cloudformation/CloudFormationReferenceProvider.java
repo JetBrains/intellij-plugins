@@ -43,14 +43,20 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
         CloudFormationSections.Resources);
     }
 
-    // Fn::GetAtt && Fn::FindInMap
+    if (isInCondition(literalExpression)) {
+      return new CloudFormationEntityReference(
+        literalExpression,
+        CloudFormationSections.Conditions);
+    }
+
     final JSArrayLiteralExpression parametersArray = ObjectUtils.tryCast(element.getParent(), JSArrayLiteralExpression.class);
     if (parametersArray != null) {
       final JSProperty funcProperty = ObjectUtils.tryCast(parametersArray.getParent(), JSProperty.class);
       final boolean isFindInMap = funcProperty != null && CloudFormationIntrinsicFunctions.FnFindInMap.equals(funcProperty.getName());
       final boolean isGetAtt = funcProperty != null && CloudFormationIntrinsicFunctions.FnGetAtt.equals(funcProperty.getName());
+      final boolean isIf = funcProperty != null && CloudFormationIntrinsicFunctions.FnIf.equals(funcProperty.getName());
 
-      if (isGetAtt || isFindInMap) {
+      if (isGetAtt || isFindInMap || isIf) {
         final JSObjectLiteralExpression obj = ObjectUtils.tryCast(funcProperty.getParent(), JSObjectLiteralExpression.class);
         if (obj != null) {
           final JSExpression[] allParameters = parametersArray.getExpressions();
@@ -61,7 +67,13 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
                 return new CloudFormationEntityReference(literalExpression, CloudFormationSections.Resources);
               }
 
-              return new CloudFormationEntityReference(literalExpression, CloudFormationSections.Mappings);
+              if (isFindInMap) {
+                return new CloudFormationEntityReference(literalExpression, CloudFormationSections.Mappings);
+              }
+
+              if (isIf) {
+                return new CloudFormationEntityReference(literalExpression, CloudFormationSections.Conditions);
+              }
             }
           } else if (allParameters.length > 1 && element == allParameters[1]) {
             if (isFindInMap) {
@@ -115,6 +127,16 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
 
     final String targetName = CloudFormationResolve.getTargetName(element);
     return !CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(targetName);
+  }
+
+  public static boolean isInCondition(JSLiteralExpression element) {
+    final JSProperty conditionProperty = ObjectUtils.tryCast(element.getParent(), JSProperty.class);
+    if (conditionProperty == null || !CloudFormationConstants.Condition.equals(conditionProperty.getName())) {
+      return false;
+    }
+
+    final JSObjectLiteralExpression obj = ObjectUtils.tryCast(conditionProperty.getParent(), JSObjectLiteralExpression.class);
+    return obj != null && obj.getProperties().length == 1;
   }
 
   public static boolean isInDependsOnSingle(PsiElement element) {

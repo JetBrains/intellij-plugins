@@ -51,6 +51,14 @@ public class EntityResolveTests extends ResolveTestsBase {
     assertEntityResolve("conditionOnResource", "CreateProdResources");
   }
 
+  public void testCondition() throws Exception {
+    assertEntityResolve("condition", "CreateProdResources");
+  }
+
+  public void testConditionInIf() throws Exception {
+    assertEntityResolve("conditionInIf", "CreateProdResources");
+  }
+
   @Override
   protected String getTestDataPath() {
     return TestUtil.getTestDataPath("/resolve/");
