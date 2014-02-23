@@ -88,6 +88,12 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
         CloudFormationSections.Resources);
     }
 
+    if (isInConditionOnResource(element)) {
+      return new CloudFormationEntityReference(
+        literalExpression,
+        CloudFormationSections.Conditions);
+    }
+
     return null;
   }
 
@@ -119,6 +125,30 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
 
     final JSObjectLiteralExpression resourceProperties =
       ObjectUtils.tryCast(dependsOnProperty.getParent(), JSObjectLiteralExpression.class);
+    if (resourceProperties == null) {
+      return false;
+    }
+
+    final JSProperty resource = ObjectUtils.tryCast(resourceProperties.getParent(), JSProperty.class);
+    if (resource == null) {
+      return false;
+    }
+
+    final PsiElement entity = CloudFormationResolve.resolveEntity(
+      element.getContainingFile(), resource.getName(),
+      CloudFormationSections.Resources);
+
+    return resource == entity;
+  }
+
+  public static boolean isInConditionOnResource(PsiElement element) {
+    final JSProperty conditionProperty = ObjectUtils.tryCast(element.getParent(), JSProperty.class);
+    if (conditionProperty == null || !CloudFormationConstants.Condition.equals(conditionProperty.getName())) {
+      return false;
+    }
+
+    final JSObjectLiteralExpression resourceProperties =
+      ObjectUtils.tryCast(conditionProperty.getParent(), JSObjectLiteralExpression.class);
     if (resourceProperties == null) {
       return false;
     }

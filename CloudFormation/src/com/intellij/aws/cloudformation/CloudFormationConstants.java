@@ -14,6 +14,7 @@ public class CloudFormationConstants {
   public static final int MaxOutputs = 10;
 
   public static final String DependsOn = "DependsOn";
+  public static final String Condition = "Condition";
 
   public static final String TypePropertyName = "Type";
 }
