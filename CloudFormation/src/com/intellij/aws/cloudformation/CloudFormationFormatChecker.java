@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -168,6 +169,49 @@ public class CloudFormationFormatChecker {
       return;
     }
 
+    resourceType(typeProperty);
+
+    final JSProperty propertiesProperty = obj.findProperty(CloudFormationConstants.PropertiesPropertyName);
+    if (propertiesProperty != null) {
+      resourceProperties(propertiesProperty, typeProperty);
+    }
+
+    // TODO Handle case with required properties and no Properties section
+  }
+
+  private void resourceProperties(JSProperty propertiesProperty, JSProperty typeProperty) {
+    final JSObjectLiteralExpression properties = ObjectUtils.tryCast(propertiesProperty.getValue(), JSObjectLiteralExpression.class);
+    if (properties == null) {
+      addProblemOnNameElement(propertiesProperty, CloudFormationBundle.getString("format.properties.property.should.properties.list"));
+      return;
+    }
+
+    final String resourceTypeName = checkAndGetUnquotedStringText(typeProperty.getValue());
+    if (resourceTypeName == null) {
+      return;
+    }
+
+    final CloudFormationResourceType resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(resourceTypeName);
+    if (resourceType == null) {
+      return;
+    }
+
+    for (JSProperty property : properties.getProperties()) {
+      final String propertyName = property.getName();
+      if (propertyName == null) {
+        continue;
+      }
+
+      if (resourceType.findProperty(propertyName) == null) {
+        // TODO Enable when ready
+        // addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName));
+      }
+    }
+
+    // TODO Required properties
+  }
+
+  private void resourceType(JSProperty typeProperty) {
     final String value = checkAndGetQuotedStringText(typeProperty.getValue());
     if (value == null) {
       return;
@@ -218,6 +262,7 @@ public class CloudFormationFormatChecker {
     }
   }
 
+  @Nullable
   private String checkAndGetQuotedStringText(JSExpression expression) {
     final JSLiteralExpression literal = ObjectUtils.tryCast(expression, JSLiteralExpression.class);
     if (literal == null || !literal.isQuotedLiteral()) {
@@ -234,6 +279,16 @@ public class CloudFormationFormatChecker {
     }
 
     return literal.getText();
+  }
+
+  @Nullable
+  private String checkAndGetUnquotedStringText(JSExpression expression) {
+    final String quoted = checkAndGetQuotedStringText(expression);
+    if (quoted == null) {
+      return null;
+    }
+
+    return StringUtil.stripQuotesAroundValue(quoted);
   }
 
   public void file(PsiFile psiFile) {

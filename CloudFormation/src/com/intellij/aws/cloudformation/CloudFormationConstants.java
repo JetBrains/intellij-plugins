@@ -17,4 +17,5 @@ public class CloudFormationConstants {
   public static final String Condition = "Condition";
 
   public static final String TypePropertyName = "Type";
+  public static final String PropertiesPropertyName = "Properties";
 }

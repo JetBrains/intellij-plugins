@@ -6,4 +6,14 @@ import java.util.List;
 public class CloudFormationMetadata {
   public List<CloudFormationResourceType> resourceTypes = new ArrayList<CloudFormationResourceType>();
   public List<String> predefinedParameters = new ArrayList<String>();
+
+  public CloudFormationResourceType findResourceType(String name) {
+    for (CloudFormationResourceType resourceType : resourceTypes) {
+      if (resourceType.name.equals(name)) {
+        return resourceType;
+      }
+    }
+
+    return null;
+  }
 }
