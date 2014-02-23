@@ -1,6 +1,6 @@
 package com.intellij.aws.cloudformation.tests;
 
-import com.intellij.aws.cloudformation.CloudFormationEntityReference;
+import com.intellij.aws.cloudformation.references.CloudFormationEntityReference;
 
 public class EntityResolveTests extends ResolveTestsBase {
   public EntityResolveTests() {
@@ -8,43 +8,43 @@ public class EntityResolveTests extends ResolveTestsBase {
   }
 
   public void testDependsOnSingle() throws Exception {
-    assertResolve("dependsOnSingle", "WebServerUser");
+    assertEntityResolve("dependsOnSingle", "WebServerUser");
   }
 
   public void testDependsOnMulti() throws Exception {
-    assertResolve("dependsOnMulti", "WebServerUser1", "WebServerUser2");
+    assertEntityResolve("dependsOnMulti", "WebServerUser1", "WebServerUser2");
   }
 
   public void testFindInMapRefToResource() throws Exception {
-    assertResolve("findInMapRefToResource", NotResolved);
+    assertEntityResolve("findInMapRefToResource", NotResolved);
   }
 
   public void testFindInMapRefToMapping() throws Exception {
-    assertResolve("findInMapRefToMapping", "AWSInstanceType2Arch");
+    assertEntityResolve("findInMapRefToMapping", "AWSInstanceType2Arch");
   }
 
   public void testGetAttrParameterRef() throws Exception {
-    assertResolve("getAttrParameterRef", NotResolved);
+    assertEntityResolve("getAttrParameterRef", NotResolved);
   }
 
   public void testGetAttrResourceRef() throws Exception {
-    assertResolve("getAttrResourceRef", "WebServerUser");
+    assertEntityResolve("getAttrResourceRef", "WebServerUser");
   }
 
   public void testRefToResource() throws Exception {
-    assertResolve("refToResource", "WebServerUser");
+    assertEntityResolve("refToResource", "WebServerUser");
   }
 
   public void testRefToParameter() throws Exception {
-    assertResolve("refToParameter", "WebServerInstanceType");
+    assertEntityResolve("refToParameter", "WebServerInstanceType");
   }
 
   public void testRefToMapping() throws Exception {
-    assertResolve("refToMapping", NotResolved);
+    assertEntityResolve("refToMapping", NotResolved);
   }
 
   public void testRefToOutput() throws Exception {
-    assertResolve("refToOutput", NotResolved, NotResolved);
+    assertEntityResolve("refToOutput", NotResolved, NotResolved);
   }
 
   @Override

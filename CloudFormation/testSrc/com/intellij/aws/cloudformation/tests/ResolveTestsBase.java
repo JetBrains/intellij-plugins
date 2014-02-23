@@ -1,15 +1,15 @@
 package com.intellij.aws.cloudformation.tests;
 
-import com.intellij.aws.cloudformation.CloudFormationResolve;
-import com.intellij.aws.cloudformation.CloudFormationSections;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiRecursiveElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.ResolveTestCase;
+import com.intellij.util.ObjectUtils;
 import junit.framework.Assert;
 
 import java.io.File;
@@ -24,7 +24,7 @@ public abstract class ResolveTestsBase extends ResolveTestCase {
     myReferenceClass = referenceClass;
   }
 
-  protected void assertResolve(String testName, Object... entities) throws Exception {
+  protected void assertEntityResolve(String testName, Object... entityNames) throws Exception {
     final String filePath = getTestDataPath() + testName + ".template";
 
     final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath.replace(File.separatorChar, '/'));
@@ -46,7 +46,7 @@ public abstract class ResolveTestsBase extends ResolveTestCase {
     }
 
     Assert.assertTrue("Test input must contain one or more " + MARKER + "markers", offsets.size() > 0);
-    Assert.assertEquals("Number of assertions and markers differs", entities.length, offsets.size());
+    Assert.assertEquals("Number of assertions and markers differs", entityNames.length, offsets.size());
 
     myFile = createFile(myModule, fileName, fileText);
     Assert.assertFalse(
@@ -62,7 +62,7 @@ public abstract class ResolveTestsBase extends ResolveTestCase {
                         myReferenceClass.isAssignableFrom(ref.getClass()));
 
       final PsiElement resolved = ref.resolve();
-      final Object expectedEntity = entities[i];
+      final Object expectedEntity = entityNames[i];
 
       if (expectedEntity == NotResolved) {
         if (resolved != null) {
@@ -73,13 +73,13 @@ public abstract class ResolveTestsBase extends ResolveTestCase {
           Assert.fail("Ref #" + (i + 1) + " is unresolved");
         }
 
-        final PsiElement entity = CloudFormationResolve.resolveEntity(
-          resolved.getContainingFile(), (String)expectedEntity,
-          CloudFormationSections.AllSections);
-        Assert.assertNotNull("Can't resolve entity " + expectedEntity, entity);
+        final PsiNamedElement namedResolved = ObjectUtils.tryCast(resolved, PsiNamedElement.class);
+        if (namedResolved == null) {
+          Assert.fail("Ref #" + (i + 1) + " should be named element");
+        }
 
-        if (entity != resolved) {
-          Assert.fail("Wrong resolve result, should resolve to " + expectedEntity + ", but got " + resolved.getText());
+        if (!expectedEntity.equals(namedResolved.getName())) {
+          Assert.fail("Wrong resolve result, should resolve to " + expectedEntity + ", but got " + namedResolved.getName());
         }
       }
     }
@@ -87,9 +87,9 @@ public abstract class ResolveTestsBase extends ResolveTestCase {
     final ReferencesCollectorElementVisitor visitor = new ReferencesCollectorElementVisitor();
     myFile.accept(visitor);
 
-    if (visitor.myResult.size() > entities.length) {
+    if (visitor.myResult.size() > entityNames.length) {
       Assert.fail("More references found in file");
-    } else if (visitor.myResult.size() < entities.length) {
+    } else if (visitor.myResult.size() < entityNames.length) {
       Assert.fail("Less references found in file?");
     }
   }

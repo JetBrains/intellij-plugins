@@ -1,6 +1,7 @@
 package com.intellij.aws.cloudformation;
 
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType;
+import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -43,9 +44,9 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
                }
 
                for (PsiReference reference : parent.getReferences()) {
-                 if (reference instanceof CloudFormationEntityReference) {
-                   CloudFormationEntityReference entityRef = (CloudFormationEntityReference)reference;
-                   for (String v : entityRef.getCompletionVariants()) {
+                 final CloudFormationReferenceBase cfnReference = ObjectUtils.tryCast(reference, CloudFormationReferenceBase.class);
+                 if (cfnReference != null) {
+                   for (String v : cfnReference.getCompletionVariants()) {
                      rs.addElement(createLookupElement(v, quoteResult));
                    }
                  }
