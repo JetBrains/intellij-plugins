@@ -14,8 +14,8 @@ public class HbFileViewProviderFactory implements FileViewProviderFactory {
   public FileViewProvider createFileViewProvider(@NotNull VirtualFile virtualFile,
                                                  Language language,
                                                  @NotNull PsiManager psiManager,
-                                                 boolean physical) {
-    return new HbFileViewProvider(psiManager, virtualFile, physical, HbLanguage.INSTANCE);
+                                                 boolean eventSystemEnabled) {
+    return new HbFileViewProvider(psiManager, virtualFile, eventSystemEnabled, HbLanguage.INSTANCE);
   }
 }
 

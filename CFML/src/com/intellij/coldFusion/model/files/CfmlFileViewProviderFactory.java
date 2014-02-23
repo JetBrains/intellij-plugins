@@ -29,7 +29,7 @@ public class CfmlFileViewProviderFactory implements FileViewProviderFactory {
   public FileViewProvider createFileViewProvider(@NotNull VirtualFile file,
                                                  com.intellij.lang.Language language,
                                                  @NotNull PsiManager manager,
-                                                 boolean physical) {
-    return new CfmlFileViewProvider(manager, file, physical);
+                                                 boolean eventSystemEnabled) {
+    return new CfmlFileViewProvider(manager, file, eventSystemEnabled);
   }
 }
