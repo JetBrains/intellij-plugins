@@ -26,7 +26,7 @@ public class CloudFormationResolve {
   }
 
   @Nullable
-  public static PsiElement resolveEntity(PsiFile file, String entityName, String... sections) {
+  public static JSProperty resolveEntity(PsiFile file, String entityName, String... sections) {
     for (String sectionName : sections) {
       final JSObjectLiteralExpression section = getSectionNode(file, sectionName);
       if (section != null) {
@@ -56,10 +56,8 @@ public class CloudFormationResolve {
   }
 
   @Nullable
-  public static PsiElement resolveTopLevelMappingKey(PsiFile file, String mappingName, String topLevelKey) {
-    JSProperty mappingElement = com.intellij.util.ObjectUtils.tryCast(
-      resolveEntity(file, mappingName, CloudFormationSections.Mappings),
-      JSProperty.class);
+  public static JSProperty resolveTopLevelMappingKey(PsiFile file, String mappingName, String topLevelKey) {
+    JSProperty mappingElement = resolveEntity(file, mappingName, CloudFormationSections.Mappings);
     if (mappingElement == null) {
       return null;
     }
@@ -74,10 +72,24 @@ public class CloudFormationResolve {
   }
 
   @Nullable
+  public static PsiElement resolveSecondLevelMappingKey(PsiFile file, String mappingName, String topLevelKey, String secondLevelKey) {
+    JSProperty topLevelKeyElement = resolveTopLevelMappingKey(file, mappingName, topLevelKey);
+    if (topLevelKeyElement == null) {
+      return null;
+    }
+
+    final JSObjectLiteralExpression objectLiteralExpression =
+      ObjectUtils.tryCast(topLevelKeyElement.getValue(), JSObjectLiteralExpression.class);
+    if (objectLiteralExpression == null) {
+      return null;
+    }
+
+    return objectLiteralExpression.findProperty(secondLevelKey);
+  }
+
+  @Nullable
   public static String[] getTopLevelMappingKeys(PsiFile file, String mappingName) {
-    JSProperty mappingElement = com.intellij.util.ObjectUtils.tryCast(
-      resolveEntity(file, mappingName, CloudFormationSections.Mappings),
-      JSProperty.class);
+    JSProperty mappingElement = resolveEntity(file, mappingName, CloudFormationSections.Mappings);
     if (mappingElement == null) {
       return null;
     }
@@ -88,9 +100,34 @@ public class CloudFormationResolve {
       return null;
     }
 
+    return getPropertiesName(objectLiteralExpression.getProperties());
+  }
+
+  @Nullable
+  public static String[] getSecondLevelMappingKeys(@NotNull PsiFile file, @NotNull String mappingName, @NotNull String topLevelKey) {
+    final JSProperty topLevelKeyElement = resolveTopLevelMappingKey(file, mappingName, topLevelKey);
+    if (topLevelKeyElement == null) {
+      return null;
+    }
+
+    final JSObjectLiteralExpression objectLiteralExpression =
+      ObjectUtils.tryCast(topLevelKeyElement.getValue(), JSObjectLiteralExpression.class);
+    if (objectLiteralExpression == null) {
+      return null;
+    }
+
+    return getPropertiesName(objectLiteralExpression.getProperties());
+  }
+
+  @Nullable
+  private static String[] getPropertiesName(@Nullable JSProperty[] properties) {
+    if (properties == null) {
+      return null;
+    }
+
     Set<String> result = new HashSet<String>();
 
-    for (JSProperty property : objectLiteralExpression.getProperties()) {
+    for (JSProperty property : properties) {
       result.add(property.getName());
     }
 

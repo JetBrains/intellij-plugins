@@ -1,6 +1,7 @@
 package com.intellij.aws.cloudformation;
 
 import com.intellij.aws.cloudformation.references.CloudFormationEntityReference;
+import com.intellij.aws.cloudformation.references.CloudFormationMappingSecondLevelKeyReference;
 import com.intellij.aws.cloudformation.references.CloudFormationMappingTopLevelKeyReference;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.psi.PsiElement;
@@ -77,10 +78,20 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
             }
           } else if (allParameters.length > 1 && element == allParameters[1]) {
             if (isFindInMap) {
-              //
               JSLiteralExpression mappingNameExpression = ObjectUtils.tryCast(allParameters[0], JSLiteralExpression.class);
               if (mappingNameExpression != null && mappingNameExpression.isQuotedLiteral()) {
                 return new CloudFormationMappingTopLevelKeyReference(literalExpression, CloudFormationResolve.getTargetName(mappingNameExpression));
+              }
+            }
+          } else if (allParameters.length > 2 && element == allParameters[2]) {
+            if (isFindInMap) {
+              JSLiteralExpression mappingNameExpression = ObjectUtils.tryCast(allParameters[0], JSLiteralExpression.class);
+              JSLiteralExpression topLevelKeyExpression = ObjectUtils.tryCast(allParameters[1], JSLiteralExpression.class);
+              if (mappingNameExpression != null && mappingNameExpression.isQuotedLiteral() && topLevelKeyExpression != null && topLevelKeyExpression.isQuotedLiteral()) {
+                return new CloudFormationMappingSecondLevelKeyReference(
+                  literalExpression,
+                  CloudFormationResolve.getTargetName(mappingNameExpression),
+                  CloudFormationResolve.getTargetName(topLevelKeyExpression));
               }
             }
           }
