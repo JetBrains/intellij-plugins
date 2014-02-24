@@ -5,7 +5,6 @@ import com.intellij.psi.impl.source.xml.SchemaPrefix;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.HtmlXmlExtension;
-import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider;
 import org.angularjs.index.AngularIndexUtil;
 
 /**
@@ -20,7 +19,7 @@ public class AngularJSHtmlExtension extends HtmlXmlExtension {
   @Override
   public boolean isRequiredAttributeImplicitlyPresent(XmlTag tag, String attrName) {
     for (XmlAttribute attribute : tag.getAttributes()) {
-      if (("ng-" + attrName).equals(AngularJSAttributeDescriptorsProvider.normalizeAttributeName(attribute.getName()))) {
+      if (("ng-" + attrName).equals(DirectiveUtil.normalizeAttributeName(attribute.getName()))) {
         return true;
       }
     }

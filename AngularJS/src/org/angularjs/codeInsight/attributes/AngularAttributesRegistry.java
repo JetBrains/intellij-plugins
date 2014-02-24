@@ -3,6 +3,7 @@ package org.angularjs.codeInsight.attributes;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlAttribute;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularControllerIndex;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularIndexUtil;
@@ -26,7 +27,7 @@ public class AngularAttributesRegistry {
   }
 
   public static boolean isAngularExpressionAttribute(XmlAttribute parent) {
-    final String attributeName = AngularJSAttributeDescriptorsProvider.normalizeAttributeName(parent.getName());
+    final String attributeName = DirectiveUtil.normalizeAttributeName(parent.getName());
     final JSNamedElementProxy directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.INDEX_ID, attributeName);
     if (directive != null) {
       final String restrict = directive.getIndexItem().getTypeString();

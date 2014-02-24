@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.indexing.ID;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +40,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     NAME_CONVERTERS.put(DIRECTIVE, new Function<String, String>() {
       @Override
       public String fun(String s) {
-        return getAttributeName(s);
+        return DirectiveUtil.getAttributeName(s);
       }
     });
     DATA_CALCULATORS.put(DIRECTIVE, new Function<PsiElement, String>() {
@@ -185,13 +186,5 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static boolean hasDirectiveName(String remainingLineContent) {
     return remainingLineContent != null && remainingLineContent.startsWith(":") &&
            !remainingLineContent.contains(".") && !remainingLineContent.contains("#");
-  }
-
-  private static String getAttributeName(final String text) {
-    final String[] split = StringUtil.unquoteString(text).split("(?=[A-Z])");
-    for (int i = 0; i < split.length; i++) {
-      split[i] = StringUtil.decapitalize(split[i]);
-    }
-    return StringUtil.join(split, "-");
   }
 }

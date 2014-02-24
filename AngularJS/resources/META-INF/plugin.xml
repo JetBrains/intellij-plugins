@@ -73,7 +73,8 @@
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector"/>
     <completion.contributor language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSCompletionContributor"
                             id="AngularJSCompletionContributor"/>
-
+    <renamePsiElementProcessor implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor" />
+    <targetElementEvaluator language="JavaScript" implementationClass="org.angularjs.AngularJSTargetElementEvaluator"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

@@ -7,6 +7,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.indexing.ID;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
@@ -66,7 +67,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(final String attrName, XmlTag xmlTag) {
-    final String attributeName = normalizeAttributeName(attrName);
+    final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       boolean attributeAvailable;
@@ -78,17 +79,5 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       return attributeAvailable ? createDescriptor(project, attributeName) : null;
     }
     return null;
-  }
-
-  public static String normalizeAttributeName(String name) {
-    if (name == null) return null;
-    if (name.startsWith("data-")) {
-      name = name.substring(5);
-    } else if (name.startsWith("x-")) {
-      name = name.substring(2);
-    }
-    name = name.replace(':', '-');
-    name = name.replace('_', '-');
-    return name;
   }
 }

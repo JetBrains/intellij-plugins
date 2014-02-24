@@ -13,7 +13,7 @@ import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
 import com.intellij.xml.impl.schema.AnyXmlElementDescriptor;
-import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
@@ -55,7 +55,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
   @Nullable
   @Override
   public XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
-    final String directiveName = AngularJSAttributeDescriptorsProvider.normalizeAttributeName(xmlTag.getName());
+    final String directiveName = DirectiveUtil.normalizeAttributeName(xmlTag.getName());
     if (xmlTag != null) {
       final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
       final XmlElementDescriptor descriptor = nsDescriptor != null ? nsDescriptor.getElementDescriptor(xmlTag) : null;

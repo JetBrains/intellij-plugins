@@ -3,14 +3,13 @@ package org.angularjs;
 import com.intellij.lang.documentation.DocumentationProviderEx;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTokenType;
-import org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +30,7 @@ public class AngularJSDocumentationProvider extends DocumentationProviderEx {
     final IElementType elementType = element != null ? element.getNode().getElementType() : null;
     if (elementType == XmlTokenType.XML_NAME || elementType == XmlTokenType.XML_TAG_NAME) {
       return AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.INDEX_ID,
-                                      AngularJSAttributeDescriptorsProvider.normalizeAttributeName(element.getText()));
+                                      DirectiveUtil.normalizeAttributeName(element.getText()));
     }
     return null;
   }
@@ -49,11 +48,8 @@ public class AngularJSDocumentationProvider extends DocumentationProviderEx {
     if (element instanceof JSNamedElementProxy) {
       final String name = ((JSNamedElementProxy)element).getName();
       if (AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.INDEX_ID, name) != null) {
-        final String[] words = name.split("-");
-        for (int i = 1; i < words.length; i++) {
-          words[i] = StringUtil.capitalize(words[i]);
-        }
-        return Collections.singletonList("http://docs.angularjs.org/api/ng/directive/" + StringUtil.join(words));
+        final String directiveName = DirectiveUtil.attributeToDirective(name);
+        return Collections.singletonList("http://docs.angularjs.org/api/ng/directive/" + directiveName);
       }
     }
     return null;

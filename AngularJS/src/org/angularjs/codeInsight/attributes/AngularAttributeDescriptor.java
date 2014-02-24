@@ -7,14 +7,19 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.indexing.ID;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
+import com.intellij.xml.impl.XmlAttributeDescriptorEx;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Dennis.Ushakov
  */
-public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor {
+public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx {
   protected final Project myProject;
   private final String myAttributeName;
   private final ID<String, Void> myIndex;
@@ -87,5 +92,11 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor {
       return AngularIndexUtil.resolve(xmlElement.getProject(), myIndex, value);
     }
     return super.getEnumeratedValueDeclaration(xmlElement, value);
+  }
+
+  @Nullable
+  @Override
+  public String handleTargetRename(@NotNull @NonNls String newTargetName) {
+    return DirectiveUtil.getAttributeName(newTargetName);
   }
 }
