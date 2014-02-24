@@ -39,6 +39,8 @@
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
+  <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
+
 
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>

@@ -1,0 +1,6 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <css.elementDescriptorProvider implementation="org.angularjs.codeInsight.AngularJSCssElementDescriptionProvider"
+                                   order="last, before cssElementDescriptorProvider"/>
+  </extensions>
+</idea-plugin>

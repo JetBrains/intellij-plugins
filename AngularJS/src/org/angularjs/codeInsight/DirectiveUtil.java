@@ -1,6 +1,15 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Processor;
+import com.intellij.util.indexing.ID;
+import org.angularjs.index.AngularDirectivesDocIndex;
+import org.angularjs.index.AngularDirectivesIndex;
+import org.angularjs.index.AngularIndexUtil;
+
+import java.util.Collection;
 
 /**
  * @author Dennis.Ushakov
@@ -32,5 +41,48 @@ public class DirectiveUtil {
       words[i] = StringUtil.capitalize(words[i]);
     }
     return StringUtil.join(words);
+  }
+
+  public static boolean processTagDirectives(final Project project,
+                                             Processor<JSNamedElementProxy> processor) {
+    final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project, false);
+    for (String directiveName : docDirectives) {
+      final JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.INDEX_ID);
+      if (directive != null) {
+        if (!processor.process(directive)) {
+          return false;
+        }
+      }
+    }
+    final Collection<String> directives = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project, false);
+    for (String directiveName : directives) {
+      if (!docDirectives.contains(directiveName)) {
+        final JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesIndex.INDEX_ID);
+        if (directive != null) {
+          if (!processor.process(directive)) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  public static JSNamedElementProxy getTagDirective(String directiveName, Project project) {
+    final JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.INDEX_ID);
+    return directive == null ? getTagDirective(project, directiveName, AngularDirectivesIndex.INDEX_ID) : directive;
+    }
+
+  private static JSNamedElementProxy getTagDirective(Project project, String directiveName, final ID<String, Void> index) {
+    final JSNamedElementProxy directive = AngularIndexUtil.resolve(project, index, directiveName);
+    final String restrictions = directive != null ? directive.getIndexItem().getTypeString() : null;
+    if (restrictions != null) {
+      final String[] split = restrictions.split(";", -1);
+      final String restrict = split[0];
+      if (!StringUtil.isEmpty(restrict) && StringUtil.containsIgnoreCase(restrict, "E")) {
+        return directive;
+      }
+    }
+    return null;
   }
 }

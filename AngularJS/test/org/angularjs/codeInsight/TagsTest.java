@@ -55,4 +55,19 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.configureByFiles("override.html", "angular.js");
     myFixture.checkHighlighting();
   }
+
+  public void testCustomAttributesCompletionCss() {
+    myFixture.testCompletion("customCss.html", "customCss.after.html", "angular.js", "custom.js");
+  }
+
+  public void testCustomAttributesResolveCss() {
+    myFixture.configureByFiles("customCss.after.html", "angular.js", "custom.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("custom.js", resolve.getContainingFile().getName());
+    assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+  }
 }
