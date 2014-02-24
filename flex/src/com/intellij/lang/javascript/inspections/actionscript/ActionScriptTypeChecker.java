@@ -84,7 +84,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
          ) ||
          (
            expr instanceof JSFunctionExpression &&
-           (_fun = ((JSFunctionExpression)expr).getFunction()) != null
+           (_fun = expr) != null
          )
         )) {
       JSFunction fun = (JSFunction)_fun;

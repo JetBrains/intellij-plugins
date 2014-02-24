@@ -58,7 +58,7 @@ public class JSUntypedDeclarationInspection extends JSInspection {
       }
 
       @Override public void visitJSFunctionExpression(final JSFunctionExpression node) {
-        process(node.getFunction(), holder);
+        process(node, holder);
       }
 
       @Override public void visitJSFunctionDeclaration(final JSFunction node) {
