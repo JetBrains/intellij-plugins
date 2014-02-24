@@ -13,7 +13,7 @@ import com.intellij.lang.javascript.refactoring.ui.JSVisibilityPanel;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -61,7 +61,7 @@ public class JSCreateFieldDialog extends DialogWrapper {
   }
 
   private void createUIComponents() {
-    Module module = ModuleUtil.findModuleForPsiElement(myTargetClass);
+    Module module = ModuleUtilCore.findModuleForPsiElement(myTargetClass);
     GlobalSearchScope scope = getTypeFieldScope(module, myTargetClass.getProject());
     myTypeField = createTypeField(myTargetClass.getProject(), scope);
 
@@ -82,7 +82,7 @@ public class JSCreateFieldDialog extends DialogWrapper {
   }
 
   public static JSExpressionCodeFragment createInitializerCodeFragment(JSClass c) {
-    return JSElementFactory.createExpressionCodeFragment(c.getProject(), "", c, true, JavaScriptSupportLoader.ECMA_SCRIPT_L4,
+    return JSElementFactory.createExpressionCodeFragment(c.getProject(), "", c, JavaScriptSupportLoader.ECMA_SCRIPT_L4,
                                                          c.getResolveScope(), JSElementFactory.TopLevelCompletion.LITERAL_VALUES, null);
   }
 
@@ -164,7 +164,9 @@ public class JSCreateFieldDialog extends DialogWrapper {
       }
     }
     myTypeField.updateRecents();
+    //noinspection AssignmentToStaticFieldFromInstanceMethod
     ourDeclareConstant = myDeclareConstantCb.isSelected();
+    //noinspection AssignmentToStaticFieldFromInstanceMethod
     ourDeclareStatic = myDeclareStaticCb.isSelected();
     super.doOKAction();
   }

@@ -38,13 +38,13 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
     if (inClass) {
       JSFile file = JSElementFactory.createExpressionCodeFragment(clazz.getProject(),
                                                                   (clazz.isInterface() ? "interface" : "class") + " Dummy {" + text + "}",
-                                                                  clazz, true, JavaScriptSupportLoader.ECMA_SCRIPT_L4, null,
+                                                                  clazz, JavaScriptSupportLoader.ECMA_SCRIPT_L4, null,
                                                                   JSElementFactory.TopLevelCompletion.NO, null);
       JSClass aClass = PsiTreeUtil.findChildOfType(file, JSClass.class);
       return aClass.getFunctions()[0];
     }
     else {
-      JSFile file = JSElementFactory.createExpressionCodeFragment(clazz.getProject(), text, clazz, true,
+      JSFile file = JSElementFactory.createExpressionCodeFragment(clazz.getProject(), text, clazz,
                                                                   JavaScriptSupportLoader.ECMA_SCRIPT_L4, null,
                                                                   JSElementFactory.TopLevelCompletion.NO, null);
       return PsiTreeUtil.findChildOfType(file, JSFunction.class);
@@ -143,6 +143,7 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
     panel.add(visibilityPanel, BorderLayout.NORTH);
     myStaticCb = new JCheckBox(JSBundle.message("declare.static"));
     myStaticCb.addChangeListener(new ChangeListener() {
+      @Override
       public void stateChanged(final ChangeEvent e) {
         updateSignature();
       }
@@ -157,6 +158,7 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
       putValue(DEFAULT_ACTION, Boolean.TRUE);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       doOKAction();
     }

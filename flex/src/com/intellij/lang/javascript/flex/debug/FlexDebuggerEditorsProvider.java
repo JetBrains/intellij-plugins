@@ -22,7 +22,7 @@ class FlexDebuggerEditorsProvider extends XDebuggerEditorsProviderBase {
 
   @Override
   protected PsiFile createExpressionCodeFragment(@NotNull Project project, @NotNull String text, @Nullable PsiElement context, boolean isPhysical) {
-    return JSElementFactory.createExpressionCodeFragment(project, text, context, true);
+    return JSElementFactory.createExpressionCodeFragment(project, text, context);
   }
 
   @Override
