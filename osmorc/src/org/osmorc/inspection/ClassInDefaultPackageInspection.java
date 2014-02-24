@@ -45,8 +45,8 @@ public class ClassInDefaultPackageInspection extends LocalInspectionTool {
       @Override
       public void visitClass(PsiClass psiClass) {
         if (OsmorcFacet.hasOsmorcFacet(psiClass)) {
-          PsiJavaFile file = (PsiJavaFile)psiClass.getContainingFile();
-          if (file.getPackageName().isEmpty()) {
+          PsiFile file = psiClass.getContainingFile();
+          if (file instanceof PsiJavaFile && ((PsiJavaFile)file).getPackageName().isEmpty()) {
             PsiIdentifier nameIdentifier = psiClass.getNameIdentifier();
             if (nameIdentifier != null) {
               holder.registerProblem(nameIdentifier, OsmorcBundle.message("ClassInDefaultPackageInspection.message"));
