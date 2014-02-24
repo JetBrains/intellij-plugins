@@ -95,6 +95,11 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return true;
   }
 
+  @Override
+  public boolean shouldAskOtherProviders(PsiElement context) {
+    return false;
+  }
+
   @Nullable
   private static String findJsClassOrFile(@NotNull JSClass root, Set<JSClass> visited, Set<String> possibleQNames) {
     if (!visited.add(root)) return null;

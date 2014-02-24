@@ -89,7 +89,7 @@
                           implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderOpenProcessor"
                           order="before EclipseProjectOpenProcessor"/>
 
-    <css.elementDescriptorProvider implementation="com.intellij.javascript.flex.css.FlexCssElementDescriptorProvider"/>
+    <css.elementDescriptorProvider implementation="com.intellij.javascript.flex.css.FlexCssElementDescriptorProvider" order="first"/>
     <css.classOrIdUsagesProvider implementation="com.intellij.javascript.flex.css.FlexClassOrIdUsagesProvider"/>
     <css.dialect implementation="com.intellij.javascript.flex.css.FlexCSSDialect"/>
     <projectConfigurable instance="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfigurable" id="flex.compiler"
