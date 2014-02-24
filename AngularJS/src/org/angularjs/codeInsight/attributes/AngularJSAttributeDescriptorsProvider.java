@@ -55,13 +55,24 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       if (!StringUtil.isEmpty(restrict) && !StringUtil.containsIgnoreCase(restrict, "A")) {
         return false;
       }
-      if (!StringUtil.isEmpty(tag) && !StringUtil.equalsIgnoreCase(tag, "ANY") &&
-          !StringUtil.equalsIgnoreCase(tag, tagName)) {
+      if (!tagMatches(tagName, tag)) {
         return false;
       }
     }
 
     return true;
+  }
+
+  private static boolean tagMatches(String tagName, String tag) {
+    if (StringUtil.isEmpty(tag) || StringUtil.equalsIgnoreCase(tag, "ANY")) {
+      return true;
+    }
+    for (String s : tag.split(",")) {
+      if (StringUtil.equalsIgnoreCase(tagName, s.trim())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Nullable

@@ -135,4 +135,14 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.configureByFiles("style.html", "angular.js");
     myFixture.checkHighlighting();
   }
+
+  public void testElement() {
+    myFixture.configureByFiles("ng-copy.html", "angular.js");
+    for (String signature : new String[]{"input", "select", "textarea", "a"}) {
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("<" + signature + " ng-<caret>", myFixture.getFile());
+      myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "ng-copy");
+    }
+  }
 }
