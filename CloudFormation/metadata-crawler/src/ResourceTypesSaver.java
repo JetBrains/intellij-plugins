@@ -131,9 +131,79 @@ public class ResourceTypesSaver {
 
         resourceType.properties.add(property);
       }
+    } else {
+      Element tableElement = doc.select("div.informaltable").first();
+      if (tableElement != null) {
+        final List<List<String>> table = parseTable(tableElement);
+
+        for (List<String> row : table) {
+          if (row.size() != 4) {
+            continue;
+          }
+
+          final String property = row.get(0);
+          final String type = row.get(1);
+          final String required = row.get(2);
+          final String notes = row.get(3);
+
+          CloudFormationResourceProperty resourceProperty = new CloudFormationResourceProperty();
+
+          resourceProperty.name = property;
+          resourceProperty.description = ""; // notes
+
+          if (required.equalsIgnoreCase("yes")) {
+            resourceProperty.required = true;
+          } else if (required.equalsIgnoreCase("no")) {
+            resourceProperty.required = false;
+          } else {
+            throw new RuntimeException("Unknown value for required in property " + property + " in " + url + ": " + required);
+          }
+
+          resourceProperty.type = type;
+
+          resourceType.properties.add(resourceProperty);
+        }
+      } else {
+        if (!name.equals("AWS::CloudFormation::WaitConditionHandle") && !name.equals("AWS::SDB::Domain")) {
+          throw new RuntimeException("No properties found in " + url);
+        }
+      }
+    }
+
+    if (name.equals("AWS::ElasticBeanstalk::Application")) {
+      // Not in official documentation yet, found in examples
+      resourceType.properties.add(CloudFormationResourceProperty.create("ConfigurationTemplates", "", "Unknown", false));
+      resourceType.properties.add(CloudFormationResourceProperty.create("ApplicationVersions", "", "Unknown", false));
     }
 
     return resourceType;
+  }
+
+  private static List<List<String>> parseTable(Element table) {
+    final Element tbody = table.getElementsByTag("tbody").first();
+    if (tbody == null) {
+      return new ArrayList<>();
+    }
+
+    List<List<String>> result = new ArrayList<>();
+    for (Element tr : tbody.children()) {
+      if (!tr.tagName().equals("tr")) {
+        continue;
+      }
+
+      List<String> row = new ArrayList<>();
+      for (Element td : tr.children()) {
+        if (!td.tagName().equals("td")) {
+          continue;
+        }
+
+        row.add(td.text());
+      }
+
+      result.add(row);
+    }
+
+    return result;
   }
 
   private static List<Pair<URL, String>> getResourceTypes() throws IOException {

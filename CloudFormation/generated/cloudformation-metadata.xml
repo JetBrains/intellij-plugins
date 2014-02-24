@@ -458,7 +458,98 @@
     </ResourceType>
     <ResourceType>
       <name>AWS::CloudWatch::Alarm</name>
-      <properties/>
+      <properties>
+        <ResourceProperty>
+          <name>ActionsEnabled</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>AlarmActions</name>
+          <description></description>
+          <type>List of String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>AlarmDescription</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>AlarmName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ComparisonOperator</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Dimensions</name>
+          <description></description>
+          <type>List of Metric Dimension type</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EvaluationPeriods</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>InsufficientDataActions</name>
+          <description></description>
+          <type>List of String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MetricName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Namespace</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>OKActions</name>
+          <description></description>
+          <type>List of String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Period</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Statistic</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Threshold</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Unit</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::DynamoDB::Table</name>
@@ -1518,11 +1609,37 @@
     </ResourceType>
     <ResourceType>
       <name>AWS::ElastiCache::SecurityGroup</name>
-      <properties/>
+      <properties>
+        <ResourceProperty>
+          <name>Description</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::ElastiCache::SecurityGroupIngress</name>
-      <properties/>
+      <properties>
+        <ResourceProperty>
+          <name>CacheSecurityGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EC2SecurityGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>EC2SecurityGroupOwnerId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::ElastiCache::SubnetGroup</name>
@@ -1554,6 +1671,18 @@
           <name>Description</name>
           <description></description>
           <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ConfigurationTemplates</name>
+          <description></description>
+          <type>Unknown</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ApplicationVersions</name>
+          <description></description>
+          <type>Unknown</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -2593,7 +2722,20 @@
     </ResourceType>
     <ResourceType>
       <name>AWS::SNS::TopicPolicy</name>
-      <properties/>
+      <properties>
+        <ResourceProperty>
+          <name>PolicyDocument</name>
+          <description></description>
+          <type>JSON</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Topics</name>
+          <description></description>
+          <type>Array of SNS topic ARNs</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
     <ResourceType>
       <name>AWS::SQS::Queue</name>
@@ -2644,7 +2786,20 @@
     </ResourceType>
     <ResourceType>
       <name>AWS::SQS::QueuePolicy</name>
-      <properties/>
+      <properties>
+        <ResourceProperty>
+          <name>PolicyDocument</name>
+          <description></description>
+          <type>JSON</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Queues</name>
+          <description></description>
+          <type>List of queue URLs</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
     </ResourceType>
   </resourceTypes>
   <predefinedParameters>

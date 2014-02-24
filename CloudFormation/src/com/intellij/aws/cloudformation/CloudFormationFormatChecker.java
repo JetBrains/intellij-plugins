@@ -203,8 +203,7 @@ public class CloudFormationFormatChecker {
       }
 
       if (resourceType.findProperty(propertyName) == null) {
-        // TODO Enable when ready
-        // addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName));
+        addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName));
       }
     }
 
