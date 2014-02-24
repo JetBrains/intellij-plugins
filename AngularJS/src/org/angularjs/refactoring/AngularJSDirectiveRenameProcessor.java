@@ -11,6 +11,7 @@ import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.rename.RenameDialog;
+import com.intellij.refactoring.rename.RenameUtil;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -28,35 +29,54 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
     return isDirective(element);
   }
 
+  @Nullable
+  @Override
+  public PsiElement substituteElementToRename(PsiElement element, @Nullable Editor editor) {
+    if (element instanceof JSLiteralExpression && ((JSLiteralExpression)element).isQuotedLiteral()) {
+      final JSNamedElementProxy directive = getDirective(element, StringUtil.unquoteString(element.getText()));
+      if (directive != null) return directive;
+    }
+    if (element instanceof JSNamedElementProxy) {
+      return element;
+    }
+    return null;
+  }
+
   private static boolean isDirective(PsiElement element) {
     if (element instanceof JSNamedElementProxy) {
-      if (isDirective(element, ((JSNamedElementProxy)element).getName())) return true;
+      if (getDirective(element, ((JSNamedElementProxy)element).getName()) != null) return true;
     }
     if (element instanceof JSLiteralExpression && ((JSLiteralExpression)element).isQuotedLiteral()) {
-      if (isDirective(element, StringUtil.unquoteString(element.getText()))) return true;
+      if (getDirective(element, StringUtil.unquoteString(element.getText())) != null) return true;
     }
     return false;
   }
 
-  private static boolean isDirective(PsiElement element, final String name) {
-    final String directiveName = DirectiveUtil.normalizeAttributeName(name);
+  private static JSNamedElementProxy getDirective(PsiElement element, final String name) {
+    final String directiveName = DirectiveUtil.getAttributeName(name);
     final JSNamedElementProxy directive = AngularIndexUtil.resolve(element.getProject(), AngularDirectivesIndex.INDEX_ID, directiveName);
-    if (element.getTextRange().contains(directive.getTextOffset())) {
-      return true;
+    if (directive != null && element.getTextRange().contains(directive.getTextOffset())) {
+      return directive;
     }
-    return false;
+    return null;
   }
 
   @Override
   public void renameElement(PsiElement element, String newName, UsageInfo[] usages, @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
-    super.renameElement(element, newName, usages, listener);
+    final String attributeName = DirectiveUtil.getAttributeName(newName);
+    for (UsageInfo usage : usages) {
+      RenameUtil.rename(usage, attributeName);
+    }
+
+    ((PsiNamedElement)element).setName(newName);
+    if (listener != null) {
+      listener.elementRenamed(element);
+    }
   }
 
   @Override
   public RenameDialog createRenameDialog(Project project, final PsiElement element, PsiElement nameSuggestionContext, Editor editor) {
-    final String directiveName = element instanceof PsiNamedElement ?
-                                 DirectiveUtil.attributeToDirective(((PsiNamedElement)element).getName()) :
-                                 StringUtil.unquoteString(element.getText());
+    final String directiveName = DirectiveUtil.attributeToDirective(((PsiNamedElement)element).getName());
     return new RenameDialog(project, element, nameSuggestionContext, editor) {
       @NotNull
       @Override
