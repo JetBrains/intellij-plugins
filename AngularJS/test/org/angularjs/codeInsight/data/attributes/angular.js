@@ -44,4 +44,5 @@
  * @name ng.directive:ngCopy
  * @element window, input, select, textarea, a
  */
-angular.directive({ngModel: ngModelDirective})
+angular.directive({ngModel: ngModelDirective,
+                   ngSrc: ngSrcDirective})
