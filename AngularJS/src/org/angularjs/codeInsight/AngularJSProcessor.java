@@ -36,7 +36,7 @@ public class AngularJSProcessor {
   }
 
   public static void process(final PsiElement element, final Consumer<JSNamedElement> consumer) {
-    final PsiFile hostFile = FileContextUtil.getContextFile(element);
+    final PsiFile hostFile = FileContextUtil.getContextFile(element.getContainingFile().getOriginalFile());
     if (hostFile == null) return;
 
     final XmlFile file = (XmlFile)hostFile;
