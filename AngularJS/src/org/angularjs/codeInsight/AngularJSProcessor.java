@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
@@ -36,7 +37,8 @@ public class AngularJSProcessor {
   }
 
   public static void process(final PsiElement element, final Consumer<JSNamedElement> consumer) {
-    final PsiFile hostFile = FileContextUtil.getContextFile(element.getContainingFile().getOriginalFile());
+    final PsiElement original = CompletionUtil.getOriginalOrSelf(element);
+    final PsiFile hostFile = FileContextUtil.getContextFile(original != element ? original : element.getContainingFile().getOriginalFile());
     if (hostFile == null) return;
 
     final XmlFile file = (XmlFile)hostFile;
@@ -46,7 +48,7 @@ public class AngularJSProcessor {
         file.accept(new AngularJSRecursiveVisitor() {
           @Override
           public void visitJSVariable(JSVariable node) {
-            if (scopeMatches(element, node)) {
+            if (scopeMatches(original, node)) {
               consumer.consume(node);
             }
             super.visitJSVariable(node);
@@ -55,14 +57,14 @@ public class AngularJSProcessor {
           @Override
           public void visitAngularJSAsExpression(AngularJSAsExpression asExpression) {
             final JSDefinitionExpression def = asExpression.getDefinition();
-            if (def != null && scopeMatches(element, asExpression)) {
+            if (def != null && scopeMatches(original, asExpression)) {
               consumer.consume(def);
             }
           }
 
           @Override
           public void visitAngularJSRepeatExpression(AngularJSRepeatExpression repeatExpression) {
-            if (scopeMatches(element, repeatExpression)) {
+            if (scopeMatches(original, repeatExpression)) {
               for (JSDefinitionExpression def : repeatExpression.getDefinitions()) {
                 consumer.consume(def);
               }
