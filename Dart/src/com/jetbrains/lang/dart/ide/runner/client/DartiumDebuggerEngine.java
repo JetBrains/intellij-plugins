@@ -32,6 +32,7 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
   public void checkAvailability(@NotNull final Project project) throws RuntimeConfigurationError {
     if (DartiumUtil.getDartiumBrowser() == null) {
       throw new RuntimeConfigurationError(DartBundle.message("dartium.not.configured", CommonBundle.settingsActionPath()), new Runnable() {
+        @Override
         public void run() {
           ShowSettingsUtil.getInstance().showSettingsDialog(project, DartBundle.message("dart.title"));
         }

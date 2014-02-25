@@ -1,13 +1,19 @@
 package com.jetbrains.lang.dart.ide;
 
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.ProjectScope;
 import com.intellij.util.Url;
 import com.jetbrains.javascript.debugger.FileUrlMapper;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,7 +28,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
 
   @Nullable
   @Override
-  public VirtualFile getFile(@NotNull Url url, @NotNull Project project) {
+  public VirtualFile getFile(@NotNull final Url url, @NotNull final Project project) {
     if (SCHEME.equals(url.getScheme())) {
       String path = url.getPath();
       int i = path.indexOf('/');
@@ -42,6 +48,25 @@ final class DartFileUrlMapper extends FileUrlMapper {
         return null;
       }
       return libraryFilePath == null ? file : file.getParent().findFileByRelativePath(libraryFilePath);
+    }
+    else if (DartResolveUtil.PACKAGE_SCHEME.equals(url.getScheme())) {
+      return DumbService.getInstance(project).tryRunReadActionInSmartMode(new Computable<VirtualFile>() {
+        @Override
+        public VirtualFile compute() {
+          Collection<VirtualFile> files = FilenameIndex.getVirtualFilesByName(project, DartResolveUtil.PUBSPEC_FILENAME, ProjectScope.getContentScope(project));
+          for (VirtualFile file : files) {
+            VirtualFile packagesDir = DartResolveUtil.getPackagesDir(file.getParent());
+            if (packagesDir != null) {
+              VirtualFile result = packagesDir.findFileByRelativePath(url.getPath());
+              if (result != null) {
+                return result;
+              }
+            }
+          }
+
+          return null;
+        }
+      }, "Smart remote file mapping is not possible during index update");
     }
     return null;
   }

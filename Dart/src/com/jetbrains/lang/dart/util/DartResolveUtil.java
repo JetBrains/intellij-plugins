@@ -37,7 +37,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class DartResolveUtil {
-  public static final String PACKAGE_PREFIX = "package:";
+  public static final String PACKAGE_SCHEME = "package";
+
+  public static final String PACKAGE_PREFIX = PACKAGE_SCHEME + ":";
+  public static final String PUBSPEC_FILENAME = "pubspec.yaml";
 
   public static List<PsiElement> findDartRoots(PsiFile psiFile) {
     if (psiFile instanceof XmlFile) {
@@ -1018,12 +1021,17 @@ public class DartResolveUtil {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     VirtualFile parent = file;
     while ((parent = parent.getParent()) != null && fileIndex.isInContent(parent)) {
-      if (parent.findChild("pubspec.yaml") != null) {
-        final VirtualFile packagesFolder = parent.findChild("packages");
-        return packagesFolder != null && packagesFolder.isDirectory() ? packagesFolder : null;
+      if (parent.findChild(PUBSPEC_FILENAME) != null) {
+        return getPackagesDir(parent);
       }
     }
     return null;
+  }
+
+  @Nullable
+  public static VirtualFile getPackagesDir(@Nullable VirtualFile parent) {
+    VirtualFile packagesFolder = parent == null ? null : parent.findChild("packages");
+    return packagesFolder != null && packagesFolder.isDirectory() ? packagesFolder : null;
   }
 
   @Nullable
