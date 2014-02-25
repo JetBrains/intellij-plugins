@@ -43,37 +43,37 @@ public class DartAnalyzerService {
     myProject = project;
 
     final VirtualFileAdapter listener = new VirtualFileAdapter() {
-      public void beforePropertyChange(final VirtualFilePropertyEvent event) {
+      public void beforePropertyChange(@NotNull final VirtualFilePropertyEvent event) {
         if (VirtualFile.PROP_NAME.equals(event.getPropertyName())) {
           fileDeleted(event);
         }
       }
 
-      public void beforeFileMovement(final VirtualFileMoveEvent event) {
+      public void beforeFileMovement(@NotNull final VirtualFileMoveEvent event) {
         fileDeleted(event);
       }
 
-      public void fileDeleted(final VirtualFileEvent event) {
+      public void fileDeleted(@NotNull final VirtualFileEvent event) {
         if (FileUtilRt.extensionEquals(event.getFileName(), DartFileType.DEFAULT_EXTENSION)) {
           myFileToSourceMap.remove(event.getFile());
         }
       }
 
-      public void propertyChanged(final VirtualFilePropertyEvent event) {
+      public void propertyChanged(@NotNull final VirtualFilePropertyEvent event) {
         if (VirtualFile.PROP_NAME.equals(event.getPropertyName())) {
           fileCreated(event);
         }
       }
 
-      public void fileMoved(final VirtualFileMoveEvent event) {
+      public void fileMoved(@NotNull final VirtualFileMoveEvent event) {
         fileCreated(event);
       }
 
-      public void fileCopied(final VirtualFileCopyEvent event) {
+      public void fileCopied(@NotNull final VirtualFileCopyEvent event) {
         fileCreated(event);
       }
 
-      public void fileCreated(final VirtualFileEvent event) {
+      public void fileCreated(@NotNull final VirtualFileEvent event) {
         if (FileUtilRt.extensionEquals(event.getFileName(), DartFileType.DEFAULT_EXTENSION)) {
           myCreatedFiles.add(event.getFile());
         }

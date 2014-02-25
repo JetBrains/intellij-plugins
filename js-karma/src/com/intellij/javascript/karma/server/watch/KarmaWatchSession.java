@@ -87,7 +87,7 @@ public class KarmaWatchSession {
   private class MyVirtualFileListener implements VirtualFileListener {
 
     @Override
-    public void propertyChanged(VirtualFilePropertyEvent event) {
+    public void propertyChanged(@NotNull VirtualFilePropertyEvent event) {
       updateWatchPatterns();
       if ("name".equals(event.getPropertyName())) {
         VirtualFile parent = event.getParent();
@@ -104,7 +104,7 @@ public class KarmaWatchSession {
     }
 
     @Override
-    public void contentsChanged(VirtualFileEvent event) {
+    public void contentsChanged(@NotNull VirtualFileEvent event) {
       VirtualFile file = event.getFile();
       String watchedPath = findWatchedOriginalPath(file);
       if (watchedPath != null) {
@@ -113,7 +113,7 @@ public class KarmaWatchSession {
     }
 
     @Override
-    public void fileCreated(VirtualFileEvent event) {
+    public void fileCreated(@NotNull VirtualFileEvent event) {
       updateWatchPatterns();
       VirtualFile file = event.getFile();
       String watchedPath = findWatchedOriginalPath(file);
@@ -123,7 +123,7 @@ public class KarmaWatchSession {
     }
 
     @Override
-    public void fileDeleted(VirtualFileEvent event) {
+    public void fileDeleted(@NotNull VirtualFileEvent event) {
       updateWatchPatterns();
       VirtualFile file = event.getFile();
       String watchedPath = findWatchedOriginalPath(file);
@@ -133,7 +133,7 @@ public class KarmaWatchSession {
     }
 
     @Override
-    public void fileMoved(VirtualFileMoveEvent event) {
+    public void fileMoved(@NotNull VirtualFileMoveEvent event) {
       updateWatchPatterns();
       String fileName = event.getFileName();
       VirtualFile oldParent = event.getOldParent();
@@ -151,7 +151,7 @@ public class KarmaWatchSession {
     }
 
     @Override
-    public void fileCopied(VirtualFileCopyEvent event) {
+    public void fileCopied(@NotNull VirtualFileCopyEvent event) {
       updateWatchPatterns();
       VirtualFile file = event.getFile();
       String watchedPath = findWatchedOriginalPath(file);
@@ -161,22 +161,22 @@ public class KarmaWatchSession {
     }
 
     @Override
-    public void beforePropertyChange(VirtualFilePropertyEvent event) {
+    public void beforePropertyChange(@NotNull VirtualFilePropertyEvent event) {
       // ignored
     }
 
     @Override
-    public void beforeContentsChange(VirtualFileEvent event) {
+    public void beforeContentsChange(@NotNull VirtualFileEvent event) {
       // ignored
     }
 
     @Override
-    public void beforeFileDeletion(VirtualFileEvent event) {
+    public void beforeFileDeletion(@NotNull VirtualFileEvent event) {
       // ignored
     }
 
     @Override
-    public void beforeFileMovement(VirtualFileMoveEvent event) {
+    public void beforeFileMovement(@NotNull VirtualFileMoveEvent event) {
       // ignored
     }
   }
