@@ -17,11 +17,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
+  @Override
   @NotNull
   public String getGroupDisplayName() {
     return DartBundle.message("inspections.group.name");
   }
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
@@ -72,20 +74,24 @@ public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
       myMessage = message;
     }
 
+    @Override
     @NotNull
     public String getName() {
       return myMessage;
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
       return getName();
     }
 
+    @Override
     public boolean startInWriteAction() {
       return false;
     }
 
+    @Override
     public void applyFix(final @NotNull Project project, final @NotNull PsiFile file, final @Nullable Editor editor) {
       ShowSettingsUtil.getInstance().showSettingsDialog(project, DartConfigurable.DART_SETTINGS_PAGE_NAME);
     }
@@ -101,20 +107,24 @@ public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
       myDartSdkGlobalLibName = dartSdkGlobalLibName;
     }
 
+    @Override
     @NotNull
     public String getName() {
       return DartBundle.message("enable.dart.support");
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
       return getName();
     }
 
+    @Override
     public boolean isAvailable(@NotNull final Project project, @Nullable final Editor editor, final PsiFile file) {
       return myAvailable;
     }
 
+    @Override
     public void applyFix(final @NotNull Project project, final @NotNull PsiFile file, @Nullable final Editor editor) {
       DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(myModule, myDartSdkGlobalLibName);
       myAvailable = false;

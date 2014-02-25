@@ -26,8 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DartSdkUtil {
-
-  private static Map<Pair<File, Long>, String> ourVersions = new HashMap<Pair<File, Long>, String>();
+  private static final Map<Pair<File, Long>, String> ourVersions = new HashMap<Pair<File, Long>, String>();
 
   @Nullable
   static String getSdkVersion(final @NotNull String sdkHomePath) {

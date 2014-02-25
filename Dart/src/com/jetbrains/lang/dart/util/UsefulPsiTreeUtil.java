@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class UsefulPsiTreeUtil {
   public static ASTNode[] findChildrenRange(ASTNode[] elements, int startOffset, int endOffset) {
     int i = findChildIndex(elements, startOffset);

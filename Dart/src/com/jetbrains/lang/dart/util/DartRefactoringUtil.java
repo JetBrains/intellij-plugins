@@ -22,9 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartRefactoringUtil {
   public static Set<String> collectUsedNames(PsiElement context) {
     return new THashSet<String>(ContainerUtil.map(collectUsedComponents(context), new Function<DartComponentName, String>() {
@@ -64,6 +61,7 @@ public class DartRefactoringUtil {
     }
     final List<PsiElement> occurrences = new ArrayList<PsiElement>();
     context.acceptChildren(new DartRecursiveVisitor() {
+      @Override
       public void visitElement(@NotNull final PsiElement element) {
         if (DartComponentType.typeOf(element) == DartComponentType.PARAMETER) {
           return;
@@ -123,7 +121,7 @@ public class DartRefactoringUtil {
     }
 
     final DartStatements statements = PsiTreeUtil.getParentOfType(element1, DartStatements.class);
-    if (statements == null || element1 == null || element2 == null || !PsiTreeUtil.isAncestor(statements, element2, true)) {
+    if (statements == null || element2 == null || !PsiTreeUtil.isAncestor(statements, element2, true)) {
       return PsiElement.EMPTY_ARRAY;
     }
 
