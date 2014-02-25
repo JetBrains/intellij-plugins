@@ -716,32 +716,32 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
   private class MyVirtualFileAdapter extends VirtualFileAdapter {
     @Override
-      public void propertyChanged(final VirtualFilePropertyEvent event) {
+      public void propertyChanged(@NotNull final VirtualFilePropertyEvent event) {
       handleVirtualFileEvent(event.getFile());
     }
 
     @Override
-      public void contentsChanged(final VirtualFileEvent event) {
+      public void contentsChanged(@NotNull final VirtualFileEvent event) {
       handleVirtualFileEvent(event.getFile(), true);
     }
 
     @Override
-      public void fileCreated(final VirtualFileEvent event) {
+      public void fileCreated(@NotNull final VirtualFileEvent event) {
       handleVirtualFileEvent(event.getFile());
     }
 
     @Override
-      public void fileDeleted(final VirtualFileEvent event) {
+      public void fileDeleted(@NotNull final VirtualFileEvent event) {
       handleVirtualFileEvent(event.getFile());
     }
 
     @Override
-      public void fileMoved(final VirtualFileMoveEvent event) {
+      public void fileMoved(@NotNull final VirtualFileMoveEvent event) {
       handleVirtualFileEvent(event.getFile());
     }
 
     @Override
-      public void fileCopied(final VirtualFileCopyEvent event) {
+      public void fileCopied(@NotNull final VirtualFileCopyEvent event) {
       handleVirtualFileEvent(event.getFile());
     }
 
