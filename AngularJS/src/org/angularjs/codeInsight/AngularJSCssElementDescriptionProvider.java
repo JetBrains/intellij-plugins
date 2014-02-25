@@ -7,8 +7,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.CssSimpleSelector;
-import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import com.intellij.xml.util.HtmlUtil;
@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularJSCssElementDescriptionProvider extends CssElementDescriptorProviderImpl {
+public class AngularJSCssElementDescriptionProvider extends CssElementDescriptorProvider {
   @Override
   public boolean isMyContext(@Nullable PsiElement context) {
     if (context == null) return false;
