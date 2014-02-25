@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.ThreeState;
 import com.intellij.util.indexing.ID;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
@@ -30,13 +31,13 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
       final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project, false);
       for (String directiveName : docDirectives) {
-        if (isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesDocIndex.INDEX_ID)) {
+        if (isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesDocIndex.INDEX_ID) == ThreeState.YES) {
           result.put(directiveName, createDescriptor(project, directiveName));
         }
       }
       for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project, false)) {
         if (!docDirectives.contains(directiveName) &&
-            isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesIndex.INDEX_ID)) {
+            isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesIndex.INDEX_ID) == ThreeState.YES) {
           result.put(directiveName, createDescriptor(project, directiveName));
         }
       }
@@ -45,22 +46,26 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     return XmlAttributeDescriptor.EMPTY;
   }
 
-  private static boolean isApplicable(Project project, String directiveName, String tagName, final ID<String, Void> index) {
+  private static ThreeState isApplicable(Project project, String directiveName, String tagName, final ID<String, Void> index) {
     final JSNamedElementProxy directive = AngularIndexUtil.resolve(project, index, directiveName);
-    final String restrictions = directive != null ? directive.getIndexItem().getTypeString() : null;
+    if (directive == null) {
+      return ThreeState.UNSURE;
+    }
+
+    final String restrictions = directive.getIndexItem().getTypeString();
     if (restrictions != null) {
       final String[] split = restrictions.split(";", -1);
       final String restrict = split[0];
       final String tag = split[1];
       if (!StringUtil.isEmpty(restrict) && !StringUtil.containsIgnoreCase(restrict, "A")) {
-        return false;
+        return ThreeState.NO;
       }
       if (!tagMatches(tagName, tag)) {
-        return false;
+        return ThreeState.NO;
       }
     }
 
-    return true;
+    return ThreeState.YES;
   }
 
   private static boolean tagMatches(String tagName, String tag) {
@@ -81,13 +86,12 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
-      boolean attributeAvailable;
-      if (AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project, false).contains(attributeName)) {
-        attributeAvailable = isApplicable(project, attributeName, xmlTag.getName(), AngularDirectivesDocIndex.INDEX_ID);
-      } else {
-        attributeAvailable = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project, false).contains(attributeName);
+      final String tagName = xmlTag.getName();
+      ThreeState attributeAvailable = isApplicable(project, attributeName, tagName, AngularDirectivesDocIndex.INDEX_ID);
+      if (attributeAvailable == ThreeState.UNSURE) {
+        attributeAvailable = isApplicable(project, attributeName, tagName, AngularDirectivesIndex.INDEX_ID);
       }
-      return attributeAvailable ? createDescriptor(project, attributeName) : null;
+      return attributeAvailable == ThreeState.YES ? createDescriptor(project, attributeName) : null;
     }
     return null;
   }
