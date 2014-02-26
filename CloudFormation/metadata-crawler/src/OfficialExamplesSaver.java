@@ -15,7 +15,11 @@ public class OfficialExamplesSaver {
       String name = key.text();
       int size = Integer.parseInt(key.parent().getElementsByTag("Size").first().text());
 
-      if (name.equalsIgnoreCase("AutoScalingRollingUpdates.template")) {
+      if (name.equalsIgnoreCase("AutoScalingRollingUpdates.template") ||
+          name.equalsIgnoreCase("VPC_RDS_DB_Instance.template") ||
+          name.equalsIgnoreCase("RDS_MySQL_With_Read_Replica.template") ||
+          name.equalsIgnoreCase("RDSDatabaseWithOptionalReadReplica.template") ||
+          name.equalsIgnoreCase("DynamoDB_Table.template")) {
         // Known to be broken
         continue;
       }
