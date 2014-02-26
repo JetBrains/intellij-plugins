@@ -1,7 +1,9 @@
 package com.intellij.aws.cloudformation.metadata;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CloudFormationResourceType {
   public String name;
@@ -15,5 +17,16 @@ public class CloudFormationResourceType {
     }
 
     return null;
+  }
+
+  public Set<String> getRequiredProperties() {
+    Set<String> requiredProperties = new HashSet<String>();
+    for (CloudFormationResourceProperty property : properties) {
+      if (property.required) {
+        requiredProperties.add(property.name);
+      }
+    }
+
+    return requiredProperties;
   }
 }

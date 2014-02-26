@@ -17,7 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class CloudFormationFormatChecker {
@@ -174,9 +176,21 @@ public class CloudFormationFormatChecker {
     final JSProperty propertiesProperty = obj.findProperty(CloudFormationConstants.PropertiesPropertyName);
     if (propertiesProperty != null) {
       resourceProperties(propertiesProperty, typeProperty);
+    } else {
+      final String resourceType = checkAndGetUnquotedStringText(typeProperty.getValue());
+      if (resourceType != null) {
+        final CloudFormationResourceType resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(resourceType);
+        if (resourceTypeMetadata != null) {
+          Set<String> requiredProperties = new HashSet<String>(resourceTypeMetadata.getRequiredProperties());
+          if (!requiredProperties.isEmpty()) {
+            final String requiredPropertiesString = StringUtil.join(requiredProperties, " ");
+            addProblemOnNameElement(
+              resourceProperty,
+              CloudFormationBundle.getString("format.required.resource.properties.are.not.set", requiredPropertiesString));
+          }
+        }
+      }
     }
-
-    // TODO Handle case with required properties and no Properties section
   }
 
   private void resourceProperties(JSProperty propertiesProperty, JSProperty typeProperty) {
@@ -196,6 +210,8 @@ public class CloudFormationFormatChecker {
       return;
     }
 
+    Set<String> requiredProperties = new HashSet<String>(resourceType.getRequiredProperties());
+
     for (JSProperty property : properties.getProperties()) {
       final String propertyName = property.getName();
       if (propertyName == null) {
@@ -205,26 +221,26 @@ public class CloudFormationFormatChecker {
       if (resourceType.findProperty(propertyName) == null) {
         addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName));
       }
+
+      requiredProperties.remove(propertyName);
     }
 
-    // TODO Required properties
+    if (!requiredProperties.isEmpty()) {
+      final String requiredPropertiesString = StringUtil.join(requiredProperties, " ");
+      addProblemOnNameElement(propertiesProperty,
+                              CloudFormationBundle.getString("format.required.resource.properties.are.not.set", requiredPropertiesString));
+    }
   }
 
   private void resourceType(JSProperty typeProperty) {
-    final String value = checkAndGetQuotedStringText(typeProperty.getValue());
+    final String value = checkAndGetUnquotedStringText(typeProperty.getValue());
     if (value == null) {
       return;
     }
 
-    final String unquotedValue = StringUtil.stripQuotesAroundValue(value);
-
-    for (CloudFormationResourceType resourceType : CloudFormationMetadataProvider.METADATA.resourceTypes) {
-      if (unquotedValue.equals(resourceType.name)) {
-        return;
-      }
+    if (CloudFormationMetadataProvider.METADATA.findResourceType(value) == null) {
+      addProblem(typeProperty, CloudFormationBundle.getString("format.unknown.type", value));
     }
-
-    addProblem(typeProperty, CloudFormationBundle.getString("format.unknown.type", value));
   }
 
   private JSObjectLiteralExpression checkAndGetObject(JSExpression expression) {

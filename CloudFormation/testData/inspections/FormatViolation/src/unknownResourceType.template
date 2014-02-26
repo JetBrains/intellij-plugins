@@ -11,7 +11,11 @@
     },
 
     "bbb": {
-      "Type": "AWS::IAM::AccessKey"
+      "Type": "AWS::IAM::AccessKey",
+      "Properties": {
+        "Status": "aaas",
+        "UserName": "bbbs"
+      }
     }
   }
 }
