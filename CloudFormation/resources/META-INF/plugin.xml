@@ -1,20 +1,12 @@
 <idea-plugin version="2">
   <id>AWSCloudFormation</id>
   <name>AWS CloudFormation support</name>
-  <version>0.1</version>
+  <version>0.2</version>
 
   <vendor url="https://github.com/shalupov/idea-cloudformation">Leonid Shalupov</vendor>
 
   <description><![CDATA[
     Amazon AWS CloudFormation language support
-
-    <ul>
-      <li>Registers *.template as CloudFormation files</li>
-      <li>Highlights wrong values in Ref</li>
-      <li>Provides Goto Declaration, Find Usages on resource, mapping and parameter names</li>
-      <li>Renames resources, mapping and parameters</li>
-      <li>Provides completion on Refs and resource types</li>
-    </ul>
   ]]></description>
 
   <idea-version since-build="133.193"/>
