@@ -141,7 +141,7 @@ public class JstdTestLocationProvider implements TestLocationProvider {
     GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
     testMethodName = StringUtil.trimStart(testMethodName, "test ");
     String key = JsTestFileByTestNameIndex.createQUnitKeyForTestFromDefaultModule(testMethodName);
-    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
+    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(project, key, scope);
     List<VirtualFile> validJsTestVirtualFiles = filterVirtualFiles(jsTestVirtualFiles);
 
     for (VirtualFile jsTestVirtualFile : validJsTestVirtualFiles) {
@@ -214,7 +214,7 @@ public class JstdTestLocationProvider implements TestLocationProvider {
     while (lastSpaceInd >= 0) {
       String topLevelSuiteName = joinedSuites.substring(0, lastSpaceInd);
       String key = JsTestFileByTestNameIndex.createJasmineKey(Collections.singletonList(topLevelSuiteName));
-      List<VirtualFile> files = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
+      List<VirtualFile> files = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(project, key, scope);
       for (VirtualFile file : files) {
         if (file.isValid()) {
           return file;
