@@ -133,11 +133,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
   }
 
-  @Override
-  public JSAnnotatingVisitor newInstance() {
-    return new ActionScriptAnnotatingVisitor();
-  }
-
   protected static ChangeSignatureFix createChangeBaseMethodSignatureFix(final JSFunction superMethod, final JSFunction override) {
     JSType type = override.getReturnType();
     String s = StringUtil.notNullize(type != null ? type.getResolvedTypeText() : null);

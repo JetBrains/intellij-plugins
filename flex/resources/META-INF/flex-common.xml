@@ -166,6 +166,8 @@
 
     <indexedRootsProvider implementation="com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor"/>
 
+    <annotator language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.inspections.actionscript.ActionScriptAnnotatingVisitor"/>
+
     <localInspection shortName="FlexUnitClassInProductSourceInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testclassinproductsource.displayname" groupKey="flexunit.inspections.group"
                      enabledByDefault="true" level="WARNING"
@@ -256,7 +258,6 @@
     <classInheritorsProvider implementation="com.intellij.javascript.flex.mxml.XmlBackedClassInheritorsProvider"/>
     <conditionalCompilationDefinitionsProvider
         implementation="com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl"/>
-    <dialectAnnotator language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.inspections.actionscript.ActionScriptAnnotatingVisitor"/>
     <elementScopeProvider language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.ActionScriptResolveScopeProvider"/>
     <xmlBackedClassProvider implementation="com.intellij.javascript.flex.mxml.MxmlJSClassProvider"/>
     <smartCompletionContributor language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.ActionScriptSmartCompletionContributor"/>
