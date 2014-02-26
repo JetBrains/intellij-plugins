@@ -170,10 +170,16 @@ public class ResourceTypesSaver {
       }
     }
 
+    // De-facto changes not covered in documentation
+
     if (name.equals("AWS::ElasticBeanstalk::Application")) {
       // Not in official documentation yet, found in examples
       resourceType.properties.add(CloudFormationResourceProperty.create("ConfigurationTemplates", "", "Unknown", false));
       resourceType.properties.add(CloudFormationResourceProperty.create("ApplicationVersions", "", "Unknown", false));
+    }
+
+    if (name.equals("AWS::IAM::AccessKey")) {
+      resourceType.findProperty("Status").required = false;
     }
 
     return resourceType;
