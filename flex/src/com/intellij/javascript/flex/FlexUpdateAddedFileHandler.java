@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.file.UpdateAddedFileProcessor;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Maxim.Mossienko
@@ -14,10 +15,12 @@ import com.intellij.util.IncorrectOperationException;
  *         Time: 3:41:49 PM
  */
 public class FlexUpdateAddedFileHandler extends UpdateAddedFileProcessor{
-  public boolean canProcessElement(final PsiFile element) {
+  @Override
+  public boolean canProcessElement(@NotNull final PsiFile element) {
     return element instanceof JSFile || JavaScriptSupportLoader.isFlexMxmFile(element);
   }
 
+  @Override
   public void update(final PsiFile element, PsiFile originalElement) throws IncorrectOperationException {
     if (element instanceof JSFile) {
       JSFile file = (JSFile)element;
