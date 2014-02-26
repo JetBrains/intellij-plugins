@@ -210,19 +210,20 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
 
   public static class DartPathOrLibraryManipulator implements ElementManipulator<DartPathOrLibraryReference> {
     @Override
-    public DartPathOrLibraryReference handleContentChange(DartPathOrLibraryReference element, TextRange range, String newContent)
+    public DartPathOrLibraryReference handleContentChange(@NotNull DartPathOrLibraryReference element, @NotNull TextRange range, String newContent)
       throws IncorrectOperationException {
       return element;
     }
 
     @Override
-    public DartPathOrLibraryReference handleContentChange(DartPathOrLibraryReference element, String newContent)
+    public DartPathOrLibraryReference handleContentChange(@NotNull DartPathOrLibraryReference element, String newContent)
       throws IncorrectOperationException {
       return element;
     }
 
+    @NotNull
     @Override
-    public TextRange getRangeInElement(DartPathOrLibraryReference element) {
+    public TextRange getRangeInElement(@NotNull DartPathOrLibraryReference element) {
       return element.getTextRange();
     }
   }

@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,7 +33,7 @@ import com.intellij.util.IncorrectOperationException;
  */
 public class CfmlAttributeValueManipulator extends AbstractElementManipulator<CfmlCompositeElement> {
   @Override
-  public CfmlCompositeElement handleContentChange(CfmlCompositeElement expr, TextRange range, String newContent) throws
+  public CfmlCompositeElement handleContentChange(@NotNull CfmlCompositeElement expr, @NotNull TextRange range, String newContent) throws
                                                                                                                  IncorrectOperationException {
     PsiElement parent = expr.getParent();
     PsiFile psiFile = null;
@@ -73,8 +74,9 @@ public class CfmlAttributeValueManipulator extends AbstractElementManipulator<Cf
     return expr;
   }
 
+  @NotNull
   @Override
-  public TextRange getRangeInElement(final CfmlCompositeElement element) {
+  public TextRange getRangeInElement(@NotNull final CfmlCompositeElement element) {
     return getValueRange(element);
   }
 

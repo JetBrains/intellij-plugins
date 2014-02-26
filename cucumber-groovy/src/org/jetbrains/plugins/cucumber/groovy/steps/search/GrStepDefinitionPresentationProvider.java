@@ -5,6 +5,7 @@ import com.intellij.navigation.ItemPresentationProvider;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
@@ -20,7 +21,7 @@ public class GrStepDefinitionPresentationProvider implements ItemPresentationPro
 
   @Nullable
   @Override
-  public ItemPresentation getPresentation(final GrMethodCall item) {
+  public ItemPresentation getPresentation(@NotNull final GrMethodCall item) {
     if (!GrCucumberUtil.isStepDefinition(item)) return null;
     return new ItemPresentation() {
       @Nullable
