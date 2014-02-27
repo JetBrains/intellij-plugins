@@ -29,13 +29,13 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<String, XmlAttributeDescriptor>();
-      final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project, false);
+      final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project);
       for (String directiveName : docDirectives) {
         if (isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesDocIndex.INDEX_ID) == ThreeState.YES) {
           result.put(directiveName, createDescriptor(project, directiveName));
         }
       }
-      for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project, false)) {
+      for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project)) {
         if (!docDirectives.contains(directiveName) &&
             isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesIndex.INDEX_ID) == ThreeState.YES) {
           result.put(directiveName, createDescriptor(project, directiveName));

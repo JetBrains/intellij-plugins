@@ -45,7 +45,7 @@ public class DirectiveUtil {
 
   public static boolean processTagDirectives(final Project project,
                                              Processor<JSNamedElementProxy> processor) {
-    final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project, false);
+    final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project);
     for (String directiveName : docDirectives) {
       final JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.INDEX_ID);
       if (directive != null) {
@@ -54,7 +54,7 @@ public class DirectiveUtil {
         }
       }
     }
-    final Collection<String> directives = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project, false);
+    final Collection<String> directives = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project);
     for (String directiveName : directives) {
       if (!docDirectives.contains(directiveName)) {
         final JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesIndex.INDEX_ID);
