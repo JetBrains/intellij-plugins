@@ -25,6 +25,7 @@ import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.psi.CfmlTag;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.FileType;
@@ -68,7 +69,7 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
       CfmlBraceMatcher braceMatcher = new CfmlBraceMatcher();
       HighlighterIterator iterator = ((EditorEx)editor).getHighlighter().createIterator(offset);
       if (!braceMatcher.isLBraceToken(iterator, editor.getDocument().getCharsSequence(), fileType)) {
-        DocumentUtils.typeInStringAndMoveCaret(editor, offset, "}");
+        DocumentUtils.typeInStringAndMoveCaret(editor, "}", 0);
         // return Result.STOP;
       }
       return Result.CONTINUE;
@@ -77,10 +78,10 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
       if (CfmlEditorUtil.countSharpsBalance(editor) == 0) {
         char charAtOffset = DocumentUtils.getCharAt(editor.getDocument(), offset);
         if (charAtOffset == '#') {
-          editor.getCaretModel().moveToOffset(offset + 1);
+          EditorModificationUtil.moveAllCaretsRelatively(editor, 1);
           return Result.STOP;
         }
-        DocumentUtils.typeInStringAndMoveCaret(editor, offset, "#");
+        DocumentUtils.typeInStringAndMoveCaret(editor, "#", 0);
       }
     }
     else if (c == '>') {
@@ -104,9 +105,10 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
     char charAtOffset = DocumentUtils.getCharAt(document, offset);
 
     if (charAtOffset != '>') {
-      DocumentUtils.typeInStringAndMoveCaret(editor, offset, ">");
+      DocumentUtils.typeInStringAndMoveCaret(editor, ">", 0);
     }
-    editor.getCaretModel().moveToOffset(++offset);
+    EditorModificationUtil.moveAllCaretsRelatively(editor, 1);
+    ++offset;
     if (DocumentUtils.getCharAt(document, offset - 2) == '/') {
       return false;
     }
@@ -161,7 +163,7 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
       }
     }
     if (doInsertion && CfmlUtil.isEndTagRequired(((CfmlTag)tagElement).getTagName(), project)) {
-      DocumentUtils.typeInStringAndMoveCaret(editor, offset, "</" + ((CfmlTag)tagElement).getTagName() + ">");
+      DocumentUtils.typeInStringAndMoveCaret(editor, "</" + ((CfmlTag)tagElement).getTagName() + ">", 0);
       return true;
     }
     return false;

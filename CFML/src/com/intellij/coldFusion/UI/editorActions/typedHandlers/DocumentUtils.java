@@ -31,8 +31,7 @@ public class DocumentUtils {
     return document.getCharsSequence().charAt(offset);
   }
 
-  static void typeInStringAndMoveCaret(Editor editor, int offset, String str) {
-    EditorModificationUtil.typeInStringAtCaretHonorBlockSelection(editor, str, true);
-    editor.getCaretModel().moveToOffset(offset);
+  static void typeInStringAndMoveCaret(Editor editor, String str, int caretShift) {
+    EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, str, true, caretShift);
   }
 }
