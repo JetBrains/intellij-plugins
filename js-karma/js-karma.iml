@@ -19,6 +19,7 @@
     <orderEntry type="module" module-name="xdebugger-api" />
     <orderEntry type="module" module-name="coverage-common" />
     <orderEntry type="module" module-name="webide-impl" />
+    <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
   </component>
 </module>
 
