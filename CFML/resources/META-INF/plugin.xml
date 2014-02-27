@@ -1,8 +1,16 @@
 <idea-plugin>
     <name>CFML Support</name>
-    <description>
-        ColdFusion Markup Language (CFML) support.
-    </description>
+  <description>
+      <![CDATA[
+      This plugin provides editing support for ColdFusion files, and facilities for deploying applications to the <a href="http://www.adobe.com/products/coldfusion-family.html">ColdFusion server</a>.
+      The following features are available:
+        <ul>
+        <li>File type.</li>
+        <li>Coding assistance (code completion, syntax and error highlighting, code formatting and folding).</li>
+        <li>Navigation and search facilities.</li>
+        </ul>
+      ]]>
+   </description>
   <version>3.53</version>
     <vendor email="support@jetbrains.com">JetBrains</vendor>
     <resource-bundle>messages.CfmlBundle</resource-bundle>
