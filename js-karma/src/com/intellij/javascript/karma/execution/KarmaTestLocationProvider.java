@@ -113,7 +113,7 @@ public class KarmaTestLocationProvider implements TestLocationProvider {
   private PsiElement findJasmineElement(@NotNull List<String> suiteNames, @Nullable String testName) {
     String suiteKey = JsTestFileByTestNameIndex.createJasmineKey(suiteNames);
     GlobalSearchScope scope = GlobalSearchScope.projectScope(myProject);
-    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(myProject, suiteKey, scope);
+    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(suiteKey, scope);
     for (VirtualFile file : jsTestVirtualFiles) {
       PsiFile psiFile = PsiManager.getInstance(myProject).findFile(file);
       if (psiFile instanceof JSFile) {
@@ -133,7 +133,7 @@ public class KarmaTestLocationProvider implements TestLocationProvider {
   private PsiElement findQUnitElement(@NotNull String moduleName, @Nullable String testName) {
     String qunitKey = JsTestFileByTestNameIndex.createQUnitKey(moduleName, testName);
     GlobalSearchScope scope = GlobalSearchScope.projectScope(myProject);
-    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(myProject, qunitKey, scope);
+    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(qunitKey, scope);
     for (VirtualFile file : jsTestVirtualFiles) {
       PsiFile psiFile = PsiManager.getInstance(myProject).findFile(file);
       if (psiFile instanceof JSFile) {
