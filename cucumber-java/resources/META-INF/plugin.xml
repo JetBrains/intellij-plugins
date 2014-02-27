@@ -2,7 +2,23 @@
 <idea-plugin version="2">
   <id>cucumber-java</id>
   <name>Cucumber for Java</name>
-  <description>Provides support of Cucumber for Java</description>
+  <description>
+      <![CDATA[
+      This plugin enables <a href="http://cukes.info/">Cucumber</a> support with step definitions written in Java.
+        The following coding assistance features are available:
+        <ul>
+          <li>Error and syntax highlighting.</li>
+          <li>Indentation.</li>
+          <li>Intention actions.</li>
+          <li>Viewing code structure.</li>
+          <li>Navigation in the source code.</li>
+          <li>Integrated documentation.</li>
+          <li>Code completion.</li>
+          <li>Search for usages.</li>
+          <li>Commenting and uncommenting lines.</li>
+        </ul>
+      ]]>
+   </description>
   <version>999.999</version>
   <depends>cucumber</depends>
   <idea-version since-build="123.0" until-build="133.0"/>
