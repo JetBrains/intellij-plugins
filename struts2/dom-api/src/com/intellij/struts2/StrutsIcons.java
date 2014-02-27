@@ -18,6 +18,7 @@ package com.intellij.struts2;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.ui.LayeredIcon;
+import com.intellij.util.ui.UIUtil;
 import icons.Struts2Icons;
 
 import javax.swing.*;
@@ -48,12 +49,12 @@ public final class StrutsIcons {
   /**
    * Vertical offset for small overlay icons.
    */
-  static final int OVERLAY_Y_OFFSET = 7;
+  static final int OVERLAY_Y_OFFSET = UIUtil.isRetina() ? 7 * 2 : 7;
 
   /**
    * Horizontal offset for small overlay icons.
    */
-  private static final int OVERLAY_X_OFFSET = 8;
+  static final int OVERLAY_X_OFFSET = UIUtil.isRetina() ? 8 * 2 : 8;
 
   private StrutsIcons() {
   }
@@ -77,19 +78,19 @@ public final class StrutsIcons {
 
   static {
     STRUTS_CONFIG_FILE.setIcon(StdFileTypes.XML.getIcon(), 0);
-    STRUTS_CONFIG_FILE.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
+    STRUTS_CONFIG_FILE.setIcon(Struts2Icons.Action_small, 1, OVERLAY_X_OFFSET, OVERLAY_Y_OFFSET);
 
     VALIDATION_CONFIG_FILE.setIcon(StdFileTypes.XML.getIcon(), 0);
-    VALIDATION_CONFIG_FILE.setIcon(Struts2Icons.Edit_small, 1, 0, OVERLAY_Y_OFFSET);
+    VALIDATION_CONFIG_FILE.setIcon(Struts2Icons.Edit_small, 1, OVERLAY_X_OFFSET, OVERLAY_Y_OFFSET);
 
     ACTION_CLASS.setIcon(AllIcons.Nodes.Class, 0);
-    ACTION_CLASS.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
+    ACTION_CLASS.setIcon(Struts2Icons.Action_small, 1, OVERLAY_X_OFFSET, OVERLAY_Y_OFFSET);
 
     STRUTS_VARIABLE.setIcon(AllIcons.Nodes.Variable, 0);
-    STRUTS_VARIABLE.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
+    STRUTS_VARIABLE.setIcon(Struts2Icons.Action_small, 1, OVERLAY_X_OFFSET, OVERLAY_Y_OFFSET);
 
     STRUTS_PACKAGE.setIcon(AllIcons.Nodes.Folder, 0);
-    STRUTS_PACKAGE.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
+    STRUTS_PACKAGE.setIcon(Struts2Icons.Action_small, 1, OVERLAY_X_OFFSET, OVERLAY_Y_OFFSET);
 
     createGlobalIcon(GLOBAL_RESULT, AllIcons.Vcs.Arrow_right);
     createGlobalIcon(GLOBAL_EXCEPTION_MAPPING, AllIcons.Nodes.ExceptionClass);
@@ -109,5 +110,4 @@ public final class StrutsIcons {
     icon.setIcon(baseIcon, 0);
     icon.setIcon(OVERLAY_DEFAULT, 1, OVERLAY_X_OFFSET, OVERLAY_Y_OFFSET);
   }
-
 }

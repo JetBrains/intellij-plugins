@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -73,7 +73,7 @@ public class Struts2IconProvider extends IconProvider {
     final LayeredIcon layeredIcon = new LayeredIcon(2);
     final Icon original = PsiClassImplUtil.getClassIcon(flags, psiClass);
     layeredIcon.setIcon(original, 0);
-    layeredIcon.setIcon(Struts2Icons.Action_small, 1, 0, StrutsIcons.OVERLAY_Y_OFFSET);
+    layeredIcon.setIcon(Struts2Icons.Action_small, 1, StrutsIcons.OVERLAY_X_OFFSET, StrutsIcons.OVERLAY_Y_OFFSET);
     return layeredIcon;
   }
 }
