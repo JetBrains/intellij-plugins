@@ -11,6 +11,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.util.PsiFormatUtilBase;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
@@ -39,19 +40,20 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
   public List<PsiBackedSmartStepIntoVariant> computeSmartStepVariants(@NotNull XSourcePosition position) {
     final Document document = FileDocumentManager.getInstance().getDocument(position.getFile());
 
-    final SortedMap<PsiElement, PsiBackedSmartStepIntoVariant> element2canddiateMap =
+    final SortedMap<PsiElement, PsiBackedSmartStepIntoVariant> element2candidateMap =
       new TreeMap<PsiElement, PsiBackedSmartStepIntoVariant>(new Comparator<PsiElement>() {
+        @Override
         public int compare(final PsiElement o1, final PsiElement o2) {
           return o1.getTextOffset() - o2.getTextOffset();
         }
       });
 
-    compute(document, element2canddiateMap, new THashSet<PsiElement>(), position.getLine(), position.getOffset());
+    compute(document, element2candidateMap, new THashSet<PsiElement>(), position.getLine(), position.getOffset());
 
     final List<PsiBackedSmartStepIntoVariant> variants = new ArrayList<PsiBackedSmartStepIntoVariant>();
 
-    for (final PsiElement key : element2canddiateMap.keySet()) {
-      final PsiBackedSmartStepIntoVariant variant = element2canddiateMap.get(key);
+    for (final PsiElement key : element2candidateMap.keySet()) {
+      final PsiBackedSmartStepIntoVariant variant = element2candidateMap.get(key);
       if (!variants.contains(variant)) {
         variants.add(variant);
       }
@@ -66,6 +68,7 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
                        final int line,
                        final int offset) {
     XDebuggerUtil.getInstance().iterateLine(myDebugProcess.getSession().getProject(), document, line, new Processor<PsiElement>() {
+      @Override
       public boolean process(PsiElement psiElement) {
         addVariants(psiElement, element2candidateMap, visited, offset);
         return true;
@@ -118,8 +121,9 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
   }
 
   @Override
-  public void startStepInto(final PsiBackedSmartStepIntoVariant stepIntoVariant) {
+  public void startStepInto(@NotNull final PsiBackedSmartStepIntoVariant stepIntoVariant) {
     myDebugProcess.sendCommand(new DebuggerCommand("bt", CommandOutputProcessingType.SPECIAL_PROCESSING) {
+      @Override
       CommandOutputProcessingMode onTextAvailable(@NonNls String s) {
         startStepInto(stepIntoVariant, getStackTraceFromBtCommandOutput(s));
         return super.onTextAvailable(s);
@@ -130,9 +134,11 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
   private void startStepInto(final PsiBackedSmartStepIntoVariant stepIntoVariant, final String[] originalStackTrace) {
     myDebugProcess.sendCommand(new DebuggerCommand("step", CommandOutputProcessingType.SPECIAL_PROCESSING) {
 
+      @Override
       CommandOutputProcessingMode onTextAvailable(@NonNls String s) {
         myDebugProcess.sendCommand(new DebuggerCommand("bt", CommandOutputProcessingType.SPECIAL_PROCESSING) {
 
+          @Override
           CommandOutputProcessingMode onTextAvailable(@NonNls String s) {
             handleStepInto(stepIntoVariant, originalStackTrace, s);
             return super.onTextAvailable(s);
@@ -211,8 +217,9 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
       return getElement().hashCode();
     }
 
+    @Override
     public String getText() {
-      return JSFormatUtil.formatMethod(getElement(), JSFormatUtil.SHOW_NAME | JSFormatUtil.SHOW_PARAMETERS, JSFormatUtil.SHOW_TYPE);
+      return JSFormatUtil.formatMethod(getElement(), PsiFormatUtilBase.SHOW_NAME | PsiFormatUtilBase.SHOW_PARAMETERS, PsiFormatUtilBase.SHOW_TYPE);
     }
   }
 }
