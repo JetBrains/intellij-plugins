@@ -21,7 +21,7 @@ public class VirtualFileMock extends VirtualFile {
     @NotNull
     @NonNls
     public String getName() {
-        return null;
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -39,12 +39,13 @@ public class VirtualFileMock extends VirtualFile {
     @Override
     @NotNull
     public VirtualFileSystem getFileSystem() {
-        return null;
+      throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public String getPath() {
-        return null;
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -76,7 +77,7 @@ public class VirtualFileMock extends VirtualFile {
     @Override
     @NotNull
     public OutputStream getOutputStream(Object requestor, long newModificationStamp, long newTimeStamp) throws IOException {
-        return null;
+      throw new UnsupportedOperationException();
     }
 
     @Override
