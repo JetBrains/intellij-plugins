@@ -9,6 +9,7 @@ import com.jetbrains.actionscript.profiler.base.NavigatableDataProducer;
 import com.jetbrains.actionscript.profiler.calltree.CallTree;
 import com.jetbrains.actionscript.profiler.file.CpuSnapshotFileType;
 import com.jetbrains.actionscript.profiler.model.ProfileData;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.text.DateFormat;
@@ -44,6 +45,7 @@ public class CPUSnapshotNode extends DefaultMutableTreeNode implements Navigatab
     if (navigatableCache == null) {
       final String name = runConfigurationName + " " + getTitle();
       VirtualFile virtualFile = new LightVirtualFile(name, new CpuSnapshotFileType(), ""){
+        @NotNull
         @Override
         public String getPath() {
           return getName();

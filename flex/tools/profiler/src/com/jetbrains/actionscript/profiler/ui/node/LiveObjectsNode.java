@@ -10,6 +10,7 @@ import com.jetbrains.actionscript.profiler.file.LiveObjectsFileType;
 import com.jetbrains.actionscript.profiler.livetable.LiveModelController;
 import com.jetbrains.actionscript.profiler.model.ProfileData;
 import com.jetbrains.actionscript.profiler.model.ProfilingManager;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -36,6 +37,7 @@ public class LiveObjectsNode extends DefaultMutableTreeNode implements Navigatab
   public Navigatable getNavigatable() {
     if (navigatableCache == null) {
       final VirtualFile virtualFile = new LightVirtualFile(runConfigurationName, new LiveObjectsFileType(), ""){
+        @NotNull
         @Override
         public String getPath() {
           return getName();
