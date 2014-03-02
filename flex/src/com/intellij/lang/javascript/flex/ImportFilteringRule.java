@@ -20,7 +20,7 @@ public class ImportFilteringRule extends com.intellij.usages.rules.ImportFilteri
       final PsiElement psiElement = ((PsiElementUsage)usage).getElement();
       final PsiFile containingFile = psiElement.getContainingFile();
       
-      if (containingFile.getLanguage().is(JavaScriptSupportLoader.ECMA_SCRIPT_L4)) {
+      if (containingFile != null && containingFile.getLanguage().is(JavaScriptSupportLoader.ECMA_SCRIPT_L4)) {
         return PsiTreeUtil.getParentOfType(psiElement, JSImportStatement.class, true) == null;
       }
     }
