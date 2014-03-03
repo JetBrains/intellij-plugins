@@ -1686,16 +1686,17 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !('!' | '!=' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
-  //                                | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
-  //                                | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
-  //                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
-  //                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
-  //                                | 'for' | 'get' | 'if' | 'in' | 'native' | 'new' | 'null' | 'operator' | 'rethrow'
-  //                                | 'return' | 'set' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try'
-  //                                | 'typedef' | 'var' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/=' | '.'
-  //                                | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
-  //                                | LONG_TEMPLATE_ENTRY_END | shiftRightOperator | ('.' '.'))
+  // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
+  //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
+  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
+  //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' |
+  //                                  'continue' | 'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
+  //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
+  //                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' |
+  //                                  'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
+  //                                   FALSE | HASH | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
+  //                                   OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART |
+  //                                   SHORT_TEMPLATE_ENTRY_START | TRUE)
   static boolean expression_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expression_recover")) return false;
     boolean result_ = false;
@@ -1705,23 +1706,25 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // '!' | '!=' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
-  //                                | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
-  //                                | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
-  //                                | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
-  //                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
-  //                                | 'for' | 'get' | 'if' | 'in' | 'native' | 'new' | 'null' | 'operator' | 'rethrow'
-  //                                | 'return' | 'set' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try'
-  //                                | 'typedef' | 'var' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/=' | '.'
-  //                                | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
-  //                                | LONG_TEMPLATE_ENTRY_END | shiftRightOperator | ('.' '.')
+  // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
+  //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
+  //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
+  //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' |
+  //                                  'continue' | 'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
+  //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
+  //                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' |
+  //                                  'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
+  //                                   FALSE | HASH | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
+  //                                   OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART |
+  //                                   SHORT_TEMPLATE_ENTRY_START | TRUE
   private static boolean expression_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expression_recover_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, NOT);
+    result_ = nonStrictID(builder_, level_ + 1);
+    if (!result_) result_ = parenthesizedExpressionWrapper(builder_, level_ + 1);
+    if (!result_) result_ = consumeToken(builder_, NOT);
     if (!result_) result_ = consumeToken(builder_, NEQ);
-    if (!result_) result_ = consumeToken(builder_, IS);
     if (!result_) result_ = consumeToken(builder_, REM);
     if (!result_) result_ = consumeToken(builder_, REM_EQ);
     if (!result_) result_ = consumeToken(builder_, AND_AND);
@@ -1738,6 +1741,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, MINUS);
     if (!result_) result_ = consumeToken(builder_, MINUS_MINUS);
     if (!result_) result_ = consumeToken(builder_, MINUS_EQ);
+    if (!result_) result_ = consumeToken(builder_, DOT);
     if (!result_) result_ = consumeToken(builder_, DIV);
     if (!result_) result_ = consumeToken(builder_, DIV_EQ);
     if (!result_) result_ = consumeToken(builder_, COLON);
@@ -1753,11 +1757,13 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, GT_EQ);
     if (!result_) result_ = consumeToken(builder_, GT_GT_EQ);
     if (!result_) result_ = consumeToken(builder_, QUEST);
+    if (!result_) result_ = consumeToken(builder_, AT);
     if (!result_) result_ = consumeToken(builder_, LBRACKET);
     if (!result_) result_ = consumeToken(builder_, RBRACKET);
     if (!result_) result_ = consumeToken(builder_, XOR);
     if (!result_) result_ = consumeToken(builder_, XOR_EQ);
     if (!result_) result_ = consumeToken(builder_, ABSTRACT);
+    if (!result_) result_ = consumeToken(builder_, AS);
     if (!result_) result_ = consumeToken(builder_, ASSERT);
     if (!result_) result_ = consumeToken(builder_, BREAK);
     if (!result_) result_ = consumeToken(builder_, CASE);
@@ -1768,30 +1774,36 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, DEFAULT);
     if (!result_) result_ = consumeToken(builder_, DO);
     if (!result_) result_ = consumeToken(builder_, ELSE);
+    if (!result_) result_ = consumeToken(builder_, EXPORT);
+    if (!result_) result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, FACTORY);
-    if (!result_) result_ = consumeToken(builder_, FALSE);
     if (!result_) result_ = consumeToken(builder_, FINAL);
     if (!result_) result_ = consumeToken(builder_, FINALLY);
     if (!result_) result_ = consumeToken(builder_, FOR);
     if (!result_) result_ = consumeToken(builder_, GET);
+    if (!result_) result_ = consumeToken(builder_, HIDE);
     if (!result_) result_ = consumeToken(builder_, IF);
-    if (!result_) result_ = consumeToken(builder_, IN);
+    if (!result_) result_ = consumeToken(builder_, IMPORT);
+    if (!result_) result_ = consumeToken(builder_, IS);
+    if (!result_) result_ = consumeToken(builder_, LIBRARY);
     if (!result_) result_ = consumeToken(builder_, NATIVE);
     if (!result_) result_ = consumeToken(builder_, NEW);
-    if (!result_) result_ = consumeToken(builder_, NULL);
+    if (!result_) result_ = consumeToken(builder_, ON);
     if (!result_) result_ = consumeToken(builder_, OPERATOR);
+    if (!result_) result_ = consumeToken(builder_, PART);
     if (!result_) result_ = consumeToken(builder_, RETHROW);
     if (!result_) result_ = consumeToken(builder_, RETURN);
     if (!result_) result_ = consumeToken(builder_, SET);
+    if (!result_) result_ = consumeToken(builder_, SHOW);
     if (!result_) result_ = consumeToken(builder_, STATIC);
     if (!result_) result_ = consumeToken(builder_, SUPER);
     if (!result_) result_ = consumeToken(builder_, SWITCH);
     if (!result_) result_ = consumeToken(builder_, THIS);
     if (!result_) result_ = consumeToken(builder_, THROW);
-    if (!result_) result_ = consumeToken(builder_, TRUE);
     if (!result_) result_ = consumeToken(builder_, TRY);
     if (!result_) result_ = consumeToken(builder_, TYPEDEF);
     if (!result_) result_ = consumeToken(builder_, VAR);
+    if (!result_) result_ = consumeToken(builder_, VOID);
     if (!result_) result_ = consumeToken(builder_, WHILE);
     if (!result_) result_ = consumeToken(builder_, LBRACE);
     if (!result_) result_ = consumeToken(builder_, OR);
@@ -1799,28 +1811,22 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, OR_OR);
     if (!result_) result_ = consumeToken(builder_, RBRACE);
     if (!result_) result_ = consumeToken(builder_, BIN_NOT);
+    if (!result_) result_ = consumeToken(builder_, INT_DIV);
     if (!result_) result_ = consumeToken(builder_, INT_DIV_EQ);
-    if (!result_) result_ = consumeToken(builder_, DOT);
+    if (!result_) result_ = consumeToken(builder_, CLOSING_QUOTE);
+    if (!result_) result_ = consumeToken(builder_, FALSE);
+    if (!result_) result_ = consumeToken(builder_, HASH);
     if (!result_) result_ = consumeToken(builder_, HEX_NUMBER);
-    if (!result_) result_ = nonStrictID(builder_, level_ + 1);
+    if (!result_) result_ = consumeToken(builder_, LONG_TEMPLATE_ENTRY_END);
+    if (!result_) result_ = consumeToken(builder_, LONG_TEMPLATE_ENTRY_START);
+    if (!result_) result_ = consumeToken(builder_, NULL);
     if (!result_) result_ = consumeToken(builder_, NUMBER);
     if (!result_) result_ = consumeToken(builder_, OPEN_QUOTE);
     if (!result_) result_ = consumeToken(builder_, RAW_SINGLE_QUOTED_STRING);
     if (!result_) result_ = consumeToken(builder_, RAW_TRIPLE_QUOTED_STRING);
-    if (!result_) result_ = consumeToken(builder_, LONG_TEMPLATE_ENTRY_END);
-    if (!result_) result_ = shiftRightOperator(builder_, level_ + 1);
-    if (!result_) result_ = expression_recover_0_90(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // '.' '.'
-  private static boolean expression_recover_0_90(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "expression_recover_0_90")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, DOT);
-    result_ = result_ && consumeToken(builder_, DOT);
+    if (!result_) result_ = consumeToken(builder_, REGULAR_STRING_PART);
+    if (!result_) result_ = consumeToken(builder_, SHORT_TEMPLATE_ENTRY_START);
+    if (!result_) result_ = consumeToken(builder_, TRUE);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -3600,9 +3606,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !('!=' | 'is' | '%' | '&&' | '&' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<'
-  //                                       | '<<' | '<=' | '==' | '=>' | '>' | '>=' | '?' | '[' | ']' | '^'
-  //                                       | 'native' | '{' | '|' | '||' | '}' | '~/' | shiftRightOperator | ('.' '.'))
+  // !(',' | '}')
   static boolean map_literal_entry_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "map_literal_entry_recover")) return false;
     boolean result_ = false;
@@ -3612,58 +3616,13 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // '!=' | 'is' | '%' | '&&' | '&' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<'
-  //                                       | '<<' | '<=' | '==' | '=>' | '>' | '>=' | '?' | '[' | ']' | '^'
-  //                                       | 'native' | '{' | '|' | '||' | '}' | '~/' | shiftRightOperator | ('.' '.')
+  // ',' | '}'
   private static boolean map_literal_entry_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "map_literal_entry_recover_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, NEQ);
-    if (!result_) result_ = consumeToken(builder_, IS);
-    if (!result_) result_ = consumeToken(builder_, REM);
-    if (!result_) result_ = consumeToken(builder_, AND_AND);
-    if (!result_) result_ = consumeToken(builder_, AND);
-    if (!result_) result_ = consumeToken(builder_, LPAREN);
-    if (!result_) result_ = consumeToken(builder_, RPAREN);
-    if (!result_) result_ = consumeToken(builder_, MUL);
-    if (!result_) result_ = consumeToken(builder_, PLUS);
-    if (!result_) result_ = consumeToken(builder_, COMMA);
-    if (!result_) result_ = consumeToken(builder_, MINUS);
-    if (!result_) result_ = consumeToken(builder_, DOT);
-    if (!result_) result_ = consumeToken(builder_, DIV);
-    if (!result_) result_ = consumeToken(builder_, COLON);
-    if (!result_) result_ = consumeToken(builder_, SEMICOLON);
-    if (!result_) result_ = consumeToken(builder_, LT);
-    if (!result_) result_ = consumeToken(builder_, LT_LT);
-    if (!result_) result_ = consumeToken(builder_, LT_EQ);
-    if (!result_) result_ = consumeToken(builder_, EQ_EQ);
-    if (!result_) result_ = consumeToken(builder_, EXPRESSION_BODY_DEF);
-    if (!result_) result_ = consumeToken(builder_, GT);
-    if (!result_) result_ = consumeToken(builder_, GT_EQ);
-    if (!result_) result_ = consumeToken(builder_, QUEST);
-    if (!result_) result_ = consumeToken(builder_, LBRACKET);
-    if (!result_) result_ = consumeToken(builder_, RBRACKET);
-    if (!result_) result_ = consumeToken(builder_, XOR);
-    if (!result_) result_ = consumeToken(builder_, NATIVE);
-    if (!result_) result_ = consumeToken(builder_, LBRACE);
-    if (!result_) result_ = consumeToken(builder_, OR);
-    if (!result_) result_ = consumeToken(builder_, OR_OR);
+    result_ = consumeToken(builder_, COMMA);
     if (!result_) result_ = consumeToken(builder_, RBRACE);
-    if (!result_) result_ = consumeToken(builder_, INT_DIV);
-    if (!result_) result_ = shiftRightOperator(builder_, level_ + 1);
-    if (!result_) result_ = map_literal_entry_recover_0_33(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // '.' '.'
-  private static boolean map_literal_entry_recover_0_33(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "map_literal_entry_recover_0_33")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, DOT);
-    result_ = result_ && consumeToken(builder_, DOT);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -5088,7 +5047,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (metadata* varDeclarationList | expression) ';'
+  // (varDeclarationList | expression) ';'
   static boolean statementFollowedBySemiColon(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statementFollowedBySemiColon")) return false;
     boolean result_ = false;
@@ -5101,47 +5060,29 @@ public class DartParser implements PsiParser {
     return result_ || pinned_;
   }
 
-  // metadata* varDeclarationList | expression
+  // varDeclarationList | expression
   private static boolean statementFollowedBySemiColon_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statementFollowedBySemiColon_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = statementFollowedBySemiColon_0_0(builder_, level_ + 1);
+    result_ = varDeclarationList(builder_, level_ + 1);
     if (!result_) result_ = expression(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
-  // metadata* varDeclarationList
-  private static boolean statementFollowedBySemiColon_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "statementFollowedBySemiColon_0_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = statementFollowedBySemiColon_0_0_0(builder_, level_ + 1);
-    result_ = result_ && varDeclarationList(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // metadata*
-  private static boolean statementFollowedBySemiColon_0_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "statementFollowedBySemiColon_0_0_0")) return false;
-    int pos_ = current_position_(builder_);
-    while (true) {
-      if (!metadata(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "statementFollowedBySemiColon_0_0_0", pos_)) break;
-      pos_ = current_position_(builder_);
-    }
-    return true;
-  }
-
   /* ********************************************************** */
-  // !('!' | '(' | ')' | '+' | '++' | '-' | '--' | ';' | '<' | '[' | 'assert' | 'break' | 'case' | 'const'
-  //                               | 'continue' | 'default' | 'do' | 'else' | 'false' | 'final' | 'for' | 'if' | 'new' | 'null' | 'rethrow' | 'return'
-  //                               | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'var' | 'while' | '{' | '}' | '~'
-  //                               | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
-  //                               | "abstract" | "assert" | "class"  | "extends" | "factory" | "get" | "implements" | "import"
-  //                               | "is" | "@" | "library" | "native" | "as" | "on" | "set" | "static" | "typedef" | "operator")
+  // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | <<varInitWrapper>> | '!' | '!=' | '%' | '%=' | '&&' |
+  //                                 '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
+  //                                  ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
+  //                                  '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
+  //                                  'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
+  //                                  'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
+  //                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
+  //                                  'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
+  //                                  HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE |
+  //                                  RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START |
+  //                                  TRUE)
   static boolean statement_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement_recover")) return false;
     boolean result_ = false;
@@ -5151,78 +5092,128 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // '!' | '(' | ')' | '+' | '++' | '-' | '--' | ';' | '<' | '[' | 'assert' | 'break' | 'case' | 'const'
-  //                               | 'continue' | 'default' | 'do' | 'else' | 'false' | 'final' | 'for' | 'if' | 'new' | 'null' | 'rethrow' | 'return'
-  //                               | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'var' | 'while' | '{' | '}' | '~'
-  //                               | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
-  //                               | "abstract" | "assert" | "class"  | "extends" | "factory" | "get" | "implements" | "import"
-  //                               | "is" | "@" | "library" | "native" | "as" | "on" | "set" | "static" | "typedef" | "operator"
+  // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | <<varInitWrapper>> | '!' | '!=' | '%' | '%=' | '&&' |
+  //                                 '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
+  //                                  ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
+  //                                  '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
+  //                                  'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
+  //                                  'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
+  //                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
+  //                                  'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
+  //                                  HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE |
+  //                                  RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START |
+  //                                  TRUE
   private static boolean statement_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement_recover_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, NOT);
+    result_ = nonStrictID(builder_, level_ + 1);
+    if (!result_) result_ = parenthesizedExpressionWrapper(builder_, level_ + 1);
+    if (!result_) result_ = varInitWrapper(builder_, level_ + 1);
+    if (!result_) result_ = consumeToken(builder_, NOT);
+    if (!result_) result_ = consumeToken(builder_, NEQ);
+    if (!result_) result_ = consumeToken(builder_, REM);
+    if (!result_) result_ = consumeToken(builder_, REM_EQ);
+    if (!result_) result_ = consumeToken(builder_, AND_AND);
+    if (!result_) result_ = consumeToken(builder_, AND);
+    if (!result_) result_ = consumeToken(builder_, AND_EQ);
     if (!result_) result_ = consumeToken(builder_, LPAREN);
     if (!result_) result_ = consumeToken(builder_, RPAREN);
+    if (!result_) result_ = consumeToken(builder_, MUL);
+    if (!result_) result_ = consumeToken(builder_, MUL_EQ);
     if (!result_) result_ = consumeToken(builder_, PLUS);
     if (!result_) result_ = consumeToken(builder_, PLUS_PLUS);
+    if (!result_) result_ = consumeToken(builder_, PLUS_EQ);
+    if (!result_) result_ = consumeToken(builder_, COMMA);
     if (!result_) result_ = consumeToken(builder_, MINUS);
     if (!result_) result_ = consumeToken(builder_, MINUS_MINUS);
+    if (!result_) result_ = consumeToken(builder_, MINUS_EQ);
+    if (!result_) result_ = consumeToken(builder_, DOT);
+    if (!result_) result_ = consumeToken(builder_, DIV);
+    if (!result_) result_ = consumeToken(builder_, DIV_EQ);
+    if (!result_) result_ = consumeToken(builder_, COLON);
     if (!result_) result_ = consumeToken(builder_, SEMICOLON);
     if (!result_) result_ = consumeToken(builder_, LT);
+    if (!result_) result_ = consumeToken(builder_, LT_LT);
+    if (!result_) result_ = consumeToken(builder_, LT_LT_EQ);
+    if (!result_) result_ = consumeToken(builder_, LT_EQ);
+    if (!result_) result_ = consumeToken(builder_, EQ);
+    if (!result_) result_ = consumeToken(builder_, EQ_EQ);
+    if (!result_) result_ = consumeToken(builder_, EXPRESSION_BODY_DEF);
+    if (!result_) result_ = consumeToken(builder_, GT);
+    if (!result_) result_ = consumeToken(builder_, GT_EQ);
+    if (!result_) result_ = consumeToken(builder_, GT_GT_EQ);
+    if (!result_) result_ = consumeToken(builder_, QUEST);
+    if (!result_) result_ = consumeToken(builder_, AT);
     if (!result_) result_ = consumeToken(builder_, LBRACKET);
+    if (!result_) result_ = consumeToken(builder_, RBRACKET);
+    if (!result_) result_ = consumeToken(builder_, XOR);
+    if (!result_) result_ = consumeToken(builder_, XOR_EQ);
+    if (!result_) result_ = consumeToken(builder_, ABSTRACT);
+    if (!result_) result_ = consumeToken(builder_, AS);
     if (!result_) result_ = consumeToken(builder_, ASSERT);
     if (!result_) result_ = consumeToken(builder_, BREAK);
     if (!result_) result_ = consumeToken(builder_, CASE);
+    if (!result_) result_ = consumeToken(builder_, CATCH);
+    if (!result_) result_ = consumeToken(builder_, CLASS);
     if (!result_) result_ = consumeToken(builder_, CONST);
     if (!result_) result_ = consumeToken(builder_, CONTINUE);
     if (!result_) result_ = consumeToken(builder_, DEFAULT);
     if (!result_) result_ = consumeToken(builder_, DO);
     if (!result_) result_ = consumeToken(builder_, ELSE);
-    if (!result_) result_ = consumeToken(builder_, FALSE);
+    if (!result_) result_ = consumeToken(builder_, EXPORT);
+    if (!result_) result_ = consumeToken(builder_, EXTERNAL);
+    if (!result_) result_ = consumeToken(builder_, FACTORY);
     if (!result_) result_ = consumeToken(builder_, FINAL);
+    if (!result_) result_ = consumeToken(builder_, FINALLY);
     if (!result_) result_ = consumeToken(builder_, FOR);
+    if (!result_) result_ = consumeToken(builder_, GET);
+    if (!result_) result_ = consumeToken(builder_, HIDE);
     if (!result_) result_ = consumeToken(builder_, IF);
+    if (!result_) result_ = consumeToken(builder_, IMPORT);
+    if (!result_) result_ = consumeToken(builder_, IS);
+    if (!result_) result_ = consumeToken(builder_, LIBRARY);
+    if (!result_) result_ = consumeToken(builder_, NATIVE);
     if (!result_) result_ = consumeToken(builder_, NEW);
-    if (!result_) result_ = consumeToken(builder_, NULL);
+    if (!result_) result_ = consumeToken(builder_, ON);
+    if (!result_) result_ = consumeToken(builder_, OPERATOR);
+    if (!result_) result_ = consumeToken(builder_, PART);
     if (!result_) result_ = consumeToken(builder_, RETHROW);
     if (!result_) result_ = consumeToken(builder_, RETURN);
+    if (!result_) result_ = consumeToken(builder_, SET);
+    if (!result_) result_ = consumeToken(builder_, SHOW);
     if (!result_) result_ = consumeToken(builder_, STATIC);
     if (!result_) result_ = consumeToken(builder_, SUPER);
     if (!result_) result_ = consumeToken(builder_, SWITCH);
     if (!result_) result_ = consumeToken(builder_, THIS);
     if (!result_) result_ = consumeToken(builder_, THROW);
-    if (!result_) result_ = consumeToken(builder_, TRUE);
     if (!result_) result_ = consumeToken(builder_, TRY);
+    if (!result_) result_ = consumeToken(builder_, TYPEDEF);
     if (!result_) result_ = consumeToken(builder_, VAR);
+    if (!result_) result_ = consumeToken(builder_, VOID);
     if (!result_) result_ = consumeToken(builder_, WHILE);
     if (!result_) result_ = consumeToken(builder_, LBRACE);
+    if (!result_) result_ = consumeToken(builder_, OR);
+    if (!result_) result_ = consumeToken(builder_, OR_EQ);
+    if (!result_) result_ = consumeToken(builder_, OR_OR);
     if (!result_) result_ = consumeToken(builder_, RBRACE);
     if (!result_) result_ = consumeToken(builder_, BIN_NOT);
+    if (!result_) result_ = consumeToken(builder_, INT_DIV);
+    if (!result_) result_ = consumeToken(builder_, INT_DIV_EQ);
+    if (!result_) result_ = consumeToken(builder_, CLOSING_QUOTE);
+    if (!result_) result_ = consumeToken(builder_, FALSE);
+    if (!result_) result_ = consumeToken(builder_, HASH);
     if (!result_) result_ = consumeToken(builder_, HEX_NUMBER);
-    if (!result_) result_ = nonStrictID(builder_, level_ + 1);
+    if (!result_) result_ = consumeToken(builder_, LONG_TEMPLATE_ENTRY_END);
+    if (!result_) result_ = consumeToken(builder_, LONG_TEMPLATE_ENTRY_START);
+    if (!result_) result_ = consumeToken(builder_, NULL);
     if (!result_) result_ = consumeToken(builder_, NUMBER);
     if (!result_) result_ = consumeToken(builder_, OPEN_QUOTE);
     if (!result_) result_ = consumeToken(builder_, RAW_SINGLE_QUOTED_STRING);
     if (!result_) result_ = consumeToken(builder_, RAW_TRIPLE_QUOTED_STRING);
-    if (!result_) result_ = consumeToken(builder_, ABSTRACT);
-    if (!result_) result_ = consumeToken(builder_, ASSERT);
-    if (!result_) result_ = consumeToken(builder_, CLASS);
-    if (!result_) result_ = consumeToken(builder_, EXTENDS);
-    if (!result_) result_ = consumeToken(builder_, FACTORY);
-    if (!result_) result_ = consumeToken(builder_, GET);
-    if (!result_) result_ = consumeToken(builder_, IMPLEMENTS);
-    if (!result_) result_ = consumeToken(builder_, IMPORT);
-    if (!result_) result_ = consumeToken(builder_, IS);
-    if (!result_) result_ = consumeToken(builder_, AT);
-    if (!result_) result_ = consumeToken(builder_, LIBRARY);
-    if (!result_) result_ = consumeToken(builder_, NATIVE);
-    if (!result_) result_ = consumeToken(builder_, AS);
-    if (!result_) result_ = consumeToken(builder_, ON);
-    if (!result_) result_ = consumeToken(builder_, SET);
-    if (!result_) result_ = consumeToken(builder_, STATIC);
-    if (!result_) result_ = consumeToken(builder_, TYPEDEF);
-    if (!result_) result_ = consumeToken(builder_, OPERATOR);
+    if (!result_) result_ = consumeToken(builder_, REGULAR_STRING_PART);
+    if (!result_) result_ = consumeToken(builder_, SHORT_TEMPLATE_ENTRY_START);
+    if (!result_) result_ = consumeToken(builder_, TRUE);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -5416,9 +5407,10 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !(')' | ',' | ':' | ';' | '=' | '=>' | ']' | 'abstract' | 'const' | 'factory'
-  //                                                     | 'final' | 'get' | 'native' | 'operator' | 'set' | 'static' | 'var' | '{' | '}'
-  //                                                     | <<nonStrictID>>)
+  // !(<<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'class' | 'const' |
+  //                                                       'export' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'library' |
+  //                                                       'native' | 'operator' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '{' |
+  //                                                       '}' )
   static boolean super_call_or_field_initializer_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "super_call_or_field_initializer_recover")) return false;
     boolean result_ = false;
@@ -5428,33 +5420,40 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // ')' | ',' | ':' | ';' | '=' | '=>' | ']' | 'abstract' | 'const' | 'factory'
-  //                                                     | 'final' | 'get' | 'native' | 'operator' | 'set' | 'static' | 'var' | '{' | '}'
-  //                                                     | <<nonStrictID>>
+  // <<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'class' | 'const' |
+  //                                                       'export' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'library' |
+  //                                                       'native' | 'operator' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '{' |
+  //                                                       '}'
   private static boolean super_call_or_field_initializer_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "super_call_or_field_initializer_recover_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, RPAREN);
+    result_ = nonStrictID(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, COMMA);
     if (!result_) result_ = consumeToken(builder_, COLON);
     if (!result_) result_ = consumeToken(builder_, SEMICOLON);
-    if (!result_) result_ = consumeToken(builder_, EQ);
     if (!result_) result_ = consumeToken(builder_, EXPRESSION_BODY_DEF);
-    if (!result_) result_ = consumeToken(builder_, RBRACKET);
+    if (!result_) result_ = consumeToken(builder_, AT);
     if (!result_) result_ = consumeToken(builder_, ABSTRACT);
+    if (!result_) result_ = consumeToken(builder_, CLASS);
     if (!result_) result_ = consumeToken(builder_, CONST);
+    if (!result_) result_ = consumeToken(builder_, EXPORT);
+    if (!result_) result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, FACTORY);
     if (!result_) result_ = consumeToken(builder_, FINAL);
     if (!result_) result_ = consumeToken(builder_, GET);
+    if (!result_) result_ = consumeToken(builder_, IMPORT);
+    if (!result_) result_ = consumeToken(builder_, LIBRARY);
     if (!result_) result_ = consumeToken(builder_, NATIVE);
     if (!result_) result_ = consumeToken(builder_, OPERATOR);
+    if (!result_) result_ = consumeToken(builder_, PART);
     if (!result_) result_ = consumeToken(builder_, SET);
     if (!result_) result_ = consumeToken(builder_, STATIC);
+    if (!result_) result_ = consumeToken(builder_, TYPEDEF);
     if (!result_) result_ = consumeToken(builder_, VAR);
+    if (!result_) result_ = consumeToken(builder_, VOID);
     if (!result_) result_ = consumeToken(builder_, LBRACE);
     if (!result_) result_ = consumeToken(builder_, RBRACE);
-    if (!result_) result_ = nonStrictID(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -5991,7 +5990,9 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !('(' | ',' | '.' | '>' | 'extends' | 'factory' | 'implements' | '{')
+  // !(<<nonStrictID>> | '(' | ',' | '=' | '>' | '@' | 'abstract' | 'class' | 'const' | 'export' | 'extends' |
+  //                                      'external' | 'final' | 'get' | 'implements' | 'import' | 'library' | 'native' | 'part' | 'set' |
+  //                                      'static' | 'typedef' | 'var' | 'void' | '{')
   static boolean type_parameter_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "type_parameter_recover")) return false;
     boolean result_ = false;
@@ -6001,18 +6002,37 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // '(' | ',' | '.' | '>' | 'extends' | 'factory' | 'implements' | '{'
+  // <<nonStrictID>> | '(' | ',' | '=' | '>' | '@' | 'abstract' | 'class' | 'const' | 'export' | 'extends' |
+  //                                      'external' | 'final' | 'get' | 'implements' | 'import' | 'library' | 'native' | 'part' | 'set' |
+  //                                      'static' | 'typedef' | 'var' | 'void' | '{'
   private static boolean type_parameter_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "type_parameter_recover_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, LPAREN);
+    result_ = nonStrictID(builder_, level_ + 1);
+    if (!result_) result_ = consumeToken(builder_, LPAREN);
     if (!result_) result_ = consumeToken(builder_, COMMA);
-    if (!result_) result_ = consumeToken(builder_, DOT);
+    if (!result_) result_ = consumeToken(builder_, EQ);
     if (!result_) result_ = consumeToken(builder_, GT);
+    if (!result_) result_ = consumeToken(builder_, AT);
+    if (!result_) result_ = consumeToken(builder_, ABSTRACT);
+    if (!result_) result_ = consumeToken(builder_, CLASS);
+    if (!result_) result_ = consumeToken(builder_, CONST);
+    if (!result_) result_ = consumeToken(builder_, EXPORT);
     if (!result_) result_ = consumeToken(builder_, EXTENDS);
-    if (!result_) result_ = consumeToken(builder_, FACTORY);
+    if (!result_) result_ = consumeToken(builder_, EXTERNAL);
+    if (!result_) result_ = consumeToken(builder_, FINAL);
+    if (!result_) result_ = consumeToken(builder_, GET);
     if (!result_) result_ = consumeToken(builder_, IMPLEMENTS);
+    if (!result_) result_ = consumeToken(builder_, IMPORT);
+    if (!result_) result_ = consumeToken(builder_, LIBRARY);
+    if (!result_) result_ = consumeToken(builder_, NATIVE);
+    if (!result_) result_ = consumeToken(builder_, PART);
+    if (!result_) result_ = consumeToken(builder_, SET);
+    if (!result_) result_ = consumeToken(builder_, STATIC);
+    if (!result_) result_ = consumeToken(builder_, TYPEDEF);
+    if (!result_) result_ = consumeToken(builder_, VAR);
+    if (!result_) result_ = consumeToken(builder_, VOID);
     if (!result_) result_ = consumeToken(builder_, LBRACE);
     exit_section_(builder_, marker_, null, result_);
     return result_;

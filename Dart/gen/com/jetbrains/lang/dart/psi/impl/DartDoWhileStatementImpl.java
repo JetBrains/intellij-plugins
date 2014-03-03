@@ -83,12 +83,6 @@ public class DartDoWhileStatementImpl extends DartPsiCompositeElementImpl implem
   }
 
   @Override
-  @NotNull
-  public List<DartMetadata> getMetadataList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
-  }
-
-  @Override
   @Nullable
   public DartRethrowStatement getRethrowStatement() {
     return findChildByClass(DartRethrowStatement.class);

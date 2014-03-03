@@ -40,9 +40,6 @@ public interface DartForStatement extends DartPsiCompositeElement {
   @NotNull
   List<DartLabel> getLabelList();
 
-  @NotNull
-  List<DartMetadata> getMetadataList();
-
   @Nullable
   DartRethrowStatement getRethrowStatement();
 

@@ -84,12 +84,6 @@ public class DartIfStatementImpl extends DartPsiCompositeElementImpl implements 
 
   @Override
   @NotNull
-  public List<DartMetadata> getMetadataList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
-  }
-
-  @Override
-  @NotNull
   public List<DartRethrowStatement> getRethrowStatementList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartRethrowStatement.class);
   }

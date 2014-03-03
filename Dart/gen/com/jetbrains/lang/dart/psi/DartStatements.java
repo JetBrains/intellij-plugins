@@ -38,9 +38,6 @@ public interface DartStatements extends DartExecutionScope {
   List<DartLabel> getLabelList();
 
   @NotNull
-  List<DartMetadata> getMetadataList();
-
-  @NotNull
   List<DartRethrowStatement> getRethrowStatementList();
 
   @NotNull

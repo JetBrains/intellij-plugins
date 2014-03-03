@@ -38,9 +38,6 @@ public interface DartIfStatement extends DartPsiCompositeElement {
   List<DartLabel> getLabelList();
 
   @NotNull
-  List<DartMetadata> getMetadataList();
-
-  @NotNull
   List<DartRethrowStatement> getRethrowStatementList();
 
   @NotNull

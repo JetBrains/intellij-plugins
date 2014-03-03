@@ -52,6 +52,7 @@ main() {
   A a = new A();
   a..name = true ? 'true' : 'false'
    ..foo();
+  void bar(){}
 }
 
 main() {

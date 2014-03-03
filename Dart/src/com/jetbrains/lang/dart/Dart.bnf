@@ -236,7 +236,9 @@ typeParameters ::= '<' typeParameter (',' typeParameter)* '>' {pin=1}
 typeParameter ::= metadata* componentName ('extends' type)?
 {recoverWhile="type_parameter_recover" mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
-private type_parameter_recover ::= !('(' | ',' | '.' | '>' | 'extends' | 'factory' | 'implements' | '{')
+private type_parameter_recover ::= !(<<nonStrictID>> | '(' | ',' | '=' | '>' | '@' | 'abstract' | 'class' | 'const' | 'export' | 'extends' |
+                                     'external' | 'final' | 'get' | 'implements' | 'import' | 'library' | 'native' | 'part' | 'set' |
+                                     'static' | 'typedef' | 'var' | 'void' | '{')
 superclass ::= 'extends' type {pin=1}
 mixins ::= 'with' typeList {pin=1}
 interfaces ::= 'implements' typeList {pin=1}
@@ -271,9 +273,10 @@ fieldInitializer ::= ('this' '.')? referenceExpression '=' expression {pin=2}
 superCallOrFieldInitializer ::= ('super' | 'this') ('.' referenceExpression)? arguments
                               | fieldInitializer
                               {recoverWhile="super_call_or_field_initializer_recover"}
-private super_call_or_field_initializer_recover ::= !(')' | ',' | ':' | ';' | '=' | '=>' | ']' | 'abstract' | 'const' | 'factory'
-                                                    | 'final' | 'get' | 'native' | 'operator' | 'set' | 'static' | 'var' | '{' | '}'
-                                                    | <<nonStrictID>>)
+private super_call_or_field_initializer_recover ::= !(<<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'class' | 'const' |
+                                                      'export' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'library' |
+                                                      'native' | 'operator' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '{' |
+                                                      '}' )
 
 functionTypeAlias ::= metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'
 {pin=5 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
@@ -361,12 +364,17 @@ block ::= '{' statements '}' {pin=1}
 
 statements ::= statement* {implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 private statement ::= label* nonLabelledStatement {pin=2 recoverWhile="statement_recover"}
-private statement_recover ::= !('!' | '(' | ')' | '+' | '++' | '-' | '--' | ';' | '<' | '[' | 'assert' | 'break' | 'case' | 'const'
-                              | 'continue' | 'default' | 'do' | 'else' | 'false' | 'final' | 'for' | 'if' | 'new' | 'null' | 'rethrow' | 'return'
-                              | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'var' | 'while' | '{' | '}' | '~'
-                              | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
-                              | "abstract" | "assert" | "class"  | "extends" | "factory" | "get" | "implements" | "import"
-                              | "is" | "@" | "library" | "native" | "as" | "on" | "set" | "static" | "typedef" | "operator")
+private statement_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | <<varInitWrapper>> | '!' | '!=' | '%' | '%=' | '&&' |
+                                '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
+                                 ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
+                                 '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
+                                 'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
+                                 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
+                                 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
+                                 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
+                                 HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE |
+                                 RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START |
+                                 TRUE)
 
 private nonLabelledStatement ::= block // Guard to break tie with map literal.  todo why ';'?
                                | functionDeclarationWithBody ';'?
@@ -384,7 +392,7 @@ private nonLabelledStatement ::= block // Guard to break tie with map literal.  
                                | assertStatement
                                | statementFollowedBySemiColon
                                | ';'
-private statementFollowedBySemiColon ::= (metadata* varDeclarationList | expression) ';' {pin=1}
+private statementFollowedBySemiColon ::= (varDeclarationList | expression) ';' {pin=1}
 
 label::= componentName ':'
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
@@ -447,16 +455,17 @@ parameterNameReferenceExpression ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 expression ::= assignExpressionWrapper {recoverWhile="expression_recover"}
-private expression_recover ::= !('!' | '!=' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'
-                               | '+=' | ',' | '-' | '--' | '-=' | '/' | '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<='
-                               | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '[' | ']'
-                               | '^' | '^=' | 'abstract' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const'
-                               | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
-                               | 'for' | 'get' | 'if' | 'in' | 'native' | 'new' | 'null' | 'operator' | 'rethrow'
-                               | 'return' | 'set' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try'
-                               | 'typedef' | 'var' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/=' | '.'
-                               | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
-                               | LONG_TEMPLATE_ENTRY_END | shiftRightOperator | ('.' '.'))
+private expression_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
+                                 '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
+                                 '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
+                                 ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' |
+                                 'continue' | 'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
+                                 'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
+                                 'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' |
+                                 'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
+                                  FALSE | HASH | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
+                                  OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART |
+                                  SHORT_TEMPLATE_ENTRY_START | TRUE)
 
 private assignExpressionWrapper ::= ternaryExpressionWrapper assignExpression*
 left assignExpression ::= assignmentOperator ternaryExpressionWrapper {pin=1} // todo right associate
@@ -567,9 +576,7 @@ mapLiteralExpression ::= 'const'? typeArguments? '{' (mapLiteralEntry (',' mapLi
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 mapLiteralEntry ::= expression ':' expression {recoverWhile="map_literal_entry_recover"}
-private map_literal_entry_recover ::= !('!=' | 'is' | '%' | '&&' | '&' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<'
-                                      | '<<' | '<=' | '==' | '=>' | '>' | '>=' | '?' | '[' | ']' | '^'
-                                      | 'native' | '{' | '|' | '||' | '}' | '~/' | shiftRightOperator | ('.' '.'))
+private map_literal_entry_recover ::= !(',' | '}')
 
 functionExpression ::= formalParameterList functionExpressionBody
 functionSignature ::= metadata* functionDeclarationPrivate

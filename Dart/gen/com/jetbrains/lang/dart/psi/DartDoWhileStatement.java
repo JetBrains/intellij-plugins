@@ -37,9 +37,6 @@ public interface DartDoWhileStatement extends DartPsiCompositeElement {
   @NotNull
   List<DartLabel> getLabelList();
 
-  @NotNull
-  List<DartMetadata> getMetadataList();
-
   @Nullable
   DartRethrowStatement getRethrowStatement();
 

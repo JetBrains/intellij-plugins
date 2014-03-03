@@ -524,6 +524,21 @@ Dart File
                 PsiElement(()('(')
                 PsiElement())(')')
           PsiElement(;)(';')
+          FUNCTION_DECLARATION_WITH_BODY
+            RETURN_TYPE
+              PsiElement(void)('void')
+            COMPONENT_NAME
+              ID
+                PsiElement(IDENTIFIER)('bar')
+            FORMAL_PARAMETER_LIST
+              PsiElement(()('(')
+              PsiElement())(')')
+            FUNCTION_BODY
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
         PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     COMPONENT_NAME
@@ -1359,13 +1374,13 @@ Dart File
             BLOCK
               PsiElement({)('{')
               STATEMENTS
-                METADATA
-                  PsiElement(@)('@')
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('annotation')
                 VAR_DECLARATION_LIST
                   VAR_ACCESS_DECLARATION
+                    METADATA
+                      PsiElement(@)('@')
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('annotation')
                     PsiElement(var)('var')
                     COMPONENT_NAME
                       ID
