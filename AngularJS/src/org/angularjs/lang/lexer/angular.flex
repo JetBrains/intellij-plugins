@@ -29,7 +29,7 @@ EXPONENT_PART=[Ee]["+""-"]?({DIGIT})*
 
 QUOTE = [\'\"]
 
-IDENT =[_$a-zA-Z][$0-9a-zA-Z]*
+IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
 
 %state YYSTRING
 
