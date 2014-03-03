@@ -8,11 +8,16 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+
 public class DartTestUtils {
 
   public static final String BASE_TEST_DATA_PATH = findTestDataPath();
 
   private static String findTestDataPath() {
+    final File f = new File("testData"); // launched from 'Dart-plugin' project
+    if (f.isDirectory()) return f.getAbsolutePath();
+
     return PathManager.getHomePath() + "/contrib/Dart/testData";
   }
 
