@@ -20,5 +20,5 @@ Prerequisites:
        open Sources tab of the Plugin SDK and add path to the cloned repo root. After some scanning IDE will find all src folders - accept them.
        Update IntelliJ IDEA Community sources from time to time, e.g. when you upgrade IntelliJ IDEA Ultimate installation (git pull).
   3.5. Open Plugin SDK Annotations tab and add [IDEA Installation]/lib/jdkAnnotations.jar
-4. Clone Dart plugin source code (https://github.com/JetBrains/intellij-plugins/tree/master/Dart) and open the project. It is ready to use.
+4. Clone IntelliJ IDEA plugins source code (https://github.com/JetBrains/intellij-plugins) and open the project in the 'Dart' folder. It is ready to use.
    Two run configurations are already configured: 'Dart tests' (run it each time before commit) and 'Dart plugin' that launches IntelliJ IDEA with Dart plugin from sources.
