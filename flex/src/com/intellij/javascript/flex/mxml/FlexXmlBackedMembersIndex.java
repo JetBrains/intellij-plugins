@@ -123,16 +123,18 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
     });
   }
 
+  @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
     return myKeyDescriptor;
   }
 
+  @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(JavaScriptSupportLoader.getMxmlFileType()) {
       @Override
-      public boolean acceptInput(VirtualFile file) {
+      public boolean acceptInput(@NotNull VirtualFile file) {
         return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
       }
     };

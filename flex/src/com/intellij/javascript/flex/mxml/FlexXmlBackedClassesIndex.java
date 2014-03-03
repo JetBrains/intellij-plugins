@@ -58,16 +58,18 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
   @Nullable
   protected abstract JSReferenceList getSupers(JSClass clazz);
 
+  @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
     return myKeyDescriptor;
   }
 
+  @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(JavaScriptSupportLoader.getMxmlFileType()) {
       @Override
-      public boolean acceptInput(VirtualFile file) {
+      public boolean acceptInput(@NotNull VirtualFile file) {
         return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
       }
     };

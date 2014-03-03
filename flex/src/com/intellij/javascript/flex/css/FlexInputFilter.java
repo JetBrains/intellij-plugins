@@ -7,6 +7,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.indexing.DefaultFileTypeSpecificInputFilter;
+import org.jetbrains.annotations.NotNull;
 
 /**
 * @author Eugene.Kudelevsky
@@ -25,7 +26,7 @@ class FlexInputFilter extends DefaultFileTypeSpecificInputFilter {
     return FlexInputFilterHolder.ourInstance;
   }
 
-  public boolean acceptInput(final VirtualFile file) {
+  public boolean acceptInput(@NotNull final VirtualFile file) {
     FileType type = file.getFileType();
     if (type == ActionScriptFileType.INSTANCE ||
         (type == FlexApplicationComponent.SWF_FILE_TYPE && file.getFileSystem() instanceof JarFileSystem)) {

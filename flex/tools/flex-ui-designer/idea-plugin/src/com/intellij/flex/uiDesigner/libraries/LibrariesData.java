@@ -8,6 +8,7 @@ import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.PersistentHashMap;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectProcedure;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -66,7 +67,7 @@ class LibrariesData {
 
   private static class LibrarySetDataExternalizer implements DataExternalizer<SortResult> {
     @Override
-    public void save(final DataOutput out, SortResult value) throws IOException {
+    public void save(@NotNull final DataOutput out, SortResult value) throws IOException {
       out.writeShort(value.libraries.size());
       for (Library library : value.libraries) {
         out.writeUTF(library.getFile().getPath());
@@ -94,7 +95,7 @@ class LibrariesData {
     }
 
     @Override
-    public SortResult read(DataInput in) throws IOException {
+    public SortResult read(@NotNull DataInput in) throws IOException {
       int librariesSize = in.readShort();
       String[] libraryPaths = new String[librariesSize];
       while (librariesSize-- > 0) {

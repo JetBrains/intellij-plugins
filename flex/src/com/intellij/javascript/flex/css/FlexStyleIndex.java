@@ -51,7 +51,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
   private final DataExternalizer<Set<FlexStyleIndexInfo>> myDataExternalizer = new DataExternalizer<Set<FlexStyleIndexInfo>>() {
 
     @Override
-    public void save(DataOutput out, Set<FlexStyleIndexInfo> value) throws IOException {
+    public void save(@NotNull DataOutput out, Set<FlexStyleIndexInfo> value) throws IOException {
       out.writeInt(value.size());
       for (FlexStyleIndexInfo info : value) {
         writeUTF(out, info.getClassOrFileName());
@@ -66,7 +66,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
     }
 
     @Override
-    public Set<FlexStyleIndexInfo> read(DataInput in) throws IOException {
+    public Set<FlexStyleIndexInfo> read(@NotNull DataInput in) throws IOException {
       int size = in.readInt();
       Set<FlexStyleIndexInfo> result = new HashSet<FlexStyleIndexInfo>();
       for (int i = 0; i < size; i++) {
@@ -219,16 +219,19 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
     }, false);
   }
 
+  @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
     return myKeyDescriptor;
   }
 
+  @NotNull
   @Override
   public DataExternalizer<Set<FlexStyleIndexInfo>> getValueExternalizer() {
     return myDataExternalizer;
   }
 
+  @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
     return FlexInputFilter.getInstance();
