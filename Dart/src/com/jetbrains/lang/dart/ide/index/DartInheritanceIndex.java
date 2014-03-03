@@ -49,16 +49,19 @@ public class DartInheritanceIndex extends FileBasedIndexExtension<String, List<D
     return true;
   }
 
+  @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
     return new EnumeratorStringDescriptor();
   }
 
+  @NotNull
   @Override
   public DataExternalizer<List<DartComponentInfo>> getValueExternalizer() {
     return myExternalizer;
   }
 
+  @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
     return DartInputFilter.INSTANCE;

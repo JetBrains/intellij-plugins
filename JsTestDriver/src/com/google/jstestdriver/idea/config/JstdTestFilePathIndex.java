@@ -71,16 +71,19 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
     };
   }
 
+  @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
     return myKeyDescriptor;
   }
 
+  @NotNull
   @Override
   public DataExternalizer<Void> getValueExternalizer() {
     return ScalarIndexExtension.VOID_DATA_EXTERNALIZER;
   }
 
+  @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
     return new DefaultFileTypeSpecificInputFilter(JstdConfigFileType.INSTANCE);

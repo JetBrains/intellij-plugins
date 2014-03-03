@@ -42,16 +42,18 @@ public class DartPathIndex extends FileBasedIndexExtension<String, List<String>>
     return myDataIndexer;
   }
 
+  @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
     return new EnumeratorStringDescriptor();
   }
 
+  @NotNull
   @Override
   public DataExternalizer<List<String>> getValueExternalizer() {
     return new DataExternalizer<List<String>>() {
       @Override
-      public void save(DataOutput out, List<String> value) throws IOException {
+      public void save(@NotNull DataOutput out, List<String> value) throws IOException {
         out.writeInt(value.size());
         for (String path : value) {
           out.writeUTF(path);
@@ -59,7 +61,7 @@ public class DartPathIndex extends FileBasedIndexExtension<String, List<String>>
       }
 
       @Override
-      public List<String> read(DataInput in) throws IOException {
+      public List<String> read(@NotNull DataInput in) throws IOException {
         final int size = in.readInt();
         final List<String> result = new ArrayList<String>(size);
         for (int i = 0; i < size; ++i) {
@@ -70,6 +72,7 @@ public class DartPathIndex extends FileBasedIndexExtension<String, List<String>>
     };
   }
 
+  @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
     return DartInputFilter.INSTANCE;

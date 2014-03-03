@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.util.io.DataExternalizer;
 import com.jetbrains.lang.dart.DartComponentType;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class DartComponentInfoListExternalizer implements DataExternalizer<List<DartComponentInfo>> {
   @Override
-  public void save(DataOutput out, List<DartComponentInfo> infos) throws IOException {
+  public void save(@NotNull DataOutput out, List<DartComponentInfo> infos) throws IOException {
     out.writeInt(infos.size());
     for (DartComponentInfo componentInfo : infos) {
       out.writeUTF(componentInfo.getValue());
@@ -28,7 +29,7 @@ public class DartComponentInfoListExternalizer implements DataExternalizer<List<
   }
 
   @Override
-  public List<DartComponentInfo> read(DataInput in) throws IOException {
+  public List<DartComponentInfo> read(@NotNull DataInput in) throws IOException {
     int size = in.readInt();
     if (size == 0) return Collections.emptyList();
 

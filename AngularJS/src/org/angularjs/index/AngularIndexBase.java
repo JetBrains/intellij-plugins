@@ -34,11 +34,13 @@ public abstract class AngularIndexBase extends ScalarIndexExtension<String> {
   @Override
   public abstract ID<String, Void> getName();
 
+  @NotNull
   @Override
   public KeyDescriptor<String> getKeyDescriptor() {
     return myKeyDescriptor;
   }
 
+  @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
     return JSEntryIndex.ourIndexedFilesFilter;
