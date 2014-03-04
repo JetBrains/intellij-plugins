@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
@@ -86,12 +87,15 @@ public class AngularJSProcessor {
 
   private static boolean scopeMatches(PsiElement element, PsiElement declaration) {
     final InjectedLanguageManager injector = InjectedLanguageManager.getInstance(element.getProject());
-    final XmlTagChild elementContainer = PsiTreeUtil.getNonStrictParentOfType(injector.getInjectionHost(element),
-                                                                              XmlTag.class, XmlText.class);
-    final XmlTagChild declarationContainer = PsiTreeUtil.getNonStrictParentOfType(injector.getInjectionHost(declaration),
-                                                                                  XmlTag.class, XmlText.class);
-    if (elementContainer != null && declarationContainer != null) {
-      return PsiTreeUtil.isAncestor(declarationContainer, elementContainer, true);
+    final PsiLanguageInjectionHost elementContainer = injector.getInjectionHost(element);
+    final XmlTagChild elementTag = PsiTreeUtil.getNonStrictParentOfType(elementContainer, XmlTag.class, XmlText.class);
+    final PsiLanguageInjectionHost declarationContainer = injector.getInjectionHost(declaration);
+    final XmlTagChild declarationTag = PsiTreeUtil.getNonStrictParentOfType(declarationContainer, XmlTag.class, XmlText.class);
+
+    if (declarationContainer != null && elementContainer != null && elementTag != null && declarationTag != null) {
+      return PsiTreeUtil.isAncestor(declarationTag, elementTag, true) ||
+             (PsiTreeUtil.isAncestor(declarationTag, elementTag, false) &&
+              declarationContainer.getTextOffset() < elementContainer.getTextOffset());
     }
     return true;
   }
