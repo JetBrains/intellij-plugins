@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
@@ -24,7 +25,7 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testPartialResolve() {
-    myFixture.configureByFiles("custom.js", "angular.js", "partials/phone-details.html", "partials/phone-list.html");
+    myFixture.configureByFiles("custom.js", "angular.js", "index.html", "partials/phone-details.html", "partials/phone-list.html");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("phone-<caret>details", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
     assertNotNull(ref);
@@ -38,6 +39,13 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
     resolve = ref.resolve();
     assertInstanceOf(resolve, PsiFile.class);
     assertEquals("phone-list.html", ((PsiFile)resolve).getName());
+
+    offsetBySignature = AngularTestUtil.findOffsetBySignature("template<caret>Id", myFixture.getFile());
+    ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    resolve = ref.resolve();
+    assertInstanceOf(resolve, XmlAttributeValue.class);
+    assertEquals("\"templateId.htm\"", resolve.getText());
   }
 
   public void testPartialCompletion() {
@@ -46,7 +54,7 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
     myFixture.completeBasic();
     final List<String> variants = myFixture.getLookupElementStrings();
-    assertContainsElements(variants, "partials", "index.html");
+    assertContainsElements(variants, "partials", "index.html", "templateId.htm");
   }
 
   public void testControllerResolve() {

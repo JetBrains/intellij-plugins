@@ -26,6 +26,10 @@ app.config(['$routeProvider',
         templateUrl: 'partials/phone-details.html',
         controller: 'AppCtrl'
       }).
+      when('/template/:template', {
+        templateUrl: 'templateId.htm',
+        controller: 'AppCtrl'
+      }).
       otherwise({
         redirectTo: '/phones'
       });
