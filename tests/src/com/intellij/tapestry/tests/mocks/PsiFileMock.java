@@ -2,7 +2,6 @@ package com.intellij.tapestry.tests.mocks;
 
 import com.intellij.lang.FileASTNode;
 import com.intellij.lang.Language;
-import com.intellij.lang.LanguageDialect;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
@@ -393,11 +392,6 @@ public class PsiFileMock implements PsiFile {
     @Override
     public boolean canNavigateToSource() {
         return false;
-    }
-
-    @Nullable
-    public LanguageDialect getLanguageDialect() {
-        return null;
     }
 
     @Override
