@@ -73,6 +73,7 @@ Search: [Go]
                 + AWS Elastic Beanstalk Snippets
                 + Elastic Load Balancing Snippets
                 + Identity and Access Management (IAM) Template Snippets
+                + AWS OpsWorks Snippets
                 + Amazon Redshift Snippets
                 + Amazon RDS Template Snippets
                 + Amazon SimpleDB Snippets
@@ -160,6 +161,11 @@ Search: [Go]
                 + AWS::IAM::Role
                 + AWS::IAM::User
                 + AWS::IAM::UserToGroupAddition
+                + AWS::OpsWorks::App
+                + AWS::OpsWorks::ElasticLoadBalancerAttachment
+                + AWS::OpsWorks::Instance
+                + AWS::OpsWorks::Layer
+                + AWS::OpsWorks::Stack
                 + AWS::Redshift::Cluster
                 + AWS::Redshift::ClusterParameterGroup
                 + AWS::Redshift::ClusterSecurityGroup
@@ -222,6 +228,11 @@ Search: [Go]
                 + ElasticLoadBalancing Listener
                 + ElasticLoadBalancing Policy
                 + Name Type
+                + AWS OpsWorks Recipes Type
+                + AWS OpsWorks Source Type
+                + AWS OpsWorks SslConfiguration Type
+                + AWS OpsWorks StackConfigurationManager Type
+                + AWS OpsWorks VolumeConfiguration Type
                 + Amazon Redshift Parameter Type
                 + AWS CloudFormation Resource Tags
                 + RDS Security Group Rule
@@ -251,6 +262,7 @@ Search: [Go]
                 + cfn-get-metadata
                 + cfn-hup
     * AWS CLI Reference
+    * AWS CloudFormation Limits
     * Custom Resource Reference
           o Request Objects
           o Response Objects
@@ -282,9 +294,16 @@ since the last release of AWS CloudFormation.
 
     * API Version: 2010-05-15
 
-    * Latest documentation update: February 18, 2014
+    * Latest documentation update: March 03, 2014
 
 Change 	Description 	Release Date
+
+AWS OpsWorks support
+
+You can use AWS CloudFormation to provision and manage AWS OpsWorks stacks. 
+For more information, see AWS::OpsWorks::Stack or AWS OpsWorks Snippets.
+
+March 03, 2014
 
 Limit increase
 
@@ -294,8 +313,8 @@ February 18, 2014
 
 Amazon Redshift support
 
-You can provision and manage Amazon Redshift clusters by using AWS 
-CloudFormation. For more information, see Amazon Redshift Snippets or 
+You can use AWS CloudFormation to provision and manage Amazon Redshift 
+clusters. For more information, see Amazon Redshift Snippets or 
 AWS::Redshift::Cluster.
 
 February 10, 2014
