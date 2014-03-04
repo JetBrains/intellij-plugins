@@ -8,6 +8,7 @@ import java.util.Set;
 public class CloudFormationResourceType {
   public String name;
   public List<CloudFormationResourceProperty> properties = new ArrayList<CloudFormationResourceProperty>();
+  public List<CloudFormationResourceAttribute> attributes = new ArrayList<CloudFormationResourceAttribute>();
 
   public CloudFormationResourceProperty findProperty(String name) {
     for (CloudFormationResourceProperty property : properties) {

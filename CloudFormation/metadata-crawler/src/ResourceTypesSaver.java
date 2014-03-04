@@ -1,7 +1,4 @@
-import com.intellij.aws.cloudformation.metadata.CloudFormationMetadata;
-import com.intellij.aws.cloudformation.metadata.CloudFormationResourceProperty;
-import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType;
-import com.intellij.aws.cloudformation.metadata.MetadataSerializer;
+import com.intellij.aws.cloudformation.metadata.*;
 import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
 import org.jsoup.Jsoup;
@@ -23,22 +20,78 @@ import java.util.regex.Pattern;
 
 public class ResourceTypesSaver {
   private static final Pattern RESOURCE_TYPE_PATTERN = Pattern.compile("<li><a href=\"([^\"]+)\">(AWS::[^<]+)</a></li>");
+  public static final int FETCH_TIMEOUT_MS = 10000;
 
   public static void saveResourceTypes() throws Exception {
-    final List<Pair<URL, String>> types = getResourceTypes();
-
     final CloudFormationMetadata metadata = new CloudFormationMetadata();
 
     metadata.predefinedParameters.addAll(getPredefinedParameters());
 
+    final List<Pair<URL, String>> types = getResourceTypes();
     for (Pair<URL, String> type : types) {
       final CloudFormationResourceType resourceType = getResourceType(type.getValue(), type.getKey());
       metadata.resourceTypes.add(resourceType);
     }
 
+    fetchResourceAttributes(metadata);
+
     try (OutputStream outputStream = new FileOutputStream(new File("generated/cloudformation-metadata.xml"))) {
       MetadataSerializer.toXML(metadata, outputStream);
     }
+  }
+
+  private static void fetchResourceAttributes(CloudFormationMetadata metadata) throws IOException {
+    URL fnGetAttrDocUrl = new URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html");
+    final Document doc = getDocumentFromUrl(fnGetAttrDocUrl);
+
+    Element tableElement = doc.select("div.informaltable").first();
+    assert tableElement != null;
+
+    final List<List<String>> table = parseTable(tableElement);
+
+    for (List<String> row : table) {
+      if (row.size() != 3) {
+        continue;
+      }
+
+      String resourceTypeName = row.get(0);
+      final String attribute = row.get(1);
+      // final String description = row.get(2);
+
+      if (resourceTypeName.equals("AWS::CloudFormation::Stack") &&
+          attribute.equals("Outputs.NestedStackOutputName")) {
+        // Not an attribute name
+        continue;
+      }
+
+      if (resourceTypeName.equals("AWS::EC2::AWS::EC2::SubnetNetworkAclAssociation")) {
+        resourceTypeName = "AWS::EC2::SubnetNetworkAclAssociation";
+      }
+
+      CloudFormationResourceType resourceType = metadata.findResourceType(resourceTypeName);
+      if (resourceType == null) {
+        resourceType = new CloudFormationResourceType();
+        resourceType.name = resourceTypeName;
+        metadata.resourceTypes.add(resourceType);
+      }
+
+      resourceType.attributes.add(CloudFormationResourceAttribute.create(attribute, ""));
+    }
+  }
+
+  private static Document getDocumentFromUrl(URL url) throws IOException {
+    System.out.println("Downloading " + url);
+    for (int retry = 1; retry < 5; retry++) {
+      try {
+        return Jsoup.parse(url, FETCH_TIMEOUT_MS);
+      }
+      catch (IOException ignored) {
+      }
+
+      System.out.println("retry...");
+    }
+
+    throw new RuntimeException("Could not download from " + url);
   }
 
   private static CloudFormationResourceType getResourceType(String name, URL url) throws IOException {
@@ -47,7 +100,7 @@ public class ResourceTypesSaver {
     final CloudFormationResourceType resourceType = new CloudFormationResourceType();
     resourceType.name = name;
 
-    final Document doc = Jsoup.parse(url, 2000);
+    final Document doc = getDocumentFromUrl(url);
 
     Element vlist = doc.select("div.variablelist").first();
 
@@ -243,7 +296,7 @@ public class ResourceTypesSaver {
 
   private static List<String> getPredefinedParameters() throws IOException {
     URL url = new URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html");
-    final Document doc = Jsoup.parse(url, 2000);
+    final Document doc = getDocumentFromUrl(url);
 
     List<String> result = new ArrayList<>();
 
