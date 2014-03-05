@@ -40,7 +40,7 @@ public class CloudFormationResolve {
     return null;
   }
 
-  public static String[] getEntities(PsiFile file, String[] sections) {
+  public static Set<String> getEntities(PsiFile file, String[] sections) {
     Set<String> result = new HashSet<String>();
 
     for (String sectionName : sections) {
@@ -52,7 +52,7 @@ public class CloudFormationResolve {
       }
     }
 
-    return ArrayUtil.toStringArray(result);
+    return result;
   }
 
   @Nullable

@@ -4,13 +4,15 @@ import com.intellij.aws.cloudformation.references.CloudFormationEntityReference;
 import com.intellij.aws.cloudformation.references.CloudFormationMappingSecondLevelKeyReference;
 import com.intellij.aws.cloudformation.references.CloudFormationMappingTopLevelKeyReference;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 public class CloudFormationReferenceProvider extends PsiReferenceProvider {
   @NotNull
@@ -20,34 +22,34 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    if (element instanceof JSLiteralExpression) {
-      final PsiReference reference = buildFromElement(element);
-      if (reference != null) {
-        return new PsiReference[]{reference};
-      }
+    final List<PsiReference> references = buildFromElement(element);
+    if (references.isEmpty()) {
+      return PsiReference.EMPTY_ARRAY;
+    } else {
+      PsiReference[] result = new PsiReference[references.size()];
+      references.toArray(result);
+      return result;
     }
-
-    return PsiReference.EMPTY_ARRAY;
   }
 
-  @Nullable
-  public static PsiReference buildFromElement(PsiElement element) {
+  @NotNull
+  public static List<PsiReference> buildFromElement(PsiElement element) {
     final JSLiteralExpression literalExpression = ObjectUtils.tryCast(element, JSLiteralExpression.class);
     if (literalExpression == null) {
-      return null;
+      return Collections.emptyList();
     }
 
-    if (isInRef(literalExpression)) {
-      return new CloudFormationEntityReference(
-        literalExpression,
-        CloudFormationSections.Parameters,
-        CloudFormationSections.Resources);
+    List<PsiReference> result = new ArrayList<PsiReference>();
+
+    if (handleRef(literalExpression, result)) {
+      return result;
     }
 
     if (isInCondition(literalExpression)) {
-      return new CloudFormationEntityReference(
+      result.add(new CloudFormationEntityReference(
         literalExpression,
-        CloudFormationSections.Conditions);
+        CloudFormationSections.Conditions));
+      return result;
     }
 
     final JSArrayLiteralExpression parametersArray = ObjectUtils.tryCast(element.getParent(), JSArrayLiteralExpression.class);
@@ -65,33 +67,42 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
             final JSProperty[] properties = obj.getProperties();
             if (properties.length == 1) {
               if (isGetAtt) {
-                return new CloudFormationEntityReference(literalExpression, CloudFormationSections.Resources);
+                result.add(new CloudFormationEntityReference(literalExpression, CloudFormationSections.Resources));
+                return result;
               }
 
               if (isFindInMap) {
-                return new CloudFormationEntityReference(literalExpression, CloudFormationSections.Mappings);
+                result.add(new CloudFormationEntityReference(literalExpression, CloudFormationSections.Mappings));
+                return result;
               }
 
               if (isIf) {
-                return new CloudFormationEntityReference(literalExpression, CloudFormationSections.Conditions);
+                result.add(new CloudFormationEntityReference(literalExpression, CloudFormationSections.Conditions));
+                return result;
               }
             }
           } else if (allParameters.length > 1 && element == allParameters[1]) {
             if (isFindInMap) {
               JSLiteralExpression mappingNameExpression = ObjectUtils.tryCast(allParameters[0], JSLiteralExpression.class);
               if (mappingNameExpression != null && mappingNameExpression.isQuotedLiteral()) {
-                return new CloudFormationMappingTopLevelKeyReference(literalExpression, CloudFormationResolve.getTargetName(mappingNameExpression));
+                result.add(new CloudFormationMappingTopLevelKeyReference(literalExpression,
+                                                                         CloudFormationResolve.getTargetName(mappingNameExpression)));
+                return result;
               }
             }
           } else if (allParameters.length > 2 && element == allParameters[2]) {
             if (isFindInMap) {
               JSLiteralExpression mappingNameExpression = ObjectUtils.tryCast(allParameters[0], JSLiteralExpression.class);
               JSLiteralExpression topLevelKeyExpression = ObjectUtils.tryCast(allParameters[1], JSLiteralExpression.class);
-              if (mappingNameExpression != null && mappingNameExpression.isQuotedLiteral() && topLevelKeyExpression != null && topLevelKeyExpression.isQuotedLiteral()) {
-                return new CloudFormationMappingSecondLevelKeyReference(
+              if (mappingNameExpression != null &&
+                  mappingNameExpression.isQuotedLiteral() &&
+                  topLevelKeyExpression != null &&
+                  topLevelKeyExpression.isQuotedLiteral()) {
+                result.add(new CloudFormationMappingSecondLevelKeyReference(
                   literalExpression,
                   CloudFormationResolve.getTargetName(mappingNameExpression),
-                  CloudFormationResolve.getTargetName(topLevelKeyExpression));
+                  CloudFormationResolve.getTargetName(topLevelKeyExpression)));
+                return result;
               }
             }
           }
@@ -99,28 +110,25 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
       }
     }
 
-    if (isInDependsOnSingle(element)) {
-      return new CloudFormationEntityReference(
-        literalExpression,
-        CloudFormationSections.Resources);
+    if (handleDependsOnSingle(literalExpression, result)) {
+      return result;
     }
 
-    if (isInDependsOnMultiple(element)) {
-      return new CloudFormationEntityReference(
-        literalExpression,
-        CloudFormationSections.Resources);
+    if (handleDependsOnMultiple(literalExpression, result)) {
+      return result;
     }
 
     if (isInConditionOnResource(element)) {
-      return new CloudFormationEntityReference(
+      result.add(new CloudFormationEntityReference(
         literalExpression,
-        CloudFormationSections.Conditions);
+        CloudFormationSections.Conditions));
+      return result;
     }
 
-    return null;
+    return result;
   }
 
-  public static boolean isInRef(JSLiteralExpression element) {
+  public static boolean handleRef(JSLiteralExpression element, List<PsiReference> result) {
     final JSProperty refProperty = ObjectUtils.tryCast(element.getParent(), JSProperty.class);
     if (refProperty == null || !CloudFormationIntrinsicFunctions.Ref.equals(refProperty.getName())) {
       return false;
@@ -137,7 +145,15 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
     }
 
     final String targetName = CloudFormationResolve.getTargetName(element);
-    return !CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(targetName);
+    if (CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(targetName)) {
+      return false;
+    }
+
+    result.add(new CloudFormationEntityReference(
+      element,
+      CloudFormationSections.Parameters,
+      CloudFormationSections.Resources));
+    return true;
   }
 
   public static boolean isInCondition(JSLiteralExpression element) {
@@ -150,7 +166,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
     return obj != null && obj.getProperties().length == 1;
   }
 
-  public static boolean isInDependsOnSingle(PsiElement element) {
+  public static boolean handleDependsOnSingle(JSLiteralExpression element, List<PsiReference> result) {
     final JSProperty dependsOnProperty = ObjectUtils.tryCast(element.getParent(), JSProperty.class);
     if (dependsOnProperty == null || !CloudFormationConstants.DependsOn.equals(dependsOnProperty.getName())) {
       return false;
@@ -163,15 +179,15 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
     }
 
     final JSProperty resource = ObjectUtils.tryCast(resourceProperties.getParent(), JSProperty.class);
-    if (resource == null) {
+    if (resource == null || !isResourceElement(resource)) {
       return false;
     }
 
-    final PsiElement entity = CloudFormationResolve.resolveEntity(
-      element.getContainingFile(), resource.getName(),
-      CloudFormationSections.Resources);
-
-    return resource == entity;
+    result.add(new CloudFormationEntityReference(
+      element,
+      Arrays.asList(resource.getName()),
+      CloudFormationSections.Resources));
+    return true;
   }
 
   public static boolean isInConditionOnResource(PsiElement element) {
@@ -187,18 +203,10 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
     }
 
     final JSProperty resource = ObjectUtils.tryCast(resourceProperties.getParent(), JSProperty.class);
-    if (resource == null) {
-      return false;
-    }
-
-    final PsiElement entity = CloudFormationResolve.resolveEntity(
-      element.getContainingFile(), resource.getName(),
-      CloudFormationSections.Resources);
-
-    return resource == entity;
+    return resource != null && isResourceElement(resource);
   }
 
-  public static boolean isInDependsOnMultiple(PsiElement element) {
+  public static boolean handleDependsOnMultiple(JSLiteralExpression element, List<PsiReference> result) {
     final JSArrayLiteralExpression refArray = ObjectUtils.tryCast(element.getParent(), JSArrayLiteralExpression.class);
     if (refArray == null) {
       return false;
@@ -216,14 +224,41 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
     }
 
     final JSProperty resource = ObjectUtils.tryCast(resourceProperties.getParent(), JSProperty.class);
-    if (resource == null) {
+    if (resource == null || !isResourceElement(resource)) {
       return false;
     }
 
-    final PsiElement entity = CloudFormationResolve.resolveEntity(
-      element.getContainingFile(), resource.getName(),
-      CloudFormationSections.Resources);
+    Collection<String> excludes = new HashSet<String>();
+    for (JSExpression childExpression : refArray.getExpressions()) {
+      if (childExpression == element) {
+        continue;
+      }
 
-    return resource == entity;
+      if (childExpression instanceof JSLiteralExpression) {
+        excludes.add(StringUtil.unquoteString(StringUtil.notNullize(childExpression.getText())));
+      }
+    }
+
+    excludes.add(resource.getName());
+
+    result.add(new CloudFormationEntityReference(
+      element,
+      excludes,
+      CloudFormationSections.Resources));
+    return true;
+  }
+
+  private static boolean isResourceElement(JSProperty element) {
+    JSObjectLiteralExpression resourcesProperties = ObjectUtils.tryCast(element.getParent(), JSObjectLiteralExpression.class);
+    if (resourcesProperties == null) {
+      return false;
+    }
+
+    JSProperty resourcesProperty = ObjectUtils.tryCast(resourcesProperties.getParent(), JSProperty.class);
+    if (resourcesProperty == null || !CloudFormationSections.Resources.equals(resourcesProperty.getName())) {
+      return false;
+    }
+
+    return CloudFormationPsiUtils.getRootExpression(resourcesProperty.getContainingFile()) == resourcesProperty.getParent();
   }
 }

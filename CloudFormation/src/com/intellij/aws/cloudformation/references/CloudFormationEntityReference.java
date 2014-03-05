@@ -4,17 +4,31 @@ import com.intellij.aws.cloudformation.CloudFormationResolve;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Set;
 
 public class CloudFormationEntityReference extends CloudFormationReferenceBase {
   private final String[] myPossibleSections;
 
-  public CloudFormationEntityReference(@NotNull JSLiteralExpression element, String... possibleSections) {
+  @Nullable
+  private final Collection<String> myExcludeFromVariants;
+
+  public CloudFormationEntityReference(@NotNull JSLiteralExpression element,
+                                       @Nullable Collection<String> variantsToExclude,
+                                       String... possibleSections) {
     super(element);
+    myExcludeFromVariants = variantsToExclude;
 
     assert possibleSections.length > 0;
     myPossibleSections = possibleSections;
+  }
+
+  public CloudFormationEntityReference(@NotNull JSLiteralExpression element, String... possibleSections) {
+    this(element, null, possibleSections);
   }
 
   @Nullable
@@ -26,6 +40,12 @@ public class CloudFormationEntityReference extends CloudFormationReferenceBase {
 
   @NotNull
   public String[] getCompletionVariants() {
-    return CloudFormationResolve.getEntities(myElement.getContainingFile(), myPossibleSections);
+    Set<String> entities = CloudFormationResolve.getEntities(myElement.getContainingFile(), myPossibleSections);
+
+    if (myExcludeFromVariants != null) {
+      entities.removeAll(myExcludeFromVariants);
+    }
+
+    return ArrayUtil.toStringArray(entities);
   }
 }

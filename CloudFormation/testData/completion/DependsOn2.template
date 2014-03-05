@@ -1,0 +1,28 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+  },
+
+  "Resources": {
+    "WebServerUser1": {
+      "Type": "AWS::IAM::User"
+    },
+
+    "WebServerUser2": {
+      "Type": "AWS::IAM::User"
+    },
+
+    "WebServerUser3": {
+      "Type": "AWS::IAM::User"
+    },
+
+    "WebServerUser4": {
+      "Type": "AAA",
+      "DependsOn": [
+        "<caret>",
+        "WebServerUser3"
+      ]
+    }
+  }
+}
