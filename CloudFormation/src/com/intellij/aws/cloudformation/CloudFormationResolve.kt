@@ -12,34 +12,23 @@ import com.intellij.openapi.util.text.StringUtil
 
 public open class CloudFormationResolve() {
   class object {
-    public open fun getSectionNode(file: PsiFile, name: String): JSObjectLiteralExpression? {
-      return CloudFormationPsiUtils.getObjectLiteralExpressionChild(CloudFormationPsiUtils.getRootExpression(file), name)
-    }
+    public open fun getSectionNode(file: PsiFile, name: String): JSObjectLiteralExpression? =
+        CloudFormationPsiUtils.getObjectLiteralExpressionChild(CloudFormationPsiUtils.getRootExpression(file), name)
 
-    public open fun getTargetName(element: JSLiteralExpression): String {
-      return StringUtil.stripQuotesAroundValue(StringUtil.notNullize(element.getText()))
-    }
+    public open fun getTargetName(element: JSLiteralExpression): String = StringUtil.stripQuotesAroundValue(element.getText() ?: "")
 
     public open fun resolveEntity(file: PsiFile, entityName: String, vararg sections: String): JSProperty? {
-      for (sectionName in sections)
-      {
-        val section = getSectionNode(file, sectionName)
-        if (section != null)
-        {
-          val property = section.findProperty(entityName)
-          if (property != null)
-          {
-            return property
-          }
-
-        }
-
-      }
-      return null
+      return sections
+          .map { getSectionNode(file, it) }
+          .filterNotNull()
+          .map { it.findProperty(entityName) }
+          .filterNotNull()
+          .firstOrNull()
     }
 
     public open fun getEntities(file: PsiFile, sections: Array<String>): Set<String> {
       val result = HashSet<String>()
+
       for (sectionName in sections)
       {
         val section = getSectionNode(file, sectionName)
@@ -54,41 +43,19 @@ public open class CloudFormationResolve() {
             }
           }
         }
-
       }
+
       return result
     }
 
     public open fun resolveTopLevelMappingKey(file: PsiFile, mappingName: String, topLevelKey: String): JSProperty? {
-      val mappingElement = resolveEntity(file, mappingName, CloudFormationSections.Mappings)
-      if (mappingElement == null)
-      {
-        return null
-      }
-
-      val objectLiteralExpression = ObjectUtils.tryCast(mappingElement.getValue(), javaClass<JSObjectLiteralExpression>())
-      if (objectLiteralExpression == null)
-      {
-        return null
-      }
-
-      return objectLiteralExpression.findProperty(topLevelKey)
+      val mappingExpression = resolveEntity(file, mappingName, CloudFormationSections.Mappings)?.getValue() as? JSObjectLiteralExpression
+      return mappingExpression?.findProperty(topLevelKey)
     }
 
     public open fun resolveSecondLevelMappingKey(file: PsiFile, mappingName: String, topLevelKey: String, secondLevelKey: String): PsiElement? {
-      val topLevelKeyElement = resolveTopLevelMappingKey(file, mappingName, topLevelKey)
-      if (topLevelKeyElement == null)
-      {
-        return null
-      }
-
-      val objectLiteralExpression = ObjectUtils.tryCast(topLevelKeyElement.getValue(), javaClass<JSObjectLiteralExpression>())
-      if (objectLiteralExpression == null)
-      {
-        return null
-      }
-
-      return objectLiteralExpression.findProperty(secondLevelKey)
+      val topLevelKeyExpression = resolveTopLevelMappingKey(file, mappingName, topLevelKey)?.getValue() as? JSObjectLiteralExpression
+      return topLevelKeyExpression?.findProperty(secondLevelKey)
     }
 
     public open fun getTopLevelMappingKeys(file: PsiFile, mappingName: String): Array<String>? {

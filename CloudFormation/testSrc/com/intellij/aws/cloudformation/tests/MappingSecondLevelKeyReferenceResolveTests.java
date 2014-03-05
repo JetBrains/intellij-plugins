@@ -7,7 +7,7 @@ public class MappingSecondLevelKeyReferenceResolveTests extends ResolveTestsBase
     super(CloudFormationMappingSecondLevelKeyReference.class);
   }
 
-  public void testFindInMapRefToTopLevelKey() throws Exception {
+  public void testFindInMapRefToSecondLevelKey() throws Exception {
     assertEntityResolve("findInMapRefToSecondLevelKey", "Arch");
   }
 
