@@ -99,7 +99,7 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
       return;
     }
 
-    final String type = CloudFormationResolve.getTargetName(typeValue);
+    final String type = CloudFormationResolve.object$.getTargetName(typeValue);
 
     final CloudFormationResourceType resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(type);
     if (resourceTypeMetadata == null) {

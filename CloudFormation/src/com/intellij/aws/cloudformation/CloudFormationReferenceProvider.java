@@ -86,7 +86,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
               JSLiteralExpression mappingNameExpression = ObjectUtils.tryCast(allParameters[0], JSLiteralExpression.class);
               if (mappingNameExpression != null && mappingNameExpression.isQuotedLiteral()) {
                 result.add(new CloudFormationMappingTopLevelKeyReference(literalExpression,
-                                                                         CloudFormationResolve.getTargetName(mappingNameExpression)));
+                                                                         CloudFormationResolve.object$.getTargetName(mappingNameExpression)));
                 return result;
               }
             }
@@ -100,8 +100,8 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
                   topLevelKeyExpression.isQuotedLiteral()) {
                 result.add(new CloudFormationMappingSecondLevelKeyReference(
                   literalExpression,
-                  CloudFormationResolve.getTargetName(mappingNameExpression),
-                  CloudFormationResolve.getTargetName(topLevelKeyExpression)));
+                  CloudFormationResolve.object$.getTargetName(mappingNameExpression),
+                  CloudFormationResolve.object$.getTargetName(topLevelKeyExpression)));
                 return result;
               }
             }
@@ -144,7 +144,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
       return false;
     }
 
-    final String targetName = CloudFormationResolve.getTargetName(element);
+    final String targetName = CloudFormationResolve.object$.getTargetName(element);
     if (CloudFormationMetadataProvider.METADATA.predefinedParameters.contains(targetName)) {
       return false;
     }
