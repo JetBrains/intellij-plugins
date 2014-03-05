@@ -23,14 +23,14 @@ public class AngularJSControllerReferencesProvider extends PsiReferenceProvider 
     return new PsiReference[] { new AngularJSControllerReference((JSLiteralExpression)element) };
   }
 
-  public static class AngularJSControllerReference extends PsiReferenceBase<JSLiteralExpression> {
+  public static class AngularJSControllerReference extends AngularJSReferenceBase<JSLiteralExpression> {
     public AngularJSControllerReference(@NotNull JSLiteralExpression element) {
-      super(element, ElementManipulators.getValueTextRange(element));
+      super(element, ElementManipulators.getValueTextRange(element), true);
     }
 
     @Nullable
     @Override
-    public PsiElement resolve() {
+    public PsiElement resolveInner() {
       return AngularIndexUtil.resolve(getElement().getProject(), AngularControllerIndex.INDEX_ID, getCanonicalText());
     }
 

@@ -146,7 +146,7 @@ public class DartStackFrame extends XStackFrame {
   }
 
   @Override
-  public void customizePresentation(ColoredTextContainer component) {
+  public void customizePresentation(@NotNull ColoredTextContainer component) {
     XSourcePosition position = getSourcePosition();
     component.append(myFunctionName, SimpleTextAttributes.REGULAR_ATTRIBUTES);
     component.append(" in ", SimpleTextAttributes.REGULAR_ATTRIBUTES);

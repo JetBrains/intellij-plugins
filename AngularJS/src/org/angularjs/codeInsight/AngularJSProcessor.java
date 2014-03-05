@@ -11,6 +11,8 @@ import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
@@ -18,6 +20,7 @@ import com.intellij.util.Consumer;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSRecursiveVisitor;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,21 +80,35 @@ public class AngularJSProcessor {
         });
       }
     };
-    final XmlDocument document = file.getDocument();
+    processDocument(visitor, file.getDocument());
+  }
+
+  private static void processDocument(final JSResolveUtil.JSInjectedFilesVisitor visitor, XmlDocument document) {
     if (document == null) return;
     for (XmlTag tag : PsiTreeUtil.getChildrenOfTypeAsList(document, XmlTag.class)) {
-      new XmlBackedJSClassImpl.InjectedScriptsVisitor(tag, null, true, true, visitor, true).go();
+      new XmlBackedJSClassImpl.InjectedScriptsVisitor(tag, null, true, true, visitor, true){
+        @Override
+        public boolean execute(@NotNull PsiElement element) {
+          if (element instanceof HtmlEmbeddedContentImpl) {
+            processDocument(visitor, PsiTreeUtil.findChildOfType(element, XmlDocument.class));
+          }
+          return super.execute(element);
+        }
+      }.go();
     }
   }
 
   private static boolean scopeMatches(PsiElement element, PsiElement declaration) {
     final InjectedLanguageManager injector = InjectedLanguageManager.getInstance(element.getProject());
-    final XmlTagChild elementContainer = PsiTreeUtil.getNonStrictParentOfType(injector.getInjectionHost(element),
-                                                                              XmlTag.class, XmlText.class);
-    final XmlTagChild declarationContainer = PsiTreeUtil.getNonStrictParentOfType(injector.getInjectionHost(declaration),
-                                                                                  XmlTag.class, XmlText.class);
-    if (elementContainer != null && declarationContainer != null) {
-      return PsiTreeUtil.isAncestor(declarationContainer, elementContainer, true);
+    final PsiLanguageInjectionHost elementContainer = injector.getInjectionHost(element);
+    final XmlTagChild elementTag = PsiTreeUtil.getNonStrictParentOfType(elementContainer, XmlTag.class, XmlText.class);
+    final PsiLanguageInjectionHost declarationContainer = injector.getInjectionHost(declaration);
+    final XmlTagChild declarationTag = PsiTreeUtil.getNonStrictParentOfType(declarationContainer, XmlTag.class, XmlText.class);
+
+    if (declarationContainer != null && elementContainer != null && elementTag != null && declarationTag != null) {
+      return PsiTreeUtil.isAncestor(declarationTag, elementTag, true) ||
+             (PsiTreeUtil.isAncestor(declarationTag, elementTag, false) &&
+              declarationContainer.getTextOffset() < elementContainer.getTextOffset());
     }
     return true;
   }

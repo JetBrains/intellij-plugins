@@ -201,8 +201,11 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     Collection<VirtualFile> files = FileTypeIndex.getFiles(JavaScriptFileType.INSTANCE, scope);
     List<VirtualFile> result = ContainerUtil.newArrayList();
     for (VirtualFile file : files) {
-      if (file.getName().endsWith(".conf.js")) {
-        result.add(file);
+      if (file != null && file.isValid() && !file.isDirectory() && file.getName().endsWith(".conf.js")) {
+        String path = file.getPath();
+        if (!path.contains("/node_modules/") && !path.contains("/bower_components/")) {
+          result.add(file);
+        }
       }
     }
     return result;

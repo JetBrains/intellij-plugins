@@ -127,25 +127,36 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                                   @NotNull String line,
                                   String patternMatched,
                                   JSSymbolVisitor visitor) {
-    if (type != JSDocumentationProcessor.MetaDocType.NAME || matchName == null || !hasDirectiveName(remainingLineContent)) return;
+    if (type != JSDocumentationProcessor.MetaDocType.NAME || matchName == null) return;
     assert remainingLineContent != null;
 
-    final int offset = comment.getTextOffset() + comment.getText().indexOf(matchName);
-    if (matchName.contains(DIRECTIVE)) {
-      final String restrictions = calculateRestrictions(comment);
-      storeAdditionalData(visitor, AngularDirectivesDocIndex.INDEX_ID, comment, DIRECTIVE,
-                          remainingLineContent.substring(1), offset, restrictions);
-    } else if (matchName.contains(FILTER)) {
-      storeAdditionalData(visitor, AngularFilterIndex.INDEX_ID, comment, FILTER, remainingLineContent.substring(1), offset, null);
+    final String commentText = comment.getText();
+    if (!commentText.contains("@ngdoc")) return;
+
+    final String[] commentLines = StringUtil.splitByLines(commentText);
+    final int offset = comment.getTextOffset() + commentText.indexOf(matchName);
+    for (int i = 0; i < Math.min(commentLines.length, 3); i++) {
+      String commentLine = commentLines[i];
+      if (!commentLine.contains("@ngdoc")) continue;
+
+      final String name = remainingLineContent.isEmpty() ? matchName : remainingLineContent.substring(1);
+      if (commentLine.contains(DIRECTIVE)) {
+        final String restrictions = calculateRestrictions(commentLines);
+        storeAdditionalData(visitor, AngularDirectivesDocIndex.INDEX_ID, comment, DIRECTIVE, name, offset, restrictions);
+        return;
+      }
+      else if (commentLine.contains(FILTER)) {
+        storeAdditionalData(visitor, AngularFilterIndex.INDEX_ID, comment, FILTER, name, offset, null);
+        return;
+      }
     }
   }
 
-  private static String calculateRestrictions(PsiComment comment) {
-    final String commentText = comment.getText();
+  private static String calculateRestrictions(final String[] commentLines) {
     String restrict = "A";
     String tag = "";
     String param = "";
-    for (String line : StringUtil.splitByLines(commentText)) {
+    for (String line : commentLines) {
       restrict = getParamValue(restrict, line, RESTRICT_PATTERN, RESTRICT);
       tag = getParamValue(tag, line, ELEMENT_PATTERN, ELEMENT);
       param = getParamValue(param, line, PARAM_PATTERN, PARAM);
@@ -181,10 +192,5 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       });
     }
     return restrict.get().trim() + ";;";
-  }
-
-  private static boolean hasDirectiveName(String remainingLineContent) {
-    return remainingLineContent != null && remainingLineContent.startsWith(":") &&
-           !remainingLineContent.contains(".") && !remainingLineContent.contains("#");
   }
 }
