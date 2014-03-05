@@ -458,7 +458,7 @@ public class FlexCommonUtils {
     if (lastSlashIndex <= 0 || lastSlashIndex == swcPath.length() - 1) {
       LOG.error("Unexpected Flex SDK root: " + swcPath);
     }
-    final String swcName = swcPath.substring(lastSlashIndex + 1);
+    final String swcName = swcPath.substring(lastSlashIndex + 1).toLowerCase();
     final String folderPath = swcPath.substring(0, lastSlashIndex);
 
     if (folderPath.endsWith("/frameworks/libs")) {
