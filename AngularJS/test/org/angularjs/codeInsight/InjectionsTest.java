@@ -55,12 +55,21 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("ngRepeatExplicit.html", "ngRepeatExplicit.after.html", "angular.js");
   }
 
+  public void testNgRepeatExplicitCompletionInScript() {
+    myFixture.testCompletion("ngRepeatExplicitInScript.html", "ngRepeatExplicitInScript.after.html", "angular.js");
+  }
+
   public void testNgRepeatExplicitCompletionSameTag() {
     myFixture.testCompletion("ngRepeatExplicitSameTag.html", "ngRepeatExplicitSameTag.after.html", "angular.js");
   }
 
   public void testNgRepeatExplicitResolve() {
     myFixture.configureByFiles("ngRepeatExplicit.resolve.html", "angular.js");
+    checkVariableResolve("per<caret>son", "person", JSDefinitionExpression.class);
+  }
+
+  public void testNgRepeatExplicitResolveInScript() {
+    myFixture.configureByFiles("ngRepeatExplicitInScript.resolve.html", "angular.js");
     checkVariableResolve("per<caret>son", "person", JSDefinitionExpression.class);
   }
 
