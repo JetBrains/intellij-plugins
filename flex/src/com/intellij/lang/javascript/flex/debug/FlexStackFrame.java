@@ -500,7 +500,7 @@ public class FlexStackFrame extends XStackFrame {
   }
 
   @Override
-  public void customizePresentation(final ColoredTextContainer component) {
+  public void customizePresentation(@NotNull final ColoredTextContainer component) {
     component.append(myScope, SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
     if (mySourcePosition != null) {
