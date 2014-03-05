@@ -83,7 +83,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected void addTypeFromClass(JSReferenceExpression expression, PsiElement parent, PsiElement resolveResult) {
+  protected void addTypeFromClass(JSReferenceExpression expression, PsiElement parent, boolean wasPrototype, PsiElement resolveResult) {
     if (resolveResult instanceof JSFunction) {
       resolveResult = resolveResult.getParent();
     }
