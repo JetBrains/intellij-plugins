@@ -40,7 +40,7 @@ public class ReferenceSupport {
     return getFileRefs(elt, offset, str, lookupOptions);
   }
 
-  public static PsiReference[] getFileRefs(final PsiElement elt, final int offset, String str, final LookupOptions lookupOptions) {
+  public static PsiReference[] getFileRefs(@NotNull PsiElement elt, final int offset, String str, final LookupOptions lookupOptions) {
     if (lookupOptions.IGNORE_TEXT_AFTER_HASH) {
       int hashIndex = str.indexOf('#');
       if (hashIndex != -1) str = str.substring(0, hashIndex);
