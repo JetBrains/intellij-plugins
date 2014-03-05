@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -61,12 +62,8 @@ public class DartTypeHandler extends TypedHandlerDelegate {
       textToInsert = "}";
     }
     if (textToInsert != null) {
-      int offset = editor.getCaretModel().getOffset();
-      if (offset >= 0) {
-        editor.getDocument().insertString(offset, textToInsert);
-        editor.getCaretModel().moveToOffset(offset);
-        return Result.STOP;
-      }
+      EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, textToInsert, false, 0);
+      return Result.STOP;
     }
     return super.charTyped(c, project, editor, file);
   }

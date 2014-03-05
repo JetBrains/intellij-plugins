@@ -1,12 +1,25 @@
 package com.jetbrains.lang.dart.completion.editor;
 
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.testFramework.EditorTestUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.completion.base.DartCompletionTestBase;
 
 public class DartEditorCompletionTest extends DartCompletionTestBase {
   public DartEditorCompletionTest() {
     super("completion", "editor");
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    EditorTestUtil.enableMultipleCarets();
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    EditorTestUtil.disableMultipleCarets();
+    super.tearDown();
   }
 
   private void doTypeAndCheck(char charToType, String expected) {
@@ -31,6 +44,14 @@ public class DartEditorCompletionTest extends DartCompletionTestBase {
     doTest('\n');
   }
 
+  public void testGenericBraceWithMultiCaret() throws Throwable {
+    doTest('<');
+  }
+
+  public void _testGenericBraceWithMultiCaretInDifferentContexts() throws Throwable {
+    doTest('<');
+  }
+
   public void testGenericBrace1() throws Throwable {
     doTest('<');
   }
@@ -45,6 +66,14 @@ public class DartEditorCompletionTest extends DartCompletionTestBase {
 
   public void testLess() throws Throwable {
     doTest('<');
+  }
+
+  public void testStringWithMultiCaret() throws Throwable {
+    doTest('{');
+  }
+
+  public void _testStringWithMultiCaretInDifferentContexts() throws Throwable {
+    doTest('{');
   }
 
   public void testString1() throws Throwable {
