@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<templateSet group="surround">
+<templateSet group="Dart surround">
   <template resource-bundle="com.jetbrains.lang.dart.DartBundle" key="livetemplate.description.surround.braces"
             name="B" toReformat="true" toShortenFQNames="true" value="{$SELECTION$}">
-    <variable name="SELECTION" expression="" defaultValue="" alwaysStopAt="false" />
     <context>
       <option name="DART" value="true"/>
     </context>
   </template>
   <template resource-bundle="com.jetbrains.lang.dart.DartBundle" key="livetemplate.description.iter"
             name="I" toReformat="true" toShortenFQNames="true" value="for ($VAR$ in $SELECTION$) {&#10;  $END$&#10;}">
-    <variable name="SELECTION" expression="" defaultValue="" alwaysStopAt="false" />
     <variable name="VAR" expression="dartSuggestVariableName()" defaultValue="&quot;o&quot;" alwaysStopAt="true"/>
     <context>
       <option name="DART" value="true"/>
