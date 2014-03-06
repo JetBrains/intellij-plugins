@@ -14,7 +14,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
-    <java.compiler implementation="org.intellij.errorProne.ErrorProneJavaCompiler"/>
+    <java.compiler implementation="org.intellij.errorProne.ErrorProneJavaBackendCompiler"/>
+    <projectService serviceImplementation="org.intellij.errorProne.ErrorProneCompilerConfiguration"/>
     <compileServer.plugin classpath="jps/error-prone-jps-plugin.jar"/>
     <buildProcess.parametersProvider implementation="org.intellij.errorProne.ErrorProneClasspathProvider"/>
   </extensions>

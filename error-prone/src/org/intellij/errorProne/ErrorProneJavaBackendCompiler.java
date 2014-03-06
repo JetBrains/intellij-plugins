@@ -4,7 +4,6 @@ import com.intellij.compiler.OutputParser;
 import com.intellij.compiler.impl.javaCompiler.BackendCompiler;
 import com.intellij.compiler.impl.javaCompiler.ModuleChunk;
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfigurable;
-import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.fileTypes.FileType;
@@ -21,10 +20,10 @@ import java.util.Set;
 /**
  * @author nik
  */
-public class ErrorProneJavaCompiler implements BackendCompiler {
+public class ErrorProneJavaBackendCompiler implements BackendCompiler {
   private Project myProject;
 
-  public ErrorProneJavaCompiler(Project project) {
+  public ErrorProneJavaBackendCompiler(Project project) {
     myProject = project;
   }
 
@@ -43,7 +42,7 @@ public class ErrorProneJavaCompiler implements BackendCompiler {
   @NotNull
   @Override
   public Configurable createConfigurable() {
-    return new JavacConfigurable(JavacConfiguration.getOptions(myProject, JavacConfiguration.class));
+    return new JavacConfigurable(ErrorProneCompilerConfiguration.getOptions(myProject));
   }
 
   @NotNull

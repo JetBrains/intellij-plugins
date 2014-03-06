@@ -29,7 +29,7 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
   @Override
   public List<String> getLauncherClassPath() {
     BackendCompiler compiler = ((CompilerConfigurationImpl)CompilerConfiguration.getInstance(myProject)).getDefaultCompiler();
-    if (compiler instanceof ErrorProneJavaCompiler) {
+    if (compiler instanceof ErrorProneJavaBackendCompiler) {
       File pluginClassesRoot = new File(PathUtil.getJarPathForClass(getClass()));
       File libJar;
       if (pluginClassesRoot.isFile()) {
