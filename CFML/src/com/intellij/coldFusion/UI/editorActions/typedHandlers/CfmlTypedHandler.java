@@ -69,7 +69,7 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
       CfmlBraceMatcher braceMatcher = new CfmlBraceMatcher();
       HighlighterIterator iterator = ((EditorEx)editor).getHighlighter().createIterator(offset);
       if (!braceMatcher.isLBraceToken(iterator, editor.getDocument().getCharsSequence(), fileType)) {
-        DocumentUtils.typeInStringAndMoveCaret(editor, "}", 0);
+        EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, "}", true, 0);
         // return Result.STOP;
       }
       return Result.CONTINUE;
@@ -81,7 +81,7 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
           EditorModificationUtil.moveAllCaretsRelatively(editor, 1);
           return Result.STOP;
         }
-        DocumentUtils.typeInStringAndMoveCaret(editor, "#", 0);
+        EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, "#", true, 0);
       }
     }
     else if (c == '>') {
@@ -105,7 +105,7 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
     char charAtOffset = DocumentUtils.getCharAt(document, offset);
 
     if (charAtOffset != '>') {
-      DocumentUtils.typeInStringAndMoveCaret(editor, ">", 0);
+      EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, ">", true, 0);
     }
     EditorModificationUtil.moveAllCaretsRelatively(editor, 1);
     ++offset;
@@ -163,7 +163,7 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
       }
     }
     if (doInsertion && CfmlUtil.isEndTagRequired(((CfmlTag)tagElement).getTagName(), project)) {
-      DocumentUtils.typeInStringAndMoveCaret(editor, "</" + ((CfmlTag)tagElement).getTagName() + ">", 0);
+      EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, "</" + ((CfmlTag)tagElement).getTagName() + ">", true, 0);
       return true;
     }
     return false;

@@ -17,8 +17,6 @@
 package com.intellij.coldFusion.UI.editorActions.typedHandlers;
 
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorModificationUtil;
 
 /**
  * @by anonymous
@@ -29,9 +27,5 @@ public class DocumentUtils {
       return 0;
     }
     return document.getCharsSequence().charAt(offset);
-  }
-
-  static void typeInStringAndMoveCaret(Editor editor, String str, int caretShift) {
-    EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, str, true, caretShift);
   }
 }
