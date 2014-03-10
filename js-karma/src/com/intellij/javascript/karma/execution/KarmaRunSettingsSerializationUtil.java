@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Sergey Simonchik
@@ -52,10 +53,18 @@ public class KarmaRunSettingsSerializationUtil {
 
   public static void writeToXml(@NotNull Element element, @NotNull KarmaRunSettings settings) {
     element.setAttribute(CONFIG_FILE, FileUtil.toSystemIndependentName(settings.getConfigPath()));
-    EnvironmentVariablesComponent.writeExternal(element, settings.getEnvVars());
+    Map<String, String> envVars = getEnvVarsForWriting(settings.getEnvVars());
+    EnvironmentVariablesComponent.writeExternal(element, envVars);
     if (settings.isPassParentEnvVars() != KarmaRunSettings.Builder.DEFAULT_PASS_PARENT_ENV_VARS) {
       element.setAttribute(PASS_PARENT_ENV_VAR, String.valueOf(settings.isPassParentEnvVars()));
     }
   }
 
+  @NotNull
+  private static Map<String, String> getEnvVarsForWriting(@NotNull Map<String, String> envVars) {
+    if (envVars.size() <= 1) {
+      return envVars;
+    }
+    return new TreeMap<String, String>(envVars);
+  }
 }

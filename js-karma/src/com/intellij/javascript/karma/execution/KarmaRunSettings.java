@@ -2,7 +2,6 @@ package com.intellij.javascript.karma.execution;
 
 import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
@@ -63,7 +62,7 @@ public class KarmaRunSettings {
     public static final boolean DEFAULT_PASS_PARENT_ENV_VARS = true;
 
     private String myConfigPath = "";
-    private Map<String, String> myEnvVars = null;
+    private Map<String, String> myEnvVars = Collections.emptyMap();
     private boolean myPassParentEnvVars = DEFAULT_PASS_PARENT_ENV_VARS;
 
     public Builder() {}
@@ -74,7 +73,7 @@ public class KarmaRunSettings {
       return this;
     }
 
-    public void setEnvVars(@Nullable Map<String, String> envVars) {
+    public void setEnvVars(@NotNull Map<String, String> envVars) {
       myEnvVars = envVars;
     }
 
@@ -84,8 +83,7 @@ public class KarmaRunSettings {
 
     @NotNull
     public KarmaRunSettings build() {
-      Map<String, String> envVars = myEnvVars != null ? myEnvVars : Collections.<String, String>emptyMap();
-      return new KarmaRunSettings(myConfigPath, envVars, myPassParentEnvVars);
+      return new KarmaRunSettings(myConfigPath, myEnvVars, myPassParentEnvVars);
     }
   }
 
