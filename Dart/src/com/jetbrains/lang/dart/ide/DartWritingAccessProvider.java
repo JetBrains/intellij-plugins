@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 
+import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
+
 public class DartWritingAccessProvider extends WritingAccessProvider {
 
   private final Project myProject;
@@ -50,7 +52,7 @@ public class DartWritingAccessProvider extends WritingAccessProvider {
     VirtualFile parent = file;
     while ((parent = parent.getParent()) != null && fileIndex.isInContent(parent)) {
       if ("packages".equals(parent.getName())) {
-        return VfsUtilCore.findRelativeFile("../pubspec.yaml", parent) != null;
+        return VfsUtilCore.findRelativeFile("../" + PUBSPEC_YAML, parent) != null;
       }
     }
 

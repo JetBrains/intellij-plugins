@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
+
 final class DartFileUrlMapper extends FileUrlMapper {
   private static final String SCHEME = "dart";
 
@@ -53,7 +55,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
       return DumbService.getInstance(project).tryRunReadActionInSmartMode(new Computable<VirtualFile>() {
         @Override
         public VirtualFile compute() {
-          Collection<VirtualFile> files = FilenameIndex.getVirtualFilesByName(project, DartResolveUtil.PUBSPEC_FILENAME, ProjectScope.getContentScope(project));
+          Collection<VirtualFile> files = FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, ProjectScope.getContentScope(project));
           for (VirtualFile file : files) {
             final VirtualFile packagesDir = file.getParent().findChild("packages");
             if (packagesDir != null && packagesDir.isDirectory()) {

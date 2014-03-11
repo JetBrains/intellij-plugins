@@ -13,6 +13,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Function;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,7 +49,7 @@ public class HtmlScriptSrcToDartPackagesPathReferenceProvider implements PathRef
       @Override
       public Collection<PsiFileSystemItem> fun(final PsiFile psiFile) {
         final VirtualFile file = DartResolveUtil.getRealVirtualFile(psiFile);
-        final VirtualFile packagesFolder = DartResolveUtil.getDartPackagesFolder(psiFile.getProject(), file);
+        final VirtualFile packagesFolder = file == null ? null : PubspecYamlUtil.getDartPackagesFolder(psiFile.getProject(), file);
         final VirtualFile parentFolder = packagesFolder == null ? null : packagesFolder.getParent();
 
         final PsiFileSystemItem psiDirectory = parentFolder == null

@@ -14,6 +14,7 @@ import com.jetbrains.lang.dart.psi.DartCallExpression;
 import com.jetbrains.lang.dart.psi.DartExpression;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,7 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
                                                   Ref<PsiElement> sourceElement) {
     final PsiElement contextElement = context.getPsiLocation();
     final VirtualFile file = contextElement == null ? null : PsiUtilCore.getVirtualFile(contextElement);
-    final VirtualFile packagesFolder = file == null ? null : DartResolveUtil.getDartPackagesFolder(context.getProject(), file);
+    final VirtualFile packagesFolder = file == null ? null : PubspecYamlUtil.getDartPackagesFolder(context.getProject(), file);
     if (packagesFolder == null || packagesFolder.findChild("unittest") == null) return false;
 
     final PsiElement element = findTestElement(contextElement);

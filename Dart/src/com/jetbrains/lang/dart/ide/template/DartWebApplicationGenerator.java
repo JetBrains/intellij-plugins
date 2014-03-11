@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.io.IOException;
 
+import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
+
 public class DartWebApplicationGenerator extends WebProjectTemplate<DartProjectWizardData> {
 
   @NotNull
@@ -62,7 +64,7 @@ public class DartWebApplicationGenerator extends WebProjectTemplate<DartProjectW
         try {
           baseDir.createChildDirectory(this, "web");
           baseDir.createChildDirectory(this, "lib");
-          final VirtualFile pubspecYamlFile = baseDir.createChildData(this, "pubspec.yaml");
+          final VirtualFile pubspecYamlFile = baseDir.createChildData(this, PUBSPEC_YAML);
           pubspecYamlFile.setBinaryContent(("name: " + module.getName() + "\n" +
                                             "dependencies:\n" +
                                             "  browser: any").getBytes());

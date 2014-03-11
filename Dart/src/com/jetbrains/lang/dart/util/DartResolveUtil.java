@@ -1,8 +1,6 @@
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
@@ -40,7 +38,6 @@ public class DartResolveUtil {
   public static final String PACKAGE_SCHEME = "package";
 
   public static final String PACKAGE_PREFIX = PACKAGE_SCHEME + ":";
-  public static final String PUBSPEC_FILENAME = "pubspec.yaml";
 
   public static List<PsiElement> findDartRoots(PsiFile psiFile) {
     if (psiFile instanceof XmlFile) {
@@ -367,13 +364,15 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  private static VirtualFile findFileByPath(Project project, VirtualFile virtualFile, String libraryNameOrPath) {
+  private static VirtualFile findFileByPath(final @NotNull Project project,
+                                            final @NotNull VirtualFile virtualFile,
+                                            final @NotNull String libraryNameOrPath) {
     // maybe path
     VirtualFile sourceFile = findRelativeFile(virtualFile, libraryNameOrPath);
     sourceFile = sourceFile != null ? sourceFile : VirtualFileManager.getInstance().findFileByUrl(libraryNameOrPath);
     // package
     if (sourceFile == null && libraryNameOrPath.startsWith(PACKAGE_PREFIX)) {
-      final VirtualFile packagesFolder = getDartPackagesFolder(project, virtualFile);
+      final VirtualFile packagesFolder = PubspecYamlUtil.getDartPackagesFolder(project, virtualFile);
       final String pathInPackages = FileUtil.toSystemIndependentName(libraryNameOrPath.substring(PACKAGE_PREFIX.length()));
       sourceFile = packagesFolder == null ? null : VfsUtilCore.findRelativeFile(pathInPackages, packagesFolder);
     }
@@ -1012,21 +1011,6 @@ public class DartResolveUtil {
       }
     });
     return result.toString();
-  }
-
-  @Nullable
-  public static VirtualFile getDartPackagesFolder(final Project project, final VirtualFile file) {
-    if (project == null || file == null) return null;
-
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    VirtualFile parent = file;
-    while ((parent = parent.getParent()) != null && fileIndex.isInContent(parent)) {
-      if (parent.findChild(PUBSPEC_FILENAME) != null) {
-        final VirtualFile packagesFolder = parent.findChild("packages");
-        return packagesFolder != null && packagesFolder.isDirectory() ? packagesFolder : null;
-      }
-    }
-    return null;
   }
 
   @Nullable

@@ -34,6 +34,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
+import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
+
 abstract public class DartPubActionBase extends AnAction {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.actions.DartPubActionBase");
   private static final String GROUP_DISPLAY_ID = "Dart Pub Tool";
@@ -55,7 +57,7 @@ abstract public class DartPubActionBase extends AnAction {
     final Module module = LangDataKeys.MODULE.getData(e.getDataContext());
     final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
 
-    if (module != null && psiFile != null && psiFile.getName().equalsIgnoreCase("pubspec.yaml")) {
+    if (module != null && psiFile != null && psiFile.getName().equalsIgnoreCase(PUBSPEC_YAML)) {
       final VirtualFile file = psiFile.getOriginalFile().getVirtualFile();
       return file != null ? Pair.create(module, file) : null;
     }

@@ -27,6 +27,7 @@ import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import com.jetbrains.lang.dart.validation.fixes.DartResolverErrorCode;
 import com.jetbrains.lang.dart.validation.fixes.DartTypeErrorCode;
 import com.jetbrains.lang.dart.validation.fixes.FixAndIntentionAction;
@@ -57,7 +58,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
 
     if (FileUtil.isAncestor(sdk.getHomePath(), annotatedFile.getPath(), true)) return null;
 
-    final VirtualFile packagesFolder = DartResolveUtil.getDartPackagesFolder(project, annotatedFile);
+    final VirtualFile packagesFolder = PubspecYamlUtil.getDartPackagesFolder(project, annotatedFile);
 
     if (packagesFolder != null && VfsUtilCore.isAncestor(packagesFolder, annotatedFile, true)) return null;
 
