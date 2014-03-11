@@ -1022,16 +1022,11 @@ public class DartResolveUtil {
     VirtualFile parent = file;
     while ((parent = parent.getParent()) != null && fileIndex.isInContent(parent)) {
       if (parent.findChild(PUBSPEC_FILENAME) != null) {
-        return getPackagesDir(parent);
+        final VirtualFile packagesFolder = parent.findChild("packages");
+        return packagesFolder != null && packagesFolder.isDirectory() ? packagesFolder : null;
       }
     }
     return null;
-  }
-
-  @Nullable
-  public static VirtualFile getPackagesDir(@Nullable VirtualFile parent) {
-    VirtualFile packagesFolder = parent == null ? null : parent.findChild("packages");
-    return packagesFolder != null && packagesFolder.isDirectory() ? packagesFolder : null;
   }
 
   @Nullable

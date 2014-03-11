@@ -55,8 +55,8 @@ final class DartFileUrlMapper extends FileUrlMapper {
         public VirtualFile compute() {
           Collection<VirtualFile> files = FilenameIndex.getVirtualFilesByName(project, DartResolveUtil.PUBSPEC_FILENAME, ProjectScope.getContentScope(project));
           for (VirtualFile file : files) {
-            VirtualFile packagesDir = DartResolveUtil.getPackagesDir(file.getParent());
-            if (packagesDir != null) {
+            final VirtualFile packagesDir = file.getParent().findChild("packages");
+            if (packagesDir != null && packagesDir.isDirectory()) {
               VirtualFile result = packagesDir.findFileByRelativePath(url.getPath());
               if (result != null) {
                 return result;
