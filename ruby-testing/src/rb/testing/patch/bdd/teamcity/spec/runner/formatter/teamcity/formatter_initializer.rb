@@ -22,18 +22,28 @@ module Spec
       # marker classed in object space
 
       if defined? ::RSpec::Core::Version::STRING
-        # rspec >= 2.x
-        require 'rspec/core/formatters/base_formatter'
-        RSPEC_VERSION_2 = true
+        if defined?(Gems::Dependency) && Gem::Dependency.new(nil, '~> 2.0').match?(nil, ::RSpec::Core::Version::STRING)
+          # rspec >= 2.x
+          require 'rspec/core/formatters/base_formatter'
+          RSPEC_VERSION_2 = true
+          RSPEC_VERSION_3 = false
+        else
+          # rspec >= 3.x
+          require 'rspec/core/formatters/base_formatter'
+          RSPEC_VERSION_2 = false
+          RSPEC_VERSION_3 = true
+        end
       elsif defined? ::Spec::VERSION::STRING
         # rspec 1.x
         require 'spec/runner/formatter/base_formatter'
         RSPEC_VERSION_2 = false
+        RSPEC_VERSION_3 = false
       else
         # some unsupported version. Let's assume that it is something like rspec 2.x
         # such require may force gem activation
         require 'rspec/core/formatters/base_formatter'
         RSPEC_VERSION_2 = true
+        RSPEC_VERSION_3 = false
       end
     end
   end

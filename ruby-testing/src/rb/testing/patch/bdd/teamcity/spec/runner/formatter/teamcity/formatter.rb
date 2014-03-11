@@ -1,4 +1,4 @@
-# Copyright 2000-2012 JetBrains s.r.o.
+# Copyright 2000-2014 JetBrains s.r.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,6 +30,9 @@ require 'teamcity/utils/std_capture_helper'
 require 'teamcity/utils/runner_utils'
 require 'teamcity/utils/url_formatter'
 
+if Spec::Runner::Formatter::RSPEC_VERSION_3
+  require File.expand_path(File.dirname(__FILE__) + '/rspec3_formatter')
+else
 module Spec
   module Runner
     module Formatter
@@ -631,12 +634,6 @@ module Spec
               ::Spec::VERSION::TINY == 0
         end
 
-        #def rspec_1_2_1_or_higher?
-        #   Spec::VERSION::MAJOR >= 1 &&
-        #     Spec::VERSION::MINOR >= 2 &&
-        #     Spec::VERSION::TINY >= 1
-        #end
-
         ######################################################
         ######################################################
         #TODO remove flowid
@@ -664,17 +661,12 @@ module Spec
           def get_std_files
             return @stdout_file_old, @stderr_file_old, @stdout_file_new, @stderr_file_new
           end
-          #
-          #def debug_log(string)
-          #  # Logs output.
-          #  SPEC_FORMATTER_LOG.log_msg(string)
-          #end
         end
       end
     end
   end
 end
-
+end
 def tc_rspec_do_close
   if ::Spec::Runner::Formatter::TeamcityFormatter.closed?
     return
