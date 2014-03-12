@@ -13,6 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
+
 public class DartConsoleFilter implements Filter {
 
   private final @NotNull Project myProject;
@@ -72,7 +74,7 @@ public class DartConsoleFilter implements Filter {
   @Nullable
   private static VirtualFile findFileInPackagesFolder(final Project project, final String relativePath) {
     final Collection<VirtualFile> pubspecYamlFiles =
-      FilenameIndex.getVirtualFilesByName(project, "pubspec.yaml", GlobalSearchScope.projectScope(project));
+      FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project));
     for (VirtualFile pubspecYamlFile : pubspecYamlFiles) {
       final VirtualFile file = pubspecYamlFile.getParent().findFileByRelativePath("/packages/" + relativePath);
       if (file != null) return file;

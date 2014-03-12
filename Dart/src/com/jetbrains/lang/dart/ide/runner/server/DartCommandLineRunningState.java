@@ -15,7 +15,7 @@ import com.intellij.util.text.StringTokenizer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class DartCommandLineRunningState extends CommandLineState {
@@ -79,7 +79,7 @@ public class DartCommandLineRunningState extends CommandLineState {
       commandLine.addParameter(argumentsTokenizer.nextToken());
     }
 
-    final VirtualFile packages = DartResolveUtil.getDartPackagesFolder(module.getProject(), libraryFile);
+    final VirtualFile packages = PubspecYamlUtil.getDartPackagesFolder(module.getProject(), libraryFile);
     if (packages != null && packages.isDirectory()) {
       commandLine.addParameter("--package-root=" + packages.getPath() + "/");
     }

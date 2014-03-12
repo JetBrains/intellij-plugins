@@ -35,6 +35,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
+
 public class DartProjectComponent extends AbstractProjectComponent {
 
   protected DartProjectComponent(final Project project) {
@@ -50,7 +52,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
         final String dartSdkGlobalLibName = importKnowledgeAboutOldDartSdkAndReturnGlobalLibName(myProject);
 
         final Collection<VirtualFile> pubspecYamlFiles =
-          FilenameIndex.getVirtualFilesByName(myProject, "pubspec.yaml", GlobalSearchScope.projectScope(myProject));
+          FilenameIndex.getVirtualFilesByName(myProject, PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));
 
         for (VirtualFile pubspecYamlFile : pubspecYamlFiles) {
           final Module module = ModuleUtilCore.findModuleForFile(pubspecYamlFile, myProject);

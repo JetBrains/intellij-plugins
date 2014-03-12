@@ -33,6 +33,7 @@ import com.intellij.util.text.StringTokenizer;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -141,7 +142,8 @@ public class DartUnitRunningState extends CommandLineState {
 
     String libUrl = VfsUtilCore.pathToUrl(myUnitParameters.getFilePath());
     final VirtualFile libraryRoot = VirtualFileManager.getInstance().findFileByUrl(libUrl);
-    final VirtualFile packages = DartResolveUtil.getDartPackagesFolder(getEnvironment().getProject(), libraryRoot);
+    final VirtualFile packages = libraryRoot == null ? null
+                                                     : PubspecYamlUtil.getDartPackagesFolder(getEnvironment().getProject(), libraryRoot);
     if (packages != null && packages.isDirectory()) {
       commandLine.addParameter("--package-root=" + packages.getPath() + "/");
     }

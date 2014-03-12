@@ -23,6 +23,7 @@ import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -128,7 +129,7 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
     final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(psiFile);
     final String text = StringUtil.unquoteString(getText());
     if (text.startsWith(DartResolveUtil.PACKAGE_PREFIX)) {
-      final VirtualFile packagesFolder = DartResolveUtil.getDartPackagesFolder(getProject(), virtualFile);
+      final VirtualFile packagesFolder = virtualFile == null ? null : PubspecYamlUtil.getDartPackagesFolder(getProject(), virtualFile);
       String relativePath = FileUtil.toSystemIndependentName(text.substring(DartResolveUtil.PACKAGE_PREFIX.length()));
       final VirtualFile sourceFile = packagesFolder == null
                                      ? null
@@ -174,9 +175,9 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
 
   @NotNull
   private PsiReference[] getPackageReferences(String path, int startIndex) {
-    VirtualFile file = DartResolveUtil.getRealVirtualFile(getContainingFile());
-    VirtualFile parentFile = file == null ? null : file.getParent();
-    VirtualFile packagesFolder = DartResolveUtil.getDartPackagesFolder(getProject(), file);
+    final VirtualFile file = DartResolveUtil.getRealVirtualFile(getContainingFile());
+    final VirtualFile parentFile = file == null ? null : file.getParent();
+    final VirtualFile packagesFolder = file == null ? null : PubspecYamlUtil.getDartPackagesFolder(getProject(), file);
     if (packagesFolder == null || parentFile == null) {
       return PsiReference.EMPTY_ARRAY;
     }
@@ -210,7 +211,9 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
 
   public static class DartPathOrLibraryManipulator implements ElementManipulator<DartPathOrLibraryReference> {
     @Override
-    public DartPathOrLibraryReference handleContentChange(@NotNull DartPathOrLibraryReference element, @NotNull TextRange range, String newContent)
+    public DartPathOrLibraryReference handleContentChange(@NotNull DartPathOrLibraryReference element,
+                                                          @NotNull TextRange range,
+                                                          String newContent)
       throws IncorrectOperationException {
       return element;
     }
