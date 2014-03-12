@@ -24,7 +24,6 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
@@ -72,9 +71,9 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
 
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (karmaServer.areBrowsersReady()) {
-      final Pair<JSDebugEngine, WebBrowser> engineAndBrowser =
+      final DebuggableWebBrowser debuggableWebBrowser =
         new KarmaDebugBrowserSelector(project, karmaServer.getCapturedBrowsers(), environment, this).selectDebugEngine();
-      return prepareDebugger(project, engineAndBrowser, new RunProfileStarter() {
+      return prepareDebugger(project, debuggableWebBrowser, new RunProfileStarter() {
         @Nullable
         @Override
         public RunContentDescriptor execute(@NotNull Project project,
@@ -82,7 +81,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
                                             @NotNull RunProfileState state,
                                             @Nullable RunContentDescriptor contentToReuse,
                                             @NotNull ExecutionEnvironment env) throws ExecutionException {
-          if (engineAndBrowser == null) {
+          if (debuggableWebBrowser == null) {
             return null;
           }
 
@@ -96,8 +95,9 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
               @Override
               @NotNull
               public XDebugProcess start(@NotNull final XDebugSession session) {
-                JSDebugProcess<?> debugProcess =
-                  engineAndBrowser.first.createDebugProcess(session, engineAndBrowser.second, fileFinder, url, executionResult, true);
+                JSDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
+                WebBrowser browser = debuggableWebBrowser.getWebBrowser();
+                JSDebugProcess<?> debugProcess = debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, true);
                 debugProcess.setElementsInspectorEnabled(false);
                 debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
                 return debugProcess;
@@ -150,14 +150,16 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
   }
 
   public static AsyncResult<RunProfileStarter> prepareDebugger(@NotNull final Project project,
-                                                               @Nullable final Pair<JSDebugEngine, WebBrowser> engineAndBrowser,
+                                                               @Nullable final DebuggableWebBrowser debuggableWebBrowser,
                                                                @NotNull final RunProfileStarter starter) {
-    if (engineAndBrowser == null) {
+    if (debuggableWebBrowser == null) {
       return AsyncResult.done(starter);
     }
     else {
       final AsyncResult<RunProfileStarter> result = new AsyncResult<RunProfileStarter>();
-      engineAndBrowser.first.prepareDebugger(project, engineAndBrowser.second).notifyWhenRejected(result).doWhenDone(new Runnable() {
+      JSDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
+      WebBrowser browser = debuggableWebBrowser.getWebBrowser();
+      debugEngine.prepareDebugger(project, browser).notifyWhenRejected(result).doWhenDone(new Runnable() {
         @Override
         public void run() {
           result.setDone(starter);
