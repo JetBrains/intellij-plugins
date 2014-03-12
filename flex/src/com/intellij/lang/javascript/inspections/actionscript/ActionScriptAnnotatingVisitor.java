@@ -1303,12 +1303,11 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     else if (JSTokenTypes.MULTIPLICATIVE_OPERATIONS.contains(sign) ||
                JSTokenTypes.SHIFT_OPERATIONS.contains(sign) ||
                sign == JSTokenTypes.MINUS) {
-      final PsiFile containingFile = node.getContainingFile();
       final JSType numberType = JSNamedType.createType(NUMBER_CLASS_NAME, JSTypeSourceFactory.createTypeSource(lOperand, true),
                                                        JSNamedType.StaticOrInstance.INSTANCE);
-      myTypeChecker.checkExpressionIsAssignableToType(lOperand, numberType, containingFile,
+      myTypeChecker.checkExpressionIsAssignableToType(lOperand, numberType,
                                                       "javascript.expression.type.implicitly.coerced.to.unrelated.type", null);
-      myTypeChecker.checkExpressionIsAssignableToType(rOperand, numberType, containingFile,
+      myTypeChecker.checkExpressionIsAssignableToType(rOperand, numberType,
                                                       "javascript.expression.type.implicitly.coerced.to.unrelated.type", null);
     }
   }
@@ -1372,7 +1371,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       myTypeChecker.checkExpressionIsAssignableToType(
         arguments[0],
         BOOLEAN_CLASS_NAME,
-        argumentList.getContainingFile(),
         "javascript.argument.type.mismatch",
         null);
     }
@@ -1407,7 +1405,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         }
       }
       else {
-        type = JSResolveUtil.getExpressionJSType(qualifier, containingFile);
+        type = JSResolveUtil.getExpressionJSType(qualifier);
         checkType = true;
       }
       if (checkType && (type instanceof JSAnyType || type == null)) {

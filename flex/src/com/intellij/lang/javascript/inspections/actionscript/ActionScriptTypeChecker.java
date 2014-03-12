@@ -62,7 +62,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
                                                        boolean allowChangeVariableTypeFix) {
     final JSType type = p.getType();
     Pair<Annotation, String> annotationAndExprType =
-      checkExpressionIsAssignableToType(expr, type, containingFile, problemKey,
+      checkExpressionIsAssignableToType(expr, type, problemKey,
                                         allowChangeVariableTypeFix ? p : null);
 
     if (annotationAndExprType != null &&
