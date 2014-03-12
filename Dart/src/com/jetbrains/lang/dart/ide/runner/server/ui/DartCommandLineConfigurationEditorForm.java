@@ -20,9 +20,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartCommandLineRunConfiguration> {
   private JPanel myMainPanel;
   private TextFieldWithBrowseButton myFileField;
@@ -40,7 +37,8 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
             public boolean accept(PsiFile file) {
               return true;
             }
-          });
+          }
+        );
 
         fileChooser.showDialog();
 

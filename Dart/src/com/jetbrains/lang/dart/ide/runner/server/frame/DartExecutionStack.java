@@ -1,61 +1,44 @@
 package com.jetbrains.lang.dart.ide.runner.server.frame;
 
-import com.google.gson.JsonObject;
-import com.intellij.util.io.socketConnection.AbstractResponseToRequestHandler;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
-import com.jetbrains.lang.dart.ide.runner.server.connection.JsonResponse;
+import com.jetbrains.lang.dart.ide.runner.server.google.VmCallFrame;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class DartExecutionStack extends XExecutionStack {
-  private final DartCommandLineDebugProcess myDebugProcess;
-  private List<DartStackFrame> myStackFrames = null;
+  private final @NotNull DartCommandLineDebugProcess myDebugProcess;
+  private @Nullable DartStackFrame myTopFrame;
+  private final @NotNull List<VmCallFrame> myVmCallFrames;
 
-  public DartExecutionStack(@NotNull DartCommandLineDebugProcess debugProcess) {
-    this(debugProcess, new ArrayList<DartStackFrame>());
-  }
-
-  public DartExecutionStack(@NotNull DartCommandLineDebugProcess debugProcess, List<DartStackFrame> stackFrames) {
-    super("DartVM");
+  public DartExecutionStack(final @NotNull DartCommandLineDebugProcess debugProcess, final @NotNull List<VmCallFrame> vmCallFrames) {
+    super("Dart VM");
     myDebugProcess = debugProcess;
-    myStackFrames = stackFrames;
+    myTopFrame = vmCallFrames.isEmpty() ? null : new DartStackFrame(myDebugProcess, vmCallFrames.get(0));
+    myVmCallFrames = vmCallFrames;
   }
 
   @Override
+  @Nullable
   public XStackFrame getTopFrame() {
-    return myStackFrames.isEmpty() ? null : myStackFrames.get(0);
+    return myTopFrame;
   }
 
   @Override
   public void computeStackFrames(final int firstFrameIndex, final XStackFrameContainer container) {
-    if (!myStackFrames.isEmpty()) {
-      addStackFrames(container, firstFrameIndex - 1);
-      return;
-    }
-    myDebugProcess.sendSimpleCommand("getStackTrace", new AbstractResponseToRequestHandler<JsonResponse>() {
-      @Override
-      public boolean processResponse(JsonResponse response) {
-        if (response.getJsonObject().get("error") == null) {
-          final JsonObject result = response.getJsonObject().getAsJsonObject("result");
-          myStackFrames.clear();
-          myStackFrames.addAll(DartStackFrame.fromJson(myDebugProcess, result.getAsJsonArray("callFrames")));
-          DartStackFrame.requestLines(myDebugProcess, myStackFrames, null);
-        }
-        addStackFrames(container, firstFrameIndex - 1);
-        return true;
-      }
-    });
-  }
+    final Iterator<VmCallFrame> iterator = myVmCallFrames.iterator();
+    if (iterator.hasNext()) iterator.next(); // skip top frame
 
-  private void addStackFrames(XStackFrameContainer container, int firstFrameIndex) {
-    final List<DartStackFrame> frames = myStackFrames.size() < 2
-                                        ? Collections.<DartStackFrame>emptyList()
-                                        : myStackFrames.subList(firstFrameIndex, myStackFrames.size());
-    container.addStackFrames(frames, true);
+    while (iterator.hasNext()) {
+      final VmCallFrame frame = iterator.next();
+      container.addStackFrames(Collections.singletonList(new DartStackFrame(myDebugProcess, frame)), false);
+    }
+
+    container.addStackFrames(Collections.<XStackFrame>emptyList(), true);
   }
 }
