@@ -62,7 +62,7 @@ public class DartCommandLineDebugRunner extends DefaultProgramRunner {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
-          return new DartCommandLineDebugProcess(session, debuggingPort, executionResult);
+          return new DartCommandLineDebugProcess(session, debuggingPort, executionResult, filePath);
         }
       });
 

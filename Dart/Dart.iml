@@ -27,11 +27,11 @@
     <orderEntry type="module" module-name="IntelliLang-js" scope="TEST" />
     <orderEntry type="module" module-name="idea-tests" scope="TEST" />
     <orderEntry type="module" module-name="htmltools" scope="TEST" />
-    <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module-library">
-      <library>
+      <library name="dartanalyzer">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/dartanalyzer.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/json.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
@@ -48,6 +48,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="snakeyaml" level="project" />
   </component>
 </module>
 

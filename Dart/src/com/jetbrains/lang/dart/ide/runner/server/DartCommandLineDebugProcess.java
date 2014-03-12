@@ -1,85 +1,96 @@
 package com.jetbrains.lang.dart.ide.runner.server;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Pair;
-import com.intellij.util.io.socketConnection.AbstractResponseHandler;
-import com.intellij.util.io.socketConnection.AbstractResponseToRequestHandler;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.TimeoutUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
+import com.intellij.xdebugger.XDebuggerBundle;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
-import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
-import com.jetbrains.lang.dart.ide.runner.server.connection.DartVMConnection;
-import com.jetbrains.lang.dart.ide.runner.server.connection.JsonResponse;
-import com.jetbrains.lang.dart.ide.runner.server.frame.DartStackFrame;
-import com.jetbrains.lang.dart.ide.runner.server.frame.DartSuspendContext;
-import gnu.trove.THashSet;
+import com.jetbrains.lang.dart.ide.runner.server.google.VmConnection;
+import com.jetbrains.lang.dart.ide.runner.server.google.VmIsolate;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.net.ConnectException;
-import java.util.*;
 
 public class DartCommandLineDebugProcess extends XDebugProcess {
-  private static final Logger LOG = Logger.getInstance(DartCommandLineDebugProcess.class.getName());
-  private final ExecutionResult myExecutionResult;
-  private final DartVMConnection myConnection = new DartVMConnection();
+  public static final Logger LOG = Logger.getInstance(DartCommandLineDebugProcess.class.getName());
+
+  private final @Nullable ExecutionResult myExecutionResult;
+  private final VmConnection myVmConnection;
   private final DartCommandLineBreakpointsHandler myBreakpointsHandler;
+  private final @Nullable VirtualFile myPubspecYamlFile;
+  private boolean myVmConnected;
+  private @Nullable VmIsolate myMainIsolate;
 
-  private static final Set<String> CORE_LIBS = new THashSet<String>(Arrays.asList(
-    "dart:core", "dart:coreimpl", "dart:nativewrappers"
-  ));
-  private int myMainIsolateId;
+  public DartCommandLineDebugProcess(final @NotNull XDebugSession session,
+                                     final int debuggingPort,
+                                     final @Nullable ExecutionResult executionResult,
+                                     final @NotNull String dartScriptPath) {
+    super(session);
 
-  enum InitializingState {NOT_INITIALIZED, INITIALIZING, INITIALIZED}
+    final VirtualFile dartFile = LocalFileSystem.getInstance().findFileByPath(dartScriptPath);
+    myPubspecYamlFile = dartFile == null ? null : PubspecYamlUtil.getPubspecYamlFile(session.getProject(), dartFile);
 
-  private volatile InitializingState myInitialized = InitializingState.NOT_INITIALIZED;
+    myBreakpointsHandler = new DartCommandLineBreakpointsHandler(this);
+    myExecutionResult = executionResult;
 
-  private final List<Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>>> postponedCommands =
-    new LinkedList<Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>>>();
+    // see com.google.dart.tools.debug.core.server.ServerDebugTarget
+    myVmConnection = new VmConnection(null, debuggingPort);
+    myVmConnection.addListener(new DartVmListener(this));
+    connect();
+  }
 
-  private final LinkedList<Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>>> commandsToWrite =
-    new LinkedList<Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>>>() {
-      @Override
-      public synchronized Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>> removeFirst() {
-        waitForData();
-        return super.removeFirst();
-      }
+  private void connect() {
+    // see com.google.dart.tools.debug.core.server.ServerDebugTarget.connect()
 
-      @Override
-      public synchronized void addFirst(final Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>> debuggerCommand) {
-        super.addFirst(debuggerCommand);
-        notify();
-      }
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      public void run() {
+        long timeout = 10000;
+        long startTime = System.currentTimeMillis();
 
-      @Override
-      public synchronized void addLast(final Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>> debuggerCommand) {
-        super.addLast(debuggerCommand);
-        notify();
-      }
-
-      private void waitForData() {
         try {
-          while (size() == 0) {
-            wait();
+          TimeoutUtil.sleep(50);
+
+          while (true) {
+            try {
+              myVmConnection.connect();
+
+              break;
+            }
+            catch (IOException ioe) {
+              if (!myVmConnection.isConnected()) {
+                throw ioe;
+              }
+
+              if (System.currentTimeMillis() > startTime + timeout) {
+                throw ioe;
+              }
+              else {
+                TimeoutUtil.sleep(20);
+              }
+            }
           }
         }
-        catch (InterruptedException ex) {
-          throw new RuntimeException(ex);
+        catch (IOException ioe) {
+          getSession().getConsoleView()
+            .print("Unable to connect debugger to the Dart VM: " + ioe.getMessage(), ConsoleViewContentType.ERROR_OUTPUT);
         }
       }
-    };
+    });
+  }
 
   @Override
   protected ProcessHandler doGetProcessHandler() {
@@ -95,225 +106,15 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     return super.createConsole();
   }
 
-  public DartCommandLineDebugProcess(@NotNull XDebugSession session,
-                                     int debuggingPort,
-                                     ExecutionResult executionResult) {
-    super(session);
-
-    myBreakpointsHandler = new DartCommandLineBreakpointsHandler(this);
-    myExecutionResult = executionResult;
-    startCommandProcessingThread(debuggingPort);
-  }
-
-  private void startCommandProcessingThread(final int debuggingPort) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        myConnection.connect(debuggingPort);
-        myConnection.registerHandler(new AbstractResponseHandler<JsonResponse>() {
-          @Override
-          public void processResponse(JsonResponse response) {
-            DartCommandLineDebugProcess.this.processResponse(response);
-          }
-        });
-
-        boolean connected = false;
-        int attempts = 10;
-        do {
-          --attempts;
-          try {
-            myConnection.open();
-            connected = true;
-          }
-          catch (ConnectException ex) {
-            synchronized (this) {
-              try {
-                wait(200);
-              }
-              catch (InterruptedException ignored) {
-              }
-            }
-          }
-          catch (IOException ignored) {
-          }
-        }
-        while (!connected && attempts > 0);
-
-        while (!getSession().isStopped()) {
-          processOneCommandLoop();
-        }
-      }
-    });
-  }
-
-  private void processOneCommandLoop() {
-    final Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>> command = commandsToWrite.removeFirst();
-    JsonObject commandObject = command.getFirst();
-    assert commandObject != null;
-    JsonObject params;
-    if (commandObject.has("params")) {
-      params = commandObject.get("params").getAsJsonObject();
-    }
-    else {
-      params = new JsonObject();
-      commandObject.add("params", params);
-    }
-    params.addProperty("isolateId", myMainIsolateId);
-    myConnection.sendCommand(commandObject, command.getSecond());
-  }
-
-  public void processResponse(JsonResponse response) {
-    LOG.debug("processResponse:" + response.getJsonObject().toString());
-    JsonElement jsonEventElement = response.getJsonObject().get("event");
-    final String event = jsonEventElement == null ? null : jsonEventElement.getAsString();
-    final JsonElement paramsElement = response.getJsonObject().get("params");
-    if ("isolate".equals(event) && myInitialized == InitializingState.NOT_INITIALIZED) {
-      myInitialized = InitializingState.INITIALIZING;
-      myMainIsolateId = paramsElement.getAsJsonObject().get("id").getAsInt();
-      enableAllStepping(new Runnable() {
-        @Override
-        public void run() {
-          myInitialized = InitializingState.INITIALIZED;
-          // wait until commands are executed
-          Iterator<Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>>> iterator = postponedCommands.iterator();
-          if (!iterator.hasNext()) {
-            handleBreakpointResolved(paramsElement);
-          }
-          while (iterator.hasNext()) {
-            final Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>> command = iterator.next();
-            if (iterator.hasNext()) {
-              commandsToWrite.addLast(command);
-            }
-            else {
-              commandsToWrite.addLast(Pair.<JsonObject, AbstractResponseToRequestHandler<JsonResponse>>create(
-                command.getFirst(),
-                new AbstractResponseToRequestHandler<JsonResponse>() {
-                  @Override
-                  public boolean processResponse(JsonResponse response) {
-                    handleBreakpointResolved(paramsElement);
-                    return command.getSecond().processResponse(response);
-                  }
-                }
-              ));
-            }
-          }
-        }
-      });
-    }
-    else if ("breakpointResolved".equals(event) && myInitialized == InitializingState.INITIALIZED) {
-      handleBreakpointResolved(paramsElement);
-    }
-    else if ("paused".equals(event) && myInitialized == InitializingState.INITIALIZED) {
-      handlePaused(paramsElement);
-    }
-    else {
-      LOG.debug("unhandled response: " + response.getJsonObject().toString());
-    }
-  }
-
-  private void enableAllStepping(final Runnable runnable) {
-    sendPriorityCommand(getCommandObject("getLibraries"), new AbstractResponseToRequestHandler<JsonResponse>() {
-      @Override
-      public boolean processResponse(JsonResponse response) {
-        if (response.getJsonObject().get("error") != null) {
-          runnable.run();
-          return true;
-        }
-        JsonArray libraries = response.getJsonObject().getAsJsonObject("result").getAsJsonArray("libraries");
-        Iterator<JsonElement> iterator = libraries.iterator();
-        if (!iterator.hasNext()) {
-          runnable.run();
-          return true;
-        }
-        while (iterator.hasNext()) {
-          JsonElement library = iterator.next();
-          int id = library.getAsJsonObject().get("id").getAsInt();
-          String url = library.getAsJsonObject().get("url").getAsString();
-          if (url != null && !CORE_LIBS.contains(url)) {
-            sendEnableLibrary(id, iterator.hasNext() ? null : new AbstractResponseToRequestHandler<JsonResponse>() {
-              @Override
-              public boolean processResponse(JsonResponse response) {
-                runnable.run();
-                return true;
-              }
-            });
-          }
-        }
-        return true;
-      }
-    });
-  }
-
-  private void handlePaused(JsonElement paramsElement) {
-    final JsonArray callFrames = paramsElement.getAsJsonObject().getAsJsonArray("callFrames");
-    if (callFrames != null) {
-      final List<DartStackFrame> frames = DartStackFrame.fromJson(this, callFrames);
-      DartStackFrame.requestLines(this, frames, new Runnable() {
-        @Override
-        public void run() {
-          getSession().positionReached(new DartSuspendContext(DartCommandLineDebugProcess.this, frames));
-        }
-      });
-    }
-    else {
-      sendSimpleCommand("getStackTrace", new AbstractResponseToRequestHandler<JsonResponse>() {
-        @Override
-        public boolean processResponse(JsonResponse response) {
-          JsonObject result = response.getJsonObject().getAsJsonObject().getAsJsonObject("result");
-          final JsonArray callFrames = result == null ? null : result.getAsJsonArray("callFrames");
-          final List<DartStackFrame> frames = callFrames == null ?
-                                              new ArrayList<DartStackFrame>() :
-                                              DartStackFrame.fromJson(DartCommandLineDebugProcess.this, callFrames);
-          DartStackFrame.requestLines(DartCommandLineDebugProcess.this, frames, new Runnable() {
-            @Override
-            public void run() {
-              getSession().positionReached(new DartSuspendContext(DartCommandLineDebugProcess.this, frames));
-            }
-          });
-          return true;
-        }
-      });
-    }
-  }
-
-  private void initLines(List<DartStackFrame> frames, Runnable runnable) {
-    for (DartStackFrame stackFrame : frames) {
-      JsonObject command = getCommandObject("getLineNumberTable");
-      command.addProperty("url", fixFileUrl(stackFrame.getFileUrl()));
-      sendCommand(command);
-    }
-    runnable.run();
-  }
-
-  private void sendEnableLibrary(int id, @Nullable AbstractResponseToRequestHandler<JsonResponse> requestHandler) {
-    JsonObject command = getCommandObject("setLibraryProperties");
-
-    JsonObject params = new JsonObject();
-    params.addProperty("libraryId", id);
-    params.addProperty("debuggingEnabled", "true");
-
-    command.add("params", params);
-    sendPriorityCommand(command, requestHandler);
-  }
-
-  private void handleBreakpointResolved(JsonElement paramsElement) {
-    final int breakpointId = getBreakpointId(paramsElement);
-    XLineBreakpoint<XBreakpointProperties> breakpoint = myBreakpointsHandler.getBreakpointById(breakpointId);
-    if (breakpoint == null) {
-      resume();
-    }
-  }
-
-  private static int getBreakpointId(JsonElement paramsElement) {
-    final JsonObject params = paramsElement == null ? null : paramsElement.getAsJsonObject();
-    JsonElement jsonEventElement = params == null ? null : params.get("breakpointId");
-    return jsonEventElement == null ? -1 : jsonEventElement.getAsInt();
-  }
-
   @NotNull
   @Override
   public XDebuggerEditorsProvider getEditorsProvider() {
     return new DartDebuggerEditorsProvider();
+  }
+
+  @NotNull
+  public DartCommandLineBreakpointsHandler getDartBreakpointsHandler() {
+    return myBreakpointsHandler;
   }
 
   @Override
@@ -322,75 +123,126 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     return myBreakpointsHandler.getBreakpointHandlers();
   }
 
-  public static JsonObject getCommandObject(String commandName) {
-    JsonObject command = new JsonObject();
-    command.addProperty("command", commandName);
-    return command;
-  }
-
   @Override
   public void startStepOver() {
-    sendSimpleCommand("stepOver");
+    if (myMainIsolate != null) {
+      try {
+        myVmConnection.stepOver(myMainIsolate);
+      }
+      catch (IOException e) {
+        LOG.error(e);
+      }
+    }
   }
 
   @Override
   public void startStepInto() {
-    sendSimpleCommand("stepInto");
+    if (myMainIsolate != null) {
+      try {
+        myVmConnection.stepInto(myMainIsolate);
+      }
+      catch (IOException e) {
+        LOG.error(e);
+      }
+    }
   }
 
   @Override
   public void startStepOut() {
-    sendSimpleCommand("stepOut");
-  }
-
-  public void sendSimpleCommand(String commandName) {
-    sendSimpleCommand(commandName, null);
-  }
-
-  public void sendSimpleCommand(String commandName, @Nullable AbstractResponseToRequestHandler<JsonResponse> requestHandler) {
-    sendCommand(getCommandObject(commandName), requestHandler);
-  }
-
-  public void sendCommand(JsonObject out) {
-    sendCommand(out, null);
-  }
-
-  public void sendPriorityCommand(final JsonObject out, @Nullable final AbstractResponseToRequestHandler<JsonResponse> requestHandler) {
-    commandsToWrite.addLast(Pair.create(out, requestHandler));
-  }
-
-  public void sendCommand(final JsonObject out, @Nullable final AbstractResponseToRequestHandler<JsonResponse> requestHandler) {
-    Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>> command = Pair.create(out, requestHandler);
-    if (myInitialized != InitializingState.INITIALIZED) {
-      postponedCommands.add(command);
-    }
-    else {
-      commandsToWrite.addLast(command);
+    if (myMainIsolate != null) {
+      try {
+        myVmConnection.stepOut(myMainIsolate);
+      }
+      catch (IOException e) {
+        LOG.error(e);
+      }
     }
   }
 
   @Override
   public void stop() {
-    myConnection.close();
-    sendSimpleCommand("fake command to release processOneCommandLoop() thread hanging on wait()");
+    try {
+      LOG.debug("closing connection");
+      myVmConnection.close();
+    }
+    catch (IOException e) {
+      LOG.warn(e);
+    }
   }
 
   @Override
   public void resume() {
-    sendSimpleCommand("resume");
+    if (myMainIsolate != null) {
+      try {
+        myVmConnection.resume(myMainIsolate);
+      }
+      catch (IOException e) {
+        LOG.error(e);
+      }
+    }
   }
 
   @Override
   public void startPausing() {
-    sendSimpleCommand("pause");
+    if (myMainIsolate != null) {
+      try {
+        myVmConnection.interrupt(myMainIsolate);
+      }
+      catch (IOException e) {
+        LOG.error(e);
+      }
+    }
   }
 
   @Override
   public void runToPosition(@NotNull XSourcePosition position) {
-    DartCommandLineBreakpointsHandler.handleRunToPosition(position, this);
+    // todo implement
   }
 
-  public static String fixFileUrl(final String fileUrl) {
+  @Nullable
+  public VirtualFile getPubspecYamlFile() {
+    return myPubspecYamlFile;
+  }
+
+  @Nullable
+  public VirtualFile getPackagesFolder() {
+    return myPubspecYamlFile == null ? null : PubspecYamlUtil.getDartPackagesFolder(getSession().getProject(), myPubspecYamlFile);
+  }
+
+  public VmConnection getVmConnection() {
+    return myVmConnection;
+  }
+
+  @Nullable
+  public VmIsolate getMainIsolate() {
+    return myMainIsolate;
+  }
+
+  boolean isVmConnected() {
+    return myVmConnected;
+  }
+
+  void setVmConnected(final boolean vmConnected) {
+    myVmConnected = vmConnected;
+    getSession().rebuildViews();
+  }
+
+  void isolateCreated(final VmIsolate vmIsolate) {
+    if (myMainIsolate == null) {
+      myMainIsolate = vmIsolate;
+    }
+  }
+
+  @Override
+  public String getCurrentStateMessage() {
+    return getSession().isStopped()
+           ? XDebuggerBundle.message("debugger.state.message.disconnected")
+           : myVmConnected
+             ? XDebuggerBundle.message("debugger.state.message.connected")
+             : DartBundle.message("debugger.waiting.vm.to.connect");
+  }
+
+  public static String threeSlashizeFileUrl(final String fileUrl) {
     if (!fileUrl.startsWith("file:///")) {
       if (fileUrl.startsWith("file://")) {
         return "file:///" + fileUrl.substring("file://".length());
