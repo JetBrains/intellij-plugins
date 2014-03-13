@@ -4,7 +4,7 @@ Prerequisites:
 - Oracle JDK 1.6 or 1.7
 - git command line client
 
-1. Install the latest IntelliJ IDEA Ultimate Edition. Usually it means Early Access build: http://eap.jetbrains.com/idea. As of 03.03.2014 it is IntelliJ IDEA 13.1 EAP (build 134.1342). Keep IDE installation up-to-date.
+1. Install the latest IntelliJ IDEA Ultimate Edition. Usually it means Early Access build: http://eap.jetbrains.com/idea. Keep IDE installation up-to-date. Make sure the following bundled plugins are enabled: UI Designer, Git Integration, I18n for Java, IntelliLang, JUnit, Plugin DevKit, Properties Support.
 2. Install 'Grammar-Kit' and 'File Watchers' plugins: launch IntelliJ IDEA, on Welcome screen click Configure | Plugins. Press 'Install JetBrains plugin...' button to find 'File Watchers' plugin and then 'Browse repositories...' to find 'Grammar-Kit'. Restart IDE.
 3. Configure JDK and Plugin SDK.
   3.1. Launch IntelliJ IDEA, on Welcome screen click Configure | Project Defaults | Project Structure | SDKs, click [+] and add JDK (1.6 or 1.7), then click [+] again, select 'IntelliJ Platform Plugin SDK' and provide path to the current IntelliJ IDEA installation.
