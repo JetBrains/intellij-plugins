@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
@@ -10,8 +9,8 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSSuperExpression;
 import com.intellij.lang.javascript.psi.types.primitives.JSObjectType;
+import com.intellij.lang.javascript.validation.JSAnnotatorProblemReporter;
 import com.intellij.lang.javascript.validation.JSFunctionSignatureChecker;
-import com.intellij.lang.javascript.validation.JSProblemUtil;
 import com.intellij.lang.javascript.validation.JSTypeChecker;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.lang.javascript.validation.fixes.CreateConstructorFix;
@@ -22,18 +21,18 @@ import org.jetbrains.annotations.NotNull;
  * @author Konstantin.Ulitin
  */
 public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChecker {
-  private final AnnotationHolder myHolder;
+  private final JSAnnotatorProblemReporter myReporter;
 
-  public ActionScriptFunctionSignatureChecker(JSTypeChecker typeChecker, AnnotationHolder holder) {
+  public ActionScriptFunctionSignatureChecker(JSTypeChecker typeChecker, JSAnnotatorProblemReporter reporter) {
     super(typeChecker);
-    myHolder = holder;
+    myReporter = reporter;
   }
 
   @Override
   protected void registerProblem(PsiElement place, String message, LocalQuickFix... fixes) {
-    JSProblemUtil.registerProblem(place, message, ProblemHighlightType.GENERIC_ERROR, myHolder,
-                                  JSValidateTypesInspection.SHORT_NAME,
-                                  fixes);
+    myReporter.registerProblem(place, message, ProblemHighlightType.GENERIC_ERROR,
+                                               JSValidateTypesInspection.SHORT_NAME,
+                                               fixes);
   }
 
   @Override
@@ -45,10 +44,10 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
         final JSExpression[] expressions = argumentList != null ? argumentList.getArguments() : JSExpression.EMPTY_ARRAY;
         if (expressions.length > 0) {
           final CreateConstructorFix fix = CreateConstructorFix.createIfApplicable(node);
-          JSProblemUtil.registerProblem(
+          myReporter.registerProblem(
             ValidateTypesUtil.getPlaceForSignatureProblem(node, argumentList),
             JSBundle.message("javascript.invalid.number.of.parameters", "0"),
-            ProblemHighlightType.GENERIC_ERROR, myHolder, JSCheckFunctionSignaturesInspection.SHORT_NAME,
+            ProblemHighlightType.GENERIC_ERROR, JSCheckFunctionSignaturesInspection.SHORT_NAME,
             fix != null ? new LocalQuickFix[]{fix} : LocalQuickFix.EMPTY_ARRAY);
           return;
         }

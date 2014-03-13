@@ -11,7 +11,6 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
-import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.flex.AddImportECMAScriptClassOrFunctionAction;
@@ -92,8 +91,9 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
   @Override
   protected void initTypeCheckers() {
-    myTypeChecker = new ActionScriptTypeChecker(myHolder);
-    myFunctionSignatureChecker = new ActionScriptFunctionSignatureChecker(myTypeChecker, myHolder);
+    myProblemReporter = new JSAnnotatorProblemReporter(myHolder);
+    myTypeChecker = new ActionScriptTypeChecker(myProblemReporter);
+    myFunctionSignatureChecker = new ActionScriptFunctionSignatureChecker(myTypeChecker, myProblemReporter);
   }
 
   public static void checkFileUnderSourceRoot(final JSNamedElement aClass, ErrorReportingClient client) {
@@ -650,7 +650,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           }
         }
         else if (parent instanceof JSNamespaceDeclaration) {
-          DuplicatesCheckUtil.checkDuplicates((JSNamespaceDeclaration)parent, myHolder);
+          DuplicatesCheckUtil.checkDuplicates((JSNamespaceDeclaration)parent, myProblemReporter);
         }
 
         if (parent instanceof JSClass) {
@@ -679,7 +679,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     if (!jsClass.isInterface()) {
       checkIfExtendsFinalOrMultipleClasses(jsClass);
     }
-    DuplicatesCheckUtil.checkDuplicates(jsClass, myHolder);
+    DuplicatesCheckUtil.checkDuplicates(jsClass, myProblemReporter);
   }
 
   private void checkIfExtendsFinalOrMultipleClasses(final JSClass jsClass) {
@@ -914,12 +914,13 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       String s = modifiers[0].getElementType().toString().toLowerCase(Locale.ENGLISH);
       final String type = s.substring(s.indexOf(':') + 1, s.indexOf('_'));
       for (ASTNode a : modifiers) {
-        final Annotation errorAnnotation = JSProblemUtil.createErrorAnnotation(a.getPsi(),
-                                                                               JSBundle.message(
-                                                                                 "javascript.validation.message.attribute.was.specified.multiple.times",
-                                                                                 type),
-                                                                               ProblemHighlightType.ERROR,
-                                                                               myHolder);
+        final Annotation errorAnnotation = JSAnnotatorProblemReporter.createErrorAnnotation(a.getPsi(),
+                                                                                            JSBundle.message(
+                                                                                              "javascript.validation.message.attribute.was.specified.multiple.times",
+                                                                                              type),
+                                                                                            ProblemHighlightType.ERROR,
+                                                                                            myHolder
+        );
         errorAnnotation.registerFix(new RemoveASTNodeFix(ourModifierFixIds[i], a));
       }
     }
@@ -1061,7 +1062,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         // ok
       }
       else {
-        JSProblemUtil.createErrorAnnotation(
+        JSAnnotatorProblemReporter.createErrorAnnotation(
           initializer,
           JSBundle.message("javascript.namespace.initializer.should.be.string.or.another.namespace.reference"),
           ProblemHighlightType.ERROR,
@@ -1293,11 +1294,11 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         ResolveResult[] results = ((JSReferenceExpression)rOperand).multiResolve(false);
         PsiElement resolve;
         if (results.length > 0 && ((resolve=results[0].getElement()) instanceof JSVariable || resolve instanceof JSFunction)) {
-          checkIfProperTypeReference(myHolder, rOperand);
+          checkIfProperTypeReference(rOperand);
         }
       }
       else {
-        checkIfProperTypeReference(myHolder, rOperand);
+        checkIfProperTypeReference(rOperand);
       }
     }
     else if (JSTokenTypes.MULTIPLICATIVE_OPERATIONS.contains(sign) ||
@@ -1312,11 +1313,11 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
   }
 
-  private static void checkIfProperTypeReference(AnnotationHolder holder, JSExpression rOperand) {
+  private void checkIfProperTypeReference(JSExpression rOperand) {
     ValidateTypesUtil.checkTypeIs(
       rOperand,
       rOperand,
-      holder,
+      myProblemReporter,
       "Class",
       "javascript.binary.operand.type.mismatch"
     );
@@ -1336,10 +1337,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       if (resolveResult instanceof JSClass && ((JSClass)resolveResult).isInterface()) {
         final PsiElement referenceNameElement = methodExpression.getReferenceNameElement();
 
-        JSProblemUtil.registerProblem(referenceNameElement,
-                                      JSBundle.message("javascript.interface.can.not.be.instantiated.message"),
-                                      getUnresolvedReferenceHighlightType(methodExpression), myHolder,
-                                      JSUnresolvedFunctionInspection.SHORT_NAME);
+        myProblemReporter.registerProblem(referenceNameElement,
+                                          JSBundle.message("javascript.interface.can.not.be.instantiated.message"),
+                                          getUnresolvedReferenceHighlightType(methodExpression),
+                                          JSUnresolvedFunctionInspection.SHORT_NAME);
         return false;
       }
     }

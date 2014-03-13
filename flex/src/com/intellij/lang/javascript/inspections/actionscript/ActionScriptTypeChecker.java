@@ -7,7 +7,6 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
-import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.ActionScriptSmartCompletionContributor;
@@ -18,7 +17,7 @@ import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.validation.JSProblemUtil;
+import com.intellij.lang.javascript.validation.JSProblemReporter;
 import com.intellij.lang.javascript.validation.JSTypeChecker;
 import com.intellij.lang.javascript.validation.fixes.ChangeSignatureFix;
 import com.intellij.openapi.util.Computable;
@@ -39,10 +38,10 @@ import static com.intellij.lang.javascript.psi.JSCommonTypeNames.FUNCTION_CLASS_
  * @author Konstantin.Ulitin
  */
 public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
-  private final AnnotationHolder myHolder;
+  private final JSProblemReporter<Annotation> myReporter;
 
-  public ActionScriptTypeChecker(AnnotationHolder holder) {
-    myHolder = holder;
+  public ActionScriptTypeChecker(JSProblemReporter<Annotation> reporter) {
+    myReporter = reporter;
   }
 
   @Override
@@ -51,7 +50,8 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
                                     @Nullable ProblemHighlightType highlightType,
                                     @Nullable HighlightDisplayLevel displayLevel,
                                     LocalQuickFix... fixes) {
-    return JSProblemUtil.registerProblem(place, message, highlightType, displayLevel, myHolder, JSValidateTypesInspection.SHORT_NAME, fixes);
+    return myReporter
+      .registerProblem(place, message, highlightType, displayLevel, JSValidateTypesInspection.SHORT_NAME, fixes);
   }
 
   @Override
@@ -164,7 +164,8 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
     }
   }
 
-  private static @Nullable JSClass calcNontrivialExpectedEventType(JSExpression expr) {
+  @Nullable
+  private static JSClass calcNontrivialExpectedEventType(JSExpression expr) {
     JSExpression prevExpr = PsiTreeUtil.findChildOfAnyType(expr.getParent(), JSExpression.class);
 
     String type = null;
