@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="http://github.com/johnlindquist/angularjs-plugin">
   <name>AngularJS</name>
   <description>Support for AngularJS</description>
-  <version>0.1.9</version>
+  <version>999.999</version>
   <vendor>johnlindquist, JetBrains</vendor>
   <change-notes><![CDATA[
         <html>
