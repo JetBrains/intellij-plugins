@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2012 JetBrains s.r.o.
+ * Copyright 2000-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public class FlaskSQLAlchemyMembersProvider implements PyClassMembersProvider {
     if (module != null) {
       module.processDeclarations(new BaseScopeProcessor() {
         @Override
-        public boolean execute(@NotNull PsiElement element, ResolveState state) {
+        public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
           if (element instanceof PyImportElement) {
             element = ((PyImportElement) element).resolve();
           }

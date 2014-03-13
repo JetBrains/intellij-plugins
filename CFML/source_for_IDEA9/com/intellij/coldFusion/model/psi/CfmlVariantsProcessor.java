@@ -35,7 +35,7 @@ import java.util.Set;
 import static com.intellij.psi.PsiModifier.*;
 import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 
-abstract public class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
+public abstract class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
 
   public static class CfmlProcessorEvent implements PsiScopeProcessor.Event {
     private CfmlProcessorEvent() {
@@ -76,7 +76,7 @@ abstract public class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
   }
 
   @Override
-  public void handleEvent(Event event, Object associated) {
+  public void handleEvent(@NotNull Event event, Object associated) {
     if (event == JavaScopeProcessorEvent.START_STATIC) {
       myStaticScopeFlag = true;
     }
@@ -86,7 +86,8 @@ abstract public class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
     }
   }
 
-  public boolean execute(@NotNull final PsiElement element, final ResolveState state) {
+  @Override
+  public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
     // continue if not a definition
     if (!(element instanceof PsiNamedElement)) {
       return true;
@@ -164,7 +165,7 @@ abstract public class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
       if (myIsMethodCall && (myReferenceName.toLowerCase().startsWith("get") || myReferenceName.toLowerCase().startsWith("set")) &&
         myReferenceName.substring(3).equalsIgnoreCase(elementName.toLowerCase())) {
         addIfNotNull(execute((PsiNamedElement)element,  false), myResult);
-        return myResult.size() == 0;
+        return myResult.isEmpty();
       }
       if (!myReferenceName.toLowerCase().equals(elementName.toLowerCase())) {
         return true;
@@ -184,7 +185,7 @@ abstract public class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
     T execute = execute((PsiNamedElement)element, false);
     if (execute != null) {
       addIfNotNull(execute, myResult);
-      if (myIsForCompletion || myResult.size() == 0) {
+      if (myIsForCompletion || myResult.isEmpty()) {
         return true;
       } else if (namedElement instanceof CfmlVariable) {
         return !((CfmlVariable)namedElement).isTrulyDeclaration();

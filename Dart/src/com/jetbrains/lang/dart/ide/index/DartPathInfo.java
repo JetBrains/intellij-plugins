@@ -45,7 +45,7 @@ public class DartPathInfo {
     }
     return new PsiScopeProcessor() {
       @Override
-      public boolean execute(@NotNull PsiElement element, ResolveState state) {
+      public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
         if (element instanceof DartComponentName && isComponentExcluded(((DartComponentName)element).getName())) {
           return true;
         }
@@ -59,7 +59,7 @@ public class DartPathInfo {
       }
 
       @Override
-      public void handleEvent(Event event, @Nullable Object associated) {
+      public void handleEvent(@NotNull Event event, @Nullable Object associated) {
         processor.handleEvent(event, associated);
       }
     };
