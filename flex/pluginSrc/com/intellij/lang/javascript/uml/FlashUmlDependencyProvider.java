@@ -258,7 +258,7 @@ public class FlashUmlDependencyProvider {
 
     myClazz.processDeclarations(new BaseScopeProcessor() {
       @Override
-      public boolean execute(@NotNull final PsiElement element, final ResolveState state) {
+      public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
         element.accept(visitor);
         return true;
       }

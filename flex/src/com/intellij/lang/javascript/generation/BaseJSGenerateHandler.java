@@ -51,10 +51,12 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
     mySkipMemberChooserDialog = skipMemberChooserDialog;
   }
 
-  protected @Nullable String getProductivityFeatureId() {
+  @Nullable
+  protected String getProductivityFeatureId() {
     return null;
   }
 
+  @Override
   public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
     if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
     final JSClass jsClass = findClass(file, editor);
@@ -126,6 +128,7 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
                      final Collection<JSNamedElementNode> selectedElements,
                      final BaseCreateMethodsFix<JSNamedElement> createMethodsFix) {
     Runnable runnable = new Runnable() {
+      @Override
       public void run() {
         for(JSNamedElementNode el: selectedElements) {
           createMethodsFix.addElementToProcess((JSNamedElement)el.getPsiElement());
@@ -133,6 +136,7 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
         createMethodsFix.beforeInvoke(project, editor, file);
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          @Override
           public void run() {
             try {
               createMethodsFix.invoke(project, editor, file);
@@ -161,10 +165,12 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
     final MemberChooser<JSNamedElementNode> chooser =
       new MemberChooser<JSNamedElementNode>(candidates.toArray(new JSNamedElementNode[candidates.size()]), allowEmptySelection,
                                             allowMultipleSelection, project, false) {
+        @Override
         protected void init() {
           super.init();
           if (!allowEmptySelection) {
             myTree.addTreeSelectionListener(new TreeSelectionListener() {
+              @Override
               public void valueChanged(final TreeSelectionEvent e) {
                 setOKActionEnabled(myTree.getSelectionCount() > 0);
               }
@@ -175,6 +181,7 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
           }
         }
 
+        @Override
         protected JComponent createCenterPanel() {
           final JComponent superComponent = super.createCenterPanel();
           final JComponent optionsComponent = getOptionsComponent(jsClass, candidates);
@@ -233,7 +240,8 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
     return clazz;
   }
 
-  protected abstract /*@PropertyKey(resourceBundle = JSBundle.BUNDLE)*/ @NonNls String getTitleKey();
+  @NonNls
+  protected abstract String getTitleKey();
 
   protected String getNoCandidatesMessage() {
     return JSBundle.message("no.candidates");
@@ -264,7 +272,8 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
         setLocalResolve(true);
       }
 
-      public boolean execute(@NotNull final PsiElement element, final ResolveState state) {
+      @Override
+      public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
         final JSNamedElement namedElement = (JSNamedElement)element;
         if (skipStatics && element instanceof JSAttributeListOwner) {
           JSAttributeList attributeList = ((JSAttributeListOwner)element).getAttributeList();
@@ -298,10 +307,12 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
     }
   }
 
+  @Override
   public boolean startInWriteAction() {
     return false;
   }
 
+  @Override
   public boolean isValidFor(final Editor editor, final PsiFile file) {
     final JSClass jsClass = findClass(file, editor);
     return jsClass != null && !jsClass.isInterface();

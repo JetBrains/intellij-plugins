@@ -90,7 +90,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
           }
 
           @Override
-          public boolean execute(@NotNull PsiElement element, ResolveState state) {
+          public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
             if (element instanceof JSFunction || element instanceof JSVariable) {
               consumer.consume(element);
             }
@@ -103,7 +103,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
           }
 
           @Override
-          public void handleEvent(Event event, Object associated) {
+          public void handleEvent(@NotNull Event event, Object associated) {
           }
         }, state, null, file);
       }

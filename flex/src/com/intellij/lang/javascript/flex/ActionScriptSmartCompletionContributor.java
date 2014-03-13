@@ -53,7 +53,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
 
       if (calledExpr instanceof JSReferenceExpression) {
         final JSReferenceExpression expression = (JSReferenceExpression)calledExpr;
-        final @NonNls String s = expression.getReferencedName();
+        @NonNls final String s = expression.getReferencedName();
 
         if ("addEventListener".equals(s) ||
             "removeEventListener".equals(s) ||
@@ -71,7 +71,8 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     return null;
   }
 
-  public static @Nullable JSClass findClassOfQualifier(JSReferenceExpression expression) {
+  @Nullable
+  public static JSClass findClassOfQualifier(JSReferenceExpression expression) {
     JSExpression qualifier = expression.getQualifier();
 
     JSClass clazzToProcess = null;
@@ -102,7 +103,8 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         setLocalResolve(true);
       }
 
-      public boolean process(final @NotNull JSAttribute jsAttribute) {
+      @Override
+      public boolean process(@NotNull final JSAttribute jsAttribute) {
         if ("Event".equals(jsAttribute.getName())) {
           final JSAttributeNameValuePair eventAttr = jsAttribute.getValueByName("name");
           JSAttributeNameValuePair typeAttr = jsAttribute.getValueByName("type");
@@ -117,12 +119,13 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         return true;
       }
 
+      @Override
       public boolean handleOtherElement(final PsiElement el, final PsiElement context, final Ref<PsiElement> continuePassElement) {
         return true;
       }
 
       @Override
-      public boolean execute(@NotNull PsiElement element, ResolveState state) {
+      public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
         if (element instanceof JSClass) {
           JSResolveUtil.processMetaAttributesForClass(element, this, true);
         }
@@ -180,7 +183,8 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       return true;
     }
 
-    public boolean execute(@NotNull final PsiElement element, final ResolveState state) {
+    @Override
+    public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
       if (element instanceof JSVariable) {
         final JSVariable variable = (JSVariable)element;
         final JSAttributeList attributeList = variable.getAttributeList();

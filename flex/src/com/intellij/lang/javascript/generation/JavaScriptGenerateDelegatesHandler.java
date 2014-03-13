@@ -76,7 +76,7 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
     // don't add members along with their supers
     class MemberDescriptor {
       private final String name;
-      private final @Nullable JSFunction.FunctionKind kind;
+      @Nullable private final JSFunction.FunctionKind kind;
 
       public MemberDescriptor(JSFunction method) {
         name = method.getName();
@@ -116,7 +116,7 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
       }
 
       @Override
-      public boolean execute(@NotNull PsiElement element, ResolveState state) {
+      public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
         JSClass clazz = JSUtils.getMemberContainingClass(element);
         if (clazz == null || JSResolveUtil.isObjectClass(clazz) || clazz == jsClass) {
           return true;
@@ -225,6 +225,7 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
         }
       }
 
+      @Override
       protected String buildFunctionBodyText(final String retType, final JSParameterList parameterList, final JSNamedElement element) {
         return OverrideMethodsFix.buildDelegatingText(retType, parameterList, ((JSFunction)element), field.getName(),
                                                       anchor != null ? anchor : myJsClass);
