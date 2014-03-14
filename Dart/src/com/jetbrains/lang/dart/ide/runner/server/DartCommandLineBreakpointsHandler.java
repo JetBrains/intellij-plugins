@@ -158,27 +158,27 @@ public class DartCommandLineBreakpointsHandler {
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
 
     final VirtualFile sdkLibFolder = sdk == null ? null : LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib");
-    final String relativeToSdkLib = sdkLibFolder == null ? null : VfsUtilCore.getRelativePath(file, sdkLibFolder, '/');
-    final String sdkLibName = relativeToSdkLib == null
+    final String relativeToSdkLibFolder = sdkLibFolder == null ? null : VfsUtilCore.getRelativePath(file, sdkLibFolder, '/');
+    final String sdkLibName = relativeToSdkLibFolder == null
                               ? null
-                              : DartLibraryIndex.getStandardLibraryNameByRelativePath(project, relativeToSdkLib);
+                              : DartLibraryIndex.getStandardLibraryNameByRelativePath(project, relativeToSdkLibFolder);
 
     final VirtualFile packagesFolder = myDebugProcess.getPackagesFolder();
-    final String relativeToPackages = packagesFolder == null || relativeToSdkLib != null
+    final String relativeToPackages = packagesFolder == null || relativeToSdkLibFolder != null
                                       ? null
                                       : VfsUtilCore.getRelativePath(file, packagesFolder, '/');
 
     final VirtualFile pubspecYamlFile = myDebugProcess.getPubspecYamlFile();
     final VirtualFile libFolder = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild("lib");
     final String pubspecName = pubspecYamlFile == null ? null : PubspecYamlUtil.getPubspecName(pubspecYamlFile);
-    final String relativeToLibFolder = libFolder == null || relativeToSdkLib != null || relativeToPackages != null
+    final String relativeToLibFolder = libFolder == null || relativeToSdkLibFolder != null || relativeToPackages != null
                                        ? null
                                        : VfsUtilCore.getRelativePath(file, libFolder, '/');
 
     return sdkLibName != null
            ? "dart:" + sdkLibName
-           : relativeToSdkLib != null
-             ? "dart:" + relativeToSdkLib
+           : relativeToSdkLibFolder != null
+             ? "dart:" + relativeToSdkLibFolder
              : relativeToPackages != null
                ? "package:" + relativeToPackages
                : relativeToLibFolder != null && pubspecName != null
