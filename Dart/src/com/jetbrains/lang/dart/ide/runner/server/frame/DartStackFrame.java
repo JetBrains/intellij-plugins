@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.server.frame;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -11,6 +12,7 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
+import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmCallFrame;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmLocation;
@@ -32,6 +34,7 @@ public class DartStackFrame extends XStackFrame {
   public DartStackFrame(@NotNull final DartCommandLineDebugProcess debugProcess, final @NotNull VmCallFrame vmCallFrame) {
     myDebugProcess = debugProcess;
     myVmCallFrame = vmCallFrame;
+    final Project project = debugProcess.getSession().getProject();
 
     final VmLocation location = vmCallFrame.getLocation();
     final String locationUrl = location == null ? null : location.getUrl();
@@ -41,10 +44,18 @@ public class DartStackFrame extends XStackFrame {
         file = VirtualFileManager.getInstance().findFileByUrl(threeSlashizeFileUrl(locationUrl));
       }
       else if (locationUrl.startsWith("dart:")) {
-        final DartSdk sdk = DartSdk.getGlobalDartSdk();
-        final String path = sdk == null ? null : sdk.getHomePath() + "/lib/" + locationUrl.substring("dart:".length());
-        // todo find internal patches somehow (real files are not available, but debugger can provide its contents)
-        file = path == null ? null : LocalFileSystem.getInstance().findFileByPath(path);
+        final String sdkLibNameOrRelPath = locationUrl.substring("dart:".length());
+        final VirtualFile sdkLibByName = DartLibraryIndex.getStandardLibraryFromSdk(project, sdkLibNameOrRelPath);
+
+        if (sdkLibByName != null) {
+          file = sdkLibByName;
+        }
+        else {
+          final DartSdk sdk = DartSdk.getGlobalDartSdk();
+          final String path = sdk == null ? null : sdk.getHomePath() + "/lib/" + sdkLibNameOrRelPath;
+          // todo find internal patches somehow (real files are not available, but debugger can provide its contents)
+          file = path == null ? null : LocalFileSystem.getInstance().findFileByPath(path);
+        }
       }
       else if (locationUrl.startsWith("package:")) {
         final VirtualFile packagesFolder = myDebugProcess.getPackagesFolder();
