@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.runner.server;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.debugger.breakpoints.JavaScriptBreakpointType;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -12,6 +13,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.ide.runner.server.google.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -152,9 +154,14 @@ public class DartCommandLineBreakpointsHandler {
   private String getUrlToSetBreakpoint(final XSourcePosition position) {
     final VirtualFile file = position.getFile();
 
+    final Project project = myDebugProcess.getSession().getProject();
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
+
     final VirtualFile sdkLibFolder = sdk == null ? null : LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib");
     final String relativeToSdkLib = sdkLibFolder == null ? null : VfsUtilCore.getRelativePath(file, sdkLibFolder, '/');
+    final String sdkLibName = relativeToSdkLib == null
+                              ? null
+                              : DartLibraryIndex.getStandardLibraryNameByRelativePath(project, relativeToSdkLib);
 
     final VirtualFile packagesFolder = myDebugProcess.getPackagesFolder();
     final String relativeToPackages = packagesFolder == null || relativeToSdkLib != null
@@ -168,13 +175,15 @@ public class DartCommandLineBreakpointsHandler {
                                        ? null
                                        : VfsUtilCore.getRelativePath(file, libFolder, '/');
 
-    return relativeToSdkLib != null
-           ? "dart:" + relativeToSdkLib
-           : relativeToPackages != null
-             ? "package:" + relativeToPackages
-             : relativeToLibFolder != null && pubspecName != null
-               ? "package:" + pubspecName + "/" + relativeToLibFolder
-               : getAbsoluteUrlForResource(file);
+    return sdkLibName != null
+           ? "dart:" + sdkLibName
+           : relativeToSdkLib != null
+             ? "dart:" + relativeToSdkLib
+             : relativeToPackages != null
+               ? "package:" + relativeToPackages
+               : relativeToLibFolder != null && pubspecName != null
+                 ? "package:" + pubspecName + "/" + relativeToLibFolder
+                 : getAbsoluteUrlForResource(file);
   }
 
   private void sendSetBreakpointCommand(final VmIsolate isolate,
