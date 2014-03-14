@@ -968,11 +968,14 @@ public class VmConnection {
           }
         }
         catch (IOException exception) {
-
-        }
-        catch (Throwable exception) {
           LOG.info(exception);
         }
+        catch (JSONException exception) {
+          LOG.info(exception);
+        }
+        //catch (Throwable exception) {
+        //  LOG.info(exception);
+        //}
       }
     });
   }
