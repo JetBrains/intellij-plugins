@@ -67,7 +67,6 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
           while (true) {
             try {
               myVmConnection.connect();
-
               break;
             }
             catch (IOException ioe) {
@@ -87,6 +86,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
         catch (IOException ioe) {
           getSession().getConsoleView()
             .print("Unable to connect debugger to the Dart VM: " + ioe.getMessage(), ConsoleViewContentType.ERROR_OUTPUT);
+          getSession().stop();
         }
       }
     });
