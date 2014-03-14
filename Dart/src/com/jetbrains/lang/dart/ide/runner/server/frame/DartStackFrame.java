@@ -18,6 +18,7 @@ import com.jetbrains.lang.dart.ide.runner.server.google.VmCallFrame;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmLocation;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmVariable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,9 +59,19 @@ public class DartStackFrame extends XStackFrame {
         }
       }
       else if (locationUrl.startsWith("package:")) {
-        final VirtualFile packagesFolder = myDebugProcess.getPackagesFolder();
-        final String path = packagesFolder == null ? null : packagesFolder.getPath() + "/" + locationUrl.substring("package:".length());
-        file = path == null ? null : LocalFileSystem.getInstance().findFileByPath(path);
+        final String packageRelPath = locationUrl.substring("package:".length());
+
+        final VirtualFile pubspecYamlFile = myDebugProcess.getPubspecYamlFile();
+        final String pubspecName = pubspecYamlFile == null ? null : PubspecYamlUtil.getPubspecName(pubspecYamlFile);
+
+        if (pubspecName != null && packageRelPath.startsWith(pubspecName + "/")) {
+          file = pubspecYamlFile.findFileByRelativePath("../lib" + packageRelPath.substring(pubspecName.length()));
+        }
+        else {
+          final VirtualFile packagesFolder = myDebugProcess.getPackagesFolder();
+          final String path = packagesFolder == null ? null : packagesFolder.getPath() + "/" + packageRelPath;
+          file = path == null ? null : LocalFileSystem.getInstance().findFileByPath(path);
+        }
       }
       else {
         LOG.warn("Unexpected URL:" + locationUrl);
