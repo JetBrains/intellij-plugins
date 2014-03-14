@@ -12,7 +12,7 @@ Prerequisites:
   3.3. Add some jars to the Plugin SDK Classpath:
          [IDEA Installation]/plugins/copyright/lib/*.jar
          [IDEA Installation]/plugins/JavaScriptDebugger/lib/*.jar
-         [IDEA config folder]/plugins/fileWatcher/lib/*.jar (see here how to locate [IDEA config folder]: https://intellij-support.jetbrains.com/entries/23358108)
+         [IDEA plugins folder]/fileWatcher/lib/*.jar (see here how to locate [IDEA plugins folder]: https://intellij-support.jetbrains.com/entries/23358108)
   3.4. Clone IntelliJ IDEA Community Edition repo (git clone https://github.com/JetBrains/intellij-community) anywhere on the computer (it takes some time), open Sources tab of the Plugin SDK and add path to the cloned repo root. After some scanning IDE will find all src folders - accept them. Update IntelliJ IDEA Community sources from time to time, e.g. when you upgrade IntelliJ IDEA Ultimate installation (git pull).
   3.5. Open Plugin SDK Annotations tab and add [IDEA Installation]/lib/jdkAnnotations.jar
 4. Clone IntelliJ IDEA plugins source code (https://github.com/JetBrains/intellij-plugins) and open the project in the 'Dart' folder. It is ready to use. Two run configurations are already configured: 'Dart tests' (run it each time before commit) and 'Dart plugin' that launches IntelliJ IDEA with Dart plugin from sources.
