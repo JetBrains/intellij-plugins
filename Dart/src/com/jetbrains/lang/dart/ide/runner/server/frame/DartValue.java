@@ -23,6 +23,8 @@ public class DartValue extends XNamedValue {
   private final @NotNull VmVariable myVmVariable;
   private @Nullable VmValue myVmValue;
 
+  private static final String OBJECT_OF_TYPE_PREFIX = "object of type ";
+
   public DartValue(final @NotNull DartCommandLineDebugProcess debugProcess, final @NotNull VmVariable vmVariable) {
     super(StringUtil.notNullize(vmVariable.getName(), "<unknown>"));
     myDebugProcess = debugProcess;
@@ -46,14 +48,22 @@ public class DartValue extends XNamedValue {
         final String value = StringUtil.notNullize(myVmValue.getText(), "null");
         final XValuePresentation presentation;
 
-        if (myVmValue.isString()) {
+        if (myVmValue.isNull()) {
+          presentation = new XRegularValuePresentation("null", null);
+        }
+        else if (myVmValue.isString()) {
           presentation = new XStringValuePresentation(StringUtil.stripQuotesAroundValue(value));
         }
         else if (myVmValue.isNumber()) {
           presentation = new XNumericValuePresentation(value);
         }
         else {
-          presentation = new XRegularValuePresentation(value, myVmValue.getKind());
+          if (value.startsWith(OBJECT_OF_TYPE_PREFIX)) {
+            presentation = new XRegularValuePresentation("", value.substring(OBJECT_OF_TYPE_PREFIX.length()));
+          }
+          else {
+            presentation = new XRegularValuePresentation(value, myVmValue.getKind());
+          }
         }
 
         final boolean neverHasChildren = myVmValue.isPrimitive() || myVmValue.isNull() || myVmValue.isFunction();
@@ -90,7 +100,7 @@ public class DartValue extends XNamedValue {
 
                                  if (fields == null || result.isError()) return;
 
-                                 // todo sort
+                                 // todo sort somehow?
                                  final XValueChildrenList childrenList = new XValueChildrenList(fields.size());
                                  for (final VmVariable field : fields) {
                                    childrenList.add(new DartValue(myDebugProcess, field));
