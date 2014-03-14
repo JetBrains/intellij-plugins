@@ -134,7 +134,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
 
     if (cachedTimestamp == null || !cachedTimestamp.equals(modificationCount)) {
       try {
-        final String contents = VfsUtilCore.loadText(librariesDartFile);
+        final String contents = StringUtil.convertLineSeparators(VfsUtilCore.loadText(librariesDartFile));
         final PsiFile psiFile = PsiFileFactory.getInstance(project).createFileFromText("libraries.dart", DartLanguage.INSTANCE, contents);
         if (!(psiFile instanceof DartFile)) return new BidirectionalMap<String, String>();
 
