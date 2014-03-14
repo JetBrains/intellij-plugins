@@ -74,7 +74,7 @@ public class DartValue extends XNamedValue {
 
   private static Icon getIcon(final @NotNull VmValue vmValue) {
     if (vmValue.isList()) return AllIcons.Debugger.Db_array;
-    if (vmValue.isPrimitive()) return AllIcons.Debugger.Db_primitive;
+    if (vmValue.isPrimitive() || vmValue.isNull()) return AllIcons.Debugger.Db_primitive;
     if (vmValue.isFunction()) return AllIcons.Nodes.Function;
 
     return AllIcons.Debugger.Value; // todo m.b. resolve and show corresponding icon?
