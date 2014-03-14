@@ -74,6 +74,9 @@ public class DartSdkUtil {
                                                    final @NotNull JBLabel versionLabel,
                                                    final @NotNull TextFieldWithBrowseButton dartiumPathComponent,
                                                    final @NotNull Computable<Boolean> isResettingControlsComputable) {
+    final String sdkHomePath = dartSdkPathComponent.getText().trim();
+    versionLabel.setText(sdkHomePath.isEmpty() ? "" : getSdkVersion(sdkHomePath));
+
     final TextComponentAccessor<JTextField> textComponentAccessor = new TextComponentAccessor<JTextField>() {
       @Override
       public String getText(final JTextField component) {
