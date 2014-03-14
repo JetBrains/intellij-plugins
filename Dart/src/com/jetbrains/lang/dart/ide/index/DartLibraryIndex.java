@@ -11,13 +11,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +29,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
   public static final ID<String, Void> DART_LIBRARY_INDEX = ID.create("DartLibraryIndex");
   private static final int INDEX_VERSION = 2;
 
-  private static final Key<Pair<Long, Map<String, String>>> LIBRARIES_TIME_AND_MAP_KEY = Key.create("dart.internal.libraries");
+  private static final Key<Pair<Long, BidirectionalMap<String, String>>> LIBRARIES_TIME_AND_MAP_KEY = Key.create("dart.internal.libraries");
 
   private DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
 
@@ -104,23 +104,31 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
   }
 
   @Nullable
+  public static String getStandardLibraryNameByRelativePath(final @NotNull Project project, final @NotNull String relativePath) {
+    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final List<String> libNames = sdk == null ? null : getLibraryNameToRelativePathMap(project, sdk).getKeysByValue(relativePath);
+    return libNames == null || libNames.isEmpty() ? null : libNames.get(0);
+  }
+
+  @Nullable
   public static VirtualFile getStandardLibraryFromSdk(final @NotNull Project project, final @NotNull String libraryName) {
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
-    final String relativeLibPath = sdk == null ? null : getLibrariesMap(project, sdk).get(libraryName);
+    final String relativeLibPath = sdk == null ? null : getLibraryNameToRelativePathMap(project, sdk).get(libraryName);
     return relativeLibPath == null ? null : LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/" + relativeLibPath);
   }
 
   public static Collection<String> getAllStandardLibrariesFromSdk(final @NotNull Project project) {
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
-    return sdk == null ? Collections.<String>emptyList() : getLibrariesMap(project, sdk).keySet();
+    return sdk == null ? Collections.<String>emptyList() : getLibraryNameToRelativePathMap(project, sdk).keySet();
   }
 
   @NotNull
-  private static Map<String, String> getLibrariesMap(final @NotNull Project project, final @NotNull DartSdk sdk) {
+  private static BidirectionalMap<String, String> getLibraryNameToRelativePathMap(final @NotNull Project project,
+                                                                                  final @NotNull DartSdk sdk) {
     final VirtualFile librariesDartFile = LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/_internal/libraries.dart");
-    if (librariesDartFile == null) return Collections.emptyMap();
+    if (librariesDartFile == null) return new BidirectionalMap<String, String>();
 
-    Pair<Long, Map<String, String>> data = librariesDartFile.getUserData(LIBRARIES_TIME_AND_MAP_KEY);
+    Pair<Long, BidirectionalMap<String, String>> data = librariesDartFile.getUserData(LIBRARIES_TIME_AND_MAP_KEY);
     final Long cachedTimestamp = data == null ? null : data.first;
     final long modificationCount = librariesDartFile.getModificationCount();
 
@@ -128,19 +136,19 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
       try {
         final String contents = VfsUtilCore.loadText(librariesDartFile);
         final PsiFile psiFile = PsiFileFactory.getInstance(project).createFileFromText("libraries.dart", DartLanguage.INSTANCE, contents);
-        if (!(psiFile instanceof DartFile)) return Collections.emptyMap();
+        if (!(psiFile instanceof DartFile)) return new BidirectionalMap<String, String>();
 
-        data = Pair.create(modificationCount, computeData((DartFile)psiFile));
+        data = Pair.create(modificationCount, computeLibraryNameToRelativePathMap((DartFile)psiFile));
         librariesDartFile.putUserData(LIBRARIES_TIME_AND_MAP_KEY, data);
       }
       catch (IOException e) {
-        return Collections.emptyMap();
+        return new BidirectionalMap<String, String>();
       }
     }
     return data.getSecond();
   }
 
-  private static Map<String, String> computeData(final @Nullable DartFile librariesDartFile) {
+  private static BidirectionalMap<String, String> computeLibraryNameToRelativePathMap(final @NotNull DartFile librariesDartFile) {
 /*
 const Map<String, LibraryInfo> LIBRARIES = const {
 
@@ -155,9 +163,8 @@ const Map<String, LibraryInfo> LIBRARIES = const {
       category: "Client"),
 
 */
-    if (librariesDartFile == null) return Collections.emptyMap();
+    final BidirectionalMap<String, String> result = new BidirectionalMap<String, String>();
 
-    final Map<String, String> result = new THashMap<String, String>();
     librariesDartFile.acceptChildren(new DartRecursiveVisitor() {
       public void visitMapLiteralEntry(final @NotNull DartMapLiteralEntry mapLiteralEntry) {
         final List<DartExpression> expressions = mapLiteralEntry.getExpressionList();
@@ -189,6 +196,7 @@ const Map<String, LibraryInfo> LIBRARIES = const {
         }
       }
     });
+
     return result;
   }
 }
