@@ -27,6 +27,7 @@ public class DartVmListener implements VmListener {
     LOG.debug("connection closed");
     myDebugProcess.setVmConnected(false);
     connection.handleTerminated();
+    myDebugProcess.getSession().stop();
   }
 
   public void isolateCreated(final VmIsolate isolate) {
