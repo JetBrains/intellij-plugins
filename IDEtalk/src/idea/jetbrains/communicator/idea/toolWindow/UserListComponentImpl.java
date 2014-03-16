@@ -77,12 +77,12 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
     myLocalMessageDispatcher = localMessageDispatcher;
     myUserModel = userModel;
 
-    myTimer4Renderer = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk renderer",200, new ActionListener() {
+    myTimer4Renderer = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk renderer", 200, new ActionListener() {
       @Override
       public void
       actionPerformed(ActionEvent e) {
         if (myLocalMessageDispatcher.hasUsersWithMessages()) {
-          myRefreshCounter ++;
+          myRefreshCounter++;
           if (myRefreshCounter > 4) {
             myRefreshCounter = 0;
           }
