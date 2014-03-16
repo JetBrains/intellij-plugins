@@ -16,9 +16,8 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
-import com.intellij.javascript.debugger.impl.BrowserConnection;
-import com.intellij.javascript.debugger.impl.JSDebugTabLayouter;
 import com.intellij.javascript.debugger.impl.JSDebugProcess;
+import com.intellij.javascript.debugger.impl.JSDebugTabLayouter;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
@@ -157,8 +156,8 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     return myExecutionSession;
   }
 
-  public <C extends BrowserConnection> KarmaDebugTabLayouter<C> createDebugLayouter(@NotNull JSDebugProcess<C> debugProcess) {
-    return new KarmaDebugTabLayouter<C>(debugProcess);
+  public KarmaDebugTabLayouter createDebugLayouter(@NotNull JSDebugProcess<?> debugProcess) {
+    return new KarmaDebugTabLayouter(debugProcess);
   }
 
   @Nullable
@@ -225,9 +224,9 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     }
   }
 
-  private class KarmaDebugTabLayouter<C extends BrowserConnection> extends JSDebugTabLayouter<C> {
+  private class KarmaDebugTabLayouter extends JSDebugTabLayouter {
 
-    public KarmaDebugTabLayouter(@NotNull JSDebugProcess<C> debugProcess) {
+    public KarmaDebugTabLayouter(@NotNull JSDebugProcess<?> debugProcess) {
       super(debugProcess);
     }
 
