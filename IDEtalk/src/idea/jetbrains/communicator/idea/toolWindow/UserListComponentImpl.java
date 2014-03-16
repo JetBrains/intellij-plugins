@@ -19,7 +19,6 @@ import com.intellij.concurrency.JobScheduler;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.messager.Callout;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ui.*;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.EventVisitor;
 import jetbrains.communicator.core.IDEtalkAdapter;
@@ -35,13 +34,11 @@ import jetbrains.communicator.ide.UserListComponent;
 import jetbrains.communicator.idea.IdeaLocalMessage;
 import jetbrains.communicator.idea.UserTreeRenderer;
 import jetbrains.communicator.util.*;
-import jetbrains.communicator.util.UIUtil;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.picocontainer.Disposable;
 
 import javax.swing.*;
-import javax.swing.Timer;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -81,7 +78,9 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
     myUserModel = userModel;
 
     myTimer4Renderer = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk renderer",200, new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+      @Override
+      public void
+      actionPerformed(ActionEvent e) {
         if (myLocalMessageDispatcher.hasUsersWithMessages()) {
           myRefreshCounter ++;
           if (myRefreshCounter > 4) {
@@ -103,21 +102,25 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
     myTree.setModel(new UsersTreeModel(myTree, userModel, myLocalMessageDispatcher));
 
     myExpandTreeNodeListener = new IDEtalkAdapter() {
+      @Override
       public void afterChange(IDEtalkEvent event) {
         event.accept(new EventVisitor(){
 
           @SuppressWarnings({"RefusedBequest"})
-          @Override public void visitTransportEvent(TransportEvent event) {
+          @Override
+          public void visitTransportEvent(TransportEvent event) {
             User user = event.createUser(myUserModel);
             expandAndRepaintUserNode(user);
           }
 
           @SuppressWarnings({"RefusedBequest"})
-          @Override public void visitUserAdded(UserEvent.Added event) {
+          @Override
+          public void visitUserAdded(UserEvent.Added event) {
             expandAndRepaintUserNode(event.getUser());
           }
 
-          @Override public void visitUserUpdated(UserEvent.Updated event) {
+          @Override
+          public void visitUserUpdated(UserEvent.Updated event) {
             repaintUserNode(event.getUser());    // Redraw user if presence property changed
           }
         });
@@ -139,6 +142,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
     }
   }
 
+  @Override
   public void dispose() {
     myTimer4Renderer.stop();
     TreeModel model = myTree.getModel();
@@ -150,6 +154,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
 
   private void expandAndRepaintUserNode(final User user) {
     UIUtil.invokeLater(new Runnable() {
+      @Override
       public void run() {
         myTree.expandUserNode(user);
       }
@@ -159,6 +164,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
 
   private void repaintUserNode(final User user) {
     UIUtil.invokeLater(new Runnable() {
+      @Override
       public void run() {
         TreePath path = myTree.getPathForUser(user);
         if (path != null) {
@@ -170,19 +176,23 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
     });
   }
 
+  @Override
   public void startEditing() {
     myTree.startEditingAtPath(myTree.getSelectionPath());
   }
 
+  @Override
   public boolean isSingleItemSelected() {
     final TreePath[] selectionPaths = myTree.getSelectionPaths();
     return selectionPaths != null && selectionPaths.length == 1;
   }
 
+  @Override
   public Container getComponent() {
     return myTree;
   }
 
+  @Override
   public Object[] getSelectedNodes() {
     if (myTree.isEditing()) return ArrayUtil.EMPTY_OBJECT_ARRAY;
 
@@ -196,10 +206,12 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
     return result.toArray();
   }
 
+  @Override
   public void rebuild() {
     ((UsersTreeModel) myTree.getModel()).updateTree(null);
   }
 
+  @Override
   public User getSelectedUser() {
     Object[] nodes = getSelectedNodes();
     if (nodes.length == 1 && nodes[0] instanceof User)
@@ -235,6 +247,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
       super(tree);
     }
 
+    @Override
     protected void customizeUserNode(User user) {
       super.customizeUserNode(user);
       Message[] pendingMessages = myLocalMessageDispatcher.getPendingMessages(user);
@@ -243,6 +256,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
       }
     }
 
+    @Override
     protected SimpleTextAttributes getGroupAttributes(String group) {
       int usersInGroup = myUserModel.getUsers(TreeUtils.getUserObject(group).toString()).length;
       if (usersInGroup == 0) {
@@ -257,6 +271,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
     MakeNodeWithMessageVisible() {
     }
 
+    @Override
     public void run() {
       User[] usersWithMessages = myLocalMessageDispatcher.getUsersWithMessages();
       if (usersWithMessages.length > 0) {
@@ -274,9 +289,11 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
       super(myTree, new DefaultTreeCellRenderer(), new MyValidatingCellEditor());
     }
 
+    @Override
     public Component getTreeCellEditorComponent(JTree tree1, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
       myEditingUser = null;
       Object originalValue = TreeUtils.convertValueIfUserNode(value, new UserActionWithValue() {
+        @Override
         public Object execute(User user) {
           myEditingUser = user;
           return user.getDisplayName();
@@ -291,6 +308,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
       ((MyValidatingCellEditor) realEditor).setEditingUser(myEditingUser);
 
       editingComponent.addKeyListener(new KeyAdapter() {
+        @Override
         public void keyPressed(KeyEvent e) {
           super.keyPressed(e);
           if (myTree.isEditing() && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -304,10 +322,12 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
       return editor;
     }
 
+    @Override
     protected boolean shouldStartEditingTimer(EventObject event) {
       return false;
     }
 
+    @Override
     protected void determineOffset(JTree tree1, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
       TreePath path = tree1.getSelectionPath();
       if (path == null) {
@@ -341,6 +361,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
       myOriginalValue = originalValue;
     }
 
+    @Override
     public boolean stopCellEditing() {
           String value = (String) getCellEditorValue();
           if (!value.equals(myOriginalValue)) {
@@ -366,8 +387,10 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
 
     private boolean problem(final String resourceCode) {
       JobScheduler.getScheduler().schedule(new Runnable(){
+        @Override
         public void run() {
           UIUtil.invokeLater(new Runnable() {
+            @Override
             public void run() {
               Callout.showText(myTree, myTree.getEditingPath(), Callout.SOUTH_WEST,
                   StringUtil.getMsg(resourceCode));
