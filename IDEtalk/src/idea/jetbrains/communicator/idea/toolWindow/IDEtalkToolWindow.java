@@ -50,13 +50,11 @@ import org.picocontainer.MutablePicoContainer;
 import javax.swing.*;
 import java.awt.*;
 
-@SuppressWarnings({"RefusedBequest", "RefusedBequest", "RefusedBequest"})
 public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternalizable {
-
   @NonNls public static final String PLACE_TOOLBAR = "TOOLBAR";
   @NonNls private static final String TOOL_WINDOW_ID = "IDEtalk";
 
-  private final UserListComponentImpl myUserListComponent;
+  private UserListComponentImpl myUserListComponent;
   private final MutablePicoContainer myContainer;
 
   private JPanel myTopPanel;
@@ -65,15 +63,17 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
                            ActionManager actionManager, Project project,
                            IDEtalkContainerRegistry containerRegistry) {
     super(toolWindowManager, actionManager, project);
-    myContainer = containerRegistry.getContainer();
 
+    myContainer = containerRegistry.getContainer();
+  }
+
+  @Override
+  public void initComponent() {
     myContainer.registerComponentImplementation(UserListComponentImpl.class);
     myContainer.registerComponentImplementation(StatusToolbarImpl.class);
 
-    myUserListComponent = (UserListComponentImpl) myContainer.getComponentInstanceOfType(UserListComponentImpl.class);
-  }
+    myUserListComponent = (UserListComponentImpl)myContainer.getComponentInstanceOfType(UserListComponentImpl.class);
 
-  public void initComponent() {
     myTopPanel = new JPanel();
     myTopPanel.setLayout(new BoxLayout(myTopPanel, BoxLayout.Y_AXIS));
   }
@@ -82,6 +82,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     return myUserListComponent.getComponent();
   }
 
+  @Override
   protected String getToolWindowId() {
     return TOOL_WINDOW_ID;
   }
@@ -94,19 +95,23 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     }
   }
 
+  @Override
   public void projectClosed() {
     UIUtil.removeListenersToPreventMemoryLeak(((Container) getComponent()));
     super.projectClosed();
   }
 
+  @Override
   @NotNull
   public String getComponentName() {
     return "IDEtalkToolWindow";
   }
 
+  @Override
   public void readExternal(Element element) throws InvalidDataException {
   }
 
+  @Override
   public void writeExternal(Element element) throws WriteExternalException {
     if (myUserListComponent != null) {
       myUserListComponent.saveState();
@@ -114,9 +119,11 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     throw new WriteExternalException();
   }
 
+  @Override
   protected void createToolWindowComponent() {
 
     StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
+      @Override
       public void run() {
         initializeTransports(myProject.getName());
       }
@@ -141,10 +148,11 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     toolbarPanel.add(Box.createHorizontalStrut(10));
     toolbarPanel.add(new SeparatorComponent(JBColor.LIGHT_GRAY, SeparatorOrientation.VERTICAL));
     toolbarPanel.add(Box.createHorizontalStrut(3));
-    toolbarPanel.add(OptionsButton.wrap(new OptionsButton()));
+    toolbarPanel.add(DropDownButton.wrap(new OptionsButton()));
     toolbarPanel.add(statusToolbar.createComponent());
 
     toolbarPanel.add(new JPanel() {
+      @Override
       public Dimension getPreferredSize() {
         return new Dimension(Short.MAX_VALUE, 10);
       }
@@ -174,6 +182,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     return toolbar;
   }
 
+  @Override
   protected ToolWindowAnchor getAnchor() {
     return ToolWindowAnchor.RIGHT;
   }
@@ -185,6 +194,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
         setOpaque(true);
         setBackground(JBColor.red);
       }
+      @Override
       public Dimension getPreferredSize() {
         return new Dimension(Short.MAX_VALUE, 10);
       }
