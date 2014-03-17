@@ -6,6 +6,8 @@ import com.intellij.lang.javascript.refactoring.JSDefaultRenameProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.ElementDescriptionLocation;
+import com.intellij.psi.ElementDescriptionProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.RefactoringBundle;
@@ -13,6 +15,8 @@ import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.rename.RenameDialog;
 import com.intellij.refactoring.rename.RenameUtil;
 import com.intellij.usageView.UsageInfo;
+import com.intellij.usageView.UsageViewTypeLocation;
+import com.intellij.usageView.UsageViewUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesIndex;
@@ -81,7 +85,7 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
       @NotNull
       @Override
       protected String getLabelText() {
-        return RefactoringBundle.message("rename.0.and.its.usages.to", "directive " + directiveName);
+        return RefactoringBundle.message("rename.0.and.its.usages.to", UsageViewUtil.getType(element) + " " + directiveName);
       }
 
       @Override
@@ -89,5 +93,17 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
         return new String[] {directiveName};
       }
     };
+  }
+
+  public static class AngularJSDirectiveElementDescriptor implements ElementDescriptionProvider {
+    @Nullable
+    @Override
+    public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
+      if (isDirective(element)) {
+        if (location instanceof UsageViewTypeLocation) return "directive";
+        return DirectiveUtil.attributeToDirective(((JSNamedElementProxy)element).getName());
+      }
+      return null;
+    }
   }
 }
