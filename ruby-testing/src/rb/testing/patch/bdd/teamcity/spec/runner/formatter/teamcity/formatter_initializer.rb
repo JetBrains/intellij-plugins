@@ -1,4 +1,4 @@
-# Copyright 2000-2012 JetBrains s.r.o.
+# Copyright 2000-2014 JetBrains s.r.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ module Spec
       # marker classed in object space
 
       if defined? ::RSpec::Core::Version::STRING
-        if defined?(Gems::Dependency) && Gem::Dependency.new(nil, '~> 2.0').match?(nil, ::RSpec::Core::Version::STRING)
+        if ::RSpec::Core::Version::STRING.split('.')[0] == '2'
           # rspec >= 2.x
           require 'rspec/core/formatters/base_formatter'
           RSPEC_VERSION_2 = true
