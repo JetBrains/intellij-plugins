@@ -78,6 +78,8 @@
                             id="AngularJSCompletionContributor"/>
     <renamePsiElementProcessor implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor" />
     <targetElementEvaluator language="JavaScript" implementationClass="org.angularjs.AngularJSTargetElementEvaluator"/>
+    <elementDescriptionProvider order="first"
+                                implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor$AngularJSDirectiveElementDescriptor" />
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
