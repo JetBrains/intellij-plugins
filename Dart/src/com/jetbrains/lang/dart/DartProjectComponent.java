@@ -48,7 +48,7 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 public class DartProjectComponent extends AbstractProjectComponent {
 
   // todo remove this field and all its usages in 13.1.1 (when JavaScriptDebugAware.isOnlySourceMappedBreakpoints() is introduced)
-  public static final @Nullable XLineBreakpointTypeBase JS_BREAKPOINT_TYPE = getJSBreakpointType();
+  public static final @Nullable XLineBreakpointTypeBase JS_BREAKPOINT_TYPE = null; //getJSBreakpointType();
 
   protected DartProjectComponent(final Project project) {
     super(project);
