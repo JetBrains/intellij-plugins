@@ -28,13 +28,11 @@ public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
     doTest("The method 'bar' is not defined for the class 'Foo'");
   }
 
-  // dartanalyzer bug: error is not reported
-  public void _testFieldDoesNotHaveAGetter1() throws Throwable {
+  public void testFieldDoesNotHaveAGetter1() throws Throwable {
     doTest("There is no such getter 'foo' in 'A'");
   }
 
-  // fails because analyzer now reports this error as "Final variables cannot be assigned a value"
-  public void _testFieldDoesNotHaveASetter1() throws Throwable {
+  public void testFieldDoesNotHaveASetter1() throws Throwable {
     doTest("There is no such setter 'foo' in 'A'");
   }
 

@@ -26,7 +26,7 @@ part of dart.core;
  * If you do, then an instance of your Iterable class
  * can be the right-hand side of a for-in construct.
  *
- * Some subclasss of `Iterable` can be modified. It is generally not allowed
+ * Some subclasss of [Iterable] can be modified. It is generally not allowed
  * to modify such collections while they are being iterated. Doing so will break
  * the iteration, which is typically signalled by throwing a
  * [ConcurrentModificationError] when it is detected.
@@ -276,7 +276,7 @@ abstract class Iterable<E> {
   /**
    * Returns the [index]th element.
    *
-   * If `this` has fewer than [index] elements throws a [RangeError].
+   * The [index] must be non-negative and less than [length].
    *
    * Note: if `this` does not have a deterministic iteration order then the
    * function may simply return any element without any iteration if there are

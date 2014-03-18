@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.dart.engine.internal.context.TimestampedData;
 import com.google.dart.engine.source.Source;
 import com.google.dart.engine.source.UriKind;
 import com.intellij.openapi.application.ApplicationManager;
@@ -7,6 +8,8 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -48,32 +51,17 @@ public class DartFileBasedSource implements Source {
     return myFile.exists() && !myFile.isDirectory();
   }
 
-  @Override
-  public void getContents(final ContentReceiver receiver) throws Exception {
-    final Exception exception = ApplicationManager.getApplication().runReadAction(new NullableComputable<Exception>() {
-      @Nullable
-      public Exception compute() {
-        final Document cachedDocument = FileDocumentManager.getInstance().getCachedDocument(myFile);
-        if (cachedDocument != null) {
-          myModificationStampWhenFileContentWasRead = cachedDocument.getModificationStamp();
-          receiver.accept(cachedDocument.getText(), myModificationStampWhenFileContentWasRead);
-        }
-        else {
-          myModificationStampWhenFileContentWasRead = myFile.getModificationStamp();
-          try {
-            receiver.accept(VfsUtilCore.loadText(myFile), myModificationStampWhenFileContentWasRead);
-          }
-          catch (IOException e) {
-            return e;
-          }
-        }
-        return null;
-      }
-    });
+  public TimestampedData<CharSequence> getContents() throws Exception {
+    final Pair<CharSequence, Long> contentsAndTimestamp = loadFile(myFile);
+    myModificationStampWhenFileContentWasRead = contentsAndTimestamp.second;
+    return new TimestampedData<CharSequence>(contentsAndTimestamp.second, contentsAndTimestamp.first);
+  }
 
-    if (exception != null) {
-      throw exception;
-    }
+  @Override
+  public void getContentsToReceiver(final ContentReceiver receiver) throws Exception {
+    final Pair<CharSequence, Long> contentsAndTimestamp = loadFile(myFile);
+    myModificationStampWhenFileContentWasRead = contentsAndTimestamp.second;
+    receiver.accept(contentsAndTimestamp.first, contentsAndTimestamp.second);
   }
 
   @Override
@@ -129,6 +117,35 @@ public class DartFileBasedSource implements Source {
   @Override
   public String toString() {
     return myFile.getPath();
+  }
+
+  private static Pair<CharSequence, Long> loadFile(final VirtualFile file) throws Exception {
+    final Ref<CharSequence> contentsRef = Ref.create();
+    final Ref<Long> timestampRef = Ref.create();
+    final Exception exception = ApplicationManager.getApplication().runReadAction(new NullableComputable<Exception>() {
+      @Nullable
+      public Exception compute() {
+        final Document cachedDocument = FileDocumentManager.getInstance().getCachedDocument(file);
+        if (cachedDocument != null) {
+          contentsRef.set(cachedDocument.getCharsSequence());
+          timestampRef.set(cachedDocument.getModificationStamp());
+        }
+        else {
+          try {
+            contentsRef.set(VfsUtilCore.loadText(file));
+            timestampRef.set(file.getModificationStamp());
+          }
+          catch (IOException e) {
+            return e;
+          }
+        }
+        return null;
+      }
+    });
+
+    if (exception != null) throw exception;
+
+    return Pair.create(contentsRef.get(), timestampRef.get());
   }
 
   public static DartFileBasedSource getSource(final @NotNull Project project, final @NotNull VirtualFile file) {

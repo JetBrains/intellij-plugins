@@ -9,6 +9,6 @@ class Foo {
 class Bar {}
 
 main() {
-  var foo = new Foo();
+  Foo foo = new Foo();
   foo.bar = new Bar();
 }

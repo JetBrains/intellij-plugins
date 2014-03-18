@@ -290,7 +290,7 @@ abstract class String implements Comparable<String>, Pattern {
   String substring(int startIndex, [int endIndex]);
 
   /**
-   * Removes leading and trailing whitespace from a string.
+   * Returns the string without any leading and trailing whitespace.
    *
    * If the string contains leading or trailing whitespace, a new string with no
    * leading and no trailing whitespace is returned:
@@ -324,6 +324,67 @@ abstract class String implements Comparable<String>, Pattern {
    *     FEFF          ; BOM                ZERO WIDTH NO_BREAK SPACE
    */
   String trim();
+
+  /**
+   * Returns the string without any leading whitespace.
+   *
+   * As [trim], but only removes leading whitespace.
+   */
+  String trimLeft();
+
+  /**
+   * Returns the string without any trailing whitespace.
+   *
+   * As [trim], but only removes trailing whitespace.
+   */
+  String trimRight();
+
+  /**
+   * Creates a new string by concatenating this string with itself a number
+   * of times.
+   *
+   * The result of `str * n` is equivalent to
+   * `str + str + ...`(n times)`... + str`.
+   *
+   * Returns an empty string if [times] is zero or negative.
+   */
+  String operator *(int times);
+
+  /**
+   * Pads this string on the left if it is shorther than [width].
+   *
+   * Return a new string that prepends [padding] onto this string
+   * one time for each position the length is less than [width].
+   *
+   * If [width] is already smaller than or equal to `this.length`,
+   * no padding is added. A negative `width` is treated as zero.
+   *
+   * If [padding] has length different from 1, the result will not
+   * have length `width`. This may be useful for cases where the
+   * padding is a longer string representing a single character, like
+   * `"&nbsp;"` or `"\u{10002}`".
+   * In that case, the user should make sure that `this.length` is
+   * the correct measure of the strings length.
+   */
+  String padLeft(int width, [String padding = ' ']);
+
+  /**
+   * Pads this string on the right if it is shorther than [width].
+   *
+   * Return a new string that appends [padding] after this string
+   * one time for each position the length is less than [width].
+   *
+   * If [width] is already smaller than or equal to `this.length`,
+   * no padding is added. A negative `width` is treated as zero.
+   *
+   * If [padding] has length different from 1, the result will not
+   * have length `width`. This may be useful for cases where the
+   * padding is a longer string representing a single character, like
+   * `"&nbsp;"` or `"\u{10002}`".
+   * In that case, the user should make sure that `this.length` is
+   * the correct measure of the strings length.
+   */
+  String padRight(int width, [String padding = ' ']);
 
   /**
    * Returns true if this string contains a match of [other]:
