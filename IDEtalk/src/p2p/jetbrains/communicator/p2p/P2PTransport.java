@@ -160,7 +160,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   private void startup() {
     Application application = ApplicationManager.getApplication();
-    if (application.isUnitTestMode() || !application.isDispatchThread()) {
+    if (application.isUnitTestMode()) {
       doStart();
     }
     else {
