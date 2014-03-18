@@ -136,7 +136,7 @@ public class DartAnalyzerService {
 
     synchronized (myCreatedFiles) {
       for (VirtualFile file : myCreatedFiles) {
-        changeSet.added(DartFileBasedSource.getSource(myProject, file));
+        changeSet.addedSource(DartFileBasedSource.getSource(myProject, file));
       }
     }
 
@@ -147,12 +147,12 @@ public class DartAnalyzerService {
     for (final Source source : sources) {
       if (source instanceof DartFileBasedSource) {
         if (!source.exists() || !myFileToSourceMap.containsKey(((DartFileBasedSource)source).getFile())) {
-          changeSet.removed(source);
+          changeSet.removedSource(source);
           continue;
         }
 
         if (((DartFileBasedSource)source).isOutOfDate()) {
-          changeSet.changed(source);
+          changeSet.changedSource(source);
         }
       }
     }

@@ -77,19 +77,19 @@ public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
   }
 
   public void testConcreteClassHasUnimplementedMembers1() throws Throwable {
-    doTest("Missing inherited members: "); // can't use full error message here because the order of 3 parameters varies
+    doTest("Missing concrete implementation of "); // can't use full error message here because the order of 3 parameters varies
   }
 
   public void testConcreteClassHasUnimplementedMembers2() throws Throwable {
-    doTest("Missing inherited member 'I.foo'");
+    doTest("Missing concrete implementation of 'I.foo'");
   }
 
-  public void _testFieldHasNoGetter1() throws Throwable {
-    doTest("There is no such getter 'bar' in 'Foo'"); // dartanalyzer bug: reported as Hint instead of Error
+  public void testFieldHasNoGetter1() throws Throwable {
+    doTest("There is no such getter 'bar' in 'Foo'");
   }
 
-  public void _testFieldHasNoSetter1() throws Throwable { // dartanalyzer bug: no error reported
-    // https://code.google.com/p/dart/issues/detail?id=10756
+  public void _testFieldHasNoSetter1() throws Throwable {
+    // poor error message instead: "'bar' cannot be used as a setter, it is final", see https://code.google.com/p/dart/issues/detail?id=14962
     doTest("Field 'bar' has no setter");
   }
 

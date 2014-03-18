@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.analyzer;
 
-import com.google.dart.engine.source.ContentCache;
 import com.google.dart.engine.source.Source;
 import com.google.dart.engine.source.UriKind;
 import com.google.dart.engine.source.UriResolver;
@@ -18,7 +17,7 @@ public class DartFileResolver extends UriResolver {
     myProject = project;
   }
 
-  public Source fromEncoding(final ContentCache contentCache, final UriKind kind, final URI uri) {
+  public Source fromEncoding(final UriKind kind, final URI uri) {
     if (kind == UriKind.FILE_URI) {
       final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(uri.getPath());
       if (file != null) {
@@ -31,7 +30,7 @@ public class DartFileResolver extends UriResolver {
     return null;
   }
 
-  public Source resolveAbsolute(final ContentCache contentCache, final URI uri) {
+  public Source resolveAbsolute(final URI uri) {
     if ("file".equals(uri.getScheme())) {
       final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(uri.getPath());
       if (file != null) {

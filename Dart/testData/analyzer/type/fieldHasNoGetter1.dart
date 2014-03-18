@@ -5,6 +5,6 @@ class Foo {
 class Bar {}
 
 main() {
-  var foo = new Foo();
+  Foo foo = new Foo();
   var bar = foo.bar;
 }
