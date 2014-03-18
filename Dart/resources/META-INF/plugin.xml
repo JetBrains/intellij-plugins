@@ -144,18 +144,19 @@
 
     <stepsBeforeRunProvider implementation="com.jetbrains.lang.dart.ide.runner.before.Dart2JSBeforeRunTaskProvider"/>
     <consoleFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.DartConsoleFilterProvider"/>
+    <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType"/>
+
     <!--command line-->
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer"/>
-
-    <!--<programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugRunner"/> in dartium-debugger-support.xml until dependency of DartCommandLineBreakpointsHandler on JavaScriptBreakpointType removed -->
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunner"/>
+    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugRunner"/>
 
     <!--unit test-->
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationProducer"/>
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunner"/>
-    <!--<programRunner implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitDebugRunner"/> in dartium-debugger-support.xml until dependency of DartCommandLineBreakpointsHandler on JavaScriptBreakpointType removed -->
+    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitDebugRunner"/>
 
     <!--inspections-->
 

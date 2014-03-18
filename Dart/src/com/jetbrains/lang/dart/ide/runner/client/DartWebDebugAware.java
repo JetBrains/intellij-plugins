@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide;
+package com.jetbrains.lang.dart.ide.runner.client;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.TextRange;
@@ -13,8 +13,14 @@ final class DartWebDebugAware extends JavaScriptDebugAware {
   @NotNull
   @Override
   public FileType getFileType() {
-    return DartFileType.INSTANCE;
+    return DartFileType.INSTANCE; // todo return null in 13.1.1 (when JavaScriptDebugAware.isOnlySourceMappedBreakpoints() is introduced)
   }
+
+  // todo uncomment in 13.1.1 (when JavaScriptDebugAware.isOnlySourceMappedBreakpoints() is introduced)
+  //@Nullable
+  //public XLineBreakpointType<?> getBreakpointTypeClass(@NotNull final Project project) {
+  //  return XBreakpointType.EXTENSION_POINT_NAME.findExtension(DartLineBreakpointType.class);
+  //}
 
   @Nullable
   @Override
