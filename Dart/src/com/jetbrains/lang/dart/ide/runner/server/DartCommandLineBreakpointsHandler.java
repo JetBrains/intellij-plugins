@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.javascript.debugger.breakpoints.JavaScriptBreakpointType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -12,8 +11,11 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
+import com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.server.google.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -39,31 +41,29 @@ public class DartCommandLineBreakpointsHandler {
   private final Map<XLineBreakpoint<?>, List<VmBreakpoint>> myCreatedBreakpoints = new THashMap<XLineBreakpoint<?>, List<VmBreakpoint>>();
   private final TIntObjectHashMap<XLineBreakpoint<?>> myIndexToBreakpointMap = new TIntObjectHashMap<XLineBreakpoint<?>>();
 
-  // todo handle breakpoints in IntelliJ IDEA Community Edition, there's no JavaScriptBreakpointType
   public DartCommandLineBreakpointsHandler(final @NotNull DartCommandLineDebugProcess debugProcess) {
     myDebugProcess = debugProcess;
 
-    List<XBreakpointHandler> handlers = new ArrayList<XBreakpointHandler>(1);
-    handlers.add(new XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>>(JavaScriptBreakpointType.class) {
-      public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
-        final XSourcePosition position = breakpoint.getSourcePosition();
-        if (position == null) return;
-        if (position.getFile().getFileType() != DartFileType.INSTANCE) return;
+    Class<? extends XLineBreakpointTypeBase> breakpointTypeClass = DartProjectComponent.JS_BREAKPOINT_TYPE != null
+                                                                   ? DartProjectComponent.JS_BREAKPOINT_TYPE.getClass()
+                                                                   : DartLineBreakpointType.class;
 
-        if (myDebugProcess.isVmConnected()) {
-          doRegisterBreakpoint(breakpoint);
+    myBreakpointHandlers = new XBreakpointHandler[]{
+      new XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>>(breakpointTypeClass) {
+        public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
+          if (myDebugProcess.isVmConnected()) {
+            doRegisterBreakpoint(breakpoint);
+          }
+          else {
+            myInitialBreakpoints.add(breakpoint);
+          }
         }
-        else {
-          myInitialBreakpoints.add(breakpoint);
+
+        public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
+          doUnregisterBreakpoint(breakpoint);
         }
       }
-
-      public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
-        doUnregisterBreakpoint(breakpoint);
-      }
-    });
-
-    myBreakpointHandlers = handlers.toArray(new XBreakpointHandler<?>[handlers.size()]);
+    };
   }
 
   XBreakpointHandler<?>[] getBreakpointHandlers() {
@@ -113,8 +113,11 @@ public class DartCommandLineBreakpointsHandler {
 
   private void doRegisterBreakpoint(final XLineBreakpoint<?> breakpoint) {
     final XSourcePosition position = breakpoint.getSourcePosition();
+    if (position == null) return;
+    if (position.getFile().getFileType() != DartFileType.INSTANCE) return;
+
     final VmIsolate isolate = myDebugProcess.getMainIsolate();
-    if (position == null || isolate == null) return;
+    if (isolate == null) return;
 
     suspendPerformActionAndResume(new ThrowableRunnable<IOException>() {
       public void run() throws IOException {
@@ -223,8 +226,9 @@ public class DartCommandLineBreakpointsHandler {
     else {
       LOG.info("Unknown breakpoint id: " + vmBreakpoint.getBreakpointId());
     }
-
-    // todo see com.google.dart.tools.debug.core.server.ServerBreakpointManager#handleBreakpointResolved: breakpoint could be automatically shifted down to another line if there's no code at initial line
+    // breakpoint could be automatically shifted down to another line if there's no code at initial line
+    // breakpoint icon on the gutter is shifted in DartEditor (see com.google.dart.tools.debug.core.server.ServerBreakpointManager#handleBreakpointResolved)
+    // but we prefer to keep it at its original position
   }
 
   // see com.google.dart.tools.debug.core.server.ServerBreakpointManager#getAbsoluteUrlForResource()
