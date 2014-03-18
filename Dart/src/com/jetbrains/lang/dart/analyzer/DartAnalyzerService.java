@@ -33,6 +33,7 @@ public class DartAnalyzerService {
   private @Nullable String mySdkPath;
   private @Nullable VirtualFile myDartPackagesFolder;
   private @Nullable WeakReference<AnalysisContext> myAnalysisContextRef;
+  private long myTimeWhenAnalysisContextWasLastQueried;
 
   private final Collection<VirtualFile> myCreatedFiles = Collections.synchronizedSet(new THashSet<VirtualFile>());
 
@@ -98,6 +99,8 @@ public class DartAnalyzerService {
   public AnalysisContext getAnalysisContext(final @NotNull VirtualFile annotatedFile,
                                             final @NotNull String sdkPath,
                                             final @Nullable VirtualFile packagesFolder) {
+    myTimeWhenAnalysisContextWasLastQueried = System.currentTimeMillis();
+
     AnalysisContext analysisContext = SoftReference.dereference(myAnalysisContextRef);
 
     if (analysisContext != null && Comparing.equal(sdkPath, mySdkPath) && Comparing.equal(packagesFolder, myDartPackagesFolder)) {
@@ -152,6 +155,14 @@ public class DartAnalyzerService {
         }
 
         if (((DartFileBasedSource)source).isOutOfDate()) {
+          changeSet.changedSource(source);
+        }
+      }
+      else if (source instanceof FileBasedSource) {
+        if (!source.exists()) {
+          changeSet.removedSource(source);
+        }
+        else if (source.getModificationStamp() > myTimeWhenAnalysisContextWasLastQueried) {
           changeSet.changedSource(source);
         }
       }
