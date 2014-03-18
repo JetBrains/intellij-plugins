@@ -199,6 +199,9 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
   };
 
   this.onSpecComplete = function (browser, result) {
+    if (result.skipped) {
+      return;
+    }
     var suiteNames = result.suite
       , specName = result.description;
     if (specName == null) {
@@ -215,16 +218,7 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
     }
     var suiteNode = getOrCreateLowerSuiteNode(browserNode, suiteNames, write);
     var specNode = createSpecNode(suiteNode, suiteNames, specName);
-    var status;
-    if (result.skipped) {
-      status = 1;
-    }
-    else if (result.success) {
-      status = 0;
-    }
-    else {
-      status = 2;
-    }
+    var status = result.success ? 0 : 2;
     var failureMsg = '';
     result.log.forEach(function (log) {
       failureMsg += formatError(log, '\t');
