@@ -546,7 +546,7 @@ public class FlexCommonUtils {
       return !bcNature.pureAS && !bcNature.isMobilePlatform() && componentSet != ComponentSet.MxOnly;
     }
 
-    if (swcName.endsWith("textLayout.swc")) {
+    if (swcName.endsWith("textlayout.swc")) {
       return true;
     }
 
