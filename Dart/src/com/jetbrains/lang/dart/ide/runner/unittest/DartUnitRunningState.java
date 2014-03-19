@@ -26,13 +26,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.ResourceUtil;
 import com.intellij.util.text.StringTokenizer;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -110,16 +107,7 @@ public class DartUnitRunningState extends CommandLineState {
 
   public GeneralCommandLine getCommand() throws ExecutionException {
     final GeneralCommandLine commandLine = new GeneralCommandLine();
-
-    Project project = getEnvironment().getProject();
-    VirtualFile realFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(myUnitParameters.getFilePath()));
-    PsiFile psiFile = realFile != null ? PsiManager.getInstance(project).findFile(realFile) : null;
-    if (psiFile != null) {
-      String libraryName = DartResolveUtil.getLibraryName(psiFile);
-      if (libraryName == null || libraryName.endsWith(".dart")) {
-        throw new ExecutionException("Missing library statement in " + psiFile.getName());
-      }
-    }
+    final VirtualFile realFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(myUnitParameters.getFilePath()));
 
     commandLine.setExePath(DartSdkUtil.getDartExePath(myDartSdk));
     if (realFile != null) {
