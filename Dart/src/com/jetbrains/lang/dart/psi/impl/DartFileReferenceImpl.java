@@ -135,6 +135,7 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
       final VirtualFile pubspecYamlFile = virtualFile == null ? null : PubspecYamlUtil.getPubspecYamlFile(getProject(), virtualFile);
       final String pubspecName = pubspecYamlFile == null ? null : PubspecYamlUtil.getPubspecName(pubspecYamlFile);
       final String prefix = pubspecName == null ? null : PACKAGE_PREFIX + pubspecName + "/";
+
       if (prefix != null && text.startsWith(prefix)) {
         final String relativePath = text.substring(prefix.length());
         final VirtualFile libFolder = pubspecYamlFile.getParent().findChild("lib");
@@ -144,13 +145,12 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
       }
 
       final VirtualFile packagesFolder = virtualFile == null ? null : PubspecYamlUtil.getDartPackagesFolder(getProject(), virtualFile);
-      String relativePath = text.substring(PACKAGE_PREFIX.length());
-      final VirtualFile sourceFile = packagesFolder == null
-                                     ? null
-                                     : VfsUtilCore.findRelativeFile(relativePath, packagesFolder);
+      final String relativePath = text.substring(PACKAGE_PREFIX.length());
+      final VirtualFile sourceFile = packagesFolder == null ? null : VfsUtilCore.findRelativeFile(relativePath, packagesFolder);
       final PsiFile sourcePsiFile = sourceFile == null ? null : psiFile.getManager().findFile(sourceFile);
       return sourcePsiFile == null ? ResolveResult.EMPTY_ARRAY : new ResolveResult[]{new PsiElementResolveResult(sourcePsiFile)};
     }
+
     VirtualFile sourceFile = virtualFile == null ? null : DartResolveUtil.findRelativeFile(virtualFile, text);
     sourceFile = sourceFile != null ? sourceFile : VirtualFileManager.getInstance().findFileByUrl(text);
 
