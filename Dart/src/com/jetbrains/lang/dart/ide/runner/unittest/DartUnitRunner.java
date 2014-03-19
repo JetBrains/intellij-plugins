@@ -7,6 +7,7 @@ import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -33,6 +34,7 @@ public class DartUnitRunner extends DefaultProgramRunner {
                                            @NotNull RunProfileState state,
                                            RunContentDescriptor contentToReuse,
                                            @NotNull ExecutionEnvironment env) throws ExecutionException {
+    FileDocumentManager.getInstance().saveAllDocuments();
     final DartUnitRunConfiguration configuration = (DartUnitRunConfiguration)env.getRunProfile();
 
     final DartUnitRunnerParameters parameters = configuration.getRunnerParameters();
