@@ -14,7 +14,6 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,8 +26,6 @@ import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XBreakpointManager;
-import com.intellij.xdebugger.breakpoints.XBreakpointType;
-import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase;
 import com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -47,40 +44,17 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartProjectComponent extends AbstractProjectComponent {
 
-  // todo remove this field and all its usages in 13.1.1 (when JavaScriptDebugAware.isOnlySourceMappedBreakpoints() is introduced)
-  public static final @Nullable XLineBreakpointTypeBase JS_BREAKPOINT_TYPE = null; //getJSBreakpointType();
-
   protected DartProjectComponent(final Project project) {
     super(project);
   }
 
-  @Nullable
-  private static XLineBreakpointTypeBase getJSBreakpointType() {
-    try {
-      final Class<?> jsBreakpointTypeClass = Class.forName("com.intellij.javascript.debugger.breakpoints.JavaScriptBreakpointType");
-      if (jsBreakpointTypeClass != null) {
-        final XBreakpointType type =
-          ContainerUtil.find(XBreakpointType.EXTENSION_POINT_NAME.getExtensions(), new Condition<XBreakpointType>() {
-            public boolean value(final XBreakpointType type) {
-              return jsBreakpointTypeClass.isInstance(type);
-            }
-          });
-        return type instanceof XLineBreakpointTypeBase ? (XLineBreakpointTypeBase)type : null;
-      }
-    }
-    catch (Throwable ignored) {/*ignore*/}
-
-    return null;
-  }
-
-
   public void projectOpened() {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(new Runnable() {
       public void run() {
-        if (JS_BREAKPOINT_TYPE != null) {
+        if (!ApplicationManager.getApplication().isUnitTestMode() && DartLineBreakpointType.getJSBreakpointType() != null) {
           removeDartLineBreakpoints(myProject);
         }
-        //removeJSBreakpointsInDartFiles(myProject); // todo uncomment in 13.1.1 (when JavaScriptDebugAware.isOnlySourceMappedBreakpoints() is introduced)
+        //removeJSBreakpointsInDartFiles(myProject); // todo remove above and uncomment this line in 13.1.1 (when JavaScriptDebugAware.isOnlySourceMappedBreakpoints() is introduced)
 
         final boolean dartSdkWasEnabledInOldModel = hasJSLibraryMappingToOldDartSdkGlobalLib(myProject);
         deleteDartSdkGlobalLibConfiguredInOldIde();
