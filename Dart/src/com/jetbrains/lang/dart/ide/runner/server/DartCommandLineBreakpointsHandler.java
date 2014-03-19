@@ -13,7 +13,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.server.google.*;
@@ -44,9 +43,10 @@ public class DartCommandLineBreakpointsHandler {
   public DartCommandLineBreakpointsHandler(final @NotNull DartCommandLineDebugProcess debugProcess) {
     myDebugProcess = debugProcess;
 
-    Class<? extends XLineBreakpointTypeBase> breakpointTypeClass = DartProjectComponent.JS_BREAKPOINT_TYPE != null
-                                                                   ? DartProjectComponent.JS_BREAKPOINT_TYPE.getClass()
-                                                                   : DartLineBreakpointType.class;
+    final XLineBreakpointTypeBase jsBreakpointType = DartLineBreakpointType.getJSBreakpointType();
+    final Class<? extends XLineBreakpointTypeBase> breakpointTypeClass = jsBreakpointType != null
+                                                                         ? jsBreakpointType.getClass()
+                                                                         : DartLineBreakpointType.class;
 
     myBreakpointHandlers = new XBreakpointHandler[]{
       new XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>>(breakpointTypeClass) {
