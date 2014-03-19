@@ -111,15 +111,7 @@ public class DartUnitRunningState extends CommandLineState {
   public GeneralCommandLine getCommand() throws ExecutionException {
     final GeneralCommandLine commandLine = new GeneralCommandLine();
 
-    Project project = getEnvironment().getProject();
     VirtualFile realFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(myUnitParameters.getFilePath()));
-    PsiFile psiFile = realFile != null ? PsiManager.getInstance(project).findFile(realFile) : null;
-    if (psiFile != null) {
-      String libraryName = DartResolveUtil.getLibraryName(psiFile);
-      if (libraryName == null || libraryName.endsWith(".dart")) {
-        throw new ExecutionException("Missing library statement in " + psiFile.getName());
-      }
-    }
 
     commandLine.setExePath(DartSdkUtil.getDartExePath(myDartSdk));
     if (realFile != null) {
