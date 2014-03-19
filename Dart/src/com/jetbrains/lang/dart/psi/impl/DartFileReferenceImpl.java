@@ -25,10 +25,13 @@ import com.jetbrains.lang.dart.util.DartElementGenerator;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.jetbrains.lang.dart.util.DartResolveUtil.PACKAGE_PREFIX;
 
 public class DartFileReferenceImpl extends DartExpressionImpl implements DartReference, PsiPolyVariantReference {
   public DartFileReferenceImpl(ASTNode node) {
@@ -128,9 +131,20 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
     final PsiFile psiFile = getContainingFile();
     final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(psiFile);
     final String text = StringUtil.unquoteString(getText());
-    if (text.startsWith(DartResolveUtil.PACKAGE_PREFIX)) {
+    if (text.startsWith(PACKAGE_PREFIX)) {
+      final VirtualFile pubspecYamlFile = virtualFile == null ? null : PubspecYamlUtil.getPubspecYamlFile(getProject(), virtualFile);
+      final String pubspecName = pubspecYamlFile == null ? null : PubspecYamlUtil.getPubspecName(pubspecYamlFile);
+      final String prefix = pubspecName == null ? null : PACKAGE_PREFIX + pubspecName + "/";
+      if (prefix != null && text.startsWith(prefix)) {
+        final String relativePath = text.substring(prefix.length());
+        final VirtualFile libFolder = pubspecYamlFile.getParent().findChild("lib");
+        final VirtualFile sourceFile = libFolder == null ? null : VfsUtilCore.findRelativeFile(relativePath, libFolder);
+        final PsiFile sourcePsiFile = sourceFile == null ? null : psiFile.getManager().findFile(sourceFile);
+        return sourcePsiFile == null ? ResolveResult.EMPTY_ARRAY : new ResolveResult[]{new PsiElementResolveResult(sourcePsiFile)};
+      }
+
       final VirtualFile packagesFolder = virtualFile == null ? null : PubspecYamlUtil.getDartPackagesFolder(getProject(), virtualFile);
-      String relativePath = FileUtil.toSystemIndependentName(text.substring(DartResolveUtil.PACKAGE_PREFIX.length()));
+      String relativePath = text.substring(PACKAGE_PREFIX.length());
       final VirtualFile sourceFile = packagesFolder == null
                                      ? null
                                      : VfsUtilCore.findRelativeFile(relativePath, packagesFolder);
@@ -165,31 +179,45 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
   @Override
   public PsiReference[] getReferences() {
     final String path = StringUtil.unquoteString(getText());
-    if (path.startsWith(DartResolveUtil.PACKAGE_PREFIX)) {
-      int length = DartResolveUtil.PACKAGE_PREFIX.length();
-      return getPackageReferences(path.substring(length), length + 1);
+    if (path.startsWith(PACKAGE_PREFIX)) {
+      final VirtualFile file = DartResolveUtil.getRealVirtualFile(getContainingFile());
+      if (file == null) return PsiReference.EMPTY_ARRAY;
+
+      final VirtualFile pubspecYamlFile = PubspecYamlUtil.getPubspecYamlFile(getProject(), file);
+      final String pubspecName = pubspecYamlFile == null ? null : PubspecYamlUtil.getPubspecName(pubspecYamlFile);
+      final String prefix = pubspecName == null ? null : PACKAGE_PREFIX + pubspecName + "/";
+
+      if (prefix != null && path.startsWith(prefix)) {
+        final VirtualFile libFolder = pubspecYamlFile.getParent().findChild("lib");
+        return getPackageReferences(file, libFolder, path.substring(prefix.length()), prefix.length() + 1);
+      }
+      else {
+        final VirtualFile packagesFolder = PubspecYamlUtil.getDartPackagesFolder(getProject(), file);
+        return getPackageReferences(file, packagesFolder, path.substring(PACKAGE_PREFIX.length()), PACKAGE_PREFIX.length() + 1);
+      }
     }
     final FileReferenceSet referenceSet = new FileReferenceSet(path, this, 1, null, false, true);
     return ArrayUtil.mergeArrays(super.getReferences(), referenceSet.getAllReferences());
   }
 
   @NotNull
-  private PsiReference[] getPackageReferences(String path, int startIndex) {
-    final VirtualFile file = DartResolveUtil.getRealVirtualFile(getContainingFile());
-    final VirtualFile parentFile = file == null ? null : file.getParent();
-    final VirtualFile packagesFolder = file == null ? null : PubspecYamlUtil.getDartPackagesFolder(getProject(), file);
-    if (packagesFolder == null || parentFile == null) {
-      return PsiReference.EMPTY_ARRAY;
-    }
-    String prefix = FileUtil.getRelativePath(parentFile.getPath(), packagesFolder.getPath(), '/');
-    if (prefix == null) {
-      return PsiReference.EMPTY_ARRAY;
-    }
-    prefix += "/";
-    int shift = startIndex - prefix.length();
-    final FileReferenceSet referenceSet = new FileReferenceSet(prefix + path, this, 0, null, false, true);
-    FileReference[] references = referenceSet.getAllReferences();
-    int nestedLevel = StringUtil.countChars(prefix, '/');
+  private PsiReference[] getPackageReferences(final @NotNull VirtualFile contextFile,
+                                              final @Nullable VirtualFile packagesFolder,
+                                              final @NotNull String relPathFromPackagesFolderToReferencedFile,
+                                              final int startIndex) {
+    final VirtualFile parentFile = contextFile.getParent();
+    if (packagesFolder == null || parentFile == null) return PsiReference.EMPTY_ARRAY;
+
+    String relPathFromContextFileToPackagesFolder = FileUtil.getRelativePath(parentFile.getPath(), packagesFolder.getPath(), '/');
+    if (relPathFromContextFileToPackagesFolder == null) return PsiReference.EMPTY_ARRAY;
+
+    relPathFromContextFileToPackagesFolder += "/";
+    final FileReferenceSet referenceSet =
+      new FileReferenceSet(relPathFromContextFileToPackagesFolder + relPathFromPackagesFolderToReferencedFile, this, 0, null, false, true);
+    final FileReference[] references = referenceSet.getAllReferences();
+
+    final int nestedLevel = StringUtil.countChars(relPathFromContextFileToPackagesFolder, '/');
+    final int shift = startIndex - relPathFromContextFileToPackagesFolder.length();
     return references.length < nestedLevel ?
            PsiReference.EMPTY_ARRAY :
            shiftReferences(Arrays.copyOfRange(references, nestedLevel, references.length), shift);
