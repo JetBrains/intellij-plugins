@@ -10,7 +10,9 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.api.CmdlineProtoUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,22 +29,19 @@ public class FlexResourceBuildTargetScopeProvider extends BuildTargetScopeProvid
     final FlexCompiler flexCompiler = FlexCompiler.getInstance(project);
     if (!filter.acceptCompiler(flexCompiler)) return Collections.emptyList();
 
-    final TargetTypeBuildScope.Builder productionBuilder = TargetTypeBuildScope.newBuilder().setTypeId(
-      FlexResourceBuildTargetType.PRODUCTION.getTypeId()).setForceBuild(forceBuild);
-    final TargetTypeBuildScope.Builder testBuilder = TargetTypeBuildScope.newBuilder().setTypeId(
-      FlexResourceBuildTargetType.TEST.getTypeId()).setForceBuild(forceBuild);
-
+    List<String> moduleNames = new ArrayList<String>();
     try {
       for (Pair<Module, FlexBuildConfiguration> moduleAndBC : FlexCompiler.getModulesAndBCsToCompile(baseScope)) {
-        final Module module = moduleAndBC.first;
-        productionBuilder.addTargetId(module.getName());
-        testBuilder.addTargetId(module.getName());
+        moduleNames.add(moduleAndBC.first.getName());
       }
     }
     catch (ConfigurationException e) {
       // can't happen because checked in ValidateFlashConfigurationsPrecompileTask
     }
 
-    return Arrays.asList(productionBuilder.build(), testBuilder.build());
+    return Arrays.asList(
+      CmdlineProtoUtil.createTargetsScope(FlexResourceBuildTargetType.PRODUCTION.getTypeId(), moduleNames, forceBuild),
+      CmdlineProtoUtil.createTargetsScope(FlexResourceBuildTargetType.TEST.getTypeId(), moduleNames, forceBuild)
+    );
   }
 }

@@ -17,7 +17,9 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.api.CmdlineProtoUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -36,12 +38,11 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
     final FlexCompiler flexCompiler = FlexCompiler.getInstance(project);
     if (!filter.acceptCompiler(flexCompiler)) return Collections.emptyList();
 
-    final TargetTypeBuildScope.Builder builder = TargetTypeBuildScope.newBuilder().setTypeId(FlexBuildTargetType.INSTANCE.getTypeId()).setForceBuild(forceBuild);
-
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(baseScope);
     final Collection<Pair<Module, FlexBuildConfiguration>> bcsToCompileForPackaging =
       FlexCompiler.getBCsToCompileForPackaging(baseScope);
 
+    List<String> targetIds = new ArrayList<String>();
     try {
       for (Pair<Module, FlexBuildConfiguration> moduleAndBC : FlexCompiler.getModulesAndBCsToCompile(baseScope)) {
         final Module module = moduleAndBC.first;
@@ -49,7 +50,7 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
 
         if (bcsToCompileForPackaging != null && contains(bcsToCompileForPackaging, module, bc)) {
           final boolean forcedDebugStatus = FlexCompiler.getForcedDebugStatus(project, bc);
-          builder.addTargetId(FlexCommonUtils.getBuildTargetId(module.getName(), bc.getName(), forcedDebugStatus));
+          targetIds.add(FlexCommonUtils.getBuildTargetId(module.getName(), bc.getName(), forcedDebugStatus));
         }
         else if (bc.isTempBCForCompilation()) {
           LOG.assertTrue(runConfiguration instanceof FlashRunConfiguration || runConfiguration instanceof FlexUnitRunConfiguration,
@@ -61,10 +62,10 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
                          "Module name in run config: " + params.getModuleName() + ", expected: " + module.getName());
           LOG.assertTrue(params.getBCName().equals(bc.getName()),
                          "BC name in run config: " + params.getBCName() + ", expected: " + bc.getName());
-          builder.addTargetId(FlexCommonUtils.getBuildTargetIdForRunConfig(runConfiguration.getType().getId(), runConfiguration.getName()));
+          targetIds.add(FlexCommonUtils.getBuildTargetIdForRunConfig(runConfiguration.getType().getId(), runConfiguration.getName()));
         }
         else {
-          builder.addTargetId(FlexCommonUtils.getBuildTargetId(module.getName(), bc.getName(), null));
+          targetIds.add(FlexCommonUtils.getBuildTargetId(module.getName(), bc.getName(), null));
         }
       }
     }
@@ -73,7 +74,10 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
       LOG.error(e);
     }
 
-    return Collections.singletonList(builder.build());
+    if (targetIds.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return Collections.singletonList(CmdlineProtoUtil.createTargetsScope(FlexBuildTargetType.INSTANCE.getTypeId(), targetIds, forceBuild));
   }
 
   private static boolean contains(final Collection<Pair<Module, FlexBuildConfiguration>> bcs,
