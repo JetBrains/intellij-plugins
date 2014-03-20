@@ -70,8 +70,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
     protected void update(final PresentationData presentation) {
       presentation.setIcon(getIcon());
       presentation.setPresentableText(myName);
-      presentation.addText(myName, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-      presentation.addText(" (link to 'lib' folder)", SimpleTextAttributes.GRAYED_ATTRIBUTES);
+      presentation.setLocationString(DartBundle.message("link.to.lib.folder"));
     }
 
     public int getWeight() {
