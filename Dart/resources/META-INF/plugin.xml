@@ -99,6 +99,7 @@
     <projectConfigurable instance="com.jetbrains.lang.dart.sdk.DartConfigurable"
                          id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
     <library.presentationProvider implementation="com.jetbrains.lang.dart.sdk.DartSdkLibraryPresentationProvider"/>
+    <treeStructureProvider implementation="com.jetbrains.lang.dart.DartTreeStructureProvider"/>
 
     <internalFileTemplate name="Dart Class"/>
     <internalFileTemplate name="Dart Empty File"/>
