@@ -4,7 +4,10 @@ import com.google.dart.engine.AnalysisEngine;
 import com.google.dart.engine.context.AnalysisContext;
 import com.google.dart.engine.context.ChangeSet;
 import com.google.dart.engine.sdk.DirectoryBasedDartSdk;
-import com.google.dart.engine.source.*;
+import com.google.dart.engine.source.DartUriResolver;
+import com.google.dart.engine.source.Source;
+import com.google.dart.engine.source.SourceFactory;
+import com.google.dart.engine.source.UriResolver;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
@@ -33,7 +36,6 @@ public class DartAnalyzerService {
   private @Nullable String mySdkPath;
   private @Nullable VirtualFile myDartPackagesFolder;
   private @Nullable WeakReference<AnalysisContext> myAnalysisContextRef;
-  private long myTimeWhenAnalysisContextWasLastQueried;
 
   private final Collection<VirtualFile> myCreatedFiles = Collections.synchronizedSet(new THashSet<VirtualFile>());
 
@@ -99,8 +101,6 @@ public class DartAnalyzerService {
   public AnalysisContext getAnalysisContext(final @NotNull VirtualFile annotatedFile,
                                             final @NotNull String sdkPath,
                                             final @Nullable VirtualFile packagesFolder) {
-    myTimeWhenAnalysisContextWasLastQueried = System.currentTimeMillis();
-
     AnalysisContext analysisContext = SoftReference.dereference(myAnalysisContextRef);
 
     if (analysisContext != null && Comparing.equal(sdkPath, mySdkPath) && Comparing.equal(packagesFolder, myDartPackagesFolder)) {
@@ -109,11 +109,11 @@ public class DartAnalyzerService {
     }
     else {
       final DartUriResolver dartUriResolver = new DartUriResolver(new DirectoryBasedDartSdk(new File(sdkPath)));
-      final UriResolver fileResolver = new DartFileResolver(myProject);
-      final SourceFactory sourceFactory = packagesFolder == null
-                                          ? new SourceFactory(dartUriResolver, fileResolver)
-                                          : new SourceFactory(dartUriResolver, fileResolver,
-                                                              new PackageUriResolver(new File(packagesFolder.getPath())));
+      final UriResolver fileResolver = new DartFileUriResolver(myProject);
+      final SourceFactory sourceFactory =
+        packagesFolder == null
+        ? new SourceFactory(dartUriResolver, fileResolver)
+        : new SourceFactory(dartUriResolver, fileResolver, new DartPackageUriResolver(myProject, packagesFolder));
 
       analysisContext = AnalysisEngine.getInstance().createAnalysisContext();
       analysisContext.setSourceFactory(sourceFactory);
@@ -155,14 +155,6 @@ public class DartAnalyzerService {
         }
 
         if (((DartFileBasedSource)source).isOutOfDate()) {
-          changeSet.changedSource(source);
-        }
-      }
-      else if (source instanceof FileBasedSource) {
-        if (!source.exists()) {
-          changeSet.removedSource(source);
-        }
-        else if (source.getModificationStamp() > myTimeWhenAnalysisContextWasLastQueried) {
           changeSet.changedSource(source);
         }
       }

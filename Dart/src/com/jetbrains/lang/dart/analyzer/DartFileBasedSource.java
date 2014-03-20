@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,11 +25,13 @@ public class DartFileBasedSource implements Source {
 
   private final @NotNull Project myProject;
   private final @NotNull VirtualFile myFile;
+  private final @NotNull UriKind myUriKind;
   private long myModificationStampWhenFileContentWasRead = -1;
 
-  private DartFileBasedSource(final @NotNull Project project, final @NotNull VirtualFile file) {
+  private DartFileBasedSource(final @NotNull Project project, final @NotNull VirtualFile file, final @NotNull UriKind uriKind) {
     myProject = project;
     myFile = file;
+    myUriKind = uriKind;
   }
 
   @NotNull
@@ -66,7 +69,7 @@ public class DartFileBasedSource implements Source {
 
   @Override
   public String getEncoding() {
-    return UriKind.FILE_URI.getEncoding() + myFile.getUrl();
+    return myUriKind.getEncoding() + myFile.getUrl();
   }
 
   @Override
@@ -90,9 +93,10 @@ public class DartFileBasedSource implements Source {
     return myFile.getName();
   }
 
+  @NotNull
   @Override
   public UriKind getUriKind() {
-    return UriKind.FILE_URI;
+    return myUriKind;
   }
 
   @Override
@@ -151,8 +155,22 @@ public class DartFileBasedSource implements Source {
   public static DartFileBasedSource getSource(final @NotNull Project project, final @NotNull VirtualFile file) {
     return DartAnalyzerService.getInstance(project).getOrCreateSource(file, new Function<VirtualFile, DartFileBasedSource>() {
       public DartFileBasedSource fun(final VirtualFile file) {
-        return new DartFileBasedSource(project, file);
+        return new DartFileBasedSource(project, file, getUriKind(project, file));
       }
     });
+  }
+
+  private static UriKind getUriKind(final Project project, final VirtualFile file) {
+    final VirtualFile packagesFolder = PubspecYamlUtil.getDartPackagesFolder(project, file);
+
+    if (packagesFolder != null && VfsUtilCore.isAncestor(packagesFolder, file, true)) {
+      return UriKind.PACKAGE_URI;
+    }
+    else {
+      final VirtualFile pubspecYamlFile = PubspecYamlUtil.getPubspecYamlFile(project, file);
+      final VirtualFile lib = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild("lib");
+      final VirtualFile libFolder = lib != null && lib.isDirectory() ? lib : null;
+      return libFolder != null && VfsUtilCore.isAncestor(libFolder, file, true) ? UriKind.PACKAGE_URI : UriKind.FILE_URI;
+    }
   }
 }
