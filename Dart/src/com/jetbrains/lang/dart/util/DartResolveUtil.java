@@ -382,16 +382,8 @@ public class DartResolveUtil {
       return packagesFolder == null ? null : VfsUtilCore.findRelativeFile(relativePath, packagesFolder);
     }
 
-    // maybe path
-    VirtualFile sourceFile = findRelativeFile(contextFile, importText);
-    sourceFile = sourceFile != null ? sourceFile : VirtualFileManager.getInstance().findFileByUrl(importText);
-    // package
-    if (sourceFile == null && importText.startsWith(PACKAGE_PREFIX)) {
-      final VirtualFile packagesFolder = PubspecYamlUtil.getDartPackagesFolder(project, contextFile);
-      final String pathInPackages = FileUtil.toSystemIndependentName(importText.substring(PACKAGE_PREFIX.length()));
-      sourceFile = packagesFolder == null ? null : VfsUtilCore.findRelativeFile(pathInPackages, packagesFolder);
-    }
-    return sourceFile;
+    final VirtualFile parent = contextFile.getParent();
+    return parent == null ? null : VfsUtilCore.findRelativeFile(importText, parent);
   }
 
   @Nullable
