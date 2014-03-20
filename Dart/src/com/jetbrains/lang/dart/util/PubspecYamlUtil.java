@@ -34,20 +34,24 @@ public class PubspecYamlUtil {
     VirtualFile parent = contextFile;
     while ((parent = parent.getParent()) != null && fileIndex.isInContent(parent)) {
       final VirtualFile file = parent.findChild(PUBSPEC_YAML);
-      if (file != null) return file;
+      if (file != null && !file.isDirectory()) return file;
     }
 
     return null;
   }
 
+  @NotNull
+  public static Pair<VirtualFile, VirtualFile> getPubspecYamlFileAndPackagesFolder(final @NotNull Project project,
+                                                                                   final @NotNull VirtualFile contextFile) {
+    final VirtualFile pubspecYamlFile = getPubspecYamlFile(project, contextFile);
+    final VirtualFile parentFolder = pubspecYamlFile == null ? null : pubspecYamlFile.getParent();
+    final VirtualFile packagesFolder = parentFolder == null ? null : parentFolder.findChild("packages");
+    return Pair.create(pubspecYamlFile, packagesFolder != null && packagesFolder.isDirectory() ? packagesFolder : null);
+  }
+
   @Nullable
   public static VirtualFile getDartPackagesFolder(final @NotNull Project project, final @NotNull VirtualFile file) {
-    final VirtualFile pubspecYamlFile = getPubspecYamlFile(project, file);
-    if (pubspecYamlFile != null) {
-      final VirtualFile packagesFolder = pubspecYamlFile.getParent().findChild("packages");
-      return packagesFolder != null && packagesFolder.isDirectory() ? packagesFolder : null;
-    }
-    return null;
+    return getPubspecYamlFileAndPackagesFolder(project, file).second;
   }
 
   @Nullable

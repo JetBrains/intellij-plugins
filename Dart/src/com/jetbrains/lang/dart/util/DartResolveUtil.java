@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -256,7 +255,7 @@ public class DartResolveUtil {
         if (!libraryRoots.isEmpty()) {
           return libraryRoots.iterator().next();
         }
-        return findImportedFile(context.getProject(), virtualFile, libraryNameOrPath);
+        return getImportedFile(context.getProject(), virtualFile, libraryNameOrPath);
       }
     }
     return null;
@@ -353,7 +352,7 @@ public class DartResolveUtil {
           return false;
         }
       }
-      VirtualFile sourceFile = findImportedFile(context.getProject(), virtualFile, libraryNameOrPath);
+      VirtualFile sourceFile = getImportedFile(context.getProject(), virtualFile, libraryNameOrPath);
       if (sourceFile != null) {
         if (!processTopLevelDeclarationsImpl(context, importShowHideAwareProcessor, sourceFile, fileNames, processedFiles)) {
           return false;
@@ -364,26 +363,37 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  private static VirtualFile findImportedFile(final @NotNull Project project,
-                                              final @NotNull VirtualFile contextFile,
-                                              final @NotNull String importText) {
+  private static VirtualFile getImportedFile(final @NotNull Project project,
+                                             final @NotNull VirtualFile contextFile,
+                                             final @NotNull String importText) {
     if (importText.startsWith(PACKAGE_PREFIX)) {
-      final VirtualFile pubspecYamlFile = PubspecYamlUtil.getPubspecYamlFile(project, contextFile);
-      final String pubspecName = pubspecYamlFile == null ? null : PubspecYamlUtil.getPubspecName(pubspecYamlFile);
-      final String prefix = pubspecName == null ? null : PACKAGE_PREFIX + pubspecName + "/";
-      if (prefix != null && importText.startsWith(prefix)) {
-        final String relativePath = importText.substring(prefix.length());
-        final VirtualFile libFolder = pubspecYamlFile.getParent().findChild("lib");
-        return libFolder == null ? null : VfsUtilCore.findRelativeFile(relativePath, libFolder);
-      }
-
-      final VirtualFile packagesFolder = PubspecYamlUtil.getDartPackagesFolder(project, contextFile);
-      final String relativePath = importText.substring(PACKAGE_PREFIX.length());
-      return packagesFolder == null ? null : VfsUtilCore.findRelativeFile(relativePath, packagesFolder);
+      return getPackagePrefixImportedFile(project, contextFile, importText);
     }
 
     final VirtualFile parent = contextFile.getParent();
     return parent == null ? null : VfsUtilCore.findRelativeFile(importText, parent);
+  }
+
+  public static VirtualFile getPackagePrefixImportedFile(final @NotNull Project project,
+                                                         final @NotNull VirtualFile contextFile,
+                                                         final @NotNull String importText) {
+    assert importText.startsWith(PACKAGE_PREFIX) : importText;
+
+    final Pair<VirtualFile, VirtualFile> pubspecYamlAndPackagesFolder =
+      PubspecYamlUtil.getPubspecYamlFileAndPackagesFolder(project, contextFile);
+    final VirtualFile pubspecYamlFile = pubspecYamlAndPackagesFolder.first;
+    final VirtualFile packagesFolder = pubspecYamlAndPackagesFolder.second;
+
+    final String pubspecName = pubspecYamlFile == null ? null : PubspecYamlUtil.getPubspecName(pubspecYamlFile);
+    final String prefix = pubspecName == null ? null : PACKAGE_PREFIX + pubspecName + "/";
+    if (prefix != null && importText.startsWith(prefix)) {
+      final String relativePath = importText.substring(prefix.length());
+      final VirtualFile libFolder = pubspecYamlFile.getParent().findChild("lib");
+      return libFolder == null ? null : VfsUtilCore.findRelativeFile(relativePath, libFolder);
+    }
+
+    final String relativePath = importText.substring(PACKAGE_PREFIX.length());
+    return packagesFolder == null ? null : VfsUtilCore.findRelativeFile(relativePath, packagesFolder);
   }
 
   @Nullable
