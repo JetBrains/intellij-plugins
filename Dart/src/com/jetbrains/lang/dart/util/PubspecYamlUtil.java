@@ -11,7 +11,9 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.Dumper;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Loader;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
@@ -97,7 +99,8 @@ public class PubspecYamlUtil {
   @Nullable
   private static Map<String, Object> loadPubspecYamlInfo(final @NotNull String pubspecYamlFileContents) {
     // see com.google.dart.tools.core.utilities.yaml.PubYamlUtils#parsePubspecYamlToMap()
-    final Yaml yaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new Resolver() {
+    // deprecated constructor used to be compatible with old snakeyaml version in testng.jar (it wins when running from sources or tests)
+    final Yaml yaml = new Yaml(new Loader(new Constructor()), new Dumper(new Representer(), new DumperOptions()), new Resolver() {
       @Override
       protected void addImplicitResolvers() {
         addImplicitResolver(Tag.NULL, NULL, "~nN\0");
