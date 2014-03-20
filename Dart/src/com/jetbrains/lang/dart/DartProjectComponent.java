@@ -31,6 +31,7 @@ import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -208,6 +209,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
   public static void excludePackagesFolders(final Module module, final VirtualFile pubspecYamlFile) {
     final VirtualFile root = pubspecYamlFile.getParent();
+    if (root == null) return;
 
     root.refresh(false, true);
 
@@ -223,10 +225,8 @@ public class DartProjectComponent extends AbstractProjectComponent {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
 
     final VirtualFile packagesFolder = VfsUtilCore.findRelativeFile("bin/packages", root);
-    if (packagesFolder != null && packagesFolder.isDirectory()) {
-      if (fileIndex.isInContent(packagesFolder)) {
-        foldersToExclude.add(packagesFolder);
-      }
+    if (packagesFolder != null && packagesFolder.isDirectory() && fileIndex.isInContent(packagesFolder)) {
+      foldersToExclude.add(packagesFolder);
     }
 
     appendPackagesFolders(foldersToExclude, root.findChild("benchmark"), fileIndex);
@@ -234,6 +234,16 @@ public class DartProjectComponent extends AbstractProjectComponent {
     appendPackagesFolders(foldersToExclude, root.findChild("test"), fileIndex);
     appendPackagesFolders(foldersToExclude, root.findChild("tool"), fileIndex);
     appendPackagesFolders(foldersToExclude, root.findChild("web"), fileIndex);
+
+    // Folder packages/ThisProject (where ThisProject is the name specified in pubspec.yaml) is a symlink to local 'lib' folder. Exclude it in order not to have duplicates. Resolve goes to local 'lib' folder.
+    // Empty 'ThisProject (link to 'lib' folder)' node is added to Project Structure by DartTreeStructureProvider
+    final String pubspecName = PubspecYamlUtil.getPubspecName(pubspecYamlFile);
+    if (pubspecName != null) {
+      final VirtualFile copyOfLibFolder = VfsUtilCore.findRelativeFile("packages/" + pubspecName, root);
+      if (copyOfLibFolder != null && copyOfLibFolder.isDirectory() && fileIndex.isInContent(copyOfLibFolder)) {
+        foldersToExclude.add(copyOfLibFolder);
+      }
+    }
 
     if (!foldersToExclude.isEmpty()) {
       excludeFoldersInWriteAction(module, foldersToExclude);
