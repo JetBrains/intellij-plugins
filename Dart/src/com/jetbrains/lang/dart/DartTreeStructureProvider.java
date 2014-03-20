@@ -8,7 +8,6 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
@@ -70,8 +69,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
     protected void update(final PresentationData presentation) {
       presentation.setIcon(getIcon());
       presentation.setPresentableText(myName);
-      presentation.addText(myName, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-      presentation.addText(" (link to 'lib' folder)", SimpleTextAttributes.GRAYED_ATTRIBUTES);
+      presentation.setLocationString(DartBundle.message("link.to.lib.folder"));
     }
 
     public int getWeight() {
