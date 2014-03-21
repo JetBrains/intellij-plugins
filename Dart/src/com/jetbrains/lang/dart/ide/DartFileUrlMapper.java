@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
@@ -13,10 +14,11 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static com.jetbrains.lang.dart.util.DartResolveUtil.PACKAGE_PREFIX;
+import static com.jetbrains.lang.dart.util.DartResolveUtil.PACKAGE_SCHEME;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 final class DartFileUrlMapper extends FileUrlMapper {
@@ -51,25 +53,32 @@ final class DartFileUrlMapper extends FileUrlMapper {
       }
       return libraryFilePath == null ? file : file.getParent().findFileByRelativePath(libraryFilePath);
     }
-    else if (DartResolveUtil.PACKAGE_SCHEME.equals(url.getScheme())) {
-      return DumbService.getInstance(project).tryRunReadActionInSmartMode(new Computable<VirtualFile>() {
+    else if (PACKAGE_SCHEME.equals(url.getScheme())) {
+      final String packageUrl = PACKAGE_PREFIX + url.getPath();
+
+      if (ApplicationManager.getApplication().isDispatchThread()) {
+        return DumbService.getInstance(project).isDumb() ? null : findFileInPackagesFolder(project, packageUrl);
+      }
+
+      return DumbService.getInstance(project).runReadActionInSmartMode(new Computable<VirtualFile>() {
         @Override
         public VirtualFile compute() {
-          Collection<VirtualFile> files = FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, ProjectScope.getContentScope(project));
-          for (VirtualFile file : files) {
-            final VirtualFile packagesDir = file.getParent().findChild("packages");
-            if (packagesDir != null && packagesDir.isDirectory()) {
-              VirtualFile result = packagesDir.findFileByRelativePath(url.getPath());
-              if (result != null) {
-                return result;
-              }
-            }
-          }
-
-          return null;
+          return findFileInPackagesFolder(project, packageUrl);
         }
-      }, "Smart remote file mapping is not possible during index update");
+      });
     }
+    return null;
+  }
+
+  @Nullable
+  private static VirtualFile findFileInPackagesFolder(final @NotNull Project project, final @NotNull String packageUrl) {
+    for (final VirtualFile file : FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, ProjectScope.getContentScope(project))) {
+      final VirtualFile result = DartResolveUtil.getPackagePrefixImportedFile(project, file, packageUrl);
+      if (result != null) {
+        return result;
+      }
+    }
+
     return null;
   }
 }
