@@ -109,6 +109,12 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.configureByFiles("ngControllerAlias.resolve.html", "angular.js", "custom.js");
     checkVariableResolve("ap<caret>p", "app", JSDefinitionExpression.class);
   }
+  
+  public void testEmmetBeforeInjection() {
+    myFixture.configureByFiles("ngController.emmet.html", "angular.js", "custom.js");
+    myFixture.type('\t');
+    myFixture.checkResultByFile("ngController.emmet.after.html");
+  }
 
   public void testComment() {
     myFixture.configureByFiles("comment.html", "angular.js");
