@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,16 +15,13 @@
 
 package com.intellij.struts2.dom.struts.action;
 
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiReference;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericDomValue;
 import com.intellij.util.xml.converters.DelimitedListConverter;
-import com.intellij.xml.util.XmlTagUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,23 +74,6 @@ public class AllowedMethodsConverter extends DelimitedListConverter<String> {
     return "Cannot resolve action-method '" + s + "'";
   }
 
-  // TODO workaround to fix TextRange in tag value
-  @NotNull
-  @Override
-  protected PsiReference createPsiReference(final PsiElement element,
-                                            final int start,
-                                            final int end,
-                                            final ConvertContext context,
-                                            final GenericDomValue<List<String>> value,
-                                            final boolean delimitersOnly) {
-    return new MyPsiReference(element, getTextRange(value, start, end), context, value, delimitersOnly);
-  }
-
-  private static TextRange getTextRange(final GenericDomValue value, final int start, final int end) {
-    final TextRange tagRange = XmlTagUtil.getTrimmedValueRange(value.getXmlTag());
-    return new TextRange(tagRange.getStartOffset() + start - 1, tagRange.getStartOffset() + end - 1);
-  }
-
   /**
    * Gets the enclosing <code>action</code>-element for the current context.
    *
@@ -107,5 +87,4 @@ public class AllowedMethodsConverter extends DelimitedListConverter<String> {
     assert action != null : "not triggered within <action> for " + domElement.getXmlElement();
     return action;
   }
-
 }
