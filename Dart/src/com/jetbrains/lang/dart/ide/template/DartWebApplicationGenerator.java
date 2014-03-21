@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.template;
 
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -38,40 +39,51 @@ public class DartWebApplicationGenerator extends WebProjectTemplate<DartProjectW
                               final @NotNull VirtualFile baseDir,
                               final @NotNull DartProjectWizardData data,
                               final @NotNull Module module) {
-    // similar to DartConfigurable.apply()
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+    // must be done in non-modal state if Project Structure dialog is open because there's no API to work with current modifiable model of global libraries (see IDEA-120545)
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
       public void run() {
-        if (DartSdkUtil.isDartSdkHome(data.dartSdkPath)) {
-          final DartSdk sdk = DartSdk.getGlobalDartSdk();
-
-          final String dartSdkLibName;
-          if (sdk == null) {
-            dartSdkLibName = DartSdkGlobalLibUtil.createDartSdkGlobalLib(project, data.dartSdkPath);
-          }
-          else {
-            dartSdkLibName = sdk.getGlobalLibName();
-
-            if (!data.dartSdkPath.equals(sdk.getHomePath())) {
-              DartSdkGlobalLibUtil.updateDartSdkGlobalLib(project, dartSdkLibName, data.dartSdkPath);
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          public void run() {
+            if (!module.isDisposed()) {
+              doGenerateProject(module, baseDir, data);
             }
           }
-
-          DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(module, dartSdkLibName);
-        }
-
-        DartiumUtil.applyDartiumSettings(FileUtilRt.toSystemIndependentName(data.dartiumPath), data.dartiumSettings);
-
-        try {
-          baseDir.createChildDirectory(this, "web");
-          baseDir.createChildDirectory(this, "lib");
-          final VirtualFile pubspecYamlFile = baseDir.createChildData(this, PUBSPEC_YAML);
-          pubspecYamlFile.setBinaryContent(("name: " + module.getName() + "\n" +
-                                            "dependencies:\n" +
-                                            "  browser: any").getBytes());
-        }
-        catch (IOException ignore) {/* unlucky */}
+        });
       }
-    });
+    }, ModalityState.NON_MODAL);
+  }
+
+  private void doGenerateProject(final Module module, final VirtualFile baseDir, final DartProjectWizardData data) {
+    // similar to DartConfigurable.apply()
+    if (DartSdkUtil.isDartSdkHome(data.dartSdkPath)) {
+      final DartSdk sdk = DartSdk.getGlobalDartSdk();
+
+      final String dartSdkLibName;
+      if (sdk == null) {
+        dartSdkLibName = DartSdkGlobalLibUtil.createDartSdkGlobalLib(module.getProject(), data.dartSdkPath);
+      }
+      else {
+        dartSdkLibName = sdk.getGlobalLibName();
+
+        if (!data.dartSdkPath.equals(sdk.getHomePath())) {
+          DartSdkGlobalLibUtil.updateDartSdkGlobalLib(module.getProject(), dartSdkLibName, data.dartSdkPath);
+        }
+      }
+
+      DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(module, dartSdkLibName);
+    }
+
+    DartiumUtil.applyDartiumSettings(FileUtilRt.toSystemIndependentName(data.dartiumPath), data.dartiumSettings);
+
+    try {
+      baseDir.createChildDirectory(this, "web");
+      baseDir.createChildDirectory(this, "lib");
+      final VirtualFile pubspecYamlFile = baseDir.createChildData(this, PUBSPEC_YAML);
+      pubspecYamlFile.setBinaryContent(("name: " + module.getName() + "\n" +
+                                        "dependencies:\n" +
+                                        "  browser: any").getBytes());
+    }
+    catch (IOException ignore) {/* unlucky */}
   }
 
   @NotNull

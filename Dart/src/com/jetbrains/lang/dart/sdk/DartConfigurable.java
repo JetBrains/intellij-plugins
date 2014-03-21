@@ -259,7 +259,7 @@ public class DartConfigurable implements SearchableConfigurable {
 
   @Override
   public void apply() throws ConfigurationException {
-    // similar to DartWebApplicationGenerator.generateProject()
+    // similar to DartWebApplicationGenerator.doGenerateProject()
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
