@@ -81,6 +81,17 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("'SupaController'", ((JSNamedElementProxy)resolve).getElement().getText());
   }
 
+  public void testPrefixedControllerResolve() {
+    myFixture.configureByFiles("controller.prefixed.html", "custom.js", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("Supa<caret>Controller", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("custom.js", resolve.getContainingFile().getName());
+    assertEquals("'SupaController'", ((JSNamedElementProxy)resolve).getElement().getText());
+  }
+
   public void testAppCompletion() {
     myFixture.testCompletion("app.html", "app.after.html", "custom.js", "angular.js");
   }

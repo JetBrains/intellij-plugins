@@ -11,6 +11,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +44,8 @@ public class AngularJSAsExpression extends JSBinaryExpressionImpl {
     final InjectedLanguageManager injector = InjectedLanguageManager.getInstance(parent.getProject());
     final PsiLanguageInjectionHost host = injector.getInjectionHost(parent);
     final PsiElement hostParent = host instanceof XmlAttributeValueImpl ? host.getParent() : null;
-    return hostParent instanceof XmlAttribute && "ng-controller".equals(((XmlAttribute)hostParent).getName());
+    final String normalized = hostParent instanceof XmlAttribute ?
+                              DirectiveUtil.normalizeAttributeName(((XmlAttribute)hostParent).getName()) : null;
+    return "ng-controller".equals(normalized);
   }
 }
