@@ -23,7 +23,7 @@ import java.io.IOException;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
-public class DartWebApplicationGenerator extends WebProjectTemplate<DartProjectWizardData> {
+public class DartApplicationGenerator extends WebProjectTemplate<DartProjectWizardData> {
 
   @NotNull
   public String getName() {
@@ -47,9 +47,9 @@ public class DartWebApplicationGenerator extends WebProjectTemplate<DartProjectW
         setupSdkAndDartium(module, data);
 
         try {
-          baseDir.createChildDirectory(DartWebApplicationGenerator.this, "web");
-          baseDir.createChildDirectory(DartWebApplicationGenerator.this, "lib");
-          final VirtualFile pubspecYamlFile = baseDir.createChildData(DartWebApplicationGenerator.this, PUBSPEC_YAML);
+          baseDir.createChildDirectory(DartApplicationGenerator.this, "web");
+          baseDir.createChildDirectory(DartApplicationGenerator.this, "lib");
+          final VirtualFile pubspecYamlFile = baseDir.createChildData(DartApplicationGenerator.this, PUBSPEC_YAML);
           pubspecYamlFile.setBinaryContent(("name: " + module.getName() + "\n" +
                                             "dependencies:\n" +
                                             "  browser: any").getBytes());
