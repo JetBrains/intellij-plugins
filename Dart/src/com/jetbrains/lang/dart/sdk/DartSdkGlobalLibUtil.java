@@ -9,8 +9,8 @@ import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,30 +29,59 @@ public class DartSdkGlobalLibUtil {
   }
 
   public static String createDartSdkGlobalLib(final @NotNull Project project, final @NotNull String sdkHomePath) {
-    final Library library = LibraryUtil.createLibrary(ApplicationLibraryTable.getApplicationTable(), DartSdk.DART_SDK_GLOBAL_LIB_NAME);
-    setupDartSdkRoots(library, sdkHomePath);
+    final LibraryTable.ModifiableModel model = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+    final String darSdkGlobalLibName = createDartSdkGlobalLib(model, sdkHomePath);
+    model.commit();
     ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
+    return darSdkGlobalLibName;
+  }
+
+  public static String createDartSdkGlobalLib(final @NotNull LibraryTable.ModifiableModel libraryTableModel,
+                                              final @NotNull String sdkHomePath) {
+    // similar to LibraryUtil.createLibrary()
+    String name = DartSdk.DART_SDK_GLOBAL_LIB_NAME;
+    int count = 2;
+    while (libraryTableModel.getLibraryByName(name) != null) {
+      name = DartSdk.DART_SDK_GLOBAL_LIB_NAME + " (" + count++ + ")";
+    }
+
+    final Library library = libraryTableModel.createLibrary(name);
+
+    setupDartSdkRoots(library, sdkHomePath);
     return library.getName();
   }
 
   public static void updateDartSdkGlobalLib(final @NotNull Project project,
                                             final @NotNull String dartSdkGlobalLibName,
                                             final @NotNull String sdkHomePath) {
-    final Library oldLibrary = ApplicationLibraryTable.getApplicationTable().getLibraryByName(dartSdkGlobalLibName);
-    LOG.assertTrue(oldLibrary != null, dartSdkGlobalLibName);
-
-    ApplicationLibraryTable.getApplicationTable().removeLibrary(oldLibrary);
-
-    final Library newLibrary = ApplicationLibraryTable.getApplicationTable().createLibrary(dartSdkGlobalLibName);
-    setupDartSdkRoots(newLibrary, sdkHomePath);
+    final LibraryTable.ModifiableModel model = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+    updateDartSdkGlobalLib(model, dartSdkGlobalLibName, sdkHomePath);
+    model.commit();
     ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
   }
 
-  private static void setupDartSdkRoots(final Library library, final String sdkHomePath) {
+  public static void updateDartSdkGlobalLib(final @NotNull LibraryTable.ModifiableModel libraryTableModifiableModel,
+                                            final @NotNull String dartSdkGlobalLibName,
+                                            final @NotNull String sdkHomePath) {
+    final Library library = libraryTableModifiableModel.getLibraryByName(dartSdkGlobalLibName);
+    LOG.assertTrue(library != null, dartSdkGlobalLibName);
+    setupDartSdkRoots(library, sdkHomePath);
+  }
+
+  private static void setupDartSdkRoots(final @NotNull Library library, final @NotNull String sdkHomePath) {
     final VirtualFile libRoot = LocalFileSystem.getInstance().refreshAndFindFileByPath(sdkHomePath + "/lib");
     if (libRoot != null && libRoot.isDirectory()) {
       final LibraryEx.ModifiableModelEx libModifiableModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
       try {
+        // remove old
+        for (String url : libModifiableModel.getUrls(OrderRootType.CLASSES)) {
+          libModifiableModel.removeRoot(url, OrderRootType.CLASSES);
+        }
+        for (String url : libModifiableModel.getExcludedRootUrls()) {
+          libModifiableModel.removeExcludedRoot(url);
+        }
+
+        // add new
         libModifiableModel.addRoot(libRoot, OrderRootType.CLASSES);
 
         libRoot.refresh(false, true);

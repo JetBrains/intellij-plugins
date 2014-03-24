@@ -39,7 +39,11 @@ public class DartSdk {
 
   @Nullable
   public static DartSdk getGlobalDartSdk() {
-    for (final Library library : ApplicationLibraryTable.getApplicationTable().getLibraries()) {
+    return findDartSdkAmongGlobalLibs(ApplicationLibraryTable.getApplicationTable().getLibraries());
+  }
+
+  public static DartSdk findDartSdkAmongGlobalLibs(final Library[] globalLibraries) {
+    for (final Library library : globalLibraries) {
       final String libraryName = library.getName();
       if (libraryName != null && libraryName.startsWith(DART_SDK_GLOBAL_LIB_NAME)) {
         for (final VirtualFile root : library.getFiles(OrderRootType.CLASSES)) {
