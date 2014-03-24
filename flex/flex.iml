@@ -33,6 +33,7 @@
     <orderEntry type="library" name="Velocity" level="project" />
     <orderEntry type="module" module-name="properties" />
     <orderEntry type="module" module-name="webide-api" />
+    <orderEntry type="module" module-name="properties-psi-api" />
   </component>
 </module>
 
