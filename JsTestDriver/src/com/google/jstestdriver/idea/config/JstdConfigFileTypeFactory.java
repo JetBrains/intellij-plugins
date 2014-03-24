@@ -16,10 +16,7 @@
 package com.google.jstestdriver.idea.config;
 
 import com.google.common.base.Joiner;
-import com.intellij.openapi.fileTypes.ExtensionFileNameMatcher;
-import com.intellij.openapi.fileTypes.FileNameMatcher;
-import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
+import com.intellij.openapi.fileTypes.*;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +43,7 @@ public class JstdConfigFileTypeFactory extends FileTypeFactory {
    * For instance following file names will be accepted:
    *    'jsTestDriver.conf', 'jsTestDriver.yaml', 'jstd.yml', 'jsTestDriver-coverage.conf'.
    */
-  private static class JstdPredefinedFileNameMatcher implements FileNameMatcher {
+  private static class JstdPredefinedFileNameMatcher extends FileNameMatcherEx {
 
     private static final String[] PREFIXES = {"jsTestDriver", "js-test-driver", "js_test_driver", "jstd"};
     private static final String[] DOT_SUFFIXES = {".conf", ".yml", ".yaml"};
@@ -62,15 +59,15 @@ public class JstdConfigFileTypeFactory extends FileTypeFactory {
     }
 
     @Override
-    public boolean accept(@NonNls @NotNull String fileName) {
+    public boolean acceptsCharSequence(@NonNls @NotNull CharSequence fileName) {
       if (COMMON_PREFIX_LENGTH > 0) {
         // performance optimization
-        if (!fileName.startsWith(COMMON_PREFIX)) {
+        if (!StringUtil.startsWith(fileName, COMMON_PREFIX)) {
           return false;
         }
       }
       for (String prefix : PREFIXES) {
-        if (fileName.startsWith(prefix)) {
+        if (StringUtil.startsWith(fileName, prefix)) {
           return hasSuitableExtension(fileName);
         }
       }
@@ -84,9 +81,9 @@ public class JstdConfigFileTypeFactory extends FileTypeFactory {
       return "(" + joiner.join(PREFIXES) + ").*(" + joiner.join(DOT_SUFFIXES) + ")";
     }
 
-    private static boolean hasSuitableExtension(@NotNull String fileName) {
+    private static boolean hasSuitableExtension(@NotNull CharSequence fileName) {
       for (String dotSuffix : DOT_SUFFIXES) {
-        if (fileName.endsWith(dotSuffix)) {
+        if (StringUtil.endsWith(fileName, dotSuffix)) {
           return true;
         }
       }
