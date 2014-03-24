@@ -20,12 +20,12 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.jam.*;
 import com.intellij.jam.annotations.JamPsiConnector;
 import com.intellij.jam.annotations.JamPsiValidity;
-import com.intellij.jam.reflect.*;
 import com.intellij.jam.model.common.CommonModelElement;
+import com.intellij.jam.reflect.*;
 import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.lang.properties.IProperty;
-import com.intellij.lang.properties.PropertiesUtil;
+import com.intellij.lang.properties.PropertiesUtilBase;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -72,7 +72,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
         return Collections.emptyList();
       }
 
-      final PropertiesFile strutsPropertiesFile = PropertiesUtil.getPropertiesFile("struts", module, null);
+      final PropertiesFile strutsPropertiesFile = PropertiesUtilBase.getPropertiesFile("struts", module, null);
       return strutsPropertiesFile != null ? strutsPropertiesFile.getProperties() : Collections.<IProperty>emptyList();
     }
 

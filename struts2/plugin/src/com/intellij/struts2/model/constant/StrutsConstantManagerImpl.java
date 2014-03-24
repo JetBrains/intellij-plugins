@@ -21,7 +21,7 @@ import com.intellij.javaee.model.xml.web.WebApp;
 import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.lang.properties.IProperty;
-import com.intellij.lang.properties.PropertiesUtil;
+import com.intellij.lang.properties.PropertiesImplUtil;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -160,7 +160,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     assert module != null : context;
 
     // collect all properties with matching key
-    final List<IProperty> properties = PropertiesUtil.findPropertiesByKey(project, name);
+    final List<IProperty> properties = PropertiesImplUtil.findPropertiesByKey(project, name);
 
     String value = null;
 
