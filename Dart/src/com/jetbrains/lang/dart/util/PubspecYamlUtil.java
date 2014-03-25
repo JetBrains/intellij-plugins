@@ -100,6 +100,7 @@ public class PubspecYamlUtil {
   private static Map<String, Object> loadPubspecYamlInfo(final @NotNull String pubspecYamlFileContents) {
     // see com.google.dart.tools.core.utilities.yaml.PubYamlUtils#parsePubspecYamlToMap()
     // deprecated constructor used to be compatible with old snakeyaml version in testng.jar (it wins when running from sources or tests)
+    //noinspection deprecation
     final Yaml yaml = new Yaml(new Loader(new Constructor()), new Dumper(new Representer(), new DumperOptions()), new Resolver() {
       @Override
       protected void addImplicitResolvers() {
@@ -110,7 +111,12 @@ public class PubspecYamlUtil {
       }
     });
 
-    //noinspection unchecked
-    return (Map<String, Object>)yaml.load(pubspecYamlFileContents);
+    try {
+      //noinspection unchecked
+      return (Map<String, Object>)yaml.load(pubspecYamlFileContents);
+    }
+    catch (Exception e) {
+      return null; // malformed yaml, e.g. because of typing in it
+    }
   }
 }
