@@ -4,7 +4,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderFactory;
-import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
@@ -14,6 +13,7 @@ import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.psi.impl.source.tree.FileElement;
+import com.intellij.psi.impl.source.tree.TreeElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
@@ -28,9 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpressionCodeFragment {
   private PsiElement myContext;
   private boolean myPhysical;
@@ -52,7 +49,7 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
 
     myPhysical = isPhysical;
     ((SingleRootFileViewProvider)getViewProvider()).forceCachedPsi(this);
-    final MyDartFileElementType type = new MyDartFileElementType();
+    final DartFragmentElementType type = new DartFragmentElementType();
     init(type, type);
   }
 
@@ -104,9 +101,9 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
     return myScope;
   }
 
-  private class MyDartFileElementType extends IFileElementType {
-    public MyDartFileElementType() {
-      super(DartLanguage.INSTANCE);
+  private static class DartFragmentElementType extends IFileElementType {
+    public DartFragmentElementType() {
+      super("DART_CODE_FRAGMENT", DartLanguage.INSTANCE);
     }
 
     @Nullable
@@ -119,7 +116,7 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
     @Override
     protected ASTNode doParseContents(@NotNull ASTNode chameleon, @NotNull PsiElement psi) {
       final PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
-      final PsiBuilder psiBuilder = factory.createBuilder(getProject(), chameleon);
+      final PsiBuilder psiBuilder = factory.createBuilder(((TreeElement)chameleon).getManager().getProject(), chameleon);
       final PsiBuilder builder = adapt_builder_(DartTokenTypes.STATEMENTS, psiBuilder, new DartParser(), DartParser.EXTENDS_SETS_);
 
       PsiBuilder.Marker marker = enter_section_(builder, 0, _COLLAPSE_, "<code fragment>");
