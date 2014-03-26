@@ -14,6 +14,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,6 +33,7 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
+import gnu.trove.THashSet;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -209,9 +211,9 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
   public static void excludePackagesFolders(final Module module, final VirtualFile pubspecYamlFile) {
     final VirtualFile root = pubspecYamlFile.getParent();
-    if (root == null) return;
-
-    root.refresh(false, true);
+    final VirtualFile contentRoot =
+      root == null ? null : ProjectRootManager.getInstance(module.getProject()).getFileIndex().getContentRootForFile(root);
+    if (contentRoot == null) return;
 
     // http://pub.dartlang.org/doc/glossary.html#entrypoint-directory
     // Entrypoint directory: A directory inside your package that is allowed to contain Dart entrypoints.
@@ -221,71 +223,100 @@ public class DartProjectComponent extends AbstractProjectComponent {
     //
     // the same can be seen in the pub tool source code: [repo root]/sdk/lib/_internal/pub/lib/src/entrypoint.dart
 
-    final Collection<VirtualFile> foldersToExclude = new ArrayList<VirtualFile>();
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
+    final Collection<String> oldExcludedPackagesUrls =
+      ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(), new Condition<String>() {
+        final String rootUrlPrefix = root.getUrl() + '/';
 
-    final VirtualFile packagesFolder = VfsUtilCore.findRelativeFile("bin/packages", root);
-    if (packagesFolder != null && packagesFolder.isDirectory() && fileIndex.isInContent(packagesFolder)) {
-      foldersToExclude.add(packagesFolder);
-    }
+        public boolean value(final String url) {
+          if (!url.startsWith(rootUrlPrefix)) return false;
 
-    appendPackagesFolders(foldersToExclude, root.findChild("benchmark"), fileIndex);
-    appendPackagesFolders(foldersToExclude, root.findChild("example"), fileIndex);
-    appendPackagesFolders(foldersToExclude, root.findChild("test"), fileIndex);
-    appendPackagesFolders(foldersToExclude, root.findChild("tool"), fileIndex);
-    appendPackagesFolders(foldersToExclude, root.findChild("web"), fileIndex);
+          if (url.endsWith("/packages")) return true;
 
-    // Folder packages/ThisProject (where ThisProject is the name specified in pubspec.yaml) is a symlink to local 'lib' folder. Exclude it in order not to have duplicates. Resolve goes to local 'lib' folder.
-    // Empty 'ThisProject (link to 'lib' folder)' node is added to Project Structure by DartTreeStructureProvider
-    final String pubspecName = PubspecYamlUtil.getPubspecName(pubspecYamlFile);
-    if (pubspecName != null) {
-      final VirtualFile copyOfLibFolder = VfsUtilCore.findRelativeFile("packages/" + pubspecName, root);
-      if (copyOfLibFolder != null && copyOfLibFolder.isDirectory() && fileIndex.isInContent(copyOfLibFolder)) {
-        foldersToExclude.add(copyOfLibFolder);
-      }
-    }
+          // excluded subfolder of 'packages' folder
+          final int lastSlashIndex = url.lastIndexOf('/');
+          if (lastSlashIndex > 0 && url.substring(0, lastSlashIndex).endsWith("/packages")) return true;
 
-    if (!foldersToExclude.isEmpty()) {
-      excludeFoldersInWriteAction(module, foldersToExclude);
+          return false;
+        }
+      });
+
+    final THashSet<String> newExcludedPackagesUrls = collectFoldersToExclude(module, pubspecYamlFile);
+
+    if (oldExcludedPackagesUrls.size() != newExcludedPackagesUrls.size() || !newExcludedPackagesUrls.containsAll(oldExcludedPackagesUrls)) {
+      updateExcludedFolders(module, contentRoot, oldExcludedPackagesUrls, newExcludedPackagesUrls);
     }
   }
 
-  private static void appendPackagesFolders(final Collection<VirtualFile> foldersToExclude,
+  private static THashSet<String> collectFoldersToExclude(final Module module, final VirtualFile pubspecYamlFile) {
+    final THashSet<String> newExcludedPackagesUrls = new THashSet<String>();
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
+    final VirtualFile root = pubspecYamlFile.getParent();
+
+    final VirtualFile binFolder = root.findChild("bin");
+    if (binFolder != null && binFolder.isDirectory() && fileIndex.isInContent(binFolder)) {
+      newExcludedPackagesUrls.add(binFolder.getUrl() + "/packages");
+    }
+
+    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("benchmark"), fileIndex);
+    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("example"), fileIndex);
+    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("test"), fileIndex);
+    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("tool"), fileIndex);
+    appendPackagesFolders(newExcludedPackagesUrls, root.findChild("web"), fileIndex);
+
+    // Folder packages/ThisProject (where ThisProject is the name specified in pubspec.yaml) is a symlink to local 'lib' folder. Exclude it in order not to have duplicates. Resolve goes to local 'lib' folder.
+    // Empty 'ThisProject (link to 'lib' folder)' node is added to Project Structure by DartTreeStructureProvider
+    final VirtualFile libFolder = root.findChild("lib");
+    if (libFolder != null && libFolder.isDirectory()) {
+      final String pubspecName = PubspecYamlUtil.getPubspecName(pubspecYamlFile);
+      if (pubspecName != null) {
+        newExcludedPackagesUrls.add(root.getUrl() + "/packages/" + pubspecName);
+      }
+    }
+
+    return newExcludedPackagesUrls;
+  }
+
+  private static void appendPackagesFolders(final @NotNull Collection<String> excludedPackagesUrls,
                                             final @Nullable VirtualFile folder,
-                                            final ProjectFileIndex fileIndex) {
+                                            final @NotNull ProjectFileIndex fileIndex) {
     if (folder == null) return;
 
     VfsUtilCore.visitChildrenRecursively(folder, new VirtualFileVisitor() {
       @NotNull
       public Result visitFileEx(@NotNull final VirtualFile file) {
-        if (file.isDirectory() && "packages".equals(file.getName())) {
-          if (fileIndex.isInContent(file)) {
-            foldersToExclude.add(file);
-          }
+        if (!fileIndex.isInContent(file)) {
           return SKIP_CHILDREN;
         }
-        else {
-          return CONTINUE;
+
+        if (file.isDirectory()) {
+          if ("packages".equals(file.getName())) {
+            return SKIP_CHILDREN;
+          }
+          else {
+            excludedPackagesUrls.add(file.getUrl() + "/packages");
+          }
         }
+
+        return CONTINUE;
       }
     });
   }
 
-  private static void excludeFoldersInWriteAction(final Module module, final Collection<VirtualFile> foldersToExclude) {
-    final VirtualFile firstItem = ContainerUtil.getFirstItem(foldersToExclude);
-    if (firstItem == null) return;
-
-    final VirtualFile contentRoot = ProjectRootManager.getInstance(module.getProject()).getFileIndex().getContentRootForFile(firstItem);
-    if (contentRoot == null) return;
-
+  private static void updateExcludedFolders(final Module module,
+                                            final VirtualFile contentRoot,
+                                            final Collection<String> urlsToUnexclude,
+                                            final Collection<String> urlsToExclude) {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
         final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
         try {
           for (final ContentEntry contentEntry : modifiableModel.getContentEntries()) {
             if (contentEntry.getFile() == contentRoot) {
-              for (VirtualFile packagesFolder : foldersToExclude) {
-                contentEntry.addExcludeFolder(packagesFolder);
+              for (String url : urlsToUnexclude) {
+                contentEntry.removeExcludeFolder(url);
+              }
+              for (String url : urlsToExclude) {
+                contentEntry.addExcludeFolder(url);
               }
               break;
             }
