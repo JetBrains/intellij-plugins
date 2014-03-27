@@ -3,6 +3,8 @@ package com.jetbrains.lang.dart.ide.runner.server;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.filters.TextConsoleBuilder;
+import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
@@ -13,27 +15,35 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.text.StringTokenizer;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class DartCommandLineRunningState extends CommandLineState {
-  private final Module module;
-  private final @NotNull String filePath;
-  private final @NotNull String vmOptions;
-  private final @NotNull String arguments;
+  private final @NotNull String myFilePath;
+  private final @NotNull String myVmOptions;
+  private final @NotNull String myArguments;
 
-  public DartCommandLineRunningState(ExecutionEnvironment env,
-                                     Module module,
-                                     @NotNull String filePath,
-                                     @NotNull String vmOptions,
-                                     @NotNull String arguments) {
+  public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env,
+                                     final @NotNull String filePath,
+                                     final @NotNull String vmOptions,
+                                     final @NotNull String arguments) {
     super(env);
-    this.module = module;
-    this.filePath = filePath;
-    this.vmOptions = vmOptions;
-    this.arguments = arguments;
+    myFilePath = filePath;
+    myVmOptions = vmOptions;
+    myArguments = arguments;
+
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+    final VirtualFile packagesFolder = file == null ? null : PubspecYamlUtil.getDartPackagesFolder(env.getProject(), file);
+
+    final TextConsoleBuilder builder = getConsoleBuilder();
+    if (builder instanceof TextConsoleBuilderImpl) {
+      ((TextConsoleBuilderImpl)builder).setUsePredefinedMessageFilter(false);
+    }
+
+    builder.addFilter(new DartConsoleFilter(env.getProject(), packagesFolder));
   }
 
   @NotNull
@@ -54,14 +64,14 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     final String dartExePath = DartSdkUtil.getDartExePath(sdk);
 
-    final VirtualFile libraryFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    final VirtualFile libraryFile = LocalFileSystem.getInstance().findFileByPath(myFilePath);
     if (libraryFile == null) {
-      throw new ExecutionException(DartBundle.message("bad.script.path", filePath));
+      throw new ExecutionException(DartBundle.message("bad.script.path", myFilePath));
     }
     final GeneralCommandLine commandLine = new GeneralCommandLine();
 
     commandLine.setExePath(dartExePath);
-    commandLine.setWorkDirectory(PathUtil.getParentPath(filePath));
+    commandLine.setWorkDirectory(PathUtil.getParentPath(myFilePath));
     commandLine.setPassParentEnvironment(true);
 
     setupUserProperties(commandLine, libraryFile);
@@ -74,19 +84,19 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     commandLine.addParameter("--ignore-unrecognized-flags");
 
-    StringTokenizer argumentsTokenizer = new StringTokenizer(vmOptions);
+    StringTokenizer argumentsTokenizer = new StringTokenizer(myVmOptions);
     while (argumentsTokenizer.hasMoreTokens()) {
       commandLine.addParameter(argumentsTokenizer.nextToken());
     }
 
-    final VirtualFile packages = PubspecYamlUtil.getDartPackagesFolder(module.getProject(), libraryFile);
+    final VirtualFile packages = PubspecYamlUtil.getDartPackagesFolder(getEnvironment().getProject(), libraryFile);
     if (packages != null && packages.isDirectory()) {
       commandLine.addParameter("--package-root=" + packages.getPath() + "/");
     }
 
-    commandLine.addParameter(filePath);
+    commandLine.addParameter(myFilePath);
 
-    argumentsTokenizer = new StringTokenizer(arguments);
+    argumentsTokenizer = new StringTokenizer(myArguments);
     while (argumentsTokenizer.hasMoreTokens()) {
       commandLine.addParameter(argumentsTokenizer.nextToken());
     }

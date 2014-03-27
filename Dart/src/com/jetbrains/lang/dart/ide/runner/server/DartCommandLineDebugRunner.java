@@ -9,7 +9,6 @@ import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.net.NetUtils;
@@ -40,7 +39,6 @@ public class DartCommandLineDebugRunner extends DefaultProgramRunner {
                                            @NotNull ExecutionEnvironment env) throws ExecutionException {
     final DartCommandLineRunConfiguration configuration = (DartCommandLineRunConfiguration)env.getRunProfile();
     FileDocumentManager.getInstance().saveAllDocuments();
-    final Module module = configuration.getModule();
 
     final String filePath = configuration.getFilePath();
     assert filePath != null;
@@ -49,7 +47,6 @@ public class DartCommandLineDebugRunner extends DefaultProgramRunner {
 
     final DartCommandLineRunningState dartCommandLineRunningState = new DartCommandLineRunningState(
       env,
-      module,
       filePath,
       ("--debug:" + debuggingPort) + " " + StringUtil.notNullize(configuration.getVMOptions()),
       StringUtil.notNullize(configuration.getArguments())

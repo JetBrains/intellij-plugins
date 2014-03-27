@@ -63,14 +63,14 @@ public class DartConsoleFilter implements Filter {
           file = DartResolveUtil.getPackagePrefixImportedFile(myProject, myPackagesFolder, "package:" + info.path);
         }
         else {
-          file = findFileInPackagesFolder(myProject, info.path);
+          file = findFileInAnyPackagesFolder(myProject, info.path);
         }
         break;
       default:
         file = null;
     }
 
-    if (file != null) {
+    if (file != null && !file.isDirectory()) {
       final int highlightStartOffset = entireLength - line.length() + info.highlightingStartIndex;
       final int highlightEndOffset = entireLength - line.length() + info.highlightingEndIndex;
       return new Result(highlightStartOffset, highlightEndOffset, new OpenFileHyperlinkInfo(myProject, file, info.line, info.column));
@@ -80,7 +80,7 @@ public class DartConsoleFilter implements Filter {
   }
 
   @Nullable
-  private static VirtualFile findFileInPackagesFolder(final Project project, final String relativePath) {
+  private static VirtualFile findFileInAnyPackagesFolder(final Project project, final String relativePath) {
     final Collection<VirtualFile> pubspecYamlFiles =
       FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project));
     for (VirtualFile pubspecYamlFile : pubspecYamlFiles) {
