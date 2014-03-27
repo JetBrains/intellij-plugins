@@ -13,9 +13,8 @@ public class DartConsoleFilterTest extends TestCase {
 
   private static void doPositiveTest(final String text,
                                      final Type type,
+                                     final String highlightedText,
                                      final String pathOnUnix,
-                                     final int highlightingStartIndex,
-                                     final int highlightingEndIndex,
                                      final int line,
                                      final int column) {
 
@@ -24,8 +23,7 @@ public class DartConsoleFilterTest extends TestCase {
     assertEquals(type, info.type);
     final boolean trimSlash = type == Type.FILE && SystemInfo.isWindows && pathOnUnix.startsWith("/");
     assertEquals(trimSlash ? pathOnUnix.substring(1) : pathOnUnix, info.path);
-    assertEquals(highlightingStartIndex, info.highlightingStartIndex);
-    assertEquals(highlightingEndIndex, info.highlightingEndIndex);
+    assertEquals(highlightedText, text.substring(info.highlightingStartIndex, info.highlightingEndIndex));
     assertEquals(line, info.line);
     assertEquals(column, info.column);
   }
@@ -34,21 +32,37 @@ public class DartConsoleFilterTest extends TestCase {
     doNegativeTest("");
     doNegativeTest(".dart");
     doNegativeTest("(.dart)");
-    doNegativeTest("(dart:foo.dart )");
-    doNegativeTest("(dart:foo.dart :1:2)");
-    doNegativeTest("(darts:foo.dart)");
-    doNegativeTest("(darts:foo.dart)");
-    doNegativeTest("(dart :foo.dart)");
+    doNegativeTest("adart:foo.dart )");
+    doNegativeTest("adart:foo:5");
+    doNegativeTest("dart:5");
+    doNegativeTest("package:foo/bar.darts");
+    doNegativeTest("packages:foo/bar.dart");
+    doNegativeTest("darts:foo.dart");
+    doNegativeTest("'darts:foo.dart'");
+    doNegativeTest("dart :foo.dart");
 
-    doPositiveTest("(dart:.dart)", Type.DART, ".dart", 1, 11, -1, -1);
-    doPositiveTest("x.dart (file://///a.dart:)", Type.FILE, "/a.dart", 8, 24, -1, -1);
-    doPositiveTest("x (package://///a.dart:xx:10)", Type.PACKAGE, "/////a.dart", 3, 22, -1, -1);
-    doPositiveTest("x (file:a.dart:15)", Type.FILE, "a.dart", 3, 14, 14, -1);
-    doPositiveTest("x (file:a.dart:15:)", Type.FILE, "a.dart", 3, 14, 14, -1);
-    doPositiveTest("x (file:a.dart:15:9y)", Type.FILE, "a.dart", 3, 14, 14, 8);
-    doPositiveTest("x (file:a.dart:15x:yy)", Type.FILE, "a.dart", 3, 14, 14, -1);
-    doPositiveTest("x (dart://a.dart:15:20)", Type.DART, "//a.dart", 3, 16, 14, 19);
-    doPositiveTest("x (package://a.dart:15:9999999999)", Type.PACKAGE, "//a.dart", 3, 19, -1, -1);
-    doPositiveTest("x (package://a.dart:9999999999:5)", Type.PACKAGE, "//a.dart", 3, 19, -1, -1);
+    doPositiveTest("dart:libName", Type.DART, "dart:libName", "libName", -1, -1);
+    doPositiveTest("packages:file:dart:libName:70: line 5 pos 9", Type.DART, "dart:libName", "libName", 69, -1);
+    doPositiveTest("package:foo/bar.dart", Type.PACKAGE, "package:foo/bar.dart", "foo/bar.dart", -1, -1);
+    doPositiveTest("(dart:.dart)", Type.DART, "dart:.dart", ".dart", -1, -1);
+    doPositiveTest("'dart:a/b/c' pos 6 line 4", Type.DART, "dart:a", "a", 3, -1);
+    doPositiveTest("x.dart (file://///a.dart:) line  05", Type.FILE, "file://///a.dart", "/a.dart", 4, -1);
+    doPositiveTest("x 'package://///a.dart:xx:10'", Type.PACKAGE, "package://///a.dart", "/////a.dart", -1, -1);
+    doPositiveTest("x (file:a.dart:15)", Type.FILE, "file:a.dart", "a.dart", 14, -1);
+    doPositiveTest("x (file:a.dart:15:)", Type.FILE, "file:a.dart", "a.dart", 14, -1);
+    doPositiveTest("xxx:file:a.dart  :  15  :  90yyy  )", Type.FILE, "file:a.dart", "a.dart", 14, 89);
+    doPositiveTest("x (file:a.dart:15x:yy)", Type.FILE, "file:a.dart", "a.dart", 14, -1);
+    doPositiveTest("file:a.dart:15", Type.FILE, "file:a.dart", "a.dart", 14, -1);
+    doPositiveTest("file:a.dart:15z:", Type.FILE, "file:a.dart", "a.dart", 14, -1);
+    doPositiveTest("file:a.dart:15:", Type.FILE, "file:a.dart", "a.dart", 14, -1);
+    doPositiveTest("file:a.dart:15:z", Type.FILE, "file:a.dart", "a.dart", 14, -1);
+    doPositiveTest("file:a.dart:15:5", Type.FILE, "file:a.dart", "a.dart", 14, 4);
+    doPositiveTest("file:a.dart:15:5x", Type.FILE, "file:a.dart", "a.dart", 14, 4);
+    doPositiveTest("file:a.dart:15:5:", Type.FILE, "file:a.dart", "a.dart", 14, 4);
+    doPositiveTest("x (dart://a.dart:15:20)", Type.DART, "dart://a.dart", "//a.dart", 14, 19);
+    doPositiveTest("x (package://a.dart:15:9999999999)", Type.PACKAGE, "package://a.dart", "//a.dart", 14, -1);
+    doPositiveTest("x (package://a.dart:9999999999:5)", Type.PACKAGE, "package://a.dart", "//a.dart", -1, -1);
+    doPositiveTest("'package:foo//bar.dart': error: line   11   pos   1: x", Type.PACKAGE, "package:foo//bar.dart", "foo//bar.dart", 10, 0);
+    doPositiveTest("'package:foo//bar.dart': error: line   11   pos   : x", Type.PACKAGE, "package:foo//bar.dart", "foo//bar.dart", 10, -1);
   }
 }

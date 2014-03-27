@@ -7,7 +7,9 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +46,13 @@ public class DartConsoleFilter implements Filter {
       case DART:
         // todo where to get source for files like "_RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:93)"?
         if (mySdk != null) {
-          file = LocalFileSystem.getInstance().findFileByPath(mySdk.getHomePath() + "/lib/" + info.path);
+          // info.path is either lib name (like "math") or relative path (like "collection/splay_tree.dart")
+          if (info.path.contains("/")) {
+            file = LocalFileSystem.getInstance().findFileByPath(mySdk.getHomePath() + "/lib/" + info.path);
+          }
+          else {
+            file = DartLibraryIndex.getStandardLibraryFromSdk(myProject, info.path);
+          }
         }
         else {
           file = null;
@@ -52,7 +60,7 @@ public class DartConsoleFilter implements Filter {
         break;
       case PACKAGE:
         if (myPackagesFolder != null) {
-          file = myPackagesFolder.findFileByRelativePath(info.path);
+          file = DartResolveUtil.getPackagePrefixImportedFile(myProject, myPackagesFolder, "package:" + info.path);
         }
         else {
           file = findFileInPackagesFolder(myProject, info.path);
@@ -76,7 +84,7 @@ public class DartConsoleFilter implements Filter {
     final Collection<VirtualFile> pubspecYamlFiles =
       FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project));
     for (VirtualFile pubspecYamlFile : pubspecYamlFiles) {
-      final VirtualFile file = pubspecYamlFile.getParent().findFileByRelativePath("/packages/" + relativePath);
+      final VirtualFile file = DartResolveUtil.getPackagePrefixImportedFile(project, pubspecYamlFile, "package:" + relativePath);
       if (file != null) return file;
     }
     return null;

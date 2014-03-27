@@ -145,7 +145,7 @@
                                         implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>
 
     <stepsBeforeRunProvider implementation="com.jetbrains.lang.dart.ide.runner.before.Dart2JSBeforeRunTaskProvider"/>
-    <consoleFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.DartConsoleFilterProvider"/>
+    <consoleFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.DartConsoleFilterProvider" order="first"/>
     <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType"/>
 
     <!--command line-->

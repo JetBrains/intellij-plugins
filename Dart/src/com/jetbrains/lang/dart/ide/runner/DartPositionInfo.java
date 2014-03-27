@@ -41,6 +41,7 @@ public class DartPositionInfo {
   }
 
   /*
+  #0      min (dart:math:70)
   #0      Object.noSuchMethod (dart:core-patch/object_patch.dart:42)
   #1      SplayTreeMap.addAll (dart:collection/splay_tree.dart:373)
   #1      Sphere.copyFrom (package:vector_math/src/vector_math/sphere.dart:46:23)
@@ -48,66 +49,152 @@ public class DartPositionInfo {
   #2      main (file:///C:/dart/DartSample2/web/Bar.dart:4:28)
   #3      _startIsolate.isolateStartHandler (dart:isolate-patch/isolate_patch.dart:190)
   #4      _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:93)
+  'package:DartSample2/mylib.dart': error: line 7 pos 1: 'myLibPart' is already defined
+  'file:///C:/dart/DartSample2/bin/file2.dart': error: line 3 pos 1: library handler failed
+   WHATEVER_NOT_ENDING_WITH_PATH_SYMBOL package:DartSample2/mylib.dart WHATEVER_ELSE_NOT_STARTING_FROM_PATH_SYMBOL
+   WHATEVER_NOT_ENDING_WITH_PATH_SYMBOL dart:core/string_buffer.dart WHATEVER_ELSE_NOT_STARTING_FROM_PATH_SYMBOL
+   inside WHATEVER_ELSE_STARTING_NOT_FROM_PATH_SYMBOL look for ':4:28' at the beginning or for 'line 3 pos 1' at any place
   */
   @Nullable
   public static DartPositionInfo parsePositionInfo(final @NotNull String text) {
-    final int dotDartIndex = text.toLowerCase().lastIndexOf(".dart");
-    final int pathEndIndex = dotDartIndex + ".dart".length();
-    if (dotDartIndex <= 0 || text.length() == pathEndIndex) return null;
+    Pair<Integer, Integer> pathStartAndEnd = parseUrlStartAndEnd(text, "package:");
+    if (pathStartAndEnd == null) pathStartAndEnd = parseUrlStartAndEnd(text, "dart:");
+    if (pathStartAndEnd == null) pathStartAndEnd = parseUrlStartAndEnd(text, "file:");
+    if (pathStartAndEnd == null) pathStartAndEnd = parseDartLibUrlStartAndEnd(text);
+    if (pathStartAndEnd == null) return null;
 
-    final char nextChar = text.charAt(pathEndIndex);
-    if (nextChar != ':' && nextChar != ')') return null;
+    final Integer urlStartIndex = pathStartAndEnd.first;
+    final Integer urlEndIndex = pathStartAndEnd.second;
 
-    final int leftParenIndex = text.substring(0, dotDartIndex).lastIndexOf("(");
-    final int rightParenIndex = text.indexOf(")", dotDartIndex);
-    if (leftParenIndex < 0 || rightParenIndex < 0) return null;
+    final String url = text.substring(urlStartIndex, urlEndIndex);
+    final String tail = text.length() == urlEndIndex ? "" : text.substring(urlEndIndex).trim();
 
-    final int colonIndex = text.indexOf(":", leftParenIndex);
-    if (colonIndex < 0) return null;
+    Pair<Integer, Integer> lineAndColumn = parseLineAndColumnInColonFormat(tail);
+    if (lineAndColumn == null) lineAndColumn = parseLineAndColumnInTextFormat(tail);
 
-    final Type type = Type.getType(text.substring(leftParenIndex + 1, colonIndex));
-    if (type == null) return null;
+    final int colonIndexInUrl = url.indexOf(':');
+    assert colonIndexInUrl > 0 : text;
 
-    final Pair<Integer, Integer> lineAndColumn = parseLineAndColumn(text.substring(pathEndIndex, rightParenIndex));
-    final int pathStartIndex = type == Type.FILE
-                               ? colonIndex + 1 + getPathStartIndex(text.substring(colonIndex + 1))
-                               : colonIndex + 1;
-    final String path = text.substring(pathStartIndex, pathEndIndex);
+    final Type type = Type.getType(url.substring(0, colonIndexInUrl));
+    assert type != null : text;
 
-    return new DartPositionInfo(type,
-                                path,
-                                leftParenIndex + 1,
-                                pathStartIndex + path.length(),
-                                lineAndColumn.first >= 0 ? lineAndColumn.first - 1 : lineAndColumn.first,
-                                lineAndColumn.second >= 0 ? lineAndColumn.second - 1 : lineAndColumn.second);
+    final int pathStartIndexInUrl = type == Type.FILE
+                                    ? colonIndexInUrl + 1 + getPathStartIndex(url.substring(colonIndexInUrl + 1))
+                                    : colonIndexInUrl + 1;
+    final String path = url.substring(pathStartIndexInUrl, url.length());
+
+    final int line = lineAndColumn == null ? -1 : lineAndColumn.first >= 0 ? lineAndColumn.first - 1 : lineAndColumn.first;
+    final int column = lineAndColumn == null ? -1 : lineAndColumn.second >= 0 ? lineAndColumn.second - 1 : lineAndColumn.second;
+    return new DartPositionInfo(type, path, urlStartIndex, urlEndIndex, line, column);
   }
 
-  @NotNull
-  private static Pair<Integer, Integer> parseLineAndColumn(final @NotNull String text) {
-    // "" or ":12" or ":12:34" or ":whatever"
-    if (text.isEmpty() || text.charAt(0) != ':') return Pair.create(-1, -1);
+  // WHATEVER_NOT_ENDING_WITH_PATH_SYMBOL PREFIX PATH_ENDING_WITH_DOT_DART WHATEVER_ELSE_NOT_STARTING_FROM_PATH_SYMBOL
+  // Example:   'package:DartSample2/mylib.dart': error: line 7 pos 1: 'myLibPart' is already defined
+  @Nullable
+  private static Pair<Integer, Integer> parseUrlStartAndEnd(final String text, final String prefix) {
+    final int pathStartIndex = text.indexOf(prefix);
+    if (pathStartIndex < 0 ||
+        pathStartIndex > 0 && !isCharAllowedBeforeOrAfterPath(text.charAt(pathStartIndex - 1))) {
+      return null;
+    }
+
+    final int dotDartIndex = text.toLowerCase().indexOf(".dart", pathStartIndex);
+    final int pathEndIndex = dotDartIndex + ".dart".length();
+    if (dotDartIndex <= 0 ||
+        text.length() > pathEndIndex && !isCharAllowedBeforeOrAfterPath(text.charAt(pathEndIndex))) {
+      return null;
+    }
+
+    return Pair.create(pathStartIndex, pathEndIndex);
+  }
+
+  //   #0      min (dart:math:70)
+  @Nullable
+  private static Pair<Integer, Integer> parseDartLibUrlStartAndEnd(final String text) {
+    final int pathStartIndex = text.indexOf("dart:");
+    if (pathStartIndex < 0 ||
+        pathStartIndex > 0 && !isCharAllowedBeforeOrAfterPath(text.charAt(pathStartIndex - 1))) {
+      return null;
+    }
+
+    final int libNameStartIndex = pathStartIndex + "dart:".length();
+
+    int index = libNameStartIndex;
+    while (text.length() > index && Character.isLetter(text.charAt(index))) index++;
+
+    if (index == libNameStartIndex) return null;
+
+    return Pair.create(pathStartIndex, index);
+  }
+
+  private static boolean isCharAllowedBeforeOrAfterPath(final char ch) {
+    return !Character.isLetterOrDigit(ch); // allow spaces, punctuation, parens, brackets, braces, e.g. almost everything
+  }
+
+  @Nullable
+  private static Pair<Integer, Integer> parseLineAndColumnInColonFormat(final @NotNull String text) {
+    // "12 whatever, ":12 whatever", "12:34 whatever" or ":12:34 whatever"
+    final Pair<Integer, String> lineAndRemainingText = parseNextIntSkippingColon(text);
+    if (lineAndRemainingText == null) return null;
+
+    final Pair<Integer, String> colonAndRemainingText = parseNextIntSkippingColon(lineAndRemainingText.second.trim());
+    if (colonAndRemainingText == null) {
+      return Pair.create(lineAndRemainingText.first, -1);
+    }
+    else {
+      return Pair.create(lineAndRemainingText.first, colonAndRemainingText.first);
+    }
+  }
+
+  @Nullable
+  private static Pair<Integer, Integer> parseLineAndColumnInTextFormat(final @NotNull String text) {
+    // "whatever line 12 pos 34 whatever"
+    int index = text.indexOf("line ");
+    if (index == -1) return null;
+
+    index += "line ".length();
+    final Pair<Integer, String> lineAndRemainingText = parseNextIntSkippingColon(text.substring(index));
+    if (lineAndRemainingText == null) return null;
+
+    Pair<Integer, String> colonAndRemainingText = null;
+
+    final String trimmedTail = lineAndRemainingText.second.trim();
+    if (trimmedTail.startsWith("pos ")) {
+      colonAndRemainingText = parseNextIntSkippingColon(trimmedTail.substring("pos ".length()));
+    }
+
+    if (colonAndRemainingText == null) {
+      return Pair.create(lineAndRemainingText.first, -1);
+    }
+    else {
+      return Pair.create(lineAndRemainingText.first, colonAndRemainingText.first);
+    }
+  }
+
+  @Nullable
+  private static Pair<Integer, String> parseNextIntSkippingColon(final @NotNull String text) {
+    // "12 whatever or ": 12 whatever"
+    int index = 0;
+
+    // skip leading colon
+    if (text.length() > index && text.charAt(index) == ':') index++;
+
+    // skip whitespaces
+    while (text.length() > index && Character.isWhitespace(text.charAt(index))) index++;
+
+    final int numberStartIndex = index;
+    while (text.length() > index && text.charAt(index) >= '0' && text.charAt(index) <= '9') index++;
+
+    final int numberEndIndex = index;
+    if (numberStartIndex == numberEndIndex) return null;
 
     try {
-      int index = 1;
-      final int lineTextStartIndex = index;
-      while (index < text.length() && Character.isDigit(text.charAt(index))) index++;
-
-      if (index == lineTextStartIndex) return Pair.create(-1, -1);
-      final int line = Integer.parseInt(text.substring(lineTextStartIndex, index));
-
-      if (index == text.length() || text.charAt(index) != ':') return Pair.create(line, -1);
-
-      index++;
-      final int columnTextStartIndex = index;
-      while (index < text.length() && Character.isDigit(text.charAt(index))) index++;
-
-      if (index == columnTextStartIndex) return Pair.create(line, -1);
-      final int column = Integer.parseInt(text.substring(columnTextStartIndex, index));
-
-      return Pair.create(line, column);
+      final int line = Integer.parseInt(text.substring(numberStartIndex, numberEndIndex));
+      final String remainingText = text.substring(numberEndIndex);
+      return Pair.create(line, remainingText);
     }
     catch (NumberFormatException e) {
-      return Pair.create(-1, -1);
+      return null;
     }
   }
 
