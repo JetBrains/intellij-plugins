@@ -23,11 +23,13 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.ResourceUtil;
 import com.intellij.util.text.StringTokenizer;
+import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -39,7 +41,7 @@ import java.io.IOException;
 import java.net.URL;
 
 public class DartUnitRunningState extends CommandLineState {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.actions.DartPubAction");
+  private static final Logger LOG = Logger.getInstance("com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunningState");
 
   private static final String DART_FRAMEWORK_NAME = "DartTestRunner";
   private static final String UNIT_CONFIG_FILE_NAME = "jetbrains_unit_config.dart";
@@ -73,12 +75,17 @@ public class DartUnitRunningState extends CommandLineState {
     return executionResult;
   }
 
-  private ConsoleView createConsole(@NotNull ExecutionEnvironment env) throws ExecutionException {
-    TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(
-      (DartUnitRunConfiguration)env.getRunProfile(),
-      DART_FRAMEWORK_NAME,
-      env.getExecutor()
-    );
+  private static ConsoleView createConsole(@NotNull ExecutionEnvironment env) throws ExecutionException {
+    final Project project = env.getProject();
+    final DartUnitRunConfiguration runConfiguration = (DartUnitRunConfiguration)env.getRunProfile();
+    final DartUnitRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
+
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(runnerParameters.getFilePath());
+    final VirtualFile packagesFolder = file == null ? null : PubspecYamlUtil.getDartPackagesFolder(project, file);
+    final DartConsoleFilter filter = new DartConsoleFilter(project, packagesFolder);
+
+    TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(runConfiguration, DART_FRAMEWORK_NAME, env.getExecutor());
+    testConsoleProperties.setUsePredefinedMessageFilter(false);
 
     SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
       DART_FRAMEWORK_NAME,
@@ -88,9 +95,9 @@ public class DartUnitRunningState extends CommandLineState {
       true,
       null
     );
-    testConsoleProperties.setUsePredefinedMessageFilter(false);
 
-    final Project project = env.getProject();
+    smtConsoleView.addMessageFilter(filter);
+
     Disposer.register(project, smtConsoleView);
     return smtConsoleView;
   }

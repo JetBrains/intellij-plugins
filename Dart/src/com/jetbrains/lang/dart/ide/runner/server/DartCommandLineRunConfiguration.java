@@ -111,7 +111,6 @@ public class DartCommandLineRunConfiguration extends LocatableConfigurationBase 
     }
     return new DartCommandLineRunningState(
       env,
-      getModule(),
       filePath,
       StringUtil.notNullize(getVMOptions()),
       StringUtil.notNullize(getArguments())
