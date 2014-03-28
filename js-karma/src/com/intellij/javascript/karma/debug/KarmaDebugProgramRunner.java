@@ -1,6 +1,7 @@
 package com.intellij.javascript.karma.debug;
 
-import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
@@ -133,20 +134,20 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
   }
 
   private static DebuggableFileFinder getDebuggableFileFinder(@NotNull KarmaServer karmaServer) {
-    ImmutableBiMap.Builder<String, VirtualFile> mappings = ImmutableBiMap.builder();
+    BiMap<String, VirtualFile> mappings = HashBiMap.create();
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
     if (karmaConfig != null) {
       File basePath = new File(karmaConfig.getBasePath());
       VirtualFile vBasePath = VfsUtil.findFileByIoFile(basePath, false);
       if (vBasePath != null && vBasePath.isValid()) {
         String baseUrl = karmaServer.formatUrlWithoutUrlRoot("/base");
-        mappings.put(baseUrl, vBasePath);
+        mappings.forcePut(baseUrl, vBasePath);
       }
     }
     for (VirtualFile root : ManagingFS.getInstance().getLocalRoots()) {
-      mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute"), root);
+      mappings.forcePut(karmaServer.formatUrlWithoutUrlRoot("/absolute"), root);
     }
-    return new RemoteDebuggingFileFinder(mappings.build(), false);
+    return new RemoteDebuggingFileFinder(mappings, false);
   }
 
   public static AsyncResult<RunProfileStarter> prepareDebugger(@NotNull final Project project,

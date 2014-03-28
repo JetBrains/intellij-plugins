@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.debug;
 
-import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.config.ParsedConfiguration;
 import com.google.jstestdriver.config.ResolvedConfiguration;
@@ -36,10 +37,10 @@ public class JstdDebuggableFileFinderProvider {
   @NotNull
   public RemoteDebuggingFileFinder provideFileFinder() throws ExecutionException {
     ResolvedConfiguration resolvedConfiguration = resolveConfiguration();
-    ImmutableBiMap.Builder<String, VirtualFile> mappings = ImmutableBiMap.builder();
+    BiMap<String, VirtualFile> mappings = HashBiMap.create();
     addAllRemoteUrlMappings(resolvedConfiguration.getTests(), mappings);
     addAllRemoteUrlMappings(resolvedConfiguration.getFilesList(), mappings);
-    return new RemoteDebuggingFileFinder(mappings.build(), false);
+    return new RemoteDebuggingFileFinder(mappings, false);
   }
 
   @NotNull
@@ -77,7 +78,7 @@ public class JstdDebuggableFileFinderProvider {
     }
   }
 
-  private static void addAllRemoteUrlMappings(@NotNull Collection<FileInfo> filesInfo, @NotNull ImmutableBiMap.Builder<String, VirtualFile> builder) {
+  private static void addAllRemoteUrlMappings(@NotNull Collection<FileInfo> filesInfo, @NotNull BiMap<String, VirtualFile> map) {
     LocalFileSystem fileSystem = LocalFileSystem.getInstance();
     for (FileInfo fileInfo : filesInfo) {
       String displayPath = fileInfo.getDisplayPath();
@@ -85,7 +86,7 @@ public class JstdDebuggableFileFinderProvider {
       if (StringUtil.isNotEmpty(displayPath) && file.isFile()) {
         VirtualFile virtualFile = fileSystem.findFileByIoFile(file);
         if (virtualFile != null) {
-          builder.put("http://127.0.0.1:9876/test/" + UriUtil.trimLeadingSlashes(displayPath), virtualFile);
+          map.forcePut("http://127.0.0.1:9876/test/" + UriUtil.trimLeadingSlashes(displayPath), virtualFile);
         }
       }
     }
