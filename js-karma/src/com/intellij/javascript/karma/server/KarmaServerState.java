@@ -55,20 +55,25 @@ public class KarmaServerState {
       boolean captured = ObjectUtils.notNull(autoCaptured, true);
       CapturedBrowser browser = new CapturedBrowser(browserName, browserId, captured);
       myCapturedBrowsers.put(browserId, browser);
-      KarmaConfig config = myConfig;
-      if (config != null) {
-        int autoCapturedBrowsers = getAutoCapturedBrowserCount();
-        if (autoCapturedBrowsers == config.getBrowsers().size()) {
-          setBrowsersReady();
-        }
-      }
-      else {
+      if (canSetBrowsersReady(autoCaptured)) {
         setBrowsersReady();
       }
     }
     else {
       myCapturedBrowsers.remove(browserId);
     }
+  }
+
+  private boolean canSetBrowsersReady(@Nullable Boolean autoCaptured) {
+    if (autoCaptured == Boolean.FALSE) {
+      return true;
+    }
+    KarmaConfig config = myConfig;
+    if (config == null) {
+      return true;
+    }
+    int autoCapturedBrowsers = getAutoCapturedBrowserCount();
+    return autoCapturedBrowsers == config.getBrowsers().size();
   }
 
   private int getAutoCapturedBrowserCount() {
