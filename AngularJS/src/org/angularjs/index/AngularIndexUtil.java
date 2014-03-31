@@ -43,13 +43,14 @@ public class AngularIndexUtil {
     final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     for (VirtualFile file : FileBasedIndex.getInstance().getContainingFiles(index, lookupKey, scope)) {
       final int id = FileBasedIndex.getFileId(file);
-      if (FileBasedIndex.getInstance().processValues(JSEntryIndex.INDEX_ID, id, null, new FileBasedIndex.ValueProcessor<JSIndexEntry>() {
+      if (!FileBasedIndex.getInstance().processValues(JSEntryIndex.INDEX_ID, id, null, new FileBasedIndex.ValueProcessor<JSIndexEntry>() {
         @Override
         public boolean process(VirtualFile file, JSIndexEntry value) {
-          result.set(value.resolveAdditionalData(JavaScriptIndex.getInstance(project), index.toString(), lookupKey));
+          final JSNamedElementProxy resolve = value.resolveAdditionalData(JavaScriptIndex.getInstance(project), index.toString(), lookupKey);
+          if (resolve != null) result.set(resolve);
           return result.isNull();
         }
-      }, scope)) {
+      }, scope) && result.get().canNavigate()) {
         break;
       }
     }
