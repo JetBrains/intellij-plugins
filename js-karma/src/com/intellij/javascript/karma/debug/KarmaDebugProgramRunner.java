@@ -23,8 +23,10 @@ import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
@@ -44,6 +46,8 @@ import java.io.File;
  */
 public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
 
+  private static final Logger LOG = Logger.getInstance(KarmaDebugProgramRunner.class);
+
   @NotNull
   @Override
   public String getRunnerId() {
@@ -62,7 +66,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
                                                    @NotNull RunProfileState state) throws ExecutionException {
     final ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) {
-      return AsyncResult.rejected();
+      return new AsyncResult<RunProfileStarter>().setDone(null);
     }
 
     final KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult);
@@ -141,11 +145,26 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
       VirtualFile vBasePath = VfsUtil.findFileByIoFile(basePath, false);
       if (vBasePath != null && vBasePath.isValid()) {
         String baseUrl = karmaServer.formatUrlWithoutUrlRoot("/base");
-        mappings.forcePut(baseUrl, vBasePath);
+        mappings.put(baseUrl, vBasePath);
       }
     }
-    for (VirtualFile root : ManagingFS.getInstance().getLocalRoots()) {
-      mappings.forcePut(karmaServer.formatUrlWithoutUrlRoot("/absolute"), root);
+    if (SystemInfo.isWindows) {
+      VirtualFile[] roots = ManagingFS.getInstance().getLocalRoots();
+      for (VirtualFile root : roots) {
+        String key = karmaServer.formatUrlWithoutUrlRoot("/absolute" + root.getName());
+        if (mappings.containsKey(key)) {
+          LOG.warn("Duplicate mapping for Karma debug: " + key);
+        }
+        else {
+          mappings.put(key, root);
+        }
+      }
+    }
+    else {
+      VirtualFile[] roots = ManagingFS.getInstance().getLocalRoots();
+      if (roots.length == 1) {
+        mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute"), roots[0]);
+      }
     }
     return new RemoteDebuggingFileFinder(mappings, false);
   }
