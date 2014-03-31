@@ -29,7 +29,7 @@ public class CustomWorldContributor extends NonCodeMembersContributor {
   @Override
   public void processDynamicElements(@NotNull PsiType qualifierType,
                                      @NotNull PsiScopeProcessor processor,
-                                     @Nullable PsiElement place,
+                                     @NotNull PsiElement place,
                                      @NotNull ResolveState state) {
     if (place instanceof GrReferenceExpression &&
         ((GrReferenceExpression)place).getQualifier() == null &&
