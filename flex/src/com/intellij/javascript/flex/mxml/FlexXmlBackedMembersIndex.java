@@ -61,7 +61,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
 
       @Override
       @NotNull
-      public Map<String, Void> map(FileContent inputData) {
+      public Map<String, Void> map(@NotNull FileContent inputData) {
         final XmlFile file = (XmlFile)inputData.getPsiFile();
 
         final Map<String, Void> result = new HashMap<String, Void>();

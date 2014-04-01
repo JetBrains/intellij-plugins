@@ -25,7 +25,7 @@ import java.util.Map;
 public class MxmlTodoIndexer extends XmlTodoIndexer {
   @NotNull
   @Override
-  public Map<TodoIndexEntry, Integer> map(final FileContent inputData) {
+  public Map<TodoIndexEntry, Integer> map(@NotNull final FileContent inputData) {
     final Map<TodoIndexEntry, Integer> map = new THashMap<TodoIndexEntry, Integer>(super.map(inputData));
     FlexXmlBackedMembersIndex.visitScriptTagInjectedFilesForIndexing((XmlFile)inputData.getPsiFile(),
                                                                      new JSResolveUtil.JSInjectedFilesVisitor() {

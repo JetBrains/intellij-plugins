@@ -153,7 +153,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
     return new DataIndexer<String, Set<FlexStyleIndexInfo>, FileContent>() {
       @Override
       @NotNull
-      public Map<String, Set<FlexStyleIndexInfo>> map(FileContent inputData) {
+      public Map<String, Set<FlexStyleIndexInfo>> map(@NotNull FileContent inputData) {
         final THashMap<String, Set<FlexStyleIndexInfo>> map = new THashMap<String, Set<FlexStyleIndexInfo>>();
         if (JavaScriptSupportLoader.isFlexMxmFile(inputData.getFileName())) {
           PsiFile file = inputData.getPsiFile();
