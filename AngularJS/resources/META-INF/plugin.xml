@@ -65,6 +65,7 @@
     <fileBasedIndex implementation="org.angularjs.index.AngularFilterIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularSymbolIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularTemplateCacheIndex"/>
+    <fileBasedIndex implementation="org.angularjs.index.AngularInjectionDelimiterIndex"/>
 
     <gotoSymbolContributor implementation="org.angularjs.navigation.AngularGotoSymbolContributor"/>
     <lang.documentationProvider language="HTML" implementationClass="org.angularjs.AngularJSDocumentationProvider" />

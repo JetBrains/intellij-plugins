@@ -19,7 +19,10 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
   public Result beforeCharTyped(char c, Project project, Editor editor, PsiFile file, FileType fileType) {
     if (file.getViewProvider() instanceof MultiplePsiFilesPerDocumentFileViewProvider) return Result.CONTINUE;
 
-    if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return TypedHandlerDelegate.Result.DEFAULT;
+    if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return Result.DEFAULT;
+    if (!AngularJSBracesUtil.DEFAULT_START.equals(AngularJSBracesUtil.getInjectionStart(project)) ||
+        !AngularJSBracesUtil.DEFAULT_END.equals(AngularJSBracesUtil.getInjectionEnd(project))) return Result.CONTINUE;
+
     // we should use AngularJSBracesUtil here
     if (file.getFileType() == HtmlFileType.INSTANCE) {
       if (c == '{') {
@@ -29,7 +32,7 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
         if (offset > 0 && (chars.charAt(offset - 1)) == '{') {
           if (offset < 2 || (chars.charAt(offset - 2)) != '{') {
             if (alreadyHasEnding(chars, offset)) {
-              return TypedHandlerDelegate.Result.CONTINUE;
+              return Result.CONTINUE;
             }
             else {
               String interpolation = addWhiteSpaceBetweenBraces ? "{  }" : "{}";
@@ -46,7 +49,7 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
       }
     }
 
-    return TypedHandlerDelegate.Result.CONTINUE;
+    return Result.CONTINUE;
   }
 
   private static boolean alreadyHasEnding(String chars, int offset) {
