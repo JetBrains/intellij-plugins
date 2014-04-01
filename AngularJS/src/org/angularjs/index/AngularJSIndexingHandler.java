@@ -99,6 +99,19 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         }
       }
     }
+
+    if ("$interpolateProvider".equals(qualifier.getText())) {
+      if ("startSymbol".equals(command) || "endSymbol".equals(command)) {
+        JSExpression[] arguments = callExpression.getArguments();
+        if (arguments.length > 0) {
+          JSExpression argument = arguments[0];
+          if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
+            visitor.storeAdditionalData(argument, AngularInjectionDelimiterIndex.INDEX_ID.toString(), command,
+                                        argument.getTextOffset(), StringUtil.unquoteString(argument.getText()));
+          }
+        }
+      }
+    }
   }
 
   private static void storeAdditionalData(final JSSymbolVisitor visitor,

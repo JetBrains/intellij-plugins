@@ -49,13 +49,14 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
       int startIndex;
       int endIndex = -1;
       do {
-        startIndex = text.indexOf(AngularJSBracesUtil.getInjectionStart(project), endIndex);
+        final String start = AngularJSBracesUtil.getInjectionStart(project);
+        startIndex = text.indexOf(start, endIndex);
         endIndex = startIndex >= 0 ? text.indexOf(AngularJSBracesUtil.getInjectionEnd(project), startIndex) : -1;
         endIndex = endIndex > 0 ? endIndex : text.length();
         final PsiElement injectionCandidate = startIndex >= 0 ? context.findElementAt(startIndex) : null;
         if (injectionCandidate != null && injectionCandidate.getNode().getElementType() != XmlTokenType.XML_COMMENT_CHARACTERS) {
           registrar.startInjecting(AngularJSLanguage.INSTANCE).
-                    addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(startIndex + 2, endIndex)).
+                    addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(startIndex + start.length(), endIndex)).
                     doneInjecting();
         }
       } while (startIndex >= 0);
