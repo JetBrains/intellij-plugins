@@ -35,9 +35,10 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
 
     final PsiElement parent = context.getParent();
     if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {
-      if (AngularAttributesRegistry.isAngularExpressionAttribute((XmlAttribute)parent)) {
+      final int length = context.getTextLength();
+      if (AngularAttributesRegistry.isAngularExpressionAttribute((XmlAttribute)parent) && length > 1) {
         registrar.startInjecting(AngularJSLanguage.INSTANCE).
-          addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(1, context.getTextLength() - 1)).
+          addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(1, length - 1)).
           doneInjecting();
         return;
       }
