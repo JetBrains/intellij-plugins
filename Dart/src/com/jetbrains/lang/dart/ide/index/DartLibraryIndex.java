@@ -95,7 +95,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
   private static class MyDataIndexer implements DataIndexer<String, Void, FileContent> {
     @Override
     @NotNull
-    public Map<String, Void> map(final FileContent inputData) {
+    public Map<String, Void> map(@NotNull final FileContent inputData) {
       final String libraryName = DartIndexUtil.indexFile(inputData).getLibraryName();
       return libraryName == null
              ? Collections.<String, Void>emptyMap()

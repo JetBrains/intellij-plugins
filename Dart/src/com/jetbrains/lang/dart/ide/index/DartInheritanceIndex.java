@@ -76,7 +76,7 @@ public class DartInheritanceIndex extends FileBasedIndexExtension<String, List<D
   private static class MyDataIndexer implements DataIndexer<String, List<DartComponentInfo>, FileContent> {
     @Override
     @NotNull
-    public Map<String, List<DartComponentInfo>> map(final FileContent inputData) {
+    public Map<String, List<DartComponentInfo>> map(@NotNull final FileContent inputData) {
       return DartIndexUtil.indexFile(inputData).getInheritorsMap();
     }
   }

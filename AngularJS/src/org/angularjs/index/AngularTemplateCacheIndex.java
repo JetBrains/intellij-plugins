@@ -67,7 +67,7 @@ public class AngularTemplateCacheIndex extends ScalarIndexExtension<String> {
   private static class MyDataIndexer implements DataIndexer<String, Void, FileContent> {
     @NotNull
     @Override
-    public Map<String, Void> map(FileContent inputData) {
+    public Map<String, Void> map(@NotNull FileContent inputData) {
       final Map<String, Void> result = new THashMap<String, Void>();
       PsiFile psiFile = inputData.getPsiFile();
       processTemplates(psiFile, new Processor<XmlAttribute>() {

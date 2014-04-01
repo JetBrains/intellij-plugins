@@ -91,7 +91,7 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
   private static class MyDataIndexer implements DataIndexer<String, Void, FileContent> {
     @Override
     @NotNull
-    public Map<String, Void> map(final FileContent inputData) {
+    public Map<String, Void> map(@NotNull final FileContent inputData) {
       List<String> symbols = DartIndexUtil.indexFile(inputData).getSymbols();
       final Map<String, Void> result = new THashMap<String, Void>();
       for (String symbol : symbols) {

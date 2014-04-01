@@ -45,7 +45,7 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
     return new DataIndexer<String, Void, FileContent>() {
       @Override
       @NotNull
-      public Map<String, Void> map(final FileContent inputData) {
+      public Map<String, Void> map(@NotNull final FileContent inputData) {
         VirtualFile file = inputData.getFile();
         if (file.isValid()) {
           VirtualFile dir = file.getParent();

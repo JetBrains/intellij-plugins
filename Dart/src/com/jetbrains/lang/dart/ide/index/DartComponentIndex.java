@@ -107,7 +107,7 @@ public class DartComponentIndex extends FileBasedIndexExtension<String, DartComp
   private static class MyDataIndexer implements DataIndexer<String, DartComponentInfo, FileContent> {
     @NotNull
     @Override
-    public Map<String, DartComponentInfo> map(FileContent inputData) {
+    public Map<String, DartComponentInfo> map(@NotNull FileContent inputData) {
       return DartIndexUtil.indexFile(inputData).getComponentInfoMap();
     }
   }

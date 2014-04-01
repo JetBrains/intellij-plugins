@@ -18,7 +18,7 @@ public abstract class AngularIndexBase extends ScalarIndexExtension<String> {
     new DataIndexer<String, Void, FileContent>() {
       @Override
       @NotNull
-      public Map<String, Void> map(FileContent inputData) {
+      public Map<String, Void> map(@NotNull FileContent inputData) {
         return JSSymbolUtil.indexFile(inputData.getPsiFile(), inputData).indexEntry.getStoredNames(getName().toString());
       }
     };
