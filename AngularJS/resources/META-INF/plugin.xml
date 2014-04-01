@@ -87,5 +87,6 @@
   <extensions defaultExtensionNs="JavaScript">
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler"/>
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
+    <customFileIndexerFactory implementation="org.angularjs.index.AngularJSIndexingHandler$Factory"/>
   </extensions>
 </idea-plugin>

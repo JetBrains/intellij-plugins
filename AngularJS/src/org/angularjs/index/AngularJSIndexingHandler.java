@@ -1,13 +1,13 @@
 package org.angularjs.index;
 
 import com.intellij.lang.javascript.documentation.JSDocumentationProcessor;
-import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
-import com.intellij.lang.javascript.index.JSSymbolVisitor;
+import com.intellij.lang.javascript.index.*;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.indexing.ID;
@@ -205,5 +205,20 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       });
     }
     return restrict.get().trim() + ";;";
+  }
+
+  public static class Factory extends JSFileIndexerFactory {
+    @Override
+    protected int getVersion() {
+      return AngularIndexUtil.BASE_VERSION;
+    }
+
+    @Nullable
+    @Override
+    public JSElementVisitor createVisitor(JSNamespace topLevelNs,
+                                          JSSymbolUtil.JavaScriptSymbolProcessorEx indexer,
+                                          PsiFile file) {
+      return null;
+    }
   }
 }
