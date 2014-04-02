@@ -5,6 +5,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Processor;
@@ -24,6 +25,8 @@ import java.util.List;
 public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
   @Override
   public void addTagNameVariants(final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
+    if (!(xmlTag instanceof HtmlTag)) return;
+
     final Project project = xmlTag.getProject();
     DirectiveUtil.processTagDirectives(project, new Processor<JSNamedElementProxy>() {
       @Override
@@ -41,19 +44,18 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
   @Nullable
   @Override
   public XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
+    if (!(xmlTag instanceof HtmlTag)) return null;
+
     final String directiveName = DirectiveUtil.normalizeAttributeName(xmlTag.getName());
-    if (xmlTag != null) {
-      final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
-      final XmlElementDescriptor descriptor = nsDescriptor != null ? nsDescriptor.getElementDescriptor(xmlTag) : null;
-      if (descriptor != null && !(descriptor instanceof AnyXmlElementDescriptor)) {
-        return null;
-      }
-
-      final Project project = xmlTag.getProject();
-      final JSNamedElementProxy directive = DirectiveUtil.getTagDirective(directiveName, project);
-
-      return directive != null ? new AngularJSTagDescriptor(directiveName, directive) : null;
+    final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
+    final XmlElementDescriptor descriptor = nsDescriptor != null ? nsDescriptor.getElementDescriptor(xmlTag) : null;
+    if (descriptor != null && !(descriptor instanceof AnyXmlElementDescriptor)) {
+      return null;
     }
-    return null;
+
+    final Project project = xmlTag.getProject();
+    final JSNamedElementProxy directive = DirectiveUtil.getTagDirective(directiveName, project);
+
+    return directive != null ? new AngularJSTagDescriptor(directiveName, directive) : null;
   }
 }

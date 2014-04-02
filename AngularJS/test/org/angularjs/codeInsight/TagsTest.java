@@ -7,6 +7,8 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.intellij.xml.util.CheckValidXmlInScriptBodyInspection;
 import org.angularjs.AngularTestUtil;
 
+import java.util.List;
+
 /**
  * @author Dennis.Ushakov
  */
@@ -69,5 +71,10 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
     assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+  }
+
+  public void testNoCompletionInXml() {
+    final List<String> variants = myFixture.getCompletionVariants("standard.xml", "angular.js");
+    assertDoesntContain(variants, "ng-form", "form", "script");
   }
 }
