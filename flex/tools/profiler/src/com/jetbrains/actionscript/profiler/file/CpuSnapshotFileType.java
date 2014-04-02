@@ -48,7 +48,7 @@ public class CpuSnapshotFileType implements FileType {
   }
 
   @Override
-  public String getCharset(@NotNull VirtualFile file, byte[] content) {
+  public String getCharset(@NotNull VirtualFile file, @NotNull byte[] content) {
     return null;
   }
 }

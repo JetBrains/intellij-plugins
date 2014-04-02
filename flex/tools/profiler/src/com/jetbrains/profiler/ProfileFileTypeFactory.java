@@ -43,7 +43,7 @@ public class ProfileFileTypeFactory extends FileTypeFactory {
       return false;
     }
 
-    public String getCharset(@NotNull VirtualFile virtualFile, byte[] bytes) {
+    public String getCharset(@NotNull VirtualFile virtualFile, @NotNull byte[] bytes) {
       return null;
     }
   };

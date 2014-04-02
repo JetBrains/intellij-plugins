@@ -58,7 +58,7 @@ public class FlexApplicationComponent extends FileTypeFactory implements Applica
       return true;
     }
 
-    public String getCharset(@NotNull final VirtualFile file, final byte[] content) {
+    public String getCharset(@NotNull final VirtualFile file, @NotNull final byte[] content) {
       return null;
     }
   };
