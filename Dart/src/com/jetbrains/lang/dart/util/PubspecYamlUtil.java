@@ -2,11 +2,15 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +33,7 @@ public class PubspecYamlUtil {
 
 
   private static final Key<Pair<Long, Map<String, Object>>> MOD_STAMP_TO_PUBSPEC_NAME = Key.create("MOD_STAMP_TO_PUBSPEC_NAME");
+  private static final String DART_PACKAGES_ROOT_OPTION = "dart.packages.root";
 
   @Nullable
   public static VirtualFile getPubspecYamlFile(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
@@ -45,6 +50,16 @@ public class PubspecYamlUtil {
   @NotNull
   public static Pair<VirtualFile, VirtualFile> getPubspecYamlFileAndPackagesFolder(final @NotNull Project project,
                                                                                    final @NotNull VirtualFile contextFile) {
+    final Module module = ModuleUtilCore.findModuleForFile(contextFile, project);
+    final String customPackagesPath = module == null ? null : getCustomPackagesPathForModule(module);
+    if (!StringUtil.isEmptyOrSpaces(customPackagesPath)) {
+      final VirtualFile customPackagesFolder = LocalFileSystem.getInstance().findFileByPath(customPackagesPath);
+      if (customPackagesFolder != null && customPackagesFolder.isDirectory()) {
+        return Pair.create(null, customPackagesFolder);
+      }
+      return Pair.create(null, null);
+    }
+
     final VirtualFile pubspecYamlFile = getPubspecYamlFile(project, contextFile);
     final VirtualFile parentFolder = pubspecYamlFile == null ? null : pubspecYamlFile.getParent();
     final VirtualFile packagesFolder = parentFolder == null ? null : parentFolder.findChild("packages");
@@ -117,6 +132,20 @@ public class PubspecYamlUtil {
     }
     catch (Exception e) {
       return null; // malformed yaml, e.g. because of typing in it
+    }
+  }
+
+  @Nullable
+  public static String getCustomPackagesPathForModule(final @NotNull Module module) {
+    return module.getOptionValue(DART_PACKAGES_ROOT_OPTION);
+  }
+
+  public static void setCustomPackagesPathForModule(final @NotNull Module module, final @Nullable String path) {
+    if (StringUtil.isEmptyOrSpaces(path)) {
+      module.clearOption(DART_PACKAGES_ROOT_OPTION);
+    }
+    else {
+      module.setOption(DART_PACKAGES_ROOT_OPTION, path);
     }
   }
 }
