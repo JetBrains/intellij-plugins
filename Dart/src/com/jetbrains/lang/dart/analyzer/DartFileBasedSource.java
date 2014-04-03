@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 
 public class DartFileBasedSource implements Source {
 
@@ -161,16 +162,18 @@ public class DartFileBasedSource implements Source {
   }
 
   private static UriKind getUriKind(final Project project, final VirtualFile file) {
-    final VirtualFile packagesFolder = PubspecYamlUtil.getDartPackagesFolder(project, file);
+    final Pair<VirtualFile, List<VirtualFile>> yamlAndPackageRoots = PubspecYamlUtil.getPubspecYamlFileAndDartPackageRoots(project, file);
 
-    if (packagesFolder != null && VfsUtilCore.isAncestor(packagesFolder, file, true)) {
-      return UriKind.PACKAGE_URI;
+    for (final VirtualFile packageRoot : yamlAndPackageRoots.second) {
+      if (packageRoot != null && VfsUtilCore.isAncestor(packageRoot, file, true)) {
+        return UriKind.PACKAGE_URI;
+      }
     }
-    else {
-      final VirtualFile pubspecYamlFile = PubspecYamlUtil.getPubspecYamlFile(project, file);
-      final VirtualFile lib = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild("lib");
-      final VirtualFile libFolder = lib != null && lib.isDirectory() ? lib : null;
-      return libFolder != null && VfsUtilCore.isAncestor(libFolder, file, true) ? UriKind.PACKAGE_URI : UriKind.FILE_URI;
-    }
+
+    final VirtualFile pubspecYamlFile = yamlAndPackageRoots.first;
+    final VirtualFile lib = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild("lib");
+    final VirtualFile libFolder = lib != null && lib.isDirectory() ? lib : null;
+
+    return libFolder != null && VfsUtilCore.isAncestor(libFolder, file, true) ? UriKind.PACKAGE_URI : UriKind.FILE_URI;
   }
 }

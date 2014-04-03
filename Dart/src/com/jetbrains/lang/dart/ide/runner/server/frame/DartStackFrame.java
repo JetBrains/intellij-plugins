@@ -68,9 +68,15 @@ public class DartStackFrame extends XStackFrame {
           file = pubspecYamlFile.findFileByRelativePath("../lib" + packageRelPath.substring(pubspecName.length()));
         }
         else {
-          final VirtualFile packagesFolder = myDebugProcess.getPackagesFolder();
-          final String path = packagesFolder == null ? null : packagesFolder.getPath() + "/" + packageRelPath;
-          file = path == null ? null : LocalFileSystem.getInstance().findFileByPath(path);
+          final List<VirtualFile> packageRoots = myDebugProcess.getPackageRoots();
+          VirtualFile inPackages = null;
+          for (VirtualFile packageRoot : packageRoots) {
+            inPackages = LocalFileSystem.getInstance().findFileByPath(packageRoot.getPath() + "/" + packageRelPath);
+            if (inPackages != null) {
+              break;
+            }
+          }
+          file = inPackages;
         }
       }
       else {

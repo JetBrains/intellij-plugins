@@ -379,10 +379,10 @@ public class DartResolveUtil {
                                                          final @NotNull String importText) {
     assert importText.startsWith(PACKAGE_PREFIX) : importText;
 
-    final Pair<VirtualFile, VirtualFile> pubspecYamlAndPackagesFolder =
-      PubspecYamlUtil.getPubspecYamlFileAndPackagesFolder(project, contextFile);
-    final VirtualFile pubspecYamlFile = pubspecYamlAndPackagesFolder.first;
-    final VirtualFile packagesFolder = pubspecYamlAndPackagesFolder.second;
+    final Pair<VirtualFile, List<VirtualFile>> yamlAndPackageRoots =
+      PubspecYamlUtil.getPubspecYamlFileAndDartPackageRoots(project, contextFile);
+    final VirtualFile pubspecYamlFile = yamlAndPackageRoots.first;
+    final List<VirtualFile> packageRoots = yamlAndPackageRoots.second;
 
     final String pubspecName = pubspecYamlFile == null ? null : PubspecYamlUtil.getPubspecName(pubspecYamlFile);
     final String prefix = pubspecName == null ? null : PACKAGE_PREFIX + pubspecName + "/";
@@ -393,7 +393,12 @@ public class DartResolveUtil {
     }
 
     final String relativePath = importText.substring(PACKAGE_PREFIX.length());
-    return packagesFolder == null ? null : VfsUtilCore.findRelativeFile(relativePath, packagesFolder);
+    for (VirtualFile packageRoot : packageRoots) {
+      final VirtualFile file = VfsUtilCore.findRelativeFile(relativePath, packageRoot);
+      if (file != null) return file;
+    }
+
+    return null;
   }
 
   @Nullable

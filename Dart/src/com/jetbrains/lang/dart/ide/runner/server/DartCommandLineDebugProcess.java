@@ -6,6 +6,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.TimeoutUtil;
@@ -24,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public class DartCommandLineDebugProcess extends XDebugProcess {
   public static final Logger LOG = Logger.getInstance(DartCommandLineDebugProcess.class.getName());
@@ -32,6 +35,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   private final VmConnection myVmConnection;
   private final DartCommandLineBreakpointsHandler myBreakpointsHandler;
   private final @Nullable VirtualFile myPubspecYamlFile;
+  private final @NotNull List<VirtualFile> myPackageRoots;
   private boolean myVmConnected;
   private @Nullable VmIsolate myMainIsolate;
 
@@ -42,7 +46,16 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     super(session);
 
     final VirtualFile dartFile = LocalFileSystem.getInstance().findFileByPath(dartScriptPath);
-    myPubspecYamlFile = dartFile == null ? null : PubspecYamlUtil.getPubspecYamlFile(session.getProject(), dartFile);
+    if (dartFile != null) {
+      final Pair<VirtualFile, List<VirtualFile>> yamlAndPackageRoots =
+        PubspecYamlUtil.getPubspecYamlFileAndDartPackageRoots(session.getProject(), dartFile);
+      myPubspecYamlFile = yamlAndPackageRoots.first;
+      myPackageRoots = yamlAndPackageRoots.second;
+    }
+    else {
+      myPubspecYamlFile = null;
+      myPackageRoots = Collections.emptyList();
+    }
 
     myBreakpointsHandler = new DartCommandLineBreakpointsHandler(this);
     myExecutionResult = executionResult;
@@ -204,9 +217,9 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     return myPubspecYamlFile;
   }
 
-  @Nullable
-  public VirtualFile getPackagesFolder() {
-    return myPubspecYamlFile == null ? null : PubspecYamlUtil.getDartPackagesFolder(getSession().getProject(), myPubspecYamlFile);
+  @NotNull
+  public List<VirtualFile> getPackageRoots() {
+    return myPackageRoots;
   }
 
   public VmConnection getVmConnection() {

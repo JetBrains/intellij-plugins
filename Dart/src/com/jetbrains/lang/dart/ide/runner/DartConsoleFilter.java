@@ -21,16 +21,17 @@ public class DartConsoleFilter implements Filter {
 
   private final @NotNull Project myProject;
   private final @Nullable DartSdk mySdk;
-  private final @Nullable VirtualFile myPackagesFolder;
+  private final @Nullable VirtualFile myContextFile;
+  private Collection<VirtualFile> myAllPubspecYamlFiles;
 
-  public DartConsoleFilter(final Project project) {
+  public DartConsoleFilter(final @NotNull Project project) {
     this(project, null);
   }
 
-  public DartConsoleFilter(final @NotNull Project project, final @Nullable VirtualFile packagesFolder) {
+  public DartConsoleFilter(final @NotNull Project project, final @Nullable VirtualFile contextFile) {
     myProject = project;
     mySdk = DartSdk.getGlobalDartSdk();
-    myPackagesFolder = packagesFolder;
+    myContextFile = contextFile;
   }
 
   @Nullable
@@ -59,11 +60,22 @@ public class DartConsoleFilter implements Filter {
         }
         break;
       case PACKAGE:
-        if (myPackagesFolder != null) {
-          file = DartResolveUtil.getPackagePrefixImportedFile(myProject, myPackagesFolder, "package:" + info.path);
+        if (myContextFile != null) {
+          file = DartResolveUtil.getPackagePrefixImportedFile(myProject, myContextFile, "package:" + info.path);
         }
         else {
-          file = findFileInAnyPackagesFolder(myProject, info.path);
+          if (myAllPubspecYamlFiles == null) {
+            myAllPubspecYamlFiles = FilenameIndex.getVirtualFilesByName(myProject, PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));
+          }
+
+          VirtualFile inPackage = null;
+          for (VirtualFile yamlFile : myAllPubspecYamlFiles) {
+            inPackage = DartResolveUtil.getPackagePrefixImportedFile(myProject, yamlFile, "package:" + info.path);
+            if (inPackage != null) {
+              break;
+            }
+          }
+          file = inPackage;
         }
         break;
       default:
@@ -76,17 +88,6 @@ public class DartConsoleFilter implements Filter {
       return new Result(highlightStartOffset, highlightEndOffset, new OpenFileHyperlinkInfo(myProject, file, info.line, info.column));
     }
 
-    return null;
-  }
-
-  @Nullable
-  private static VirtualFile findFileInAnyPackagesFolder(final Project project, final String relativePath) {
-    final Collection<VirtualFile> pubspecYamlFiles =
-      FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project));
-    for (VirtualFile pubspecYamlFile : pubspecYamlFiles) {
-      final VirtualFile file = DartResolveUtil.getPackagePrefixImportedFile(project, pubspecYamlFile, "package:" + relativePath);
-      if (file != null) return file;
-    }
     return null;
   }
 }

@@ -39,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 public class DartUnitRunningState extends CommandLineState {
   private static final Logger LOG = Logger.getInstance("com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunningState");
@@ -80,9 +81,8 @@ public class DartUnitRunningState extends CommandLineState {
     final DartUnitRunConfiguration runConfiguration = (DartUnitRunConfiguration)env.getRunProfile();
     final DartUnitRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
 
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(runnerParameters.getFilePath());
-    final VirtualFile packagesFolder = file == null ? null : PubspecYamlUtil.getDartPackagesFolder(project, file);
-    final DartConsoleFilter filter = new DartConsoleFilter(project, packagesFolder);
+    final DartConsoleFilter filter =
+      new DartConsoleFilter(project, LocalFileSystem.getInstance().findFileByPath(runnerParameters.getFilePath()));
 
     TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(runConfiguration, DART_FRAMEWORK_NAME, env.getExecutor());
     testConsoleProperties.setUsePredefinedMessageFilter(false);
@@ -135,12 +135,13 @@ public class DartUnitRunningState extends CommandLineState {
       commandLine.addParameter(argumentsTokenizer.nextToken());
     }
 
-    String libUrl = VfsUtilCore.pathToUrl(myUnitParameters.getFilePath());
-    final VirtualFile libraryRoot = VirtualFileManager.getInstance().findFileByUrl(libUrl);
-    final VirtualFile packages = libraryRoot == null ? null
-                                                     : PubspecYamlUtil.getDartPackagesFolder(getEnvironment().getProject(), libraryRoot);
-    if (packages != null && packages.isDirectory()) {
-      commandLine.addParameter("--package-root=" + packages.getPath() + "/");
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(myUnitParameters.getFilePath());
+    if (file != null) {
+      // todo how to handle multiple package roots?
+      final List<VirtualFile> packageRoots = PubspecYamlUtil.getDartPackageRoots(getEnvironment().getProject(), file);
+      if (!packageRoots.isEmpty()) {
+        commandLine.addParameter("--package-root=" + packageRoots.get(0).getPath() + "/");
+      }
     }
 
     if (myDebuggingPort > 0) {

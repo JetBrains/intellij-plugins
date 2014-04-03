@@ -58,15 +58,11 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
 
     if (FileUtil.isAncestor(sdk.getHomePath(), annotatedFile.getPath(), true)) return null;
 
-    final VirtualFile packagesFolder = PubspecYamlUtil.getDartPackagesFolder(project, annotatedFile);
-
-    if (packagesFolder != null && VfsUtilCore.isAncestor(packagesFolder, annotatedFile, true)) return null;
-
     final List<VirtualFile> libraries = DartResolveUtil.findLibrary(psiFile, GlobalSearchScope.projectScope(project));
     final VirtualFile fileToAnalyze = libraries.isEmpty() || libraries.contains(annotatedFile) ? annotatedFile : libraries.get(0);
 
     return Pair.create(DartFileBasedSource.getSource(project, fileToAnalyze),
-                       DartAnalyzerService.getInstance(project).getAnalysisContext(annotatedFile, sdk.getHomePath(), packagesFolder));
+                       DartAnalyzerService.getInstance(project).getAnalysisContext(annotatedFile, sdk.getHomePath()));
   }
 
   private static boolean containsDartEmbeddedContent(final XmlFile file) {
