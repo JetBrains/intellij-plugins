@@ -11,7 +11,10 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -21,6 +24,7 @@ import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.Function;
 import com.intellij.xdebugger.XSourcePosition;
+import com.intellij.xdebugger.evaluation.ExpressionInfo;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XStackFrame;
@@ -483,7 +487,7 @@ public class FlexStackFrame extends XStackFrame {
 
     @Nullable
     @Override
-    public Pair<TextRange, String> getExpressionAtOffset(@NotNull Project project, @NotNull Document document, final int offset, boolean sideEffectsAllowed) {
+    public ExpressionInfo getExpressionInfoAtOffset(@NotNull Project project, @NotNull Document document, final int offset, boolean sideEffectsAllowed) {
       return JSDebuggerSupportUtils.getExpressionAtOffset(project, document, offset);
     }
   }
