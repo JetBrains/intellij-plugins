@@ -6,6 +6,7 @@ import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
 import com.intellij.psi.PsiFile;
@@ -17,7 +18,8 @@ import org.angularjs.settings.AngularJSConfig;
 public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate {
   @Override
   public Result beforeCharTyped(char c, Project project, Editor editor, PsiFile file, FileType fileType) {
-    if (file.getViewProvider() instanceof MultiplePsiFilesPerDocumentFileViewProvider) return Result.CONTINUE;
+    if (file.getViewProvider() instanceof MultiplePsiFilesPerDocumentFileViewProvider ||
+        DumbService.isDumb(project)) return Result.CONTINUE;
 
     if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return Result.DEFAULT;
     if (!AngularJSBracesUtil.DEFAULT_START.equals(AngularJSBracesUtil.getInjectionStart(project)) ||
