@@ -16,11 +16,11 @@ import static com.jetbrains.lang.dart.util.DartResolveUtil.PACKAGE_SCHEME;
 
 public class DartPackageUriResolver extends UriResolver {
   private final @NotNull Project myProject;
-  private final @NotNull VirtualFile myPackagesFolder;
+  private final @NotNull VirtualFile myContextFile;
 
-  public DartPackageUriResolver(final @NotNull Project project, final @NotNull VirtualFile packagesFolder) {
+  public DartPackageUriResolver(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
     myProject = project;
-    myPackagesFolder = packagesFolder;
+    myContextFile = contextFile;
   }
 
   public Source fromEncoding(final UriKind kind, final URI uri) {
@@ -39,7 +39,7 @@ public class DartPackageUriResolver extends UriResolver {
   public Source resolveAbsolute(final URI uri) {
     if (!PACKAGE_SCHEME.equals(uri.getScheme())) return null;
 
-    final VirtualFile file = DartResolveUtil.getPackagePrefixImportedFile(myProject, myPackagesFolder,
+    final VirtualFile file = DartResolveUtil.getPackagePrefixImportedFile(myProject, myContextFile,
                                                                           PACKAGE_PREFIX + uri.getSchemeSpecificPart());
     final DartFileBasedSource source = file == null ? null : DartFileBasedSource.getSource(myProject, file);
     return source != null && source.getUriKind() == UriKind.PACKAGE_URI ? source : null;

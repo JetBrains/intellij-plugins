@@ -144,11 +144,19 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
         return sourcePsiFile == null ? ResolveResult.EMPTY_ARRAY : new ResolveResult[]{new PsiElementResolveResult(sourcePsiFile)};
       }
 
-      final VirtualFile packagesFolder = virtualFile == null ? null : PubspecYamlUtil.getDartPackagesFolder(getProject(), virtualFile);
-      final String relativePath = text.substring(PACKAGE_PREFIX.length());
-      final VirtualFile sourceFile = packagesFolder == null ? null : VfsUtilCore.findRelativeFile(relativePath, packagesFolder);
-      final PsiFile sourcePsiFile = sourceFile == null ? null : psiFile.getManager().findFile(sourceFile);
-      return sourcePsiFile == null ? ResolveResult.EMPTY_ARRAY : new ResolveResult[]{new PsiElementResolveResult(sourcePsiFile)};
+      if (virtualFile != null) {
+        final String relativePath = text.substring(PACKAGE_PREFIX.length());
+        final List<VirtualFile> packageRoots = PubspecYamlUtil.getDartPackageRoots(getProject(), virtualFile);
+        for (VirtualFile packageRoot : packageRoots) {
+          final VirtualFile sourceFile = VfsUtilCore.findRelativeFile(relativePath, packageRoot);
+          final PsiFile sourcePsiFile = sourceFile == null ? null : psiFile.getManager().findFile(sourceFile);
+          if (sourcePsiFile != null) {
+            return new ResolveResult[]{new PsiElementResolveResult(sourcePsiFile)};
+          }
+        }
+      }
+
+      return ResolveResult.EMPTY_ARRAY;
     }
 
     VirtualFile sourceFile = virtualFile == null ? null : DartResolveUtil.findRelativeFile(virtualFile, text);
@@ -192,8 +200,15 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
         return getPackageReferences(file, libFolder, path.substring(prefix.length()), prefix.length() + 1);
       }
       else {
-        final VirtualFile packagesFolder = PubspecYamlUtil.getDartPackagesFolder(getProject(), file);
-        return getPackageReferences(file, packagesFolder, path.substring(PACKAGE_PREFIX.length()), PACKAGE_PREFIX.length() + 1);
+        final String relPath = path.substring(PACKAGE_PREFIX.length());
+        final List<VirtualFile> packageRoots = PubspecYamlUtil.getDartPackageRoots(getProject(), file);
+        for (VirtualFile packageRoot : packageRoots) {
+          if (packageRoot.findFileByRelativePath(relPath) != null) {
+            return getPackageReferences(file, packageRoot, relPath, PACKAGE_PREFIX.length() + 1);
+          }
+        }
+
+        return PsiReference.EMPTY_ARRAY;
       }
     }
     final FileReferenceSet referenceSet = new FileReferenceSet(path, this, 1, null, false, true);

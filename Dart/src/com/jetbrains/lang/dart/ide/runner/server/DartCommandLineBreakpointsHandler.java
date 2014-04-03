@@ -166,10 +166,17 @@ public class DartCommandLineBreakpointsHandler {
                               ? null
                               : DartLibraryIndex.getStandardLibraryNameByRelativePath(project, relativeToSdkLibFolder);
 
-    final VirtualFile packagesFolder = myDebugProcess.getPackagesFolder();
-    final String relativeToPackages = packagesFolder == null || relativeToSdkLibFolder != null
-                                      ? null
-                                      : VfsUtilCore.getRelativePath(file, packagesFolder, '/');
+    final List<VirtualFile> packageRoots = myDebugProcess.getPackageRoots();
+
+    String relativeToPackages = null;
+    if (relativeToSdkLibFolder == null) {
+      for (VirtualFile packageRoot : packageRoots) {
+        relativeToPackages = VfsUtilCore.getRelativePath(file, packageRoot, '/');
+        if (relativeToPackages != null) {
+          break;
+        }
+      }
+    }
 
     final VirtualFile pubspecYamlFile = myDebugProcess.getPubspecYamlFile();
     final VirtualFile libFolder = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild("lib");

@@ -17,6 +17,7 @@ import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -49,13 +50,21 @@ public class HtmlScriptSrcToDartPackagesPathReferenceProvider implements PathRef
       @Override
       public Collection<PsiFileSystemItem> fun(final PsiFile psiFile) {
         final VirtualFile file = DartResolveUtil.getRealVirtualFile(psiFile);
-        final VirtualFile packagesFolder = file == null ? null : PubspecYamlUtil.getDartPackagesFolder(psiFile.getProject(), file);
-        final VirtualFile parentFolder = packagesFolder == null ? null : packagesFolder.getParent();
+        if (file == null) return Collections.emptyList();
 
-        final PsiFileSystemItem psiDirectory = parentFolder == null
-                                               ? null
-                                               : PsiManager.getInstance(psiFile.getProject()).findDirectory(parentFolder);
-        return psiDirectory != null ? Collections.singletonList(psiDirectory) : null;
+        final List<VirtualFile> packageRoots = PubspecYamlUtil.getDartPackageRoots(psiFile.getProject(), file);
+        final Collection<PsiFileSystemItem> result = new ArrayList<PsiFileSystemItem>(packageRoots.size());
+        for (VirtualFile packageRoot : packageRoots) {
+          final VirtualFile parentFolder = packageRoot.getParent();
+          final PsiFileSystemItem psiDirectory = parentFolder == null
+                                                 ? null
+                                                 : PsiManager.getInstance(psiFile.getProject()).findDirectory(parentFolder);
+          if (psiDirectory != null) {
+            result.add(psiDirectory);
+          }
+        }
+
+        return result;
       }
     });
 

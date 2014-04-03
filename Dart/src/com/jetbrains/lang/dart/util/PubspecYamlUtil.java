@@ -25,6 +25,9 @@ import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class PubspecYamlUtil {
@@ -49,29 +52,32 @@ public class PubspecYamlUtil {
   }
 
   @NotNull
-  public static Pair<VirtualFile, VirtualFile> getPubspecYamlFileAndPackagesFolder(final @NotNull Project project,
-                                                                                   final @NotNull VirtualFile contextFile) {
+  public static Pair<VirtualFile, List<VirtualFile>> getPubspecYamlFileAndDartPackageRoots(final @NotNull Project project,
+                                                                                           final @NotNull VirtualFile contextFile) {
     final Module module = ModuleUtilCore.findModuleForFile(contextFile, project);
     final String customPackageRootPaths = module == null ? null : getCustomPackageRootsForModule(module);
     if (!StringUtil.isEmptyOrSpaces(customPackageRootPaths)) {
+      final List<VirtualFile> dartPackageRoots = new ArrayList<VirtualFile>();
       for (String path : StringUtil.split(customPackageRootPaths, DART_CUSTOM_PACKAGE_ROOTS_SEPARATOR)) {
         final VirtualFile customPackagesFolder = LocalFileSystem.getInstance().findFileByPath(path.trim());
         if (customPackagesFolder != null && customPackagesFolder.isDirectory()) {
-          return Pair.create(null, customPackagesFolder); // todo return all package roots, not only first!
+          dartPackageRoots.add(customPackagesFolder);
         }
       }
-      return Pair.create(null, null);
+      return Pair.create(null, dartPackageRoots);
     }
 
     final VirtualFile pubspecYamlFile = getPubspecYamlFile(project, contextFile);
     final VirtualFile parentFolder = pubspecYamlFile == null ? null : pubspecYamlFile.getParent();
     final VirtualFile packagesFolder = parentFolder == null ? null : parentFolder.findChild("packages");
-    return Pair.create(pubspecYamlFile, packagesFolder != null && packagesFolder.isDirectory() ? packagesFolder : null);
+    return packagesFolder == null || !packagesFolder.isDirectory()
+           ? Pair.create(pubspecYamlFile, Collections.<VirtualFile>emptyList())
+           : Pair.create(pubspecYamlFile, Collections.singletonList(packagesFolder));
   }
 
-  @Nullable
-  public static VirtualFile getDartPackagesFolder(final @NotNull Project project, final @NotNull VirtualFile file) {
-    return getPubspecYamlFileAndPackagesFolder(project, file).second;
+  @NotNull
+  public static List<VirtualFile> getDartPackageRoots(final @NotNull Project project, final @NotNull VirtualFile file) {
+    return getPubspecYamlFileAndDartPackageRoots(project, file).second;
   }
 
   @Nullable
