@@ -17,7 +17,7 @@ public class DartExecutionStack extends XExecutionStack {
   private final @NotNull List<VmCallFrame> myVmCallFrames;
 
   public DartExecutionStack(final @NotNull DartCommandLineDebugProcess debugProcess, final @NotNull List<VmCallFrame> vmCallFrames) {
-    super("Dart VM");
+    super("");
     myDebugProcess = debugProcess;
     myTopFrame = vmCallFrames.isEmpty() ? null : new DartStackFrame(myDebugProcess, vmCallFrames.get(0));
     myVmCallFrames = vmCallFrames;
