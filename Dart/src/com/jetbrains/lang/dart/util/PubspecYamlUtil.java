@@ -33,7 +33,8 @@ public class PubspecYamlUtil {
 
 
   private static final Key<Pair<Long, Map<String, Object>>> MOD_STAMP_TO_PUBSPEC_NAME = Key.create("MOD_STAMP_TO_PUBSPEC_NAME");
-  private static final String DART_PACKAGES_ROOT_OPTION = "dart.packages.root";
+  private static final String DART_CUSTOM_PACKAGE_ROOTS_OPTION = "dart.package.roots";
+  public static final String DART_CUSTOM_PACKAGE_ROOTS_SEPARATOR = ";";
 
   @Nullable
   public static VirtualFile getPubspecYamlFile(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
@@ -51,11 +52,13 @@ public class PubspecYamlUtil {
   public static Pair<VirtualFile, VirtualFile> getPubspecYamlFileAndPackagesFolder(final @NotNull Project project,
                                                                                    final @NotNull VirtualFile contextFile) {
     final Module module = ModuleUtilCore.findModuleForFile(contextFile, project);
-    final String customPackagesPath = module == null ? null : getCustomPackagesPathForModule(module);
-    if (!StringUtil.isEmptyOrSpaces(customPackagesPath)) {
-      final VirtualFile customPackagesFolder = LocalFileSystem.getInstance().findFileByPath(customPackagesPath);
-      if (customPackagesFolder != null && customPackagesFolder.isDirectory()) {
-        return Pair.create(null, customPackagesFolder);
+    final String customPackageRootPaths = module == null ? null : getCustomPackageRootsForModule(module);
+    if (!StringUtil.isEmptyOrSpaces(customPackageRootPaths)) {
+      for (String path : StringUtil.split(customPackageRootPaths, DART_CUSTOM_PACKAGE_ROOTS_SEPARATOR)) {
+        final VirtualFile customPackagesFolder = LocalFileSystem.getInstance().findFileByPath(path.trim());
+        if (customPackagesFolder != null && customPackagesFolder.isDirectory()) {
+          return Pair.create(null, customPackagesFolder); // todo return all package roots, not only first!
+        }
       }
       return Pair.create(null, null);
     }
@@ -136,16 +139,16 @@ public class PubspecYamlUtil {
   }
 
   @Nullable
-  public static String getCustomPackagesPathForModule(final @NotNull Module module) {
-    return module.getOptionValue(DART_PACKAGES_ROOT_OPTION);
+  public static String getCustomPackageRootsForModule(final @NotNull Module module) {
+    return module.getOptionValue(DART_CUSTOM_PACKAGE_ROOTS_OPTION);
   }
 
-  public static void setCustomPackagesPathForModule(final @NotNull Module module, final @Nullable String path) {
+  public static void setCustomPackageRootsForModule(final @NotNull Module module, final @Nullable String path) {
     if (StringUtil.isEmptyOrSpaces(path)) {
-      module.clearOption(DART_PACKAGES_ROOT_OPTION);
+      module.clearOption(DART_CUSTOM_PACKAGE_ROOTS_OPTION);
     }
     else {
-      module.setOption(DART_PACKAGES_ROOT_OPTION, path);
+      module.setOption(DART_CUSTOM_PACKAGE_ROOTS_OPTION, path);
     }
   }
 }
