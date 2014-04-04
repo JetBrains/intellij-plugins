@@ -23,7 +23,7 @@
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="js-test-common" />
     <orderEntry type="module" module-name="webide-impl" />
-    <orderEntry type="module" module-name="debugger-ui" />
+    <orderEntry type="module" module-name="script-debugger-ui" />
   </component>
 </module>
 
