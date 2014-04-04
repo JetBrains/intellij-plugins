@@ -14,6 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.DartPartStatement;
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static com.jetbrains.lang.dart.util.DartResolveUtil.PACKAGE_PREFIX;
@@ -202,13 +204,18 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
       else {
         final String relPath = path.substring(PACKAGE_PREFIX.length());
         final List<VirtualFile> packageRoots = PubspecYamlUtil.getDartPackageRoots(getProject(), file);
+
+        if (packageRoots.size() == 0) return PsiReference.EMPTY_ARRAY;
+        if (packageRoots.size() == 1) return getPackageReferences(file, packageRoots.get(0), relPath, PACKAGE_PREFIX.length() + 1);
+
+        final Collection<PsiReference> result = new SmartList<PsiReference>();
         for (VirtualFile packageRoot : packageRoots) {
           if (packageRoot.findFileByRelativePath(relPath) != null) {
-            return getPackageReferences(file, packageRoot, relPath, PACKAGE_PREFIX.length() + 1);
+            ContainerUtil.addAll(result, getPackageReferences(file, packageRoot, relPath, PACKAGE_PREFIX.length() + 1));
           }
         }
 
-        return PsiReference.EMPTY_ARRAY;
+        return result.toArray(new PsiReference[result.size()]);
       }
     }
     final FileReferenceSet referenceSet = new FileReferenceSet(path, this, 1, null, false, true);
