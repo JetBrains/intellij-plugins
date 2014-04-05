@@ -2,6 +2,8 @@
   <property name="idea.version" value="13.0.3" />
   <property name="kotlin.version" value="0.7.270" />
 
+  <property name="build.number" value="SNAPSHOT_XXX" />
+
   <property name="deps" value="${basedir}/out" />
 
   <mkdir dir="${deps}" />
@@ -57,6 +59,13 @@
     <echo message="##teamcity[setParameter name='teamcity.ideaRunner.additional.lib.path' value='${deps}/kotlin/Kotlin/lib/jps']"/>
     <echo message="##teamcity[setParameter name='system.jps.kotlin.home' value='${deps}/kotlin/Kotlin/kotlinc']"/>
     <echo message="##teamcity[setParameter name='system.jps.kotlin.extra.annotation.paths' value='${deps}/kotlin/Kotlin/kotlinc/lib/kotlin-jdk-annotations.jar']"/>
+  </target>
+
+  <target name="replace.build.number">
+    <replace
+      token="SNAPSHOT"
+      value="${build.number}"
+      file="${basedir}/resources/META-INF/plugin.xml" />
   </target>
 
   <target name="fetch.dependencies" depends="fetch.ant.contrib,fetch.idea,fetch.kotlin" />

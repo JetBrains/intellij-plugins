@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>AWSCloudFormation</id>
   <name>AWS CloudFormation support</name>
-  <version>0.2</version>
+  <version>SNAPSHOT</version>
 
   <vendor url="https://github.com/shalupov/idea-cloudformation">Leonid Shalupov</vendor>
 
