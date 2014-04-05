@@ -1,9 +1,9 @@
-<idea-plugin version="2">
+<idea-plugin version="2" url="https://github.com/shalupov/idea-cloudformation">
   <id>AWSCloudFormation</id>
   <name>AWS CloudFormation support</name>
   <version>SNAPSHOT</version>
 
-  <vendor url="https://github.com/shalupov/idea-cloudformation">Leonid Shalupov</vendor>
+  <vendor url="https://github.com/shalupov/idea-cloudformation" email="shalupov@diverse.org.ru">Leonid Shalupov</vendor>
 
   <description><![CDATA[
     Amazon AWS CloudFormation language support
