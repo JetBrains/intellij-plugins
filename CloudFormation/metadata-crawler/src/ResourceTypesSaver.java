@@ -94,7 +94,7 @@ public class ResourceTypesSaver {
     throw new RuntimeException("Could not download from " + url);
   }
 
-  private static CloudFormationResourceType getResourceType(String name, URL url) throws IOException {
+  private static CloudFormationResourceType getResourceType(String name, URL url) {
     System.out.println(name);
 
     final CloudFormationResourceType resourceType = new CloudFormationResourceType();
