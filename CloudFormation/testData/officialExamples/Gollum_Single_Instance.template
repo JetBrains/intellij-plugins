@@ -75,7 +75,7 @@
                 "gcc"          : [],
                 "make"         : [],
                 "ruby-devel"   : [],
-                "ruby-rdoc"    : [],
+                "ruby18-rdoc"  : [],
                 "rubygems"     : [],
                 "libxml2-devel": [],
                 "libxslt-devel": [],
@@ -119,7 +119,7 @@
           "gollum --port 80 --host 0.0.0.0 &\n",
 
           "# If all is well so signal success\n",
-          "/opt/aws/bin/cfn-signal -e $? -r \"Rails application setup complete\" '", { "Ref" : "WaitHandle" }, "'\n"
+          "/opt/aws/bin/cfn-signal -e $? -r \"Rails application setup failed\" '", { "Ref" : "WaitHandle" }, "'\n"
         ]]}}        
       }
     },
@@ -144,7 +144,7 @@
       "DependsOn" : "WebServer",
       "Properties" : {
         "Handle" : {"Ref" : "WaitHandle"},
-        "Timeout" : "300"
+        "Timeout" : "600"
       }
     }    
   },

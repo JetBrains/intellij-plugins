@@ -242,8 +242,9 @@
           "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r LaunchConfig ",
           "    --region ", { "Ref" : "AWS::Region" }, " || error_exit 'Failed to run cfn-init'\n",
 
-          "# Install anu other Gems, create the database and run a migration\n",
+          "# Install any other Gems, create the database and run a migration\n",
           "cd /home/ec2-user/sample\n",
+          "export PATH=$PATH:/usr/local/bin\n",
           "bundle install  || error_exit 'Failed to install bundle'\n",
           "rake db:migrate || error_exit 'Failed to execute database migration'\n",
 

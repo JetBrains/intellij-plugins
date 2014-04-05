@@ -40,7 +40,7 @@
           "VersionLabel" : "Initial Version",
           "Description" : "Version 1.0",
           "SourceBundle" : {
-            "S3Bucket" : "@@@CFN_EXAMPLES_DIR@@@",
+            "S3Bucket" : "cloudformation-examples",
             "S3Key" : "sns-http-example.war"
           }
         }],

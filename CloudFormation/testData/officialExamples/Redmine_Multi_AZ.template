@@ -179,11 +179,11 @@
                 "gcc-c++"           : [],
                 "make"              : [],
                 "ruby-devel"        : [],
-                "ruby-rdoc"         : [],
+                "ruby18-rdoc"       : [],
                 "rubygems"          : [],
                 "mysql"             : [],
                 "mysql-devel"       : [],
-                "libjpeg-devel"     : [],
+                "libjpeg-turbo-devel" : [],
                 "libpng-devel"      : [],
                 "libtiff-devel"     : [],
                 "freetype-devel"    : [],
@@ -197,7 +197,7 @@
             },
 
             "sources" : {
-              "/home/ec2-user/redmine"     : "http://rubyforge.org/frs/download.php/76189/redmine-2.0.2.tar.gz"
+              "/home/ec2-user/redmine"     : "http://rubyforge.org/frs/download.php/77242/redmine-2.4.0.tar.gz"
             },
 
             "files" : {
@@ -206,7 +206,7 @@
                 "content" : { "Fn::Join" : ["", [
                   "#!/bin/bash -v\n",
                   "#Install and run Redmine\n",
-                  "cd /home/ec2-user/redmine/redmine-2.0.2\n",
+                  "cd /home/ec2-user/redmine/redmine-2.4.0\n",
                   "bundle install --without development test postgresql sqlite\n",
                   "rake generate_secret_token\n",
                   "RAILS_ENV=production rake db:migrate\n",
@@ -220,7 +220,7 @@
                 "group" : "root"
               },
 
-              "/home/ec2-user/redmine/redmine-2.0.2/config/database.yml" : {
+              "/home/ec2-user/redmine/redmine-2.4.0/config/database.yml" : {
                 "content" : { "Fn::Join" : ["", [
                   "production:\n",
                   "  adapter: mysql\n",

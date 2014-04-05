@@ -47,7 +47,7 @@
             "#!/bin/bash -ex","\n",
             "yum -y install gcc-c++ make","\n",
             "yum -y install mysql-devel sqlite-devel","\n",
-            "yum -y install ruby-rdoc rubygems ruby-mysql ruby-devel","\n",
+            "yum -y install ruby18-rdoc rubygems ruby-mysql ruby-devel","\n",
             "gem install --no-ri --no-rdoc rails","\n",
             "gem install --no-ri --no-rdoc mysql","\n",
             "gem install --no-ri --no-rdoc sqlite3","\n",

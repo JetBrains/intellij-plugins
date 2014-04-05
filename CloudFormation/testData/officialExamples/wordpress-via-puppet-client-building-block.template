@@ -71,7 +71,7 @@
 
   "Mappings" : {
     "RegionMap" : {
-      "us-east-1" :      { "s3Bucket" : "https://s3.amazonaws.com/@@@CFN_TEMPLATES_USEAST1_DIR@@@" },
+      "us-east-1" :      { "s3Bucket" : "https://s3.amazonaws.com/cloudformation-templates-us-east-1" },
       "us-west-1" :      { "s3Bucket" : "https://s3.amazonaws.com/cloudformation-templates-us-west-1" },
       "us-west-2" :      { "s3Bucket" : "https://s3.amazonaws.com/cloudformation-templates-us-west-2" },
       "eu-west-1" :      { "s3Bucket" : "https://s3.amazonaws.com/cloudformation-templates-eu-west-1" },

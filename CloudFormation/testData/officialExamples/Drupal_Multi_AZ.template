@@ -315,7 +315,7 @@
                   "ini_set('session.gc_maxlifetime', 200000);\n",
                   "ini_set('session.cookie_lifetime', 2000000);\n"
                 ]]},
-                "mode"  : "000400",
+                "mode"  : "000444",
                 "owner" : "root",
                 "group" : "root"
               }
@@ -386,10 +386,9 @@
           "  # use the S3 bucket for shared file storage\n",
           "  cp -R sites/default/files_original/* sites/default/files\n",
           "  cp -R sites/default/files_original/.htaccess sites/default/files\n",
-          "else\n",
-          "  # Copy settings.php file since everything else is configured\n",
-          "  cp /home/ec2-user/settings.php /var/www/html/sites/default\n",
           "fi\n",
+          "# Copy settings.php file since everything else is configured\n",
+          "cp /home/ec2-user/settings.php /var/www/html/sites/default\n",
           "rm /home/ec2-user/settings.php\n",
 
           "# All is well so signal success\n",

@@ -200,8 +200,9 @@
           "mysqladmin -u root password '", { "Ref" : "DBRootPassword" }, "' || error_exit 'Failed to initialize root password'\n",
           "mysql -u root --password='", { "Ref" : "DBRootPassword" }, "' < /tmp/setup.mysql || error_exit 'Failed to create database user'\n",
 
-          "# Install anu other Gems, create the database and run a migration\n",
+          "# Install any other Gems, create the database and run a migration\n",
           "cd /home/ec2-user/sample\n",
+          "export PATH=$PATH:/usr/local/bin\n",
           "bundle install  || error_exit 'Failed to install bundle'\n",
           "rake db:create  || error_exit 'Failed to create database'\n",
           "rake db:migrate || error_exit 'Failed to execute database migration'\n",
