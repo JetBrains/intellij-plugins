@@ -4,17 +4,16 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 public class MetadataSerializer {
-  public static void toXML(CloudFormationMetadata metadata, OutputStream output) throws IOException {
+  public static void toXML(CloudFormationMetadata metadata, OutputStream output) {
     createXStream().marshal(metadata, new PrettyPrintWriter(new OutputStreamWriter(output)));
   }
 
-  public static CloudFormationMetadata fromXML(InputStream input) throws IOException {
+  public static CloudFormationMetadata fromXML(InputStream input) {
     return (CloudFormationMetadata)createXStream().fromXML(input);
   }
 

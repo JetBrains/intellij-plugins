@@ -79,7 +79,7 @@ public class ResourceTypesSaver {
     }
   }
 
-  private static Document getDocumentFromUrl(URL url) throws IOException {
+  private static Document getDocumentFromUrl(URL url) {
     System.out.println("Downloading " + url);
     for (int retry = 1; retry < 5; retry++) {
       try {
@@ -197,7 +197,7 @@ public class ResourceTypesSaver {
           final String property = row.get(0);
           final String type = row.get(1);
           final String required = row.get(2);
-          final String notes = row.get(3);
+          // final String notes = row.get(3);
 
           CloudFormationResourceProperty resourceProperty = new CloudFormationResourceProperty();
 

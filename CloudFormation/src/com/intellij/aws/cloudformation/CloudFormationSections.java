@@ -7,13 +7,6 @@ public class CloudFormationSections {
   public static final String Conditions = "Conditions";
   public static final String Outputs = "Outputs";
 
-  public static final String[] AllSections = new String[]{
-    Parameters,
-    Resources,
-    Mappings,
-    Conditions,
-    Outputs,
-  };
   public static final String FormatVersion = "AWSTemplateFormatVersion";
   public static final String Description = "Description";
 }
