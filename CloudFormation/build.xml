@@ -1,5 +1,6 @@
 <project name="AWS CloudFormation IDEA Plugin" basedir=".">
   <property name="idea.version" value="13.0.3" />
+  <property name="kotlin.version" value="0.7.270" />
 
   <property name="deps" value="${basedir}/out" />
 
@@ -32,4 +33,31 @@
       </sequential>
     </outofdate>
   </target>
+
+  <target name="fetch.kotlin" depends="fetch.ant.contrib">
+    <mkdir dir="${basedir}/out"/>
+
+    <get
+        src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/${kotlin.version}/kotlin-plugin-${kotlin.version}.zip"
+        dest="${deps}/kotlin-plugin-${kotlin.version}.zip"
+        skipexisting="true"/>
+    <outofdate>
+      <sourcefiles>
+        <pathelement path="${basedir}/build.xml"/>
+        <pathelement path="${deps}/kotlin-plugin-${kotlin.version}.zip"/>
+      </sourcefiles>
+      <targetfiles path="${basedir}/out/kotlin.touch"/>
+      <sequential>
+        <delete dir="${deps}/kotlin"/>
+        <unzip src="${basedir}/out/kotlin-plugin-${kotlin.version}.zip" dest="${deps}/kotlin"/>
+        <touch file="${basedir}/out/kotlin.touch"/>
+      </sequential>
+    </outofdate>
+
+    <echo message="##teamcity[setParameter name='teamcity.ideaRunner.additional.lib.path' value='${deps}/kotlin/Kotlin/lib/jps']"/>
+    <echo message="##teamcity[setParameter name='system.jps.kotlin.home' value='${deps}/kotlin/Kotlin/kotlinc']"/>
+    <echo message="##teamcity[setParameter name='system.jps.kotlin.extra.annotation.paths' value='${deps}/kotlin/Kotlin/kotlinc/lib/kotlin-jdk-annotations.jar']"/>
+  </target>
+
+  <target name="fetch.dependencies" depends="fetch.ant.contrib,fetch.idea,fetch.kotlin" />
 </project>

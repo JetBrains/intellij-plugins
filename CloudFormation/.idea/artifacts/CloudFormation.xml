@@ -8,7 +8,7 @@
             <element id="module-output" name="CloudFormation" />
           </element>
           <element id="library" level="project" name="xstream" />
-          <element id="library" level="project" name="KotlinJavaRuntime" />
+          <element id="library" level="project" name="kotlin-runtime" />
         </element>
       </element>
     </root>
