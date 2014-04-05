@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="idea_sdk">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/idea/plugins/JavaScriptLanguage/lib/javascript-openapi.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/idea/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/" />
+      <root url="file://$PROJECT_DIR$/out/idea/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/out/idea/lib" recursive="false" />
+  </library>
+</component>

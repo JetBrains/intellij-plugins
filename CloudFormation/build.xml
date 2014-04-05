@@ -1,0 +1,35 @@
+<project name="AWS CloudFormation IDEA Plugin" basedir=".">
+  <property name="idea.version" value="13.0.3" />
+
+  <property name="deps" value="${basedir}/out" />
+
+  <mkdir dir="${deps}" />
+
+  <target name="fetch.ant.contrib">
+    <get
+        src="http://repository.jetbrains.com/remote-repos/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar"
+        dest="${deps}/ant-contrib-1.0b3.jar"
+        skipexisting="true"/>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${deps}/ant-contrib-1.0b3.jar"/>
+  </target>
+
+  <target name="fetch.idea" depends="fetch.ant.contrib">
+    <get
+        src="http://download.jetbrains.com/idea/ideaIU-${idea.version}.zip"
+        dest="${deps}/ideaIU-${idea.version}.zip"
+        skipexisting="true"/>
+    <outofdate>
+      <sourcefiles>
+        <pathelement path="${basedir}/build.xml"/>
+        <pathelement path="${deps}/ideaIU-${idea.version}.zip"/>
+      </sourcefiles>
+      <targetfiles path="${basedir}/out/idea.touch"/>
+      <sequential>
+        <delete dir="${deps}/idea"/>
+        <unzip src="${deps}/ideaIU-${idea.version}.zip" dest="${deps}/idea"/>
+        <touch file="${basedir}/out/idea.touch"/>
+      </sequential>
+    </outofdate>
+  </target>
+</project>
