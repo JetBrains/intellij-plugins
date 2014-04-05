@@ -1,16 +1,8 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="CloudFormation">
+  <artifact type="jar" name="CloudFormation">
     <output-path>$PROJECT_DIR$/out/artifacts/CloudFormation</output-path>
     <root id="archive" name="CloudFormation.zip">
-      <element id="directory" name="CloudFormation">
-        <element id="directory" name="lib">
-          <element id="archive" name="CloudFormation.jar">
-            <element id="module-output" name="CloudFormation" />
-          </element>
-          <element id="library" level="project" name="xstream" />
-          <element id="library" level="project" name="kotlin-runtime" />
-        </element>
-      </element>
+      <element id="artifact" artifact-name="CloudFormation_exploded" />
     </root>
   </artifact>
 </component>

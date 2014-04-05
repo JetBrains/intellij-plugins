@@ -14,6 +14,7 @@
     <orderEntry type="module" module-name="metadata-model" />
     <orderEntry type="library" name="idea_sdk" level="project" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
+    <orderEntry type="library" name="idea_sdk_javascript" level="project" />
   </component>
 </module>
 
