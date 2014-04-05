@@ -764,7 +764,7 @@
         <ResourceProperty>
           <name>BlockDeviceMappings</name>
           <description></description>
-          <type>A list of EC2 Block Device Mapping</type>
+          <type>A list of Amazon EC2 Block Device Mapping Property</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -1726,7 +1726,7 @@
           <name>Description</name>
           <description></description>
           <type>String</type>
-          <required>true</required>
+          <required>false</required>
         </ResourceProperty>
       </properties>
       <attributes/>
@@ -1938,6 +1938,12 @@
       <name>AWS::ElasticLoadBalancing::LoadBalancer</name>
       <properties>
         <ResourceProperty>
+          <name>AccessLoggingPolicy</name>
+          <description></description>
+          <type>Elastic Load Balancing AccessLoggingPolicy</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>AppCookieStickinessPolicy</name>
           <description></description>
           <type>A list of AppCookieStickinessPolicy objects</type>
@@ -1947,6 +1953,12 @@
           <name>AvailabilityZones</name>
           <description></description>
           <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>ConnectionDrainingPolicy</name>
+          <description></description>
+          <type>Elastic Load Balancing ConnectionDrainingPolicy</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2637,7 +2649,7 @@
           <name>Engine</name>
           <description></description>
           <type>String</type>
-          <required>true</required>
+          <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>EngineVersion</name>
@@ -2661,13 +2673,13 @@
           <name>MasterUsername</name>
           <description></description>
           <type>String</type>
-          <required>true</required>
+          <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>MasterUserPassword</name>
           <description></description>
           <type>String</type>
-          <required>true</required>
+          <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>MultiAZ</name>
@@ -3271,7 +3283,12 @@
           <required>false</required>
         </ResourceProperty>
       </properties>
-      <attributes/>
+      <attributes>
+        <ResourceAttribute>
+          <name>TopicName</name>
+          <description></description>
+        </ResourceAttribute>
+      </attributes>
     </ResourceType>
     <ResourceType>
       <name>AWS::SNS::TopicPolicy</name>

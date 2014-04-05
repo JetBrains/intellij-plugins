@@ -130,8 +130,8 @@ Search: [Go]
                 + AWS::EC2::Route
                 + AWS::EC2::RouteTable
                 + AWS::EC2::SecurityGroup
-                + AWS::EC2::SecurityGroupIngress
                 + AWS::EC2::SecurityGroupEgress
+                + AWS::EC2::SecurityGroupIngress
                 + AWS::EC2::Subnet
                 + AWS::EC2::SubnetNetworkAclAssociation
                 + AWS::EC2::SubnetRouteTableAssociation
@@ -206,8 +206,8 @@ Search: [Go]
                 + DynamoDB Local Secondary Indexes
                 + DynamoDB Projection Object
                 + DynamoDB Provisioned Throughput
-                + EC2 Block Device Mapping
-                + EC2 EBS Block Device
+                + Amazon EC2 Block Device Mapping Property
+                + Amazon Elastic Block Store Block Device Property
                 + EC2 ICMP
                 + EC2 MountPoint
                 + EC2 Network Interface
@@ -222,7 +222,9 @@ Search: [Go]
                 + AWS Elastic Beanstalk OptionSettings Property Type
                 + AWS Elastic Beanstalk SourceBundle Property Type
                 + AWS Elastic Beanstalk SourceConfiguration Property Type
+                + Elastic Load Balancing AccessLoggingPolicy
                 + AppCookieStickinessPolicy
+                + Elastic Load Balancing ConnectionDrainingPolicy
                 + ElasticLoadBalancing HealthCheck
                 + LBCookieStickinessPolicy
                 + ElasticLoadBalancing Listener
@@ -270,8 +272,9 @@ Search: [Go]
                 + Create
                 + Delete
                 + Update
+    * Logging API Calls
     * Document History
-    * Glossary
+    * AWS Glossary
 AWS Documentation <http://aws.amazon.com/documentation> » AWS 
 CloudFormation <http://aws.amazon.com/documentation/cloudformation/> » 
 User Guide <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/> 
@@ -294,9 +297,26 @@ since the last release of AWS CloudFormation.
 
     * API Version: 2010-05-15
 
-    * Latest documentation update: March 03, 2014
-
 Change 	Description 	Release Date
+
+API logging with AWS CloudTrail
+
+You can use AWS CloudTrail to log AWS CloudFormation requests. With AWS 
+CloudTrail you can get a history of AWS CloudFormation API calls for your 
+account. For more information, see Logging AWS CloudFormation API Calls in 
+AWS CloudTrail.
+
+April 02, 2014
+
+Elastic Load Balancing update
+
+You can specify an access logging policy to capture information about 
+requests made to your load balancer. You can also specify a connection 
+draining policy that describes how to handle in-flight requests when 
+instances are deregistered or become unhealthy. For more information, see 
+AWS::ElasticLoadBalancing::LoadBalancer.
+
+March 20, 2014
 
 AWS OpsWorks support
 
@@ -619,8 +639,8 @@ to set block device mappings for your EC2 instance.
 
 With this change, two new types have been added:
 
-    * EC2 Block Device Mapping
-    * EC2 EBS Block Device
+    * Amazon EC2 Block Device Mapping Property
+    * Amazon Elastic Block Store Block Device Property
 
 December 21, 2012
 
