@@ -1,0 +1,46 @@
+<idea-plugin version="2">
+  <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
+  <name>PhoneGap Plugin</name>
+  <version>0.1</version>
+  <vendor email="masahiro.suzuka@gmail.com" url="http://github.com/masahirosuzuka/PhoneGapIntelliJPlugin">masahirosuzuka</vendor>
+
+  <description><![CDATA[
+        <h4>PhoneGap integration for InteliJ Platform.<h4>
+        <p>See README.md</p>
+        <a href="http://github.com/masahirosuzuka/PhoneGapIntelliJPlugin">masahirsuzuka/PhoneGapIntelliJPlugin</a>
+    ]]></description>
+
+  <change-notes><![CDATA[
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>
+    ]]>
+  </change-notes>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+  <idea-version since-build="131"/>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+    <configurationType implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapConfigurationType" />
+    <programRunner implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapRunner" />
+  </extensions>
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <project-components>
+    <!-- Add your project components here -->
+  </project-components>
+
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
+
+</idea-plugin>
