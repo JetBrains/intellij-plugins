@@ -47,3 +47,5 @@ Run
 
 * iOS support
 * Windows Phone support
+* Project importer (.cordova)
+

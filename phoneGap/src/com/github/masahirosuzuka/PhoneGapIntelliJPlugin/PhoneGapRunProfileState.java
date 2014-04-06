@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class PhoneGapRunProfileState extends CommandLineState {
 
   public static Project project;
+  public static ExecutionEnvironment env;
   public static PhoneGapRunConfiguration phoneGapRunConfiguration;
 
   public PhoneGapRunProfileState(Project project,
@@ -22,15 +23,23 @@ public class PhoneGapRunProfileState extends CommandLineState {
                                  PhoneGapRunConfiguration phoneGapRunConfiguration) {
     super(env);
     this.project = project;
+    this.env = env;
     this.phoneGapRunConfiguration = phoneGapRunConfiguration;
   }
 
   @NotNull
   @Override
   protected ProcessHandler startProcess() throws ExecutionException {
+
+    String projectDir = this.project.getBasePath();
+
     GeneralCommandLine commandLine = new GeneralCommandLine(this.phoneGapRunConfiguration.PHONEGAP_PATH,
         this.phoneGapRunConfiguration.PHONEGAP_COMMAND,
         this.phoneGapRunConfiguration.PHONEGAP_PLATFORM);
+
+    // Change workingdir to project page
+    commandLine.setWorkDirectory(projectDir);
+
     OSProcessHandler handler = new OSProcessHandler(commandLine);
 
     return handler;
