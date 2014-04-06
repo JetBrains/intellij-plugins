@@ -37,7 +37,7 @@ public class PhoneGapRunProfileState extends CommandLineState {
         this.phoneGapRunConfiguration.PHONEGAP_COMMAND,
         this.phoneGapRunConfiguration.PHONEGAP_PLATFORM);
 
-    // Change workingdir to project page
+    // Change workingDir to project page
     commandLine.setWorkDirectory(projectDir);
 
     OSProcessHandler handler = new OSProcessHandler(commandLine);
