@@ -12,6 +12,7 @@ import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
@@ -73,10 +74,12 @@ public class KarmaExecutionSession {
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_IGNORED_TEST, true);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.SCROLL_TO_SOURCE, true);
+    String splitterPropertyName = SMTestRunnerConnectionUtil.getSplitterPropertyName(FRAMEWORK_NAME);
+    PropertiesComponent.getInstance().setValue(splitterPropertyName, String.valueOf(0.2f));
 
     KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties,
                                                         myEnvironment,
-                                                        SMTestRunnerConnectionUtil.getSplitterPropertyName(FRAMEWORK_NAME),
+                                                        splitterPropertyName,
                                                         myKarmaServer,
                                                         this);
     Disposer.register(myProject, consoleView);
