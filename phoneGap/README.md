@@ -1,51 +1,40 @@
-##About
-This is PhoneGap plugin for IntelliJ Platform.
+###PhoneGapIntelliJPluginについて
 
-##What is PhoneGap?
+PhoneGap/Cordovaアプリ開発をIntelliJ IDEAで行えるようにするプラグインです．
 
-(http://phonegap.com/)
-(http://phonegap-fan.com/)
+###PhoneGap/Cprdovaについて
 
-##Who to use?
+http://phonegap.com/
+http://phonegap-fan.com/
 
-###Step 0
-Install this plugin to your IntelliJ
+###使い方
+#####(0)PhoneGapIntelliJPluginをインストール
+Preferance -> PluginsからPhoneGapと検索してください．IntelliJの再起動が必要です．
 
-###Step 1
-Intall node.js
-
-###Step 2
-Install phonegap with npm
-```
+#####(1)PhoneGapをインストール
+Node.jsを使ってインストールする必要があります．Nodeのインストール方法は特に指定しませんがnvmをお勧めします．
 npm install -g phonegap
-```
-###Step 3
-####Step 3-1
-Install Android SDK
 
-####Step 3-2
-Install iOS Sim
+#####(2)Android SDKをインストール
+AndroidSDKをインストールし，PATHを通しておいてください．
 
-####Step 3-2-1
-Install Xcode
+#####(3)PhoneGapプロジェクトを作成
+phonegap create my-app
 
-####Step 3-2-2
-```
-npm install -g ios-sim
-```
+#####(4)PhoneGapアプリをIntelliJにインポート
+コードジェネレータ及びオートインポータは開発中です．手動でのインポートが必要になります．
 
-###Step 4
-Create PhoneGap Project
+File -> Import Project -> PhoneGapプロジェクトのルートディレクトリを指定 -> Create project from existing sources -> Finish
+File -> Project Structure -> Modules -> Moduleを追加 -> Name : www Content root : PhoneGapプロジェクトのルート/www
 
-###Step 5
-Import PhoneGap Project to IntelliJ
+必要であればhooks, mergers, platforms, pluginsも同様にインポートしてください．pluginsはインポートしておいた方が便利かもしれません．
 
-###Step 6
-Run
+#####(5)エミュレータ起動
+Edit ConfigurationにPhoneGapが追加されているはずです．新規Configurationを作成し，実行してください．
 
 ###ToDo
 
 * iOS support
 * Windows Phone support
 * Project importer (.cordova)
-
+* Project generator
