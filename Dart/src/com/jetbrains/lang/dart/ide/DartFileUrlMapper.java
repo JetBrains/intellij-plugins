@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
@@ -9,6 +10,7 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.util.Url;
 import com.jetbrains.javascript.debugger.FileUrlMapper;
+import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
@@ -80,5 +82,11 @@ final class DartFileUrlMapper extends FileUrlMapper {
     }
 
     return null;
+  }
+
+  @Nullable
+  @Override
+  public FileType getFileType(@NotNull Url url) {
+    return SCHEME.equals(url.getScheme()) || PACKAGE_SCHEME.equals(url.getScheme()) ? DartFileType.INSTANCE : null;
   }
 }
