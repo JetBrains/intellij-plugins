@@ -100,7 +100,8 @@ public class DartColorAnnotator implements Annotator {
 
   private static boolean isInSdkCore(final @NotNull DartSdk sdk, final @NotNull PsiFile psiFile) {
     final VirtualFile virtualFile = psiFile.getVirtualFile();
-    return virtualFile != null && virtualFile.getParent().getPath().equals(sdk.getHomePath() + "/lib/core");
+    final VirtualFile parentFolder = virtualFile == null ? null : virtualFile.getParent();
+    return parentFolder != null && parentFolder.getPath().equals(sdk.getHomePath() + "/lib/core");
   }
 
   private static void highlightEscapeSequences(final PsiElement node, final AnnotationHolder holder) {
