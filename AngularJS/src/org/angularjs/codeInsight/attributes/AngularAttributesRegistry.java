@@ -35,4 +35,18 @@ public class AngularAttributesRegistry {
     }
     return false;
   }
+
+  public static boolean isJSONAttribute(XmlAttribute parent) {
+    final String value = parent.getValue();
+    if (value == null || !value.startsWith("{")) return false;
+
+    final String attributeName = DirectiveUtil.normalizeAttributeName(parent.getName());
+    final JSNamedElementProxy directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.INDEX_ID, attributeName);
+    if (directive != null) {
+      final String restrict = directive.getIndexItem().getTypeString();
+      final String type = restrict.split(";", -1)[2];
+      return type.contains("object literal") || type.equals("mixed");
+    }
+    return false;
+  }
 }
