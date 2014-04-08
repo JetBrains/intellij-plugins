@@ -2,14 +2,15 @@
 
 PhoneGap/Cordovaアプリ開発をIntelliJ IDEAで行えるようにするプラグインです．
 
-###PhoneGap/Cprdovaについて
+###PhoneGap/Cordovaについて
 
-http://phonegap.com/
+http://phonegap.com/  
 http://phonegap-fan.com/
 
 ###使い方
 #####(0)PhoneGapIntelliJPluginをインストール
 Preferance -> PluginsからPhoneGapと検索してください．IntelliJの再起動が必要です．
+本プラグインを動作させるためにはIntelliJ Platformがjvm1.7以上で動作している必要があります．
 
 #####(1)PhoneGapをインストール
 Node.jsを使ってインストールする必要があります．Nodeのインストール方法は特に指定しませんがnvmをお勧めします．
@@ -22,7 +23,7 @@ AndroidSDKをインストールし，PATHを通しておいてください．
 phonegap create my-app
 
 #####(4)PhoneGapアプリをIntelliJにインポート
-コードジェネレータ及びオートインポータは開発中です．手動でのインポートが必要になります．
+*コードジェネレータ*及び*オートインポータ*は開発中です．手動でのインポートが必要になります．
 
 File -> Import Project -> PhoneGapプロジェクトのルートディレクトリを指定 -> Create project from existing sources -> Finish
 File -> Project Structure -> Modules -> Moduleを追加 -> Name : www Content root : PhoneGapプロジェクトのルート/www
