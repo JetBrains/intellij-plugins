@@ -27,6 +27,12 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
+
+    <!-- Project importer -->
+    <projectImportProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapProjectImportProvider" />
+    <projectImportBuilder implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapProjectImportBuilder" />
+
+    <!-- Project runner -->
     <configurationType implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapConfigurationType" />
     <programRunner implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapRunner" />
   </extensions>
