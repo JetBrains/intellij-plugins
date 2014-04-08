@@ -34,7 +34,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
 
   @Nullable
   @Override
-  public VirtualFile getFile(@NotNull final Url url, @NotNull final Project project) {
+  public VirtualFile getFile(@NotNull final Url url, @NotNull final Project project, @Nullable Url requestor) {
     if (SCHEME.equals(url.getScheme())) {
       String path = url.getPath();
       int i = path.indexOf('/');
