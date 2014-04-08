@@ -17,7 +17,7 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartIconProvider extends IconProvider {
 
-  private Icon mySymlinkedFolderIcon = LayeredIcon.create(PlatformIcons.FOLDER_ICON, PlatformIcons.SYMLINK_ICON);
+  public static final Icon FOLDER_SYMLINK_ICON = LayeredIcon.create(PlatformIcons.FOLDER_ICON, PlatformIcons.SYMLINK_ICON);
 
   @Nullable
   public Icon getIcon(@NotNull final PsiElement element, @Iconable.IconFlags final int flags) {
@@ -29,7 +29,7 @@ public class DartIconProvider extends IconProvider {
       if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile(), "web")) return AllIcons.Nodes.WebFolder;
       if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile(), "test")) return AllIcons.Modules.TestSourceFolder;
       if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile(), "packages")) return AllIcons.Nodes.JarDirectory;
-      if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile().getParent(), "packages")) return mySymlinkedFolderIcon;
+      if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile().getParent(), "packages")) return FOLDER_SYMLINK_ICON;
     }
 
     return null;
