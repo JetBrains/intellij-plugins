@@ -34,6 +34,12 @@ public class PubspecYamlUtil {
 
   public static final String PUBSPEC_YAML = "pubspec.yaml";
 
+  public static final String NAME = "name";
+  public static final String DEPENDENCIES = "dependencies";
+  public static final String DEV_DEPENDENCIES = "dev_dependencies";
+  public static final String PATH = "path";
+
+  public static final String LIB_DIRECTORY_NAME = "lib";
 
   private static final Key<Pair<Long, Map<String, Object>>> MOD_STAMP_TO_PUBSPEC_NAME = Key.create("MOD_STAMP_TO_PUBSPEC_NAME");
   private static final String DART_CUSTOM_PACKAGE_ROOTS_OPTION = "dart.package.roots";
@@ -88,7 +94,7 @@ public class PubspecYamlUtil {
   }
 
   @Nullable
-  private static Map<String, Object> getPubspecYamlInfo(final @NotNull VirtualFile pubspecYamlFile) {
+  public static Map<String, Object> getPubspecYamlInfo(final @NotNull VirtualFile pubspecYamlFile) {
     // do not use Yaml plugin here - IntelliJ IDEA Community Edition doesn't contain it.
     Pair<Long, Map<String, Object>> data = pubspecYamlFile.getUserData(MOD_STAMP_TO_PUBSPEC_NAME);
 
