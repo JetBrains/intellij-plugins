@@ -1,13 +1,16 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.ID;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -82,6 +85,26 @@ public class DirectiveUtil {
       if (!StringUtil.isEmpty(restrict) && StringUtil.containsIgnoreCase(restrict, "E")) {
         return directive;
       }
+    }
+    return null;
+  }
+
+  @Nullable
+  public static JSNamedElementProxy getDirective(@Nullable PsiElement element) {
+    if (element instanceof JSNamedElementProxy) {
+      return getDirective(element, ((JSNamedElementProxy)element).getName());
+    }
+    if (element instanceof JSLiteralExpression && ((JSLiteralExpression)element).isQuotedLiteral()) {
+      return getDirective(element, StringUtil.unquoteString(element.getText()));
+    }
+    return null;
+  }
+
+  private static JSNamedElementProxy getDirective(PsiElement element, final String name) {
+    final String directiveName = getAttributeName(name);
+    final JSNamedElementProxy directive = AngularIndexUtil.resolve(element.getProject(), AngularDirectivesIndex.INDEX_ID, directiveName);
+    if (directive != null && element.getTextRange().contains(directive.getTextOffset())) {
+      return directive;
     }
     return null;
   }
