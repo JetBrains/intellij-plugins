@@ -13,10 +13,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.ParameterizedCachedValue;
-import com.intellij.psi.util.ParameterizedCachedValueProvider;
+import com.intellij.psi.util.*;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.containers.ConcurrentHashMap;
@@ -63,8 +60,16 @@ public class AngularIndexUtil {
     return CachedValuesManager.getManager(project).getParameterizedCachedValue(project, key, PROVIDER, false, Pair.create(project, index));
   }
 
-  public static boolean hasAngularJS(Project project) {
-    return !DumbService.isDumb(project) && resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-model") != null;
+  public static boolean hasAngularJS(final Project project) {
+    if (DumbService.isDumb(project)) return false;
+    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<Boolean>() {
+      @Nullable
+      @Override
+      public Result<Boolean> compute() {
+        final boolean hasNgModel = resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-model") != null;
+        return Result.create(hasNgModel, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+      }
+    });
   }
 
   private static class AngularKeysProvider implements ParameterizedCachedValueProvider<List<String>, Pair<Project, ID<String, Void>>> {
