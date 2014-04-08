@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <script src="http://code.angularjs.org/1.2.2/angular.min.js"></script>
+  <script>
+    angular.directive("my<caret>Directive2", function () {
+      return {restrict: "E"};
+    });
+  </script>
+  <style>
+    my<caret>-directive2 {}
+  </style>
+</head>
+<body>
+<my-directive2></my-directive2>
+</body>
+</html>

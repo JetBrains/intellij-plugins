@@ -82,6 +82,9 @@
     <targetElementEvaluator language="JavaScript" implementationClass="org.angularjs.AngularJSTargetElementEvaluator"/>
     <elementDescriptionProvider order="first"
                                 implementation="org.angularjs.refactoring.AngularJSDirectiveRenameProcessor$AngularJSDirectiveElementDescriptor" />
+
+    <findUsagesHandlerFactory id="JavaScript" implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory"/>
+    <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher" />
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
