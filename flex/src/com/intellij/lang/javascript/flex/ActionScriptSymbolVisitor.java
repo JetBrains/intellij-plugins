@@ -42,7 +42,7 @@ public class ActionScriptSymbolVisitor extends JSSymbolVisitor {
       final String ns = attributeList.getNamespace();
       if (ResolveProcessor.AS3_NAMESPACE.equals(ns)) return false;
       if (ns != null) myNamespace = getNestedNsWithName(ns, myNamespace);
-      myAccessType = attributeList.getAccessType();
+      myProcessingState.myAccessType = attributeList.getAccessType();
     }
     return true;
   }
@@ -51,7 +51,7 @@ public class ActionScriptSymbolVisitor extends JSSymbolVisitor {
   protected JSNamespace processXmlTag(XmlTag element) {
     String id = element.getAttributeValue("id");
     if (id != null) {
-      myAttributeName = JSNamedElementIndexItem.AttributeName.Id;
+      myProcessingState.myAttributeName = JSNamedElementIndexItem.AttributeName.Id;
       mySymbolVisitor.processTag(myFileNamespace, id, element, "id");
     }
 
