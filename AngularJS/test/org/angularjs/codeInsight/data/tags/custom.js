@@ -10,4 +10,14 @@ angular.module('docsSimpleDirective', [])
                    template: 'Name: {{customer.name}} Address: {{customer.address}}',
                    restrict: 'E'
                  };
+               })
+    .directive('hisCustomer', function () {
+                 return {
+                   template: 'Name: {{customer.name}} Address: {{customer.address}}',
+                   restrict: 'E',
+                   scope: {
+                     name: "",
+                     homeAddress: ""
+                   }
+                 };
                });
