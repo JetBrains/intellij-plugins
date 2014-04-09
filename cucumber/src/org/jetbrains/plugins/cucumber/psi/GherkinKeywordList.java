@@ -2,16 +2,21 @@ package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
+import gnu.trove.THashMap;
+import gnu.trove.THashSet;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
 * @author yole, Roman.Chernyatchik
 */
 public class GherkinKeywordList {
   // maps custom language keyword to base (English) keyword
-  private Map<String, String> myKeyword2BaseNameTable = new HashMap<String, String>();
-  private Set<String> myKeywordsWithNoSpaceAfter = new HashSet<String>();
+  private Map<String, String> myKeyword2BaseNameTable = new THashMap<String, String>();
+  private Set<String> myKeywordsWithNoSpaceAfter = new THashSet<String>();
   private GherkinKeywordTable myKeywordsTable = new GherkinKeywordTable();
 
   public GherkinKeywordList() {
