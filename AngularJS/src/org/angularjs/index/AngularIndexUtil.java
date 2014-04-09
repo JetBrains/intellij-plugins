@@ -31,7 +31,7 @@ import java.util.Set;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 10;
+  public static final int BASE_VERSION = 11;
   private static final ConcurrentHashMap<String, Key<ParameterizedCachedValue<List<String>, Pair<Project, ID<String, Void>>>>> ourCacheKeys = new ConcurrentHashMap<String, Key<ParameterizedCachedValue<List<String>, Pair<Project, ID<String, Void>>>>>();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
 

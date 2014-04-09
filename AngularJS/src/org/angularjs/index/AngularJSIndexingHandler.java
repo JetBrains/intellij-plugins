@@ -1,6 +1,7 @@
 package org.angularjs.index;
 
 import com.intellij.lang.javascript.documentation.JSDocumentationProcessor;
+import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.*;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.util.Ref;
@@ -169,12 +170,21 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     String restrict = "A";
     String tag = "";
     String param = "";
+    StringBuilder attributes = new StringBuilder();
     for (String line : commentLines) {
       restrict = getParamValue(restrict, line, RESTRICT_PATTERN, RESTRICT);
       tag = getParamValue(tag, line, ELEMENT_PATTERN, ELEMENT);
-      param = getParamValue(param, line, PARAM_PATTERN, PARAM);
+      final int start = line.indexOf(PARAM);
+      if (start >= 0) {
+        final JSDocumentationUtils.DocTag docTag = JSDocumentationUtils.getDocTag(line.substring(start));
+        if (docTag != null) {
+          param = docTag.matchValue;
+          if (attributes.length() > 0) attributes.append(",");
+          attributes.append(docTag.matchName);
+        }
+      }
     }
-    return restrict.trim() + ";" + tag.trim() + ";" + param.trim();
+    return restrict.trim() + ";" + tag.trim() + ";" + param.trim() + ";" + attributes.toString().trim();
   }
 
   private static String getParamValue(String previousValue, String line, final Pattern pattern, final String docTag) {
@@ -189,22 +199,32 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
   private static String calculateRestrictions(PsiElement element) {
     final Ref<String> restrict = Ref.create("A");
+    final Ref<String> scope = Ref.create("");
     final JSFunction function = PsiTreeUtil.getNextSiblingOfType(element, JSFunction.class);
     if (function != null) {
       function.accept(new JSRecursiveElementVisitor() {
         @Override
         public void visitJSProperty(JSProperty node) {
           final String name = node.getName();
+          final JSExpression value = node.getValue();
           if ("restrict".equals(name)) {
-            final JSExpression value = node.getValue();
             if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
               restrict.set(StringUtil.unquoteString(value.getText()));
+            }
+          } else if ("scope".equals(name)) {
+            if (value instanceof JSObjectLiteralExpression) {
+              scope.set(StringUtil.join(((JSObjectLiteralExpression)value).getProperties(), new Function<JSProperty, String>() {
+                @Override
+                public String fun(JSProperty property) {
+                  return property.getName();
+                }
+              }, ","));
             }
           }
         }
       });
     }
-    return restrict.get().trim() + ";;";
+    return restrict.get().trim() + ";;;" + scope.get();
   }
 
   public static class Factory extends JSFileIndexerFactory {

@@ -23,11 +23,15 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     return getTestName(true).contains("Completion");
   }
 
-  public void testStandardAttributesCompletion() {
+  public void testStandardTagsCompletion() {
     myFixture.testCompletion("standard.html", "standard.after.html", "angular.js");
   }
 
-  public void testStandardAttributesResolve() {
+  public void testStandardAttributesCompletion() {
+    myFixture.testCompletion("standardAttributes.html", "standardAttributes.after.html", "angular.js");
+  }
+
+  public void testStandardTagsResolve() {
     myFixture.configureByFiles("standard.after.html", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-fo<caret>rm", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -37,11 +41,15 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("angular.js", resolve.getContainingFile().getName());
   }
 
-  public void testCustomAttributesCompletion() {
+  public void testCustomTagsCompletion() {
     myFixture.testCompletion("custom.html", "custom.after.html", "custom.js");
   }
 
-  public void testCustomAttributesResolve() {
+  public void testCustomAttributesCompletion() {
+    myFixture.testCompletion("customAttributes.html", "customAttributes.after.html", "custom.js");
+  }
+
+  public void testCustomTagsResolve() {
     myFixture.configureByFiles("custom.after.html", "custom.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
@@ -58,11 +66,11 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
-  public void testCustomAttributesCompletionCss() {
+  public void testCustomTagsCompletionCss() {
     myFixture.testCompletion("customCss.html", "customCss.after.html", "angular.js", "custom.js");
   }
 
-  public void testCustomAttributesResolveCss() {
+  public void testCustomTagsResolveCss() {
     myFixture.configureByFiles("customCss.after.html", "angular.js", "custom.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);

@@ -60,4 +60,12 @@
  * @name ng.directive:script
  * @restrict E
  */
+
+/**
+ * @ngdoc directive
+ * @name ng.directive:ngScript
+ * @restrict E
+ * @param {string} type Must be set to `'text/ng-template'`.
+ * @param {string} id Cache name of the template.
+ */
 angular.directive({ngModel: ngModelDirective})

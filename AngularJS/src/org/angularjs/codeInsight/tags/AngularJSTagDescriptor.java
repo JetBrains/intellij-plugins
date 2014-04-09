@@ -1,16 +1,20 @@
 package org.angularjs.codeInsight.tags;
 
+import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,9 +23,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AngularJSTagDescriptor implements XmlElementDescriptor {
   protected final String myName;
-  private final PsiElement myDeclaration;
+  private final JSNamedElementProxy myDeclaration;
 
-  public AngularJSTagDescriptor(String name, PsiElement declaration) {
+  public AngularJSTagDescriptor(String name, JSNamedElementProxy declaration) {
     myName = name;
     myDeclaration = declaration;
   }
@@ -53,7 +57,15 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
 
   @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    return XmlAttributeDescriptor.EMPTY;
+    final String string = getDeclaration().getIndexItem().getTypeString();
+    final String attributes = string.split(";", -1)[3];
+    final String[] split = attributes.split(",");
+    if (split.length == 1 && split[0].isEmpty()) return XmlAttributeDescriptor.EMPTY;
+    final XmlAttributeDescriptor[] result = new XmlAttributeDescriptor[split.length];
+    for (int i = 0; i < split.length; i++) {
+      result[i] = new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(split[i]));
+    }
+    return result;
   }
 
   @Nullable
@@ -65,7 +77,12 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls final String attributeName, @Nullable XmlTag context) {
-    return new AnyXmlAttributeDescriptor(attributeName);
+    return ContainerUtil.find(getAttributesDescriptors(context), new Condition<XmlAttributeDescriptor>() {
+      @Override
+      public boolean value(XmlAttributeDescriptor descriptor) {
+        return attributeName.equals(descriptor.getName());
+      }
+    });
   }
 
   @Override
@@ -91,7 +108,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
   }
 
   @Override
-  public PsiElement getDeclaration() {
+  public JSNamedElementProxy getDeclaration() {
     return myDeclaration;
   }
 
