@@ -12,11 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.facet.ui;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.vfs.JarFile;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
@@ -37,34 +35,38 @@ import java.util.Properties;
  * @author Yann C&eacute;bron
  */
 public class StrutsVersionDetector {
-
-  private StrutsVersionDetector() {
-  }
+  private StrutsVersionDetector() { }
 
   @Nullable
   public static String detectStrutsVersion(@NotNull final Module module) {
     try {
-      final JarFile strutsJar = getStrutsJar(module);
-      if (strutsJar == null) {
+      final VirtualFile jarRoot = getStrutsJarRoot(module);
+      if (jarRoot == null) {
         return null;
       }
 
-      final JarFile.JarEntry zipEntry = strutsJar.getEntry("META-INF/maven/org.apache.struts/struts2-core/pom.properties");
-      if (zipEntry == null) {
+      final VirtualFile entry = jarRoot.findFileByRelativePath("META-INF/maven/org.apache.struts/struts2-core/pom.properties");
+      if (entry == null) {
         return null;
       }
 
-      final InputStream inputStream = strutsJar.getInputStream(zipEntry);
-      final Properties properties = new Properties();
-      properties.load(inputStream);
-      return properties.getProperty("version");
-    } catch (IOException e) {
+      final InputStream stream = entry.getInputStream();
+      try {
+        final Properties properties = new Properties();
+        properties.load(stream);
+        return properties.getProperty("version");
+      }
+      finally {
+        stream.close();
+      }
+    }
+    catch (IOException e) {
       return null;
     }
   }
 
   @Nullable
-  private static JarFile getStrutsJar(final Module module) throws IOException {
+  private static VirtualFile getStrutsJarRoot(final Module module) throws IOException {
     final GlobalSearchScope scope = GlobalSearchScope.moduleRuntimeScope(module, false);
     final JavaPsiFacade psiManager = JavaPsiFacade.getInstance(module.getProject());
 
@@ -73,7 +75,12 @@ public class StrutsVersionDetector {
       return null;
     }
 
-    return JarFileSystem.getInstance().getJarFile(virtualFile);
+    final VirtualFile jarFile = JarFileSystem.getInstance().getLocalVirtualFileFor(virtualFile);
+    if (jarFile == null) {
+      return null;
+    }
+
+    return JarFileSystem.getInstance().getJarRootForLocalFile(jarFile);
   }
 
   @Nullable
