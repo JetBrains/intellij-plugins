@@ -23,6 +23,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.WebModuleBuilder;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
@@ -281,5 +282,10 @@ public class FlexModuleBuilder extends ModuleBuilder {
   @Override
   public ModuleWizardStep getCustomOptionsStep(WizardContext context, Disposable parentDisposable) {
     return new SetupFlexModuleWizardStep(this);
+  }
+
+  @Override
+  public String getParentGroup() {
+    return WebModuleBuilder.GROUP_NAME;
   }
 }
