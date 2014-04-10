@@ -14,6 +14,7 @@ import com.jetbrains.lang.dart.psi.DartCallExpression;
 import com.jetbrains.lang.dart.psi.DartExpression;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +34,7 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
     if (file == null) return false;
 
     final VirtualFile dartUnitLib =
-      DartResolveUtil.getPackagePrefixImportedFile(context.getProject(), file, "package:unittest/unittest.dart");
+      DartUrlResolver.getInstance(context.getProject(), file).findFileByDartUrl("package:unittest/unittest.dart");
     if (dartUnitLib == null) return false;
 
     final PsiElement element = findTestElement(contextElement);

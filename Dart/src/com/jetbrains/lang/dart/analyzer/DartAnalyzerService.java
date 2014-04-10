@@ -7,9 +7,10 @@ import com.google.dart.engine.sdk.DirectoryBasedDartSdk;
 import com.google.dart.engine.source.DartUriResolver;
 import com.google.dart.engine.source.Source;
 import com.google.dart.engine.source.SourceFactory;
-import com.google.dart.engine.source.UriResolver;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
@@ -18,7 +19,7 @@ import com.intellij.openapi.vfs.*;
 import com.intellij.reference.SoftReference;
 import com.intellij.util.Function;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.util.PubspecYamlUtil;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,6 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class DartAnalyzerService {
@@ -36,7 +36,8 @@ public class DartAnalyzerService {
   private final Project myProject;
 
   private @Nullable String mySdkPath;
-  private @NotNull List<VirtualFile> myDartPackageRoots;
+  private long myPubspecYamlTimestamp;
+  private @NotNull VirtualFile[] myDartPackageRoots;
   private @Nullable WeakReference<AnalysisContext> myAnalysisContextRef;
 
   private final Collection<VirtualFile> myCreatedFiles = Collections.synchronizedSet(new THashSet<VirtualFile>());
@@ -104,21 +105,31 @@ public class DartAnalyzerService {
                                             final @NotNull String sdkPath) {
     AnalysisContext analysisContext = SoftReference.dereference(myAnalysisContextRef);
 
-    final List<VirtualFile> packageRoots = PubspecYamlUtil.getDartPackageRoots(myProject, annotatedFile);
-    if (analysisContext != null && Comparing.equal(sdkPath, mySdkPath) && Comparing.haveEqualElements(packageRoots, myDartPackageRoots)) {
+    final DartUrlResolver dartUrlResolver = DartUrlResolver.getInstance(myProject, annotatedFile);
+    final VirtualFile yamlFile = dartUrlResolver.getPubspecYamlFile();
+    final Document cachedDocument = yamlFile == null ? null : FileDocumentManager.getInstance().getCachedDocument(yamlFile);
+    final long pubspecYamlTimestamp = yamlFile == null ? -1
+                                                       : cachedDocument == null ? yamlFile.getModificationCount()
+                                                                                : cachedDocument.getModificationStamp();
+
+    final VirtualFile[] packageRoots = dartUrlResolver.getPackageRoots();
+
+    if (analysisContext != null &&
+        Comparing.equal(sdkPath, mySdkPath) &&
+        pubspecYamlTimestamp == myPubspecYamlTimestamp &&
+        Comparing.haveEqualElements(packageRoots, myDartPackageRoots)) {
       applyChangeSet(analysisContext, annotatedFile);
       myCreatedFiles.clear();
     }
     else {
-      final DartUriResolver dartUriResolver = new DartUriResolver(new DirectoryBasedDartSdk(new File(sdkPath)));
-      final UriResolver fileResolver = new DartFileUriResolver(myProject);
-      final SourceFactory sourceFactory =
-        new SourceFactory(dartUriResolver, fileResolver, new DartPackageUriResolver(myProject, annotatedFile));
+      final SourceFactory sourceFactory = new SourceFactory(new DartUriResolver(new DirectoryBasedDartSdk(new File(sdkPath))),
+                                                            new DartFileUriResolver(myProject, dartUrlResolver));
 
       analysisContext = AnalysisEngine.getInstance().createAnalysisContext();
       analysisContext.setSourceFactory(sourceFactory);
 
       mySdkPath = sdkPath;
+      myPubspecYamlTimestamp = pubspecYamlTimestamp;
       myDartPackageRoots = packageRoots;
       myAnalysisContextRef = new WeakReference<AnalysisContext>(analysisContext);
     }

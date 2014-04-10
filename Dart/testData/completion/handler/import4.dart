@@ -1,4 +1,4 @@
-import 'Foo' show FooBar;
+import 'additional/Foo.dart' show FooBar;
 
 main() {
   <caret>

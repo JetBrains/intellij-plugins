@@ -1,4 +1,4 @@
-import 'Foo' hide Foo;
+import 'additional/Foo.dart' hide Foo;
 
 main() {
   <caret>

@@ -1,1 +1,1 @@
-import 'Bar' as helper show <caret>
+import 'additional/Bar.dart' as helper show <caret>

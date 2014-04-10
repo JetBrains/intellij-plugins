@@ -10,13 +10,15 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PairConsumer;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
-import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+
+import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGES_FOLDER_NAME;
+import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartTreeStructureProvider implements TreeStructureProvider {
 
@@ -30,11 +32,11 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
     final VirtualFile packagesDir = parentNode instanceof PsiDirectoryNode && project != null
                                     ? ((PsiDirectoryNode)parentNode).getVirtualFile()
                                     : null;
-    final VirtualFile parentFolder = packagesDir != null && packagesDir.isDirectory() && "packages".equals(packagesDir.getName())
+    final VirtualFile parentFolder = packagesDir != null && packagesDir.isDirectory() && PACKAGES_FOLDER_NAME.equals(packagesDir.getName())
                                      ? packagesDir.getParent()
                                      : null;
     final VirtualFile pubspecYamlFile = parentFolder != null
-                                        ? parentFolder.findChild(PubspecYamlUtil.PUBSPEC_YAML)
+                                        ? parentFolder.findChild(PUBSPEC_YAML)
                                         : null;
 
     if (pubspecYamlFile != null && !pubspecYamlFile.isDirectory()) {

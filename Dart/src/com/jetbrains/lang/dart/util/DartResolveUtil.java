@@ -33,10 +33,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class DartResolveUtil {
-  public static final String PACKAGE_SCHEME = "package";
+import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
 
-  public static final String PACKAGE_PREFIX = PACKAGE_SCHEME + ":";
+public class DartResolveUtil {
 
   public static List<PsiElement> findDartRoots(PsiFile psiFile) {
     if (psiFile instanceof XmlFile) {
@@ -367,38 +366,11 @@ public class DartResolveUtil {
                                              final @NotNull VirtualFile contextFile,
                                              final @NotNull String importText) {
     if (importText.startsWith(PACKAGE_PREFIX)) {
-      return getPackagePrefixImportedFile(project, contextFile, importText);
+      return DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(importText);
     }
 
     final VirtualFile parent = contextFile.getParent();
     return parent == null ? null : VfsUtilCore.findRelativeFile(importText, parent);
-  }
-
-  public static VirtualFile getPackagePrefixImportedFile(final @NotNull Project project,
-                                                         final @NotNull VirtualFile contextFile,
-                                                         final @NotNull String importText) {
-    assert importText.startsWith(PACKAGE_PREFIX) : importText;
-
-    final Pair<VirtualFile, List<VirtualFile>> yamlAndPackageRoots =
-      PubspecYamlUtil.getPubspecYamlFileAndDartPackageRoots(project, contextFile);
-    final VirtualFile pubspecYamlFile = yamlAndPackageRoots.first;
-    final List<VirtualFile> packageRoots = yamlAndPackageRoots.second;
-
-    final String pubspecName = pubspecYamlFile == null ? null : PubspecYamlUtil.getPubspecName(pubspecYamlFile);
-    final String prefix = pubspecName == null ? null : PACKAGE_PREFIX + pubspecName + "/";
-    if (prefix != null && importText.startsWith(prefix)) {
-      final String relativePath = importText.substring(prefix.length());
-      final VirtualFile libFolder = pubspecYamlFile.getParent().findChild("lib");
-      return libFolder == null ? null : VfsUtilCore.findRelativeFile(relativePath, libFolder);
-    }
-
-    final String relativePath = importText.substring(PACKAGE_PREFIX.length());
-    for (VirtualFile packageRoot : packageRoots) {
-      final VirtualFile file = VfsUtilCore.findRelativeFile(relativePath, packageRoot);
-      if (file != null) return file;
-    }
-
-    return null;
   }
 
   @Nullable

@@ -14,13 +14,11 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
-import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 
 public class DartFileBasedSource implements Source {
 
@@ -156,24 +154,8 @@ public class DartFileBasedSource implements Source {
   public static DartFileBasedSource getSource(final @NotNull Project project, final @NotNull VirtualFile file) {
     return DartAnalyzerService.getInstance(project).getOrCreateSource(file, new Function<VirtualFile, DartFileBasedSource>() {
       public DartFileBasedSource fun(final VirtualFile file) {
-        return new DartFileBasedSource(project, file, getUriKind(project, file));
+        return new DartFileBasedSource(project, file, UriKind.FILE_URI);
       }
     });
-  }
-
-  private static UriKind getUriKind(final Project project, final VirtualFile file) {
-    final Pair<VirtualFile, List<VirtualFile>> yamlAndPackageRoots = PubspecYamlUtil.getPubspecYamlFileAndDartPackageRoots(project, file);
-
-    for (final VirtualFile packageRoot : yamlAndPackageRoots.second) {
-      if (packageRoot != null && VfsUtilCore.isAncestor(packageRoot, file, true)) {
-        return UriKind.PACKAGE_URI;
-      }
-    }
-
-    final VirtualFile pubspecYamlFile = yamlAndPackageRoots.first;
-    final VirtualFile lib = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild("lib");
-    final VirtualFile libFolder = lib != null && lib.isDirectory() ? lib : null;
-
-    return libFolder != null && VfsUtilCore.isAncestor(libFolder, file, true) ? UriKind.PACKAGE_URI : UriKind.FILE_URI;
   }
 }

@@ -13,6 +13,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Function;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,8 +53,8 @@ public class HtmlScriptSrcToDartPackagesPathReferenceProvider implements PathRef
         final VirtualFile file = DartResolveUtil.getRealVirtualFile(psiFile);
         if (file == null) return Collections.emptyList();
 
-        final List<VirtualFile> packageRoots = PubspecYamlUtil.getDartPackageRoots(psiFile.getProject(), file);
-        final Collection<PsiFileSystemItem> result = new ArrayList<PsiFileSystemItem>(packageRoots.size());
+        final VirtualFile[] packageRoots = DartUrlResolver.getInstance(psiFile.getProject(), file).getPackageRoots();
+        final Collection<PsiFileSystemItem> result = new ArrayList<PsiFileSystemItem>(packageRoots.length);
         for (VirtualFile packageRoot : packageRoots) {
           final VirtualFile parentFolder = packageRoot.getParent();
           final PsiFileSystemItem psiDirectory = parentFolder == null

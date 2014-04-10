@@ -1,10 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.server.frame;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.XDebuggerUtil;
@@ -12,78 +9,29 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
-import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmCallFrame;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmLocation;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmVariable;
-import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess.LOG;
-import static com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess.threeSlashizeFileUrl;
-
 public class DartStackFrame extends XStackFrame {
   private final @NotNull DartCommandLineDebugProcess myDebugProcess;
   private final @NotNull VmCallFrame myVmCallFrame;
   private final @Nullable XSourcePosition mySourcePosition;
+  private final @Nullable String myLocationUrl;
 
   public DartStackFrame(@NotNull final DartCommandLineDebugProcess debugProcess, final @NotNull VmCallFrame vmCallFrame) {
     myDebugProcess = debugProcess;
     myVmCallFrame = vmCallFrame;
-    final Project project = debugProcess.getSession().getProject();
 
     final VmLocation location = vmCallFrame.getLocation();
-    final String locationUrl = location == null ? null : location.getUrl();
-    if (locationUrl != null) {
-      final VirtualFile file;
-      if (locationUrl.startsWith("file:")) {
-        file = VirtualFileManager.getInstance().findFileByUrl(threeSlashizeFileUrl(locationUrl));
-      }
-      else if (locationUrl.startsWith("dart:")) {
-        final String sdkLibNameOrRelPath = locationUrl.substring("dart:".length());
-        final VirtualFile sdkLibByName = DartLibraryIndex.getStandardLibraryFromSdk(project, sdkLibNameOrRelPath);
-
-        if (sdkLibByName != null) {
-          file = sdkLibByName;
-        }
-        else {
-          final DartSdk sdk = DartSdk.getGlobalDartSdk();
-          final String path = sdk == null ? null : sdk.getHomePath() + "/lib/" + sdkLibNameOrRelPath;
-          // todo find internal patches somehow (real files are not available, but debugger can provide its contents)
-          file = path == null ? null : LocalFileSystem.getInstance().findFileByPath(path);
-        }
-      }
-      else if (locationUrl.startsWith("package:")) {
-        final String packageRelPath = locationUrl.substring("package:".length());
-
-        final VirtualFile pubspecYamlFile = myDebugProcess.getPubspecYamlFile();
-        final String pubspecName = pubspecYamlFile == null ? null : PubspecYamlUtil.getPubspecName(pubspecYamlFile);
-
-        if (pubspecName != null && packageRelPath.startsWith(pubspecName + "/")) {
-          file = pubspecYamlFile.findFileByRelativePath("../lib" + packageRelPath.substring(pubspecName.length()));
-        }
-        else {
-          final List<VirtualFile> packageRoots = myDebugProcess.getPackageRoots();
-          VirtualFile inPackages = null;
-          for (VirtualFile packageRoot : packageRoots) {
-            inPackages = LocalFileSystem.getInstance().findFileByPath(packageRoot.getPath() + "/" + packageRelPath);
-            if (inPackages != null) {
-              break;
-            }
-          }
-          file = inPackages;
-        }
-      }
-      else {
-        LOG.warn("Unexpected URL:" + locationUrl);
-        file = null;
-      }
-
+    myLocationUrl = location == null ? null : location.getUrl();
+    if (myLocationUrl != null) {
+      final VirtualFile file = myDebugProcess.getDartUrlResolver().findFileByDartUrl(myLocationUrl);
       final int line = location.getLineNumber(debugProcess.getVmConnection()) - 1;
       mySourcePosition = file == null || line < 0 ? null : XDebuggerUtil.getInstance().createPosition(file, line);
     }
@@ -124,15 +72,14 @@ public class DartStackFrame extends XStackFrame {
 
     if (myVmCallFrame.getFunctionName() != null) {
       component.append(myVmCallFrame.getFunctionName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-      component.append(" in ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
     }
 
     if (position != null) {
-      component.append(position.getFile().getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-      component.append(":" + (position.getLine() + 1), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      final String text = " (" + position.getFile().getName() + ":" + (position.getLine() + 1) + ")";
+      component.append(text, SimpleTextAttributes.GRAY_ATTRIBUTES);
     }
-    else {
-      component.append("<file name is not available>", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+    else if (myLocationUrl != null) {
+      component.append(" (" + myLocationUrl + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
     }
 
     component.setIcon(AllIcons.Debugger.StackFrame);
