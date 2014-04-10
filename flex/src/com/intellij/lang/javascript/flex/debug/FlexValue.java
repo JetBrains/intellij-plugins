@@ -15,7 +15,6 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -27,7 +26,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.Processor;
-import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.*;
@@ -511,7 +509,7 @@ class FlexValue extends XValue {
         final Project project = myDebugProcess.getSession().getProject();
         final JSClass jsClass =
           findJSClass(project, ModuleUtilCore.findModuleForFile(mySourcePosition.getFile(), project), typeFromFlexValueResult);
-        navigatable.setSourcePosition(calcSourcePosition(jsClass));
+        navigatable.setSourcePosition(JSDebuggerSupportUtils.calcSourcePosition(jsClass));
         return;
       }
     }
@@ -560,7 +558,7 @@ class FlexValue extends XValue {
         });
 
         if (!varRef.isNull()) {
-          result = calcSourcePosition(varRef.get());
+          result = JSDebuggerSupportUtils.calcSourcePosition(varRef.get());
         }
       }
     }
@@ -572,7 +570,7 @@ class FlexValue extends XValue {
       final JSParameter[] parameters = parameterList == null ? JSParameter.EMPTY_ARRAY : parameterList.getParameters();
       for (final JSParameter parameter : parameters) {
         if (myName.equals(parameter.getName())) {
-          result = calcSourcePosition(parameter);
+          result = JSDebuggerSupportUtils.calcSourcePosition(parameter);
           break;
         }
       }
@@ -605,22 +603,10 @@ class FlexValue extends XValue {
           }
         }
 
-        result = calcSourcePosition(fieldRef.get());
+        result = JSDebuggerSupportUtils.calcSourcePosition(fieldRef.get());
       }
     }
     navigatable.setSourcePosition(result);
-  }
-
-  @Nullable
-  private static XSourcePosition calcSourcePosition(final @Nullable PsiElement element) {
-    if (element != null) {
-      final PsiElement navigationElement = element.getNavigationElement();
-      final VirtualFile file = navigationElement.getContainingFile().getVirtualFile();
-      if (file != null) {
-        return XDebuggerUtil.getInstance().createPositionByOffset(file, navigationElement.getTextOffset());
-      }
-    }
-    return null;
   }
 
   private static void addValueCheckingDuplicates(final FlexValue flexValue,
