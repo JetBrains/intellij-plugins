@@ -7,21 +7,22 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+import static com.jetbrains.lang.dart.util.DartUrlResolver.DART_PREFIX;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartConsoleFilter implements Filter {
 
   private final @NotNull Project myProject;
   private final @Nullable DartSdk mySdk;
-  private final @Nullable VirtualFile myContextFile;
+  private final @Nullable DartUrlResolver myDartUrlResolver;
   private Collection<VirtualFile> myAllPubspecYamlFiles;
 
   public DartConsoleFilter(final @NotNull Project project) {
@@ -31,7 +32,7 @@ public class DartConsoleFilter implements Filter {
   public DartConsoleFilter(final @NotNull Project project, final @Nullable VirtualFile contextFile) {
     myProject = project;
     mySdk = DartSdk.getGlobalDartSdk();
-    myContextFile = contextFile;
+    myDartUrlResolver = contextFile == null ? null : DartUrlResolver.getInstance(project, contextFile);
   }
 
   @Nullable
@@ -45,23 +46,11 @@ public class DartConsoleFilter implements Filter {
         file = LocalFileSystem.getInstance().findFileByPath(info.path);
         break;
       case DART:
-        // todo where to get source for files like "_RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:93)"?
-        if (mySdk != null) {
-          // info.path is either lib name (like "math") or relative path (like "collection/splay_tree.dart")
-          if (info.path.contains("/")) {
-            file = LocalFileSystem.getInstance().findFileByPath(mySdk.getHomePath() + "/lib/" + info.path);
-          }
-          else {
-            file = DartLibraryIndex.getStandardLibraryFromSdk(myProject, info.path);
-          }
-        }
-        else {
-          file = null;
-        }
+        file = DartUrlResolver.findFileInDarSdkLibFolder(myProject, mySdk, DART_PREFIX + info.path);
         break;
       case PACKAGE:
-        if (myContextFile != null) {
-          file = DartResolveUtil.getPackagePrefixImportedFile(myProject, myContextFile, "package:" + info.path);
+        if (myDartUrlResolver != null) {
+          file = myDartUrlResolver.findFileByDartUrl(PACKAGE_PREFIX + info.path);
         }
         else {
           if (myAllPubspecYamlFiles == null) {
@@ -70,7 +59,7 @@ public class DartConsoleFilter implements Filter {
 
           VirtualFile inPackage = null;
           for (VirtualFile yamlFile : myAllPubspecYamlFiles) {
-            inPackage = DartResolveUtil.getPackagePrefixImportedFile(myProject, yamlFile, "package:" + info.path);
+            inPackage = DartUrlResolver.getInstance(myProject, yamlFile).findFileByDartUrl(PACKAGE_PREFIX + info.path);
             if (inPackage != null) {
               break;
             }

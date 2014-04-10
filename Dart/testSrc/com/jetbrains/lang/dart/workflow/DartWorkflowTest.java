@@ -7,6 +7,8 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartProjectComponent;
+import com.jetbrains.lang.dart.util.DartTestUtils;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 
 public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
 
@@ -104,5 +106,43 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                        rootUrl + "/dir2/example/packages/project3",
                        rootUrl + "/dir2/example/packages/project2"
     );
+  }
+
+  public void testDartUrlResolver() throws Exception {
+    final String rootPath = ModuleRootManager.getInstance(myModule).getContentRoots()[0].getPath();
+
+    myFixture.addFileToProject("pubspec.yaml", "name: RootProject");
+    myFixture.addFileToProject("lib/rootlib.dart", "");
+    final VirtualFile nestedPubspec = myFixture.addFileToProject("example/pubspec.yaml", "name: NestedProject\n" +
+                                                                                         "dependencies:\n" +
+                                                                                         "  RootProject:\n" +
+                                                                                         "    path: ../").getVirtualFile();
+    myFixture.addFileToProject("example/lib/src/nestedlib.dart", "");
+    myFixture.addFileToProject("example/packages/NestedProject/nestedlib.dart", "");
+    myFixture.addFileToProject("example/packages/RootProject/rootlib.dart", "");
+    myFixture.addFileToProject("example/packages/SomePackage/somepack.dart", "");
+
+    final DartUrlResolver resolver = DartUrlResolver.getInstance(getProject(), nestedPubspec);
+    VirtualFile file;
+
+    file = resolver.findFileByDartUrl("dart:collection");
+    assertEquals(DartTestUtils.SDK_HOME_PATH + "/lib/collection/collection.dart", file.getPath());
+    assertEquals("dart:collection", resolver.getDartUrlForFile(file));
+
+    file = resolver.findFileByDartUrl("dart:collection/hash_map.dart");
+    assertEquals(DartTestUtils.SDK_HOME_PATH + "/lib/collection/hash_map.dart", file.getPath());
+    assertEquals("dart:collection/hash_map.dart", resolver.getDartUrlForFile(file));
+
+    file = resolver.findFileByDartUrl("package:SomePackage/somepack.dart");
+    assertEquals(rootPath + "/example/packages/SomePackage/somepack.dart", file.getPath());
+    assertEquals("package:SomePackage/somepack.dart", resolver.getDartUrlForFile(file));
+
+    file = resolver.findFileByDartUrl("package:NestedProject/src/nestedlib.dart");
+    assertEquals(rootPath + "/example/lib/src/nestedlib.dart", file.getPath());
+    assertEquals("package:NestedProject/src/nestedlib.dart", resolver.getDartUrlForFile(file));
+
+    file = resolver.findFileByDartUrl("package:RootProject/rootlib.dart");
+    assertEquals(rootPath + "/lib/rootlib.dart", file.getPath());
+    assertEquals("package:RootProject/rootlib.dart", resolver.getDartUrlForFile(file));
   }
 }

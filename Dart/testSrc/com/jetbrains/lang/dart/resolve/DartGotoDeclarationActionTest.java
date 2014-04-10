@@ -126,16 +126,6 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
     doTest(myFixture.configureByFiles(testName + ".dart", testName + "Helper.dart"), 1);
   }
 
-  public void testLibrary6() throws Throwable {
-    final String testName = getTestName(false);
-    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Helper.dart"), 1);
-  }
-
-  public void testLibrary7() throws Throwable {
-    final String testName = getTestName(false);
-    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Helper.dart"), 1);
-  }
-
   public void testLibrary8() throws Throwable {
     final String testName = getTestName(false);
     doTest(myFixture.configureByFiles(testName + ".dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);

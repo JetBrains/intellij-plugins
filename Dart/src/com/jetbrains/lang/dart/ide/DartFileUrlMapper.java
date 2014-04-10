@@ -11,16 +11,18 @@ import com.intellij.psi.search.ProjectScope;
 import com.intellij.util.Url;
 import com.jetbrains.javascript.debugger.FileUrlMapper;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 
-import static com.jetbrains.lang.dart.util.DartResolveUtil.PACKAGE_PREFIX;
-import static com.jetbrains.lang.dart.util.DartResolveUtil.PACKAGE_SCHEME;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.DART_PREFIX;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.DART_SCHEME;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_SCHEME;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 final class DartFileUrlMapper extends FileUrlMapper {
@@ -35,50 +37,56 @@ final class DartFileUrlMapper extends FileUrlMapper {
   @Nullable
   @Override
   public VirtualFile getFile(@NotNull final Url url, @NotNull final Project project, @Nullable Url requestor) {
-    if (SCHEME.equals(url.getScheme())) {
-      String path = url.getPath();
-      int i = path.indexOf('/');
-      String libraryName;
-      String libraryFilePath;
-      if (i > 0) {
-        libraryName = path.substring(0, i);
-        libraryFilePath = path.substring(i + 1);
+    if (DART_SCHEME.equals(url.getScheme())) {
+      return DartUrlResolver.findFileInDarSdkLibFolder(project, DartSdk.getGlobalDartSdk(), DART_PREFIX + url.getPath());
+    }
+
+    if (PACKAGE_SCHEME.equals(url.getScheme())) {
+      final String packageUrl = PACKAGE_PREFIX + url.getPath();
+      final VirtualFile contextFile = findContextFile(project, requestor);
+
+      if (contextFile != null) {
+        return ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
+          public VirtualFile compute() {
+            return DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(packageUrl);
+          }
+        });
       }
       else {
-        libraryName = path;
-        libraryFilePath = null;
-      }
-
-      VirtualFile file = DartLibraryIndex.getStandardLibraryFromSdk(project, libraryName);
-      if (file == null) {
-        return null;
-      }
-      return libraryFilePath == null ? file : file.getParent().findFileByRelativePath(libraryFilePath);
-    }
-    else if (PACKAGE_SCHEME.equals(url.getScheme())) {
-      final String packageUrl = PACKAGE_PREFIX + url.getPath();
-
-      if (ApplicationManager.getApplication().isDispatchThread()) {
-        return DumbService.getInstance(project).isDumb() ? null : findFileInPackagesFolder(project, packageUrl);
-      }
-
-      return DumbService.getInstance(project).runReadActionInSmartMode(new Computable<VirtualFile>() {
-        @Override
-        public VirtualFile compute() {
-          return findFileInPackagesFolder(project, packageUrl);
+        if (ApplicationManager.getApplication().isDispatchThread()) {
+          return DumbService.getInstance(project).isDumb() ? null : findFileInAnyPackagesFolder(project, packageUrl);
         }
-      });
+
+        return DumbService.getInstance(project).runReadActionInSmartMode(new Computable<VirtualFile>() {
+          @Override
+          public VirtualFile compute() {
+            return findFileInAnyPackagesFolder(project, packageUrl);
+          }
+        });
+      }
     }
+
     return null;
   }
 
   @Nullable
-  private static VirtualFile findFileInPackagesFolder(final @NotNull Project project, final @NotNull String packageUrl) {
-    for (final VirtualFile file : FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, ProjectScope.getContentScope(project))) {
-      final VirtualFile result = DartResolveUtil.getPackagePrefixImportedFile(project, file, packageUrl);
-      if (result != null) {
-        return result;
-      }
+  private static VirtualFile findContextFile(final @NotNull Project project, final @Nullable Url url) {
+    if (url == null) return null;
+
+    for (FileUrlMapper urlMapper : FileUrlMapper.EP_NAME.getExtensions()) {
+      if (urlMapper instanceof DartFileUrlMapper) continue;
+      final VirtualFile file = urlMapper.getFile(url, project, url);
+      if (file != null) return file;
+    }
+
+    return null;
+  }
+
+  @Nullable
+  private static VirtualFile findFileInAnyPackagesFolder(final @NotNull Project project, final @NotNull String packageUrl) {
+    for (final VirtualFile yamlFile : FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, ProjectScope.getContentScope(project))) {
+      final VirtualFile file = DartUrlResolver.getInstance(project, yamlFile).findFileByDartUrl(packageUrl);
+      if (file != null) return file;
     }
 
     return null;

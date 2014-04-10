@@ -6,8 +6,6 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.xdebugger.XDebugProcess;
@@ -20,13 +18,11 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmConnection;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmIsolate;
-import com.jetbrains.lang.dart.util.PubspecYamlUtil;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 public class DartCommandLineDebugProcess extends XDebugProcess {
   public static final Logger LOG = Logger.getInstance(DartCommandLineDebugProcess.class.getName());
@@ -34,28 +30,17 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   private final @Nullable ExecutionResult myExecutionResult;
   private final VmConnection myVmConnection;
   private final DartCommandLineBreakpointsHandler myBreakpointsHandler;
-  private final @Nullable VirtualFile myPubspecYamlFile;
-  private final @NotNull List<VirtualFile> myPackageRoots;
+  private final @NotNull DartUrlResolver myDartUrlResolver;
   private boolean myVmConnected;
   private @Nullable VmIsolate myMainIsolate;
 
   public DartCommandLineDebugProcess(final @NotNull XDebugSession session,
                                      final int debuggingPort,
                                      final @Nullable ExecutionResult executionResult,
-                                     final @NotNull String dartScriptPath) {
+                                     final @NotNull VirtualFile dartFile) {
     super(session);
 
-    final VirtualFile dartFile = LocalFileSystem.getInstance().findFileByPath(dartScriptPath);
-    if (dartFile != null) {
-      final Pair<VirtualFile, List<VirtualFile>> yamlAndPackageRoots =
-        PubspecYamlUtil.getPubspecYamlFileAndDartPackageRoots(session.getProject(), dartFile);
-      myPubspecYamlFile = yamlAndPackageRoots.first;
-      myPackageRoots = yamlAndPackageRoots.second;
-    }
-    else {
-      myPubspecYamlFile = null;
-      myPackageRoots = Collections.emptyList();
-    }
+    myDartUrlResolver = DartUrlResolver.getInstance(session.getProject(), dartFile);
 
     myBreakpointsHandler = new DartCommandLineBreakpointsHandler(this);
     myExecutionResult = executionResult;
@@ -212,14 +197,9 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     // todo implement
   }
 
-  @Nullable
-  public VirtualFile getPubspecYamlFile() {
-    return myPubspecYamlFile;
-  }
-
   @NotNull
-  public List<VirtualFile> getPackageRoots() {
-    return myPackageRoots;
+  public DartUrlResolver getDartUrlResolver() {
+    return myDartUrlResolver;
   }
 
   public VmConnection getVmConnection() {

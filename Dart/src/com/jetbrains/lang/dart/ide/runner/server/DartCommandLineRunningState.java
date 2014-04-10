@@ -17,6 +17,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,10 +88,10 @@ public class DartCommandLineRunningState extends CommandLineState {
       commandLine.addParameter(argumentsTokenizer.nextToken());
     }
 
-    // todo how to handle multiple package roots?
-    final List<VirtualFile> packageRoots = PubspecYamlUtil.getDartPackageRoots(getEnvironment().getProject(), libraryFile);
-    if (!packageRoots.isEmpty()) {
-      commandLine.addParameter("--package-root=" + packageRoots.get(0).getPath() + "/");
+    final VirtualFile[] packageRoots = DartUrlResolver.getInstance(getEnvironment().getProject(), libraryFile).getPackageRoots();
+    if (packageRoots.length > 0) {
+      // more than one package root is not supported by the [SDK]/bin/dart tool
+      commandLine.addParameter("--package-root=" + packageRoots[0].getPath());
     }
 
     commandLine.addParameter(myFilePath);

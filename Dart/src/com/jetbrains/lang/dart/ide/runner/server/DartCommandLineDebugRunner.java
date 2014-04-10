@@ -11,6 +11,8 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
@@ -42,6 +44,10 @@ public class DartCommandLineDebugRunner extends DefaultProgramRunner {
 
     final String filePath = configuration.getFilePath();
     assert filePath != null;
+    final VirtualFile dartFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    if (dartFile == null) {
+      throw new ExecutionException("File not found: " + filePath);
+    }
 
     final int debuggingPort = NetUtils.tryToFindAvailableSocketPort();
 
@@ -59,7 +65,7 @@ public class DartCommandLineDebugRunner extends DefaultProgramRunner {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
-          return new DartCommandLineDebugProcess(session, debuggingPort, executionResult, filePath);
+          return new DartCommandLineDebugProcess(session, debuggingPort, executionResult, dartFile);
         }
       });
 

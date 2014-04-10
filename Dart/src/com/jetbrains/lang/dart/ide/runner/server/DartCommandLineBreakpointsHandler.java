@@ -2,10 +2,6 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
@@ -13,17 +9,13 @@ import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.server.google.*;
-import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -121,9 +113,9 @@ public class DartCommandLineBreakpointsHandler {
 
     suspendPerformActionAndResume(new ThrowableRunnable<IOException>() {
       public void run() throws IOException {
-        final String urlToSetBreakpoint = getUrlToSetBreakpoint(position);
-        final int line = breakpoint.getLine() + 1;
-        sendSetBreakpointCommand(isolate, breakpoint, urlToSetBreakpoint, line);
+        final String dartUrl = myDebugProcess.getDartUrlResolver().getDartUrlForFile(position.getFile());
+        final int line = position.getLine() + 1;
+        sendSetBreakpointCommand(isolate, breakpoint, dartUrl, line);
       }
     });
   }
@@ -152,48 +144,6 @@ public class DartCommandLineBreakpointsHandler {
     else {
       runnable.run();
     }
-  }
-
-  private String getUrlToSetBreakpoint(final XSourcePosition position) {
-    final VirtualFile file = position.getFile();
-
-    final Project project = myDebugProcess.getSession().getProject();
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
-
-    final VirtualFile sdkLibFolder = sdk == null ? null : LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib");
-    final String relativeToSdkLibFolder = sdkLibFolder == null ? null : VfsUtilCore.getRelativePath(file, sdkLibFolder, '/');
-    final String sdkLibName = relativeToSdkLibFolder == null
-                              ? null
-                              : DartLibraryIndex.getStandardLibraryNameByRelativePath(project, relativeToSdkLibFolder);
-
-    final List<VirtualFile> packageRoots = myDebugProcess.getPackageRoots();
-
-    String relativeToPackages = null;
-    if (relativeToSdkLibFolder == null) {
-      for (VirtualFile packageRoot : packageRoots) {
-        relativeToPackages = VfsUtilCore.getRelativePath(file, packageRoot, '/');
-        if (relativeToPackages != null) {
-          break;
-        }
-      }
-    }
-
-    final VirtualFile pubspecYamlFile = myDebugProcess.getPubspecYamlFile();
-    final VirtualFile libFolder = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild("lib");
-    final String pubspecName = pubspecYamlFile == null ? null : PubspecYamlUtil.getPubspecName(pubspecYamlFile);
-    final String relativeToLibFolder = libFolder == null || relativeToSdkLibFolder != null || relativeToPackages != null
-                                       ? null
-                                       : VfsUtilCore.getRelativePath(file, libFolder, '/');
-
-    return sdkLibName != null
-           ? "dart:" + sdkLibName
-           : relativeToSdkLibFolder != null
-             ? "dart:" + relativeToSdkLibFolder
-             : relativeToPackages != null
-               ? "package:" + relativeToPackages
-               : relativeToLibFolder != null && pubspecName != null
-                 ? "package:" + pubspecName + "/" + relativeToLibFolder
-                 : getAbsoluteUrlForResource(file);
   }
 
   private void sendSetBreakpointCommand(final VmIsolate isolate,
@@ -236,11 +186,5 @@ public class DartCommandLineBreakpointsHandler {
     // breakpoint could be automatically shifted down to another line if there's no code at initial line
     // breakpoint icon on the gutter is shifted in DartEditor (see com.google.dart.tools.debug.core.server.ServerBreakpointManager#handleBreakpointResolved)
     // but we prefer to keep it at its original position
-  }
-
-  // see com.google.dart.tools.debug.core.server.ServerBreakpointManager#getAbsoluteUrlForResource()
-  @NotNull
-  private static String getAbsoluteUrlForResource(final @NotNull VirtualFile file) {
-    return new File(file.getPath()).toURI().toString();
   }
 }

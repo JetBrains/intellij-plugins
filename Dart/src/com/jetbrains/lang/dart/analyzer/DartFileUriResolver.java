@@ -4,37 +4,42 @@ import com.google.dart.engine.source.Source;
 import com.google.dart.engine.source.UriKind;
 import com.google.dart.engine.source.UriResolver;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 
+import static com.jetbrains.lang.dart.util.DartUrlResolver.FILE_PREFIX;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.FILE_SCHEME;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_SCHEME;
+
 public class DartFileUriResolver extends UriResolver {
 
-  private final Project myProject;
+  private final @NotNull Project myProject;
+  private final @NotNull DartUrlResolver myDartUrlResolver;
 
-  public DartFileUriResolver(final Project project) {
+  public DartFileUriResolver(final @NotNull Project project, final @NotNull DartUrlResolver dartUrlResolver) {
     myProject = project;
+    myDartUrlResolver = dartUrlResolver;
   }
 
   public Source fromEncoding(final UriKind kind, final URI uri) {
-    if (kind != UriKind.FILE_URI) return null;
-
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(uri.getPath());
-    final DartFileBasedSource source = file == null ? null : DartFileBasedSource.getSource(myProject, file);
-
-    if (source != null && source.getUriKind() != UriKind.PACKAGE_URI) {
-      DartInProcessAnnotator.LOG.warn("DartFileUriResolver.fromEncoding: unexpected uri kind for file " + uri);
+    if (kind != UriKind.FILE_URI) {
+      DartInProcessAnnotator.LOG.warn("DartFileUriResolver.fromEncoding: uri=" + uri + ", kind=" + kind);
     }
 
-    return source;
+    return resolveAbsolute(uri);
   }
 
   public Source resolveAbsolute(final URI uri) {
-    if (!"file".equals(uri.getScheme())) return null;
+    final String scheme = uri.getScheme();
+    if (FILE_SCHEME.equals(scheme) || PACKAGE_SCHEME.equals(scheme)) {
+      final VirtualFile file = myDartUrlResolver.findFileByDartUrl(uri.toString());
+      return file == null ? null : DartFileBasedSource.getSource(myProject, file);
+    }
 
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(uri.getPath());
-    final DartFileBasedSource source = file == null ? null : DartFileBasedSource.getSource(myProject, file);
-    return source != null && source.getUriKind() == UriKind.FILE_URI ? source : null;
+    return null;
   }
 }
