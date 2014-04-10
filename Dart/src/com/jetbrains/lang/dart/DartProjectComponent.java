@@ -55,10 +55,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
   public void projectOpened() {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(new Runnable() {
       public void run() {
-        if (!ApplicationManager.getApplication().isUnitTestMode() && DartLineBreakpointType.getJSBreakpointType() != null) {
-          removeDartLineBreakpoints(myProject);
-        }
-        //removeJSBreakpointsInDartFiles(myProject); // todo remove above and uncomment this line in 13.1.1 (when JavaScriptDebugAware.isOnlySourceMappedBreakpoints() is introduced)
+        removeJSBreakpointsInDartFiles(myProject);
 
         final boolean dartSdkWasEnabledInOldModel = hasJSLibraryMappingToOldDartSdkGlobalLib(myProject);
         deleteDartSdkGlobalLibConfiguredInOldIde();
@@ -87,30 +84,6 @@ public class DartProjectComponent extends AbstractProjectComponent {
         }
       }
     });
-  }
-
-  private static void removeDartLineBreakpoints(final Project project) {
-    final XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
-    final Collection<XBreakpoint<?>> toRemove = new ArrayList<XBreakpoint<?>>();
-
-    for (XBreakpoint<?> breakpoint : breakpointManager.getAllBreakpoints()) {
-      final XSourcePosition position = breakpoint.getSourcePosition();
-      if (position != null &&
-          position.getFile().getFileType() == DartFileType.INSTANCE &&
-          (breakpoint.getType() instanceof DartLineBreakpointType)) {
-        toRemove.add(breakpoint);
-      }
-    }
-
-    if (!toRemove.isEmpty()) {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        public void run() {
-          for (XBreakpoint<?> breakpoint : toRemove) {
-            breakpointManager.removeBreakpoint(breakpoint);
-          }
-        }
-      });
-    }
   }
 
   private static void removeJSBreakpointsInDartFiles(final Project project) {
