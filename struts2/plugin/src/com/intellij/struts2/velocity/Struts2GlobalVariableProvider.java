@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.velocity;
 
+import com.intellij.javaee.web.WebCommonClassNames;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.CommonClassNames;
@@ -52,12 +53,12 @@ public class Struts2GlobalVariableProvider extends VtlGlobalVariableProvider {
     }
 
     final List<VtlVariable> result = ContainerUtil.newArrayList();
-    result.add(new MyVtlVariable("response", file, "javax.servlet.http.HttpServletResponse"));
-    result.add(new MyVtlVariable("res", file, "javax.servlet.http.HttpServletResponse"));
-    result.add(new MyVtlVariable("request", file, "javax.servlet.http.HttpServletRequest"));
-    result.add(new MyVtlVariable("req", file, "javax.servlet.http.HttpServletRequest"));
-    result.add(new MyVtlVariable("application", file, "javax.servlet.ServletContext"));
-    result.add(new MyVtlVariable("session", file, "javax.servlet.http.HttpSession"));
+    result.add(new MyVtlVariable("response", file, WebCommonClassNames.HTTP_SERVLET_RESPONSE));
+    result.add(new MyVtlVariable("res", file, WebCommonClassNames.HTTP_SERVLET_RESPONSE));
+    result.add(new MyVtlVariable("request", file, WebCommonClassNames.HTTP_SERVLET_REQUEST));
+    result.add(new MyVtlVariable("req", file, WebCommonClassNames.HTTP_SERVLET_REQUEST));
+    result.add(new MyVtlVariable("application", file, WebCommonClassNames.SERVLET_CONTEXT));
+    result.add(new MyVtlVariable("session", file, WebCommonClassNames.HTTP_SESSION));
     result.add(new MyVtlVariable("base", file, CommonClassNames.JAVA_LANG_STRING));
     result.add(new MyVtlVariable("stack", file, "com.opensymphony.xwork2.util.ValueStack"));
     result.add(new MyVtlVariable("action", file, "com.opensymphony.xwork2.ActionInvocation"));
