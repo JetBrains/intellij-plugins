@@ -12,14 +12,10 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.NonFocusableCheckBox;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -47,9 +43,6 @@ public class FlexModuleWizardForm {
   private JCheckBox myEnableHistoryCheckBox;
   private JCheckBox myCheckPlayerVersionCheckBox;
   private JCheckBox myExpressInstallCheckBox;
-
-  private boolean mySampleAppNameNameChangedByUser;
-  private boolean mySettingSampleAppNameFromCode;
 
   public FlexModuleWizardForm() {
     mySdkLabel.setLabelFor(mySdkCombo.getChildComponent());
@@ -79,21 +72,13 @@ public class FlexModuleWizardForm {
       public void actionPerformed(final ActionEvent e) {
         final String sampleApp = mySampleAppTextField.getText().trim();
         if (sampleApp.endsWith(".as") || sampleApp.endsWith(".mxml")) {
-          mySettingSampleAppNameFromCode = true;
           mySampleAppTextField
             .setText(FileUtil.getNameWithoutExtension(sampleApp) + (myPureActionScriptCheckBox.isSelected() ? ".as" : ".mxml"));
-          mySettingSampleAppNameFromCode = false;
         }
       }
     });
 
-    mySampleAppTextField.getDocument().addDocumentListener(new DocumentAdapter() {
-      protected void textChanged(final DocumentEvent e) {
-        if (!mySettingSampleAppNameFromCode) {
-          mySampleAppNameNameChangedByUser = true;
-        }
-      }
-    });
+    reset();
   }
 
   public JPanel getMainPanel() {
@@ -107,7 +92,7 @@ public class FlexModuleWizardForm {
     }
   }
 
-  public void reset(@Nullable final String moduleName) {
+  private void reset() {
     myTargetPlayerCombo.setSelectedItem(TargetPlatform.Web);
     myPureActionScriptCheckBox.setSelected(false);
     myOutputTypeCombo.setSelectedItem(OutputType.Application);
@@ -115,15 +100,12 @@ public class FlexModuleWizardForm {
     myIOSCheckBox.setSelected(true);
     BCUtils.updateAvailableTargetPlayers(mySdkCombo.getSelectedSdk(), myTargetPlayerCombo);
     mySampleAppCheckBox.setSelected(true);
-    if (moduleName != null) {
-      onModuleNameChanged(moduleName);
-    }
+    mySampleAppTextField.setText("Main.mxml");
     myHtmlWrapperCheckBox.setSelected(true);
     myEnableHistoryCheckBox.setSelected(true);
     myCheckPlayerVersionCheckBox.setSelected(true);
     myExpressInstallCheckBox.setSelected(true);
 
-    mySampleAppNameNameChangedByUser = false;
     updateControls();
   }
 
@@ -189,30 +171,6 @@ public class FlexModuleWizardForm {
     moduleBuilder.setCreateHtmlWrapperTemplate(myHtmlWrapperCheckBox.isEnabled() && myHtmlWrapperCheckBox.isSelected());
     moduleBuilder.setHtmlWrapperTemplateParameters(myEnableHistoryCheckBox.isSelected(), myCheckPlayerVersionCheckBox.isSelected(),
                                                    myExpressInstallCheckBox.isEnabled() && myExpressInstallCheckBox.isSelected());
-  }
-
-  public void onModuleNameChanged(@NotNull final String moduleName) {
-    if (!mySampleAppNameNameChangedByUser) {
-      final StringBuilder builder = new StringBuilder();
-      for (int i = 0; i < moduleName.length(); i++) {
-        final char ch = moduleName.charAt(i);
-        if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9' || ch == '_' || ch == '$') {
-          builder.append(ch);
-        }
-      }
-      if (builder.length() == 0) {
-        builder.append("Main");
-      }
-      if (Character.isDigit(builder.charAt(0))) {
-        builder.insert(0, "Main_");
-      }
-      builder.replace(0, 1, String.valueOf(Character.toUpperCase(builder.charAt(0))));
-      builder.append(myPureActionScriptCheckBox.isSelected() ? ".as" : ".mxml");
-
-      mySettingSampleAppNameFromCode = true;
-      mySampleAppTextField.setText(builder.toString());
-      mySettingSampleAppNameFromCode = false;
-    }
   }
 
   public boolean validate() throws ConfigurationException {

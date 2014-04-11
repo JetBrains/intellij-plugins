@@ -6,9 +6,6 @@ import com.intellij.openapi.options.ConfigurationException;
 
 import javax.swing.*;
 
-/**
- * User: ksafonov
- */
 public class SetupFlexModuleWizardStep extends ModuleWizardStep {
 
   private final FlexModuleWizardForm myForm;
@@ -21,10 +18,6 @@ public class SetupFlexModuleWizardStep extends ModuleWizardStep {
 
   public JComponent getComponent() {
     return myForm.getMainPanel();
-  }
-
-  public void _init() {
-    myForm.reset(myModuleBuilder.getName());
   }
 
   public void updateDataModel() {
