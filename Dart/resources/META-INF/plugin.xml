@@ -141,6 +141,7 @@
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
 
+    <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
     <codeInspection.InspectionExtension id="dartGlobalInspection"
                                         implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>
 
