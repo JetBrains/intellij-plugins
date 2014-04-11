@@ -10,7 +10,7 @@ import com.intellij.psi.PsiRecursiveElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.ResolveTestCase;
 import com.intellij.util.ObjectUtils;
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import java.io.File;
 import java.util.ArrayList;
