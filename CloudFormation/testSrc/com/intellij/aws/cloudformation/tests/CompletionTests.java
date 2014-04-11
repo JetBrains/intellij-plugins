@@ -56,6 +56,13 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
     assertSameElements(strings, Arrays.asList("ConfigurationEndpoint.Address", "ConfigurationEndpoint.Port"));
   }
 
+  public void testResourceTopLevelProperty1() throws Exception {
+    myFixture.configureByFiles("ResourceTopLevelProperty1.template");
+    myFixture.complete(CompletionType.BASIC, 1);
+    List<String> strings = myFixture.getLookupElementStrings();
+    assertSameElements(strings, Arrays.asList("Condition", "DeletionPolicy", "Metadata", "Properties", "UpdatePolicy"));
+  }
+
   @Override
   protected String getTestDataPath() {
     return TestUtil.getTestDataPath("/completion/");

@@ -45,6 +45,8 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
                  completeResourceProperty(rs, parent, quoteResult);
                }
 
+               completeResourceTopLevelProperty(rs, parent, quoteResult);
+
                String attResourceName = getResourceNameFromGetAttAtrributePosition(parent);
                if (attResourceName != null) {
                  completeAttribute(parent.getContainingFile(), rs, quoteResult, attResourceName);
@@ -64,6 +66,47 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
              }
            }
     );
+  }
+
+  private void completeResourceTopLevelProperty(CompletionResultSet rs, PsiElement element, boolean quoteResult) {
+    final JSProperty property = ObjectUtils.tryCast(element, JSProperty.class);
+    if (property == null) {
+      return;
+    }
+
+    final JSObjectLiteralExpression resourceExpression = ObjectUtils.tryCast(property.getParent(), JSObjectLiteralExpression.class);
+    if (resourceExpression == null) {
+      return;
+    }
+
+    final JSProperty resourceProperty = ObjectUtils.tryCast(resourceExpression.getParent(), JSProperty.class);
+    if (resourceProperty == null) {
+      return;
+    }
+
+    final JSObjectLiteralExpression resourcesExpression =
+      ObjectUtils.tryCast(resourceProperty.getParent(), JSObjectLiteralExpression.class);
+    if (resourcesExpression == null) {
+      return;
+    }
+
+    final JSProperty resourcesProperty = ObjectUtils.tryCast(resourcesExpression.getParent(), JSProperty.class);
+    if (resourcesProperty == null ||
+        resourcesProperty.getName() == null ||
+        !CloudFormationSections.Resources.equals(StringUtil.stripQuotesAroundValue(resourcesProperty.getName()))) {
+      return;
+    }
+
+    final JSObjectLiteralExpression root = CloudFormationPsiUtils.getRootExpression(resourceProperty.getContainingFile());
+    if (root != resourcesProperty.getParent()) {
+      return;
+    }
+
+    for (String propertyName : CloudFormationConstants.AllTopLevelResourceProperties) {
+      if (resourceExpression.findProperty(propertyName) == null) {
+        rs.addElement(createLookupElement(propertyName, quoteResult));
+      }
+    }
   }
 
   private String getResourceNameFromGetAttAtrributePosition(PsiElement element) {
