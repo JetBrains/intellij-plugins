@@ -1,6 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapRunConfiguration;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfiguration;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;

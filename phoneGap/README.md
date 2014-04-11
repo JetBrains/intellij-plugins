@@ -4,7 +4,7 @@ PhoneGap/Cordovaアプリ開発をIntelliJ IDEAで行えるようにするプラ
 
 ###PhoneGap/Cordovaについて
 
-http://phonegap.com/  
+http://phonegap.com/
 http://phonegap-fan.com/
 
 ###使い方
@@ -37,5 +37,7 @@ Edit ConfigurationにPhoneGapが追加されているはずです．新規Config
 
 * iOS support
 * Windows Phone support
-* Project importer (.cordova)
+* Project importer (.cordova/config.xml)
 * Project generator
+* PhoneGap Build support
+* PhoneGapPlugin support

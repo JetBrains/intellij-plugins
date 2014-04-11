@@ -1,4 +1,4 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;

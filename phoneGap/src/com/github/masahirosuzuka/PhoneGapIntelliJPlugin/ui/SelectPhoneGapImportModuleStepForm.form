@@ -16,18 +16,10 @@
           <text value="PhoneGap Project root"/>
         </properties>
       </component>
-      <component id="18c90" class="javax.swing.JTextField" binding="projectRootPath">
+      <component id="18c90" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="projectRootPathField">
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
-          </grid>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="74587" class="javax.swing.JTree" binding="projectTree">
-        <constraints>
-          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
           </grid>
         </constraints>
         <properties/>
@@ -39,6 +31,14 @@
         <properties>
           <text value="Import Module"/>
         </properties>
+      </component>
+      <component id="71f7c" class="javax.swing.JList" binding="moduleList">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="50"/>
+          </grid>
+        </constraints>
+        <properties/>
       </component>
     </children>
   </grid>
