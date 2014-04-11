@@ -158,7 +158,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
 
   public static boolean isInCondition(JSLiteralExpression element) {
     final JSProperty conditionProperty = ObjectUtils.tryCast(element.getParent(), JSProperty.class);
-    if (conditionProperty == null || !CloudFormationConstants.Condition.equals(conditionProperty.getName())) {
+    if (conditionProperty == null || !CloudFormationConstants.ConditionPropertyName.equals(conditionProperty.getName())) {
       return false;
     }
 
@@ -168,7 +168,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
 
   public static boolean handleDependsOnSingle(JSLiteralExpression element, List<PsiReference> result) {
     final JSProperty dependsOnProperty = ObjectUtils.tryCast(element.getParent(), JSProperty.class);
-    if (dependsOnProperty == null || !CloudFormationConstants.DependsOn.equals(dependsOnProperty.getName())) {
+    if (dependsOnProperty == null || !CloudFormationConstants.DependsOnPropertyName.equals(dependsOnProperty.getName())) {
       return false;
     }
 
@@ -192,7 +192,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
 
   public static boolean isInConditionOnResource(PsiElement element) {
     final JSProperty conditionProperty = ObjectUtils.tryCast(element.getParent(), JSProperty.class);
-    if (conditionProperty == null || !CloudFormationConstants.Condition.equals(conditionProperty.getName())) {
+    if (conditionProperty == null || !CloudFormationConstants.ConditionPropertyName.equals(conditionProperty.getName())) {
       return false;
     }
 
@@ -213,7 +213,7 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
     }
 
     final JSProperty dependsOnProperty = ObjectUtils.tryCast(refArray.getParent(), JSProperty.class);
-    if (dependsOnProperty == null || !CloudFormationConstants.DependsOn.equals(dependsOnProperty.getName())) {
+    if (dependsOnProperty == null || !CloudFormationConstants.DependsOnPropertyName.equals(dependsOnProperty.getName())) {
       return false;
     }
 

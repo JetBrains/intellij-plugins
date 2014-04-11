@@ -171,6 +171,14 @@ public class CloudFormationFormatChecker {
       return;
     }
 
+    for (JSProperty property : obj.getProperties()) {
+      final String propertyName = property.getName();
+
+      if (!CloudFormationConstants.AllTopLevelResourceProperties.contains(propertyName)) {
+        addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.property", propertyName));
+      }
+    }
+
     resourceType(typeProperty);
 
     final JSProperty propertiesProperty = obj.findProperty(CloudFormationConstants.PropertiesPropertyName);
