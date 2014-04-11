@@ -1,5 +1,6 @@
 package com.intellij.aws.cloudformation;
 
+import com.intellij.aws.cloudformation.metadata.CloudFormationResourceAttribute;
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceProperty;
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType;
 import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase;
@@ -7,13 +8,11 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.JavascriptLanguage;
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.JSLiteralExpression;
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
-import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
@@ -46,6 +45,11 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
                  completeResourceProperty(rs, parent, quoteResult);
                }
 
+               String attResourceName = getResourceNameFromGetAttAtrributePosition(parent);
+               if (attResourceName != null) {
+                 completeAttribute(parent.getContainingFile(), rs, quoteResult, attResourceName);
+               }
+
                for (PsiReference reference : parent.getReferences()) {
                  final CloudFormationReferenceBase cfnReference = ObjectUtils.tryCast(reference, CloudFormationReferenceBase.class);
                  if (cfnReference != null) {
@@ -62,9 +66,62 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
     );
   }
 
+  private String getResourceNameFromGetAttAtrributePosition(PsiElement element) {
+    final JSLiteralExpression attributeExpression = ObjectUtils.tryCast(element, JSLiteralExpression.class);
+    if (attributeExpression == null || !attributeExpression.isQuotedLiteral()) {
+      return null;
+    }
+
+    final JSArrayLiteralExpression getattParameters = ObjectUtils.tryCast(attributeExpression.getParent(), JSArrayLiteralExpression.class);
+    if (getattParameters == null || getattParameters.getExpressions().length != 2) {
+      return null;
+    }
+
+    final JSProperty getattProperty = ObjectUtils.tryCast(getattParameters.getParent(), JSProperty.class);
+    if (getattProperty == null || !CloudFormationIntrinsicFunctions.FnGetAtt.equals(getattProperty.getName())) {
+      return null;
+    }
+
+    final JSObjectLiteralExpression getattFunc = ObjectUtils.tryCast(getattProperty.getParent(), JSObjectLiteralExpression.class);
+    if (getattFunc == null || getattFunc.getProperties().length != 1) {
+      return null;
+    }
+
+    final String text = getattParameters.getExpressions()[0].getText();
+    return StringUtil.stripQuotesAroundValue(text);
+  }
+
   private void completeResourceType(CompletionResultSet rs, boolean quoteResult) {
     for (CloudFormationResourceType resourceType : CloudFormationMetadataProvider.METADATA.resourceTypes) {
       rs.addElement(createLookupElement(resourceType.name, quoteResult));
+    }
+  }
+
+  private void completeAttribute(PsiFile file, CompletionResultSet rs, boolean quoteResult, String resourceName) {
+    final JSProperty resource = CloudFormationResolve.object$.resolveEntity(file, resourceName, CloudFormationSections.Resources);
+    if (resource == null) {
+      return;
+    }
+
+    final JSObjectLiteralExpression resourceProperties = ObjectUtils.tryCast(resource.getValue(), JSObjectLiteralExpression.class);
+    if (resourceProperties == null) {
+      return;
+    }
+
+    final JSProperty typeProperty = resourceProperties.findProperty(CloudFormationConstants.TypePropertyName);
+    if (typeProperty == null || typeProperty.getValue() == null) {
+      return;
+    }
+
+    final String resourceTypeName = StringUtil.stripQuotesAroundValue(typeProperty.getValue().getText());
+
+    final CloudFormationResourceType resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(resourceTypeName);
+    if (resourceType == null) {
+      return;
+    }
+
+    for (CloudFormationResourceAttribute attribute : resourceType.attributes) {
+      rs.addElement(createLookupElement(attribute.name, quoteResult));
     }
   }
 

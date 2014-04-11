@@ -42,6 +42,20 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
     assertSameElements(strings, Arrays.asList("WebServerUser1", "WebServerUser2"));
   }
 
+  public void testGetAtt1() throws Exception {
+    myFixture.configureByFiles("GetAtt1.template");
+    myFixture.complete(CompletionType.BASIC, 1);
+    List<String> strings = myFixture.getLookupElementStrings();
+    assertSameElements(strings, Arrays.asList("Arn"));
+  }
+
+  public void testGetAtt2() throws Exception {
+    myFixture.configureByFiles("GetAtt2.template");
+    myFixture.complete(CompletionType.BASIC, 1);
+    List<String> strings = myFixture.getLookupElementStrings();
+    assertSameElements(strings, Arrays.asList("ConfigurationEndpoint.Address", "ConfigurationEndpoint.Port"));
+  }
+
   @Override
   protected String getTestDataPath() {
     return TestUtil.getTestDataPath("/completion/");
