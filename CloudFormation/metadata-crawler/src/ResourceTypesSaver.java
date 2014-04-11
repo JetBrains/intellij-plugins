@@ -1,6 +1,7 @@
 import com.intellij.aws.cloudformation.metadata.*;
-import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -281,12 +282,12 @@ public class ResourceTypesSaver {
         continue;
       }
 
-      result.add(new Pair<>(new URL(url, href.trim()), name.trim()));
+      result.add(Pair.of(new URL(url, href.trim()), name.trim()));
     }
 
     Collections.sort(result, new Comparator<Pair<URL, String>>() {
       @Override
-      public int compare(Pair<URL, String> o1, Pair<URL, String> o2) {
+      public int compare(@NotNull Pair<URL, String> o1, @NotNull Pair<URL, String> o2) {
         return o1.getValue().compareTo(o2.getValue());
       }
     });

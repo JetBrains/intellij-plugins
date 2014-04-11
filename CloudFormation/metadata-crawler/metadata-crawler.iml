@@ -12,6 +12,8 @@
     <orderEntry type="module" module-name="metadata-model" />
     <orderEntry type="library" name="jsoup" level="project" />
     <orderEntry type="library" name="jericho-html" level="project" />
+    <orderEntry type="library" name="commons-lang3" level="project" />
+    <orderEntry type="library" name="annotations" level="project" />
   </component>
 </module>
 
