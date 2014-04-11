@@ -31,7 +31,7 @@ public class PhoneGapConfigurationType implements ConfigurationType {
 
   @Override
   public Icon getIcon() {
-    return new PhoneGapIcons().getIcon();
+    return PhoneGapIcons.getIcon();
   }
 
   @NotNull

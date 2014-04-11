@@ -23,12 +23,9 @@ AndroidSDKをインストールし，PATHを通しておいてください．
 phonegap create my-app
 
 #####(4)PhoneGapアプリをIntelliJにインポート
-*コードジェネレータ*及び*オートインポータ*は開発中です．手動でのインポートが必要になります．
 
-File -> Import Project -> PhoneGapプロジェクトのルートディレクトリを指定 -> Create project from existing sources -> Finish
-File -> Project Structure -> Modules -> Moduleを追加 -> Name : www Content root : PhoneGapプロジェクトのルート/www
-
-必要であればhooks, mergers, platforms, pluginsも同様にインポートしてください．pluginsはインポートしておいた方が便利かもしれません．
+プロジェクトのインポート
+File -> Import Project -> PhoneGapプロジェクトのルートディレクトリを指定
 
 #####(5)エミュレータ起動
 Edit ConfigurationにPhoneGapが追加されているはずです．新規Configurationを作成し，実行してください．
@@ -37,7 +34,6 @@ Edit ConfigurationにPhoneGapが追加されているはずです．新規Config
 
 * iOS support
 * Windows Phone support
-* Project importer (.cordova/config.xml)
 * Project generator
 * PhoneGap Build support
 * PhoneGapPlugin support

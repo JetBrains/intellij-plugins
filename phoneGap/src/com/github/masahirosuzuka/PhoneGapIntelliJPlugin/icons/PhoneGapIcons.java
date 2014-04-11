@@ -8,7 +8,7 @@ import javax.swing.*;
  * Created by Masahiro Suzuka on 2014/04/09.
  */
 public class PhoneGapIcons {
-  public Icon getIcon() {
+  public static Icon getIcon() {
     return IconLoader.getIcon("phonegap_13px.png");
   }
 }
