@@ -19,6 +19,7 @@ public class OfficialExamplesSaver {
           name.equalsIgnoreCase("VPC_RDS_DB_Instance.template") ||
           name.equalsIgnoreCase("RDS_MySQL_With_Read_Replica.template") ||
           name.equalsIgnoreCase("RDSDatabaseWithOptionalReadReplica.template") ||
+          name.equalsIgnoreCase("auto_scaling_with_instance_profile.template") ||
           name.equalsIgnoreCase("DynamoDB_Table.template")) {
         // Known to be broken
         continue;
