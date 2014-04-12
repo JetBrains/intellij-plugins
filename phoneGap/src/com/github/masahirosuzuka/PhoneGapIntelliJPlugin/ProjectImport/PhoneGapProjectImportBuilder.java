@@ -1,4 +1,4 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImport;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.icons.PhoneGapIcons;
 import com.intellij.openapi.application.ApplicationManager;

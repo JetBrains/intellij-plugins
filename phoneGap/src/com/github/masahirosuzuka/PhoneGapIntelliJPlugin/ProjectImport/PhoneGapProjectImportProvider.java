@@ -1,4 +1,4 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImport;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.SelectPhoneGapImportModuleStep;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;

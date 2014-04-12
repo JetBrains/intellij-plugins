@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
   <name>PhoneGap Plugin</name>
-  <version>0.1</version>
+  <version>0.2</version>
   <vendor email="masahiro.suzuka@gmail.com" url="http://github.com/masahirosuzuka/PhoneGapIntelliJPlugin">masahirosuzuka</vendor>
 
   <description><![CDATA[
@@ -12,7 +12,8 @@
 
   <change-notes><![CDATA[
       Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+      <p>v0.1 RunConfigure</p>
+      <p>v0.2 ProjectImport</p>
     ]]>
   </change-notes>
 
@@ -29,8 +30,8 @@
     <!-- Add your extensions here -->
 
     <!-- Project importer -->
-    <projectImportProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapProjectImportProvider" />
-    <projectImportBuilder implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapProjectImportBuilder" />
+    <projectImportProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImport.PhoneGapProjectImportProvider" />
+    <projectImportBuilder implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImport.PhoneGapProjectImportBuilder" />
 
     <!-- Project runner -->
     <configurationType implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapConfigurationType" />
