@@ -22,6 +22,8 @@ public class SelectPhoneGapImportModuleStep extends ProjectImportWizardStep {
   public SelectPhoneGapImportModuleStep(final WizardContext context) {
     super(context);
     projectRootPathField.setText(context.getProjectFileDirectory());
+    //projectRootPathField.addBrowseFolderListener();
+
     projectRootPathField.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

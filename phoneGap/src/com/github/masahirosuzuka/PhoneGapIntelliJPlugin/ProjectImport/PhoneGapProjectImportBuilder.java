@@ -32,7 +32,7 @@ public class PhoneGapProjectImportBuilder extends ProjectImportBuilder {
 
   @Override
   public Icon getIcon() {
-    return PhoneGapIcons.getIcon();
+    return PhoneGapIcons.get13pxIcon();
   }
 
   @Override
