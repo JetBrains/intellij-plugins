@@ -26,15 +26,12 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
            new CompletionProvider<CompletionParameters>() {
              public void addCompletions(@NotNull CompletionParameters parameters,
                                         ProcessingContext context,
-                                        @NotNull CompletionResultSet resultSet) {
+                                        @NotNull CompletionResultSet rs) {
                final PsiElement position = parameters.getPosition();
 
                if (!CloudFormationPsiUtils.isCloudFormationFile(position)) {
                  return;
                }
-
-               PrefixMatcher oldPrefixMatcher = resultSet.getPrefixMatcher();
-               CompletionResultSet rs = resultSet.withPrefixMatcher(new PlainPrefixMatcher(oldPrefixMatcher.getPrefix()));
 
                PsiElement parent = position.getParent();
                boolean quoteResult = false; // parent instanceof JSReferenceExpression;

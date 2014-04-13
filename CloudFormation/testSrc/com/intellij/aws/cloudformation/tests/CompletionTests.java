@@ -1,6 +1,8 @@
 package com.intellij.aws.cloudformation.tests;
 
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.openapi.application.ApplicationInfo;
+import com.intellij.openapi.util.BuildNumber;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 
 import java.util.Arrays;
@@ -62,6 +64,21 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
     List<String> strings = myFixture.getLookupElementStrings();
     assertSameElements(strings, Arrays.asList("Condition", "DeletionPolicy", "Metadata", "Properties", "UpdatePolicy"));
   }
+
+  public void testPrefix1() throws Exception {
+    BuildNumber build = ApplicationInfo.getInstance().getBuild();
+    if (build.compareTo(new BuildNumber("IU", 135, 670)) < 0) {
+      System.out.println("fixed only by http://youtrack.jetbrains.com/issue/WEB-11859");
+      return;
+    }
+
+    myFixture.testCompletion("Prefix1.template", "Prefix1_after.template");
+  }
+
+  public void testPrefix2() throws Exception {
+    myFixture.testCompletion("Prefix2.template", "Prefix2_after.template");
+  }
+
 
   @Override
   protected String getTestDataPath() {
