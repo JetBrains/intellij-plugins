@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
   <name>PhoneGap Plugin</name>
-  <version>0.3</version>
+  <version>0.3.0</version>
   <vendor email="masahiro.suzuka@gmail.com" url="http://github.com/masahirosuzuka/PhoneGapIntelliJPlugin">masahirosuzuka</vendor>
 
   <description><![CDATA[
@@ -11,7 +11,7 @@
     ]]></description>
 
   <change-notes><![CDATA[
-      <p>v0.3 Project Generator</p>
+      <p>v0.3.0 Project Generator (Dev)</p>
       <p>v0.2 Project Import</p>
       <p>v0.1 RunConfigure</p>
     ]]>

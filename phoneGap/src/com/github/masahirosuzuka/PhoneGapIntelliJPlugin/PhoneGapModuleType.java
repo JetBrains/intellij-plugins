@@ -32,7 +32,7 @@ public class PhoneGapModuleType extends ModuleType<PhoneGapModuleBuilder> {
   @NotNull
   @Override
   public String getName() {
-    return "PhoneGap";
+    return "PhoneGap (dev)";
   }
 
   @NotNull
