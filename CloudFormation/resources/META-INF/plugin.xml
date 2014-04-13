@@ -34,5 +34,8 @@
     <completion.contributor language="JavaScript"
                             order="first"
                             implementationClass="com.intellij.aws.cloudformation.CloudFormationCompletionContributor"/>
+
+    <liveTemplateContext implementation="com.intellij.aws.cloudformation.CloudFormationCodeContextType"/>
+    <defaultLiveTemplatesProvider implementation="com.intellij.aws.cloudformation.CloudFormationDefaultLiveTemplateProvider"/>
   </extensions>
 </idea-plugin>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templateSet group="AWS CloudFormation">
+
+  <template name="ref" value='{ "Ref": "$VAL$" }'
+            resource-bundle="com.intellij.aws.cloudformation.CloudFormationBundle" key="livetemplate.description.ref">
+    <variable name="VAL" expression="complete()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AWS_CLOUD_FORMATION" value="true" />
+    </context>
+  </template>
+
+</templateSet>
