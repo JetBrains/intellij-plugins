@@ -79,6 +79,12 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
     myFixture.testCompletion("Prefix2.template", "Prefix2_after.template");
   }
 
+  public void testPrefix3() throws Exception {
+    myFixture.configureByFiles("Prefix3.template");
+    myFixture.complete(CompletionType.BASIC, 1);
+    List<String> strings = myFixture.getLookupElementStrings();
+    assertSameElements(strings, Arrays.asList("AWS::ElasticBeanstalk::Application", "AWS::ElasticBeanstalk::ApplicationVersion"));
+  }
 
   @Override
   protected String getTestDataPath() {
