@@ -11,8 +11,8 @@
     ]]></description>
 
   <change-notes><![CDATA[
-      <p>v0.3.0 Project Generator (Dev)</p>
-      <p>v0.2 Project Import</p>
+      <p>v0.3.0 Project Builder (Dev)</p>
+      <p>v0.2 Project Importer</p>
       <p>v0.1 RunConfigure</p>
     ]]>
   </change-notes>
@@ -29,12 +29,12 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
     <!-- Project generator -->
-    <moduleType id="PHONEGAP_MODULE" implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapModuleType" />
-    <moduleConfigurationEditorProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapModuleEditorProvider" />
+    <moduleType id="PHONEGAP_MODULE" implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapModuleType" />
+    <moduleConfigurationEditorProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapModuleEditorProvider" />
 
     <!-- Project importer -->
-    <projectImportProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImport.PhoneGapProjectImportProvider" />
-    <projectImportBuilder implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImport.PhoneGapProjectImportBuilder" />
+    <projectImportProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImporter.PhoneGapProjectImportProvider" />
+    <projectImportBuilder implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImporter.PhoneGapProjectImportBuilder" />
 
     <!-- Project runner -->
     <configurationType implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapConfigurationType" />
