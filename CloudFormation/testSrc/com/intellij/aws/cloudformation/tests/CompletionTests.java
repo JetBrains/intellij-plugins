@@ -66,9 +66,7 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
   }
 
   public void testPrefix1() throws Exception {
-    BuildNumber build = ApplicationInfo.getInstance().getBuild();
-    if (build.compareTo(new BuildNumber("IU", 135, 670)) < 0) {
-      System.out.println("fixed only by http://youtrack.jetbrains.com/issue/WEB-11859");
+    if (!checkIdeaHasWeb11859Fixed()) {
       return;
     }
 
@@ -80,10 +78,24 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
   }
 
   public void testPrefix3() throws Exception {
+    if (!checkIdeaHasWeb11859Fixed()) {
+      return;
+    }
+
     myFixture.configureByFiles("Prefix3.template");
     myFixture.complete(CompletionType.BASIC, 1);
     List<String> strings = myFixture.getLookupElementStrings();
     assertSameElements(strings, Arrays.asList("AWS::ElasticBeanstalk::Application", "AWS::ElasticBeanstalk::ApplicationVersion"));
+  }
+
+  private static boolean checkIdeaHasWeb11859Fixed() {
+    BuildNumber build = ApplicationInfo.getInstance().getBuild();
+    if (build.compareTo(new BuildNumber("IU", 135, 670)) < 0) {
+      System.out.println("fixed only by http://youtrack.jetbrains.com/issue/WEB-11859");
+      return false;
+    }
+
+    return true;
   }
 
   @Override
