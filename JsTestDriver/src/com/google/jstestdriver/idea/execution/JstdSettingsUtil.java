@@ -5,6 +5,7 @@ import com.google.jstestdriver.idea.config.JstdConfigFileType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
@@ -86,19 +87,24 @@ public class JstdSettingsUtil {
 
   private static boolean areJstdConfigFilesInScope(GlobalSearchScope scope) {
     final Ref<Boolean> jstdConfigFound = Ref.create(false);
-    FileBasedIndex.getInstance().processValues(
-      FileTypeIndex.NAME,
-      JstdConfigFileType.INSTANCE,
-      null,
-      new FileBasedIndex.ValueProcessor<Void>() {
-        @Override
-        public boolean process(final VirtualFile file, final Void value) {
-          jstdConfigFound.set(true);
-          return false;
-        }
-      },
-      scope
-    );
+    try {
+      FileBasedIndex.getInstance().processValues(
+        FileTypeIndex.NAME,
+        JstdConfigFileType.INSTANCE,
+        null,
+        new FileBasedIndex.ValueProcessor<Void>() {
+          @Override
+          public boolean process(final VirtualFile file, final Void value) {
+            jstdConfigFound.set(true);
+            return false;
+          }
+        },
+        scope
+      );
+    }
+    catch (IndexNotReadyException e) {
+      return false;
+    }
     return jstdConfigFound.get();
   }
 
