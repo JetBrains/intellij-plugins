@@ -4,6 +4,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartProjectComponent;
@@ -121,8 +123,12 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     myFixture.addFileToProject("example/packages/NestedProject/nestedlib.dart", "");
     myFixture.addFileToProject("example/packages/RootProject/rootlib.dart", "");
     myFixture.addFileToProject("example/packages/SomePackage/somepack.dart", "");
+    final VirtualFile customPack1 =
+      myFixture.addFileToProject("custom_pack1/RootProject/rootlib.dart", "").getVirtualFile().getParent().getParent();
+    final VirtualFile customPack2 =
+      myFixture.addFileToProject("custom_pack2/SomePackage/somepack.dart", "").getVirtualFile().getParent().getParent();
 
-    final DartUrlResolver resolver = DartUrlResolver.getInstance(getProject(), nestedPubspec);
+    DartUrlResolver resolver = DartUrlResolver.getInstance(getProject(), nestedPubspec);
     VirtualFile file;
 
     file = resolver.findFileByDartUrl("dart:collection");
@@ -133,10 +139,6 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     assertEquals(DartTestUtils.SDK_HOME_PATH + "/lib/collection/hash_map.dart", file.getPath());
     assertEquals("dart:collection/hash_map.dart", resolver.getDartUrlForFile(file));
 
-    file = resolver.findFileByDartUrl("package:SomePackage/somepack.dart");
-    assertEquals(rootPath + "/example/packages/SomePackage/somepack.dart", file.getPath());
-    assertEquals("package:SomePackage/somepack.dart", resolver.getDartUrlForFile(file));
-
     file = resolver.findFileByDartUrl("package:NestedProject/src/nestedlib.dart");
     assertEquals(rootPath + "/example/lib/src/nestedlib.dart", file.getPath());
     assertEquals("package:NestedProject/src/nestedlib.dart", resolver.getDartUrlForFile(file));
@@ -144,5 +146,39 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     file = resolver.findFileByDartUrl("package:RootProject/rootlib.dart");
     assertEquals(rootPath + "/lib/rootlib.dart", file.getPath());
     assertEquals("package:RootProject/rootlib.dart", resolver.getDartUrlForFile(file));
+
+    file = resolver.findFileByDartUrl("package:SomePackage/somepack.dart");
+    assertEquals(rootPath + "/example/packages/SomePackage/somepack.dart", file.getPath());
+    assertEquals("package:SomePackage/somepack.dart", resolver.getDartUrlForFile(file));
+
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      public void run() {
+        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
+        try {
+          final Library library = modifiableModel.getModuleLibraryTable().createLibrary("Dart custom package roots");
+          final Library.ModifiableModel libModel = library.getModifiableModel();
+          libModel.addRoot(customPack1.getUrl(), OrderRootType.CLASSES);
+          libModel.addRoot(customPack2.getUrl(), OrderRootType.CLASSES);
+          libModel.commit();
+          modifiableModel.commit();
+        }
+        catch (Exception e) {
+          if (!modifiableModel.isDisposed()) modifiableModel.dispose();
+        }
+      }
+    });
+
+    resolver = DartUrlResolver.getInstance(getProject(), nestedPubspec);
+
+    file = resolver.findFileByDartUrl("package:NestedProject/src/nestedlib.dart");
+    assertNull(file);
+
+    file = resolver.findFileByDartUrl("package:RootProject/rootlib.dart");
+    assertEquals(rootPath + "/custom_pack1/RootProject/rootlib.dart", file.getPath());
+    assertEquals("package:RootProject/rootlib.dart", resolver.getDartUrlForFile(file));
+
+    file = resolver.findFileByDartUrl("package:SomePackage/somepack.dart");
+    assertEquals(rootPath + "/custom_pack2/SomePackage/somepack.dart", file.getPath());
+    assertEquals("package:SomePackage/somepack.dart", resolver.getDartUrlForFile(file));
   }
 }

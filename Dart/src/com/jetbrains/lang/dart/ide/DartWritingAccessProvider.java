@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.WritingAccessProvider;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -37,8 +38,8 @@ public class DartWritingAccessProvider extends WritingAccessProvider {
   public static boolean isInDartSdkOrDartPackagesFolder(final Project project, final VirtualFile file) {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
-    if (!fileIndex.isInContent(file) && (fileIndex.isInLibrarySource(file) || fileIndex.isInLibraryClasses(file))) {
-      return true; // file in SDK
+    if (fileIndex.isInLibraryClasses(file)) {
+      return true; // file in SDK or in custom package root
     }
 
     if (fileIndex.isInContent(file) && isInDartPackagesFolder(fileIndex, file)) {
@@ -51,7 +52,7 @@ public class DartWritingAccessProvider extends WritingAccessProvider {
   private static boolean isInDartPackagesFolder(final ProjectFileIndex fileIndex, final VirtualFile file) {
     VirtualFile parent = file;
     while ((parent = parent.getParent()) != null && fileIndex.isInContent(parent)) {
-      if ("packages".equals(parent.getName())) {
+      if (DartUrlResolver.PACKAGES_FOLDER_NAME.equals(parent.getName())) {
         return VfsUtilCore.findRelativeFile("../" + PUBSPEC_YAML, parent) != null;
       }
     }
