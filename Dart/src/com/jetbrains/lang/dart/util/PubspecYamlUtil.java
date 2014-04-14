@@ -2,10 +2,8 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +32,6 @@ public class PubspecYamlUtil {
   public static final String LIB_DIRECTORY_NAME = "lib";
 
   private static final Key<Pair<Long, Map<String, Object>>> MOD_STAMP_TO_PUBSPEC_NAME = Key.create("MOD_STAMP_TO_PUBSPEC_NAME");
-  private static final String DART_CUSTOM_PACKAGE_ROOTS_OPTION = "dart.package.roots";
-  public static final String DART_CUSTOM_PACKAGE_ROOTS_SEPARATOR = ";";
 
   @Nullable
   public static Map<String, Object> getPubspecYamlInfo(final @NotNull VirtualFile pubspecYamlFile) {
@@ -91,20 +87,6 @@ public class PubspecYamlUtil {
     }
     catch (Exception e) {
       return null; // malformed yaml, e.g. because of typing in it
-    }
-  }
-
-  @Nullable
-  public static String getCustomPackageRootsForModule(final @NotNull Module module) {
-    return module.getOptionValue(DART_CUSTOM_PACKAGE_ROOTS_OPTION);
-  }
-
-  public static void setCustomPackageRootsForModule(final @NotNull Module module, final @Nullable String path) {
-    if (StringUtil.isEmptyOrSpaces(path)) {
-      module.clearOption(DART_CUSTOM_PACKAGE_ROOTS_OPTION);
-    }
-    else {
-      module.setOption(DART_CUSTOM_PACKAGE_ROOTS_OPTION, path);
     }
   }
 }

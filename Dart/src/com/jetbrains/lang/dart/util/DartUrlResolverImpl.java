@@ -3,8 +3,7 @@ package com.jetbrains.lang.dart.util;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -19,9 +18,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.jetbrains.lang.dart.sdk.DartConfigurable.CUSTOM_PACKAGE_ROOTS_LIB_NAME;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.*;
 
 class DartUrlResolverImpl extends DartUrlResolver {
@@ -148,14 +149,11 @@ class DartUrlResolverImpl extends DartUrlResolver {
   @Nullable
   private VirtualFile initPackageRootsAndReturnPubspecYamlFile(final @NotNull VirtualFile contextFile) {
     final Module module = ModuleUtilCore.findModuleForFile(contextFile, myProject);
-    final String customPackageRootPaths = module == null ? null : getCustomPackageRootsForModule(module);
-    if (!StringUtil.isEmptyOrSpaces(customPackageRootPaths)) {
-      for (String path : StringUtil.split(customPackageRootPaths, DART_CUSTOM_PACKAGE_ROOTS_SEPARATOR)) {
-        final VirtualFile customPackagesFolder = LocalFileSystem.getInstance().findFileByPath(path.trim());
-        if (customPackagesFolder != null && customPackagesFolder.isDirectory()) {
-          myPackageRoots.add(customPackagesFolder);
-        }
-      }
+    if (module == null) return null;
+
+    final VirtualFile[] customPackageRoots = getCustomPackageRoots(module);
+    if (customPackageRoots.length > 0) {
+      Collections.addAll(myPackageRoots, customPackageRoots);
       return null;
     }
 
@@ -167,6 +165,17 @@ class DartUrlResolverImpl extends DartUrlResolver {
     }
 
     return pubspecYamlFile;
+  }
+
+  @NotNull
+  private static VirtualFile[] getCustomPackageRoots(final @NotNull Module module) {
+    for (OrderEntry entry : ModuleRootManager.getInstance(module).getOrderEntries()) {
+      if (entry instanceof LibraryOrderEntry && CUSTOM_PACKAGE_ROOTS_LIB_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
+        return ((LibraryOrderEntry)entry).getRootFiles(OrderRootType.CLASSES);
+      }
+    }
+
+    return VirtualFile.EMPTY_ARRAY;
   }
 
   private static VirtualFile findPubspecYamlFile(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
