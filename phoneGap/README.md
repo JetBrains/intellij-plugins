@@ -2,9 +2,16 @@
 
 PhoneGap/Cordovaアプリ開発をIntelliJ IDEAで行えるようにするプラグインです．
 
+PhoneGapIntelliJPluginの機能は以下の通りです．
+
+* PhoneGapプロジェクトウィザード（開発中）
+* PhoneGapプロジェクトのインポート
+* IntelliJからPhoneGapプロジェクトの実行（エミュレータ）
+
 ###PhoneGap/Cordovaについて
 
 http://phonegap.com/
+
 http://phonegap-fan.com/
 
 ###使い方
@@ -34,6 +41,5 @@ Edit ConfigurationにPhoneGapが追加されているはずです．新規Config
 
 * iOS support
 * Windows Phone support
-* Project generator
 * PhoneGap Build support
 * PhoneGapPlugin support

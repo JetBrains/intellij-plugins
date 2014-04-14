@@ -1,6 +1,8 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.ide.util.projectWizard.WizardContext;
+import com.intellij.openapi.ui.TextBrowseFolderListener;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.projectImport.ProjectImportWizardStep;
 
@@ -17,29 +19,20 @@ public class SelectPhoneGapImportModuleStep extends ProjectImportWizardStep {
   private TextFieldWithBrowseButton projectRootPathField;
   private JList moduleList;
 
-  public String projectRootPath;
-
   public SelectPhoneGapImportModuleStep(final WizardContext context) {
     super(context);
     projectRootPathField.setText(context.getProjectFileDirectory());
-    //projectRootPathField.addBrowseFolderListener();
-
-    projectRootPathField.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        projectRootPath = projectRootPathField.getText();
-      }
-    });
 
     //Fix me!!
-    String[] list = new String[]{".cordova",
-                                  "hooks",
-                                  "marges",
-                                  "platforms",
-                                  "plugins",
-                                  "www"};
+    String[] PhoneGapFolders = new String[]{PhoneGapSettings.PHONEGAP_FOLDERS_CORDOVA,
+        PhoneGapSettings.PHONEGAP_FOLDERS_HOOKS,
+        PhoneGapSettings.PHONEGAP_FOLDERS_MERGES,
+        PhoneGapSettings.PHONEGAP_FOLDERS_NODE_MODULES,
+        PhoneGapSettings.PHONEGAP_FOLDERS_PLATFORMS,
+        PhoneGapSettings.PHONEGAP_FOLDERS_PLUGINS,
+        PhoneGapSettings.PHONEGAP_FOLDERS_WWW };
 
-    moduleList.setListData(list);
+    moduleList.setListData(PhoneGapFolders);
   }
 
   public void updateStep() {
@@ -48,7 +41,7 @@ public class SelectPhoneGapImportModuleStep extends ProjectImportWizardStep {
 
   @Override
   public void updateDataModel() {
-    //System.out.println("Finish");
+
   }
 
   @Override

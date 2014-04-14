@@ -1,4 +1,4 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImport;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImporter;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.SelectPhoneGapImportModuleStep;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
@@ -15,7 +15,6 @@ public class PhoneGapProjectImportProvider extends ProjectImportProvider {
   }
 
   public ModuleWizardStep[] createSteps(WizardContext context) {
-    //final ProjectWizardStepFactory stepFactory = ProjectWizardStepFactory.getInstance();
     return new ModuleWizardStep[]{
       new SelectPhoneGapImportModuleStep(context)
     };
