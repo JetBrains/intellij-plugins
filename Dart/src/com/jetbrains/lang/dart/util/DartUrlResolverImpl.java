@@ -199,20 +199,19 @@ class DartUrlResolverImpl extends DartUrlResolver {
       packageNameToDirMap.put((String)name, libFolder);
     }
 
-    //noinspection unchecked
-    addPathPackagesToMap(packageNameToDirMap, (Map<String, Object>)yamlInfo.get(DEPENDENCIES), baseDir);
-    //noinspection unchecked
-    addPathPackagesToMap(packageNameToDirMap, (Map<String, Object>)yamlInfo.get(DEV_DEPENDENCIES), baseDir);
+    addPathPackagesToMap(packageNameToDirMap, yamlInfo.get(DEPENDENCIES), baseDir);
+    addPathPackagesToMap(packageNameToDirMap, yamlInfo.get(DEV_DEPENDENCIES), baseDir);
   }
 
   // Path packages: https://www.dartlang.org/tools/pub/dependencies.html#path-packages
   private static void addPathPackagesToMap(final @NotNull Map<String, VirtualFile> packageNameToDirMap,
-                                           final @Nullable Map<String, Object> yamlDep,
+                                           final @Nullable Object yamlDep,
                                            final @NotNull VirtualFile baseDir) {
     // see com.google.dart.tools.core.pub.PubspecModel#processDependencies
-    if (yamlDep == null) return;
+    if (!(yamlDep instanceof Map)) return;
 
-    for (Map.Entry<String, Object> packageEntry : yamlDep.entrySet()) {
+    //noinspection unchecked
+    for (Map.Entry<String, Object> packageEntry : ((Map<String, Object>)yamlDep).entrySet()) {
       final String packageName = packageEntry.getKey();
 
       final Object packageEntryValue = packageEntry.getValue();
