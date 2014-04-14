@@ -123,7 +123,7 @@ public class DartAnalyzerService {
     else {
 
       UriResolver packageResolver;
-      if (myDartPackageRoots.length != 0) {
+      if (myDartPackageRoots != null && myDartPackageRoots.length != 0) {
         final File[] packages = new File[myDartPackageRoots.length];
         for (int i = 0; i < myDartPackageRoots.length; ++i) {
           packages[i] = new File(myDartPackageRoots[i].getPath());
