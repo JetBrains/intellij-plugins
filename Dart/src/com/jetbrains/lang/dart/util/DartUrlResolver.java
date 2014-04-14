@@ -51,7 +51,7 @@ public abstract class DartUrlResolver {
 
 
   @Nullable
-  public static VirtualFile findFileInDarSdkLibFolder(final @NotNull Project project,
+  public static VirtualFile findFileInDartSdkLibFolder(final @NotNull Project project,
                                                        final @Nullable DartSdk dartSdk,
                                                        final @Nullable String dartUrl) {
     if (dartSdk == null || dartUrl == null || !dartUrl.startsWith(DART_PREFIX)) return null;
