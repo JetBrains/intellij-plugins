@@ -58,7 +58,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
   @Nullable
   public VirtualFile findFileByDartUrl(final @NotNull String url) {
     if (url.startsWith(DART_PREFIX)) {
-      return findFileInDarSdkLibFolder(myProject, myDartSdk, url);
+      return findFileInDartSdkLibFolder(myProject, myDartSdk, url);
     }
 
     if (url.startsWith(PACKAGE_PREFIX)) {

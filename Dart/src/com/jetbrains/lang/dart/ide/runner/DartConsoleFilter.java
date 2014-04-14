@@ -46,7 +46,7 @@ public class DartConsoleFilter implements Filter {
         file = LocalFileSystem.getInstance().findFileByPath(info.path);
         break;
       case DART:
-        file = DartUrlResolver.findFileInDarSdkLibFolder(myProject, mySdk, DART_PREFIX + info.path);
+        file = DartUrlResolver.findFileInDartSdkLibFolder(myProject, mySdk, DART_PREFIX + info.path);
         break;
       case PACKAGE:
         if (myDartUrlResolver != null) {
