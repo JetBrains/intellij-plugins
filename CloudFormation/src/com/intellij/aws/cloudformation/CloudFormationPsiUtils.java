@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.ReflectionCache;
 import org.jetbrains.annotations.Nullable;
 
 public class CloudFormationPsiUtils {
@@ -41,7 +40,7 @@ public class CloudFormationPsiUtils {
   @Nullable
   public static JSObjectLiteralExpression getRootExpression(final PsiFile file) {
     for (PsiElement cur = file.getFirstChild(); cur != null; cur = cur.getNextSibling()) {
-      if (ReflectionCache.isInstance(cur, JSObjectLiteralExpression.class)) {
+      if (cur instanceof JSObjectLiteralExpression) {
         return (JSObjectLiteralExpression)cur;
       }
     }
