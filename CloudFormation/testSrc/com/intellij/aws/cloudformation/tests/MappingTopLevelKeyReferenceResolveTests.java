@@ -13,6 +13,6 @@ public class MappingTopLevelKeyReferenceResolveTests extends ResolveTestsBase {
 
   @Override
   protected String getTestDataPath() {
-    return TestUtil.getTestDataPath("/topLevelKeyResolve/");
+    return TestUtil.getTestDataPath("topLevelKeyResolve");
   }
 }

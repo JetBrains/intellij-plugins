@@ -12,6 +12,6 @@ public class InspectionsTests extends InspectionTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return TestUtil.getTestDataPath("/inspections/");
+    return TestUtil.getTestDataPath("inspections");
   }
 }

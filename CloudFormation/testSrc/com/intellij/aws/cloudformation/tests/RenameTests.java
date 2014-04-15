@@ -16,6 +16,6 @@ public class RenameTests extends DaemonAnalyzerTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return TestUtil.getTestDataPath("/rename/");
+    return TestUtil.getTestDataPath("rename");
   }
 }

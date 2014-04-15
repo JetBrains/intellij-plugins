@@ -61,6 +61,6 @@ public class EntityResolveTests extends ResolveTestsBase {
 
   @Override
   protected String getTestDataPath() {
-    return TestUtil.getTestDataPath("/resolve/");
+    return TestUtil.getTestDataPath("resolve");
   }
 }

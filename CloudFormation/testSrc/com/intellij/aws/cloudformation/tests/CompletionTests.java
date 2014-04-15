@@ -100,6 +100,6 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return TestUtil.getTestDataPath("/completion/");
+    return TestUtil.getTestDataPath("completion");
   }
 }
