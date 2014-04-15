@@ -54,11 +54,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeWillExpandListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.ExpandVetoException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -529,6 +532,11 @@ public class DartConfigurable implements SearchableConfigurable {
 
     final TableCellRenderer customPackageRootsCellRenderer = new TableCellRenderer() {
       private final JBLabel myLabel = new JBLabel();
+      private final TextFieldWithBrowseButton myTextWithBrowse = new TextFieldWithBrowseButton() {
+        public void setOpaque(final boolean isOpaque) {
+          // never make this renderer opaque in order not to have cell selection background between text field and browse button
+        }
+      };
 
       public Component getTableCellRendererComponent(final JTable table,
                                                      final Object value,
@@ -537,22 +545,29 @@ public class DartConfigurable implements SearchableConfigurable {
                                                      final int row,
                                                      final int column) {
 
-        //noinspection unchecked
-        final String text;
         if (value instanceof List) {
           //noinspection unchecked
-          text = StringUtil.join((List<String>)value, new Function<String, String>() {
+          final List<String> paths = (List<String>)value;
+
+          final String text = StringUtil.join(paths, new Function<String, String>() {
             public String fun(final String s) {
               return FileUtil.toSystemDependentName(s);
             }
           }, SEMICOLON);
+
+          if (isSelected) {
+            myTextWithBrowse.setText(text);
+            return myTextWithBrowse;
+          }
+          else {
+            myLabel.setText(text);
+            return myLabel;
+          }
         }
         else {
-          text = "";
+          myLabel.setText("");
+          return myLabel;
         }
-
-        myLabel.setText(text);
-        return myLabel;
       }
     };
 
@@ -633,6 +648,16 @@ public class DartConfigurable implements SearchableConfigurable {
       };
 
     myModulesCheckboxTreeTable.setRowHeight(myModulesCheckboxTreeTable.getRowHeight() + 2);
+
+    myModulesCheckboxTreeTable.getTree().addTreeWillExpandListener(new TreeWillExpandListener() {
+      public void treeWillExpand(final TreeExpansionEvent event) throws ExpandVetoException {
+
+      }
+
+      public void treeWillCollapse(final TreeExpansionEvent event) throws ExpandVetoException {
+        throw new ExpandVetoException(event);
+      }
+    });
 
     final DefaultActionGroup group = new DefaultActionGroup();
     group.add(new RemoveCustomPackageRootsAction(myModulesCheckboxTreeTable));
