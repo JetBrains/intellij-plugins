@@ -1,5 +1,5 @@
 <project name="AWS CloudFormation IDEA Plugin" basedir=".">
-  <property name="idea.version" value="13.0.3" />
+  <property name="idea.version" value="13" />
   <property name="kotlin.version" value="0.7.270" />
 
   <property name="build.number" value="SNAPSHOT_XXX" />
