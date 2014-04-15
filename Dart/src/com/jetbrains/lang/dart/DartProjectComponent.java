@@ -87,8 +87,6 @@ public class DartProjectComponent extends AbstractProjectComponent {
   }
 
   private static void removeJSBreakpointsInDartFiles(final Project project) {
-    if (ApplicationManager.getApplication().isUnitTestMode()) return;
-
     final XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
     final Collection<XBreakpoint<?>> toRemove = new ArrayList<XBreakpoint<?>>();
 
