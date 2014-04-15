@@ -20,4 +20,14 @@
     <line>10</line>
     <description>Unknown CloudFormation resource type: &quot;ZZZ&quot;</description>
   </problem>
+  <problem>
+    <file>noRequiredResourceProperty1.template</file>
+    <line>11</line>
+    <description>Required resource properties are not set: UserName</description>
+  </problem>
+  <problem>
+    <file>noRequiredResourceProperty2.template</file>
+    <line>9</line>
+    <description>Required resource properties are not set: UserName</description>
+  </problem>
 </problems>

@@ -1,0 +1,16 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+
+  "Conditions": {
+  },
+
+  "Resources": {
+    "xxx": {
+      "Type": "AWS::IAM::AccessKey",
+      "Properties": {
+        "Status": "aaas"
+      }
+    }
+  }
+}
