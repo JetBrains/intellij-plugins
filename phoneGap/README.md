@@ -18,7 +18,14 @@ Preference -> Plugins -> Search "PhoneGap Plugin"
 Restart IntelliJ
 
 ####(1)Install PhoneGap
+Please install from [Official site](http://nodejs.org/)
+nvm is not supported
+
 $npm install -g PhoneGap
+
+PhoneGap dir must be
+
+ '/usr/local/bin/phonegap'
 
 ####(2)Install Android SDK
 If you want to develop Android app. You must install Android SDK and set PATH.
@@ -54,8 +61,16 @@ Preference -> PluginsからPhoneGapと検索してください．IntelliJの再�
 本プラグインを動作させるためにはIntelliJ Platformがjvm1.7以上で動作している必要があります．
 
 #####(1)PhoneGapをインストール
-Node.jsを使ってインストールする必要があります．Nodeのインストール方法は特に指定しませんがnvmをお勧めします．
+Node.jsを使ってインストールする必要があります．nvmでの動作は保証しません．
+公式サイトからのインストールをお勧めします．
+
 npm install -g phonegap
+
+PhoneGapのインストールディレクトリは
+
+ '/usr/local/bin/phonegap'
+
+である必要があります．ご不便をおかけして申し訳ありません．近くどこにインストールしても動作するよう改修したいと思っています．
 
 #####(2)Android SDKをインストール
 AndroidSDKをインストールし，PATHを通しておいてください．
