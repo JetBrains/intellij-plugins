@@ -693,7 +693,7 @@ public class DartConfigurable implements SearchableConfigurable {
       for (Object item : myTable.getSelection()) {
         final Object userObject = item instanceof CheckedTreeNode ? ((CheckedTreeNode)item).getUserObject() : null;
         if (userObject instanceof Module) {
-          myModuleToCustomPackageRootsCurrent.put((Module)userObject, null);
+          myModuleToCustomPackageRootsCurrent.put((Module)userObject, Collections.<String>emptyList());
         }
       }
 
