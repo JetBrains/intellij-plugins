@@ -5,6 +5,7 @@ import com.intellij.testFramework.InspectionTestCase;
 
 public class ExamplesTests extends InspectionTestCase {
   public void testFormatViolationInspection() {
+    TestUtil.refreshVfs();
     final FormatViolationInspection inspection = new FormatViolationInspection();
     doTest(".", inspection);
   }
