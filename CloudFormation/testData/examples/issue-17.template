@@ -1,0 +1,50 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+  },
+
+  "Resources": {
+    "VPCSGlocal": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow local traffic",
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "SecurityGroupEgress": [
+          {
+            "IpProtocol": "udp",
+            "FromPort": "53",
+            "ToPort": "53",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "VPCSGlocalIngressAll": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "VPCSGlocal"
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": {
+          "Ref": "VPCSGlocal"
+        }
+      }
+    },
+    "VPCSGlocalEgressAll": {
+      "Type": "AWS::EC2::SecurityGroupEgress",
+      "Properties": {
+        "GroupId": {
+          "Ref": "VPCSGlocal"
+        },
+        "IpProtocol": "-1",
+        "DestinationSecurityGroupId": {
+          "Ref": "VPCSGlocal"
+        }
+      }
+    }
+  }
+}

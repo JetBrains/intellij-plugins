@@ -1202,7 +1202,7 @@
           <name>FromPort</name>
           <description></description>
           <type>String</type>
-          <required>true</required>
+          <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>GroupId</name>
@@ -1220,7 +1220,7 @@
           <name>ToPort</name>
           <description></description>
           <type>String</type>
-          <required>true</required>
+          <required>false</required>
         </ResourceProperty>
       </properties>
       <attributes/>
