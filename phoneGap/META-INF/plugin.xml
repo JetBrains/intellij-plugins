@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
   <name>PhoneGap Plugin</name>
-  <version>0.3.0</version>
+  <version>0.3.2</version>
   <vendor email="masahiro.suzuka@gmail.com" url="http://github.com/masahirosuzuka/PhoneGapIntelliJPlugin">masahirosuzuka</vendor>
 
   <description><![CDATA[
@@ -10,7 +10,9 @@
         <a href="https://github.com/masahirosuzuka/phonegap-intelliJ-plugin">masahirsuzuka/PhoneGapIntelliJPlugin</a>
     ]]></description>
 
-  <change-notes><![CDATA[
+  <change-notes>
+      <p>v0.3.2 Fix target Platform</p>
+      <p>v0.3.1 Bug fix</p>
       <p>v0.3.0 Project Builder (Dev)</p>
       <p>v0.2 Project Importer</p>
       <p>v0.1 RunConfigure</p>
@@ -22,9 +24,7 @@
 
   <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
-  <!-- uncomment to enable plugin in all products
   <depends>com.intellij.modules.lang</depends>
-  -->
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
@@ -43,10 +43,16 @@
 
   <application-components>
     <!-- Add your application components here -->
+
   </application-components>
 
   <project-components>
     <!-- Add your project components here -->
+      <component>
+          <implementation-class>
+              com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapDetector
+          </implementation-class>
+      </component>
   </project-components>
 
   <actions>
