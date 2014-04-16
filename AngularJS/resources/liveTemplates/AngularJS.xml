@@ -10,7 +10,7 @@
       <option name="XSL_TEXT" value="false"/>
       <option name="XML" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -28,7 +28,7 @@
       <option name="XSL_TEXT" value="false"/>
       <option name="XML" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_EXPRESSION" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -90,7 +90,7 @@
       <option name="XSL_TEXT" value="false"/>
       <option name="XML" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -111,7 +111,7 @@
       <option name="CSS_DECLARATION_BLOCK" value="false"/>
       <option name="CSS_RULESET_LIST" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -206,7 +206,7 @@
       <option name="CSS_DECLARATION_BLOCK" value="false"/>
       <option name="CSS_RULESET_LIST" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -223,7 +223,7 @@
       <option name="XSL_TEXT" value="false"/>
       <option name="XML" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -247,7 +247,7 @@
       <option name="CSS_DECLARATION_BLOCK" value="false"/>
       <option name="CSS_RULESET_LIST" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -330,7 +330,7 @@
       <option name="CSS_DECLARATION_BLOCK" value="false"/>
       <option name="CSS_RULESET_LIST" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -351,7 +351,7 @@
       <option name="CSS_DECLARATION_BLOCK" value="false"/>
       <option name="CSS_RULESET_LIST" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -369,7 +369,7 @@
       <option name="CSS_DECLARATION_BLOCK" value="false"/>
       <option name="CSS_RULESET_LIST" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -387,7 +387,7 @@
       <option name="XSL_TEXT" value="false"/>
       <option name="XML" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -409,7 +409,7 @@
       <option name="CSS_DECLARATION_BLOCK" value="false"/>
       <option name="CSS_RULESET_LIST" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -428,7 +428,7 @@
       <option name="CSS_DECLARATION_BLOCK" value="false"/>
       <option name="CSS_RULESET_LIST" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -447,7 +447,7 @@
       <option name="CSS_DECLARATION_BLOCK" value="false"/>
       <option name="CSS_RULESET_LIST" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -467,7 +467,7 @@
       <option name="CSS_DECLARATION_BLOCK" value="false"/>
       <option name="CSS_RULESET_LIST" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -487,7 +487,7 @@
       <option name="CSS_DECLARATION_BLOCK" value="false"/>
       <option name="CSS_RULESET_LIST" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
@@ -507,7 +507,7 @@
       <option name="CSS_DECLARATION_BLOCK" value="false"/>
       <option name="CSS_RULESET_LIST" value="false"/>
       <option name="CSS" value="false"/>
-      <option name="JAVA_SCRIPT" value="true"/>
+      <option name="JS_STATEMENT" value="true"/>
       <option name="JSP" value="false"/>
       <option name="HAML" value="false"/>
       <option name="OTHER" value="false"/>
