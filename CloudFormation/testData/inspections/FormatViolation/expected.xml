@@ -30,4 +30,19 @@
     <line>9</line>
     <description>Required resource properties are not set: UserName</description>
   </problem>
+  <problem>
+    <file>noResourcesSection.template</file>
+    <line>1</line>
+    <description>Resources section is required</description>
+  </problem>
+  <problem>
+    <file>notStringDescr.template</file>
+    <line>3</line>
+    <description>A quoted string is expected</description>
+  </problem>
+  <problem>
+    <file>unknownSection.template</file>
+    <line>8</line>
+    <description>Unknown section: XXX</description>
+  </problem>
 </problems>
