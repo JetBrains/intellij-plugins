@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by masahiro on 2014/04/06.
+ * Created by Masahiro Suzuka on 2014/04/06.
  */
 public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfiguration> {
 
@@ -59,7 +59,7 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
   @Override
   protected void applyEditorTo(PhoneGapRunConfiguration phoneGapRunConfiguration) throws ConfigurationException {
     if (runScript.getText().length() == 0) {
-      ;
+
     }
   }
 

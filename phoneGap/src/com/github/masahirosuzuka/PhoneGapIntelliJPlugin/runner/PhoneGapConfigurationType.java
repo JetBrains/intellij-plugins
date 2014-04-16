@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 /**
- * Created by masahiro on 2014/04/04.
+ * Created by Masahiro Suzuka on 2014/04/04.
  */
 public class PhoneGapConfigurationType implements ConfigurationType {
   public PhoneGapConfigurationFactory myConfigurationFactory;

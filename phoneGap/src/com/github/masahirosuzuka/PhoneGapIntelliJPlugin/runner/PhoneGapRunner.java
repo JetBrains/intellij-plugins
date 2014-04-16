@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by masahiro on 2014/04/06.
+ * Created by Masahiro Suzuka on 2014/04/06.
  */
 public class PhoneGapRunner extends DefaultProgramRunner {
   @NotNull

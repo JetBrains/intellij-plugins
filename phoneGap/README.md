@@ -18,6 +18,8 @@ Preference -> Plugins -> Search "PhoneGap Plugin"
 
 Restart IntelliJ
 
+This Plugin requests jvm1.7 or higher
+
 ####(1)Install PhoneGap
 Please install from [Node.js Official site](http://nodejs.org/)
 
@@ -94,5 +96,6 @@ PhoneGapが追加されているはずです．新規Configurationを作成し�
 
 * iOS support
 * Windows Phone support
+* nvm support
 * PhoneGap Build support
 * PhoneGapPlugin support

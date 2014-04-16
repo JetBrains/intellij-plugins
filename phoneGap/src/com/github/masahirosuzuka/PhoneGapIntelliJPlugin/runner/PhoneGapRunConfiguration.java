@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurationEditor;
 
 /**
- * Created by masahiro on 2014/04/05.
+ * Created by Masahiro Suzuka on 2014/04/05.
  */
 public class PhoneGapRunConfiguration extends RunConfigurationBase {
 

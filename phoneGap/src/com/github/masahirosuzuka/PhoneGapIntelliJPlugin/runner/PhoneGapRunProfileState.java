@@ -1,6 +1,7 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfiguration;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -11,7 +12,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by masahiro on 2014/04/06.
+ * Created by Masahiro Suzuka on 2014/04/06.
  */
 public class PhoneGapRunProfileState extends CommandLineState {
 
@@ -34,7 +35,8 @@ public class PhoneGapRunProfileState extends CommandLineState {
 
     String projectDir = this.project.getBasePath();
 
-    GeneralCommandLine commandLine = new GeneralCommandLine(this.phoneGapRunConfiguration.PHONEGAP_PATH,
+    // Fix me!!
+    GeneralCommandLine commandLine = new GeneralCommandLine(PhoneGapSettings.PHONEGAP_PATH,
         this.phoneGapRunConfiguration.PHONEGAP_COMMAND,
         this.phoneGapRunConfiguration.PHONEGAP_PLATFORM);
 

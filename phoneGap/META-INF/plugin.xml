@@ -10,7 +10,7 @@
         <a href="https://github.com/masahirosuzuka/phonegap-intelliJ-plugin">masahirsuzuka/PhoneGapIntelliJPlugin</a>
     ]]></description>
 
-  <change-notes>
+  <change-notes><![CDATA[
       <p>v0.3.2 Fix target Platform</p>
       <p>v0.3.1 Bug fix</p>
       <p>v0.3.0 Project Builder (Dev)</p>
