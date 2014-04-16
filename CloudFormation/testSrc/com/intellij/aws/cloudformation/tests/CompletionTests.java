@@ -62,7 +62,7 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
     myFixture.configureByFiles("ResourceTopLevelProperty1.template");
     myFixture.complete(CompletionType.BASIC, 1);
     List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("Condition", "DeletionPolicy", "Metadata", "Properties", "UpdatePolicy"));
+    assertSameElements(strings, Arrays.asList("Condition", "DeletionPolicy", "Metadata", "Properties", "UpdatePolicy", "Version"));
   }
 
   public void testPrefix1() throws Exception {

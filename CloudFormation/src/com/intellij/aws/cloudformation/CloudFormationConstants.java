@@ -10,8 +10,8 @@ public class CloudFormationConstants {
     "2010-09-09"
   ));
 
-  public static final int MaxParameters = 50;
-  public static final int MaxOutputs = 10;
+  public static final String CustomResourceType = "AWS::CloudFormation::CustomResource";
+  public static final String CustomResourceTypePrefix = "Custom::";
 
   public static final String ConditionPropertyName = "Condition";
   public static final String TypePropertyName = "Type";
@@ -20,6 +20,7 @@ public class CloudFormationConstants {
   public static final String DependsOnPropertyName = "DependsOn";
   public static final String MetadataPropertyName = "Metadata";
   public static final String UpdatePolicyPropertyName = "UpdatePolicy";
+  public static final String VersionPropertyName = "Version";
 
   public static final Set<String> AllTopLevelResourceProperties = new HashSet<String>(Arrays.asList(
     ConditionPropertyName,
@@ -28,6 +29,7 @@ public class CloudFormationConstants {
     DeletionPolicyPropertyName,
     DependsOnPropertyName,
     MetadataPropertyName,
-    UpdatePolicyPropertyName
+    UpdatePolicyPropertyName,
+    VersionPropertyName
   ));
 }

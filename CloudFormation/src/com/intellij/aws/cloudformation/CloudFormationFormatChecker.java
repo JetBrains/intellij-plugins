@@ -264,7 +264,7 @@ public class CloudFormationFormatChecker {
         continue;
       }
 
-      if (resourceType.findProperty(propertyName) == null) {
+      if (resourceType.findProperty(propertyName) == null && !isCustomResourceType(resourceTypeName)) {
         addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName));
       }
 
@@ -284,9 +284,17 @@ public class CloudFormationFormatChecker {
       return;
     }
 
+    if (isCustomResourceType(value)) {
+      return;
+    }
+
     if (CloudFormationMetadataProvider.METADATA.findResourceType(value) == null) {
       addProblem(typeProperty, CloudFormationBundle.getString("format.unknown.type", value));
     }
+  }
+
+  private boolean isCustomResourceType(String value) {
+    return value.equals(CloudFormationConstants.CustomResourceType) || value.startsWith(CloudFormationConstants.CustomResourceTypePrefix);
   }
 
   private JSObjectLiteralExpression checkAndGetObject(JSExpression expression) {

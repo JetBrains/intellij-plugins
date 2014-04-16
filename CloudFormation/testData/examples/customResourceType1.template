@@ -1,0 +1,23 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Resources" : {
+    "MyFrontEndTest" : {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Version" : "1.0",
+      "Properties" : {
+        "ServiceToken": "arn:aws:sns:us-east-1:84969EXAMPLE:CRTest",
+        "key1" : "string",
+        "key2" : [ "list" ],
+        "key3" : { "key4" : "map" }
+      }
+    }
+  },
+  "Outputs" : {
+    "CustomResourceAttribute1" : {
+      "Value" : { "Fn::GetAtt" : ["MyFrontEndTest", "responseKey1"] }
+    },
+    "CustomResourceAttribute2" : {
+      "Value" : { "Fn::GetAtt" : ["MyFrontEndTest", "responseKey2"] }
+    }
+  }
+}     
