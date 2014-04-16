@@ -1,0 +1,14 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Resources" : {
+    "MyFrontEndTest" : {
+      "Type": "AWS::CloudFormation::CustomResource",
+      "Version" : "1.0",
+      "Properties" : {
+        "key1" : "string",
+        "key2" : [ "list" ],
+        "key3" : { "key4" : "map" }
+      }
+    }
+  }
+}     

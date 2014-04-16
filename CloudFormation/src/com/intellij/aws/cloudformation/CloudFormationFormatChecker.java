@@ -246,9 +246,13 @@ public class CloudFormationFormatChecker {
       return;
     }
 
-    final String resourceTypeName = checkAndGetUnquotedStringText(typeProperty.getValue());
+    String resourceTypeName = checkAndGetUnquotedStringText(typeProperty.getValue());
     if (resourceTypeName == null) {
       return;
+    }
+
+    if (resourceTypeName.startsWith(CloudFormationConstants.CustomResourceTypePrefix)) {
+      resourceTypeName = CloudFormationConstants.CustomResourceType;
     }
 
     final CloudFormationResourceType resourceType = CloudFormationMetadataProvider.METADATA.findResourceType(resourceTypeName);

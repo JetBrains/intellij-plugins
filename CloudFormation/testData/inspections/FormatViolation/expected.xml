@@ -70,4 +70,14 @@
     <line>4</line>
     <description>Exceeded a maximum of 100 mappings in template</description>
   </problem>
+  <problem>
+    <file>noServiceTokenInCustomResourceType1.template</file>
+    <line>7</line>
+    <description>Required resource properties are not set: ServiceToken</description>
+  </problem>
+  <problem>
+    <file>noServiceTokenInCustomResourceType2.template</file>
+    <line>7</line>
+    <description>Required resource properties are not set: ServiceToken</description>
+  </problem>
 </problems>
