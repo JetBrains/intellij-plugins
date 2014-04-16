@@ -12,10 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +23,7 @@ public class ResourceTypesSaver {
   public static void saveResourceTypes() throws Exception {
     final CloudFormationMetadata metadata = new CloudFormationMetadata();
 
+    metadata.limits = getLimits();
     metadata.predefinedParameters.addAll(getPredefinedParameters());
 
     final List<Pair<URL, String>> types = getResourceTypes();
@@ -314,6 +312,28 @@ public class ResourceTypesSaver {
     }
 
     Collections.sort(result);
+
+    return result;
+  }
+
+  private static CloudFormationLimits getLimits() throws IOException {
+    CloudFormationLimits result = new CloudFormationLimits();
+
+    URL fnGetAttrDocUrl = new URL("http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html");
+    final Document doc = getDocumentFromUrl(fnGetAttrDocUrl);
+
+    Element tableElement = doc.select("div.table-contents").first();
+    assert tableElement != null;
+
+    final List<List<String>> table = parseTable(tableElement);
+    Map<String, String> limits = new HashMap<>();
+    for (List<String> row : table) {
+      limits.put(row.get(0), row.get(2));
+    }
+
+    result.maxOutputs = Integer.parseInt(limits.get("Outputs").replace(" outputs", ""));
+    result.maxParameters = Integer.parseInt(limits.get("Parameters").replace(" parameters", ""));
+    result.maxMappings = Integer.parseInt(limits.get("Mappings").replace(" mappings", ""));
 
     return result;
   }

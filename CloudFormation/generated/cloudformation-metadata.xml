@@ -3392,4 +3392,9 @@
     <string>AWS::StackId</string>
     <string>AWS::StackName</string>
   </predefinedParameters>
+  <limits>
+    <maxParameters>60</maxParameters>
+    <maxOutputs>60</maxOutputs>
+    <maxMappings>100</maxMappings>
+  </limits>
 </Metadata>

@@ -23,6 +23,7 @@ public class MetadataSerializer {
     xstream.alias("ResourceType", CloudFormationResourceType.class);
     xstream.alias("ResourceProperty", CloudFormationResourceProperty.class);
     xstream.alias("ResourceAttribute", CloudFormationResourceAttribute.class);
+    xstream.alias("Limits", CloudFormationLimits.class);
 
     return xstream;
   }
