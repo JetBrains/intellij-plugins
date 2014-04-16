@@ -45,4 +45,14 @@
     <line>8</line>
     <description>Unknown section: XXX</description>
   </problem>
+  <problem>
+    <file>notObjExpr2.template</file>
+    <line>8</line>
+    <description>Expected JSON object</description>
+  </problem>
+  <problem>
+    <file>notObjExpr1.template</file>
+    <line>11</line>
+    <description>Expected properties list</description>
+  </problem>
 </problems>
