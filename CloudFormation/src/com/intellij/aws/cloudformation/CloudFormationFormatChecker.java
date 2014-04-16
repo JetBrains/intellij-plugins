@@ -67,7 +67,7 @@ public class CloudFormationFormatChecker {
       } else if (CloudFormationSections.Description.equals(name)) {
         description(value);
       } else if (CloudFormationSections.Parameters.equals(name)) {
-        // TODO
+        parameters(value);
       } else if (CloudFormationSections.Resources.equals(name)) {
         resources(value);
       } else if (CloudFormationSections.Conditions.equals(name)) {
@@ -75,7 +75,7 @@ public class CloudFormationFormatChecker {
       } else if (CloudFormationSections.Outputs.equals(name)) {
         outputs(value);
       } else if (CloudFormationSections.Mappings.equals(name)) {
-        // TODO
+        mappings(value);
       } else {
         addProblemOnNameElement(
           property,
@@ -111,10 +111,48 @@ public class CloudFormationFormatChecker {
         CloudFormationBundle.getString("format.no.outputs.declared"));
     }
 
-    if (obj.getProperties().length > CloudFormationConstants.MaxOutputs) {
+    if (obj.getProperties().length > CloudFormationMetadataProvider.METADATA.limits.maxOutputs) {
       addProblemOnNameElement(
         (JSProperty)obj.getParent(),
-        CloudFormationBundle.getString("format.max.outputs.exceeded", CloudFormationConstants.MaxOutputs));
+        CloudFormationBundle.getString("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs));
+    }
+  }
+
+  private void parameters(JSExpression parametersExpression) {
+    final JSObjectLiteralExpression obj = checkAndGetObject(parametersExpression);
+    if (obj == null) {
+      return;
+    }
+
+    if (obj.getProperties().length == 0) {
+      addProblemOnNameElement(
+        (JSProperty)obj.getParent(),
+        CloudFormationBundle.getString("format.no.parameters.declared"));
+    }
+
+    if (obj.getProperties().length > CloudFormationMetadataProvider.METADATA.limits.maxParameters) {
+      addProblemOnNameElement(
+        (JSProperty)obj.getParent(),
+        CloudFormationBundle.getString("format.max.parameters.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxParameters));
+    }
+  }
+
+  private void mappings(JSExpression mappingsExpression) {
+    final JSObjectLiteralExpression obj = checkAndGetObject(mappingsExpression);
+    if (obj == null) {
+      return;
+    }
+
+    if (obj.getProperties().length == 0) {
+      addProblemOnNameElement(
+        (JSProperty)obj.getParent(),
+        CloudFormationBundle.getString("format.no.mappings.declared"));
+    }
+
+    if (obj.getProperties().length > CloudFormationMetadataProvider.METADATA.limits.maxMappings) {
+      addProblemOnNameElement(
+        (JSProperty)obj.getParent(),
+        CloudFormationBundle.getString("format.max.mappings.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxMappings));
     }
   }
 

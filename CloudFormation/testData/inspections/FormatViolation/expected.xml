@@ -55,4 +55,19 @@
     <line>11</line>
     <description>Expected properties list</description>
   </problem>
+  <problem>
+    <file>maxOutputs.template</file>
+    <line>4</line>
+    <description>Exceeded a maximum of 60 outputs in template</description>
+  </problem>
+  <problem>
+    <file>maxParameters.template</file>
+    <line>4</line>
+    <description>Exceeded a maximum of 60 parameters in template</description>
+  </problem>
+  <problem>
+    <file>maxMappings.template</file>
+    <line>4</line>
+    <description>Exceeded a maximum of 100 mappings in template</description>
+  </problem>
 </problems>
