@@ -1,6 +1,6 @@
 ###About PhoneGapIntelliJPlugin
 
-IntelliJ Platform Pligin for PhoneGap/Cordova Applocation
+IntelliJ Platform Plugin for PhoneGap/Cordova Application
 
 * PhoneGap Project wizard (not stable)
 * PhoneGap Project importer
@@ -15,11 +15,13 @@ http://phonegap.com/
 ###How to use
 ####(0)Install PhoneGapIntelliJPlugin
 Preference -> Plugins -> Search "PhoneGap Plugin"
+
 Restart IntelliJ
 
 ####(1)Install PhoneGap
-Please install from [Official site](http://nodejs.org/)
-nvm is not supported
+Please install from [Node.js Official site](http://nodejs.org/)
+
+nvm is not supported (So sorry fix soon)
 
 $npm install -g PhoneGap
 
@@ -39,6 +41,7 @@ File -> Import Project -> PhoneGap Project root dir -> Import form external mode
 ####(5)Run PhoneGap app
 Run -> Edit Configuration -> Create new Config -> run
 
+日本語
 ###PhoneGapIntelliJPluginについて
 
 PhoneGap/Cordovaアプリ開発をIntelliJ IDEAで行えるようにするプラグインです．
@@ -70,7 +73,7 @@ PhoneGapのインストールディレクトリは
 
  '/usr/local/bin/phonegap'
 
-である必要があります．ご不便をおかけして申し訳ありません．近くどこにインストールしても動作するよう改修したいと思っています．
+である必要があります．ご不便をおかけして申し訳ありません．近くnvmにも対応したいと思っています．
 
 #####(2)Android SDKをインストール
 AndroidSDKをインストールし，PATHを通しておいてください．
