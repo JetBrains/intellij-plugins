@@ -88,6 +88,20 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
     assertSameElements(strings, Arrays.asList("AWS::ElasticBeanstalk::Application", "AWS::ElasticBeanstalk::ApplicationVersion"));
   }
 
+  public void testMappingTopLevelKey1() throws Exception {
+    myFixture.configureByFiles("MappingTopLevelKey1.template");
+    myFixture.complete(CompletionType.BASIC, 1);
+    List<String> strings = myFixture.getLookupElementStrings();
+    assertSameElements(strings, Arrays.asList("cc1.4xlarge", "cc2.8xlarge"));
+  }
+
+  public void testMappingSecondLevelKey1() throws Exception {
+    myFixture.configureByFiles("MappingSecondLevelKey1.template");
+    myFixture.complete(CompletionType.BASIC, 1);
+    List<String> strings = myFixture.getLookupElementStrings();
+    assertSameElements(strings, Arrays.asList("Arch", "Arch2"));
+  }
+
   private static boolean checkIdeaHasWeb11859Fixed() {
     BuildNumber build = ApplicationInfo.getInstance().getBuild();
     if (build.compareTo(new BuildNumber("IU", 135, 670)) < 0) {
