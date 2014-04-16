@@ -1,12 +1,11 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.common.collect.Collections2;
 import com.google.dart.engine.AnalysisEngine;
 import com.google.dart.engine.context.AnalysisContext;
 import com.google.dart.engine.context.ChangeSet;
 import com.google.dart.engine.sdk.DirectoryBasedDartSdk;
-import com.google.dart.engine.source.DartUriResolver;
-import com.google.dart.engine.source.Source;
-import com.google.dart.engine.source.SourceFactory;
+import com.google.dart.engine.source.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
@@ -122,7 +121,20 @@ public class DartAnalyzerService {
       myCreatedFiles.clear();
     }
     else {
+
+      UriResolver packageResolver;
+      if (myDartPackageRoots != null && myDartPackageRoots.length != 0) {
+        final File[] packages = new File[myDartPackageRoots.length];
+        for (int i = 0; i < myDartPackageRoots.length; ++i) {
+          packages[i] = new File(myDartPackageRoots[i].getPath());
+        }
+        packageResolver = new PackageUriResolver(packages);
+      } else {
+        packageResolver = new ExplicitPackageUriResolver(new DirectoryBasedDartSdk(new File(sdkPath)), new File(myProject.getBasePath()));
+      }
+
       final SourceFactory sourceFactory = new SourceFactory(new DartUriResolver(new DirectoryBasedDartSdk(new File(sdkPath))),
+                                                            packageResolver,
                                                             new DartFileUriResolver(myProject, dartUrlResolver));
 
       analysisContext = AnalysisEngine.getInstance().createAnalysisContext();
