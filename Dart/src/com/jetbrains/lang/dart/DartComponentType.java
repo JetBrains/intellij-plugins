@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.psi.*;
@@ -9,16 +10,16 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public enum DartComponentType {
-  CLASS(DartIcons.Class_dart),
-  FUNCTION(DartIcons.Function_dart),
-  METHOD(DartIcons.Method_dart),
-  VARIABLE(DartIcons.Variable_dart),
-  FIELD(DartIcons.Field_dart),
-  PARAMETER(DartIcons.Parameter_dart),
-  TYPEDEF(DartIcons.Annotationtype_dart),
-  CONSTRUCTOR(DartIcons.Class_dart),
-  OPERATOR(DartIcons.Method_dart),
-  LABEL(DartIcons.Label_dart);
+  CLASS(AllIcons.Nodes.Class),
+  FUNCTION(AllIcons.Nodes.Function),
+  METHOD(AllIcons.Nodes.Method),
+  VARIABLE(AllIcons.Nodes.Variable),
+  FIELD(AllIcons.Nodes.Field),
+  PARAMETER(AllIcons.Nodes.Parameter),
+  TYPEDEF(AllIcons.Nodes.Annotationtype),
+  CONSTRUCTOR(AllIcons.Nodes.Method),
+  OPERATOR(AllIcons.Nodes.ClassInitializer),
+  LABEL(AllIcons.Nodes.Variable);
 
   private final Icon myIcon;
 

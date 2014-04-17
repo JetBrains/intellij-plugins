@@ -8,6 +8,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.PlatformIcons;
+import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,13 +23,10 @@ public class DartIconProvider extends IconProvider {
   @Nullable
   public Icon getIcon(@NotNull final PsiElement element, @Iconable.IconFlags final int flags) {
     if (element instanceof PsiDirectory) {
-      if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile(), "asset")) return AllIcons.Modules.ResourcesRoot;
-      if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile(), "build")) return AllIcons.Modules.Output;
-      if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile(), "lib")) return AllIcons.Nodes.PpLibFolder;
-      if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile(), "tool")) return AllIcons.Nodes.KeymapTools;
+      if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile(), "build")) return AllIcons.Modules.GeneratedFolder;
       if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile(), "web")) return AllIcons.Nodes.WebFolder;
       if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile(), "test")) return AllIcons.Modules.TestSourceFolder;
-      if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile(), "packages")) return AllIcons.Nodes.JarDirectory;
+      if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile(), "packages")) return DartIcons.Package_root;
       if (isFolderNearPubspecYaml(((PsiDirectory)element).getVirtualFile().getParent(), "packages")) return FOLDER_SYMLINK_ICON;
     }
 
