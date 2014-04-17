@@ -63,10 +63,8 @@ public class TmlLexer extends XHtmlLexer {
   }
 
   public static XmlLexer createElAwareXmlLexer() {
-    return new XmlLexer(new _XmlLexer(new __XmlLexer((Reader)null) {
-      {
-        setElTypes(TelTokenTypes.TAP5_EL_CONTENT, TelTokenTypes.TAP5_EL_CONTENT);
-      }
-    }));
+    final __XmlLexer internalLexer = new __XmlLexer((Reader)null);
+    internalLexer.setElTypes(TelTokenTypes.TAP5_EL_CONTENT, TelTokenTypes.TAP5_EL_CONTENT);
+    return new XmlLexer(new _XmlLexer(internalLexer));
   }
 }
