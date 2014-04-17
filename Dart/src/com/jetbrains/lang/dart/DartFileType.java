@@ -2,16 +2,11 @@ package com.jetbrains.lang.dart;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.vfs.VirtualFile;
+import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Maxim.Mossienko
- * Date: 10/12/11
- * Time: 8:02 PM
- */
 public class DartFileType extends LanguageFileType {
   public static final LanguageFileType INSTANCE = new DartFileType();
   public static final String DEFAULT_EXTENSION = "dart";
@@ -40,7 +35,7 @@ public class DartFileType extends LanguageFileType {
 
   @Override
   public Icon getIcon() {
-    return icons.DartIcons.Dart_16;
+    return DartIcons.Dart_file;
   }
 
   @Override
