@@ -95,11 +95,32 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
     assertSameElements(strings, Arrays.asList("cc1.4xlarge", "cc2.8xlarge"));
   }
 
+  public void _testMappingTopLevelKey2() throws Exception {
+    myFixture.configureByFiles("MappingTopLevelKey2.template");
+    myFixture.complete(CompletionType.BASIC, 1);
+    List<String> strings = myFixture.getLookupElementStrings();
+    assertSameElements(strings, Arrays.asList("m1.small", "t1.micro", "m2.small"));
+  }
+
   public void testMappingSecondLevelKey1() throws Exception {
     myFixture.configureByFiles("MappingSecondLevelKey1.template");
     myFixture.complete(CompletionType.BASIC, 1);
     List<String> strings = myFixture.getLookupElementStrings();
     assertSameElements(strings, Arrays.asList("Arch", "Arch2"));
+  }
+
+  public void _testMappingSecondLevelKey2() throws Exception {
+    myFixture.configureByFiles("MappingSecondLevelKey2.template");
+    myFixture.complete(CompletionType.BASIC, 1);
+    List<String> strings = myFixture.getLookupElementStrings();
+    assertSameElements(strings, Arrays.asList("Arch", "Arch2", "Arch3"));
+  }
+
+  public void _testMappingSecondLevelKey3() throws Exception {
+    myFixture.configureByFiles("MappingSecondLevelKey3.template");
+    myFixture.complete(CompletionType.BASIC, 1);
+    List<String> strings = myFixture.getLookupElementStrings();
+    assertSameElements(strings, Arrays.asList("Arch", "Arch2", "Arch3", "A56", "A4"));
   }
 
   private static boolean checkIdeaHasWeb11859Fixed() {
