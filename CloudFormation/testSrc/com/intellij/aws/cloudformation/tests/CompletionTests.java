@@ -24,45 +24,27 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
   }
 
   public void testResourceProperty1() throws Exception {
-    myFixture.configureByFiles("ResourceProperty1.template");
-    myFixture.complete(CompletionType.BASIC, 1);
-    List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("ApplicationName", "ApplicationVersions"));
+    checkBasicCompletion("ResourceProperty1.template", "ApplicationName", "ApplicationVersions");
   }
 
   public void testDependsOn1() throws Exception {
-    myFixture.configureByFiles("DependsOn1.template");
-    myFixture.complete(CompletionType.BASIC, 1);
-    List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("WebServerUser1"));
+    checkBasicCompletion("DependsOn1.template", "WebServerUser1");
   }
 
   public void testDependsOn2() throws Exception {
-    myFixture.configureByFiles("DependsOn2.template");
-    myFixture.complete(CompletionType.BASIC, 1);
-    List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("WebServerUser1", "WebServerUser2"));
+    checkBasicCompletion("DependsOn2.template", "WebServerUser1", "WebServerUser2");
   }
 
   public void testGetAtt1() throws Exception {
-    myFixture.configureByFiles("GetAtt1.template");
-    myFixture.complete(CompletionType.BASIC, 1);
-    List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("Arn"));
+    checkBasicCompletion("GetAtt1.template", "Arn");
   }
 
   public void testGetAtt2() throws Exception {
-    myFixture.configureByFiles("GetAtt2.template");
-    myFixture.complete(CompletionType.BASIC, 1);
-    List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("ConfigurationEndpoint.Address", "ConfigurationEndpoint.Port"));
+    checkBasicCompletion("GetAtt2.template", "ConfigurationEndpoint.Address", "ConfigurationEndpoint.Port");
   }
 
   public void testResourceTopLevelProperty1() throws Exception {
-    myFixture.configureByFiles("ResourceTopLevelProperty1.template");
-    myFixture.complete(CompletionType.BASIC, 1);
-    List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("Condition", "DeletionPolicy", "Metadata", "Properties", "UpdatePolicy", "Version"));
+    checkBasicCompletion("ResourceTopLevelProperty1.template", "Condition", "DeletionPolicy", "Metadata", "Properties", "UpdatePolicy", "Version");
   }
 
   public void testPrefix1() throws Exception {
@@ -82,45 +64,34 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
       return;
     }
 
-    myFixture.configureByFiles("Prefix3.template");
-    myFixture.complete(CompletionType.BASIC, 1);
-    List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("AWS::ElasticBeanstalk::Application", "AWS::ElasticBeanstalk::ApplicationVersion"));
+    checkBasicCompletion("Prefix3.template", "AWS::ElasticBeanstalk::Application", "AWS::ElasticBeanstalk::ApplicationVersion");
   }
 
   public void testMappingTopLevelKey1() throws Exception {
-    myFixture.configureByFiles("MappingTopLevelKey1.template");
-    myFixture.complete(CompletionType.BASIC, 1);
-    List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("cc1.4xlarge", "cc2.8xlarge"));
+    checkBasicCompletion("MappingTopLevelKey1.template", "cc1.4xlarge", "cc2.8xlarge");
   }
 
   public void _testMappingTopLevelKey2() throws Exception {
-    myFixture.configureByFiles("MappingTopLevelKey2.template");
-    myFixture.complete(CompletionType.BASIC, 1);
-    List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("m1.small", "t1.micro", "m2.small"));
+    checkBasicCompletion("MappingTopLevelKey2.template", "m1.small", "t1.micro", "m2.small");
   }
 
   public void testMappingSecondLevelKey1() throws Exception {
-    myFixture.configureByFiles("MappingSecondLevelKey1.template");
-    myFixture.complete(CompletionType.BASIC, 1);
-    List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("Arch", "Arch2"));
+    checkBasicCompletion("MappingSecondLevelKey1.template", "Arch", "Arch2");
   }
 
   public void _testMappingSecondLevelKey2() throws Exception {
-    myFixture.configureByFiles("MappingSecondLevelKey2.template");
-    myFixture.complete(CompletionType.BASIC, 1);
-    List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("Arch", "Arch2", "Arch3"));
+    checkBasicCompletion("MappingSecondLevelKey2.template", "Arch", "Arch2", "Arch3");
   }
 
   public void _testMappingSecondLevelKey3() throws Exception {
-    myFixture.configureByFiles("MappingSecondLevelKey3.template");
+    checkBasicCompletion("MappingSecondLevelKey3.template", "Arch", "Arch2", "Arch3", "A56", "A4");
+  }
+
+  private void checkBasicCompletion(String fileName, String... expectedElements) {
+    myFixture.configureByFiles(fileName);
     myFixture.complete(CompletionType.BASIC, 1);
     List<String> strings = myFixture.getLookupElementStrings();
-    assertSameElements(strings, Arrays.asList("Arch", "Arch2", "Arch3", "A56", "A4"));
+    assertSameElements(strings, Arrays.asList(expectedElements));
   }
 
   private static boolean checkIdeaHasWeb11859Fixed() {
