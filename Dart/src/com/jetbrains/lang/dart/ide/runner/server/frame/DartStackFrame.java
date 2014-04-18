@@ -10,6 +10,7 @@ import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
+import com.jetbrains.lang.dart.ide.runner.server.google.DebuggerUtils;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmCallFrame;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmLocation;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmVariable;
@@ -71,7 +72,7 @@ public class DartStackFrame extends XStackFrame {
     final XSourcePosition position = getSourcePosition();
 
     if (myVmCallFrame.getFunctionName() != null) {
-      component.append(myVmCallFrame.getFunctionName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      component.append(DebuggerUtils.demangleVmName(myVmCallFrame.getFunctionName()), SimpleTextAttributes.REGULAR_ATTRIBUTES);
     }
 
     if (position != null) {
