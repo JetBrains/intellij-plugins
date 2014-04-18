@@ -16,6 +16,8 @@ public class PhoneGapDetector implements ProjectComponent {
   }
 
   public void initComponent() {
+    // Detect node.js
+
     // Detect phonegap cli
     PhoneGapDetectThread phoneGapDetectThread = new PhoneGapDetectThread(project);
     phoneGapDetectThread.run();
