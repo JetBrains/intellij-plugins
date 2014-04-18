@@ -1,8 +1,5 @@
 package com.jetbrains.lang.dart.ide.runner.unittest;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartUnitRunnerParameters implements Cloneable {
   private String myFilePath = null;
   private String myArguments = null;
@@ -55,13 +52,12 @@ public class DartUnitRunnerParameters implements Cloneable {
   }
 
   @Override
-  protected Object clone() throws CloneNotSupportedException {
-    final DartUnitRunnerParameters result = new DartUnitRunnerParameters();
-    result.setTestName(getTestName());
-    result.setArguments(getArguments());
-    result.setFilePath(getFilePath());
-    result.setScope(getScope());
-    result.setTestName(getTestName());
-    return result;
+  protected DartUnitRunnerParameters clone() {
+    try {
+      return (DartUnitRunnerParameters)super.clone();
+    }
+    catch (CloneNotSupportedException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
