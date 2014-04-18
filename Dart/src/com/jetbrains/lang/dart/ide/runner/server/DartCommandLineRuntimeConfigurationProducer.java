@@ -2,12 +2,15 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.RunConfigurationProducer;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.psi.DartFile;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartCommandLineRuntimeConfigurationProducer extends RunConfigurationProducer<DartCommandLineRunConfiguration> {
@@ -16,31 +19,39 @@ public class DartCommandLineRuntimeConfigurationProducer extends RunConfiguratio
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(DartCommandLineRunConfiguration configuration,
-                                                  ConfigurationContext context,
-                                                  Ref<PsiElement> sourceElement) {
-    final String path = findDartPath(context);
-    if (path != null) {
-      configuration.setName(VfsUtil.extractFileName(path));
-      configuration.setFilePath(path);
+  protected boolean setupConfigurationFromContext(final @NotNull DartCommandLineRunConfiguration configuration,
+                                                  final @NotNull ConfigurationContext context,
+                                                  final @NotNull Ref<PsiElement> sourceElement) {
+    final VirtualFile dartFile = findRunnableDartFile(context);
+    if (dartFile != null) {
+      configuration.setFilePath(dartFile.getPath());
+      configuration.setName(configuration.suggestedName());
       return true;
     }
     return false;
   }
 
   @Override
-  public boolean isConfigurationFromContext(DartCommandLineRunConfiguration configuration, ConfigurationContext context) {
-    final String contextPath = findDartPath(context);
-    final String configurationPath = configuration.getFilePath();
-    return configurationPath != null && configurationPath.equals(contextPath);
+  public boolean isConfigurationFromContext(final @NotNull DartCommandLineRunConfiguration configuration,
+                                            final @NotNull ConfigurationContext context) {
+    final VirtualFile dartFile = findRunnableDartFile(context);
+    return dartFile != null && dartFile.getPath().equals(configuration.getFilePath());
   }
 
   @Nullable
-  private static String findDartPath(ConfigurationContext context) {
+  public static VirtualFile findRunnableDartFile(final @NotNull ConfigurationContext context) {
     final PsiElement psiLocation = context.getPsiLocation();
-    final PsiFile containingFile = psiLocation != null ? psiLocation.getContainingFile() : null;
-    if (!(containingFile instanceof DartFile)) return null;
-    final VirtualFile virtualFile = containingFile.getVirtualFile();
-    return virtualFile != null ? virtualFile.getPath() : null;
+    final PsiFile psiFile = psiLocation == null ? null : psiLocation.getContainingFile();
+    final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(psiFile);
+
+    if (psiFile instanceof DartFile &&
+        virtualFile != null &&
+        ProjectRootManager.getInstance(context.getProject()).getFileIndex().isInContent(virtualFile) &&
+        !DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile.getProject(), virtualFile) &&
+        DartResolveUtil.getMainFunction(psiFile) != null) {
+      return virtualFile;
+    }
+
+    return null;
   }
 }

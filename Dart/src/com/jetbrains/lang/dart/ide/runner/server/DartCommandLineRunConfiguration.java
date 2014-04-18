@@ -18,6 +18,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.PathUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
@@ -25,9 +26,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartCommandLineRunConfiguration extends LocatableConfigurationBase {
   @Nullable
   private String myFilePath = null;
@@ -117,7 +115,6 @@ public class DartCommandLineRunConfiguration extends LocatableConfigurationBase 
     );
   }
 
-
   public void writeExternal(final Element element) throws WriteExternalException {
     super.writeExternal(element);
     XmlSerializer.serializeInto(this, element);
@@ -126,5 +123,10 @@ public class DartCommandLineRunConfiguration extends LocatableConfigurationBase 
   public void readExternal(final Element element) throws InvalidDataException {
     super.readExternal(element);
     XmlSerializer.deserializeInto(this, element);
+  }
+
+  @Nullable
+  public String suggestedName() {
+    return myFilePath == null ? null : PathUtil.getFileName(myFilePath);
   }
 }

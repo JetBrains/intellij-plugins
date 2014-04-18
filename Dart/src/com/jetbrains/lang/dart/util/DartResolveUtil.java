@@ -196,7 +196,7 @@ public class DartResolveUtil {
     }
     final DartPartStatement[] sources = PsiTreeUtil.getChildrenOfType(psiFile, DartPartStatement.class);
     if (libraryStatement == null && sources == null) {
-      return hasMainFunction(psiFile) ? psiFile.getName() : null;
+      return getMainFunction(psiFile) == null ? null : psiFile.getName();
     }
     return getLibraryName(psiFile, libraryStatement);
   }
@@ -452,18 +452,28 @@ public class DartResolveUtil {
     for (PsiElement root : findDartRoots(psiFile)) {
       DartPsiCompositeElement oneOfLibraryStatement =
         PsiTreeUtil.getChildOfAnyType(root, DartLibraryStatement.class, DartPartStatement.class, DartImportStatement.class);
-      if (oneOfLibraryStatement != null || hasMainFunction(psiFile)) {
+      if (oneOfLibraryStatement != null || getMainFunction(psiFile) != null) {
         return true;
       }
     }
     return false;
   }
 
-  private static boolean hasMainFunction(@Nullable PsiFile file) {
-    if (file == null) return false;
-    ArrayList<DartComponentName> result = new ArrayList<DartComponentName>();
+  // todo this method must look for main function in library parts as well
+  @Nullable
+  public static DartFunctionDeclarationWithBodyOrNative getMainFunction(final @Nullable PsiFile file) {
+    if (!(file instanceof DartFile)) return null;
+
+    final ArrayList<DartComponentName> result = new ArrayList<DartComponentName>();
     DartPsiCompositeElementImpl.processDeclarationsImpl(file, new ResolveScopeProcessor(result, "main"), ResolveState.initial(), null);
-    return !result.isEmpty();
+
+    for (DartComponentName componentName : result) {
+      final PsiElement parent = componentName.getParent();
+      if (parent instanceof DartFunctionDeclarationWithBodyOrNative) {
+        return (DartFunctionDeclarationWithBodyOrNative)parent;
+      }
+    }
+    return null;
   }
 
   @Nullable
