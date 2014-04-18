@@ -26,7 +26,7 @@ public class DartValue extends XNamedValue {
   private static final String OBJECT_OF_TYPE_PREFIX = "object of type ";
 
   public DartValue(final @NotNull DartCommandLineDebugProcess debugProcess, final @NotNull VmVariable vmVariable) {
-    super(StringUtil.notNullize(vmVariable.getName(), "<unknown>"));
+    super(StringUtil.notNullize(DebuggerUtils.demangleVmName(vmVariable.getName()), "<unknown>"));
     myDebugProcess = debugProcess;
     myVmVariable = vmVariable;
   }
@@ -58,11 +58,14 @@ public class DartValue extends XNamedValue {
           presentation = new XNumericValuePresentation(value);
         }
         else {
+          final int objectId = myVmValue.getObjectId();
+          final String postfix = objectId == 0 ? "" : "[id=" + objectId + "]";
+
           if (value.startsWith(OBJECT_OF_TYPE_PREFIX)) {
-            presentation = new XRegularValuePresentation("", value.substring(OBJECT_OF_TYPE_PREFIX.length()));
+            presentation = new XRegularValuePresentation("", value.substring(OBJECT_OF_TYPE_PREFIX.length()) + postfix);
           }
           else {
-            presentation = new XRegularValuePresentation(value, myVmValue.getKind());
+            presentation = new XRegularValuePresentation(value, DebuggerUtils.demangleVmName(myVmValue.getKind()) + postfix);
           }
         }
 
