@@ -1,21 +1,30 @@
 package com.intellij.javascript.karma.coverage;
 
 import com.intellij.coverage.*;
+import com.intellij.coverage.view.CoverageListRootNode;
 import com.intellij.coverage.view.CoverageViewExtension;
 import com.intellij.coverage.view.CoverageViewManager;
 import com.intellij.coverage.view.DirectoryCoverageViewExtension;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
 import com.intellij.execution.testframework.AbstractTestProxy;
+import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.rt.coverage.data.ProjectData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -117,9 +126,6 @@ public class KarmaCoverageEngine extends CoverageEngine {
       return null;
     }
     final String filePath = file.getPath();
-    if (filePath == null) {
-      return null;
-    }
     return SimpleCoverageAnnotator.getFilePath(filePath);
   }
 
@@ -177,9 +183,52 @@ public class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public CoverageViewExtension createCoverageViewExtension(Project project,
-                                                           CoverageSuitesBundle suiteBundle,
+  public CoverageViewExtension createCoverageViewExtension(final Project project,
+                                                           final CoverageSuitesBundle suiteBundle,
                                                            CoverageViewManager.StateBean stateBean) {
-    return new DirectoryCoverageViewExtension(project, getCoverageAnnotator(project), suiteBundle, stateBean);
+    return new DirectoryCoverageViewExtension(project, getCoverageAnnotator(project), suiteBundle, stateBean) {
+      @Override
+      public AbstractTreeNode createRootNode() {
+        VirtualFile rootDir = findRootDir(project, suiteBundle);
+        if (rootDir == null) {
+          rootDir = myProject.getBaseDir();
+        }
+        PsiDirectory psiRootDir = PsiManager.getInstance(myProject).findDirectory(rootDir);
+        return new CoverageListRootNode(myProject, psiRootDir, mySuitesBundle, myStateBean);
+      }
+    };
+  }
+
+  /**
+   * Finds a root directory for Coverage toolwindow view.
+   * Returns a content root containing at least one covered file.
+   */
+  @Nullable
+  private static VirtualFile findRootDir(@NotNull final Project project, @NotNull final CoverageSuitesBundle suitesBundle) {
+    return ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
+      @Override
+      public VirtualFile compute() {
+        CoverageDataManager coverageDataManager = CoverageDataManager.getInstance(project);
+        for (CoverageSuite suite : suitesBundle.getSuites()) {
+          ProjectData data = suite.getCoverageData(coverageDataManager);
+          if (data != null) {
+            for (Object key : data.getClasses().keySet()) {
+              if (key instanceof String) {
+                String path = (String) key;
+                VirtualFile file = VfsUtil.findFileByIoFile(new File(path), false);
+                if (file != null && file.isValid()) {
+                  ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
+                  VirtualFile contentRoot = projectFileIndex.getContentRootForFile(file);
+                  if (contentRoot != null && contentRoot.isDirectory() && contentRoot.isValid()) {
+                    return contentRoot;
+                  }
+                }
+              }
+            }
+          }
+        }
+        return null;
+      }
+    });
   }
 }
