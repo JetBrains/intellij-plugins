@@ -178,7 +178,7 @@ showCombinator ::= 'show' libraryReferenceList
 hideCombinator ::= 'hide' libraryReferenceList
 libraryReferenceList ::= libraryComponentReferenceExpression (',' libraryComponentReferenceExpression)*
 
-exportStatement ::= metadata* 'export' pathOrLibraryReference ('as' componentName )? combinator* ';' {pin = 3}
+exportStatement ::= metadata* 'export' pathOrLibraryReference combinator* ';' {pin = 3}
 
 partStatement ::= metadata* 'part' pathOrLibraryReference ';' {
   pin=3

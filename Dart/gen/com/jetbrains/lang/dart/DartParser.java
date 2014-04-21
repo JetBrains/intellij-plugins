@@ -1556,7 +1556,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'export' pathOrLibraryReference ('as' componentName )? combinator* ';'
+  // metadata* 'export' pathOrLibraryReference combinator* ';'
   public static boolean exportStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "exportStatement")) return false;
     if (!nextTokenIs(builder_, "<export statement>", AT, EXPORT)) return false;
@@ -1568,7 +1568,6 @@ public class DartParser implements PsiParser {
     result_ = result_ && pathOrLibraryReference(builder_, level_ + 1);
     pinned_ = result_; // pin = 3
     result_ = result_ && report_error_(builder_, exportStatement_3(builder_, level_ + 1));
-    result_ = pinned_ && report_error_(builder_, exportStatement_4(builder_, level_ + 1)) && result_;
     result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
     exit_section_(builder_, level_, marker_, EXPORT_STATEMENT, result_, pinned_, null);
     return result_ || pinned_;
@@ -1586,31 +1585,13 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // ('as' componentName )?
+  // combinator*
   private static boolean exportStatement_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "exportStatement_3")) return false;
-    exportStatement_3_0(builder_, level_ + 1);
-    return true;
-  }
-
-  // 'as' componentName
-  private static boolean exportStatement_3_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "exportStatement_3_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, AS);
-    result_ = result_ && componentName(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // combinator*
-  private static boolean exportStatement_4(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "exportStatement_4")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
       if (!combinator(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "exportStatement_4", pos_)) break;
+      if (!empty_element_parsed_guard_(builder_, "exportStatement_3", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;

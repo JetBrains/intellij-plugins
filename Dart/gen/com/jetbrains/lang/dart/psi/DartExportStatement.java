@@ -7,9 +7,6 @@ import com.intellij.psi.PsiElement;
 
 public interface DartExportStatement extends DartPsiCompositeElement {
 
-  @Nullable
-  DartComponentName getComponentName();
-
   @NotNull
   List<DartHideCombinator> getHideCombinatorList();
 
