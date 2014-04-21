@@ -85,6 +85,8 @@
 
     <findUsagesHandlerFactory id="JavaScript" implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory"/>
     <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher" />
+
+    <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
