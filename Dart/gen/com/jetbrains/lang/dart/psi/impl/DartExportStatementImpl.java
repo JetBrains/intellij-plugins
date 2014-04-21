@@ -23,12 +23,6 @@ public class DartExportStatementImpl extends DartPsiCompositeElementImpl impleme
   }
 
   @Override
-  @Nullable
-  public DartComponentName getComponentName() {
-    return findChildByClass(DartComponentName.class);
-  }
-
-  @Override
   @NotNull
   public List<DartHideCombinator> getHideCombinatorList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartHideCombinator.class);
