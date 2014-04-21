@@ -1,5 +1,6 @@
 package org.angularjs.editor;
 
+import com.intellij.lang.Language;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -38,7 +39,11 @@ public class AngularJSBracesUtil {
 
   public static boolean hasConflicts(String start, String end, PsiFile file) {
     if (DEFAULT_START.equals(start) || DEFAULT_END.equals(end)) {
-      return DEFAULT_CONFLICTS.contains(file.getLanguage().getDisplayName());
+      for (Language language : file.getViewProvider().getLanguages()) {
+        if (DEFAULT_CONFLICTS.contains(language.getDisplayName())) {
+          return true;
+        }
+      }
     }
     return false;
   }
