@@ -23,7 +23,7 @@ import java.util.Set;
 
 public class DartIndexUtil {
   // inc when change parser
-  public static int BASE_VERSION = 5;
+  public static final int BASE_VERSION = 6;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
@@ -94,7 +94,7 @@ public class DartIndexUtil {
   }
 
   private static void processImportStatement(DartFileIndexData result, DartImportStatement importStatement) {
-    final String pathValue = FileUtil.toSystemIndependentName(importStatement.getLibraryName());
+    final String importText = importStatement.getImportText();
 
     final Set<String> showComponentNames = new THashSet<String>();
     for (DartShowCombinator showCombinator : importStatement.getShowCombinatorList()) {
@@ -110,10 +110,10 @@ public class DartIndexUtil {
       }
     }
 
-    final DartComponentName prefixName = importStatement.getComponentName();
-    final String prefix = prefixName != null ? prefixName.getName() : null;
+    final DartComponentName importPrefix = importStatement.getImportPrefix();
+    final String prefix = importPrefix != null ? importPrefix.getName() : null;
 
-    result.addImport(new DartPathInfo(pathValue, prefix, showComponentNames, hideComponentNames));
+    result.addImportInfo(new DartImportInfo(importText, prefix, showComponentNames, hideComponentNames));
     result.addComponentInfo(prefix, new DartComponentInfo(importStatement.getContainingFile().getName(), DartComponentType.LABEL, null));
   }
 

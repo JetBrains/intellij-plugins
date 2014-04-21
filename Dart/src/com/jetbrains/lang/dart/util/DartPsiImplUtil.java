@@ -30,25 +30,15 @@ public class DartPsiImplUtil {
   }
 
   @NotNull
-  public static String getLibraryName(@NotNull DartImportStatement importStatement) {
+  public static String getImportText(@NotNull DartImportStatement importStatement) {
     final DartExpression expression = importStatement.getLibraryExpression();
-    return FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
+    return StringUtil.unquoteString(expression.getText());
   }
 
   @NotNull
   public static String getLibraryName(@NotNull DartPartOfStatement importStatement) {
     final DartLibraryId expression = importStatement.getLibraryId();
     return FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
-  }
-
-  @Nullable
-  public static PsiElement getLibraryPrefix(@NotNull DartImportStatement resourceStatement) {
-    final DartComponentName componentName = resourceStatement.getComponentName();
-    if (componentName != null) {
-      return componentName;
-    }
-    final DartExpression[] childrenOfType = PsiTreeUtil.getChildrenOfType(resourceStatement, DartExpression.class);
-    return childrenOfType == null || childrenOfType.length < 2 ? null : childrenOfType[1];
   }
 
   @Nullable

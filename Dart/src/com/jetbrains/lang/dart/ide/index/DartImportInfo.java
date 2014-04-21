@@ -10,37 +10,44 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-/**
- * @author: Fedor.Korotkov
- */
-public class DartPathInfo {
-  private final String path;
+public class DartImportInfo {
+  private final @NotNull String myImportText;
+  private final @Nullable String myPrefix;
+  private final @NotNull Set<String> myShowComponents;
+  private final @NotNull Set<String> myHideComponents;
+
+  public DartImportInfo(final @NotNull String importText,
+                        final @Nullable String prefix,
+                        final @NotNull Set<String> showComponents,
+                        final @NotNull Set<String> hideComponents) {
+    myImportText = importText;
+    myPrefix = prefix;
+    myShowComponents = showComponents;
+    myHideComponents = hideComponents;
+  }
+
+  @NotNull
+  public String getImportText() {
+    return myImportText;
+  }
+
   @Nullable
-  private final String prefix;
-  private final Set<String> showComponents;
-  private final Set<String> hideComponents;
-
-  public DartPathInfo(String path, @Nullable String prefix, Set<String> showComponents, Set<String> hideComponents) {
-    this.path = path;
-    this.prefix = prefix;
-    this.showComponents = showComponents;
-    this.hideComponents = hideComponents;
+  public String getPrefix() {
+    return myPrefix;
   }
 
-  public String getPath() {
-    return path;
-  }
-
+  @NotNull
   public Set<String> getShowComponents() {
-    return showComponents;
+    return myShowComponents;
   }
 
+  @NotNull
   public Set<String> getHideComponents() {
-    return hideComponents;
+    return myHideComponents;
   }
 
   public PsiScopeProcessor wrapElementProcessor(final PsiScopeProcessor processor) {
-    if (showComponents.isEmpty() && hideComponents.isEmpty()) {
+    if (myShowComponents.isEmpty() && myHideComponents.isEmpty()) {
       return processor;
     }
     return new PsiScopeProcessor() {
@@ -65,23 +72,19 @@ public class DartPathInfo {
     };
   }
 
-  public boolean isComponentExcluded(@Nullable String elementName) {
+  private boolean isComponentExcluded(@Nullable String elementName) {
     // nothing
-    if (showComponents.isEmpty() && hideComponents.isEmpty()) {
+    if (myShowComponents.isEmpty() && myHideComponents.isEmpty()) {
       return false;
     }
     // hide
-    if (hideComponents.contains(elementName)) {
+    if (myHideComponents.contains(elementName)) {
       return true;
     }
     // show isn't empty and doesn't contain name
-    if (!showComponents.isEmpty() && !showComponents.contains(elementName)) {
+    if (!myShowComponents.isEmpty() && !myShowComponents.contains(elementName)) {
       return true;
     }
     return false;
-  }
-
-  public String getPrefix() {
-    return prefix;
   }
 }

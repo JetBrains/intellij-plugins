@@ -112,9 +112,9 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
     final DartImportStatement[] importStatements = PsiTreeUtil.getChildrenOfType(context, DartImportStatement.class);
     if (importStatements != null) {
       for (DartImportStatement importStatement : importStatements) {
-        final DartComponentName componentName = importStatement.getComponentName();
-        if (componentName != null) {
-          result.add(componentName);
+        final DartComponentName importPrefix = importStatement.getImportPrefix();
+        if (importPrefix != null) {
+          result.add(importPrefix);
         }
       }
     }
