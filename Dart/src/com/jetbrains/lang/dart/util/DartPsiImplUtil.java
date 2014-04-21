@@ -16,10 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 
 public class DartPsiImplUtil {
-  @NotNull
-  public static String normalizeLibraryName(@NotNull String libraryName) {
-    return libraryName.startsWith("dart.") ? "dart:" + libraryName.substring("dart.".length()) : libraryName;
-  }
 
   @NotNull
   public static String getPath(@NotNull DartPartStatement partStatement) {
@@ -30,19 +26,19 @@ public class DartPsiImplUtil {
   @NotNull
   public static String getLibraryName(@NotNull DartLibraryStatement libraryStatement) {
     final DartQualifiedComponentName componentName = libraryStatement.getQualifiedComponentName();
-    return normalizeLibraryName(StringUtil.notNullize(componentName.getName()));
+    return StringUtil.notNullize(componentName.getName());
   }
 
   @NotNull
   public static String getLibraryName(@NotNull DartImportStatement importStatement) {
     final DartExpression expression = importStatement.getLibraryExpression();
-    return FileUtil.toSystemIndependentName(normalizeLibraryName(StringUtil.unquoteString(expression.getText())));
+    return FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
   }
 
   @NotNull
   public static String getLibraryName(@NotNull DartPartOfStatement importStatement) {
     final DartLibraryId expression = importStatement.getLibraryId();
-    return FileUtil.toSystemIndependentName(normalizeLibraryName(StringUtil.unquoteString(expression.getText())));
+    return FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
   }
 
   @Nullable

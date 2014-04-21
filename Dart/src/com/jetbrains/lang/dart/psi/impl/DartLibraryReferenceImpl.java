@@ -21,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartLibraryReferenceImpl extends DartExpressionImpl implements DartReference, PsiPolyVariantReference {
   public DartLibraryReferenceImpl(ASTNode node) {
     super(node);
@@ -97,7 +94,7 @@ public class DartLibraryReferenceImpl extends DartExpressionImpl implements Dart
   }
 
   private ResolveResult[] tryResolveLibraries() {
-    final String libraryName = DartPsiImplUtil.normalizeLibraryName(StringUtil.unquoteString(getText()));
+    final String libraryName = StringUtil.unquoteString(getText());
     final List<VirtualFile> virtualFiles = DartLibraryIndex.findLibraryClass(this, libraryName);
     final List<PsiElementResolveResult> result = new ArrayList<PsiElementResolveResult>();
     for (VirtualFile virtualFile : virtualFiles) {
