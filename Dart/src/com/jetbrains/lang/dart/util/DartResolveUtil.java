@@ -33,6 +33,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.jetbrains.lang.dart.util.DartUrlResolver.DART_PREFIX;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.FILE_PREFIX;
 import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
 
 public class DartResolveUtil {
@@ -214,7 +216,7 @@ public class DartResolveUtil {
   public static List<DartComponentName> findComponentsInLibraryByPrefix(PsiElement contextToSearch,
                                                                         String libraryPrefix,
                                                                         String componentName) {
-    final VirtualFile virtualFile = getFileByPrefix(contextToSearch.getContainingFile(), libraryPrefix);
+    final VirtualFile virtualFile = getImportedFileByImportPrefix(contextToSearch.getContainingFile(), libraryPrefix);
     if (virtualFile != null) {
       final List<DartComponentName> result = new ArrayList<DartComponentName>();
       processTopLevelDeclarations(contextToSearch, new ResolveScopeProcessor(result, componentName),
@@ -240,21 +242,16 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  public static VirtualFile getFileByPrefix(@NotNull PsiElement context, @NotNull String prefix) {
+  public static VirtualFile getImportedFileByImportPrefix(final @NotNull PsiElement context, final @NotNull String prefix) {
     final List<VirtualFile> virtualFiles = findLibrary(context.getContainingFile());
     for (VirtualFile virtualFile : virtualFiles) {
-      for (DartPathInfo pathInfo : DartImportIndex.getLibraryNames(context.getProject(), virtualFile)) {
-        final String importPrefix = pathInfo.getPrefix();
+      for (DartImportInfo importInfo : DartImportIndex.getImportInfos(context.getProject(), virtualFile)) {
+        final String importPrefix = importInfo.getPrefix();
         if (importPrefix == null || !prefix.equals(StringUtil.unquoteString(importPrefix))) {
           continue;
         }
 
-        final String libraryNameOrPath = pathInfo.getPath();
-        List<VirtualFile> libraryRoots = DartLibraryIndex.findLibraryClass(context, libraryNameOrPath);
-        if (!libraryRoots.isEmpty()) {
-          return libraryRoots.iterator().next();
-        }
-        return getImportedFile(context.getProject(), virtualFile, libraryNameOrPath);
+        return getImportedFile(context.getProject(), virtualFile, importInfo.getImportText());
       }
     }
     return null;
@@ -337,21 +334,13 @@ public class DartResolveUtil {
       return true;
     }
 
-    for (DartPathInfo libraryPathInfo : DartImportIndex.getLibraryNames(context.getProject(), virtualFile)) {
-      if (libraryPathInfo.getPrefix() != null) {
-        // statement has prefix
-        // all components are prefix.Name
+    for (DartImportInfo importInfo : DartImportIndex.getImportInfos(context.getProject(), virtualFile)) {
+      if (importInfo.getPrefix() != null) {
+        // statement has prefix => all components are prefix.Name
         continue;
       }
-      final PsiScopeProcessor importShowHideAwareProcessor = libraryPathInfo.wrapElementProcessor(processor);
-      final String libraryNameOrPath = libraryPathInfo.getPath();
-      List<VirtualFile> libraryRoots = DartLibraryIndex.findLibraryClass(context, libraryNameOrPath);
-      for (VirtualFile libraryRoot : libraryRoots) {
-        if (!processTopLevelDeclarationsImpl(context, importShowHideAwareProcessor, libraryRoot, fileNames, processedFiles)) {
-          return false;
-        }
-      }
-      VirtualFile sourceFile = getImportedFile(context.getProject(), virtualFile, libraryNameOrPath);
+      final PsiScopeProcessor importShowHideAwareProcessor = importInfo.wrapElementProcessor(processor);
+      final VirtualFile sourceFile = getImportedFile(context.getProject(), virtualFile, importInfo.getImportText());
       if (sourceFile != null) {
         if (!processTopLevelDeclarationsImpl(context, importShowHideAwareProcessor, sourceFile, fileNames, processedFiles)) {
           return false;
@@ -365,7 +354,7 @@ public class DartResolveUtil {
   private static VirtualFile getImportedFile(final @NotNull Project project,
                                              final @NotNull VirtualFile contextFile,
                                              final @NotNull String importText) {
-    if (importText.startsWith(PACKAGE_PREFIX)) {
+    if (importText.startsWith(DART_PREFIX) || importText.startsWith(PACKAGE_PREFIX) || importText.startsWith(FILE_PREFIX)) {
       return DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(importText);
     }
 

@@ -23,12 +23,6 @@ public class DartImportStatementImpl extends DartPsiCompositeElementImpl impleme
   }
 
   @Override
-  @Nullable
-  public DartComponentName getComponentName() {
-    return findChildByClass(DartComponentName.class);
-  }
-
-  @Override
   @NotNull
   public List<DartHideCombinator> getHideCombinatorList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartHideCombinator.class);
@@ -47,8 +41,8 @@ public class DartImportStatementImpl extends DartPsiCompositeElementImpl impleme
   }
 
   @NotNull
-  public String getLibraryName() {
-    return DartPsiImplUtil.getLibraryName(this);
+  public String getImportText() {
+    return DartPsiImplUtil.getImportText(this);
   }
 
   @Override
@@ -57,9 +51,10 @@ public class DartImportStatementImpl extends DartPsiCompositeElementImpl impleme
     return findNotNullChildByClass(DartPathOrLibraryReference.class);
   }
 
+  @Override
   @Nullable
-  public PsiElement getLibraryPrefix() {
-    return DartPsiImplUtil.getLibraryPrefix(this);
+  public DartComponentName getImportPrefix() {
+    return findChildByClass(DartComponentName.class);
   }
 
 }

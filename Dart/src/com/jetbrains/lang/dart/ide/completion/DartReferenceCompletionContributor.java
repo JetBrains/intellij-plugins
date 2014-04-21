@@ -26,9 +26,6 @@ import java.util.Set;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-/**
- * Created by fedorkorotkov.
- */
 public class DartReferenceCompletionContributor extends CompletionContributor {
   public DartReferenceCompletionContributor() {
     final PsiElementPattern.Capture<PsiElement> idInReference =
@@ -51,7 +48,8 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
                  }
                }
              }
-           });
+           }
+    );
     extend(CompletionType.BASIC,
            idInReference.withSuperParent(3, DartLibraryReferenceList.class),
            new CompletionProvider<CompletionParameters>() {
@@ -60,7 +58,7 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
                                            ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
                final DartReference reference = PsiTreeUtil.getParentOfType(parameters.getPosition(), DartReference.class);
-               final PsiElement library = resolveLibrary(reference);
+               final PsiElement library = reference == null ? null : resolveLibrary(reference);
                if (library != null) {
                  final Set<DartComponentName> suggestedVariants = new THashSet<DartComponentName>();
                  DartResolveUtil.processTopLevelDeclarations(reference, new ComponentNameScopeProcessor(suggestedVariants),
@@ -72,14 +70,15 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
              }
 
              @Nullable
-             public PsiElement resolveLibrary(DartReference reference) {
+             public PsiElement resolveLibrary(final @NotNull DartReference reference) {
                final DartPsiCompositeElementImpl statement =
                  PsiTreeUtil.getParentOfType(reference, DartImportStatementImpl.class, DartExportStatementImpl.class);
                final DartPathOrLibraryReference pathOrLibraryReference =
                  PsiTreeUtil.getChildOfType(statement, DartPathOrLibraryReference.class);
                return pathOrLibraryReference != null ? pathOrLibraryReference.resolve() : null;
              }
-           });
+           }
+    );
   }
 
   private static Collection<DartLookupElement> addCompletionVariants(@NotNull DartReference reference,
@@ -98,7 +97,8 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
       dartClass = classResolveResult.getDartClass();
       // prefix
       if (PsiTreeUtil.getParentOfType(leftReference.resolve(), DartImportStatement.class, DartExportStatement.class) != null) {
-        final VirtualFile virtualFile = DartResolveUtil.getFileByPrefix(reference.getContainingFile(), leftReference.getText());
+        final VirtualFile virtualFile =
+          DartResolveUtil.getImportedFileByImportPrefix(reference.getContainingFile(), leftReference.getText());
         DartResolveUtil.processTopLevelDeclarations(reference, new ComponentNameScopeProcessor(suggestedVariants), virtualFile, null);
       }
     }
@@ -115,7 +115,8 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
             public boolean value(DartComponent component) {
               return component instanceof DartNamedConstructorDeclaration || component instanceof DartFactoryConstructorDeclaration;
             }
-          }),
+          }
+        ),
         needFilterPrivateMembers
       ));
     }
@@ -128,15 +129,17 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
         final PsiElement parent = componentName.getParent();
         if (!(parent instanceof DartClass)) continue;
         constructors.addAll(DartResolveUtil.getComponentNames(ContainerUtil.filter(
-          ((DartClass)parent).getConstructors(),
-          new Condition<DartComponent>() {
-            @Override
-            public boolean value(DartComponent component) {
-              boolean namedOrFactory = component instanceof DartNamedConstructorDeclaration ||
-                                       component instanceof DartFactoryConstructorDeclaration;
-              return namedOrFactory && component.isPublic();
-            }
-          })
+                                                                ((DartClass)parent).getConstructors(),
+                                                                new Condition<DartComponent>() {
+                                                                  @Override
+                                                                  public boolean value(DartComponent component) {
+                                                                    boolean namedOrFactory =
+                                                                      component instanceof DartNamedConstructorDeclaration ||
+                                                                      component instanceof DartFactoryConstructorDeclaration;
+                                                                    return namedOrFactory && component.isPublic();
+                                                                  }
+                                                                }
+                                                              )
         ));
       }
       suggestedVariants.addAll(constructors);

@@ -7,9 +7,6 @@ import com.intellij.psi.PsiElement;
 
 public interface DartImportStatement extends DartPsiCompositeElement {
 
-  @Nullable
-  DartComponentName getComponentName();
-
   @NotNull
   List<DartHideCombinator> getHideCombinatorList();
 
@@ -20,12 +17,12 @@ public interface DartImportStatement extends DartPsiCompositeElement {
   List<DartShowCombinator> getShowCombinatorList();
 
   @NotNull
-  String getLibraryName();
+  String getImportText();
 
   @NotNull
   DartPathOrLibraryReference getLibraryExpression();
 
   @Nullable
-  PsiElement getLibraryPrefix();
+  DartComponentName getImportPrefix();
 
 }
