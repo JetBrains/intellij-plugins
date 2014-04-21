@@ -22,7 +22,7 @@ public class PhoneGapModuleEditorProvider implements ModuleConfigurationEditorPr
     }
 
     DefaultModuleConfigurationEditorFactory defaultModuleConfigurationEditorFactory = DefaultModuleConfigurationEditorFactory.getInstance();
-    List<ModuleConfigurationEditor> list = new ArrayList<>();
+    List<ModuleConfigurationEditor> list = new ArrayList<ModuleConfigurationEditor>();
     list.add(defaultModuleConfigurationEditorFactory.createModuleContentRootsEditor(state));
 
     return list.toArray(new ModuleConfigurationEditor[list.size()]);

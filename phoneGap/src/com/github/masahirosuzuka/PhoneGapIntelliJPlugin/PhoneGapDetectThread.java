@@ -4,6 +4,9 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notification;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 
@@ -27,8 +30,19 @@ public class PhoneGapDetectThread implements Runnable, ProcessListener {
     try {
       final OSProcessHandler handler = new OSProcessHandler(generalCommandLine);
       handler.addProcessListener(this);
+      handler.startNotify();
+      generalCommandLine.createProcess();
     } catch (Exception e) {
-      e.printStackTrace();
+
+      /* PhoneGap not run */
+      String groupeDisplayId = "PhoneGap notification";
+      String notificationTitle = "PhoneGap Plugin";
+      String notificationMessage = "PhoneGap can't run";
+      NotificationType notificationType = NotificationType.ERROR;
+      Notification notification = new Notification(groupeDisplayId, notificationTitle, notificationMessage, notificationType);
+
+      Notifications.Bus.notify(notification);
+
     } finally { }
   }
 
@@ -39,12 +53,18 @@ public class PhoneGapDetectThread implements Runnable, ProcessListener {
 
   @Override
   public void processTerminated(ProcessEvent processEvent) {
+    /*
     int exitCode = processEvent.getExitCode();
     if (exitCode != 0) {
-      //System.out.println("PhoneGap not detected");
-    } else {
-      //System.out.println("PhoneGap detected");
+      String groupeDisplayId = "PhoneGap notification";
+      String notificationTitle = "PhoneGap";
+      String notificationMessage = "PhoneGap not detected";
+      NotificationType notificationType = NotificationType.ERROR;
+      Notification notification = new Notification(groupeDisplayId, notificationTitle, notificationMessage, notificationType);
+
+      Notifications.Bus.notify(notification);
     }
+    */
   }
 
   @Override

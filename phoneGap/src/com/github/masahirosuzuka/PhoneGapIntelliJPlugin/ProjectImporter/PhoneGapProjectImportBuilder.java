@@ -61,7 +61,7 @@ public class PhoneGapProjectImportBuilder extends ProjectImportBuilder {
                              ModifiableModuleModel modifiableModuleModel,
                              ModulesProvider modulesProvider,
                              ModifiableArtifactModel modifiableArtifactModel) {
-    List<Module> result = new ArrayList<>();
+    List<Module> result = new ArrayList<Module>();
 
     final ModifiableModuleModel model = ModuleManager.getInstance(project).getModifiableModel();
 

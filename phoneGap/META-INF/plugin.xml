@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
   <name>PhoneGap Plugin</name>
-  <version>0.3.2</version>
+  <version>0.3.3</version>
   <vendor email="masahiro.suzuka@gmail.com" url="http://github.com/masahirosuzuka/PhoneGapIntelliJPlugin">masahirosuzuka</vendor>
 
   <description><![CDATA[
@@ -11,6 +11,7 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      <p>v0.3.3 Fix request jvm version 1.7 -> 1.6 (Error:Unsupported major.minor version 51.0)</p>
       <p>v0.3.2 Fix target Platform</p>
       <p>v0.3.1 Bug fix</p>
       <p>v0.3.0 Project Builder (Dev)</p>
