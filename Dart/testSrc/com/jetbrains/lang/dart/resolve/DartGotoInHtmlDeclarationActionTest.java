@@ -194,7 +194,7 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
 
   public void testPackage2() throws Throwable {
     myFixture.addFileToProject("pubspec.yaml", "");
-    doTest(1, "Package2.dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart");
+    doTest(0, "Package2.dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart");
   }
 
   public void testPackage3() throws Throwable {

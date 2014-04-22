@@ -334,19 +334,23 @@ public class DartResolveUtil {
       return true;
     }
 
-    for (DartImportInfo importInfo : DartImportIndex.getImportInfos(context.getProject(), virtualFile)) {
-      if (importInfo.getPrefix() != null) {
-        // statement has prefix => all components are prefix.Name
-        continue;
-      }
-      final PsiScopeProcessor importShowHideAwareProcessor = importInfo.wrapElementProcessor(processor);
-      final VirtualFile sourceFile = getImportedFile(context.getProject(), virtualFile, importInfo.getImportText());
-      if (sourceFile != null) {
-        if (!processTopLevelDeclarationsImpl(context, importShowHideAwareProcessor, sourceFile, fileNames, processedFiles)) {
-          return false;
+    final List<VirtualFile> libraryFiles = findLibrary(context.getContainingFile());
+    if (libraryFiles.contains(virtualFile)) {
+      for (DartImportInfo importInfo : DartImportIndex.getImportInfos(context.getProject(), virtualFile)) {
+        if (importInfo.getPrefix() != null) {
+          // statement has prefix => all components are prefix.Name
+          continue;
+        }
+        final PsiScopeProcessor importShowHideAwareProcessor = importInfo.wrapElementProcessor(processor);
+        final VirtualFile sourceFile = getImportedFile(context.getProject(), virtualFile, importInfo.getImportText());
+        if (sourceFile != null) {
+          if (!processTopLevelDeclarationsImpl(context, importShowHideAwareProcessor, sourceFile, fileNames, processedFiles)) {
+            return false;
+          }
         }
       }
     }
+
     return true;
   }
 
