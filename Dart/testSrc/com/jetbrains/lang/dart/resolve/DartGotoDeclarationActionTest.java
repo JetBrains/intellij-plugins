@@ -213,7 +213,7 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
   public void testPackage2() throws Throwable {
     myFixture.addFileToProject("pubspec.yaml", "");
     final String testName = getTestName(false);
-    doTest(myFixture.configureByFiles(testName + ".dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 1);
+    doTest(myFixture.configureByFiles(testName + ".dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart"), 0);
   }
 
   public void testPackage3() throws Throwable {
