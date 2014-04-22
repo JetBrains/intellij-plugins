@@ -3,6 +3,7 @@ package com.intellij.flex.model.bc.impl;
 import com.intellij.flex.model.bc.JpsFlexBCReference;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
+import com.intellij.flex.model.module.JpsFlexModuleType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsCompositeElement;
@@ -12,6 +13,7 @@ import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.impl.JpsNamedElementReferenceBase;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleReference;
+import org.jetbrains.jps.model.module.JpsTypedModule;
 
 class JpsFlexBCReferenceImpl
   extends JpsNamedElementReferenceBase<JpsFlexBuildConfiguration, JpsFlexBuildConfiguration, JpsFlexBCReferenceImpl>
@@ -36,8 +38,10 @@ class JpsFlexBCReferenceImpl
   @Override
   protected JpsElementCollection<? extends JpsFlexBuildConfiguration> getCollection(@NotNull JpsCompositeElement parent) {
     if (!(parent instanceof JpsModule)) return null;
-    JpsFlexBuildConfigurationManager manager = JpsFlexBuildConfigurationManagerImpl.getManager((JpsModule)parent);
-    return manager != null ? manager.getContainer().getChild(JpsFlexBuildConfigurationImpl.COLLECTION_ROLE) : null;
+    JpsTypedModule<JpsFlexBuildConfigurationManager> flexModule = ((JpsModule)parent).asTyped(JpsFlexModuleType.INSTANCE);
+    if (flexModule == null) return null;
+
+    return flexModule.getProperties().getContainer().getChild(JpsFlexBuildConfigurationImpl.COLLECTION_ROLE);
   }
 
   @Nullable

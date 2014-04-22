@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsElementCollection;
 import org.jetbrains.jps.model.ex.JpsCompositeElementBase;
-import org.jetbrains.jps.model.module.JpsModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +32,6 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
 
   private JpsFlexBuildConfigurationManagerImpl(final JpsFlexBuildConfigurationManagerImpl original) {
     super(original);
-  }
-
-  public static JpsFlexBuildConfigurationManager getManager(final JpsModule module) {
-    return (JpsFlexBuildConfigurationManager)module.getProperties();
   }
 
   @NotNull
