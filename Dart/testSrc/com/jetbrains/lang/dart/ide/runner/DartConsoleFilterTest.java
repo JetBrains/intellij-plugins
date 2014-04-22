@@ -40,6 +40,7 @@ public class DartConsoleFilterTest extends TestCase {
     doNegativeTest("darts:foo.dart");
     doNegativeTest("'darts:foo.dart'");
     doNegativeTest("dart :foo.dart");
+    doNegativeTest("abc.dart ef.dart file:foo.dart/bar.dart_baz.dart.more");
 
     doPositiveTest("dart:libName", Type.DART, "dart:libName", "libName", -1, -1);
     doPositiveTest("packages:file:dart:libName:70: line 5 pos 9", Type.DART, "dart:libName", "libName", 69, -1);
@@ -64,5 +65,9 @@ public class DartConsoleFilterTest extends TestCase {
     doPositiveTest("x (package://a.dart:9999999999:5)", Type.PACKAGE, "package://a.dart", "//a.dart", -1, -1);
     doPositiveTest("'package:foo//bar.dart': error: line   11   pos   1: x", Type.PACKAGE, "package:foo//bar.dart", "foo//bar.dart", 10, 0);
     doPositiveTest("'package:foo//bar.dart': error: line   11   pos   : x", Type.PACKAGE, "package:foo//bar.dart", "foo//bar.dart", 10, -1);
+    doPositiveTest("abc.dart ef.dart file:foo.dart/bar.dart_baz.dart.more.dart", Type.FILE, "file:foo.dart/bar.dart_baz.dart.more.dart",
+                   "foo.dart/bar.dart_baz.dart.more.dart", -1, -1);
+    doPositiveTest("file:foo.dart/bar.dart_baz.dart.more.dart,evenmore.dart", Type.FILE, "file:foo.dart/bar.dart_baz.dart.more.dart",
+                   "foo.dart/bar.dart_baz.dart.more.dart", -1, -1);
   }
 }
