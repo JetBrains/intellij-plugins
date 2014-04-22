@@ -7,16 +7,18 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by Masahiro Suzuka on 2014/04/16.
  */
-public class PhoneGapDetector implements ProjectComponent {
+public class ExternalToolsDetector implements ProjectComponent {
 
   private static Project project;
 
-  public PhoneGapDetector(Project project) {
+  public ExternalToolsDetector(Project project) {
     this.project = project;
   }
 
   public void initComponent() {
     // Detect node.js
+    NodeJSDetectorThread nodeJSDetectorThread = new NodeJSDetectorThread(project);
+    nodeJSDetectorThread.run();
 
     // Detect phonegap cli
     PhoneGapDetectThread phoneGapDetectThread = new PhoneGapDetectThread(project);
@@ -33,7 +35,7 @@ public class PhoneGapDetector implements ProjectComponent {
 
   @NotNull
   public String getComponentName() {
-    return "PhoneGapDetector";
+    return "ExternalToolsDetector";
   }
 
   public void projectOpened() {
