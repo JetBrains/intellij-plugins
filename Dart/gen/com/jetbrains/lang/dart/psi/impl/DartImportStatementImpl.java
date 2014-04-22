@@ -41,8 +41,8 @@ public class DartImportStatementImpl extends DartPsiCompositeElementImpl impleme
   }
 
   @NotNull
-  public String getImportText() {
-    return DartPsiImplUtil.getImportText(this);
+  public String getUri() {
+    return DartPsiImplUtil.getUri(this);
   }
 
   @Override

@@ -165,10 +165,20 @@ libraryStatement ::= metadata* 'library' qualifiedComponentName ';' {
 
 importStatement ::= metadata* 'import' pathOrLibraryReference ('as' componentName )? combinator* ';' {
   pin=3
+  implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
   methods = [
-    getImportText
+    getUri
     libraryExpression = "pathOrLibraryReference"
     importPrefix = "componentName"
+  ]
+}
+
+exportStatement ::= metadata* 'export' pathOrLibraryReference combinator* ';' {
+  pin=3
+  implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
+  methods = [
+    getUri
+    libraryExpression = "pathOrLibraryReference"
   ]
 }
 
@@ -177,8 +187,6 @@ private combinator ::= showCombinator | hideCombinator
 showCombinator ::= 'show' libraryReferenceList
 hideCombinator ::= 'hide' libraryReferenceList
 libraryReferenceList ::= libraryComponentReferenceExpression (',' libraryComponentReferenceExpression)*
-
-exportStatement ::= metadata* 'export' pathOrLibraryReference combinator* ';' {pin = 3}
 
 partStatement ::= metadata* 'part' pathOrLibraryReference ';' {
   pin=3

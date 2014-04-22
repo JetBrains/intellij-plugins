@@ -8,6 +8,7 @@ import com.intellij.psi.ResolveState;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.*;
+ import com.jetbrains.lang.dart.psi.DartImportOrExportStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,7 @@ public class DartPsiImplUtil {
   }
 
   @NotNull
-  public static String getImportText(@NotNull DartImportStatement importStatement) {
+  public static String getUri(@NotNull DartImportOrExportStatement importStatement) {
     final DartExpression expression = importStatement.getLibraryExpression();
     return StringUtil.unquoteString(expression.getText());
   }

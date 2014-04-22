@@ -21,9 +21,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
+
 public class DartIndexUtil {
   // inc when change parser
-  public static final int BASE_VERSION = 6;
+  public static final int BASE_VERSION = 7;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
@@ -69,8 +71,8 @@ public class DartIndexUtil {
       }
 
       for (PsiElement child : children) {
-        if (child instanceof DartImportStatement) {
-          processImportStatement(result, (DartImportStatement)child);
+        if (child instanceof DartImportOrExportStatement) {
+          processImportOrExportStatement(result, (DartImportOrExportStatement)child);
         }
         if (child instanceof DartPartStatement) {
           final String pathValue = FileUtil.toSystemIndependentName(StringUtil.unquoteString(((DartPartStatement)child).getPath()));
@@ -93,28 +95,33 @@ public class DartIndexUtil {
     }
   }
 
-  private static void processImportStatement(DartFileIndexData result, DartImportStatement importStatement) {
-    final String importText = importStatement.getImportText();
+  private static void processImportOrExportStatement(final @NotNull DartFileIndexData result,
+                                                     final @NotNull DartImportOrExportStatement importOrExportStatement) {
+    final String uri = importOrExportStatement.getUri();
 
     final Set<String> showComponentNames = new THashSet<String>();
-    for (DartShowCombinator showCombinator : importStatement.getShowCombinatorList()) {
+    for (DartShowCombinator showCombinator : importOrExportStatement.getShowCombinatorList()) {
       for (DartExpression expression : showCombinator.getLibraryReferenceList().getLibraryComponentReferenceExpressionList()) {
         showComponentNames.add(expression.getText());
       }
     }
 
     final Set<String> hideComponentNames = new THashSet<String>();
-    for (DartHideCombinator hideCombinator : importStatement.getHideCombinatorList()) {
+    for (DartHideCombinator hideCombinator : importOrExportStatement.getHideCombinatorList()) {
       for (DartExpression expression : hideCombinator.getLibraryReferenceList().getLibraryComponentReferenceExpressionList()) {
         hideComponentNames.add(expression.getText());
       }
     }
 
-    final DartComponentName importPrefix = importStatement.getImportPrefix();
-    final String prefix = importPrefix != null ? importPrefix.getName() : null;
+    final DartComponentName importPrefixComponent = importOrExportStatement instanceof DartImportStatement
+                                                    ? ((DartImportStatement)importOrExportStatement).getImportPrefix()
+                                                    : null;
+    final String importPrefix = importPrefixComponent != null ? importPrefixComponent.getName() : null;
 
-    result.addImportInfo(new DartImportInfo(importText, prefix, showComponentNames, hideComponentNames));
-    result.addComponentInfo(prefix, new DartComponentInfo(importStatement.getContainingFile().getName(), DartComponentType.LABEL, null));
+    final Kind kind = importOrExportStatement instanceof DartImportStatement ? Kind.Import : Kind.Export;
+    result.addImportInfo(new DartImportOrExportInfo(kind, uri, importPrefix, showComponentNames, hideComponentNames));
+    result.addComponentInfo(importPrefix,
+                            new DartComponentInfo(importOrExportStatement.getContainingFile().getName(), DartComponentType.LABEL, null));
   }
 
   private static List<PsiElement> findDartRoots(PsiFile psiFile) {

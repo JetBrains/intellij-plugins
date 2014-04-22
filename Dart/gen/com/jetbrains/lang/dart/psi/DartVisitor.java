@@ -127,7 +127,7 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitExportStatement(@NotNull DartExportStatement o) {
-    visitPsiCompositeElement(o);
+    visitImportOrExportStatement(o);
   }
 
   public void visitExpression(@NotNull DartExpression o) {
@@ -219,7 +219,7 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitImportStatement(@NotNull DartImportStatement o) {
-    visitPsiCompositeElement(o);
+    visitImportOrExportStatement(o);
   }
 
   public void visitIncompleteDeclaration(@NotNull DartIncompleteDeclaration o) {
@@ -548,6 +548,10 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitExecutionScope(@NotNull DartExecutionScope o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitImportOrExportStatement(@NotNull DartImportOrExportStatement o) {
     visitPsiCompositeElement(o);
   }
 

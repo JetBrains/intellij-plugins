@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class DartFileIndexData {
   private List<String> myClassNames = new ArrayList<String>();
-  private List<DartImportInfo> myImportInfos = new ArrayList<DartImportInfo>();
+  private List<DartImportOrExportInfo> myImportAndExportInfos = new ArrayList<DartImportOrExportInfo>();
   private Map<String, DartComponentInfo> myComponentInfoMap = new THashMap<String, DartComponentInfo>();
   final Map<String, List<DartComponentInfo>> myInheritorsMap = new THashMap<String, List<DartComponentInfo>>();
   @Nullable private String myLibraryName;
@@ -37,12 +37,12 @@ public class DartFileIndexData {
     }
   }
 
-  public List<DartImportInfo> getImportInfos() {
-    return myImportInfos;
+  public List<DartImportOrExportInfo> getImportAndExportInfos() {
+    return myImportAndExportInfos;
   }
 
-  public void addImportInfo(final @NotNull DartImportInfo importInfo) {
-    myImportInfos.add(importInfo);
+  public void addImportInfo(final @NotNull DartImportOrExportInfo importInfo) {
+    myImportAndExportInfos.add(importInfo);
   }
 
   public Map<String, List<DartComponentInfo>> getInheritorsMap() {

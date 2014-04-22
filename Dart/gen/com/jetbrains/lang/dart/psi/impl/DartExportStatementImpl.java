@@ -36,14 +36,19 @@ public class DartExportStatementImpl extends DartPsiCompositeElementImpl impleme
 
   @Override
   @NotNull
-  public DartPathOrLibraryReference getPathOrLibraryReference() {
-    return findNotNullChildByClass(DartPathOrLibraryReference.class);
+  public List<DartShowCombinator> getShowCombinatorList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartShowCombinator.class);
+  }
+
+  @NotNull
+  public String getUri() {
+    return DartPsiImplUtil.getUri(this);
   }
 
   @Override
   @NotNull
-  public List<DartShowCombinator> getShowCombinatorList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartShowCombinator.class);
+  public DartPathOrLibraryReference getLibraryExpression() {
+    return findNotNullChildByClass(DartPathOrLibraryReference.class);
   }
 
 }
