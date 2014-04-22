@@ -5,6 +5,8 @@ import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
+
 public class DartPositionInfo {
 
   public enum Type {
@@ -94,14 +96,22 @@ public class DartPositionInfo {
   private static Pair<Integer, Integer> parseUrlStartAndEnd(final String text, final String prefix) {
     final int pathStartIndex = text.indexOf(prefix);
     if (pathStartIndex < 0 ||
-        pathStartIndex > 0 && !isCharAllowedBeforeOrAfterPath(text.charAt(pathStartIndex - 1))) {
+        pathStartIndex > 0 && !isCharAllowedBeforePath(text.charAt(pathStartIndex - 1))) {
       return null;
     }
 
-    final int dotDartIndex = text.toLowerCase().indexOf(".dart", pathStartIndex);
-    final int pathEndIndex = dotDartIndex + ".dart".length();
-    if (dotDartIndex <= 0 ||
-        text.length() > pathEndIndex && !isCharAllowedBeforeOrAfterPath(text.charAt(pathEndIndex))) {
+    final String lowercased = text.toLowerCase(Locale.US);
+    int dotDartIndex = pathStartIndex;
+    int pathEndIndex;
+
+    do {
+      dotDartIndex = lowercased.indexOf(".dart", dotDartIndex + 1);
+      pathEndIndex = dotDartIndex + ".dart".length();
+    }
+    while (dotDartIndex > 0 && text.length() > pathEndIndex && !isCharAllowedAfterPath(text.charAt(pathEndIndex)));
+
+    if (dotDartIndex <= pathStartIndex ||
+        text.length() > pathEndIndex && !isCharAllowedAfterPath(text.charAt(pathEndIndex))) {
       return null;
     }
 
@@ -113,7 +123,7 @@ public class DartPositionInfo {
   private static Pair<Integer, Integer> parseDartLibUrlStartAndEnd(final String text) {
     final int pathStartIndex = text.indexOf("dart:");
     if (pathStartIndex < 0 ||
-        pathStartIndex > 0 && !isCharAllowedBeforeOrAfterPath(text.charAt(pathStartIndex - 1))) {
+        pathStartIndex > 0 && !isCharAllowedBeforePath(text.charAt(pathStartIndex - 1))) {
       return null;
     }
 
@@ -127,8 +137,13 @@ public class DartPositionInfo {
     return Pair.create(pathStartIndex, index);
   }
 
-  private static boolean isCharAllowedBeforeOrAfterPath(final char ch) {
+  private static boolean isCharAllowedBeforePath(final char ch) {
     return !Character.isLetterOrDigit(ch); // allow spaces, punctuation, parens, brackets, braces, e.g. almost everything
+  }
+
+  private static boolean isCharAllowedAfterPath(final char ch) {
+    // heuristics for paths like foo/angular.dart/path or foo/angular.dart.examples/path
+    return !Character.isLetterOrDigit(ch) && ch != '/' && ch != '.' && ch != '_';
   }
 
   @Nullable
