@@ -336,7 +336,12 @@ public class CloudFormationFormatChecker {
   }
 
   @Nullable
-  private String checkAndGetQuotedStringText(JSExpression expression) {
+  private String checkAndGetQuotedStringText(@Nullable JSExpression expression) {
+    if (expression == null) {
+      // Do not threat value absense as error
+      return null;
+    }
+
     final JSLiteralExpression literal = ObjectUtils.tryCast(expression, JSLiteralExpression.class);
     if (literal == null || !literal.isQuotedLiteral()) {
       myProblems.add(
@@ -355,7 +360,7 @@ public class CloudFormationFormatChecker {
   }
 
   @Nullable
-  private String checkAndGetUnquotedStringText(JSExpression expression) {
+  private String checkAndGetUnquotedStringText(@Nullable JSExpression expression) {
     final String quoted = checkAndGetQuotedStringText(expression);
     if (quoted == null) {
       return null;
