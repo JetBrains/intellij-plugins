@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 import static com.jetbrains.lang.dart.util.DartUrlResolver.DART_PREFIX;
 import static com.jetbrains.lang.dart.util.DartUrlResolver.FILE_PREFIX;
 import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
@@ -243,15 +244,16 @@ public class DartResolveUtil {
 
   @Nullable
   public static VirtualFile getImportedFileByImportPrefix(final @NotNull PsiElement context, final @NotNull String prefix) {
+    final Project project = context.getProject();
     final List<VirtualFile> virtualFiles = findLibrary(context.getContainingFile());
     for (VirtualFile virtualFile : virtualFiles) {
-      for (DartImportInfo importInfo : DartImportIndex.getImportInfos(context.getProject(), virtualFile)) {
-        final String importPrefix = importInfo.getPrefix();
-        if (importPrefix == null || !prefix.equals(StringUtil.unquoteString(importPrefix))) {
-          continue;
-        }
+      for (DartImportOrExportInfo importOrExportInfo : DartImportAndExportIndex.getImportAndExportInfos(project, virtualFile)) {
+        if (importOrExportInfo.getKind() != Kind.Import) continue;
 
-        return getImportedFile(context.getProject(), virtualFile, importInfo.getImportText());
+        final String importPrefix = importOrExportInfo.getImportPrefix();
+        if (importPrefix == null || !prefix.equals(StringUtil.unquoteString(importPrefix))) continue;
+
+        return getImportedFile(project, virtualFile, importOrExportInfo.getUri());
       }
     }
     return null;
@@ -335,18 +337,21 @@ public class DartResolveUtil {
     }
 
     final List<VirtualFile> libraryFiles = findLibrary(context.getContainingFile());
-    if (libraryFiles.contains(virtualFile)) {
-      for (DartImportInfo importInfo : DartImportIndex.getImportInfos(context.getProject(), virtualFile)) {
-        if (importInfo.getPrefix() != null) {
-          // statement has prefix => all components are prefix.Name
-          continue;
-        }
-        final PsiScopeProcessor importShowHideAwareProcessor = importInfo.wrapElementProcessor(processor);
-        final VirtualFile sourceFile = getImportedFile(context.getProject(), virtualFile, importInfo.getImportText());
-        if (sourceFile != null) {
-          if (!processTopLevelDeclarationsImpl(context, importShowHideAwareProcessor, sourceFile, fileNames, processedFiles)) {
-            return false;
-          }
+    final boolean processingLibraryWhereContextElementLocated = libraryFiles.contains(virtualFile);
+
+    for (DartImportOrExportInfo importOrExportInfo : DartImportAndExportIndex.getImportAndExportInfos(context.getProject(), virtualFile)) {
+      if (processingLibraryWhereContextElementLocated && importOrExportInfo.getKind() == Kind.Export) continue;
+      if (!processingLibraryWhereContextElementLocated && importOrExportInfo.getKind() == Kind.Import) continue;
+
+      if (importOrExportInfo.getKind() == Kind.Import && importOrExportInfo.getImportPrefix() != null) {
+        // statement has prefix => all components are prefix.Name
+        continue;
+      }
+      final PsiScopeProcessor showHideAwareProcessor = importOrExportInfo.createShowHideAwareProcessor(processor);
+      final VirtualFile sourceFile = getImportedFile(context.getProject(), virtualFile, importOrExportInfo.getUri());
+      if (sourceFile != null) {
+        if (!processTopLevelDeclarationsImpl(context, showHideAwareProcessor, sourceFile, fileNames, processedFiles)) {
+          return false;
         }
       }
     }

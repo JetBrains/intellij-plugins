@@ -10,30 +10,40 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class DartImportInfo {
-  private final @NotNull String myImportText;
-  private final @Nullable String myPrefix;
+public class DartImportOrExportInfo {
+  public enum Kind {Import, Export}
+
+  private final @NotNull Kind myKind;
+  private final @NotNull String myUri;
+  private final @Nullable String myImportPrefix;
   private final @NotNull Set<String> myShowComponents;
   private final @NotNull Set<String> myHideComponents;
 
-  public DartImportInfo(final @NotNull String importText,
-                        final @Nullable String prefix,
-                        final @NotNull Set<String> showComponents,
-                        final @NotNull Set<String> hideComponents) {
-    myImportText = importText;
-    myPrefix = prefix;
+  public DartImportOrExportInfo(final @NotNull Kind kind,
+                                final @NotNull String uri,
+                                final @Nullable String importPrefix,
+                                final @NotNull Set<String> showComponents,
+                                final @NotNull Set<String> hideComponents) {
+    myKind = kind;
+    myUri = uri;
+    myImportPrefix = kind == Kind.Export ? null : importPrefix;
     myShowComponents = showComponents;
     myHideComponents = hideComponents;
   }
 
   @NotNull
-  public String getImportText() {
-    return myImportText;
+  public String getUri() {
+    return myUri;
+  }
+
+  @NotNull
+  public Kind getKind() {
+    return myKind;
   }
 
   @Nullable
-  public String getPrefix() {
-    return myPrefix;
+  public String getImportPrefix() {
+    return myImportPrefix;
   }
 
   @NotNull
@@ -46,7 +56,7 @@ public class DartImportInfo {
     return myHideComponents;
   }
 
-  public PsiScopeProcessor wrapElementProcessor(final PsiScopeProcessor processor) {
+  public PsiScopeProcessor createShowHideAwareProcessor(final PsiScopeProcessor processor) {
     if (myShowComponents.isEmpty() && myHideComponents.isEmpty()) {
       return processor;
     }

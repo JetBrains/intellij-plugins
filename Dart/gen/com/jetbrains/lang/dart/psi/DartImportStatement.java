@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartImportStatement extends DartPsiCompositeElement {
+public interface DartImportStatement extends DartImportOrExportStatement {
 
   @NotNull
   List<DartHideCombinator> getHideCombinatorList();
@@ -17,7 +17,7 @@ public interface DartImportStatement extends DartPsiCompositeElement {
   List<DartShowCombinator> getShowCombinatorList();
 
   @NotNull
-  String getImportText();
+  String getUri();
 
   @NotNull
   DartPathOrLibraryReference getLibraryExpression();
