@@ -232,7 +232,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myShowAllOptionsCheckBox.setSelected(true);
     myShowAllOptionsCheckBox.setVisible(false);
 
-    UserActivityWatcher watcher = new TableAwareUserActivityWatcher();
+    UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.register(myMainPanel);
     myUserActivityDispatcher = EventDispatcher.create(UserActivityListener.class);
     watcher.addUserActivityListener(new UserActivityListener() {

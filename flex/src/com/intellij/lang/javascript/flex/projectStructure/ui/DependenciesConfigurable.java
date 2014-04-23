@@ -976,7 +976,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }, myDisposable);
 
-    UserActivityWatcher watcher = new TableAwareUserActivityWatcher();
+    UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.register(myMainPanel);
     myUserActivityDispatcher = EventDispatcher.create(UserActivityListener.class);
     watcher.addUserActivityListener(new UserActivityListener() {
