@@ -61,35 +61,42 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
     }
   }
 
+  @Override
   public String getUnresolvedMessage() {
     return CssBundle.message("invalid.css.class");
   }
 
+  @Override
   public PsiElement getElement() {
     return myElement;
   }
 
+  @Override
   public TextRange getRangeInElement() {
     return new TextRange(myStart, myEnd);
   }
 
+  @Override
   @NotNull
   public String getCanonicalText() {
     String value = getValue(myElement);
     return value != null ? value : "";
   }
 
+  @Override
   public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
     final ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(myElement);
     assert manipulator != null;
     return manipulator.handleContentChange(myElement, getRangeInElement(), newElementName);
   }
 
+  @Override
   @Nullable
   public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
     return null;
   }
 
+  @Override
   @NotNull
   public Object[] getVariants() {
     MyCandidatesProcessor processor = new MyCandidatesProcessor();
@@ -99,12 +106,12 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
 
   @NotNull
   @Override
-  protected ResolveResult[] resolveInner(boolean incompleteCode) {
+  protected ResolveResult[] resolveInner(boolean incompleteCode, @NotNull PsiFile containingFile) {
     String value = getValue(myElement);
     if (value == null) return ResolveResult.EMPTY_ARRAY;
     MyResolveProcessor processor = new MyResolveProcessor(value);
     processStyles(processor);
-    if (processor.myTargets.size() == 0) {
+    if (processor.myTargets.isEmpty()) {
       return ResolveResult.EMPTY_ARRAY;
     }
     return PsiElementResolveResult.createResults(processor.myTargets);
@@ -114,7 +121,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
   public boolean isReferenceTo(PsiElement element) {
     if (element instanceof CssSelectorSuffix) {
       String text = element.getText();
-      return text != null && text.length() > 0 && text.substring(1).equals(getValue(myElement));
+      return text != null && !text.isEmpty() && text.substring(1).equals(getValue(myElement));
     }
     return false;
   }
@@ -156,6 +163,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
   private static class MyCandidatesProcessor extends MyCssElementProcessor {
     Set<String> myStyleNames = new HashSet<String>();
 
+    @Override
     protected void handleSelector(@NotNull CssSelectorSuffix selectorSuffix, @NotNull String text) {
       myStyleNames.add(text);
     }
@@ -163,7 +171,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
 
   private static class MyResolveProcessor extends MyCssElementProcessor {
     private final String myReferenceText;
-    private Set<CssSelectorSuffix> myTargets = new HashSet<CssSelectorSuffix>();
+    private final Set<CssSelectorSuffix> myTargets = new HashSet<CssSelectorSuffix>();
 
     private MyResolveProcessor(@NotNull String referenceText) {
       myReferenceText = referenceText;
@@ -177,7 +185,8 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
     }
   }
 
-  private static abstract class MyCssElementProcessor implements CssElementProcessor {
+  private abstract static class MyCssElementProcessor implements CssElementProcessor {
+    @Override
     public void process(CssRuleset ruleset) {
       if (ruleset == null) return;
       CssSelectorList selectorList = ruleset.getSelectorList();
@@ -187,7 +196,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
           if (child instanceof CssSimpleSelector) {
             for (CssSelectorSuffix selectorSuffix : ((CssSimpleSelector)child).getSelectorSuffixes()) {
               String text = selectorSuffix.getText();
-              if (text != null && text.length() > 0 && text.charAt(0) == '.') {
+              if (text != null && !text.isEmpty() && text.charAt(0) == '.') {
                 handleSelector(selectorSuffix, text.substring(1));
               }
             }
@@ -196,6 +205,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
       }
     }
 
+    @Override
     public void process(CssDeclaration declaration) {
     }
 

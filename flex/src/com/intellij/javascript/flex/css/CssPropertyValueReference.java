@@ -36,13 +36,14 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
     }
   }
 
+  @Override
   public String getUnresolvedMessage() {
     return CssBundle.message("invalid.css.property.name.message");
   }
 
   @NotNull
   @Override
-  protected ResolveResult[] resolveInner(boolean incompleteCode) {
+  protected ResolveResult[] resolveInner(boolean incompleteCode, @NotNull PsiFile containingFile) {
     String value = myElement.getText();
     if (FlexCssUtil.inQuotes(value)) {
       FlexCssElementDescriptorProvider provider =
@@ -55,14 +56,17 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
     return ResolveResult.EMPTY_ARRAY;
   }
 
+  @Override
   public PsiElement getElement() {
     return myElement;
   }
 
+  @Override
   public TextRange getRangeInElement() {
     return new TextRange(myStart, myEnd);
   }
 
+  @Override
   @NotNull
   public String getCanonicalText() {
     String text = myElement.getText();
@@ -74,17 +78,20 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
     }
   }
 
+  @Override
   public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
     final ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(myElement);
     assert manipulator != null;
     return manipulator.handleContentChange(myElement, getRangeInElement(), newElementName);
   }
 
+  @Override
   @Nullable
   public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
     return null;
   }
 
+  @Override
   @NotNull
   public Object[] getVariants() {
     return CssElementDescriptorProvider.EP_NAME.findExtension(FlexCssElementDescriptorProvider.class).getPropertyNames(myElement);
