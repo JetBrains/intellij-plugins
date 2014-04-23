@@ -594,7 +594,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
         errorConsumer.consume(FlashProjectStructureProblem
                                 .createCompilerOptionsProblem(Severity.ERROR, FlexBundle
                                   .message("additional.config.file.not.found", FileUtil.toSystemDependentName(additionalConfigFilePath)),
-                                                              CompilerOptionsConfigurable.Location.AdditonalConfigFile));
+                                                              CompilerOptionsConfigurable.Location.AdditionalConfigFile));
       }
       if (!bc.isTempBCForCompilation()) {
         info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(additionalConfigFilePath);

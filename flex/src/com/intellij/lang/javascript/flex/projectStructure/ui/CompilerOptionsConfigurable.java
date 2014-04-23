@@ -78,7 +78,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   public static final String CONDITIONAL_COMPILER_DEFINITION_NAME = "FlexCompilerOptions.ConditionalCompilerDefinitionName";
 
   public enum Location {
-    AdditonalConfigFile("additional-config-file"),
+    AdditionalConfigFile("additional-config-file"),
     FilesToIncludeInSwc("files-to-include-in-swc"),
     ConditionalCompilerDefinition("doesn't matter");
 
@@ -1011,7 +1011,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);
       if (location instanceof Location) {
         switch ((Location)location) {
-          case AdditonalConfigFile:
+          case AdditionalConfigFile:
             return IdeFocusManager.findInstance().requestFocus(myConfigFileTextWithBrowse.getChildComponent(), true);
 
           case FilesToIncludeInSwc:
