@@ -7,7 +7,15 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util;
 // Store PhoneGapSettings class
 final public class PhoneGapSettings {
 
+  // External tools PATH
+  public static String NODEJS_PATH = "/usr/local/bin/node";
+  public static String ANDROID_SDK = "android";
+  // public static String IOS_SIM = "ios-sim";
+
+  // PhoneGap PATH
   public static String PHONEGAP_PATH = "/usr/local/bin/phonegap";
+
+  // PhoneGap commands
   public static String PHONEGAP_TASK = "run";
   public static String PHONEGAP_PLATFORM_ANDROID = "android";
   public static String PHONEGAP_PLATFORM_IOS = "ios";
