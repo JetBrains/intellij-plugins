@@ -37,12 +37,12 @@ public class PhoneGapRunConfiguration extends RunConfigurationBase {
     }
 
     if (!(PHONEGAP_COMMAND.equals("run"))) {
-      throw new RuntimeConfigurationException("PhoneGap Run command is missing");
+      throw new RuntimeConfigurationException("PhoneGap command is missing");
     }
 
-    if ( (!(PHONEGAP_PLATFORM.equals("android")) ||
-        (!(PHONEGAP_PLATFORM.equals("ios"))) ||
-        (!(PHONEGAP_PLATFORM.equals("windowsphone")))) ) {
+    if ( !(PHONEGAP_PLATFORM.equals("android") ||
+        PHONEGAP_PLATFORM.equals("ios") ||
+        PHONEGAP_PLATFORM.equals("windowsphone")) ) {
       throw new RuntimeConfigurationException("PhoneGap Platform is missing");
     }
   }
