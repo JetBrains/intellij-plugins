@@ -1,4 +1,4 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector;
 
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
@@ -25,6 +25,8 @@ public class ExternalToolsDetector implements ProjectComponent {
     phoneGapDetectThread.run();
 
     // Detect AndroidSDK
+    AndroidSDKDetectorThread androidSDKDetectorThread = new AndroidSDKDetectorThread(project);
+    androidSDKDetectorThread.run();
 
     // Detect iOS SDK & Detect ios-sim
   }

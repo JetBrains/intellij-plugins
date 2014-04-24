@@ -1,21 +1,17 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
-
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessListener;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notification;
-import com.intellij.notification.Notifications;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
+import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
+import com.intellij.openapi.project.Project;
 
 /**
  * Created by Masahiro Suzuka on 2014/04/16.
  */
-public class PhoneGapDetectThread implements Runnable, ProcessListener {
+public class PhoneGapDetectThread implements Runnable/*, ProcessListener*/ {
 
   private static Project project = null;
 
@@ -29,7 +25,7 @@ public class PhoneGapDetectThread implements Runnable, ProcessListener {
     generalCommandLine.setWorkDirectory(project.getBasePath());
     try {
       final OSProcessHandler handler = new OSProcessHandler(generalCommandLine);
-      handler.addProcessListener(this);
+      //handler.addProcessListener(this);
       handler.startNotify();
       generalCommandLine.createProcess();
     } catch (Exception e) {
@@ -46,6 +42,7 @@ public class PhoneGapDetectThread implements Runnable, ProcessListener {
     } finally { }
   }
 
+  /*
   @Override
   public void startNotified(ProcessEvent processEvent) {
 
@@ -53,7 +50,6 @@ public class PhoneGapDetectThread implements Runnable, ProcessListener {
 
   @Override
   public void processTerminated(ProcessEvent processEvent) {
-    /*
     int exitCode = processEvent.getExitCode();
     if (exitCode != 0) {
       String groupeDisplayId = "PhoneGap notification";
@@ -64,7 +60,6 @@ public class PhoneGapDetectThread implements Runnable, ProcessListener {
 
       Notifications.Bus.notify(notification);
     }
-    */
   }
 
   @Override
@@ -76,4 +71,5 @@ public class PhoneGapDetectThread implements Runnable, ProcessListener {
   public void onTextAvailable(ProcessEvent processEvent, Key key) {
 
   }
+  */
 }
