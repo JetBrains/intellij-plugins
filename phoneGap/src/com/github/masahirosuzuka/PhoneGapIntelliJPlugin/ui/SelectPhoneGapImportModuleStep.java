@@ -1,13 +1,10 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.ui.TextBrowseFolderListener;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.projectImport.ProjectImportWizardStep;
-import sun.misc.JavaLangAccess;
 
 import javax.swing.*;
 
@@ -31,7 +28,7 @@ public class SelectPhoneGapImportModuleStep extends ProjectImportWizardStep {
         PhoneGapSettings.PHONEGAP_FOLDERS_CORDOVA,
         PhoneGapSettings.PHONEGAP_FOLDERS_HOOKS,
         PhoneGapSettings.PHONEGAP_FOLDERS_MERGES,
-        PhoneGapSettings.PHONEGAP_FOLDERS_NODE_MODULES,
+        /*PhoneGapSettings.PHONEGAP_FOLDERS_NODE_MODULES,*/
         PhoneGapSettings.PHONEGAP_FOLDERS_PLATFORMS,
         PhoneGapSettings.PHONEGAP_FOLDERS_PLUGINS,
         PhoneGapSettings.PHONEGAP_FOLDERS_WWW

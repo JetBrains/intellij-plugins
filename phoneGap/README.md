@@ -43,7 +43,6 @@ File -> Import Project -> PhoneGap Project root dir -> Import form external mode
 ####(5)Run PhoneGap app
 Run -> Edit Configuration -> Create new Config -> run
 
-日本語
 ###PhoneGapIntelliJPluginについて
 
 PhoneGap/Cordovaアプリ開発をIntelliJ IDEAで行えるようにするプラグインです．
@@ -94,8 +93,11 @@ PhoneGapが追加されているはずです．新規Configurationを作成し�
 
 ###ToDo
 
+* LogCat integration(or helper for javaScript debugging)
+* Suggest for PhoneGap function (onDeviceReady(), onSuccess(), ..etc)
 * iOS support
 * Windows Phone support
 * nvm support
 * PhoneGap Build support
-* PhoneGapPlugin support
+* Management PhoneGapPlugin (auto download and auto conf config.xml)
+* Component management with Bower (or other tool)

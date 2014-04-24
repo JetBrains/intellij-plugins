@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
   <name>PhoneGap Plugin</name>
-  <version>0.3.3</version>
+  <version>0.4.1</version>
   <vendor email="masahiro.suzuka@gmail.com" url="http://github.com/masahirosuzuka/PhoneGapIntelliJPlugin">masahirosuzuka</vendor>
 
   <description><![CDATA[
@@ -11,12 +11,13 @@
     ]]></description>
 
   <change-notes><![CDATA[
-      <p>v0.3.3 Fix request jvm version 1.7 -> 1.6 (Error:Unsupported major.minor version 51.0)</p>
-      <p>v0.3.2 Fix target Platform</p>
-      <p>v0.3.1 Bug fix</p>
-      <p>v0.3.0 Project Builder (Dev)</p>
-      <p>v0.2 Project Importer</p>
-      <p>v0.1 RunConfigure</p>
+    <p>v0.4.1 External tool(NodeJS and Android SDK) detector && fix always output "PhoneGap platform is missing" bug</p>
+    <p>v0.3.3 Fix request jvm version 1.7 -> 1.6 (Error:Unsupported major.minor version 51.0)</p>
+    <p>v0.3.2 Fix target Platform</p>
+    <p>v0.3.1 Bug fix</p>
+    <p>v0.3.0 Project Builder (Dev)</p>
+    <p>v0.2 Project Importer</p>
+    <p>v0.1 RunConfigure</p>
     ]]>
   </change-notes>
 
@@ -51,7 +52,7 @@
     <!-- Add your project components here -->
       <component>
           <implementation-class>
-              com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapDetector
+              com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector.ExternalToolsDetector
           </implementation-class>
       </component>
   </project-components>
