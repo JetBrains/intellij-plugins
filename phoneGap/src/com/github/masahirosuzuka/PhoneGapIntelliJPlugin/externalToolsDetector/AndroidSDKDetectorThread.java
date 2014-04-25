@@ -32,7 +32,7 @@ public class AndroidSDKDetectorThread implements Runnable {
       // Output Notify
       String groupeDisplayId = "PhoneGap notification";
       String notificationTitle = "PhoneGap Plugin";
-      String notificationMessage = "AndroidSDK not working";
+      String notificationMessage = "AndroidSDK not detected";
       NotificationType notificationType = NotificationType.ERROR;
       Notification notification = new Notification(groupeDisplayId, notificationTitle, notificationMessage, notificationType);
 
