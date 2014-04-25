@@ -18,10 +18,13 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.arrangement.*;
 import com.intellij.psi.codeStyle.arrangement.group.ArrangementGroupingRule;
-import com.intellij.psi.codeStyle.arrangement.match.*;
+import com.intellij.psi.codeStyle.arrangement.match.ArrangementEntryMatcher;
+import com.intellij.psi.codeStyle.arrangement.match.StdArrangementEntryMatcher;
+import com.intellij.psi.codeStyle.arrangement.match.StdArrangementMatchRule;
+import com.intellij.psi.codeStyle.arrangement.model.ArrangementAtomMatchCondition;
+import com.intellij.psi.codeStyle.arrangement.model.ArrangementCompositeMatchCondition;
+import com.intellij.psi.codeStyle.arrangement.model.ArrangementMatchCondition;
 import com.intellij.psi.codeStyle.arrangement.std.*;
-import com.intellij.psi.codeStyle.arrangement.model.*;
-import com.intellij.psi.codeStyle.arrangement.std.ArrangementStandardSettingsAware;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
@@ -33,11 +36,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.EntryType.*;
+import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.General.*;
+import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Grouping.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER;
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Modifier.*;
-import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Grouping.*;
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Order.BY_NAME;
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Order.KEEP;
-import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.General.*;
 
 public class ActionScriptRearranger implements Rearranger<ActionScriptArrangementEntry>, ArrangementStandardSettingsAware {
 
@@ -57,7 +60,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     final List<ArrangementGroupingRule> groupingRules =
       Collections.singletonList(new ArrangementGroupingRule(GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER));
     final List<StdArrangementMatchRule> matchRules = getDefaultMatchRules();
-    DEFAULT_SETTINGS = new StdRulePriorityAwareSettings(groupingRules, matchRules);
+    DEFAULT_SETTINGS = StdArrangementSettings.createByMatchRules(groupingRules, matchRules);
   }
 
   private static final DefaultArrangementSettingsSerializer SETTINGS_SERIALIZER = new DefaultArrangementSettingsSerializer(DEFAULT_SETTINGS);
