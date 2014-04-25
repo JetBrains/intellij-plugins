@@ -380,12 +380,15 @@ public class FlexCompiler implements SourceProcessingCompiler {
                 }
                 break;
               case AndroidDevice:
-                checkPackagingOptions(module, bc.getSdk(), bc.getAndroidPackagingOptions(),
+                checkPackagingOptions(module, bc.getSdk(), bc.getAndroidPackagingOptions(), false,
                                       PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
                 break;
               case iOSSimulator:
+                checkPackagingOptions(module, bc.getSdk(), bc.getIosPackagingOptions(), true,
+                                      PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
+                break;
               case iOSDevice:
-                checkPackagingOptions(module, bc.getSdk(), bc.getIosPackagingOptions(),
+                checkPackagingOptions(module, bc.getSdk(), bc.getIosPackagingOptions(), false,
                                       PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
                 break;
             }
@@ -813,16 +816,16 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (bc.getOutputType() != OutputType.Application) return;
 
     if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
-      checkPackagingOptions(module, bc.getSdk(), bc.getAirDesktopPackagingOptions(),
+      checkPackagingOptions(module, bc.getSdk(), bc.getAirDesktopPackagingOptions(), false,
                             PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
     }
     else if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
       if (bc.getAndroidPackagingOptions().isEnabled()) {
-        checkPackagingOptions(module, bc.getSdk(), bc.getAndroidPackagingOptions(),
+        checkPackagingOptions(module, bc.getSdk(), bc.getAndroidPackagingOptions(), false,
                               PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
       }
       if (bc.getIosPackagingOptions().isEnabled()) {
-        checkPackagingOptions(module, bc.getSdk(), bc.getIosPackagingOptions(),
+        checkPackagingOptions(module, bc.getSdk(), bc.getIosPackagingOptions(), false,
                               PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
       }
     }
@@ -831,6 +834,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
   private static void checkPackagingOptions(final Module module,
                                             final @Nullable Sdk sdk,
                                             final AirPackagingOptions packagingOptions,
+                                            final boolean isForIosSimulator,
                                             final String outputFolderPath,
                                             final Consumer<FlashProjectStructureProblem> errorConsumer) {
     final String device = packagingOptions instanceof AndroidPackagingOptions
@@ -917,7 +921,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
 
     final AirSigningOptions signingOptions = packagingOptions.getSigningOptions();
-    if (packagingOptions instanceof IosPackagingOptions) {
+    if (packagingOptions instanceof IosPackagingOptions && !isForIosSimulator) {
       final String provisioningProfilePath = signingOptions.getProvisioningProfilePath();
       if (provisioningProfilePath.isEmpty()) {
         errorConsumer.consume(FlashProjectStructureProblem.createPackagingOptionsProblem(Severity.ERROR, packagingOptions, FlexBundle
@@ -934,7 +938,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
     }
 
-    final boolean tempCertificate = !(packagingOptions instanceof IosPackagingOptions) && signingOptions.isUseTempCertificate();
+    final boolean tempCertificate = packagingOptions instanceof IosPackagingOptions && isForIosSimulator
+                                    || signingOptions.isUseTempCertificate();
     if (!tempCertificate) {
       final String keystorePath = signingOptions.getKeystorePath();
       if (keystorePath.isEmpty()) {
