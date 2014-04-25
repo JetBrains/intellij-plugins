@@ -938,8 +938,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
     }
 
-    final boolean tempCertificate = packagingOptions instanceof IosPackagingOptions && isForIosSimulator
-                                    || signingOptions.isUseTempCertificate();
+    final boolean tempCertificate = packagingOptions instanceof IosPackagingOptions ? isForIosSimulator
+                                                                                    : signingOptions.isUseTempCertificate();
     if (!tempCertificate) {
       final String keystorePath = signingOptions.getKeystorePath();
       if (keystorePath.isEmpty()) {
