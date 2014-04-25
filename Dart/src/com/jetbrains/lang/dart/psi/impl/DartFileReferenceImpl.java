@@ -170,12 +170,12 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
       final VirtualFile[] packageRoots = dartUrlResolver.getPackageRoots();
 
       if (packageRoots.length == 0) return PsiReference.EMPTY_ARRAY;
-      if (packageRoots.length == 1) return getPackageReferences(file, packageRoots[0], relPath, PACKAGE_PREFIX.length() + 1);
+      if (packageRoots.length == 1) return getPackageReferences(file, packageRoots[0], relPath, PACKAGE_PREFIX.length());
 
       final Collection<PsiReference> result = new SmartList<PsiReference>();
       for (VirtualFile packageRoot : packageRoots) {
         if (packageRoot.findFileByRelativePath(relPath) != null) {
-          ContainerUtil.addAll(result, getPackageReferences(file, packageRoot, relPath, PACKAGE_PREFIX.length() + 1));
+          ContainerUtil.addAll(result, getPackageReferences(file, packageRoot, relPath, PACKAGE_PREFIX.length()));
         }
       }
 
@@ -203,7 +203,7 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
     final FileReference[] references = referenceSet.getAllReferences();
 
     final int nestedLevel = StringUtil.countChars(relPathFromContextFileToPackagesFolder, '/');
-    final int shift = startIndex - relPathFromContextFileToPackagesFolder.length();
+    final int shift = startIndex - relPathFromContextFileToPackagesFolder.length() + 1;
     return references.length < nestedLevel ?
            PsiReference.EMPTY_ARRAY :
            shiftReferences(Arrays.copyOfRange(references, nestedLevel, references.length), shift);

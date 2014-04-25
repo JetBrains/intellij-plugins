@@ -1,8 +1,11 @@
 package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.impl.file.PsiDirectoryImpl;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.psi.DartComponentName;
@@ -45,21 +48,25 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
       buf.insert(0, componentName.getName() + " -> ");
       componentName = PsiTreeUtil.getParentOfType(componentName, DartComponentName.class);
     }
-    buf.insert(0, element.getContainingFile().getName() + " -> ");
+    String path = element instanceof PsiDirectoryImpl ? ((PsiDirectoryImpl)element).getVirtualFile().getPath()
+                                                      : element.getContainingFile().getVirtualFile().getPath();
+    if (path.startsWith("/src/")) path = path.substring("/src/".length());
+    if (buf.length() > 0) buf.insert(0, " -> ");
+    buf.insert(0, path);
 
     return buf.toString();
   }
 
   public void testNoRecursiveImports() throws Exception {
-    myFixture.configureByText("file2.dart", "inFile2(){}");
-    myFixture.configureByText("file1.dart", "import 'file2.dart'\n inFile1(){}");
-    myFixture.configureByText("file.dart", "library fileLib;\n" +
-                                           "import 'file1.dart';\n" +
-                                           "part 'filePart1.dart';\n" +
-                                           "part 'filePart2.dart';\n" +
-                                           "inFile(){}");
-    myFixture.configureByText("filePart1.dart", "part of fileLib;\n" +
-                                                "inFilePart1(){}");
+    myFixture.addFileToProject("file2.dart", "inFile2(){}");
+    myFixture.addFileToProject("file1.dart", "import 'file2.dart'\n inFile1(){}");
+    myFixture.addFileToProject("file.dart", "library fileLib;\n" +
+                                            "import 'file1.dart';\n" +
+                                            "part 'filePart1.dart';\n" +
+                                            "part 'filePart2.dart';\n" +
+                                            "inFile(){}");
+    myFixture.addFileToProject("filePart1.dart", "part of fileLib;\n" +
+                                                 "inFilePart1(){}");
     myFixture.configureByText("filePart2.dart", "part of fileLib;\n" +
                                                 "inFilePart2(){\n" +
                                                 "  <caret expected='filePart1.dart -> inFilePart1'>inFilePart1()\n" +
@@ -72,28 +79,28 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testResolveWithExports() throws Exception {
-    myFixture.configureByText("file1.dart", "inFile1(){}\n" +
-                                            "inFile1HiddenLater(){}");
-    myFixture.configureByText("file2.dart", "inFile2(){}");
-    myFixture.configureByText("file3.dart", "inFile3(){}");
-    myFixture.configureByText("file4.dart", "inFile4(){}");
-    myFixture.configureByText("file5.dart", "inFile5(){}");
-    myFixture.configureByText("file6.dart", "export 'file1.dart;\n" +
-                                            "export 'file2.dart' show xxx, inFile2, yyy;\n" +
-                                            "export 'file3.dart' show xxx, yyy;\n" +
-                                            "export 'file4.dart' hide xxx, inFile4, yyy;\n" +
-                                            "export 'file5.dart' hide xxx, yyy;\n" +
-                                            "export 'file1.dart';\n" +
-                                            "export 'file.dart';\n" +
-                                            "inFile6(){}");
-    myFixture.configureByText("file7.dart", "export 'file6.dart' hide inFile1HiddenLater;\n" +
-                                            "inFile7(){}");
-    myFixture.configureByText("file8.dart", "inFile8(){}");
-    myFixture.configureByText("file.dart", "library fileLib;\n" +
-                                           "import 'file7.dart';\n" +
-                                           "export 'file8.dart';\n" +
-                                           "part 'filePart1.dart';\n" +
-                                           "inFile(){}");
+    myFixture.addFileToProject("file1.dart", "inFile1(){}\n" +
+                                             "inFile1HiddenLater(){}");
+    myFixture.addFileToProject("file2.dart", "inFile2(){}");
+    myFixture.addFileToProject("file3.dart", "inFile3(){}");
+    myFixture.addFileToProject("file4.dart", "inFile4(){}");
+    myFixture.addFileToProject("file5.dart", "inFile5(){}");
+    myFixture.addFileToProject("file6.dart", "export 'file1.dart;\n" +
+                                             "export 'file2.dart' show xxx, inFile2, yyy;\n" +
+                                             "export 'file3.dart' show xxx, yyy;\n" +
+                                             "export 'file4.dart' hide xxx, inFile4, yyy;\n" +
+                                             "export 'file5.dart' hide xxx, yyy;\n" +
+                                             "export 'file1.dart';\n" +
+                                             "export 'file.dart';\n" +
+                                             "inFile6(){}");
+    myFixture.addFileToProject("file7.dart", "export 'file6.dart' hide inFile1HiddenLater;\n" +
+                                             "inFile7(){}");
+    myFixture.addFileToProject("file8.dart", "inFile8(){}");
+    myFixture.addFileToProject("file.dart", "library fileLib;\n" +
+                                            "import 'file7.dart';\n" +
+                                            "export 'file8.dart';\n" +
+                                            "part 'filePart1.dart';\n" +
+                                            "inFile(){}");
     myFixture.configureByText("filePart1.dart", "part of fileLib;\n" +
                                                 "foo(){\n" +
                                                 "  <caret expected='file.dart -> inFile'>inFile()\n" +
@@ -107,6 +114,44 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                                 "  <caret expected='file1.dart -> inFile1'>inFile1()\n" +
                                                 "  <caret expected=''>inFile1HiddenLater()\n" +
                                                 "}");
+    doTest();
+  }
+
+  public void testFileReferencesInImports() throws Exception {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n" +
+                                               "dependencies:\n" +
+                                               "  PathPackage:\n" +
+                                               "    path: local_package\n");
+    myFixture.addFileToProject("local_package/lib/localPackageLib1.dart", "");
+    myFixture.addFileToProject("local_package/lib/src/localPackageLib2.dart", "");
+    myFixture.addFileToProject("packages/ProjectName/src/file0.dart", ""); // symlink to lib/src/file0.dart
+    myFixture.addFileToProject("packages/ProjectName/file1.dart", ""); // symlink to lib/file1.dart
+    myFixture.addFileToProject("packages/ProjectName/file2.dart", ""); // symlink to lib/file2.dart
+    myFixture.addFileToProject("packages/PathPackage/localPackageLib1.dart", ""); // symlink to local_package/lib/localPackageLib1.dart
+    myFixture
+      .addFileToProject("packages/PathPackage/src/localPackageLib2.dart", ""); // symlink to local_package/lib/src/localPackageLib2.dart
+    myFixture.addFileToProject("packages/SomePackage/somePack1.dart", "");
+    myFixture.addFileToProject("packages/SomePackage/src/somePack2.dart", "");
+    myFixture.addFileToProject("lib/src/file0.dart", "");
+    myFixture.addFileToProject("lib/file1.dart", "");
+    final PsiFile psiFile = myFixture.addFileToProject(
+      "lib/file2.dart",
+
+      "import '<caret expected='lib/file1.dart'>file1.dart<caret expected='lib/file1.dart'>';\n" +
+      "import '<caret expected='lib'>.<caret expected='lib'>/<caret expected='lib/file1.dart'>file1.dart<caret expected='lib/file1.dart'>';\n" +
+      "import '<caret expected='/src'>..<caret expected='/src'>/<caret expected='lib'>lib<caret expected='lib'>/<caret expected='lib/file1.dart'>file1.dart<caret expected='lib/file1.dart'>';\n" +
+      "import '<caret expected='lib/src'>src<caret expected='lib/src'>/<caret expected='lib/src/file0.dart'>file0.dart<caret expected='lib/src/file0.dart'>';\n" +
+      // todo not sure that DartStringLiteralExpression should be here as reference
+      "import 'package:ProjectName<caret expected=''>/<caret expected='lib/src'>src<caret expected='lib/src'>/<caret expected='lib/src/file0.dart'>file0.dart<caret expected='lib/src/file0.dart'>';\n" +
+      "import 'package:ProjectName<caret expected=''>/<caret expected='lib/file1.dart'>file1.dart<caret expected='lib/file1.dart'>';\n" +
+      "import 'package:PathPackage<caret expected=''>/<caret expected='local_package/lib/localPackageLib1.dart'>localPackageLib1.dart<caret expected='local_package/lib/localPackageLib1.dart'>';\n" +
+      "import 'package:PathPackage<caret expected=''>/<caret expected='local_package/lib/src'>src<caret expected='local_package/lib/src'>/<caret expected='local_package/lib/src/localPackageLib2.dart'>localPackageLib2.dart<caret expected='local_package/lib/src/localPackageLib2.dart'>';\n" +
+      "import 'package<caret expected=''>:<caret expected='packages/SomePackage'>SomePackage<caret expected='packages/SomePackage'>/<caret expected='packages/SomePackage/somePack1.dart'>somePack1.dart<caret expected='packages/SomePackage/somePack1.dart'>';\n" +
+      "import 'package<caret expected=''>:<caret expected='packages/SomePackage'>SomePackage<caret expected='packages/SomePackage'>/<caret expected='packages/SomePackage/src'>src<caret expected='packages/SomePackage/src'>/<caret expected='packages/SomePackage/src/somePack2.dart'>somePack2.dart<caret expected='packages/SomePackage/src/somePack2.dart'>';\n" +
+      ""
+    );
+    ((CodeInsightTestFixtureImpl)myFixture).openFileInEditor(psiFile.getVirtualFile());
+
     doTest();
   }
 }
