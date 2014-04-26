@@ -8,8 +8,6 @@ package com.dmarcotte.handlebars.parsing;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.Stack;
-import com.dmarcotte.handlebars.parsing.HbTokenTypes;
-import com.dmarcotte.handlebars.config.HbConfig;
 
 // suppress various warnings/inspections for the generated class
 @SuppressWarnings ({"FieldCanBeLocal", "UnusedDeclaration", "UnusedAssignment", "AccessStaticViaInstance", "MismatchedReadAndWriteOfArray", "WeakerAccess", "SameParameterValue", "CanBeFinal", "SameReturnValue", "RedundantThrows", "ConstantConditions"})
@@ -145,7 +143,8 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 
 <comment> {
   "{{!--"~"--}}" { yypopState(); return HbTokenTypes.COMMENT; }
-  "{{!"[^"--"]~"}}" {
+  "{{!}}" { yypopState(); return HbTokenTypes.COMMENT; }
+  "{{!"[^"--"}]~"}}" {
       // backtrack over any extra stache characters at the end of this string
       while (yylength() > 2 && yytext().subSequence(yylength() - 3, yylength()).toString().equals("}}}")) {
         yypushback(1);
@@ -155,7 +154,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   }
   // lex unclosed comments so that we can give better errors
   "{{!--"!([^]*"--}}"[^]*) { yypopState(); return HbTokenTypes.UNCLOSED_COMMENT; }
-  "{{!"[^"--"]!([^]*"}}"[^]*) { yypopState(); return HbTokenTypes.UNCLOSED_COMMENT; }
+  "{{!"!([^]*"}}"[^]*) { yypopState(); return HbTokenTypes.UNCLOSED_COMMENT; }
 }
 
 {WhiteSpace}+ { return HbTokenTypes.WHITE_SPACE; }

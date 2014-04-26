@@ -121,6 +121,13 @@ public class HbLexerFreeFormTest extends HbLexerTest {
     result.shouldBeToken(0, UNCLOSED_COMMENT, "{{!-- unclosed comment {{foo}}");
   }
 
+  public void testEmptyComment() {
+    TokenizerResult result = tokenize("{{!}}");
+
+    result.shouldMatchTokenTypes(COMMENT);
+    result.shouldBeToken(0, COMMENT, "{{!}}");
+  }
+
   public void testEscapedMustacheAtEOF() {
     TokenizerResult result = tokenize("\\{{escaped}}");
 

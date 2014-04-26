@@ -37,9 +37,10 @@ public class HbFoldingBuilder implements FoldingBuilder, DumbAware {
       ASTNode commentNode = psi.getNode();
       String commentText = commentNode.getText();
 
-      // comment might be unclosed, so do a bit of sanity checking on its length and whether or not it's
-      // got the requisite open/close tags before we allow folding
-      if (commentText.length() > 5
+      // comment might be unclosed or too short (a one character fold triggers an invalid range assertion error),
+      // so do a bit of sanity checking on its length and whether or not it's got the requisite open/close
+      // tags before we allow folding
+      if (commentText.length() > 6
           && commentText.substring(0, 3).equals("{{!")
           && commentText.substring(commentText.length() - 2, commentText.length()).equals("}}")) {
         TextRange range = new TextRange(commentNode.getTextRange().getStartOffset() + 3, commentNode.getTextRange().getEndOffset() - 2);

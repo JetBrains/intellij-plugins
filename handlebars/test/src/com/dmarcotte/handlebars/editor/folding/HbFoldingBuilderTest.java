@@ -41,6 +41,11 @@ public class HbFoldingBuilderTest extends LightPlatformCodeInsightFixtureTestCas
     doTest();
   }
 
+  public void testEmptyCommentFolds() {
+    // regression test for https://github.com/dmarcotte/idea-handlebars/issues/80.  Expect no folds in this case.
+    doTest();
+  }
+
   /**
    * Test folding based by validating against a the file in {@link #TEST_DATA_PATH} who
    * names matches the test.<br/>
