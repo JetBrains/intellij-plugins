@@ -6,6 +6,9 @@
 
   <description><![CDATA[
         <h4>PhoneGap integration for InteliJ Platform.<h4>
+        <p>* PhoneGap Project wizard (not stable)</p>
+        <p>* PhoneGap Project importer</p>
+        <p>* Run PhoneGap Application from IntelliJ toolbar</p>
         <p>See README.md</p>
         <a href="https://github.com/masahirosuzuka/phonegap-intelliJ-plugin">masahirsuzuka/PhoneGapIntelliJPlugin</a>
     ]]></description>
@@ -30,6 +33,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
+
     <!-- Project generator -->
     <moduleType id="PHONEGAP_MODULE" implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapModuleType" />
     <moduleConfigurationEditorProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapModuleEditorProvider" />

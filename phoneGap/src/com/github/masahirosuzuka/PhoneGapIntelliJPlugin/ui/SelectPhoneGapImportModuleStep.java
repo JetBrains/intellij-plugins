@@ -28,7 +28,7 @@ public class SelectPhoneGapImportModuleStep extends ProjectImportWizardStep {
         PhoneGapSettings.PHONEGAP_FOLDERS_CORDOVA,
         PhoneGapSettings.PHONEGAP_FOLDERS_HOOKS,
         PhoneGapSettings.PHONEGAP_FOLDERS_MERGES,
-        /*PhoneGapSettings.PHONEGAP_FOLDERS_NODE_MODULES,*/
+        PhoneGapSettings.PHONEGAP_FOLDERS_NODE_MODULES,
         PhoneGapSettings.PHONEGAP_FOLDERS_PLATFORMS,
         PhoneGapSettings.PHONEGAP_FOLDERS_PLUGINS,
         PhoneGapSettings.PHONEGAP_FOLDERS_WWW

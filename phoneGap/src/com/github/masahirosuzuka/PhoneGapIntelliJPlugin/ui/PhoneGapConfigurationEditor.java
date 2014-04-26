@@ -20,6 +20,8 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
   private JRadioButton iOSRadioButton;
   private JRadioButton windowsPhoneRadioButton;
   private JTextArea runScript;
+  private JCheckBox weinreCheckBox;
+  private JCheckBox logCatCheckBox;
 
   public PhoneGapConfigurationEditor(Project project) {
     androidRadioButton.addActionListener(new ActionListener() {

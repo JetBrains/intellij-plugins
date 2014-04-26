@@ -9,30 +9,29 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 
 /**
- * Created by Masahiro Suzuka on 2014/04/22.
+ * Created by Masahiro Suzuka on 2014/04/25.
  */
-public class NodeJSDetectorThread implements Runnable {
+public class iOSSDKdetectorThread implements Runnable{
 
   private Project project;
 
-  public NodeJSDetectorThread(Project project) {
+  public iOSSDKdetectorThread(final Project project) {
     this.project = project;
   }
 
   @Override
   public void run() {
-    final GeneralCommandLine generalCommandLine = new GeneralCommandLine(PhoneGapSettings.NODEJS_PATH, "--version");
+    final GeneralCommandLine generalCommandLine = new GeneralCommandLine(PhoneGapSettings.IOS_SIM, "--version");
     generalCommandLine.setWorkDirectory(project.getBasePath());
     try {
       OSProcessHandler handler = new OSProcessHandler(generalCommandLine);
-      handler.startNotify();
+      // handler.notifyAll();
       generalCommandLine.createProcess();
     } catch (Exception e) {
-      // Node not working
-      // Output Notify
+      /* ios-sim not run */
       String groupeDisplayId = "PhoneGap notification";
       String notificationTitle = "PhoneGap Plugin";
-      String notificationMessage = "NodeJS not detected";
+      String notificationMessage = "ios-sim not detected";
       NotificationType notificationType = NotificationType.ERROR;
       Notification notification = new Notification(groupeDisplayId, notificationTitle, notificationMessage, notificationType);
 

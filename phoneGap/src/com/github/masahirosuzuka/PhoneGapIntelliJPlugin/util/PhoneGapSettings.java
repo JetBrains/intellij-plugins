@@ -1,5 +1,7 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util;
 
+import com.intellij.openapi.externalSystem.model.ProjectSystemId;
+
 /**
  * Created by Masahiro Suzuka on 2014/04/12.
  */
@@ -7,10 +9,14 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util;
 // Store PhoneGapSettings class
 final public class PhoneGapSettings {
 
+  // System ID
+  public static final ProjectSystemId PHONEGAP_SYSTEM_ID = new ProjectSystemId("PHONEGAP");
+  public static final ProjectSystemId CORDOVA_SYSTEM_ID = new ProjectSystemId("CORDOVA");
+
   // External tools PATH
   public static String NODEJS_PATH = "/usr/local/bin/node";
   public static String ANDROID_SDK = "android";
-  // public static String IOS_SIM = "ios-sim";
+  public static String IOS_SIM = "ios-sim";
 
   // PhoneGap PATH
   public static String PHONEGAP_PATH = "/usr/local/bin/phonegap";

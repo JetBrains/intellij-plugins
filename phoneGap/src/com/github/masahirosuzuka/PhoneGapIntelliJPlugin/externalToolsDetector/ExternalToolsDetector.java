@@ -2,6 +2,7 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector;
 
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,6 +30,13 @@ public class ExternalToolsDetector implements ProjectComponent {
     androidSDKDetectorThread.run();
 
     // Detect iOS SDK & Detect ios-sim
+    // Only Mac
+    if (SystemInfo.isMac) {
+      iOSSDKdetectorThread iosSDKdetectorThread = new iOSSDKdetectorThread(project);
+      iosSDKdetectorThread.run();
+    }
+
+    // Detect Bower
   }
 
   public void disposeComponent() {

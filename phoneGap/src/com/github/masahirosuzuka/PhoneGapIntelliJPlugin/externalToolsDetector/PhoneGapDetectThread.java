@@ -29,7 +29,6 @@ public class PhoneGapDetectThread implements Runnable/*, ProcessListener*/ {
       handler.startNotify();
       generalCommandLine.createProcess();
     } catch (Exception e) {
-
       /* PhoneGap not run */
       String groupeDisplayId = "PhoneGap notification";
       String notificationTitle = "PhoneGap Plugin";

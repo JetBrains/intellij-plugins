@@ -93,6 +93,7 @@ PhoneGapが追加されているはずです．新規Configurationを作成し�
 
 ###ToDo
 
+* weinre support
 * LogCat integration(or helper for javaScript debugging)
 * Suggest for PhoneGap function (onDeviceReady(), onSuccess(), ..etc)
 * iOS support
