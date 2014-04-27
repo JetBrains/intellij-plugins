@@ -60,6 +60,14 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
 
   @Override
   protected void applyEditorTo(PhoneGapRunConfiguration phoneGapRunConfiguration) throws ConfigurationException {
+    if (androidRadioButton.isSelected()) {
+      phoneGapRunConfiguration.PHONEGAP_PLATFORM = "android";
+    }
+
+    if (iOSRadioButton.isSelected()) {
+      phoneGapRunConfiguration.PHONEGAP_PLATFORM = "ios";
+    }
+
     if (runScript.getText().length() == 0) {
 
     }

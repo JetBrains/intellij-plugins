@@ -96,7 +96,6 @@ PhoneGapが追加されているはずです．新規Configurationを作成し�
 * weinre support
 * LogCat integration(or helper for javaScript debugging)
 * Suggest for PhoneGap function (onDeviceReady(), onSuccess(), ..etc)
-* iOS support
 * Windows Phone support
 * nvm support
 * PhoneGap Build support
