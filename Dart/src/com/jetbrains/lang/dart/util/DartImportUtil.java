@@ -9,15 +9,13 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * Created by fedorkorotkov.
- */
 public class DartImportUtil {
   private DartImportUtil() {
   }

@@ -11,6 +11,7 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.ide.index.DartComponentInfo;
 import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.resolve.ClassNameScopeProcessor;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import gnu.trove.THashSet;
@@ -30,7 +31,8 @@ public class DartClassNameCompletionContributor extends CompletionContributor {
          idInComponentName.withSuperParent(3, DartVarAccessDeclaration.class).with(new PatternCondition<PsiElement>("not after DartType") {
            public boolean accepts(@NotNull final PsiElement element, final ProcessingContext context) {
              // no class name completion must be here: const type name<caret>;
-             return !(UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(element.getParent().getParent(), true) instanceof DartType);
+             return !(UsefulPsiTreeUtil
+                        .getPrevSiblingSkipWhiteSpacesAndComments(element.getParent().getParent(), true) instanceof DartType);
            }
          })
       );
@@ -42,9 +44,7 @@ public class DartClassNameCompletionContributor extends CompletionContributor {
                                            ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
                final Set<DartComponentName> suggestedVariants = new THashSet<DartComponentName>();
-               final ClassNameScopeProcessor processor = new ClassNameScopeProcessor(suggestedVariants);
-
-               DartResolveUtil.treeWalkUpAndTopLevelDeclarations(parameters.getPosition(), processor);
+               DartResolveUtil.treeWalkUpAndTopLevelDeclarations(parameters.getPosition(), new ClassNameScopeProcessor(suggestedVariants));
 
                for (DartComponentName variant : suggestedVariants) {
                  result.addElement(LookupElementBuilder.create(variant));

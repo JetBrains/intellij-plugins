@@ -154,4 +154,50 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
 
     doTest();
   }
+
+  public void testShowHideInImports() throws Exception {
+    myFixture.addFileToProject("file1.dart", "foo1(){}\n" +
+                                             "foo2(){}\n" +
+                                             "foo3(){}\n" +
+                                             "foo4(){}\n");
+    myFixture.configureByText("file.dart", "import 'file1.dart' show foo1;\n" +
+                                           "import 'file1.dart' show foo2;\n" +
+                                           "import 'file1.dart' hide foo1, foo2, foo3, foo4;\n" +
+                                           "import 'file1.dart' show foo3;\n" +
+                                           "main(){\n" +
+                                           "  <caret expected='file1.dart -> foo1'>foo1();\n" +
+                                           "  <caret expected='file1.dart -> foo2'>foo2();\n" +
+                                           "  <caret expected='file1.dart -> foo3'>foo3();\n" +
+                                           "  <caret expected=''>foo4();\n" +
+                                           "}");
+    doTest();
+  }
+
+  public void testTransitiveShowHide() throws Exception {
+    myFixture.addFileToProject("file1part.dart", "part of file1lib;\n" +
+                                                 "var foo1, foo2, foo3, foo4, foo5, foo6, foo7, foo8, foo9;");
+    myFixture.addFileToProject("file1.dart", "library file1lib;\n" +
+                                             "part 'file1part.dart';");
+    myFixture.addFileToProject("file2.dart", "export 'file1.dart' show foo1, foo2, foo3, foo4;");
+    myFixture.addFileToProject("file3.dart", "export 'file1.dart' show foo5, foo6, foo7, foo8;");
+    myFixture.addFileToProject("file4.dart", "export 'file2.dart' show foo1, foo2, foo3, foo5, foo6, foo7, foo8, foo9;");
+    myFixture.addFileToProject("file5.dart", "export 'file3.dart' hide foo7, foo8;");
+    myFixture.addFileToProject("file.dart", "library filelib;\n" +
+                                            "import 'file4.dart' hide foo3;\n" +
+                                            "import 'file5.dart' show foo1, foo2, foo3, foo4, foo5, foo7, foo8, foo9;\n" +
+                                            "part 'filepart.dart';");
+    myFixture.configureByText("filepart.dart", "part of filelib;\n" +
+                                               "main(){\n" +
+                                               "  <caret expected='file1part.dart -> foo1'>foo1;\n" +
+                                               "  <caret expected='file1part.dart -> foo2'>foo2;\n" +
+                                               "  <caret expected=''>foo3;\n" +
+                                               "  <caret expected=''>foo4;\n" +
+                                               "  <caret expected='file1part.dart -> foo5'>foo5;\n" +
+                                               "  <caret expected=''>foo6;\n" +
+                                               "  <caret expected=''>foo7;\n" +
+                                               "  <caret expected=''>foo8;\n" +
+                                               "  <caret expected=''>foo9;\n" +
+                                               "}");
+    doTest();
+  }
 }

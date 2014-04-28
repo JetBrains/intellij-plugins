@@ -13,6 +13,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.resolve.ComponentNameScopeProcessor;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +36,7 @@ public class DartRefactoringUtil {
 
   public static Set<DartComponentName> collectUsedComponents(PsiElement context) {
     final Set<DartComponentName> usedComponentNames = new THashSet<DartComponentName>();
-    PsiTreeUtil.treeWalkUp(new ComponentNameScopeProcessor(usedComponentNames), context, null, new ResolveState());
+    PsiTreeUtil.treeWalkUp(new ComponentNameScopeProcessor(usedComponentNames), context, null, ResolveState.initial());
     return usedComponentNames;
   }
 
