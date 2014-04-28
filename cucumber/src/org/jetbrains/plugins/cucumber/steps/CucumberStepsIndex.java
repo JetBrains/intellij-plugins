@@ -83,13 +83,16 @@ public class CucumberStepsIndex {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) return null;
 
+    AbstractStepDefinition result = null;
     List<AbstractStepDefinition> allSteps = loadStepsFor(featureFile, module);
     for (AbstractStepDefinition stepDefinition : allSteps) {
       if (stepDefinition.matches(stepName)) {
-        return stepDefinition;
+        if (result == null || result.getPattern().getPattern().length() < stepDefinition.getPattern().getPattern().length()) {
+          result = stepDefinition;
+        }
       }
     }
-    return null;
+    return result;
   }
 
    // ToDo: use binary search here
