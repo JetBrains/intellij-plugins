@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.psi;
+package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -10,9 +10,9 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
+import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import com.jetbrains.lang.dart.util.ResolveScopeProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,9 +136,8 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   public static List<? extends PsiElement> resolveSimpleReference(PsiElement scopeElement, String name) {
     final List<DartComponentName> result = new ArrayList<DartComponentName>();
     // local
-    final ResolveScopeProcessor resolveScopeProcessor =
-      new ResolveScopeProcessor(result, name, DartResolveUtil.isLValue(scopeElement));
-    PsiTreeUtil.treeWalkUp(resolveScopeProcessor, scopeElement, null, new ResolveState());
+    final DartResolveProcessor dartResolveProcessor = new DartResolveProcessor(result, name, DartResolveUtil.isLValue(scopeElement));
+    PsiTreeUtil.treeWalkUp(dartResolveProcessor, scopeElement, null, ResolveState.initial());
     // supers
     final DartClass dartClass = PsiTreeUtil.getParentOfType(scopeElement, DartClass.class);
     final boolean inClass = PsiTreeUtil.getParentOfType(scopeElement, DartClassBody.class, false) != null;
@@ -151,12 +150,12 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     // global
     if (result.isEmpty()) {
       final List<VirtualFile> libraryFiles = DartResolveUtil.findLibrary(scopeElement.getContainingFile());
-      DartResolveUtil.processTopLevelDeclarations(scopeElement, resolveScopeProcessor, libraryFiles, name);
+      DartResolveUtil.processTopLevelDeclarations(scopeElement, dartResolveProcessor, libraryFiles, name);
     }
     // dart:core
     if (result.isEmpty() && !"void".equals(name)) {
       final List<VirtualFile> libraryFiles = DartLibraryIndex.findLibraryClass(scopeElement, "dart:core");
-      DartResolveUtil.processTopLevelDeclarations(scopeElement, resolveScopeProcessor, libraryFiles, name);
+      DartResolveUtil.processTopLevelDeclarations(scopeElement, dartResolveProcessor, libraryFiles, name);
     }
 
     return result;

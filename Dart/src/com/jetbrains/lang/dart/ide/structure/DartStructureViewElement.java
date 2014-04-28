@@ -9,18 +9,15 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.psi.impl.DartPsiCompositeElementImpl;
+import com.jetbrains.lang.dart.resolve.ComponentNameScopeProcessor;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartStructureViewElement implements StructureViewTreeElement, SortableTreeElement {
   private final PsiElement myElement;
 

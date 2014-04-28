@@ -10,7 +10,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -27,6 +26,8 @@ import com.jetbrains.lang.dart.ide.info.DartFunctionDescription;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass;
 import com.jetbrains.lang.dart.psi.impl.DartPsiCompositeElementImpl;
+import com.jetbrains.lang.dart.resolve.DartPsiScopeProcessor;
+import com.jetbrains.lang.dart.resolve.DartResolveProcessor;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -141,7 +142,7 @@ public class DartResolveUtil {
   public static DartClassResolveResult findCoreClass(PsiElement context, String className) {
     final List<VirtualFile> libraryFile = DartLibraryIndex.findLibraryClass(context, "dart:core");
     final List<DartComponentName> result = new ArrayList<DartComponentName>();
-    processTopLevelDeclarations(context, new ResolveScopeProcessor(result, className), libraryFile, className);
+    processTopLevelDeclarations(context, new DartResolveProcessor(result, className), libraryFile, className);
     final PsiElement parent = result.isEmpty() ? null : result.iterator().next().getParent();
     return DartClassResolveResult.create(parent instanceof DartClass ? (DartClass)parent : null);
   }
@@ -220,7 +221,7 @@ public class DartResolveUtil {
     final VirtualFile virtualFile = getImportedFileByImportPrefix(contextToSearch.getContainingFile(), libraryPrefix);
     if (virtualFile != null) {
       final List<DartComponentName> result = new ArrayList<DartComponentName>();
-      processTopLevelDeclarations(contextToSearch, new ResolveScopeProcessor(result, componentName),
+      processTopLevelDeclarations(contextToSearch, new DartResolveProcessor(result, componentName),
                                   virtualFile, componentName);
       return result;
     }
@@ -259,10 +260,10 @@ public class DartResolveUtil {
     return null;
   }
 
-  public static void processTopLevelDeclarations(@NotNull PsiElement context,
-                                                 @NotNull PsiScopeProcessor processor,
-                                                 @NotNull List<VirtualFile> files,
-                                                 @Nullable String componentNameHint) {
+  public static void processTopLevelDeclarations(final @NotNull PsiElement context,
+                                                 final @NotNull DartPsiScopeProcessor processor,
+                                                 final @NotNull List<VirtualFile> files,
+                                                 final @Nullable String componentNameHint) {
     for (VirtualFile virtualFile : files) {
       if (!processTopLevelDeclarations(context, processor, virtualFile, componentNameHint)) {
         break;
@@ -270,10 +271,10 @@ public class DartResolveUtil {
     }
   }
 
-  public static boolean processTopLevelDeclarations(@NotNull PsiElement context,
-                                                    @NotNull PsiScopeProcessor processor,
-                                                    @Nullable VirtualFile rootVirtualFile,
-                                                    @Nullable String componentNameHint) {
+  public static boolean processTopLevelDeclarations(final @NotNull PsiElement context,
+                                                    final @NotNull DartPsiScopeProcessor processor,
+                                                    final @Nullable VirtualFile rootVirtualFile,
+                                                    final @Nullable String componentNameHint) {
     final Set<String> fileNames = new THashSet<String>();
     for (VirtualFile virtualFile : DartComponentIndex.getAllFiles(context.getProject(), componentNameHint)) {
       fileNames.add(virtualFile.getName());
@@ -282,34 +283,34 @@ public class DartResolveUtil {
                                            new THashSet<VirtualFile>(), componentNameHint != null && componentNameHint.startsWith("_"));
   }
 
-  private static boolean processTopLevelDeclarationsImpl(@NotNull PsiElement context,
-                                                         PsiScopeProcessor processor,
-                                                         @Nullable VirtualFile virtualFile,
-                                                         @Nullable Set<String> fileNames,
-                                                         Set<VirtualFile> processedFiles) {
+  private static boolean processTopLevelDeclarationsImpl(final @NotNull PsiElement context,
+                                                         final @NotNull DartPsiScopeProcessor processor,
+                                                         final @Nullable VirtualFile virtualFile,
+                                                         final @Nullable Set<String> fileNames,
+                                                         final @NotNull Set<VirtualFile> processedFiles) {
     return processTopLevelDeclarationsImpl(context, processor, virtualFile, fileNames, processedFiles, false);
   }
 
-  private static boolean processTopLevelDeclarationsImpl(@NotNull PsiElement context,
-                                                         final PsiScopeProcessor processor,
-                                                         @Nullable VirtualFile virtualFile,
-                                                         @Nullable Set<String> fileNames,
-                                                         Set<VirtualFile> processedFiles,
-                                                         boolean isLookingForPrivate) {
-    if (virtualFile == null) {
-      return false;
-    }
+  private static boolean processTopLevelDeclarationsImpl(final @NotNull PsiElement context,
+                                                         final @NotNull DartPsiScopeProcessor processor,
+                                                         final @Nullable VirtualFile virtualFile,
+                                                         final @Nullable Set<String> fileNames,
+                                                         final @NotNull Set<VirtualFile> processedFiles,
+                                                         final boolean isLookingForPrivate) {
+    if (virtualFile == null) return false;
+
     if (processedFiles.contains(virtualFile)) {
+      processor.processFilteredOutElementsForImportedFile(virtualFile);
       return true;
     }
+
     processedFiles.add(virtualFile);
 
     boolean contains = fileNames == null || fileNames.contains(virtualFile.getName());
     if (contains) {
       final PsiFile psiFile = context.getManager().findFile(virtualFile);
       for (PsiElement root : findDartRoots(psiFile)) {
-        if (!DartPsiCompositeElementImpl
-          .processDeclarationsImpl(root, processor, ResolveState.initial(), null)) {
+        if (!DartPsiCompositeElementImpl.processDeclarationsImpl(root, processor, ResolveState.initial(), null)) {
           return false;
         }
       }
@@ -343,16 +344,15 @@ public class DartResolveUtil {
       if (processingLibraryWhereContextElementLocated && importOrExportInfo.getKind() == Kind.Export) continue;
       if (!processingLibraryWhereContextElementLocated && importOrExportInfo.getKind() == Kind.Import) continue;
 
-      if (importOrExportInfo.getKind() == Kind.Import && importOrExportInfo.getImportPrefix() != null) {
-        // statement has prefix => all components are prefix.Name
-        continue;
-      }
-      final PsiScopeProcessor showHideAwareProcessor = importOrExportInfo.createShowHideAwareProcessor(processor);
-      final VirtualFile sourceFile = getImportedFile(context.getProject(), virtualFile, importOrExportInfo.getUri());
-      if (sourceFile != null) {
-        if (!processTopLevelDeclarationsImpl(context, showHideAwareProcessor, sourceFile, fileNames, processedFiles)) {
-          return false;
-        }
+      // if statement has prefix all components are prefix.Name
+      if (importOrExportInfo.getKind() == Kind.Import && importOrExportInfo.getImportPrefix() != null) continue;
+
+      final VirtualFile importedFile = getImportedFile(context.getProject(), virtualFile, importOrExportInfo.getUri());
+      if (importedFile != null) {
+        processor.importedFileProcessingStarted(importedFile, importOrExportInfo);
+        final boolean continueProcessing = processTopLevelDeclarationsImpl(context, processor, importedFile, fileNames, processedFiles);
+        processor.importedFileProcessingFinished(importedFile);
+        if (!continueProcessing) return false;
       }
     }
 
@@ -448,13 +448,9 @@ public class DartResolveUtil {
 
   public static boolean isLibraryRoot(PsiFile psiFile) {
     for (PsiElement root : findDartRoots(psiFile)) {
-      DartPsiCompositeElement oneOfLibraryStatement =
-        PsiTreeUtil.getChildOfAnyType(root, DartLibraryStatement.class, DartPartStatement.class, DartImportStatement.class);
-      if (oneOfLibraryStatement != null || getMainFunction(psiFile) != null) {
-        return true;
-      }
+      if (PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class) != null) return false;
     }
-    return false;
+    return true;
   }
 
   // todo this method must look for main function in library parts as well
@@ -463,7 +459,7 @@ public class DartResolveUtil {
     if (!(file instanceof DartFile)) return null;
 
     final ArrayList<DartComponentName> result = new ArrayList<DartComponentName>();
-    DartPsiCompositeElementImpl.processDeclarationsImpl(file, new ResolveScopeProcessor(result, "main"), ResolveState.initial(), null);
+    DartPsiCompositeElementImpl.processDeclarationsImpl(file, new DartResolveProcessor(result, "main"), ResolveState.initial(), null);
 
     for (DartComponentName componentName : result) {
       final PsiElement parent = componentName.getParent();
@@ -1062,8 +1058,8 @@ public class DartResolveUtil {
     return result;
   }
 
-  public static void treeWalkUpAndTopLevelDeclarations(PsiElement context, PsiScopeProcessor processor) {
-    PsiTreeUtil.treeWalkUp(processor, context, null, new ResolveState());
+  public static void treeWalkUpAndTopLevelDeclarations(final @NotNull PsiElement context, final @NotNull DartPsiScopeProcessor processor) {
+    PsiTreeUtil.treeWalkUp(processor, context, null, ResolveState.initial());
 
     final List<VirtualFile> libraryFiles = new ArrayList<VirtualFile>();
     libraryFiles.addAll(findLibrary(context.getContainingFile()));

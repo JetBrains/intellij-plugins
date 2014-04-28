@@ -13,6 +13,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -20,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartReferenceImpl extends DartExpressionImpl implements DartReference, PsiPolyVariantReference {
   public DartReferenceImpl(ASTNode node) {
     super(node);

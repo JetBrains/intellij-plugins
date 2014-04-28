@@ -6,7 +6,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
@@ -15,6 +14,7 @@ import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.psi.impl.DartExportStatementImpl;
 import com.jetbrains.lang.dart.psi.impl.DartImportStatementImpl;
 import com.jetbrains.lang.dart.psi.impl.DartPsiCompositeElementImpl;
+import com.jetbrains.lang.dart.resolve.ComponentNameScopeProcessor;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
@@ -86,8 +86,7 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
     DartClass dartClass = null;
     // if do not contain references
     if (DartResolveUtil.aloneOrFirstInChain(reference)) {
-      final PsiScopeProcessor processor = new ComponentNameScopeProcessor(suggestedVariants);
-      DartResolveUtil.treeWalkUpAndTopLevelDeclarations(reference, processor);
+      DartResolveUtil.treeWalkUpAndTopLevelDeclarations(reference, new ComponentNameScopeProcessor(suggestedVariants));
       dartClass = PsiTreeUtil.getParentOfType(reference, DartClass.class);
     }
 
