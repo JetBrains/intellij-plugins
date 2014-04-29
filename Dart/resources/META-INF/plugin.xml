@@ -94,7 +94,9 @@
     <definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>
 
     <projectTemplatesFactory implementation="com.jetbrains.lang.dart.ide.template.DartTemplatesFactory"/>
-    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartApplicationGenerator"/>
+    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartEmptyApplicationGenerator"/>
+    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartCommandLineApplicationGenerator"/>
+    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartWebApplicationGenerator"/>
 
     <projectConfigurable instance="com.jetbrains.lang.dart.sdk.DartConfigurable"
                          id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
@@ -130,6 +132,8 @@
                             implementationClass="com.jetbrains.lang.dart.ide.completion.DartClassNameCompletionContributor"/>
     <completion.contributor language="Dart"
                             implementationClass="com.jetbrains.lang.dart.ide.completion.DartReferenceCompletionContributor"/>
+
+    <moduleType id="DART_MODULE" implementationClass="com.jetbrains.lang.dart.ide.module.DartModuleType"/>
 
     <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>
     <externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>
