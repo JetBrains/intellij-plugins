@@ -10,17 +10,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 
-import static com.jetbrains.lang.dart.util.DartUrlResolver.FILE_PREFIX;
 import static com.jetbrains.lang.dart.util.DartUrlResolver.FILE_SCHEME;
-import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
 import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_SCHEME;
 
-public class DartFileUriResolver extends UriResolver {
+public class DartFileAndPackageUriResolver extends UriResolver {
 
   private final @NotNull Project myProject;
   private final @NotNull DartUrlResolver myDartUrlResolver;
 
-  public DartFileUriResolver(final @NotNull Project project, final @NotNull DartUrlResolver dartUrlResolver) {
+  public DartFileAndPackageUriResolver(final @NotNull Project project, final @NotNull DartUrlResolver dartUrlResolver) {
     myProject = project;
     myDartUrlResolver = dartUrlResolver;
   }

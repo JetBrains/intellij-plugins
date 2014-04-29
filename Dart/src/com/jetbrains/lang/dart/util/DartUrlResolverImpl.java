@@ -3,7 +3,8 @@ package com.jetbrains.lang.dart.util;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -11,6 +12,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PairConsumer;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
+import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.jetbrains.lang.dart.sdk.DartConfigurable.CUSTOM_PACKAGE_ROOTS_LIB_NAME;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.*;
 
 class DartUrlResolverImpl extends DartUrlResolver {
@@ -151,7 +152,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
     final Module module = ModuleUtilCore.findModuleForFile(contextFile, myProject);
     if (module == null) return null;
 
-    final VirtualFile[] customPackageRoots = getCustomPackageRoots(module);
+    final VirtualFile[] customPackageRoots = DartConfigurable.getCustomPackageRoots(module);
     if (customPackageRoots.length > 0) {
       Collections.addAll(myPackageRoots, customPackageRoots);
       return null;
@@ -165,17 +166,6 @@ class DartUrlResolverImpl extends DartUrlResolver {
     }
 
     return pubspecYamlFile;
-  }
-
-  @NotNull
-  private static VirtualFile[] getCustomPackageRoots(final @NotNull Module module) {
-    for (OrderEntry entry : ModuleRootManager.getInstance(module).getOrderEntries()) {
-      if (entry instanceof LibraryOrderEntry && CUSTOM_PACKAGE_ROOTS_LIB_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
-        return ((LibraryOrderEntry)entry).getRootFiles(OrderRootType.CLASSES);
-      }
-    }
-
-    return VirtualFile.EMPTY_ARRAY;
   }
 
   private static VirtualFile findPubspecYamlFile(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
