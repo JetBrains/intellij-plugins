@@ -3,7 +3,7 @@
   <description>Support for Dart programming language</description>
   <version>999.999</version>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="136.1" until-build="136.*"/>
+  <idea-version since-build="138.1" until-build="138.*"/>
   <depends>com.intellij.modules.xml</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
@@ -11,11 +11,8 @@
   <change-notes>
     <![CDATA[
         <ul>
-          <li>Dart plugin is now compatible with IntelliJ IDEA Community Edition. All features except debugging are available.</li>
-          <li>Redesigned Dart Settings page.</li>
-          <li>Ability to set Dartium command line options and user data folder.</li>
-          <li>Dart command line app debugger fixed.</li>
-          <li>Bug fixes and improvements in code highlighting and autocompletion.</li>
+          <li>Major performance improvements in code highlighting/completion/analysis/etc.</li>
+          <li>Bug fixes</li>
         </ul>
       ]]>
   </change-notes>
