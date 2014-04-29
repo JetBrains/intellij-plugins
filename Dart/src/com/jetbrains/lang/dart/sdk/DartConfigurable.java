@@ -72,7 +72,8 @@ import java.util.List;
 public class DartConfigurable implements SearchableConfigurable {
 
   public static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
-  public static final String CUSTOM_PACKAGE_ROOTS_LIB_NAME = "Dart custom package roots";
+
+  private static final String CUSTOM_PACKAGE_ROOTS_LIB_NAME = "Dart custom package roots";
   private static final String SEMICOLON = ";";
 
   private JPanel myMainPanel;
@@ -772,5 +773,26 @@ public class DartConfigurable implements SearchableConfigurable {
     catch (Exception e) {
       if (!modifiableModel.isDisposed()) modifiableModel.dispose();
     }
+  }
+
+  @NotNull
+  public static VirtualFile[] getCustomPackageRoots(final @NotNull Module module) {
+    for (OrderEntry entry : ModuleRootManager.getInstance(module).getOrderEntries()) {
+      if (entry instanceof LibraryOrderEntry && CUSTOM_PACKAGE_ROOTS_LIB_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
+        return ((LibraryOrderEntry)entry).getRootFiles(OrderRootType.CLASSES);
+      }
+    }
+
+    return VirtualFile.EMPTY_ARRAY;
+  }
+
+  public static boolean isCustomPackageRootSet(final @NotNull Module module) {
+    for (OrderEntry entry : ModuleRootManager.getInstance(module).getOrderEntries()) {
+      if (entry instanceof LibraryOrderEntry && CUSTOM_PACKAGE_ROOTS_LIB_NAME.equals(((LibraryOrderEntry)entry).getLibraryName())) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
