@@ -1,12 +1,14 @@
 package com.jetbrains.lang.dart.ide.template;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.ide.module.DartProjectTemplate;
@@ -36,7 +38,7 @@ public abstract class BaseDartApplicationGenerator extends DartProjectTemplate<D
       public void run() {
         setupSdkAndDartium(module, data);
         try {
-          createContents(baseDir, module);
+          createContents(baseDir, module, project);
           final VirtualFile pubspecYamlFile = createPubspec(baseDir);
           setPubspecContent(pubspecYamlFile, module);
         }
@@ -49,6 +51,23 @@ public abstract class BaseDartApplicationGenerator extends DartProjectTemplate<D
   @Override
   public GeneratorPeer<DartProjectWizardData> createPeer() { return new DartGeneratorPeer(); }
 
+
+  protected  void openFile(final VirtualFile file, final Project project) {
+    final Runnable runnable = new Runnable() {
+      @Override
+      public void run() {
+        FileEditorManager.getInstance(project).openFile(file, true);
+      }
+    };
+
+    if (project.isInitialized()) {
+      runnable.run();
+    }
+    else {
+      StartupManager.getInstance(project).registerPostStartupActivity(runnable);
+    }
+  }
+
   protected VirtualFile createPubspec(final VirtualFile baseDir) throws IOException {
     return baseDir.createChildData(BaseDartApplicationGenerator.this, PubspecYamlUtil.PUBSPEC_YAML);
   }
@@ -57,7 +76,7 @@ public abstract class BaseDartApplicationGenerator extends DartProjectTemplate<D
     // Default is empty
   }
 
-  protected void createContents(final VirtualFile baseDir, final Module module) throws IOException {
+  protected void createContents(final VirtualFile baseDir, final Module module, Project project) throws IOException {
     // Default is none
   }
 

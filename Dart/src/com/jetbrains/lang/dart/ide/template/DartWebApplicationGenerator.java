@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.template;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.module.DartProjectTemplate;
@@ -15,7 +16,7 @@ public class DartWebApplicationGenerator extends BaseDartApplicationGenerator {
   protected DartProjectTemplate<?> getGenerator() { return this; }
 
   @Override
-  protected void createContents(final VirtualFile baseDir, final Module module) throws IOException {
+  protected void createContents(final VirtualFile baseDir, final Module module, Project project) throws IOException {
     final VirtualFile webDir = baseDir.createChildDirectory(this, "web");
     final String moduleName = module.getName().toLowerCase();
     final String moduleTitle = toTitleCase(moduleName);
@@ -78,6 +79,8 @@ public class DartWebApplicationGenerator extends BaseDartApplicationGenerator {
                           "  -webkit-user-select: none;\n" +
                           "  user-select: none;\n" +
                           "}\n").getBytes());
+
+    openFile(html, project);
   }
 
   @Override

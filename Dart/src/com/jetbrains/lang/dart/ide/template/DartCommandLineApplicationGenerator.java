@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.template;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.module.DartProjectTemplate;
@@ -15,10 +16,11 @@ public class DartCommandLineApplicationGenerator extends BaseDartApplicationGene
   protected DartProjectTemplate<?> getGenerator() { return this; }
 
   @Override
-  protected void createContents(final VirtualFile baseDir, final Module module) throws IOException {
+  protected void createContents(final VirtualFile baseDir, final Module module, Project project) throws IOException {
     final VirtualFile binDir = baseDir.createChildDirectory(this, "bin");
     final VirtualFile main = binDir.createChildData(DartCommandLineApplicationGenerator.this, module.getName().toLowerCase() + ".dart");
     main.setBinaryContent("void main() {\n  print(\"Hello, World!\");\n}\n".getBytes());
+    openFile(main, project);
   }
 
   @Override
