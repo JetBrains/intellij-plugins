@@ -19,16 +19,17 @@ import com.intellij.coldFusion.model.psi.CfmlComponent;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.NamedStubBase;
 import com.intellij.psi.stubs.StubElement;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author vnikolaenko
  */
 public class CfmlComponentStubImpl extends NamedStubBase<CfmlComponent> implements CfmlComponentStub {
-  private boolean myIsInterface;
-  private String mySuperClass;
-  private String[] myInterfaces;
+  private final boolean myIsInterface;
+  private final String mySuperClass;
+  private final String[] myInterfaces;
 
-  protected CfmlComponentStubImpl(final StubElement parent, final IStubElementType elementType, final String name,
+  protected CfmlComponentStubImpl(final StubElement parent, @NotNull IStubElementType elementType, final String name,
                                   boolean isInterface, String superclass, String[] interfaces) {
     super(parent, elementType, name);
     myIsInterface = isInterface;
@@ -36,14 +37,17 @@ public class CfmlComponentStubImpl extends NamedStubBase<CfmlComponent> implemen
     myInterfaces = interfaces;
   }
 
+  @Override
   public String getSuperclass() {
     return mySuperClass;
   }
 
+  @Override
   public String[] getInterfaces() {
     return myInterfaces;
   }
 
+  @Override
   public boolean isInterface() {
     return myIsInterface;
   }
