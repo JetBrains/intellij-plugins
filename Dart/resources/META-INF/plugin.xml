@@ -133,8 +133,6 @@
     <completion.contributor language="Dart"
                             implementationClass="com.jetbrains.lang.dart.ide.completion.DartReferenceCompletionContributor"/>
 
-    <moduleType id="DART_MODULE" implementationClass="com.jetbrains.lang.dart.ide.module.DartModuleType"/>
-
     <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>
     <externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator"/>

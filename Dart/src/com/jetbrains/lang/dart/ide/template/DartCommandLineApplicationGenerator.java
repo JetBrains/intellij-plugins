@@ -3,11 +3,16 @@ package com.jetbrains.lang.dart.ide.template;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.module.DartProjectTemplate;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
 public class DartCommandLineApplicationGenerator extends BaseDartApplicationGenerator {
+
+  @Override
+  @NotNull
+  protected DartProjectTemplate<?> getGenerator() { return this; }
 
   @Override
   protected void createContents(final VirtualFile baseDir, final Module module) throws IOException {
