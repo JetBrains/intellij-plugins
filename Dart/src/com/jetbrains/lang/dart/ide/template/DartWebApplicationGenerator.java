@@ -34,7 +34,7 @@ public class DartWebApplicationGenerator extends BaseDartApplicationGenerator {
                           "    buffer.write(text[i]);\n" +
                           "  }\n" +
                           "  querySelector('#sample_text_id').text = buffer.toString();\n" +
-                          "};\n").getBytes());
+                          "}\n").getBytes());
     final VirtualFile html = webDir.createChildData(DartWebApplicationGenerator.this, moduleName + ".html");
     html.setBinaryContent(("<!DOCTYPE html>\n\n" +
                            "<html>\n" +
