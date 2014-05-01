@@ -75,7 +75,7 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     final FileChooserDescriptor folderChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
     folderChooserDescriptor.setTitle(folderChooserTitle);
     folderChooserDescriptor.setRoots(model.getDirectory().getVirtualFile());
-    folderChooserDescriptor.setIsTreeRootVisible(true);
+    folderChooserDescriptor.withTreeRootVisible(true);
     folderChooserDescriptor.setShowFileSystemRoots(false);
     folderChooserDescriptor.setHideIgnored(true);
 
