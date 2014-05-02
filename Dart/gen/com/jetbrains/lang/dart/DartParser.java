@@ -2995,7 +2995,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'import' pathOrLibraryReference ('as' componentName )? combinator* ';'
+  // metadata* 'import' pathOrLibraryReference (('deferred' )?'as' componentName )? combinator* ';'
   public static boolean importStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "importStatement")) return false;
     if (!nextTokenIs(builder_, "<import statement>", AT, IMPORT)) return false;
@@ -3025,20 +3025,38 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // ('as' componentName )?
+  // (('deferred' )?'as' componentName )?
   private static boolean importStatement_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "importStatement_3")) return false;
     importStatement_3_0(builder_, level_ + 1);
     return true;
   }
 
-  // 'as' componentName
+  // ('deferred' )?'as' componentName
   private static boolean importStatement_3_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "importStatement_3_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, AS);
+    result_ = importStatement_3_0_0(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, AS);
     result_ = result_ && componentName(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // ('deferred' )?
+  private static boolean importStatement_3_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "importStatement_3_0_0")) return false;
+    importStatement_3_0_0_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // ('deferred' )
+  private static boolean importStatement_3_0_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "importStatement_3_0_0_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, DEFERRED);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -5057,7 +5075,7 @@ public class DartParser implements PsiParser {
   //                                 '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
   //                                  ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
   //                                  '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
-  //                                  'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
+  //                                  'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
   //                                  'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
   //                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
   //                                  'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
@@ -5077,7 +5095,7 @@ public class DartParser implements PsiParser {
   //                                 '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
   //                                  ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
   //                                  '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
-  //                                  'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
+  //                                  'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
   //                                  'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
   //                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
   //                                  'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
@@ -5140,6 +5158,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, CONST);
     if (!result_) result_ = consumeToken(builder_, CONTINUE);
     if (!result_) result_ = consumeToken(builder_, DEFAULT);
+    if (!result_) result_ = consumeToken(builder_, DEFERRED);
     if (!result_) result_ = consumeToken(builder_, DO);
     if (!result_) result_ = consumeToken(builder_, ELSE);
     if (!result_) result_ = consumeToken(builder_, EXPORT);

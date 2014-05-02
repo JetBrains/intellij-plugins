@@ -154,6 +154,7 @@ public interface DartTokenTypes {
   IElementType CONST = new DartElementType("const");
   IElementType CONTINUE = new DartElementType("continue");
   IElementType DEFAULT = new DartElementType("default");
+  IElementType DEFERRED = new DartElementType("deferred");
   IElementType DIV = new DartElementType("/");
   IElementType DIV_EQ = new DartElementType("/=");
   IElementType DO = new DartElementType("do");

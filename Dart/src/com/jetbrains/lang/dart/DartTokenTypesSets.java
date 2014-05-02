@@ -69,6 +69,7 @@ public interface DartTokenTypesSets {
 
   TokenSet BUILT_IN_IDENTIFIERS = TokenSet.create(ABSTRACT,
                                                   AS,
+                                                  DEFERRED,
                                                   EXPORT,
                                                   EXTERNAL,
                                                   FACTORY,
