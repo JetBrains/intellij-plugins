@@ -21,7 +21,8 @@ public class AndroidSDKDetectorThread implements Runnable {
 
   @Override
   public void run() {
-    final GeneralCommandLine generalCommandLine = new GeneralCommandLine(PhoneGapSettings.ANDROID_SDK, "list");
+    //System.out.println("AndroidSDk detector");
+    final GeneralCommandLine generalCommandLine = new GeneralCommandLine(PhoneGapSettings.ANDROID_SDK, "--version");
     generalCommandLine.setWorkDirectory(project.getBasePath());
     try {
       OSProcessHandler handler = new OSProcessHandler(generalCommandLine);

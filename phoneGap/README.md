@@ -3,8 +3,9 @@
 IntelliJ Platform Plugin for PhoneGap/Cordova Application
 
 * PhoneGap Project wizard (not stable)
-* PhoneGap Project importer
+* PhoneGap Project importer (recommend)
 * Run PhoneGap Application from IntelliJ toolbar
+* Ripple Emulator integration (not stable)
 
 ###About PhoneGap/Cordova
 
@@ -18,9 +19,7 @@ Preference -> Plugins -> Search "PhoneGap Plugin"
 
 Restart IntelliJ
 
-This Plugin requests jvm1.7 or higher
-
-####(1)Install PhoneGap
+####(1)Install NodeJS and PhoneGap
 Please install from [Node.js Official site](http://nodejs.org/)
 
 nvm is not supported (So sorry fix soon)
@@ -43,6 +42,8 @@ File -> Import Project -> PhoneGap Project root dir -> Import form external mode
 ####(5)Run PhoneGap app
 Run -> Edit Configuration -> Create new Config -> run
 
+#####(6)Debug PhoneGap app
+
 ###PhoneGapIntelliJPluginについて
 
 PhoneGap/Cordovaアプリ開発をIntelliJ IDEAで行えるようにするプラグインです．
@@ -62,13 +63,12 @@ http://phonegap-fan.com/
 ###使い方
 #####(0)PhoneGapIntelliJPluginをインストール
 Preference -> PluginsからPhoneGapと検索してください．IntelliJの再起動が必要です．
-本プラグインを動作させるためにはIntelliJ Platformがjvm1.7以上で動作している必要があります．
 
 #####(1)PhoneGapをインストール
 Node.jsを使ってインストールする必要があります．nvmでの動作は保証しません．
 公式サイトからのインストールをお勧めします．
 
-npm install -g phonegap
+$npm install -g phonegap
 
 PhoneGapのインストールディレクトリは
 
@@ -91,9 +91,13 @@ File -> Import Project -> PhoneGapプロジェクトのルートディレクト�
 Run -> Edit Configuration
 PhoneGapが追加されているはずです．新規Configurationを作成し，実行してください．
 
+#####(6)デバッグ
+
+
 ###ToDo
 
 * weinre support
+* Ripple Emulator integration (by NanoHTTPD or HttpServer)
 * LogCat integration(or helper for javaScript debugging)
 * Suggest for PhoneGap function (onDeviceReady(), onSuccess(), ..etc)
 * Windows Phone support

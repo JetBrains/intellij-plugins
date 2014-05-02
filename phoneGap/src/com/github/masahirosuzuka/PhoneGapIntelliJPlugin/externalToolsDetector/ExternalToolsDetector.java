@@ -2,12 +2,17 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector;
 
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Masahiro Suzuka on 2014/04/16.
  */
+
+//
+// I have found that these are not suitable for culture of IntelliJ.
+// But I leave for absolutely necessary only 'node.js detector' and 'phonegap detector'.
+//
+
 public class ExternalToolsDetector implements ProjectComponent {
 
   private static Project project;
@@ -26,6 +31,7 @@ public class ExternalToolsDetector implements ProjectComponent {
     phoneGapDetectThread.run();
 
     // Detect AndroidSDK
+    /*
     AndroidSDKDetectorThread androidSDKDetectorThread = new AndroidSDKDetectorThread(project);
     androidSDKDetectorThread.run();
 
@@ -35,8 +41,7 @@ public class ExternalToolsDetector implements ProjectComponent {
       iOSSDKdetectorThread iosSDKdetectorThread = new iOSSDKdetectorThread(project);
       iosSDKdetectorThread.run();
     }
-
-    // Detect Bower
+    */
   }
 
   public void disposeComponent() {

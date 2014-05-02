@@ -18,7 +18,7 @@ public class PhoneGapRunConfiguration extends RunConfigurationBase {
 
   public static String PHONEGAP_PATH = "phonegap";
   public static String PHONEGAP_COMMAND = "run";
-  public static String PHONEGAP_PLATFORM = "android";
+  public static String PHONEGAP_PLATFORM = "android"; // Default value
 
   public PhoneGapRunConfiguration(Project project, ConfigurationFactory factory, String name) {
     super(project, factory, name);
