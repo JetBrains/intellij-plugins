@@ -36,6 +36,9 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
 
+    <!-- Setting Dialog -->
+    <applicationConfigurable instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapSettingDialog"></applicationConfigurable>
+
     <!-- Project generator -->
     <moduleType id="PHONEGAP_MODULE" implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapModuleType" />
     <moduleConfigurationEditorProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapModuleEditorProvider" />

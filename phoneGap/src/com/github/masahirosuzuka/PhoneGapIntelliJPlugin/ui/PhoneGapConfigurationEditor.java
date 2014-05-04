@@ -22,6 +22,7 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
   private JTextArea runScript;
   private JCheckBox weinreCheckBox;
   private JCheckBox logCatCheckBox;
+  private JRadioButton rippleButton;
 
   public PhoneGapConfigurationEditor(Project project) {
     androidRadioButton.addActionListener(new ActionListener() {
@@ -52,6 +53,7 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
 
   @Override
   protected void resetEditorFrom(PhoneGapRunConfiguration phoneGapRunConfiguration) {
+    System.out.println("resetEditor");
     androidRadioButton.setSelected(false);
     iOSRadioButton.setSelected(false);
     windowsPhoneRadioButton.setSelected(false);

@@ -2,6 +2,7 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector;
 
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,25 +24,35 @@ public class ExternalToolsDetector implements ProjectComponent {
 
   public void initComponent() {
     // Detect node.js
-    NodeJSDetectorThread nodeJSDetectorThread = new NodeJSDetectorThread(project);
-    nodeJSDetectorThread.run();
+    if (SystemInfo.isWindows) {
+      if (SystemInfo.is32Bit) { // System is Windows32bit
+        // Program Files(x86)
+      }
 
-    // Detect phonegap cli
-    PhoneGapDetectThread phoneGapDetectThread = new PhoneGapDetectThread(project);
-    phoneGapDetectThread.run();
+      if (SystemInfo.is64Bit) { // System is Windows64bit
+        // Program Files
+      }
+    } else { // System is Mac or Linux
+      NodeJSDetectorThread nodeJSDetectorThread = new NodeJSDetectorThread(project);
+      nodeJSDetectorThread.run();
 
-    // Detect AndroidSDK
-    /*
-    AndroidSDKDetectorThread androidSDKDetectorThread = new AndroidSDKDetectorThread(project);
-    androidSDKDetectorThread.run();
+      // Detect phonegap cli
+      PhoneGapDetectThread phoneGapDetectThread = new PhoneGapDetectThread(project);
+      phoneGapDetectThread.run();
 
-    // Detect iOS SDK & Detect ios-sim
-    // Only Mac
-    if (SystemInfo.isMac) {
-      iOSSDKdetectorThread iosSDKdetectorThread = new iOSSDKdetectorThread(project);
-      iosSDKdetectorThread.run();
+      // Detect AndroidSDK
+      /*
+      AndroidSDKDetectorThread androidSDKDetectorThread = new AndroidSDKDetectorThread(project);
+      androidSDKDetectorThread.run();
+
+      // Detect iOS SDK & Detect ios-sim
+      // Only Mac
+      if (SystemInfo.isMac) {
+        iOSSDKdetectorThread iosSDKdetectorThread = new iOSSDKdetectorThread(project);
+        iosSDKdetectorThread.run();
+      }
+      */
     }
-    */
   }
 
   public void disposeComponent() {

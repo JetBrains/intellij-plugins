@@ -3,9 +3,9 @@
 IntelliJ Platform Plugin for PhoneGap/Cordova Application
 
 * PhoneGap Project wizard (not stable)
-* PhoneGap Project importer (recommend)
+* PhoneGap Project importer
 * Run PhoneGap Application from IntelliJ toolbar
-* Ripple Emulator integration (not stable)
+* Ripple Emulator integration
 
 ###About PhoneGap/Cordova
 
@@ -52,7 +52,7 @@ PhoneGapIntelliJPluginの機能は以下の通りです．
 
 * PhoneGapプロジェクトウィザード（開発中）
 * PhoneGapプロジェクトのインポート
-* IntelliJからPhoneGapプロジェクトの実行（エミュレータ）
+* IntelliJからPhoneGapプロジェクトの実行
 
 ###PhoneGap/Cordovaについて
 
@@ -87,17 +87,23 @@ phonegap create my-app
 プロジェクトのインポート
 File -> Import Project -> PhoneGapプロジェクトのルートディレクトリを指定 -> Import form external model -> PhoneGap -> Finish
 
-#####(5)エミュレータ起動
+#####(5)PhoneGapアプリを実行
 Run -> Edit Configuration
-PhoneGapが追加されているはずです．新規Configurationを作成し，実行してください．
+にPhoneGapが追加されているはずです．新規Configurationを作成し，実行してください．
+
+Android : Androidをターゲットにビルドします．
 
 #####(6)デバッグ
 
+Configuration作成時にRipple Emuを選択した場合，Rippleエミュレータを利用出来ます．
+
+Configuration作成時にweinreを選択した場合，weinreによるリモートデバッグを利用出来ます．
 
 ###ToDo
 
 * weinre support
 * Ripple Emulator integration (by NanoHTTPD or HttpServer)
+* GUI builder(sencha touch, Kendo UI, OnsenUI, etc...)
 * LogCat integration(or helper for javaScript debugging)
 * Suggest for PhoneGap function (onDeviceReady(), onSuccess(), ..etc)
 * Windows Phone support
