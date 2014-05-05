@@ -112,6 +112,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   "{{{" { return HbTokenTypes.OPEN_UNESCAPED; }
   "{{&" { return HbTokenTypes.OPEN; }
   "{{!" { yypushback(3); yypopState(); yypushState(comment); }
+  "{{~" { return HbTokenTypes.OPEN; }
   "{{" { return HbTokenTypes.OPEN; }
   "=" { return HbTokenTypes.EQUALS; }
   "."/["}"\t \n\x0B\f\r] { return HbTokenTypes.ID; }
@@ -119,6 +120,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   [\/.] { return HbTokenTypes.SEP; }
   [\t \n\x0B\f\r]* { return HbTokenTypes.WHITE_SPACE; }
   "}}}" { yypopState(); return HbTokenTypes.CLOSE_UNESCAPED; }
+  "~}}" { yypopState(); return HbTokenTypes.CLOSE; }
   "}}" { yypopState(); return HbTokenTypes.CLOSE; }
   \"([^\"\\]|\\.)*\" { return HbTokenTypes.STRING; }
   '([^'\\]|\\.)*' { return HbTokenTypes.STRING; }
