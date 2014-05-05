@@ -40,6 +40,10 @@ public class DartParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testDeferredImport() throws Throwable {
+    doTest();
+  }
+
   public void testErrors() throws Throwable {
     doTest();
   }
