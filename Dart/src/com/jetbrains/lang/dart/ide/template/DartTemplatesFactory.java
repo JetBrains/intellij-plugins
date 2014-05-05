@@ -22,7 +22,7 @@ public class DartTemplatesFactory extends ProjectTemplatesFactory {
   @Override
   public ProjectTemplate[] createTemplates(String group, WizardContext context) {
     return new ProjectTemplate[]{
-      new DartWebApplicationGenerator(), new DartCommandLineApplicationGenerator(), new DartEmptyApplicationGenerator()
+      new DartWebApplicationGenerator(), new DartCommandLineApplicationGenerator()
     };
   }
 

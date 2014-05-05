@@ -94,7 +94,6 @@
     <definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>
 
     <projectTemplatesFactory implementation="com.jetbrains.lang.dart.ide.template.DartTemplatesFactory"/>
-    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartEmptyApplicationGenerator"/>
     <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartCommandLineApplicationGenerator"/>
     <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartWebApplicationGenerator"/>
 
