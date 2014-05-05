@@ -42,15 +42,15 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testCustomTagsCompletion() {
-    myFixture.testCompletion("custom.html", "custom.after.html", "custom.js");
+    myFixture.testCompletion("custom.html", "custom.after.html", "angular.js", "custom.js");
   }
 
   public void testCustomAttributesCompletion() {
-    myFixture.testCompletion("customAttributes.html", "customAttributes.after.html", "custom.js");
+    myFixture.testCompletion("customAttributes.html", "customAttributes.after.html", "angular.js", "custom.js");
   }
 
   public void testCustomTagsResolve() {
-    myFixture.configureByFiles("custom.after.html", "custom.js");
+    myFixture.configureByFiles("custom.after.html", "angular.js", "custom.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
     PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
     assertNotNull(ref);

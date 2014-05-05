@@ -14,6 +14,7 @@ import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
 import com.intellij.xml.impl.schema.AnyXmlElementDescriptor;
 import org.angularjs.codeInsight.DirectiveUtil;
+import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +26,7 @@ import java.util.List;
 public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
   @Override
   public void addTagNameVariants(final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
-    if (!(xmlTag instanceof HtmlTag)) return;
+    if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(xmlTag.getProject()))) return;
 
     final Project project = xmlTag.getProject();
     DirectiveUtil.processTagDirectives(project, new Processor<JSNamedElementProxy>() {
@@ -44,7 +45,7 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
   @Nullable
   @Override
   public XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
-    if (!(xmlTag instanceof HtmlTag)) return null;
+    if (!(xmlTag instanceof HtmlTag && AngularIndexUtil.hasAngularJS(xmlTag.getProject()))) return null;
 
     final String directiveName = DirectiveUtil.normalizeAttributeName(xmlTag.getName());
     final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
