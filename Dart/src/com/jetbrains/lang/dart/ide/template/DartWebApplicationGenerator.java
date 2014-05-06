@@ -93,7 +93,7 @@ public class DartWebApplicationGenerator extends BaseDartApplicationGenerator {
   @Override
   @NotNull
   public String getName() {
-    return DartBundle.message("dart.web.application.title");
+    return DartBundle.message("dart.web.application.title.long");
   }
 
   @Override

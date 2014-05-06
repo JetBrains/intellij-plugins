@@ -3,14 +3,19 @@ package com.jetbrains.lang.dart.ide.template;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.IdeBorderFactory;
 import com.jetbrains.lang.dart.ide.module.DartProjectTemplate;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -22,9 +27,90 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 
 public abstract class BaseDartApplicationGenerator extends DartProjectTemplate<DartProjectWizardData> {
+
+  private class MyDialogWrapper extends DialogWrapper {
+
+    private final GeneratorPeer myPeer;
+    private final JComponent myCenterComponent;
+    private final JTextPane myDescriptionPane;
+
+    protected MyDialogWrapper(@NotNull GeneratorPeer<DartProjectWizardData> peer) {
+      super(true);
+      myPeer = peer;
+      myCenterComponent = peer.getComponent();
+      final Integer preferredDescriptionWidth = getPreferredDescriptionWidth();
+      if (preferredDescriptionWidth == null) {
+        myDescriptionPane = new JTextPane();
+      }
+      else {
+        myDescriptionPane = new JTextPane() {
+          @Override
+          public Dimension getPreferredSize() {
+            // This trick makes text component to carry text over to the next line
+            // iff the text line width exceeds parent's width
+            Dimension dimension = super.getPreferredSize();
+            dimension.width = preferredDescriptionWidth;
+            return dimension;
+          }
+        };
+      }
+      myDescriptionPane.setBorder(IdeBorderFactory.createEmptyBorder(5, 0, 10, 0));
+      Messages.configureMessagePaneUi(myDescriptionPane, getDescription());
+
+      getOKAction().setEnabled(peer.validate() == null);
+      peer.addSettingsStateListener(new SettingsStateListener() {
+        @Override
+        public void stateChanged(boolean validSettings) {
+          getOKAction().setEnabled(validSettings);
+        }
+      });
+      setTitle(BaseDartApplicationGenerator.this.getName());
+      init();
+    }
+
+    @Nullable
+    @Override
+    protected String getHelpId() {
+      return BaseDartApplicationGenerator.this.getHelpId();
+    }
+
+    @Override
+    protected boolean postponeValidation() {
+      return false;
+    }
+
+    @Override
+    protected ValidationInfo doValidate() {
+      ValidationInfo validationInfo = myPeer.validate();
+      if (validationInfo != null && myPeer.isBackgroundJobRunning()) {
+        return null;
+      }
+      return validationInfo;
+    }
+
+    @Nullable
+    @Override
+    protected JComponent createNorthPanel() {
+      return myDescriptionPane;
+    }
+
+    @Override
+    protected JComponent createCenterPanel() {
+      return myCenterComponent;
+    }
+  }
+
+  @Nullable
+  public Integer getPreferredDescriptionWidth() {
+    return null;
+  }
+
+  @Nullable
+  public String getHelpId() { return null; }
 
   public Icon getIcon() {
     return DartIcons.Dart_16;
@@ -51,6 +137,17 @@ public abstract class BaseDartApplicationGenerator extends DartProjectTemplate<D
   @Override
   public GeneratorPeer<DartProjectWizardData> createPeer() { return new DartGeneratorPeer(); }
 
+  @Nullable
+  @Override
+  public DartProjectWizardData showGenerationSettings(final VirtualFile baseDir) throws ProcessCanceledException {
+    GeneratorPeer<DartProjectWizardData> peer = createPeer();
+    DialogWrapper dialog = new MyDialogWrapper(peer);
+    dialog.show();
+    if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
+      throw new ProcessCanceledException();
+    }
+    return peer.getSettings();
+  }
 
   protected  void openFile(final VirtualFile file, final Project project) {
     final Runnable runnable = new Runnable() {

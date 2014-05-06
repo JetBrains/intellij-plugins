@@ -34,7 +34,7 @@ public class DartCommandLineApplicationGenerator extends BaseDartApplicationGene
   @Override
   @NotNull
   public String getName() {
-    return DartBundle.message("dart.commandline.application.title");
+    return DartBundle.message("dart.commandline.application.title.long");
   }
 
   @Override
