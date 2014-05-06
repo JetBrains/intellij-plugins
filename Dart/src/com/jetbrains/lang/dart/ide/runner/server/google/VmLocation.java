@@ -14,6 +14,8 @@
 
 package com.jetbrains.lang.dart.ide.runner.server.google;
 
+import com.intellij.util.io.URLUtil;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -66,6 +68,11 @@ public class VmLocation {
 
   public String getUrl() {
     return url;
+  }
+
+  @Nullable
+  public String getUnescapedUrl() {
+    return url == null ? null : URLUtil.unescapePercentSequences(url);
   }
 
   public JSONObject toJSONObject() throws JSONException {
