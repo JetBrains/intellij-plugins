@@ -30,7 +30,7 @@ public class DartStackFrame extends XStackFrame {
     myVmCallFrame = vmCallFrame;
 
     final VmLocation location = vmCallFrame.getLocation();
-    myLocationUrl = location == null ? null : location.getUrl();
+    myLocationUrl = location == null ? null : location.getUnescapedUrl();
     if (myLocationUrl != null) {
       final VirtualFile file = myDebugProcess.getDartUrlResolver().findFileByDartUrl(myLocationUrl);
       final int line = location.getLineNumber(debugProcess.getVmConnection()) - 1;

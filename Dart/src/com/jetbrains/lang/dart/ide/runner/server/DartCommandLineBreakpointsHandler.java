@@ -69,7 +69,7 @@ public class DartCommandLineBreakpointsHandler {
     for (XLineBreakpoint<?> breakpoint : myInitialBreakpoints) {
       final XSourcePosition sourcePosition = breakpoint.getSourcePosition();
       if (sourcePosition != null &&
-          threeSlashizeFileUrl(sourcePosition.getFile().getUrl()).equals(threeSlashizeFileUrl(vmLocation.getUrl())) &&
+          threeSlashizeFileUrl(sourcePosition.getFile().getUrl()).equals(threeSlashizeFileUrl(vmLocation.getUnescapedUrl())) &&
           sourcePosition.getLine() == vmLocation.getLineNumber(myDebugProcess.getVmConnection()) - 1) {
         return true;
       }
