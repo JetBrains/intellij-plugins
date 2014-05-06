@@ -4,6 +4,7 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfig
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -19,10 +20,10 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
   private JRadioButton androidRadioButton;
   private JRadioButton iOSRadioButton;
   private JRadioButton windowsPhoneRadioButton;
-  private JTextArea runScript;
+  private JRadioButton rippleButton;
   private JCheckBox weinreCheckBox;
   private JCheckBox logCatCheckBox;
-  private JRadioButton rippleButton;
+  private JTextArea runScript;
 
   public PhoneGapConfigurationEditor(Project project) {
     androidRadioButton.addActionListener(new ActionListener() {
@@ -49,11 +50,19 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
       }
     });
     */
+
+    rippleButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        runScript.setText("");
+        runScript.setText("node server.js");
+      }
+    });
   }
 
   @Override
   protected void resetEditorFrom(PhoneGapRunConfiguration phoneGapRunConfiguration) {
-    System.out.println("resetEditor");
+    //System.out.println("resetEditor");
     androidRadioButton.setSelected(false);
     iOSRadioButton.setSelected(false);
     windowsPhoneRadioButton.setSelected(false);
@@ -68,6 +77,10 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
 
     if (iOSRadioButton.isSelected()) {
       phoneGapRunConfiguration.PHONEGAP_PLATFORM = "ios";
+    }
+
+    if (rippleButton.isSelected()) {
+      phoneGapRunConfiguration.PHONEGAP_PLATFORM = "ripple";
     }
 
     if (runScript.getText().length() == 0) {

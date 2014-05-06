@@ -97,17 +97,34 @@ Android : Androidをターゲットにビルドします．
 
 Configuration作成時にRipple Emuを選択した場合，Rippleエミュレータを利用出来ます．
 
+######Rippleエミュレータのインストール
+
+RippleエミュレータはChromeAppです．Chrome Web Storeからインストールしてください．
+Rippleエミュレータに関しては
+
+[Apache Ripple公式サイト](http://ripple.incubator.apache.org/)
+
+######Rippleエミュレータ上での実行
+
+Chromeブラウザで
+
+http://localhost:1337
+
+にアクセスしてください．
+
+
+
 Configuration作成時にweinreを選択した場合，weinreによるリモートデバッグを利用出来ます．
 
 ###ToDo
 
+* Windows support
 * weinre support
 * Ripple Emulator integration (by NanoHTTPD or HttpServer)
 * GUI builder(sencha touch, Kendo UI, OnsenUI, etc...)
 * LogCat integration(or helper for javaScript debugging)
-* Suggest for PhoneGap function (onDeviceReady(), onSuccess(), ..etc)
+* Suggest for PhoneGap function, event (onDeviceReady(), onSuccess(), ..etc)
 * Windows Phone support
 * nvm support
 * PhoneGap Build support
 * Management PhoneGapPlugin (auto download and auto conf config.xml)
-* Component management with Bower (or other tool)

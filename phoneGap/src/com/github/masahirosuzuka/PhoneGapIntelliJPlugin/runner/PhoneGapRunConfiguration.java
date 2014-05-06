@@ -42,7 +42,8 @@ public class PhoneGapRunConfiguration extends RunConfigurationBase {
 
     if ( !(PHONEGAP_PLATFORM.equals("android") ||
         PHONEGAP_PLATFORM.equals("ios") ||
-        PHONEGAP_PLATFORM.equals("windowsphone")) ) {
+        PHONEGAP_PLATFORM.equals("windowsphone")||
+        PHONEGAP_PLATFORM.equals("ripple")) ) {
       throw new RuntimeConfigurationException("PhoneGap Platform is missing");
     }
   }

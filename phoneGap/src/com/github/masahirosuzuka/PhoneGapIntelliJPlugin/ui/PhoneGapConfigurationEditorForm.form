@@ -91,8 +91,8 @@
           <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <enabled value="false"/>
-          <text value="Ripple emu"/>
+          <enabled value="true"/>
+          <text value="Ripple"/>
         </properties>
       </component>
     </children>
@@ -102,6 +102,7 @@
       <member id="dc520"/>
       <member id="45b2c"/>
       <member id="42999"/>
+      <member id="fb4d4"/>
     </group>
   </buttonGroups>
 </form>
