@@ -58,7 +58,7 @@ public class DartTemplatesFactory extends ProjectTemplatesFactory {
 
   @Override
   public Icon getGroupIcon(final String group) {
-    return DartIcons.Dart_24;
+    return DartIcons.Dart_16;
   }
 
 }
