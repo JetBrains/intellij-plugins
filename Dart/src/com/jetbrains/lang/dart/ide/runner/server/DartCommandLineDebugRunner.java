@@ -55,6 +55,7 @@ public class DartCommandLineDebugRunner extends DefaultProgramRunner {
       env,
       filePath,
       ("--debug:" + debuggingPort) + " " + StringUtil.notNullize(configuration.getVMOptions()),
+      StringUtil.notNullize(configuration.getWorkingDirectory()),
       StringUtil.notNullize(configuration.getArguments())
     );
 

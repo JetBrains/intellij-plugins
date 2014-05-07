@@ -2,6 +2,8 @@ package com.jetbrains.lang.dart.ide.runner.server.ui;
 
 import com.intellij.ide.util.TreeFileChooser;
 import com.intellij.ide.util.TreeFileChooserFactory;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
@@ -25,6 +27,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   private TextFieldWithBrowseButton myFileField;
   private RawCommandLineEditor myVMOptions;
   private RawCommandLineEditor myArguments;
+  private TextFieldWithBrowseButton myWorkingDirectory;
 
   public DartCommandLineConfigurationEditorForm(final Project project) {
     myFileField.getButton().addActionListener(new ActionListener() {
@@ -50,6 +53,19 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
         }
       }
     });
+    myWorkingDirectory.getButton().addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(final ActionEvent event) {
+        final VirtualFile virtualFile =
+          FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), project, null);
+            if (virtualFile != null) {
+              final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
+              myWorkingDirectory.setText(path);
+            }
+
+      }
+    });
+
   }
 
   @Override
@@ -57,6 +73,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(configuration.getFilePath())));
     myArguments.setText(StringUtil.notNullize(configuration.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(configuration.getVMOptions()));
+    myWorkingDirectory.setText(StringUtil.notNullize(configuration.getWorkingDirectory()));
   }
 
   @Override
@@ -64,6 +81,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     configuration.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText()), true));
     configuration.setArguments(StringUtil.nullize(myArguments.getText(), true));
     configuration.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
+    configuration.setWorkingDirectory(StringUtil.nullize(myWorkingDirectory.getText(), true));
   }
 
   @NotNull

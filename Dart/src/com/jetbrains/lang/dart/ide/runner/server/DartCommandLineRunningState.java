@@ -11,30 +11,29 @@ import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.PathUtil;
 import com.intellij.util.text.StringTokenizer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
-import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class DartCommandLineRunningState extends CommandLineState {
   private final @NotNull String myFilePath;
   private final @NotNull String myVmOptions;
   private final @NotNull String myArguments;
+  private final @NotNull String myWorkingDirectory;
 
   public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env,
                                      final @NotNull String filePath,
                                      final @NotNull String vmOptions,
+                                     final @NotNull String workingDirectory,
                                      final @NotNull String arguments) {
     super(env);
     myFilePath = filePath;
     myVmOptions = vmOptions;
+    myWorkingDirectory = workingDirectory;
     myArguments = arguments;
 
     final TextConsoleBuilder builder = getConsoleBuilder();
@@ -70,7 +69,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     final GeneralCommandLine commandLine = new GeneralCommandLine();
 
     commandLine.setExePath(dartExePath);
-    commandLine.setWorkDirectory(PathUtil.getParentPath(myFilePath));
+    commandLine.setWorkDirectory(myWorkingDirectory);
     commandLine.setPassParentEnvironment(true);
 
     setupUserProperties(commandLine, libraryFile);
