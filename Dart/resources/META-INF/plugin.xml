@@ -91,7 +91,8 @@
     <definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>
 
     <projectTemplatesFactory implementation="com.jetbrains.lang.dart.ide.template.DartTemplatesFactory"/>
-    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartApplicationGenerator"/>
+    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartCommandLineApplicationGenerator"/>
+    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartWebApplicationGenerator"/>
 
     <projectConfigurable instance="com.jetbrains.lang.dart.sdk.DartConfigurable"
                          id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>

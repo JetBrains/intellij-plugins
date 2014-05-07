@@ -13,10 +13,11 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.platform.WebProjectGenerator;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBLabel;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.module.DartProjectGenerator;
+import com.jetbrains.lang.dart.ide.module.DartProjectTemplate;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
@@ -28,7 +29,7 @@ import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<DartProjectWizardData> {
+public class DartGeneratorPeer implements DartProjectGenerator.GeneratorPeer<DartProjectWizardData> {
   private JPanel myMainPanel;
   private TextFieldWithBrowseButton mySdkPathTextWithBrowse;
   private JBLabel myVersionLabel;
@@ -106,7 +107,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   }
 
   @Override
-  public void addSettingsStateListener(final @NotNull WebProjectGenerator.SettingsStateListener stateListener) {
+  public void addSettingsStateListener(final @NotNull DartProjectTemplate.SettingsStateListener stateListener) {
     // invalid Dartium path is not a blocking error
     mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
