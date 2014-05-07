@@ -29,7 +29,7 @@ public abstract class AngularJSReferenceBase<T extends PsiElement> extends PsiRe
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    AngularJSTemplateCacheReference that = (AngularJSTemplateCacheReference)o;
+    AngularJSReferenceBase that = (AngularJSReferenceBase)o;
 
     if (!myElement.equals(that.myElement)) return false;
 
