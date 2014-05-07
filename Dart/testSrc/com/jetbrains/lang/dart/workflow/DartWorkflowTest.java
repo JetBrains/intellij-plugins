@@ -18,6 +18,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     final String rootUrl = ModuleRootManager.getInstance(myModule).getContentEntries()[0].getUrl();
 
     myFixture.addFileToProject("dir1/pubspec.yaml", "name: project1");
+    myFixture.addFileToProject("dir1/someFolder/lib/foo.dart", "");
     final VirtualFile pubspec2 = myFixture.addFileToProject("dir2/pubspec.yaml", "name: project2").getVirtualFile();
     myFixture.addFileToProject("dir2/bin/foo.dart", "");
     myFixture.addFileToProject("dir2/bin/sub/foo.dart", "");
@@ -36,7 +37,9 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     final VirtualFile pubspec3 = myFixture.addFileToProject("dir2/example/pubspec.yaml", "name: project3\n" +
                                                                                          "dependencies:\n" +
                                                                                          "  project2:\n" +
-                                                                                         "    path: ..").getVirtualFile();
+                                                                                         "    path: ..\n" +
+                                                                                         "  outside_project:\n" +
+                                                                                         "    path: ../../dir1/someFolder").getVirtualFile();
     myFixture.addFileToProject("dir2/example/lib/foo.dart", "");
     myFixture.addFileToProject("dir2/example/lib/sub/foo.dart", "");
     myFixture.addFileToProject("dir2/example/web/foo.dart", "");

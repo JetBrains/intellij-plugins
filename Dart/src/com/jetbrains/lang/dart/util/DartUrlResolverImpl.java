@@ -185,11 +185,12 @@ class DartUrlResolverImpl extends DartUrlResolver {
     final VirtualFile baseDir = myPubspecYamlFile.getParent();
     final Map<String, Object> yamlInfo = getPubspecYamlInfo(myPubspecYamlFile);
     if (baseDir != null && yamlInfo != null) {
-      fillLivePackageNameToDirMap(myLivePackageNameToDirMap, baseDir, yamlInfo);
+      fillLivePackageNameToDirMap(myProject, myLivePackageNameToDirMap, baseDir, yamlInfo);
     }
   }
 
-  private static void fillLivePackageNameToDirMap(final @NotNull Map<String, VirtualFile> packageNameToDirMap,
+  private static void fillLivePackageNameToDirMap(final @NotNull Project project,
+                                                  final @NotNull Map<String, VirtualFile> packageNameToDirMap,
                                                   final @NotNull VirtualFile baseDir,
                                                   final @NotNull Map<String, Object> yamlInfo) {
     final Object name = yamlInfo.get(NAME);
@@ -198,17 +199,19 @@ class DartUrlResolverImpl extends DartUrlResolver {
       packageNameToDirMap.put((String)name, libFolder);
     }
 
-    addPathPackagesToMap(packageNameToDirMap, yamlInfo.get(DEPENDENCIES), baseDir);
-    addPathPackagesToMap(packageNameToDirMap, yamlInfo.get(DEV_DEPENDENCIES), baseDir);
+    addPathPackagesToMap(project, packageNameToDirMap, yamlInfo.get(DEPENDENCIES), baseDir);
+    addPathPackagesToMap(project, packageNameToDirMap, yamlInfo.get(DEV_DEPENDENCIES), baseDir);
   }
 
   // Path packages: https://www.dartlang.org/tools/pub/dependencies.html#path-packages
-  private static void addPathPackagesToMap(final @NotNull Map<String, VirtualFile> packageNameToDirMap,
+  private static void addPathPackagesToMap(final @NotNull Project project,
+                                           final @NotNull Map<String, VirtualFile> packageNameToDirMap,
                                            final @Nullable Object yamlDep,
                                            final @NotNull VirtualFile baseDir) {
     // see com.google.dart.tools.core.pub.PubspecModel#processDependencies
     if (!(yamlDep instanceof Map)) return;
 
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     //noinspection unchecked
     for (Map.Entry<String, Object> packageEntry : ((Map<String, Object>)yamlDep).entrySet()) {
       final String packageName = packageEntry.getKey();
@@ -218,7 +221,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
         final Object pathObj = ((Map)packageEntryValue).get(PATH);
         if (pathObj instanceof String) {
           final VirtualFile packageFolder = VfsUtilCore.findRelativeFile(pathObj + "/" + LIB_DIRECTORY_NAME, baseDir);
-          if (packageFolder != null && packageFolder.isDirectory()) {
+          if (packageFolder != null && packageFolder.isDirectory() && fileIndex.isInContent(packageFolder)) {
             packageNameToDirMap.put(packageName, packageFolder);
           }
         }
