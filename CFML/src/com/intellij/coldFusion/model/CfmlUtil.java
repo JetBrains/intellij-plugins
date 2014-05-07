@@ -32,7 +32,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -308,14 +308,14 @@ public class CfmlUtil {
     return psiFile.getOriginalFile().getVirtualFile();
   }
 
-  public static Pair<String, String> getPrefixAndName(String name) {
+  public static Couple<String> getPrefixAndName(String name) {
     if (name == null) {
-      return Pair.empty();
+      return Couple.getEmpty();
     }
     final int index = name.indexOf(':');
     if (index == -1) {
-      return Pair.create(null, name);
+      return Couple.newOne(null, name);
     }
-    return Pair.create(name.substring(0, index), name.substring(index + 1));
+    return Couple.newOne(name.substring(0, index), name.substring(index + 1));
   }
 }

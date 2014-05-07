@@ -19,7 +19,7 @@ import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
@@ -75,7 +75,7 @@ public class CfmlTagImpl extends CfmlCompositeElement implements CfmlTag {
   @NotNull
   @Override
   public PsiReference[] getReferences() {
-    final Pair<String, String> prefixAndName = CfmlUtil.getPrefixAndName(getName());
+    final Couple<String> prefixAndName = CfmlUtil.getPrefixAndName(getName());
     final String componentName = prefixAndName.getSecond();
     final CfmlImport cfmlImport = CfmlUtil.getImportByPrefix(this, prefixAndName.getFirst());
     PsiElement tagName = findChildByType(CfmlTokenTypes.CF_TAG_NAME);

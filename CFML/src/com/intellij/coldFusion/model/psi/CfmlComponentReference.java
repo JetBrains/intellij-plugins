@@ -28,7 +28,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -221,7 +221,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     }
 
     if (result.isEmpty()) {
-      final Pair<String, String> prefixAndName = CfmlUtil.getPrefixAndName(componentQualifiedName);
+      final Couple<String> prefixAndName = CfmlUtil.getPrefixAndName(componentQualifiedName);
       final String componentName = prefixAndName.getSecond();
       final CfmlImport cfmlImport = CfmlUtil.getImportByPrefix(originalFile, prefixAndName.getFirst());
       if (cfmlImport != null && !StringUtil.isEmpty(componentName)) {
