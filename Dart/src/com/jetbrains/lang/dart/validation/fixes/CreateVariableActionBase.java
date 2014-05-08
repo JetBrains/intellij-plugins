@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.validation.fixes;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -18,7 +17,6 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 abstract public class CreateVariableActionBase extends BaseCreateFix {
-  private static final Logger LOG = Logger.getInstance(CreateVariableActionBase.class);
   protected final String myName;
   protected final boolean myStatic;
 
@@ -36,7 +34,8 @@ abstract public class CreateVariableActionBase extends BaseCreateFix {
   protected boolean isAvailable(Project project, PsiElement element, Editor editor, PsiFile file) {
     if (PsiTreeUtil.getParentOfType(myElement, DartReference.class) == null) return false;
     final PsiElement anchor = findAnchor(element);
-    return anchor != null && !isInDartSdkOrDartPackagesFolder(anchor.getContainingFile());
+    final PsiFile containingFile = anchor == null ? null : anchor.getContainingFile();
+    return containingFile != null && !isInDartSdkOrDartPackagesFolder(containingFile);
   }
 
   @Override
