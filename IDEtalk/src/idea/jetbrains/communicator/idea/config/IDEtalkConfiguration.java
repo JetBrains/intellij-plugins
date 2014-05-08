@@ -61,13 +61,13 @@ public class IDEtalkConfiguration implements Configurable {
 
     myProject = project;
 
-    myFlags.add(new Pair<JCheckBox, OptionFlag>(myHideOffline, OptionFlag.OPTION_HIDE_OFFLINE_USERS));
-    myFlags.add(new Pair<JCheckBox, OptionFlag>(myPlaySoundCheckBox, IdeaFlags.SOUND_ON_MESSAGE));
-    myFlags.add(new Pair<JCheckBox, OptionFlag>(myExpand, IdeaFlags.EXPAND_ON_MESSAGE));
-    myFlags.add(new Pair<JCheckBox, OptionFlag>(myActivateWindow, IdeaFlags.ACTIVATE_WINDOW_ON_MESSAGE));
-    myFlags.add(new Pair<JCheckBox, OptionFlag>(myHideMyFiles, OptionFlag.HIDE_ALL_KEY));
-    myFlags.add(new Pair<JCheckBox, OptionFlag>(myUserEnterKeyToCheckBox, IdeaFlags.USE_ENTER_FOR_MESSAGES));
-    myFlags.add(new Pair<JCheckBox, OptionFlag>(myShowPopup, IdeaFlags.POPUP_ON_MESSAGE));
+    myFlags.add(Pair.create(myHideOffline, OptionFlag.OPTION_HIDE_OFFLINE_USERS));
+    myFlags.add(Pair.create(myPlaySoundCheckBox, IdeaFlags.SOUND_ON_MESSAGE));
+    myFlags.add(Pair.create(myExpand, IdeaFlags.EXPAND_ON_MESSAGE));
+    myFlags.add(Pair.create(myActivateWindow, IdeaFlags.ACTIVATE_WINDOW_ON_MESSAGE));
+    myFlags.add(Pair.create(myHideMyFiles, OptionFlag.HIDE_ALL_KEY));
+    myFlags.add(Pair.create(myUserEnterKeyToCheckBox, IdeaFlags.USE_ENTER_FOR_MESSAGES));
+    myFlags.add(Pair.create(myShowPopup, IdeaFlags.POPUP_ON_MESSAGE));
 
     myOptions = Pico.getOptions();
 

@@ -183,7 +183,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
       return null;
     }
 
-    return new Pair<DomElement, Converter>(paramValueElement, converter);
+    return Pair.create(paramValueElement, converter);
   }
 
 }
