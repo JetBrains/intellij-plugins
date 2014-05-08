@@ -12,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
  * @author Dennis.Ushakov
  */
 public abstract class AngularJSReferenceBase<T extends PsiElement> extends PsiReferenceBase<T> {
-  public AngularJSReferenceBase(T element, TextRange textRange, boolean soft) {
-    super(element, textRange, soft);
+  public AngularJSReferenceBase(T element, TextRange textRange) {
+    super(element, textRange, true);
   }
 
   @Override

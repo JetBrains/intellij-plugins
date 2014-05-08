@@ -28,7 +28,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<String, Function<String, String>>();
   private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<String, Function<PsiElement, String>>();
 
-  public static Set<String> INTERESTING_METHODS = new HashSet<String>();
+  public static final Set<String> INTERESTING_METHODS = new HashSet<String>();
   public static final String CONTROLLER = "controller";
   public static final String DIRECTIVE = "directive";
   public static final String MODULE = "module";
@@ -61,7 +61,6 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final String PARAM = "@param";
   private static final Pattern RESTRICT_PATTERN = Pattern.compile(RESTRICT + "\\s*(.*)");
   private static final Pattern ELEMENT_PATTERN = Pattern.compile(ELEMENT + "\\s*(.*)");
-  private static final Pattern PARAM_PATTERN = Pattern.compile(PARAM + "\\s*\\{([^}]*)}");
 
   @Override
   public void processCallExpression(JSCallExpression callExpression, JSSymbolVisitor visitor) {

@@ -6,7 +6,7 @@ import com.intellij.psi.PsiFile;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by denofevil on 27/11/13.
+ * @author Dennis.Ushakov
  */
 public class AngularTestUtil {
 

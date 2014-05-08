@@ -68,7 +68,7 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
   }
 
   protected class AngularJSExpressionParser extends ExpressionParser<AngularJSParser> {
-    private Key<Boolean> IN_FILTER = Key.create("angular.filter.started");
+    private final Key<Boolean> IN_FILTER = Key.create("angular.filter.started");
 
     public AngularJSExpressionParser() {
       super(AngularJSParser.this);

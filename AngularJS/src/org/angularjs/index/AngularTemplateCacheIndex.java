@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class AngularTemplateCacheIndex extends ScalarIndexExtension<String> {
   public static final ID<String, Void> TEMPLATE_CACHE_INDEX = ID.create("angularjs.template.cache");
-  private DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
+  private final DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
 
   @NotNull
   @Override

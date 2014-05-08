@@ -25,7 +25,7 @@ import java.util.Collection;
  */
 public class AngularJSTemplateCacheReference extends AngularJSReferenceBase<JSLiteralExpression> {
   public AngularJSTemplateCacheReference(@NotNull JSLiteralExpression element) {
-    super(element, ElementManipulators.getValueTextRange(element), true);
+    super(element, ElementManipulators.getValueTextRange(element));
   }
 
   @NotNull

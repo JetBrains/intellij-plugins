@@ -25,7 +25,7 @@ public class AngularJSControllerReferencesProvider extends PsiReferenceProvider 
 
   public static class AngularJSControllerReference extends AngularJSReferenceBase<JSLiteralExpression> {
     public AngularJSControllerReference(@NotNull JSLiteralExpression element) {
-      super(element, ElementManipulators.getValueTextRange(element), true);
+      super(element, ElementManipulators.getValueTextRange(element));
     }
 
     @Nullable
