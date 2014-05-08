@@ -117,7 +117,7 @@ public class FlexUnitTestFinder implements TestFinder {
       for (final JSQualifiedNamedElement jsElement : JSResolveUtil.findElementsByName(nameWithWeight.first, module.getProject(), scope)) {
         if (jsElement instanceof JSClass && jsElement != jsClass && !((JSClass)jsElement).isInterface() &&
             !flexUnitSupport.isTestClass((JSClass)jsElement, true)) {
-          classesWithWeights.add(new Pair<JSQualifiedNamedElement, Integer>(jsElement, nameWithWeight.second));
+          classesWithWeights.add(Pair.create(jsElement, nameWithWeight.second));
         }
       }
     }

@@ -619,7 +619,7 @@ public class FlexStackFrame extends XStackFrame {
                                                        removeTrailingNewLines(previousNameAndValue.second), null, myValueType));
           }
 
-          previousNameAndValue = new Pair<String, StringBuilder>(name, new StringBuilder(token.substring(i + DELIM.length())));
+          previousNameAndValue = Pair.create(name, new StringBuilder(token.substring(i + DELIM.length())));
         }
 
         if (previousNameAndValue != null) {

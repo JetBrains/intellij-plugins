@@ -98,7 +98,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
   @Override
   protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
     ASTNode lbrace = myClass.getNode().findChildByType(JSTokenTypes.LBRACE);
-    return new Pair<JSReferenceExpression, PsiElement>(myRefExpr, lbrace.getPsi());
+    return Pair.create(myRefExpr, lbrace.getPsi());
   }
 
   @Override

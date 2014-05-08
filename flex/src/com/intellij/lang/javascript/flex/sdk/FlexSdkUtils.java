@@ -228,7 +228,7 @@ public class FlexSdkUtils {
     }
 
     if (airRuntime.isDirectory()) {
-      return new Pair<VirtualFile, Boolean>(airRuntime, Boolean.FALSE);
+      return Pair.create(airRuntime, Boolean.FALSE);
     }
     else {
       final String systemTempDirPath = FileUtil.getTempDirectory();
@@ -241,7 +241,7 @@ public class FlexSdkUtils {
 
       try {
         final VirtualFile tempDir = unzip(airRuntime.getPath(), tempDirPath);
-        return new Pair<VirtualFile, Boolean>(tempDir, Boolean.TRUE);
+        return Pair.create(tempDir, Boolean.TRUE);
       }
       catch (IOException e) {
         throw new IOException(

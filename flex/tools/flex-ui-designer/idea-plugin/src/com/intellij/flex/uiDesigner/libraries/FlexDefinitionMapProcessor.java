@@ -28,18 +28,18 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
 
   @SuppressWarnings("unchecked")
   final static Pair<String, String>[] FLEX_LIBS_PATTERNS = new Pair[]{
-    new Pair<String, String>(FRAMEWORK, "FrameworkClasses"),
-    new Pair<String, String>(AIRFRAMEWORK, "AIRFrameworkClasses"),
-    new Pair<String, String>(SPARK, "SparkClasses"),
-    new Pair<String, String>(AIRSPARK, "AIRSparkClasses"),
+    Pair.create(FRAMEWORK, "FrameworkClasses"),
+    Pair.create(AIRFRAMEWORK, "AIRFrameworkClasses"),
+    Pair.create(SPARK, "SparkClasses"),
+    Pair.create(AIRSPARK, "AIRSparkClasses"),
 
-    new Pair<String, String>("mobile.swc", "MobileThemeClasses"),
+    Pair.create("mobile.swc", "MobileThemeClasses"),
 
-    new Pair<String, String>(MX, "MxClasses"),
-    new Pair<String, String>(RPC, "RPCClasses"),
-    new Pair<String, String>(MOBILECOMPONENTS, "MobileComponentsClasses"),
-    new Pair<String, String>("charts", "ChartsClasses"),
-    new Pair<String, String>("sparkskins", "SparkSkinsClasses")};
+    Pair.create(MX, "MxClasses"),
+    Pair.create(RPC, "RPCClasses"),
+    Pair.create(MOBILECOMPONENTS, "MobileComponentsClasses"),
+    Pair.create("charts", "ChartsClasses"),
+    Pair.create("sparkskins", "SparkSkinsClasses")};
 
   @Override
   public void process(THashMap<CharSequence, Definition> definitionMap, AbcMerger abcMerger) throws IOException {

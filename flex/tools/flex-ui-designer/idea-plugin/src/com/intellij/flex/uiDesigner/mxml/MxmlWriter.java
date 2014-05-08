@@ -131,7 +131,7 @@ public class MxmlWriter {
 
       injectedASWriter.write();
       writer.writeMessageHeader(projectComponentReferenceCounter);
-      return new Pair<ProjectComponentReferenceCounter, List<RangeMarker>>(projectComponentReferenceCounter, rangeMarkers);
+      return Pair.create(projectComponentReferenceCounter, rangeMarkers);
     }
     finally {
       token.finish();
