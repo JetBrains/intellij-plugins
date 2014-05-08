@@ -66,6 +66,8 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
       }
     });
 
+    myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
+    myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
   }
 
   @Override

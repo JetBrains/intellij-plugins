@@ -86,6 +86,9 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
         updateScope(getScope());
       }
     });
+
+    myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
+    myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
   }
 
   @Override
