@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.LocatableConfigurationBase;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
@@ -21,18 +20,22 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.PathUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartCommandLineRunConfiguration extends LocatableConfigurationBase {
+public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
   @Nullable
   private String myFilePath = null;
   @Nullable
   private String myVMOptions = null;
   @Nullable
   private String myArguments = null;
+
+  @Override
+  protected void filePathChanged(final @NotNull VirtualFile file) { setFilePath(file.getPath()); }
 
   public DartCommandLineRunConfiguration(String name, Project project, DartCommandLineRunConfigurationType configurationType) {
     super(project, configurationType.getConfigurationFactories()[0], name);
@@ -129,4 +132,5 @@ public class DartCommandLineRunConfiguration extends LocatableConfigurationBase 
   public String suggestedName() {
     return myFilePath == null ? null : PathUtil.getFileName(myFilePath);
   }
+
 }
