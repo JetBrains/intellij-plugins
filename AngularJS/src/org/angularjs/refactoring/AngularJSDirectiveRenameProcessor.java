@@ -61,10 +61,10 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
     @Nullable
     @Override
     public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
-      element = DirectiveUtil.getDirective(element);
-      if (element != null) {
+      JSNamedElementProxy directive = DirectiveUtil.getDirective(element);
+      if (directive != null) {
         if (location instanceof UsageViewTypeLocation) return "directive";
-        return DirectiveUtil.attributeToDirective(((JSNamedElementProxy)element).getName());
+        return DirectiveUtil.attributeToDirective(directive.getName());
       }
       return null;
     }
