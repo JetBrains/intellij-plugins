@@ -1,0 +1,18 @@
+<idea-plugin version="2">
+
+  <name>AppCode Reveal Integration</name>
+  <id>org.jetbrains.appcode-reveal</id>
+  <description>
+    <![CDATA[
+      Provides run and debug actions with <b>Reveal.app</b>.<br>
+      Visit <a href="http://revealapp.com">revealapp.com</a> to learn more about the Reveal.
+    ]]>
+  </description>
+  
+  <vendor>JetBrains</vendor>
+  <depends>com.intellij.modules.appcode</depends>
+  
+  <extensions defaultExtensionNs="appcode">
+    <runConfigurationExtension implementation="org.jetbrains.appcode.reveal.RevealRunConfigurationExtension"/>
+  </extensions>
+</idea-plugin>
