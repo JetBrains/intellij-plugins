@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.template;
+package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.ide.browsers.chrome.ChromeSettings;
 import org.jetbrains.annotations.NotNull;
