@@ -6,6 +6,8 @@ import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.projectImport.ProjectImportProvider;
 
 /**
+ * PhoneGapProjectImportProvider.java
+ *
  * Created by Masahiro Suzuka on 2014/04/08.
  */
 public class PhoneGapProjectImportProvider extends ProjectImportProvider {

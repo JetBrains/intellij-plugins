@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 /**
+ * PhoneGapConfigurationType.java
+ *
  * Created by Masahiro Suzuka on 2014/04/04.
  */
 public class PhoneGapConfigurationType implements ConfigurationType {

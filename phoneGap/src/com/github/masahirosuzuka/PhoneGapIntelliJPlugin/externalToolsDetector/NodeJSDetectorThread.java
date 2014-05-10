@@ -9,6 +9,8 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 
 /**
+ * NodeJSDetectorThread.java
+ *
  * Created by Masahiro Suzuka on 2014/04/22.
  */
 public class NodeJSDetectorThread implements Runnable {

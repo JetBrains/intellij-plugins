@@ -11,6 +11,8 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * PhoneGapModuleBuilder.java
+ *
  * Created by Masahiro Suzuka on 2014/04/13.
  */
 public class PhoneGapModuleBuilder extends ModuleBuilder implements ModuleBuilderListener {

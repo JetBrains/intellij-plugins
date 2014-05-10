@@ -3,6 +3,8 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 
 /**
+ * PhoneGapSettings.java
+ *
  * Created by Masahiro Suzuka on 2014/04/12.
  */
 

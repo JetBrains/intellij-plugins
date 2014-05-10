@@ -9,6 +9,8 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 
 /**
+ * PhoneGapDetectThread.java
+ *
  * Created by Masahiro Suzuka on 2014/04/16.
  */
 public class PhoneGapDetectThread implements Runnable/*, ProcessListener*/ {

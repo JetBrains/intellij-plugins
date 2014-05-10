@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 /**
+ * PhoneGapModuleType.java
+ *
  * Created by Masahiro Suzuka on 2014/04/13.
  */
 public class PhoneGapModuleType extends ModuleType<PhoneGapModuleBuilder> {

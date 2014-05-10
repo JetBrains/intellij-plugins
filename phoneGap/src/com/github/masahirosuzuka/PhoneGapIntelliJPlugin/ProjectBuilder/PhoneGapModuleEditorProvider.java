@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * PhoneGapModuleEditorProvider.java
+ *
  * Created by Masahiro Suzuka on 2014/04/13.
  */
 public class PhoneGapModuleEditorProvider implements ModuleConfigurationEditorProvider {

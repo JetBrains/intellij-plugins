@@ -12,9 +12,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 
 /**
+ * PhoneGapRunProfileState.java
+ *
  * Created by Masahiro Suzuka on 2014/04/06.
  */
 public class PhoneGapRunProfileState extends CommandLineState {

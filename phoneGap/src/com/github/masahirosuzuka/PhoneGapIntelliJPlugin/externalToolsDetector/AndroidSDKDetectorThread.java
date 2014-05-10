@@ -9,6 +9,8 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 
 /**
+ * AndroidSDKDetectorThread.java
+ *
  * Created by Masahiro Suzuka on 2014/04/23.
  */
 public class AndroidSDKDetectorThread implements Runnable {

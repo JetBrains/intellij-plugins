@@ -9,6 +9,8 @@ import com.intellij.projectImport.ProjectImportWizardStep;
 import javax.swing.*;
 
 /**
+ * SelectPhoneGapImportModuleStep.java
+ *
  * Created by Masahiro Suzuka on 2014/04/10.
  */
 public class SelectPhoneGapImportModuleStep extends ProjectImportWizardStep {

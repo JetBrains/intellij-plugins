@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
+ * PhoneGapConfigurationEditor.java
+ *
  * Created by Masahiro Suzuka on 2014/04/06.
  */
 public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfiguration> {

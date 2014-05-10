@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * PhoneGapProjectImportBuilder.java
+ *
  * Created by Masahiro Suzuka on 2014/04/08.
  */
 public class PhoneGapProjectImportBuilder extends ProjectImportBuilder {

@@ -6,6 +6,8 @@ import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * ExternalToolsDetector.java
+ *
  * Created by Masahiro Suzuka on 2014/04/16.
  */
 

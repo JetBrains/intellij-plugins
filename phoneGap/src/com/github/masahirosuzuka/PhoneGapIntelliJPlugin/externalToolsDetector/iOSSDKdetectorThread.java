@@ -9,6 +9,8 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 
 /**
+ * iOSSDKdetectorThread.java
+ *
  * Created by Masahiro Suzuka on 2014/04/25.
  */
 public class iOSSDKdetectorThread implements Runnable{

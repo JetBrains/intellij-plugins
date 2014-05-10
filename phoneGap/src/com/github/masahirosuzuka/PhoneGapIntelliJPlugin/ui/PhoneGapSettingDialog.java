@@ -8,11 +8,17 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 /**
+ * PhoneGapSettingDialog.java
+ * 
  * Created by Masahiro Suzuka on 2014/05/05.
  */
 public class PhoneGapSettingDialog implements Configurable{
 
   private JPanel components;
+  private JTextField nodejsDirField;
+  private JTextField phoneGapDirField;
+  private JTextField androidDirField;
+  private JTextField iosDirField;
 
   @Nls
   @Override

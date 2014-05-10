@@ -5,7 +5,7 @@ IntelliJ Platform Plugin for PhoneGap/Cordova Application
 * PhoneGap Project wizard (not stable)
 * PhoneGap Project importer
 * Run PhoneGap Application from IntelliJ toolbar
-* Ripple Emulator integration
+* Ripple Emulator support
 
 ###About PhoneGap/Cordova
 
@@ -95,23 +95,30 @@ Android : Androidをターゲットにビルドします．
 
 #####(6)デバッグ
 
-Configuration作成時にRipple Emuを選択した場合，Rippleエミュレータを利用出来ます．
+Configuration作成時にRippleを選択した場合，Rippleエミュレータを利用出来ます．
+Rippleエミュレータに関しては
+[Apache Ripple公式サイト](http://ripple.incubator.apache.org/)
+を参照してください．
 
 ######Rippleエミュレータのインストール
 
 RippleエミュレータはChromeAppです．Chrome Web Storeからインストールしてください．
-Rippleエミュレータに関しては
-
-[Apache Ripple公式サイト](http://ripple.incubator.apache.org/)
 
 ######Rippleエミュレータ上での実行
 
-Chromeブラウザで
-
 http://localhost:1337
+にアクセスし，Rippleエミュレータを有効にしてください．
 
-にアクセスしてください．
 
+実行時に生成されるserver.jsはNodeJS上で実行されるhttpサーバです．
+本スクリプトが実行され，Rippleエミュレータにwwwフォルダ以下のファイルが配信されます．
+本スクリプトは自由に編集可能です．独自のカスタマイズを推奨します．
+
+スクリプトに関しては
+
+https://github.com/masahirosuzuka/simpleserver
+
+を参照してください．
 
 
 Configuration作成時にweinreを選択した場合，weinreによるリモートデバッグを利用出来ます．
@@ -120,7 +127,6 @@ Configuration作成時にweinreを選択した場合，weinreによるリモー�
 
 * Windows support
 * weinre support
-* Ripple Emulator integration (by NanoHTTPD or HttpServer)
 * GUI builder(sencha touch, Kendo UI, OnsenUI, etc...)
 * LogCat integration(or helper for javaScript debugging)
 * Suggest for PhoneGap function, event (onDeviceReady(), onSuccess(), ..etc)

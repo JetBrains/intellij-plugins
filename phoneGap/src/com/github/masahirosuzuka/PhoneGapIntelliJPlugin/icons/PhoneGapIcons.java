@@ -5,6 +5,8 @@ import com.intellij.openapi.util.IconLoader;
 import javax.swing.*;
 
 /**
+ * PhoneGapIcons.java
+ *
  * Created by Masahiro Suzuka on 2014/04/09.
  */
 public class PhoneGapIcons {
