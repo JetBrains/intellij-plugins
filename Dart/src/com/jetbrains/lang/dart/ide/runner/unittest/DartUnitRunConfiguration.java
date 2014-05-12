@@ -52,7 +52,7 @@ public class DartUnitRunConfiguration extends DartRunConfigurationBase {
   @Nullable
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
     final Project project = env.getProject();
-    final String path = myRunnerParameters.getFilePath();
+    final String path = getFilePath();
     if (path == null || VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(path)) == null) {
       throw new ExecutionException("Can't find file: " + path);
     }
@@ -79,6 +79,10 @@ public class DartUnitRunConfiguration extends DartRunConfigurationBase {
       throw new RuntimeConfigurationException("Not a Dart file");
     }
   }
+
+  @Nullable
+  @Override
+  public String getFilePath() { return myRunnerParameters.getFilePath(); }
 
   @Override
   public void writeExternal(final Element element) throws WriteExternalException {

@@ -37,13 +37,14 @@ public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
   @Override
   protected void filePathChanged(final @NotNull VirtualFile file) { setFilePath(file.getPath()); }
 
-  public DartCommandLineRunConfiguration(String name, Project project, DartCommandLineRunConfigurationType configurationType) {
-    super(project, configurationType.getConfigurationFactories()[0], name);
-  }
-
   @Nullable
+  @Override
   public String getFilePath() {
     return myFilePath;
+  }
+
+  public DartCommandLineRunConfiguration(String name, Project project, DartCommandLineRunConfigurationType configurationType) {
+    super(project, configurationType.getConfigurationFactories()[0], name);
   }
 
   public void setFilePath(@Nullable String fileUrl) {
