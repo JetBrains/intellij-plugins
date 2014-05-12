@@ -80,10 +80,10 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
 
   @Override
   protected void applyEditorTo(DartCommandLineRunConfiguration configuration) throws ConfigurationException {
-    configuration.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText()), true));
+    configuration.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
     configuration.setArguments(StringUtil.nullize(myArguments.getText(), true));
     configuration.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
-    configuration.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText()), true));
+    configuration.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
   }
 
   @NotNull
