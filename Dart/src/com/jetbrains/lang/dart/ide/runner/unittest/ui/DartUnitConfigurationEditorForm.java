@@ -97,7 +97,7 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
     myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
-    myWorkingDirectory.setText(StringUtil.notNullize(parameters.getWorkingDirectory()));
+    myWorkingDirectory.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getWorkingDirectory())));
     if (parameters.getScope() != DartUnitRunnerParameters.Scope.ALL) {
       myTestNameField.setText(StringUtil.notNullize(parameters.getTestName()));
     }
@@ -141,7 +141,7 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
     final DartUnitRunnerParameters parameters = configuration.getRunnerParameters();
     parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText()), true));
     parameters.setArguments(StringUtil.nullize(myArguments.getText(), true));
-    parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
+    parameters.setVMOptions(StringUtil.nullize(FileUtil.toSystemIndependentName(myVMOptions.getText()), true));
     parameters.setWorkingDirectory(StringUtil.nullize(myWorkingDirectory.getText(), true));
     parameters.setScope(getScope());
     if (getScope() != DartUnitRunnerParameters.Scope.ALL) {
