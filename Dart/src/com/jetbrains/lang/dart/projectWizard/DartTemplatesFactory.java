@@ -20,12 +20,10 @@ public class DartTemplatesFactory extends ProjectTemplatesFactory {
     return new String[]{GROUP_NAME};
   }
 
-  /*
   @Override
   public String getParentGroup(String group) {
     return WebModuleBuilder.GROUP_NAME;
   }
-  */
 
   @NotNull
   @Override
