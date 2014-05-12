@@ -77,35 +77,44 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     final Pair<Module, VirtualFile> moduleAndPubspecYamlFile = getModuleAndPubspecYamlFile(e);
     if (moduleAndPubspecYamlFile == null) return;
 
+    final Module module = moduleAndPubspecYamlFile.first;
+    final VirtualFile pubspecYamlFile = moduleAndPubspecYamlFile.second;
+
+    performPubAction(module, pubspecYamlFile, true);
+  }
+
+  public void performPubAction(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile, final boolean allowModalDialogs) {
     DartSdk sdk = DartSdk.getGlobalDartSdk();
-    if (sdk == null) {
-      final int answer = Messages.showDialog(moduleAndPubspecYamlFile.first.getProject(), "Dart SDK is not configured",
+
+    if (sdk == null && allowModalDialogs) {
+      final int answer = Messages.showDialog(module.getProject(), "Dart SDK is not configured",
                                              getPresentableText(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
       if (answer != 0) return;
 
-      ShowSettingsUtil.getInstance().showSettingsDialog(moduleAndPubspecYamlFile.first.getProject(), DartBundle.message("dart.title"));
-
+      ShowSettingsUtil.getInstance().showSettingsDialog(module.getProject(), DartBundle.message("dart.title"));
       sdk = DartSdk.getGlobalDartSdk();
-      if (sdk == null) return;
     }
 
+    if (sdk == null) return;
+
     File pubFile = new File(sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/pub.bat" : "/bin/pub"));
-    if (!pubFile.isFile()) {
+    if (!pubFile.isFile() && allowModalDialogs) {
       final int answer =
-        Messages.showDialog(moduleAndPubspecYamlFile.first.getProject(), DartBundle.message("dart.sdk.bad.dartpub.path", pubFile.getPath()),
+        Messages.showDialog(module.getProject(), DartBundle.message("dart.sdk.bad.dartpub.path", pubFile.getPath()),
                             getPresentableText(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
       if (answer != 0) return;
 
-      ShowSettingsUtil.getInstance().showSettingsDialog(moduleAndPubspecYamlFile.first.getProject(), DartBundle.message("dart.title"));
+      ShowSettingsUtil.getInstance().showSettingsDialog(module.getProject(), DartBundle.message("dart.title"));
 
       sdk = DartSdk.getGlobalDartSdk();
       if (sdk == null) return;
 
       pubFile = new File(sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/pub.bat" : "/bin/pub"));
-      if (!pubFile.isFile()) return;
     }
 
-    doExecute(moduleAndPubspecYamlFile.first, moduleAndPubspecYamlFile.second, sdk.getHomePath(), pubFile.getPath());
+    if (!pubFile.isFile()) return;
+
+    doExecute(module, pubspecYamlFile, sdk.getHomePath(), pubFile.getPath());
   }
 
   private void doExecute(final Module module, final VirtualFile pubspecYamlFile, final String sdkPath, final String pubPath) {

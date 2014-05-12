@@ -1,9 +1,12 @@
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -13,10 +16,12 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.actions.DartPubGetAction;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,7 +75,7 @@ public class DartEmptyProjectGenerator extends WebProjectTemplate<DartProjectWiz
         try {
           final VirtualFile[] filesToOpen = doGenerateProject(module, baseDir);
           if (filesToOpen.length > 0) {
-            scheduleFilesOpening(project, filesToOpen);
+            scheduleFilesOpeningAndPubGet(project, filesToOpen);
           }
         }
         catch (IOException ignore) {/* unlucky */}
@@ -120,13 +125,21 @@ public class DartEmptyProjectGenerator extends WebProjectTemplate<DartProjectWiz
     DartiumUtil.applyDartiumSettings(FileUtilRt.toSystemIndependentName(data.dartiumPath), data.dartiumSettings);
   }
 
-  private static void scheduleFilesOpening(final @NotNull Project project, final @NotNull VirtualFile[] files) {
+  private static void scheduleFilesOpeningAndPubGet(final @NotNull Project project, final @NotNull VirtualFile[] files) {
     final Runnable runnable = new Runnable() {
       @Override
       public void run() {
         final FileEditorManager manager = FileEditorManager.getInstance(project);
         for (VirtualFile file : files) {
           manager.openFile(file, true);
+
+          if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName())) {
+            final AnAction pubGetAction = ActionManager.getInstance().getAction("Dart.pub.get");
+            final Module module = ModuleUtilCore.findModuleForFile(file, project);
+            if (pubGetAction instanceof DartPubGetAction && module != null) {
+              ((DartPubGetAction)pubGetAction).performPubAction(module, file, false);
+            }
+          }
         }
       }
     };
