@@ -8,17 +8,17 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.IconLoader;
 import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
 import com.jetbrains.cidr.execution.BuildDestination;
 import com.jetbrains.cidr.execution.IOSBuildDestination;
+import icons.AppcodeRevealIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.File;
 
 public class RefreshRevealAction extends AnAction implements AnAction.TransparentUpdate {
-  public static final Icon ICON = IconLoader.getIcon("/icons/RunWithReveal.png");
+  public static final Icon ICON = AppcodeRevealIcons.RunWithReveal;
 
   @NotNull private final AppCodeRunConfiguration myConfiguration;
   @NotNull private final ExecutionEnvironment myEnvironment;
