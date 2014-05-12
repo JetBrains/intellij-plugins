@@ -126,7 +126,7 @@ public class DartEmptyProjectGenerator extends WebProjectTemplate<DartProjectWiz
   }
 
   private static void scheduleFilesOpeningAndPubGet(final @NotNull Project project, final @NotNull VirtualFile[] files) {
-    final Runnable runnable = new Runnable() {
+    StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
       @Override
       public void run() {
         final FileEditorManager manager = FileEditorManager.getInstance(project);
@@ -142,13 +142,6 @@ public class DartEmptyProjectGenerator extends WebProjectTemplate<DartProjectWiz
           }
         }
       }
-    };
-
-    if (project.isInitialized()) {
-      runnable.run();
-    }
-    else {
-      StartupManager.getInstance(project).registerPostStartupActivity(runnable);
-    }
+    });
   }
 }
