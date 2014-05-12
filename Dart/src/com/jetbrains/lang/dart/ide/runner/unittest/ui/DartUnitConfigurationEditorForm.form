@@ -8,7 +8,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="aecbe" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="aecbe" layout-manager="GridLayoutManager" row-count="6" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -27,7 +27,8 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Test File:"/>
+              <labelFor value="17e7a"/>
+              <text value="Test &amp;File:"/>
             </properties>
           </component>
           <component id="c23d5" class="javax.swing.JLabel">
@@ -35,7 +36,8 @@
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="VM options:"/>
+              <labelFor value="c3dd1"/>
+              <text value="&amp;VM options:"/>
             </properties>
           </component>
           <component id="c3dd1" class="com.intellij.ui.RawCommandLineEditor" binding="myVMOptions">
@@ -49,7 +51,8 @@
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Program arguments:"/>
+              <labelFor value="103fd"/>
+              <text value="Program a&amp;rguments:"/>
             </properties>
           </component>
           <component id="103fd" class="com.intellij.ui.RawCommandLineEditor" binding="myArguments">
@@ -129,6 +132,21 @@
               </grid>
             </children>
           </grid>
+          <component id="6ed0f" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <labelFor value="4d125"/>
+              <text value="&amp;Working directory:"/>
+            </properties>
+          </component>
+          <component id="4d125" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myWorkingDirectory">
+            <constraints>
+              <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+          </component>
         </children>
       </grid>
     </children>

@@ -80,8 +80,13 @@ public class DartUnitRunningState extends CommandLineState {
     final DartUnitRunConfiguration runConfiguration = (DartUnitRunConfiguration)env.getRunProfile();
     final DartUnitRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
 
-    final DartConsoleFilter filter =
-      new DartConsoleFilter(project, LocalFileSystem.getInstance().findFileByPath(runnerParameters.getFilePath()));
+    VirtualFile file = null;
+    final String filePath = runnerParameters.getFilePath();
+    if (filePath != null) {
+      file = LocalFileSystem.getInstance().findFileByPath(filePath);
+    }
+
+    final DartConsoleFilter filter = new DartConsoleFilter(project, file);
 
     TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(runConfiguration, DART_FRAMEWORK_NAME, env.getExecutor());
     testConsoleProperties.setUsePredefinedMessageFilter(false);
@@ -113,10 +118,14 @@ public class DartUnitRunningState extends CommandLineState {
 
   public GeneralCommandLine getCommand() throws ExecutionException {
     final GeneralCommandLine commandLine = new GeneralCommandLine();
-    final VirtualFile realFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(myUnitParameters.getFilePath()));
+    final String filePath = myUnitParameters.getFilePath();
+    final VirtualFile realFile = filePath == null ? null : VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(filePath));
 
     commandLine.setExePath(DartSdkUtil.getDartExePath(myDartSdk));
-    if (realFile != null) {
+    final String workingDirectory = myUnitParameters.getWorkingDirectory();
+    if (workingDirectory != null) {
+      commandLine.setWorkDirectory(workingDirectory);
+    } else if (realFile != null) {
       commandLine.setWorkDirectory(realFile.getParent().getPath());
     }
     commandLine.setPassParentEnvironment(true);
@@ -134,12 +143,15 @@ public class DartUnitRunningState extends CommandLineState {
       commandLine.addParameter(argumentsTokenizer.nextToken());
     }
 
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(myUnitParameters.getFilePath());
-    if (file != null) {
-      final VirtualFile[] packageRoots = DartUrlResolver.getInstance(getEnvironment().getProject(), file).getPackageRoots();
-      if (packageRoots.length > 0) {
-        // more than one package root is not supported by the [SDK]/bin/dart tool
-        commandLine.addParameter("--package-root=" + packageRoots[0].getPath());
+    final String filePath = myUnitParameters.getFilePath();
+    if (filePath != null) {
+      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+      if (file != null) {
+        final VirtualFile[] packageRoots = DartUrlResolver.getInstance(getEnvironment().getProject(), file).getPackageRoots();
+        if (packageRoots.length > 0) {
+          // more than one package root is not supported by the [SDK]/bin/dart tool
+          commandLine.addParameter("--package-root=" + packageRoots[0].getPath());
+        }
       }
     }
 
@@ -164,6 +176,7 @@ public class DartUnitRunningState extends CommandLineState {
   private String createPatchedFile() throws IOException {
     final File file = new File(FileUtil.getTempDirectory(), UNIT_CONFIG_FILE_NAME);
     if (!file.exists()) {
+      //noinspection ResultOfMethodCallIgnored
       file.createNewFile();
     }
 
@@ -173,8 +186,9 @@ public class DartUnitRunningState extends CommandLineState {
     String runnerCode = getRunnerCode();
     runnerCode = runnerCode.replaceFirst("DART_UNITTEST", "package:unittest/unittest.dart");
     runnerCode = runnerCode.replaceFirst("NAME", StringUtil.notNullize(name));
-    runnerCode = runnerCode.replaceFirst("SCOPE", scope.toString());
-    runnerCode = runnerCode.replaceFirst("TEST_FILE_PATH", pathToDartUrl(myUnitParameters.getFilePath()));
+    runnerCode = runnerCode.replaceFirst("SCOPE", scope == null ? "" : scope.toString());
+    final String filePath = myUnitParameters.getFilePath();
+    runnerCode = runnerCode.replaceFirst("TEST_FILE_PATH", filePath == null ? "" : pathToDartUrl(filePath));
 
     FileUtil.writeToFile(file, runnerCode);
 

@@ -2,6 +2,8 @@ package com.jetbrains.lang.dart.ide.runner.unittest.ui;
 
 import com.intellij.ide.util.TreeFileChooser;
 import com.intellij.ide.util.TreeFileChooserFactory;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
@@ -36,6 +38,7 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
   private JTextField myTestNameField;
   private JPanel myTestNamePanel;
   private JPanel myAdditionalPanel;
+  private TextFieldWithBrowseButton myWorkingDirectory;
 
   public DartUnitConfigurationEditorForm(final Project project) {
     myFileField.getButton().addActionListener(new ActionListener() {
@@ -61,6 +64,18 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
       }
     });
 
+    myWorkingDirectory.getButton().addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(final ActionEvent event) {
+        final VirtualFile virtualFile =
+          FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), project, null);
+        if (virtualFile != null) {
+          final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
+          myWorkingDirectory.setText(path);
+        }
+      }
+    });
+
     for (DartUnitRunnerParameters.Scope scope : DartUnitRunnerParameters.Scope.values()) {
       myScopeCombo.addItem(StringUtil.capitalize(scope.toString().toLowerCase()));
     }
@@ -71,6 +86,9 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
         updateScope(getScope());
       }
     });
+
+    myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
+    myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
   }
 
   @Override
@@ -79,6 +97,7 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
     myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
+    myWorkingDirectory.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getWorkingDirectory())));
     if (parameters.getScope() != DartUnitRunnerParameters.Scope.ALL) {
       myTestNameField.setText(StringUtil.notNullize(parameters.getTestName()));
     }
@@ -120,9 +139,10 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
   @Override
   protected void applyEditorTo(DartUnitRunConfiguration configuration) throws ConfigurationException {
     final DartUnitRunnerParameters parameters = configuration.getRunnerParameters();
-    parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText()), true));
+    parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
     parameters.setArguments(StringUtil.nullize(myArguments.getText(), true));
     parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
+    parameters.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
     parameters.setScope(getScope());
     if (getScope() != DartUnitRunnerParameters.Scope.ALL) {
       parameters.setTestName(StringUtil.nullize(myTestNameField.getText()));
