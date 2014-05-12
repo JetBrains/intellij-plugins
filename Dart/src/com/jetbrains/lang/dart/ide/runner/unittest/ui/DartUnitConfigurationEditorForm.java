@@ -141,8 +141,8 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
     final DartUnitRunnerParameters parameters = configuration.getRunnerParameters();
     parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText()), true));
     parameters.setArguments(StringUtil.nullize(myArguments.getText(), true));
-    parameters.setVMOptions(StringUtil.nullize(FileUtil.toSystemIndependentName(myVMOptions.getText()), true));
-    parameters.setWorkingDirectory(StringUtil.nullize(myWorkingDirectory.getText(), true));
+    parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
+    parameters.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText()), true));
     parameters.setScope(getScope());
     if (getScope() != DartUnitRunnerParameters.Scope.ALL) {
       parameters.setTestName(StringUtil.nullize(myTestNameField.getText()));
