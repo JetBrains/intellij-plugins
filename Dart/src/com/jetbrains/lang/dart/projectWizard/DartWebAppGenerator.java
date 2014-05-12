@@ -1,10 +1,20 @@
 package com.jetbrains.lang.dart.projectWizard;
 
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.impl.WebBrowserServiceImpl;
+import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
+import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.util.Url;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -100,6 +110,31 @@ public class DartWebAppGenerator extends DartEmptyProjectGenerator {
                               "  user-select: none;\n" +
                               "}\n").getBytes());
 
+    createRunConfiguration(module, htmlFile);
+
     return new VirtualFile[]{pubspecFile, htmlFile, cssFile, dartFile};
+  }
+
+  private static void createRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile htmlFile) {
+    final WebBrowser dartium = DartiumUtil.getDartiumBrowser();
+    if (dartium == null) return;
+
+    final PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(htmlFile);
+    final Url url = psiFile == null ? null : WebBrowserServiceImpl.getUrlForContext(psiFile);
+    if (url == null) return;
+
+    final RunManager runManager = RunManager.getInstance(module.getProject());
+    try {
+      final RunnerAndConfigurationSettings settings =
+        runManager.createRunConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().getFactory());
+
+      ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
+      ((JavaScriptDebugConfiguration)settings.getConfiguration()).setEngineId(dartium.getId().toString());
+      settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
+
+      runManager.addConfiguration(settings, false);
+      runManager.setSelectedConfiguration(settings);
+    }
+    catch (Throwable t) {/* ClassNotFound in IDEA Community or if JS Debugger plugin disabled */}
   }
 }

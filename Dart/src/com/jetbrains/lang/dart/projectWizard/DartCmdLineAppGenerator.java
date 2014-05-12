@@ -1,10 +1,13 @@
 package com.jetbrains.lang.dart.projectWizard;
 
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.projectWizard.DartEmptyProjectGenerator;
+import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
+import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +40,21 @@ public class DartCmdLineAppGenerator extends DartEmptyProjectGenerator {
     mainFile.setBinaryContent(("void main() {\n" +
                                "  print('Hello, World!');\n" +
                                "}\n").getBytes());
+
+    createRunConfiguration(module, mainFile);
+
     return new VirtualFile[]{pubspecFile, mainFile};
+  }
+
+  private static void createRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile mainDartFile) {
+    final RunManager runManager = RunManager.getInstance(module.getProject());
+    final RunnerAndConfigurationSettings settings =
+      runManager.createRunConfiguration("", DartCommandLineRunConfigurationType.getInstance().getConfigurationFactories()[0]);
+
+    ((DartCommandLineRunConfiguration)settings.getConfiguration()).setFilePath(mainDartFile.getPath());
+    settings.setName(((DartCommandLineRunConfiguration)settings.getConfiguration()).suggestedName());
+
+    runManager.addConfiguration(settings, false);
+    runManager.setSelectedConfiguration(settings);
   }
 }
