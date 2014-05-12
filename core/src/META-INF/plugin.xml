@@ -10,7 +10,6 @@
   <category>Web/JavaEE Technologies</category>
 
   <!--<helpset file="help.jar" path="/Help.hs"/>-->
-  <depends optional="true" config-file="intellilang-tapestry-support.xml">org.intellij.intelliLang</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
