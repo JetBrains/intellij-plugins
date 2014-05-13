@@ -9,17 +9,17 @@ import com.google.gson.Gson;
 import com.google.jstestdriver.JsTestDriverServer;
 import com.google.jstestdriver.idea.TestRunner;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
-import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
-import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
+import com.google.jstestdriver.idea.server.JstdServer;
+import com.google.jstestdriver.idea.server.JstdServerRegistry;
 import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.google.jstestdriver.idea.util.TestFileScope;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
@@ -53,7 +53,7 @@ import static java.io.File.pathSeparator;
 /**
  * @author Sergey Simonchik
  */
-public class JstdTestRunnerCommandLineState extends CommandLineState {
+public class JstdTestRunnerCommandLineState implements RunProfileState {
 
   private static final String JSTD_FRAMEWORK_NAME = "JsTestDriver";
   private static final Function<File, String> GET_ABSOLUTE_PATH = new Function<File, String>() {
@@ -69,14 +69,11 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
   private final String myCoverageFilePath;
   private final boolean myDebug;
 
-  public JstdTestRunnerCommandLineState(
-    @NotNull Project project,
-    @NotNull ExecutionEnvironment executionEnvironment,
-    @NotNull JstdRunSettings runSettings,
-    @Nullable String coverageFilePath,
-    boolean debug)
-  {
-    super(executionEnvironment);
+  public JstdTestRunnerCommandLineState(@NotNull Project project,
+                                        @NotNull ExecutionEnvironment executionEnvironment,
+                                        @NotNull JstdRunSettings runSettings,
+                                        @Nullable String coverageFilePath,
+                                        boolean debug) {
     myProject = project;
     myExecutionEnvironment = executionEnvironment;
     myRunSettings = runSettings;
@@ -87,24 +84,34 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
   @Override
   @NotNull
   public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
-    ProcessHandler processHandler = startProcess();
-    ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment, executor);
+    String serverUrl = getServerUrl();
+    ProcessHandler processHandler = startProcess(serverUrl);
+    ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment);
     consoleView.attachToProcess(processHandler);
-
     DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
-    executionResult.setRestartActions(new ToggleAutoTestAction(getEnvironment()));
+    executionResult.setRestartActions(new ToggleAutoTestAction(myExecutionEnvironment));
     return executionResult;
   }
 
+  @NotNull
+  private String getServerUrl() throws ExecutionException {
+    if (myRunSettings.isExternalServerType()) {
+      return myRunSettings.getServerAddress();
+    }
+    JstdServer server = JstdServerRegistry.getInstance().getServer();
+    if (server == null || !server.isProcessRunning()) {
+      throw new ExecutionException("JsTestDriver server is not running unexpectedly");
+    }
+    return server.getServerUrl();
+  }
+
   private static ConsoleView createConsole(@NotNull Project project,
-                                           @NotNull ExecutionEnvironment env,
-                                           Executor executor)
-    throws ExecutionException {
+                                           @NotNull ExecutionEnvironment env) throws ExecutionException {
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
     TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(
       runConfiguration,
       JSTD_FRAMEWORK_NAME,
-      executor
+      env.getExecutor()
     );
     testConsoleProperties.setUsePredefinedMessageFilter(false);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
@@ -123,9 +130,8 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
   }
 
   @NotNull
-  @Override
-  protected ProcessHandler startProcess() throws ExecutionException {
-    Map<TestRunner.ParameterKey, String> params = createParameterMap();
+  private ProcessHandler startProcess(@NotNull String serverUrl) throws ExecutionException {
+    Map<TestRunner.ParameterKey, String> params = createParameterMap(serverUrl);
     GeneralCommandLine commandLine = createCommandLine(params);
 
     OSProcessHandler osProcessHandler = new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString());
@@ -149,7 +155,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
 
     commandLine.addParameter(TestRunner.class.getName());
     for (Map.Entry<TestRunner.ParameterKey, String> param : parameters.entrySet()) {
-      String keyValue = EscapeUtils.join(Arrays.asList(param.getKey().name().toLowerCase(), param.getValue()), '=');
+      String keyValue = EscapeUtils.join(Arrays.asList(param.getKey().name().toLowerCase(Locale.ENGLISH), param.getValue()), '=');
       commandLine.addParameter("--" + keyValue);
     }
 
@@ -177,11 +183,9 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
     return classpath;
   }
 
-  public Map<TestRunner.ParameterKey, String> createParameterMap() throws ExecutionException {
+  @NotNull
+  private Map<TestRunner.ParameterKey, String> createParameterMap(@NotNull String serverUrl) throws ExecutionException {
     Map<TestRunner.ParameterKey, String> parameters = Maps.newLinkedHashMap();
-    String serverUrl = myRunSettings.getServerType() == ServerType.INTERNAL ?
-                       "http://127.0.0.1:" + JstdToolWindowPanel.serverPort :
-                       myRunSettings.getServerAddress();
     parameters.put(TestRunner.ParameterKey.SERVER_URL, serverUrl);
     TestType testType = myRunSettings.getTestType();
     if (testType == TestType.ALL_CONFIGS_IN_DIRECTORY) {

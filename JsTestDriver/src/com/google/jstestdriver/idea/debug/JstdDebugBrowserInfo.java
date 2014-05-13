@@ -1,23 +1,19 @@
 package com.google.jstestdriver.idea.debug;
 
-import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
-import com.google.jstestdriver.idea.server.JstdServerState;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.ide.browsers.BrowserFamily;
+import com.google.jstestdriver.idea.server.JstdBrowserInfo;
+import com.google.jstestdriver.idea.server.JstdServer;
+import com.google.jstestdriver.idea.server.JstdServerRegistry;
+import com.google.jstestdriver.idea.server.JstdServerSettings;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
 * @author Sergey Simonchik
@@ -25,15 +21,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class JstdDebugBrowserInfo {
 
   private final Pair<JSDebugEngine, WebBrowser> myDebugEngine;
-  private final String myCapturedBrowserUrl;
-  private final SlaveBrowser mySlaveBrowser;
+  private final JstdServerSettings myServerSettings;
+  private final JstdBrowserInfo myBrowserInfo;
 
   private JstdDebugBrowserInfo(@NotNull Pair<JSDebugEngine, WebBrowser> debugEngine,
-                               @NotNull String capturedBrowserUrl,
-                               @NotNull SlaveBrowser slaveBrowser) {
-    myCapturedBrowserUrl = capturedBrowserUrl;
+                               @NotNull JstdServerSettings serverSettings,
+                               @NotNull JstdBrowserInfo browserInfo) {
     myDebugEngine = debugEngine;
-    mySlaveBrowser = slaveBrowser;
+    myServerSettings = serverSettings;
+    myBrowserInfo = browserInfo;
   }
 
   @NotNull
@@ -47,57 +43,37 @@ public class JstdDebugBrowserInfo {
   }
 
   @NotNull
-  public String getCapturedBrowserUrl() {
-    return myCapturedBrowserUrl;
+  public JstdServerSettings getServerSettings() {
+    return myServerSettings;
   }
 
-  public void fixIfChrome(@NotNull ProcessHandler processHandler) {
-    if (!(myDebugEngine.second.getFamily().equals(BrowserFamily.CHROME))) {
-      return;
-    }
-    final AtomicBoolean done = new AtomicBoolean(false);
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        while (!done.get()) {
-          mySlaveBrowser.heartBeat();
-          try {
-            //noinspection BusyWait
-            Thread.sleep(5000);
-          }
-          catch (InterruptedException ignored) {
-          }
-        }
-      }
-    });
-    processHandler.addProcessListener(new ProcessAdapter() {
-      @Override
-      public void processTerminated(ProcessEvent event) {
-        done.set(true);
-      }
-    });
+  @NotNull
+  public String getPath() {
+    return "/slave/id/" + myBrowserInfo.getId()
+           + "/page/CONSOLE/mode/quirks/timeout/" + myServerSettings.getBrowserTimeoutMillis()
+           + "/upload_size/50/rt/CLIENT";
   }
 
   @Nullable
-  public static JstdDebugBrowserInfo build(@NotNull JstdRunSettings settings) {
-    JstdServerState jstdServerState = JstdServerState.getInstance();
-    CapturedBrowsers browsers = jstdServerState.getCaptured();
-    if (browsers == null) {
+  public static JstdDebugBrowserInfo build(@NotNull JstdRunSettings runSettings) {
+    JstdServer server = JstdServerRegistry.getInstance().getServer();
+    if (server == null || !server.isProcessRunning()) {
       return null;
     }
+    Collection<JstdBrowserInfo> capturedBrowsers = server.getCapturedBrowsers();
 
     List<JstdDebugBrowserInfo> debugBrowserInfos = new SmartList<JstdDebugBrowserInfo>();
-    for (SlaveBrowser slaveBrowser : browsers.getSlaveBrowsers()) {
-      Pair<JSDebugEngine, WebBrowser> engine = JSDebugEngine.findByBrowserName(slaveBrowser.getBrowserInfo().getName());
+    for (JstdBrowserInfo browserInfo : capturedBrowsers) {
+      Pair<JSDebugEngine, WebBrowser> engine = JSDebugEngine.findByBrowserName(browserInfo.getName());
       if (engine != null) {
-        debugBrowserInfos.add(new JstdDebugBrowserInfo(engine, slaveBrowser.getCaptureUrl(), slaveBrowser));
+        debugBrowserInfos.add(new JstdDebugBrowserInfo(engine, server.getSettings(), browserInfo));
       }
     }
     if (debugBrowserInfos.size() == 1) {
       return debugBrowserInfos.get(0);
     }
     if (debugBrowserInfos.size() > 1) {
-      WebBrowser preferredBrowser = settings.getPreferredDebugBrowser();
+      WebBrowser preferredBrowser = runSettings.getPreferredDebugBrowser();
       for (JstdDebugBrowserInfo info : debugBrowserInfos) {
         if (preferredBrowser.equals(info.getBrowser())) {
           return info;

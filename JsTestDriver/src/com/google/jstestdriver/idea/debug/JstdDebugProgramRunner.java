@@ -4,7 +4,6 @@ import com.google.jstestdriver.idea.TestRunner;
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.JstdRunConfigurationVerifier;
 import com.google.jstestdriver.idea.execution.JstdTestRunnerCommandLineState;
-import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.RunProfileStarter;
@@ -102,7 +101,7 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
     final WebBrowser browser = debugBrowserInfo.getBrowser();
     final Url url;
     if (browser.getFamily().equals(BrowserFamily.CHROME)) {
-      url = Urls.newHttpUrl("127.0.0.1:" + JstdToolWindowPanel.serverPort, debugBrowserInfo.getCapturedBrowserUrl());
+      url = Urls.newHttpUrl("127.0.0.1:" + debugBrowserInfo.getServerSettings().getPort(), debugBrowserInfo.getPath());
     }
     else {
       url = null;
@@ -110,7 +109,6 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
 
     JstdTestRunnerCommandLineState runState = runConfiguration.getState(env, null, true);
     final ExecutionResult executionResult = runState.execute(env.getExecutor(), this);
-    debugBrowserInfo.fixIfChrome(executionResult.getProcessHandler());
 
     final RemoteDebuggingFileFinder fileFinder = new JstdDebuggableFileFinderProvider(new File(runConfiguration.getRunSettings().getConfigFile())).provideFileFinder();
     XDebugSession session = XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {

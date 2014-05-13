@@ -1,17 +1,15 @@
 package com.google.jstestdriver.idea.server.ui;
 
-import com.google.jstestdriver.idea.execution.JstdSettingsUtil;
+import com.google.jstestdriver.idea.server.JstdServerSettingsManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowEP;
-import com.intellij.openapi.wm.ToolWindowFactory;
-import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
+import com.intellij.openapi.wm.ToolWindowAnchor;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
+import icons.JsTestDriverIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Sergey Simonchik
@@ -21,63 +19,56 @@ public class JstdToolWindowManager {
   private static final String TOOL_WINDOW_ID = "JsTestDriver Server";
 
   private final Project myProject;
+  private final ToolWindow myToolWindow;
+  private final ContentManager myContentManager;
+  private JstdToolWindowSession myCurrentSession;
 
-  public JstdToolWindowManager(@NotNull Project project) {
+  public JstdToolWindowManager(@NotNull Project project,
+                               @NotNull ToolWindowManager toolWindowManager) {
     myProject = project;
+    myToolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID,
+                                                        true,
+                                                        ToolWindowAnchor.BOTTOM,
+                                                        project,
+                                                        true);
+    myToolWindow.setToHideOnEmptyContent(true);
+    myToolWindow.setIcon(JsTestDriverIcons.ToolWindowTestDriver);
+    myToolWindow.setAutoHide(true);
+    myToolWindow.setSplitMode(true, null);
+    myContentManager = myToolWindow.getContentManager();
   }
 
   public static JstdToolWindowManager getInstance(@NotNull Project project) {
     return ServiceManager.getService(project, JstdToolWindowManager.class);
   }
 
-  @Nullable
-  public ToolWindow registerToolWindowIfNeeded() {
-    ToolWindowManagerEx toolWindowManagerEx = ToolWindowManagerEx.getInstanceEx(myProject);
-    ToolWindow toolWindow = toolWindowManagerEx.getToolWindow(TOOL_WINDOW_ID);
-    if (toolWindow == null) {
-      ToolWindowEP toolWindowEP = getJstdToolWindowEP();
-      toolWindowManagerEx.initToolWindow(toolWindowEP);
-      toolWindow = toolWindowManagerEx.getToolWindow(TOOL_WINDOW_ID);
-    }
-    return toolWindow;
-  }
-
-  @Nullable
-  private static ToolWindowEP getJstdToolWindowEP() {
-    for (ToolWindowEP ep : ToolWindowEP.EP_NAME.getExtensions()) {
-      if (ep.id.equals(TOOL_WINDOW_ID)) {
-        return ep;
+  public void setAvailable(boolean available) {
+    if (available) {
+      if (myContentManager.getContentCount() == 0) {
+        JstdToolWindowSession session = new JstdToolWindowSession(myProject);
+        myCurrentSession = session;
+        Content content = myContentManager.getFactory().createContent(session.getComponent(), null, true);
+        content.setCloseable(true);
+        myContentManager.addContent(content);
       }
     }
-    return null;
+    else {
+      myContentManager.removeAllContents(true);
+      myCurrentSession = null;
+    }
+    myToolWindow.setAvailable(available, null);
   }
 
-  public static class ToolWindowCondition implements Condition<Project> {
-    @Override
-    public boolean value(Project project) {
-      return JstdSettingsUtil.areJstdConfigFilesInProject(project);
+  public void show() {
+    if (myToolWindow.isAvailable()) {
+      myToolWindow.show(null);
     }
   }
 
-  public static class Factory implements ToolWindowFactory {
-    @Override
-    public void createToolWindowContent(Project project, ToolWindow toolWindow) {
-      toolWindow.setAvailable(true, null);
-      toolWindow.setToHideOnEmptyContent(true);
-
-      final ContentManager contentManager = toolWindow.getContentManager();
-      JstdToolWindowPanel component = new JstdToolWindowPanel();
-      final Content content = contentManager.getFactory().createContent(component, null, false);
-      content.setDisposer(project);
-      content.setCloseable(false);
-
-      content.setPreferredFocusableComponent(component.getPreferredFocusedComponent());
-      contentManager.addContent(content);
-
-      contentManager.setSelectedContent(content, true);
-      toolWindow.setAutoHide(true);
-      toolWindow.setSplitMode(true, null);
+  public void restartServer() {
+    JstdToolWindowSession session = myCurrentSession;
+    if (session != null) {
+      session.restart(JstdServerSettingsManager.loadSettings());
     }
   }
-
 }
