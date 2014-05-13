@@ -1,6 +1,7 @@
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.text.StringUtil;
@@ -61,6 +62,8 @@ public class Reveal {
   }
 
   public static void refreshReveal(@NotNull String bundleID, @NotNull String deviceName) throws ExecutionException {
+    UsageTrigger.trigger("appcode.reveal.showInReveal");
+
     String script = "activate\n" +
                     "repeat with doc in documents\n" +
                     " refresh doc " +

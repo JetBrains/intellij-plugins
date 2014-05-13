@@ -9,6 +9,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.icons.AllIcons;
+import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ConfigurationException;
@@ -150,6 +151,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     if (toInject == null) return;
     Reveal.LOG.info("Injecting Reveal lib: " + toInject);
                               
+    UsageTrigger.trigger("appcode.reveal.inject");
+
     CidrExecUtil.appendSearchPath(commandLine.getEnvironment(), EnvParameterNames.DYLD_INSERT_LIBRARIES, toInject.getPath());
   }
 
@@ -191,6 +194,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       setRevealSettings(configuration, settings);
     }
 
+    UsageTrigger.trigger("appcode.reveal.installOnDevice");
+    
     AMDevice device = destination.getIOSDeviceSafe();
     return installOnDevice(libReveal, buildConfiguration, commandLine, device, getBundleID(environment, buildConfiguration));
   }
