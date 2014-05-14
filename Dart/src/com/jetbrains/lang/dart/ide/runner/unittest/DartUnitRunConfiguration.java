@@ -2,7 +2,10 @@ package com.jetbrains.lang.dart.ide.runner.unittest;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.*;
+import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -18,18 +21,23 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.unittest.ui.DartUnitConfigurationEditorForm;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartUnitRunConfiguration extends LocatableConfigurationBase {
+public class DartUnitRunConfiguration extends DartRunConfigurationBase {
+
   private DartUnitRunnerParameters myRunnerParameters = new DartUnitRunnerParameters();
 
   protected DartUnitRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
     super(project, factory, name);
   }
+
+  @Override
+  protected void filePathChanged(final @NotNull VirtualFile file) { myRunnerParameters.setFilePath(file.getPath()); }
 
   public DartUnitRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
@@ -44,7 +52,7 @@ public class DartUnitRunConfiguration extends LocatableConfigurationBase {
   @Nullable
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
     final Project project = env.getProject();
-    final String path = myRunnerParameters.getFilePath();
+    final String path = getFilePath();
     if (path == null || VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(path)) == null) {
       throw new ExecutionException("Can't find file: " + path);
     }
@@ -71,6 +79,10 @@ public class DartUnitRunConfiguration extends LocatableConfigurationBase {
       throw new RuntimeConfigurationException("Not a Dart file");
     }
   }
+
+  @Nullable
+  @Override
+  public String getFilePath() { return myRunnerParameters.getFilePath(); }
 
   @Override
   public void writeExternal(final Element element) throws WriteExternalException {
@@ -105,4 +117,5 @@ public class DartUnitRunConfiguration extends LocatableConfigurationBase {
     clone.myRunnerParameters = myRunnerParameters.clone();
     return clone;
   }
+
 }
