@@ -33,6 +33,8 @@ public class DartCommandLineRunConfiguration extends LocatableConfigurationBase 
   private String myVMOptions = null;
   @Nullable
   private String myArguments = null;
+  @Nullable
+  private String myWorkingDirectory = null;
 
   public DartCommandLineRunConfiguration(String name, Project project, DartCommandLineRunConfigurationType configurationType) {
     super(project, configurationType.getConfigurationFactories()[0], name);
@@ -55,6 +57,16 @@ public class DartCommandLineRunConfiguration extends LocatableConfigurationBase 
   public void setVMOptions(@Nullable String vmOptions) {
     myVMOptions = vmOptions;
   }
+
+  @Nullable
+  public String getWorkingDirectory() {
+    if (myWorkingDirectory != null) {
+      return myWorkingDirectory;
+    }
+    return myFilePath == null ? null : PathUtil.getParentPath(myFilePath);
+  }
+
+  public void setWorkingDirectory(@Nullable final String workingDirectory) { myWorkingDirectory = workingDirectory; }
 
   @Nullable
   public String getArguments() {
@@ -107,10 +119,12 @@ public class DartCommandLineRunConfiguration extends LocatableConfigurationBase 
     if (StringUtil.isEmpty(filePath)) {
       throw new ExecutionException("Empty file path");
     }
+    final String workingDirectory = myWorkingDirectory != null ? myWorkingDirectory : PathUtil.getParentPath(filePath);
     return new DartCommandLineRunningState(
       env,
       filePath,
       StringUtil.notNullize(getVMOptions()),
+      workingDirectory,
       StringUtil.notNullize(getArguments())
     );
   }

@@ -1,49 +1,66 @@
 package com.jetbrains.lang.dart.ide.runner.unittest;
 
+import org.jetbrains.annotations.Nullable;
+
 public class DartUnitRunnerParameters implements Cloneable {
+  @Nullable
   private String myFilePath = null;
+  @Nullable
   private String myArguments = null;
+  @Nullable
   private String myVMOptions = null;
+  @Nullable
   private String myTestName = null;
+  @Nullable
   private Scope myScope = Scope.ALL;
+  @Nullable
+  private String myWorkingDirectory = null;
 
-  public String getFilePath() {
-    return myFilePath;
-  }
+  @Nullable
+  public String getFilePath() { return myFilePath; }
 
-  public void setFilePath(String filePath) {
+  public void setFilePath(@Nullable String filePath) {
     myFilePath = filePath;
   }
 
+  @Nullable
   public String getArguments() {
     return myArguments;
   }
 
-  public void setArguments(String arguments) {
+  public void setArguments(@Nullable String arguments) {
     myArguments = arguments;
   }
 
+  @Nullable
+  public String getWorkingDirectory() { return myWorkingDirectory; }
+
+  public void setWorkingDirectory(@Nullable String workingDirectory) { myWorkingDirectory = workingDirectory; }
+
+  @Nullable
   public String getVMOptions() {
     return myVMOptions;
   }
 
+  @Nullable
   public String getTestName() {
     return myTestName;
   }
 
-  public void setTestName(String name) {
+  public void setTestName(@Nullable String name) {
     myTestName = name;
   }
 
-  public void setVMOptions(String VMOptions) {
+  public void setVMOptions(@Nullable String VMOptions) {
     myVMOptions = VMOptions;
   }
 
+  @Nullable
   public Scope getScope() {
     return myScope;
   }
 
-  public void setScope(Scope scope) {
+  public void setScope(@Nullable Scope scope) {
     myScope = scope;
   }
 
@@ -52,7 +69,7 @@ public class DartUnitRunnerParameters implements Cloneable {
   }
 
   @Override
-  protected DartUnitRunnerParameters clone() {
+  protected final DartUnitRunnerParameters clone() {
     try {
       return (DartUnitRunnerParameters)super.clone();
     }
