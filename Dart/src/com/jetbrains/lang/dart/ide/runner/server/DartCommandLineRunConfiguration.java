@@ -22,6 +22,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class DartCommandLineRunConfiguration extends LocatableConfigurationBase {
+public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
   @Nullable
   private String myFilePath = null;
   @Nullable
@@ -46,12 +47,14 @@ public class DartCommandLineRunConfiguration extends LocatableConfigurationBase 
   }
 
   @Nullable
+  @Override
   public String getFilePath() {
     return myFilePath;
   }
 
-  public void setFilePath(@Nullable String fileUrl) {
-    myFilePath = fileUrl;
+  @Override
+  public void setFilePath(@Nullable String filePath) {
+    myFilePath = filePath;
   }
 
   @Nullable
@@ -156,6 +159,5 @@ public class DartCommandLineRunConfiguration extends LocatableConfigurationBase 
     myEnvs.clear();
     myEnvs.putAll(envs);
   }
-
 
 }
