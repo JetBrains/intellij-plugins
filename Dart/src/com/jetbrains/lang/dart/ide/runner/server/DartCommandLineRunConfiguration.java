@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
+import com.intellij.execution.configurations.LocatableConfigurationBase;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
@@ -18,6 +19,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.hash.LinkedHashMap;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
@@ -25,6 +27,8 @@ import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfiguration
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
   @Nullable
@@ -35,6 +39,8 @@ public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
   private String myArguments = null;
   @Nullable
   private String myWorkingDirectory = null;
+  @NotNull
+  private final Map<String, String> myEnvs = new LinkedHashMap<String, String>();
 
   public DartCommandLineRunConfiguration(String name, Project project, DartCommandLineRunConfigurationType configurationType) {
     super(project, configurationType.getConfigurationFactories()[0], name);
@@ -126,6 +132,7 @@ public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
       filePath,
       StringUtil.notNullize(getVMOptions()),
       workingDirectory,
+      getEnvs(),
       StringUtil.notNullize(getArguments())
     );
   }
@@ -144,4 +151,13 @@ public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
   public String suggestedName() {
     return myFilePath == null ? null : PathUtil.getFileName(myFilePath);
   }
+
+  @NotNull
+  public Map<String, String> getEnvs() { return myEnvs; }
+
+  public void setEnvs(@NotNull Map<String, String> envs) {
+    myEnvs.clear();
+    myEnvs.putAll(envs);
+  }
+
 }

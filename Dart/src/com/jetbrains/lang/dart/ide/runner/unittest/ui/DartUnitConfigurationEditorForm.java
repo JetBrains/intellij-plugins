@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.unittest.ui;
 
 import com.intellij.execution.ExecutionBundle;
+import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -33,6 +34,7 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
   private JLabel myTestNameLabel;
   private JTextField myTestNameField;
   private TextFieldWithBrowseButton myWorkingDirectory;
+  private EnvironmentVariablesComponent myEnvironmentVariables;
 
   public DartUnitConfigurationEditorForm(final Project project) {
     DartCommandLineConfigurationEditorForm.initDartFileTextWithBrowse(project, myFileField);
@@ -91,6 +93,7 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
     parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
     parameters.setArguments(StringUtil.nullize(myArguments.getText(), true));
     parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
+    parameters.setEnvs(myEnvironmentVariables.getEnvs());
     parameters.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
     final Scope scope = (Scope)myScopeCombo.getSelectedItem();
     parameters.setScope(scope);
@@ -107,4 +110,7 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
   protected JComponent createEditor() {
     return myMainPanel;
   }
+
+  private void createUIComponents() { myEnvironmentVariables = new EnvironmentVariablesComponent(); }
+
 }
