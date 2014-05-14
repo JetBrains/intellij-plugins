@@ -1,8 +1,8 @@
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.ide.util.TreeFileChooser;
 import com.intellij.ide.util.TreeFileChooserFactory;
-import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -53,18 +53,9 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
         }
       }
     });
-    myWorkingDirectory.getButton().addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent event) {
-        final VirtualFile virtualFile =
-          FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), project, null);
-            if (virtualFile != null) {
-              final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
-              myWorkingDirectory.setText(path);
-            }
 
-      }
-    });
+    myWorkingDirectory.addBrowseFolderListener(ExecutionBundle.message("select.working.directory.message"), null, project,
+                                               FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
     myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
