@@ -129,6 +129,7 @@ public class DartUnitRunningState extends CommandLineState {
       commandLine.setWorkDirectory(realFile.getParent().getPath());
     }
     commandLine.setPassParentEnvironment(true);
+    commandLine.getEnvironment().putAll(myUnitParameters.getEnvs());
 
     setupUserProperties(commandLine);
 
