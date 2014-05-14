@@ -41,9 +41,9 @@ public class JstdServer {
     int id = NEXT_ID.getAndIncrement();
     mySettings = settings;
     myProcessHandler = start(settings, id);
-    myProcessHandler.startNotify();
     myName = formatName(id, myProcessHandler.getProcess());
     myOutputProcessor = new JstdServerOutputProcessor(myProcessHandler);
+    myProcessHandler.startNotify();
     myLifeCycleManager = new JstdServerLifeCycleManager();
     myOutputProcessor.addListener(myLifeCycleManager);
     myDisposable = new MyDisposable();
@@ -56,11 +56,6 @@ public class JstdServer {
       }
     });
     Disposer.register(ApplicationManager.getApplication(), myDisposable);
-  }
-
-  @NotNull
-  public ProcessHandler getProcessHandler() {
-    return myProcessHandler;
   }
 
   public boolean isProcessRunning() {

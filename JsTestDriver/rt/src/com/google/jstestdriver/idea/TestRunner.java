@@ -33,8 +33,6 @@ import com.google.jstestdriver.idea.coverage.CoverageReport;
 import com.google.jstestdriver.idea.coverage.CoverageSerializationUtils;
 import com.google.jstestdriver.idea.coverage.CoverageSession;
 import com.google.jstestdriver.idea.execution.tree.TreeManager;
-import com.google.jstestdriver.idea.server.JstdServerFetchResult;
-import com.google.jstestdriver.idea.server.JstdServerUtilsRt;
 import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.google.jstestdriver.idea.util.JstdConfigParsingUtils;
 import com.google.jstestdriver.idea.util.JstdUtils;
@@ -45,10 +43,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Main class of JsTestDriver test runner, that runs tests in a separate process and streams messages
@@ -104,12 +99,30 @@ public class TestRunner {
       runTests(config, new String[]{"--dryRunFor", runScope}, true);
       myTreeManager.reportTotalTestCount();
       runTests(config, new String[]{"--tests", runScope}, false);
-    } catch (ConfigurationException ce) {
+    }
+    catch (ConfigurationException ce) {
       exception = ce;
-    } catch (Exception e) {
-      exception = new Exception("Can't run tests. Details:", e);
-    } finally {
-      myTreeManager.onJstdConfigRunningFinished(exception, mySettings.getTestFileScope());
+    }
+    catch (RuntimeException re) {
+      String haltErrorMessage = getErrorMessageIfNoServerRunning(re, mySettings);
+      if (haltErrorMessage == null) {
+        haltErrorMessage = getErrorMessageIfNoCapturedBrowsersFound(re, mySettings);
+      }
+      if (haltErrorMessage != null) {
+        myTreeManager.onJstdConfigRunningFinished(haltErrorMessage, mySettings.getTestFileScope());
+        System.exit(1);
+      }
+      exception = new Exception("Can't run tests.", re);
+    }
+    catch (Exception e) {
+      exception = new Exception("Can't run tests.", e);
+    }
+    finally {
+      String errorMessage = null;
+      if (exception != null) {
+        errorMessage = TreeManager.formatMessage(exception.getMessage(), exception.getCause());
+      }
+      myTreeManager.onJstdConfigRunningFinished(errorMessage, mySettings.getTestFileScope());
       nullSystemOut.close();
       System.setOut(myTreeManager.getSystemOutStream());
     }
@@ -268,11 +281,8 @@ public class TestRunner {
     Map<ParameterKey, String> paramMap = parseParams(args);
     JstdSettings settings = JstdSettings.build(paramMap);
     TreeManager treeManager = new TreeManager(settings.getRunAllConfigsInDirectory());
-    if (!validateServer(settings, treeManager)) {
-      System.exit(1);
-      return;
-    }
     if (settings.isDebug()) {
+      @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
       String line;
       while ((line = reader.readLine()) != null) {
@@ -290,22 +300,31 @@ public class TestRunner {
     }
   }
 
-  private static boolean validateServer(@NotNull JstdSettings settings, @NotNull TreeManager treeManager) throws IOException {
-    String serverUrl = settings.getServerUrl();
-    JstdServerFetchResult fetchResult = JstdServerUtilsRt.syncFetchServerInfo(serverUrl);
-    String message = null;
-    if (fetchResult.isError()) {
-      message = "Could not connect to a JsTestDriver server running at " + serverUrl + "\n" +
-                "Check that the server is running.";
-    } else if (fetchResult.getServerInfo().getCapturedBrowsers().isEmpty()) {
-      message = "No captured browsers found.\n" +
-                "To capture browser open '" + serverUrl + "' in browser.";
+  @Nullable
+  private static String getErrorMessageIfNoServerRunning(@NotNull RuntimeException ex,
+                                                         @NotNull JstdSettings settings) {
+    // java.lang.RuntimeException: Connection error on: sun.net.www.protocol.http.HttpURLConnection:http://localhost:9876/jstd/gateway
+    //    at com.google.jstestdriver.HttpServer.postJson(HttpServer.java:161)
+    String exMessage = ex.getMessage();
+    if (exMessage != null && exMessage.startsWith("Connection error on: ") && ex.getCause() instanceof IOException) {
+      return "Could not connect to JsTestDriver server running at " + settings.getServerUrl() + "\n" +
+             "Check that the server is running.";
     }
-    if (message != null) {
-      treeManager.reportRootError(message);
-      return false;
+    return null;
+  }
+
+  @Nullable
+  private static String getErrorMessageIfNoCapturedBrowsersFound(@NotNull RuntimeException ex,
+                                                                 @NotNull JstdSettings settings) {
+    // at com.google.jstestdriver.browser.BrowserActionExecutorAction.run(BrowserActionExecutorAction.java:94)
+    String exMessage = ex.getMessage();
+    if (exMessage != null &&
+        exMessage.startsWith("No browsers available, yet actions") &&
+        exMessage.endsWith("If running against a persistent server please capture browsers. Otherwise, ensure that browsers are defined.")) {
+      return "No captured browsers found.\n" +
+             "To capture a browser open " + settings.getServerUrl() + "/capture";
     }
-    return true;
+    return null;
   }
 
   private static Map<ParameterKey, String> parseParams(String[] args) {
@@ -315,7 +334,7 @@ public class TestRunner {
       if (arg.startsWith("--") && elements.size() == 2) {
         String key = elements.get(0).substring(2);
         String value = elements.get(1);
-        ParameterKey parameterKey = ParameterKey.valueOf(key.toUpperCase());
+        ParameterKey parameterKey = ParameterKey.valueOf(key.toUpperCase(Locale.ENGLISH));
         params.put(parameterKey, value);
       }
     }
@@ -372,7 +391,7 @@ public class TestRunner {
     }
 
     /** Discards the specified byte array. */
-    @Override public void write(byte[] b, int off, int len) {
+    @Override public void write(@NotNull byte[] b, int off, int len) {
     }
   }
 

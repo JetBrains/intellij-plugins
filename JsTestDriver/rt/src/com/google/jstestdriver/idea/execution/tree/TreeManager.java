@@ -172,13 +172,13 @@ public class TreeManager {
     return myOutStream;
   }
 
-  public void onJstdConfigRunningFinished(@Nullable Exception testsRunException, @NotNull TestFileScope testFileScope) {
+  public void onJstdConfigRunningFinished(@Nullable String errorMessage, @NotNull TestFileScope testFileScope) {
     ConfigNode configNode = getCurrentConfigNode();
     for (BrowserNode browserNode : configNode.getChildren()) {
       for (TestCaseNode testCaseNode : browserNode.getChildren()) {
         for (TestNode testNode : testCaseNode.getChildren()) {
           TCMessage testFailedMessage = TC.newTestFailedMessage(testNode);
-          String reason = testsRunException != null ? "JsTestDriver crash" : "unknown reason";
+          String reason = errorMessage != null ? "JsTestDriver crash" : "unknown reason";
           testFailedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, "Can't execute test due to " + reason + ".");
           testFailedMessage.addAttribute(TCAttribute.IS_TEST_ERROR, "yes");
           printTCMessage(testFailedMessage);
@@ -189,13 +189,12 @@ public class TreeManager {
       TCMessage browserFinishedMessage = TC.newTestSuiteFinishedMessage(browserNode);
       printTCMessage(browserFinishedMessage);
     }
-    if (testsRunException != null) {
+    if (errorMessage != null) {
       ConfigErrorNode configErrorNode = new ConfigErrorNode(configNode);
       TCMessage startedMessage = configErrorNode.createStartedMessage();
       printTCMessage(startedMessage);
       TCMessage finishedMessage = TC.newConfigErrorFinishedMessage(configErrorNode);
-      String fullMessage = formatMessage(testsRunException.getMessage(), testsRunException.getCause());
-      finishedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, fullMessage);
+      finishedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, errorMessage);
       printTCMessage(finishedMessage);
     }
     else if (configNode.getChildren().isEmpty()) {
@@ -230,15 +229,6 @@ public class TreeManager {
     myOutStream.print(message.getText() + "\n");
   }
 
-  public void reportRootError(@NotNull String message) {
-    RootErrorNode rootErrorNode = new RootErrorNode(myRootNode);
-    TCMessage startedMessage = rootErrorNode.createStartedMessage();
-    printTCMessage(startedMessage);
-    TCMessage finishedMessage = TC.newRootErrorFinishedMessage(rootErrorNode);
-    finishedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, message);
-    printTCMessage(finishedMessage);
-  }
-
   public void onFileLoadError(@NotNull String browserName,
                               @Nullable String pathToJsFileWithError,
                               @Nullable String errorMessage) {
@@ -260,7 +250,7 @@ public class TreeManager {
   }
 
   @NotNull
-  private static String formatMessage(@NotNull String message, @Nullable Throwable t) {
+  public static String formatMessage(@NotNull String message, @Nullable Throwable t) {
     if (t == null) {
       return message;
     }
