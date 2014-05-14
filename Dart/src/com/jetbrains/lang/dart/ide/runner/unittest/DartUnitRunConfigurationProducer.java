@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer;
 import com.jetbrains.lang.dart.psi.DartArgumentList;
 import com.jetbrains.lang.dart.psi.DartCallExpression;
@@ -70,14 +71,10 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
 
     final DartUnitRunnerParameters existingParams = configuration.getRunnerParameters();
 
-    final boolean b = Comparing.equal(existingParams.getFilePath(), paramsFromContext.getFilePath()) &&
-                      Comparing.equal(existingParams.getScope(), paramsFromContext.getScope()) &&
-                      (existingParams.getScope() == Scope.ALL ||
-                       Comparing.equal(existingParams.getTestName(), paramsFromContext.getTestName()));
-    if (b) {
-      int i =0;
-    }
-    return b;
+    return Comparing.equal(existingParams.getFilePath(), paramsFromContext.getFilePath()) &&
+           Comparing.equal(existingParams.getScope(), paramsFromContext.getScope()) &&
+           (existingParams.getScope() == Scope.ALL ||
+            Comparing.equal(existingParams.getTestName(), paramsFromContext.getTestName()));
   }
 
   private static boolean setupRunConfiguration(final @NotNull DartUnitRunnerParameters runnerParams, final @NotNull PsiElement psiElement) {
@@ -90,7 +87,9 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
 
       runnerParams.setTestName(testName);
       runnerParams.setScope(isTest((DartCallExpression)psiElement) ? Scope.METHOD : Scope.GROUP);
-      runnerParams.setFilePath(virtualFiles.iterator().next().getPath());
+      final String dartFilePath = virtualFiles.iterator().next().getPath();
+      runnerParams.setFilePath(dartFilePath);
+      runnerParams.setWorkingDirectory(PathUtil.getParentPath(dartFilePath));
       return true;
     }
     else {
@@ -103,7 +102,9 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
 
         runnerParams.setTestName(DartResolveUtil.getLibraryName((DartFile)psiElement));
         runnerParams.setScope(Scope.ALL);
-        runnerParams.setFilePath(FileUtil.toSystemIndependentName(virtualFile.getPath()));
+        final String dartFilePath = FileUtil.toSystemIndependentName(virtualFile.getPath());
+        runnerParams.setFilePath(dartFilePath);
+        runnerParams.setWorkingDirectory(PathUtil.getParentPath(dartFilePath));
         return true;
       }
     }
