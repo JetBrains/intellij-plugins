@@ -4,31 +4,25 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.LocatableConfigurationBase;
 import com.intellij.execution.configurations.RefactoringListenerProvider;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
+import com.intellij.refactoring.listeners.UndoRefactoringElementAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-
 public abstract class DartRunConfigurationBase extends LocatableConfigurationBase implements RefactoringListenerProvider {
 
-  private final RefactoringElementListener myRefactoringElementListener = new RefactoringElementListener() {
-    @Override
-    public void elementMoved(@NotNull final PsiElement newElement) {
-      elementChanged(newElement);
-    }
+  private final RefactoringElementListener myRefactoringElementListener = new UndoRefactoringElementAdapter() {
+    protected void refactored(@NotNull final PsiElement element, @Nullable final String oldQualifiedName) {
+      final boolean generatedName = getName().equals(suggestedName());
 
-    protected void elementChanged(final @NotNull PsiElement newElement) {
-      filePathChanged(newElement.getContainingFile().getVirtualFile());
-    }
+      setFilePath(element.getContainingFile().getVirtualFile().getPath());
 
-    @Override
-    public void elementRenamed(@NotNull final PsiElement newElement) {
-      elementChanged(newElement);
+      if (generatedName) {
+        setGeneratedName();
+      }
     }
   };
 
@@ -36,7 +30,7 @@ public abstract class DartRunConfigurationBase extends LocatableConfigurationBas
     super(project, factory, name);
   }
 
-  protected abstract void filePathChanged(final @NotNull VirtualFile file);
+  protected abstract void setFilePath(final @NotNull String path);
 
   @Nullable
   public abstract String getFilePath();
@@ -45,16 +39,12 @@ public abstract class DartRunConfigurationBase extends LocatableConfigurationBas
   @Override
   public RefactoringElementListener getRefactoringElementListener(final PsiElement element) {
     if (element instanceof PsiFile) {
-      final String scriptFile = getFilePath();
-      if (scriptFile != null) {
-        VirtualFile changedFile = ((PsiFile)element).getVirtualFile();
-        if (changedFile != null && Comparing.equal(new File(changedFile.getPath()).getAbsolutePath(),
-                                                   new File(scriptFile).getAbsolutePath())) {
-          return myRefactoringElementListener;
-        }
+      final String filePath = getFilePath();
+      final VirtualFile changedFile = ((PsiFile)element).getVirtualFile();
+      if (filePath != null && changedFile != null && filePath.equals(changedFile.getPath())) {
+        return myRefactoringElementListener;
       }
     }
     return null;
   }
-
 }

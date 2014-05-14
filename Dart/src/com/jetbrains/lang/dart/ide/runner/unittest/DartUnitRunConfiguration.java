@@ -37,7 +37,15 @@ public class DartUnitRunConfiguration extends DartRunConfigurationBase {
   }
 
   @Override
-  protected void filePathChanged(final @NotNull VirtualFile file) { myRunnerParameters.setFilePath(file.getPath()); }
+  protected void setFilePath(final @Nullable String filePath) {
+    myRunnerParameters.setFilePath(filePath);
+  }
+
+  @Nullable
+  @Override
+  public String getFilePath() {
+    return myRunnerParameters.getFilePath();
+  }
 
   public DartUnitRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
@@ -80,10 +88,6 @@ public class DartUnitRunConfiguration extends DartRunConfigurationBase {
     }
   }
 
-  @Nullable
-  @Override
-  public String getFilePath() { return myRunnerParameters.getFilePath(); }
-
   @Override
   public void writeExternal(final Element element) throws WriteExternalException {
     super.writeExternal(element);
@@ -117,5 +121,4 @@ public class DartUnitRunConfiguration extends DartRunConfigurationBase {
     clone.myRunnerParameters = myRunnerParameters.clone();
     return clone;
   }
-
 }
