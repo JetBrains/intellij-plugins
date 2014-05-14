@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
 import com.intellij.execution.ExecutionBundle;
+import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.ide.util.TreeFileChooser;
 import com.intellij.ide.util.TreeFileChooserFactory;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -31,6 +32,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   private RawCommandLineEditor myVMOptions;
   private RawCommandLineEditor myArguments;
   private TextFieldWithBrowseButton myWorkingDirectory;
+  private EnvironmentVariablesComponent myEnvironmentVariables;
 
   public DartCommandLineConfigurationEditorForm(final Project project) {
     initDartFileTextWithBrowse(project, myFileField);
@@ -79,6 +81,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     myArguments.setText(StringUtil.notNullize(configuration.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(configuration.getVMOptions()));
     myWorkingDirectory.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(configuration.getWorkingDirectory())));
+    myEnvironmentVariables.setEnvs(configuration.getEnvs());
   }
 
   @Override
@@ -87,11 +90,16 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     configuration.setArguments(StringUtil.nullize(myArguments.getText(), true));
     configuration.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
     configuration.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
+    configuration.setEnvs(myEnvironmentVariables.getEnvs());
   }
 
   @NotNull
   @Override
   protected JComponent createEditor() {
     return myMainPanel;
+  }
+
+  private void createUIComponents() {
+    myEnvironmentVariables = new EnvironmentVariablesComponent();
   }
 }

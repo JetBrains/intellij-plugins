@@ -19,21 +19,27 @@ import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class DartCommandLineRunningState extends CommandLineState {
   private final @NotNull String myFilePath;
   private final @NotNull String myVmOptions;
   private final @NotNull String myArguments;
   private final @NotNull String myWorkingDirectory;
+  private final @NotNull Map<String, String> myEnvs = new LinkedHashMap<String, String>();
 
   public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env,
                                      final @NotNull String filePath,
                                      final @NotNull String vmOptions,
                                      final @NotNull String workingDirectory,
+                                     final @NotNull Map<String,String> envVariables,
                                      final @NotNull String arguments) {
     super(env);
     myFilePath = filePath;
     myVmOptions = vmOptions;
     myWorkingDirectory = workingDirectory;
+    myEnvs.putAll(envVariables);
     myArguments = arguments;
 
     final TextConsoleBuilder builder = getConsoleBuilder();
@@ -71,6 +77,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     commandLine.setExePath(dartExePath);
     commandLine.setWorkDirectory(myWorkingDirectory);
     commandLine.setPassParentEnvironment(true);
+    commandLine.getEnvironment().putAll(myEnvs);
 
     setupUserProperties(commandLine, libraryFile);
 
