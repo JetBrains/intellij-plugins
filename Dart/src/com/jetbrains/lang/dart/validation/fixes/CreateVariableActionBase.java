@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartReference;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
@@ -35,7 +36,7 @@ abstract public class CreateVariableActionBase extends BaseCreateFix {
     if (PsiTreeUtil.getParentOfType(myElement, DartReference.class) == null) return false;
     final PsiElement anchor = findAnchor(element);
     final PsiFile containingFile = anchor == null ? null : anchor.getContainingFile();
-    return containingFile != null && !isInDartSdkOrDartPackagesFolder(containingFile);
+    return containingFile != null && !DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(containingFile);
   }
 
   @Override

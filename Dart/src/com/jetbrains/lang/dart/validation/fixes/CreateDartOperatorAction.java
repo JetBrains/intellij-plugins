@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartReference;
 import com.jetbrains.lang.dart.psi.impl.DartOperatorExpressionImpl;
@@ -33,7 +34,7 @@ public class CreateDartOperatorAction extends CreateDartMethodAction {
     if (references == null || references[0].resolveDartClass().getDartClass() == null) return false;
 
     final PsiElement anchor = findAnchor(element);
-    return anchor != null && !isInDartSdkOrDartPackagesFolder(anchor.getContainingFile());
+    return anchor != null && !DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(anchor.getContainingFile());
   }
 
   @Nullable

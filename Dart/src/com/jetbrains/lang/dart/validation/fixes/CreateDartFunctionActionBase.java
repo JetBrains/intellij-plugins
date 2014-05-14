@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.psi.DartArgumentList;
 import com.jetbrains.lang.dart.psi.DartCallExpression;
 import com.jetbrains.lang.dart.psi.DartReference;
@@ -34,7 +35,7 @@ abstract public class CreateDartFunctionActionBase extends BaseCreateFix {
   protected boolean isAvailable(Project project, PsiElement element, Editor editor, PsiFile file) {
     if (PsiTreeUtil.getParentOfType(myElement, DartReference.class) == null) return false;
     final PsiElement anchor = findAnchor(element);
-    return anchor != null && !isInDartSdkOrDartPackagesFolder(anchor.getContainingFile());
+    return anchor != null && !DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(anchor.getContainingFile());
   }
 
   @Override

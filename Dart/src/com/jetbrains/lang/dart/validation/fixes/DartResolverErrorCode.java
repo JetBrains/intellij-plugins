@@ -4,6 +4,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.SmartList;
+import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -106,7 +107,7 @@ public enum DartResolverErrorCode {
     public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // Instance member '%s' cannot be accessed using static access
       DartComponent target = DartResolveUtil.findReferenceAndComponentTarget(file.findElementAt(startOffset));
-      return target == null || BaseCreateFix.isInDartSdkOrDartPackagesFolder(target.getContainingFile())
+      return target == null || DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(target.getContainingFile())
              ? Collections.<IntentionAction>emptyList()
              : Arrays.asList(new MakeStaticAction(target));
     }

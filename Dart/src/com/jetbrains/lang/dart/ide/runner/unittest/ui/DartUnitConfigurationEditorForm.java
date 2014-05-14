@@ -1,8 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner.unittest.ui;
 
 import com.intellij.execution.ExecutionBundle;
-import com.intellij.ide.util.TreeFileChooser;
-import com.intellij.ide.util.TreeFileChooserFactory;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -10,13 +8,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.ui.EnumComboBoxModel;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
 import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunnerParameters;
 import org.jetbrains.annotations.NotNull;
@@ -39,29 +35,7 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
   private TextFieldWithBrowseButton myWorkingDirectory;
 
   public DartUnitConfigurationEditorForm(final Project project) {
-    myFileField.getButton().addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        TreeFileChooser fileChooser = TreeFileChooserFactory.getInstance(project).createFileChooser(
-          DartBundle.message("choose.dart.main.file"),
-          null,
-          DartFileType.INSTANCE,
-          new TreeFileChooser.PsiFileFilter() {
-            public boolean accept(PsiFile file) {
-              return true;
-            }
-          }
-        );
-
-        fileChooser.showDialog();
-
-        PsiFile selectedFile = fileChooser.getSelectedFile();
-        final VirtualFile virtualFile = selectedFile == null ? null : selectedFile.getVirtualFile();
-        if (virtualFile != null) {
-          final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
-          myFileField.setText(path);
-        }
-      }
-    });
+    DartCommandLineConfigurationEditorForm.initDartFileTextWithBrowse(project, myFileField);
 
     myWorkingDirectory.addBrowseFolderListener(ExecutionBundle.message("select.working.directory.message"), null, project,
                                                FileChooserDescriptorFactory.createSingleFolderDescriptor());
