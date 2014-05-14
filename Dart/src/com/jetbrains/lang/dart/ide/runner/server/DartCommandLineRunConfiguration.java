@@ -60,13 +60,12 @@ public class DartCommandLineRunConfiguration extends LocatableConfigurationBase 
 
   @Nullable
   public String getWorkingDirectory() {
-    if (myWorkingDirectory != null) {
-      return myWorkingDirectory;
-    }
-    return myFilePath == null ? null : PathUtil.getParentPath(myFilePath);
+    return myWorkingDirectory;
   }
 
-  public void setWorkingDirectory(@Nullable final String workingDirectory) { myWorkingDirectory = workingDirectory; }
+  public void setWorkingDirectory(@Nullable final String workingDirectory) {
+    myWorkingDirectory = workingDirectory;
+  }
 
   @Nullable
   public String getArguments() {

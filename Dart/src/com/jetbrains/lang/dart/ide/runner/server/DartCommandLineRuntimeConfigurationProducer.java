@@ -27,6 +27,7 @@ public class DartCommandLineRuntimeConfigurationProducer extends RunConfiguratio
     final VirtualFile dartFile = findRunnableDartFile(context);
     if (dartFile != null) {
       configuration.setFilePath(dartFile.getPath());
+      configuration.setWorkingDirectory(dartFile.getParent().getPath());
       configuration.setName(configuration.suggestedName());
       return true;
     }
