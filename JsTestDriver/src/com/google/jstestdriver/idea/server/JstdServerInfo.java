@@ -11,8 +11,8 @@ public class JstdServerInfo {
   private final List<JstdBrowserInfo> myCapturedBrowsers;
 
   public JstdServerInfo(@NotNull String serverUrl, @NotNull List<JstdBrowserInfo> capturedBrowsers) {
-    this.myServerUrl = serverUrl;
-    this.myCapturedBrowsers = new ImmutableList.Builder<JstdBrowserInfo>().addAll(capturedBrowsers).build();
+    myServerUrl = serverUrl;
+    myCapturedBrowsers = ImmutableList.copyOf(capturedBrowsers);
   }
 
   public String getServerUrl() {
