@@ -69,18 +69,32 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
   @Override
   protected void resetEditorFrom(DartUnitRunConfiguration configuration) {
     final DartUnitRunnerParameters parameters = configuration.getRunnerParameters();
+
+    myScopeCombo.setSelectedItem(parameters.getScope());
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
+    myTestNameField.setText(parameters.getScope() == Scope.ALL ? "" : StringUtil.notNullize(parameters.getTestName()));
     myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
     myWorkingDirectory.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getWorkingDirectory())));
-    if (parameters.getScope() != Scope.ALL) {
-      myTestNameField.setText(StringUtil.notNullize(parameters.getTestName()));
-    }
-    else {
-      myTestNameField.setText("");
-    }
-    myScopeCombo.setSelectedItem(parameters.getScope());
+    myEnvironmentVariables.setEnvs(parameters.getEnvs());
+    myEnvironmentVariables.setPassParentEnvs(parameters.isIncludeParentEnvs());
+
     onScopeChanged();
+  }
+
+  @Override
+  protected void applyEditorTo(DartUnitRunConfiguration configuration) throws ConfigurationException {
+    final DartUnitRunnerParameters parameters = configuration.getRunnerParameters();
+
+    final Scope scope = (Scope)myScopeCombo.getSelectedItem();
+    parameters.setScope(scope);
+    parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
+    parameters.setTestName(scope == Scope.ALL ? null : StringUtil.nullize(myTestNameField.getText()));
+    parameters.setArguments(StringUtil.nullize(myArguments.getText(), true));
+    parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
+    parameters.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
+    parameters.setEnvs(myEnvironmentVariables.getEnvs());
+    parameters.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());
   }
 
   private void onScopeChanged() {
@@ -90,24 +104,6 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
     myTestNameLabel.setText(scope == Scope.GROUP
                             ? DartBundle.message("dart.unit.group.name")
                             : DartBundle.message("dart.unit.method.name"));
-  }
-
-  @Override
-  protected void applyEditorTo(DartUnitRunConfiguration configuration) throws ConfigurationException {
-    final DartUnitRunnerParameters parameters = configuration.getRunnerParameters();
-    parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
-    parameters.setArguments(StringUtil.nullize(myArguments.getText(), true));
-    parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
-    parameters.setEnvs(myEnvironmentVariables.getEnvs());
-    parameters.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
-    final Scope scope = (Scope)myScopeCombo.getSelectedItem();
-    parameters.setScope(scope);
-    if (scope != Scope.ALL) {
-      parameters.setTestName(StringUtil.nullize(myTestNameField.getText()));
-    }
-    else {
-      parameters.setTestName(null);
-    }
   }
 
   @NotNull

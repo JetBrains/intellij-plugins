@@ -28,19 +28,22 @@ public class DartCommandLineRunningState extends CommandLineState {
   private final @NotNull String myArguments;
   private final @NotNull String myWorkingDirectory;
   private final @NotNull Map<String, String> myEnvs = new LinkedHashMap<String, String>();
+  private final boolean myIncludeParentEnvs;
 
   public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env,
                                      final @NotNull String filePath,
                                      final @NotNull String vmOptions,
+                                     final @NotNull String arguments,
                                      final @NotNull String workingDirectory,
-                                     final @NotNull Map<String,String> envVariables,
-                                     final @NotNull String arguments) {
+                                     final @NotNull Map<String, String> envVariables,
+                                     final boolean includeParentEnvs) {
     super(env);
     myFilePath = filePath;
     myVmOptions = vmOptions;
+    myArguments = arguments;
     myWorkingDirectory = workingDirectory;
     myEnvs.putAll(envVariables);
-    myArguments = arguments;
+    myIncludeParentEnvs = includeParentEnvs;
 
     final TextConsoleBuilder builder = getConsoleBuilder();
     if (builder instanceof TextConsoleBuilderImpl) {
@@ -76,8 +79,8 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     commandLine.setExePath(dartExePath);
     commandLine.setWorkDirectory(myWorkingDirectory);
-    commandLine.setPassParentEnvironment(true);
     commandLine.getEnvironment().putAll(myEnvs);
+    commandLine.setPassParentEnvironment(myIncludeParentEnvs);
 
     setupUserProperties(commandLine, libraryFile);
 

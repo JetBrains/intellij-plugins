@@ -123,13 +123,14 @@ public class DartUnitRunningState extends CommandLineState {
 
     commandLine.setExePath(DartSdkUtil.getDartExePath(myDartSdk));
     final String workingDirectory = myUnitParameters.getWorkingDirectory();
-    if (workingDirectory != null) {
+    if (!StringUtil.isEmptyOrSpaces(workingDirectory)) {
       commandLine.setWorkDirectory(workingDirectory);
-    } else if (realFile != null) {
+    }
+    else if (realFile != null) {
       commandLine.setWorkDirectory(realFile.getParent().getPath());
     }
-    commandLine.setPassParentEnvironment(true);
     commandLine.getEnvironment().putAll(myUnitParameters.getEnvs());
+    commandLine.setPassParentEnvironment(myUnitParameters.isIncludeParentEnvs());
 
     setupUserProperties(commandLine);
 
@@ -187,7 +188,7 @@ public class DartUnitRunningState extends CommandLineState {
     String runnerCode = getRunnerCode();
     runnerCode = runnerCode.replaceFirst("DART_UNITTEST", "package:unittest/unittest.dart");
     runnerCode = runnerCode.replaceFirst("NAME", StringUtil.notNullize(name));
-    runnerCode = runnerCode.replaceFirst("SCOPE", scope == null ? "" : scope.toString());
+    runnerCode = runnerCode.replaceFirst("SCOPE", scope.toString());
     final String filePath = myUnitParameters.getFilePath();
     runnerCode = runnerCode.replaceFirst("TEST_FILE_PATH", filePath == null ? "" : pathToDartUrl(filePath));
 
