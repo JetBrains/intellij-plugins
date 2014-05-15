@@ -56,7 +56,7 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
       return false;
     }
 
-    configuration.setName(configuration.suggestedName());
+    configuration.setGeneratedName();
     return true;
   }
 
