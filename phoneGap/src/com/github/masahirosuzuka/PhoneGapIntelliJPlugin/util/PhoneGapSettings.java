@@ -7,9 +7,7 @@ import com.intellij.openapi.externalSystem.model.ProjectSystemId;
  *
  * Created by Masahiro Suzuka on 2014/04/12.
  */
-
-// Store PhoneGapSettings class
-final public class PhoneGapSettings {
+public final class PhoneGapSettings {
 
   // System ID
   public static final ProjectSystemId PHONEGAP_SYSTEM_ID = new ProjectSystemId("PHONEGAP");
@@ -37,23 +35,11 @@ final public class PhoneGapSettings {
   public static String PHONEGAP_FOLDERS_WWW = "www";
   public static boolean isPhoneGapInstallded = false;
 
-  private static PhoneGapSettings instance;
+  private static final PhoneGapSettings instance = new PhoneGapSettings();
 
   private PhoneGapSettings() {}
 
   public static PhoneGapSettings getInstance() {
-    if (instance == null) {
-      instance = new PhoneGapSettings();
-    }
     return instance;
   }
-
-  public static boolean isIsPhoneGapInstallded() {
-    return isPhoneGapInstallded;
-  }
-
-  public static void setIsPhoneGapInstallded(boolean isPhoneGapInstallded) {
-    PhoneGapSettings.isPhoneGapInstallded = isPhoneGapInstallded;
-  }
-
 }

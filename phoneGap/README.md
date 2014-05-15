@@ -95,20 +95,21 @@ Android : Androidをターゲットにビルドします．
 
 #####(6)デバッグ
 
+#####(6)-1 Rippleエミュレータによるデバッグ
+
 Configuration作成時にRippleを選択した場合，Rippleエミュレータを利用出来ます．
 Rippleエミュレータに関しては
 [Apache Ripple公式サイト](http://ripple.incubator.apache.org/)
 を参照してください．
 
-######Rippleエミュレータのインストール
+######(6)-1-1 Rippleエミュレータのインストール
 
 RippleエミュレータはChromeAppです．Chrome Web Storeからインストールしてください．
 
-######Rippleエミュレータ上での実行
+######(6)-1-2 Rippleエミュレータ上での実行
 
 http://localhost:1337
 にアクセスし，Rippleエミュレータを有効にしてください．
-
 
 実行時に生成されるserver.jsはNodeJS上で実行されるhttpサーバです．
 本スクリプトが実行され，Rippleエミュレータにwwwフォルダ以下のファイルが配信されます．
@@ -120,8 +121,25 @@ https://github.com/masahirosuzuka/simpleserver
 
 を参照してください．
 
+####(6)-2 weinreによるリモートデバッグ
 
 Configuration作成時にweinreを選択した場合，weinreによるリモートデバッグを利用出来ます．
+weinreに関しては
+
+を参照してください．
+
+#####(6)-2-1 weinreのインストール
+
+$npm install -g weinre
+
+#####(6)-2-2
+
+Configuration作成時にweinreを選択した場合，weinreスクリプトの埋め込みは自動で行われます．
+ブラウザで
+
+http://localhost:8080
+
+にアクセスしてください．
 
 ###ToDo
 
