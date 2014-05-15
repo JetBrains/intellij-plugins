@@ -19,15 +19,15 @@ public abstract class DartRunConfigurationBase extends LocatableConfigurationBas
   private class RenameRefactoringListener extends UndoRefactoringElementAdapter {
 
     private final String myOldPath;
+    private String myAffectedPathSegment;
 
-    private RenameRefactoringListener(@NotNull String oldPath) {
+    private RenameRefactoringListener(@NotNull String oldPath, @NotNull String affectedPathSegment) {
       myOldPath = oldPath;
+      myAffectedPathSegment = affectedPathSegment;
     }
 
-    @SuppressWarnings("ConstantConditions")
     private String getNewPath(@NotNull PsiElement newElement) {
-      // File path cannot be null
-      return getFilePath().replaceFirst(myOldPath, getPath(newElement));
+      return myOldPath.replaceFirst(myAffectedPathSegment, getPath(newElement));
     }
 
     private @NotNull String getPath(PsiElement element) {
@@ -72,12 +72,12 @@ public abstract class DartRunConfigurationBase extends LocatableConfigurationBas
           final String affectedPath = changedElement.getPath();
           if (element instanceof PsiFile) {
             if (filePath.equals(affectedPath)) {
-              return new RenameRefactoringListener(affectedPath);
+              return new RenameRefactoringListener(filePath, affectedPath);
             }
           }
           if (element instanceof PsiDirectory) {
             if (filePath.startsWith(affectedPath)) {
-              return new RenameRefactoringListener(affectedPath);
+              return new RenameRefactoringListener(filePath, affectedPath);
             }
           }
         }
