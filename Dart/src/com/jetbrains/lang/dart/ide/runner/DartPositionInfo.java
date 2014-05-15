@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner;
 
+import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +60,7 @@ public class DartPositionInfo {
   */
   @Nullable
   public static DartPositionInfo parsePositionInfo(final @NotNull String text) {
-    Pair<Integer, Integer> pathStartAndEnd = parseUrlStartAndEnd(text, "package:");
+    Couple<Integer> pathStartAndEnd = parseUrlStartAndEnd(text, "package:");
     if (pathStartAndEnd == null) pathStartAndEnd = parseUrlStartAndEnd(text, "dart:");
     if (pathStartAndEnd == null) pathStartAndEnd = parseUrlStartAndEnd(text, "file:");
     if (pathStartAndEnd == null) pathStartAndEnd = parseDartLibUrlStartAndEnd(text);
@@ -71,7 +72,7 @@ public class DartPositionInfo {
     final String url = text.substring(urlStartIndex, urlEndIndex);
     final String tail = text.length() == urlEndIndex ? "" : text.substring(urlEndIndex).trim();
 
-    Pair<Integer, Integer> lineAndColumn = parseLineAndColumnInColonFormat(tail);
+    Couple<Integer> lineAndColumn = parseLineAndColumnInColonFormat(tail);
     if (lineAndColumn == null) lineAndColumn = parseLineAndColumnInTextFormat(tail);
 
     final int colonIndexInUrl = url.indexOf(':');
@@ -93,7 +94,7 @@ public class DartPositionInfo {
   // WHATEVER_NOT_ENDING_WITH_PATH_SYMBOL PREFIX PATH_ENDING_WITH_DOT_DART WHATEVER_ELSE_NOT_STARTING_FROM_PATH_SYMBOL
   // Example:   'package:DartSample2/mylib.dart': error: line 7 pos 1: 'myLibPart' is already defined
   @Nullable
-  private static Pair<Integer, Integer> parseUrlStartAndEnd(final String text, final String prefix) {
+  private static Couple<Integer> parseUrlStartAndEnd(final String text, final String prefix) {
     final int pathStartIndex = text.indexOf(prefix);
     if (pathStartIndex < 0 ||
         pathStartIndex > 0 && !isCharAllowedBeforePath(text.charAt(pathStartIndex - 1))) {
@@ -115,12 +116,12 @@ public class DartPositionInfo {
       return null;
     }
 
-    return Pair.create(pathStartIndex, pathEndIndex);
+    return Couple.newOne(pathStartIndex, pathEndIndex);
   }
 
   //   #0      min (dart:math:70)
   @Nullable
-  private static Pair<Integer, Integer> parseDartLibUrlStartAndEnd(final String text) {
+  private static Couple<Integer> parseDartLibUrlStartAndEnd(final String text) {
     final int pathStartIndex = text.indexOf("dart:");
     if (pathStartIndex < 0 ||
         pathStartIndex > 0 && !isCharAllowedBeforePath(text.charAt(pathStartIndex - 1))) {
@@ -134,7 +135,7 @@ public class DartPositionInfo {
 
     if (index == libNameStartIndex) return null;
 
-    return Pair.create(pathStartIndex, index);
+    return Couple.newOne(pathStartIndex, index);
   }
 
   private static boolean isCharAllowedBeforePath(final char ch) {
@@ -147,22 +148,22 @@ public class DartPositionInfo {
   }
 
   @Nullable
-  private static Pair<Integer, Integer> parseLineAndColumnInColonFormat(final @NotNull String text) {
+  private static Couple<Integer> parseLineAndColumnInColonFormat(final @NotNull String text) {
     // "12 whatever, ":12 whatever", "12:34 whatever" or ":12:34 whatever"
     final Pair<Integer, String> lineAndRemainingText = parseNextIntSkippingColon(text);
     if (lineAndRemainingText == null) return null;
 
     final Pair<Integer, String> colonAndRemainingText = parseNextIntSkippingColon(lineAndRemainingText.second.trim());
     if (colonAndRemainingText == null) {
-      return Pair.create(lineAndRemainingText.first, -1);
+      return Couple.newOne(lineAndRemainingText.first, -1);
     }
     else {
-      return Pair.create(lineAndRemainingText.first, colonAndRemainingText.first);
+      return Couple.newOne(lineAndRemainingText.first, colonAndRemainingText.first);
     }
   }
 
   @Nullable
-  private static Pair<Integer, Integer> parseLineAndColumnInTextFormat(final @NotNull String text) {
+  private static Couple<Integer> parseLineAndColumnInTextFormat(final @NotNull String text) {
     // "whatever line 12 pos 34 whatever"
     int index = text.indexOf("line ");
     if (index == -1) return null;
@@ -179,10 +180,10 @@ public class DartPositionInfo {
     }
 
     if (colonAndRemainingText == null) {
-      return Pair.create(lineAndRemainingText.first, -1);
+      return Couple.newOne(lineAndRemainingText.first, -1);
     }
     else {
-      return Pair.create(lineAndRemainingText.first, colonAndRemainingText.first);
+      return Couple.newOne(lineAndRemainingText.first, colonAndRemainingText.first);
     }
   }
 

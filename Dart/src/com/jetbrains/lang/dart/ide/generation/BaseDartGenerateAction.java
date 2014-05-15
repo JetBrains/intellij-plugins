@@ -3,8 +3,6 @@ package com.jetbrains.lang.dart.ide.generation;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -26,7 +24,7 @@ public abstract class BaseDartGenerateAction extends AnAction {
 
   private static Pair<Editor, PsiFile> getEditorAndPsiFile(final AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
-    if (project == null) return Pair.create(null, null);
+    if (project == null) return Pair.create((Editor)null, null);
     Editor editor = e.getData(CommonDataKeys.EDITOR);
     PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
     return Pair.create(editor, psiFile);
