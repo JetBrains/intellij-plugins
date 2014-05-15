@@ -164,7 +164,7 @@ libraryStatement ::= metadata* 'library' qualifiedComponentName ';' {
   methods = [ getLibraryName ]
 }
 
-importStatement ::= metadata* 'import' pathOrLibraryReference (('deferred' )?'as' componentName )? combinator* ';' {
+importStatement ::= metadata* 'import' pathOrLibraryReference ('deferred'? 'as' componentName )? combinator* ';' {
   pin=3
   implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
   methods = [
@@ -468,7 +468,7 @@ private expression_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrap
                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' |
-                                 'continue' | 'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
+                                 'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' |
                                  'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
