@@ -59,7 +59,7 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
                          });
         }
         catch (Exception e) {
-          throw new IncorrectOperationException(e.getMessage(), e);
+          throw new IncorrectOperationException(e);
         }
       }
     }, JSBundle.message(FlexBundle.message("new.flex.component.command.name")), null);

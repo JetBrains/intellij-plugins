@@ -3,19 +3,13 @@ package com.intellij.lang.javascript.uml.actions;
 import com.intellij.diagram.DiagramDataModel;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSIconProvider;
-import com.intellij.lang.javascript.ui.newclass.CreateFlashClassWizard;
-import com.intellij.lang.javascript.ui.newclass.CustomVariablesStep;
-import com.intellij.lang.javascript.ui.newclass.MainStep;
-import com.intellij.lang.javascript.ui.newclass.WizardModel;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -75,7 +69,7 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
                          });
         }
         catch (Exception e) {
-          throw new IncorrectOperationException(e.getMessage(), e);
+          throw new IncorrectOperationException(e);
         }
       }
     }, JSBundle.message(JSBundle.message("new.actionscript.class.command.name")), null);
