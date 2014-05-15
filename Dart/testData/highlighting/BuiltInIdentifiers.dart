@@ -1,9 +1,11 @@
 <error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">library</info></error> library;
+
+<error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">import</info></error> <error descr="Target of URI does not exist: 'foo'">"foo"</error> <info descr="highlighted as keyword">as</info> as <info descr="highlighted as keyword">hide</info> hide <info descr="highlighted as keyword">show</info> show;
+<error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">import</info></error> <error descr="Target of URI does not exist: 'foo'">"foo"</error> <info descr="highlighted as keyword">deferred</info> <info descr="highlighted as keyword">as</info> deferred;
+<error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">export</info></error> <error descr="Target of URI does not exist: 'bar'">"bar"</error> <info descr="highlighted as keyword">show</info> hide <info descr="highlighted as keyword">hide</info> show;
+
 <error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">part</info></error> <error descr="Target of URI does not exist: 'part'">"part"</error>;
 <info descr="highlighted as keyword">part</info> <info descr="highlighted as keyword">of</info> part.of;
-
-<error descr="Import directives must preceed part directives"><error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">import</info></error></error> <error descr="Target of URI does not exist: 'foo'">"foo"</error> <info descr="highlighted as keyword">as</info> as <info descr="highlighted as keyword">hide</info> hide <info descr="highlighted as keyword">show</info> show;
-<error descr="Export directives must preceed part directives"><error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">export</info></error></error> <error descr="Target of URI does not exist: 'bar'">"bar"</error> <info descr="highlighted as keyword">show</info> hide <info descr="highlighted as keyword">hide</info> show;
 
 <info descr="highlighted as keyword">typedef</info> <error descr="The built-in identifier 'typedef' cannot be used as a type alias name"><info descr="null">typedef</info></error>();
 
@@ -13,6 +15,7 @@
 
   <info descr="null">bool</info> <info descr="null">abstract</info>() => false;
   <info descr="metadata">@<info descr="null">Object</info></info>() void <info descr="null">as</info>() => null;
+  void <info descr="null">deferred</info>() => null;
   void <info descr="null">export</info>() => null;
   <info descr="highlighted as keyword">external</info> void <info descr="null">external</info>();
   void <info descr="null">factory</info>() => null;
@@ -34,6 +37,7 @@
   <info descr="null">callFunctions</info>() {
     <info descr="null">print</info>(<info descr="null">abstract</info>());
     <info descr="null">print</info>(as());
+    <info descr="null">print</info>(deferred());
     <info descr="null">print</info>(<info descr="null">export</info>());
     <info descr="null">print</info>(<info descr="null">external</info>());
     <info descr="null">print</info>(<info descr="null">factory</info>());
@@ -59,6 +63,7 @@
   
   <info descr="null">int</info> <info descr="null">abstract</info> = 1;
   <info descr="metadata">@<info descr="null">Object</info></info>() var <info descr="null">as</info> = 2;
+  <info descr="null">dynamic</info> <info descr="null">deferred</info> = 2.5;
   <info descr="null">dynamic</info> <info descr="null">export</info> = 3;
   var <info descr="null">external</info> = 4;
   var <info descr="null">factory</info> = 5;
@@ -80,6 +85,7 @@
 
   <info descr="null">print</info>(<info descr="null">abstract</info> + 1);
   <info descr="null">print</info>(<info descr="null">as</info> + 1);
+  <info descr="null">print</info>(<info descr="null">deferred</info> + 1);
   <info descr="null">print</info>(<info descr="null">export</info> + 1);
   <info descr="null">print</info>(<info descr="null">external</info> + 1);
   <info descr="null">print</info>(<info descr="null">factory</info> + 1);
