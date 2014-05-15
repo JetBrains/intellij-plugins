@@ -179,18 +179,14 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     final FileTemplateManager templateManager = FileTemplateManager.getInstance();
     final FileTemplate validationTemplate = templateManager.getJ2eeTemplate(StrutsFileTemplateGroupDescriptorFactory.VALIDATION_XML);
 
-    final PsiDirectory packageDirectoryInSourceRoot = RefactoringUtil.createPackageDirectoryInSourceRoot(targetPackage,
-                                                                                                         sourceRoot);
+    final PsiDirectory packageDirectoryInSourceRoot = RefactoringUtil.createPackageDirectoryInSourceRoot(targetPackage, sourceRoot);
     try {
-      final String filename = path == null ? actionClass.getName() + "-validation.xml" :
-          actionClass.getName() + "-" + path + "-validation.xml";
-      final PsiElement psiElement = FileTemplateUtil.createFromTemplate(validationTemplate,
-                                                                        filename,
-                                                                        null,
-                                                                        packageDirectoryInSourceRoot);
+      final String filename = path == null ? actionClass.getName() + "-validation.xml" : actionClass.getName() + "-" + path + "-validation.xml";
+      final PsiElement psiElement = FileTemplateUtil.createFromTemplate(validationTemplate, filename, null, packageDirectoryInSourceRoot);
       NavigationUtil.activateFileWithPsiElement(psiElement, true);
-    } catch (Exception e) {
-      throw new IncorrectOperationException("error creating validation.xml", e);
+    }
+    catch (Exception e) {
+      throw new IncorrectOperationException("error creating validation.xml", (Throwable)e);
     }
   }
 

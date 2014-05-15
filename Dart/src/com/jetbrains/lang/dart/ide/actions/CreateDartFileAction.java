@@ -87,7 +87,7 @@ public class CreateDartFileAction extends CreateFromTemplateAction<PsiFile> {
       return createFile(className, dir, templateName).getContainingFile();
     }
     catch (Exception e) {
-      throw new IncorrectOperationException(e.getMessage(), e);
+      throw new IncorrectOperationException(e);
     }
   }
 
