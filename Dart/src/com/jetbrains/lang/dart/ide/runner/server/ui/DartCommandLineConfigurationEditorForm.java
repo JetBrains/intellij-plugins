@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 
 public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartCommandLineRunConfiguration> {
   private JPanel myMainPanel;
+  private JLabel myDartFileLabel;
   private TextFieldWithBrowseButton myFileField;
   private RawCommandLineEditor myVMOptions;
   private RawCommandLineEditor myArguments;
@@ -42,6 +43,10 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
 
     myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
     myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
+
+    // 'Environment variables' is the widest label, anchored by myDartFileLabel
+    myDartFileLabel.setPreferredSize(myEnvironmentVariables.getLabel().getPreferredSize());
+    myEnvironmentVariables.setAnchor(myDartFileLabel);
   }
 
   public static void initDartFileTextWithBrowse(final @NotNull Project project,
@@ -97,9 +102,5 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   @Override
   protected JComponent createEditor() {
     return myMainPanel;
-  }
-
-  private void createUIComponents() {
-    myEnvironmentVariables = new EnvironmentVariablesComponent();
   }
 }

@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
+import com.intellij.execution.configurations.LocatableConfigurationBase;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
@@ -152,7 +153,9 @@ public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
   }
 
   @NotNull
-  public Map<String, String> getEnvs() { return myEnvs; }
+  public Map<String, String> getEnvs() {
+    return myEnvs;
+  }
 
   public void setEnvs(@NotNull Map<String, String> envs) {
     myEnvs.clear();

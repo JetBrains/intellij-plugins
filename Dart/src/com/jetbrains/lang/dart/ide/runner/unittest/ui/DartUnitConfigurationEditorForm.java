@@ -27,12 +27,13 @@ import static com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunnerParamete
 
 public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunConfiguration> {
   private JPanel myMainPanel;
-  private TextFieldWithBrowseButton myFileField;
-  private RawCommandLineEditor myVMOptions;
-  private RawCommandLineEditor myArguments;
   private JComboBox myScopeCombo;
+  private JLabel myTestFileLabel;
+  private TextFieldWithBrowseButton myFileField;
   private JLabel myTestNameLabel;
   private JTextField myTestNameField;
+  private RawCommandLineEditor myVMOptions;
+  private RawCommandLineEditor myArguments;
   private TextFieldWithBrowseButton myWorkingDirectory;
   private EnvironmentVariablesComponent myEnvironmentVariables;
 
@@ -59,6 +60,10 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
 
     myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
     myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
+
+    // 'Environment variables' is the widest label, anchored by myTestFileLabel
+    myTestFileLabel.setPreferredSize(myEnvironmentVariables.getLabel().getPreferredSize());
+    myEnvironmentVariables.setAnchor(myTestFileLabel);
   }
 
   @Override
@@ -110,7 +115,4 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
   protected JComponent createEditor() {
     return myMainPanel;
   }
-
-  private void createUIComponents() { myEnvironmentVariables = new EnvironmentVariablesComponent(); }
-
 }
