@@ -380,7 +380,7 @@ module Teamcity
         msg = "#{exception.class.name}: #{exception.message}"
         backtrace = ::Rake::TeamCity::RunnerCommon.format_backtrace(exception.backtrace)
 
-        log(@message_factory.create_msg_error(msg, backtrace))
+        log(@message_factory.create_msg_error(msg, backtrace)) unless @handled_exception 
       end
 
 #######################################################################
