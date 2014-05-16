@@ -122,6 +122,11 @@ module Teamcity
       def before_step_result(keyword, step_match, multiline_arg, status, exception, source_indent, background, file_colon_line = nil)
         tc_before_step_result(exception, keyword, multiline_arg, source_indent, status, step_match, background, file_colon_line)
       end
+
+#### Exceptions:
+      def exception(exception, status)
+        tc_exception(exception, status)
+      end
     end
   end
 end
