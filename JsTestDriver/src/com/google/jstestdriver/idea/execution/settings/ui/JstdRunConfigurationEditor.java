@@ -32,6 +32,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
   public JstdRunConfigurationEditor(@NotNull Project project) {
     myTabSections = ContainerUtil.newLinkedHashMap();
     myTabSections.put("Configuration", new RootSection());
+    myTabSections.put("Server", new JstdRunConfigurationServerSection());
     myTabSections.put("Debug", new JstdDebugSection());
     myTabSections.put("Coverage", new JstdCoverageSection(project));
     myRootComponent = createTabbedPane(project, myTabSections);
@@ -77,7 +78,6 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
 
     private JComboBox myTestTypeComboBox;
     private OneOfRunSettingsSection<TestTypeListItem> myTestTypeContentRunSettingsSection;
-    private final ServerConfigurationForm myServerConfigurationForm = new ServerConfigurationForm();
     private Map<TestType, TestTypeListItem> myListItemByTestTypeMap;
     private final JBLabel myLabel = new JBLabel("Test:");
 
@@ -121,16 +121,6 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
         0, 0
       ));
 
-      panel.add(myServerConfigurationForm.getComponent(creationContext), new GridBagConstraints(
-        0, 2,
-        2, 1,
-        1.0, 0.0,
-        GridBagConstraints.WEST,
-        GridBagConstraints.HORIZONTAL,
-        new Insets(0, 0, 0, 0),
-        0, 0
-      ));
-
       setAnchor(myTestTypeContentRunSettingsSection.getAnchor());
       return panel;
     }
@@ -139,7 +129,6 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
     public void resetFrom(@NotNull JstdRunSettings runSettings) {
       selectTestType(runSettings.getTestType());
       myTestTypeContentRunSettingsSection.resetFrom(runSettings);
-      myServerConfigurationForm.resetFrom(runSettings);
     }
 
     @Override
@@ -148,7 +137,6 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
       selectTestType(selectedTestType);
       runSettingsBuilder.setTestType(selectedTestType);
       myTestTypeContentRunSettingsSection.applyTo(runSettingsBuilder);
-      myServerConfigurationForm.applyTo(runSettingsBuilder);
     }
 
     private static @NotNull List<TestTypeListItem> createTestTypeListItems() {
