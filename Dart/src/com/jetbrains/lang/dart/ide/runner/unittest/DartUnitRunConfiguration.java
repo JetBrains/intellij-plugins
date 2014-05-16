@@ -37,7 +37,7 @@ public class DartUnitRunConfiguration extends DartRunConfigurationBase {
   }
 
   @Override
-  protected void setFilePath(final @Nullable String filePath) {
+  public void setFilePath(final @Nullable String filePath) {
     myRunnerParameters.setFilePath(filePath);
   }
 
@@ -45,6 +45,15 @@ public class DartUnitRunConfiguration extends DartRunConfigurationBase {
   @Override
   public String getFilePath() {
     return myRunnerParameters.getFilePath();
+  }
+
+  public void setWorkingDirectory(final @NotNull String path) {
+    myRunnerParameters.setWorkingDirectory(path);
+  }
+
+  @Nullable
+  public String getWorkingDirectory() {
+    return myRunnerParameters.getWorkingDirectory();
   }
 
   public DartUnitRunnerParameters getRunnerParameters() {
