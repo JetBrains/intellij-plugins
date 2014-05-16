@@ -5,8 +5,10 @@ import com.intellij.execution.configurations.LocatableConfigurationBase;
 import com.intellij.execution.configurations.RefactoringListenerProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.listeners.UndoRefactoringElementAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -14,17 +16,40 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class DartRunConfigurationBase extends LocatableConfigurationBase implements RefactoringListenerProvider {
 
-  private final RefactoringElementListener myRefactoringElementListener = new UndoRefactoringElementAdapter() {
+  private class RenameRefactoringListener extends UndoRefactoringElementAdapter {
+
+    private final String myOldPath;
+    private String myAffectedPathSegment;
+
+    private RenameRefactoringListener(@NotNull String oldPath, @NotNull String affectedPathSegment) {
+      myOldPath = oldPath;
+      myAffectedPathSegment = affectedPathSegment;
+    }
+
+    private String getNewPath(@NotNull PsiElement newElement) {
+      return myOldPath.replaceFirst(myAffectedPathSegment, getPath(newElement));
+    }
+
+    private @NotNull String getPath(PsiElement element) {
+      final VirtualFile virtualFile = ((PsiFileSystemItem)element).getVirtualFile();
+      if (virtualFile != null) {
+        return virtualFile.getPath();
+      }
+      return ""; //Shouldn't happen
+    }
+
+    @Override
     protected void refactored(@NotNull final PsiElement element, @Nullable final String oldQualifiedName) {
       final boolean generatedName = getName().equals(suggestedName());
 
-      setFilePath(element.getContainingFile().getVirtualFile().getPath());
+      setFilePath(getNewPath(element));
 
       if (generatedName) {
         setGeneratedName();
       }
     }
-  };
+  }
+
 
   protected DartRunConfigurationBase(final Project project, final ConfigurationFactory factory, final String name) {
     super(project, factory, name);
@@ -38,13 +63,28 @@ public abstract class DartRunConfigurationBase extends LocatableConfigurationBas
   @Nullable
   @Override
   public RefactoringElementListener getRefactoringElementListener(final PsiElement element) {
-    if (element instanceof PsiFile) {
+
+    if (element instanceof PsiFileSystemItem) {
       final String filePath = getFilePath();
-      final VirtualFile changedFile = ((PsiFile)element).getVirtualFile();
-      if (filePath != null && changedFile != null && filePath.equals(changedFile.getPath())) {
-        return myRefactoringElementListener;
+      if (filePath != null) {
+        final VirtualFile changedElement = ((PsiFileSystemItem)element).getVirtualFile();
+        if (changedElement != null) {
+          final String affectedPath = changedElement.getPath();
+          if (element instanceof PsiFile) {
+            if (filePath.equals(affectedPath)) {
+              return new RenameRefactoringListener(filePath, affectedPath);
+            }
+          }
+          if (element instanceof PsiDirectory) {
+            if (filePath.startsWith(affectedPath)) {
+              return new RenameRefactoringListener(filePath, affectedPath);
+            }
+          }
+        }
       }
     }
+
     return null;
   }
+
 }
