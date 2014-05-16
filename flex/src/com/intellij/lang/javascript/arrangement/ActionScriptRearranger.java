@@ -85,7 +85,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
                                                                                              @Nullable Document document,
                                                                                              @NotNull Collection<TextRange> ranges,
                                                                                              @NotNull PsiElement element,
-                                                                                             @Nullable ArrangementSettings settings) {
+                                                                                             @NotNull ArrangementSettings settings) {
     // todo implement and use in quick fixes, code generators, etc.
     return null;
   }
@@ -95,7 +95,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
   public List<ActionScriptArrangementEntry> parse(final @NotNull PsiElement root,
                                                   final @Nullable Document document,
                                                   final @NotNull Collection<TextRange> ranges,
-                                                  final @Nullable ArrangementSettings settings) {
+                                                  final @NotNull ArrangementSettings settings) {
     final PsiFile file = root.getContainingFile();
     if (!(file instanceof JSFile)) return Collections.emptyList();
 
@@ -160,7 +160,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     }
 
     // group property fields with getters/setters
-    if (settings != null && groupPropertyFieldWithGetterSetter(settings)) {
+    if (groupPropertyFieldWithGetterSetter(settings)) {
       final JSCodeStyleSettings codeStyleSettings =
         CodeStyleSettingsManager.getSettings(jsClass.getProject()).getCustomSettings(JSCodeStyleSettings.class);
 
