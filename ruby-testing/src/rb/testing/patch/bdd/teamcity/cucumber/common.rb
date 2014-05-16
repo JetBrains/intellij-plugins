@@ -377,7 +377,10 @@ module Teamcity
       # handler for when exceptions occur - exceptions in steps are already handled but
       # others are not (i.e. Before / After hooks) so we need to reflect this
       def tc_exception(exception, status)
-        print_exception(exception, status, 0) unless @handled_exception == exception
+        msg = "#{exception.class.name}: #{exception.message}"
+        backtrace = ::Rake::TeamCity::RunnerCommon.format_backtrace(exception.backtrace)
+
+        log(@message_factory.create_msg_error(msg, backtrace))
       end
 
 #######################################################################
