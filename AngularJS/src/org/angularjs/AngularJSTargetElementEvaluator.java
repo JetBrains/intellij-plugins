@@ -23,7 +23,7 @@ public class AngularJSTargetElementEvaluator implements TargetElementEvaluator {
 
   @Nullable
   @Override
-  public PsiElement getElementByReference(PsiReference ref, int flags) {
+  public PsiElement getElementByReference(@NotNull PsiReference ref, int flags) {
     if (ref instanceof JSTextReference) {
       final PsiElement element = ref.getElement();
       final JSCallExpression call = PsiTreeUtil.getParentOfType(element, JSCallExpression.class);
