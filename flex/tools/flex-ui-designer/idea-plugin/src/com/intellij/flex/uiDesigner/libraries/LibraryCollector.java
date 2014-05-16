@@ -145,8 +145,13 @@ class LibraryCollector {
     }
 
     flexSdkVersion = sdk.getVersionString();
-    assert flexSdkVersion != null && flexSdkVersion.length() >= 3;
-    flexSdkVersion = flexSdkVersion.substring(0, 3);
+    assert flexSdkVersion != null;
+    if (StringUtil.compareVersionNumbers(flexSdkVersion, "4.5.1") >= 0) {
+      flexSdkVersion = "4.6";
+    }
+    else {
+      flexSdkVersion = flexSdkVersion.substring(0, 3);
+    }
 
     globalCatalogForTests(bc);
 

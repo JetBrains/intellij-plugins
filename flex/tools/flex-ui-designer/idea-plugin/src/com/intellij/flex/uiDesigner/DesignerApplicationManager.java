@@ -153,6 +153,10 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
     }
 
+    if (StringUtil.compareVersionNumbers(version, "4.5.1") >= 0) {
+      return true;
+    }
+
     if (version.length() < 5 || version.charAt(0) < '4') {
       return false;
     }

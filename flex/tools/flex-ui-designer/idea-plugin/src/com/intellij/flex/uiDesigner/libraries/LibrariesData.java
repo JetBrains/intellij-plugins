@@ -20,7 +20,7 @@ import static com.intellij.flex.uiDesigner.libraries.LibrarySorter.SortResult;
 class LibrariesData {
   final PersistentHashMap<String, SortResult> librarySets;
 
-  private static final String ABC_FILTER_VERSION = "39";
+  private static final String ABC_FILTER_VERSION = "40";
   private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
 
   static final char NAME_PREFIX = '@';
