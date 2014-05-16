@@ -58,5 +58,5 @@
       <reference ref="FlashUIDesigner.RunDesignView"/>
       <add-to-group anchor="last" group-id="RunContextPopupGroup"/>
     </group>
-  </actions>
+  </actions>w
 </idea-plugin>
