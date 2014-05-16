@@ -334,6 +334,7 @@ module Teamcity
       def tc_before_step_result(exception, keyword, multiline_arg, source_indent, status, step_match, background, file_colon_line)
         finished_at_ms = get_current_time_in_ms
         duration_ms = finished_at_ms - @current_step_start_time
+        @handled_exception = exception
 
         # Actually cucumber standard formatters doesn't count BG steps in
         # context of Background element. Instead it count such steps in each
@@ -371,6 +372,12 @@ module Teamcity
 
         diagnostic_info = "cucumber  f/s=(#{finished_at_ms}, #{@current_step_start_time}), duration=#{duration_ms}, time.now=#{Time.now.to_s}"
         log_status_and_test_finished(status, step_line, duration_ms, exception, multiline_arg, keyword, diagnostic_info)
+      end
+
+      # handler for when exceptions occur - exceptions in steps are already handled but
+      # others are not (i.e. Before / After hooks) so we need to reflect this
+      def tc_exception(exception, status)
+        print_exception(exception, status, 0) unless @handled_exception == exception
       end
 
 #######################################################################
