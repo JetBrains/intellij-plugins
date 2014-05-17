@@ -31,7 +31,7 @@ public class ExternalToolsDetector implements ProjectComponent {
     if (SystemInfo.isWindows) {
       if (SystemInfo.is32Bit) { // System is Windows32bit
         // Program Files(x86)
-        PhoneGapSettings.getInstance().
+        PhoneGapSettings.getInstance().PHONEGAP_PATH = "";
       }
 
       if (SystemInfo.is64Bit) { // System is Windows64bit

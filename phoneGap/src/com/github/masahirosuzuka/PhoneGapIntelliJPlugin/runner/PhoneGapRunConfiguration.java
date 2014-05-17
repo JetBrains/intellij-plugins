@@ -1,5 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
@@ -34,19 +35,19 @@ public class PhoneGapRunConfiguration extends RunConfigurationBase {
 
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
-    if (!(PHONEGAP_PATH.equals("phonegap"))) {
-      throw new RuntimeConfigurationException("PhoneGap PATH is missing");
+    if (!(PHONEGAP_PATH.equals(PhoneGapSettings.PHONEGAP_PATH) || PHONEGAP_PATH.equals(PhoneGapSettings.CORDOVA_PATH))) {
+      throw new RuntimeConfigurationException("SDK is missing");
     }
 
     if (!(PHONEGAP_COMMAND.equals("run"))) {
-      throw new RuntimeConfigurationException("PhoneGap command is missing");
+      throw new RuntimeConfigurationException("Command is missing");
     }
 
     if ( !(PHONEGAP_PLATFORM.equals("android") ||
         PHONEGAP_PLATFORM.equals("ios") ||
         PHONEGAP_PLATFORM.equals("windowsphone")||
         PHONEGAP_PLATFORM.equals("ripple")) ) {
-      throw new RuntimeConfigurationException("PhoneGap Platform is missing");
+      throw new RuntimeConfigurationException("Platform is missing");
     }
   }
 

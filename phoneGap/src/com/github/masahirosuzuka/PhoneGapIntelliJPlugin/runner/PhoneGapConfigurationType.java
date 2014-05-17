@@ -23,12 +23,12 @@ public class PhoneGapConfigurationType implements ConfigurationType {
 
   @Override
   public String getDisplayName() {
-    return "PhoneGap";
+    return "PhoneGap/Cordova";
   }
 
   @Override
   public String getConfigurationTypeDescription() {
-    return "PhoneGap Application";
+    return "PhoneGap/Cordova Application";
   }
 
   @Override

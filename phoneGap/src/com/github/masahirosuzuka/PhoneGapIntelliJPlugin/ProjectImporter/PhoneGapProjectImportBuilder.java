@@ -29,7 +29,7 @@ public class PhoneGapProjectImportBuilder extends ProjectImportBuilder {
   @NotNull
   @Override
   public String getName() {
-    return "PhoneGap";
+    return "PhoneGap/Cordova";
   }
 
   @Override

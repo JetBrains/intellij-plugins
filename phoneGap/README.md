@@ -2,9 +2,9 @@
 
 IntelliJ Platform Plugin for PhoneGap/Cordova Application
 
-* PhoneGap Project wizard (not stable)
-* PhoneGap Project importer
-* Run PhoneGap Application from IntelliJ toolbar
+* PhoneGap/Cordova Project wizard (not stable)
+* PhoneGap/Cordova Project importer
+* Run PhoneGap/Cordova Application from IntelliJ toolbar
 * Ripple Emulator support
 
 ###About PhoneGap/Cordova
@@ -35,6 +35,11 @@ If you want to develop Android app. You must install Android SDK and set PATH.
 
 ####(3)Create PhoneGap Project
 $phonegap create hellophonegap
+
+if you use cordova
+
+$cordova add platform android
+$cordova add platform ios
 
 ####(4)Import PhoneGap Project
 File -> Import Project -> PhoneGap Project root dir -> Import form external model -> PhoneGap -> Finish
@@ -144,6 +149,7 @@ http://localhost:8080
 ###ToDo
 
 * Windows support
+* New ConfigurationEditor
 * weinre support
 * GUI builder(sencha touch, Kendo UI, OnsenUI, etc...)
 * LogCat integration(or helper for javaScript debugging)

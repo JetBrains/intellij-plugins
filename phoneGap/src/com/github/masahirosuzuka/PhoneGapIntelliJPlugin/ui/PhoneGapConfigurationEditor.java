@@ -1,10 +1,10 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfiguration;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -19,6 +19,8 @@ import java.awt.event.ActionListener;
 public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfiguration> {
 
   private JPanel component;
+  private JRadioButton phoneGapRadioButton;
+  private JRadioButton cordovaRadioButton;
   private JRadioButton androidRadioButton;
   private JRadioButton iOSRadioButton;
   private JRadioButton windowsPhoneRadioButton;
@@ -28,19 +30,50 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
   private JTextArea runScript;
 
   public PhoneGapConfigurationEditor(Project project) {
-    androidRadioButton.addActionListener(new ActionListener() {
+
+    phoneGapRadioButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
         runScript.setText("");
-        runScript.setText("phonegap run android");
+        runScript.setText("phonegap");
+      }
+    });
+
+    cordovaRadioButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        runScript.setText("");
+        runScript.setText("cordova");
+      }
+    });
+
+    androidRadioButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent actionEvent) {
+        if (phoneGapRadioButton.isSelected() || cordovaRadioButton.isSelected()) {
+          if (phoneGapRadioButton.isSelected()) {
+            runScript.setText("");
+            runScript.setText("phonegap run android");
+          } else {
+            runScript.setText("");
+            runScript.setText("cordova run android");
+          }
+        }
       }
     });
 
     iOSRadioButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        runScript.setText("");
-        runScript.setText("phonegap run ios");
+        if (phoneGapRadioButton.isSelected() || cordovaRadioButton.isSelected()) {
+          if (phoneGapRadioButton.isSelected()) {
+            runScript.setText("");
+            runScript.setText("phonegap run ios");
+          } else {
+            runScript.setText("");
+            runScript.setText("cordova run ios");
+          }
+        }
       }
     });
 
@@ -64,15 +97,44 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
 
   @Override
   protected void resetEditorFrom(PhoneGapRunConfiguration phoneGapRunConfiguration) {
-    //System.out.println("resetEditor");
-    androidRadioButton.setSelected(false);
-    iOSRadioButton.setSelected(false);
-    windowsPhoneRadioButton.setSelected(false);
-    runScript.setText("");
+    if (phoneGapRunConfiguration == null) { // Creating new configuration
+      phoneGapRadioButton.setSelected(true);// PhoneGap is default SDK but user can choose Cordova
+      androidRadioButton.setSelected(false);
+      iOSRadioButton.setSelected(false);
+      windowsPhoneRadioButton.setSelected(false);
+      runScript.setText("");
+    } else {
+      if (phoneGapRunConfiguration.PHONEGAP_PATH.equals("phonegap")) {
+        phoneGapRadioButton.setSelected(true);
+      } else {
+        cordovaRadioButton.setSelected(true);
+      }
+
+      if (phoneGapRunConfiguration.PHONEGAP_PLATFORM.equals("android")) {
+        androidRadioButton.setSelected(true);
+      } else if(phoneGapRunConfiguration.PHONEGAP_PLATFORM.equals("ios")) {
+        iOSRadioButton.setSelected(true);
+      }
+
+      if (phoneGapRunConfiguration.PHONEGAP_PLATFORM.equals("ripple")) {
+        rippleButton.setSelected(true);
+      }
+
+      runScript.setText(createScriptFromForm());
+    }
   }
 
   @Override
   protected void applyEditorTo(PhoneGapRunConfiguration phoneGapRunConfiguration) throws ConfigurationException {
+
+    if (phoneGapRadioButton.isSelected()) {
+      phoneGapRunConfiguration.PHONEGAP_PATH = PhoneGapSettings.PHONEGAP_PATH;
+    }
+
+    if (cordovaRadioButton.isSelected()) {
+      phoneGapRunConfiguration.PHONEGAP_PATH = PhoneGapSettings.CORDOVA_PATH;
+    }
+
     if (androidRadioButton.isSelected()) {
       phoneGapRunConfiguration.PHONEGAP_PLATFORM = "android";
     }
@@ -94,5 +156,9 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
   @Override
   protected JComponent createEditor() {
     return component;
+  }
+
+  private String createScriptFromForm() {
+    return "";
   }
 }

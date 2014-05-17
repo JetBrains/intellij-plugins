@@ -20,6 +20,7 @@ public final class PhoneGapSettings {
 
   // PhoneGap PATH
   public static String PHONEGAP_PATH = "/usr/local/bin/phonegap";
+  public static String CORDOVA_PATH = "/usr/local/bin/cordova";
 
   // PhoneGap commands
   public static String PHONEGAP_TASK = "run";
