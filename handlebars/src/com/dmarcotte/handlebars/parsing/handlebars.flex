@@ -104,22 +104,22 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 }
 
 <mu> {
-  "{{>" { return HbTokenTypes.OPEN_PARTIAL; }
-  "{{#" { return HbTokenTypes.OPEN_BLOCK; }
-  "{{/" { return HbTokenTypes.OPEN_ENDBLOCK; }
-  "{{^" { return HbTokenTypes.OPEN_INVERSE; }
+  "{{"\~?">" { return HbTokenTypes.OPEN_PARTIAL; }
+  "{{"\~?"#" { return HbTokenTypes.OPEN_BLOCK; }
+  "{{"\~?"/" { return HbTokenTypes.OPEN_ENDBLOCK; }
+  "{{"\~?"^" { return HbTokenTypes.OPEN_INVERSE; }
   // NOTE: a standard Handlebars lexer would check for "{{else" here.  We instead want to lex it as two tokens to highlight the "{{" and the "else" differently.  See where we make an HbTokens.ELSE below.
-  "{{{" { return HbTokenTypes.OPEN_UNESCAPED; }
-  "{{&" { return HbTokenTypes.OPEN; }
+  "{{"\~?"{" { return HbTokenTypes.OPEN_UNESCAPED; }
+  "{{"\~?"&" { return HbTokenTypes.OPEN; }
   "{{!" { yypushback(3); yypopState(); yypushState(comment); }
-  "{{" { return HbTokenTypes.OPEN; }
+  "{{"\~? { return HbTokenTypes.OPEN; }
   "=" { return HbTokenTypes.EQUALS; }
-  "."/["}"\t \n\x0B\f\r] { return HbTokenTypes.ID; }
+  "."/[\~\}\t \n\x0B\f\r] { return HbTokenTypes.ID; }
   ".." { return HbTokenTypes.ID; }
   [\/.] { return HbTokenTypes.SEP; }
   [\t \n\x0B\f\r]* { return HbTokenTypes.WHITE_SPACE; }
-  "}}}" { yypopState(); return HbTokenTypes.CLOSE_UNESCAPED; }
-  "}}" { yypopState(); return HbTokenTypes.CLOSE; }
+  "}"\~?"}}" { yypopState(); return HbTokenTypes.CLOSE_UNESCAPED; }
+  \~?"}}" { yypopState(); return HbTokenTypes.CLOSE; }
   \"([^\"\\]|\\.)*\" { return HbTokenTypes.STRING; }
   '([^'\\]|\\.)*' { return HbTokenTypes.STRING; }
   "@" { return HbTokenTypes.DATA_PREFIX; }
@@ -136,7 +136,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
       [\[-\^`]      [, \, ], ^, `,                          Exceptions in range: _
       [\{-~]        {, |, }, ~
     */
-  [^\t \n\x0B\f\r!\"#%-,\.\/;->@\[-\^`\{-~]+/[=}\t \n\x0B\f\r\/.]   { return HbTokenTypes.ID; }
+  [^\t \n\x0B\f\r!\"#%-,\.\/;->@\[-\^`\{-~]+/[\~=}\t \n\x0B\f\r\/.]   { return HbTokenTypes.ID; }
   // TODO handlesbars.l extracts the id from within the square brackets.  Fix it to match handlebars.l?
   "["[^\]]*"]" { return HbTokenTypes.ID; }
 }

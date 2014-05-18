@@ -152,4 +152,90 @@ public class HbLexerFreeFormTest extends HbLexerTest {
 
     result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, DATA_PREFIX, INVALID, ID, WHITE_SPACE, CLOSE);
   }
+
+  public void testOpenWhitespaceStrip() {
+    TokenizerResult result = tokenize("{{~foo}}");
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE);
+
+    result = tokenize("{{~ foo }}");
+    result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, ID, WHITE_SPACE, CLOSE);
+  }
+
+  public void testOpenPartialWhitespaceStrip() {
+    TokenizerResult result = tokenize("{{~>foo}}");
+    result.shouldMatchTokenTypes(OPEN_PARTIAL, ID, CLOSE);
+
+    result = tokenize("{{~> foo }}");
+    result.shouldMatchTokenTypes(OPEN_PARTIAL, WHITE_SPACE, ID, WHITE_SPACE, CLOSE);
+  }
+
+  public void testOpenBlockWhitespaceStrip() {
+    TokenizerResult result = tokenize("{{~#foo}}");
+    result.shouldMatchTokenTypes(OPEN_BLOCK, ID, CLOSE);
+
+    result = tokenize("{{~# foo }}");
+    result.shouldMatchTokenTypes(OPEN_BLOCK, WHITE_SPACE, ID, WHITE_SPACE, CLOSE);
+  }
+
+  public void testOpenEndblockWhitespaceStrip() {
+    TokenizerResult result = tokenize("{{~/foo}}");
+    result.shouldMatchTokenTypes(OPEN_ENDBLOCK, ID, CLOSE);
+
+    result = tokenize("{{~/ foo }}");
+    result.shouldMatchTokenTypes(OPEN_ENDBLOCK, WHITE_SPACE, ID, WHITE_SPACE, CLOSE);
+  }
+
+  public void testOpenInverseWhitespaceStrip() {
+    TokenizerResult result = tokenize("{{~^foo}}");
+    result.shouldMatchTokenTypes(OPEN_INVERSE, ID, CLOSE);
+
+    result = tokenize("{{~^ foo }}");
+    result.shouldMatchTokenTypes(OPEN_INVERSE, WHITE_SPACE, ID, WHITE_SPACE, CLOSE);
+
+    result = tokenize("{{~else foo}}");
+    result.shouldMatchTokenTypes(OPEN, ELSE, WHITE_SPACE, ID, CLOSE);
+
+    result = tokenize("{{~else foo }}");
+    result.shouldMatchTokenTypes(OPEN, ELSE, WHITE_SPACE, ID, WHITE_SPACE, CLOSE);
+  }
+
+  public void testOpenUnescapedWhitespaceStrip() {
+    TokenizerResult result = tokenize("{{~{foo}}}");
+    result.shouldMatchTokenTypes(OPEN_UNESCAPED, ID, CLOSE_UNESCAPED);
+
+    result = tokenize("{{~{ foo }}}");
+    result.shouldMatchTokenTypes(OPEN_UNESCAPED, WHITE_SPACE, ID, WHITE_SPACE, CLOSE_UNESCAPED);
+  }
+
+  public void testCloseWhitespaceStrip() {
+    TokenizerResult result = tokenize("{{foo~}}");
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE);
+
+    result = tokenize("{{ foo ~}}");
+    result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, ID, WHITE_SPACE, CLOSE);
+  }
+
+  public void testOpenCloseWhitespaceStrip() {
+    TokenizerResult result = tokenize("{{~foo~}}");
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE);
+
+    result = tokenize("{{~ foo ~}}");
+    result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, ID, WHITE_SPACE, CLOSE);
+  }
+
+  public void testCloseUnescapedWhitespaceStrip() {
+    TokenizerResult result = tokenize("{{{foo}~}}");
+    result.shouldMatchTokenTypes(OPEN_UNESCAPED, ID, CLOSE_UNESCAPED);
+
+    result = tokenize("{{{ foo }~}}");
+    result.shouldMatchTokenTypes(OPEN_UNESCAPED, WHITE_SPACE, ID, WHITE_SPACE, CLOSE_UNESCAPED);
+  }
+
+  public void testOpenCloseUnescapedWhitespaceStrip() {
+    TokenizerResult result = tokenize("{{~{foo}~}}");
+    result.shouldMatchTokenTypes(OPEN_UNESCAPED, ID, CLOSE_UNESCAPED);
+
+    result = tokenize("{{~{ foo }~}}");
+    result.shouldMatchTokenTypes(OPEN_UNESCAPED, WHITE_SPACE, ID, WHITE_SPACE, CLOSE_UNESCAPED);
+  }
 }
