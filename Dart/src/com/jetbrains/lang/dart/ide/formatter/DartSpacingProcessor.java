@@ -25,6 +25,7 @@ public class DartSpacingProcessor {
     OPERATOR,
     PART,
     EXPORT,
+    DEFERRED,
     AS,
     SHOW,
     HIDE,
@@ -36,6 +37,7 @@ public class DartSpacingProcessor {
     SET,
     EXTENDS,
     IMPLEMENTS,
+    DEFERRED,
     AS
   );
 
@@ -63,7 +65,8 @@ public class DartSpacingProcessor {
     if (METADATA == type1) return Spacing.createSpacing(1, 1, 0, true, 0);
 
     if (FUNCTION_DEFINITION.contains(type2)) {
-      return Spacing.createSpacing(0, 0, 2, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      final int lineFeeds = COMMENTS.contains(type1) ? 1 : 2;
+      return Spacing.createSpacing(0, 0, lineFeeds, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
     if (DOC_COMMENT_CONTENTS.contains(type2)) {
       return Spacing.createSpacing(0, Integer.MAX_VALUE, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
