@@ -126,6 +126,11 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
   }
 
+  public void testCustomDelimitersDefaultIgnored() {
+    myFixture.configureByFiles("customDelimitersDefaultIgnored.html", "angular.js", "customDelimitersDefaultIgnored.js");
+    assertNotSame(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+  }
+
   public void testCustomDelimitersSameStartEnd() {
     myFixture.configureByFiles("customDelimitersSameStartEnd.html", "angular.js", "customDelimitersSameStartEnd.js");
     assertEquals(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
