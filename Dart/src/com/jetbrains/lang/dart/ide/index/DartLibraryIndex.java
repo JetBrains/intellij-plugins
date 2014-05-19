@@ -1,6 +1,8 @@
 package com.jetbrains.lang.dart.ide.index;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -128,24 +130,34 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
     final VirtualFile librariesDartFile = LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/_internal/libraries.dart");
     if (librariesDartFile == null) return new BidirectionalMap<String, String>();
 
-    Pair<Long, BidirectionalMap<String, String>> data = librariesDartFile.getUserData(LIBRARIES_TIME_AND_MAP_KEY);
+    final Pair<Long, BidirectionalMap<String, String>> data = librariesDartFile.getUserData(LIBRARIES_TIME_AND_MAP_KEY);
     final Long cachedTimestamp = data == null ? null : data.first;
     final long modificationCount = librariesDartFile.getModificationCount();
 
-    if (cachedTimestamp == null || !cachedTimestamp.equals(modificationCount)) {
-      try {
-        final String contents = StringUtil.convertLineSeparators(VfsUtilCore.loadText(librariesDartFile));
-        final PsiFile psiFile = PsiFileFactory.getInstance(project).createFileFromText("libraries.dart", DartLanguage.INSTANCE, contents);
-        if (!(psiFile instanceof DartFile)) return new BidirectionalMap<String, String>();
-
-        data = Pair.create(modificationCount, computeLibraryNameToRelativePathMap((DartFile)psiFile));
-        librariesDartFile.putUserData(LIBRARIES_TIME_AND_MAP_KEY, data);
-      }
-      catch (IOException e) {
-        return new BidirectionalMap<String, String>();
-      }
+    if (cachedTimestamp != null && cachedTimestamp.equals(modificationCount)) {
+      return data.second;
     }
-    return data.getSecond();
+
+    return ApplicationManager.getApplication().runReadAction(new Computable<BidirectionalMap<String, String>>() {
+      public BidirectionalMap<String, String> compute() {
+        try {
+          final String contents = StringUtil.convertLineSeparators(VfsUtilCore.loadText(librariesDartFile));
+          final PsiFile psiFile =
+            PsiFileFactory.getInstance(project).createFileFromText("libraries.dart", DartLanguage.INSTANCE, contents);
+          if (!(psiFile instanceof DartFile)) {
+            return new BidirectionalMap<String, String>();
+          }
+
+          final Pair<Long, BidirectionalMap<String, String>> data =
+            Pair.create(modificationCount, computeLibraryNameToRelativePathMap((DartFile)psiFile));
+          librariesDartFile.putUserData(LIBRARIES_TIME_AND_MAP_KEY, data);
+          return data.second;
+        }
+        catch (IOException e) {
+          return new BidirectionalMap<String, String>();
+        }
+      }
+    });
   }
 
   private static BidirectionalMap<String, String> computeLibraryNameToRelativePathMap(final @NotNull DartFile librariesDartFile) {
