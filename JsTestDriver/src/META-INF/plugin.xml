@@ -44,7 +44,6 @@
     <runConfigurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRunConfigurationProducer"/>
     <fileBasedIndex implementation="com.google.jstestdriver.idea.config.JstdTestFilePathIndex"/>
     <projectService serviceImplementation="com.google.jstestdriver.idea.server.ui.JstdToolWindowManager"/>
-    <postStartupActivity implementation="com.google.jstestdriver.idea.server.ui.JstdStartupActivity"/>
     <localInspection groupPath="JavaScript"
                      groupName="JsTestDriver"
                      displayName="Add JsTestDriver assertion framework support"
