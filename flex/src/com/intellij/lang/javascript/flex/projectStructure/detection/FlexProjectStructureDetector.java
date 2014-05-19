@@ -29,7 +29,7 @@ import java.util.List;
 
 public class FlexProjectStructureDetector extends ProjectStructureDetector {
 
-  public static final NullableFunction<CharSequence,String> PACKAGE_NAME_FETCHER = new NullableFunction<CharSequence, String>() {
+  public static final NullableFunction<CharSequence, String> PACKAGE_NAME_FETCHER = new NullableFunction<CharSequence, String>() {
     public String fun(final CharSequence charSequence) {
       Lexer lexer = LanguageParserDefinitions.INSTANCE.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).createLexer(null);
       lexer.start(charSequence);
@@ -66,6 +66,10 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
           // don't skip this folder since .as files can be located here, and they will make some parent folder marked as source root
           // essentially 'dir' will be marked as source root *only* if no .as files exist at this level or below 
         }
+      }
+
+      if ("node_modules".equals(child.getName())) {
+        return DirectoryProcessingResult.SKIP_CHILDREN;
       }
     }
     return DirectoryProcessingResult.PROCESS_CHILDREN;
