@@ -2,9 +2,9 @@ package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import icons.FlexIcons;
@@ -51,7 +51,7 @@ public class FlexUnitRunConfigurationType implements ConfigurationType {
   }
 
   public static FlexUnitRunConfigurationType getInstance() {
-    return Extensions.findExtension(CONFIGURATION_TYPE_EP, FlexUnitRunConfigurationType.class);
+    return ConfigurationTypeUtil.findConfigurationType(FlexUnitRunConfigurationType.class);
   }
 
   public static ConfigurationFactory getFactory() {
