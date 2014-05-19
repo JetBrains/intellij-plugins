@@ -18,6 +18,7 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 
 public class DartCommandLineDebugRunner extends DefaultProgramRunner {
@@ -35,39 +36,34 @@ public class DartCommandLineDebugRunner extends DefaultProgramRunner {
   }
 
   @Override
-  protected RunContentDescriptor doExecute(@NotNull Project project,
-                                           @NotNull RunProfileState state,
-                                           RunContentDescriptor contentToReuse,
-                                           @NotNull ExecutionEnvironment env) throws ExecutionException {
-    final DartCommandLineRunConfiguration configuration = (DartCommandLineRunConfiguration)env.getRunProfile();
+  protected RunContentDescriptor doExecute(final @NotNull Project project,
+                                           final @NotNull RunProfileState runProfileState,
+                                           final RunContentDescriptor contentToReuse,
+                                           final @NotNull ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
 
+    final DartCommandLineRunConfiguration configuration = (DartCommandLineRunConfiguration)env.getRunProfile();
+
     final String filePath = configuration.getFilePath();
-    assert filePath != null;
-    final VirtualFile dartFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-    if (dartFile == null) {
-      throw new ExecutionException("File not found: " + filePath);
+    if (StringUtil.isEmptyOrSpaces(filePath)) {
+      throw new ExecutionException(DartBundle.message("path.to.dart.file.not.set"));
+    }
+
+    final VirtualFile mainDartFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    if (mainDartFile == null) {
+      throw new ExecutionException(DartBundle.message("dart.file.not.found", filePath));
     }
 
     final int debuggingPort = NetUtils.tryToFindAvailableSocketPort();
-
-    final DartCommandLineRunningState dartCommandLineRunningState = new DartCommandLineRunningState(
-      env,
-      filePath,
-      ("--debug:" + debuggingPort) + " " + StringUtil.notNullize(configuration.getVMOptions()),
-      StringUtil.notNullize(configuration.getArguments()),
-      StringUtil.notNullize(configuration.getWorkingDirectory()),
-      configuration.getEnvs(),
-      configuration.isIncludeParentEnvs());
-
-    final ExecutionResult executionResult = dartCommandLineRunningState.execute(env.getExecutor(), this);
+    final DartCommandLineRunningState state = new DartCommandLineRunningState(env, configuration.getRunnerParameters(), debuggingPort);
+    final ExecutionResult executionResult = state.execute(env.getExecutor(), this);
 
     final XDebugSession debugSession =
       XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
-          return new DartCommandLineDebugProcess(session, debuggingPort, executionResult, dartFile);
+          return new DartCommandLineDebugProcess(session, debuggingPort, executionResult, mainDartFile);
         }
       });
 

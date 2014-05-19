@@ -20,6 +20,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
+import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -81,23 +82,27 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   }
 
   @Override
-  protected void resetEditorFrom(DartCommandLineRunConfiguration configuration) {
-    myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(configuration.getFilePath())));
-    myArguments.setText(StringUtil.notNullize(configuration.getArguments()));
-    myVMOptions.setText(StringUtil.notNullize(configuration.getVMOptions()));
-    myWorkingDirectory.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(configuration.getWorkingDirectory())));
-    myEnvironmentVariables.setEnvs(configuration.getEnvs());
-    myEnvironmentVariables.setPassParentEnvs(configuration.isIncludeParentEnvs());
+  protected void resetEditorFrom(final DartCommandLineRunConfiguration configuration) {
+    final DartCommandLineRunnerParameters parameters = configuration.getRunnerParameters();
+
+    myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
+    myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
+    myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
+    myWorkingDirectory.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getWorkingDirectory())));
+    myEnvironmentVariables.setEnvs(parameters.getEnvs());
+    myEnvironmentVariables.setPassParentEnvs(parameters.isIncludeParentEnvs());
   }
 
   @Override
-  protected void applyEditorTo(DartCommandLineRunConfiguration configuration) throws ConfigurationException {
-    configuration.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
-    configuration.setArguments(StringUtil.nullize(myArguments.getText(), true));
-    configuration.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
-    configuration.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
-    configuration.setEnvs(myEnvironmentVariables.getEnvs());
-    configuration.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());
+  protected void applyEditorTo(final DartCommandLineRunConfiguration configuration) throws ConfigurationException {
+    final DartCommandLineRunnerParameters parameters = configuration.getRunnerParameters();
+
+    parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
+    parameters.setArguments(StringUtil.nullize(myArguments.getText(), true));
+    parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
+    parameters.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
+    parameters.setEnvs(myEnvironmentVariables.getEnvs());
+    parameters.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());
   }
 
   @NotNull

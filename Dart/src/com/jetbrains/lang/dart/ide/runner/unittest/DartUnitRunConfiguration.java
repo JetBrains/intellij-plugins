@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.PathUtil;
+import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
@@ -100,7 +101,7 @@ public class DartUnitRunConfiguration extends DartRunConfigurationBase {
   @Override
   public void writeExternal(final Element element) throws WriteExternalException {
     super.writeExternal(element);
-    XmlSerializer.serializeInto(myRunnerParameters, element);
+    XmlSerializer.serializeInto(myRunnerParameters, element, new SkipDefaultValuesSerializationFilters());
   }
 
   @Override

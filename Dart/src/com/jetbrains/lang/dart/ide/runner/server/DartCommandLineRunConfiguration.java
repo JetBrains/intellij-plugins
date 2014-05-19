@@ -18,9 +18,8 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.hash.LinkedHashMap;
+import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
 import com.intellij.util.xmlb.XmlSerializer;
-import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
@@ -28,76 +27,37 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-
 public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
-  private @Nullable String myFilePath = null;
-  private @Nullable String myVMOptions = null;
-  private @Nullable String myArguments = null;
-  private @Nullable String myWorkingDirectory = null;
-  private @NotNull Map<String, String> myEnvs = new LinkedHashMap<String, String>();
-  private boolean myIncludeParentEnvs = true;
+  private @NotNull DartCommandLineRunnerParameters myRunnerParameters;
 
   public DartCommandLineRunConfiguration(String name, Project project, DartCommandLineRunConfigurationType configurationType) {
     super(project, configurationType.getConfigurationFactories()[0], name);
+    myRunnerParameters = new DartCommandLineRunnerParameters();
+  }
+
+  @NotNull
+  public DartCommandLineRunnerParameters getRunnerParameters() {
+    return myRunnerParameters;
   }
 
   @Nullable
   @Override
   public String getFilePath() {
-    return myFilePath;
+    return myRunnerParameters.getFilePath();
   }
 
   @Override
   public void setFilePath(final @Nullable String filePath) {
-    myFilePath = filePath;
-  }
-
-  @Nullable
-  public String getVMOptions() {
-    return myVMOptions;
-  }
-
-  public void setVMOptions(final @Nullable String vmOptions) {
-    myVMOptions = vmOptions;
-  }
-
-  @Nullable
-  public String getArguments() {
-    return myArguments;
-  }
-
-  public void setArguments(final @Nullable String arguments) {
-    myArguments = arguments;
+    myRunnerParameters.setFilePath(filePath);
   }
 
   @Nullable
   public String getWorkingDirectory() {
-    return myWorkingDirectory;
+    return myRunnerParameters.getWorkingDirectory();
   }
 
   public void setWorkingDirectory(final @Nullable String workingDirectory) {
-    myWorkingDirectory = workingDirectory;
-  }
-
-  @NotNull
-  @MapAnnotation(surroundWithTag = false, surroundKeyWithTag = false, surroundValueWithTag = false)
-  public Map<String, String> getEnvs() {
-    return myEnvs;
-  }
-
-  public void setEnvs(@SuppressWarnings("NullableProblems") final Map<String, String> envs) {
-    if (envs != null) { // null comes from old projects or if storage corrupted
-      myEnvs = envs;
-    }
-  }
-
-  public boolean isIncludeParentEnvs() {
-    return myIncludeParentEnvs;
-  }
-
-  public void setIncludeParentEnvs(final boolean includeParentEnvs) {
-    myIncludeParentEnvs = includeParentEnvs;
+    myRunnerParameters.setWorkingDirectory(workingDirectory);
   }
 
   @NotNull
@@ -126,13 +86,14 @@ public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
 
   @Nullable
   private Module findModule() throws RuntimeConfigurationException {
-    if (myFilePath == null) {
+    final String filePath = myRunnerParameters.getFilePath();
+    if (filePath == null) {
       return null;
     }
-    String fileUrl = VfsUtilCore.pathToUrl(FileUtil.toSystemIndependentName(myFilePath));
+    String fileUrl = VfsUtilCore.pathToUrl(FileUtil.toSystemIndependentName(filePath));
     VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(fileUrl);
     if (file == null) {
-      throw new RuntimeConfigurationException("Can't find module for " + myFilePath);
+      throw new RuntimeConfigurationException("Can't find module for " + filePath);
     }
     return ModuleUtilCore.findModuleForFile(file, getProject());
   }
@@ -142,35 +103,28 @@ public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
     if (StringUtil.isEmpty(filePath)) {
       throw new ExecutionException("Empty file path");
     }
-    final String workingDirectory = myWorkingDirectory != null ? myWorkingDirectory : PathUtil.getParentPath(filePath);
-    return new DartCommandLineRunningState(env,
-                                           filePath,
-                                           StringUtil.notNullize(getVMOptions()),
-                                           StringUtil.notNullize(getArguments()),
-                                           workingDirectory,
-                                           getEnvs(),
-                                           isIncludeParentEnvs());
+    return new DartCommandLineRunningState(env, myRunnerParameters, -1);
   }
 
   public void writeExternal(final Element element) throws WriteExternalException {
     super.writeExternal(element);
-    XmlSerializer.serializeInto(this, element);
+    XmlSerializer.serializeInto(myRunnerParameters, element, new SkipDefaultValuesSerializationFilters());
   }
 
   public void readExternal(final Element element) throws InvalidDataException {
     super.readExternal(element);
-    XmlSerializer.deserializeInto(this, element);
+    XmlSerializer.deserializeInto(myRunnerParameters, element);
   }
 
   @Nullable
   public String suggestedName() {
-    return myFilePath == null ? null : PathUtil.getFileName(myFilePath);
+    final String filePath = myRunnerParameters.getFilePath();
+    return filePath == null ? null : PathUtil.getFileName(filePath);
   }
 
   public DartCommandLineRunConfiguration clone() {
     final DartCommandLineRunConfiguration clone = (DartCommandLineRunConfiguration)super.clone();
-    clone.myEnvs = new LinkedHashMap<String, String>();
-    clone.myEnvs.putAll(myEnvs);
+    clone.myRunnerParameters = myRunnerParameters.clone();
     return clone;
   }
 }
