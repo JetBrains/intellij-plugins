@@ -251,6 +251,7 @@ module Teamcity
 #noinspection RubyUnusedLocalVariable
       def tc_before_step(step)
         register_tags_holder
+        @handled_exception = nil
         @current_step_start_time = get_current_time_in_ms
       end
 
