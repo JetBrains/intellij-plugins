@@ -106,8 +106,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         if (arguments.length > 0) {
           JSExpression argument = arguments[0];
           if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
+            String interpolation = StringUtil.unquoteString(argument.getText());
+            // '//' interpolations are usually dragged from examples folder and not supposed to be used by real users
+            if ("//".equals(interpolation)) return;
+
             visitor.storeAdditionalData(argument, AngularInjectionDelimiterIndex.INDEX_ID.toString(), command,
-                                        argument.getTextOffset(), StringUtil.unquoteString(argument.getText()));
+                                        argument.getTextOffset(), interpolation);
           }
         }
       }
