@@ -33,10 +33,7 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
-import com.intellij.lang.javascript.psi.types.JSAnyType;
-import com.intellij.lang.javascript.psi.types.JSNamedType;
-import com.intellij.lang.javascript.psi.types.JSTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
@@ -1305,7 +1302,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                JSTokenTypes.SHIFT_OPERATIONS.contains(sign) ||
                sign == JSTokenTypes.MINUS) {
       final JSType numberType = JSNamedType.createType(NUMBER_CLASS_NAME, JSTypeSourceFactory.createTypeSource(lOperand, true),
-                                                       JSNamedType.StaticOrInstance.INSTANCE);
+                                                       JSContext.INSTANCE);
       myTypeChecker.checkExpressionIsAssignableToType(lOperand, numberType,
                                                       "javascript.expression.type.implicitly.coerced.to.unrelated.type", null);
       myTypeChecker.checkExpressionIsAssignableToType(rOperand, numberType,

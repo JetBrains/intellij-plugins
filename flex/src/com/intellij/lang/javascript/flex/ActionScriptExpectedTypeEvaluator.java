@@ -4,10 +4,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSNamedType;
-import com.intellij.lang.javascript.psi.types.JSTypeSource;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -26,7 +23,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
     PsiElement element = JSResolveUtil.findParent(fun);
 
     JSType classType = element instanceof JSClass ?
-                       JSNamedType.createType(((JSClass)element).getQualifiedName(), JSTypeSource.EMPTY, JSNamedType.StaticOrInstance.INSTANCE) :
+                       JSNamedType.createType(((JSClass)element).getQualifiedName(), JSTypeSource.EMPTY, JSContext.INSTANCE) :
                        null;
     if (classType != null && JSTypeUtils.isActionScriptVectorType(classType)) {
       String name = fun.getName();
@@ -65,8 +62,8 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
     else {
       final JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(myScope, true);
       myResult = new JSCompositeTypeImpl(typeSource,
-                                         JSNamedType.createType(JSCommonTypeNames.INT_TYPE_NAME, typeSource, JSNamedType.StaticOrInstance.INSTANCE),
-                                         JSNamedType.createType(JSCommonTypeNames.UINT_TYPE_NAME, typeSource, JSNamedType.StaticOrInstance.INSTANCE));
+                                         JSNamedType.createType(JSCommonTypeNames.INT_TYPE_NAME, typeSource, JSContext.INSTANCE),
+                                         JSNamedType.createType(JSCommonTypeNames.UINT_TYPE_NAME, typeSource, JSContext.INSTANCE));
     }
   }
 

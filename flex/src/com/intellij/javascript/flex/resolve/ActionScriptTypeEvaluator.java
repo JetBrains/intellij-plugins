@@ -55,7 +55,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     if (methodExpr != null) {
       if (methodExpr instanceof JSArrayLiteralExpression) {
         JSTypeSource source = JSTypeSourceFactory.createTypeSource(methodExpr);
-        JSType type = JSNamedType.createType(VECTOR_CLASS_NAME, source, JSNamedType.StaticOrInstance.INSTANCE);
+        JSType type = JSNamedType.createType(VECTOR_CLASS_NAME, source, JSContext.INSTANCE);
 
         PsiElement arrayInitializingType = newExpression.getArrayInitializingType();
         if (arrayInitializingType != null) {
@@ -93,7 +93,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
                             parent instanceof JSCallExpression ?
                             ((JSClass)resolveResult).getQualifiedName():"Class";
     JSTypeSource source = JSTypeSourceFactory.createTypeSource(expression);
-    JSType type = JSNamedType.createType(psiElementType, source, JSNamedType.StaticOrInstance.UNKNOWN);
+    JSType type = JSNamedType.createType(psiElementType, source, JSContext.UNKNOWN);
     if (JSTypeUtils.isActionScriptVectorType(type)) {
       type = JSTypeUtils.createType(JSImportHandlingUtil.resolveTypeName(expression.getText(), expression), source);
     }
@@ -129,11 +129,11 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
           JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
           JSType type;
           if (arrayType != null) {
-            JSType baseType = JSNamedType.createType(arrayType, source, JSNamedType.StaticOrInstance.INSTANCE);
+            JSType baseType = JSNamedType.createType(arrayType, source, JSContext.INSTANCE);
             type = new JSArrayTypeImpl(baseType, source);
           }
           else {
-            type = new JSPrimitiveArrayType(source, JSNamedType.StaticOrInstance.INSTANCE);
+            type = new JSPrimitiveArrayType(source, JSContext.INSTANCE);
           }
           addType(type, arrayClass);
         }
