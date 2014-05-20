@@ -28,36 +28,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
-  private @NotNull DartCommandLineRunnerParameters myRunnerParameters;
+  private @NotNull DartCommandLineRunnerParameters myRunnerParameters = new DartCommandLineRunnerParameters();
 
   public DartCommandLineRunConfiguration(String name, Project project, DartCommandLineRunConfigurationType configurationType) {
     super(project, configurationType.getConfigurationFactories()[0], name);
-    myRunnerParameters = new DartCommandLineRunnerParameters();
   }
 
   @NotNull
   public DartCommandLineRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
-  }
-
-  @Nullable
-  @Override
-  public String getFilePath() {
-    return myRunnerParameters.getFilePath();
-  }
-
-  @Override
-  public void setFilePath(final @Nullable String filePath) {
-    myRunnerParameters.setFilePath(filePath);
-  }
-
-  @Nullable
-  public String getWorkingDirectory() {
-    return myRunnerParameters.getWorkingDirectory();
-  }
-
-  public void setWorkingDirectory(final @Nullable String workingDirectory) {
-    myRunnerParameters.setWorkingDirectory(workingDirectory);
   }
 
   @NotNull
@@ -99,7 +78,7 @@ public class DartCommandLineRunConfiguration extends DartRunConfigurationBase {
   }
 
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-    final String filePath = getFilePath();
+    final String filePath = myRunnerParameters.getFilePath();
     if (StringUtil.isEmpty(filePath)) {
       throw new ExecutionException("Empty file path");
     }

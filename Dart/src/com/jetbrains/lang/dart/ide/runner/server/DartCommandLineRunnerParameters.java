@@ -1,10 +1,10 @@
 package com.jetbrains.lang.dart.ide.runner.server;
 
-import com.intellij.util.containers.hash.LinkedHashMap;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DartCommandLineRunnerParameters implements Cloneable {
@@ -72,10 +72,10 @@ public class DartCommandLineRunnerParameters implements Cloneable {
   }
 
   @Override
-  protected final DartCommandLineRunnerParameters clone() {
+  protected DartCommandLineRunnerParameters clone() {
     try {
       final DartCommandLineRunnerParameters clone = (DartCommandLineRunnerParameters)super.clone();
-      clone.myEnvs = new java.util.LinkedHashMap<String, String>();
+      clone.myEnvs = new LinkedHashMap<String, String>();
       clone.myEnvs.putAll(myEnvs);
       return clone;
     }

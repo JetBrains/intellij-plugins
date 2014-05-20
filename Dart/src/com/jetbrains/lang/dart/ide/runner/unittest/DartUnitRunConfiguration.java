@@ -31,32 +31,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class DartUnitRunConfiguration extends DartRunConfigurationBase {
 
-  private DartUnitRunnerParameters myRunnerParameters = new DartUnitRunnerParameters();
+  private @NotNull DartUnitRunnerParameters myRunnerParameters = new DartUnitRunnerParameters();
 
   protected DartUnitRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
     super(project, factory, name);
   }
 
-  @Override
-  public void setFilePath(final @Nullable String filePath) {
-    myRunnerParameters.setFilePath(filePath);
-  }
-
-  @Nullable
-  @Override
-  public String getFilePath() {
-    return myRunnerParameters.getFilePath();
-  }
-
-  public void setWorkingDirectory(final @NotNull String path) {
-    myRunnerParameters.setWorkingDirectory(path);
-  }
-
-  @Nullable
-  public String getWorkingDirectory() {
-    return myRunnerParameters.getWorkingDirectory();
-  }
-
+  @NotNull
   public DartUnitRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
   }
@@ -70,7 +51,7 @@ public class DartUnitRunConfiguration extends DartRunConfigurationBase {
   @Nullable
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
     final Project project = env.getProject();
-    final String path = getFilePath();
+    final String path = myRunnerParameters.getFilePath();
     if (path == null || VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(path)) == null) {
       throw new ExecutionException("Can't find file: " + path);
     }

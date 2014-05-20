@@ -51,9 +51,10 @@ public class DartCmdLineAppGenerator extends DartEmptyProjectGenerator {
     final RunnerAndConfigurationSettings settings =
       runManager.createRunConfiguration("", DartCommandLineRunConfigurationType.getInstance().getConfigurationFactories()[0]);
 
-    ((DartCommandLineRunConfiguration)settings.getConfiguration()).setFilePath(mainDartFile.getPath());
-    ((DartCommandLineRunConfiguration)settings.getConfiguration()).setWorkingDirectory(mainDartFile.getParent().getPath());
-    settings.setName(((DartCommandLineRunConfiguration)settings.getConfiguration()).suggestedName());
+    final DartCommandLineRunConfiguration runConfiguration = (DartCommandLineRunConfiguration)settings.getConfiguration();
+    runConfiguration.getRunnerParameters().setFilePath(mainDartFile.getPath());
+    runConfiguration.getRunnerParameters().setWorkingDirectory(mainDartFile.getParent().getPath());
+    settings.setName(runConfiguration.suggestedName());
 
     runManager.addConfiguration(settings, false);
     runManager.setSelectedConfiguration(settings);

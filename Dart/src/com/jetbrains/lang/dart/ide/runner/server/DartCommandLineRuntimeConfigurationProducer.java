@@ -26,8 +26,8 @@ public class DartCommandLineRuntimeConfigurationProducer extends RunConfiguratio
                                                   final @NotNull Ref<PsiElement> sourceElement) {
     final VirtualFile dartFile = findRunnableDartFile(context);
     if (dartFile != null) {
-      configuration.setFilePath(dartFile.getPath());
-      configuration.setWorkingDirectory(dartFile.getParent().getPath());
+      configuration.getRunnerParameters().setFilePath(dartFile.getPath());
+      configuration.getRunnerParameters().setWorkingDirectory(dartFile.getParent().getPath());
       configuration.setGeneratedName();
       return true;
     }
@@ -38,7 +38,7 @@ public class DartCommandLineRuntimeConfigurationProducer extends RunConfiguratio
   public boolean isConfigurationFromContext(final @NotNull DartCommandLineRunConfiguration configuration,
                                             final @NotNull ConfigurationContext context) {
     final VirtualFile dartFile = findRunnableDartFile(context);
-    return dartFile != null && dartFile.getPath().equals(configuration.getFilePath());
+    return dartFile != null && dartFile.getPath().equals(configuration.getRunnerParameters().getFilePath());
   }
 
   @Nullable

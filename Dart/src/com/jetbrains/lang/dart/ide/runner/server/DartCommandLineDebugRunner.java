@@ -44,7 +44,7 @@ public class DartCommandLineDebugRunner extends DefaultProgramRunner {
 
     final DartCommandLineRunConfiguration configuration = (DartCommandLineRunConfiguration)env.getRunProfile();
 
-    final String filePath = configuration.getFilePath();
+    final String filePath = configuration.getRunnerParameters().getFilePath();
     if (StringUtil.isEmptyOrSpaces(filePath)) {
       throw new ExecutionException(DartBundle.message("path.to.dart.file.not.set"));
     }
