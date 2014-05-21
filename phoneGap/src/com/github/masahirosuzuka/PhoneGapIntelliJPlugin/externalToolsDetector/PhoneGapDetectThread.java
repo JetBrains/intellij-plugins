@@ -10,38 +10,48 @@ import com.intellij.openapi.project.Project;
 
 /**
  * PhoneGapDetectThread.java
- *
+ * <p/>
  * Created by Masahiro Suzuka on 2014/04/16.
  */
 public class PhoneGapDetectThread implements Runnable/*, ProcessListener*/ {
 
-  private static Project project = null;
+    private final Project myProject;
 
-  public PhoneGapDetectThread(final Project project) {
-    this.project = project;
-  }
+    public PhoneGapDetectThread(final Project project) {
+        this.myProject = project;
+    }
 
-  @Override
-  public void run() {
-    final GeneralCommandLine generalCommandLine = new GeneralCommandLine(PhoneGapSettings.PHONEGAP_PATH, "--version");
-    generalCommandLine.setWorkDirectory(project.getBasePath());
-    try {
-      final OSProcessHandler handler = new OSProcessHandler(generalCommandLine);
-      //handler.addProcessListener(this);
-      handler.startNotify();
-      generalCommandLine.createProcess();
-    } catch (Exception e) {
-      /* PhoneGap not run */
-      String groupeDisplayId = "PhoneGap notification";
-      String notificationTitle = "PhoneGap Plugin";
-      String notificationMessage = "PhoneGap can't run";
-      NotificationType notificationType = NotificationType.ERROR;
-      Notification notification = new Notification(groupeDisplayId, notificationTitle, notificationMessage, notificationType);
+    @Override
+    public void run() {
+        PhoneGapSettings instance = PhoneGapSettings.getInstance();
+        if (!instance.isPhoneGapAvailable()) {
+            noPhoneGap();
+            return;
+        }
 
-      Notifications.Bus.notify(notification);
+        String phoneGapExecutablePath = instance.getPhoneGapExecutablePath();
+        final GeneralCommandLine generalCommandLine = new GeneralCommandLine(phoneGapExecutablePath, "--version");
+        generalCommandLine.setWorkDirectory(myProject.getBasePath());
+        try {
+            final OSProcessHandler handler = new OSProcessHandler(generalCommandLine);
+            //handler.addProcessListener(this);
+            handler.startNotify();
+            generalCommandLine.createProcess();
+        } catch (Exception e) {
+            noPhoneGap();
 
-    } finally { }
-  }
+        }
+    }
+
+    private void noPhoneGap() {
+        String groupDisplayId = "PhoneGap notification";
+        String notificationTitle = "PhoneGap Plugin";
+        String notificationMessage = "PhoneGap can't run";
+        NotificationType notificationType = NotificationType.ERROR;
+        Notification notification = new Notification(groupDisplayId, notificationTitle, notificationMessage, notificationType);
+
+        Notifications.Bus.notify(notification);
+    }
 
   /*
   @Override
