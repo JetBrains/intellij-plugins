@@ -14,9 +14,7 @@ import com.intellij.javascript.testFramework.JstdRunElement;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
 import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.stubs.impl.JSFileStubImpl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
@@ -189,8 +187,7 @@ public class JstdRunConfigurationProducer extends RunConfigurationProducer<JstdR
         return null;
       }
       Project project = psiFile.getProject();
-      final JSFileStubImpl stub = JavaScriptIndex.getJSStub(psiFile);
-      if (stub == null || !stub.isTestFile()) {
+      if (!(psiFile instanceof JSFile) || !((JSFile)psiFile).isTestFile()) {
         return null;
       }
       JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
