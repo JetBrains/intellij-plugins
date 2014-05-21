@@ -4,55 +4,73 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
+import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.StringTokenizer;
 
 public class DartCommandLineRunningState extends CommandLineState {
-  private final @NotNull DartCommandLineRunnerParameters myRunnerParameters;
-  private final int myDebuggingPort;
+  protected final @NotNull DartCommandLineRunnerParameters myRunnerParameters;
+  private int myDebuggingPort = -1;
 
-  public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env,
-                                     final @NotNull DartCommandLineRunnerParameters runnerParameters,
-                                     final int debuggingPort) {
+  public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env) throws ExecutionException {
     super(env);
-    myRunnerParameters = runnerParameters;
-    myDebuggingPort = debuggingPort;
+    myRunnerParameters = ((DartRunConfigurationBase)env.getRunProfile()).getRunnerParameters();
+
+    try {
+      myRunnerParameters.check(env.getProject());
+    }
+    catch (RuntimeConfigurationError e) {
+      throw new ExecutionException(e);
+    }
 
     final TextConsoleBuilder builder = getConsoleBuilder();
     if (builder instanceof TextConsoleBuilderImpl) {
       ((TextConsoleBuilderImpl)builder).setUsePredefinedMessageFilter(false);
     }
 
-    final String path = myRunnerParameters.getFilePath();
-    final VirtualFile contextFile = StringUtil.isEmptyOrSpaces(path) ? null : LocalFileSystem.getInstance().findFileByPath(path);
-    builder.addFilter(new DartConsoleFilter(env.getProject(), contextFile));
+    try {
+      builder.addFilter(new DartConsoleFilter(env.getProject(), myRunnerParameters.getDartFile()));
+    }
+    catch (RuntimeConfigurationError e) {
+      builder.addFilter(new DartConsoleFilter(env.getProject(), null)); // can't happen because already checked
+    }
+  }
+
+  public void setDebuggingPort(final int debuggingPort) {
+    myDebuggingPort = debuggingPort;
   }
 
   @NotNull
   @Override
   protected ProcessHandler startProcess() throws ExecutionException {
-    final OSProcessHandler processHandler = new OSProcessHandler(createCommandLine());
+    return doStartProcess(null);
+  }
+
+  protected ProcessHandler doStartProcess(final @Nullable String overriddenMainFilePath) throws ExecutionException {
+    final GeneralCommandLine commandLine = createCommandLine(overriddenMainFilePath);
+    final OSProcessHandler processHandler = new OSProcessHandler(commandLine);
     ProcessTerminatedListener.attach(processHandler, getEnvironment().getProject());
     return processHandler;
   }
 
-  private GeneralCommandLine createCommandLine() throws ExecutionException {
+  private GeneralCommandLine createCommandLine(final @Nullable String overriddenMainFilePath) throws ExecutionException {
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
     if (sdk == null) {
       throw new ExecutionException(DartBundle.message("dart.sdk.is.not.configured"));
@@ -60,32 +78,36 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     final String dartExePath = DartSdkUtil.getDartExePath(sdk);
 
-    final String filePath = myRunnerParameters.getFilePath();
-    if (StringUtil.isEmptyOrSpaces(filePath)) {
-      throw new ExecutionException(DartBundle.message("path.to.dart.file.not.set"));
+    final VirtualFile dartFile;
+    try {
+      dartFile = myRunnerParameters.getDartFile();
+    }
+    catch (RuntimeConfigurationError e) {
+      throw new ExecutionException(e); // can't happen because already checked
     }
 
-    final VirtualFile mainDartFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-    if (mainDartFile == null) {
-      throw new ExecutionException(DartBundle.message("dart.file.not.found", filePath));
-    }
-
-    final String workingDir = StringUtil.notNullize(myRunnerParameters.getWorkingDirectory(), PathUtil.getParentPath(filePath));
+    final String workingDir = StringUtil.isEmptyOrSpaces(myRunnerParameters.getWorkingDirectory())
+                              ? dartFile.getParent().getPath()
+                              : myRunnerParameters.getWorkingDirectory();
 
     final GeneralCommandLine commandLine = new GeneralCommandLine();
     commandLine.setExePath(dartExePath);
     commandLine.setWorkDirectory(workingDir);
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine.setPassParentEnvironment(myRunnerParameters.isIncludeParentEnvs());
-    setupParameters(commandLine, mainDartFile);
+    setupParameters(getEnvironment().getProject(), commandLine, myRunnerParameters, myDebuggingPort, overriddenMainFilePath);
 
     return commandLine;
   }
 
-  private void setupParameters(final @NotNull GeneralCommandLine commandLine, final @NotNull VirtualFile mainDartFile) {
+  private static void setupParameters(final @NotNull Project project,
+                                      final @NotNull GeneralCommandLine commandLine,
+                                      final @NotNull DartCommandLineRunnerParameters runnerParameters,
+                                      final int debuggingPort,
+                                      final @Nullable String overriddenMainFilePath) throws ExecutionException {
     commandLine.addParameter("--ignore-unrecognized-flags");
 
-    final String vmOptions = myRunnerParameters.getVMOptions();
+    final String vmOptions = runnerParameters.getVMOptions();
     if (vmOptions != null) {
       final StringTokenizer vmOptionsTokenizer = new CommandLineTokenizer(vmOptions);
       while (vmOptionsTokenizer.hasMoreTokens()) {
@@ -93,19 +115,27 @@ public class DartCommandLineRunningState extends CommandLineState {
       }
     }
 
-    final VirtualFile[] packageRoots = DartUrlResolver.getInstance(getEnvironment().getProject(), mainDartFile).getPackageRoots();
+    final VirtualFile dartFile;
+    try {
+      dartFile = runnerParameters.getDartFile();
+    }
+    catch (RuntimeConfigurationError e) {
+      throw new ExecutionException(e);
+    }
+
+    final VirtualFile[] packageRoots = DartUrlResolver.getInstance(project, dartFile).getPackageRoots();
     if (packageRoots.length > 0) {
       // more than one package root is not supported by the [SDK]/bin/dart tool
       commandLine.addParameter("--package-root=" + packageRoots[0].getPath());
     }
 
-    if (myDebuggingPort > 0) {
-      commandLine.addParameter("--debug:" + myDebuggingPort);
+    if (debuggingPort > 0) {
+      commandLine.addParameter("--debug:" + debuggingPort);
     }
 
-    commandLine.addParameter(mainDartFile.getPath());
+    commandLine.addParameter(overriddenMainFilePath == null ? dartFile.getPath() : overriddenMainFilePath);
 
-    final String arguments = myRunnerParameters.getArguments();
+    final String arguments = runnerParameters.getArguments();
     if (arguments != null) {
       StringTokenizer argumentsTokenizer = new CommandLineTokenizer(arguments);
       while (argumentsTokenizer.hasMoreTokens()) {
