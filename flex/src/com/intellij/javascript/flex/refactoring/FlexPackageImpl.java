@@ -19,6 +19,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -126,6 +127,11 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
   @Override
   public PsiElement getNameIdentifier() {
     return null;
+  }
+
+  @Override
+  public JSContext getJSContext() {
+    return JSContext.UNKNOWN;
   }
 
   public static class DescriptionProvider implements ElementDescriptionProvider {
