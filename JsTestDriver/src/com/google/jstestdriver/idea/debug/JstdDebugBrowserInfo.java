@@ -6,9 +6,9 @@ import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.server.JstdServerRegistry;
 import com.google.jstestdriver.idea.server.JstdServerSettings;
 import com.intellij.ide.browsers.WebBrowser;
-import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.SmartList;
+import com.jetbrains.javascript.debugger.JSDebugEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
