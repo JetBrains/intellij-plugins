@@ -1,21 +1,21 @@
 package com.intellij.javascript.karma.debug;
 
 import com.intellij.ide.browsers.WebBrowser;
-import com.jetbrains.javascript.debugger.JSDebugEngine;
+import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DebuggableWebBrowser {
-  private final JSDebugEngine myDebugEngine;
+  private final JavaScriptDebugEngine myDebugEngine;
   private final WebBrowser myWebBrowser;
 
-  public DebuggableWebBrowser(@NotNull JSDebugEngine debugEngine, @NotNull WebBrowser webBrowser) {
+  public DebuggableWebBrowser(@NotNull JavaScriptDebugEngine debugEngine, @NotNull WebBrowser webBrowser) {
     myDebugEngine = debugEngine;
     myWebBrowser = webBrowser;
   }
 
   @NotNull
-  public JSDebugEngine getDebugEngine() {
+  public JavaScriptDebugEngine getDebugEngine() {
     return myDebugEngine;
   }
 
@@ -26,7 +26,7 @@ public class DebuggableWebBrowser {
 
   @Nullable
   public static DebuggableWebBrowser create(@NotNull WebBrowser browser) {
-    JSDebugEngine debugEngine = JSDebugEngine.findByBrowser(browser);
+    JavaScriptDebugEngine debugEngine = JavaScriptDebugEngine.findByBrowser(browser);
     if (debugEngine != null) {
       return new DebuggableWebBrowser(debugEngine, browser);
     }

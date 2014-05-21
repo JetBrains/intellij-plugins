@@ -35,7 +35,7 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import com.jetbrains.javascript.debugger.JSDebugEngine;
+import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,7 +100,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
               @Override
               @NotNull
               public XDebugProcess start(@NotNull final XDebugSession session) {
-                JSDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
+                JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
                 WebBrowser browser = debuggableWebBrowser.getWebBrowser();
                 JSDebugProcess<?> debugProcess = debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, true);
                 debugProcess.setElementsInspectorEnabled(false);
@@ -177,7 +177,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
     }
     else {
       final AsyncResult<RunProfileStarter> result = new AsyncResult<RunProfileStarter>();
-      JSDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
+      JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
       WebBrowser browser = debuggableWebBrowser.getWebBrowser();
       debugEngine.prepareDebugger(project, browser).notifyWhenRejected(result).doWhenDone(new Runnable() {
         @Override

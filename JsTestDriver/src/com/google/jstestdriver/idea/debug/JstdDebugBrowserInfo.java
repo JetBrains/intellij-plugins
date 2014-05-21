@@ -8,7 +8,7 @@ import com.google.jstestdriver.idea.server.JstdServerSettings;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.SmartList;
-import com.jetbrains.javascript.debugger.JSDebugEngine;
+import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,11 +20,11 @@ import java.util.List;
 */
 public class JstdDebugBrowserInfo {
 
-  private final Pair<JSDebugEngine, WebBrowser> myDebugEngine;
+  private final Pair<JavaScriptDebugEngine, WebBrowser> myDebugEngine;
   private final JstdServerSettings myServerSettings;
   private final JstdBrowserInfo myBrowserInfo;
 
-  private JstdDebugBrowserInfo(@NotNull Pair<JSDebugEngine, WebBrowser> debugEngine,
+  private JstdDebugBrowserInfo(@NotNull Pair<JavaScriptDebugEngine, WebBrowser> debugEngine,
                                @NotNull JstdServerSettings serverSettings,
                                @NotNull JstdBrowserInfo browserInfo) {
     myDebugEngine = debugEngine;
@@ -33,7 +33,7 @@ public class JstdDebugBrowserInfo {
   }
 
   @NotNull
-  public JSDebugEngine getDebugEngine() {
+  public JavaScriptDebugEngine getDebugEngine() {
     return myDebugEngine.first;
   }
 
@@ -64,7 +64,7 @@ public class JstdDebugBrowserInfo {
 
     List<JstdDebugBrowserInfo> debugBrowserInfos = new SmartList<JstdDebugBrowserInfo>();
     for (JstdBrowserInfo browserInfo : capturedBrowsers) {
-      Pair<JSDebugEngine, WebBrowser> engine = JSDebugEngine.findByBrowserName(browserInfo.getName());
+      Pair<JavaScriptDebugEngine, WebBrowser> engine = JavaScriptDebugEngine.findByBrowserName(browserInfo.getName());
       if (engine != null) {
         debugBrowserInfos.add(new JstdDebugBrowserInfo(engine, server.getSettings(), browserInfo));
       }
