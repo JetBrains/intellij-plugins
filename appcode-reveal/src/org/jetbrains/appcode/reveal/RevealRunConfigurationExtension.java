@@ -47,11 +47,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExtension {
   private static final String REVEAL_SETTINGS_TAG = "REVEAL_SETTINGS";
   private static final Key<RevealSettings> REVEAL_SETTINGS_KEY = Key.create(REVEAL_SETTINGS_TAG);
   private static final Key<String> BUNDLE_ID_KEY = Key.create("BUNDLE_INFO");
+  private static final Pattern AUTHORITY_PATTERN = Pattern.compile("^Authority=(.*)$", Pattern.MULTILINE);
 
   @NotNull
   public static RevealSettings getRevealSettings(@NotNull AppCodeRunConfiguration config) {
@@ -148,15 +151,16 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   public void install(@NotNull AppCodeRunConfiguration configuration,
                       @NotNull ExecutionEnvironment environment,
                       @NotNull BuildConfiguration buildConfiguration,
+                      @NotNull File mainExecutable,
                       @NotNull GeneralCommandLine commandLine) throws ExecutionException {
-    super.install(configuration, environment, buildConfiguration, commandLine);
+    super.install(configuration, environment, buildConfiguration, mainExecutable, commandLine);
     
     if (!Reveal.isCompatible()) return;
 
     RevealSettings settings = getRevealSettings(configuration);
     if (!settings.autoInject) return;
 
-    File toInject = installReveal(configuration, environment, buildConfiguration, commandLine, settings);
+    File toInject = installReveal(configuration, environment, buildConfiguration, commandLine, mainExecutable, settings);
     if (toInject == null) return;
     Reveal.LOG.info("Injecting Reveal lib: " + toInject);
                               
@@ -170,6 +174,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                     @NotNull ExecutionEnvironment environment,
                                     @NotNull BuildConfiguration buildConfiguration,
                                     @NotNull GeneralCommandLine commandLine,
+                                    @NotNull File mainExecutable,
                                     @NotNull final RevealSettings settings) throws ExecutionException {
     File libReveal = Reveal.getRevealLib();
     if (libReveal == null || !libReveal.exists()) throw new ExecutionException("Reveal library not found");
@@ -238,7 +243,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     UsageTrigger.trigger("appcode.reveal.installOnDevice");
     
     AMDevice device = destination.getIOSDeviceSafe();
-    return installOnDevice(libReveal, buildConfiguration, commandLine, device, getBundleID(environment, buildConfiguration));
+    return installOnDevice(libReveal, buildConfiguration, mainExecutable, commandLine, device,
+                           getBundleID(environment, buildConfiguration));
   }
 
   private static boolean hasBundledRevealLib(@NotNull final BuildConfiguration buildConfiguration, @NotNull final File libReveal) {
@@ -261,6 +267,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   @NotNull
   private static File installOnDevice(@NotNull File libReveal,
                                       @NotNull BuildConfiguration buildConfiguration,
+                                      @NotNull File mainExecutable,
                                       @NotNull GeneralCommandLine commandLine,
                                       @NotNull AMDevice device,
                                       @NotNull String bundleId) throws ExecutionException {
@@ -274,22 +281,58 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     catch (IOException e) {
       throw new ExecutionException("Cannot create a temporary copy of Reveal library", e);
     }
+    Reveal.LOG.info("Reading executable signature from " + mainExecutable);
+    String signature = runCodesign(mainExecutable.getParent(),
+                                   "Cannot sign Reveal library",
+                                   "/usr/bin/codesign",
+                                   "--verbose=2",
+                                   "--display",
+                                   mainExecutable.getPath()).getStderr();
 
-    List<String> commands = Arrays.asList("/usr/bin/codesign",
-                                          "-fs",
-                                          buildConfiguration.getBuildSetting("CODE_SIGN_IDENTITY").getString(),
-                                          libRevealInTempDir.getPath());
-
-    ProcessOutput output = ExecUtil.execAndGetOutput(commands, libRevealInTempDir.getParent());
-    if (output.getExitCode() != 0) {
-      Reveal.LOG.info("codesign command line: " + StringUtil.join(commands, " "));
-      throw new ExecutionException("Cannot sign Reveal library:\n" + output.getStderr());
+    String identity;
+    Matcher matcher = AUTHORITY_PATTERN.matcher(signature);
+    if (matcher.find()) {
+      identity = matcher.group(1);
     }
+    else {
+      identity = buildConfiguration.getBuildSetting("CODE_SIGN_IDENTITY").getString();
+      Reveal.LOG.info("Executable signature not found, using the default: " + identity);
+    }
+
+
+    Reveal.LOG.info("Signing " + libRevealInTempDir + " with " + identity);
+    runCodesign(libRevealInTempDir.getParent(),
+                "Cannot sign Reveal library.\n" +
+                "Please remove expired certificates from Kaychain",
+                "/usr/bin/codesign",
+                "-fs",
+                identity,
+                libRevealInTempDir.getPath());
 
     AMDeviceUtil.transferPathToApplicationBundle(device, libRevealInTempDir.getParent(), "/tmp", bundleId);
 
     return new File(new File(commandLine.getExePath()).getParentFile().getParentFile(),
                     "tmp/" + libRevealInTempDir.getParentFile().getName() + "/" + libRevealInTempDir.getName());
+  }
+
+  @NotNull
+  private static ProcessOutput runCodesign(String workingDir, final String errorMessage, String... commands) throws ExecutionException {
+    ProcessOutput output;
+
+    try {
+      output = ExecUtil.execAndGetOutput(Arrays.asList(commands), workingDir);
+    }
+    catch (ExecutionException e) {
+      Reveal.LOG.info("codesign failed : " + StringUtil.join(commands, " ") + "\n", e);
+      throw e;
+    }
+
+    if (output.getExitCode() != 0) {
+      String stderr = output.getStderr();
+      Reveal.LOG.info("codesign failed : " + StringUtil.join(commands, " ") + "\n" + stderr);
+      throw new ExecutionException(errorMessage + ":\n\n" + stderr);
+    }
+    return output;
   }
 
   @NotNull
