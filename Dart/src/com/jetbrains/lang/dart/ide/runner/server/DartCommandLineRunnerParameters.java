@@ -1,6 +1,17 @@
 package com.jetbrains.lang.dart.ide.runner.server;
 
+import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
+import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.sdk.DartConfigurable;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,6 +80,49 @@ public class DartCommandLineRunnerParameters implements Cloneable {
 
   public void setIncludeParentEnvs(final boolean includeParentEnvs) {
     myIncludeParentEnvs = includeParentEnvs;
+  }
+
+  @NotNull
+  public VirtualFile getDartFile() throws RuntimeConfigurationError {
+    final String filePath = getFilePath();
+    if (StringUtil.isEmptyOrSpaces(filePath)) {
+      throw new RuntimeConfigurationError(DartBundle.message("path.to.dart.file.not.set"));
+    }
+
+    final VirtualFile dartFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    if (dartFile == null || dartFile.isDirectory()) {
+      throw new RuntimeConfigurationError(DartBundle.message("dart.file.not.found", FileUtil.toSystemDependentName(filePath)));
+    }
+
+    if (dartFile.getFileType() != DartFileType.INSTANCE) {
+      throw new RuntimeConfigurationError(DartBundle.message("not.a.dart.file", FileUtil.toSystemDependentName(filePath)));
+    }
+
+    return dartFile;
+  }
+
+  public void check(final @NotNull Project project) throws RuntimeConfigurationError {
+    // check sdk
+    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    if (sdk == null) {
+      throw new RuntimeConfigurationError(DartBundle.message("dart.sdk.is.not.configured"), new Runnable() {
+        public void run() {
+          ShowSettingsUtil.getInstance().showSettingsDialog(project, DartConfigurable.DART_SETTINGS_PAGE_NAME);
+        }
+      });
+    }
+
+    // check main dart file
+    getDartFile();
+
+    // check working directory
+    final String workDirPath = getWorkingDirectory();
+    if (!StringUtil.isEmptyOrSpaces(workDirPath)) {
+      final VirtualFile workDir = LocalFileSystem.getInstance().findFileByPath(workDirPath);
+      if (workDir == null || !workDir.isDirectory()) {
+        throw new RuntimeConfigurationError(DartBundle.message("work.dir.does.not.exist", FileUtil.toSystemDependentName(workDirPath)));
+      }
+    }
   }
 
   @Override

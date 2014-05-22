@@ -182,7 +182,7 @@ public class DartConfigurable implements SearchableConfigurable {
                                                                            myCustomPackageRootsTextWithBrowse,
                                                                            myProject,
                                                                            // this descriptor is not used because overridden in selectCustomPackageRoots()
-                                                                           FileChooserDescriptorFactory.createMultipleFoldersDescriptor(),
+                                                                           FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                                                                            TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT) {
         public void actionPerformed(final ActionEvent e) {
           selectCustomPackageRoots(myCustomPackageRootsTextWithBrowse.getTextField());

@@ -1,5 +1,6 @@
 package org.jetbrains.appcode.reveal;
 
+import com.intellij.CommonBundle;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RunnerSettings;
@@ -14,6 +15,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.InvalidDataException;
@@ -45,11 +47,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExtension {
   private static final String REVEAL_SETTINGS_TAG = "REVEAL_SETTINGS";
   private static final Key<RevealSettings> REVEAL_SETTINGS_KEY = Key.create(REVEAL_SETTINGS_TAG);
   private static final Key<String> BUNDLE_ID_KEY = Key.create("BUNDLE_INFO");
+  private static final Pattern AUTHORITY_PATTERN = Pattern.compile("^Authority=(.*)$", Pattern.MULTILINE);
 
   @NotNull
   public static RevealSettings getRevealSettings(@NotNull AppCodeRunConfiguration config) {
@@ -68,10 +73,16 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     RevealSettings settings = null;
     if (settingsTag != null) {
       settings = new RevealSettings();
-      settings.autoInject = "true".equals(settingsTag.getAttributeValue("autoInject"));
-      settings.autoInstall = "true".equals(settingsTag.getAttributeValue("autoInstall"));
+      settings.autoInject = getAttributeValue(settingsTag.getAttributeValue("autoInject"), settings.autoInject);
+      settings.autoInstall = getAttributeValue(settingsTag.getAttributeValue("autoInstall"), settings.autoInstall);
+      settings.askToEnableAutoInstall =
+        getAttributeValue(settingsTag.getAttributeValue("askToEnableAutoInstall"), settings.askToEnableAutoInstall);
     }
     setRevealSettings(runConfiguration, settings);
+  }
+
+  private static boolean getAttributeValue(@Nullable String value, boolean defaultValue) {
+    return value == null ? defaultValue : "true".equals(value);
   }
 
   @Override
@@ -82,6 +93,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     Element settingsTag = new Element(REVEAL_SETTINGS_TAG);
     settingsTag.setAttribute("autoInject", String.valueOf(settings.autoInject));
     settingsTag.setAttribute("autoInstall", String.valueOf(settings.autoInstall));
+    settingsTag.setAttribute("askToEnableAutoInstall", String.valueOf(settings.askToEnableAutoInstall));
     element.addContent(settingsTag);
   }
 
@@ -139,15 +151,16 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   public void install(@NotNull AppCodeRunConfiguration configuration,
                       @NotNull ExecutionEnvironment environment,
                       @NotNull BuildConfiguration buildConfiguration,
+                      @NotNull File mainExecutable,
                       @NotNull GeneralCommandLine commandLine) throws ExecutionException {
-    super.install(configuration, environment, buildConfiguration, commandLine);
+    super.install(configuration, environment, buildConfiguration, mainExecutable, commandLine);
     
     if (!Reveal.isCompatible()) return;
 
     RevealSettings settings = getRevealSettings(configuration);
     if (!settings.autoInject) return;
 
-    File toInject = installReveal(configuration, environment, buildConfiguration, commandLine, settings);
+    File toInject = installReveal(configuration, environment, buildConfiguration, commandLine, mainExecutable, settings);
     if (toInject == null) return;
     Reveal.LOG.info("Injecting Reveal lib: " + toInject);
                               
@@ -161,7 +174,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                     @NotNull ExecutionEnvironment environment,
                                     @NotNull BuildConfiguration buildConfiguration,
                                     @NotNull GeneralCommandLine commandLine,
-                                    @NotNull RevealSettings settings) throws ExecutionException {
+                                    @NotNull File mainExecutable,
+                                    @NotNull final RevealSettings settings) throws ExecutionException {
     File libReveal = Reveal.getRevealLib();
     if (libReveal == null || !libReveal.exists()) throw new ExecutionException("Reveal library not found");
 
@@ -177,27 +191,60 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     }
 
     if (!settings.autoInstall) {
+      if (!settings.askToEnableAutoInstall) return null;
+
       final int[] response = new int[1];
+
       UIUtil.invokeAndWaitIfNeeded(new Runnable() {
         @Override
         public void run() {
-          response[0] = Messages.showYesNoDialog(configuration.getProject(),
-                                              "Project is not configured with Reveal library.<br><br>" +
-                                              "Would you like to enable automatic library upload for this run configuration?",
-                                              "Reveal", Messages.getQuestionIcon()
+          response[0] = Messages.showYesNoDialog("Project is not configured with Reveal library.<br><br>" +
+                                                 "Would you like to enable automatic library upload for this run configuration?",
+                                                 "Reveal",
+                                                 Messages.YES_BUTTON,
+                                                 Messages.NO_BUTTON,
+                                                 Messages.getQuestionIcon(),
+                                                 new DialogWrapper.DoNotAskOption() {
+                                                   @Override
+                                                   public boolean isToBeShown() {
+                                                     return true;
+                                                   }
+
+                                                   @Override
+                                                   public void setToBeShown(boolean value, int exitCode) {
+                                                     settings.askToEnableAutoInstall = value;
+                                                   }
+
+                                                   @Override
+                                                   public boolean canBeHidden() {
+                                                     return true;
+                                                   }
+
+                                                   @Override
+                                                   public boolean shouldSaveOptionsOnCancel() {
+                                                     return false;
+                                                   }
+
+                                                   @Override
+                                                   public String getDoNotShowMessage() {
+                                                     return CommonBundle.message("dialog.options.do.not.show");
+                                                   }
+                                                 }
           );
         }
       });
       if (response[0] != Messages.YES) return null;
 
       settings.autoInstall = true;
+      settings.askToEnableAutoInstall = true; // is user changes autoInstall in future, ask him/her again 
       setRevealSettings(configuration, settings);
     }
 
     UsageTrigger.trigger("appcode.reveal.installOnDevice");
     
     AMDevice device = destination.getIOSDeviceSafe();
-    return installOnDevice(libReveal, buildConfiguration, commandLine, device, getBundleID(environment, buildConfiguration));
+    return installOnDevice(libReveal, buildConfiguration, mainExecutable, commandLine, device,
+                           getBundleID(environment, buildConfiguration));
   }
 
   private static boolean hasBundledRevealLib(@NotNull final BuildConfiguration buildConfiguration, @NotNull final File libReveal) {
@@ -220,6 +267,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   @NotNull
   private static File installOnDevice(@NotNull File libReveal,
                                       @NotNull BuildConfiguration buildConfiguration,
+                                      @NotNull File mainExecutable,
                                       @NotNull GeneralCommandLine commandLine,
                                       @NotNull AMDevice device,
                                       @NotNull String bundleId) throws ExecutionException {
@@ -233,22 +281,58 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     catch (IOException e) {
       throw new ExecutionException("Cannot create a temporary copy of Reveal library", e);
     }
+    Reveal.LOG.info("Reading executable signature from " + mainExecutable);
+    String signature = runCodesign(mainExecutable.getParent(),
+                                   "Cannot sign Reveal library",
+                                   "/usr/bin/codesign",
+                                   "--verbose=2",
+                                   "--display",
+                                   mainExecutable.getPath()).getStderr();
 
-    List<String> commands = Arrays.asList("/usr/bin/codesign",
-                                          "-fs",
-                                          buildConfiguration.getBuildSetting("CODE_SIGN_IDENTITY").getString(),
-                                          libRevealInTempDir.getPath());
-
-    ProcessOutput output = ExecUtil.execAndGetOutput(commands, libRevealInTempDir.getParent());
-    if (output.getExitCode() != 0) {
-      Reveal.LOG.info("codesign command line: " + StringUtil.join(commands, " "));
-      throw new ExecutionException("Cannot sign Reveal library:\n" + output.getStderr());
+    String identity;
+    Matcher matcher = AUTHORITY_PATTERN.matcher(signature);
+    if (matcher.find()) {
+      identity = matcher.group(1);
     }
+    else {
+      identity = buildConfiguration.getBuildSetting("CODE_SIGN_IDENTITY").getString();
+      Reveal.LOG.info("Executable signature not found, using the default: " + identity);
+    }
+
+
+    Reveal.LOG.info("Signing " + libRevealInTempDir + " with " + identity);
+    runCodesign(libRevealInTempDir.getParent(),
+                "Cannot sign Reveal library.\n" +
+                "Please remove expired certificates from Kaychain",
+                "/usr/bin/codesign",
+                "-fs",
+                identity,
+                libRevealInTempDir.getPath());
 
     AMDeviceUtil.transferPathToApplicationBundle(device, libRevealInTempDir.getParent(), "/tmp", bundleId);
 
     return new File(new File(commandLine.getExePath()).getParentFile().getParentFile(),
                     "tmp/" + libRevealInTempDir.getParentFile().getName() + "/" + libRevealInTempDir.getName());
+  }
+
+  @NotNull
+  private static ProcessOutput runCodesign(String workingDir, final String errorMessage, String... commands) throws ExecutionException {
+    ProcessOutput output;
+
+    try {
+      output = ExecUtil.execAndGetOutput(Arrays.asList(commands), workingDir);
+    }
+    catch (ExecutionException e) {
+      Reveal.LOG.info("codesign failed : " + StringUtil.join(commands, " ") + "\n", e);
+      throw e;
+    }
+
+    if (output.getExitCode() != 0) {
+      String stderr = output.getStderr();
+      Reveal.LOG.info("codesign failed : " + StringUtil.join(commands, " ") + "\n" + stderr);
+      throw new ExecutionException(errorMessage + ":\n\n" + stderr);
+    }
+    return output;
   }
 
   @NotNull
@@ -406,5 +490,6 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   public static class RevealSettings {
     public boolean autoInject;
     public boolean autoInstall = true;
+    public boolean askToEnableAutoInstall = true;
   }
 }

@@ -12,7 +12,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.execution.configurations.RuntimeConfigurationWarning;
-import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
 import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -24,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.UIUtil;
+import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -185,7 +185,7 @@ public class JstdRunConfigurationVerifier {
       Collection<JstdBrowserInfo> capturedBrowsers = server.getCapturedBrowsers();
       boolean ok = false;
       for (JstdBrowserInfo browserInfo : capturedBrowsers) {
-        if (JSDebugEngine.findByBrowserName(browserInfo.getName()) != null) {
+        if (JavaScriptDebugEngine.findByBrowserName(browserInfo.getName()) != null) {
           ok = true;
           break;
         }

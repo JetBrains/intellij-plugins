@@ -284,7 +284,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
   }
 
   private static void updateExcludedFolders(final Module module,
-                                            final VirtualFile contentRoot,
+                                            @NotNull final VirtualFile contentRoot,
                                             final Collection<String> urlsToUnexclude,
                                             final Collection<String> urlsToExclude) {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -292,7 +292,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
         final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
         try {
           for (final ContentEntry contentEntry : modifiableModel.getContentEntries()) {
-            if (contentEntry.getFile() == contentRoot) {
+            if (contentRoot.equals(contentEntry.getFile())) {
               for (String url : urlsToUnexclude) {
                 contentEntry.removeExcludeFolder(url);
               }

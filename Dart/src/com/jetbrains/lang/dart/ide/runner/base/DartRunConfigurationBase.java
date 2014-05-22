@@ -3,7 +3,10 @@ package com.jetbrains.lang.dart.ide.runner.base;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.LocatableConfigurationBase;
 import com.intellij.execution.configurations.RefactoringListenerProvider;
+import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -12,7 +15,10 @@ import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.listeners.UndoRefactoringElementAdapter;
 import com.intellij.util.PathUtil;
+import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
+import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +30,22 @@ public abstract class DartRunConfigurationBase extends LocatableConfigurationBas
 
   @NotNull
   public abstract DartCommandLineRunnerParameters getRunnerParameters();
+
+  public void checkConfiguration() throws RuntimeConfigurationException {
+    getRunnerParameters().check(getProject());
+  }
+
+  @Override
+  public void writeExternal(final Element element) throws WriteExternalException {
+    super.writeExternal(element);
+    XmlSerializer.serializeInto(getRunnerParameters(), element, new SkipDefaultValuesSerializationFilters());
+  }
+
+  @Override
+  public void readExternal(final Element element) throws InvalidDataException {
+    super.readExternal(element);
+    XmlSerializer.deserializeInto(getRunnerParameters(), element);
+  }
 
   @Nullable
   @Override
