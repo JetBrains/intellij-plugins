@@ -5,6 +5,6 @@ OgnlFile:ConstructorOrArray.ognl
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('Integer')
-  PsiErrorElement:'(', '.', '@' or '[' expected, got '}'
+  PsiErrorElement:'(' or '[' expected, got '}'
     <empty list>
   PsiElement(EXPRESSION_END)('}')
