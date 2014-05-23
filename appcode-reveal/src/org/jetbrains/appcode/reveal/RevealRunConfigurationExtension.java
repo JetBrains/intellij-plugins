@@ -54,7 +54,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   private static final String REVEAL_SETTINGS_TAG = "REVEAL_SETTINGS";
   private static final Key<RevealSettings> REVEAL_SETTINGS_KEY = Key.create(REVEAL_SETTINGS_TAG);
   private static final Key<String> BUNDLE_ID_KEY = Key.create("BUNDLE_INFO");
-  private static final Pattern AUTHORITY_PATTERN = Pattern.compile("^Authority=(.*)$", Pattern.MULTILINE);
+  private static final Pattern FINGERPRINT_PATTERN =
+    Pattern.compile("^.* Fingerprint=(\\p{XDigit}{2}(:\\p{XDigit}{2})+)$", Pattern.MULTILINE);
 
   @NotNull
   public static RevealSettings getRevealSettings(@NotNull AppCodeRunConfiguration config) {
@@ -281,33 +282,52 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     catch (IOException e) {
       throw new ExecutionException("Cannot create a temporary copy of Reveal library", e);
     }
-    Reveal.LOG.info("Reading executable signature from " + mainExecutable);
-    String signature = runCodesign(mainExecutable.getParent(),
-                                   "Cannot sign Reveal library",
-                                   "/usr/bin/codesign",
-                                   "--verbose=2",
-                                   "--display",
-                                   mainExecutable.getPath()).getStderr();
+    String signature = null;
+    try {
+      File tmpDir = FileUtil.createTempDirectory("revealCodesign", null);
 
-    String identity;
-    Matcher matcher = AUTHORITY_PATTERN.matcher(signature);
-    if (matcher.find()) {
-      identity = matcher.group(1);
-    }
-    else {
-      identity = buildConfiguration.getBuildSetting("CODE_SIGN_IDENTITY").getString();
-      Reveal.LOG.info("Executable signature not found, using the default: " + identity);
-    }
-
-
-    Reveal.LOG.info("Signing " + libRevealInTempDir + " with " + identity);
-    runCodesign(libRevealInTempDir.getParent(),
-                "Cannot sign Reveal library.\n" +
-                "Please remove expired certificates from Kaychain",
+      try {
+        Reveal.LOG.info("Reading executable signature from " + mainExecutable);
+        runTool(tmpDir.getPath(),
+                "Cannot sign Reveal library",
                 "/usr/bin/codesign",
-                "-fs",
-                identity,
-                libRevealInTempDir.getPath());
+                "-d",
+                "--extract-certificates",
+                mainExecutable.getPath()).getStderr();
+
+        Reveal.LOG.info("Reading fingerprint from " + new File(tmpDir, "codesign0"));
+        String fingerprint = runTool(tmpDir.getPath(),
+                                     "Cannot read certificate fingerprint using openssl",
+                                     "/usr/bin/openssl",
+                                     "x509",
+                                     "-inform",
+                                     "der",
+                                     "-in",
+                                     "codesign0",
+                                     "-fingerprint",
+                                     "-noout").getStdout();
+        signature = readFingerprint(fingerprint);
+      }
+      finally {
+        FileUtil.delete(tmpDir);
+      }
+    }
+    catch (IOException ignore) {
+    }
+
+    if (signature == null) {
+      signature = buildConfiguration.getBuildSetting("CODE_SIGN_IDENTITY").getString();
+      Reveal.LOG.warn("Executable signature not found, using the default: " + signature);
+    }
+
+
+    Reveal.LOG.info("Signing " + libRevealInTempDir + " with " + signature);
+    runTool(libRevealInTempDir.getParent(),
+            "Cannot sign Reveal library." +
+            "/usr/bin/codesign",
+            "-fs",
+            signature,
+            libRevealInTempDir.getPath());
 
     AMDeviceUtil.transferPathToApplicationBundle(device, libRevealInTempDir.getParent(), "/tmp", bundleId);
 
@@ -315,21 +335,32 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                     "tmp/" + libRevealInTempDir.getParentFile().getName() + "/" + libRevealInTempDir.getName());
   }
 
+  
+  @Nullable
+  public static String readFingerprint(String fingerprint) {
+    Matcher matcher = FINGERPRINT_PATTERN.matcher(fingerprint);
+    if (matcher.find()) {
+      String ids = matcher.group(1);
+      return ids.replaceAll(":", "");
+    }
+    return null;
+  }
+
   @NotNull
-  private static ProcessOutput runCodesign(String workingDir, final String errorMessage, String... commands) throws ExecutionException {
+  private static ProcessOutput runTool(String workingDir, final String errorMessage, String... commands) throws ExecutionException {
     ProcessOutput output;
 
     try {
       output = ExecUtil.execAndGetOutput(Arrays.asList(commands), workingDir);
     }
     catch (ExecutionException e) {
-      Reveal.LOG.info("codesign failed : " + StringUtil.join(commands, " ") + "\n", e);
+      Reveal.LOG.info("execution failed: " + StringUtil.join(commands, " ") + "\n", e);
       throw e;
     }
 
     if (output.getExitCode() != 0) {
       String stderr = output.getStderr();
-      Reveal.LOG.info("codesign failed : " + StringUtil.join(commands, " ") + "\n" + stderr);
+      Reveal.LOG.info("execution failed: " + StringUtil.join(commands, " ") + "\n" + stderr);
       throw new ExecutionException(errorMessage + ":\n\n" + stderr);
     }
     return output;
