@@ -29,7 +29,7 @@ import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.groovy.GroovyFileType;
 import org.jetbrains.plugins.groovy.actions.GroovyTemplatesFactory;
-import org.jetbrains.plugins.groovy.annotator.intentions.QuickfixUtil;
+import org.jetbrains.plugins.groovy.intentions.base.IntentionUtils;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock;
@@ -117,7 +117,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
 
     final Editor editorToRunTemplate;
     if (editor == null) {
-      editorToRunTemplate = QuickfixUtil.positionCursor(project, file, methodCall);
+      editorToRunTemplate = IntentionUtils.positionCursor(project, file, methodCall);
     }
     else {
       editorToRunTemplate = editor;
