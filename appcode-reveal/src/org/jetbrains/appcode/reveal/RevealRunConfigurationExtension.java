@@ -288,24 +288,13 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
       try {
         Reveal.LOG.info("Reading executable signature from " + mainExecutable);
-        runTool(tmpDir.getPath(),
-                "Cannot sign Reveal library",
-                "/usr/bin/codesign",
-                "-d",
-                "--extract-certificates",
-                mainExecutable.getPath()).getStderr();
+        runTool(tmpDir.getPath(), "Cannot sign Reveal library",
+                Arrays.asList("/usr/bin/codesign", "-d", "--extract-certificates", mainExecutable.getPath()));
 
         Reveal.LOG.info("Reading fingerprint from " + new File(tmpDir, "codesign0"));
-        String fingerprint = runTool(tmpDir.getPath(),
-                                     "Cannot read certificate fingerprint using openssl",
-                                     "/usr/bin/openssl",
-                                     "x509",
-                                     "-inform",
-                                     "der",
-                                     "-in",
-                                     "codesign0",
-                                     "-fingerprint",
-                                     "-noout").getStdout();
+        String fingerprint
+          = runTool(tmpDir.getPath(), "Cannot read certificate fingerprint using openssl",
+                    Arrays.asList("/usr/bin/openssl", "x509", "-inform", "der", "-in", "codesign0", "-fingerprint", "-noout")).getStdout();
         signature = readFingerprint(fingerprint);
       }
       finally {
@@ -322,12 +311,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
 
     Reveal.LOG.info("Signing " + libRevealInTempDir + " with " + signature);
-    runTool(libRevealInTempDir.getParent(),
-            "Cannot sign Reveal library." +
-            "/usr/bin/codesign",
-            "-fs",
-            signature,
-            libRevealInTempDir.getPath());
+    runTool(libRevealInTempDir.getParent(), "Cannot sign Reveal library.",
+            Arrays.asList("/usr/bin/codesign", "-fs", signature, libRevealInTempDir.getPath()));
 
     AMDeviceUtil.transferPathToApplicationBundle(device, libRevealInTempDir.getParent(), "/tmp", bundleId);
 
@@ -347,11 +332,11 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   }
 
   @NotNull
-  private static ProcessOutput runTool(String workingDir, final String errorMessage, String... commands) throws ExecutionException {
+  private static ProcessOutput runTool(String workingDir, final String errorMessage, List<String> commands) throws ExecutionException {
     ProcessOutput output;
 
     try {
-      output = ExecUtil.execAndGetOutput(Arrays.asList(commands), workingDir);
+      output = ExecUtil.execAndGetOutput(commands, workingDir);
     }
     catch (ExecutionException e) {
       Reveal.LOG.info("execution failed: " + StringUtil.join(commands, " ") + "\n", e);
