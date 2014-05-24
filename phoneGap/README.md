@@ -24,7 +24,7 @@ Please install from [Node.js Official site](http://nodejs.org/)
 
 nvm is not supported (So sorry fix soon)
 
-$npm install -g PhoneGap
+$npm install -g phonegap
 
 PhoneGap dir must be
 
