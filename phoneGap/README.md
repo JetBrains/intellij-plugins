@@ -148,12 +148,11 @@ http://localhost:8080
 
 ###ToDo
 
-* Windows support
+* Code completion for PhoneGap function, event (onDeviceReady(), onSuccess(), ..etc)
+* Replace server.js to Grunt
+* WindowsPhone support
 * New ConfigurationEditor
 * weinre support
-* GUI builder(sencha touch, Kendo UI, OnsenUI, etc...)
-* LogCat integration(or helper for javaScript debugging)
-* Suggest for PhoneGap function, event (onDeviceReady(), onSuccess(), ..etc)
 * Windows Phone support
 * nvm support
 * PhoneGap Build support
