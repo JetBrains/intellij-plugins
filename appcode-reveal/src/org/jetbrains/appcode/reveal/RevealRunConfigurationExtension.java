@@ -267,7 +267,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @NotNull
   private static File installOnDevice(@NotNull File libReveal,
-                                      @NotNull BuildConfiguration buildConfiguration,
+                                      @NotNull final BuildConfiguration buildConfiguration,
                                       @NotNull File mainExecutable,
                                       @NotNull GeneralCommandLine commandLine,
                                       @NotNull AMDevice device,
@@ -305,7 +305,12 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     }
 
     if (signature == null) {
-      signature = buildConfiguration.getBuildSetting("CODE_SIGN_IDENTITY").getString();
+      signature = ApplicationManager.getApplication().runReadAction(new Computable<String>() {
+        @Override
+        public String compute() {
+          return buildConfiguration.getBuildSetting("CODE_SIGN_IDENTITY").getString();
+        }
+      });
       Reveal.LOG.warn("Executable signature not found, using the default: " + signature);
     }
 
