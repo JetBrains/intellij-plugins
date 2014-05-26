@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.lexer;
 
 import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.Lexer;
+import com.intellij.lexer.MergeFunction;
 import com.intellij.lexer.MergingLexerAdapterBase;
 import com.intellij.psi.tree.IElementType;
 
@@ -11,7 +12,7 @@ import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 public class DartLexer extends MergingLexerAdapterBase {
 
   public DartLexer() {
-    super(createLexer(), MERGE_FUNCTION);
+    super(createLexer());
   }
 
   private static FlexAdapter createLexer() {
@@ -29,7 +30,7 @@ public class DartLexer extends MergingLexerAdapterBase {
    * collapses sequence like <code>{MULTI_LINE_(DOC_)COMMENT_START MULTI_LINE_COMMENT_BODY* MULTI_LINE_COMMENT_END}</code> into a single <code>DartTokenTypesSets.MULTI_LINE_(DOC_)COMMENT</code>.
    * Doc comment content is lazily parsed separately
    */
-  private static final MergingLexerAdapterBase.MergeFunction MERGE_FUNCTION = new MergingLexerAdapterBase.MergeFunction() {
+  private static final MergeFunction MERGE_FUNCTION = new MergeFunction() {
     public IElementType merge(final IElementType firstTokenType, final Lexer originalLexer) {
       if (firstTokenType == REGULAR_STRING_PART || firstTokenType == WHITE_SPACE) {
         // merge consequent tokens of the same type
@@ -59,4 +60,9 @@ public class DartLexer extends MergingLexerAdapterBase {
       return firstTokenType;
     }
   };
+
+  @Override
+  public MergeFunction defineMergeFunction() {
+    return MERGE_FUNCTION;
+  }
 }
