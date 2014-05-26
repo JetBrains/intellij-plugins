@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -11,7 +10,10 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.*;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
+import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.psi.DartPartStatement;
 import com.jetbrains.lang.dart.psi.DartPathOrLibraryReference;
@@ -151,18 +153,10 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
 
       final int slashIndex = url.indexOf('/');
       if (slashIndex > 0) {
-        final Ref<VirtualFile> packageDirRef = new Ref<VirtualFile>();
         final String packageName = url.substring(PACKAGE_PREFIX.length(), slashIndex);
-        dartUrlResolver.processLivePackages(new PairConsumer<String, VirtualFile>() {
-          public void consume(final String packageName1, final VirtualFile packageDir) {
-            if (packageName.equals(packageName1)) {
-              packageDirRef.set(packageDir);
-            }
-          }
-        });
-
-        if (!packageDirRef.isNull()) {
-          return getPackageReferences(file, packageDirRef.get(), url.substring(slashIndex + 1), slashIndex + 1);
+        final VirtualFile packageDir = dartUrlResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(packageName);
+        if (packageDir != null) {
+          return getPackageReferences(file, packageDir, url.substring(slashIndex + 1), slashIndex + 1);
         }
       }
 
