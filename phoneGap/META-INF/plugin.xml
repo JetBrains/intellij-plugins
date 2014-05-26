@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
     <name>PhoneGap/Cordova Plugin</name>
-    <version>0.6.0</version>
+    <version>0.8.0</version>
     <vendor email="masahiro.suzuka@gmail.com" url="http://github.com/masahirosuzuka/PhoneGapIntelliJPlugin">
         masahirosuzuka
     </vendor>
@@ -16,6 +16,8 @@
     ]]></description>
 
     <change-notes><![CDATA[
+    <p>v0.8.0 Code complements</p>
+    <p>v0.7.0 Cordova support</p>
     <p>v0.6.0 Ripple emulator support</p>
     <p>v0.5.1 Bug fix</p>
     <p>v0.5.0 iOS Support</p>
@@ -37,8 +39,6 @@
     <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
-
         <!-- Setting Dialog -->
         <applicationConfigurable instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable"/>
 
@@ -61,6 +61,9 @@
 
         <applicationService serviceInterface="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings"
                             serviceImplementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings"/>
+
+        <completion.contributor language="any"
+                                implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.codecompletion.PhoneGapCodeCompletion" />
     </extensions>
 
     <application-components>
