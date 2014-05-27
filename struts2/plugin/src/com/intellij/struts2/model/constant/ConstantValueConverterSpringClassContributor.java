@@ -19,6 +19,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.spring.SpringManager;
 import com.intellij.spring.contexts.model.SpringModel;
 import com.intellij.spring.model.SpringBeanPointer;
+import com.intellij.spring.model.utils.SpringModelSearchers;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomJavaUtil;
@@ -47,7 +48,7 @@ public class ConstantValueConverterSpringClassContributor implements ConstantVal
     }
 
     final SpringModel springModel = SpringManager.getInstance(module.getProject()).getCombinedModel(module);
-    final SpringBeanPointer springBeanPointer = springModel.findBeanByName(s);
+    final SpringBeanPointer springBeanPointer = SpringModelSearchers.getInstance().findBean(springModel, s);
     if (springBeanPointer == null) {
       return null;
     }

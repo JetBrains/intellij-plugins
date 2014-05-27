@@ -24,8 +24,10 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.spring.SpringManager;
 import com.intellij.spring.contexts.model.SpringModel;
 import com.intellij.spring.facet.SpringFacet;
+import com.intellij.spring.model.SpringModelSearchParameters;
 import com.intellij.spring.model.SpringBeanPointer;
 import com.intellij.spring.model.converters.SpringConverterUtil;
+import com.intellij.spring.model.utils.SpringModelSearchers;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.dom.ExtendableClassConverter;
@@ -110,7 +112,7 @@ public class ExtendableClassConverterSpringContributor
       }
 
       final SpringModel springModel = getSpringModel();
-      final SpringBeanPointer springBean = springModel.findBeanByName(beanName);
+      final SpringBeanPointer springBean = SpringModelSearchers.getInstance().findBean(springModel, beanName);
       if (springBean == null) {
         return null;
       }
@@ -129,7 +131,7 @@ public class ExtendableClassConverterSpringContributor
       final PsiClass subClass = getPossibleSubClass();
       final Collection<? extends SpringBeanPointer> list;
       if (subClass != null) {
-        list = springModel.findBeansByPsiClassWithInheritance(subClass.getQualifiedName());
+        list = SpringModelSearchers.getInstance().findBeans(springModel, SpringModelSearchParameters.byClass(subClass.getQualifiedName()).withInheritors());
       }
       else {
         list = springModel.getAllCommonBeans();
