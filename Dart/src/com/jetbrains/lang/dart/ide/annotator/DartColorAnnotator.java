@@ -4,6 +4,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -59,7 +60,7 @@ public class DartColorAnnotator implements Annotator {
     }
 
     if (element instanceof DartReference && element.getParent() instanceof DartType && "dynamic".equals(element.getText())) {
-      holder.createInfoAnnotation(element, null).setTextAttributes(TextAttributesKey.find(DartSyntaxHighlighterColors.DART_BUILTIN));
+      createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_BUILTIN);
       return;
     }
 
@@ -71,6 +72,8 @@ public class DartColorAnnotator implements Annotator {
                                                         final @Nullable DartSdk sdk) {
     DartComponentName componentName = null;
 
+    //System.out.println(element.getText());
+
     if (element instanceof DartComponentName) {
       componentName = (DartComponentName)element;
     }
@@ -79,22 +82,93 @@ public class DartColorAnnotator implements Annotator {
       boolean chain = references != null && references.length > 1;
       if (!chain) {
         final PsiElement resolved = ((DartReference)element).resolve(); // todo this takes too much time
-        if (resolved instanceof DartComponentName) componentName = (DartComponentName)resolved;
+        final PsiElement elementParent = element.getParent();
+        if (resolved != null && elementParent instanceof DartCallExpression) {
+          final PsiElement parent = resolved.getParent();
+          if (parent instanceof DartFunctionDeclarationWithBodyOrNative) {
+            createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_CALL);
+          } else if (parent instanceof DartMethodDeclaration) {
+            final String callType =
+              ((DartMethodDeclaration)parent).isStatic() ? DartSyntaxHighlighterColors.DART_STATIC_MEMBER_FUNCTION_CALL
+                                                         : DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_FUNCTION_CALL;
+            createInfoAnnotation(holder, element, callType);
+          }
+        } else {
+          if (resolved instanceof DartComponentName) componentName = (DartComponentName)resolved;
+        }
       }
     }
 
     if (componentName != null) {
       if (BUILT_IN_TYPES_HIGHLIGHTED_AS_KEYWORDS.contains(componentName.getName()) &&
           sdk != null && isInSdkCore(sdk, componentName.getContainingFile())) {
-        holder.createInfoAnnotation(element, null).setTextAttributes(TextAttributesKey.find(DartSyntaxHighlighterColors.DART_BUILTIN));
+        createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_BUILTIN);
+
         return;
       }
 
       final boolean isStatic = isStatic(componentName.getParent());
-      final TextAttributesKey attribute = getAttributeByType(DartComponentType.typeOf(componentName.getParent()), isStatic);
+      final boolean isTopLevel = !isStatic && isTopLevel(componentName.getParent());
+      final TextAttributesKey attribute = getAttributeByType(DartComponentType.typeOf(componentName.getParent()), isStatic, isTopLevel);
       if (attribute != null) {
         holder.createInfoAnnotation(element, null).setTextAttributes(attribute);
       }
+    } else {
+      highlightDeclarationsAndInvocations(element, holder);
+    }
+
+  }
+
+  private static void highlightDeclarationsAndInvocations(final @NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
+    if (element instanceof DartNewExpression) {
+      final DartNewExpression newExpression = (DartNewExpression)element;
+      final DartType type = newExpression.getType();
+      createInfoAnnotation(holder, type, DartSyntaxHighlighterColors.DART_CONSTRUCTOR_CALL);
+    }
+    else if (element instanceof DartConstConstructorExpression) {
+      final DartConstConstructorExpression constConstructorExpression = (DartConstConstructorExpression)element;
+      final DartType type = constConstructorExpression.getType();
+      createInfoAnnotation(holder, type, DartSyntaxHighlighterColors.DART_CONSTRUCTOR_CALL);
+    }
+    else if (element instanceof DartNamedConstructorDeclaration) {
+      final DartNamedConstructorDeclaration decl = (DartNamedConstructorDeclaration)element;
+      final PsiElement child = decl.getFirstChild();
+      final DartComponentName name = decl.getComponentName();
+      final TextRange textRange = new TextRange(child.getTextOffset(), name.getTextRange().getEndOffset());
+      holder.createInfoAnnotation(textRange, null).setTextAttributes(
+        TextAttributesKey.find(DartSyntaxHighlighterColors.DART_CONSTRUCTOR_DECLARATION));
+    }
+    else if (element instanceof DartFactoryConstructorDeclaration) {
+      final DartFactoryConstructorDeclaration decl = (DartFactoryConstructorDeclaration)element;
+      final DartReference dartReference = PsiTreeUtil.findChildOfType(decl, DartReference.class);
+      createInfoAnnotation(holder, dartReference, DartSyntaxHighlighterColors.DART_CONSTRUCTOR_DECLARATION);
+    }
+    // Constructors are just method declarations whose name matches the parent class
+    else if (element instanceof DartMethodDeclaration) {
+      final DartMethodDeclaration decl = (DartMethodDeclaration)element;
+      final String methodName = decl.getName();
+      final DartClassDefinition classDef = PsiTreeUtil.getParentOfType(decl, DartClassDefinition.class);
+      if (classDef != null && methodName != null) {
+        final String className = classDef.getName();
+        if (className != null) {
+          // Method declarations have likely been handled already but we check to be safe
+          final String elementKind = className.equals(methodName) ? DartSyntaxHighlighterColors.DART_CONSTRUCTOR_DECLARATION
+                                                                  : DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_FUNCTION;
+          createInfoAnnotation(holder, decl.getComponentName(), elementKind);
+        }
+      }
+    }
+    else if (element instanceof DartFunctionDeclarationWithBodyOrNative) {
+      final DartFunctionDeclarationWithBodyOrNative decl = (DartFunctionDeclarationWithBodyOrNative)element;
+      createInfoAnnotation(holder, decl.getComponentName(), DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_DECLARATION);
+    }
+  }
+
+  private static void createInfoAnnotation(final @NotNull AnnotationHolder holder,
+                                           final @Nullable PsiElement element,
+                                           final @NotNull String attributeKey) {
+    if (element != null) {
+      holder.createInfoAnnotation(element, null).setTextAttributes(TextAttributesKey.find(attributeKey));
     }
   }
 
@@ -122,14 +196,20 @@ public class DartColorAnnotator implements Annotator {
   }
 
   private static boolean isStatic(final PsiElement element) {
-    if (element instanceof DartComponent) {
-      return ((DartComponent)element).isStatic();
-    }
-    return false;
+    return element instanceof DartComponent && ((DartComponent)element).isStatic();
+  }
+
+  private static boolean isTopLevel(final PsiElement element) {
+    return PsiTreeUtil.findFirstParent(element, new Condition<PsiElement>() {
+      @Override
+      public boolean value(final PsiElement element) {
+        return element instanceof DartMethodDeclaration;
+      }
+    }) == null;
   }
 
   @Nullable
-  private static TextAttributesKey getAttributeByType(final @Nullable DartComponentType type, boolean isStatic) {
+  private static TextAttributesKey getAttributeByType(final @Nullable DartComponentType type, boolean isStatic, boolean isTopLevel) {
     if (type == null) {
       return null;
     }
@@ -140,8 +220,10 @@ public class DartColorAnnotator implements Annotator {
       case PARAMETER:
         return TextAttributesKey.find(DartSyntaxHighlighterColors.DART_PARAMETER);
       case FUNCTION:
+        if (isTopLevel) return TextAttributesKey.find(DartSyntaxHighlighterColors.DART_TOP_LEVEL_FUNCTION_DECLARATION);
         return TextAttributesKey.find(DartSyntaxHighlighterColors.DART_FUNCTION);
       case VARIABLE:
+        if (isTopLevel) return TextAttributesKey.find(DartSyntaxHighlighterColors.DART_TOP_LEVEL_VARIABLE_DECLARATION);
         return TextAttributesKey.find(DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE);
       case LABEL:
         return TextAttributesKey.find(DartSyntaxHighlighterColors.DART_LABEL);

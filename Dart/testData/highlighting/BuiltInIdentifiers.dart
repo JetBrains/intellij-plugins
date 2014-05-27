@@ -41,7 +41,7 @@
     <info descr="null">print</info>(<info descr="null">export</info>());
     <info descr="null">print</info>(<info descr="null">external</info>());
     <info descr="null">print</info>(<info descr="null">factory</info>());
-    <info descr="null">print</info>(<info descr="null">get</info>());
+    <info descr="null">print</info>(get());
     <info descr="null">print</info>(<info descr="null">implements</info>());
     <info descr="null">print</info>(<info descr="null">import</info>());
     <info descr="null">print</info>(<info descr="null">library</info>());
@@ -49,7 +49,7 @@
     <info descr="null">print</info>(<info descr="null">part</info>());
     <info descr="null">print</info>(set());
     <info descr="null">print</info>(<info descr="null">static</info>());
-    <info descr="null">print</info>(<info descr="null">typedef</info>());
+    <info descr="null">print</info>(typedef());
 
     <info descr="null">print</info>(<info descr="null">on</info>());
     <info descr="null">print</info>(<info descr="null">of</info>());
