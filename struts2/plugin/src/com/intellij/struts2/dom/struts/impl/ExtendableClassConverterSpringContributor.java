@@ -131,7 +131,7 @@ public class ExtendableClassConverterSpringContributor
       final PsiClass subClass = getPossibleSubClass();
       final Collection<? extends SpringBeanPointer> list;
       if (subClass != null) {
-        list = SpringModelSearchers.findBeans(springModel, SpringModelSearchParameters.byClass(subClass.getQualifiedName()).withInheritors());
+        list = SpringModelSearchers.findBeans(springModel, SpringModelSearchParameters.byClass(subClass).withInheritors());
       }
       else {
         list = springModel.getAllCommonBeans();
