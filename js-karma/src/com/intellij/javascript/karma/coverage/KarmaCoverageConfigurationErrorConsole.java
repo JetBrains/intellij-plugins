@@ -12,7 +12,6 @@ import com.intellij.openapi.editor.colors.*;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ui.UIUtil;
@@ -20,8 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicHTML;
-import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.io.File;
 
@@ -79,9 +76,9 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
   @Override
   public JComponent getComponent() {
     if (myComponent == null) {
-      JTextPane textPane = createTextPane();
-      textPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-      myComponent = ScrollPaneFactory.createScrollPane(textPane,
+      JEditorPane pane = createEditorPane();
+      pane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+      myComponent = ScrollPaneFactory.createScrollPane(pane,
                                                        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
@@ -89,39 +86,27 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
   }
 
   @NotNull
-  private JTextPane createTextPane() {
-    JTextPane textPane = new JTextPane();
-    String text = getWarningMessage();
-    configureMessagePaneUi(textPane, text, true);
-    return textPane;
-  }
-
-  private static void configureMessagePaneUi(@NotNull JTextPane messageComponent,
-                                             @NotNull String message,
-                                             final boolean addBrowserHyperlinkListener) {
+  private JEditorPane createEditorPane() {
     EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
     Font font = colorsScheme.getFont(EditorFontType.PLAIN);
     Color background = colorsScheme.getDefaultBackground();
     Color foreground = getTextForeground(colorsScheme);
 
-    messageComponent.setFont(font);
-    if (BasicHTML.isHTMLString(message)) {
-      final HTMLEditorKit editorKit = new HTMLEditorKit();
-      editorKit.getStyleSheet().addRule(UIUtil.displayPropertiesToCSS(font, foreground));
-      messageComponent.setEditorKit(editorKit);
-      messageComponent.setContentType(UIUtil.HTML_MIME);
-      if (addBrowserHyperlinkListener) {
-        messageComponent.addHyperlinkListener(new BrowserHyperlinkListener());
-      }
-    }
-    messageComponent.setText(message);
-    messageComponent.setEditable(false);
-    if (messageComponent.getCaret() != null) {
-      messageComponent.setCaretPosition(0);
-    }
+    JEditorPane pane = new JEditorPane();
+    pane.setContentType(UIUtil.HTML_MIME);
+    pane.setEditable(false);
+    pane.setFont(font);
+    pane.setBackground(background);
+    pane.setForeground(foreground);
 
-    messageComponent.setBackground(background);
-    messageComponent.setForeground(foreground);
+    String bodyInnerHtml = getWarningMessage();
+    String html = String.format(
+      "<html><head>%s</head><body>%s</body></html>",
+      UIUtil.getCssFontDeclaration(font, foreground, null, null),
+      bodyInnerHtml
+    );
+    pane.setText(html);
+    return pane;
   }
 
   @NotNull
@@ -152,10 +137,7 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
 
   @NotNull
   private static String getCommonWarning() {
-    return "<html><body>"
-           + TITLE
-           + SEE_KARMA_SERVER_TAB
-           + "</body></html>";
+    return TITLE + SEE_KARMA_SERVER_TAB;
   }
 
   @NotNull
@@ -206,8 +188,7 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
 
   @NotNull
   private static String getWarningAboutMissingCoveragePreprocessorInConfigFile() {
-    return "<html><body>"
-           + TITLE
+    return TITLE
            + "<div style='padding-top:3px'>Make sure coverage preprocessor is configured like this:</div>"
            + formatHtmlCode(new String[]{
               "module.exports = function (config) {",
@@ -223,8 +204,7 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
               "  });",
               "};"
              })
-           + "As the preprocessor is configured, run with coverage again."
-           + "</body></html>";
+           + "As the preprocessor is configured, run with coverage again.";
   }
 
   @NotNull
@@ -238,8 +218,7 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
     else {
       path = karmaPackageDir.getAbsolutePath();
     }
-    return "<html><body>"
-           + TITLE
+    return TITLE
            + SEE_KARMA_SERVER_TAB
            + "<div style='padding-top:3px'>It seems that 'karma-coverage' node package isn't installed.</div>"
            + "<div style='padding-top:3px'>To install it execute the following commands:</div>"
@@ -247,14 +226,12 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
               "cd " + path,
               "npm install karma-coverage"
              })
-           + "As the package is installed, run with coverage again."
-           + "</body></html>";
+           + "As the package is installed, run with coverage again.";
   }
 
   @NotNull
   private static String getWarningAboutMissingCoveragePluginInConfigFile() {
-    return "<html><body>"
-           + TITLE
+    return TITLE
            + SEE_KARMA_SERVER_TAB
            + "<div style='padding-top:3px'>It seems that <code>'coverage'</code> reporter isn't available.</div>"
            + "<div style='padding-top:3px; padding-bottom:3px\'>"
@@ -269,8 +246,7 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
               "  });",
               "};"
              })
-           + "As the plugin is specified, run with coverage again."
-           + "</body></html>";
+           + "As the plugin is specified, run with coverage again.";
   }
 
   @Override
