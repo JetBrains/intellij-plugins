@@ -112,7 +112,7 @@ public class ExtendableClassConverterSpringContributor
       }
 
       final SpringModel springModel = getSpringModel();
-      final SpringBeanPointer springBean = SpringModelSearchers.getInstance().findBean(springModel, beanName);
+      final SpringBeanPointer springBean = SpringModelSearchers.findBean(springModel, beanName);
       if (springBean == null) {
         return null;
       }
@@ -131,7 +131,7 @@ public class ExtendableClassConverterSpringContributor
       final PsiClass subClass = getPossibleSubClass();
       final Collection<? extends SpringBeanPointer> list;
       if (subClass != null) {
-        list = SpringModelSearchers.getInstance().findBeans(springModel, SpringModelSearchParameters.byClass(subClass.getQualifiedName()).withInheritors());
+        list = SpringModelSearchers.findBeans(springModel, SpringModelSearchParameters.byClass(subClass.getQualifiedName()).withInheritors());
       }
       else {
         list = springModel.getAllCommonBeans();
