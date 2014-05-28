@@ -12,5 +12,12 @@
 
 class <info textAttributesKey="DART_CLASS">A</info> {
   <info textAttributesKey="DART_KEYWORD">static</info> <info>int</info> <info textAttributesKey="DART_STATIC_MEMBER_VARIABLE">BAR</info> = 4;
-
+  <info textAttributesKey="DART_KEYWORD">static</info> <info textAttributesKey="DART_STATIC_MEMBER_FUNCTION">a</info>() {}
+  <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">b</info>() {
+    var <info textAttributesKey="DART_LOCAL_VARIABLE">loc</info> =
+      <info textAttributesKey="DART_STATIC_MEMBER_FUNCTION_CALL">a</info>() +
+      <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE_ACCESS">_c</info> +
+      <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_ACCESS">x</info>;
+  }
+  var <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">_c</info> = <info textAttributesKey="DART_STATIC_MEMBER_VARIABLE_ACCESS">BAR</info>;
 }

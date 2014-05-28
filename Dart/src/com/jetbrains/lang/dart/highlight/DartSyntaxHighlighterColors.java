@@ -16,8 +16,11 @@ public class DartSyntaxHighlighterColors {
   public static final String DART_INSTANCE_MEMBER_FUNCTION = "DART_INSTANCE_MEMBER_FUNCTION";
   public static final String DART_INSTANCE_MEMBER_FUNCTION_CALL = "DART_INSTANCE_MEMBER_FUNCTION_CALL";
   public static final String DART_INSTANCE_MEMBER_VARIABLE = "DART_INSTANCE_MEMBER_VARIABLE";
+  public static final String DART_INSTANCE_MEMBER_VARIABLE_ACCESS = "DART_INSTANCE_MEMBER_VARIABLE_ACCESS";
   public static final String DART_STATIC_MEMBER_VARIABLE = "DART_STATIC_MEMBER_VARIABLE";
+  public static final String DART_STATIC_MEMBER_VARIABLE_ACCESS = "DART_STATIC_MEMBER_VARIABLE_ACCESS";
   public static final String DART_LOCAL_VARIABLE = "DART_LOCAL_VARIABLE";
+  public static final String DART_LOCAL_VARIABLE_ACCESS = "DART_LOCAL_VARIABLE_ACCESS";
   public static final String DART_PARAMETER = "DART_PARAMETER";
   public static final String DART_LABEL = "DART_LABEL";
   public static final String DART_METADATA = "DART_METADATA";
@@ -90,10 +93,16 @@ public class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_INSTANCE_MEMBER_FUNCTION_CALL, DefaultLanguageHighlighterColors.FUNCTION_CALL);
   public static final TextAttributesKey INSTANCE_MEMBER_VARIABLE =
     createTextAttributesKey(DART_INSTANCE_MEMBER_VARIABLE, DefaultLanguageHighlighterColors.INSTANCE_FIELD);
+  public static final TextAttributesKey INSTANCE_MEMBER_VARIABLE_ACCESS =
+    createTextAttributesKey(DART_INSTANCE_MEMBER_VARIABLE_ACCESS, DefaultLanguageHighlighterColors.INSTANCE_FIELD);
   public static final TextAttributesKey STATIC_MEMBER_VARIABLE =
     createTextAttributesKey(DART_STATIC_MEMBER_VARIABLE, DefaultLanguageHighlighterColors.STATIC_FIELD);
+  public static final TextAttributesKey STATIC_MEMBER_VARIABLE_ACCESS =
+    createTextAttributesKey(DART_STATIC_MEMBER_VARIABLE_ACCESS, DefaultLanguageHighlighterColors.STATIC_FIELD);
   public static final TextAttributesKey LOCAL_VARIABLE =
     createTextAttributesKey(DART_LOCAL_VARIABLE, DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
+  public static final TextAttributesKey LOCAL_VARIABLE_ACCESS =
+    createTextAttributesKey(DART_LOCAL_VARIABLE_ACCESS, DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
   public static final TextAttributesKey FUNCTION =
     createTextAttributesKey(DART_FUNCTION, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
   public static final TextAttributesKey PARAMETER =

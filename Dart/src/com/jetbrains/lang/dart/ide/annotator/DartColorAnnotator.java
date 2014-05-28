@@ -93,8 +93,28 @@ public class DartColorAnnotator implements Annotator {
                                                          : DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_FUNCTION_CALL;
             createInfoAnnotation(holder, element, callType);
           }
-        } else {
-          if (resolved instanceof DartComponentName) componentName = (DartComponentName)resolved;
+        } else if (resolved != null) {
+
+          final PsiElement parent = resolved.getParent();
+          if (parent instanceof DartVarAccessDeclaration) {
+            final DartComponentType type = DartComponentType.typeOf(parent);
+            if (type == DartComponentType.VARIABLE) {
+              final PsiElement varParent = parent.getParent().getParent();
+              if (varParent instanceof DartFile) {
+                createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_TOP_LEVEL_VARIABLE_ACCESS);
+              } else {
+                createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_LOCAL_VARIABLE_ACCESS);
+              }
+            } else {
+              if (((DartVarAccessDeclaration)parent).isStatic()) {
+                createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_STATIC_MEMBER_VARIABLE_ACCESS);
+              } else {
+                createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_VARIABLE_ACCESS);
+              }
+            }
+
+          }
+          else if (resolved instanceof DartComponentName) componentName = (DartComponentName)resolved;
         }
       }
     }
@@ -151,9 +171,13 @@ public class DartColorAnnotator implements Annotator {
       if (classDef != null && methodName != null) {
         final String className = classDef.getName();
         if (className != null) {
-          // Method declarations have likely been handled already but we check to be safe
-          final String elementKind = className.equals(methodName) ? DartSyntaxHighlighterColors.DART_CONSTRUCTOR_DECLARATION
-                                                                  : DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_FUNCTION;
+          final String elementKind;
+          if (className.equals(methodName)) {
+            elementKind = DartSyntaxHighlighterColors.DART_CONSTRUCTOR_DECLARATION;
+          } else {
+            elementKind = isStatic(element) ? DartSyntaxHighlighterColors.DART_STATIC_MEMBER_FUNCTION
+                                            : DartSyntaxHighlighterColors.DART_INSTANCE_MEMBER_FUNCTION;
+          }
           createInfoAnnotation(holder, decl.getComponentName(), elementKind);
         }
       }
