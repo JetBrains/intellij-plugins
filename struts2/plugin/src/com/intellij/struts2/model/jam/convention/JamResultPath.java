@@ -27,6 +27,7 @@ import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.PropertiesUtilBase;
 import com.intellij.lang.properties.psi.PropertiesFile;
+import com.intellij.lang.properties.references.PropertiesCompletionContributor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Comparing;
@@ -100,7 +101,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
     protected LookupElement createLookupElementFor(@NotNull final IProperty target) {
       return LookupElementBuilder.create((PsiNamedElement) target.getPsiElement())
                                  .withIcon(ElementPresentationManager.getIcon(target))
-                                 .withTailText("=" + target.getValue(), true);
+                                 .withTailText("=" + target.getValue(), true).withRenderer(PropertiesCompletionContributor.LOOKUP_ELEMENT_RENDERER);
     }
   };
 
