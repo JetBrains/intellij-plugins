@@ -6,7 +6,7 @@ import com.intellij.ide.actions.ShowFilePathAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
-import com.intellij.lang.javascript.flex.build.FlexCompiler;
+import com.intellij.lang.javascript.flex.build.FlexResourceBuildTargetScopeProvider;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationGroup;
@@ -89,7 +89,7 @@ public class AirPackageAction extends DumbAwareAction {
 
     final CompilerManager compilerManager = CompilerManager.getInstance(project);
     final CompileScope compileScope = compilerManager.createModulesCompileScope(modules.toArray(new Module[modules.size()]), false);
-    FlexCompiler.setBCsToCompileForPackaging(compileScope, modulesAndBCs);
+    FlexResourceBuildTargetScopeProvider.setBCsToCompileForPackaging(compileScope, modulesAndBCs);
 
     compilerManager.make(compileScope, new CompileStatusNotification() {
       public void finished(final boolean aborted, final int errors, final int warnings, final CompileContext compileContext) {

@@ -8,30 +8,41 @@ import com.intellij.openapi.compiler.CompilerFilter;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.api.CmdlineProtoUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jps.api.CmdlineRemoteProto.Message.ControllerMessage.ParametersMessage.TargetTypeBuildScope;
 
 public class FlexResourceBuildTargetScopeProvider extends BuildTargetScopeProvider {
 
+  private static final Key<Collection<Pair<Module, FlexBuildConfiguration>>> MODULES_AND_BCS_TO_COMPILE =
+    Key.create("modules.and.bcs.to.compile");
+
+  public static void setBCsToCompileForPackaging(final CompileScope scope, final Collection<Pair<Module, FlexBuildConfiguration>> bcs) {
+    scope.putUserData(MODULES_AND_BCS_TO_COMPILE, bcs);
+  }
+
+  @Nullable
+  public static Collection<Pair<Module, FlexBuildConfiguration>> getBCsToCompileForPackaging(final CompileScope scope) {
+    return scope.getUserData(MODULES_AND_BCS_TO_COMPILE);
+  }
+
   @NotNull
   public List<TargetTypeBuildScope> getBuildTargetScopes(@NotNull final CompileScope baseScope,
                                                          @NotNull final CompilerFilter filter,
                                                          @NotNull final Project project,
                                                          boolean forceBuild) {
-    final FlexCompiler flexCompiler = FlexCompiler.getInstance(project);
-    if (!filter.acceptCompiler(flexCompiler)) return Collections.emptyList();
-
     List<String> moduleNames = new ArrayList<String>();
     try {
-      for (Pair<Module, FlexBuildConfiguration> moduleAndBC : FlexCompiler.getModulesAndBCsToCompile(baseScope)) {
+      for (Pair<Module, FlexBuildConfiguration> moduleAndBC : FlexBuildTargetScopeProvider.getModulesAndBCsToCompile(baseScope)) {
         moduleNames.add(moduleAndBC.first.getName());
       }
     }

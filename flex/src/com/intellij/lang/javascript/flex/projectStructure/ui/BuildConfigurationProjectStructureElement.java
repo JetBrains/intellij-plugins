@@ -4,8 +4,8 @@ import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.build.FlashProjectStructureProblem;
-import com.intellij.lang.javascript.flex.build.FlexCompiler;
 import com.intellij.lang.javascript.flex.build.FlexCompilerHandler;
+import com.intellij.lang.javascript.flex.build.ValidateFlashConfigurationsPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
@@ -97,15 +97,15 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
 
     checkIfBCOutputUsedAs3rdPartyLib(problemsHolder, configurator, editor);
 
-    FlexCompiler.checkConfiguration(myModule, myBc, true, new Consumer<FlashProjectStructureProblem>() {
+    ValidateFlashConfigurationsPrecompileTask.checkConfiguration(myModule, myBc, true, new Consumer<FlashProjectStructureProblem>() {
       public void consume(final FlashProjectStructureProblem problem) {
         // actually this if-condition is always true because real model doesn't report FlexUnitOutputFolderProblem
         if (!(problem instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem)) {
           PlaceInProjectStructure place =
             new PlaceInBuildConfiguration(BuildConfigurationProjectStructureElement.this, problem.tabName, problem.locationOnTab);
           final ProjectStructureProblemType problemType = problem.severity == ProjectStructureProblemType.Severity.ERROR
-                                                          ? ProjectStructureProblemType.error(problem.errorId)
-                                                          : ProjectStructureProblemType.warning(problem.errorId);
+            ? ProjectStructureProblemType.error(problem.errorId)
+            : ProjectStructureProblemType.warning(problem.errorId);
           problemsHolder.registerProblem(problem.errorMessage, null, problemType, place, null);
         }
       }
