@@ -27,7 +27,6 @@ public interface DartTokenTypes {
   IElementType CLASS_BODY = new DartElementType("CLASS_BODY");
   IElementType CLASS_DEFINITION = new DartElementType("CLASS_DEFINITION");
   IElementType CLASS_MEMBERS = new DartElementType("CLASS_MEMBERS");
-  IElementType CLASS_TYPE_ALIAS = new DartElementType("CLASS_TYPE_ALIAS");
   IElementType COMPARE_EXPRESSION = new DartElementType("COMPARE_EXPRESSION");
   IElementType COMPONENT_NAME = new DartElementType("COMPONENT_NAME");
   IElementType CONST_CONSTRUCTOR_EXPRESSION = new DartElementType("CONST_CONSTRUCTOR_EXPRESSION");
@@ -307,9 +306,6 @@ public interface DartTokenTypes {
       }
       else if (type == CLASS_MEMBERS) {
         return new DartClassMembersImpl(node);
-      }
-      else if (type == CLASS_TYPE_ALIAS) {
-        return new DartClassTypeAliasImpl(node);
       }
       else if (type == COMPARE_EXPRESSION) {
         return new DartCompareExpressionImpl(node);

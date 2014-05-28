@@ -1,21 +1,39 @@
 Dart File
-  CLASS_TYPE_ALIAS
-    PsiElement(typedef)('typedef')
+  CLASS_DEFINITION
+    PsiElement(class)('class')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('ObservableBase')
     PsiElement(=)('=')
-    TYPE
-      REFERENCE_EXPRESSION
-        ID
-          PsiElement(IDENTIFIER)('Object')
-    MIXINS
-      PsiElement(with)('with')
-      TYPE_LIST
-        TYPE
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('ObservableMixin')
+    MIXIN_APPLICATION
+      TYPE
+        REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('Super')
+      MIXINS
+        PsiElement(with)('with')
+        TYPE_LIST
+          TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('Mixin1')
+          PsiElement(,)(',')
+          TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('Mixin2')
+      INTERFACES
+        PsiElement(implements)('implements')
+        TYPE_LIST
+          TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('Inter1')
+          PsiElement(,)(',')
+          TYPE
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('Inter2')
     PsiElement(;)(';')
   CLASS_DEFINITION
     METADATA
