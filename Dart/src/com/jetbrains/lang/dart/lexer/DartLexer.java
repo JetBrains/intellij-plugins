@@ -62,7 +62,7 @@ public class DartLexer extends MergingLexerAdapterBase {
   };
 
   @Override
-  public MergeFunction defineMergeFunction() {
+  public MergeFunction getMergeFunction() {
     return MERGE_FUNCTION;
   }
 }
