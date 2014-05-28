@@ -42,6 +42,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.parameter"), PARAMETER),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.function"), FUNCTION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.variable"), LOCAL_VARIABLE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.local.variable.access"), LOCAL_VARIABLE_ACCESS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.label"), LABEL),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.class"), CLASS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.metadata"), METADATA),
@@ -55,7 +56,9 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.toplevel.variable"), TOP_LEVEL_VARIABLE_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.toplevel.variable.access"), TOP_LEVEL_VARIABLE_ACCESS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.variable"), INSTANCE_MEMBER_VARIABLE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.variable.access"), INSTANCE_MEMBER_VARIABLE_ACCESS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.member.variable"), STATIC_MEMBER_VARIABLE),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.member.variable.access"), STATIC_MEMBER_VARIABLE_ACCESS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.constructor.call"), CONSTRUCTOR_CALL),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.constructor.decl"), CONSTRUCTOR_DECLARATION),
     };
