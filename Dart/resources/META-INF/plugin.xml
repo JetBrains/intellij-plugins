@@ -97,6 +97,7 @@
     <projectConfigurable instance="com.jetbrains.lang.dart.sdk.DartConfigurable"
                          id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
     <library.presentationProvider implementation="com.jetbrains.lang.dart.sdk.DartSdkLibraryPresentationProvider"/>
+    <library.type implementation="com.jetbrains.lang.dart.sdk.listPackageDirs.DartListPackageDirsLibraryType"/>
     <treeStructureProvider implementation="com.jetbrains.lang.dart.DartTreeStructureProvider"/>
     <iconProvider implementation="com.jetbrains.lang.dart.DartIconProvider" order="first"/>
 
@@ -179,6 +180,10 @@
   </extensions>
 
   <actions>
+    <!-- Action for Google internal developers only, action can be found only using 'Find Action' -->
+    <action id="Dart.pub.list.package.dirs" class="com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction"
+            text="Configure Dart package roots using 'pub list-package-dirs'"/>
+
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
             text="Dart File" description="Create new Dart file/class/interface">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>

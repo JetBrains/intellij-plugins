@@ -77,9 +77,6 @@ public class DartParser implements PsiParser {
     else if (root_ == CLASS_MEMBERS) {
       result_ = classMembers(builder_, 0);
     }
-    else if (root_ == CLASS_TYPE_ALIAS) {
-      result_ = classTypeAlias(builder_, 0);
-    }
     else if (root_ == COMPARE_EXPRESSION) {
       result_ = compareExpression(builder_, 0);
     }
@@ -1153,53 +1150,6 @@ public class DartParser implements PsiParser {
       pos_ = current_position_(builder_);
     }
     exit_section_(builder_, level_, marker_, CLASS_MEMBERS, true, false, simple_scope_recover_parser_);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // metadata* 'typedef' componentName typeParameters? '=' type mixins? ';'
-  public static boolean classTypeAlias(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classTypeAlias")) return false;
-    if (!nextTokenIs(builder_, "<class type alias>", AT, TYPEDEF)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<class type alias>");
-    result_ = classTypeAlias_0(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, TYPEDEF);
-    result_ = result_ && componentName(builder_, level_ + 1);
-    result_ = result_ && classTypeAlias_3(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, EQ);
-    pinned_ = result_; // pin = 5
-    result_ = result_ && report_error_(builder_, type(builder_, level_ + 1));
-    result_ = pinned_ && report_error_(builder_, classTypeAlias_6(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
-    exit_section_(builder_, level_, marker_, CLASS_TYPE_ALIAS, result_, pinned_, null);
-    return result_ || pinned_;
-  }
-
-  // metadata*
-  private static boolean classTypeAlias_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classTypeAlias_0")) return false;
-    int pos_ = current_position_(builder_);
-    while (true) {
-      if (!metadata(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "classTypeAlias_0", pos_)) break;
-      pos_ = current_position_(builder_);
-    }
-    return true;
-  }
-
-  // typeParameters?
-  private static boolean classTypeAlias_3(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classTypeAlias_3")) return false;
-    typeParameters(builder_, level_ + 1);
-    return true;
-  }
-
-  // mixins?
-  private static boolean classTypeAlias_6(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classTypeAlias_6")) return false;
-    mixins(builder_, level_ + 1);
     return true;
   }
 
@@ -5692,7 +5642,6 @@ public class DartParser implements PsiParser {
   //                              | exportStatement
   //                              | partStatement
   //                              | classDefinition
-  //                              | classTypeAlias
   //                              | functionTypeAlias
   //                              | getterOrSetterDeclaration
   //                              | functionDeclarationWithBodyOrNative
@@ -5708,7 +5657,6 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = exportStatement(builder_, level_ + 1);
     if (!result_) result_ = partStatement(builder_, level_ + 1);
     if (!result_) result_ = classDefinition(builder_, level_ + 1);
-    if (!result_) result_ = classTypeAlias(builder_, level_ + 1);
     if (!result_) result_ = functionTypeAlias(builder_, level_ + 1);
     if (!result_) result_ = getterOrSetterDeclaration(builder_, level_ + 1);
     if (!result_) result_ = functionDeclarationWithBodyOrNative(builder_, level_ + 1);

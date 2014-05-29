@@ -3,8 +3,11 @@ package com.jetbrains.lang.dart.util;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryProperties;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -14,15 +17,14 @@ import com.intellij.util.PairConsumer;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.listPackageDirs.DartListPackageDirsLibraryProperties;
+import com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.*;
 
@@ -33,12 +35,14 @@ class DartUrlResolverImpl extends DartUrlResolver {
   private final @Nullable VirtualFile myPubspecYamlFile;
   private final @NotNull List<VirtualFile> myPackageRoots = new ArrayList<VirtualFile>();
   private final @NotNull Map<String, VirtualFile> myLivePackageNameToDirMap = new THashMap<String, VirtualFile>();
+  private final @NotNull Map<String, Set<String>> myPubListPackageDirsMap = new THashMap<String, Set<String>>();
 
   DartUrlResolverImpl(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
     myProject = project;
     myDartSdk = DartSdk.getGlobalDartSdk();
     myPubspecYamlFile = initPackageRootsAndReturnPubspecYamlFile(contextFile);
     initLivePackageNameToDirMap();
+    initPubListPackageDirsMap(contextFile);
   }
 
   @Nullable
@@ -58,6 +62,24 @@ class DartUrlResolverImpl extends DartUrlResolver {
   }
 
   @Nullable
+  public VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(final @NotNull String packageName) {
+    final VirtualFile dir = myLivePackageNameToDirMap.get(packageName);
+    if (dir != null) return dir;
+
+    final Set<String> dirPaths = myPubListPackageDirsMap.get(packageName);
+    if (dirPaths != null) {
+      for (String dirPath : dirPaths) {
+        final VirtualFile packageDir = LocalFileSystem.getInstance().findFileByPath(dirPath);
+        if (packageDir != null) {
+          return packageDir;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  @Nullable
   public VirtualFile findFileByDartUrl(final @NotNull String url) {
     if (url.startsWith(DART_PREFIX)) {
       return findFileInDartSdkLibFolder(myProject, myDartSdk, url);
@@ -68,15 +90,27 @@ class DartUrlResolverImpl extends DartUrlResolver {
 
       final int slashIndex = packageRelPath.indexOf('/');
       final String packageName = slashIndex > 0 ? packageRelPath.substring(0, slashIndex) : packageRelPath;
+      final String relPathToPackageDir = slashIndex > 0 ? packageRelPath.substring(slashIndex + 1) : "";
+
       final VirtualFile packageDir = StringUtil.isEmpty(packageName) ? null : myLivePackageNameToDirMap.get(packageName);
       if (packageDir != null) {
-        return slashIndex > 0 ? packageDir.findFileByRelativePath(packageRelPath.substring(slashIndex + 1)) : packageDir;
+        return packageDir.findFileByRelativePath(relPathToPackageDir);
       }
 
       for (final VirtualFile packageRoot : myPackageRoots) {
         final VirtualFile file = packageRoot.findFileByRelativePath(packageRelPath);
         if (file != null) {
           return file;
+        }
+      }
+
+      final Set<String> packageDirs = myPubListPackageDirsMap.get(packageName);
+      if (packageDirs != null) {
+        for (String packageDirPath : packageDirs) {
+          final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(packageDirPath + "/" + relPathToPackageDir);
+          if (file != null) {
+            return file;
+          }
         }
       }
     }
@@ -100,6 +134,9 @@ class DartUrlResolverImpl extends DartUrlResolver {
     if (result != null) return result;
 
     result = getUrlIfFileFromPackageRoot(file, myPackageRoots);
+    if (result != null) return result;
+
+    result = getUrlIfFileFromPubListPackageDirs(myProject, file, myPubListPackageDirsMap);
     if (result != null) return result;
 
     // see com.google.dart.tools.debug.core.server.ServerBreakpointManager#getAbsoluteUrlForResource()
@@ -142,6 +179,30 @@ class DartUrlResolverImpl extends DartUrlResolver {
       final String relPath = VfsUtilCore.getRelativePath(file, packageRoot, '/');
       if (relPath != null) {
         return PACKAGE_PREFIX + relPath;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  private static String getUrlIfFileFromPubListPackageDirs(final @NotNull Project project,
+                                                           final @NotNull VirtualFile file,
+                                                           final @NotNull Map<String, Set<String>> pubListPackageDirsMap) {
+    final String filePath = file.getPath();
+
+    for (OrderEntry orderEntry : ProjectRootManager.getInstance(project).getFileIndex().getOrderEntriesForFile(file)) {
+      if (orderEntry instanceof LibraryOrderEntry &&
+          LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
+          PubListPackageDirsAction.PUB_LIST_PACKAGE_DIRS_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName())) {
+        for (Map.Entry<String, Set<String>> mapEntry : pubListPackageDirsMap.entrySet()) {
+          for (String dirPath : mapEntry.getValue()) {
+            if (filePath.startsWith(dirPath + "/")) {
+              final String packageName = mapEntry.getKey();
+              return PACKAGE_PREFIX + packageName + filePath.substring(dirPath.length());
+            }
+          }
+        }
+        return null;
       }
     }
     return null;
@@ -224,6 +285,28 @@ class DartUrlResolverImpl extends DartUrlResolver {
           if (packageFolder != null && packageFolder.isDirectory() && fileIndex.isInContent(packageFolder)) {
             packageNameToDirMap.put(packageName, packageFolder);
           }
+        }
+      }
+    }
+  }
+
+  private void initPubListPackageDirsMap(final @NotNull VirtualFile contextFile) {
+    final Module module = ModuleUtilCore.findModuleForFile(contextFile, myProject);
+
+    final List<OrderEntry> orderEntries = module != null
+                                          ? Arrays.asList(ModuleRootManager.getInstance(module).getOrderEntries())
+                                          : ProjectRootManager.getInstance(myProject).getFileIndex().getOrderEntriesForFile(contextFile);
+    for (OrderEntry orderEntry : orderEntries) {
+      if (orderEntry instanceof LibraryOrderEntry &&
+          LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
+          PubListPackageDirsAction.PUB_LIST_PACKAGE_DIRS_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName())) {
+        final LibraryEx library =
+          (LibraryEx)ProjectLibraryTable.getInstance(myProject).getLibraryByName(PubListPackageDirsAction.PUB_LIST_PACKAGE_DIRS_LIB_NAME);
+        final LibraryProperties properties = library == null ? null : library.getProperties();
+
+        if (properties instanceof DartListPackageDirsLibraryProperties) {
+          myPubListPackageDirsMap.putAll(((DartListPackageDirsLibraryProperties)properties).getPackageNameToDirsMap());
+          return;
         }
       }
     }

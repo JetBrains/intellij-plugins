@@ -4,7 +4,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.psi.*;
-import icons.DartIcons;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -52,7 +51,7 @@ public enum DartComponentType {
     if (element instanceof DartClassDefinition) {
       return CLASS;
     }
-    if (element instanceof DartFunctionTypeAlias || element instanceof DartClassTypeAlias) {
+    if (element instanceof DartFunctionTypeAlias) {
       return TYPEDEF;
     }
     if (element instanceof DartNamedConstructorDeclaration

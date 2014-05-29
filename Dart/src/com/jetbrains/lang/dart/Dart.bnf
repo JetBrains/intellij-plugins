@@ -143,7 +143,6 @@ private topLevelDefinition ::= libraryStatement
                              | exportStatement
                              | partStatement
                              | classDefinition
-                             | classTypeAlias
                              | functionTypeAlias
                              | getterOrSetterDeclaration
                              | functionDeclarationWithBodyOrNative
@@ -290,9 +289,6 @@ private super_call_or_field_initializer_recover ::= !(<<nonStrictID>> | ',' | ':
 functionTypeAlias ::= metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'
 {pin=5 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private functionPrefix ::= returnType componentName | componentName
-
-classTypeAlias ::= metadata* 'typedef' componentName typeParameters? '=' type mixins? ';'
-{pin=5 mixin="com.jetbrains.lang.dart.psi.impl.TypedefDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
 factoryConstructorDeclaration ::= metadata* ('external' | 'const')* 'factory' referenceExpression ('.' componentName)? formalParameterList factoryTail?
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}

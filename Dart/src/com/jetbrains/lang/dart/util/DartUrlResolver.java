@@ -43,12 +43,14 @@ public abstract class DartUrlResolver {
    */
   public abstract void processLivePackages(final @NotNull PairConsumer<String, VirtualFile> packageNameAndDirConsumer);
 
+  @Nullable
+  public abstract VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(final @NotNull String packageName);
+
   /**
    * Dart url has <code>dart:</code>, <code>package:</code> or <code>file:</code> scheme
    */
   @Nullable
   public abstract VirtualFile findFileByDartUrl(@NotNull String url);
-
 
   @Nullable
   public static VirtualFile findFileInDartSdkLibFolder(final @NotNull Project project,

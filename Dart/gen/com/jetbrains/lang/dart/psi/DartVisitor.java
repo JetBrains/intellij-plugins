@@ -88,10 +88,6 @@ public class DartVisitor extends PsiElementVisitor {
     visitExecutionScope(o);
   }
 
-  public void visitClassTypeAlias(@NotNull DartClassTypeAlias o) {
-    visitComponent(o);
-  }
-
   public void visitCompareExpression(@NotNull DartCompareExpression o) {
     visitExpression(o);
     // visitReference(o);
