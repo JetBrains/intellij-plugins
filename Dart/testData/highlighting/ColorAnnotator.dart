@@ -1,5 +1,5 @@
-<error descr="Annotation can be only constant variable or constant constructor invocation"><info descr="metadata">@aaa.bbb</info>("")</error>
-<info descr="metadata">@<info>deprecated</info></info>
+<error descr="Annotation can be only constant variable or constant constructor invocation"><info textAttributesKey="DART_METADATA">@aaa.bbb</info>("")</error>
+<info textAttributesKey="DART_METADATA">@<info>deprecated</info></info>
 <info>foo</info>(){}
 
 <info textAttributesKey="DART_BUILTIN">int</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">x</info>;
@@ -18,6 +18,10 @@ class <info textAttributesKey="DART_CLASS">A</info> {
       <info textAttributesKey="DART_STATIC_MEMBER_FUNCTION_CALL">a</info>() +
       <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE_ACCESS">_c</info> +
       <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_ACCESS">x</info>;
+    var <info>xx</info> = new <info textAttributesKey="DART_CONSTRUCTOR_CALL">A</info>();
   }
   var <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">_c</info> = <info textAttributesKey="DART_STATIC_MEMBER_VARIABLE_ACCESS">BAR</info>;
+  <info textAttributesKey="DART_CONSTRUCTOR_DECLARATION">A</info>();
+  <info textAttributesKey="DART_CONSTRUCTOR_DECLARATION"><info>A</info>.aaa</info>();
+
 }
