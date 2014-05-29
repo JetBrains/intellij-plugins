@@ -15,7 +15,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -25,9 +24,9 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
+import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import com.jetbrains.lang.dart.validation.fixes.DartResolverErrorCode;
 import com.jetbrains.lang.dart.validation.fixes.DartTypeErrorCode;
 import com.jetbrains.lang.dart.validation.fixes.FixAndIntentionAction;
@@ -44,6 +43,8 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
   @Nullable
   public Pair<DartFileBasedSource, AnalysisContext> collectInformation(@NotNull final PsiFile psiFile) {
     final Project project = psiFile.getProject();
+
+    if (psiFile instanceof DartExpressionCodeFragment) return null;
 
     final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
     if (annotatedFile == null) return null;

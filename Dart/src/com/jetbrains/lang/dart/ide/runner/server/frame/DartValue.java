@@ -20,7 +20,7 @@ import java.util.List;
 // todo navigate to source, type
 public class DartValue extends XNamedValue {
   private final @NotNull DartCommandLineDebugProcess myDebugProcess;
-  private final @NotNull VmVariable myVmVariable;
+  private final @Nullable VmVariable myVmVariable;
   private @Nullable VmValue myVmValue;
 
   private static final String OBJECT_OF_TYPE_PREFIX = "object of type ";
@@ -31,19 +31,28 @@ public class DartValue extends XNamedValue {
     myVmVariable = vmVariable;
   }
 
+  public DartValue(@NotNull final DartCommandLineDebugProcess debugProcess,
+                   @NotNull @SuppressWarnings("NullableProblems") final VmValue vmValue) {
+    super("result");
+    myDebugProcess = debugProcess;
+    myVmVariable = null;
+    myVmValue = vmValue;
+  }
+
   @Override
   public void computePresentation(final @NotNull XValueNode node, final @NotNull XValuePlace place) {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       public void run() {
         if (node.isObsolete()) return;
 
-        myVmValue = myVmVariable.getValue();
+        if (myVmValue == null && myVmVariable != null) {
+          myVmValue = myVmVariable.getValue();
+        }
 
         if (myVmValue == null) {
           node.setPresentation(AllIcons.Debugger.Value, null, "<no value>", false);
           return;
         }
-
 
         final String value = StringUtil.notNullize(myVmValue.getText(), "null");
         final XValuePresentation presentation;
