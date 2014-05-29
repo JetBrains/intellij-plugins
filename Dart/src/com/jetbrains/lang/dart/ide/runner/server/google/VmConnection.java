@@ -87,6 +87,11 @@ public class VmConnection {
     listeners.add(listener);
   }
 
+  public void callToString(final VmValue object, final VmCallback<VmValue> callback)
+      throws IOException {
+    evaluateObject(object.getIsolate(), object, "toString()", callback);
+  }
+
   public void close() throws IOException {
     if (socket != null) {
       socket.close();
@@ -157,16 +162,16 @@ public class VmConnection {
         try {
           if (!result.isError()) {
             for (VmLibraryRef ref : result.getResult()) {
-              try {
-                setLibraryProperties(isolate, ref.getId(), true);
-              }
-              catch (IOException e) {
+              if (!ref.isInternal() && !ref.isAsync()) {
+                try {
+                  setLibraryProperties(isolate, ref.getId(), true);
+                } catch (IOException e) {
 
+                }
               }
             }
           }
-        }
-        finally {
+        } finally {
           latch.countDown();
         }
       }
@@ -264,12 +269,39 @@ public class VmConnection {
     }
   }
 
-  public void evaluateOnCallFrame(VmIsolate isolate, VmCallFrame callFrame, String expression,
-                                  final VmCallback<VmValue> callback) {
-    // TODO(devoncarew): call through to the VM implementation when available
+  public void evaluateOnCallFrame(final VmIsolate isolate, VmCallFrame callFrame,
+                                  String expression, final VmCallback<VmValue> callback) throws IOException {
+    if (callback == null) {
+      throw new IllegalArgumentException("a callback is required");
+    }
 
-    VmResult<VmValue> result = VmResult.createErrorResult("unimplemented");
-    callback.handleResult(result);
+    try {
+      JSONObject request = new JSONObject();
+
+      request.put("command", "evaluateExpr");
+      request.put(
+        "params",
+        new JSONObject().put("frameId", callFrame.getFrameId()).put("expression", expression));
+
+      sendRequest(request, isolate.getId(), new Callback() {
+        @Override
+        public void handleResult(JSONObject result) throws JSONException {
+          VmResult<VmValue> evalResult = convertEvaluateObjectResult(isolate, result);
+
+          callback.handleResult(evalResult);
+        }
+      });
+    } catch (JSONException exception) {
+      throw new IOException(exception);
+    }
+  }
+
+  public VmClass getClassInfoSync(VmIsolate isolate, int classId) {
+    if (!isolate.hasClassInfo(classId)) {
+      populateClassInfo(isolate, classId);
+    }
+
+    return isolate.getClassInfo(classId);
   }
 
   public VmClass getClassInfoSync(VmObject obj) {
@@ -277,13 +309,7 @@ public class VmConnection {
       return null;
     }
 
-    VmIsolate isolate = obj.getIsolate();
-
-    if (!isolate.hasClassInfo(obj.getClassId())) {
-      populateClassInfo(isolate, obj.getClassId());
-    }
-
-    return isolate.getClassInfo(obj.getClassId());
+    return getClassInfoSync(obj.getIsolate(), obj.getClassId());
   }
 
   public String getClassNameSync(VmObject obj) {
@@ -1469,8 +1495,6 @@ public class VmConnection {
   }
 
   private Callback resumeOnSuccess(final VmIsolate isolate) {
-    //isolate.resumeCommandAdded();
-
     return new Callback() {
       @Override
       public void handleResult(JSONObject result) throws JSONException {
