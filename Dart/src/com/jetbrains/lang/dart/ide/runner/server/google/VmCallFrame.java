@@ -30,7 +30,7 @@ public class VmCallFrame extends VmRef {
     List<VmCallFrame> frames = new ArrayList<VmCallFrame>();
 
     for (int i = 0; i < arr.length(); i++) {
-      VmCallFrame frame = createFrom(isolate, arr.getJSONObject(i));
+      VmCallFrame frame = createFrom(isolate, arr.getJSONObject(i), i);
 
       // If we are on the first frame and there are at least 3 frames:
       if (i == 0 && arr.length() > 2) {
@@ -48,24 +48,43 @@ public class VmCallFrame extends VmRef {
     return frames;
   }
 
-  private static VmCallFrame createFrom(VmIsolate isolate, JSONObject object) throws JSONException {
-    VmCallFrame frame = new VmCallFrame(isolate);
+  private static VmCallFrame createFrom(VmIsolate isolate, JSONObject object, int frameIndex)
+      throws JSONException {
+    VmCallFrame frame = new VmCallFrame(isolate, frameIndex);
 
     frame.functionName = JsonUtils.getString(object, "functionName");
     frame.location = VmLocation.createFrom(isolate, object.getJSONObject("location"));
     frame.locals = VmVariable.createFrom(isolate, object.optJSONArray("locals"), true);
+    frame.classId = object.optInt("classId", -1);
 
     return frame;
   }
 
+  private int frameId;
+
   private String functionName;
+
+  private int classId;
 
   private VmLocation location;
 
   private List<VmVariable> locals;
 
-  private VmCallFrame(VmIsolate isolate) {
+  private VmCallFrame(VmIsolate isolate, int frameId) {
     super(isolate);
+
+    this.frameId = frameId;
+  }
+
+  /**
+   * Return the classId for this frame; returns -1 if this is not a static or instance frame.
+   */
+  public int getClassId() {
+    return classId;
+  }
+
+  public int getFrameId() {
+    return frameId;
   }
 
   /**
@@ -98,6 +117,10 @@ public class VmCallFrame extends VmRef {
     }
 
     return null;
+  }
+
+  public boolean hasClassId() {
+    return getClassId() != -1;
   }
 
   public boolean isMain() {
