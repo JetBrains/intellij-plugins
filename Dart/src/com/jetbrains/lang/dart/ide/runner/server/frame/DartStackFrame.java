@@ -47,6 +47,11 @@ public class DartStackFrame extends XStackFrame {
     return mySourcePosition;
   }
 
+  @NotNull
+  public VmCallFrame getVmCallFrame() {
+    return myVmCallFrame;
+  }
+
   @Override
   public void computeChildren(final @NotNull XCompositeNode node) {
     final List<VmVariable> locals = myVmCallFrame.getLocals();
