@@ -1,32 +1,32 @@
-<error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">library</info></error> library;
+<error descr="The part-of directive must be the only directive in a part"><info textAttributesKey="DART_KEYWORD">library</info></error> library;
 
-<error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">import</info></error> <error descr="Target of URI does not exist: 'foo'">"foo"</error> <info descr="highlighted as keyword">as</info> as <info descr="highlighted as keyword">hide</info> hide <info descr="highlighted as keyword">show</info> show;
-<error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">import</info></error> <error descr="Target of URI does not exist: 'foo'">"foo"</error> <info descr="highlighted as keyword">deferred</info> <info descr="highlighted as keyword">as</info> deferred;
-<error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">export</info></error> <error descr="Target of URI does not exist: 'bar'">"bar"</error> <info descr="highlighted as keyword">show</info> hide <info descr="highlighted as keyword">hide</info> show;
+<error descr="The part-of directive must be the only directive in a part"><info textAttributesKey="DART_KEYWORD">import</info></error> <error descr="Target of URI does not exist: 'foo'">"foo"</error> <info textAttributesKey="DART_KEYWORD">as</info> as <info textAttributesKey="DART_KEYWORD">hide</info> hide <info textAttributesKey="DART_KEYWORD">show</info> show;
+<error descr="The part-of directive must be the only directive in a part"><info textAttributesKey="DART_KEYWORD">import</info></error> <error descr="Target of URI does not exist: 'foo'">"foo"</error> <info textAttributesKey="DART_KEYWORD">deferred</info> <info textAttributesKey="DART_KEYWORD">as</info> deferred;
+<error descr="The part-of directive must be the only directive in a part"><info textAttributesKey="DART_KEYWORD">export</info></error> <error descr="Target of URI does not exist: 'bar'">"bar"</error> <info textAttributesKey="DART_KEYWORD">show</info> hide <info textAttributesKey="DART_KEYWORD">hide</info> show;
 
-<error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">part</info></error> <error descr="Target of URI does not exist: 'part'">"part"</error>;
-<info descr="highlighted as keyword">part</info> <info descr="highlighted as keyword">of</info> part.of;
+<error descr="The part-of directive must be the only directive in a part"><info textAttributesKey="DART_KEYWORD">part</info></error> <error descr="Target of URI does not exist: 'part'">"part"</error>;
+<info textAttributesKey="DART_KEYWORD">part</info> <info textAttributesKey="DART_KEYWORD">of</info> part.of;
 
-<info descr="highlighted as keyword">typedef</info> <error descr="The built-in identifier 'typedef' cannot be used as a type alias name"><info descr="null">typedef</info></error>();
+<info textAttributesKey="DART_KEYWORD">typedef</info> <error descr="The built-in identifier 'typedef' cannot be used as a type alias name"><info descr="null">typedef</info></error>();
 
-<info descr="highlighted as keyword">abstract</info> class <info descr="null">Functions</info> <info descr="highlighted as keyword">implements</info> <error descr="Classes can only implement other classes">implements</error> {
-  <info descr="highlighted as keyword">factory</info> <error descr="The name of the immediately enclosing class expected"><info descr="null">factory</info></error>() {}
-  <info descr="highlighted as keyword">operator</info> +(<info descr="null">a</info>){}
+<info textAttributesKey="DART_KEYWORD">abstract</info> class <info descr="null">Functions</info> <info textAttributesKey="DART_KEYWORD">implements</info> <error descr="Classes can only implement other classes">implements</error> {
+  <info textAttributesKey="DART_KEYWORD">factory</info> <error descr="The name of the immediately enclosing class expected"><info descr="null">factory</info></error>() {}
+  <info textAttributesKey="DART_KEYWORD">operator</info> +(<info descr="null">a</info>){}
 
   <info descr="null">bool</info> <info descr="null">abstract</info>() => false;
-  <info descr="metadata">@<info descr="null">Object</info></info>() void <info descr="null">as</info>() => null;
+  <info textAttributesKey="DART_METADATA">@<info descr="null">Object</info></info>() void <info descr="null">as</info>() => null;
   void <info descr="null">deferred</info>() => null;
   void <info descr="null">export</info>() => null;
-  <info descr="highlighted as keyword">external</info> void <info descr="null">external</info>();
+  <info textAttributesKey="DART_KEYWORD">external</info> void <info descr="null">external</info>();
   void <info descr="null">factory</info>() => null;
-  <info descr="highlighted as keyword">get</info> <info descr="null">get</info> => null;
+  <info textAttributesKey="DART_KEYWORD">get</info> <info descr="null">get</info> => null;
   void <info descr="null">implements</info>() => null;
   void <info descr="null">import</info>() => null;
   void <info descr="null">library</info>() => null;
   void <info descr="null">operator</info>() => null;
   void <info descr="null">part</info>() => null;
-  <info descr="highlighted as keyword">set</info> <info descr="null">set</info>(<info descr="null">a</info>) => null;
-  <info descr="highlighted as keyword">static</info> void <info descr="null">static</info>() => null;
+  <info textAttributesKey="DART_KEYWORD">set</info> <info descr="null">set</info>(<info descr="null">a</info>) => null;
+  <info textAttributesKey="DART_KEYWORD">static</info> void <info descr="null">static</info>() => null;
   void <info descr="null">typedef</info>() => null;
 
   void <info descr="null">on</info>() => null;
@@ -59,10 +59,10 @@
 }
 
 <info descr="null">main</info>() {
-  try{} <info descr="highlighted as keyword">on</info> <error descr="Local variables cannot be referenced before they are declared">on</error>{}
+  try{} <info textAttributesKey="DART_KEYWORD">on</info> <error descr="Local variables cannot be referenced before they are declared">on</error>{}
   
   <info descr="null">int</info> <info descr="null">abstract</info> = 1;
-  <info descr="metadata">@<info descr="null">Object</info></info>() var <info descr="null">as</info> = 2;
+  <info textAttributesKey="DART_METADATA">@<info descr="null">Object</info></info>() var <info descr="null">as</info> = 2;
   <info descr="null">dynamic</info> <info descr="null">deferred</info> = 2.5;
   <info descr="null">dynamic</info> <info descr="null">export</info> = 3;
   var <info descr="null">external</info> = 4;
