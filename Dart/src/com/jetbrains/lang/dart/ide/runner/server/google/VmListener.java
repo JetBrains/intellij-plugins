@@ -69,7 +69,7 @@ public interface VmListener {
    * @param exception can be null
    */
   public void debuggerPaused(PausedReason reason, VmIsolate isolate, List<VmCallFrame> frames,
-                             VmValue exception);
+                             VmValue exception, boolean isStepping);
 
   /**
    * Handle the debugger resumed event.

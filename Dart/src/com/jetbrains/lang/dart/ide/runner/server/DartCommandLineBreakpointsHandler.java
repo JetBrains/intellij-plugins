@@ -30,6 +30,8 @@ public class DartCommandLineBreakpointsHandler {
   private final Collection<XLineBreakpoint<?>> myInitialBreakpoints = new ArrayList<XLineBreakpoint<?>>();
   private final Map<XLineBreakpoint<?>, List<VmBreakpoint>> myCreatedBreakpoints = new THashMap<XLineBreakpoint<?>, List<VmBreakpoint>>();
   private final TIntObjectHashMap<XLineBreakpoint<?>> myIndexToBreakpointMap = new TIntObjectHashMap<XLineBreakpoint<?>>();
+  private final Map<VmBreakpointLocation, XLineBreakpoint<?>> myVmBreakpointLocationToXLineBreakpoint =
+    new THashMap<VmBreakpointLocation, XLineBreakpoint<?>>();
 
   public DartCommandLineBreakpointsHandler(final @NotNull DartCommandLineDebugProcess debugProcess) {
     myDebugProcess = debugProcess;
@@ -78,6 +80,12 @@ public class DartCommandLineBreakpointsHandler {
     return false;
   }
 
+  @Nullable
+  XLineBreakpoint<?> getBreakpointForLocation(final @Nullable VmLocation vmLocation) {
+    if (vmLocation == null) return null;
+    return myVmBreakpointLocationToXLineBreakpoint.get(new VmBreakpointLocation(vmLocation));
+  }
+
   private void doUnregisterBreakpoint(final XLineBreakpoint<XBreakpointProperties> breakpoint) {
     final XSourcePosition position = breakpoint.getSourcePosition();
     if (position == null) return;
@@ -91,6 +99,11 @@ public class DartCommandLineBreakpointsHandler {
         if (breakpoints != null) {
           for (VmBreakpoint vmBreakpoint : breakpoints) {
             myDebugProcess.getVmConnection().removeBreakpoint(vmBreakpoint.getIsolate(), vmBreakpoint);
+            myIndexToBreakpointMap.remove(vmBreakpoint.getBreakpointId());
+            final VmLocation vmLocation = vmBreakpoint.getLocation();
+            if (vmLocation != null) {
+              myVmBreakpointLocationToXLineBreakpoint.remove(new VmBreakpointLocation(vmLocation));
+            }
           }
         }
       }
@@ -172,6 +185,10 @@ public class DartCommandLineBreakpointsHandler {
   public void breakpointResolved(final VmBreakpoint vmBreakpoint) {
     final XLineBreakpoint<?> breakpoint = myIndexToBreakpointMap.get(vmBreakpoint.getBreakpointId());
     if (breakpoint != null) {
+      final VmLocation vmLocation = vmBreakpoint.getLocation();
+      if (vmLocation != null) {
+        myVmBreakpointLocationToXLineBreakpoint.put(new VmBreakpointLocation(vmLocation), breakpoint);
+      }
       myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, AllIcons.Debugger.Db_verified_breakpoint, null);
     }
     else {
@@ -181,4 +198,33 @@ public class DartCommandLineBreakpointsHandler {
     // breakpoint icon on the gutter is shifted in DartEditor (see com.google.dart.tools.debug.core.server.ServerBreakpointManager#handleBreakpointResolved)
     // but we prefer to keep it at its original position
   }
+
+  private static class VmBreakpointLocation {
+    private final String url;
+    private final int tokenOffset;
+
+    private VmBreakpointLocation(final @NotNull VmLocation vmLocation) {
+      url = vmLocation.getUrl();
+      tokenOffset = vmLocation.getTokenOffset();
+    }
+
+    public boolean equals(final Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      final VmBreakpointLocation location = (VmBreakpointLocation)o;
+
+      if (tokenOffset != location.tokenOffset) return false;
+      if (!url.equals(location.url)) return false;
+
+      return true;
+    }
+
+    public int hashCode() {
+      int result = url.hashCode();
+      result = 31 * result + tokenOffset;
+      return result;
+    }
+  }
 }
+
