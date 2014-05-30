@@ -14,12 +14,10 @@ import com.intellij.xdebugger.XDebuggerBundle;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
-import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
-import com.jetbrains.lang.dart.ide.runner.server.frame.DartStackFrame;
-import com.jetbrains.lang.dart.ide.runner.server.frame.DartValue;
-import com.jetbrains.lang.dart.ide.runner.server.google.*;
+import com.jetbrains.lang.dart.ide.runner.server.google.VmConnection;
+import com.jetbrains.lang.dart.ide.runner.server.google.VmIsolate;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -121,39 +119,6 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   @NotNull
   public XBreakpointHandler<?>[] getBreakpointHandlers() {
     return myBreakpointsHandler.getBreakpointHandlers();
-  }
-
-  @Override
-  public XDebuggerEvaluator getEvaluator() {
-    return new XDebuggerEvaluator() {
-      public void evaluate(@NotNull final String expression,
-                           @NotNull final XEvaluationCallback callback,
-                           @Nullable final XSourcePosition expressionPosition) {
-        final DartStackFrame frame = (DartStackFrame)getSession().getCurrentStackFrame();
-        if (frame == null) {
-          callback.errorOccurred("Debugger is not paused");
-          return;
-        }
-
-        try {
-          final VmCallFrame vmCallFrame = frame.getVmCallFrame();
-          myVmConnection.evaluateOnCallFrame(vmCallFrame.getIsolate(), vmCallFrame, expression, new VmCallback<VmValue>() {
-            public void handleResult(final VmResult<VmValue> result) {
-              if (result.isError()) {
-                callback.errorOccurred(result.getError());
-              }
-              else {
-                final VmValue vmValue = result.getResult();
-                callback.evaluated(new DartValue(DartCommandLineDebugProcess.this, vmValue));
-              }
-            }
-          });
-        }
-        catch (IOException e) {
-          callback.errorOccurred(e.toString());
-        }
-      }
-    };
   }
 
   @Override
