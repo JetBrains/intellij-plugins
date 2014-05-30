@@ -1550,18 +1550,21 @@ public class VmConnection {
         getStackTrace(isolate, new VmCallback<List<VmCallFrame>>() {
           @Override
           public void handleResult(VmResult<List<VmCallFrame>> result) {
-            currentLocation = location;
-            isStepping = false;
-
-            if (result.isError()) {
-              LOG.info(result.getError());
-            }
-            else {
-              List<VmCallFrame> frames = result.getResult();
-
-              for (VmListener listener : listeners) {
-                listener.debuggerPaused(reason, isolate, frames, exception);
+            try {
+              if (result.isError()) {
+                LOG.info(result.getError());
               }
+              else {
+                List<VmCallFrame> frames = result.getResult();
+
+                for (VmListener listener : listeners) {
+                  listener.debuggerPaused(reason, isolate, frames, exception, isStepping);
+                }
+              }
+            }
+            finally {
+              currentLocation = location;
+              isStepping = false;
             }
           }
         });
