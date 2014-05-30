@@ -447,7 +447,7 @@ public class FlexStackFrame extends XStackFrame {
 
   private class FlexDebuggerEvaluator extends XDebuggerEvaluator {
     public boolean isCodeFragmentEvaluationSupported() {
-      return super.isCodeFragmentEvaluationSupported();
+      return false;
     }
 
     @Override
