@@ -1,21 +1,24 @@
 <idea-plugin version="2">
     <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
     <name>PhoneGap/Cordova Plugin</name>
-    <version>0.8.0</version>
+    <version>0.8.1</version>
     <vendor email="masahiro.suzuka@gmail.com" url="http://github.com/masahirosuzuka/PhoneGapIntelliJPlugin">
         masahirosuzuka
     </vendor>
 
     <description><![CDATA[
-        <h4>PhoneGap integration for InteliJ Platform.<h4>
-        <p>* PhoneGap Project wizard (not stable)</p>
-        <p>* PhoneGap Project importer</p>
-        <p>* Run PhoneGap Application from IntelliJ toolbar</p>
+        <h4>PhoneGap/Cordova integration for InteliJ Platform.<h4>
+        <p>* PhoneGap/Cordova Project wizard (not stable)</p>
+        <p>* PhoneGap/Cordova Project importer</p>
+        <p>* Run PhoneGap/Cordova application from IntelliJ toolbar</p>
+        <p>* Code completion</p>
+        <p>Ripple emulator support</p>
         <p>See README.md</p>
         <a href="https://github.com/masahirosuzuka/phonegap-intelliJ-plugin">masahirsuzuka/PhoneGapIntelliJPlugin</a>
     ]]></description>
 
     <change-notes><![CDATA[
+    <p>v0.8.1 Fix request jvm version</p>
     <p>v0.8.0 Code complements</p>
     <p>v0.7.0 Cordova support</p>
     <p>v0.6.0 Ripple emulator support</p>
@@ -39,8 +42,11 @@
     <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Setting Dialog -->
+        <!-- Global Setting Dialog -->
         <applicationConfigurable instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable"/>
+
+        <!-- Project Setting Dialog -->
+        <projectConfigurable instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapProjectConfigurable" />
 
         <!-- Project generator -->
         <moduleType id="PHONEGAP_MODULE"

@@ -60,7 +60,7 @@ public class PhoneGapRunProfileState extends CommandLineState {
                     phoneGapRunConfiguration.getCommand(),
                     phoneGapRunConfiguration.getPlatform());
 
-            // Change workingDir to project dir
+            // Change working dir to project dir
             commandLine.setWorkDirectory(projectDir);
 
             return new OSProcessHandler(commandLine);
@@ -68,53 +68,55 @@ public class PhoneGapRunProfileState extends CommandLineState {
     }
 
     private void writeScript(File serverScript) throws IOException {
+      // TODO
+      // Replace server.js to Gruntfile.js
         FileWriter fileWriter = new FileWriter(serverScript);
         try {
-            fileWriter.write(
-                    "var http = require('http');\n" +
-                            "var url = require('url');\n" +
-                            "var path = require('path');\n" +
-                            "var fs = require('fs');\n" +
-                            "\n" +
-                            "http.createServer(function(req, res) {\n" +
-                            "  var webroot = 'www';\n" +
-                            "  var uri = webroot + url.parse(req.url).pathname;\n" +
-                            "  var fileName = path.join(process.cwd(), uri);\n" +
-                            "\n" +
-                            "  if (uri == 'www/') {\n" +
-                            "    fileName = path.join(process.cwd(), 'www/index.html');\n" +
-                            "  }\n" +
-                            "\n" +
-                            "  fs.readFile(fileName, function(err, file) {\n" +
-                            "    if(err){\n" +
-                            "      // 404\n" +
-                            "      res.writeHead(404, {\"Content-Type\": \"text/plain\"});\n" +
-                            "      res.write('404 not found\\n');\n" +
-                            "      res.end();\n" +
-                            "    } else {\n" +
-                            "      // 200\n" +
-                            "      var mimeType = 'text/plain';// Default mime-type\n" +
-                            "      var extention = path.extname(fileName);\n" +
-                            "      if (extention == '.html') {\n" +
-                            "        mimeType = 'text/html';\n" +
-                            "      } else if (extention == '.css') {\n" +
-                            "        mimeType = 'text/css';\n" +
-                            "      } else if (extention == '.js') {\n" +
-                            "        mimeType = 'text/javascript';\n" +
-                            "      }\n" +
-                            "\n" +
-                            "      res.writeHead(200, {\"Content-Type\": mimeType});\n" +
-                            "      res.write(file);\n" +
-                            "      res.end();\n" +
-                            "    }\n" +
-                            "  });\n" +
-                            "\n" +
-                            "}).listen(1337, '127.0.0.1');\n" +
-                            "\n" +
-                            "console.log('Server running at http://127.0.0.1:1337/');"
-            );
+          fileWriter.write(
+              "var http = require('http');\n" +
+                  "var url = require('url');\n" +
+                  "var path = require('path');\n" +
+                  "var fs = require('fs');\n" +
+                  "\n" +
+                  "http.createServer(function(req, res) {\n" +
+                  "  var webroot = 'www';\n" +
+                  "  var uri = webroot + url.parse(req.url).pathname;\n" +
+                  "  var fileName = path.join(process.cwd(), uri);\n" +
+                  "\n" +
+                  "  if (uri == 'www/') {\n" +
+                  "    fileName = path.join(process.cwd(), 'www/index.html');\n" +
+                  "  }\n" +
+                  "\n" +
+                  "  fs.readFile(fileName, function(err, file) {\n" +
+                  "    if(err){\n" +
+                  "      // 404\n" +
+                  "      res.writeHead(404, {\"Content-Type\": \"text/plain\"});\n" +
+                  "      res.write('404 not found\\n');\n" +
+                  "      res.end();\n" +
+                  "    } else {\n" +
+                  "      // 200\n" +
+                  "      var mimeType = 'text/plain';// Default mime-type\n" +
+                  "      var extention = path.extname(fileName);\n" +
+                  "      if (extention == '.html') {\n" +
+                  "        mimeType = 'text/html';\n" +
+                  "      } else if (extention == '.css') {\n" +
+                  "        mimeType = 'text/css';\n" +
+                  "      } else if (extention == '.js') {\n" +
+                  "        mimeType = 'text/javascript';\n" +
+                  "      }\n" +
+                  "\n" +
+                  "      res.writeHead(200, {\"Content-Type\": mimeType});\n" +
+                  "      res.write(file);\n" +
+                  "      res.end();\n" +
+                  "    }\n" +
+                  "  });\n" +
+                  "\n" +
+                  "}).listen(1337, '127.0.0.1');\n" +
+                  "\n" +
+                  "console.log('Server running at http://127.0.0.1:1337/');"
+          );
         } finally {
-            fileWriter.close();
+          fileWriter.close();
         }
     }
 }
