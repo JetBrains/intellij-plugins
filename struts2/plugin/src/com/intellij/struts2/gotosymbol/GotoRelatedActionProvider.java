@@ -50,7 +50,10 @@ public class GotoRelatedActionProvider extends GotoRelatedProvider {
   @NotNull
   @Override
   public List<? extends GotoRelatedItem> getItems(@NotNull final PsiElement psiElement) {
-    final PsiFile containingFile = psiElement.getContainingFile().getOriginalFile();
+    PsiFile psiFile = psiElement.getContainingFile();
+    if (psiFile == null) return Collections.emptyList();
+
+    final PsiFile containingFile = psiFile.getOriginalFile();
     final String filename = containingFile.getName();
 
     final String extension = FileUtilRt.getExtension(filename);
