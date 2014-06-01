@@ -314,8 +314,8 @@ public class CfmlUtil {
     }
     final int index = name.indexOf(':');
     if (index == -1) {
-      return Couple.newOne(null, name);
+      return Couple.of(null, name);
     }
-    return Couple.newOne(name.substring(0, index), name.substring(index + 1));
+    return Couple.of(name.substring(0, index), name.substring(index + 1));
   }
 }
