@@ -11,6 +11,7 @@ import com.google.jstestdriver.idea.TestRunner;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.google.jstestdriver.idea.server.JstdServer;
+import com.google.jstestdriver.idea.server.JstdServerLifeCycleAdapter;
 import com.google.jstestdriver.idea.server.JstdServerRegistry;
 import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.google.jstestdriver.idea.util.TestFileScope;
@@ -20,7 +21,7 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.execution.process.KillableColoredProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -31,6 +32,7 @@ import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
 import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -50,10 +52,7 @@ import java.util.*;
 
 import static java.io.File.pathSeparator;
 
-/**
- * @author Sergey Simonchik
- */
-public class JstdTestRunnerCommandLineState implements RunProfileState {
+public class JstdRunProfileState implements RunProfileState {
 
   private static final String JSTD_FRAMEWORK_NAME = "JsTestDriver";
   private static final Function<File, String> GET_ABSOLUTE_PATH = new Function<File, String>() {
@@ -64,79 +63,116 @@ public class JstdTestRunnerCommandLineState implements RunProfileState {
   };
 
   private final Project myProject;
-  private final ExecutionEnvironment myExecutionEnvironment;
+  private final ExecutionEnvironment myEnvironment;
   private final JstdRunSettings myRunSettings;
   private final String myCoverageFilePath;
   private final boolean myDebug;
 
-  public JstdTestRunnerCommandLineState(@NotNull Project project,
-                                        @NotNull ExecutionEnvironment executionEnvironment,
-                                        @NotNull JstdRunSettings runSettings,
-                                        @Nullable String coverageFilePath,
-                                        boolean debug) {
+  public JstdRunProfileState(@NotNull Project project,
+                             @NotNull ExecutionEnvironment environment,
+                             @NotNull JstdRunSettings runSettings,
+                             @Nullable String coverageFilePath,
+                             boolean debug) {
     myProject = project;
-    myExecutionEnvironment = executionEnvironment;
+    myEnvironment = environment;
     myRunSettings = runSettings;
     myCoverageFilePath = coverageFilePath;
     myDebug = debug;
   }
 
-  @Override
   @NotNull
+  public JstdRunSettings getRunSettings() {
+    return myRunSettings;
+  }
+
+  @Override
+  @Nullable
   public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
-    String serverUrl = getServerUrl();
-    ProcessHandler processHandler = startProcess(serverUrl);
-    ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment);
+    if (myRunSettings.isExternalServerType()) {
+      return executeWithServer(null);
+    }
+    JstdServer ideServer = JstdServerRegistry.getInstance().getServer();
+    if (ideServer == null || !ideServer.isProcessRunning()) {
+      throw new ExecutionException("JsTestDriver server is not running unexpectedly");
+    }
+    return executeWithServer(ideServer);
+  }
+
+  @NotNull
+  public ExecutionResult executeWithServer(@Nullable JstdServer ideServer) throws ExecutionException {
+    ProcessHandler processHandler = createProcessHandler(ideServer);
+    ConsoleView consoleView = createSMTRunnerConsoleView(ideServer);
     consoleView.attachToProcess(processHandler);
     DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
-    executionResult.setRestartActions(new ToggleAutoTestAction(myExecutionEnvironment));
+    executionResult.setRestartActions(new ToggleAutoTestAction(myEnvironment));
     return executionResult;
   }
 
-  @NotNull
-  private String getServerUrl() throws ExecutionException {
+  @Nullable
+  private String getServerUrl(@Nullable JstdServer ideServer) throws ExecutionException {
     if (myRunSettings.isExternalServerType()) {
       return myRunSettings.getServerAddress();
     }
-    JstdServer server = JstdServerRegistry.getInstance().getServer();
-    if (server == null || !server.isProcessRunning()) {
-      throw new ExecutionException("JsTestDriver server is not running unexpectedly");
+    if (ideServer != null && ideServer.isReadyForRunningTests()) {
+      return ideServer.getServerUrl();
     }
-    return server.getServerUrl();
-  }
-
-  private static ConsoleView createConsole(@NotNull Project project,
-                                           @NotNull ExecutionEnvironment env) throws ExecutionException {
-    JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
-    TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(
-      runConfiguration,
-      JSTD_FRAMEWORK_NAME,
-      env.getExecutor()
-    );
-    testConsoleProperties.setUsePredefinedMessageFilter(false);
-    testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
-
-    SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
-      JSTD_FRAMEWORK_NAME,
-      testConsoleProperties,
-      env,
-      new JstdTestLocationProvider(),
-      true,
-      new JstdTestProxyFilterProvider(testConsoleProperties.getProject())
-    );
-
-    Disposer.register(project, smtConsoleView);
-    return smtConsoleView;
+    return null;
   }
 
   @NotNull
-  private ProcessHandler startProcess(@NotNull String serverUrl) throws ExecutionException {
+  private SMTRunnerConsoleView createSMTRunnerConsoleView(@Nullable JstdServer ideServer) {
+    JstdRunConfiguration runConfiguration = (JstdRunConfiguration) myEnvironment.getRunProfile();
+    TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(
+      runConfiguration,
+      JSTD_FRAMEWORK_NAME,
+      myEnvironment.getExecutor(),
+      false
+    );
+    testConsoleProperties.setUsePredefinedMessageFilter(false);
+    testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
+    testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_IGNORED_TEST, true);
+    testConsoleProperties.setIfUndefined(TestConsoleProperties.SCROLL_TO_SOURCE, true);
+    String splitterPropertyName = SMTestRunnerConnectionUtil.getSplitterPropertyName(JSTD_FRAMEWORK_NAME);
+    PropertiesComponent.getInstance().setValue(splitterPropertyName, String.valueOf(0.2f));
+
+    JstdConsoleView consoleView = new JstdConsoleView(testConsoleProperties,
+                                                      myEnvironment,
+                                                      splitterPropertyName,
+                                                      ideServer);
+    Disposer.register(myProject, consoleView);
+    SMTestRunnerConnectionUtil.initConsoleView(consoleView,
+                                               JSTD_FRAMEWORK_NAME,
+                                               new JstdTestLocationProvider(),
+                                               true,
+                                               new JstdTestProxyFilterProvider(myProject));
+    return consoleView;
+  }
+
+  @NotNull
+  private ProcessHandler createProcessHandler(@Nullable JstdServer ideServer) throws ExecutionException {
+    String serverUrl = getServerUrl(ideServer);
+    if (serverUrl != null) {
+      return createOSProcessHandler(serverUrl);
+    }
+    final NopProcessHandler nopProcessHandler = new NopProcessHandler();
+    if (ideServer != null) {
+      ideServer.addLifeCycleListener(new JstdServerLifeCycleAdapter() {
+        @Override
+        public void onServerTerminated() {
+          nopProcessHandler.destroyProcess();
+        }
+      }, myProject);
+    }
+    return nopProcessHandler;
+  }
+
+  @NotNull
+  private KillableColoredProcessHandler createOSProcessHandler(@NotNull String serverUrl) throws ExecutionException {
     Map<TestRunner.ParameterKey, String> params = createParameterMap(serverUrl);
     GeneralCommandLine commandLine = createCommandLine(params);
-
-    OSProcessHandler osProcessHandler = new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString());
-    ProcessTerminatedListener.attach(osProcessHandler);
-    return osProcessHandler;
+    KillableColoredProcessHandler processHandler = KillableColoredProcessHandler.create(commandLine);
+    ProcessTerminatedListener.attach(processHandler);
+    return processHandler;
   }
 
   @NotNull

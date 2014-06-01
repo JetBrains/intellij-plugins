@@ -250,7 +250,7 @@ public class JstdRunConfigurationVerifier {
         JstdToolWindowManager manager = JstdToolWindowManager.getInstance(myProject);
         manager.setAvailable(true);
         manager.show();
-        manager.restartServer();
+        manager.restartServer(null);
       }
     }
   }

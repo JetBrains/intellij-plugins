@@ -45,9 +45,17 @@ public class JstdServerLifeCycleManager implements JstdServerOutputListener {
     Disposer.register(disposable, d);
   }
 
+  public void removeListener(@NotNull JstdServerLifeCycleListener listener) {
+    myListeners.remove(listener);
+  }
+
   @NotNull
   public Collection<JstdBrowserInfo> getCapturedBrowsers() {
     return Collections.unmodifiableCollection(myCapturedBrowsers.values());
+  }
+
+  public boolean isServerStarted() {
+    return myServerStarted;
   }
 
   public boolean isServerStopped() {

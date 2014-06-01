@@ -3,7 +3,7 @@ package com.google.jstestdriver.idea.debug;
 import com.google.jstestdriver.idea.TestRunner;
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.JstdRunConfigurationVerifier;
-import com.google.jstestdriver.idea.execution.JstdTestRunnerCommandLineState;
+import com.google.jstestdriver.idea.execution.JstdRunProfileState;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.RunProfileStarter;
@@ -107,7 +107,7 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
       url = null;
     }
 
-    JstdTestRunnerCommandLineState runState = runConfiguration.getState(env, null, true);
+    JstdRunProfileState runState = runConfiguration.getState(env, null, true);
     final ExecutionResult executionResult = runState.execute(env.getExecutor(), this);
 
     final RemoteDebuggingFileFinder fileFinder = new JstdDebuggableFileFinderProvider(new File(runConfiguration.getRunSettings().getConfigFile())).provideFileFinder();
