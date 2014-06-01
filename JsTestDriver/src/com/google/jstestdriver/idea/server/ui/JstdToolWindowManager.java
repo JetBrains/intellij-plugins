@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.server.ui;
 
+import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.server.JstdServerSettingsManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
@@ -8,8 +9,10 @@ import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
+import com.intellij.util.NullableConsumer;
 import icons.JsTestDriverIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Sergey Simonchik
@@ -65,10 +68,11 @@ public class JstdToolWindowManager {
     }
   }
 
-  public void restartServer() {
+  public void restartServer(@Nullable NullableConsumer<JstdServer> callback) {
     JstdToolWindowSession session = myCurrentSession;
-    if (session != null) {
-      session.restart(JstdServerSettingsManager.loadSettings());
+    if (session == null) {
+      throw new RuntimeException("JsTestDriver Server toolwindow isn't available");
     }
+    session.restart(JstdServerSettingsManager.loadSettings(), callback);
   }
 }

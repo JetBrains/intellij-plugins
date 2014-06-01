@@ -35,6 +35,6 @@ public class JstdServerRestartAction extends AnAction {
   @Override
   public void actionPerformed(AnActionEvent e) {
     mySession.saveSettings();
-    mySession.restart(JstdServerSettingsManager.loadSettings());
+    mySession.restart(JstdServerSettingsManager.loadSettings(), null);
   }
 }

@@ -72,6 +72,14 @@ public class JstdServer {
     return "http://127.0.0.1:" + mySettings.getPort();
   }
 
+  public boolean isReadyForCapturing() {
+    return isProcessRunning() && myLifeCycleManager.isServerStarted() && !myLifeCycleManager.isServerStopped();
+  }
+
+  public boolean isReadyForRunningTests() {
+    return isReadyForCapturing() && !getCapturedBrowsers().isEmpty();
+  }
+
   @NotNull
   public Collection<JstdBrowserInfo> getCapturedBrowsers() {
     return myLifeCycleManager.getCapturedBrowsers();
@@ -160,8 +168,12 @@ public class JstdServer {
     });
   }
 
-  public void addLifeCycleListener(@NotNull final JstdServerLifeCycleListener listener, @NotNull final Disposable disposable) {
+  public void addLifeCycleListener(@NotNull JstdServerLifeCycleListener listener, @NotNull final Disposable disposable) {
     myLifeCycleManager.addListener(listener, disposable);
+  }
+
+  public void removeLifeCycleListener(@NotNull JstdServerLifeCycleListener listener) {
+    myLifeCycleManager.removeListener(listener);
   }
 
   public void shutdownAsync() {

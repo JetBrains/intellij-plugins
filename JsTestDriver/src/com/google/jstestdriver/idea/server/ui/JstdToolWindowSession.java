@@ -13,8 +13,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.CatchingConsumer;
+import com.intellij.util.NullableConsumer;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -110,16 +112,22 @@ public class JstdToolWindowSession {
     consoleView.showServerStartupError(ex);
   }
 
-  public void restart(@NotNull JstdServerSettings settings) {
+  public void restart(@NotNull JstdServerSettings settings, @Nullable final NullableConsumer<JstdServer> callback) {
     JstdServerRegistry.getInstance().restartServer(settings, new CatchingConsumer<JstdServer, Exception>() {
       @Override
       public void consume(JstdServer server) {
         attachToServer(server);
+        if (callback != null) {
+          callback.consume(server);
+        }
       }
 
       @Override
       public void consume(Exception e) {
         showServerStartupError(e);
+        if (callback != null) {
+          callback.consume(null);
+        }
       }
     });
   }
