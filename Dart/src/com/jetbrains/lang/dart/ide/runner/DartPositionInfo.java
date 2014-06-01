@@ -116,7 +116,7 @@ public class DartPositionInfo {
       return null;
     }
 
-    return Couple.newOne(pathStartIndex, pathEndIndex);
+    return Couple.of(pathStartIndex, pathEndIndex);
   }
 
   //   #0      min (dart:math:70)
@@ -135,7 +135,7 @@ public class DartPositionInfo {
 
     if (index == libNameStartIndex) return null;
 
-    return Couple.newOne(pathStartIndex, index);
+    return Couple.of(pathStartIndex, index);
   }
 
   private static boolean isCharAllowedBeforePath(final char ch) {
@@ -155,10 +155,10 @@ public class DartPositionInfo {
 
     final Pair<Integer, String> colonAndRemainingText = parseNextIntSkippingColon(lineAndRemainingText.second.trim());
     if (colonAndRemainingText == null) {
-      return Couple.newOne(lineAndRemainingText.first, -1);
+      return Couple.of(lineAndRemainingText.first, -1);
     }
     else {
-      return Couple.newOne(lineAndRemainingText.first, colonAndRemainingText.first);
+      return Couple.of(lineAndRemainingText.first, colonAndRemainingText.first);
     }
   }
 
@@ -180,10 +180,10 @@ public class DartPositionInfo {
     }
 
     if (colonAndRemainingText == null) {
-      return Couple.newOne(lineAndRemainingText.first, -1);
+      return Couple.of(lineAndRemainingText.first, -1);
     }
     else {
-      return Couple.newOne(lineAndRemainingText.first, colonAndRemainingText.first);
+      return Couple.of(lineAndRemainingText.first, colonAndRemainingText.first);
     }
   }
 
