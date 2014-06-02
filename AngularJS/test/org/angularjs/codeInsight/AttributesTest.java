@@ -142,6 +142,23 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertDoesntContain(myFixture.getLookupElementStrings(), "form");
   }
 
+  public void testIncorrectJSDoc() {
+    myFixture.configureByText(System.currentTimeMillis() + ".js",
+                              "/**\n" +
+                              " * @ngdoc directive\n" +
+                              " * @name yaSelect\n" +
+                              " * @restrict E\n" +
+                              " *\n" +
+                              " * @param description\n" +
+                              " *\n" +
+                              " * @description Р’С‹РІРѕРґРёС‚ select\n" +
+                              " *\n" +
+                              " * @param ngModel Assignable angular expression to data-bind to. sa\n" +
+                              " * bla bla bla l\n" +
+                              " */");
+    myFixture.doHighlighting();
+  }
+
   public void testInlineStyle() {
     myFixture.configureByFiles("style.html", "angular.js");
     myFixture.checkHighlighting();
