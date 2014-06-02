@@ -181,7 +181,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       if (start >= 0) {
         final JSDocumentationUtils.DocTag docTag = JSDocumentationUtils.getDocTag(line.substring(start));
         if (docTag != null) {
-          param = docTag.matchValue;
+          param = docTag.matchValue != null ? docTag.matchValue : param;
           if (attributes.length() > 0) attributes.append(",");
           attributes.append(docTag.matchName);
         }
