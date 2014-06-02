@@ -247,6 +247,11 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   public boolean isPossibleFunction(@NotNull String name, @Nullable PsiElement context) {
     return false;
   }
+  
+  @Override
+  public boolean isPossibleProperty(@NotNull String name, @Nullable PsiElement context) {
+    return false;
+  }
 
   @NotNull
   public String[] getPossiblePseudoSelectorsNames(@Nullable PsiElement context) {
