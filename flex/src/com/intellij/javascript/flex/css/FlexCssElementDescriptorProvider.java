@@ -32,14 +32,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.*;
+import com.intellij.psi.css.descriptor.CssFunctionDescriptor;
+import com.intellij.psi.css.descriptor.CssFunctionDescriptorStub;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
+import com.intellij.psi.css.descriptor.value.CssNullValue;
+import com.intellij.psi.css.descriptor.value.CssValueDescriptor;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.util.references.HtmlCssClassOrIdReference;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
@@ -210,6 +215,18 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return ContainerUtil.<CssPseudoSelectorDescriptor>newArrayList(new CssPseudoSelectorDescriptorStub(name));
   }
 
+  @NotNull
+  @Override
+  public Collection<CssValueDescriptor> getNamedValueDescriptors(@NotNull String name, @Nullable CssValueDescriptor parent) {
+    return ContainerUtil.<CssValueDescriptor>newArrayList(new CssNullValue(parent));
+  }
+
+  @NotNull
+  @Override
+  public Collection<CssFunctionDescriptor> getFunctionDescriptors(@NotNull String functionName) {
+    return ContainerUtil.<CssFunctionDescriptor>newArrayList(new CssFunctionDescriptorStub(functionName));
+  }
+
   public boolean isPossibleSelector(@NotNull String selector, @NotNull PsiElement context) {
     if (selector.equals("global")) return true;
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
@@ -223,6 +240,11 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   public boolean isPossiblePseudoSelector(@NotNull String selectorName, @Nullable PsiElement context) {
+    return false;
+  }
+
+  @Override
+  public boolean isPossibleFunction(@NotNull String name, @Nullable PsiElement context) {
     return false;
   }
 
@@ -302,7 +324,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   private static boolean containsGlobalSelectors(@NotNull List<CssSimpleSelector> selectors) {
     for (CssSimpleSelector selector : selectors) {
       final String elementName = selector.getElementName();
-      if ("".equals(elementName) || "global".equals(elementName) || "*".equals(elementName)) {
+      if (elementName != null && elementName.isEmpty() || "global".equals(elementName) || "*".equals(elementName)) {
         return  true;
       }
     }
@@ -362,7 +384,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @Nullable
   public static XmlElementDescriptor getTypeSelectorDescriptor(@NotNull CssSimpleSelector selector, @NotNull Module module) {
-    CssNamespace namespace = ((CssFile)selector.getContainingFile()).getStylesheet().getNamespace(selector.getNamespaceName());
+    CssStylesheet stylesheet = ((CssFile)selector.getContainingFile()).getStylesheet();
+    CssNamespace namespace = stylesheet != null ? stylesheet.getNamespace(selector.getNamespaceName()) : null;
     if (namespace != null && namespace.getUri() != null) {
       return CodeContext.getContext(namespace.getUri(), module).getElementDescriptor(selector.getElementName(), (XmlTag)null);
     }
@@ -503,7 +526,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   @Override
   public Color getColorByValue(@NotNull String value) {
     try {
-      return new Color(Integer.parseInt(value));
+      int rgb = Integer.parseInt(value);
+      return new JBColor(rgb, rgb);
     }
     catch (NumberFormatException e) {
       return null;
