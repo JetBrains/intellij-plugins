@@ -3,6 +3,7 @@ package org.angularjs.editor;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSTargetedInjector;
+import com.intellij.lang.javascript.json.JSONLanguageDialect;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -31,10 +32,13 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
 
     final PsiElement parent = context.getParent();
     if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {
-      final int length = context.getTextLength();
+      final String value = context.getText();
+      final int start = value.startsWith("'") || value.startsWith("\"") ? 1 : 0;
+      final int end = value.endsWith("'") || value.endsWith("\"") ? 1 : 0;
+      final int length = value.length();
       if (AngularAttributesRegistry.isAngularExpressionAttribute((XmlAttribute)parent) && length > 1) {
         registrar.startInjecting(AngularJSLanguage.INSTANCE).
-          addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(1, length - 1)).
+          addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(start, length - end)).
           doneInjecting();
         return;
       }
