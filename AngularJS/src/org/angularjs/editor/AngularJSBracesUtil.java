@@ -3,6 +3,7 @@ package org.angularjs.editor;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularInjectionDelimiterIndex;
@@ -37,7 +38,12 @@ public class AngularJSBracesUtil {
     return defaultDelimiter;
   }
 
-  public static boolean hasConflicts(String start, String end, PsiFile file) {
+  public static boolean hasConflicts(String start, String end, PsiElement element) {
+    // JSP contains two roots that contain XmlText, don't inject anything in JSP root to prevent double injections
+    if ("JSP".equals(element.getLanguage().getDisplayName())) {
+      return true;
+    }
+    PsiFile file = element.getContainingFile();
     if (DEFAULT_START.equals(start) || DEFAULT_END.equals(end)) {
       for (Language language : file.getViewProvider().getLanguages()) {
         if (DEFAULT_CONFLICTS.contains(language.getDisplayName())) {
