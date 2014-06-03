@@ -3,7 +3,6 @@ package com.google.jstestdriver.idea.debug;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.server.JstdBrowserInfo;
 import com.google.jstestdriver.idea.server.JstdServer;
-import com.google.jstestdriver.idea.server.JstdServerRegistry;
 import com.google.jstestdriver.idea.server.JstdServerSettings;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.openapi.util.Pair;
@@ -55,13 +54,8 @@ public class JstdDebugBrowserInfo {
   }
 
   @Nullable
-  public static JstdDebugBrowserInfo build(@NotNull JstdRunSettings runSettings) {
-    JstdServer server = JstdServerRegistry.getInstance().getServer();
-    if (server == null || !server.isProcessRunning()) {
-      return null;
-    }
+  public static JstdDebugBrowserInfo build(@NotNull JstdServer server, @NotNull JstdRunSettings runSettings) {
     Collection<JstdBrowserInfo> capturedBrowsers = server.getCapturedBrowsers();
-
     List<JstdDebugBrowserInfo> debugBrowserInfos = new SmartList<JstdDebugBrowserInfo>();
     for (JstdBrowserInfo browserInfo : capturedBrowsers) {
       Pair<JavaScriptDebugEngine, WebBrowser> engine = JavaScriptDebugEngine.findByBrowserName(browserInfo.getName());

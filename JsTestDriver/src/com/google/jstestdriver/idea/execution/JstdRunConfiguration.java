@@ -62,19 +62,11 @@ public class JstdRunConfiguration extends LocatableConfigurationBase implements 
   @Override
   @NotNull
   public JstdRunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-    return getState(env, null, false);
+    return getState(env, null);
   }
 
   @NotNull
-  public JstdRunProfileState getCoverageState(@NotNull ExecutionEnvironment env,
-                                                         @Nullable String coverageFilePath) throws ExecutionException {
-    return getState(env, coverageFilePath, false);
-  }
-
-  @NotNull
-  public JstdRunProfileState getState(@NotNull ExecutionEnvironment env,
-                                                 @Nullable String coverageFilePath,
-                                                 boolean debug) throws ExecutionException {
+  public JstdRunProfileState getState(@NotNull ExecutionEnvironment env, @Nullable String coverageFilePath) throws ExecutionException {
     try {
       checkConfiguration();
     }
@@ -84,7 +76,7 @@ public class JstdRunConfiguration extends LocatableConfigurationBase implements 
     catch (RuntimeConfigurationException ignored) {
       // does nothing
     }
-    return new JstdRunProfileState(getProject(), env, myRunSettings, coverageFilePath, debug);
+    return new JstdRunProfileState(getProject(), env, myRunSettings, coverageFilePath);
   }
 
   public void setRunSettings(@NotNull JstdRunSettings runSettings) {

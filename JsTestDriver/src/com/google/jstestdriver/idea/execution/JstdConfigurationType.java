@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver.idea.execution;
 
-import com.google.jstestdriver.idea.MessageBundle;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
@@ -30,13 +29,23 @@ import icons.JsTestDriverIcons;
  */
 public class JstdConfigurationType extends ConfigurationTypeBase {
 
+  private static final String NAME = "JsTestDriver";
   public JstdConfigurationType() {
-    super("JSTestDriver:ConfigurationType", MessageBundle.getPluginName(),
-          MessageBundle.getPluginName(), JsTestDriverIcons.JsTestDriver);
+    super("JSTestDriver:ConfigurationType", NAME, NAME, JsTestDriverIcons.JsTestDriver);
     addFactory(new ConfigurationFactory(this) {
       @Override
       public RunConfiguration createTemplateConfiguration(Project project) {
-        return new JstdRunConfiguration(project, this, MessageBundle.getPluginName());
+        return new JstdRunConfiguration(project, this, NAME);
+      }
+
+      @Override
+      public boolean isConfigurationSingletonByDefault() {
+        return true;
+      }
+
+      @Override
+      public boolean canConfigurationBeSingleton() {
+        return false;
       }
     });
   }
@@ -44,5 +53,4 @@ public class JstdConfigurationType extends ConfigurationTypeBase {
   public static JstdConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(JstdConfigurationType.class);
   }
-
 }

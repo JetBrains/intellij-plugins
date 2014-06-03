@@ -21,6 +21,7 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.KillableColoredProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
@@ -71,13 +72,12 @@ public class JstdRunProfileState implements RunProfileState {
   public JstdRunProfileState(@NotNull Project project,
                              @NotNull ExecutionEnvironment environment,
                              @NotNull JstdRunSettings runSettings,
-                             @Nullable String coverageFilePath,
-                             boolean debug) {
+                             @Nullable String coverageFilePath) {
     myProject = project;
     myEnvironment = environment;
     myRunSettings = runSettings;
     myCoverageFilePath = coverageFilePath;
-    myDebug = debug;
+    myDebug = environment.getExecutor().getId().equals(DefaultDebugExecutor.EXECUTOR_ID);
   }
 
   @NotNull
@@ -301,5 +301,13 @@ public class JstdRunProfileState implements RunProfileState {
       paths.add(config.getPath());
     }
     return EscapeUtils.join(paths, ',');
+  }
+
+  @NotNull
+  public static JstdRunProfileState cast(@NotNull RunProfileState state) throws ExecutionException {
+    if (state instanceof JstdRunProfileState) {
+      return (JstdRunProfileState) state;
+    }
+    throw new ExecutionException("[Internal error] Cannot run JsTestDriver tests");
   }
 }
