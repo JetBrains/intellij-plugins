@@ -13,7 +13,7 @@ import com.intellij.psi.tree.IFileElementType;
  * To change this template use File | Settings | File Templates.
  */
 public class DecompiledSwfParserDefinition extends ECMAL4ParserDefinition {
-  private static final IFileElementType FILE_TYPE = new JSFileElementType(FlexApplicationComponent.DECOMPILED_SWF);
+  private static final IFileElementType FILE_TYPE = JSFileElementType.create(FlexApplicationComponent.DECOMPILED_SWF);
 
   @Override
   public IFileElementType getFileNodeType() {
