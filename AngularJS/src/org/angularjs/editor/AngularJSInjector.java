@@ -44,7 +44,7 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
       final String start = AngularJSBracesUtil.getInjectionStart(project);
       final String end = AngularJSBracesUtil.getInjectionEnd(project);
 
-      if (AngularJSBracesUtil.hasConflicts(start, end, context.getContainingFile())) return;
+      if (AngularJSBracesUtil.hasConflicts(start, end, context)) return;
 
       final String text = context.getText();
       int startIndex;
