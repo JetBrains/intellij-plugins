@@ -118,9 +118,9 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
       if (simulator == null) throw new ExecutionException("Simulator not specified.");
 
       switch (simulator.getDeviceFamilyID()) {
-        case IOSBuildDestination.Simulator.IPHONE_FAMILY:
+        case SimulatorConfiguration.IPHONE_FAMILY:
           return "iPhone Simulator";
-        case IOSBuildDestination.Simulator.IPAD_FAMILY:
+        case SimulatorConfiguration.IPAD_FAMILY:
           return "iPad Simulator";
       }
       throw new ExecutionException("Unknown simulator type: " + simulator);
