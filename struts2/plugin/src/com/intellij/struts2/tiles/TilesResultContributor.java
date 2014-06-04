@@ -35,7 +35,7 @@ import com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import icons.StrutsIcons;
+import icons.StrutsApiIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +73,7 @@ public class TilesResultContributor extends StrutsResultContributor {
   }
 
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement psiElement) {
-    return createDefaultPathReference(path, psiElement, StrutsIcons.Tiles.Tile);
+    return createDefaultPathReference(path, psiElement, StrutsApiIcons.Tiles.Tile);
   }
 
   private static List<TilesModel> getAllTilesModels(@NotNull final PsiElement psiElement) {
@@ -133,7 +133,7 @@ public class TilesResultContributor extends StrutsResultContributor {
           //noinspection ConstantConditions
           final LookupElementBuilder builder =
             LookupElementBuilder.create(definition, definitionName)
-              .withIcon(StrutsIcons.Tiles.Tile)
+              .withIcon(StrutsApiIcons.Tiles.Tile)
               .withTypeText(psiFile.getName());
           variants.add(builder);
         }
