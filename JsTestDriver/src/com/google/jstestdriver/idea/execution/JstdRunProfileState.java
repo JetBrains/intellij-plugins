@@ -100,6 +100,9 @@ public class JstdRunProfileState implements RunProfileState {
 
   @NotNull
   public ExecutionResult executeWithServer(@Nullable JstdServer ideServer) throws ExecutionException {
+    if (!myRunSettings.isExternalServerType() && ideServer == null) {
+      throw new ExecutionException("[Internal error] Local JsTestDriver server running in IDE not found");
+    }
     ProcessHandler processHandler = createProcessHandler(ideServer);
     ConsoleView consoleView = createSMTRunnerConsoleView(ideServer);
     consoleView.attachToProcess(processHandler);

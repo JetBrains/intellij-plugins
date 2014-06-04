@@ -6,6 +6,7 @@ import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.config.ParsedConfiguration;
 import com.google.jstestdriver.config.ResolvedConfiguration;
 import com.google.jstestdriver.config.YamlParser;
+import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.util.JstdConfigParsingUtils;
 import com.google.jstestdriver.model.BasePaths;
 import com.intellij.execution.ExecutionException;
@@ -22,16 +23,15 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Collection;
 
-/**
- * @author Sergey Simonchik
- */
-public class JstdDebuggableFileFinderProvider {
-  private static final Logger LOG = Logger.getInstance(JstdDebuggableFileFinderProvider.class);
+public class JstdDebuggingFileFinderProvider {
+  private static final Logger LOG = Logger.getInstance(JstdDebuggingFileFinderProvider.class);
 
   private final File myConfigFile;
+  private final JstdServer myServer;
 
-  public JstdDebuggableFileFinderProvider(@NotNull File configFile) {
+  public JstdDebuggingFileFinderProvider(@NotNull File configFile, @NotNull JstdServer server) {
     myConfigFile = configFile;
+    myServer = server;
   }
 
   @NotNull
@@ -78,7 +78,7 @@ public class JstdDebuggableFileFinderProvider {
     }
   }
 
-  private static void addAllRemoteUrlMappings(@NotNull Collection<FileInfo> filesInfo, @NotNull BiMap<String, VirtualFile> map) {
+  private void addAllRemoteUrlMappings(@NotNull Collection<FileInfo> filesInfo, @NotNull BiMap<String, VirtualFile> map) {
     LocalFileSystem fileSystem = LocalFileSystem.getInstance();
     for (FileInfo fileInfo : filesInfo) {
       String displayPath = fileInfo.getDisplayPath();
@@ -86,7 +86,8 @@ public class JstdDebuggableFileFinderProvider {
       if (StringUtil.isNotEmpty(displayPath) && file.isFile()) {
         VirtualFile virtualFile = fileSystem.findFileByIoFile(file);
         if (virtualFile != null) {
-          map.forcePut("http://127.0.0.1:9876/test/" + UriUtil.trimLeadingSlashes(displayPath), virtualFile);
+          String url = "http://127.0.0.1:" + myServer.getSettings().getPort() + "/test/" + UriUtil.trimLeadingSlashes(displayPath);
+          map.forcePut(url, virtualFile);
         }
       }
     }
