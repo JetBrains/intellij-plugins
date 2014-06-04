@@ -45,17 +45,14 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
   protected AsyncResult<RunProfileStarter> prepare(@NotNull Project project,
                                                    @NotNull ExecutionEnvironment environment,
                                                    @NotNull RunProfileState state) throws ExecutionException {
-    if (state instanceof JstdRunProfileState) {
-      JstdRunProfileState jstdState = (JstdRunProfileState) state;
-      if (jstdState.getRunSettings().isExternalServerType()) {
-        return AsyncResult.<RunProfileStarter>done(new MyStarter(null, this));
-      }
+    JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
+    if (jstdState.getRunSettings().isExternalServerType()) {
+      return AsyncResult.<RunProfileStarter>done(new MyStarter(null, this));
     }
     JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(project);
     jstdToolWindowManager.setAvailable(true);
-    JstdServerRegistry registry = JstdServerRegistry.getInstance();
-    JstdServer server = registry.getServer();
-    if (server != null && server.isProcessRunning() && !server.isStopped()) {
+    JstdServer server = JstdServerRegistry.getInstance().getServer();
+    if (server != null && !server.isStopped()) {
       return AsyncResult.<RunProfileStarter>done(new MyStarter(server, this));
     }
     final AsyncResult<RunProfileStarter> result = new AsyncResult<RunProfileStarter>();
@@ -91,7 +88,7 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
                                         @Nullable RunContentDescriptor contentToReuse,
                                         @NotNull ExecutionEnvironment environment) throws ExecutionException {
       FileDocumentManager.getInstance().saveAllDocuments();
-      JstdRunProfileState jstdState = (JstdRunProfileState) state;
+      JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
       ExecutionResult executionResult = jstdState.executeWithServer(myServer);
       RunContentBuilder contentBuilder = new RunContentBuilder(myRunner, executionResult, environment);
       final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);

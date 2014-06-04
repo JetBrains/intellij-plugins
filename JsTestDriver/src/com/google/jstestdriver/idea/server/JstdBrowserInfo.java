@@ -23,6 +23,6 @@ public class JstdBrowserInfo {
 
   @Override
   public String toString() {
-    return "id:" + myId + ", name='" + myName;
+    return "id=" + myId + ", name=" + myName;
   }
 }

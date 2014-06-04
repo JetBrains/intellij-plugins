@@ -61,7 +61,7 @@ public class JstdCoverageProgramRunner extends GenericProgramRunner {
     FileDocumentManager.getInstance().saveAllDocuments();
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
-    RunProfileState state = runConfiguration.getCoverageState(env, coverageFilePath);
+    RunProfileState state = runConfiguration.getState(env, coverageFilePath);
     ExecutionResult executionResult = state.execute(env.getExecutor(), this);
     if (executionResult == null) {
       return null;

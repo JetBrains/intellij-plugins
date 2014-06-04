@@ -53,7 +53,8 @@ public class UITagsAttributesReferenceProviderTest extends BasicLightHighlightin
   }
 
   public void testCommonAttributes() throws Throwable {
-    myFixture.testHighlighting(true, false, false, "/jsp/common.jsp");
+    myFixture.testHighlighting(true, false, false, "/jsp/common.jsp",
+                               "MyBundle.properties");
   }
 
   public void testSpecificAttributes() throws Throwable {

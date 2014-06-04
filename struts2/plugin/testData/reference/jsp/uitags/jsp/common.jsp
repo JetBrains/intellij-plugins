@@ -42,3 +42,7 @@
 <s:doubleselect multiple="false"/>
 <s:doubleselect multiple="<error>INVALID_VALUE</error>"/>
 
+<%-- "key" --%>
+<s:doubleselect key="validKey"/>
+<s:doubleselect key="<error descr="Cannot resolve property key">INVALID_VALUE</error>"/>
+
