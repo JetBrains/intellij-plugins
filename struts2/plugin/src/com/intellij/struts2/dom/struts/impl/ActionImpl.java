@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,6 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.openapi.util.VolatileNotNullLazyValue;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
@@ -39,17 +37,9 @@ import java.util.List;
 @SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class ActionImpl implements Action {
 
-  private final NotNullLazyValue<String> myActionName = new VolatileNotNullLazyValue<String>() {
-    @NotNull
-    @Override
-    protected String compute() {
-      return getName().getRawText();
-    }
-  };
-
   @Nullable
   private String getNameValue() {
-    return myActionName.getValue();
+    return getName().getRawText();
   }
 
   @Override
