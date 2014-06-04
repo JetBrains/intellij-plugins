@@ -43,6 +43,9 @@
 
 
   <extensions defaultExtensionNs="com.intellij">
+    <codeInsight.template.postfixTemplateProvider language="AngularJS"
+                                                  implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
+
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
     <xml.attributeDescriptorsProvider implementation="org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider" order="first"/>
