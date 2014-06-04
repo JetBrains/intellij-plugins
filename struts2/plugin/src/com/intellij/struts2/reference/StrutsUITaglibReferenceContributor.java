@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -117,6 +117,10 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
     registerTags(new StaticStringValuesReferenceProvider(false, "left", "right"),
                  "requiredposition", registrar,
                  TAGLIB_UI_FORM_TAGS);
+
+    registerTags(wrappedPropertiesProvider,
+                 "key", registrar,
+                 TAGLIB_UI_FORM_INPUT_TAGS);
 
     // elements with "readonly"
     registerBoolean("readonly", registrar, "combobox", "password", "textarea", "textfield");
