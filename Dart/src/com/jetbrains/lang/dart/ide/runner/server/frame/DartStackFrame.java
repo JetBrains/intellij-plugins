@@ -43,6 +43,11 @@ public class DartStackFrame extends XStackFrame {
   }
 
   @Nullable
+  public Object getEqualityObject() {
+    return myLocationUrl + "#" + myVmCallFrame.getFunctionName();
+  }
+
+  @Nullable
   @Override
   public XSourcePosition getSourcePosition() {
     return mySourcePosition;
