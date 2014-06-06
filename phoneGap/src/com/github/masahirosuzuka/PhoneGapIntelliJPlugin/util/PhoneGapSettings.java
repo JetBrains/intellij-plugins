@@ -3,6 +3,7 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util;
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -133,8 +134,8 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
             return;
         }
 
-        File cordova = PathEnvironmentVariableUtil.findInPath("cordova");
-        File phoneGap = PathEnvironmentVariableUtil.findInPath("phonegap");
+        File cordova = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? "cordova.cmd" : "cordova");
+        File phoneGap = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? "phonegap.cmd" : "phonegap");
         State state = new State();
         if (cordova != null && cordova.exists()) {
             state.cordovaExecutablePath = cordova.getAbsolutePath();
