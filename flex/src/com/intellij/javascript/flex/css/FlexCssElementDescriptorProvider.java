@@ -195,7 +195,21 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return null;
   }
 
-  public CssPropertyDescriptor getPropertyDescriptor(@NotNull String propertyName, @Nullable PsiElement context) {
+  @NotNull
+  @Override
+  public Collection<? extends CssPseudoSelectorDescriptor> getPseudoSelectorDescriptors(@NotNull String name) {
+    return ContainerUtil.newArrayList(new CssPseudoSelectorDescriptorStub(name));
+  }
+
+  @NotNull
+  @Override
+  public Collection<? extends CssValueDescriptor> getNamedValueDescriptors(@NotNull String name, @Nullable CssValueDescriptor parent) {
+    return ContainerUtil.newArrayList(new CssNullValue(parent));
+  }
+
+  @NotNull
+  @Override
+  public Collection<? extends CssPropertyDescriptor> getPropertyDescriptors(@NotNull String propertyName, PsiElement context) {
     if (context != null) {
       Module module = findModuleForPsiElement(context);
       GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
@@ -203,28 +217,16 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       List<CssSimpleSelector> selectors = findSimpleSelectorsAbove(context);
       List<FlexStyleIndexInfo> infos = filter(lists, selectors, scope, module);
       if (infos.size() > 0) {
-        return new FlexCssPropertyDescriptor(infos);
+        return ContainerUtil.newHashSet(new FlexCssPropertyDescriptor(infos));
       }
     }
-    return null;
+    return Collections.emptyList();
   }
 
   @NotNull
   @Override
-  public Collection<CssPseudoSelectorDescriptor> getPseudoSelectorDescriptors(@NotNull String name) {
-    return ContainerUtil.<CssPseudoSelectorDescriptor>newArrayList(new CssPseudoSelectorDescriptorStub(name));
-  }
-
-  @NotNull
-  @Override
-  public Collection<CssValueDescriptor> getNamedValueDescriptors(@NotNull String name, @Nullable CssValueDescriptor parent) {
-    return ContainerUtil.<CssValueDescriptor>newArrayList(new CssNullValue(parent));
-  }
-
-  @NotNull
-  @Override
-  public Collection<CssFunctionDescriptor> getFunctionDescriptors(@NotNull String functionName) {
-    return ContainerUtil.<CssFunctionDescriptor>newArrayList(new CssFunctionDescriptorStub(functionName));
+  public Collection<? extends CssFunctionDescriptor> getFunctionDescriptors(@NotNull String functionName) {
+    return ContainerUtil.newArrayList(new CssFunctionDescriptorStub(functionName));
   }
 
   public boolean isPossibleSelector(@NotNull String selector, @NotNull PsiElement context) {
@@ -558,8 +560,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
     final CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
     if (dialect == CssDialect.CLASSIC) {
-      final CssPropertyDescriptor flexDescriptor = getPropertyDescriptor(propertyName, context);
-      if (flexDescriptor != null) {
+      final Collection<? extends CssPropertyDescriptor> flexDescriptor = getPropertyDescriptors(propertyName, context);
+      if (!flexDescriptor.isEmpty()) {
         return new LocalQuickFix[]{new SwitchToCssDialectQuickFix(FlexCSSDialect.getInstance())};
       }
     }
@@ -567,8 +569,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       final CssElementDescriptorProviderImpl classicCssDescriptorProvider =
         CssElementDescriptorProvider.EP_NAME.findExtension(CssElementDescriptorProviderImpl.class);
       if (classicCssDescriptorProvider != null) {
-        final CssPropertyDescriptor classicDescriptor = classicCssDescriptorProvider.getPropertyDescriptor(propertyName, context);
-        if (classicDescriptor != null) {
+        Collection<? extends CssPropertyDescriptor> classicDescriptors = classicCssDescriptorProvider.getPropertyDescriptors(propertyName, context);
+        if (!classicDescriptors.isEmpty()) {
           return new LocalQuickFix[]{new SwitchToCssDialectQuickFix(CssDialect.CLASSIC)};
         }
       }
