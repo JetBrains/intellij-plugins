@@ -75,6 +75,21 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
     }
 
     @Override
+    protected boolean parseUnaryExpression() {
+      final IElementType tokenType = builder.getTokenType();
+      if (tokenType == AngularJSTokenTypes.ONE_TIME_BINDING) {
+        final PsiBuilder.Marker expr = builder.mark();
+        builder.advanceLexer();
+        if (!parseUnaryExpression()) {
+          builder.error(JSBundle.message("javascript.parser.message.expected.expression"));
+        }
+        expr.done(JSElementTypes.PREFIX_EXPRESSION);
+        return true;
+      }
+      return super.parseUnaryExpression();
+    }
+
+    @Override
     public boolean parsePrimaryExpression() {
       final IElementType firstToken = builder.getTokenType();
       if (firstToken == JSTokenTypes.STRING_LITERAL) {
