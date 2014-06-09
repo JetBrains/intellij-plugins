@@ -12,6 +12,7 @@ import com.intellij.openapi.util.IconLoader;
 import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
 import com.jetbrains.cidr.execution.BuildDestination;
 import com.jetbrains.cidr.execution.IOSBuildDestination;
+import com.jetbrains.cidr.execution.simulator.SimulatorConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
