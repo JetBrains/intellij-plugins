@@ -161,7 +161,7 @@ public class JstdRunProfileState implements RunProfileState {
     if (ideServer != null) {
       ideServer.addLifeCycleListener(new JstdServerLifeCycleAdapter() {
         @Override
-        public void onServerTerminated() {
+        public void onServerTerminated(int exitCode) {
           nopProcessHandler.destroyProcess();
         }
       }, myProject);

@@ -51,7 +51,7 @@ public class JstdServer {
       @Override
       public void processTerminated(ProcessEvent event) {
         LOG.info(myName + " terminated with exit code " + event.getExitCode());
-        myLifeCycleManager.onTerminated();
+        myLifeCycleManager.onTerminated(event.getExitCode());
         Disposer.dispose(myDisposable);
       }
     });

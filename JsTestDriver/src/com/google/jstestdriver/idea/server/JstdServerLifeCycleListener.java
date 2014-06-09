@@ -7,5 +7,5 @@ public interface JstdServerLifeCycleListener {
   void onBrowserCaptured(@NotNull JstdBrowserInfo info);
   void onBrowserPanicked(@NotNull JstdBrowserInfo info);
   void onServerStopped();
-  void onServerTerminated();
+  void onServerTerminated(int exitCode);
 }

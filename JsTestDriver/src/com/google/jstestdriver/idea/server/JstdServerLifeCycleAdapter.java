@@ -10,7 +10,7 @@ public class JstdServerLifeCycleAdapter implements JstdServerLifeCycleListener {
   public void onServerStopped() {}
 
   @Override
-  public void onServerTerminated() {}
+  public void onServerTerminated(int exitCode) {}
 
   @Override
   public void onBrowserCaptured(@NotNull JstdBrowserInfo info) {}
