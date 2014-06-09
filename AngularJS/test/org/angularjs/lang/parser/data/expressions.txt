@@ -160,3 +160,10 @@ ASTWrapperPsiElement(FILE)
       PsiElement(JS:EQ)('=')
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('234')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSPrefixExpression
+      PsiElement(ONE_TIME_BINDING)('::')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('a')
