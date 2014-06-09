@@ -18,6 +18,8 @@ package com.intellij.javascript.flex.refactoring;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.index.JSNamespace;
+import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.navigation.NavigationItem;
@@ -152,5 +154,11 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
       }
       return null;
     }
+  }
+
+  @Nullable
+  @Override
+  public JSQualifiedName getNamespace() {
+    return JSNamespace.buildNamespace(this, getName());
   }
 }
