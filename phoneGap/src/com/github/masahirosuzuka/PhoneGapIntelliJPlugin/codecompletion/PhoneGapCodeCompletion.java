@@ -2,12 +2,9 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.codecompletion;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.lang.Language;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.util.ProcessingContext;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.kohsuke.rngom.binary.ElementPattern;
 
 /**
  * PhoneGapCodeCompletion.java
