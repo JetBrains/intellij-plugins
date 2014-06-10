@@ -161,4 +161,9 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
   public JSQualifiedName getNamespace() {
     return JSNamespace.buildNamespace(this);
   }
+
+  @Override
+  public boolean isNamespaceExplicitlyDeclared() {
+    return true;
+  }
 }
