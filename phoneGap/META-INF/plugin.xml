@@ -1,0 +1,93 @@
+<idea-plugin version="2">
+    <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
+    <name>PhoneGap/Cordova Plugin</name>
+    <version>0.8.1</version>
+    <vendor email="masahiro.suzuka@gmail.com" url="http://github.com/masahirosuzuka/PhoneGapIntelliJPlugin">
+        masahirosuzuka
+    </vendor>
+
+    <description><![CDATA[
+        <h4>PhoneGap/Cordova integration for InteliJ Platform.<h4>
+        <p>* PhoneGap/Cordova Project wizard (not stable)</p>
+        <p>* PhoneGap/Cordova Project importer</p>
+        <p>* Run PhoneGap/Cordova application from IntelliJ toolbar</p>
+        <p>* Code completion</p>
+        <p>Ripple emulator support</p>
+        <p>See README.md</p>
+        <a href="https://github.com/masahirosuzuka/phonegap-intelliJ-plugin">masahirsuzuka/PhoneGapIntelliJPlugin</a>
+    ]]></description>
+
+    <change-notes><![CDATA[
+    <p>v0.8.1 Fix request jvm version</p>
+    <p>v0.8.0 Code complements</p>
+    <p>v0.7.0 Cordova support</p>
+    <p>v0.6.0 Ripple emulator support</p>
+    <p>v0.5.1 Bug fix</p>
+    <p>v0.5.0 iOS Support</p>
+    <p>v0.4.1 External tool(NodeJS and Android SDK) detector && fix always output "PhoneGap platform is missing" bug</p>
+    <p>v0.3.3 Fix request jvm version 1.7 -> 1.6 (Error:Unsupported major.minor version 51.0)</p>
+    <p>v0.3.2 Fix target Platform</p>
+    <p>v0.3.1 Bug fix</p>
+    <p>v0.3.0 Project Builder (Dev)</p>
+    <p>v0.2 Project Importer</p>
+    <p>v0.1 RunConfigure</p>
+    ]]>
+    </change-notes>
+
+    <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+    <idea-version since-build="131"/>
+
+    <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+         on how to target different products -->
+    <depends>com.intellij.modules.lang</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Global Setting Dialog -->
+        <applicationConfigurable instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable"/>
+
+        <!-- Project Setting Dialog -->
+        <projectConfigurable instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapProjectConfigurable" />
+
+        <!-- Project generator -->
+        <moduleType id="PHONEGAP_MODULE"
+                    implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapModuleType"/>
+        <moduleConfigurationEditorProvider
+                implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapModuleEditorProvider"/>
+
+        <!-- Project importer -->
+        <projectImportProvider
+                implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImporter.PhoneGapProjectImportProvider"/>
+        <projectImportBuilder
+                implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImporter.PhoneGapProjectImportBuilder"/>
+
+        <!-- Project runner -->
+        <configurationType
+                implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapConfigurationType"/>
+        <programRunner implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunner"/>
+
+        <applicationService serviceInterface="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings"
+                            serviceImplementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings"/>
+
+        <completion.contributor language="any"
+                                implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.codecompletion.PhoneGapCodeCompletion" />
+    </extensions>
+
+    <application-components>
+        <!-- Add your application components here -->
+
+    </application-components>
+
+    <project-components>
+        <!-- Add your project components here -->
+        <component>
+            <implementation-class>
+                com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector.ExternalToolsDetector
+            </implementation-class>
+        </component>
+    </project-components>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+
+</idea-plugin>
