@@ -180,7 +180,7 @@ module Spec
                     end
 
           # Backtrace
-          backtrace = calc_backtrace(failure.exception, example)
+          backtrace = example_notification.formatted_backtrace.join("\n")
 
           debug_log("Example failing... full name = [#{running_example_full_name}], Message:\n#{message} \n\nBackrace:\n#{backtrace}\n\n, additional flowid suffix=[#{additional_flowid_suffix}]")
 
@@ -274,11 +274,6 @@ module Spec
         ###########################################################################
         ###########################################################################
         private
-
-        def calc_backtrace(exception, example)
-          return '' if exception.nil?
-          RSpec.configuration.backtrace_formatter.format_backtrace(exception.backtrace).join("\n")
-        end
 
         def gather_unfinished_examples_name
           if @@RUNNING_EXAMPLES_STORAGE.empty?
