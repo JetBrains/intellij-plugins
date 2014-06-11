@@ -41,10 +41,13 @@ import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyExternalProcessException;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.templateLanguages.TemplatesService;
+import icons.PycharmFlaskIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.File;
 
 /**
  * @author yole
@@ -60,10 +63,11 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
     myForceInstallFlask = forceInstallFlask;
   }
 
+  @NotNull
   @Nls
   @Override
   public String getName() {
-    return "Flask project";
+    return "Flask";
   }
 
   @Override
@@ -72,7 +76,7 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
   }
 
   @Override
-  public boolean isFrameworkInstalled(Project project, Sdk sdk) {
+  public boolean isFrameworkInstalled(Sdk sdk) {
     VirtualFile[] roots = sdk.getRootProvider().getFiles(OrderRootType.CLASSES);
     for (VirtualFile root : roots) {
       if (root.isValid() && root.findChild("flask") != null) {
@@ -93,7 +97,24 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
   }
 
   @Override
+  @Nullable
+  public Icon getIcon() {
+    return PycharmFlaskIcons.Flask_logo;
+  }
+
+  @Override
   public PyNewProjectSettings showGenerationSettings(VirtualFile baseDir) throws ProcessCanceledException {
+    return null;  // to be deleted
+  }
+
+  @Override
+  @Nullable
+  public JComponent getSettingsPanel(File baseDir) throws ProcessCanceledException {
+    return null;
+  }
+
+  @Override
+  public PyNewProjectSettings getProjectSettings() throws ProcessCanceledException {
     return new PyNewProjectSettings();
   }
 
@@ -134,7 +155,7 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
     }
     if (myForceInstallFlask) {
       Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
-      return sdk != null && !isFrameworkInstalled(module.getProject(), sdk);
+      return sdk != null && !isFrameworkInstalled(sdk);
     }
     return false;
   }
