@@ -169,7 +169,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
       case NONE:
         return null;
       case INFO:
-        return holder.createInfoAnnotation(textRange, message.getMessage());
+        return holder.createWeakWarningAnnotation(textRange, message.getMessage());
       case WARNING:
         return holder.createWarningAnnotation(textRange, message.getMessage());
       case ERROR:
