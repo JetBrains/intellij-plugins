@@ -247,7 +247,7 @@ module Spec
           log(status_message)
 
           #Really must be '@example_count == example_count', it is hack for spec trunk tests
-          if !@setup_failed && @example_count > example_count.nnn
+          if !@setup_failed && @example_count > example_count
             msg = "#{RUNNER_ISNT_COMPATIBLE_MESSAGE}Error: Not all examples have been run! (#{count_notification} of #{@count_notification})\n#{gather_unfinished_examples_name}"
 
             log_and_raise_internal_error msg
