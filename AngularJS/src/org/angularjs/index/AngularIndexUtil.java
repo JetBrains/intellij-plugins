@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.index.JSEntryIndex;
 import com.intellij.lang.javascript.index.JSIndexEntry;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -61,6 +62,8 @@ public class AngularIndexUtil {
   }
 
   public static boolean hasAngularJS(final Project project) {
+    if (ApplicationManager.getApplication().isUnitTestMode() && "disabled".equals(System.getProperty("angular.js"))) return false;
+
     if (DumbService.isDumb(project)) return false;
     return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<Boolean>() {
       @Nullable
