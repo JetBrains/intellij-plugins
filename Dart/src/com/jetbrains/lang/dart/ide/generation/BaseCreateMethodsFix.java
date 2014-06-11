@@ -1,8 +1,10 @@
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.FileModificationService;
+import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -80,11 +82,20 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
   }
 
   protected void processElements(@NotNull Project project, @NotNull Editor editor, Set<T> elementsToProcess) {
+    if (elementsToProcess.isEmpty()) {
+      if (!ApplicationManager.getApplication().isUnitTestMode()) {
+        HintManager.getInstance().showErrorHint(editor, getNothingFoundMessage());
+       }
+       return;
+    }
     final TemplateManager templateManager = TemplateManager.getInstance(project);
     for (T e : elementsToProcess) {
       anchor = doAddMethodsForOne(editor, templateManager, buildFunctionsText(templateManager, e), anchor);
     }
   }
+
+  @NotNull
+  protected abstract String getNothingFoundMessage();
 
   @Nullable
   protected abstract Template buildFunctionsText(TemplateManager templateManager, T e);

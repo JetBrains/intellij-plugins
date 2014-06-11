@@ -5,11 +5,13 @@ import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartReturnType;
 import com.jetbrains.lang.dart.psi.DartType;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -25,6 +27,10 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
           }
         }) == null;
       }
+
+      @NotNull
+      @Override
+      String getNothingFoundMessage() { return DartBundle.message("dart.fix.getter.none.found"); }
     }, SETTER {
       @Override
       boolean accept(final String name, List<DartComponent> componentList) {
@@ -35,6 +41,10 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
           }
         }) == null;
       }
+
+      @NotNull
+      @Override
+      String getNothingFoundMessage() { return DartBundle.message("dart.fix.setter.none.found"); }
     }, GETTERSETTER {
       @Override
       boolean accept(final String name, List<DartComponent> componentList) {
@@ -45,17 +55,28 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
           }
         }) == null;
       }
+
+      @NotNull
+      @Override
+      String getNothingFoundMessage() { return DartBundle.message("dart.fix.gettersetter.none.found"); }
     };
 
     abstract boolean accept(String name, List<DartComponent> componentList);
+
+    @NotNull
+    abstract String getNothingFoundMessage();
   }
 
-  private final Strategy myStratagy;
+  private final @NotNull Strategy myStrategy;
 
-  public CreateGetterSetterFix(final DartClass dartClass, Strategy strategy) {
+  public CreateGetterSetterFix(final DartClass dartClass, @NotNull Strategy strategy) {
     super(dartClass);
-    myStratagy = strategy;
+    myStrategy = strategy;
   }
+
+  @Override
+  @NotNull
+  protected String getNothingFoundMessage() { return myStrategy.getNothingFoundMessage(); }
 
   @Override
   protected Template buildFunctionsText(TemplateManager templateManager, DartComponent namedComponent) {
@@ -65,10 +86,10 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
                                                : DartPresentableUtil.buildTypeText(namedComponent, returnType, null);
     final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);
     template.setToReformat(true);
-    if (myStratagy == Strategy.GETTER || myStratagy == Strategy.GETTERSETTER) {
+    if (myStrategy == Strategy.GETTER || myStrategy == Strategy.GETTERSETTER) {
       buildGetter(template, namedComponent.getName(), typeText);
     }
-    if (myStratagy == Strategy.SETTER || myStratagy == Strategy.GETTERSETTER) {
+    if (myStrategy == Strategy.SETTER || myStrategy == Strategy.GETTERSETTER) {
       buildSetter(template, namedComponent.getName(), typeText);
     }
     return template;

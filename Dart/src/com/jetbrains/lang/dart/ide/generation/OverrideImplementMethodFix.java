@@ -3,16 +3,22 @@ package com.jetbrains.lang.dart.ide.generation;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartReturnType;
 import com.jetbrains.lang.dart.psi.DartType;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
+import org.jetbrains.annotations.NotNull;
 
 public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartComponent> {
   public OverrideImplementMethodFix(final DartClass dartClass) {
     super(dartClass);
   }
+
+  @Override
+  @NotNull
+  protected String getNothingFoundMessage() { return DartBundle.message("dart.fix.implement.none.found"); }
 
   @Override
   protected Template buildFunctionsText(TemplateManager templateManager, DartComponent element) {
@@ -43,4 +49,6 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
     template.addTextSegment("\n}\n");
     return template;
   }
+
+
 }
