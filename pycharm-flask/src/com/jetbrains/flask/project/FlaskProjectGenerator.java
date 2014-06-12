@@ -38,6 +38,7 @@ import com.intellij.psi.PsiManager;
 import com.jetbrains.flask.codeInsight.FlaskNames;
 import com.jetbrains.python.newProject.PyFrameworkProjectGenerator;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
+import com.jetbrains.python.newProject.PythonProjectGenerator;
 import com.jetbrains.python.packaging.PyExternalProcessException;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.templateLanguages.TemplatesService;
@@ -52,7 +53,7 @@ import java.io.File;
 /**
  * @author yole
  */
-public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewProjectSettings> {
+public class FlaskProjectGenerator extends PythonProjectGenerator implements PyFrameworkProjectGenerator<PyNewProjectSettings> {
   private final boolean myForceInstallFlask;
 
   public FlaskProjectGenerator() {
@@ -114,7 +115,7 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
   }
 
   @Override
-  public PyNewProjectSettings getProjectSettings() throws ProcessCanceledException {
+  public PyNewProjectSettings getProjectSettings() {
     return new PyNewProjectSettings();
   }
 
