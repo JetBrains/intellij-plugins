@@ -98,7 +98,7 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
 
   @Override
   @Nullable
-  public Icon getIcon() {
+  public Icon getLogo() {
     return PycharmFlaskIcons.Flask_logo;
   }
 
