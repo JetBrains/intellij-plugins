@@ -5,6 +5,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.util.Computable;
 import com.intellij.testFramework.LightIdeaTestCase;
 import com.intellij.util.TimeoutUtil;
 import org.jetbrains.annotations.NotNull;
@@ -148,12 +149,26 @@ public class BundleManagerTest extends LightIdeaTestCase {
       "Bundle-Version: 1.0.0\n" +
       "Require-Bundle: org.eclipse.circular.one",
       getModule()));
+    Set<Object> objects = resolve();
 
+
+    assertThat(objects, notNullValue());
+    assertThat(objects.contains("org.eclipse.circular.one"), is(true));
+    assertThat(objects.contains("org.eclipse.circular.two"), is(true));
+    assertThat(objects.size(), is(2)); //  no more no less
+  }
+
+  private Set<Object> resolve() throws InterruptedException, ExecutionException {
     // may run into infinite loop, so run it in a future task
     FutureTask<Set<Object>> bt = new FutureTask<Set<Object>>(new Callable<Set<Object>>() {
       @Override
       public Set<Object> call() throws Exception {
-        return myBundleManager.resolveDependenciesOf(getModule());
+        return ApplicationManager.getApplication().runReadAction(new Computable<Set<Object>>() {
+                @Override
+                public Set<Object> compute() {
+                  return myBundleManager.resolveDependenciesOf(getModule());
+                }
+              });
       }
     });
     Executors.newFixedThreadPool(1).execute(bt);
@@ -168,11 +183,7 @@ public class BundleManagerTest extends LightIdeaTestCase {
       TimeoutUtil.sleep(100);
     }
 
-    Set<Object> objects = bt.get();
-    assertThat(objects, notNullValue());
-    assertThat(objects.contains("org.eclipse.circular.one"), is(true));
-    assertThat(objects.contains("org.eclipse.circular.two"), is(true));
-    assertThat(objects.size(), is(2)); //  no more no less
+    return bt.get();
   }
 
   /**
@@ -204,26 +215,7 @@ public class BundleManagerTest extends LightIdeaTestCase {
       "Require-Bundle: org.eclipse.fragment.host\n" +
       "Bundle-ClassPath: " + FAKE_JAR_NAME, getModule()));
 
-    // may run into infinite loop, so run it in a future task
-    FutureTask<Set<Object>> bt = new FutureTask<Set<Object>>(new Callable<Set<Object>>() {
-      @Override
-      public Set<Object> call() throws Exception {
-        return myBundleManager.resolveDependenciesOf(getModule());
-      }
-    });
-    Executors.newFixedThreadPool(1).execute(bt);
-
-    long t = System.currentTimeMillis();
-    while (!bt.isDone()) {
-      long elapsed = System.currentTimeMillis() - t;
-      if (elapsed > 2000) { // should be easily doable within 2 second
-        bt.cancel(true);
-        fail("Infinite loop detected in MyBundleManager while resolving circular dependencies.");
-      }
-      TimeoutUtil.sleep(100);
-    }
-
-    Set<Object> objects = bt.get();
+    Set<Object> objects = resolve();
     assertThat(objects, notNullValue());
     assertThat(objects.contains("org.eclipse.fragment.host"), is(true));
     assertThat(objects.contains("org.eclipse.circular.one"), is(true));
