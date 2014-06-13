@@ -112,6 +112,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @Override
   protected boolean isApplicableFor(@NotNull AppCodeRunConfiguration configuration) {
+    if (ApplicationManager.getApplication().isUnitTestMode()) return false;
     return configuration instanceof AppCodeAppRunConfiguration;
   }
 
