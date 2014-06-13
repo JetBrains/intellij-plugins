@@ -226,6 +226,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                                      return false;
                                                    }
 
+                                                   @NotNull
                                                    @Override
                                                    public String getDoNotShowMessage() {
                                                      return CommonBundle.message("dialog.options.do.not.show");
