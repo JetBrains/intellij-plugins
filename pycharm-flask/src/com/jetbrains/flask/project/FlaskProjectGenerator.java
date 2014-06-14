@@ -35,12 +35,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.jetbrains.flask.codeInsight.FlaskNames;
 import com.jetbrains.python.newProject.PyFrameworkProjectGenerator;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.newProject.PythonProjectGenerator;
 import com.jetbrains.python.packaging.PyExternalProcessException;
 import com.jetbrains.python.packaging.PyPackageManager;
+import com.jetbrains.python.templateLanguages.TemplateLanguagePanel;
+import com.jetbrains.python.templateLanguages.TemplateSettingsHolder;
 import com.jetbrains.python.templateLanguages.TemplatesService;
 import icons.PycharmFlaskIcons;
 import org.jetbrains.annotations.Nls;
@@ -53,8 +54,9 @@ import java.io.File;
 /**
  * @author yole
  */
-public class FlaskProjectGenerator extends PythonProjectGenerator implements PyFrameworkProjectGenerator<PyNewProjectSettings> {
+public class FlaskProjectGenerator extends PythonProjectGenerator implements PyFrameworkProjectGenerator<TemplateSettingsHolder> {
   private final boolean myForceInstallFlask;
+  private TemplateLanguagePanel myTemplatesPanel;
 
   public FlaskProjectGenerator() {
     myForceInstallFlask = false;
@@ -104,23 +106,27 @@ public class FlaskProjectGenerator extends PythonProjectGenerator implements PyF
   }
 
   @Override
-  public PyNewProjectSettings showGenerationSettings(VirtualFile baseDir) throws ProcessCanceledException {
-    return null;  // to be deleted
+  public TemplateSettingsHolder showGenerationSettings(VirtualFile baseDir) throws ProcessCanceledException {
+    return null;
   }
 
   @Override
   @Nullable
   public JComponent getSettingsPanel(File baseDir) throws ProcessCanceledException {
-    return null;
+    myTemplatesPanel = new TemplateLanguagePanel();
+    myTemplatesPanel.setTemplateLanguage(TemplatesService.JINJA2);
+    return myTemplatesPanel;
   }
 
   @Override
   public PyNewProjectSettings getProjectSettings() {
-    return new PyNewProjectSettings();
+    final TemplateSettingsHolder settingsHolder = new TemplateSettingsHolder();
+    myTemplatesPanel.saveSettings(settingsHolder);
+    return settingsHolder;
   }
 
   @Override
-  public void generateProject(final Project project, final VirtualFile baseDir, final PyNewProjectSettings settings, final Module module) {
+  public void generateProject(@NotNull final Project project, @NotNull final VirtualFile baseDir, final TemplateSettingsHolder settings, final Module module) {
     if (needInstallFlask(settings, module)) {
       ProgressManager.getInstance().run(new Task.Backgroundable(project, "Installing Flask", false) {
         @Override
@@ -140,12 +146,13 @@ public class FlaskProjectGenerator extends PythonProjectGenerator implements PyF
               }
             });
           }
-        }});
+        }
+      });
     }
     StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
       @Override
       public void run() {
-        createFlaskMain(module, baseDir);
+        createFlaskMain(module, baseDir, settings);
       }
     });
   }
@@ -161,7 +168,7 @@ public class FlaskProjectGenerator extends PythonProjectGenerator implements PyF
     return false;
   }
 
-  private static void createFlaskMain(final Module module, final VirtualFile baseDir) {
+  private static void createFlaskMain(final Module module, final VirtualFile baseDir, final TemplateSettingsHolder settings) {
     final Project project = module.getProject();
     final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(baseDir);
     new WriteCommandAction.Simple(project) {
@@ -177,11 +184,9 @@ public class FlaskProjectGenerator extends PythonProjectGenerator implements PyF
           return;
         }
         projectDir.createSubdirectory("static");
-        PsiDirectory templates = projectDir.createSubdirectory(FlaskNames.TEMPLATES);
         FlaskProjectConfigurator.createFlaskRunConfiguration(module, appFile.getVirtualFile());
         TemplatesService templatesService = TemplatesService.getInstance(module);
-        templatesService.setTemplateLanguage(TemplatesService.JINJA2);
-        templatesService.setTemplateFolders(templates.getVirtualFile());
+        templatesService.generateTemplates(settings, baseDir);
         appFile.navigate(true);
       }
     }.execute();
