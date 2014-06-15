@@ -2,6 +2,7 @@ package com.google.jstestdriver.idea.execution;
 
 import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.server.JstdServerLifeCycleAdapter;
+import com.google.jstestdriver.idea.server.ui.JstdToolWindowManager;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
@@ -55,6 +56,14 @@ public class JstdConsoleView extends SMTRunnerConsoleView {
         }
       }, this);
     }
+    myServer.addLifeCycleListener(new JstdServerLifeCycleAdapter() {
+      @Override
+      public void onServerTerminated(int exitCode) {
+        print("JsTestDriver server finished with exit code " + exitCode + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+        JstdToolWindowManager.getInstance(getProperties().getProject()).show();
+      }
+    }, this);
+
   }
 
   @Override

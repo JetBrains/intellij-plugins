@@ -1,2 +1,0 @@
-temp.menu = COA
-[GLOBAL]

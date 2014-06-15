@@ -82,6 +82,7 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
   ";"                         { return SEMICOLON; }
   ":"                         { return COLON; }
   "?"                         { return QUEST; }
+  "::"                        { return ONE_TIME_BINDING; }
 
   [^]                         { return BAD_CHARACTER; }
 }
