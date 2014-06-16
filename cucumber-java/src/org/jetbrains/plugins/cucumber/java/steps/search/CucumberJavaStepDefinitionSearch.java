@@ -66,7 +66,7 @@ public class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiRefere
     // As far as default CacheBasedRefSearcher doesn't look for references in string we have to write out own to handle this correctly
     final TextOccurenceProcessor processor = new TextOccurenceProcessor() {
       @Override
-      public boolean execute(PsiElement element, int offsetInElement) {
+      public boolean execute(@NotNull PsiElement element, int offsetInElement) {
         PsiElement parent = element.getParent();
         if (parent == null) return true;
 
