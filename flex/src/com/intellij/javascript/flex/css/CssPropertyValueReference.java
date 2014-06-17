@@ -11,13 +11,8 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Eugene.Kudelevsky
- * Date: Mar 7, 2010
- * Time: 7:41:54 PM
- * To change this template use File | Settings | File Templates.
- */
+import static com.intellij.psi.css.impl.util.table.CssDescriptorsUtil.extractDescriptorsIdsAsArray;
+
 public class CssPropertyValueReference extends PsiPolyVariantCachingReference implements CssReference {
   private final PsiElement myElement;
   private final int myStart;
@@ -94,7 +89,8 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
   @Override
   @NotNull
   public Object[] getVariants() {
-    return CssElementDescriptorProvider.EP_NAME.findExtension(FlexCssElementDescriptorProvider.class).getPropertyNames(myElement);
+    FlexCssElementDescriptorProvider flexDescriptorProvider = CssElementDescriptorProvider.EP_NAME.findExtension(FlexCssElementDescriptorProvider.class);
+    return extractDescriptorsIdsAsArray(flexDescriptorProvider.getAllPropertyDescriptors(myElement));
   }
 
   @Override

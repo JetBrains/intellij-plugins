@@ -197,7 +197,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   @Override
-  public Collection<? extends CssPseudoSelectorDescriptor> getPseudoSelectorDescriptors(@NotNull String name) {
+  public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name) {
     return ContainerUtil.newArrayList(new CssPseudoSelectorDescriptorStub(name));
   }
 
@@ -209,7 +209,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   @Override
-  public Collection<? extends CssPropertyDescriptor> getPropertyDescriptors(@NotNull String propertyName, PsiElement context) {
+  public Collection<? extends CssPropertyDescriptor> findPropertyDescriptors(@NotNull String propertyName, PsiElement context) {
     if (context != null) {
       Module module = findModuleForPsiElement(context);
       GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
@@ -255,16 +255,11 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return false;
   }
 
-  @NotNull
-  public String[] getPossiblePseudoSelectorsNames(@Nullable PsiElement context) {
-    return ArrayUtil.EMPTY_STRING_ARRAY;
-  }
-
   private static boolean isInClassicForm(String propertyName) {
     return propertyName.indexOf('-') >= 0;
   }
 
-  private static void fillPropertyNamesDinamically(@NotNull JSClass jsClass, Set<JSClass> visited, final Set<String> result) {
+  private static void fillPropertyDescriptorsDynamically(@NotNull final JSClass jsClass, Set<JSClass> visited, final Set<CssPropertyDescriptor> result) {
     if (!visited.add(jsClass)) return;
     FlexUtils.processMetaAttributesForClass(jsClass, new JSResolveUtil.MetaDataProcessor() {
       public boolean process(@NotNull JSAttribute jsAttribute) {
@@ -272,7 +267,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
           JSAttributeNameValuePair pair = jsAttribute.getValueByName("name");
           String styleName = pair != null ? pair.getSimpleValue() : null;
           if (styleName != null) {
-            result.add(styleName);
+            result.add(new FlexCssPropertyDescriptor(ContainerUtil.newHashSet(
+              FlexStyleIndexInfo.create(jsClass.getQualifiedName(), styleName, jsAttribute, true))));
           }
         }
         return true;
@@ -284,24 +280,24 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     });
     for (JSClass jsSuper : jsClass.getSupers()) {
       if (jsSuper != null) {
-        fillPropertyNamesDinamically(jsSuper, visited, result);
+        fillPropertyDescriptorsDynamically(jsSuper, visited, result);
       }
     }
   }
 
   @NotNull
-  private static String[] getPropertyNamesDynamically(@NotNull List<CssSimpleSelector> selectors, @NotNull Module module) {
+  private static Collection<? extends CssPropertyDescriptor> getPropertyDescriptorsDynamically(@NotNull List<CssSimpleSelector> selectors,
+                                                                                               @NotNull Module module) {
     FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
     GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
     Set<JSClass> visited = new HashSet<JSClass>();
-    Set<String> result = new HashSet<String>();
+    Set<CssPropertyDescriptor> result = new HashSet<CssPropertyDescriptor>();
     Project project = module.getProject();
 
     for (CssSimpleSelector selector : selectors) {
-
       final JSClass jsClass = getClassFromMxmlDescriptor(selector, module);
       if (jsClass != null) {
-        fillPropertyNamesDinamically(jsClass, visited, result);
+        fillPropertyDescriptorsDynamically(jsClass, visited, result);
         continue;
       }
 
@@ -313,19 +309,19 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       Collection<JSQualifiedNamedElement> candidates = JSResolveUtil.findElementsByName(shortClassName, project, scope);
       for (JSQualifiedNamedElement candidate : candidates) {
         if (candidate instanceof JSClass) {
-          fillPropertyNamesDinamically((JSClass)candidate, visited, result);
+          fillPropertyDescriptorsDynamically((JSClass)candidate, visited, result);
         }
       }
     }
 
-    for (Iterator<String> iterator = result.iterator(); iterator.hasNext();) {
-      String propertyName = iterator.next();
-      List<Set<FlexStyleIndexInfo>> values = fileBasedIndex.getValues(FlexStyleIndex.INDEX_ID, propertyName, scope);
+    for (Iterator<CssPropertyDescriptor> iterator = result.iterator(); iterator.hasNext();) {
+      CssPropertyDescriptor propertyDescriptor = iterator.next();
+      List<Set<FlexStyleIndexInfo>> values = fileBasedIndex.getValues(FlexStyleIndex.INDEX_ID, propertyDescriptor.getPropertyName(), scope);
       if (values.size() == 0) {
         iterator.remove();
       }
     }
-    return ArrayUtil.toStringArray(result);
+    return result;
   }
 
   private static boolean containsGlobalSelectors(@NotNull List<CssSimpleSelector> selectors) {
@@ -339,26 +335,31 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   @NotNull
-  public String[] getPropertyNames(@Nullable PsiElement context) {
+  public Collection<? extends CssPropertyDescriptor> getAllPropertyDescriptors(@Nullable PsiElement context) {
     if(context == null) {
-      return ArrayUtil.EMPTY_STRING_ARRAY;
+      return Collections.emptyList();
     }
+    Module module = findModuleForPsiElement(context);
     List<CssSimpleSelector> simpleSelectors = findSimpleSelectorsAbove(context);
     if (simpleSelectors.size() > 0 && !containsGlobalSelectors(simpleSelectors)) {
-      Module module = findModuleForPsiElement(context);
       if (module != null) {
-        return getPropertyNamesDynamically(simpleSelectors, module);
+        return getPropertyDescriptorsDynamically(simpleSelectors, module);
       }
     }
     FileBasedIndex index = FileBasedIndex.getInstance();
     Collection<String> keys = index.getAllKeys(FlexStyleIndex.INDEX_ID, context.getProject());
-    List<String> result = new ArrayList<String>();
+    List<FlexCssPropertyDescriptor> result = new ArrayList<FlexCssPropertyDescriptor>();
+    GlobalSearchScope scope = module != null 
+                              ? module.getModuleWithDependenciesAndLibrariesScope(false) 
+                              : GlobalSearchScope.projectScope(context.getProject());
     for (String key : keys) {
       if (!isInClassicForm(key)) {
-        result.add(key);
+        for (Set<FlexStyleIndexInfo> infos : index.getValues(FlexStyleIndex.INDEX_ID, key, scope)) {
+          result.add(new FlexCssPropertyDescriptor(infos)); 
+        }
       }
     }
-    return ArrayUtil.toStringArray(result);
+    return result;
   }
 
   @NotNull
@@ -479,7 +480,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       classes[i] = (JSClass)declaration;
     }
     Arrays.sort(classes, new Comparator<JSClass>() {
-      public int compare(JSClass c1, JSClass c2) {
+      public int compare(@NotNull JSClass c1, @NotNull JSClass c2) {
         return Comparing.compare(c1.getQualifiedName(), c2.getQualifiedName());
       }
     });
@@ -560,7 +561,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
     final CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
     if (dialect == CssDialect.CLASSIC) {
-      final Collection<? extends CssPropertyDescriptor> flexDescriptor = getPropertyDescriptors(propertyName, context);
+      final Collection<? extends CssPropertyDescriptor> flexDescriptor = findPropertyDescriptors(propertyName, context);
       if (!flexDescriptor.isEmpty()) {
         return new LocalQuickFix[]{new SwitchToCssDialectQuickFix(FlexCSSDialect.getInstance())};
       }
@@ -569,7 +570,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       final CssElementDescriptorProviderImpl classicCssDescriptorProvider =
         CssElementDescriptorProvider.EP_NAME.findExtension(CssElementDescriptorProviderImpl.class);
       if (classicCssDescriptorProvider != null) {
-        Collection<? extends CssPropertyDescriptor> classicDescriptors = classicCssDescriptorProvider.getPropertyDescriptors(propertyName, context);
+        Collection<? extends CssPropertyDescriptor> classicDescriptors = classicCssDescriptorProvider.findPropertyDescriptors(propertyName,
+                                                                                                                              context);
         if (!classicDescriptors.isEmpty()) {
           return new LocalQuickFix[]{new SwitchToCssDialectQuickFix(CssDialect.CLASSIC)};
         }

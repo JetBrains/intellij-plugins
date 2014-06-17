@@ -60,7 +60,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     myStyleInfo = firstInfo;
     myPropertyName = firstInfo.getAttributeName();
     myInherit = firstInfo.getInherit();
-    myShorthand = constainsShorthand(infos);
+    myShorthand = containsShorthand(infos);
     myValue = createPropertyValue(infos, myShorthand);
     myClassNames = new HashSet<String>();
     myFileNames = new HashSet<String>();
@@ -74,7 +74,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
   }
 
-  private static boolean constainsShorthand(Collection<FlexStyleIndexInfo> infos) {
+  private static boolean containsShorthand(Collection<FlexStyleIndexInfo> infos) {
     for (FlexStyleIndexInfo info : infos) {
       if (isShorthand(info)) return true;
     }
@@ -172,12 +172,12 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
   }
 
-  public String generateDoc(@Nullable PsiElement context) {
+  @Nullable
+  public String getDocumentationString(@Nullable PsiElement context) {
     if (context == null) return null;
     PsiElement[] declarations = getDeclarations(context);
     List<DocumentationElement> docElements = new ArrayList<DocumentationElement>();
-    for (int i = 0, n = declarations.length; i < n; i++) {
-      PsiElement declaration = declarations[i];
+    for (PsiElement declaration : declarations) {
       PsiFile file = declaration.getContainingFile();
       if (file != null) {
         DocumentationProvider provider = DocumentationManager.getProviderFromElement(declaration);
@@ -190,7 +190,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       }
     }
     Collections.sort(docElements, new Comparator<DocumentationElement>() {
-      public int compare(DocumentationElement e1, DocumentationElement e2) {
+      public int compare(@NotNull DocumentationElement e1, @NotNull DocumentationElement e2) {
         return Comparing.compare(e1.header, e2.header);
       }
     });
@@ -291,12 +291,9 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     final Project project = context.getProject();
 
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
-
-    StubIndex stubIndex = StubIndex.getInstance();
-
     Set<JSClass> visited = new HashSet<JSClass>();
     for (String className : myClassNames) {
-      Collection<JSQualifiedNamedElement> candidates = stubIndex.getElements(JSQualifiedElementIndex.KEY, className.hashCode(), project,
+      Collection<JSQualifiedNamedElement> candidates = StubIndex.getElements(JSQualifiedElementIndex.KEY, className.hashCode(), project,
                                                                              scope, JSQualifiedNamedElement.class);
       findStyleAttributes(candidates, visited, navElement2pairInfo);
       // search in MXML files
@@ -329,11 +326,9 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       PairInfo pairInfo = navElement2pairInfo.get(navPair);
       String jsClassQName = pairInfo.myJsClassQName;
       PsiElement navPairInOtherClassWithSameQName = jsClassQName != null ? qName2ResultElement.get(jsClassQName) : null;
-      if (navPairInOtherClassWithSameQName == null) {
-        qName2ResultElement.put(jsClassQName, navPair);
-      }
-      else if (navPairInOtherClassWithSameQName == navElement2pairInfo.get(navPairInOtherClassWithSameQName) &&
-               pairInfo.myPair != navPair) {
+      if (navPairInOtherClassWithSameQName == null ||
+          navPairInOtherClassWithSameQName == navElement2pairInfo.get(navPairInOtherClassWithSameQName) &&
+          pairInfo.myPair != navPair) {
         qName2ResultElement.put(jsClassQName, navPair);
       }
     }
