@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.template.*;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
@@ -19,12 +20,24 @@ public class DartPresentableUtil {
   }
 
   public static String unwrapCommentDelimiters(String text) {
-    if (text.startsWith("/**")) text = text.substring("/**".length());
-    if (text.startsWith("/*")) text = text.substring("/*".length());
-    if (text.startsWith("///")) text = text.substring("///".length());
-    if (text.startsWith("//")) text = text.substring("//".length());
-    if (text.endsWith("**/")) text = text.substring(0, text.length() - "**/".length());
-    if (text.endsWith("*/")) text = text.substring(0, text.length() - "*/".length());
+    if (text.matches("(?sm:[\\t ]*/\\*\\*.*)")) {
+      text = text.replaceAll("\\*/.*", "");
+      text = text.replaceAll("\\n[\\t ]*\\* ?", "\n");
+      text = text.replaceAll("^[\\t ]*/\\*\\* ?", "");
+    }
+    else if (text.matches("(?sm:[\\t ]*/\\*.*)")) {
+      text = text.replaceAll("\\*/.*", "");
+      text = text.replaceAll("\\n[\\t ]*\\* ?", "\n");
+      text = text.replaceAll("^[\\t ]*/\\* ?", "");
+    }
+    else if (text.matches("(?sm:[\\t ]*///.*)")) {
+      text = text.replaceAll("^[\\t ]*/// ?", "");
+      text = text.replaceAll("\\n[\\t ]*/// ?", "\n");
+    }
+    else if (text.matches("(?sm:[\\t ]*//.*)")) {
+      text = text.replaceAll("^[\\t ]*// ?", "");
+      text = text.replaceAll("\\n[\\t ]*// ?", "\n");
+    }
     return text;
   }
 
@@ -52,7 +65,10 @@ public class DartPresentableUtil {
       if (!list.isEmpty()) {
         result.append(", ");
       }
-      result.append("[");
+
+      final boolean isOptional = isOptionalParameterList(namedFormalParameters);
+      result.append(isOptional ? '{' : '[');
+
       List<DartDefaultFormalNamedParameter> list1 = namedFormalParameters.getDefaultFormalNamedParameterList();
       for (int i = 0, size = list1.size(); i < size; i++) {
         if (i > 0) {
@@ -61,9 +77,15 @@ public class DartPresentableUtil {
         DartDefaultFormalNamedParameter formalParameter = list1.get(i);
         result.append(getPresentableNormalFormalParameter(formalParameter.getNormalFormalParameter(), specialization));
       }
-      result.append("]");
+      result.append(isOptional ? '}' : ']');
     }
     return result.toString();
+  }
+
+  private static boolean isOptionalParameterList(final @NotNull DartNamedFormalParameters parameters) {
+    // Workaround for the lack of distinction between named and optional params in the grammar
+    final PsiElement firstChild = parameters.getFirstChild();
+    return firstChild != null && "{".equals(firstChild.getText());
   }
 
   public static String getPresentableNormalFormalParameter(DartNormalFormalParameter parameter, DartGenericSpecialization specialization) {
@@ -160,8 +182,11 @@ public class DartPresentableUtil {
       if (expression instanceof DartReference) {
         DartClass dartClass = ((DartReference)expression).resolveDartClass().getDartClass();
         if (dartClass != null) {
-          result.addTextSegment(dartClass.getName());
-          result.addTextSegment(" ");
+          final String name = dartClass.getName();
+          if (name != null) {
+            result.addTextSegment(name);
+            result.addTextSegment(" ");
+          }
         }
       }
 
@@ -187,8 +212,11 @@ public class DartPresentableUtil {
       if (expression instanceof DartReference) {
         DartClass dartClass = ((DartReference)expression).resolveDartClass().getDartClass();
         if (dartClass != null) {
-          result.addTextSegment(dartClass.getName());
-          result.addTextSegment(" ");
+          final String name = dartClass.getName();
+          if (name != null) {
+            result.addTextSegment(name);
+            result.addTextSegment(" ");
+          }
         }
       }
 
