@@ -10,19 +10,10 @@ import org.jetbrains.plugins.cucumber.inspections.suppress.GherkinSuppressionUti
 /**
  * @author Roman.Chernyatchik
  */
-public abstract class GherkinInspection extends LocalInspectionTool implements BatchSuppressableTool {
+public abstract class GherkinInspection extends LocalInspectionTool {
   @NotNull
   public String getGroupDisplayName() {
     return CucumberBundle.message("cucumber.inspection.group.name");
   }
 
-  @NotNull
-  @Override
-  public SuppressQuickFix[] getBatchSuppressActions(@Nullable PsiElement element) {
-    return GherkinSuppressionUtil.getDefaultSuppressActions(element, getShortName());
-  }
-
-  public boolean isSuppressedFor(@NotNull final PsiElement element) {
-    return GherkinSuppressionUtil.isSuppressedFor(element, getID());
-  }
 }
