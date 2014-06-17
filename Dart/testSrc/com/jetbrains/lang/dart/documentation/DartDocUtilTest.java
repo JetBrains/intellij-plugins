@@ -4,10 +4,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.documentation.DartDocUtil;
-import com.jetbrains.lang.dart.psi.DartClass;
-import com.jetbrains.lang.dart.psi.DartFile;
-import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBodyOrNative;
-import com.jetbrains.lang.dart.psi.DartFunctionTypeAlias;
+import com.jetbrains.lang.dart.psi.*;
+
+import static com.jetbrains.lang.dart.util.DartPresentableUtil.RIGHT_ARROW;
 
 
 public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
@@ -37,7 +36,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testFunctionSig1() throws Exception {
-    assertFunctionDocEquals("calc(int x) " + DartDocUtil.RIGHT_ARROW + " int",
+    assertFunctionDocEquals("calc(int x) " + RIGHT_ARROW + " int",
                             "int calc(int x) => x + 42;");
   }
 
@@ -47,30 +46,51 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testFunctionSig3() throws Exception {
-    assertFunctionDocEquals("foo([int x]) " + DartDocUtil.RIGHT_ARROW + " void",
+    assertFunctionDocEquals("foo([int x]) " + RIGHT_ARROW + " void",
                             "void foo([int x = 3]) { print(x); }");
   }
 
   public void testFunctionSig4() throws Exception {
-    assertFunctionDocEquals("foo(int x, {int y, int z}) " + DartDocUtil.RIGHT_ARROW + " void",
+    assertFunctionDocEquals("foo(int x, {int y, int z}) " + RIGHT_ARROW + " void",
                             "void foo(int x, {int y, int z}) { }");
   }
 
+  public void testFunctionSig5() throws Exception {
+    assertFunctionDocEquals("calc(x() " + RIGHT_ARROW  + " int) " + RIGHT_ARROW + " int",
+                            "int calc(int x()) => null;");
+  }
+
   public void testTypedefSig() throws Exception {
-    assertTypedefDocEquals("typedef a(int x) " + DartDocUtil.RIGHT_ARROW + " int",
+    assertTypedefDocEquals("typedef a(int x) " + RIGHT_ARROW + " int",
                            "typedef int a(int x);");
 
   }
 
+  public void testFieldSig1() throws Exception {
+    assertFieldDocEquals("Z<br/><br/>int y",
+                         "class Z { int y = 42; }");
+  }
+
+  public void testFieldSig2() throws Exception {
+    assertFieldDocEquals("Z<br/><br/>int y",
+                         "class Z { int y; }");
+  }
+
+  public void testMethodSig1() throws Exception {
+    assertMethodDocEquals("Z<br/><br/>y() " + RIGHT_ARROW + " int",
+                          "class Z { int y() => 42; }");
+  }
+
+  // getters, setters
+
+
   //Doc tests
 
   public void testFunctionDoc1() throws Exception {
-    assertFunctionDocEquals("foo(int x) " + DartDocUtil.RIGHT_ARROW + " void" +
+    assertFunctionDocEquals("foo(int x) " + RIGHT_ARROW + " void" +
                             "<br/><br/><p>A function on [x]s.</p>\n",
                             "/// A function on [x]s.\nvoid foo(int x) { }");
   }
-
-  /// methods, fields
 
 
 
@@ -85,6 +105,14 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   private void assertFunctionDocEquals(String expected, String fileContents) throws Exception {
     assertEquals(expected, genDoc(fileContents, DartFunctionDeclarationWithBodyOrNative.class));
+  }
+
+  private void assertMethodDocEquals(String expected, String fileContents) throws Exception {
+    assertEquals(expected, genDoc(fileContents, DartMethodDeclaration.class));
+  }
+
+  private void assertFieldDocEquals(String expected, String fileContents) throws Exception {
+    assertEquals(expected, genDoc(fileContents, DartVarAccessDeclaration.class));
   }
 
   private void assertTypedefDocEquals(String expected, String fileContents) throws Exception {

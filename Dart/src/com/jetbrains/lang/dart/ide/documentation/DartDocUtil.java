@@ -4,19 +4,16 @@ package com.jetbrains.lang.dart.ide.documentation;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.util.DartGenericSpecialization;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.petebevin.markdown.MarkdownProcessor;
-import org.jetbrains.annotations.NonNls;
 
 import java.util.Iterator;
 import java.util.List;
 
 public class DartDocUtil {
-
-  @NonNls public static final String RIGHT_ARROW = " \u2192 ";
 
   public static String generateDoc(final PsiElement element) {
     if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {
@@ -24,10 +21,8 @@ public class DartDocUtil {
     }
     final DartComponent namedComponent = (DartComponent)(element instanceof DartComponent ? element : element.getParent());
     final StringBuilder builder = new StringBuilder();
-    final DartComponentType type = DartComponentType.typeOf(namedComponent);
     if (namedComponent instanceof DartClass) {
       appendClassSignature(builder, (DartClass)namedComponent);
-
     }
     else if (namedComponent instanceof DartFunctionDeclarationWithBodyOrNative) {
       appendFunctionSignature(builder, namedComponent, ((DartFunctionDeclarationWithBodyOrNative)namedComponent).getReturnType());
@@ -36,14 +31,19 @@ public class DartDocUtil {
       builder.append("typedef ");
       appendFunctionSignature(builder, namedComponent, ((DartFunctionTypeAlias)namedComponent).getReturnType());
     }
-    else if (type == DartComponentType.FIELD || type == DartComponentType.METHOD) {
+    else if (namedComponent instanceof DartMethodDeclaration) {
       final DartClass haxeClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class);
       assert haxeClass != null;
       builder.append(haxeClass.getName());
-      builder.append(" ");
-      builder.append(type.toString().toLowerCase());
-      builder.append(" ");
-      builder.append(namedComponent.getName());
+      builder.append("<br/><br/>");
+      appendFunctionSignature(builder, namedComponent, ((DartMethodDeclaration)namedComponent).getReturnType());
+    }
+    else if (namedComponent instanceof DartVarAccessDeclaration) {
+      final DartClass haxeClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class);
+      assert haxeClass != null;
+      builder.append(haxeClass.getName());
+      builder.append("<br/><br/>");
+      appendVariableSignature(builder, namedComponent, ((DartVarAccessDeclaration)namedComponent).getType());
     }
     final PsiComment comment = DartResolveUtil.findDocumentation(namedComponent);
     if (comment != null) {
@@ -53,6 +53,15 @@ public class DartDocUtil {
       builder.append(processor.markdown(commentText));
     }
     return builder.toString();
+  }
+
+  private static void appendVariableSignature(final StringBuilder builder, final DartComponent component, final DartType type) {
+    final PsiElement resolvedReference = type.resolveReference();
+    if (resolvedReference != null) {
+      builder.append(resolvedReference.getText());
+      builder.append(" ");
+    }
+    builder.append(component.getName());
   }
 
   protected static void appendClassSignature(final StringBuilder builder, final DartClass dartClass) {
@@ -102,11 +111,11 @@ public class DartDocUtil {
   private static void appendFunctionSignature(final StringBuilder builder, final DartComponent function, final DartReturnType returnType) {
     builder.append(function.getName());
     builder.append('(');
-    builder.append(DartPresentableUtil.getPresentableParameterList(function));
+    builder.append(DartPresentableUtil.getPresentableParameterList(function, new DartGenericSpecialization(), true));
     builder.append(')');
     if (returnType != null) {
       builder.append(' ');
-      builder.append(RIGHT_ARROW);
+      builder.append(DartPresentableUtil.RIGHT_ARROW);
       builder.append(' ');
       builder.append(DartPresentableUtil.buildTypeText(null, returnType, null));
     }
