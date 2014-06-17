@@ -2,11 +2,11 @@ package com.intellij.javascript.flex.css;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.css.*;
-import com.intellij.psi.css.impl.util.references.CssReference;
+import com.intellij.psi.css.reference.CssReference;
 import com.intellij.psi.css.resolve.CssElementProcessor;
 import com.intellij.psi.css.resolve.CssResolveManager;
 import com.intellij.psi.css.resolve.impl.CssResolverImpl;
@@ -145,7 +145,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
     else if (file instanceof CssFile) {
       processOneCssFile((CssFile)file, processor);
     }
-    Module module = ModuleUtil.findModuleForPsiElement(file);
+    Module module = ModuleUtilCore.findModuleForPsiElement(file);
     if (module != null) {
       CssResolverImpl.processStyles(module, processor, file);
     }

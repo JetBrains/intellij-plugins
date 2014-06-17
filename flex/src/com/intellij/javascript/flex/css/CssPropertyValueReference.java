@@ -5,7 +5,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.CssPropertyDescriptor;
-import com.intellij.psi.css.impl.util.references.CssReference;
+import com.intellij.psi.css.reference.CssReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiPolyVariantCachingReference;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
