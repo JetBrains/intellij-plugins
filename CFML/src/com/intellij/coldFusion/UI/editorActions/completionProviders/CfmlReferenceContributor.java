@@ -78,7 +78,7 @@ public class CfmlReferenceContributor extends PsiReferenceContributor {
     }
   }
 
-  public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
     registerImplicitVariableProvider(registrar);
   }
 

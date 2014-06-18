@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class HbFileViewProviderFactory implements FileViewProviderFactory {
+  @NotNull
   @Override
   public FileViewProvider createFileViewProvider(@NotNull VirtualFile virtualFile,
                                                  Language language,

@@ -39,7 +39,7 @@ public class StrutsJQueryGridTaglibReferenceContributor extends StrutsJQueryTagl
   }
 
   @Override
-  public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
 
     // <grid>
     registerBoolean("autoencode", registrar, GRID);

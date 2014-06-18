@@ -50,7 +50,7 @@ public class StrutsJQueryMobileTaglibReferenceContributor extends StrutsJQueryTa
   }
 
   @Override
-  public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
     // common attributes -------------------------------------
 
     // CSS*

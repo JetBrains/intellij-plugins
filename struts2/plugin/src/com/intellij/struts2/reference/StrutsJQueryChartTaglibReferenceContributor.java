@@ -39,7 +39,7 @@ public class StrutsJQueryChartTaglibReferenceContributor extends StrutsJQueryTag
   }
 
   @Override
-  public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
 
     // common attributes
     installCSS(registrar, CHART);
