@@ -87,7 +87,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
   private static final String UI_COMPONENT_FQN = "mx.core.UIComponent";
   public static final String CLASS_REFERENCE = "ClassReference";
 
-  public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(PlatformPatterns.psiElement(CssString.class).and(new FilterPattern(new ElementFilter() {
       public boolean isAcceptable(Object element, PsiElement context) {
         CssFunction fun = PsiTreeUtil.getParentOfType((PsiElement)element, CssFunction.class);
