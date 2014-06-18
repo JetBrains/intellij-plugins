@@ -44,7 +44,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   };
   private static final Key<XmlTag> TAG_KEY = Key.create("TAG_KEY");
 
-  public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
     registerTypeAttrValueReferenceProvider(registrar);
     registerIdAttrValueReferenceProvider(registrar);
     registerAttrValueReferenceProvider(registrar);

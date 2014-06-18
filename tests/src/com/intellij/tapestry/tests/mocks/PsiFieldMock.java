@@ -157,6 +157,7 @@ public class PsiFieldMock implements PsiField {
         return new char[0];
     }
 
+    @NotNull
     @Override
     public PsiElement getNavigationElement() {
         return null;

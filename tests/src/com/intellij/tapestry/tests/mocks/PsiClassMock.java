@@ -344,6 +344,7 @@ public class PsiClassMock implements PsiClass {
         return new char[0];
     }
 
+    @NotNull
     @Override
     public PsiElement getNavigationElement() {
         return null;
