@@ -367,4 +367,34 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       return true;
     }
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof FlexCssPropertyDescriptor)) return false;
+
+    FlexCssPropertyDescriptor that = (FlexCssPropertyDescriptor)o;
+
+    if (myShorthand != that.myShorthand) return false;
+    if (myClassNames != null ? !myClassNames.equals(that.myClassNames) : that.myClassNames != null) return false;
+    if (myFileNames != null ? !myFileNames.equals(that.myFileNames) : that.myFileNames != null) return false;
+    if (myInherit != null ? !myInherit.equals(that.myInherit) : that.myInherit != null) return false;
+    if (myPropertyName != null ? !myPropertyName.equals(that.myPropertyName) : that.myPropertyName != null) return false;
+    if (myStyleInfo != null ? !myStyleInfo.equals(that.myStyleInfo) : that.myStyleInfo != null) return false;
+    if (myValue != null ? !myValue.equals(that.myValue) : that.myValue != null) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = myInherit != null ? myInherit.hashCode() : 0;
+    result = 31 * result + (myShorthand ? 1 : 0);
+    result = 31 * result + (myPropertyName != null ? myPropertyName.hashCode() : 0);
+    result = 31 * result + (myValue != null ? myValue.hashCode() : 0);
+    result = 31 * result + (myClassNames != null ? myClassNames.hashCode() : 0);
+    result = 31 * result + (myFileNames != null ? myFileNames.hashCode() : 0);
+    result = 31 * result + (myStyleInfo != null ? myStyleInfo.hashCode() : 0);
+    return result;
+  }
 }
