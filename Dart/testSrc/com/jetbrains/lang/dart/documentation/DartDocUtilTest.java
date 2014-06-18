@@ -13,8 +13,6 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   private static final String TEST_FILE_NAME = "_test.dart";
 
-  //Signature tests
-
   public void testAbstractClassSig() throws Exception {
     assertClassDocEquals("abstract class <b>Foo</b> extends Bar",
                          "abstract class Foo extends Bar { }\nclass Bar { }");
@@ -81,10 +79,25 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
                           "class Z { int y() => 42; }");
   }
 
-  // getters, setters
+  public void testNamedConstructorSig() throws Exception {
+    assertNamedConstructorDocEquals("Z<br/><br/>Z.z() " + RIGHT_ARROW + " Z",
+                                    "class Z { Z.z(); }");
+  }
 
+  public void testConstructorSig() throws Exception {
+    assertMethodDocEquals("Z<br/><br/>Z() " + RIGHT_ARROW + " Z",
+                          "class Z { Z(); }");
+  }
 
-  //Doc tests
+  public void testGetterSig() throws Exception {
+    assertGetterDocEquals("Z<br/><br/>get x() " + RIGHT_ARROW + " int",
+                          "class Z { int get x => 0; }");
+  }
+
+  public void testSetterSig() throws Exception {
+    assertSetterDocEquals("Z<br/><br/>set x(int x) " + RIGHT_ARROW + " void",
+                          "class Z { void set x(int x) { } }");
+  }
 
   public void testFunctionDoc1() throws Exception {
     assertFunctionDocEquals("foo(int x) " + RIGHT_ARROW + " void" +
@@ -92,12 +105,20 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
                             "/// A function on [x]s.\nvoid foo(int x) { }");
   }
 
+  public void testFunctionDoc2() throws Exception {
+    assertFunctionDocEquals("foo(int x) " + RIGHT_ARROW + " void" +
+                            "<br/><br/><p>Good for:</p>\n\n" +
+                            "<ul>\n" +
+                            "<li>this</li>\n" +
+                            "<li>that</li>\n" +
+                            "</ul>\n",
+                            "/** Good for:\n\n" +
+                            " * * this\n" +
+                            " * * that\n" +
+                            "*/\n" +
+                            "\nvoid foo(int x) { }");
 
-
-  /// ... some real markdown here
-
-
-
+  }
 
   private void assertClassDocEquals(String expected, String fileContents) throws Exception {
     assertEquals(expected, genDoc(fileContents, DartClass.class));
@@ -109,6 +130,18 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   private void assertMethodDocEquals(String expected, String fileContents) throws Exception {
     assertEquals(expected, genDoc(fileContents, DartMethodDeclaration.class));
+  }
+
+  private void assertNamedConstructorDocEquals(String expected, String fileContents) throws Exception {
+    assertEquals(expected, genDoc(fileContents, DartNamedConstructorDeclaration.class));
+  }
+
+  private void assertGetterDocEquals(String expected, String fileContents) throws Exception {
+    assertEquals(expected, genDoc(fileContents, DartGetterDeclaration.class));
+  }
+
+  private void assertSetterDocEquals(String expected, String fileContents) throws Exception {
+    assertEquals(expected, genDoc(fileContents, DartSetterDeclaration.class));
   }
 
   private void assertFieldDocEquals(String expected, String fileContents) throws Exception {

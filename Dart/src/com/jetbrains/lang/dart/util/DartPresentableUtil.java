@@ -17,7 +17,8 @@ import java.util.Set;
 
 public class DartPresentableUtil {
 
-  @NonNls public static final String RIGHT_ARROW = " \u2192 ";
+  @NonNls public static final String RIGHT_ARROW = "\u2192";
+  @NonNls private static final String SPACE = " ";
 
   public static String setterGetterName(String name) {
     return name.startsWith("_") ? name.substring(1) : name;
@@ -114,16 +115,16 @@ public class DartPresentableUtil {
       final DartReturnType returnType = functionSignature.getReturnType();
       if (!functionalStyleSignature && returnType != null) {
         result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), returnType, specialization));
-        result.append(" ");
+        result.append(SPACE);
       }
       result.append(functionSignature.getName());
       result.append("(");
       result.append(getPresentableParameterList(functionSignature, specialization, functionalStyleSignature));
       result.append(")");
       if (functionalStyleSignature && returnType != null) {
-        result.append(" ");
+        result.append(SPACE);
         result.append(RIGHT_ARROW);
-        result.append(" ");
+        result.append(SPACE);
         result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), returnType, specialization));
       }
     }
@@ -131,7 +132,7 @@ public class DartPresentableUtil {
       final DartType type = fieldFormalParameter.getType();
       if (type != null) {
         result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
-        result.append(" ");
+        result.append(SPACE);
       }
       result.append(fieldFormalParameter.getReferenceExpression().getText());
     }
@@ -139,7 +140,7 @@ public class DartPresentableUtil {
       final DartType type = simpleFormalParameter.getType();
       if (type != null) {
         result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
-        result.append(" ");
+        result.append(SPACE);
       }
       result.append(simpleFormalParameter.getComponentName().getText());
     }
@@ -236,7 +237,7 @@ public class DartPresentableUtil {
           final String name = dartClass.getName();
           if (name != null) {
             result.addTextSegment(name);
-            result.addTextSegment(" ");
+            result.addTextSegment(SPACE);
           }
         }
       }

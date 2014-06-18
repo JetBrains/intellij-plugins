@@ -32,18 +32,31 @@ public class DartDocUtil {
       appendFunctionSignature(builder, namedComponent, ((DartFunctionTypeAlias)namedComponent).getReturnType());
     }
     else if (namedComponent instanceof DartMethodDeclaration) {
-      final DartClass haxeClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class);
-      assert haxeClass != null;
-      builder.append(haxeClass.getName());
-      builder.append("<br/><br/>");
-      appendFunctionSignature(builder, namedComponent, ((DartMethodDeclaration)namedComponent).getReturnType());
+      appendDeclaringClass(builder, namedComponent);
+      if (isConstructor(namedComponent)) {
+        appendConstructorSignature(builder, namedComponent, PsiTreeUtil.getParentOfType(namedComponent, DartClass.class), false);
+      }
+      else {
+        appendFunctionSignature(builder, namedComponent, ((DartMethodDeclaration)namedComponent).getReturnType());
+      }
     }
     else if (namedComponent instanceof DartVarAccessDeclaration) {
-      final DartClass haxeClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class);
-      assert haxeClass != null;
-      builder.append(haxeClass.getName());
-      builder.append("<br/><br/>");
+      appendDeclaringClass(builder, namedComponent);
       appendVariableSignature(builder, namedComponent, ((DartVarAccessDeclaration)namedComponent).getType());
+    }
+    else if (namedComponent instanceof DartGetterDeclaration) {
+      appendDeclaringClass(builder, namedComponent);
+      builder.append("get ");
+      appendFunctionSignature(builder, namedComponent, ((DartGetterDeclaration)namedComponent).getReturnType());
+    }
+    else if (namedComponent instanceof DartSetterDeclaration) {
+      appendDeclaringClass(builder, namedComponent);
+      builder.append("set ");
+      appendFunctionSignature(builder, namedComponent, ((DartSetterDeclaration)namedComponent).getReturnType());
+    }
+    else if (namedComponent instanceof DartNamedConstructorDeclaration) {
+      appendDeclaringClass(builder, namedComponent);
+      appendConstructorSignature(builder, namedComponent, PsiTreeUtil.getParentOfType(namedComponent, DartClass.class), true);
     }
     final PsiComment comment = DartResolveUtil.findDocumentation(namedComponent);
     if (comment != null) {
@@ -55,6 +68,32 @@ public class DartDocUtil {
     return builder.toString();
   }
 
+  private static boolean isConstructor(final DartComponent decl) {
+    final String methodName = decl.getName();
+    final DartClassDefinition classDef = PsiTreeUtil.getParentOfType(decl, DartClassDefinition.class);
+    if (classDef != null && methodName != null) {
+      final String className = classDef.getName();
+      return className != null && className.equals(methodName);
+    }
+    return false;
+  }
+
+  private static void appendConstructorSignature(final StringBuilder builder, final DartComponent component, final DartClass type,
+                                                 final boolean isNamed) {
+    if (isNamed) {
+      builder.append(type.getName());
+      builder.append(".");
+    }
+    appendFunctionSignature(builder, component, type.getName());
+  }
+
+  private static void appendDeclaringClass(final StringBuilder builder, final DartComponent namedComponent) {
+    final DartClass haxeClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class);
+    assert haxeClass != null;
+    builder.append(haxeClass.getName());
+    builder.append("<br/><br/>");
+  }
+
   private static void appendVariableSignature(final StringBuilder builder, final DartComponent component, final DartType type) {
     final PsiElement resolvedReference = type.resolveReference();
     if (resolvedReference != null) {
@@ -64,7 +103,7 @@ public class DartDocUtil {
     builder.append(component.getName());
   }
 
-  protected static void appendClassSignature(final StringBuilder builder, final DartClass dartClass) {
+  private static void appendClassSignature(final StringBuilder builder, final DartClass dartClass) {
     if (isAbstract(dartClass)) {
       builder.append("abstract ");
     }
@@ -109,6 +148,11 @@ public class DartDocUtil {
   }
 
   private static void appendFunctionSignature(final StringBuilder builder, final DartComponent function, final DartReturnType returnType) {
+    final String returnString = returnType == null ? null : DartPresentableUtil.buildTypeText(null, returnType, null);
+    appendFunctionSignature(builder, function, returnString);
+  }
+
+  private static void appendFunctionSignature(final StringBuilder builder, final DartComponent function, final String returnType) {
     builder.append(function.getName());
     builder.append('(');
     builder.append(DartPresentableUtil.getPresentableParameterList(function, new DartGenericSpecialization(), true));
@@ -117,7 +161,7 @@ public class DartDocUtil {
       builder.append(' ');
       builder.append(DartPresentableUtil.RIGHT_ARROW);
       builder.append(' ');
-      builder.append(DartPresentableUtil.buildTypeText(null, returnType, null));
+      builder.append(returnType);
     }
   }
 
