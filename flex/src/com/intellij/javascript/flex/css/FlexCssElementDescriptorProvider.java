@@ -349,9 +349,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     FileBasedIndex index = FileBasedIndex.getInstance();
     Collection<String> keys = index.getAllKeys(FlexStyleIndex.INDEX_ID, context.getProject());
     List<FlexCssPropertyDescriptor> result = new ArrayList<FlexCssPropertyDescriptor>();
-    GlobalSearchScope scope = module != null 
-                              ? module.getModuleWithDependenciesAndLibrariesScope(false) 
-                              : GlobalSearchScope.projectScope(context.getProject());
+    GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
     for (String key : keys) {
       if (!isInClassicForm(key)) {
         for (Set<FlexStyleIndexInfo> infos : index.getValues(FlexStyleIndex.INDEX_ID, key, scope)) {

@@ -44,18 +44,18 @@ import java.util.*;
  * @author Eugene.Kudelevsky
  */
 public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
-  private final String myInherit;
+  @NotNull private final String myInherit;
   private final boolean myShorthand;
-  private final String myPropertyName;
-  private final CssPropertyValue myValue;
-  private final Set<String> myClassNames;
-  private final Set<String> myFileNames;
+  @NotNull private final String myPropertyName;
+  @NotNull private final CssPropertyValue myValue;
+  @NotNull private final Set<String> myClassNames;
+  @NotNull private final Set<String> myFileNames;
   private final FlexStyleIndexInfo myStyleInfo;
 
   public static final String COLOR_FORMAT = "Color";
   private static final String LENGTH_FORMAT = "Length";
 
-  public FlexCssPropertyDescriptor(Collection<FlexStyleIndexInfo> infos) {
+  public FlexCssPropertyDescriptor(@NotNull Collection<FlexStyleIndexInfo> infos) {
     FlexStyleIndexInfo firstInfo = infos.iterator().next();
     myStyleInfo = firstInfo;
     myPropertyName = firstInfo.getAttributeName();
@@ -74,18 +74,18 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
   }
 
-  private static boolean containsShorthand(Collection<FlexStyleIndexInfo> infos) {
+  private static boolean containsShorthand(@NotNull Collection<FlexStyleIndexInfo> infos) {
     for (FlexStyleIndexInfo info : infos) {
       if (isShorthand(info)) return true;
     }
     return false;
   }
 
-  private static boolean isShorthand(FlexStyleIndexInfo info) {
+  private static boolean isShorthand(@NotNull FlexStyleIndexInfo info) {
     return JSCommonTypeNames.ARRAY_CLASS_NAME.equals(info.getType());
   }
 
-  private static void addValuesFromEnumerations(Collection<FlexStyleIndexInfo> infos, Collection<CssPropertyValue> children) {
+  private static void addValuesFromEnumerations(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Collection<CssPropertyValue> children) {
     Set<String> constantSet = new HashSet<String>();
     for (FlexStyleIndexInfo info : infos) {
       String enumeration = info.getEnumeration();
@@ -108,7 +108,8 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     return myStyleInfo;
   }
 
-  private static Set<String> addValuesFromFormats(Collection<FlexStyleIndexInfo> infos, List<CssPropertyValue> children) {
+  @NotNull
+  private static Set<String> addValuesFromFormats(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull List<CssPropertyValue> children) {
     Set<String> formats = new HashSet<String>();
     for (FlexStyleIndexInfo info : infos) {
       String format = info.getFormat();
@@ -126,7 +127,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     return formats;
   }
 
-  private static void addValuesFromTypes(Collection<FlexStyleIndexInfo> infos, Set<String> formats, List<CssPropertyValue> children) {
+  private static void addValuesFromTypes(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssPropertyValue> children) {
     Set<String> types = new HashSet<String>();
     for (FlexStyleIndexInfo info : infos) {
       String type = info.getType();
@@ -140,7 +141,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   }
 
   @NotNull
-  private static CssPropertyValueImpl createPropertyValue(Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
+  private static CssPropertyValueImpl createPropertyValue(@NotNull Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
     List<CssPropertyValue> children = new ArrayList<CssPropertyValue>();
     Set<String> formats = addValuesFromFormats(infos, children);
     addValuesFromEnumerations(infos, children);
@@ -223,7 +224,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     return false;
   }
 
-  private boolean findStyleAttributesInFile(@NotNull JSFile jsFile, Set<JSFile> visited, Map<PsiElement, PairInfo> navElement2pair) {
+  private boolean findStyleAttributesInFile(@NotNull JSFile jsFile, @NotNull Set<JSFile> visited, @NotNull Map<PsiElement, PairInfo> navElement2pair) {
     if (!visited.add(jsFile)) return false;
     JSAttributeNameValuePair result = null;
     String fileName = jsFile.getName();
@@ -240,7 +241,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     return false;
   }
 
-  private boolean findStyleAttributesInClassOrSuper(@NotNull JSClass c, Set<JSClass> visited, Map<PsiElement, PairInfo> navElement2pair) {
+  private boolean findStyleAttributesInClassOrSuper(@NotNull JSClass c, @NotNull Set<JSClass> visited, @NotNull Map<PsiElement, PairInfo> navElement2pair) {
     if (!visited.add(c)) return false;
     JSAttributeNameValuePair result = null;
     String qName = c.getQualifiedName();
@@ -264,9 +265,9 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     return false;
   }
 
-  private void findStyleAttributes(Collection<JSQualifiedNamedElement> elements,
-                                   Set<JSClass> visited,
-                                   Map<PsiElement, PairInfo> navElement2pair) {
+  private void findStyleAttributes(@NotNull Collection<JSQualifiedNamedElement> elements,
+                                   @NotNull Set<JSClass> visited,
+                                   @NotNull Map<PsiElement, PairInfo> navElement2pair) {
     for (JSQualifiedNamedElement element : elements) {
       if (element instanceof JSClass) {
         findStyleAttributesInClassOrSuper((JSClass)element, visited, navElement2pair);
@@ -286,7 +287,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
 
   @NotNull
   @Override
-  public PsiElement[] getDeclarations(PsiElement context) {
+  public PsiElement[] getDeclarations(@NotNull PsiElement context) {
     Map<PsiElement, PairInfo> navElement2pairInfo = new HashMap<PsiElement, PairInfo>();
     final Project project = context.getProject();
 
@@ -376,25 +377,25 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     FlexCssPropertyDescriptor that = (FlexCssPropertyDescriptor)o;
 
     if (myShorthand != that.myShorthand) return false;
-    if (myClassNames != null ? !myClassNames.equals(that.myClassNames) : that.myClassNames != null) return false;
-    if (myFileNames != null ? !myFileNames.equals(that.myFileNames) : that.myFileNames != null) return false;
-    if (myInherit != null ? !myInherit.equals(that.myInherit) : that.myInherit != null) return false;
-    if (myPropertyName != null ? !myPropertyName.equals(that.myPropertyName) : that.myPropertyName != null) return false;
-    if (myStyleInfo != null ? !myStyleInfo.equals(that.myStyleInfo) : that.myStyleInfo != null) return false;
-    if (myValue != null ? !myValue.equals(that.myValue) : that.myValue != null) return false;
+    if (!myClassNames.equals(that.myClassNames)) return false;
+    if (!myFileNames.equals(that.myFileNames)) return false;
+    if (!myInherit.equals(that.myInherit)) return false;
+    if (!myPropertyName.equals(that.myPropertyName)) return false;
+    if (!myStyleInfo.equals(that.myStyleInfo)) return false;
+    if (!myValue.equals(that.myValue)) return false;
 
     return true;
   }
 
   @Override
   public int hashCode() {
-    int result = myInherit != null ? myInherit.hashCode() : 0;
+    int result = myInherit.hashCode();
     result = 31 * result + (myShorthand ? 1 : 0);
-    result = 31 * result + (myPropertyName != null ? myPropertyName.hashCode() : 0);
-    result = 31 * result + (myValue != null ? myValue.hashCode() : 0);
-    result = 31 * result + (myClassNames != null ? myClassNames.hashCode() : 0);
-    result = 31 * result + (myFileNames != null ? myFileNames.hashCode() : 0);
-    result = 31 * result + (myStyleInfo != null ? myStyleInfo.hashCode() : 0);
+    result = 31 * result + (myPropertyName.hashCode());
+    result = 31 * result + (myValue.hashCode());
+    result = 31 * result + (myClassNames.hashCode());
+    result = 31 * result + (myFileNames.hashCode());
+    result = 31 * result + (myStyleInfo.hashCode());
     return result;
   }
 }
