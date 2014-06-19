@@ -20,6 +20,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.index.JSNamespace;
 import com.intellij.lang.javascript.psi.JSQualifiedName;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.navigation.NavigationItem;
@@ -131,6 +132,7 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
     return null;
   }
 
+  @NotNull
   @Override
   public JSContext getJSContext() {
     return JSContext.UNKNOWN;
@@ -165,5 +167,11 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
   @Override
   public boolean isNamespaceExplicitlyDeclared() {
     return true;
+  }
+
+  @NotNull
+  @Override
+  public JSAttributeList.AccessType getAccessType() {
+    return JSAttributeList.AccessType.PACKAGE_LOCAL;
   }
 }
