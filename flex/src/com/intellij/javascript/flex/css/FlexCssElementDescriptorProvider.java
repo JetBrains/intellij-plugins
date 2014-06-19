@@ -245,16 +245,6 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return false;
   }
 
-  @Override
-  public boolean isPossibleFunction(@NotNull String name, @Nullable PsiElement context) {
-    return false;
-  }
-  
-  @Override
-  public boolean isPossibleProperty(@NotNull String name, @Nullable PsiElement context) {
-    return false;
-  }
-
   private static boolean isInClassicForm(String propertyName) {
     return propertyName.indexOf('-') >= 0;
   }
