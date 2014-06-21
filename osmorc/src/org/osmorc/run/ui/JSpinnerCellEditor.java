@@ -31,7 +31,7 @@ public class JSpinnerCellEditor extends AbstractCellEditor implements TableCellE
   @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     mySpinner.setValue(value);
-    adjust(table, row, column);
+    adjust(table, column);
     return mySpinner;
   }
 
@@ -48,15 +48,14 @@ public class JSpinnerCellEditor extends AbstractCellEditor implements TableCellE
         fireEditingStopped();
       }
     });
-    adjust(table, row, column);
+    adjust(table, column);
     return mySpinner;
   }
 
-  private void adjust(JTable table, int row, int column) {
+  private void adjust(JTable table, int column) {
     Dimension size = mySpinner.getPreferredSize();
-    size.width = table.getColumnModel().getColumn(column).getWidth();
+    size.width = table.getColumnModel().getColumn(column).getWidth() - 5;
     mySpinner.setPreferredSize(size);
-    table.setRowHeight(row, size.height);
   }
 
   @Override

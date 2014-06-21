@@ -48,7 +48,7 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
     }));
 
   @Override
-  public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(STRING_LITERAL_INSIDE_KARMA_CONFIG_FILE, new PsiReferenceProvider() {
       @NotNull
       @Override

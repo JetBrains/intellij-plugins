@@ -15,11 +15,13 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.AsyncGenericProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
+import com.intellij.util.Alarm;
 import com.intellij.util.NullableConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,20 +49,20 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
                                                    @NotNull RunProfileState state) throws ExecutionException {
     JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
     if (jstdState.getRunSettings().isExternalServerType()) {
-      return AsyncResult.<RunProfileStarter>done(new MyStarter(null, this));
+      return AsyncResult.<RunProfileStarter>done(new JstdRunStarter(null, this, false));
     }
     JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(project);
     jstdToolWindowManager.setAvailable(true);
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     if (server != null && !server.isStopped()) {
-      return AsyncResult.<RunProfileStarter>done(new MyStarter(server, this));
+      return AsyncResult.<RunProfileStarter>done(new JstdRunStarter(server, this, false));
     }
     final AsyncResult<RunProfileStarter> result = new AsyncResult<RunProfileStarter>();
     jstdToolWindowManager.restartServer(new NullableConsumer<JstdServer>() {
       @Override
       public void consume(@Nullable JstdServer server) {
         if (server != null) {
-          result.setDone(new MyStarter(server, JstdRunProgramRunner.this));
+          result.setDone(new JstdRunStarter(server, JstdRunProgramRunner.this, false));
         }
         else {
           result.setDone(null);
@@ -70,14 +72,16 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
     return result;
   }
 
-  private static class MyStarter extends RunProfileStarter {
+  public static class JstdRunStarter extends RunProfileStarter {
 
     private final JstdServer myServer;
-    private final JstdRunProgramRunner myRunner;
+    private final ProgramRunner myRunner;
+    private final boolean myFromDebug;
 
-    private MyStarter(@Nullable JstdServer server, @NotNull JstdRunProgramRunner runner) {
+    public JstdRunStarter(@Nullable JstdServer server, @NotNull ProgramRunner runner, boolean fromDebug) {
       myServer = server;
       myRunner = runner;
+      myFromDebug = fromDebug;
     }
 
     @Nullable
@@ -96,12 +100,27 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
         myServer.addLifeCycleListener(new JstdServerLifeCycleAdapter() {
           @Override
           public void onBrowserCaptured(@NotNull JstdBrowserInfo info) {
-            JstdUtil.restart(descriptor);
+            if (myFromDebug) {
+              scheduleRestart(descriptor, 1000);
+            }
+            else {
+              JstdUtil.restart(descriptor);
+            }
             myServer.removeLifeCycleListener(this);
           }
         }, contentBuilder);
       }
       return descriptor;
+    }
+
+    private static void scheduleRestart(@NotNull final RunContentDescriptor descriptor, int timeoutMillis) {
+      final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, descriptor);
+      alarm.addRequest(new Runnable() {
+        @Override
+        public void run() {
+          JstdUtil.restart(descriptor);
+        }
+      }, timeoutMillis);
     }
   }
 }

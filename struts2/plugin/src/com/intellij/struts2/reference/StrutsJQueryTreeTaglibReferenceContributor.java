@@ -39,7 +39,7 @@ public class StrutsJQueryTreeTaglibReferenceContributor extends StrutsJQueryTagl
   }
 
   @Override
-  public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
 
     // <tree>
     registerBoolean("openAllOnLoad", registrar, TREE);

@@ -88,7 +88,7 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
   }
 
   @Override
-  public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
     // common attributes --------------------------------------
 
     registerTags(new ThemeReferenceProvider(),

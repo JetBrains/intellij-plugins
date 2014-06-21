@@ -1,9 +1,12 @@
 package com.jetbrains.lang.dart.ide.runner.client;
 
 import com.intellij.CommonBundle;
+import com.intellij.chromeConnector.debugger.ChromeDebugProcess;
 import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
+import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -11,6 +14,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.Url;
+import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +24,18 @@ import org.jetbrains.annotations.Nullable;
 public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
   public DartiumDebuggerEngine() {
     super("dartium");
+  }
+
+  public ChromeDebugProcess createDebugProcess(@NotNull final XDebugSession session,
+                                               @NotNull final WebBrowser browser,
+                                               @NotNull final DebuggableFileFinder fileFinder,
+                                               @Nullable final Url initialUrl,
+                                               @Nullable final ExecutionResult executionResult,
+                                               final boolean usePreliminaryPage) {
+    final ChromeDebugProcess debugProcess =
+      super.createDebugProcess(session, browser, fileFinder, initialUrl, executionResult, usePreliminaryPage);
+    debugProcess.setProcessBreakpointConditionsAtIDESide(true);
+    return debugProcess;
   }
 
   @Override

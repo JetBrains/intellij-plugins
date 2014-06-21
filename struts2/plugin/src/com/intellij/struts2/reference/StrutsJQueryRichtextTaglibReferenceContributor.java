@@ -39,7 +39,7 @@ public class StrutsJQueryRichtextTaglibReferenceContributor extends StrutsJQuery
   }
 
   @Override
-  public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
 
     // common attributes
 

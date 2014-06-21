@@ -152,7 +152,7 @@ public class JstdServerLifeCycleManager implements JstdServerOutputListener {
     return null;
   }
 
-  public void onTerminated() {
+  public void onTerminated(final int exitCode) {
     UIUtil.invokeLaterIfNeeded(new Runnable() {
       @Override
       public void run() {
@@ -160,7 +160,7 @@ public class JstdServerLifeCycleManager implements JstdServerOutputListener {
           onServerStopped();
         }
         for (JstdServerLifeCycleListener listener : myListeners) {
-          listener.onServerTerminated();
+          listener.onServerTerminated(exitCode);
         }
         dispose();
       }

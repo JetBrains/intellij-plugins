@@ -4,35 +4,23 @@ import com.google.jstestdriver.idea.assertFramework.JstdTestMethodNameRefiner;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
-import com.google.jstestdriver.idea.server.JstdBrowserInfo;
-import com.google.jstestdriver.idea.server.JstdServer;
-import com.google.jstestdriver.idea.server.JstdServerRegistry;
-import com.google.jstestdriver.idea.server.ui.JstdToolWindowManager;
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.execution.configurations.RuntimeConfigurationWarning;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
 import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.ui.UIUtil;
-import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 
 public class JstdRunConfigurationVerifier {
 
@@ -161,96 +149,6 @@ public class JstdRunConfigurationVerifier {
         new URL(serverAddressStr);
       } catch (MalformedURLException e) {
         throw new RuntimeConfigurationError("Please specify server address correctly.");
-      }
-    }
-  }
-
-  public static void checkJstdServerAndBrowserEnvironment(@NotNull Project project,
-                                                          @NotNull JstdRunSettings settings,
-                                                          boolean debug) throws ExecutionException {
-    if (settings.isExternalServerType()) {
-      return;
-    }
-    JstdServer server = JstdServerRegistry.getInstance().getServer();
-    if (server == null || !server.isProcessRunning()) {
-      String browserMessage = debug ? "Firefox or Chrome" : "a browser";
-      String link = formatLink(JstdSlaveBrowserIsNotReadyExecutionException.START_LOCAL_SERVER_HREF, "Start a local server");
-      throw new JstdSlaveBrowserIsNotReadyExecutionException(
-        project,
-        "JsTestDriver local server is not running.<br>" +
-        link + ", capture " + browserMessage + " and try again."
-      );
-    }
-    if (debug) {
-      Collection<JstdBrowserInfo> capturedBrowsers = server.getCapturedBrowsers();
-      boolean ok = false;
-      for (JstdBrowserInfo browserInfo : capturedBrowsers) {
-        if (JavaScriptDebugEngine.findByBrowserName(browserInfo.getName()) != null) {
-          ok = true;
-          break;
-        }
-      }
-      if (!ok) {
-        throw new JstdSlaveBrowserIsNotReadyExecutionException(
-          project,
-          "Debug is available in Firefox or Chrome only.\n" +
-          "Please capture one of these browsers and try again."
-        );
-      }
-    }
-    else {
-      if (server.getCapturedBrowsers().isEmpty()) {
-        throw new JstdSlaveBrowserIsNotReadyExecutionException(
-          project,
-          "JsTestDriver local server is running without captured browsers.\n" +
-          "Please capture a browser and try again."
-        );
-      }
-    }
-    ensureJstdToolWindowRegistered(project);
-  }
-
-  private static void ensureJstdToolWindowRegistered(@NotNull final Project project) {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        JstdToolWindowManager manager = JstdToolWindowManager.getInstance(project);
-        manager.setAvailable(true);
-      }
-    });
-  }
-
-  private static String formatLink(@NotNull String href, @NotNull String text) {
-    return "<a href=\"" + href + "\">" + text + "</a>";
-
-  }
-  private static class JstdSlaveBrowserIsNotReadyExecutionException extends ExecutionException implements HyperlinkListener,
-                                                                                                          NotificationListener {
-    private static final String START_LOCAL_SERVER_HREF = "start_local_server";
-
-    private final Project myProject;
-
-    public JstdSlaveBrowserIsNotReadyExecutionException(Project project, String s) {
-      super(s);
-      myProject = project;
-    }
-
-    @Override
-    public void hyperlinkUpdate(HyperlinkEvent e) {
-      handleEvent(e);
-    }
-
-    @Override
-    public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-      handleEvent(event);
-    }
-
-    private void handleEvent(HyperlinkEvent e) {
-      if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && START_LOCAL_SERVER_HREF.equals(e.getDescription())) {
-        JstdToolWindowManager manager = JstdToolWindowManager.getInstance(myProject);
-        manager.setAvailable(true);
-        manager.show();
-        manager.restartServer(null);
       }
     }
   }

@@ -85,8 +85,9 @@ public class TestUtil {
 
         for (File moduleDir : projectDir.listFiles(VISIBLE_DIR_FILTER)) {
           String moduleDirPath = moduleDir.getPath().replace(File.separatorChar, '/') + "/";
-          final String moduleFileName = moduleDirPath + moduleDir.getName() + ".iml";
+          String moduleFileName = moduleDirPath + moduleDir.getName() + ".iml";
           if (new File(moduleFileName).exists()) {
+            LocalFileSystem.getInstance().refreshAndFindFileByPath(moduleFileName);
             Module module = ModuleManager.getInstance(project).loadModule(moduleFileName);
             VirtualFile file = LocalFileSystem.getInstance().findFileByPath(moduleDirPath);
             assertNotNull(moduleDirPath, file);

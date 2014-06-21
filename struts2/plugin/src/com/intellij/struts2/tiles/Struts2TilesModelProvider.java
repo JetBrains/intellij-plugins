@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,6 +36,7 @@ import com.intellij.struts.TilesModel;
 import com.intellij.struts.TilesModelProvider;
 import com.intellij.struts.dom.tiles.TilesDefinitions;
 import com.intellij.struts.psi.TilesModelImpl;
+import com.intellij.tiles.TilesConstants;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
@@ -61,12 +62,6 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
   private static final String STRUTS_TILES_LISTENER_CLASS = "org.apache.struts2.tiles.StrutsTilesListener";
 
   @NonNls
-  private static final String TILES_LISTENER_CLASS = "org.apache.tiles.listener.TilesListener";
-
-  @NonNls
-  private static final String TILES_CONTEXT_PARAM = "org.apache.tiles.impl.BasicTilesContainer.DEFINITIONS_CONFIG";
-
-  @NonNls
   private static final String DEFAULT_TILES_XML = "/WEB-INF/tiles.xml";
 
   @NonNls
@@ -74,7 +69,7 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
 
   private static final Condition<ParamValue> TILES_CONTEXT_PARAM_CONDITION = new Condition<ParamValue>() {
     public boolean value(final ParamValue paramValue) {
-      return Comparing.equal(TILES_CONTEXT_PARAM, paramValue.getParamName().getStringValue());
+      return Comparing.equal(TilesConstants.DEFINITIONS_CONFIG_PARAMETER, paramValue.getParamName().getStringValue());
     }
   };
 
@@ -91,7 +86,7 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
       return Collections.emptyList();
     }
 
-    final PsiClass tilesListenerClass = facade.findClass(TILES_LISTENER_CLASS, moduleScope);
+    final PsiClass tilesListenerClass = facade.findClass(TilesConstants.TILES_LISTENER, moduleScope);
 
     final StrutsPluginDomFactory<TilesDefinitions, TilesModel> factory =
         StrutsProjectComponent.getInstance(project).getTilesFactory();

@@ -28,7 +28,7 @@ import java.util.List;
 public class JstdConfigFileReferenceContributor extends PsiReferenceContributor {
 
   @Override
-  public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(JstdConfigFileUtils.CONFIG_FILE_ELEMENT_PATTERN, new PsiReferenceProvider() {
       @NotNull
       @Override

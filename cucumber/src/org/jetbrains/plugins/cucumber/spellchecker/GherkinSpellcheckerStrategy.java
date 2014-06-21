@@ -1,6 +1,5 @@
 package org.jetbrains.plugins.cucumber.spellchecker;
 
-import com.intellij.codeInspection.SuppressQuickFix;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -9,16 +8,14 @@ import com.intellij.spellchecker.quickfixes.AcceptWordAsCorrect;
 import com.intellij.spellchecker.quickfixes.ChangeTo;
 import com.intellij.spellchecker.quickfixes.SpellCheckerQuickFix;
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy;
-import com.intellij.spellchecker.tokenizer.SuppressibleSpellcheckingStrategy;
 import com.intellij.spellchecker.tokenizer.Tokenizer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.inspections.suppress.GherkinSuppressionUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementType;
 
 /**
  * @author oleg
  */
-public class GherkinSpellcheckerStrategy extends SuppressibleSpellcheckingStrategy {
+public class GherkinSpellcheckerStrategy extends SpellcheckingStrategy {
   @NotNull
   @Override
   public Tokenizer getTokenizer(final PsiElement element) {
@@ -29,16 +26,6 @@ public class GherkinSpellcheckerStrategy extends SuppressibleSpellcheckingStrate
       }
     }
     return super.getTokenizer(element);
-  }
-
-  @Override
-  public boolean isSuppressedFor(@NotNull PsiElement element, @NotNull String name) {
-    return GherkinSuppressionUtil.isSuppressedFor(element, name);
-  }
-
-  @Override
-  public SuppressQuickFix[] getSuppressActions(@NotNull final PsiElement element, @NotNull final String name) {
-    return GherkinSuppressionUtil.getDefaultSuppressActions(element, name);
   }
 
   @Override

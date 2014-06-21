@@ -132,7 +132,7 @@ module Spec
 
           # Start capturing...
           std_files = capture_output_start_external
-          started_at_ms = get_time_in_ms(example.execution_result[:started_at])
+          started_at_ms = get_time_in_ms(example.execution_result.started_at)
 
           debug_log('Output capturing started.')
 
@@ -180,7 +180,7 @@ module Spec
                     end
 
           # Backtrace
-          backtrace = calc_backtrace(failure.exception, example)
+          backtrace = example_notification.formatted_backtrace.join("\n")
 
           debug_log("Example failing... full name = [#{running_example_full_name}], Message:\n#{message} \n\nBackrace:\n#{backtrace}\n\n, additional flowid suffix=[#{additional_flowid_suffix}]")
 
@@ -196,7 +196,7 @@ module Spec
 
         def example_pending(example_notification)
           example = example_notification.example
-          message = example.execution_result[:pending_message]
+          message = example.execution_result.pending_message
           debug_log("pending: #{example_description(example)}, #{message}, #{example}")
 
           # stop capturing
@@ -246,8 +246,8 @@ module Spec
           debug_log(status_message)
           log(status_message)
 
-          #Really must be '@count_notification == count_notification', it is hack for spec trunk tests
-          if !@setup_failed && @count_notification > count_notification
+          #Really must be '@example_count == example_count', it is hack for spec trunk tests
+          if !@setup_failed && @example_count > example_count
             msg = "#{RUNNER_ISNT_COMPATIBLE_MESSAGE}Error: Not all examples have been run! (#{count_notification} of #{@count_notification})\n#{gather_unfinished_examples_name}"
 
             log_and_raise_internal_error msg
@@ -261,7 +261,7 @@ module Spec
           end
 
           # finishing
-          @@RUNNING_EXAMPLES_STORAGE.clear()
+          @@RUNNING_EXAMPLES_STORAGE.clear
 
           debug_log("Summary finished.")
         end
@@ -274,11 +274,6 @@ module Spec
         ###########################################################################
         ###########################################################################
         private
-
-        def calc_backtrace(exception, example)
-          return '' if exception.nil?
-          format_backtrace(exception.backtrace, example).join("\n")
-        end
 
         def gather_unfinished_examples_name
           if @@RUNNING_EXAMPLES_STORAGE.empty?
@@ -330,14 +325,14 @@ module Spec
 
         def close_test_block(example)
           example_data = remove_data_from_storage(example)
-          finished_at_ms = get_time_in_ms(example.execution_result[:finished_at])
+          finished_at_ms = get_time_in_ms(example.execution_result.finished_at)
           duration = finished_at_ms - example_data.start_time_in_ms
 
           additional_flowid_suffix = example_data.additional_flowid_suffix
           running_example_full_name = example_data.full_name
 
           debug_log("Example finishing... full example name = [#{running_example_full_name}], duration = #{duration} ms, additional flowid suffix=[#{additional_flowid_suffix}]")
-          diagnostic_info = "rspec [#{::RSpec::Core::Version::STRING}]" + ", f/s=(#{finished_at_ms}, #{example_data.start_time_in_ms}), duration=#{duration}, time.now=#{Time.now.to_s}, raw[:started_at]=#{example.execution_result[:started_at].to_s}, raw[:finished_at]=#{example.execution_result[:finished_at].to_s}, raw[:run_time]=#{example.execution_result[:run_time].to_s}"
+          diagnostic_info = "rspec [#{::RSpec::Core::Version::STRING}]" + ", f/s=(#{finished_at_ms}, #{example_data.start_time_in_ms}), duration=#{duration}, time.now=#{Time.now.to_s}, raw[:started_at]=#{example.execution_result.started_at.to_s}, raw[:finished_at]=#{example.execution_result.finished_at.to_s}, raw[:run_time]=#{example.execution_result.run_time.to_s}"
 
           log(@message_factory.create_test_finished(running_example_full_name, duration, ::Rake::TeamCity.is_in_buildserver_mode ? nil : diagnostic_info))
         end
@@ -400,7 +395,7 @@ module Spec
 
           excep_data = [msg, caller]
           if raise_now
-            @@RUNNING_EXAMPLES_STORAGE.clear()
+            @@RUNNING_EXAMPLES_STORAGE.clear
             raise ::Rake::TeamCity::InnerException, *excep_data
           end
           TEAMCITY_FORMATTER_INTERNAL_ERRORS << excep_data

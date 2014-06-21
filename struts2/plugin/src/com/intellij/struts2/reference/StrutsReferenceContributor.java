@@ -26,6 +26,7 @@ import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.validator.Message;
 import com.intellij.struts2.reference.web.WebXmlStrutsConstantNameReferenceProvider;
 import com.intellij.struts2.reference.web.WebXmlStrutsConstantValueReferenceProvider;
+import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.patterns.DomPatterns.*;
 import static com.intellij.patterns.PsiJavaPatterns.psiClass;
@@ -58,7 +59,7 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
                     )
              );
 
-  public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
     registerWebXml(registrar);
     registerStrutsXmlTags(registrar);
     registerValidationXmlTags(registrar);

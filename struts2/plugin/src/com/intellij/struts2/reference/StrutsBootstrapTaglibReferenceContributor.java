@@ -37,7 +37,7 @@ public class StrutsBootstrapTaglibReferenceContributor extends StrutsTaglibRefer
   }
 
   @Override
-  public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
+  public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
     registerBoolean("compressed", registrar, HEAD);
     registerBoolean("includeStyles", registrar, HEAD);
     registerBoolean("includeStylesResponsive", registrar, HEAD);
