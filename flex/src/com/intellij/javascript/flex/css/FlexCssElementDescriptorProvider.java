@@ -24,6 +24,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
@@ -326,7 +327,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   public Collection<? extends CssPropertyDescriptor> getAllPropertyDescriptors(@Nullable PsiElement context) {
-    if(context == null) {
+    if(context == null || DumbService.getInstance(context.getProject()).isDumb()) {
       return Collections.emptyList();
     }
     Module module = findModuleForPsiElement(context);
