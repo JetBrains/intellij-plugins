@@ -1,9 +1,13 @@
 var cli = require('./intellijCli.js')
-  , server = cli.requireKarmaModule('lib/server.js');
+  , server = cli.requireKarmaModule('lib/server.js')
+  , cliOptions = { configFile: require.resolve('./intellij.conf.js') };
 
-server.start({
-  configFile: require.resolve('./intellij.conf.js')
-});
+var browsers = cli.getBrowsers();
+if (browsers != null) {
+  cliOptions.browsers = browsers;
+}
+
+server.start(cliOptions);
 
 // Prevent karma server from being an orphan process.
 // For example, if WebStorm is killed using SIGKILL, karma server will still be alive.

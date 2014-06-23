@@ -6,21 +6,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.Map;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaRunSettings {
 
   private final String myConfigPath;
   private final ImmutableMap<String, String> myEnvVars;
   private final boolean myPassParentEnvVars;
+  private final String myBrowsers;
 
   public KarmaRunSettings(@NotNull String configPath,
                           @NotNull Map<String, String> envVars,
-                          boolean passParentEnvVars) {
+                          boolean passParentEnvVars,
+                          @NotNull String browsers) {
     myConfigPath = configPath;
     myEnvVars = ImmutableMap.copyOf(envVars);
     myPassParentEnvVars = passParentEnvVars;
+    myBrowsers = browsers;
   }
 
   @NotNull
@@ -37,16 +37,22 @@ public class KarmaRunSettings {
     return myPassParentEnvVars;
   }
 
+  @NotNull
+  public String getBrowsers() {
+    return myBrowsers;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    KarmaRunSettings settings = (KarmaRunSettings)o;
+    KarmaRunSettings that = (KarmaRunSettings)o;
 
-    return  myPassParentEnvVars == settings.myPassParentEnvVars &&
-            myConfigPath.equals(settings.myConfigPath) &&
-            myEnvVars.equals(settings.myEnvVars);
+    return  myPassParentEnvVars == that.myPassParentEnvVars &&
+            myConfigPath.equals(that.myConfigPath) &&
+            myEnvVars.equals(that.myEnvVars) &&
+            myBrowsers.equals(that.myBrowsers);
   }
 
   @Override
@@ -54,6 +60,7 @@ public class KarmaRunSettings {
     int result = myConfigPath.hashCode();
     result = 31 * result + myEnvVars.hashCode();
     result = 31 * result + (myPassParentEnvVars ? 1 : 0);
+    result = 31 * result + myBrowsers.hashCode();
     return result;
   }
 
@@ -64,6 +71,7 @@ public class KarmaRunSettings {
     private String myConfigPath = "";
     private Map<String, String> myEnvVars = Collections.emptyMap();
     private boolean myPassParentEnvVars = DEFAULT_PASS_PARENT_ENV_VARS;
+    private String myBrowsers = "";
 
     public Builder() {}
 
@@ -73,18 +81,27 @@ public class KarmaRunSettings {
       return this;
     }
 
-    public void setEnvVars(@NotNull Map<String, String> envVars) {
-      myEnvVars = envVars;
+    @NotNull
+    public Builder setEnvVars(@NotNull Map<String, String> envVars) {
+      myEnvVars = ImmutableMap.copyOf(envVars);
+      return this;
     }
 
-    public void setPassParentEnvVars(boolean passParentEnvVars) {
+    @NotNull
+    public Builder setPassParentEnvVars(boolean passParentEnvVars) {
       myPassParentEnvVars = passParentEnvVars;
+      return this;
+    }
+
+    @NotNull
+    public Builder setBrowsers(@NotNull String browsers) {
+      myBrowsers = browsers;
+      return this;
     }
 
     @NotNull
     public KarmaRunSettings build() {
-      return new KarmaRunSettings(myConfigPath, myEnvVars, myPassParentEnvVars);
+      return new KarmaRunSettings(myConfigPath, myEnvVars, myPassParentEnvVars, myBrowsers);
     }
   }
-
 }
