@@ -155,6 +155,10 @@ public class KarmaServer {
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaJsSourcesLocator.getKarmaPackageDir().getAbsolutePath());
     commandLine.addParameter("--configFile=" + serverSettings.getConfigurationFilePath());
+    String browsers = serverSettings.getRunSettings().getBrowsers();
+    if (!browsers.isEmpty()) {
+      commandLine.addParameter("--browsers=" + browsers);
+    }
     if (myCoveragePeer != null) {
       commandLine.addParameter("--coverageTempDir=" + myCoveragePeer.getCoverageTempDir());
     }

@@ -21,6 +21,7 @@ public class KarmaRunSettingsSerializationUtil {
   private static final String OLD_CONFIG_PATH = "config_file";
   private static final String CONFIG_FILE = "config-file";
   private static final String PASS_PARENT_ENV_VAR = "pass-parent-env-vars";
+  private static final String BROWSERS = "browsers";
 
   private KarmaRunSettingsSerializationUtil() {}
 
@@ -32,6 +33,11 @@ public class KarmaRunSettingsSerializationUtil {
       configPath = StringUtil.notNullize(JDOMExternalizer.readString(element, OLD_CONFIG_PATH));
     }
     builder.setConfigPath(FileUtil.toSystemDependentName(configPath));
+
+    String browsers = getAttrValue(element, BROWSERS);
+    if (browsers != null) {
+      builder.setBrowsers(browsers);
+    }
 
     Map<String, String> envVars = ContainerUtil.newHashMap();
     EnvironmentVariablesComponent.readExternal(element, envVars);
@@ -53,6 +59,9 @@ public class KarmaRunSettingsSerializationUtil {
 
   public static void writeToXml(@NotNull Element element, @NotNull KarmaRunSettings settings) {
     element.setAttribute(CONFIG_FILE, FileUtil.toSystemIndependentName(settings.getConfigPath()));
+    if (!settings.getBrowsers().isEmpty()) {
+      element.setAttribute(BROWSERS, settings.getBrowsers());
+    }
     Map<String, String> envVars = getEnvVarsForWriting(settings.getEnvVars());
     EnvironmentVariablesComponent.writeExternal(element, envVars);
     if (settings.isPassParentEnvVars() != KarmaRunSettings.Builder.DEFAULT_PASS_PARENT_ENV_VARS) {

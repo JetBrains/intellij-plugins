@@ -22,18 +22,21 @@ import java.awt.*;
 public class DartEditorNotificationsProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
   private static final Key<EditorNotificationPanel> KEY = Key.create("DartEditorNotificationsProvider");
 
-  private final @NotNull Project myProject;
+  @NotNull private final Project myProject;
 
-  public DartEditorNotificationsProvider(final @NotNull Project project) {
+  public DartEditorNotificationsProvider(@NotNull final Project project) {
     myProject = project;
   }
 
+  @Override
+  @NotNull
   public Key<EditorNotificationPanel> getKey() {
     return KEY;
   }
 
+  @Override
   @Nullable
-  public EditorNotificationPanel createNotificationPanel(final @NotNull VirtualFile file, final @NotNull FileEditor fileEditor) {
+  public EditorNotificationPanel createNotificationPanel(@NotNull final VirtualFile file, @NotNull final FileEditor fileEditor) {
     if (file.isInLocalFileSystem() && PubspecYamlUtil.PUBSPEC_YAML.equalsIgnoreCase(file.getName())) {
       final DartSdk sdk = DartSdk.getGlobalDartSdk();
       final Module module = ModuleUtilCore.findModuleForFile(file, myProject);
@@ -53,6 +56,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       createActionLabel("Build", "Dart.pub.build");
     }
 
+    @Override
     public Color getBackground() {
       final Color color = EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.GUTTER_BACKGROUND);
       return color != null ? color : super.getBackground();

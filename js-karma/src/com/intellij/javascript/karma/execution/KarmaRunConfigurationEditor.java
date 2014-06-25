@@ -1,6 +1,6 @@
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.execution.configuration.EnvironmentVariablesComponent;
+import com.intellij.execution.configuration.EnvironmentVariablesTextField;
 import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
@@ -11,63 +11,72 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
-import com.intellij.ui.PanelWithAnchor;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
+import com.intellij.ui.components.JBTextField;
 import com.intellij.util.Function;
 import com.intellij.util.NotNullProducer;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.FormBuilder;
+import com.intellij.util.ui.StatusText;
+import com.intellij.util.ui.UIUtil;
 import com.intellij.webcore.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Sergey Simonchik
- */
-public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfiguration> implements PanelWithAnchor {
+public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfiguration> {
+
   private final Project myProject;
-  private final JComponent myRootComponent;
-  private final LabeledComponent<TextFieldWithHistoryWithBrowseButton> myNodeInterpreterPathTextFieldWithBrowseButton;
-  private final LabeledComponent<TextFieldWithHistoryWithBrowseButton> myKarmaPackageDirPathTextFieldWithBrowseButton;
-  private final LabeledComponent<TextFieldWithHistoryWithBrowseButton> myConfigPathTextFieldWithBrowseButton;
-  private final EnvironmentVariablesComponent myEnvironmentVariablesComponent;
-  private JComponent myAnchor;
+  private final TextFieldWithHistoryWithBrowseButton myNodeInterpreterPathTextFieldWithBrowseButton;
+  private final TextFieldWithHistoryWithBrowseButton myKarmaPackageDirPathTextFieldWithBrowseButton;
+  private final TextFieldWithHistoryWithBrowseButton myConfigPathTextFieldWithBrowseButton;
+  private final EnvironmentVariablesTextField myEnvironmentVariablesTextField;
+  private final JBTextField myBrowsers;
+  private final JPanel myRootComponent;
 
   public KarmaRunConfigurationEditor(@NotNull Project project) {
     myProject = project;
-    JPanel panel = new JPanel(new VerticalFlowLayout(VerticalFlowLayout.MIDDLE, 0, 5, true, false));
-    myNodeInterpreterPathTextFieldWithBrowseButton = LabeledComponent.create(NodeUIUtil.createNodeInterpreterTextField(project),
-                                                                             NodeUIUtil.NODE_INTERPRETER_PATH_LABEL);
-    myNodeInterpreterPathTextFieldWithBrowseButton.setLabelLocation(BorderLayout.WEST);
-    panel.add(myNodeInterpreterPathTextFieldWithBrowseButton);
+    myNodeInterpreterPathTextFieldWithBrowseButton = NodeUIUtil.createNodeInterpreterTextField(project);
+    myKarmaPackageDirPathTextFieldWithBrowseButton = createKarmaPackageDirPathTextField(project);
+    myConfigPathTextFieldWithBrowseButton = createConfigurationFileTextField(project);
+    myEnvironmentVariablesTextField = new EnvironmentVariablesTextField();
+    myBrowsers = createBrowsersTextField();
+    JLabel browserLabel = new JLabel("comma-separated list of browsers (e.g. Chrome,ChromeCanary,Firefox)");
+    browserLabel.setFont(UIUtil.getTitledBorderFont());
+    myRootComponent = new FormBuilder()
+      .setAlignLabelOnRight(false)
+      .addLabeledComponent(KarmaBundle.message("runConfiguration.config_file.label"), myConfigPathTextFieldWithBrowseButton)
+      .addLabeledComponent(KarmaBundle.message("runConfiguration.browsers.label"), myBrowsers)
+      .addLabeledComponent("", browserLabel, 0, false)
+      .addComponent(new JSeparator(), 8)
+      .addLabeledComponent(KarmaBundle.message("runConfiguration.node_interpreter.label"), myNodeInterpreterPathTextFieldWithBrowseButton, 8)
+      .addLabeledComponent(KarmaBundle.message("runConfiguration.karma_package_dir.label"), myKarmaPackageDirPathTextFieldWithBrowseButton)
+      .addLabeledComponent(KarmaBundle.message("runConfiguration.environment.label"), myEnvironmentVariablesTextField.getComponent())
+      .getPanel();
+  }
 
-    myKarmaPackageDirPathTextFieldWithBrowseButton = LabeledComponent.create(createKarmaPackageDirPathTextField(project), "Karma package:");
-    myKarmaPackageDirPathTextFieldWithBrowseButton.setLabelLocation(BorderLayout.WEST);
-    panel.add(myKarmaPackageDirPathTextFieldWithBrowseButton);
-
-    myConfigPathTextFieldWithBrowseButton = LabeledComponent.create(createConfigurationFileTextField(project), "Configuration file:");
-    myConfigPathTextFieldWithBrowseButton.setLabelLocation(BorderLayout.WEST);
-    panel.add(myConfigPathTextFieldWithBrowseButton);
-
-    myEnvironmentVariablesComponent = new EnvironmentVariablesComponent();
-    myEnvironmentVariablesComponent.setLabelLocation(BorderLayout.WEST);
-    panel.add(myEnvironmentVariablesComponent);
-    myRootComponent = panel;
-
-    setAnchor(myEnvironmentVariablesComponent.getLabel());
+  @NotNull
+  private static JBTextField createBrowsersTextField() {
+    JBTextField browsers = new JBTextField();
+    // by default 'browsers' setting from the configuration file is used
+    StatusText emptyStatusText = browsers.getEmptyText();
+    emptyStatusText.clear();
+    emptyStatusText.appendText("using ", SimpleTextAttributes.GRAYED_ATTRIBUTES);
+    emptyStatusText.appendText("browsers", SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES);
+    emptyStatusText.appendText(" setting from the configuration file", SimpleTextAttributes.GRAYED_ATTRIBUTES);
+    return browsers;
   }
 
   private TextFieldWithHistoryWithBrowseButton createKarmaPackageDirPathTextField(@NotNull final Project project) {
@@ -86,7 +95,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
         List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
         VirtualFile requester = KarmaGlobalSettingsUtil.getRequester(
           myProject,
-          myConfigPathTextFieldWithBrowseButton.getComponent().getChildComponent().getText()
+          myConfigPathTextFieldWithBrowseButton.getChildComponent().getText()
         );
         NodeModuleSearchUtil.findModulesWithName(modules,
                                                  KarmaGlobalSettingsUtil.NODE_PACKAGE_NAME,
@@ -166,15 +175,16 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     KarmaRunSettings runSettings = runConfiguration.getRunSettings();
 
     String nodeInterpreterPath = KarmaGlobalSettingsUtil.getNodeInterpreterPath();
-    setTextAndAddToHistory(myNodeInterpreterPathTextFieldWithBrowseButton.getComponent().getChildComponent(), nodeInterpreterPath);
+    setTextAndAddToHistory(myNodeInterpreterPathTextFieldWithBrowseButton.getChildComponent(), nodeInterpreterPath);
 
     String karmaNodePackageDir = KarmaGlobalSettingsUtil.getKarmaNodePackageDir(myProject, runSettings.getConfigPath());
-    setTextAndAddToHistory(myKarmaPackageDirPathTextFieldWithBrowseButton.getComponent().getChildComponent(), karmaNodePackageDir);
+    setTextAndAddToHistory(myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent(), karmaNodePackageDir);
 
-    setTextAndAddToHistory(myConfigPathTextFieldWithBrowseButton.getComponent().getChildComponent(), runSettings.getConfigPath());
+    setTextAndAddToHistory(myConfigPathTextFieldWithBrowseButton.getChildComponent(), runSettings.getConfigPath());
+    myBrowsers.setText(runSettings.getBrowsers());
 
-    myEnvironmentVariablesComponent.setEnvs(runSettings.getEnvVars());
-    myEnvironmentVariablesComponent.setPassParentEnvs(runSettings.isPassParentEnvVars());
+    myEnvironmentVariablesTextField.setEnvs(runSettings.getEnvVars());
+    myEnvironmentVariablesTextField.setPassParentEnvs(runSettings.isPassParentEnvVars());
   }
 
   private static void setTextAndAddToHistory(@NotNull TextFieldWithHistory textFieldWithHistory, @Nullable String text) {
@@ -184,15 +194,16 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
 
   @Override
   protected void applyEditorTo(@NotNull KarmaRunConfiguration runConfiguration) throws ConfigurationException {
-    String configPath = myConfigPathTextFieldWithBrowseButton.getComponent().getChildComponent().getText();
+    String configPath = myConfigPathTextFieldWithBrowseButton.getChildComponent().getText();
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
     builder.setConfigPath(configPath);
-    builder.setEnvVars(myEnvironmentVariablesComponent.getEnvs());
-    builder.setPassParentEnvVars(myEnvironmentVariablesComponent.isPassParentEnvs());
+    builder.setBrowsers(StringUtil.notNullize(myBrowsers.getText()));
+    builder.setEnvVars(myEnvironmentVariablesTextField.getEnvs());
+    builder.setPassParentEnvVars(myEnvironmentVariablesTextField.isPassParentEnvs());
     runConfiguration.setRunSettings(builder.build());
-    String karmaNodePackageDir = myKarmaPackageDirPathTextFieldWithBrowseButton.getComponent().getChildComponent().getText();
+    String karmaNodePackageDir = myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent().getText();
     KarmaGlobalSettingsUtil.storeKarmaPackageDir(myProject, karmaNodePackageDir);
-    String nodeInterpreterPath = myNodeInterpreterPathTextFieldWithBrowseButton.getComponent().getChildComponent().getText();
+    String nodeInterpreterPath = myNodeInterpreterPathTextFieldWithBrowseButton.getChildComponent().getText();
     KarmaGlobalSettingsUtil.storeNodeInterpreterPath(nodeInterpreterPath);
   }
 
@@ -200,19 +211,5 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   @Override
   protected JComponent createEditor() {
     return myRootComponent;
-  }
-
-  @Override
-  public JComponent getAnchor() {
-    return myAnchor;
-  }
-
-  @Override
-  public void setAnchor(@Nullable JComponent anchor) {
-    myAnchor = anchor;
-    myNodeInterpreterPathTextFieldWithBrowseButton.setAnchor(anchor);
-    myKarmaPackageDirPathTextFieldWithBrowseButton.setAnchor(anchor);
-    myConfigPathTextFieldWithBrowseButton.setAnchor(anchor);
-    myEnvironmentVariablesComponent.setAnchor(anchor);
   }
 }

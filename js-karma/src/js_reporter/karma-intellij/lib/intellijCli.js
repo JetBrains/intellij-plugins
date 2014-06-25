@@ -5,6 +5,7 @@ var SERVER_PORT_KEY = 'serverPort'
   , KARMA_PACKAGE_DIR_KEY = 'karmaPackageDir'
   , DEBUG_KEY = 'debug'
   , URL_ROOT_KEY = 'urlRoot'
+  , BROWSERS_KEY = 'browsers'
   , COVERAGE_TEMP_DIR = 'coverageTempDir';
 
 function parseArguments() {
@@ -66,6 +67,14 @@ function getUrlRoot() {
   return options[URL_ROOT_KEY];
 }
 
+function getBrowsers() {
+  var str = options[BROWSERS_KEY];
+  if (str == null) {
+    return null;
+  }
+  return str.split(',');
+}
+
 function getCoverageTempDirPath() {
   return options[COVERAGE_TEMP_DIR];
 }
@@ -82,5 +91,6 @@ exports.getConfigFile = getConfigFile;
 exports.getServerPort = getServerPort;
 exports.isDebug = isDebug;
 exports.getUrlRoot = getUrlRoot;
+exports.getBrowsers = getBrowsers;
 exports.getCoverageTempDirPath = getCoverageTempDirPath;
 exports.isWithCoverage = isWithCoverage;

@@ -20,6 +20,7 @@ import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.lang.AngularJSLanguage;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Dennis.Ushakov
@@ -28,7 +29,7 @@ public class AngularJSCompletionContributor extends CompletionContributor {
   private static final int NG_VARIABLE_PRIORITY = VariantsProcessor.LookupPriority.LOCAL_SCOPE_MAX_PRIORITY;
 
   @Override
-  public void fillCompletionVariants(final CompletionParameters parameters, final CompletionResultSet result) {
+  public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
     if (!getElementLanguage(parameters).is(AngularJSLanguage.INSTANCE)) return;
     PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
 
