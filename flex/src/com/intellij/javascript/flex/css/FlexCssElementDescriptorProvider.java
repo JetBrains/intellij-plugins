@@ -226,7 +226,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   @Override
-  public Collection<? extends CssFunctionDescriptor> getFunctionDescriptors(@NotNull String functionName) {
+  public Collection<? extends CssFunctionDescriptor> findFunctionDescriptors(@NotNull String functionName) {
     return ContainerUtil.newArrayList(new CssFunctionDescriptorStub(functionName));
   }
 
