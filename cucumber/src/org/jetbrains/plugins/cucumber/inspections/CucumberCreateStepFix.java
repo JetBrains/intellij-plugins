@@ -7,7 +7,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -15,6 +14,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -27,9 +27,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.CucumberBundle;
-import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
-import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
+import org.jetbrains.plugins.cucumber.*;
 import org.jetbrains.plugins.cucumber.inspections.model.CreateStepDefinitionFileModel;
 import org.jetbrains.plugins.cucumber.inspections.ui.CreateStepDefinitionFileDialog;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
@@ -44,6 +42,8 @@ import java.util.*;
  */
 public class CucumberCreateStepFix implements LocalQuickFix {
 
+  private static final FileFrameworkComparator FILE_FRAMEWORK_COMPARATOR = new FileFrameworkComparator();
+
   @NotNull
   public String getName() {
     return "Create Step Definition";
@@ -54,38 +54,27 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     return getName();
   }
 
-  public static Set<PsiFile> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
+  public static Set<Pair<PsiFile, BDDFrameworkType>> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
     return CucumberStepsIndex.getInstance(featureFile.getProject()).getStepDefinitionContainers(featureFile);
   }
 
   public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
     final GherkinStep step = (GherkinStep)descriptor.getPsiElement();
     final GherkinFile featureFile = (GherkinFile)step.getContainingFile();
-    // TODO + step defs files from other content roots
-    final List<PsiFile> files = ContainerUtil.newArrayList(getStepDefinitionContainers(featureFile));
-    if (files.size() > 0) {
-      files.add(null);
+    // TODO + step defs pairs from other content roots
+    //Tree is used to prevent duplicates (if several frameworks take care about one file)
+    final SortedSet<Pair<PsiFile, BDDFrameworkType>> pairSortedSet = ContainerUtil.newTreeSet(FILE_FRAMEWORK_COMPARATOR);
+    pairSortedSet.addAll(getStepDefinitionContainers(featureFile));
+    final List<Pair<PsiFile, BDDFrameworkType>> pairs = ContainerUtil.newArrayList(pairSortedSet);
+    if (!pairs.isEmpty()) {
+      pairs.add(0, null);
 
-      Collections.sort(files, new Comparator<PsiFile>() {
-        @Override
-        public int compare(PsiFile file, PsiFile file2) {
-          if (file == null && file2 == null) {
-            return 0;
-          } else if (file == null) {
-            return -1;
-          } else if (file2 == null) {
-            return 1;
-          }
-
-          return file.getName().compareTo(file2.getName());
-        }
-      });
 
       final JBPopupFactory popupFactory = JBPopupFactory.getInstance();
 
       final ListPopup popupStep =
-        popupFactory.createListPopup(new BaseListPopupStep<PsiFile>(
-          CucumberBundle.message("choose.step.definition.file"), files) {
+        popupFactory.createListPopup(new BaseListPopupStep<Pair<PsiFile, BDDFrameworkType>>(
+          CucumberBundle.message("choose.step.definition.file"), ContainerUtil.newArrayList(pairs)) {
 
           @Override
           public boolean isSpeedSearchEnabled() {
@@ -94,26 +83,26 @@ public class CucumberCreateStepFix implements LocalQuickFix {
 
           @NotNull
           @Override
-          public String getTextFor(PsiFile value) {
+          public String getTextFor(Pair<PsiFile, BDDFrameworkType> value) {
             if (value == null) {
               return CucumberBundle.message("create.new.file");
             }
 
-            final VirtualFile file = value.getVirtualFile();
+            final VirtualFile file = value.getFirst().getVirtualFile();
             assert file != null;
 
-            CucumberStepsIndex stepsIndex = CucumberStepsIndex.getInstance(value.getProject());
-            StepDefinitionCreator stepDefinitionCreator = stepsIndex.getExtensionMap().get(file.getFileType()).getStepDefinitionCreator();
-            return stepDefinitionCreator.getStepDefinitionFilePath(value);
+            CucumberStepsIndex stepsIndex = CucumberStepsIndex.getInstance(value.getFirst().getProject());
+            StepDefinitionCreator stepDefinitionCreator = stepsIndex.getExtensionMap().get(value.getSecond()).getStepDefinitionCreator();
+            return stepDefinitionCreator.getStepDefinitionFilePath(value.getFirst());
           }
 
           @Override
-          public Icon getIconFor(PsiFile value) {
-            return value == null ? AllIcons.Actions.CreateFromUsage : value.getIcon(0);
+          public Icon getIconFor(Pair<PsiFile, BDDFrameworkType> value) {
+            return value == null ? AllIcons.Actions.CreateFromUsage : value.getFirst().getIcon(0);
           }
 
           @Override
-          public PopupStep onChosen(final PsiFile selectedValue, boolean finalChoice) {
+          public PopupStep onChosen(final Pair<PsiFile, BDDFrameworkType> selectedValue, boolean finalChoice) {
             return doFinalStep(new Runnable() {
               public void run() {
                 createFileOrStepDefinition(step, selectedValue);
@@ -128,7 +117,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
         new WriteCommandAction.Simple(step.getProject()) {
           @Override
           protected void run() throws Throwable {
-            createStepDefinition(step, files.get(1));
+            createStepDefinition(step, pairs.get(1).getFirst());
           }
         }.execute();
       }
@@ -147,7 +136,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
       return;
     }
     String filePath = FileUtil.toSystemDependentName(model.getFilePath());
-    final FileType fileType = model.getSelectedFileType();
+    final BDDFrameworkType frameworkType = model.getSelectedFileType();
 
     // show error if file already exists
     if (LocalFileSystem.getInstance().findFileByPath(filePath) == null) {
@@ -164,7 +153,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
               final PsiDirectory parentPsiDir = PsiManager.getInstance(project).findDirectory(parentDir);
               assert parentPsiDir != null;
               PsiFile newFile = CucumberStepsIndex.getInstance(step.getProject())
-                .createStepDefinitionFile(model.getDirectory(), model.getFileName(), fileType);
+                .createStepDefinitionFile(model.getDirectory(), model.getFileName(), frameworkType);
               createStepDefinition(step, newFile);
             }
           }.execute();
@@ -178,8 +167,8 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     }
   }
 
-  private static void createFileOrStepDefinition(final GherkinStep step, @Nullable final PsiFile file) {
-    if (file == null) {
+  private static void createFileOrStepDefinition(final GherkinStep step, @Nullable final Pair<PsiFile, BDDFrameworkType> pair) {
+    if (pair == null) {
       createStepDefinitionFile(step);
     }
     else {
@@ -188,7 +177,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
           new WriteCommandAction.Simple(step.getProject()) {
             @Override
             protected void run() throws Throwable {
-              createStepDefinition(step, file);
+              createStepDefinition(step, pair.getFirst());
             }
           }.execute();
         }
@@ -208,9 +197,15 @@ public class CucumberCreateStepFix implements LocalQuickFix {
       }
     };
 
-    Map<FileType, String> supportedFileTypesAndDefaultFileNames = new HashMap<FileType, String>();
-    Map<FileType, PsiDirectory> fileTypeToDefaultDirectoryMap = new HashMap<FileType, PsiDirectory>();
+    Map<BDDFrameworkType, String> supportedFileTypesAndDefaultFileNames = new HashMap<BDDFrameworkType, String>();
+    Map<BDDFrameworkType, PsiDirectory> fileTypeToDefaultDirectoryMap = new HashMap<BDDFrameworkType, PsiDirectory>();
     for (CucumberJvmExtensionPoint e : Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME)) {
+       if (e instanceof OptionalStepDefinitionExtensionPoint) {
+         // Skip if framework file creation support is optional
+         if (!((OptionalStepDefinitionExtensionPoint)e).participateInStepDefinitionCreation(step)) {
+           continue;
+         }
+       }
       supportedFileTypesAndDefaultFileNames.put(e.getStepFileType(), e.getStepDefinitionCreator().getDefaultStepFileName());
       fileTypeToDefaultDirectoryMap.put(e.getStepFileType(), e.getStepDefinitionCreator().getDefaultStepDefinitionFolder(step));
     }
@@ -238,6 +233,24 @@ public class CucumberCreateStepFix implements LocalQuickFix {
       if (ep.getStepDefinitionCreator().createStepDefinition(step, file)) {
         return;
       }
+    }
+  }
+
+  /**
+   * Compares two paris of file-frameworkType using file name as key
+   */
+  private static class FileFrameworkComparator implements Comparator<Pair<PsiFile, BDDFrameworkType>> {
+    @Override
+    public int compare(Pair<PsiFile, BDDFrameworkType> pair1, Pair<PsiFile, BDDFrameworkType> pair2) {
+      if (pair1 == null && pair2 == null) {
+        return 0;
+      } else if (pair1 == null) {
+        return -1;
+      } else if (pair2 == null) {
+        return 1;
+      }
+
+      return pair1.getFirst().getName().compareTo(pair2.getFirst().getName());
     }
   }
 }

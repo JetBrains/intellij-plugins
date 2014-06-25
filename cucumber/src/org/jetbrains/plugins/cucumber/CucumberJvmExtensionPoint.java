@@ -43,10 +43,10 @@ public interface CucumberJvmExtensionPoint {
 
   /**
    * Provides type of step definition file
-   * @return FileType
+   * @return type
    */
   @NotNull
-  FileType getStepFileType();
+  BDDFrameworkType getStepFileType();
 
 
   @NotNull

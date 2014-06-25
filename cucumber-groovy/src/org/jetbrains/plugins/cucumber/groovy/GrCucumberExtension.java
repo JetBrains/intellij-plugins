@@ -1,6 +1,5 @@
 package org.jetbrains.plugins.cucumber.groovy;
 
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
@@ -11,6 +10,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinition;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinitionCreator;
@@ -42,8 +42,8 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
 
   @NotNull
   @Override
-  public FileType getStepFileType() {
-    return GroovyFileType.GROOVY_FILE_TYPE;
+  public BDDFrameworkType getStepFileType() {
+    return new BDDFrameworkType(GroovyFileType.GROOVY_FILE_TYPE);
   }
 
   @NotNull
