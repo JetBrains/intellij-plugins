@@ -135,34 +135,36 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @Override
   public void createAdditionalActions(@NotNull AppCodeRunConfiguration configuration,
+                                      @NotNull File product,
                                       @NotNull ExecutionEnvironment environment,
                                       @NotNull BuildConfiguration buildConfiguration,
                                       @NotNull ExecutionConsole console,
                                       @NotNull ProcessHandler processHandler,
                                       @NotNull List<AnAction> actions) throws ExecutionException {
-    super.createAdditionalActions(configuration, environment, buildConfiguration, console, processHandler, actions);
+    super.createAdditionalActions(configuration, product, environment, buildConfiguration, console, processHandler, actions);
 
     actions.add(new RefreshRevealAction(configuration,
                                         environment,
                                         processHandler,
                                         buildConfiguration.getDestination(),
-                                        getBundleID(environment, buildConfiguration)));
+                                        getBundleID(environment, product)));
   }
 
   @Override
   public void install(@NotNull AppCodeRunConfiguration configuration,
+                      @NotNull File product,
                       @NotNull ExecutionEnvironment environment,
                       @NotNull BuildConfiguration buildConfiguration,
                       @NotNull File mainExecutable,
                       @NotNull GeneralCommandLine commandLine) throws ExecutionException {
-    super.install(configuration, environment, buildConfiguration, mainExecutable, commandLine);
+    super.install(configuration, product, environment, buildConfiguration, mainExecutable, commandLine);
     
     if (!Reveal.isCompatible()) return;
 
     RevealSettings settings = getRevealSettings(configuration);
     if (!settings.autoInject) return;
 
-    File toInject = installReveal(configuration, environment, buildConfiguration, commandLine, mainExecutable, settings);
+    File toInject = installReveal(configuration, product, environment, buildConfiguration, commandLine, mainExecutable, settings);
     if (toInject == null) return;
     Reveal.LOG.info("Injecting Reveal lib: " + toInject);
                               
@@ -173,6 +175,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @Nullable
   private static File installReveal(@NotNull final AppCodeRunConfiguration configuration,
+                                    @NotNull File product,
                                     @NotNull ExecutionEnvironment environment,
                                     @NotNull BuildConfiguration buildConfiguration,
                                     @NotNull GeneralCommandLine commandLine,
@@ -247,7 +250,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     
     AMDevice device = destination.getIOSDeviceSafe();
     return installOnDevice(libReveal, buildConfiguration, mainExecutable, commandLine, device,
-                           getBundleID(environment, buildConfiguration));
+                           getBundleID(environment, product));
   }
 
   private static boolean hasBundledRevealLib(@NotNull final BuildConfiguration buildConfiguration, @NotNull final File libReveal) {
@@ -360,11 +363,9 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
   @NotNull
   private static String getBundleID(@NotNull ExecutionEnvironment environment,
-                                    @NotNull BuildConfiguration buildConfiguration) throws ExecutionException {
+                                    @NotNull File product) throws ExecutionException {
     String result = environment.getUserData(BUNDLE_ID_KEY);
     if (result != null) return result;
-
-    File product = buildConfiguration.getProductFile();
 
     File plistFile = new File(product, "Info.plist");
     Plist plist = PlistDriver.readAnyFormatSafe(plistFile);
