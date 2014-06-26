@@ -33,7 +33,7 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
 
   @Override
   public boolean isStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent) {
-    if (child instanceof PsiJavaFile) {
+    if (child instanceof PsiClassOwner) {
       return true;
     }
     return false;
@@ -41,7 +41,7 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
 
   @Override
   public boolean isWritableStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent) {
-    if (child instanceof PsiJavaFile) {
+    if (child instanceof PsiClassOwner) {
       final PsiFile file = child.getContainingFile();
       if (file != null) {
         final VirtualFile virtualFile = file.getVirtualFile();

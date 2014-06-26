@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.java.steps;
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
+import com.intellij.lang.Language;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
@@ -52,7 +53,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
 
   @Override
   public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull PsiFile file) {
-    if (!(file instanceof PsiJavaFile)) return false;
+    if (!(file instanceof PsiClassOwner)) return false;
 
     final Project project = file.getProject();
     Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
@@ -60,12 +61,12 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
 
     closeActiveTemplateBuilders(file);
 
-    // snippet text
-    final PsiMethod element = buildStepDefinitionByStep(step);
-
     final PsiClass clazz = PsiTreeUtil.getChildOfType(file, PsiClass.class);
     if (clazz != null) {
       PsiDocumentManager.getInstance(project).commitAllDocuments();
+
+      // snippet text
+      final PsiMethod element = buildStepDefinitionByStep(step, file.getLanguage());
       PsiMethod addedElement = (PsiMethod)clazz.add(element);
       addedElement = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(addedElement);
       JavaCodeStyleManager.getInstance(project).shortenClassReferences(addedElement);
@@ -174,8 +175,8 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   @Override
   public String getStepDefinitionFilePath(@NotNull final PsiFile file) {
     final VirtualFile vFile = file.getVirtualFile();
-    if (file instanceof PsiJavaFile && vFile != null) {
-      String packageName = ((PsiJavaFile)file).getPackageName();
+    if (file instanceof PsiClassOwner && vFile != null) {
+      String packageName = ((PsiClassOwner)file).getPackageName();
       if (StringUtil.isEmptyOrSpaces(packageName)) {
         return vFile.getNameWithoutExtension();
       }
@@ -192,7 +193,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     return STEP_DEFINITION_SUFFIX;
   }
 
-  private static PsiMethod buildStepDefinitionByStep(@NotNull final GherkinStep step) {
+  private static PsiMethod buildStepDefinitionByStep(@NotNull final GherkinStep step, Language language) {
     String annotationPackage = new AnnotationPackageProvider().getAnnotationPackageFor(step);
     String methodAnnotation = String.format("@%s.", annotationPackage);
 
@@ -203,6 +204,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
       .replaceAll("\\\\\\\\", "\\\\")
       .replaceAll("\\\\d", "\\\\\\\\d");
 
-    return JavaPsiFacade.getInstance(step.getProject()).getElementFactory().createMethodFromText(snippet, step);
+    JVMElementFactory factory = JVMElementFactories.requireFactory(language, step.getProject());
+    return factory.createMethodFromText(snippet, step);
   }
 }
