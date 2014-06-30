@@ -22,12 +22,12 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
         DumbService.isDumb(project)) return Result.CONTINUE;
 
     if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return Result.DEFAULT;
-    if (!AngularJSBracesUtil.DEFAULT_START.equals(AngularJSBracesUtil.getInjectionStart(project)) ||
-        !AngularJSBracesUtil.DEFAULT_END.equals(AngularJSBracesUtil.getInjectionEnd(project))) return Result.CONTINUE;
 
     // we should use AngularJSBracesUtil here
     if (file.getFileType() == HtmlFileType.INSTANCE) {
       if (c == '{') {
+        if (!AngularJSBracesUtil.DEFAULT_START.equals(AngularJSBracesUtil.getInjectionStart(project)) ||
+            !AngularJSBracesUtil.DEFAULT_END.equals(AngularJSBracesUtil.getInjectionEnd(project))) return Result.CONTINUE;
         boolean addWhiteSpaceBetweenBraces = AngularJSConfig.getInstance().INSERT_WHITESPACE;
         int offset = editor.getCaretModel().getOffset();
         String chars = editor.getDocument().getText();
