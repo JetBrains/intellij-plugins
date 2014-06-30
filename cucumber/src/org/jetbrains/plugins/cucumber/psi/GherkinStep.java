@@ -2,6 +2,7 @@ package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.pom.PomTarget;
+import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +12,7 @@ import java.util.Set;
 /**
  * @author yole
  */
-public interface GherkinStep extends GherkinPsiElement, GherkinSuppressionHolder, PomTarget {
+public interface GherkinStep extends GherkinPsiElement, GherkinSuppressionHolder, PomTarget, PsiNamedElement {
   GherkinStep[] EMPTY_ARRAY = new GherkinStep[0];
 
   ASTNode getKeyword();

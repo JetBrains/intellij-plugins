@@ -94,4 +94,7 @@ public abstract class AbstractStepDefinition {
   public int hashCode() {
     return myElementPointer.hashCode();
   }
+
+  public void setCucumberRegex(@NotNull final String newValue) {
+  }
 }
