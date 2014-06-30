@@ -43,7 +43,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   private final TextFieldWithHistoryWithBrowseButton myKarmaPackageDirPathTextFieldWithBrowseButton;
   private final TextFieldWithHistoryWithBrowseButton myConfigPathTextFieldWithBrowseButton;
   private final EnvironmentVariablesTextField myEnvironmentVariablesTextField;
-  private final JBTextField myBrowsers;
+  private final JTextField myBrowsers;
   private final JPanel myRootComponent;
 
   public KarmaRunConfigurationEditor(@NotNull Project project) {
@@ -53,13 +53,12 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myConfigPathTextFieldWithBrowseButton = createConfigurationFileTextField(project);
     myEnvironmentVariablesTextField = new EnvironmentVariablesTextField();
     myBrowsers = createBrowsersTextField();
-    JLabel browserLabel = new JLabel("comma-separated list of browsers (e.g. Chrome,ChromeCanary,Firefox)");
-    browserLabel.setFont(UIUtil.getTitledBorderFont());
+    JComponent browsersDescription = createBrowsersDescription();
     myRootComponent = new FormBuilder()
       .setAlignLabelOnRight(false)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.config_file.label"), myConfigPathTextFieldWithBrowseButton)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.browsers.label"), myBrowsers)
-      .addLabeledComponent("", browserLabel, 0, false)
+      .addLabeledComponent("", browsersDescription, 0, false)
       .addComponent(new JSeparator(), 8)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.node_interpreter.label"), myNodeInterpreterPathTextFieldWithBrowseButton, 8)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.karma_package_dir.label"), myKarmaPackageDirPathTextFieldWithBrowseButton)
@@ -68,7 +67,14 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   }
 
   @NotNull
-  private static JBTextField createBrowsersTextField() {
+  private static JComponent createBrowsersDescription() {
+    JEditorPane editorPane = SwingHelper.createHtmlViewer(true, UIUtil.getTitledBorderFont(), null, null);
+    SwingHelper.setHtml(editorPane, "comma-separated list of browsers (e.g. Chrome,ChromeCanary,Firefox)");
+    return editorPane;
+  }
+
+  @NotNull
+  private static JTextField createBrowsersTextField() {
     JBTextField browsers = new JBTextField();
     // by default 'browsers' setting from the configuration file is used
     StatusText emptyStatusText = browsers.getEmptyText();
