@@ -17,7 +17,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
-import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBTextField;
@@ -69,19 +68,17 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   @NotNull
   private static JComponent createBrowsersDescription() {
     JEditorPane editorPane = SwingHelper.createHtmlViewer(true, UIUtil.getTitledBorderFont(), null, null);
-    SwingHelper.setHtml(editorPane, "comma-separated list of browsers (e.g. Chrome,ChromeCanary,Firefox)");
-    return editorPane;
+    SwingHelper.setHtml(editorPane, "overrides <i>browsers</i> setting from the configuration file");
+    JPanel panel = SwingHelper.wrapWithHorizontalStretch(editorPane);
+    panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
+    return panel;
   }
 
   @NotNull
   private static JTextField createBrowsersTextField() {
     JBTextField browsers = new JBTextField();
-    // by default 'browsers' setting from the configuration file is used
     StatusText emptyStatusText = browsers.getEmptyText();
-    emptyStatusText.clear();
-    emptyStatusText.appendText("using ", SimpleTextAttributes.GRAYED_ATTRIBUTES);
-    emptyStatusText.appendText("browsers", SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES);
-    emptyStatusText.appendText(" setting from the configuration file", SimpleTextAttributes.GRAYED_ATTRIBUTES);
+    emptyStatusText.setText("comma-separated list of browsers (e.g. Chrome,ChromeCanary,Firefox)");
     return browsers;
   }
 
