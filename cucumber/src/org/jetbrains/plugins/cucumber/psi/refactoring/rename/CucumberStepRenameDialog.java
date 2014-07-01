@@ -54,17 +54,19 @@ public class CucumberStepRenameDialog extends RenameDialog {
       @Override
       public void run() {
         final Editor editor = getNameSuggestionsField().getEditor();
-        editor.getSelectionModel().removeSelection();
-        editor.getCaretModel().moveToOffset(0);
-        final Document document = editor.getDocument();
-        EditorActionManager.getInstance().setReadonlyFragmentModificationHandler(document, new ReadonlyFragmentModificationHandler() {
-            @Override
-            public void handle(final ReadOnlyFragmentModificationException e) {
-              //do nothing
-            }
-          });
+        if (editor != null) {
+          editor.getSelectionModel().removeSelection();
+          editor.getCaretModel().moveToOffset(0);
+          final Document document = editor.getDocument();
+          EditorActionManager.getInstance().setReadonlyFragmentModificationHandler(document, new ReadonlyFragmentModificationHandler() {
+              @Override
+              public void handle(final ReadOnlyFragmentModificationException e) {
+                //do nothing
+              }
+            });
 
-        guardRegexpSpecialSymbols(editor);
+          guardRegexpSpecialSymbols(editor);
+        }
       }
     };
 
