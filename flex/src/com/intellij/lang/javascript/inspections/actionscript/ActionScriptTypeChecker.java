@@ -56,10 +56,10 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
 
   @Override
   public void checkExpressionIsAssignableToVariable(JSVariable p,
-                                                       final JSExpression expr,
-                                                       PsiFile containingFile,
-                                                       @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey,
-                                                       boolean allowChangeVariableTypeFix) {
+                                                    final JSExpression expr,
+                                                    PsiFile containingFile,
+                                                    @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey,
+                                                    boolean allowChangeVariableTypeFix) {
     final JSType type = p.getType();
     Pair<Annotation, String> annotationAndExprType =
       checkExpressionIsAssignableToType(expr, type, problemKey,

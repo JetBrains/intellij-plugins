@@ -69,12 +69,15 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
   }
 
   @Override
-  protected void checkCallArgumentType(JSParameter p, JSExpression expression, JSCallExpression node, JSFunction resolveResult) {
-    myTypeChecker.checkExpressionIsAssignableToVariable(p, expression, node.getContainingFile(), "javascript.argument.type.mismatch", false);
+  protected void checkCallArgumentType(JSParameterItem p, JSExpression expression, JSCallExpression node, PsiElement resolveResult) {
+    if (p instanceof JSParameter) {
+      myTypeChecker.checkExpressionIsAssignableToVariable((JSParameter)p, expression, node.getContainingFile(),
+                                                           "javascript.argument.type.mismatch", false);
+    }
   }
 
   @Override
-  protected boolean obtainNextMatchedParams(int[] matchedParams, JSParameter[] parameters) {
+  protected boolean obtainNextMatchedParams(int[] matchedParams, JSParameterItem[] parameters) {
     return false;
   }
 }
