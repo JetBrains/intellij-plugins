@@ -15,7 +15,7 @@
     <vendor email="support@jetbrains.com">JetBrains</vendor>
     <resource-bundle>messages.CfmlBundle</resource-bundle>
 
-    <depends>com.intellij.sql</depends>
+    <depends>com.intellij.modules.sql</depends>
     <depends>com.intellij.modules.java</depends>
     <depends>com.intellij.modules.ultimate</depends>
     <extensions defaultExtensionNs="com.intellij">
