@@ -9,10 +9,13 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
+import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.HashSet;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.refactoring.GherkinChangeUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -207,5 +210,19 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
       stepName = stepName.replace("<" + cellText + ">", dataCells.get(i).getText().trim());
     }
     return stepName;
+  }
+
+  @Override
+  public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
+    GherkinStep newStep = GherkinChangeUtil.createStep(getKeyword().getText() + " " + name, getProject());
+    replace(newStep);
+    return newStep;
+  }
+
+  @Override
+  public String getName() {
+    final ASTNode keyword = getKeyword();
+    final int keywordLength = keyword != null ? keyword.getTextLength() : 0;
+    return getText().substring(keywordLength).trim();
   }
 }

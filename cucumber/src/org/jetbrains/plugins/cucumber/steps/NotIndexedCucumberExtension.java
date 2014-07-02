@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.cucumber.steps;
 
 import com.intellij.ProjectTopics;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -145,6 +146,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
             if (!file.getProject().isDisposed()) {
               reloadAbstractStepDefinitions(file);
             }
+            DaemonCodeAnalyzer.getInstance(file.getProject()).restart();
           }
         });
       }

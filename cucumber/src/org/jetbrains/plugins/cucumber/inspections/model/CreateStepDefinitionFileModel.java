@@ -1,10 +1,10 @@
 package org.jetbrains.plugins.cucumber.inspections.model;
 
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 
 import javax.swing.*;
 import java.io.File;
@@ -20,7 +20,7 @@ public class CreateStepDefinitionFileModel {
 
   private String myFileName;
 
-  private final Map<FileType, PsiDirectory> myFileTypeToDefaultDirectoryMap;
+  private final Map<BDDFrameworkType, PsiDirectory> myFileTypeToDefaultDirectoryMap;
 
   DefaultComboBoxModel myFileTypeModel;
 
@@ -28,10 +28,10 @@ public class CreateStepDefinitionFileModel {
 
   private Project myProject;
 
-  public CreateStepDefinitionFileModel(@NotNull final Project project, @NotNull final Map<FileType, String> fileTypeToDefaultNameMap, @NotNull final Map<FileType, PsiDirectory> fileTypeToDefaultDirectoryMap) {
+  public CreateStepDefinitionFileModel(@NotNull final Project project, @NotNull final Map<BDDFrameworkType, String> fileTypeToDefaultNameMap, @NotNull final Map<BDDFrameworkType, PsiDirectory> fileTypeToDefaultDirectoryMap) {
     myProject = project;
     List<FileTypeComboboxItem> myFileTypeList = new ArrayList<FileTypeComboboxItem>();
-    for (Map.Entry<FileType, String> entry : fileTypeToDefaultNameMap.entrySet()) {
+    for (Map.Entry<BDDFrameworkType, String> entry : fileTypeToDefaultNameMap.entrySet()) {
       if (myFileName == null) {
         myFileName = entry.getValue();
       }
@@ -52,7 +52,7 @@ public class CreateStepDefinitionFileModel {
   public String getFileNameWithExtension() {
     final StringBuilder result = new StringBuilder();
     result.append(myFileName)
-      .append('.').append(getSelectedFileType().getDefaultExtension());
+      .append('.').append(getSelectedFileType().getFileType().getDefaultExtension());
     return result.toString();
   }
 
@@ -76,9 +76,9 @@ public class CreateStepDefinitionFileModel {
     myDirectory = psiDirectory;
   }
 
-  public FileType getSelectedFileType() {
+  public BDDFrameworkType getSelectedFileType() {
     final FileTypeComboboxItem selectedItem = (FileTypeComboboxItem) myFileTypeModel.getSelectedItem();
-    return selectedItem != null ? selectedItem.getFileType() : null;
+    return selectedItem != null ? selectedItem.getFrameworkType() : null;
   }
 
   public DefaultComboBoxModel getFileTypeModel() {

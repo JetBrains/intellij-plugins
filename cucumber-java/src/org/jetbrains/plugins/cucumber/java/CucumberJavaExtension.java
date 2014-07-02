@@ -1,7 +1,6 @@
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.ide.highlighter.JavaFileType;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -13,6 +12,7 @@ import com.intellij.util.Query;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinition;
 import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinitionCreator;
@@ -33,7 +33,7 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
 
   @Override
   public boolean isStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent) {
-    if (child instanceof PsiJavaFile) {
+    if (child instanceof PsiClassOwner) {
       return true;
     }
     return false;
@@ -41,7 +41,7 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
 
   @Override
   public boolean isWritableStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent) {
-    if (child instanceof PsiJavaFile) {
+    if (child instanceof PsiClassOwner) {
       final PsiFile file = child.getContainingFile();
       if (file != null) {
         final VirtualFile virtualFile = file.getVirtualFile();
@@ -55,8 +55,8 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
 
   @NotNull
   @Override
-  public FileType getStepFileType() {
-    return JavaFileType.INSTANCE;
+  public BDDFrameworkType getStepFileType() {
+    return new BDDFrameworkType(JavaFileType.INSTANCE);
   }
 
   @NotNull

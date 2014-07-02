@@ -1,6 +1,6 @@
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.execution.configuration.EnvironmentVariablesTextField;
+import com.intellij.execution.configuration.EnvironmentVariablesTextFieldWithBrowseButton;
 import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
@@ -17,7 +17,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
-import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBTextField;
@@ -42,8 +41,8 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   private final TextFieldWithHistoryWithBrowseButton myNodeInterpreterPathTextFieldWithBrowseButton;
   private final TextFieldWithHistoryWithBrowseButton myKarmaPackageDirPathTextFieldWithBrowseButton;
   private final TextFieldWithHistoryWithBrowseButton myConfigPathTextFieldWithBrowseButton;
-  private final EnvironmentVariablesTextField myEnvironmentVariablesTextField;
-  private final JBTextField myBrowsers;
+  private final EnvironmentVariablesTextFieldWithBrowseButton myEnvVarsComponent;
+  private final JTextField myBrowsers;
   private final JPanel myRootComponent;
 
   public KarmaRunConfigurationEditor(@NotNull Project project) {
@@ -51,31 +50,35 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myNodeInterpreterPathTextFieldWithBrowseButton = NodeUIUtil.createNodeInterpreterTextField(project);
     myKarmaPackageDirPathTextFieldWithBrowseButton = createKarmaPackageDirPathTextField(project);
     myConfigPathTextFieldWithBrowseButton = createConfigurationFileTextField(project);
-    myEnvironmentVariablesTextField = new EnvironmentVariablesTextField();
+    myEnvVarsComponent = new EnvironmentVariablesTextFieldWithBrowseButton();
     myBrowsers = createBrowsersTextField();
-    JLabel browserLabel = new JLabel("comma-separated list of browsers (e.g. Chrome,ChromeCanary,Firefox)");
-    browserLabel.setFont(UIUtil.getTitledBorderFont());
+    JComponent browsersDescription = createBrowsersDescription();
     myRootComponent = new FormBuilder()
       .setAlignLabelOnRight(false)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.config_file.label"), myConfigPathTextFieldWithBrowseButton)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.browsers.label"), myBrowsers)
-      .addLabeledComponent("", browserLabel, 0, false)
+      .addLabeledComponent("", browsersDescription, 0, false)
       .addComponent(new JSeparator(), 8)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.node_interpreter.label"), myNodeInterpreterPathTextFieldWithBrowseButton, 8)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.karma_package_dir.label"), myKarmaPackageDirPathTextFieldWithBrowseButton)
-      .addLabeledComponent(KarmaBundle.message("runConfiguration.environment.label"), myEnvironmentVariablesTextField.getComponent())
+      .addLabeledComponent(KarmaBundle.message("runConfiguration.environment.label"), myEnvVarsComponent)
       .getPanel();
   }
 
   @NotNull
-  private static JBTextField createBrowsersTextField() {
+  private static JComponent createBrowsersDescription() {
+    JEditorPane editorPane = SwingHelper.createHtmlViewer(true, UIUtil.getTitledBorderFont(), null, null);
+    SwingHelper.setHtml(editorPane, "overrides <i>browsers</i> setting from the configuration file");
+    JPanel panel = SwingHelper.wrapWithHorizontalStretch(editorPane);
+    panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
+    return panel;
+  }
+
+  @NotNull
+  private static JTextField createBrowsersTextField() {
     JBTextField browsers = new JBTextField();
-    // by default 'browsers' setting from the configuration file is used
     StatusText emptyStatusText = browsers.getEmptyText();
-    emptyStatusText.clear();
-    emptyStatusText.appendText("using ", SimpleTextAttributes.GRAYED_ATTRIBUTES);
-    emptyStatusText.appendText("browsers", SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES);
-    emptyStatusText.appendText(" setting from the configuration file", SimpleTextAttributes.GRAYED_ATTRIBUTES);
+    emptyStatusText.setText("comma-separated list of browsers (e.g. Chrome,ChromeCanary,Firefox)");
     return browsers;
   }
 
@@ -183,8 +186,8 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     setTextAndAddToHistory(myConfigPathTextFieldWithBrowseButton.getChildComponent(), runSettings.getConfigPath());
     myBrowsers.setText(runSettings.getBrowsers());
 
-    myEnvironmentVariablesTextField.setEnvs(runSettings.getEnvVars());
-    myEnvironmentVariablesTextField.setPassParentEnvs(runSettings.isPassParentEnvVars());
+    myEnvVarsComponent.setEnvs(runSettings.getEnvVars());
+    myEnvVarsComponent.setPassParentEnvs(runSettings.isPassParentEnvVars());
   }
 
   private static void setTextAndAddToHistory(@NotNull TextFieldWithHistory textFieldWithHistory, @Nullable String text) {
@@ -198,8 +201,8 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
     builder.setConfigPath(configPath);
     builder.setBrowsers(StringUtil.notNullize(myBrowsers.getText()));
-    builder.setEnvVars(myEnvironmentVariablesTextField.getEnvs());
-    builder.setPassParentEnvVars(myEnvironmentVariablesTextField.isPassParentEnvs());
+    builder.setEnvVars(myEnvVarsComponent.getEnvs());
+    builder.setPassParentEnvVars(myEnvVarsComponent.isPassParentEnvs());
     runConfiguration.setRunSettings(builder.build());
     String karmaNodePackageDir = myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent().getText();
     KarmaGlobalSettingsUtil.storeKarmaPackageDir(myProject, karmaNodePackageDir);

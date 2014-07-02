@@ -25,6 +25,7 @@ import com.intellij.facet.ui.libraries.LibraryInfo;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.ModificationTracker;
+import com.intellij.openapi.util.SimpleModificationTracker;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.struts2.facet.ui.FeaturesConfigurationTab;
@@ -42,7 +43,7 @@ import java.util.Set;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsFacetConfiguration implements FacetConfiguration, ModificationTracker, Disposable {
+public class StrutsFacetConfiguration extends SimpleModificationTracker implements FacetConfiguration, ModificationTracker, Disposable {
 
   // Filesets
   @NonNls
@@ -62,7 +63,6 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
    */
   private final Set<StrutsFileSet> myFileSets = new LinkedHashSet<StrutsFileSet>();
 
-  private long myModificationCount;
 
   // Features - tab
   private static final String PROPERTIES_KEYS = "propertiesKeys";
@@ -146,12 +146,8 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
     element.addContent(propertiesElement);
   }
 
-  public long getModificationCount() {
-    return myModificationCount;
-  }
-
   public void setModified() {
-    myModificationCount++;
+    incModificationCount();
   }
 
   public void dispose() {

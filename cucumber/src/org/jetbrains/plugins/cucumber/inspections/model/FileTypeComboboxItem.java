@@ -1,8 +1,8 @@
 package org.jetbrains.plugins.cucumber.inspections.model;
 
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 
 /**
  * User: Andrey.Vokin
@@ -10,22 +10,25 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FileTypeComboboxItem {
 
-  private final FileType myFileType;
+  private final BDDFrameworkType myFrameworkType;
 
   private final String myDefaultFileName;
 
-  public FileTypeComboboxItem(@NotNull final FileType fileType, @NotNull final String defaultFileName) {
-    myFileType = fileType;
+  public FileTypeComboboxItem(@NotNull final BDDFrameworkType frameworkType, @NotNull final String defaultFileName) {
+    myFrameworkType = frameworkType;
     myDefaultFileName = defaultFileName;
   }
 
   @Override
   public String toString() {
-    return StringUtil.capitalizeWords(myFileType.getName().toLowerCase(), true);
+    final String fileType = StringUtil.capitalizeWords(myFrameworkType.getFileType().getName().toLowerCase(), true);
+    final String additionalInfo = myFrameworkType.getAdditionalInfo();
+    // Display additional info in bracets (if exists)
+    return (additionalInfo != null) ? String.format("%s (%s)", fileType, additionalInfo) : fileType;
   }
 
-  public FileType getFileType() {
-    return myFileType;
+  public BDDFrameworkType getFrameworkType() {
+    return myFrameworkType;
   }
 
   public String getDefaultFileName() {

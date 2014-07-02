@@ -24,12 +24,8 @@ public abstract class AbstractStepDefinition {
 
   private final SmartPsiElementPointer<PsiElement> myElementPointer;
 
-  private String myCucumberRegex = null;
-
   public AbstractStepDefinition(@NotNull final PsiElement element) {
     myElementPointer = SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
-
-    myCucumberRegex = getCucumberRegexFromElement(element);
   }
 
   public abstract List<String> getVariableNames();
@@ -67,12 +63,7 @@ public abstract class AbstractStepDefinition {
 
   @Nullable
   public String getCucumberRegex() {
-    final String cucumberRegexFromSmartPointer = getCucumberRegexFromElement(getElement());
-    if (cucumberRegexFromSmartPointer == null || myCucumberRegex == null || !cucumberRegexFromSmartPointer.equals(myCucumberRegex)) {
-      return null;
-    }
-
-    return myCucumberRegex;
+    return getCucumberRegexFromElement(getElement());
   }
 
   @Nullable
@@ -93,5 +84,8 @@ public abstract class AbstractStepDefinition {
   @Override
   public int hashCode() {
     return myElementPointer.hashCode();
+  }
+
+  public void setCucumberRegex(@NotNull final String newValue) {
   }
 }

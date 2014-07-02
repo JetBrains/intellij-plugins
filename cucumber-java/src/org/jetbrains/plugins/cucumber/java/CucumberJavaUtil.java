@@ -202,8 +202,8 @@ public class CucumberJavaUtil {
     for (PsiReference ref : step.getReferences()) {
       PsiElement refElement = ref.resolve();
       if (refElement != null && refElement instanceof PsiMethod) {
-        PsiJavaFile javaFile = (PsiJavaFile)refElement.getContainingFile();
-        final String packageName = javaFile.getPackageName();
+        PsiClassOwner file = (PsiClassOwner)refElement.getContainingFile();
+        final String packageName = file.getPackageName();
         if (StringUtil.isNotEmpty(packageName)) {
           return packageName;
         }
