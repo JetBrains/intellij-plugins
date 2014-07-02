@@ -3,10 +3,7 @@ package com.jetbrains.lang.dart;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.module.WebModuleTypeBase;
+import com.intellij.openapi.module.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
@@ -224,7 +221,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
     final THashSet<String> newExcludedPackagesUrls = collectFoldersToExclude(module, pubspecYamlFile);
 
     if (oldExcludedPackagesUrls.size() != newExcludedPackagesUrls.size() || !newExcludedPackagesUrls.containsAll(oldExcludedPackagesUrls)) {
-      updateExcludedFolders(module, contentRoot, oldExcludedPackagesUrls, newExcludedPackagesUrls);
+      ModuleUtil.updateExcludedFoldersInWriteAction(module, contentRoot, oldExcludedPackagesUrls, newExcludedPackagesUrls);
     }
   }
 
@@ -279,34 +276,6 @@ public class DartProjectComponent extends AbstractProjectComponent {
         }
 
         return CONTINUE;
-      }
-    });
-  }
-
-  private static void updateExcludedFolders(final Module module,
-                                            @NotNull final VirtualFile contentRoot,
-                                            final Collection<String> urlsToUnexclude,
-                                            final Collection<String> urlsToExclude) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
-        try {
-          for (final ContentEntry contentEntry : modifiableModel.getContentEntries()) {
-            if (contentRoot.equals(contentEntry.getFile())) {
-              for (String url : urlsToUnexclude) {
-                contentEntry.removeExcludeFolder(url);
-              }
-              for (String url : urlsToExclude) {
-                contentEntry.addExcludeFolder(url);
-              }
-              break;
-            }
-          }
-          modifiableModel.commit();
-        }
-        catch (Exception e) {
-          modifiableModel.dispose();
-        }
       }
     });
   }
