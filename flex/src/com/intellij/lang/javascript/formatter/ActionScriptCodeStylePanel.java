@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.formatter;
 
 import com.intellij.lang.javascript.ActionScriptFileType;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
 
   public ActionScriptCodeStylePanel(final CodeStyleSettings settings) {
-    super(settings);
+    super(JavaScriptSupportLoader.ECMA_SCRIPT_L4, settings);
     myNamingConventionsPane.setVisible(true);
     myFormattingOptionsPane.setVisible(true);
     myIndentPackageChildren.setVisible(true);
