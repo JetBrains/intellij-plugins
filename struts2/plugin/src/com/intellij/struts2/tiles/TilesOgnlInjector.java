@@ -1,5 +1,6 @@
 package com.intellij.struts2.tiles;
 
+import com.intellij.jam.model.util.JamCommonUtil;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.ognl.OgnlLanguage;
@@ -8,11 +9,8 @@ import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.impl.source.jsp.jspXml.JspXmlFile;
-import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts.dom.tiles.Add;
 import com.intellij.struts.dom.tiles.Definition;
@@ -37,9 +35,7 @@ public class TilesOgnlInjector implements MultiHostInjector {
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
     final PsiFile containingFile = context.getContainingFile();
-    if (!(containingFile instanceof XmlFile) ||
-        containingFile instanceof JspFile ||
-        containingFile instanceof JspXmlFile) {
+   if (!JamCommonUtil.isPlainXmlFile(containingFile)) {
       return;
     }
 
