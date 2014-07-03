@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,8 @@
 
 package com.intellij.struts2.model.constant.contributor;
 
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.Pair;
@@ -29,6 +31,7 @@ import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.ResolvingConverter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -146,9 +149,15 @@ public class StrutsCoreConstantContributor extends StrutsConstantContributorBase
       return charSets.getValue().contains(s) ? s : null;
     }
 
+    @Nullable
+    @Override
+    public LookupElement createLookupElement(String s) {
+      return LookupElementBuilder.create(s).withCaseSensitivity(false);
+    }
+
     @NotNull
     @Override
-    public Collection<? extends String> getVariants(final ConvertContext convertContext) {
+    public Collection<String> getVariants(final ConvertContext convertContext) {
       return charSets.getValue();
     }
   }
