@@ -15,7 +15,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="Groovy" level="project" />
     <orderEntry type="module" module-name="platform-api" />
-    <orderEntry type="module" module-name="sql" />
+    <orderEntry type="module" module-name="sql-impl" />
     <orderEntry type="module" module-name="platform-impl" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="lang-api" />
