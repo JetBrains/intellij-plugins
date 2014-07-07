@@ -97,7 +97,8 @@ public abstract class HbActionHandlerTest extends LightPlatformCodeInsightFixtur
     doExecuteActionTest(before, expected, new Runnable() {
       @Override
       public void run() {
-        new CommentByBlockCommentHandler().invoke(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile());
+        new CommentByBlockCommentHandler().invoke(myFixture.getProject(), myFixture.getEditor(),
+                                                  myFixture.getEditor().getCaretModel().getPrimaryCaret(), myFixture.getFile());
       }
     });
   }
