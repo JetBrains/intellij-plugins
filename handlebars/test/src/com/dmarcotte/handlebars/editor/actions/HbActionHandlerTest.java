@@ -2,7 +2,7 @@ package com.dmarcotte.handlebars.editor.actions;
 
 import com.dmarcotte.handlebars.file.HbFileType;
 import com.intellij.codeInsight.generation.CommentByBlockCommentHandler;
-import com.intellij.codeInsight.generation.CommentByLineCommentHandler;
+import com.intellij.codeInsight.generation.actions.CommentByLineCommentAction;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
@@ -84,7 +84,7 @@ public abstract class HbActionHandlerTest extends LightPlatformCodeInsightFixtur
     doExecuteActionTest(before, expected, new Runnable() {
       @Override
       public void run() {
-        new CommentByLineCommentHandler().invoke(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile());
+        new CommentByLineCommentAction().actionPerformedImpl(myFixture.getProject(), myFixture.getEditor());
       }
     });
   }
