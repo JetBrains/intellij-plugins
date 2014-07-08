@@ -69,7 +69,7 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
       CfmlBraceMatcher braceMatcher = new CfmlBraceMatcher();
       HighlighterIterator iterator = ((EditorEx)editor).getHighlighter().createIterator(offset);
       if (!braceMatcher.isLBraceToken(iterator, editor.getDocument().getCharsSequence(), fileType)) {
-        EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, "}", true, 0);
+        EditorModificationUtil.insertStringAtCaret(editor, "}", true, 0);
         // return Result.STOP;
       }
       return Result.CONTINUE;
@@ -78,10 +78,10 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
       if (CfmlEditorUtil.countSharpsBalance(editor) == 0) {
         char charAtOffset = DocumentUtils.getCharAt(editor.getDocument(), offset);
         if (charAtOffset == '#') {
-          EditorModificationUtil.moveAllCaretsRelatively(editor, 1);
+          EditorModificationUtil.moveCaretRelatively(editor, 1);
           return Result.STOP;
         }
-        EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, "#", true, 0);
+        EditorModificationUtil.insertStringAtCaret(editor, "#", true, 0);
       }
     }
     else if (c == '>') {
@@ -105,9 +105,9 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
     char charAtOffset = DocumentUtils.getCharAt(document, offset);
 
     if (charAtOffset != '>') {
-      EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, ">", true, 0);
+      EditorModificationUtil.insertStringAtCaret(editor, ">", true, 0);
     }
-    EditorModificationUtil.moveAllCaretsRelatively(editor, 1);
+    EditorModificationUtil.moveCaretRelatively(editor, 1);
     ++offset;
     if (DocumentUtils.getCharAt(document, offset - 2) == '/') {
       return false;
@@ -163,7 +163,7 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
       }
     }
     if (doInsertion && CfmlUtil.isEndTagRequired(((CfmlTag)tagElement).getTagName(), project)) {
-      EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, "</" + ((CfmlTag)tagElement).getTagName() + ">", true, 0);
+      EditorModificationUtil.insertStringAtCaret(editor, "</" + ((CfmlTag)tagElement).getTagName() + ">", true, 0);
       return true;
     }
     return false;

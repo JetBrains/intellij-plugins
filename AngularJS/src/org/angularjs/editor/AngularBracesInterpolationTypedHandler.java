@@ -43,7 +43,7 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
                 interpolation += "}";
               }
 
-              EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, interpolation, true, addWhiteSpaceBetweenBraces ? 2 : 1);
+              EditorModificationUtil.insertStringAtCaret(editor, interpolation, true, addWhiteSpaceBetweenBraces ? 2 : 1);
               return Result.STOP;
             }
           }

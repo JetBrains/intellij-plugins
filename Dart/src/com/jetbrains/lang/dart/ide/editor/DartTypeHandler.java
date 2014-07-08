@@ -62,7 +62,7 @@ public class DartTypeHandler extends TypedHandlerDelegate {
       textToInsert = "}";
     }
     if (textToInsert != null) {
-      EditorModificationUtil.typeInStringAtCaretHonorMultipleCarets(editor, textToInsert, false, 0);
+      EditorModificationUtil.insertStringAtCaret(editor, textToInsert, false, 0);
       return Result.STOP;
     }
     return super.charTyped(c, project, editor, file);
