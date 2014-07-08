@@ -1,6 +1,6 @@
 package com.intellij.tapestry.tests;
 
-import com.intellij.codeInsight.actions.CodeInsightAction;
+import com.intellij.codeInsight.actions.MultiCaretCodeInsightAction;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -83,7 +83,7 @@ public class TapestryActionsTest extends TapestryBaseTestCase {
 
   private void doTest(final String actionId) throws Throwable {
     initByComponent(true);
-    CodeInsightAction action = (CodeInsightAction)ActionManager.getInstance().getAction(actionId);
+    MultiCaretCodeInsightAction action = (MultiCaretCodeInsightAction)ActionManager.getInstance().getAction(actionId);
     action.actionPerformedImpl(myModule.getProject(), myFixture.getEditor());
     checkResultByFile();
   }
