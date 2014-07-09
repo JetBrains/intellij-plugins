@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,8 @@ public interface OgnlTypes {
   IElementType EXPRESSION = new OgnlTokenType("EXPRESSION");
   IElementType INDEXED_EXPRESSION = new OgnlTokenType("INDEXED_EXPRESSION");
   IElementType LITERAL_EXPRESSION = new OgnlTokenType("LITERAL_EXPRESSION");
+  IElementType MAP_ENTRY_ELEMENT = new OgnlTokenType("MAP_ENTRY_ELEMENT");
+  IElementType MAP_EXPRESSION = new OgnlTokenType("MAP_EXPRESSION");
   IElementType METHOD_CALL_EXPRESSION = new OgnlTokenType("METHOD_CALL_EXPRESSION");
   IElementType NEW_EXPRESSION = new OgnlTokenType("NEW_EXPRESSION");
   IElementType PARENTHESIZED_EXPRESSION = new OgnlTokenType("PARENTHESIZED_EXPRESSION");
@@ -123,6 +125,12 @@ public interface OgnlTypes {
       }
       else if (type == LITERAL_EXPRESSION) {
         return new OgnlLiteralExpressionImpl(node);
+      }
+      else if (type == MAP_ENTRY_ELEMENT) {
+        return new OgnlMapEntryElementImpl(node);
+      }
+      else if (type == MAP_EXPRESSION) {
+        return new OgnlMapExpressionImpl(node);
       }
       else if (type == METHOD_CALL_EXPRESSION) {
         return new OgnlMethodCallExpressionImpl(node);

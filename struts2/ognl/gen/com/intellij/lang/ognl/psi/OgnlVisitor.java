@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,6 +39,14 @@ public class OgnlVisitor extends PsiElementVisitor {
   }
 
   public void visitLiteralExpression(@NotNull OgnlLiteralExpression o) {
+    visitExpression(o);
+  }
+
+  public void visitMapEntryElement(@NotNull OgnlMapEntryElement o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitMapExpression(@NotNull OgnlMapExpression o) {
     visitExpression(o);
   }
 

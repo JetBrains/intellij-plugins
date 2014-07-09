@@ -7,5 +7,9 @@ class SomeClass {
   const SomeClass();
   @deprecated
   @<weak_warning descr="SomeClass is deprecated">SomeClass</weak_warning>()
-  static <weak_warning descr="SomeClass is deprecated">SomeClass</weak_warning> foo() {}
+  static <weak_warning descr="SomeClass is deprecated">SomeClass</weak_warning> foo() {
+    return null;
+    <weak_warning descr="Dead code">var i = 0;
+    i.<weak_warning descr="The method 'fooBar' is not defined for the class 'int'">fooBar</weak_warning>();</weak_warning>
+  }
 }

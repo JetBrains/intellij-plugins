@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,16 +17,16 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.parser;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
+import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
+
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
-import com.intellij.lang.LighterASTNode;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class OgnlParser implements PsiParser {
@@ -38,10 +38,10 @@ public class OgnlParser implements PsiParser {
     builder_ = adapt_builder_(root_, builder_, this, EXTENDS_SETS_);
     Marker marker_ = enter_section_(builder_, 0, _COLLAPSE_, null);
     if (root_ == BINARY_EXPRESSION) {
-      result_ = expression(builder_, 0, 3);
+      result_ = expression(builder_, 0, 4);
     }
     else if (root_ == CONDITIONAL_EXPRESSION) {
-      result_ = expression(builder_, 0, 2);
+      result_ = expression(builder_, 0, 3);
     }
     else if (root_ == EXPRESSION) {
       result_ = expression(builder_, 0, -1);
@@ -51,6 +51,12 @@ public class OgnlParser implements PsiParser {
     }
     else if (root_ == LITERAL_EXPRESSION) {
       result_ = literalExpression(builder_, 0);
+    }
+    else if (root_ == MAP_ENTRY_ELEMENT) {
+      result_ = mapEntryElement(builder_, 0);
+    }
+    else if (root_ == MAP_EXPRESSION) {
+      result_ = mapExpression(builder_, 0);
     }
     else if (root_ == METHOD_CALL_EXPRESSION) {
       result_ = methodCallExpression(builder_, 0);
@@ -89,9 +95,9 @@ public class OgnlParser implements PsiParser {
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(BINARY_EXPRESSION, CONDITIONAL_EXPRESSION, EXPRESSION, INDEXED_EXPRESSION,
-      LITERAL_EXPRESSION, METHOD_CALL_EXPRESSION, NEW_EXPRESSION, PARENTHESIZED_EXPRESSION,
-      REFERENCE_EXPRESSION, SEQUENCE_EXPRESSION, UNARY_EXPRESSION, VARIABLE_ASSIGNMENT_EXPRESSION,
-      VARIABLE_EXPRESSION),
+      LITERAL_EXPRESSION, MAP_EXPRESSION, METHOD_CALL_EXPRESSION, NEW_EXPRESSION,
+      PARENTHESIZED_EXPRESSION, REFERENCE_EXPRESSION, SEQUENCE_EXPRESSION, UNARY_EXPRESSION,
+      VARIABLE_ASSIGNMENT_EXPRESSION, VARIABLE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -314,9 +320,99 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // IDENTIFIER ('.' IDENTIFIER)*
+  static boolean fqnTypeExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "fqnTypeExpression")) return false;
+    if (!nextTokenIs(builder_, IDENTIFIER)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, IDENTIFIER);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && fqnTypeExpression_1(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  // ('.' IDENTIFIER)*
+  private static boolean fqnTypeExpression_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "fqnTypeExpression_1")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!fqnTypeExpression_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "fqnTypeExpression_1", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
+  }
+
+  // '.' IDENTIFIER
+  private static boolean fqnTypeExpression_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "fqnTypeExpression_1_0")) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, DOT);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && consumeToken(builder_, IDENTIFIER);
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
   // "instanceof"
   static boolean instanceOfOperation(PsiBuilder builder_, int level_) {
     return consumeToken(builder_, INSTANCEOF_KEYWORD);
+  }
+
+  /* ********************************************************** */
+  // expression ':' expression
+  public static boolean mapEntryElement(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapEntryElement")) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<map entry>");
+    result_ = expression(builder_, level_ + 1, -1);
+    result_ = result_ && consumeToken(builder_, COLON);
+    pinned_ = result_; // pin = 2
+    result_ = result_ && expression(builder_, level_ + 1, -1);
+    exit_section_(builder_, level_, marker_, MAP_ENTRY_ELEMENT, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // mapEntryElement (',' mapEntryElement)*
+  static boolean mapExpressionSequence(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapExpressionSequence")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = mapEntryElement(builder_, level_ + 1);
+    result_ = result_ && mapExpressionSequence_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // (',' mapEntryElement)*
+  private static boolean mapExpressionSequence_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapExpressionSequence_1")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!mapExpressionSequence_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "mapExpressionSequence_1", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
+  }
+
+  // ',' mapEntryElement
+  private static boolean mapExpressionSequence_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapExpressionSequence_1_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, COMMA);
+    result_ = result_ && mapEntryElement(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -506,25 +602,27 @@ public class OgnlParser implements PsiParser {
   /* ********************************************************** */
   // Expression root: expression
   // Operator priority table:
-  // 0: ATOM(sequenceExpression)
-  // 1: ATOM(parenthesizedExpression)
-  // 2: ATOM(variableAssignmentExpression)
-  // 3: BINARY(conditionalExpression)
-  // 4: BINARY(binaryExpression)
-  // 5: ATOM(newExpression)
-  // 6: ATOM(methodCallExpression)
-  // 7: ATOM(indexedExpression)
-  // 8: ATOM(referenceExpression)
-  // 9: ATOM(variableExpression)
-  // 10: PREFIX(unaryExpression)
-  // 11: ATOM(literalExpression)
+  // 0: ATOM(mapExpression)
+  // 1: ATOM(sequenceExpression)
+  // 2: ATOM(parenthesizedExpression)
+  // 3: ATOM(variableAssignmentExpression)
+  // 4: BINARY(conditionalExpression)
+  // 5: BINARY(binaryExpression)
+  // 6: ATOM(newExpression)
+  // 7: ATOM(methodCallExpression)
+  // 8: ATOM(indexedExpression)
+  // 9: ATOM(referenceExpression)
+  // 10: ATOM(variableExpression)
+  // 11: PREFIX(unaryExpression)
+  // 12: ATOM(literalExpression)
   public static boolean expression(PsiBuilder builder_, int level_, int priority_) {
     if (!recursion_guard_(builder_, level_, "expression")) return false;
     addVariant(builder_, "<expression>");
     boolean result_ = false;
     boolean pinned_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<expression>");
-    result_ = sequenceExpression(builder_, level_ + 1);
+    result_ = mapExpression(builder_, level_ + 1);
+    if (!result_) result_ = sequenceExpression(builder_, level_ + 1);
     if (!result_) result_ = parenthesizedExpression(builder_, level_ + 1);
     if (!result_) result_ = variableAssignmentExpression(builder_, level_ + 1);
     if (!result_) result_ = newExpression(builder_, level_ + 1);
@@ -547,14 +645,14 @@ public class OgnlParser implements PsiParser {
       Marker left_marker_ = (Marker) builder_.getLatestDoneMarker();
       if (!invalid_left_marker_guard_(builder_, left_marker_, "expression_0")) return false;
       Marker marker_ = builder_.mark();
-      if (priority_ < 3 && consumeTokenSmart(builder_, QUESTION)) {
-        result_ = report_error_(builder_, expression(builder_, level_, 3));
+      if (priority_ < 4 && consumeTokenSmart(builder_, QUESTION)) {
+        result_ = report_error_(builder_, expression(builder_, level_, 4));
         result_ = report_error_(builder_, conditionalExpressionTail(builder_, level_ + 1)) && result_;
         marker_.drop();
         left_marker_.precede().done(CONDITIONAL_EXPRESSION);
       }
-      else if (priority_ < 4 && binaryOperations(builder_, level_ + 1)) {
-        result_ = report_error_(builder_, expression(builder_, level_, 4));
+      else if (priority_ < 5 && binaryOperations(builder_, level_ + 1)) {
+        result_ = report_error_(builder_, expression(builder_, level_, 5));
         marker_.drop();
         left_marker_.precede().done(BINARY_EXPRESSION);
       }
@@ -563,6 +661,43 @@ public class OgnlParser implements PsiParser {
         break;
       }
     }
+    return result_;
+  }
+
+  // ('#{' | '#@' fqnTypeExpression '@{') mapExpressionSequence '}'
+  public static boolean mapExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapExpression")) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<map expression>");
+    result_ = mapExpression_0(builder_, level_ + 1);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, mapExpressionSequence(builder_, level_ + 1));
+    result_ = pinned_ && consumeToken(builder_, RBRACE) && result_;
+    exit_section_(builder_, level_, marker_, MAP_EXPRESSION, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  // '#{' | '#@' fqnTypeExpression '@{'
+  private static boolean mapExpression_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapExpression_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeTokenSmart(builder_, "#{");
+    if (!result_) result_ = mapExpression_0_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // '#@' fqnTypeExpression '@{'
+  private static boolean mapExpression_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapExpression_0_1")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeTokenSmart(builder_, "#@");
+    result_ = result_ && fqnTypeExpression(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, "@{");
+    exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
@@ -790,7 +925,7 @@ public class OgnlParser implements PsiParser {
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = unaryOperator(builder_, level_ + 1);
     pinned_ = result_;
-    result_ = pinned_ && expression(builder_, level_, 10);
+    result_ = pinned_ && expression(builder_, level_, 11);
     exit_section_(builder_, level_, marker_, UNARY_EXPRESSION, result_, pinned_, null);
     return result_ || pinned_;
   }

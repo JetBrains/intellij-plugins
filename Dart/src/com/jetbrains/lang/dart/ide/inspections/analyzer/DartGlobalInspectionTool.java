@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,6 +50,8 @@ public class DartGlobalInspectionTool extends GlobalInspectionTool {
                                 final GlobalInspectionContext globalContext,
                                 final InspectionManager manager,
                                 final ProblemDescriptionsProcessor problemDescriptionsProcessor) {
+    if (DartInProcessAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) return;
+
     final PsiFile psiFile = PsiManager.getInstance(globalContext.getProject()).findFile(file);
     if (psiFile == null) return;
 
@@ -101,7 +104,7 @@ public class DartGlobalInspectionTool extends GlobalInspectionTool {
       case NONE:
         return ProblemHighlightType.INFORMATION;
       case INFO:
-        return ProblemHighlightType.INFORMATION;
+        return ProblemHighlightType.WEAK_WARNING;
       case WARNING:
         return ProblemHighlightType.GENERIC_ERROR_OR_WARNING;
       case ERROR:
