@@ -174,4 +174,9 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
   public JSAttributeList.AccessType getAccessType() {
     return JSAttributeList.AccessType.PACKAGE_LOCAL;
   }
+
+  @Override
+  public boolean isDeprecated() {
+    return false;
+  }
 }
