@@ -114,7 +114,8 @@ root ::= EXPRESSION_START rootElement EXPRESSION_END { pin=1 }
 private rootRecover ::= !(EXPRESSION_END)
 private rootElement ::= expression {recoverWhile="rootRecover"}
 
-expression ::= sequenceExpression |
+expression ::= mapExpression |
+               sequenceExpression |
                parenthesizedExpression |
                variableAssignmentExpression |
                conditionalExpression |
@@ -168,6 +169,17 @@ methodCallExpression ::= referenceExpression '(' methodCallParameters ')'  {
 
 private expressionSequenceRequired ::= expression (',' expression)+  { pin(".*")=1 }
 sequenceExpression ::= '{' expressionSequenceRequired '}' { pin=1 }
+
+mapEntryElement ::= expression ':' expression {
+  methods=[
+    keyExpression="expression[0]"
+    valueExpression="expression[1]"
+  ]
+  name="map entry"
+  pin=2
+}
+private mapExpressionSequence ::= mapEntryElement (',' mapEntryElement)*  //{ pin(".*")=1 }
+mapExpression ::= '#{' mapExpressionSequence '}' { pin=1}
 
 indexedExpression ::= (referenceExpression | variableExpression) '[' expression ']' {
   methods=[

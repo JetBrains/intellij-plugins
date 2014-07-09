@@ -42,6 +42,14 @@ public class OgnlVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
+  public void visitMapEntryElement(@NotNull OgnlMapEntryElement o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitMapExpression(@NotNull OgnlMapExpression o) {
+    visitExpression(o);
+  }
+
   public void visitMethodCallExpression(@NotNull OgnlMethodCallExpression o) {
     visitExpression(o);
   }

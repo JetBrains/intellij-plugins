@@ -1,0 +1,13 @@
+OgnlFile:MissingColonAfterKey.ognl
+  PsiElement(%{)('%{')
+  PsiWhiteSpace(' ')
+  MAP_EXPRESSION
+    PsiElement(#)('#')
+    PsiElement({)('{')
+  PsiWhiteSpace(' ')
+  PsiElement(CHARACTER_LITERAL)(''key'')
+  PsiWhiteSpace('  ')
+  PsiErrorElement:':' or <operator> expected, got '}'
+    PsiElement(})('}')
+  PsiWhiteSpace(' ')
+  PsiElement(EXPRESSION_END)('}')
