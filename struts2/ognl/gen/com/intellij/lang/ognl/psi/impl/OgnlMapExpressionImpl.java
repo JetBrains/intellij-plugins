@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,15 +17,14 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.psi.impl;
 
+import java.util.List;
+import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.ognl.psi.OgnlMapEntryElement;
-import com.intellij.lang.ognl.psi.OgnlMapExpression;
-import com.intellij.lang.ognl.psi.OgnlVisitor;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
+import static com.intellij.lang.ognl.OgnlTypes.*;
+import com.intellij.lang.ognl.psi.*;
 
 public class OgnlMapExpressionImpl extends OgnlExpressionImpl implements OgnlMapExpression {
 
