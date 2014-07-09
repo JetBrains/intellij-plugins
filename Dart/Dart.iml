@@ -19,7 +19,6 @@
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="copyright" />
-    <orderEntry type="module" module-name="fileWatcher" />
     <orderEntry type="module" module-name="spellchecker" />
     <orderEntry type="module" module-name="JavaScriptDebugger" />
     <orderEntry type="module" module-name="ChromeConnector" />
