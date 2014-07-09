@@ -12,13 +12,19 @@ import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartComponent> {
-  public OverrideImplementMethodFix(final DartClass dartClass) {
+  final boolean myImplementNotOverride;
+
+  public OverrideImplementMethodFix(final DartClass dartClass, final boolean implementNotOverride) {
     super(dartClass);
+    myImplementNotOverride = implementNotOverride;
   }
 
   @Override
   @NotNull
-  protected String getNothingFoundMessage() { return DartBundle.message("dart.fix.implement.none.found"); }
+  protected String getNothingFoundMessage() {
+    return myImplementNotOverride ? DartBundle.message("dart.fix.implement.none.found")
+                                  : DartBundle.message("dart.fix.override.none.found");
+  }
 
   @Override
   protected Template buildFunctionsText(TemplateManager templateManager, DartComponent element) {
@@ -49,6 +55,4 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
     template.addTextSegment("\n}\n");
     return template;
   }
-
-
 }

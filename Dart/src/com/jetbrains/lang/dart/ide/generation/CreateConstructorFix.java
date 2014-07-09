@@ -4,7 +4,6 @@ import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import org.jetbrains.annotations.NotNull;
@@ -12,9 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.Set;
 
-/**
- * Created by fedorkorotkov.
- */
 public class CreateConstructorFix extends BaseCreateMethodsFix<DartComponent> {
   public CreateConstructorFix(DartClass dartClass) {
     super(dartClass);
@@ -28,7 +24,9 @@ public class CreateConstructorFix extends BaseCreateMethodsFix<DartComponent> {
 
   @Override
   @NotNull
-  protected String getNothingFoundMessage() { return DartBundle.message("dart.fix.method.insert.none.found"); }
+  protected String getNothingFoundMessage() {
+    return ""; // can't be called actually because processElements() is overridden
+  }
 
   protected Template buildFunctionsText(TemplateManager templateManager, Set<DartComponent> elementsToProcess) {
     final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);

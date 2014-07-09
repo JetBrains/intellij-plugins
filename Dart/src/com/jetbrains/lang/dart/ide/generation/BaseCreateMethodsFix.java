@@ -24,9 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 abstract public class BaseCreateMethodsFix<T extends DartComponent> {
   protected static final String DART_TEMPLATE_GROUP = "Dart";
   private final Set<T> elementsToProcess = new LinkedHashSet<T>();
@@ -85,8 +82,8 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     if (elementsToProcess.isEmpty()) {
       if (!ApplicationManager.getApplication().isUnitTestMode()) {
         HintManager.getInstance().showErrorHint(editor, getNothingFoundMessage());
-       }
-       return;
+      }
+      return;
     }
     final TemplateManager templateManager = TemplateManager.getInstance(project);
     for (T e : elementsToProcess) {

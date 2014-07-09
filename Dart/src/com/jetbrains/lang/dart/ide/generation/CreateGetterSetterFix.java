@@ -17,7 +17,7 @@ import java.util.List;
 
 public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
   public enum Strategy {
-    GETTER {
+    GETTER(DartBundle.message("dart.fix.getter.none.found")) {
       @Override
       boolean accept(final String name, List<DartComponent> componentList) {
         return name.startsWith("_") && ContainerUtil.find(componentList, new Condition<DartComponent>() {
@@ -27,11 +27,9 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
           }
         }) == null;
       }
+    },
 
-      @NotNull
-      @Override
-      String getNothingFoundMessage() { return DartBundle.message("dart.fix.getter.none.found"); }
-    }, SETTER {
+    SETTER(DartBundle.message("dart.fix.setter.none.found")) {
       @Override
       boolean accept(final String name, List<DartComponent> componentList) {
         return name.startsWith("_") && ContainerUtil.find(componentList, new Condition<DartComponent>() {
@@ -41,11 +39,9 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
           }
         }) == null;
       }
+    },
 
-      @NotNull
-      @Override
-      String getNothingFoundMessage() { return DartBundle.message("dart.fix.setter.none.found"); }
-    }, GETTERSETTER {
+    GETTERSETTER(DartBundle.message("dart.fix.gettersetter.none.found")) {
       @Override
       boolean accept(final String name, List<DartComponent> componentList) {
         return name.startsWith("_") && ContainerUtil.find(componentList, new Condition<DartComponent>() {
@@ -55,16 +51,15 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
           }
         }) == null;
       }
-
-      @NotNull
-      @Override
-      String getNothingFoundMessage() { return DartBundle.message("dart.fix.gettersetter.none.found"); }
     };
 
-    abstract boolean accept(String name, List<DartComponent> componentList);
+    private final String myNothingFoundMessage;
 
-    @NotNull
-    abstract String getNothingFoundMessage();
+    Strategy(final String nothingFoundMessage) {
+      myNothingFoundMessage = nothingFoundMessage;
+    }
+
+    abstract boolean accept(String name, List<DartComponent> componentList);
   }
 
   private final @NotNull Strategy myStrategy;
@@ -76,7 +71,9 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
 
   @Override
   @NotNull
-  protected String getNothingFoundMessage() { return myStrategy.getNothingFoundMessage(); }
+  protected String getNothingFoundMessage() {
+    return myStrategy.myNothingFoundMessage;
+  }
 
   @Override
   protected Template buildFunctionsText(TemplateManager templateManager, DartComponent namedComponent) {
