@@ -178,8 +178,8 @@ mapEntryElement ::= expression ':' expression {
   name="map entry"
   pin=2
 }
-private mapExpressionSequence ::= mapEntryElement (',' mapEntryElement)*  //{ pin(".*")=1 }
-mapExpression ::= '#{' mapExpressionSequence '}' { pin=1}
+private mapExpressionSequence ::= mapEntryElement (',' mapEntryElement)*
+mapExpression ::= ('#{' | '#@' fqnTypeExpression '@{') mapExpressionSequence '}' { pin=1 }
 
 indexedExpression ::= (referenceExpression | variableExpression) '[' expression ']' {
   methods=[
@@ -250,12 +250,16 @@ newExpression ::= "new" referenceExpression (arrayConstructorExpression | constr
 }
 
 
+// common
+private fqnTypeExpression ::= IDENTIFIER ('.' IDENTIFIER)* {
+  pin(".*")=1
+  name="FQN type"
+}
+
 // TODO:
 // projection/selection: e1.{e2} / e1.{?e2}
 // sub-expression: e1.(e2)
 // chained sub-expression: headline.parent.(ensureLoaded(), name)
 // list creation: { e, ... } --> already via sequence?
 // array creation: new array-component-class[] { e, ... }
-// map creation: #{ e1 : e2, ... }
-// map creation w/ class: #@classname@{ e1 : e2, ... }
 // lambda: :[ e ]

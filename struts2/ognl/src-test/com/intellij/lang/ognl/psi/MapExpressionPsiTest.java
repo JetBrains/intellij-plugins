@@ -68,6 +68,11 @@ public class MapExpressionPsiTest extends PsiTestCase {
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, mapEntryElement2.getValueExpression());
   }
 
+  public void testTypedMapExpression() {
+    final OgnlMapExpression expression = parse("#@java.util.LinkedHashMap@{'key':aaa}");
+    assertSize(1, expression.getMapEntryElementList());
+  }
+
   private OgnlMapExpression parse(@Language(value = OgnlLanguage.ID,
                                             prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                             suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {

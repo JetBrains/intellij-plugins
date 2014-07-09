@@ -17,16 +17,16 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.parser;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
+import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
+
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
-import com.intellij.lang.LighterASTNode;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class OgnlParser implements PsiParser {
@@ -315,6 +315,46 @@ public class OgnlParser implements PsiParser {
     result_ = consumeToken(builder_, COMMA);
     pinned_ = result_; // pin = 1
     result_ = result_ && expression(builder_, level_ + 1, -1);
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // IDENTIFIER ('.' IDENTIFIER)*
+  static boolean fqnTypeExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "fqnTypeExpression")) return false;
+    if (!nextTokenIs(builder_, IDENTIFIER)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, IDENTIFIER);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && fqnTypeExpression_1(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  // ('.' IDENTIFIER)*
+  private static boolean fqnTypeExpression_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "fqnTypeExpression_1")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!fqnTypeExpression_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "fqnTypeExpression_1", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
+  }
+
+  // '.' IDENTIFIER
+  private static boolean fqnTypeExpression_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "fqnTypeExpression_1_0")) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, DOT);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && consumeToken(builder_, IDENTIFIER);
     exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
     return result_ || pinned_;
   }
@@ -624,18 +664,41 @@ public class OgnlParser implements PsiParser {
     return result_;
   }
 
-  // '#{' mapExpressionSequence '}'
+  // ('#{' | '#@' fqnTypeExpression '@{') mapExpressionSequence '}'
   public static boolean mapExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "mapExpression")) return false;
     boolean result_ = false;
     boolean pinned_ = false;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<map expression>");
-    result_ = consumeTokenSmart(builder_, "#{");
+    Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<map expression>");
+    result_ = mapExpression_0(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
     result_ = result_ && report_error_(builder_, mapExpressionSequence(builder_, level_ + 1));
     result_ = pinned_ && consumeToken(builder_, RBRACE) && result_;
     exit_section_(builder_, level_, marker_, MAP_EXPRESSION, result_, pinned_, null);
     return result_ || pinned_;
+  }
+
+  // '#{' | '#@' fqnTypeExpression '@{'
+  private static boolean mapExpression_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapExpression_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeTokenSmart(builder_, "#{");
+    if (!result_) result_ = mapExpression_0_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // '#@' fqnTypeExpression '@{'
+  private static boolean mapExpression_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapExpression_0_1")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeTokenSmart(builder_, "#@");
+    result_ = result_ && fqnTypeExpression(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, "@{");
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   // '{' expressionSequenceRequired '}'
