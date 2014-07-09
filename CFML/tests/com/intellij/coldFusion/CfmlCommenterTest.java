@@ -15,10 +15,9 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.codeInsight.actions.CodeInsightAction;
+import com.intellij.codeInsight.actions.MultiCaretCodeInsightAction;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 
 /**
  * Created by Lera Nikolaenko
@@ -57,7 +56,7 @@ public class CfmlCommenterTest extends CfmlCodeInsightFixtureTestCase {
 
     private void doTest(final String actionId) throws Throwable {
         myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
-        CodeInsightAction action = (CodeInsightAction) ActionManager.getInstance().getAction(actionId);
+        MultiCaretCodeInsightAction action = (MultiCaretCodeInsightAction) ActionManager.getInstance().getAction(actionId);
         action.actionPerformedImpl(myModule.getProject(), myFixture.getEditor());
         myFixture.checkResultByFile(Util.getExpectedDataFileName(getTestName(true)));
     }
