@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.analyzer;
 import com.google.dart.engine.context.AnalysisContext;
 import com.google.dart.engine.context.AnalysisException;
 import com.google.dart.engine.error.AnalysisError;
+import com.google.dart.engine.error.HintCode;
 import com.google.dart.engine.error.TodoCode;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.lang.annotation.Annotation;
@@ -105,7 +106,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
     if (messages == null || !psiFile.isValid()) return;
 
     for (AnalysisError message : messages) {
-      if (message.getErrorCode() == TodoCode.TODO) continue; // already done using IDE engine
+      if (shouldIgnoreMessageFromDartAnalyzer(message)) continue;
 
       if (source != message.getSource()) {
         LOG.warn("Unexpected Source: " + message.getSource() + ",\nfile: " + annotatedFile.getPath());
@@ -117,6 +118,12 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
         registerFixes(psiFile, annotation, message);
       }
     }
+  }
+
+  public static boolean shouldIgnoreMessageFromDartAnalyzer(final @NotNull AnalysisError message) {
+    if (message.getErrorCode() == TodoCode.TODO) return true; // // already done using IDE engine
+    if (message.getErrorCode() == HintCode.DEPRECATED_MEMBER_USE) return true; // already done as DartDeprecatedApiUsageInspection
+    return false;
   }
 
   private static void registerFixes(final PsiFile psiFile, final Annotation annotation, final AnalysisError message) {
