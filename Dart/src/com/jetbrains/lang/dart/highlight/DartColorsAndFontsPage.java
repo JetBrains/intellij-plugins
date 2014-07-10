@@ -48,19 +48,25 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.metadata"), METADATA),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.builtin"), BUILTIN),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.function"), INSTANCE_MEMBER_FUNCTION),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.function.call"), INSTANCE_MEMBER_FUNCTION_CALL),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.inherited.function.call"), INHERITED_MEMBER_FUNCTION_CALL),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.abstract.function.call"), ABSTRACT_MEMBER_FUNCTION_CALL),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.function.call"),
+                               INSTANCE_MEMBER_FUNCTION_CALL),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.inherited.function.call"),
+                               INHERITED_MEMBER_FUNCTION_CALL),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.abstract.function.call"),
+                               ABSTRACT_MEMBER_FUNCTION_CALL),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.member.function"), STATIC_MEMBER_FUNCTION),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.member.function.call"), STATIC_MEMBER_FUNCTION_CALL),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.member.function.call"),
+                               STATIC_MEMBER_FUNCTION_CALL),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.toplevel.function"), TOP_LEVEL_FUNCTION_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.toplevel.function.call"), TOP_LEVEL_FUNCTION_CALL),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.toplevel.variable"), TOP_LEVEL_VARIABLE_DECLARATION),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.toplevel.variable.access"), TOP_LEVEL_VARIABLE_ACCESS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.variable"), INSTANCE_MEMBER_VARIABLE),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.variable.access"), INSTANCE_MEMBER_VARIABLE_ACCESS),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.instance.member.variable.access"),
+                               INSTANCE_MEMBER_VARIABLE_ACCESS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.member.variable"), STATIC_MEMBER_VARIABLE),
-      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.member.variable.access"), STATIC_MEMBER_VARIABLE_ACCESS),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.static.member.variable.access"),
+                               STATIC_MEMBER_VARIABLE_ACCESS),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.constructor.call"), CONSTRUCTOR_CALL),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.constructor.decl"), CONSTRUCTOR_DECLARATION),
     };
@@ -151,7 +157,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
            "<top.level.func.decl>main</top.level.func.decl>() {\n" +
            "  <top.level.func.call>print</top.level.func.call>(<top.level.var.call>topLevelVar</top.level.var.call>);\n" +
            "}\n"
-    ;
+      ;
   }
 
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
