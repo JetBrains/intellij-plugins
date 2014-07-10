@@ -46,9 +46,6 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
     indentOptions.INDENT_SIZE = 2;
     indentOptions.CONTINUATION_INDENT_SIZE = 4;
     indentOptions.TAB_SIZE = 2;
-
-    defaultSettings.KEEP_LINE_BREAKS = false;
-
     return defaultSettings;
   }
 

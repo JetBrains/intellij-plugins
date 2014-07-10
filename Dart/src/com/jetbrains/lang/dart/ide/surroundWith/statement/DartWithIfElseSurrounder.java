@@ -1,8 +1,5 @@
 package com.jetbrains.lang.dart.ide.surroundWith.statement;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartWithIfElseSurrounder extends DartLiteralAndBlockStatementSurrounderBase {
   @Override
   public String getTemplateDescription() {
@@ -11,6 +8,6 @@ public class DartWithIfElseSurrounder extends DartLiteralAndBlockStatementSurrou
 
   @Override
   protected String getTemplateText() {
-    return "if(true) {\n}\nelse {\n\n}";
+    return "if (true) {\n} else {\n\n}";
   }
 }
