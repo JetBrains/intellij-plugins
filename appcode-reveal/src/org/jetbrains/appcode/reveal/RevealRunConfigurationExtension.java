@@ -28,7 +28,6 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.cidr.AppCodeBundle;
 import com.jetbrains.cidr.execution.*;
 import com.jetbrains.cidr.execution.deviceSupport.AMDevice;
 import com.jetbrains.cidr.execution.deviceSupport.AMDeviceUtil;
@@ -48,7 +47,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -327,14 +325,9 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
             Arrays.asList("/usr/bin/codesign", "-fs", signature, libRevealInTempDir.getPath()));
 
     AMDeviceUtil.transferPathToApplicationBundle(device, libRevealInTempDir.getParent(), "/tmp", bundleId);
-    Map<String,String> environmentVariables = commandLine.getUserData(AMDeviceUtil.APPLICATION_ENVIRONMENT_VARIABLES);
-    if (environmentVariables == null)
-      throw new ExecutionException(AppCodeBundle.message("device.appBundleHasNoEnvironment"));
 
-    String homeDir = environmentVariables.get("HOME");
-    if (homeDir == null) {
-      throw new ExecutionException(AppCodeBundle.message("device.appBundleHasNoHomeVar"));
-    }
+    String homeDir = AMDeviceUtil.getHomeDirFromAppEnvironment(commandLine);
+
     return new File(new File(homeDir), "tmp/" + libRevealInTempDir.getParentFile().getName() + "/" + libRevealInTempDir.getName());
   }
 
