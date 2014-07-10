@@ -3,8 +3,8 @@ OgnlFile:ConstructorOrArray.ognl
   NEW_EXPRESSION
     PsiElement(new)('new')
     PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
+    EXPRESSION
       PsiElement(IDENTIFIER)('Integer')
-  PsiErrorElement:'(' or '[' expected, got '}'
+  PsiErrorElement:'(', '.' or '[' expected, got '}'
     <empty list>
   PsiElement(EXPRESSION_END)('}')

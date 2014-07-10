@@ -17,14 +17,17 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
+import com.intellij.lang.ognl.psi.OgnlExpression;
+import com.intellij.lang.ognl.psi.OgnlMapEntryElement;
+import com.intellij.lang.ognl.psi.OgnlMapExpression;
+import com.intellij.lang.ognl.psi.OgnlVisitor;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.intellij.lang.ognl.OgnlTypes.*;
-import com.intellij.lang.ognl.psi.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class OgnlMapExpressionImpl extends OgnlExpressionImpl implements OgnlMapExpression {
 
@@ -41,6 +44,12 @@ public class OgnlMapExpressionImpl extends OgnlExpressionImpl implements OgnlMap
   @NotNull
   public List<OgnlMapEntryElement> getMapEntryElementList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlMapEntryElement.class);
+  }
+
+  @Override
+  @Nullable
+  public OgnlExpression getMapType() {
+    return findChildByClass(OgnlExpression.class);
   }
 
 }

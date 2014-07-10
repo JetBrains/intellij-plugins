@@ -179,7 +179,12 @@ mapEntryElement ::= expression ':' expression {
   pin=2
 }
 private mapExpressionSequence ::= mapEntryElement (',' mapEntryElement)*
-mapExpression ::= ('#{' | '#@' fqnTypeExpression '@{') mapExpressionSequence '}' { pin=1 }
+mapExpression ::= ('#{' | '#@' fqnTypeExpression '@{') mapExpressionSequence '}' {
+  methods=[
+    mapType="expression"
+  ]
+  pin=1
+}
 
 indexedExpression ::= (referenceExpression | variableExpression) '[' expression ']' {
   methods=[
@@ -245,15 +250,19 @@ conditionalExpression ::= expression '?' expression conditionalExpressionTail {
 
 private arrayConstructorExpression ::= '[' expression? ']' sequenceExpression? {pin=1}
 private constructorExpression ::= '(' methodCallParameters ')' {pin=1}
-newExpression ::= "new" referenceExpression (arrayConstructorExpression | constructorExpression) {
+newExpression ::= "new" fqnTypeExpression (arrayConstructorExpression | constructorExpression) {
+  methods=[
+    objectType="expression[0]"
+  ]
   pin(".*")=1
 }
 
 
 // common
-private fqnTypeExpression ::= IDENTIFIER ('.' IDENTIFIER)* {
+fqnTypeExpression ::= IDENTIFIER ('.' IDENTIFIER)* {
   pin(".*")=1
   name="FQN type"
+  elementType="expression" // todo own PSI/resolve etc.
 }
 
 // TODO:

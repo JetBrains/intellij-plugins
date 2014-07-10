@@ -17,16 +17,16 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.parser;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
-
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
+import com.intellij.lang.LighterASTNode;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class OgnlParser implements PsiParser {
@@ -321,7 +321,7 @@ public class OgnlParser implements PsiParser {
 
   /* ********************************************************** */
   // IDENTIFIER ('.' IDENTIFIER)*
-  static boolean fqnTypeExpression(PsiBuilder builder_, int level_) {
+  public static boolean fqnTypeExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "fqnTypeExpression")) return false;
     if (!nextTokenIs(builder_, IDENTIFIER)) return false;
     boolean result_ = false;
@@ -330,7 +330,7 @@ public class OgnlParser implements PsiParser {
     result_ = consumeToken(builder_, IDENTIFIER);
     pinned_ = result_; // pin = 1
     result_ = result_ && fqnTypeExpression_1(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
+    exit_section_(builder_, level_, marker_, EXPRESSION, result_, pinned_, null);
     return result_ || pinned_;
   }
 
@@ -747,7 +747,7 @@ public class OgnlParser implements PsiParser {
     return result_ || pinned_;
   }
 
-  // "new" referenceExpression (arrayConstructorExpression | constructorExpression)
+  // "new" fqnTypeExpression (arrayConstructorExpression | constructorExpression)
   public static boolean newExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "newExpression")) return false;
     if (!nextTokenIsFast(builder_, NEW_KEYWORD)) return false;
@@ -756,7 +756,7 @@ public class OgnlParser implements PsiParser {
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeTokenSmart(builder_, NEW_KEYWORD);
     pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, referenceExpression(builder_, level_ + 1));
+    result_ = result_ && report_error_(builder_, fqnTypeExpression(builder_, level_ + 1));
     result_ = pinned_ && newExpression_2(builder_, level_ + 1) && result_;
     exit_section_(builder_, level_, marker_, NEW_EXPRESSION, result_, pinned_, null);
     return result_ || pinned_;

@@ -17,13 +17,17 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.psi;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
 
 public interface OgnlNewExpression extends OgnlExpression {
 
   @NotNull
   List<OgnlExpression> getExpressionList();
+
+  @Nullable
+  OgnlExpression getObjectType();
 
 }

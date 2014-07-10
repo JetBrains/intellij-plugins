@@ -71,6 +71,9 @@ public class MapExpressionPsiTest extends PsiTestCase {
   public void testTypedMapExpression() {
     final OgnlMapExpression expression = parse("#@java.util.LinkedHashMap@{'key':aaa}");
     assertSize(1, expression.getMapEntryElementList());
+    final OgnlExpression mapTypeExpression = expression.getMapType();
+    assertNotNull(mapTypeExpression);
+    assertEquals("java.util.LinkedHashMap", mapTypeExpression.getText());
   }
 
   private OgnlMapExpression parse(@Language(value = OgnlLanguage.ID,
