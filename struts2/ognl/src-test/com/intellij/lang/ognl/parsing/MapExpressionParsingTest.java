@@ -35,4 +35,12 @@ public class MapExpressionParsingTest extends OgnlParsingTestCase {
   public void testMissingKeyAfterFirstElement() {
     doTest(true);
   }
+
+  public void testNoMapEntries() {
+    doTest(true);
+  }
+
+  public void testMissingMapEntryAfterComma() {
+    doTest(true);
+  }
 }

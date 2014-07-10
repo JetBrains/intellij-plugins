@@ -1,0 +1,12 @@
+OgnlFile:NoMapEntries.ognl
+  PsiElement(%{)('%{')
+  PsiWhiteSpace(' ')
+  MAP_EXPRESSION
+    PsiElement(#)('#')
+    PsiElement({)('{')
+    PsiErrorElement:<map entry> expected, got '}'
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(})('}')
+  PsiWhiteSpace(' ')
+  PsiElement(EXPRESSION_END)('}')
