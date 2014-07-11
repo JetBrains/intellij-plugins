@@ -221,7 +221,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
     final THashSet<String> newExcludedPackagesUrls = collectFoldersToExclude(module, pubspecYamlFile);
 
     if (oldExcludedPackagesUrls.size() != newExcludedPackagesUrls.size() || !newExcludedPackagesUrls.containsAll(oldExcludedPackagesUrls)) {
-      ModuleUtil.updateExcludedFoldersInWriteAction(module, contentRoot, oldExcludedPackagesUrls, newExcludedPackagesUrls);
+      ModuleRootModificationUtil.updateExcludedFolders(module, contentRoot, oldExcludedPackagesUrls, newExcludedPackagesUrls);
     }
   }
 
