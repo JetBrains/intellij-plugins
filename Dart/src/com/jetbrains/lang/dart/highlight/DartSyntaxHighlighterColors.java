@@ -15,6 +15,8 @@ public class DartSyntaxHighlighterColors {
   public static final String DART_STATIC_MEMBER_FUNCTION_CALL = "DART_STATIC_MEMBER_FUNCTION_CALL";
   public static final String DART_INSTANCE_MEMBER_FUNCTION = "DART_INSTANCE_MEMBER_FUNCTION";
   public static final String DART_INSTANCE_MEMBER_FUNCTION_CALL = "DART_INSTANCE_MEMBER_FUNCTION_CALL";
+  public static final String DART_INHERITED_MEMBER_FUNCTION_CALL = "DART_INHERITED_MEMBER_FUNCTION_CALL";
+  public static final String DART_ABSTRACT_MEMBER_FUNCTION_CALL = "DART_ABSTRACT_MEMBER_FUNCTION_CALL";
   public static final String DART_INSTANCE_MEMBER_VARIABLE = "DART_INSTANCE_MEMBER_VARIABLE";
   public static final String DART_INSTANCE_MEMBER_VARIABLE_ACCESS = "DART_INSTANCE_MEMBER_VARIABLE_ACCESS";
   public static final String DART_STATIC_MEMBER_VARIABLE = "DART_STATIC_MEMBER_VARIABLE";
@@ -86,11 +88,15 @@ public class DartSyntaxHighlighterColors {
   public static final TextAttributesKey STATIC_MEMBER_FUNCTION =
     createTextAttributesKey(DART_STATIC_MEMBER_FUNCTION, DefaultLanguageHighlighterColors.STATIC_METHOD);
   public static final TextAttributesKey STATIC_MEMBER_FUNCTION_CALL =
-    createTextAttributesKey(DART_STATIC_MEMBER_FUNCTION_CALL, DefaultLanguageHighlighterColors.FUNCTION_CALL);
+    createTextAttributesKey(DART_STATIC_MEMBER_FUNCTION_CALL, DefaultLanguageHighlighterColors.STATIC_METHOD);
   public static final TextAttributesKey INSTANCE_MEMBER_FUNCTION =
     createTextAttributesKey(DART_INSTANCE_MEMBER_FUNCTION, DefaultLanguageHighlighterColors.INSTANCE_METHOD);
   public static final TextAttributesKey INSTANCE_MEMBER_FUNCTION_CALL =
     createTextAttributesKey(DART_INSTANCE_MEMBER_FUNCTION_CALL, DefaultLanguageHighlighterColors.FUNCTION_CALL);
+  public static final TextAttributesKey INHERITED_MEMBER_FUNCTION_CALL =
+    createTextAttributesKey(DART_INHERITED_MEMBER_FUNCTION_CALL, DefaultLanguageHighlighterColors.FUNCTION_CALL);
+  public static final TextAttributesKey ABSTRACT_MEMBER_FUNCTION_CALL =
+    createTextAttributesKey(DART_ABSTRACT_MEMBER_FUNCTION_CALL, DefaultLanguageHighlighterColors.FUNCTION_CALL);
   public static final TextAttributesKey INSTANCE_MEMBER_VARIABLE =
     createTextAttributesKey(DART_INSTANCE_MEMBER_VARIABLE, DefaultLanguageHighlighterColors.INSTANCE_FIELD);
   public static final TextAttributesKey INSTANCE_MEMBER_VARIABLE_ACCESS =
