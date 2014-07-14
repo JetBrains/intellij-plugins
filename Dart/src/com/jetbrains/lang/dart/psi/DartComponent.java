@@ -11,6 +11,8 @@ public interface DartComponent extends DartPsiCompositeElement, PsiNameIdentifie
 
   boolean isPublic();
 
+  boolean isConstructor();
+
   boolean isGetter();
 
   boolean isSetter();

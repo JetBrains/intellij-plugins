@@ -31,14 +31,13 @@ public class DartDocUtil {
       builder.append("typedef ");
       appendFunctionSignature(builder, namedComponent, ((DartFunctionTypeAlias)namedComponent).getReturnType());
     }
+    else if (namedComponent.isConstructor()) {
+      appendDeclaringClass(builder, namedComponent);
+      appendConstructorSignature(builder, namedComponent, PsiTreeUtil.getParentOfType(namedComponent, DartClass.class));
+    }
     else if (namedComponent instanceof DartMethodDeclaration) {
       appendDeclaringClass(builder, namedComponent);
-      if (isConstructor(namedComponent)) {
-        appendConstructorSignature(builder, namedComponent, PsiTreeUtil.getParentOfType(namedComponent, DartClass.class), false);
-      }
-      else {
-        appendFunctionSignature(builder, namedComponent, ((DartMethodDeclaration)namedComponent).getReturnType());
-      }
+      appendFunctionSignature(builder, namedComponent, ((DartMethodDeclaration)namedComponent).getReturnType());
     }
     else if (namedComponent instanceof DartVarAccessDeclaration) {
       appendDeclaringClass(builder, namedComponent);
@@ -54,10 +53,7 @@ public class DartDocUtil {
       builder.append("set ");
       appendFunctionSignature(builder, namedComponent, ((DartSetterDeclaration)namedComponent).getReturnType());
     }
-    else if (namedComponent instanceof DartNamedConstructorDeclaration) {
-      appendDeclaringClass(builder, namedComponent);
-      appendConstructorSignature(builder, namedComponent, PsiTreeUtil.getParentOfType(namedComponent, DartClass.class), true);
-    }
+
     final PsiComment comment = DartResolveUtil.findDocumentation(namedComponent);
     if (comment != null) {
       builder.append("<br/><br/>");
@@ -68,19 +64,8 @@ public class DartDocUtil {
     return builder.toString();
   }
 
-  private static boolean isConstructor(final DartComponent decl) {
-    final String methodName = decl.getName();
-    final DartClassDefinition classDef = PsiTreeUtil.getParentOfType(decl, DartClassDefinition.class);
-    if (classDef != null && methodName != null) {
-      final String className = classDef.getName();
-      return className != null && className.equals(methodName);
-    }
-    return false;
-  }
-
-  private static void appendConstructorSignature(final StringBuilder builder, final DartComponent component, final DartClass type,
-                                                 final boolean isNamed) {
-    if (isNamed) {
+  private static void appendConstructorSignature(final StringBuilder builder, final DartComponent component, final DartClass type) {
+    if (component instanceof DartNamedConstructorDeclaration || component instanceof DartFactoryConstructorDeclaration) {
       builder.append(type.getName());
       builder.append(".");
     }
@@ -104,9 +89,10 @@ public class DartDocUtil {
   }
 
   private static void appendClassSignature(final StringBuilder builder, final DartClass dartClass) {
-    if (isAbstract(dartClass)) {
+    if (dartClass.isAbstract()) {
       builder.append("abstract ");
     }
+
     builder.append("class <b>").append(dartClass.getName()).append("</b>");
     final DartTypeParameters typeParameters = dartClass.getTypeParameters();
     if (typeParameters != null) {
@@ -164,10 +150,4 @@ public class DartDocUtil {
       builder.append(returnType);
     }
   }
-
-  // isAbstract does not work for classes :/
-  private static boolean isAbstract(final DartClass cls) {
-    return "abstract".equals(cls.getFirstChild().getText());
-  }
-
 }
