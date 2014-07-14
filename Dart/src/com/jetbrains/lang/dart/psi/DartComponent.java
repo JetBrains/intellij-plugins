@@ -19,5 +19,5 @@ public interface DartComponent extends DartPsiCompositeElement, PsiNameIdentifie
 
   boolean isAbstract();
 
-  boolean isDeprecated();
+  DartMetadata getMetadataByName(final String name);
 }

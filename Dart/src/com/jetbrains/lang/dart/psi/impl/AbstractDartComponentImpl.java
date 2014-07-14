@@ -84,13 +84,14 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
   }
 
   @Override
-  public boolean isDeprecated() {
+  @Nullable
+  public DartMetadata getMetadataByName(final String name) {
     for (DartMetadata metadata : PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class)) {
       if ("deprecated".equals(metadata.getReferenceExpression().getText())) {
-        return true;
+        return metadata;
       }
     }
-    return false;
+    return null;
   }
 
   @Override
