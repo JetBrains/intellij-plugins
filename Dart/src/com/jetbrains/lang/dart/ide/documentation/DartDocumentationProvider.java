@@ -12,6 +12,7 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.petebevin.markdown.MarkdownProcessor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -110,7 +111,9 @@ public class DartDocumentationProvider implements DocumentationProvider {
     final PsiComment comment = DartResolveUtil.findDocumentation(namedComponent);
     if (comment != null) {
       builder.append("<br/>");
-      builder.append(DartPresentableUtil.unwrapCommentDelimiters(comment.getText()));
+      final String commentText = DartPresentableUtil.unwrapCommentDelimiters(comment.getText());
+      final MarkdownProcessor processor = new MarkdownProcessor();
+      builder.append(processor.markdown(commentText));
     }
     return builder.toString();
   }

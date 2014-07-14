@@ -19,12 +19,21 @@ public class DartPresentableUtil {
   }
 
   public static String unwrapCommentDelimiters(String text) {
-    if (text.startsWith("/**")) text = text.substring("/**".length());
-    if (text.startsWith("/*")) text = text.substring("/*".length());
-    if (text.startsWith("///")) text = text.substring("///".length());
-    if (text.startsWith("//")) text = text.substring("//".length());
-    if (text.endsWith("**/")) text = text.substring(0, text.length() - "**/".length());
-    if (text.endsWith("*/")) text = text.substring(0, text.length() - "*/".length());
+    if (text.matches("(?sm:[\\t ]*/\\*\\*.*)")) {
+      text = text.replaceAll("\\*/.*", "");
+      text = text.replaceAll("\\n[\\t ]*\\* ?", "\n");
+      text = text.replaceAll("^[\\t ]*/\\*\\* ?", "");
+    } else if (text.matches("(?sm:[\\t ]*/\\*.*)")) {
+      text = text.replaceAll("\\*/.*", "");
+      text = text.replaceAll("\\n[\\t ]*\\* ?", "\n");
+      text = text.replaceAll("^[\\t ]*/\\* ?", "");
+    } else if (text.matches("(?sm:[\\t ]*///.*)")) {
+      text = text.replaceAll("^[\\t ]*/// ?", "");
+      text = text.replaceAll("\\n[\\t ]*/// ?", "\n");
+    } else if (text.matches("(?sm:[\\t ]*//.*)")) {
+      text = text.replaceAll("^[\\t ]*// ?", "");
+      text = text.replaceAll("\\n[\\t ]*// ?", "\n");
+    }
     return text;
   }
 
