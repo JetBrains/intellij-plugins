@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.ide.documentation;
 
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -10,17 +9,28 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class DartDocumentationProvider implements DocumentationProvider {
   private static final String BASE_DART_DOC_URL = "http://api.dartlang.org/docs/releases/latest/";
   private static final String STD_LIB_PREFIX = "dart.";
+
+  // Scraped 08/16/2014
+  private static final Set<String> APIDOC_HOSTED_PACKAGES = new THashSet<String>(Arrays.asList(
+    "analyzer", "args", "barback", "code_transformers", "collection", "crypto", "csslib", "custom_element",
+    "fixnum", "html5lib", "http", "http_parser", "http_server", "intl", "json_rpc_2", "logging",
+    "matcher", "math", "mine", "mock", "oauth2", "observe", "path", "polymer", "polymer_expressions", "scheduled_test",
+    "serialization", "shelf", "smoke", "source_maps", "stack_trace", "string_scanner", "template_binding",
+    "typed_data", "unittest", "utf", "watcher", "web_components", "yaml"
+  ));
 
   @Override
   public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
@@ -64,8 +74,11 @@ public class DartDocumentationProvider implements DocumentationProvider {
     if (libName.startsWith(STD_LIB_PREFIX)) {
       resultUrl.append("dart_").append(libName.substring(STD_LIB_PREFIX.length()));
     }
-    else {
+    else if (APIDOC_HOSTED_PACKAGES.contains(libName)){
       resultUrl.append(libName);
+    }
+    else {
+      return null;
     }
 
     final DartClass dartClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class, true);
@@ -89,30 +102,7 @@ public class DartDocumentationProvider implements DocumentationProvider {
 
   @Override
   public String generateDoc(PsiElement element, PsiElement originalElement) {
-    if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {
-      return null;
-    }
-    final DartComponent namedComponent = (DartComponent)(element instanceof DartComponent ? element : element.getParent());
-    final StringBuilder builder = new StringBuilder();
-    final DartComponentType type = DartComponentType.typeOf(namedComponent);
-    if (namedComponent instanceof DartClass) {
-      builder.append(namedComponent.getName());
-    }
-    else if (type == DartComponentType.FIELD || type == DartComponentType.METHOD) {
-      final DartClass haxeClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class);
-      assert haxeClass != null;
-      builder.append(haxeClass.getName());
-      builder.append(" ");
-      builder.append(type.toString().toLowerCase());
-      builder.append(" ");
-      builder.append(namedComponent.getName());
-    }
-    final PsiComment comment = DartResolveUtil.findDocumentation(namedComponent);
-    if (comment != null) {
-      builder.append("<br/>");
-      builder.append(DartPresentableUtil.unwrapCommentDelimiters(comment.getText()));
-    }
-    return builder.toString();
+    return DartDocUtil.generateDoc(element);
   }
 
   @Override

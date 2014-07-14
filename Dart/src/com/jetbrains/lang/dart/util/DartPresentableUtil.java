@@ -2,10 +2,12 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.template.*;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,17 +16,33 @@ import java.util.List;
 import java.util.Set;
 
 public class DartPresentableUtil {
+
+  @NonNls public static final String RIGHT_ARROW = "\u2192";
+  @NonNls private static final String SPACE = " ";
+
   public static String setterGetterName(String name) {
     return name.startsWith("_") ? name.substring(1) : name;
   }
 
   public static String unwrapCommentDelimiters(String text) {
-    if (text.startsWith("/**")) text = text.substring("/**".length());
-    if (text.startsWith("/*")) text = text.substring("/*".length());
-    if (text.startsWith("///")) text = text.substring("///".length());
-    if (text.startsWith("//")) text = text.substring("//".length());
-    if (text.endsWith("**/")) text = text.substring(0, text.length() - "**/".length());
-    if (text.endsWith("*/")) text = text.substring(0, text.length() - "*/".length());
+    if (text.matches("(?sm:[\\t ]*/\\*\\*.*)")) {
+      text = text.replaceAll("\\*/.*", "");
+      text = text.replaceAll("\\n[\\t ]*\\* ?", "\n");
+      text = text.replaceAll("^[\\t ]*/\\*\\* ?", "");
+    }
+    else if (text.matches("(?sm:[\\t ]*/\\*.*)")) {
+      text = text.replaceAll("\\*/.*", "");
+      text = text.replaceAll("\\n[\\t ]*\\* ?", "\n");
+      text = text.replaceAll("^[\\t ]*/\\* ?", "");
+    }
+    else if (text.matches("(?sm:[\\t ]*///.*)")) {
+      text = text.replaceAll("^[\\t ]*/// ?", "");
+      text = text.replaceAll("\\n[\\t ]*/// ?", "\n");
+    }
+    else if (text.matches("(?sm:[\\t ]*//.*)")) {
+      text = text.replaceAll("^[\\t ]*// ?", "");
+      text = text.replaceAll("\\n[\\t ]*// ?", "\n");
+    }
     return text;
   }
 
@@ -35,6 +53,12 @@ public class DartPresentableUtil {
 
   @NotNull
   public static String getPresentableParameterList(DartComponent element, DartGenericSpecialization specialization) {
+    return getPresentableParameterList(element, specialization, false);
+  }
+
+  @NotNull
+  public static String getPresentableParameterList(DartComponent element, DartGenericSpecialization specialization,
+                                                   boolean functionalStyleSignatures) {
     final StringBuilder result = new StringBuilder();
     final DartFormalParameterList parameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
     if (parameterList == null) {
@@ -42,7 +66,7 @@ public class DartPresentableUtil {
     }
     final List<DartNormalFormalParameter> list = parameterList.getNormalFormalParameterList();
     for (int i = 0, size = list.size(); i < size; i++) {
-      result.append(getPresentableNormalFormalParameter(list.get(i), specialization));
+      result.append(getPresentableNormalFormalParameter(list.get(i), specialization, functionalStyleSignatures));
       if (i < size - 1) {
         result.append(", ");
       }
@@ -52,21 +76,35 @@ public class DartPresentableUtil {
       if (!list.isEmpty()) {
         result.append(", ");
       }
-      result.append("[");
+
+      final boolean isOptional = isOptionalParameterList(namedFormalParameters);
+      result.append(isOptional ? '{' : '[');
+
       List<DartDefaultFormalNamedParameter> list1 = namedFormalParameters.getDefaultFormalNamedParameterList();
       for (int i = 0, size = list1.size(); i < size; i++) {
         if (i > 0) {
           result.append(", ");
         }
         DartDefaultFormalNamedParameter formalParameter = list1.get(i);
-        result.append(getPresentableNormalFormalParameter(formalParameter.getNormalFormalParameter(), specialization));
+        result.append(getPresentableNormalFormalParameter(formalParameter.getNormalFormalParameter(), specialization, functionalStyleSignatures));
       }
-      result.append("]");
+      result.append(isOptional ? '}' : ']');
     }
     return result.toString();
   }
 
+  private static boolean isOptionalParameterList(final @NotNull DartNamedFormalParameters parameters) {
+    // Workaround for the lack of distinction between named and optional params in the grammar
+    final PsiElement firstChild = parameters.getFirstChild();
+    return firstChild != null && "{".equals(firstChild.getText());
+  }
+
   public static String getPresentableNormalFormalParameter(DartNormalFormalParameter parameter, DartGenericSpecialization specialization) {
+    return getPresentableNormalFormalParameter(parameter, specialization, false);
+  }
+
+  public static String getPresentableNormalFormalParameter(DartNormalFormalParameter parameter, DartGenericSpecialization specialization,
+                                                           boolean functionalStyleSignature) {
     final StringBuilder result = new StringBuilder();
 
     final DartFunctionSignature functionSignature = parameter.getFunctionSignature();
@@ -75,20 +113,26 @@ public class DartPresentableUtil {
 
     if (functionSignature != null) {
       final DartReturnType returnType = functionSignature.getReturnType();
-      if (returnType != null) {
+      if (!functionalStyleSignature && returnType != null) {
         result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), returnType, specialization));
-        result.append(" ");
+        result.append(SPACE);
       }
       result.append(functionSignature.getName());
       result.append("(");
-      result.append(getPresentableParameterList(functionSignature, specialization));
+      result.append(getPresentableParameterList(functionSignature, specialization, functionalStyleSignature));
       result.append(")");
+      if (functionalStyleSignature && returnType != null) {
+        result.append(SPACE);
+        result.append(RIGHT_ARROW);
+        result.append(SPACE);
+        result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), returnType, specialization));
+      }
     }
     else if (fieldFormalParameter != null) {
       final DartType type = fieldFormalParameter.getType();
       if (type != null) {
         result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
-        result.append(" ");
+        result.append(SPACE);
       }
       result.append(fieldFormalParameter.getReferenceExpression().getText());
     }
@@ -96,7 +140,7 @@ public class DartPresentableUtil {
       final DartType type = simpleFormalParameter.getType();
       if (type != null) {
         result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
-        result.append(" ");
+        result.append(SPACE);
       }
       result.append(simpleFormalParameter.getComponentName().getText());
     }
@@ -160,8 +204,11 @@ public class DartPresentableUtil {
       if (expression instanceof DartReference) {
         DartClass dartClass = ((DartReference)expression).resolveDartClass().getDartClass();
         if (dartClass != null) {
-          result.addTextSegment(dartClass.getName());
-          result.addTextSegment(" ");
+          final String name = dartClass.getName();
+          if (name != null) {
+            result.addTextSegment(name);
+            result.addTextSegment(" ");
+          }
         }
       }
 
@@ -187,8 +234,11 @@ public class DartPresentableUtil {
       if (expression instanceof DartReference) {
         DartClass dartClass = ((DartReference)expression).resolveDartClass().getDartClass();
         if (dartClass != null) {
-          result.addTextSegment(dartClass.getName());
-          result.addTextSegment(" ");
+          final String name = dartClass.getName();
+          if (name != null) {
+            result.addTextSegment(name);
+            result.addTextSegment(SPACE);
+          }
         }
       }
 
