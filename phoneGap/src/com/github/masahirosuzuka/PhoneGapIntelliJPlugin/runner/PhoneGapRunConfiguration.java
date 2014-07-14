@@ -4,7 +4,6 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfiguration
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.JavaRunConfigurationExtensionManager;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.options.SettingsEditor;
@@ -30,7 +29,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
         CORDOVA {
             @Override
             public String getPath() {
-                return PhoneGapSettings.getInstance().getCordovaExecutablePath();
+                return getInstance().getCordovaExecutablePath();
             }
 
             @Override
@@ -41,7 +40,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
         PHONEGAP {
             @Override
             public String getPath() {
-                return PhoneGapSettings.getInstance().getPhoneGapExecutablePath();
+                return getInstance().getPhoneGapExecutablePath();
             }
 
             @Override
@@ -127,7 +126,6 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
     @Override
     public void readExternal(Element element) throws InvalidDataException {
         super.readExternal(element);
-        JavaRunConfigurationExtensionManager.getInstance().readExternal(this, element);
 
         DefaultJDOMExternalizer.readExternal(this, element);
     }
@@ -135,7 +133,6 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
-        JavaRunConfigurationExtensionManager.getInstance().writeExternal(this, element);
 
         DefaultJDOMExternalizer.writeExternal(this, element);
     }
@@ -148,7 +145,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
 
     @Override
     public void checkConfiguration() throws RuntimeConfigurationException {
-        PhoneGapSettings settings = PhoneGapSettings.getInstance();
+        PhoneGapSettings settings = getInstance();
         if (myExecutableType == Type.CORDOVA && !settings.isCordovaAvailable()
                 || myExecutableType == Type.PHONEGAP && !settings.isPhoneGapAvailable()) {
             throw new RuntimeConfigurationException("SDK is missing");

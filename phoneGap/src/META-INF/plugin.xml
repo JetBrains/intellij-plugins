@@ -6,6 +6,9 @@
         masahirosuzuka
     </vendor>
 
+  <depends optional="true" config-file="javascript-plugin.xml">JavaScript</depends>
+
+
     <description><![CDATA[
         <h4>PhoneGap/Cordova integration for InteliJ Platform.<h4>
         <p>* PhoneGap/Cordova Project wizard (not stable)</p>
@@ -49,10 +52,7 @@
         <projectConfigurable instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapProjectConfigurable" />
 
         <!-- Project generator -->
-        <moduleType id="PHONEGAP_MODULE"
-                    implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapModuleType"/>
-        <moduleConfigurationEditorProvider
-                implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapModuleEditorProvider"/>
+
 
         <!-- Project importer -->
         <projectImportProvider
@@ -68,8 +68,9 @@
         <applicationService serviceInterface="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings"
                             serviceImplementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings"/>
 
-        <completion.contributor language="any"
-                                implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.codecompletion.PhoneGapCodeCompletion" />
+      <directoryProjectGenerator implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapProjectTemplateGenerator"/>
+
+      <projectTemplatesFactory implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapTemplatesFactory"/>
     </extensions>
 
     <application-components>
