@@ -24,28 +24,6 @@ public class DartPresentableUtil {
     return name.startsWith("_") ? name.substring(1) : name;
   }
 
-  public static String unwrapCommentDelimiters(String text) {
-    if (text.matches("(?sm:[\\t ]*/\\*\\*.*)")) {
-      text = text.replaceAll("\\*/.*", "");
-      text = text.replaceAll("\\n[\\t ]*\\* ?", "\n");
-      text = text.replaceAll("^[\\t ]*/\\*\\* ?", "");
-    }
-    else if (text.matches("(?sm:[\\t ]*/\\*.*)")) {
-      text = text.replaceAll("\\*/.*", "");
-      text = text.replaceAll("\\n[\\t ]*\\* ?", "\n");
-      text = text.replaceAll("^[\\t ]*/\\* ?", "");
-    }
-    else if (text.matches("(?sm:[\\t ]*///.*)")) {
-      text = text.replaceAll("^[\\t ]*/// ?", "");
-      text = text.replaceAll("\\n[\\t ]*/// ?", "\n");
-    }
-    else if (text.matches("(?sm:[\\t ]*//.*)")) {
-      text = text.replaceAll("^[\\t ]*// ?", "");
-      text = text.replaceAll("\\n[\\t ]*// ?", "\n");
-    }
-    return text;
-  }
-
   @NotNull
   public static String getPresentableParameterList(DartComponent element) {
     return getPresentableParameterList(element, new DartGenericSpecialization());

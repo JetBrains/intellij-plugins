@@ -183,15 +183,6 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  public static PsiComment findDocumentation(PsiElement element) {
-    final PsiElement candidate = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpaces(element, true);
-    if (candidate instanceof PsiComment) {
-      return (PsiComment)candidate;
-    }
-    return null;
-  }
-
-  @Nullable
   public static String getLibraryName(@NotNull PsiFile psiFile) {
     DartLibraryStatement libraryStatement = null;
     for (PsiElement root : findDartRoots(psiFile)) {
