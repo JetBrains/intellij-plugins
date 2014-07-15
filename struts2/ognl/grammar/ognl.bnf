@@ -227,7 +227,6 @@ binaryExpression ::= expression binaryOperations expression {
     right="expression[1]"
     getOperator
   ]
-  pin=2
 }
 
 private bitwiseOperations ::= '!' | "~"
@@ -254,7 +253,7 @@ newExpression ::= "new" fqnTypeExpression (arrayConstructorExpression | construc
   methods=[
     objectType="expression[0]"
   ]
-  pin(".*")=1
+  pin=1
 }
 
 
