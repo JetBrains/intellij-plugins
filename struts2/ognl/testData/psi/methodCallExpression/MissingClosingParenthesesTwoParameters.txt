@@ -9,6 +9,6 @@ OgnlFile:MissingClosingParenthesesTwoParameters.ognl
     PsiElement(,)(',')
     LITERAL_EXPRESSION
       PsiElement(INTEGER_LITERAL)('2')
-  PsiErrorElement:')', ',' or <operator> expected, got '}'
-    <empty list>
+    PsiErrorElement:')', ',' or <operator> expected, got '}'
+      <empty list>
   PsiElement(EXPRESSION_END)('}')

@@ -164,7 +164,7 @@ methodCallExpression ::= referenceExpression '(' methodCallParameters ')'  {
     method="expression[0]"
     getParameterCount
   ]
-  pin=2
+  pin(".*")="'\('"
 }
 
 private expressionSequenceRequired ::= expression (',' expression)+  { pin(".*")=1 }
