@@ -31,8 +31,9 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
     }
   }
 
+  @NotNull
   @Override
-  public String getUnresolvedMessage() {
+  public String getUnresolvedMessagePattern() {
     return CssBundle.message("invalid.css.property.name.message");
   }
 

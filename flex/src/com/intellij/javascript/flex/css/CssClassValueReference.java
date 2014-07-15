@@ -61,8 +61,9 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
     }
   }
 
+  @NotNull
   @Override
-  public String getUnresolvedMessage() {
+  public String getUnresolvedMessagePattern() {
     return CssBundle.message("invalid.css.class");
   }
 
