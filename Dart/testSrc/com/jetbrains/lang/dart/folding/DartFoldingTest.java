@@ -32,15 +32,19 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
     doTest();
   }
 
-  public void testFileHeaderBeforeImport() throws Exception {
+  public void testFileHeaderBeforeSingleImport() throws Exception {
     doTest();
   }
 
-  public void testCompositeFileHeaderBeforeLibrary() throws Exception {
-    doTest();
+  public void testCompositeFileHeaderAndExpandedImports() throws Exception {
+    doTestWithSpecificSettings(new Consumer<CodeFoldingSettings>() {
+      public void consume(final CodeFoldingSettings settings) {
+        settings.COLLAPSE_IMPORTS = false;
+      }
+    });
   }
 
-  public void testExpandedFileHeaderBeforePart() throws Exception {
+  public void testExpandedFileHeaderAndFoldedImports() throws Exception {
     doTestWithSpecificSettings(new Consumer<CodeFoldingSettings>() {
       public void consume(final CodeFoldingSettings settings) {
         settings.COLLAPSE_FILE_HEADER = false;
@@ -48,7 +52,7 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
     });
   }
 
-  public void testExpandedFileHeaderBeforePartOf() throws Exception {
+  public void testFileHeaderBeforePartOf() throws Exception {
     doTest();
   }
 

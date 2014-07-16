@@ -11,6 +11,7 @@ import com.intellij.openapi.util.UnfairTextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,18 +25,14 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
                                           final boolean quick) {
     if (!(root instanceof DartFile)) return;
 
-    // 1. File header
-    final TextRange fileHeaderCommentsRange = getFileHeaderCommentsRange((DartFile)root);
-    if (fileHeaderCommentsRange != null &&
-        fileHeaderCommentsRange.getLength() > 1 &&
-        document.getLineNumber(fileHeaderCommentsRange.getEndOffset()) > document.getLineNumber(fileHeaderCommentsRange.getStartOffset())) {
-      descriptors.add(new FoldingDescriptor(root, fileHeaderCommentsRange));
-    }
+    foldFileHeader(descriptors, (DartFile)root, document);                 // 1. File header
+    foldImportExportStatements(descriptors, (DartFile)root);                     // 2. Import and export statements
   }
 
   protected String getLanguagePlaceholderText(@NotNull final ASTNode node, @NotNull final TextRange range) {
     final PsiElement psiElement = node.getPsi();
-    if (psiElement instanceof DartFile) return "/.../"; // 1. File header
+    if (psiElement instanceof DartFile) return "/.../";                           // 1. File header
+    if (psiElement instanceof DartImportOrExportStatement) return "...";          // 2. Import and export statements
 
     return null;
   }
@@ -44,9 +41,19 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     final PsiElement psiElement = node.getPsi();
     final CodeFoldingSettings settings = CodeFoldingSettings.getInstance();
 
-    if (psiElement instanceof DartFile) return settings.COLLAPSE_FILE_HEADER; // 1. File header
+    if (psiElement instanceof DartFile) return settings.COLLAPSE_FILE_HEADER;                // 1. File header
+    if (psiElement instanceof DartImportOrExportStatement) return settings.COLLAPSE_IMPORTS; // 2. Import and export statements
 
     return false;
+  }
+
+  private static void foldFileHeader(final List<FoldingDescriptor> descriptors, final DartFile dartFile, final Document document) {
+    final TextRange fileHeaderCommentsRange = getFileHeaderCommentsRange(dartFile);
+    if (fileHeaderCommentsRange != null &&
+        fileHeaderCommentsRange.getLength() > 1 &&
+        document.getLineNumber(fileHeaderCommentsRange.getEndOffset()) > document.getLineNumber(fileHeaderCommentsRange.getStartOffset())) {
+      descriptors.add(new FoldingDescriptor(dartFile, fileHeaderCommentsRange));
+    }
   }
 
   @Nullable
@@ -74,6 +81,28 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     else {
       // this is not a file-level comment, but class, function or var doc
       return null;
+    }
+  }
+
+  private static void foldImportExportStatements(final List<FoldingDescriptor> descriptors, final DartFile dartFile) {
+    final DartImportOrExportStatement firstImport = PsiTreeUtil.findChildOfType(dartFile, DartImportOrExportStatement.class);
+    if (firstImport == null) return;
+
+    PsiElement lastImport = firstImport;
+    PsiElement nextElement = firstImport;
+    while (nextElement instanceof DartImportOrExportStatement ||
+           nextElement instanceof PsiComment ||
+           nextElement instanceof PsiWhiteSpace) {
+      if (nextElement instanceof DartImportOrExportStatement) {
+        lastImport = nextElement;
+      }
+      nextElement = nextElement.getNextSibling();
+    }
+
+    if (lastImport != firstImport) {
+      final int startOffset = firstImport.getTextOffset() + firstImport.getFirstChild().getTextLength() + 1; // after "import " or "export "
+      final int endOffset = lastImport.getTextRange().getEndOffset();
+      descriptors.add(new FoldingDescriptor(firstImport, TextRange.create(startOffset, endOffset)));
     }
   }
 }
