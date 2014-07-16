@@ -3,9 +3,11 @@ package com.jetbrains.lang.dart.analyzer;
 import com.google.dart.engine.context.AnalysisContext;
 import com.google.dart.engine.context.AnalysisException;
 import com.google.dart.engine.error.AnalysisError;
+import com.google.dart.engine.error.ErrorCode;
 import com.google.dart.engine.error.HintCode;
 import com.google.dart.engine.error.TodoCode;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
@@ -171,12 +173,17 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
   @Nullable
   private static Annotation annotate(final AnnotationHolder holder, final AnalysisError message) {
     final TextRange textRange = new TextRange(message.getOffset(), message.getOffset() + message.getLength());
+    final ErrorCode errorCode = message.getErrorCode();
 
-    switch (message.getErrorCode().getErrorSeverity()) {
+    switch (errorCode.getErrorSeverity()) {
       case NONE:
         return null;
       case INFO:
-        return holder.createWeakWarningAnnotation(textRange, message.getMessage());
+        final Annotation annotation = holder.createWeakWarningAnnotation(textRange, message.getMessage());
+        if (errorCode == HintCode.UNUSED_IMPORT || errorCode == HintCode.DUPLICATE_IMPORT) {
+          annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+        }
+        return annotation;
       case WARNING:
         return holder.createWarningAnnotation(textRange, message.getMessage());
       case ERROR:
