@@ -1,0 +1,5 @@
+/**
+ * doc
+ */
+// comment
+class A{}

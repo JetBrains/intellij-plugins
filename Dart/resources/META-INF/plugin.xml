@@ -41,7 +41,7 @@
     <languageInjector implementation="com.jetbrains.lang.dart.psi.DartLanguageInjector"/>
 
     <colorSettingsPage implementation="com.jetbrains.lang.dart.highlight.DartColorsAndFontsPage"/>
-    <lang.foldingBuilder language="Dart" implementationClass="com.jetbrains.lang.dart.ide.folding.DartFoldingBuilder"/>
+    <lang.foldingBuilder language="Dart" implementationClass="com.jetbrains.lang.dart.folding.DartFoldingBuilder"/>
 
     <html.scriptContentProvider language="Dart" implementationClass="com.jetbrains.lang.dart.DartScriptContentProvider"/>
     <writingAccessProvider implementation="com.jetbrains.lang.dart.ide.DartWritingAccessProvider"/>
