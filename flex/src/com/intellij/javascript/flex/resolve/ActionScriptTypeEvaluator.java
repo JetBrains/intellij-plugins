@@ -133,7 +133,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
             type = new JSArrayTypeImpl(baseType, source);
           }
           else {
-            type = new JSPrimitiveArrayType(source, JSContext.INSTANCE);
+            type = new JSPrimitiveArrayType(source, JSTypeContext.INSTANCE);
           }
           addType(type, arrayClass);
         }
