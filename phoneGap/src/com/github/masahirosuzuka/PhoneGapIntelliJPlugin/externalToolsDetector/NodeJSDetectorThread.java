@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project;
 
 /**
  * NodeJSDetectorThread.java
- *
+ * <p/>
  * Created by Masahiro Suzuka on 2014/04/22.
  */
 public class NodeJSDetectorThread implements Runnable {
@@ -29,7 +29,8 @@ public class NodeJSDetectorThread implements Runnable {
       OSProcessHandler handler = new OSProcessHandler(generalCommandLine);
       handler.startNotify();
       generalCommandLine.createProcess();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       // Node not working
       // Output Notify
       String groupeDisplayId = "PhoneGap notification";
@@ -39,6 +40,6 @@ public class NodeJSDetectorThread implements Runnable {
       Notification notification = new Notification(groupeDisplayId, notificationTitle, notificationMessage, notificationType);
 
       Notifications.Bus.notify(notification);
-    } finally { }
+    }
   }
 }

@@ -43,44 +43,13 @@ public class PhoneGapDetectThread implements Runnable/*, ProcessListener*/ {
         }
     }
 
-    private void noPhoneGap() {
+    private static void noPhoneGap() {
         String groupDisplayId = "PhoneGap notification";
         String notificationTitle = "PhoneGap Plugin";
-        String notificationMessage = "PhoneGap can't run";
+        String notificationMessage = "PhoneGap/Cordova has incorrect executable path";
         NotificationType notificationType = NotificationType.ERROR;
         Notification notification = new Notification(groupDisplayId, notificationTitle, notificationMessage, notificationType);
 
         Notifications.Bus.notify(notification);
     }
-
-  /*
-  @Override
-  public void startNotified(ProcessEvent processEvent) {
-
-  }
-
-  @Override
-  public void processTerminated(ProcessEvent processEvent) {
-    int exitCode = processEvent.getExitCode();
-    if (exitCode != 0) {
-      String groupeDisplayId = "PhoneGap notification";
-      String notificationTitle = "PhoneGap";
-      String notificationMessage = "PhoneGap not detected";
-      NotificationType notificationType = NotificationType.ERROR;
-      Notification notification = new Notification(groupeDisplayId, notificationTitle, notificationMessage, notificationType);
-
-      Notifications.Bus.notify(notification);
-    }
-  }
-
-  @Override
-  public void processWillTerminate(ProcessEvent processEvent, boolean b) {
-
-  }
-
-  @Override
-  public void onTextAvailable(ProcessEvent processEvent, Key key) {
-
-  }
-  */
 }
