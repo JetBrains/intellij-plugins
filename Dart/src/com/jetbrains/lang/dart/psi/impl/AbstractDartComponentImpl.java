@@ -62,6 +62,10 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
     return name != null && !name.startsWith("_");
   }
 
+  public boolean isConstructor() {
+    return DartComponentType.typeOf(this) == DartComponentType.CONSTRUCTOR;
+  }
+
   @Override
   public boolean isSetter() {
     return findChildByType(DartTokenTypes.SET) != null;
@@ -74,18 +78,20 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
 
   @Override
   public boolean isAbstract() {
-    // todo this works correctly for functions only
-    return findChildByType(DartTokenTypes.FUNCTION_BODY) == null;
+    final DartComponentType componentType = DartComponentType.typeOf(this);
+    return componentType == DartComponentType.CLASS && findChildByType(DartTokenTypes.ABSTRACT) != null ||
+           componentType == DartComponentType.METHOD && findChildByType(DartTokenTypes.FUNCTION_BODY) == null;
   }
 
   @Override
-  public boolean isDeprecated() {
+  @Nullable
+  public DartMetadata getMetadataByName(final String name) {
     for (DartMetadata metadata : PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class)) {
       if ("deprecated".equals(metadata.getReferenceExpression().getText())) {
-        return true;
+        return metadata;
       }
     }
-    return false;
+    return null;
   }
 
   @Override

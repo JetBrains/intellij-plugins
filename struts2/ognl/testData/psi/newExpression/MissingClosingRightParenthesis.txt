@@ -3,7 +3,7 @@ OgnlFile:MissingClosingRightParenthesis.ognl
   NEW_EXPRESSION
     PsiElement(new)('new')
     PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
+    EXPRESSION
       PsiElement(IDENTIFIER)('Integer')
     PsiElement(()('(')
     LITERAL_EXPRESSION

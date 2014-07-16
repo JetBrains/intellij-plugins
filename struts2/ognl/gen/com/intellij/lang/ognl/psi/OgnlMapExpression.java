@@ -26,4 +26,7 @@ public interface OgnlMapExpression extends OgnlExpression {
   @NotNull
   List<OgnlMapEntryElement> getMapEntryElementList();
 
+  @Nullable
+  OgnlExpression getMapType();
+
 }

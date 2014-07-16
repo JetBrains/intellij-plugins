@@ -27,7 +27,7 @@ public class DartTabCompletionTest extends LightPlatformCodeInsightFixtureTestCa
     doTest();
   }
 
-  public void _testClosingBracketPreserved() {
+  public void testClosingBracketPreserved() {
     doTest();
   }
 }

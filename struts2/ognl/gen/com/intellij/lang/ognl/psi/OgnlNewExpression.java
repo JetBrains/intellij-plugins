@@ -26,4 +26,7 @@ public interface OgnlNewExpression extends OgnlExpression {
   @NotNull
   List<OgnlExpression> getExpressionList();
 
+  @Nullable
+  OgnlExpression getObjectType();
+
 }

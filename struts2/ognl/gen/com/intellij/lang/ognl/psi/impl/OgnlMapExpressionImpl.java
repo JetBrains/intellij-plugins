@@ -43,4 +43,10 @@ public class OgnlMapExpressionImpl extends OgnlExpressionImpl implements OgnlMap
     return PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlMapEntryElement.class);
   }
 
+  @Override
+  @Nullable
+  public OgnlExpression getMapType() {
+    return findChildByClass(OgnlExpression.class);
+  }
+
 }

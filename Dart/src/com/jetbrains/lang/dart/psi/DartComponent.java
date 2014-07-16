@@ -11,11 +11,13 @@ public interface DartComponent extends DartPsiCompositeElement, PsiNameIdentifie
 
   boolean isPublic();
 
+  boolean isConstructor();
+
   boolean isGetter();
 
   boolean isSetter();
 
   boolean isAbstract();
 
-  boolean isDeprecated();
+  DartMetadata getMetadataByName(final String name);
 }
