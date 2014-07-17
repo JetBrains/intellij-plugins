@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
     <name>PhoneGap/Cordova Plugin</name>
-    <version>0.8.1</version>
+    <version>999.999</version>
     <vendor email="masahiro.suzuka@gmail.com" url="http://github.com/masahirosuzuka/PhoneGapIntelliJPlugin">
         masahirosuzuka
     </vendor>
