@@ -3,6 +3,7 @@ package com.jetbrains.actionscript.profiler.base;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.util.ui.ColumnInfo;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -41,8 +42,9 @@ public class BaseSortableTreeTable extends TreeTable {
     setRowHeight(DEFAULT_ROW_HEIGHT);
   }
 
+  @NotNull
   @Override
-  public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+  public Component prepareRenderer(@NotNull TableCellRenderer renderer, int row, int column) {
     JComponent jComponent = (JComponent)super.prepareRenderer(renderer, row, column);
     jComponent.setBorder(new MatteBorder(0, 0, 1, 0, JBColor.LIGHT_GRAY));
 

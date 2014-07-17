@@ -11,6 +11,7 @@ import com.intellij.ui.FileColorManager;
 import com.intellij.util.ui.ColumnInfo;
 import com.jetbrains.actionscript.profiler.util.ResolveUtil;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -42,8 +43,9 @@ public class ColoredSortableTreeTable extends BaseSortableTreeTable {
     path2ColorCache.clear();
   }
 
+  @NotNull
   @Override
-  public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+  public Component prepareRenderer(@NotNull TableCellRenderer renderer, int row, int column) {
     final JComponent jComponent = (JComponent)super.prepareRenderer(renderer, row, column);
     if (jComponent.getBackground() == getSelectionBackground()) {
       return jComponent;
