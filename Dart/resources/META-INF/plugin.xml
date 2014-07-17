@@ -166,10 +166,6 @@
                       level="WARNING"
                       implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartGlobalInspectionTool"/>
 
-    <localInspection language="Dart" shortName="DartUnresolvedImport" bundle="com.jetbrains.lang.dart.DartBundle"
-                     key="inspections.unresolved.import.name"
-                     groupName="Dart" enabledByDefault="true" level="WARNING"
-                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartUnresolvedImportInspection"/>
     <localInspection language="Dart" bundle="com.jetbrains.lang.dart.DartBundle" key="dart.sdk.is.not.configured"
                      groupName="Dart" enabledByDefault="true" level="WARNING"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartSdkIsNotConfiguredInspection"/>
