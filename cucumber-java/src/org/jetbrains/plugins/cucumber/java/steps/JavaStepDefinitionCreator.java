@@ -11,9 +11,8 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.impl.DirectoryIndex;
-import com.intellij.openapi.roots.impl.DirectoryInfo;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -119,15 +118,15 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   public PsiDirectory getDefaultStepDefinitionFolder(@NotNull final GherkinStep step) {
     PsiFile featureFile = step.getContainingFile();
     if (featureFile != null) {
-      PsiDirectory directory = featureFile.getContainingDirectory();
-      if (directory != null && directory.getManager() != null) {
-        PsiManager manager = directory.getManager();
-        DirectoryIndex directoryIndex = DirectoryIndex.getInstance(manager.getProject());
-        DirectoryInfo info = directoryIndex.getInfoForDirectory(directory.getVirtualFile());
-        if (info != null) {
-          VirtualFile sourceRoot = info.getSourceRoot();
+      PsiDirectory psiDirectory = featureFile.getContainingDirectory();
+      final Project project = step.getProject();
+      if (psiDirectory != null) {
+        ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+        VirtualFile directory = psiDirectory.getVirtualFile();
+        if (projectFileIndex.isInContent(directory)) {
+          VirtualFile sourceRoot = projectFileIndex.getSourceRootForFile(directory);
           //noinspection ConstantConditions
-          final Module module = ProjectRootManager.getInstance(step.getProject()).getFileIndex().getModuleForFile(featureFile.getVirtualFile());
+          final Module module = projectFileIndex.getModuleForFile(featureFile.getVirtualFile());
           if (module != null) {
             final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots();
             if (sourceRoot != null && sourceRoot.getName().equals("resources")) {
@@ -151,14 +150,14 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
           }
 
           final String packagePath = packageName.replace('.', '/');
-          final String path = sourceRoot != null ? sourceRoot.getPath() : directory.getVirtualFile().getPath();
+          final String path = sourceRoot != null ? sourceRoot.getPath() : directory.getPath();
           // ToDo: I shouldn't create directories, only create VirtualFile object.
           final Ref<PsiDirectory> resultRef = new Ref<PsiDirectory>();
           new WriteAction() {
             protected void run(@NotNull Result result) throws Throwable {
               final VirtualFile packageFile = VfsUtil.createDirectoryIfMissing(path + '/' + packagePath);
               if (packageFile != null) {
-                resultRef.set(PsiDirectoryFactory.getInstance(step.getProject()).createDirectory(packageFile));
+                resultRef.set(PsiDirectoryFactory.getInstance(project).createDirectory(packageFile));
               }
             }
           }.execute();
