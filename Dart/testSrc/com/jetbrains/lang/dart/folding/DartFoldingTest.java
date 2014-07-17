@@ -59,4 +59,16 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
   public void testClassDocNoFileHeader() throws Exception {
     doTest();
   }
+
+  public void testCommentsFolding() throws Exception {
+    doTest();
+  }
+
+  public void testDocCommentsCollapsed() throws Exception {
+    doTestWithSpecificSettings(new Consumer<CodeFoldingSettings>() {
+      public void consume(final CodeFoldingSettings settings) {
+        settings.COLLAPSE_DOC_COMMENTS = true;
+      }
+    });
+  }
 }

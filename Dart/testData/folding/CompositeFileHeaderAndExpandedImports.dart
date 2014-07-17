@@ -14,12 +14,12 @@ s
 library foo;
 
 export <fold text='...' expand='true'>"dart:core";
-/* comment */
+<fold text='/*...*/' expand='true'>/* comment */</fold>
 // comment
 /// doc
-/**
+<fold text='/**...*/' expand='true'>/**
  * doc
- */
+ */</fold>
 import "dart:core";
 
 import "";
