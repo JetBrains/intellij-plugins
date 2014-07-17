@@ -30,7 +30,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     final TextRange fileHeaderRange = foldFileHeader(descriptors, (DartFile)root, document); // 1. File header
     foldImportExportStatements(descriptors, (DartFile)root);                                 // 2. Import and export statements
     foldComments(descriptors, root, fileHeaderRange);                                        // 3. Comments and comment sequences
-    // todo 4. Class body
+    foldClassBodies(descriptors, (DartFile)root);                                            // 4. Class body
     // todo 5. Function body
   }
 
@@ -44,6 +44,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     if (elementType == DartTokenTypesSets.MULTI_LINE_COMMENT) return "/*...*/";      // 3.2. Multiline comments
     if (elementType == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) return "///...";  // 3.3. Consequent single line doc comments
     if (elementType == DartTokenTypesSets.SINGLE_LINE_COMMENT) return "//...";       // 3.4. Consequent single line comments
+    if (psiElement instanceof DartClassBody) return "{...}";                         // 4.   Class body
 
     return null;
   }
@@ -164,6 +165,15 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       }
       else {
         foldComments(descriptors, child, fileHeaderRange);
+      }
+    }
+  }
+
+  private static void foldClassBodies(final List<FoldingDescriptor> descriptors, final DartFile dartFile) {
+    for (DartClassDefinition dartClass : PsiTreeUtil.getChildrenOfTypeAsList(dartFile, DartClassDefinition.class)) {
+      final DartClassBody body = dartClass.getClassBody();
+      if (body != null && body.getTextLength() > 2) {
+        descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
       }
     }
   }

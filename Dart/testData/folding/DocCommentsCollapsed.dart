@@ -20,7 +20,7 @@ topLevel(){}
 /// doc2</fold>
 <fold text='//...' expand='true'>// 1
 // 2</fold>
-class A{
+class A<fold text='{...}' expand='true'>{
   <fold text='/**...*/' expand='false'>/**
    method doc
    */</fold>
@@ -32,4 +32,4 @@ class A{
   <fold text='///...' expand='false'>/// doc1
   /// doc2</fold>
   bar(){}
-}
+}</fold>
