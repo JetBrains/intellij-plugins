@@ -71,4 +71,16 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
       }
     });
   }
+
+  public void testFunctionBody() throws Exception {
+    doTest();
+  }
+
+  public void testFunctionBodyCollapsedByDefault() throws Exception {
+    doTestWithSpecificSettings(new Consumer<CodeFoldingSettings>() {
+      public void consume(final CodeFoldingSettings settings) {
+        settings.COLLAPSE_METHODS = true;
+      }
+    });
+  }
 }

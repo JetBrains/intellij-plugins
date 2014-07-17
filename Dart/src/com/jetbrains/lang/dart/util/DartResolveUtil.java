@@ -704,14 +704,9 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  public static PsiElement getBody(@Nullable DartClass dartClass) {
-    PsiElement body = null;
-    final DartComponentType type = DartComponentType.typeOf(dartClass);
-    if (type == DartComponentType.CLASS) {
-      final DartClassBody classBody = PsiTreeUtil.getChildOfAnyType(dartClass, DartClassBody.class);
-      body = classBody != null ? classBody.getClassMembers() : null;
-    }
-    return body;
+  public static DartClassMembers getBody(@Nullable final DartClass dartClass) {
+    final DartClassBody body = dartClass == null ? null : ((DartClassDefinition)dartClass).getClassBody();
+    return body == null ? null : body.getClassMembers();
   }
 
   public static List<DartComponent> filterComponentsByType(List<DartComponent> components, final DartComponentType type) {

@@ -13,7 +13,7 @@ multiline
  * multiline doc
  */</fold>
 class A<fold text='{...}' expand='true'>{
-  bar(){
+  bar()<fold text='{...}' expand='true'>{
     if (true){
       <fold text='/*...*/' expand='true'>/*
       multiline
@@ -32,7 +32,7 @@ class A<fold text='{...}' expand='true'>{
        * multiline doc 2
        */</fold>
     }
-  }
+  }</fold>
 }</fold>
 
 class B <fold text='{...}' expand='true'>{

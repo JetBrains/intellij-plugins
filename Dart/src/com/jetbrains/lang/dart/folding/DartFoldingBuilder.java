@@ -13,8 +13,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +33,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     foldImportExportStatements(descriptors, (DartFile)root);                                 // 2. Import and export statements
     foldComments(descriptors, root, fileHeaderRange);                                        // 3. Comments and comment sequences
     foldClassBodies(descriptors, (DartFile)root);                                            // 4. Class body
-    // todo 5. Function body
+    foldFunctionBodies(descriptors, root);                                                   // 5. Function body
   }
 
   protected String getLanguagePlaceholderText(@NotNull final ASTNode node, @NotNull final TextRange range) {
@@ -45,8 +47,9 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     if (elementType == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) return "///...";  // 3.3. Consequent single line doc comments
     if (elementType == DartTokenTypesSets.SINGLE_LINE_COMMENT) return "//...";       // 3.4. Consequent single line comments
     if (psiElement instanceof DartClassBody) return "{...}";                         // 4.   Class body
+    if (psiElement instanceof DartFunctionBody) return "{...}";                      // 5.   Function body
 
-    return null;
+    return "...";
   }
 
   protected boolean isRegionCollapsedByDefault(@NotNull final ASTNode node) {
@@ -59,14 +62,18 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
 
     if (elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT ||                          // 3.1. Multiline doc comments
         elementType == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) {                         // 3.3. Consequent single line doc comments
-      return settings.COLLAPSE_DOC_COMMENTS;
+      return settings.COLLAPSE_DOC_COMMENTS;                                                 // 3.2 and 3.4 never collapsed by default
     }
+    //                                                                                          4. Class body never collapsed by default
+    if (psiElement instanceof DartFunctionBody) return settings.COLLAPSE_METHODS;            // 5. Function body
 
     return false;
   }
 
   @Nullable
-  private static TextRange foldFileHeader(final List<FoldingDescriptor> descriptors, final DartFile dartFile, final Document document) {
+  private static TextRange foldFileHeader(@NotNull final List<FoldingDescriptor> descriptors,
+                                          @NotNull final DartFile dartFile,
+                                          @NotNull final Document document) {
     final TextRange fileHeaderCommentsRange = getFileHeaderCommentsRange(dartFile);
     if (fileHeaderCommentsRange != null &&
         fileHeaderCommentsRange.getLength() > 1 &&
@@ -106,7 +113,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     }
   }
 
-  private static void foldImportExportStatements(final List<FoldingDescriptor> descriptors, final DartFile dartFile) {
+  private static void foldImportExportStatements(@NotNull final List<FoldingDescriptor> descriptors, final @NotNull DartFile dartFile) {
     final DartImportOrExportStatement firstImport = PsiTreeUtil.findChildOfType(dartFile, DartImportOrExportStatement.class);
     if (firstImport == null) return;
 
@@ -128,9 +135,9 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     }
   }
 
-  private static void foldComments(final @NotNull List<FoldingDescriptor> descriptors,
-                                   final @NotNull PsiElement root,
-                                   final @Nullable TextRange fileHeaderRange) {
+  private static void foldComments(@NotNull final List<FoldingDescriptor> descriptors,
+                                   @NotNull final PsiElement root,
+                                   @Nullable final TextRange fileHeaderRange) {
     for (PsiElement child = root.getFirstChild(); child != null; child = child.getNextSibling()) {
       if (fileHeaderRange != null && fileHeaderRange.intersects(child.getTextRange())) {
         continue;
@@ -169,12 +176,47 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     }
   }
 
-  private static void foldClassBodies(final List<FoldingDescriptor> descriptors, final DartFile dartFile) {
+  private static void foldClassBodies(@NotNull final List<FoldingDescriptor> descriptors, @NotNull final DartFile dartFile) {
     for (DartClassDefinition dartClass : PsiTreeUtil.getChildrenOfTypeAsList(dartFile, DartClassDefinition.class)) {
       final DartClassBody body = dartClass.getClassBody();
       if (body != null && body.getTextLength() > 2) {
         descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
       }
+    }
+  }
+
+  private static void foldFunctionBodies(@NotNull final List<FoldingDescriptor> descriptors, @NotNull final PsiElement root) {
+    for (PsiElement dartComponent : PsiTreeUtil.findChildrenOfAnyType(root, DartComponent.class, DartOperatorDeclaration.class)) {
+      final DartComponentType componentType = DartComponentType.typeOf(dartComponent);
+      if (componentType == null) continue;
+
+      switch (componentType) {
+        case CLASS:
+          final DartClassMembers classMembers = DartResolveUtil.getBody((DartClass)dartComponent);
+          if (classMembers != null) {
+            for (DartComponent childComponent : PsiTreeUtil.findChildrenOfType(classMembers, DartComponent.class)) {
+              foldFunctionBody(descriptors, childComponent);
+            }
+          }
+          break;
+        case CONSTRUCTOR:
+        case FUNCTION:
+        case METHOD:
+        case OPERATOR:
+          foldFunctionBody(descriptors, dartComponent);
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  private static void foldFunctionBody(@NotNull final List<FoldingDescriptor> descriptors,
+                                       @NotNull final PsiElement dartComponentOrOperatorDeclaration) {
+    final DartFunctionBody functionBody = PsiTreeUtil.getChildOfType(dartComponentOrOperatorDeclaration, DartFunctionBody.class);
+    final DartBlock block = functionBody == null ? null : functionBody.getBlock();
+    if (block != null && block.getTextLength() > 2) {
+      descriptors.add(new FoldingDescriptor(functionBody, block.getTextRange()));
     }
   }
 }
