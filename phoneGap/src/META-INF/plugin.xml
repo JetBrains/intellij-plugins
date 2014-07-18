@@ -46,10 +46,10 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Global Setting Dialog -->
-        <applicationConfigurable instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable"/>
+        <applicationConfigurable groupId="tools" instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable"/>
 
         <!-- Project Setting Dialog -->
-        <projectConfigurable instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapProjectConfigurable" />
+        <projectConfigurable groupId="tools" instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapProjectConfigurable" />
 
         <!-- Project generator -->
 

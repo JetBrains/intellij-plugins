@@ -29,7 +29,7 @@
                          implementationClass="com.dmarcotte.handlebars.editor.folding.HbFoldingBuilder"/>
     <typedHandler implementation="com.dmarcotte.handlebars.editor.actions.HbTypedHandler"/>
     <enterHandlerDelegate implementation="com.dmarcotte.handlebars.editor.actions.HbEnterHandler"/>
-    <applicationConfigurable instance="com.dmarcotte.handlebars.pages.HbConfigurationPage"/>
+    <applicationConfigurable groupId="language" instance="com.dmarcotte.handlebars.pages.HbConfigurationPage"/>
     <codeFoldingOptionsProvider
         instance="com.dmarcotte.handlebars.config.HbFoldingOptionsProvider"/>
     <lang.psiStructureViewFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.structure.HbStructureViewFactory"/>
