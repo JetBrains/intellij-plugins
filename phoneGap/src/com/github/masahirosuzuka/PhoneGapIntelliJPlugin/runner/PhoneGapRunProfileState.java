@@ -4,6 +4,7 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.process.KillableColoredProcessHandler;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -53,7 +54,7 @@ public class PhoneGapRunProfileState extends CommandLineState {
 
             GeneralCommandLine commandLine = new GeneralCommandLine("node", "server.js");
             commandLine.setWorkDirectory(projectDir);
-            return new OSProcessHandler(commandLine);
+            return KillableColoredProcessHandler.create(commandLine);
         } else { // Android or iOS
             GeneralCommandLine commandLine = new GeneralCommandLine(
                     phoneGapRunConfiguration.getExecutableType().getPath(),
