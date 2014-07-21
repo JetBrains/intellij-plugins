@@ -97,7 +97,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
 
   @Override
   public void apply(@NotNull PsiFile psiFile, @Nullable AnalysisContext analysisContext, @NotNull AnnotationHolder holder) {
-    if (analysisContext == null) return;
+    if (analysisContext == null || !psiFile.isValid()) return;
 
     final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
     final DartFileBasedSource source = annotatedFile == null ? null : DartFileBasedSource.getSource(psiFile.getProject(), annotatedFile);
@@ -105,7 +105,9 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
 
     // analysisContext.getErrors() doesn't perform analysis and returns already calculated errors
     final AnalysisError[] messages = analysisContext.getErrors(source).getErrors();
-    if (messages == null || !psiFile.isValid()) return;
+    if (messages == null || messages.length == 0) return;
+
+    final int fileTextLength = psiFile.getTextLength();
 
     for (AnalysisError message : messages) {
       if (shouldIgnoreMessageFromDartAnalyzer(message)) continue;
@@ -115,7 +117,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
         continue;
       }
 
-      final Annotation annotation = annotate(holder, message);
+      final Annotation annotation = annotate(holder, message, fileTextLength);
       if (annotation != null) {
         registerFixes(psiFile, annotation, message);
       }
@@ -171,8 +173,13 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
   }
 
   @Nullable
-  private static Annotation annotate(final AnnotationHolder holder, final AnalysisError message) {
-    final TextRange textRange = new TextRange(message.getOffset(), message.getOffset() + message.getLength());
+  private static Annotation annotate(final AnnotationHolder holder, final AnalysisError message, final int fileTextLength) {
+    int highlightingStart = message.getOffset();
+    int highlightingEnd = message.getOffset() + message.getLength();
+    if (highlightingEnd > fileTextLength) highlightingEnd = fileTextLength;
+    if (highlightingStart >= highlightingEnd) highlightingStart = highlightingEnd - 1;
+
+    final TextRange textRange = new TextRange(highlightingStart, highlightingEnd);
     final ErrorCode errorCode = message.getErrorCode();
 
     switch (errorCode.getErrorSeverity()) {
