@@ -434,9 +434,9 @@ switchCase ::= label? ('case' expression ':')+ statements {recoverWhile="switch_
 private switch_case_recover ::= !('case' | 'default' | '}' | <<nonStrictID>>)
 defaultCase::= label? ('case' expression ':')* 'default' ':' statements
 
-tryStatement ::= 'try' block ((onPart | catchPart)+ finallyPart? | finallyPart) {pin=1}
-onPart ::= 'on' type catchPart? {pin=1}
-catchPart ::= 'catch' formalParameterList block {pin=1}
+tryStatement ::= 'try' block (onPart+ finallyPart? | finallyPart) {pin=1}
+onPart ::= catchPart block | 'on' type catchPart? block {pin=1}
+catchPart ::= 'catch' '(' componentName (',' componentName)? ')' {pin=1}
 finallyPart::= 'finally' block {pin=1}
 
 varInit ::= '=' expression {pin=1}

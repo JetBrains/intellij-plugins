@@ -117,7 +117,7 @@ public class DartSpacingProcessor {
       else if (elementType == TRY_STATEMENT) {
         return addSingleSpaceIf(mySettings.SPACE_BEFORE_TRY_PARENTHESES);
       }
-      else if (elementType == CATCH_PART) {
+      else if (elementType == ON_PART || elementType == CATCH_PART) {
         return addSingleSpaceIf(mySettings.SPACE_BEFORE_CATCH_PARENTHESES);
       }
     }
@@ -153,7 +153,7 @@ public class DartSpacingProcessor {
       else if (elementType == TRY_STATEMENT) {
         return setBraceSpace(mySettings.SPACE_BEFORE_TRY_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
       }
-      else if (elementType == CATCH_PART) {
+      else if (elementType == ON_PART) {
         return setBraceSpace(mySettings.SPACE_BEFORE_CATCH_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
       }
     }
@@ -303,7 +303,7 @@ public class DartSpacingProcessor {
     if (type2 == WHILE) {
       return addSingleSpaceIf(mySettings.SPACE_BEFORE_WHILE_KEYWORD, mySettings.WHILE_ON_NEW_LINE);
     }
-    if (type2 == CATCH_PART) {
+    if (type2 == ON_PART) {
       return addSingleSpaceIf(mySettings.SPACE_BEFORE_CATCH_KEYWORD, mySettings.CATCH_ON_NEW_LINE);
     }
 

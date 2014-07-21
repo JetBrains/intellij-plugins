@@ -291,4 +291,19 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
     doTestNoSdkClassesInCompletion("class Foo{const Foo <caret>}");
   }
 
+  public void testExceptionParameter1() throws Throwable {
+    doTest();
+  }
+
+  public void testExceptionParameter2() throws Throwable {
+    doTest();
+  }
+
+  public void testExceptionParameter3() throws Throwable {
+    doTest();
+  }
+
+  public void testExceptionParameter4() throws Throwable {
+    doTest();
+  }
 }

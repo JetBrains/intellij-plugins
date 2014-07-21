@@ -14,7 +14,7 @@ class Baz extends Kuk implements A, B, C {
   void baz() {
     if (42) if (42) 42; else throw 42;
     switch (42) { case 42: return 42; default: break; }
-    try { } catch (var e) {
+    try { } catch (e) {
      rethrow
      rethrow;
     }

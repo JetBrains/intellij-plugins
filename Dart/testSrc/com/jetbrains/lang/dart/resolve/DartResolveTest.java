@@ -223,4 +223,15 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                            "}");
     doTest();
   }
+
+  public void testExceptionParameters() throws Exception {
+    myFixture.configureByText("file.dart", "main(){\n" +
+                                           "  try{} on Error catch (e1){<caret expected='file.dart -> main -> e1'>e1;}\n" +
+                                           "  try{} on Error catch (e2, s2){<caret expected='file.dart -> main -> e2'>e2 + <caret expected='file.dart -> main -> s2'>s2; <caret expected=''>e1;}\n" +
+                                           "  try{} catch (e3){<caret expected='file.dart -> main -> e3'>e3; <caret expected=''>e1; <caret expected=''>e2; <caret expected=''>s2;}\n" +
+                                           "  try{} catch (e4, s4){print(<caret expected='file.dart -> main -> e4'>e4 + <caret expected='file.dart -> main -> s4'>s4); <caret expected=''>e1; <caret expected=''>e2; <caret expected=''>s2; <caret expected=''>e3;}\n" +
+                                           "}");
+
+    doTest();
+  }
 }

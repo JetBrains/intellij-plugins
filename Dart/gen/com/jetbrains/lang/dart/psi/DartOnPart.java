@@ -7,6 +7,9 @@ import com.intellij.psi.PsiElement;
 
 public interface DartOnPart extends DartPsiCompositeElement {
 
+  @NotNull
+  DartBlock getBlock();
+
   @Nullable
   DartCatchPart getCatchPart();
 

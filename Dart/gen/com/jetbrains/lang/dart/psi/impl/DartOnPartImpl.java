@@ -23,6 +23,12 @@ public class DartOnPartImpl extends DartPsiCompositeElementImpl implements DartO
   }
 
   @Override
+  @NotNull
+  public DartBlock getBlock() {
+    return findNotNullChildByClass(DartBlock.class);
+  }
+
+  @Override
   @Nullable
   public DartCatchPart getCatchPart() {
     return findChildByClass(DartCatchPart.class);

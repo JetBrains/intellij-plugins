@@ -7,10 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface DartCatchPart extends DartPsiCompositeElement {
 
-  @Nullable
-  DartBlock getBlock();
-
-  @Nullable
-  DartFormalParameterList getFormalParameterList();
+  @NotNull
+  List<DartComponentName> getComponentNameList();
 
 }
