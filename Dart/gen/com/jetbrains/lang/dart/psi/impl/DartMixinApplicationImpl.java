@@ -35,9 +35,9 @@ public class DartMixinApplicationImpl extends DartPsiCompositeElementImpl implem
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DartType getType() {
-    return findNotNullChildByClass(DartType.class);
+    return findChildByClass(DartType.class);
   }
 
 }

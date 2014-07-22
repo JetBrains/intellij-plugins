@@ -97,20 +97,20 @@ Dart File
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('X')
-    PsiElement(=)('=')
     MIXIN_APPLICATION
+      PsiElement(=)('=')
       TYPE
         REFERENCE_EXPRESSION
           ID
             PsiElement(IDENTIFIER)('Y')
-    PsiElement(;)(';')
+      PsiElement(;)(';')
   CLASS_DEFINITION
     PsiElement(class)('class')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('X')
-    PsiElement(=)('=')
     MIXIN_APPLICATION
+      PsiElement(=)('=')
       TYPE
         REFERENCE_EXPRESSION
           ID
@@ -122,7 +122,7 @@ Dart File
             REFERENCE_EXPRESSION
               ID
                 PsiElement(IDENTIFIER)('Z')
-    PsiElement(;)(';')
+      PsiElement(;)(';')
   CLASS_DEFINITION
     PsiElement(abstract)('abstract')
     PsiElement(class)('class')
@@ -136,8 +136,8 @@ Dart File
           ID
             PsiElement(IDENTIFIER)('E')
       PsiElement(>)('>')
-    PsiElement(=)('=')
     MIXIN_APPLICATION
+      PsiElement(=)('=')
       TYPE
         REFERENCE_EXPRESSION
           ID
@@ -157,14 +157,14 @@ Dart File
                     ID
                       PsiElement(IDENTIFIER)('E')
               PsiElement(>)('>')
-    PsiElement(;)(';')
+      PsiElement(;)(';')
   CLASS_DEFINITION
     PsiElement(class)('class')
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('Z')
-    PsiElement(=)('=')
     MIXIN_APPLICATION
+      PsiElement(=)('=')
       TYPE
         REFERENCE_EXPRESSION
           REFERENCE_EXPRESSION
@@ -401,7 +401,7 @@ Dart File
             REFERENCE_EXPRESSION
               ID
                 PsiElement(IDENTIFIER)('W')
-    PsiElement(;)(';')
+      PsiElement(;)(';')
   CLASS_DEFINITION
     PsiElement(class)('class')
     COMPONENT_NAME

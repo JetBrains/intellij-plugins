@@ -1,1 +1,1 @@
-class Foo implement<error descr="A class definition must have a body, even if it is empty"><error descr="Classes can only implement other classes"><error descr="Expected a type name">s</error></error></error>
+class Foo<error descr="A class definition must have a body, even if it is empty">o</error>
