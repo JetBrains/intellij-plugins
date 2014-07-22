@@ -26,7 +26,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.StatusText;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.webcore.ui.SwingHelper;
+import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

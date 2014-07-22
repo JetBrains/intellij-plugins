@@ -21,7 +21,7 @@ import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import com.intellij.webcore.libraries.ScriptingLibraryMappings;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.webcore.libraries.ui.ModuleScopeSelectorComponent;
-import com.intellij.webcore.ui.SwingHelper;
+import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

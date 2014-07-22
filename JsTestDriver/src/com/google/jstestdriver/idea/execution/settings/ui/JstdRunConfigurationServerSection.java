@@ -12,7 +12,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.webcore.ui.SwingHelper;
+import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

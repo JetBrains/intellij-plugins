@@ -25,7 +25,7 @@ import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ArrayUtil;
 import com.intellij.webcore.ScriptingFrameworkDescriptor;
-import com.intellij.webcore.ui.SwingHelper;
+import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

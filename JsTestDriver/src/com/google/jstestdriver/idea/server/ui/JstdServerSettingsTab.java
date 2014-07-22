@@ -10,7 +10,7 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.FormBuilder;
-import com.intellij.webcore.ui.SwingHelper;
+import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
