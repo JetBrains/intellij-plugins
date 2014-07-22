@@ -23,10 +23,6 @@ public interface DartClass extends DartComponent {
   @NotNull
   List<DartComponent> getFields();
 
-  /**
-   * @return named and factory constructors
-   */
-
   @NotNull
   List<DartComponent> getConstructors();
 
