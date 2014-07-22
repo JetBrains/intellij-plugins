@@ -147,7 +147,7 @@ public class FlexResolveHelper implements JSResolveHelper {
       } else {
         ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
         for(VirtualFile child:vfile.getChildren()) {
-          if (!index.isIgnored(child) && !processor.process(child)) return false;
+          if (!index.isExcluded(child) && !processor.process(child)) return false;
         }
       }
     }
