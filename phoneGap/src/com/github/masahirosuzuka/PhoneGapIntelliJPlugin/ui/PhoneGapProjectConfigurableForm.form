@@ -16,7 +16,7 @@
           <text value="Plugman executable :"/>
         </properties>
       </component>
-      <component id="6ca4b" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+      <component id="6ca4b" class="javax.swing.JTextField" binding="plugmanExecutableField">
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -39,16 +39,6 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="d612b" class="javax.swing.JList" binding="list1" default-binding="true">
-        <constraints>
-          <grid row="1" column="1" row-span="2" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
-          </grid>
-        </constraints>
-        <properties>
-          <enabled value="false"/>
-        </properties>
-      </component>
       <component id="7ca4e" class="javax.swing.JButton" binding="installPhoneGapCordovaPluginButton" default-binding="true">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -57,6 +47,14 @@
           <enabled value="true"/>
           <text value="Install PhoneGap/Cordova plugin"/>
         </properties>
+      </component>
+      <component id="8243a" class="javax.swing.JTable" binding="pluginsTable">
+        <constraints>
+          <grid row="1" column="1" row-span="2" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="50"/>
+          </grid>
+        </constraints>
+        <properties/>
       </component>
     </children>
   </grid>
