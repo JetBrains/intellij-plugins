@@ -1,7 +1,7 @@
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.index.JavaScriptClassContributor;
+import com.intellij.lang.javascript.navigation.JavaScriptClassContributor;
 import com.intellij.navigation.ChooseByNameContributor;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
