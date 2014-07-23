@@ -1630,7 +1630,11 @@ public class FlexDebugProcess extends XDebugProcess {
         if (startupDone) {
           final Balloon balloon = ToolWindowManager.getInstance(getSession().getProject()).getToolWindowBalloon(ToolWindowId.DEBUG);
           if (balloon != null) {
-            balloon.hide();
+            ApplicationManager.getApplication().invokeLater(new Runnable() {
+              public void run() {
+                balloon.hide();
+              }
+            });
           }
 
           getSession().rebuildViews();
