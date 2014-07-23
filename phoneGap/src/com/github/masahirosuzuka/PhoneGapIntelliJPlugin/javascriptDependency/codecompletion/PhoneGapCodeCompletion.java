@@ -1,4 +1,4 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.codecompletion;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.javascriptDependency.codecompletion;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapFacade;
 import com.intellij.codeInsight.completion.*;

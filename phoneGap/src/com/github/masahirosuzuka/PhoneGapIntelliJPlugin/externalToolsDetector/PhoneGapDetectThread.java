@@ -7,6 +7,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 
 /**
  * PhoneGapDetectThread.java
@@ -24,12 +25,12 @@ public class PhoneGapDetectThread implements Runnable/*, ProcessListener*/ {
     @Override
     public void run() {
         PhoneGapSettings instance = PhoneGapSettings.getInstance();
-        if (!instance.isPhoneGapAvailable()) {
+        if (StringUtil.isEmpty(instance.getExecutablePath())) {
             noPhoneGap();
             return;
         }
 
-        String phoneGapExecutablePath = instance.getPhoneGapExecutablePath();
+        String phoneGapExecutablePath = instance.getExecutablePath();
         final GeneralCommandLine generalCommandLine = new GeneralCommandLine(phoneGapExecutablePath, "--version");
         generalCommandLine.setWorkDirectory(myProject.getBasePath());
         try {

@@ -56,8 +56,8 @@ public class ExternalToolsDetector implements ProjectComponent {
         //}
         //  } else {
         //  // System is Mac or Linux
-        NodeJSDetectorThread nodeJSDetectorThread = new NodeJSDetectorThread(project);
-        nodeJSDetectorThread.run();
+        //NodeJSDetectorThread nodeJSDetectorThread = new NodeJSDetectorThread(project);
+        //nodeJSDetectorThread.run();
 
         // Detect phonegap cli
         PhoneGapDetectThread phoneGapDetectThread = new PhoneGapDetectThread(project);
