@@ -56,6 +56,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
     String path = element instanceof PsiDirectoryImpl ? ((PsiDirectoryImpl)element).getVirtualFile().getPath()
                                                       : element.getContainingFile().getVirtualFile().getPath();
     if (path.startsWith("/src/")) path = path.substring("/src/".length());
+    if (path.startsWith(DartTestUtils.SDK_HOME_PATH)) path = "[Dart SDK]" + path.substring(DartTestUtils.SDK_HOME_PATH.length());
     if (buf.length() > 0) buf.insert(0, " -> ");
     buf.insert(0, path);
 
@@ -230,6 +231,20 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                            "  try{} on Error catch (e2, s2){<caret expected='file.dart -> main -> e2'>e2 + <caret expected='file.dart -> main -> s2'>s2; <caret expected=''>e1;}\n" +
                                            "  try{} catch (e3){<caret expected='file.dart -> main -> e3'>e3; <caret expected=''>e1; <caret expected=''>e2; <caret expected=''>s2;}\n" +
                                            "  try{} catch (e4, s4){print(<caret expected='file.dart -> main -> e4'>e4 + <caret expected='file.dart -> main -> s4'>s4); <caret expected=''>e1; <caret expected=''>e2; <caret expected=''>s2; <caret expected=''>e3;}\n" +
+                                           "}");
+
+    doTest();
+  }
+
+  public void testObjectMembers() throws Exception {
+    myFixture.configureByText("file.dart", "class Bar{}\n" +
+                                           "class Foo extends Bar{\n" +
+                                           "  String toString(){\n" +
+                                           "    var i = hashCode<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> hashCode'>;\n" +
+                                           "    var b = new Bar();\n" +
+                                           "    b.runtimeType<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> runtimeType'>;\n" +
+                                           "    return super.toString<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> toString'>();\n" +
+                                           "  }\n" +
                                            "}");
 
     doTest();

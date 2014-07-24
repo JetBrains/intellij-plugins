@@ -79,8 +79,12 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
   @Override
   public boolean isAbstract() {
     final DartComponentType componentType = DartComponentType.typeOf(this);
-    return componentType == DartComponentType.CLASS && findChildByType(DartTokenTypes.ABSTRACT) != null ||
-           componentType == DartComponentType.METHOD && findChildByType(DartTokenTypes.FUNCTION_BODY) == null;
+    return componentType == DartComponentType.CLASS &&
+           findChildByType(DartTokenTypes.ABSTRACT) != null
+           ||
+           componentType == DartComponentType.METHOD &&
+           findChildByType(DartTokenTypes.EXTERNAL) == null &&
+           findChildByType(DartTokenTypes.FUNCTION_BODY) == null;
   }
 
   @Override

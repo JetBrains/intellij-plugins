@@ -16,6 +16,7 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartType;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartGotoSuperHandler implements LanguageCodeInsightActionHandler {
   @Override
   public boolean isValidFor(Editor editor, PsiFile file) {
@@ -41,13 +39,17 @@ public class DartGotoSuperHandler implements LanguageCodeInsightActionHandler {
     if (at == null || dartClass == null || component == null) return;
 
     final List<DartClass> supers = new ArrayList<DartClass>();
-    final DartClassResolveResult dartClassResolveResult = DartResolveUtil.resolveClassByType(dartClass.getSuperClass());
-    if (dartClassResolveResult.getDartClass() != null) {
-      supers.add(dartClassResolveResult.getDartClass());
+    final DartType superClass = dartClass.getSuperClass();
+    // looks like there's no sense in jumping to Object class
+    if (superClass != null && !DartResolveUtil.OBJECT.equals(superClass.getReferenceExpression().getText())) {
+      final DartClassResolveResult dartClassResolveResult = DartResolveUtil.resolveClassByType(superClass);
+      if (dartClassResolveResult.getDartClass() != null) {
+        supers.add(dartClassResolveResult.getDartClass());
+      }
     }
-    List<DartClassResolveResult> implementsAndMixinsList = DartResolveUtil.resolveClassesByTypes(
-      DartResolveUtil.getImplementsAndMixinsList(dartClass)
-    );
+
+    List<DartClassResolveResult> implementsAndMixinsList =
+      DartResolveUtil.resolveClassesByTypes(DartResolveUtil.getImplementsAndMixinsList(dartClass));
     for (DartClassResolveResult resolveResult : implementsAndMixinsList) {
       final DartClass resolveResultDartClass = resolveResult.getDartClass();
       if (resolveResultDartClass != null) {
@@ -85,8 +87,10 @@ public class DartGotoSuperHandler implements LanguageCodeInsightActionHandler {
       }
     });
     if (!filteredSuperItems.isEmpty()) {
-      PsiElementListNavigator.openTargets(editor, DartResolveUtil.getComponentNames(filteredSuperItems)
-        .toArray(new NavigatablePsiElement[filteredSuperItems.size()]),
+      final NavigatablePsiElement[] targets =
+        DartResolveUtil.getComponentNames(filteredSuperItems).toArray(new NavigatablePsiElement[filteredSuperItems.size()]);
+      PsiElementListNavigator.openTargets(editor,
+                                          targets,
                                           DaemonBundle.message("navigation.title.super.method", methodName),
                                           null,
                                           new DefaultPsiElementCellRenderer());

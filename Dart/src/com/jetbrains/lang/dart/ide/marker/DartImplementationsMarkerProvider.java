@@ -47,7 +47,7 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
 
   private static void collectMarkers(@NotNull final Collection<LineMarkerInfo> result, @NotNull final DartClass dartClass) {
     final List<DartClass> subClasses = DartInheritanceIndex.getItemsByName(dartClass);
-    if (!subClasses.isEmpty()) {
+    if (!subClasses.isEmpty() && !DartResolveUtil.OBJECT.equals(dartClass.getName())) {
       result.add(createImplementationMarker(dartClass, subClasses));
     }
 
