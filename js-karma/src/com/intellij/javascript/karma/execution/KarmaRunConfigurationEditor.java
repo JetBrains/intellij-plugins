@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -67,8 +68,9 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
 
   @NotNull
   private static JComponent createBrowsersDescription() {
-    JEditorPane editorPane = SwingHelper.createHtmlViewer(true, UIUtil.getTitledBorderFont(), null, null);
-    SwingHelper.setHtml(editorPane, "overrides <i>browsers</i> setting from the configuration file");
+    Color fgColor = UIUtil.getLabelDisabledForeground();
+    JEditorPane editorPane = SwingHelper.createHtmlViewer(true, UIUtil.getTitledBorderFont(), null, fgColor);
+    SwingHelper.setHtml(editorPane, "overrides <i>browsers</i> setting from the configuration file", fgColor);
     JPanel panel = SwingHelper.wrapWithHorizontalStretch(editorPane);
     panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
     return panel;
