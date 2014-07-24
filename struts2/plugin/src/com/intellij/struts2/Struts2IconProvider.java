@@ -68,7 +68,8 @@ public class Struts2IconProvider extends IconProvider {
     final PsiClass psiClass = (PsiClass)element;
     if (psiClass.isInterface() ||
         psiClass.isEnum() ||
-        psiClass.hasModifierProperty(PsiModifier.PRIVATE) ||
+        !psiClass.hasModifierProperty(PsiModifier.PUBLIC) ||
+        psiClass.hasModifierProperty(PsiModifier.ABSTRACT) ||
         !JamCommonUtil.isPlainJavaFile(psiClass.getContainingFile())) {
       return null;
     }
