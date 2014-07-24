@@ -9,6 +9,7 @@ import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
@@ -30,35 +31,31 @@ import java.util.List;
 public class DartImplementationsMarkerProvider implements LineMarkerProvider {
 
   @Override
-  public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
+  public LineMarkerInfo getLineMarkerInfo(@NotNull final PsiElement element) {
     return null;
   }
 
   @Override
-  public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
-    elements = ContainerUtil.filter(elements, new Condition<PsiElement>() {
-      @Override
-      public boolean value(PsiElement element) {
-        return element instanceof DartClass;
+  public void collectSlowLineMarkers(@NotNull final List<PsiElement> elements, @NotNull final Collection<LineMarkerInfo> result) {
+    for (PsiElement element : elements) {
+      ProgressManager.checkCanceled();
+      if (element instanceof DartClass) {
+        collectMarkers(result, (DartClass)element);
       }
-    });
-    if (elements.size() > 20) {
-      return;
-    }
-    for (PsiElement dartClass : elements) {
-      collectMarkers(result, (DartClass)dartClass);
     }
   }
 
-  private static void collectMarkers(Collection<LineMarkerInfo> result, DartClass dartClass) {
+  private static void collectMarkers(@NotNull final Collection<LineMarkerInfo> result, @NotNull final DartClass dartClass) {
     final List<DartClass> subClasses = DartInheritanceIndex.getItemsByName(dartClass);
     if (!subClasses.isEmpty()) {
       result.add(createImplementationMarker(dartClass, subClasses));
     }
+
     final List<DartComponent> subItems = new ArrayList<DartComponent>();
     for (DartClass subClass : subClasses) {
       subItems.addAll(DartResolveUtil.getNamedSubComponents(subClass));
     }
+
     for (DartComponent dartComponent : DartResolveUtil.getNamedSubComponents(dartClass)) {
       final LineMarkerInfo markerInfo = tryCreateImplementationMarker(dartComponent, subItems, dartComponent.isAbstract());
       if (markerInfo != null) {
@@ -67,14 +64,16 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
     }
   }
 
-  private static LineMarkerInfo createImplementationMarker(final DartClass dartClass,
-                                                           final List<DartClass> items) {
+  @NotNull
+  private static LineMarkerInfo createImplementationMarker(@NotNull final DartClass dartClass, @NotNull final List<DartClass> subClasses) {
     final DartComponentName componentName = dartClass.getComponentName();
+    assert componentName != null : dartClass.getText(); // unnamed class can't have subclasses
+
     return new LineMarkerInfo<PsiElement>(
       componentName,
       componentName.getTextRange(),
       AllIcons.Gutter.OverridenMethod,
-      Pass.UPDATE_ALL,
+      Pass.UPDATE_OVERRIDEN_MARKERS,
       new Function<PsiElement, String>() {
         @Override
         public String fun(PsiElement element) {
@@ -85,8 +84,8 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
         @Override
         public void navigate(MouseEvent e, PsiElement elt) {
           PsiElementListNavigator.openTargets(
-            e, DartResolveUtil.getComponentNames(items).toArray(new NavigatablePsiElement[items.size()]),
-            DaemonBundle.message("navigation.title.subclass", dartClass.getName(), items.size()),
+            e, DartResolveUtil.getComponentNames(subClasses).toArray(new NavigatablePsiElement[subClasses.size()]),
+            DaemonBundle.message("navigation.title.subclass", dartClass.getName(), subClasses.size()),
             "Superclasses of " + dartClass.getName(),
             new DefaultPsiElementCellRenderer()
           );
@@ -97,8 +96,8 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
   }
 
   @Nullable
-  private static LineMarkerInfo tryCreateImplementationMarker(final DartComponent componentWithDeclarationList,
-                                                              List<DartComponent> subItems,
+  private static LineMarkerInfo tryCreateImplementationMarker(@NotNull final DartComponent componentWithDeclarationList,
+                                                              @NotNull final List<DartComponent> subItems,
                                                               final boolean isInterface) {
     final PsiElement componentName = componentWithDeclarationList.getComponentName();
     final String methodName = componentWithDeclarationList.getName();
@@ -118,7 +117,7 @@ public class DartImplementationsMarkerProvider implements LineMarkerProvider {
       componentName,
       componentName.getTextRange(),
       isInterface ? AllIcons.Gutter.ImplementedMethod : AllIcons.Gutter.OverridenMethod,
-      Pass.UPDATE_ALL,
+      Pass.UPDATE_OVERRIDEN_MARKERS,
       new Function<PsiElement, String>() {
         @Override
         public String fun(PsiElement element) {
