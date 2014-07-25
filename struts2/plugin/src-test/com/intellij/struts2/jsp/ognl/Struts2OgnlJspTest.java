@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 package com.intellij.struts2.jsp.ognl;
 
 import com.intellij.struts2.BasicLightHighlightingTestCase;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,6 +27,12 @@ public class Struts2OgnlJspTest extends BasicLightHighlightingTestCase {
   @NotNull
   protected String getTestDataLocation() {
     return "/jsp/ognl";
+  }
+
+  @NotNull
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return createWebDescriptor();
   }
 
   /**
@@ -41,5 +48,9 @@ public class Struts2OgnlJspTest extends BasicLightHighlightingTestCase {
                                      "root",
                                      "session",
                                      "this");
+  }
+
+  public void testStruts2TaglibOgnlInjection() {
+    myFixture.testHighlighting(true, true, false, "taglib-ognl-injection.jsp");
   }
 }
