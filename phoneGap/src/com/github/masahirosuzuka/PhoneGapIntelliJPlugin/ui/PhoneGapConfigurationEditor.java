@@ -2,10 +2,12 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUIUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfiguration;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.containers.ContainerUtil;
@@ -27,7 +29,10 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
 
   @Override
   protected void resetEditorFrom(PhoneGapRunConfiguration s) {
-    PhoneGapUIUtil.setExecutablePath(myExecutablePathField, s.getExecutable());
+
+    String executable = s.getExecutable();
+    PhoneGapUIUtil.setExecutablePath(myExecutablePathField,
+                                     !StringUtil.isEmpty(executable) ? executable : PhoneGapSettings.getInstance().getExecutablePath());
     String item = getCommandsMap().get(s.getPlatform());
     if (item != null) {
       myPlatformField.setSelectedItem(item);
