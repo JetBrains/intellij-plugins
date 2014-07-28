@@ -12,6 +12,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.EnumComboBoxModel;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.ui.components.JBCheckBox;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
 import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfiguration;
@@ -33,6 +34,7 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
   private JLabel myTestNameLabel;
   private JTextField myTestNameField;
   private RawCommandLineEditor myVMOptions;
+  private JBCheckBox myCheckedModeCheckBox;
   private RawCommandLineEditor myArguments;
   private TextFieldWithBrowseButton myWorkingDirectory;
   private EnvironmentVariablesComponent myEnvironmentVariables;
@@ -75,6 +77,7 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
     myTestNameField.setText(parameters.getScope() == Scope.ALL ? "" : StringUtil.notNullize(parameters.getTestName()));
     myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
+    myCheckedModeCheckBox.setSelected(parameters.isCheckedMode());
     myWorkingDirectory.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getWorkingDirectory())));
     myEnvironmentVariables.setEnvs(parameters.getEnvs());
     myEnvironmentVariables.setPassParentEnvs(parameters.isIncludeParentEnvs());
@@ -92,6 +95,7 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
     parameters.setTestName(scope == Scope.ALL ? null : StringUtil.nullize(myTestNameField.getText()));
     parameters.setArguments(StringUtil.nullize(myArguments.getText(), true));
     parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
+    parameters.setCheckedMode(myCheckedModeCheckBox.isSelected());
     parameters.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
     parameters.setEnvs(myEnvironmentVariables.getEnvs());
     parameters.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());

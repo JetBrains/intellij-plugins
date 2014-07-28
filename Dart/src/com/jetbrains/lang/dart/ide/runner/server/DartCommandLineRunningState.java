@@ -115,6 +115,10 @@ public class DartCommandLineRunningState extends CommandLineState {
       }
     }
 
+    if (runnerParameters.isCheckedMode()) {
+      commandLine.addParameter("-checked");
+    }
+
     final VirtualFile dartFile;
     try {
       dartFile = runnerParameters.getDartFile();
