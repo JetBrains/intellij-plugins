@@ -41,6 +41,7 @@ public class CfmlFileElementType extends IStubFileElementType<CfmlFileStub> {
   @Override
   public StubBuilder getBuilder() {
     return new DefaultStubBuilder() {
+      @NotNull
       protected StubElement createStubForFile(@NotNull final PsiFile file) {
         if (file instanceof CfmlFile) {
           return new CfmlFileStubImpl((CfmlFile)file);

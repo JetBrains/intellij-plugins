@@ -3,9 +3,11 @@ package com.jetbrains.lang.dart.analyzer;
 import com.google.dart.engine.context.AnalysisContext;
 import com.google.dart.engine.context.AnalysisException;
 import com.google.dart.engine.error.AnalysisError;
+import com.google.dart.engine.error.ErrorCode;
 import com.google.dart.engine.error.HintCode;
 import com.google.dart.engine.error.TodoCode;
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
@@ -95,7 +97,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
 
   @Override
   public void apply(@NotNull PsiFile psiFile, @Nullable AnalysisContext analysisContext, @NotNull AnnotationHolder holder) {
-    if (analysisContext == null) return;
+    if (analysisContext == null || !psiFile.isValid()) return;
 
     final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
     final DartFileBasedSource source = annotatedFile == null ? null : DartFileBasedSource.getSource(psiFile.getProject(), annotatedFile);
@@ -103,7 +105,9 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
 
     // analysisContext.getErrors() doesn't perform analysis and returns already calculated errors
     final AnalysisError[] messages = analysisContext.getErrors(source).getErrors();
-    if (messages == null || !psiFile.isValid()) return;
+    if (messages == null || messages.length == 0) return;
+
+    final int fileTextLength = psiFile.getTextLength();
 
     for (AnalysisError message : messages) {
       if (shouldIgnoreMessageFromDartAnalyzer(message)) continue;
@@ -113,7 +117,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
         continue;
       }
 
-      final Annotation annotation = annotate(holder, message);
+      final Annotation annotation = annotate(holder, message, fileTextLength);
       if (annotation != null) {
         registerFixes(psiFile, annotation, message);
       }
@@ -169,14 +173,24 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
   }
 
   @Nullable
-  private static Annotation annotate(final AnnotationHolder holder, final AnalysisError message) {
-    final TextRange textRange = new TextRange(message.getOffset(), message.getOffset() + message.getLength());
+  private static Annotation annotate(final AnnotationHolder holder, final AnalysisError message, final int fileTextLength) {
+    int highlightingStart = message.getOffset();
+    int highlightingEnd = message.getOffset() + message.getLength();
+    if (highlightingEnd > fileTextLength) highlightingEnd = fileTextLength;
+    if (highlightingStart >= highlightingEnd) highlightingStart = highlightingEnd - 1;
 
-    switch (message.getErrorCode().getErrorSeverity()) {
+    final TextRange textRange = new TextRange(highlightingStart, highlightingEnd);
+    final ErrorCode errorCode = message.getErrorCode();
+
+    switch (errorCode.getErrorSeverity()) {
       case NONE:
         return null;
       case INFO:
-        return holder.createWeakWarningAnnotation(textRange, message.getMessage());
+        final Annotation annotation = holder.createWeakWarningAnnotation(textRange, message.getMessage());
+        if (errorCode == HintCode.UNUSED_IMPORT || errorCode == HintCode.DUPLICATE_IMPORT) {
+          annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+        }
+        return annotation;
       case WARNING:
         return holder.createWarningAnnotation(textRange, message.getMessage());
       case ERROR:

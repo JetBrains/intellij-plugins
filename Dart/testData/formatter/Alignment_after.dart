@@ -10,7 +10,7 @@ class Foo {
             this.fTwo(
                 argA, argB, argC, this.fThree(
                     "", argE, argF, argG, argH));
-        } catch (string ignored) {
+        } catch (error, stack) {
         }
         var z = argA == 'Some string' ?
                 'yes' : 'no';

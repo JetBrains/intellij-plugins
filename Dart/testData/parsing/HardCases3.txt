@@ -4,8 +4,8 @@ Dart File
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('ObservableBase')
-    PsiElement(=)('=')
     MIXIN_APPLICATION
+      PsiElement(=)('=')
       TYPE
         REFERENCE_EXPRESSION
           ID
@@ -34,7 +34,7 @@ Dart File
             REFERENCE_EXPRESSION
               ID
                 PsiElement(IDENTIFIER)('Inter2')
-    PsiElement(;)(';')
+      PsiElement(;)(';')
   CLASS_DEFINITION
     METADATA
       PsiElement(@)('@')

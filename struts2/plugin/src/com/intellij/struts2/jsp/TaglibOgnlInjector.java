@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -67,9 +67,9 @@ public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
     .withLocalName("value")
     .withSuperParent(2, xmlTag().withLocalName("iterator"));
 
-  // list expression "{....}"
-  private static final ElementPattern<XmlAttributeValue> OGNL_LIST_ELEMENT_PATTERN = xmlAttributeValue()
-    .withValue(string().startsWith("{"));
+  // list/map expression
+  private static final ElementPattern<XmlAttributeValue> OGNL_LIST_MAP_PATTERN = xmlAttributeValue()
+    .withValue(string().andOr(string().startsWith("{"), string().startsWith("#{")));
 
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar multiHostRegistrar,
@@ -98,7 +98,7 @@ public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
       return;
     }
 
-    if (OGNL_LIST_ELEMENT_PATTERN.accepts(psiElement)) {
+    if (OGNL_LIST_MAP_PATTERN.accepts(psiElement)) {
       OgnlLanguageInjector.injectElementWithPrefixSuffix(multiHostRegistrar, (PsiLanguageInjectionHost)psiElement);
     }
   }

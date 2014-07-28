@@ -4,7 +4,7 @@ import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.intellij.ide.browsers.BrowserSelector;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.execution.JavaScriptDebugSettingsEditor;
-import com.intellij.webcore.ui.SwingHelper;
+import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

@@ -1,2 +1,6 @@
 BASIC 1 EQUALS
 getBar
+hashCode
+noSuchMethod
+runtimeType
+toString

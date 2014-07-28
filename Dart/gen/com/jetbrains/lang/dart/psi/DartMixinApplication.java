@@ -13,7 +13,7 @@ public interface DartMixinApplication extends DartPsiCompositeElement {
   @Nullable
   DartMixins getMixins();
 
-  @NotNull
+  @Nullable
   DartType getType();
 
 }

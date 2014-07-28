@@ -1,10 +1,11 @@
-###About PhoneGapIntelliJPlugin
+###About PhoneGap/Cordova Plugin for IntelliJ
 
-IntelliJ Platform Plugin for PhoneGap/Cordova Application
+PhoneGap/Cordova plugin for IntelliJ IDEA
 
-* PhoneGap/Cordova Project wizard (not stable)
+* PhoneGap/Cordova Project wizard
 * PhoneGap/Cordova Project importer
-* Run PhoneGap/Cordova Application from IntelliJ toolbar
+* Run PhoneGap/Cordova Application from IDEA toolbar
+* codecomplation
 * Ripple Emulator support
 
 ###About PhoneGap/Cordova
@@ -14,30 +15,40 @@ See
 http://phonegap.com/
 
 ###How to use
-####(0)Install PhoneGapIntelliJPlugin
-Preference -> Plugins -> Search "PhoneGap Plugin"
+####(0)Install PhoneGap/Cordova plugin for IntelliJ
+Preference -> Plugins -> Search "PhoneGap/Cordova Plugin"
 
-Restart IntelliJ
+Restart IntelliJ IDEA
 
-####(1)Install NodeJS and PhoneGap
+####(1)Install NodeJS and PhoneGap/Cordova
 Please install from [Node.js Official site](http://nodejs.org/)
 
-nvm is not supported (So sorry fix soon)
-
 $npm install -g phonegap
+$npm install -g cordova
 
-PhoneGap dir must be
+####(2)Install SDKs
+If you want to create Android app. You must install Android SDK and set PATH.
 
- '/usr/local/bin/phonegap'
+If you want to create iOS app. You must install Xcode and commandline tools and ios-sim.
 
-####(2)Install Android SDK
-If you want to develop Android app. You must install Android SDK and set PATH.
+#####(2)-1 Install Xcode and commandline tools
+
+See
+
+https://developer.apple.com/xcode/
+
+#####(2)-2 Install ios-sim
+
+$npm install -g ios-sim
 
 ####(3)Create PhoneGap Project
+
+PhoneGap
 $phonegap create hellophonegap
 
-if you use cordova
-
+Cordova
+$cordova create hellocordova
+$cd hellocordova
 $cordova add platform android
 $cordova add platform ios
 
@@ -47,7 +58,7 @@ File -> Import Project -> PhoneGap Project root dir -> Import form external mode
 ####(5)Run PhoneGap app
 Run -> Edit Configuration -> Create new Config -> run
 
-#####(6)Debug PhoneGap app
+#####(6)Debugging
 
 ###PhoneGapIntelliJPluginについて
 

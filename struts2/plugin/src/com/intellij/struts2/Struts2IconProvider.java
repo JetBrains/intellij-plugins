@@ -16,10 +16,12 @@
 package com.intellij.struts2;
 
 import com.intellij.ide.IconProvider;
+import com.intellij.jam.model.util.JamCommonUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiModifier;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -62,8 +64,16 @@ public class Struts2IconProvider extends IconProvider {
       return null;
     }
 
-    // handle JAVA classes --> overlay icon
+    // handle suitable JAVA classes --> overlay icon
     final PsiClass psiClass = (PsiClass)element;
+    if (psiClass.isInterface() ||
+        psiClass.isEnum() ||
+        !psiClass.hasModifierProperty(PsiModifier.PUBLIC) ||
+        psiClass.hasModifierProperty(PsiModifier.ABSTRACT) ||
+        !JamCommonUtil.isPlainJavaFile(psiClass.getContainingFile())) {
+      return null;
+    }
+
     final StrutsModel strutsModel = StrutsManager.getInstance(psiClass.getProject()).getCombinedModel(module);
     if (strutsModel == null ||
         !strutsModel.isActionClass(psiClass)) {

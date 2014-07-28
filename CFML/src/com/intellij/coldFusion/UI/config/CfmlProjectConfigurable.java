@@ -21,7 +21,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.NonDefaultProjectConfigurable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -41,8 +40,7 @@ import java.util.Collection;
 /**
  * @author vnikolaenko
  */
-public class CfmlProjectConfigurable
-  implements SearchableConfigurable, NonDefaultProjectConfigurable, Configurable.NoScroll {
+public class CfmlProjectConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
   private final Project myProject;
   private CfmlMappingsForm myForm;

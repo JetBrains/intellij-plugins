@@ -36,7 +36,7 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
   private static final String DART_FRAMEWORK_NAME = "DartTestRunner";
   private static final String UNIT_CONFIG_FILE_NAME = "jetbrains_unit_config.dart";
 
-  public DartUnitRunningState(final @NotNull ExecutionEnvironment environment)  throws ExecutionException {
+  public DartUnitRunningState(final @NotNull ExecutionEnvironment environment) throws ExecutionException {
     super(environment);
   }
 
@@ -57,14 +57,6 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
     final DartUnitRunConfiguration runConfiguration = (DartUnitRunConfiguration)env.getRunProfile();
     final DartUnitRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
 
-    VirtualFile dartFile = null;
-    try {
-      dartFile = runnerParameters.getDartFile();
-    }
-    catch (RuntimeConfigurationError ignore) {/**/}
-
-    final DartConsoleFilter filter = new DartConsoleFilter(project, dartFile);
-
     final TestConsoleProperties testConsoleProperties =
       new SMTRunnerConsoleProperties(runConfiguration, DART_FRAMEWORK_NAME, env.getExecutor());
     testConsoleProperties.setUsePredefinedMessageFilter(false);
@@ -72,7 +64,16 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
     final SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil
       .createConsoleWithCustomLocator(DART_FRAMEWORK_NAME, testConsoleProperties, env, new DartTestLocationProvider(), true, null);
 
-    smtConsoleView.addMessageFilter(filter);
+    try {
+      final VirtualFile dartFile = runnerParameters.getDartFile();
+      smtConsoleView.addMessageFilter(new DartConsoleFilter(project, dartFile));
+
+      final String workingDir = StringUtil.isEmptyOrSpaces(runnerParameters.getWorkingDirectory())
+                                ? dartFile.getParent().getPath()
+                                : runnerParameters.getWorkingDirectory();
+      smtConsoleView.addMessageFilter(new DartUnitConsoleFilter(project, workingDir));
+    }
+    catch (RuntimeConfigurationError ignore) {/**/}
 
     Disposer.register(project, smtConsoleView);
     return smtConsoleView;

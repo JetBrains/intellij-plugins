@@ -1,7 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurationEditor;
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
@@ -16,174 +15,119 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings.*;
-
 /**
  * PhoneGapRunConfiguration.java
  * <p/>
  * Created by Masahiro Suzuka on 2014/04/05.
  */
-@SuppressWarnings("UnusedDeclaration")
 public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
-    public enum Type {
-        CORDOVA {
-            @Override
-            public String getPath() {
-                return getInstance().getCordovaExecutablePath();
-            }
 
-            @Override
-            public String getName() {
-                return "cordova";
-            }
-        },
-        PHONEGAP {
-            @Override
-            public String getPath() {
-                return getInstance().getPhoneGapExecutablePath();
-            }
+  //public for serializer
+  @Nullable
+  public String myExecutable;
 
-            @Override
-            public String getName() {
-                return "phonegap";
-            }
-        };
+  @Nullable
+  public String myCommand;
 
-        public abstract String getPath();
+  @Nullable
+  public String getCommand() {
+    return myCommand;
+  }
 
-        public abstract String getName();
+  @Nullable
+  public String myPlatform;
+
+  @Nullable
+  public String getExecutable() {
+    return myExecutable;
+  }
+
+  public void setExecutable(@Nullable String executable) {
+    myExecutable = executable;
+  }
+
+  public void setCommand(@Nullable String myCommand) {
+    this.myCommand = myCommand;
+  }
+
+  @Nullable
+  public String getPlatform() {
+    return myPlatform;
+  }
+
+  public void setPlatform(@Nullable String myPlatform) {
+    this.myPlatform = myPlatform;
+  }
+
+
+  public PhoneGapRunConfiguration(Project project, ConfigurationFactory factory, String name) {
+    super(project, factory, name);
+
+    //defaults
+  }
+
+  @Override
+  public String suggestedName() {
+    return "Run phonegap";
+  }
+
+  @Override
+  public void readExternal(Element element) throws InvalidDataException {
+    super.readExternal(element);
+
+    DefaultJDOMExternalizer.readExternal(this, element);
+  }
+
+  @Override
+  public void writeExternal(Element element) throws WriteExternalException {
+    super.writeExternal(element);
+
+    DefaultJDOMExternalizer.writeExternal(this, element);
+  }
+
+  @NotNull
+  @Override
+  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+    return new PhoneGapConfigurationEditor(getProject());
+  }
+
+  @Override
+  public void checkConfiguration() throws RuntimeConfigurationException {
+    if (StringUtil.isEmpty(myCommand)) {
+      throw new RuntimeConfigurationException("Command is missing");
     }
 
-    @Nullable
-    public String getExecutableTypeCode() {
-        if (myExecutableType != null) {
-            return myExecutableType.getName();
-        }
-
-        return null;
+    if (StringUtil.isEmpty(myPlatform)) {
+      throw new RuntimeConfigurationException("Platform is missing");
     }
 
-    public void setExecutableTypeByCode(@Nullable String executableTypeCode) {
-        for (Type type : Type.values()) {
-            if (type.getName().equals(executableTypeCode)) {
-                this.myExecutableType = type;
-            }
-        }
+    if (StringUtil.isEmpty(myExecutable)) {
+      throw new RuntimeConfigurationException("Executable is missing");
     }
+  }
 
-    @Nullable
-    private Type myExecutableType;
-    @Nullable
-    public String myExecutableTypeCode;
-    @Nullable
-    public String myCommand;
-    @Nullable
-    public String myPlatform;
-
-    @Nullable
-    public Type getExecutableType() {
-        if (myExecutableType == null) {
-            setExecutableTypeByCode(myExecutableTypeCode);
-        }
-        return myExecutableType;
+  @SuppressWarnings("CloneDoesntCallSuperClone")
+  @Override
+  public PhoneGapRunConfiguration clone() {
+    final Element element = new Element("toClone");
+    try {
+      writeExternal(element);
+      PhoneGapRunConfiguration configuration =
+        (PhoneGapRunConfiguration)getFactory().createTemplateConfiguration(getProject());
+      configuration.setName(getName());
+      configuration.readExternal(element);
+      return configuration;
     }
-
-    public void setExecutableType(@Nullable Type myExecutableType) {
-        this.myExecutableType = myExecutableType;
-        this.myExecutableTypeCode = myExecutableType != null ? myExecutableType.getName() : null;
+    catch (Exception e) {
+      throw new RuntimeException(e.getMessage(), e);
     }
+  }
 
-    @Nullable
-    public String getCommand() {
-        return myCommand;
-    }
+  @Nullable
+  @Override
+  public RunProfileState getState(@NotNull Executor executor,
+                                  @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
 
-    public void setCommand(@Nullable String myCommand) {
-        this.myCommand = myCommand;
-    }
-
-    @Nullable
-    public String getPlatform() {
-        return myPlatform;
-    }
-
-    public void setPlatform(@Nullable String myPlatform) {
-        this.myPlatform = myPlatform;
-    }
-
-
-    public PhoneGapRunConfiguration(Project project, ConfigurationFactory factory, String name) {
-        super(project, factory, name);
-
-        //defaults
-    }
-
-    @Override
-    public String suggestedName() {
-        return "Run phonegap";
-    }
-
-    @Override
-    public void readExternal(Element element) throws InvalidDataException {
-        super.readExternal(element);
-
-        DefaultJDOMExternalizer.readExternal(this, element);
-    }
-
-    @Override
-    public void writeExternal(Element element) throws WriteExternalException {
-        super.writeExternal(element);
-
-        DefaultJDOMExternalizer.writeExternal(this, element);
-    }
-
-    @NotNull
-    @Override
-    public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-        return new PhoneGapConfigurationEditor(getProject());
-    }
-
-    @Override
-    public void checkConfiguration() throws RuntimeConfigurationException {
-        PhoneGapSettings settings = getInstance();
-        if (myExecutableType == Type.CORDOVA && !settings.isCordovaAvailable()
-                || myExecutableType == Type.PHONEGAP && !settings.isPhoneGapAvailable()) {
-            throw new RuntimeConfigurationException("SDK is missing");
-        }
-
-        if (StringUtil.isEmpty(myCommand)) {
-            throw new RuntimeConfigurationException("Command is missing");
-        }
-
-        if (!(PHONEGAP_PLATFORM_ANDROID.equals(myPlatform) ||
-                PHONEGAP_PLATFORM_IOS.equals(myPlatform) ||
-                PHONEGAP_PLATFORM_WP.equals(myPlatform) ||
-                PHONEGAP_PLATFORM_RIPPLE.equals(myPlatform))) {
-            throw new RuntimeConfigurationException("Platform is missing");
-        }
-    }
-
-    @SuppressWarnings("CloneDoesntCallSuperClone")
-    @Override
-    public PhoneGapRunConfiguration clone() {
-        final Element element = new Element("toClone");
-        try {
-            writeExternal(element);
-            PhoneGapRunConfiguration configuration =
-                    (PhoneGapRunConfiguration) getFactory().createTemplateConfiguration(getProject());
-            configuration.setName(getName());
-            configuration.readExternal(element);
-            return configuration;
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
-
-    @Nullable
-    @Override
-    public RunProfileState getState(@NotNull Executor executor,
-                                    @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
-
-        return new PhoneGapRunProfileState(getProject(), executionEnvironment, this);
-    }
+    return new PhoneGapRunProfileState(getProject(), executionEnvironment, this);
+  }
 }

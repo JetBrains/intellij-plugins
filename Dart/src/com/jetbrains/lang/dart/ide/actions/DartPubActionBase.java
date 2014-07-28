@@ -20,9 +20,11 @@ import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
@@ -47,7 +49,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
   @Override
   public void update(AnActionEvent e) {
-    e.getPresentation().setText(getPresentableText());
+    //e.getPresentation().setText(getTitle());  "Pub: Build..." action name set in plugin.xml is different from its "Pub: Build" title
     final boolean enabled = getModuleAndPubspecYamlFile(e) != null;
     e.getPresentation().setVisible(enabled);
     e.getPresentation().setEnabled(enabled);
@@ -66,9 +68,10 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   }
 
   @Nls
-  protected abstract String getPresentableText();
+  protected abstract String getTitle();
 
-  protected abstract String getPubCommand();
+  @Nullable
+  protected abstract String[] calculatePubParameters(final Project project);
 
   protected abstract String getSuccessMessage();
 
@@ -88,7 +91,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
     if (sdk == null && allowModalDialogs) {
       final int answer = Messages.showDialog(module.getProject(), "Dart SDK is not configured",
-                                             getPresentableText(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
+                                             getTitle(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
       if (answer != 0) return;
 
       ShowSettingsUtil.getInstance().showSettingsDialog(module.getProject(), DartBundle.message("dart.title"));
@@ -101,7 +104,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     if (!pubFile.isFile() && allowModalDialogs) {
       final int answer =
         Messages.showDialog(module.getProject(), DartBundle.message("dart.sdk.bad.dartpub.path", pubFile.getPath()),
-                            getPresentableText(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
+                            getTitle(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
       if (answer != 0) return;
 
       ShowSettingsUtil.getInstance().showSettingsDialog(module.getProject(), DartBundle.message("dart.title"));
@@ -114,19 +117,23 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
     if (!pubFile.isFile()) return;
 
-    doExecute(module, pubspecYamlFile, sdk.getHomePath(), pubFile.getPath());
+    final String[] pubParameters = calculatePubParameters(module.getProject());
+    if (pubParameters != null) {
+      doExecute(module, pubspecYamlFile, pubFile.getPath(), pubParameters);
+    }
   }
 
-  private void doExecute(final Module module, final VirtualFile pubspecYamlFile, final String sdkPath, final String pubPath) {
-    final Task.Backgroundable task = new Task.Backgroundable(module.getProject(), getPresentableText(), true) {
+  private void doExecute(final Module module, final VirtualFile pubspecYamlFile, final String pubPath, final String... pubParameters) {
+    final Task.Backgroundable task = new Task.Backgroundable(module.getProject(), getTitle(), true) {
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText(DartBundle.message("dart.pub.0.in.progress", getPubCommand()));
+        final String presentableCommandLine = "pub " + StringUtil.join(pubParameters, " ");
+
+        indicator.setText(DartBundle.message("dart.0.in.progress", presentableCommandLine));
         indicator.setIndeterminate(true);
         final GeneralCommandLine command = new GeneralCommandLine();
         command.setExePath(pubPath);
         command.setWorkDirectory(pubspecYamlFile.getParent().getPath());
-        command.addParameter(getPubCommand());
-        command.getEnvironment().put("DART_SDK", sdkPath);
+        command.addParameters(pubParameters);
 
         ApplicationManager.getApplication().invokeAndWait(new Runnable() {
           @Override
@@ -140,15 +147,15 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
           final ProcessOutput processOutput = new CapturingProcessHandler(command).runProcess();
           final String err = processOutput.getStderr().trim();
 
-          LOG.debug("pub " + getPubCommand() + ", exit code: " + processOutput.getExitCode() + ", err:\n" +
+          LOG.debug(presentableCommandLine + ", exit code: " + processOutput.getExitCode() + ", err:\n" +
                     err + "\nout:\n" + processOutput.getStdout());
 
           if (err.isEmpty()) {
-            Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, getPresentableText(), getSuccessMessage(),
+            Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, DartPubActionBase.this.getTitle(), getSuccessMessage(),
                                                       NotificationType.INFORMATION));
           }
           else {
-            Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, getPresentableText(), err, NotificationType.ERROR));
+            Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, DartPubActionBase.this.getTitle(), err, NotificationType.ERROR));
           }
 
           ApplicationManager.getApplication().invokeLater(new Runnable() {
@@ -161,7 +168,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
         }
         catch (ExecutionException ex) {
           LOG.error(ex);
-          Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, getPresentableText(),
+          Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, DartPubActionBase.this.getTitle(),
                                                     DartBundle.message("dart.pub.exception", ex.getMessage()),
                                                     NotificationType.ERROR));
         }

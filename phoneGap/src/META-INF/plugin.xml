@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
     <name>PhoneGap/Cordova Plugin</name>
-    <version>0.8.1</version>
+    <version>999.999</version>
     <vendor email="masahiro.suzuka@gmail.com" url="http://github.com/masahirosuzuka/PhoneGapIntelliJPlugin">
         masahirosuzuka
     </vendor>
@@ -37,30 +37,13 @@
     ]]>
     </change-notes>
 
-    <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
     <idea-version since-build="131"/>
 
-    <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
-         on how to target different products -->
     <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Global Setting Dialog -->
-        <applicationConfigurable instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable"/>
+        <projectConfigurable groupId="tools" instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable"/>
 
-        <!-- Project Setting Dialog -->
-        <projectConfigurable instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapProjectConfigurable" />
-
-        <!-- Project generator -->
-
-
-        <!-- Project importer -->
-        <projectImportProvider
-                implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImporter.PhoneGapProjectImportProvider"/>
-        <projectImportBuilder
-                implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectImporter.PhoneGapProjectImportBuilder"/>
-
-        <!-- Project runner -->
         <configurationType
                 implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapConfigurationType"/>
         <programRunner implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunner"/>
@@ -73,22 +56,12 @@
       <projectTemplatesFactory implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder.PhoneGapTemplatesFactory"/>
     </extensions>
 
-    <application-components>
-        <!-- Add your application components here -->
-
-    </application-components>
-
     <project-components>
-        <!-- Add your project components here -->
         <component>
             <implementation-class>
                 com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector.ExternalToolsDetector
             </implementation-class>
         </component>
     </project-components>
-
-    <actions>
-        <!-- Add your actions here -->
-    </actions>
 
 </idea-plugin>

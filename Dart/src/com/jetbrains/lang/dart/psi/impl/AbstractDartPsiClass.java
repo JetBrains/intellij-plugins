@@ -7,6 +7,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +18,15 @@ import java.util.List;
 abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl implements DartClass {
   public AbstractDartPsiClass(@NotNull ASTNode node) {
     super(node);
+  }
+
+  @NotNull
+  public DartClassResolveResult getSuperClassResolvedOrObjectClass() {
+    if (DartResolveUtil.OBJECT.equals(getName())) return DartClassResolveResult.EMPTY;
+
+    final DartType superClass = getSuperClass();
+    return superClass != null ? DartResolveUtil.resolveClassByType(superClass)
+                              : DartResolveUtil.findCoreClass(this, DartResolveUtil.OBJECT);
   }
 
   @Nullable

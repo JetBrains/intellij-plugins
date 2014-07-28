@@ -1,6 +1,6 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <completion.contributor language="JavaScript"
-                            implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.codecompletion.PhoneGapCodeCompletion"/>
+                            implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.javascriptDependency.codecompletion.PhoneGapCodeCompletion"/>
   </extensions>
 </idea-plugin>

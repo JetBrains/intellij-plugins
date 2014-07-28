@@ -274,6 +274,10 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
   }
 
   public void testClassLevelType() throws Throwable {
+    doTestSdkClassesInCompletion("class Foo extends <caret>");
+    doTestSdkClassesInCompletion("class Foo implements <caret>");
+    doTestSdkClassesInCompletion("class Foo extends Object implements <caret>");
+    doTestSdkClassesInCompletion("class Foo = <caret>");
     doTestSdkClassesInCompletion("class Foo {<caret>}");
     doTestSdkClassesInCompletion("class Foo {@<caret>}");
     doTestSdkClassesInCompletion("class Foo {@Object @<caret>}");
@@ -291,4 +295,19 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
     doTestNoSdkClassesInCompletion("class Foo{const Foo <caret>}");
   }
 
+  public void testExceptionParameter1() throws Throwable {
+    doTest();
+  }
+
+  public void testExceptionParameter2() throws Throwable {
+    doTest();
+  }
+
+  public void testExceptionParameter3() throws Throwable {
+    doTest();
+  }
+
+  public void testExceptionParameter4() throws Throwable {
+    doTest();
+  }
 }

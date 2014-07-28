@@ -2,7 +2,6 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -26,8 +25,6 @@ public class iOSSDKdetectorThread implements Runnable{
     final GeneralCommandLine generalCommandLine = new GeneralCommandLine(PhoneGapSettings.IOS_SIM, "--version");
     generalCommandLine.setWorkDirectory(project.getBasePath());
     try {
-      OSProcessHandler handler = new OSProcessHandler(generalCommandLine);
-      // handler.notifyAll();
       generalCommandLine.createProcess();
     } catch (Exception e) {
       /* ios-sim not run */
@@ -38,6 +35,7 @@ public class iOSSDKdetectorThread implements Runnable{
       Notification notification = new Notification(groupeDisplayId, notificationTitle, notificationMessage, notificationType);
 
       Notifications.Bus.notify(notification);
-    } finally { }
+    }
+
   }
 }

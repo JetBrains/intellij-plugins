@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.psi.*;
@@ -58,6 +57,7 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
     final PsiElement[] children = context.getChildren();
     final Set<DartComponentName> result =
       DartControlFlowUtil.getSimpleDeclarations(children, lastParent, context instanceof DartStatements);
+
     for (PsiElement child : children) {
       if (child instanceof DartFormalParameterList) {
         final DartFormalParameterList formalParameterList = (DartFormalParameterList)child;
@@ -81,8 +81,21 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
           }
         }
       }
-    }
 
+      if (child instanceof DartTypeParameters) {
+        for (DartTypeParameter typeParameter : ((DartTypeParameters)child).getTypeParameterList()) {
+          result.add(typeParameter.getComponentName());
+        }
+      }
+
+      if (child instanceof DartImportStatement) {
+        ContainerUtil.addIfNotNull(result, ((DartImportStatement)child).getImportPrefix());
+      }
+
+      if (child instanceof DartCatchPart) {
+        result.addAll(((DartCatchPart)child).getComponentNameList());
+      }
+    }
 
     if (context instanceof DartForStatement) {
       final DartForLoopPartsInBraces loopPartsInBraces = ((DartForStatement)context).getForLoopPartsInBraces();
@@ -102,22 +115,6 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
       }
     }
 
-    final DartTypeParameters typeParameters = PsiTreeUtil.getChildOfType(context, DartTypeParameters.class);
-    if (typeParameters != null) {
-      for (DartTypeParameter typeParameter : typeParameters.getTypeParameterList()) {
-        result.add(typeParameter.getComponentName());
-      }
-    }
-
-    final DartImportStatement[] importStatements = PsiTreeUtil.getChildrenOfType(context, DartImportStatement.class);
-    if (importStatements != null) {
-      for (DartImportStatement importStatement : importStatements) {
-        final DartComponentName importPrefix = importStatement.getImportPrefix();
-        if (importPrefix != null) {
-          result.add(importPrefix);
-        }
-      }
-    }
     return result;
   }
 }

@@ -3,6 +3,7 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -23,11 +24,7 @@ public class PhoneGapRunner extends DefaultProgramRunner {
 
   @Override
   public boolean canRun(@NotNull String s, @NotNull RunProfile runProfile) {
-    if (!(runProfile instanceof PhoneGapRunConfiguration)) {
-      return false;
-    }
-
-    return true;
+    return DefaultRunExecutor.EXECUTOR_ID.equals(s) && runProfile instanceof PhoneGapRunConfiguration;
   }
 
   @Override

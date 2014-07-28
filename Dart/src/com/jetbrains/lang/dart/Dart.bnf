@@ -217,11 +217,11 @@ operatorDeclaration ::= operatorDeclarationWithReturnType | operatorDeclarationW
 private operatorDeclarationWithReturnType    ::= metadata* 'external'? returnType 'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative) {pin=5}
 private operatorDeclarationWithoutReturnType ::= metadata* 'external'?            'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative) {pin=4}
 
-classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? ((superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody |
-                                                                                 '=' mixinApplication ';')
+classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
 {pin=4 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
-mixinApplication ::= type mixins? interfaces?
+mixinApplication ::= '=' type mixins? interfaces? ';' {pin = 1}
+private standardClassDeclarationTail ::= (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody?
 
 classBody ::= '{' classMembers '}' {pin=1}
 classMembers ::= classMemberDefinition*
@@ -434,9 +434,9 @@ switchCase ::= label? ('case' expression ':')+ statements {recoverWhile="switch_
 private switch_case_recover ::= !('case' | 'default' | '}' | <<nonStrictID>>)
 defaultCase::= label? ('case' expression ':')* 'default' ':' statements
 
-tryStatement ::= 'try' block ((onPart | catchPart)+ finallyPart? | finallyPart) {pin=1}
-onPart ::= 'on' type catchPart? {pin=1}
-catchPart ::= 'catch' formalParameterList block {pin=1}
+tryStatement ::= 'try' block (onPart+ finallyPart? | finallyPart) {pin=1}
+onPart ::= catchPart block | 'on' type catchPart? block {pin=1}
+catchPart ::= 'catch' '(' componentName (',' componentName)? ')' {pin=1}
 finallyPart::= 'finally' block {pin=1}
 
 varInit ::= '=' expression {pin=1}

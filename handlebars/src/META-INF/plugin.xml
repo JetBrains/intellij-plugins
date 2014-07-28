@@ -10,6 +10,7 @@
   <category>HTML/JavaScript Development</category>
   <version>0.8</version>
   <depends>com.intellij.modules.lang</depends>
+  <depends optional="true">JavaScript</depends>
   <vendor logo="/icons/handlebars_icon.png" url="https://github.com/dmarcotte">dmarcotte</vendor>
 
   <idea-version since-build="134.1342"/>
@@ -29,11 +30,19 @@
                          implementationClass="com.dmarcotte.handlebars.editor.folding.HbFoldingBuilder"/>
     <typedHandler implementation="com.dmarcotte.handlebars.editor.actions.HbTypedHandler"/>
     <enterHandlerDelegate implementation="com.dmarcotte.handlebars.editor.actions.HbEnterHandler"/>
-    <applicationConfigurable instance="com.dmarcotte.handlebars.pages.HbConfigurationPage"/>
+    <projectConfigurable provider="com.dmarcotte.handlebars.pages.HbConfigurationProvider"/>
     <codeFoldingOptionsProvider
         instance="com.dmarcotte.handlebars.config.HbFoldingOptionsProvider"/>
     <lang.psiStructureViewFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.structure.HbStructureViewFactory"/>
     <annotator language="Handlebars" implementationClass="com.dmarcotte.handlebars.inspections.HbBlockMismatchInspection"/>
     <xml.zenCodingGenerator implementation="com.dmarcotte.handlebars.editor.templates.HbEmmetGenerator"/>
+    <xml.zenCodingGenerator implementation="com.dmarcotte.handlebars.editor.templates.HbEmmetGenerator"/>
+
+    <projectConfigurable provider="com.dmarcotte.handlebars.pages.HbConfigurationProvider"/>
   </extensions>
+
+  <extensions defaultExtensionNs="JavaScript">
+    <lang.templates instance="com.dmarcotte.handlebars.pages.HbConfigurationPage"/>
+  </extensions>
+
 </idea-plugin>

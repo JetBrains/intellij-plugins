@@ -148,7 +148,7 @@ public class DartPositionInfo {
   }
 
   @Nullable
-  private static Couple<Integer> parseLineAndColumnInColonFormat(final @NotNull String text) {
+  public static Couple<Integer> parseLineAndColumnInColonFormat(final @NotNull String text) {
     // "12 whatever, ":12 whatever", "12:34 whatever" or ":12:34 whatever"
     final Pair<Integer, String> lineAndRemainingText = parseNextIntSkippingColon(text);
     if (lineAndRemainingText == null) return null;

@@ -29,12 +29,6 @@ public class DartTryStatementImpl extends DartPsiCompositeElementImpl implements
   }
 
   @Override
-  @NotNull
-  public List<DartCatchPart> getCatchPartList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartCatchPart.class);
-  }
-
-  @Override
   @Nullable
   public DartFinallyPart getFinallyPart() {
     return findChildByClass(DartFinallyPart.class);

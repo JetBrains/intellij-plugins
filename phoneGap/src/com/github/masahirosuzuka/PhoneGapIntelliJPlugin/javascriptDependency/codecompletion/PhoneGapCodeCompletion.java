@@ -1,8 +1,10 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.codecompletion;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.javascriptDependency.codecompletion;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapFacade;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class PhoneGapCodeCompletion extends CompletionContributor {
 
   public PhoneGapCodeCompletion() {
+
     extend(CompletionType.BASIC, PlatformPatterns.psiElement(JSTokenTypes.STRING_LITERAL), getProvider());
   }
 
@@ -24,6 +27,11 @@ public class PhoneGapCodeCompletion extends CompletionContributor {
       protected void addCompletions(@NotNull CompletionParameters completionParameters,
                                     ProcessingContext processingContext,
                                     @NotNull CompletionResultSet completionResultSet) {
+        Project project = completionParameters.getEditor().getProject();
+
+        if (null == project || !PhoneGapFacade.isPhoneGapProject(project)) {
+          return;
+        }
         completionResultSet.addElement(LookupElementBuilder.create("deviceready"));
         completionResultSet.addElement(LookupElementBuilder.create("pause"));
         completionResultSet.addElement(LookupElementBuilder.create("resume"));

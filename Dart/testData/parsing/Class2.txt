@@ -193,16 +193,13 @@ Dart File
                     STATEMENTS
                       <empty list>
                     PsiElement(})('}')
-                  CATCH_PART
-                    PsiElement(catch)('catch')
-                    FORMAL_PARAMETER_LIST
+                  ON_PART
+                    CATCH_PART
+                      PsiElement(catch)('catch')
                       PsiElement(()('(')
-                      NORMAL_FORMAL_PARAMETER
-                        SIMPLE_FORMAL_PARAMETER
-                          PsiElement(var)('var')
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('e')
+                      COMPONENT_NAME
+                        ID
+                          PsiElement(IDENTIFIER)('e')
                       PsiElement())(')')
                     BLOCK
                       PsiElement({)('{')

@@ -13,7 +13,7 @@ import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SideBorder;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.webcore.ui.SwingHelper;
+import com.intellij.util.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -301,6 +301,47 @@ Dart File
                 PsiElement(;)(';')
               PsiElement(})('}')
             ON_PART
+              CATCH_PART
+                PsiElement(catch)('catch')
+                PsiElement(()('(')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('ex')
+                PsiElement())(')')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+            ON_PART
+              CATCH_PART
+                PsiElement(catch)('catch')
+                PsiElement(()('(')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('e')
+                PsiElement(,)(',')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('s')
+                PsiElement())(')')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+            ON_PART
+              PsiElement(on)('on')
+              TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('IllegalArgumentException')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+            ON_PART
               PsiElement(on)('on')
               TYPE
                 REFERENCE_EXPRESSION
@@ -308,19 +349,203 @@ Dart File
                     PsiElement(IDENTIFIER)('IllegalArgumentException')
               CATCH_PART
                 PsiElement(catch)('catch')
-                FORMAL_PARAMETER_LIST
-                  PsiElement(()('(')
-                  NORMAL_FORMAL_PARAMETER
-                    SIMPLE_FORMAL_PARAMETER
-                      COMPONENT_NAME
-                        ID
-                          PsiElement(IDENTIFIER)('ex')
-                  PsiElement())(')')
-                BLOCK
-                  PsiElement({)('{')
-                  STATEMENTS
-                    <empty list>
-                  PsiElement(})('}')
+                PsiElement(()('(')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('e')
+                PsiElement())(')')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+            ON_PART
+              PsiElement(on)('on')
+              TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('IllegalArgumentException')
+              CATCH_PART
+                PsiElement(catch)('catch')
+                PsiElement(()('(')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('e')
+                PsiElement(,)(',')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('s')
+                PsiElement())(')')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+          TRY_STATEMENT
+            PsiElement(try)('try')
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+            FINALLY_PART
+              PsiElement(finally)('finally')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+          TRY_STATEMENT
+            PsiElement(try)('try')
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+            ON_PART
+              CATCH_PART
+                PsiElement(catch)('catch')
+                PsiElement(()('(')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('e')
+                PsiElement())(')')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+            FINALLY_PART
+              PsiElement(finally)('finally')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+          TRY_STATEMENT
+            PsiElement(try)('try')
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+            ON_PART
+              CATCH_PART
+                PsiElement(catch)('catch')
+                PsiElement(()('(')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('e')
+                PsiElement(,)(',')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('s')
+                PsiElement())(')')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+            FINALLY_PART
+              PsiElement(finally)('finally')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+          TRY_STATEMENT
+            PsiElement(try)('try')
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+            ON_PART
+              PsiElement(on)('on')
+              TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('IllegalArgumentException')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+            FINALLY_PART
+              PsiElement(finally)('finally')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+          TRY_STATEMENT
+            PsiElement(try)('try')
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+            ON_PART
+              PsiElement(on)('on')
+              TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('IllegalArgumentException')
+              CATCH_PART
+                PsiElement(catch)('catch')
+                PsiElement(()('(')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('e')
+                PsiElement())(')')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+            FINALLY_PART
+              PsiElement(finally)('finally')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+          TRY_STATEMENT
+            PsiElement(try)('try')
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                <empty list>
+              PsiElement(})('}')
+            ON_PART
+              PsiElement(on)('on')
+              TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('IllegalArgumentException')
+              CATCH_PART
+                PsiElement(catch)('catch')
+                PsiElement(()('(')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('e')
+                PsiElement(,)(',')
+                COMPONENT_NAME
+                  ID
+                    PsiElement(IDENTIFIER)('s')
+                PsiElement())(')')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
+            FINALLY_PART
+              PsiElement(finally)('finally')
+              BLOCK
+                PsiElement({)('{')
+                STATEMENTS
+                  <empty list>
+                PsiElement(})('}')
         PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     COMPONENT_NAME
