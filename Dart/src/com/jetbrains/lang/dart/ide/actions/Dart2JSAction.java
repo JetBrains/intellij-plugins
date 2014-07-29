@@ -20,6 +20,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.actions.ui.Dart2JSSettingsDialog;
+import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
@@ -130,7 +131,7 @@ public class Dart2JSAction extends AnAction {
     final GeneralCommandLine command = new GeneralCommandLine();
     command.setExePath(dart2jsPath);
     if (checkedMode) {
-      command.addParameter("--checked");
+      command.addParameter(DartiumUtil.CHECKED_MODE_OPTION);
     }
     if (minifyMode) {
       command.addParameter("--minify");
