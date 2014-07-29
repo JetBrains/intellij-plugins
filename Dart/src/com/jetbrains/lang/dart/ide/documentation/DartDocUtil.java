@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart.ide.documentation;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -11,6 +12,7 @@ import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartGenericSpecialization;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import com.petebevin.markdown.MarkdownProcessor;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +30,15 @@ public class DartDocUtil {
     }
     final DartComponent namedComponent = (DartComponent)(element instanceof DartComponent ? element : element.getParent());
     final StringBuilder builder = new StringBuilder();
+
+    appendLibraryName(builder, element);
+
+    builder.append("<code>");
+
+    for (DartMetadata metadata : namedComponent.getMetadataList()) {
+      builder.append(StringUtil.join(metadata.getText(), "<br/>"));
+    }
+
     if (namedComponent instanceof DartClass) {
       appendClassSignature(builder, (DartClass)namedComponent);
     }
@@ -60,6 +71,8 @@ public class DartDocUtil {
       builder.append("set ");
       appendFunctionSignature(builder, namedComponent, ((DartSetterDeclaration)namedComponent).getReturnType());
     }
+
+    builder.append("</code>");
 
     final String docText = getDocumentationText(namedComponent);
     if (docText != null) {
@@ -172,27 +185,81 @@ public class DartDocUtil {
 
   private static void appendDeclaringClass(final StringBuilder builder, final DartComponent namedComponent) {
     final DartClass haxeClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class);
-    assert haxeClass != null;
-    builder.append(haxeClass.getName());
-    builder.append("<br/><br/>");
+    if (haxeClass != null) {
+      builder.append(haxeClass.getName());
+      builder.append("<br/><br/>");
+    }
   }
 
   private static void appendVariableSignature(final StringBuilder builder, final DartComponent component, final DartType type) {
-    final PsiElement resolvedReference = type.resolveReference();
-    if (resolvedReference != null) {
-      builder.append(resolvedReference.getText());
-      builder.append(" ");
+    if (type == null) {
+      builder.append("var ");
+    } else {
+      final PsiElement resolvedReference = type.resolveReference();
+      if (resolvedReference != null) {
+        builder.append(StringUtil.join(resolvedReference.getText(), " "));
+      }
     }
     builder.append(component.getName());
   }
 
   private static void appendClassSignature(final StringBuilder builder, final DartClass dartClass) {
+
     if (dartClass.isAbstract()) {
       builder.append("abstract ");
     }
 
-    builder.append("class <b>").append(dartClass.getName()).append("</b>");
-    final DartTypeParameters typeParameters = dartClass.getTypeParameters();
+    builder.append(StringUtil.join("class ", dartClass.getName()));
+    appendTypeParams(builder, dartClass.getTypeParameters());
+
+    final List<DartType> mixins = dartClass.getMixinsList();
+    if (!mixins.isEmpty()) {
+      builder.append(" with ");
+      for (Iterator<DartType> iter = mixins.iterator(); iter.hasNext(); ) {
+        builder.append(htmlify(iter.next().getText()));
+        if (iter.hasNext()) {
+          builder.append(", ");
+        }
+      }
+    } else {
+      final DartType superClass = dartClass.getSuperClass();
+      if (superClass != null) {
+        builder.append(StringUtil.join("<br/>extends ", htmlify(superClass.getText())));
+      }
+    }
+
+    final List<DartType> implementsList = dartClass.getImplementsList();
+    if (!implementsList.isEmpty()) {
+      builder.append("<br/>implements ");
+      for (Iterator<DartType> iter = implementsList.iterator(); iter.hasNext(); ) {
+        final DartType implementedType = iter.next();
+        final PsiElement resolvedReference = implementedType.resolveReference();
+        if (resolvedReference != null) {
+          builder.append(implementedType.getText());
+          if (iter.hasNext()) {
+            builder.append(", ");
+          }
+        }
+      }
+    }
+
+  }
+
+  private static void appendLibraryName(final StringBuilder builder, final PsiElement element) {
+    final PsiFile file = element.getContainingFile();
+    if (file != null) {
+      final String libraryName = DartResolveUtil.getLibraryName(file);
+      if (libraryName != null) {
+        builder.append(StringUtil.join("<b>", libraryName, "</b><br/><br/>"));
+      }
+    }
+  }
+
+  private static String htmlify(final String text) {
+    return text.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  }
+
+  private static void appendTypeParams(final StringBuilder builder, final DartTypeParameters typeParameters) {
     if (typeParameters != null) {
       final List<DartTypeParameter> parameters = typeParameters.getTypeParameterList();
       if (!parameters.isEmpty()) {
@@ -204,29 +271,6 @@ public class DartDocUtil {
           }
         }
         builder.append("&gt;");
-      }
-    }
-
-    final DartType superClass = dartClass.getSuperClass();
-    if (superClass != null) {
-      final PsiElement resolved = superClass.resolveReference();
-      if (resolved != null) {
-        builder.append(" extends ").append(resolved.getText());
-      }
-    }
-
-    final List<DartType> implementsList = dartClass.getImplementsList();
-    if (!implementsList.isEmpty()) {
-      builder.append(" implements ");
-      for (Iterator<DartType> iter = implementsList.iterator(); iter.hasNext(); ) {
-        final DartType implementedType = iter.next();
-        final PsiElement resolvedReference = implementedType.resolveReference();
-        if (resolvedReference != null) {
-          builder.append(implementedType.getText());
-          if (iter.hasNext()) {
-            builder.append(",");
-          }
-        }
       }
     }
   }

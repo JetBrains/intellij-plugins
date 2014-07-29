@@ -22,98 +22,144 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testAbstractClassSig() throws Exception {
-    doTest("abstract class <b>Foo</b> extends Bar",
+    doTest("<code>abstract class Foo<br/>extends Bar</code>",
            "<caret>abstract class Foo extends Bar { }\nclass Bar { }");
   }
 
   public void testParamClassSig() throws Exception {
-    doTest("class <b>Foo</b>&lt;T&gt;",
+    doTest("<code>class Foo&lt;T&gt;</code>",
            "<caret>class Foo<T>{ }");
   }
 
   public void testParamClassSig2() throws Exception {
-    doTest("class <b>Foo</b>&lt;T,Z&gt;",
+    doTest("<code>class Foo&lt;T,Z&gt;</code>",
            "<caret>class Foo<T,Z>{ }");
   }
 
   public void testParamClassSig3() throws Exception {
-    doTest("class <b>Foo</b> implements Bar",
-           "<caret>class Foo implements Bar { }\nclass Bar { }");
+    doTest("<code>class Foo<br/>implements Bar</code>",
+           "<caret>class Foo implements Bar { }<br/>class Bar { }");
+  }
+
+  public void testParamClassSig4() throws Exception {
+    doTest("<code>class Foo<br/>implements Bar, Baz</code>",
+           "<caret>class Foo implements Bar, Baz { }<br/>class Bar { }<br/>class Baz { }");
+  }
+
+  public void testParamClassSig5() throws Exception {
+    doTest("<code>class Foo&lt;A,B&gt;<br/>extends Bar&lt;A,B&gt;</code>",
+           "class <caret>Foo<A,B> extends Bar<A,B> { }<br/>class Bar<A,B> { }");
+  }
+
+
+  public void testMetaClassSig1() throws Exception {
+    doTest("<code>@deprecated<br/>class A</code>",
+           " @deprecated class <caret>A {}");
+  }
+
+  public void testMetaClassSig2() throws Exception {
+    doTest("<code>@Meta('foo')<br/>class A</code>",
+           "@Meta(\'foo\') class <caret>A {};<br/>" +
+           "class Meta {<br/>" +
+           "  final String name;\n" +
+           "  const Meta([this.name]);\n" +
+           "}");
+  }
+
+  public void testLibraryClassDoc() throws Exception {
+    doTest("<b>c.b.a</b><br/><br/><code>class A</code>",
+           "library c.b.a;\nclass <caret>A {}");
+  }
+
+  public void testMixinSig1() throws Exception {
+    doTest("<code>class Foo2 with Baz1&lt;K&gt;, Baz2</code>",
+           "<caret>class Foo2 = Bar1<E> with Baz1<K>, Baz2");
   }
 
   public void testFunctionSig1() throws Exception {
-    doTest("calc(int x) " + RIGHT_ARROW + " int",
+    doTest("<code>calc(int x) " + RIGHT_ARROW + " int</code>",
            "<caret>int calc(int x) => x + 42;");
   }
 
   public void testFunctionSig2() throws Exception {
-    doTest("foo([int x])",
+    doTest("<code>foo([int x])</code>",
            "<caret>foo([int x = 3]) { print(x); }");
   }
 
   public void testFunctionSig3() throws Exception {
-    doTest("foo([int x]) " + RIGHT_ARROW + " void",
+    doTest("<code>foo([int x]) " + RIGHT_ARROW + " void</code>",
            "<caret>void foo([int x = 3]) { print(x); }");
   }
 
   public void testFunctionSig4() throws Exception {
-    doTest("foo(int x, {int y, int z}) " + RIGHT_ARROW + " void",
+    doTest("<code>foo(int x, {int y, int z}) " + RIGHT_ARROW + " void</code>",
            "<caret>void foo(int x, {int y, int z}) { }");
   }
 
   public void testFunctionSig5() throws Exception {
-    doTest("calc(x() " + RIGHT_ARROW + " int) " + RIGHT_ARROW + " int",
+    doTest("<code>calc(x() " + RIGHT_ARROW + " int) " + RIGHT_ARROW + " int</code>",
            "<caret>int calc(int x()) => null;");
   }
 
   public void testTypedefSig() throws Exception {
-    doTest("typedef a(int x) " + RIGHT_ARROW + " int",
+    doTest("<code>typedef a(int x) " + RIGHT_ARROW + " int</code>",
            "<caret>typedef int a(int x);");
   }
 
   public void testFieldSig1() throws Exception {
-    doTest("Z<br/><br/>int y",
+    doTest("<code>Z<br/><br/>int y</code>",
            "class Z { <caret>int y = 42; }");
   }
 
   public void testFieldSig2() throws Exception {
-    doTest("Z<br/><br/>int y",
+    doTest("<code>Z<br/><br/>int y</code>",
            "class Z { <caret>int y; }");
   }
 
   public void testMethodSig1() throws Exception {
-    doTest("Z<br/><br/>y() " + RIGHT_ARROW + " int",
+    doTest("<code>Z<br/><br/>y() " + RIGHT_ARROW + " int</code>",
            "class Z { <caret>int y() => 42; }");
   }
 
   public void testNamedConstructorSig() throws Exception {
-    doTest("Z<br/><br/>Z.z() " + RIGHT_ARROW + " Z",
+    doTest("<code>Z<br/><br/>Z.z() " + RIGHT_ARROW + " Z</code>",
            "class Z { <caret>Z.z(); }");
   }
 
   public void testConstructorSig() throws Exception {
-    doTest("Z<br/><br/>Z() " + RIGHT_ARROW + " Z",
+    doTest("<code>Z<br/><br/>Z() " + RIGHT_ARROW + " Z</code>",
            "class Z { <caret>Z(); }");
   }
 
   public void testGetterSig() throws Exception {
-    doTest("Z<br/><br/>get x() " + RIGHT_ARROW + " int",
+    doTest("<code>Z<br/><br/>get x() " + RIGHT_ARROW + " int</code>",
            "class Z { <caret>int get x => 0; }");
   }
 
   public void testSetterSig() throws Exception {
-    doTest("Z<br/><br/>set x(int x) " + RIGHT_ARROW + " void",
+    doTest("<code>Z<br/><br/>set x(int x) " + RIGHT_ARROW + " void</code>",
            "class Z { <caret>void set x(int x) { } }");
   }
 
+  public void testTopLevelVarDoc1() throws Exception {
+    doTest("<b>a.b.c</b><br/><br/><code>@deprecated<br/>var x</code>",
+           "library a.b.c;\n<caret>@deprecated var x = 'foo';\n");
+  }
+
+  public void testTopLevelVarDoc2() throws Exception {
+    doTest("<b>a.b.c</b><br/><br/><code>int x</code>",
+           "library a.b.c;\n<caret>int x = 3;\n");
+  }
+
   public void testFunctionDoc1() throws Exception {
-    doTest("foo(int x) " + RIGHT_ARROW + " void" +
+    doTest("<code>foo(int x) " + RIGHT_ARROW + " void</code>" +
            "<br/><br/><p>A function on [x]s.</p>\n",
            "/// A function on [x]s.\n<caret>void foo(int x) { }");
   }
 
+
   public void testFunctionDoc2() throws Exception {
-    doTest("foo(int x) " + RIGHT_ARROW + " void" +
+    doTest("<code>foo(int x) " + RIGHT_ARROW + " void</code>" +
            "<br/><br/><p> Good for:</p>\n\n" +
            "<ul>\n" +
            "<li>this</li>\n" +
@@ -127,7 +173,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testClassMultilineDoc1() throws Exception {
-    doTest("class <b>A</b><br/><br/><p>     doc1\n" +
+    doTest("<code>class A</code><br/><br/><p>     doc1\n" +
            "doc2\n" +
            " doc3</p>\n" +
            "\n" +
@@ -151,7 +197,8 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testClassMultilineDoc2() throws Exception {
-    doTest("abstract class <b>A</b><br/><br/><p>doc1\n" +
+    doTest("<code>@deprecated<br/>" +
+           "abstract class A</code><br/><br/><p>doc1\n" +
            "doc2\n" +
            " doc3\n" +
            "doc4\n" +
@@ -171,7 +218,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testClassSingleLineDocs1() throws Exception {
-    doTest("class <b>A</b><br/><br/><p>doc1\n" +
+    doTest("<code>class A</code><br/><br/><p>doc1\n" +
            "doc2</p>\n",
 
            "// not doc \n" +
@@ -183,7 +230,8 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testClassSingleLineDocs2() throws Exception {
-    doTest("class <b>A</b><br/><br/><p>doc1\n" +
+    doTest("<code>@deprecated<br/>" +
+           "class A</code><br/><br/><p>doc1\n" +
            "doc2</p>\n",
 
            "@deprecated" +
@@ -196,7 +244,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testMethodMultilineDoc() throws Exception {
-    doTest("A<br/><br/>foo()<br/><br/><p>     doc1\n" +
+    doTest("<code>A<br/><br/>foo()</code><br/><br/><p>     doc1\n" +
            "doc2\n" +
            " doc3</p>\n" +
            "\n" +
@@ -222,7 +270,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testMethodSingleLineDocs() throws Exception {
-    doTest("A<br/><br/>foo()<br/><br/><p>doc1\n" +
+    doTest("<code>A<br/><br/>foo()</code><br/><br/><p>doc1\n" +
            "doc2</p>\n",
 
            "class A{\n" +
