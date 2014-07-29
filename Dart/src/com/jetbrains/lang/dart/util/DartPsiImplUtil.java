@@ -52,6 +52,11 @@ public class DartPsiImplUtil {
     return PsiTreeUtil.getChildrenOfTypeAsList(varDeclarationList, DartMetadata.class);
   }
 
+  @NotNull
+  public static List<DartMetadata> getMetadataList(@NotNull DartVarDeclarationListPart varDeclarationListPart) {
+    return PsiTreeUtil.getChildrenOfTypeAsList(varDeclarationListPart, DartMetadata.class);
+  }
+
   @Nullable
   public static PsiElement resolveReference(@NotNull DartType dartType) {
     final DartExpression expression = dartType.getReferenceExpression();
