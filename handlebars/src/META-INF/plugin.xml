@@ -42,8 +42,6 @@
     <iconProvider implementation="com.dmarcotte.handlebars.file.HbIconProvider"/>
     <lang.substitutor language="HTML" implementationClass="com.dmarcotte.handlebars.file.HbLanguageSubstitutor"/>
 
-    <applicationService serviceInterface="com.dmarcotte.handlebars.config.HbOpenHtmlDefaultValueProvider"
-                        serviceImplementation="com.dmarcotte.handlebars.config.HbOpenHtmlDefaultValueProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
