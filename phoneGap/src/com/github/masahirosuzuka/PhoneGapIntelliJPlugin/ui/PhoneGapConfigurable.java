@@ -1,16 +1,21 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUIUtil;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.plugins.PhoneGapPluginsView;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import java.awt.*;
 
 /**
@@ -24,7 +29,9 @@ public class PhoneGapConfigurable implements Configurable {
 
   private final PhoneGapSettings mySettings = PhoneGapSettings.getInstance();
   private UIController myUIController;
+  private PhoneGapPluginsView phoneGapPluginsView;
   private Project myProject;
+  private JPanel myWrapper;
 
   public PhoneGapConfigurable(Project project) {
     myProject = project;
@@ -63,16 +70,36 @@ public class PhoneGapConfigurable implements Configurable {
   @Override
   public JComponent createComponent() {
 
-    if (myUIController == null) {
+    if (myWrapper == null) {
       myExecutablePath = PhoneGapUIUtil.createPhoneGapExecutableTextField(myProject);
       myUIController = new UIController();
       myUIController.reset(mySettings.getState());
+      phoneGapPluginsView = new PhoneGapPluginsView(myProject);
+      JPanel panel = FormBuilder.createFormBuilder()
+        .addLabeledComponent("PhoneGap/Cordova executable path:", myExecutablePath)
+        .addComponent(phoneGapPluginsView.getPanel()).getPanel();
+      myWrapper = new JPanel(new BorderLayout());
+      myWrapper.add(panel, BorderLayout.NORTH);
+      setUpListener();
     }
 
-    JPanel panel = FormBuilder.createFormBuilder().addLabeledComponent("PhoneGap/Cordova executable path:", myExecutablePath).getPanel();
-    JPanel wrapper = new JPanel(new BorderLayout());
-    wrapper.add(panel, BorderLayout.NORTH);
-    return wrapper;
+    return myWrapper;
+  }
+
+  public void setUpListener() {
+    final JTextField textField = myExecutablePath.getChildComponent().getTextEditor();
+    final Ref<String> prevExecutablePathRef = Ref.create(StringUtil.notNullize(textField.getText()));
+    textField.getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
+      protected void textChanged(DocumentEvent e) {
+        String executablePath = StringUtil.notNullize(textField.getText());
+        String prevExecutablePath = prevExecutablePathRef.get();
+        if (!prevExecutablePath.equals(executablePath)) {
+          phoneGapPluginsView.setupService(executablePath);
+          prevExecutablePathRef.set(executablePath);
+        }
+      }
+    });
   }
 
   @Override
