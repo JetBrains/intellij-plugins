@@ -210,7 +210,11 @@ private finalOrConst ::= 'final' | 'const'
 private varDeclarationListWithSemicolon ::= varDeclarationList ';'{pin=1}
 varDeclarationList ::= varAccessDeclaration varInit? (',' varDeclarationListPart)* {pin = 3 methods = [getMetadataList]}
 varDeclarationListPart ::= componentName varInit?
-{mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+{
+  mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl"
+  implements="com.jetbrains.lang.dart.psi.DartComponent"
+  methods= [getMetadataList]
+}
 
 operatorDeclaration ::= operatorDeclarationWithReturnType | operatorDeclarationWithoutReturnType // 'operator' is a valid identifier, so can be a returnType
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartOperator" implements="com.jetbrains.lang.dart.psi.DartOperator"}
