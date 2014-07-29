@@ -208,7 +208,7 @@ varAccessDeclaration ::= metadata* 'static'? (finalOrConst type componentName | 
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private finalOrConst ::= 'final' | 'const'
 private varDeclarationListWithSemicolon ::= varDeclarationList ';'{pin=1}
-varDeclarationList ::= varAccessDeclaration varInit? (',' varDeclarationListPart)* {pin = 3}
+varDeclarationList ::= varAccessDeclaration varInit? (',' varDeclarationListPart)* {pin = 3 methods = [getMetadataList]}
 varDeclarationListPart ::= componentName varInit?
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
@@ -400,7 +400,11 @@ private nonLabelledStatement ::= block // Guard to break tie with map literal.  
 private statementFollowedBySemiColon ::= (varDeclarationList | expression) ';' {pin=1}
 
 label::= componentName ':'
-{mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+{
+  mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl"
+  implements="com.jetbrains.lang.dart.psi.DartComponent"
+  methods = [getMetadataList]
+}
 
 private expressionWithRecoverUntilParen ::= expression {recoverWhile="not_paren_recover"}
 private not_paren_recover ::= !')'

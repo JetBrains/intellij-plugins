@@ -4,6 +4,8 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public interface DartComponent extends DartPsiCompositeElement, PsiNameIdentifierOwner {
   @Nullable
   DartComponentName getComponentName();
@@ -21,4 +23,7 @@ public interface DartComponent extends DartPsiCompositeElement, PsiNameIdentifie
   boolean isAbstract();
 
   DartMetadata getMetadataByName(@NotNull final String name);
+
+  @NotNull
+  List<DartMetadata> getMetadataList();
 }

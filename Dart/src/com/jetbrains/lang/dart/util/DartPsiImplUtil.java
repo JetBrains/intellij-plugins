@@ -42,6 +42,16 @@ public class DartPsiImplUtil {
     return FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
   }
 
+  @NotNull
+  public static List<DartMetadata> getMetadataList(@NotNull DartLabel label) {
+    return PsiTreeUtil.getChildrenOfTypeAsList(label, DartMetadata.class);
+  }
+
+  @NotNull
+  public static List<DartMetadata> getMetadataList(@NotNull DartVarDeclarationList varDeclarationList) {
+    return PsiTreeUtil.getChildrenOfTypeAsList(varDeclarationList, DartMetadata.class);
+  }
+
   @Nullable
   public static PsiElement resolveReference(@NotNull DartType dartType) {
     final DartExpression expression = dartType.getReferenceExpression();

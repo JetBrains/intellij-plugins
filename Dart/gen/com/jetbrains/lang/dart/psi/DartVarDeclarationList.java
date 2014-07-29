@@ -16,4 +16,7 @@ public interface DartVarDeclarationList extends DartPsiCompositeElement {
   @Nullable
   DartVarInit getVarInit();
 
+  @NotNull
+  List<DartMetadata> getMetadataList();
+
 }
