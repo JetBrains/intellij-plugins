@@ -22,9 +22,16 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.CssPropertyValue;
+import com.intellij.psi.css.descriptor.BrowserVersion;
+import com.intellij.psi.css.descriptor.CssContextType;
+import com.intellij.psi.css.descriptor.value.CssValueDescriptor;
 import com.intellij.psi.css.impl.CssTermTypes;
+import com.intellij.psi.css.impl.descriptor.CssCommonDescriptorData;
+import com.intellij.psi.css.impl.descriptor.value.*;
 import com.intellij.psi.css.impl.util.completion.LengthUserLookup;
+import com.intellij.psi.css.impl.util.scheme.CssValueDescriptorModificator;
 import com.intellij.psi.css.impl.util.table.AbstractCssPropertyDescriptor;
 import com.intellij.psi.css.impl.util.table.CssLookupValue;
 import com.intellij.psi.css.impl.util.table.CssPropertyValueImpl;
@@ -33,6 +40,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +62,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
 
   public static final String COLOR_FORMAT = "Color";
   private static final String LENGTH_FORMAT = "Length";
+  @NotNull private final CssValueDescriptor myValueDescriptor;
 
   public FlexCssPropertyDescriptor(@NotNull Collection<FlexStyleIndexInfo> infos) {
     FlexStyleIndexInfo firstInfo = infos.iterator().next();
@@ -62,6 +71,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     myInherit = firstInfo.getInherit();
     myShorthand = containsShorthand(infos);
     myValue = createPropertyValue(infos, myShorthand);
+    myValueDescriptor = createPropertyValueDescriptor(infos, myShorthand);
     myClassNames = new HashSet<String>();
     myFileNames = new HashSet<String>();
     for (FlexStyleIndexInfo info : infos) {
@@ -84,6 +94,23 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   private static boolean isShorthand(@NotNull FlexStyleIndexInfo info) {
     return JSCommonTypeNames.ARRAY_CLASS_NAME.equals(info.getType());
   }
+  
+  private static void addValuesFromEnumerations2(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Collection<CssValueDescriptor> children) {
+    Set<String> constantSet = new HashSet<String>();
+    for (FlexStyleIndexInfo info : infos) {
+      String enumeration = info.getEnumeration();
+      if (enumeration != null) {
+        String[] constants = enumeration.split(",");
+        Collections.addAll(constantSet, constants);
+      }
+    }
+    if (constantSet.size() > 0) {
+      for (String constant : constantSet) {
+        children.add(createCssNameValue(constant.trim(), null));
+      }
+    }
+  }
+
 
   private static void addValuesFromEnumerations(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Collection<CssPropertyValue> children) {
     Set<String> constantSet = new HashSet<String>();
@@ -109,6 +136,22 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   }
 
   @NotNull
+  private static Set<String> addValuesFromFormats(@NotNull List<CssValueDescriptor> children, @NotNull Collection<FlexStyleIndexInfo> infos) {
+    Set<String> formats = ContainerUtil.newHashSet();
+    for (FlexStyleIndexInfo info : infos) {
+      ContainerUtil.addIfNotNull(info.getFormat(), formats);
+    }
+    
+    if (formats.contains(COLOR_FORMAT)) {
+      children.add(createCssColorValue());
+    }
+    if (formats.contains(LENGTH_FORMAT)) {
+      children.add(createCssLengthValue());
+    }
+    return formats;
+  }
+
+  @NotNull
   private static Set<String> addValuesFromFormats(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull List<CssPropertyValue> children) {
     Set<String> formats = new HashSet<String>();
     for (FlexStyleIndexInfo info : infos) {
@@ -126,6 +169,16 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
     return formats;
   }
+  
+  private static void addValuesFromTypes2(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssValueDescriptor> children) {
+    Set<String> types = ContainerUtil.newHashSet();
+    for (FlexStyleIndexInfo info : infos) {
+      ContainerUtil.addIfNotNull(info.getType(), types);
+    }
+    if (types.contains(JSCommonTypeNames.NUMBER_CLASS_NAME) && !formats.contains(LENGTH_FORMAT)) {
+      children.add(createCssNumberValue());
+    }
+  }
 
   private static void addValuesFromTypes(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssPropertyValue> children) {
     Set<String> types = new HashSet<String>();
@@ -139,7 +192,78 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       children.add(new CssLookupValue(CssPropertyValueImpl.Type.OR, CssTermTypes.NUMBER, CssTermTypes.NEGATIVE_NUMBER));
     }
   }
+  
+  @NotNull
+  private static CssValueDescriptor createPropertyValueDescriptor(@NotNull Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
+    List<CssValueDescriptor> children = ContainerUtil.newArrayList();
+    Set<String> formats = addValuesFromFormats(children, infos);
+    addValuesFromEnumerations2(infos, children);
+    addValuesFromTypes2(infos, formats, children);
 
+    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData("", "", CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, shorthand ? -1 : 1, null, null, null, null);
+    CssGroupValue result = CssGroupValue.create(commonDescriptorData, valueDescriptorData, true, null, CssGroupValue.Type.OR);
+    if (!children.isEmpty()) {
+      for (CssValueDescriptor child : children) {
+        result.addChild(CssValueDescriptorModificator.withParent(child, result));
+      }
+      if (!formats.contains(COLOR_FORMAT)) {
+        result.addChild(createCssStringValue(result));
+      }
+    }
+    else {
+      result.addChild(createCssAnyValue(result));
+    }
+
+    result.addChild(createCssNameValue("undefined", result));
+    return result;
+    
+  }
+  
+  private static CssAnyValueImpl createCssAnyValue(@Nullable CssValueDescriptor parent) {
+    String id = CssBundle.message("any.value.presentable.name");
+    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, parent, null);
+    return new CssAnyValueImpl(commonDescriptorData, valueDescriptorData);
+  }
+  
+  private static CssStringValue createCssStringValue(@Nullable CssValueDescriptor parent) {
+    String id = CssBundle.message("string.value.presentable.name");
+    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, parent, null);
+    return new CssStringValue(null, commonDescriptorData, valueDescriptorData);
+  }
+
+  private static CssNameValue createCssNameValue(@NotNull String name, @Nullable CssValueDescriptor parent) {
+    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(name, name, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, parent, null);
+    return new CssNameValue(name, true, commonDescriptorData, valueDescriptorData);
+  }
+  
+  private static CssColorValue createCssColorValue() {
+    String id = CssBundle.message("color.value.presentable.name");
+    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null);
+    return new CssColorValue(commonDescriptorData, valueDescriptorData);
+  }
+  
+  private static CssLengthValue createCssLengthValue() {
+    String id = CssBundle.message("length.value.presentable.name");
+    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null);
+    return new CssLengthValue(commonDescriptorData, valueDescriptorData);
+  }
+  
+  private static CssNumberValue createCssNumberValue() {
+    String id = CssBundle.message("number.value.presentable.name");
+    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null);
+    return new CssNumberValue(commonDescriptorData, valueDescriptorData);
+  }
+
+  /**
+   * @deprecated use this#createPropertyValueDescriptor
+   */
   @NotNull
   private static CssPropertyValueImpl createPropertyValue(@NotNull Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
     List<CssPropertyValue> children = new ArrayList<CssPropertyValue>();
@@ -369,6 +493,12 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
   }
 
+  @NotNull
+  @Override
+  public CssValueDescriptor getValueDescriptor() {
+    return myValueDescriptor;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -383,6 +513,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     if (!myPropertyName.equals(that.myPropertyName)) return false;
     if (!myStyleInfo.equals(that.myStyleInfo)) return false;
     if (!myValue.equals(that.myValue)) return false;
+    if (!myValueDescriptor.equals(that.myValueDescriptor)) return false;
 
     return true;
   }
@@ -393,6 +524,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     result = 31 * result + (myShorthand ? 1 : 0);
     result = 31 * result + (myPropertyName.hashCode());
     result = 31 * result + (myValue.hashCode());
+    result = 31 * result + (myValueDescriptor.hashCode());
     result = 31 * result + (myClassNames.hashCode());
     result = 31 * result + (myFileNames.hashCode());
     result = 31 * result + (myStyleInfo.hashCode());

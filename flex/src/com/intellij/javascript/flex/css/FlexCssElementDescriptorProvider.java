@@ -39,6 +39,7 @@ import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
 import com.intellij.psi.css.descriptor.value.CssNullValue;
 import com.intellij.psi.css.descriptor.value.CssValueDescriptor;
+import com.intellij.psi.css.descriptor.value.CssValueValidator;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.util.references.HtmlCssClassOrIdReference;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
@@ -67,6 +68,9 @@ import static com.intellij.psi.util.PsiUtilCore.toPsiElementArray;
  * @author Eugene.Kudelevsky
  */
 public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvider {
+
+  private final FlexCssValueValidator FLEX_CSS_VALUE_VALIDATOR = new FlexCssValueValidator(this);
+
   public boolean isMyContext(@Nullable PsiElement context) {
     if (context == null) return false;
     PsiFile file = context.getContainingFile();
@@ -99,6 +103,12 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
 
     return true;
+  }
+
+  @NotNull
+  @Override
+  public CssValueValidator getValueValidator() {
+    return FLEX_CSS_VALUE_VALIDATOR;
   }
 
   @Override
