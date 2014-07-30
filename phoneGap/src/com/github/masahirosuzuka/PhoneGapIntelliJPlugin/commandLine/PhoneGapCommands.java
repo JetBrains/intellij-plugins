@@ -51,13 +51,13 @@ public class PhoneGapCommands {
   }
 
   public ProcessOutput pluginListRaw() throws ExecutionException {
-    return executeAndGetOut(new String[]{ myPath, "plugin", "list"});
+    return executeAndGetOut(new String[]{myPath, "plugin", "list"});
   }
 
   public List<String> pluginList() {
     try {
       String out = executeAndReturnResult(myPath, "plugin", "list").trim();
-      if (StringUtil.isEmpty(out)) {
+      if (StringUtil.isEmpty(out) || StringUtil.contains(out.toLowerCase(Locale.getDefault()), "no plugins")) {
         return ContainerUtil.newArrayList();
       }
       if (out.startsWith("[")) {
@@ -108,11 +108,7 @@ public class PhoneGapCommands {
         throw new RuntimeException("Command error: " + output.getStderr());
       }
 
-      String text = output.getStdout();
-      if (StringUtil.contains(text.toLowerCase(Locale.getDefault()), "no plugins")) {
-        return "";
-      }
-      return text;
+      return output.getStdout();
     }
     catch (Exception e) {
       throw new RuntimeException(e.getMessage(), e);
