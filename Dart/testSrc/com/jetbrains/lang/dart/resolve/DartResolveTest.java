@@ -249,4 +249,20 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
 
     doTest();
   }
+
+  public void testPackageReferencesInHtml() throws Exception {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n" +
+                                               "dependencies:\n" +
+                                               "  PathPackage:\n" +
+                                               "    path: local_package\n");
+    myFixture.addFileToProject("lib/projectFile.dart", "");
+    myFixture.addFileToProject("local_package/lib/localPackageFile.html", "");
+    myFixture.addFileToProject("packages/browser/dart.js", "");
+    final PsiFile psiFile = myFixture.addFileToProject("web/file.html",
+                                                       "<script src='<caret expected='packages'>packages/<caret expected='lib'>ProjectName/<caret expected='lib/projectFile.dart'>projectFile.dart'/>\n" +
+                                                       "<script src='packages<caret expected='packages'>/PathPackage<caret expected='local_package/lib'>/localPackageFile.html<caret expected='local_package/lib/localPackageFile.html'>'/>\n" +
+                                                       "<script src='<caret expected='packages'>packages/<caret expected='packages/browser'>browser/<caret expected='packages/browser/dart.js'>dart.js'/>\n");
+    ((CodeInsightTestFixtureImpl)myFixture).openFileInEditor(psiFile.getVirtualFile());
+    doTest();
+  }
 }

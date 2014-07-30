@@ -17,8 +17,14 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   public void testScriptSrcPathToPackagesFolder() {
     final String testName = getTestName(false);
     myFixture.enableInspections(HtmlUnknownTargetInspection.class);
+
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n" +
+                                               "dependencies:\n" +
+                                               "  PathPackage:\n" +
+                                               "    path: local_package\n");
+    myFixture.addFileToProject("lib/projectFile.dart", "");
+    myFixture.addFileToProject("local_package/lib/localPackageFile.html", "");
     myFixture.addFileToProject("packages/browser/dart.js", "");
-    myFixture.addFileToProject("pubspec.yaml", "");
     myFixture.configureByFile(testName + "/" + testName + ".html");
     myFixture.checkHighlighting(true, false, true);
   }

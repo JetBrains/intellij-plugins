@@ -9,6 +9,8 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 public abstract class DartUrlResolver {
 
   public static final String DART_SCHEME = "dart";
@@ -42,6 +44,8 @@ public abstract class DartUrlResolver {
    * Process 'Path Packages' (https://www.dartlang.org/tools/pub/dependencies.html#path-packages) and this package itself (symlink to local 'lib' folder)
    */
   public abstract void processLivePackages(final @NotNull PairConsumer<String, VirtualFile> packageNameAndDirConsumer);
+
+  public abstract Collection<String> getLivePackageNames();
 
   @Nullable
   public abstract VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(final @NotNull String packageName);
