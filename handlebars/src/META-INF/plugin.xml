@@ -38,7 +38,6 @@
     <xml.zenCodingGenerator implementation="com.dmarcotte.handlebars.editor.templates.HbEmmetGenerator"/>
     <xml.zenCodingGenerator implementation="com.dmarcotte.handlebars.editor.templates.HbEmmetGenerator"/>
 
-    <projectConfigurable provider="com.dmarcotte.handlebars.pages.HbConfigurationProvider"/>
     <iconProvider implementation="com.dmarcotte.handlebars.file.HbIconProvider"/>
     <lang.substitutor language="HTML" implementationClass="com.dmarcotte.handlebars.file.HbLanguageSubstitutor"/>
 

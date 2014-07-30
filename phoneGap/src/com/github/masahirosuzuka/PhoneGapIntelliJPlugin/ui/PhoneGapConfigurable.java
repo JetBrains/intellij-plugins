@@ -63,7 +63,7 @@ public class PhoneGapConfigurable implements Configurable {
   @Nullable
   @Override
   public String getHelpTopic() {
-    return "phoneGap/cordova";
+    return "settings.phonegap";
   }
 
   @Nullable
