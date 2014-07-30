@@ -3,4 +3,8 @@
     <completion.contributor language="JavaScript"
                             implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.javascriptDependency.codecompletion.PhoneGapCodeCompletion"/>
   </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <projectConfigurable parentId="Settings.JavaScript"
+                         instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable"/>
+  </extensions>
 </idea-plugin>
