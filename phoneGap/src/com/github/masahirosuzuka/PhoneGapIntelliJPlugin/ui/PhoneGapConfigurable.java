@@ -81,6 +81,7 @@ public class PhoneGapConfigurable implements Configurable {
       myWrapper = new JPanel(new BorderLayout());
       myWrapper.add(panel, BorderLayout.NORTH);
       setUpListener();
+      phoneGapPluginsView.setupService(myExecutablePath.getText());
     }
 
     return myWrapper;

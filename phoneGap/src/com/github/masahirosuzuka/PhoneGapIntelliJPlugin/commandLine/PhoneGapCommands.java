@@ -50,6 +50,10 @@ public class PhoneGapCommands {
     executeVoidCommand(myPath, "plugin", "remove", fqn);
   }
 
+  public ProcessOutput pluginListRaw() throws ExecutionException {
+    return executeAndGetOut(new String[]{ myPath, "plugin", "list"});
+  }
+
   public List<String> pluginList() {
     try {
       String out = executeAndReturnResult(myPath, "plugin", "list").trim();

@@ -1,6 +1,7 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.plugins;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommands;
+import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.FormBuilder;
@@ -44,11 +45,15 @@ public class PhoneGapPluginsView {
 
     try {
       if (!StringUtil.isEmpty(path)) {
-        new PhoneGapCommands(path, myProject.getBasePath()).version();
-        service = new PhoneGapPackageManagementService(myProject, path);
+        ProcessOutput output = new PhoneGapCommands(path, myProject.getBasePath()).pluginListRaw();
+        if (StringUtil.isEmpty(output.getStderr())) {
+          service = new PhoneGapPackageManagementService(myProject, path);
+        } else {
+          packagesNotificationPanel.showError("Project root directory is not phonegap/cordova project", null, null);
+        }
       }
     }
-    catch (RuntimeException e) {
+    catch (Exception e) {
       packagesNotificationPanel.showError("Please correct path to phoneGap/cordova executable", null, null);
     }
 
