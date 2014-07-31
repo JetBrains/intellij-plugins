@@ -265,4 +265,13 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
     ((CodeInsightTestFixtureImpl)myFixture).openFileInEditor(psiFile.getVirtualFile());
     doTest();
   }
+
+  public void testCommentsInsideCallExpression() throws Exception {
+    myFixture.configureByText("file.dart", "main(){\n" +
+                                           "  '1 2 3 4'.<caret expected='[Dart SDK]/lib/core/string.dart -> String -> split'>split(' ')  // comment\n" +
+                                           "  .map<caret expected='[Dart SDK]/lib/core/iterable.dart -> Iterable -> map'>((e) => int.<caret expected='[Dart SDK]/lib/core/int.dart -> int -> parse'>parse(e) * 2);\n" +
+                                           "}");
+
+    doTest();
+  }
 }
