@@ -1,6 +1,8 @@
 package com.jetbrains.lang.dart.sdk;
 
+import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.TextComponentAccessor;
@@ -11,6 +13,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
@@ -20,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -73,6 +78,9 @@ public class DartSdkUtil {
                                                    final @NotNull TextFieldWithBrowseButton dartSdkPathComponent,
                                                    final @NotNull JBLabel versionLabel,
                                                    final @NotNull TextFieldWithBrowseButton dartiumPathComponent,
+                                                   final @NotNull Computable<ChromeSettings> currentDartiumSettingsRetriever,
+                                                   final @NotNull JButton dartiumSettingsButton,
+                                                   final @NotNull JBCheckBox checkedModeCheckBox,
                                                    final @NotNull Computable<Boolean> isResettingControlsComputable) {
     final String sdkHomePath = dartSdkPathComponent.getText().trim();
     versionLabel.setText(sdkHomePath.isEmpty() ? "" : getSdkVersion(sdkHomePath));
@@ -118,6 +126,20 @@ public class DartSdkUtil {
             dartiumPathComponent.setText(FileUtilRt.toSystemDependentName(dartiumPath));
           }
         }
+      }
+    });
+
+    dartiumSettingsButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(final ActionEvent e) {
+        ShowSettingsUtil.getInstance().editConfigurable(dartiumSettingsButton,
+                                                        currentDartiumSettingsRetriever.compute().createConfigurable());
+      }
+    });
+
+    checkedModeCheckBox.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        DartiumUtil.setCheckedMode(currentDartiumSettingsRetriever.compute().getEnvironmentVariables(), checkedModeCheckBox.isSelected());
       }
     });
   }

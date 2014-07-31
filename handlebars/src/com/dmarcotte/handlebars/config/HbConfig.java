@@ -2,6 +2,9 @@ package com.dmarcotte.handlebars.config;
 
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.Language;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.dmarcotte.handlebars.config.Property.*;
 
@@ -52,21 +55,54 @@ public class HbConfig {
     }
   }
 
+  public static String getRawOpenHtmlAsHandlebarsValue(Project project) {
+    return getStringPropertyValue(SHOULD_OPEN_HTML, project);
+  }
+
+  public static boolean shouldOpenHtmlAsHandlebars(Project project) {
+    String value = getRawOpenHtmlAsHandlebarsValue(project);
+    return ENABLED.equals(value);
+  }
+
+  public static boolean setShouldOpenHtmlAsHandlebars(boolean value, Project project) {
+    if (shouldOpenHtmlAsHandlebars(project) == value) return false;
+
+    setBooleanPropertyValue(SHOULD_OPEN_HTML, value, project);
+    return true;
+  }
+
+  private static String getStringPropertyValue(Property property, Project project) {
+    return new PropertyAccessor(getProperties(project)).getPropertyValue(property);
+  }
+
+  @NotNull
+  private static PropertiesComponent getProperties(@Nullable Project project) {
+    return project == null ? PropertiesComponent.getInstance() : PropertiesComponent.getInstance(project);
+  }
+
+
+  private static void setStringPropertyValue(@NotNull Property property, @Nullable String value, @Nullable Project project) {
+    new PropertyAccessor(getProperties(project)).setPropertyValue(property, value);
+  }
+
+
   private static String getStringPropertyValue(Property property) {
-    return new PropertyAccessor(PropertiesComponent.getInstance())
-      .getPropertyValue(property);
+    return getStringPropertyValue(property, null);
   }
 
   private static void setStringPropertyValue(Property property, String value) {
-    new PropertyAccessor(PropertiesComponent.getInstance())
-      .setPropertyValue(property, value);
+    setStringPropertyValue(property, value, null);
   }
 
   private static boolean getBooleanPropertyValue(Property property) {
     return ENABLED.equals(getStringPropertyValue(property));
   }
 
+  private static void setBooleanPropertyValue(@NotNull Property property, boolean enabled, @Nullable Project project) {
+    setStringPropertyValue(property, enabled ? ENABLED : DISABLED, project);
+  }
+
   private static void setBooleanPropertyValue(Property property, boolean enabled) {
-    setStringPropertyValue(property, enabled ? ENABLED : DISABLED);
+    setBooleanPropertyValue(property, enabled, null);
   }
 }

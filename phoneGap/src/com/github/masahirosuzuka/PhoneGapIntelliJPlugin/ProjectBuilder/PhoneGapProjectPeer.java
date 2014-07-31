@@ -1,7 +1,7 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUIUtil;
-import com.intellij.execution.util.ExecUtil;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommands;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
@@ -73,7 +73,8 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
           return new ValidationInfo("Please select path to executable");
         }
 
-        error = ExecUtil.execAndGetResult(path, "--version") > 0;
+        new PhoneGapCommands(path, null).version();
+        error = false;
       }
       catch (Exception e) {
         error = true;

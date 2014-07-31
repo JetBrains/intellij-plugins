@@ -7,14 +7,20 @@ import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Map;
 import java.util.UUID;
 
 public class DartiumUtil {
+
+  private static final String DART_FLAGS_ENV_VAR = "DART_FLAGS";
+  public static final String CHECKED_MODE_OPTION = "--checked";
+
   private static final UUID DARTIUM_ID = UUID.fromString("BFEE1B69-A97D-4338-8BA4-25170ADCBAA6");
   private static final String DARTIUM_NAME = "Dartium";
 
@@ -80,6 +86,49 @@ public class DartiumUtil {
 
     if (dartiumInitial != null && !dartiumSettingsFromUI.equals(dartiumInitial.getSpecificSettings())) {
       WebBrowserManager.getInstance().setBrowserSpecificSettings(dartiumInitial, dartiumSettingsFromUI);
+    }
+  }
+
+  public static boolean isCheckedMode(@NotNull final Map<String, String> envVars) {
+    final String dartFlags = envVars.get(DART_FLAGS_ENV_VAR);
+    return dartFlags != null && (dartFlags.trim().equals(CHECKED_MODE_OPTION) ||
+                                 dartFlags.startsWith(CHECKED_MODE_OPTION + " ") ||
+                                 dartFlags.endsWith(" " + CHECKED_MODE_OPTION) ||
+                                 dartFlags.contains(" " + CHECKED_MODE_OPTION + " "));
+  }
+
+  public static void setCheckedMode(@NotNull final Map<String, String> envVars, final boolean checkedMode) {
+    final boolean oldCheckedMode = isCheckedMode(envVars);
+    if (oldCheckedMode == checkedMode) return;
+
+    final String dartFlags = envVars.get(DART_FLAGS_ENV_VAR);
+    if (checkedMode) {
+      if (dartFlags == null) {
+        envVars.put(DART_FLAGS_ENV_VAR, CHECKED_MODE_OPTION);
+      }
+      else {
+        envVars.put(DART_FLAGS_ENV_VAR, dartFlags + " " + CHECKED_MODE_OPTION);
+      }
+    }
+    else {
+      String newFlags = dartFlags;
+      if (newFlags.trim().equals(CHECKED_MODE_OPTION)) {
+        newFlags = "";
+      }
+      newFlags = StringUtil.trimStart(newFlags, CHECKED_MODE_OPTION + " ");
+      newFlags = StringUtil.trimEnd(newFlags, " " + CHECKED_MODE_OPTION);
+      final int index = newFlags.indexOf(" " + CHECKED_MODE_OPTION + " ");
+      if (index != -1) {
+        // keep one space between parts
+        newFlags = newFlags.substring(0, index) + newFlags.substring(index + CHECKED_MODE_OPTION.length() + 1);
+      }
+
+      if (StringUtil.isEmptyOrSpaces(newFlags)) {
+        envVars.remove(DART_FLAGS_ENV_VAR);
+      }
+      else {
+        envVars.put(DART_FLAGS_ENV_VAR, newFlags);
+      }
     }
   }
 }

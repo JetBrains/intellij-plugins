@@ -6,7 +6,8 @@ import com.intellij.platform.ProjectTemplate;
 import com.intellij.platform.ProjectTemplatesFactory;
 import org.jetbrains.annotations.NotNull;
 
-public class PhoneGapTemplatesFactory extends ProjectTemplatesFactory {
+public class
+  PhoneGapTemplatesFactory extends ProjectTemplatesFactory {
   @NotNull
   @Override
   public String[] getGroups() {

@@ -21,6 +21,7 @@ import java.util.Map;
 public class DartCommandLineRunnerParameters implements Cloneable {
   private @Nullable String myFilePath = null;
   private @Nullable String myVMOptions = null;
+  private boolean myCheckedMode = true;
   private @Nullable String myArguments = null;
   private @Nullable String myWorkingDirectory = null;
   private @NotNull Map<String, String> myEnvs = new LinkedHashMap<String, String>();
@@ -42,6 +43,14 @@ public class DartCommandLineRunnerParameters implements Cloneable {
 
   public void setVMOptions(final @Nullable String vmOptions) {
     myVMOptions = vmOptions;
+  }
+
+  public boolean isCheckedMode() {
+    return myCheckedMode;
+  }
+
+  public void setCheckedMode(final boolean checkedMode) {
+    myCheckedMode = checkedMode;
   }
 
   @Nullable

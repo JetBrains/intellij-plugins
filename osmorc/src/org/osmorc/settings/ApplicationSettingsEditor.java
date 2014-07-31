@@ -52,7 +52,7 @@ public class ApplicationSettingsEditor implements SearchableConfigurable, Config
 
   @Override
   public String getHelpTopic() {
-    return null;
+    return "topicId642359";
   }
 
   @NotNull

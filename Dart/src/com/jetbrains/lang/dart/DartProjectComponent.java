@@ -1,11 +1,20 @@
 package com.jetbrains.lang.dart;
 
+import com.intellij.ide.browsers.BrowserSpecificSettings;
+import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
-import com.intellij.openapi.module.*;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.module.WebModuleTypeBase;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ModuleRootModificationUtil;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind;
@@ -45,6 +54,8 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartProjectComponent extends AbstractProjectComponent {
 
+  private static final String DARTIUM_CHECKED_MODE_INITIALLY_ENABLED_KEY = "DARTIUM_CHECKED_MODE_INITIALLY_ENABLED";
+
   protected DartProjectComponent(final Project project) {
     super(project);
   }
@@ -58,6 +69,8 @@ public class DartProjectComponent extends AbstractProjectComponent {
         deleteDartSdkGlobalLibConfiguredInOldIde();
 
         final String dartSdkGlobalLibName = importKnowledgeAboutOldDartSdkAndReturnGlobalLibName(myProject);
+
+        initiallyEnableDartiumCheckedModeIfNeeded();
 
         final Collection<VirtualFile> pubspecYamlFiles =
           FilenameIndex.getVirtualFilesByName(myProject, PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));
@@ -120,7 +133,11 @@ public class DartProjectComponent extends AbstractProjectComponent {
     else if (DartSdkUtil.isDartSdkHome(oldDartSdkPath)) {
       if (DartiumUtil.getDartiumBrowser() == null) {
         // configure even if getDartiumPathForSdk() returns null
-        DartiumUtil.ensureDartiumBrowserConfigured(DartiumUtil.getDartiumPathForSdk(oldDartSdkPath));
+        final WebBrowser browser = DartiumUtil.ensureDartiumBrowserConfigured(DartiumUtil.getDartiumPathForSdk(oldDartSdkPath));
+        final BrowserSpecificSettings browserSpecificSettings = browser.getSpecificSettings();
+        if (browserSpecificSettings instanceof ChromeSettings) {
+          DartiumUtil.setCheckedMode(((ChromeSettings)browserSpecificSettings).getEnvironmentVariables(), true);
+        }
       }
 
       return ApplicationManager.getApplication().runWriteAction(new Computable<String>() {
@@ -131,6 +148,19 @@ public class DartProjectComponent extends AbstractProjectComponent {
     }
 
     return null;
+  }
+
+  private static void initiallyEnableDartiumCheckedModeIfNeeded() {
+    if (PropertiesComponent.getInstance().getBoolean(DARTIUM_CHECKED_MODE_INITIALLY_ENABLED_KEY, false)) {
+      return;
+    }
+    PropertiesComponent.getInstance().setValue(DARTIUM_CHECKED_MODE_INITIALLY_ENABLED_KEY, "true");
+
+    final WebBrowser dartium = DartiumUtil.getDartiumBrowser();
+    final BrowserSpecificSettings browserSpecificSettings = dartium == null ? null : dartium.getSpecificSettings();
+    if (browserSpecificSettings instanceof ChromeSettings) {
+      DartiumUtil.setCheckedMode(browserSpecificSettings.getEnvironmentVariables(), true);
+    }
   }
 
   private static void deleteDartSdkGlobalLibConfiguredInOldIde() {

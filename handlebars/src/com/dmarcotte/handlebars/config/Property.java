@@ -77,7 +77,24 @@ enum Property {
     public String getDefault() {
       return HTMLLanguage.INSTANCE.getID();
     }
+
+  },
+
+  SHOULD_OPEN_HTML {
+    @NotNull
+    @Override
+    public String getStringName() {
+      return "HbShouldOpenHtmlAsHb";
+    }
+
+    @NotNull
+    @Override
+    public String getDefault() {
+      return "";
+    }
   };
+
+
 
   public static final String ENABLED = "enabled";
   public static final String DISABLED = "disabled";

@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.ui.components.JBCheckBox;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
@@ -32,6 +33,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   private JLabel myDartFileLabel;
   private TextFieldWithBrowseButton myFileField;
   private RawCommandLineEditor myVMOptions;
+  private JBCheckBox myCheckedModeCheckBox;
   private RawCommandLineEditor myArguments;
   private TextFieldWithBrowseButton myWorkingDirectory;
   private EnvironmentVariablesComponent myEnvironmentVariables;
@@ -88,6 +90,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
     myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
+    myCheckedModeCheckBox.setSelected(parameters.isCheckedMode());
     myWorkingDirectory.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getWorkingDirectory())));
     myEnvironmentVariables.setEnvs(parameters.getEnvs());
     myEnvironmentVariables.setPassParentEnvs(parameters.isIncludeParentEnvs());
@@ -100,6 +103,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
     parameters.setArguments(StringUtil.nullize(myArguments.getText(), true));
     parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
+    parameters.setCheckedMode(myCheckedModeCheckBox.isSelected());
     parameters.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
     parameters.setEnvs(myEnvironmentVariables.getEnvs());
     parameters.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());

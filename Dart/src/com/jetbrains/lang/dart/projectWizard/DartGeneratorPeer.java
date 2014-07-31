@@ -4,7 +4,6 @@ import com.intellij.ide.browsers.BrowserSpecificSettings;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.ide.util.projectWizard.SettingsStep;
-import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -15,6 +14,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.platform.WebProjectGenerator;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
@@ -25,8 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<DartProjectWizardData> {
   private JPanel myMainPanel;
@@ -36,6 +34,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   private JPanel myDartiumSettingsPanel;
   private TextFieldWithBrowseButton myDartiumPathTextWithBrowse;
   private JButton myDartiumSettingsButton;
+  private JBCheckBox myCheckedModeCheckBox;
 
   private ChromeSettings myDartiumSettingsCurrent;
 
@@ -62,13 +61,12 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
     // now setup controls
     DartSdkUtil.initDartSdkAndDartiumControls(null, mySdkPathTextWithBrowse, myVersionLabel, myDartiumPathTextWithBrowse,
+                                              new Computable.PredefinedValueComputable<ChromeSettings>(myDartiumSettingsCurrent),
+                                              myDartiumSettingsButton, myCheckedModeCheckBox,
                                               new Computable.PredefinedValueComputable<Boolean>(false));
 
-    myDartiumSettingsButton.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        ShowSettingsUtil.getInstance().editConfigurable(myDartiumSettingsButton, myDartiumSettingsCurrent.createConfigurable());
-      }
-    });
+    final boolean checkedMode = dartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
+    myCheckedModeCheckBox.setSelected(checkedMode);
   }
 
   @NotNull
@@ -82,6 +80,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     settingsStep.addSettingsField(DartBundle.message("dart.sdk.path.label"), mySdkPathTextWithBrowse);
     settingsStep.addSettingsField(DartBundle.message("version.label"), myVersionLabel);
     settingsStep.addSettingsField(DartBundle.message("dartium.path.label"), myDartiumSettingsPanel);
+    settingsStep.addSettingsField("", myCheckedModeCheckBox);
   }
 
   @NotNull

@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
+import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
@@ -113,6 +114,10 @@ public class DartCommandLineRunningState extends CommandLineState {
       while (vmOptionsTokenizer.hasMoreTokens()) {
         commandLine.addParameter(vmOptionsTokenizer.nextToken());
       }
+    }
+
+    if (runnerParameters.isCheckedMode()) {
+      commandLine.addParameter(DartiumUtil.CHECKED_MODE_OPTION);
     }
 
     final VirtualFile dartFile;
