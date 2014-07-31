@@ -15,15 +15,20 @@ import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.ArrayList;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.List;
 
-public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfiguration> {
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.*;
+
+public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunConfiguration> {
 
   private TextFieldWithHistoryWithBrowseButton myExecutablePathField;
   private ComboBox myPlatformField;
+  private ComboBox myCommand;
   private final Project myProject;
 
-  public PhoneGapConfigurationEditor(Project project) {
+  public PhoneGapRunConfigurationEditor(Project project) {
     myProject = project;
   }
 
@@ -33,18 +38,24 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
     String executable = s.getExecutable();
     PhoneGapUIUtil.setExecutablePath(myExecutablePathField,
                                      !StringUtil.isEmpty(executable) ? executable : PhoneGapSettings.getInstance().getExecutablePath());
-    String item = getCommandsMap().get(s.getPlatform());
+    String item = getPlatformsMap().get(s.getPlatform());
     if (item != null) {
       myPlatformField.setSelectedItem(item);
     }
+    String command = s.getCommand();
+    if (command != null) {
+      myCommand.setSelectedItem(command);
+      myPlatformField.setEnabled(!COMMAND_RIPPLE.equals(command));
+    }
+
   }
 
   @Override
   protected void applyEditorTo(PhoneGapRunConfiguration s) throws ConfigurationException {
     s.setExecutable(myExecutablePathField.getText());
     String item = (String)myPlatformField.getSelectedItem();
-    s.setPlatform(ContainerUtil.getFirstItem(getCommandsMap().getKeysByValue(item)));
-    s.setCommand("run");
+    s.setPlatform(ContainerUtil.getFirstItem(getPlatformsMap().getKeysByValue(item)));
+    s.setCommand((String)myCommand.getSelectedItem());
   }
 
 
@@ -53,17 +64,36 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
   protected JComponent createEditor() {
     myExecutablePathField = PhoneGapUIUtil.createPhoneGapExecutableTextField(myProject);
     myPlatformField = new ComboBox();
-    addItems(myPlatformField);
+    myCommand = new ComboBox();
+    myCommand.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        Object item = e.getItem();
+        myPlatformField.setEnabled(!COMMAND_RIPPLE.equals(item));
+      }
+    });
+
+    addPlatformItems(myPlatformField);
+    addCommandItems(myCommand);
 
     return FormBuilder.createFormBuilder()
       .addLabeledComponent("Phonegap/Cordova executable path:", myExecutablePathField)
+      .addLabeledComponent("Command:", myCommand)
       .addLabeledComponent("Platform:", myPlatformField)
       .getPanel();
   }
 
+  private static void addCommandItems(ComboBox box) {
+    addItems(box, ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN, COMMAND_RIPPLE));
+  }
+
+
+  private static void addPlatformItems(ComboBox box) {
+    addItems(box, ContainerUtil.newArrayList(getPlatformsMap().values()));
+  }
+
   @SuppressWarnings("unchecked")
-  private static void addItems(ComboBox box) {
-    ArrayList<String> list = ContainerUtil.newArrayList(getCommandsMap().values());
+  private static void addItems(ComboBox box, List<String> list) {
     ContainerUtil.sort(list);
     for (String s : list) {
       box.addItem(s);
@@ -72,11 +102,10 @@ public class PhoneGapConfigurationEditor extends SettingsEditor<PhoneGapRunConfi
     box.setSelectedIndex(0);
   }
 
-  private static BidirectionalMap<String, String> getCommandsMap() {
+  private static BidirectionalMap<String, String> getPlatformsMap() {
     BidirectionalMap<String, String> map = new BidirectionalMap<String, String>();
     map.put("android", "Android");
     map.put("ios", "iOS");
-    map.put("Setup http server", "Ripple");
 
     return map;
   }

@@ -26,7 +26,7 @@ public class PhoneGapPluginsList {
 
   public static volatile Map<String, PhoneGapRepoPackage> CACHED_REPO;
 
-  private static boolean isExcluded(String name) {
+  private static boolean isExcludedProperty(String name) {
     return "_updated".equals(name);
   }
 
@@ -101,7 +101,7 @@ public class PhoneGapPluginsList {
 
       JsonObject object = jsonElement.getAsJsonObject();
       for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
-        if (!isExcluded(entry.getKey())) {
+        if (!isExcludedProperty(entry.getKey())) {
           result.put(entry.getKey(), new PhoneGapRepoPackage(entry.getKey(), entry.getValue().getAsJsonObject()));
         }
       }

@@ -2,10 +2,13 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.plugins;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.FormBuilder;
+import com.intellij.util.ui.UIUtil;
 import com.intellij.webcore.packaging.PackagesNotificationPanel;
 
 import javax.swing.*;
@@ -27,34 +30,67 @@ public class PhoneGapPluginsView {
     myComponent = wrapper;
   }
 
-  public void setupService(PhoneGapCommandLine commandLine) {
-    PhoneGapPackageManagementService service = null;
+  public interface VersionCallback {
+    void forVersion(String version);
+  }
 
-    if (!commandLine.isCorrectExecutable()) {
-      packagesNotificationPanel.showError("Please correct path to phoneGap/cordova executable", null, null);
-      myPanel.updatePackages(null);
+  public void setupService(final String path, final String workdir, final VersionCallback callback) {
+    packagesNotificationPanel.removeAllLinkHandlers();
+    packagesNotificationPanel.hide();
+    callback.forVersion("");
+    if (StringUtil.isEmpty(path)) {
       return;
     }
 
-    packagesNotificationPanel.hide();
-    packagesNotificationPanel.removeAllLinkHandlers();
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
+      public void run() {
+        final Ref<String> error = new Ref<String>();
+        final Ref<String> warning = new Ref<String>();
+        final Ref<PhoneGapPackageManagementService> service = new Ref<PhoneGapPackageManagementService>();
+        final Ref<String> version = new Ref<String>();
+        try {
+          PhoneGapCommandLine commandLine = new PhoneGapCommandLine(path, workdir);
 
-    try {
-        ProcessOutput output = commandLine.pluginListRaw();
-        if (StringUtil.isEmpty(output.getStderr())) {
-          service = new PhoneGapPackageManagementService(commandLine);
-          if (commandLine.isOld()) {
-            packagesNotificationPanel.showWarning("Phonegap/Cordova version before 3.5 doesn't support plugin version management");
+          if (commandLine.isCorrectExecutable()) {
+            version.set(commandLine.version());
+            ProcessOutput output = commandLine.pluginListRaw();
+            if (StringUtil.isEmpty(output.getStderr())) {
+              service.set(new PhoneGapPackageManagementService(commandLine));
+
+              if (commandLine.isOld()) {
+                warning.set("Phonegap/Cordova version before 3.5 doesn't support plugin version management");
+              }
+            }
+            else {
+              error.set("Project root directory is not phonegap/cordova project");
+            }
           }
-        } else {
-          packagesNotificationPanel.showError("Project root directory is not phonegap/cordova project", null, null);
+          else {
+            error.set("Please correct path to phoneGap/cordova executable");
+          }
         }
-    }
-    catch (Exception e) {
-      packagesNotificationPanel.showError("Please correct path to phoneGap/cordova executable", null, null);
-    }
+        catch (Exception e) {
+          error.set("Please correct path to phoneGap/cordova executable");
+        }
 
-    myPanel.updatePackages(service);
+        UIUtil.invokeLaterIfNeeded(new Runnable() {
+          @Override
+          public void run() {
+            myPanel.updatePackages(service.get());
+            if (error.get() != null) {
+              packagesNotificationPanel.showError(error.get(), null, null);
+            }
+
+            if (warning.get() != null) {
+              packagesNotificationPanel.showWarning(warning.get());
+            }
+
+            callback.forVersion(version.get());
+          }
+        });
+      }
+    });
   }
 
   public JPanel getPanel() {

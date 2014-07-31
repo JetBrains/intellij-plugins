@@ -1,7 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUIUtil;
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.plugins.PhoneGapPluginsView;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.openapi.options.Configurable;
@@ -87,21 +86,15 @@ public class PhoneGapConfigurable implements Configurable {
       myWrapper.add(panel, BorderLayout.NORTH);
       setUpListener();
       if (!StringUtil.isEmpty(myExecutablePath.getText())) {
-        PhoneGapCommandLine line = getCommandLine();
-        phoneGapPluginsView.setupService(line);
-        setVersion(line);
+        phoneGapPluginsView.setupService(myExecutablePath.getText(), myProject.getBasePath(), getVersionCallback());
       }
     }
 
     return myWrapper;
   }
 
-  private PhoneGapCommandLine getCommandLine() {
-    return new PhoneGapCommandLine(myExecutablePath.getText(), myProject.getBasePath());
-  }
-
-  private void setVersion(PhoneGapCommandLine line) {
-    myVersion.setText(line.isCorrectExecutable() ? line.version() : "");
+  private void setVersion(String version) {
+    myVersion.setText(version);
   }
 
   public void setUpListener() {
@@ -113,9 +106,7 @@ public class PhoneGapConfigurable implements Configurable {
         String executablePath = StringUtil.notNullize(textField.getText());
         String prevExecutablePath = prevExecutablePathRef.get();
         if (!prevExecutablePath.equals(executablePath)) {
-          PhoneGapCommandLine line = getCommandLine();
-          phoneGapPluginsView.setupService(line);
-          setVersion(line);
+          phoneGapPluginsView.setupService(myExecutablePath.getText(), myProject.getBasePath(), getVersionCallback());
           prevExecutablePathRef.set(executablePath);
         }
       }
@@ -139,5 +130,14 @@ public class PhoneGapConfigurable implements Configurable {
 
   @Override
   public void disposeUIResources() {
+  }
+
+  private PhoneGapPluginsView.VersionCallback getVersionCallback() {
+    return new PhoneGapPluginsView.VersionCallback() {
+      @Override
+      public void forVersion(String version) {
+        setVersion(version);
+      }
+    };
   }
 }

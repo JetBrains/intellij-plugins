@@ -12,15 +12,24 @@ import org.apache.commons.codec.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class PhoneGapCommandLine {
-  public static final Logger LOGGER = Logger.getInstance(PhoneGapCommandLine.class);
+  private static final Logger LOGGER = Logger.getInstance(PhoneGapCommandLine.class);
 
   public static final String INFO_PHONEGAP = "the following plugins are installed";
+
+  public static final String PLATFORM_PHONEGAP = "phonegap";
+  public static final String PLATFORM_CORDOVA = "cordova";
+  public static final String PLATFORM_IONIC = "ionic";
+  public static final String COMMAND_RUN = "run";
+  public static final String COMMAND_EMULATE = "emulate";
+  public static final String COMMAND_RIPPLE = "ripple";
+
 
   @Nullable
   private final String myWorkDir;
@@ -43,7 +52,7 @@ public class PhoneGapCommandLine {
     myWorkDir = dir;
     myPath = path;
     try {
-      version = executeAndReturnResult(myPath, "--version").replace("\"", "").trim();
+      version = getInnerVersion(myPath, "--version").replace("\"", "").trim();
     }
     catch (Exception e) {
       version = null;
@@ -75,16 +84,22 @@ public class PhoneGapCommandLine {
   public boolean isOld() {
     if (StringUtil.isEmpty(version)) return false;
 
-    String[] split = version.split("\\.");
-    int first = Integer.parseInt(split[0]);
-    if (first > 3) return false;
-    if (first == 3) {
-      return (split.length < 2 || Integer.parseInt(split[1]) < 5);
+    try {
+      String[] split = version.split("\\.");
+      int first = Integer.parseInt(split[0]);
+      if (first > 3) return false;
+      if (first == 3) {
+        return (split.length < 2 || Integer.parseInt(split[1]) < 5);
+      }
+      return first < 3;
     }
-
-    return first < 3;
+    catch (RuntimeException e) {
+      LOGGER.debug(e.getMessage(), e);
+    }
+    return false;
   }
 
+  @NotNull
   public List<String> pluginList() {
     try {
       String out = executeAndReturnResult(myPath, "plugin", "list").trim();
@@ -94,6 +109,49 @@ public class PhoneGapCommandLine {
       LOGGER.debug(e.getMessage(), e);
       return Collections.emptyList();
     }
+  }
+
+  @NotNull
+  public OSProcessHandler runCommand(@NotNull String command, @NotNull String platform) throws ExecutionException {
+    if (COMMAND_RUN.equals(command)) {
+      return run(platform);
+    }
+
+    if (COMMAND_EMULATE.equals(command)) {
+      return emulate(platform);
+    }
+
+    throw new IllegalStateException("Unsupported command");
+  }
+
+  private OSProcessHandler emulate(@NotNull String platform) throws ExecutionException {
+    GeneralCommandLine commandLine;
+    if (isPhoneGap()) {
+      commandLine = new GeneralCommandLine(myPath, "run", platform, "--emulate");
+    }
+    else {
+      commandLine = new GeneralCommandLine(myPath, "emulate", platform);
+    }
+    commandLine.setWorkDirectory(myWorkDir);
+    return KillableColoredProcessHandler.create(commandLine);
+  }
+
+  private OSProcessHandler run(@NotNull String platform) throws ExecutionException {
+    GeneralCommandLine commandLine = new GeneralCommandLine(myPath, "run", platform);
+    commandLine.setWorkDirectory(myWorkDir);
+    return KillableColoredProcessHandler.create(commandLine);
+  }
+
+  private boolean isPhoneGap() {
+    assert myWorkDir != null;
+    File file = new File(myPath);
+    if (file.getName().contains(PLATFORM_PHONEGAP)) return true;
+    if (file.getName().contains(PLATFORM_CORDOVA)) return false;
+    if (file.getName().contains(PLATFORM_IONIC)) return false;
+
+    String s = executeAndReturnResult(myPath);
+
+    return s.contains(PLATFORM_PHONEGAP);
   }
 
   static List<String> parsePluginList(String out) {
@@ -130,6 +188,27 @@ public class PhoneGapCommandLine {
       LOGGER.debug(e.getMessage(), e);
 
       throw new RuntimeException("Select correct executable path", e);
+    }
+  }
+
+  private String getInnerVersion(String... command) {
+    try {
+      final ProcessOutput output = executeAndGetOut(command);
+
+      String stderr = output.getStderr();
+      if (output.getExitCode() > 0) {
+        throw new RuntimeException("Command error: " + stderr);
+      }
+
+      String stdout = output.getStdout();
+      if (StringUtil.isEmpty(stdout) && !StringUtil.isEmpty(stderr) && stderr.startsWith("v")) {
+        return stderr.substring(1);
+      }
+
+      return stdout;
+    }
+    catch (Exception e) {
+      throw new RuntimeException(e.getMessage(), e);
     }
   }
 
