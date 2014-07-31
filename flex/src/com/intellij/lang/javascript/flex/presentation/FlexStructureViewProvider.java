@@ -6,10 +6,7 @@ import com.intellij.ide.structureView.xml.XmlStructureViewBuilderProvider;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.index.JSIndexEntry;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
-import com.intellij.lang.javascript.index.JSNamespace;
-import com.intellij.lang.javascript.index.JavaScriptIndex;
+import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.structureView.JSStructureViewElement;
@@ -63,8 +60,9 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     }
 
     @Override
-    protected List<StructureViewTreeElement> collectMyElements(final THashSet<String> referencedNames, final JSIndexEntry entry,
-                                                           final JSNamespace ns, final JavaScriptIndex index, PsiFile contextFile) {
+    protected List<StructureViewTreeElement> collectMyElements(final THashSet<String> referencedNamedIds,
+                                                               final JSQualifiedName ns,
+                                                               final PsiFile contextFile) {
       final List<StructureViewTreeElement> result = new ArrayList<StructureViewTreeElement>();
       final ResolveProcessor processor = new ResolveProcessor(null) {
         @Override
@@ -95,12 +93,12 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     }
 
     @Override
-    protected JSStructureViewElement createStructureViewElement(final PsiElement element, final JSNamedElementProxy proxy) {
+    protected JSStructureViewElement createStructureViewElement(final PsiElement element) {
       if (element instanceof XmlBackedJSClassImpl) {
         PsiFile file = element.getContainingFile();
         return new FlexStructureViewElement((JSClass)element, (XmlFile)file, myIncludeInherited);
       } else {
-        return super.createStructureViewElement(element, proxy);
+        return super.createStructureViewElement(element);
       }
     }
   }
