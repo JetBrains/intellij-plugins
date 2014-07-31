@@ -208,7 +208,7 @@ varAccessDeclaration ::= metadata* 'static'? (finalOrConst type componentName | 
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private finalOrConst ::= 'final' | 'const'
 private varDeclarationListWithSemicolon ::= varDeclarationList ';'{pin=1}
-varDeclarationList ::= varAccessDeclaration varInit? (',' varDeclarationListPart)* {pin = 3 methods = [getMetadataList]}
+varDeclarationList ::= varAccessDeclaration varInit? (',' varDeclarationListPart)* {pin = 3}
 varDeclarationListPart ::= componentName varInit?
 {
   mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl"

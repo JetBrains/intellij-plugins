@@ -40,9 +40,4 @@ public class DartVarDeclarationListImpl extends DartPsiCompositeElementImpl impl
     return findChildByClass(DartVarInit.class);
   }
 
-  @NotNull
-  public List<DartMetadata> getMetadataList() {
-    return DartPsiImplUtil.getMetadataList(this);
-  }
-
 }
