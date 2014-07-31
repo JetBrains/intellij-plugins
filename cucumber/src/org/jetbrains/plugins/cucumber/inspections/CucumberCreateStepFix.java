@@ -113,8 +113,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
 
       if (!ApplicationManager.getApplication().isUnitTestMode()) {
         popupStep.showCenteredInCurrentWindow(step.getProject());
-      }
-      else {
+      } else {
         new WriteCommandAction.Simple(step.getProject()) {
           @Override
           protected void run() throws Throwable {
@@ -201,12 +200,12 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     Map<BDDFrameworkType, String> supportedFileTypesAndDefaultFileNames = new HashMap<BDDFrameworkType, String>();
     Map<BDDFrameworkType, PsiDirectory> fileTypeToDefaultDirectoryMap = new HashMap<BDDFrameworkType, PsiDirectory>();
     for (CucumberJvmExtensionPoint e : Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME)) {
-      if (e instanceof OptionalStepDefinitionExtensionPoint) {
-        // Skip if framework file creation support is optional
-        if (!((OptionalStepDefinitionExtensionPoint)e).participateInStepDefinitionCreation(step)) {
-          continue;
-        }
-      }
+       if (e instanceof OptionalStepDefinitionExtensionPoint) {
+         // Skip if framework file creation support is optional
+         if (!((OptionalStepDefinitionExtensionPoint)e).participateInStepDefinitionCreation(step)) {
+           continue;
+         }
+       }
       supportedFileTypesAndDefaultFileNames.put(e.getStepFileType(), e.getStepDefinitionCreator().getDefaultStepFileName());
       fileTypeToDefaultDirectoryMap.put(e.getStepFileType(), e.getStepDefinitionCreator().getDefaultStepDefinitionFolder(step));
     }
@@ -245,15 +244,24 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     public int compare(Pair<PsiFile, BDDFrameworkType> pair1, Pair<PsiFile, BDDFrameworkType> pair2) {
       if (pair1 == null && pair2 == null) {
         return 0;
-      }
-      else if (pair1 == null) {
+      } else if (pair1 == null) {
         return -1;
-      }
-      else if (pair2 == null) {
+      } else if (pair2 == null) {
         return 1;
       }
 
-      return pair1.getFirst().getVirtualFile().getPath().compareTo(pair2.getFirst().getVirtualFile().getPath());
+      final VirtualFile virtualFile1 = pair1.getFirst().getVirtualFile();
+      final VirtualFile virtualFile2 = pair2.getFirst().getVirtualFile();
+      if (virtualFile1 == null && virtualFile2 == null) {
+        return 0;
+      }
+      else if (virtualFile1 == null) {
+        return -1;
+      }
+      else if (virtualFile2 == null) {
+        return 1;
+      }
+      return virtualFile1.getPath().compareTo(virtualFile2.getPath());
     }
   }
 }
