@@ -1,9 +1,10 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.plugins;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommands;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.webcore.packaging.PackagesNotificationPanel;
 
@@ -14,29 +15,24 @@ import java.awt.*;
 public class PhoneGapPluginsView {
   private final PhoneGapInstalledPluginsPanel myPanel;
   private final JPanel myComponent;
-  private Project myProject;
   private PackagesNotificationPanel packagesNotificationPanel;
-  private volatile String myCurrentPath;
 
   public PhoneGapPluginsView(Project project) {
-    myProject = project;
-
-    myProject = project;
-    //panel.setBorder(IdeBorderFactory.createTitledBorder("Plugins", false));
     packagesNotificationPanel = new PackagesNotificationPanel(project);
     myPanel = new PhoneGapInstalledPluginsPanel(project, packagesNotificationPanel);
     myPanel.setPreferredSize(new Dimension(400, 400));
-    //panel.add(myPanel, BorderLayout.CENTER);
-    //panel.add(packagesNotificationPanel.getComponent(), BorderLayout.SOUTH);
-    //panel.setPreferredSize(new Dimension(400, 400));
     JPanel wrapper = new JPanel(new BorderLayout());
+    wrapper.setBorder(IdeBorderFactory.createTitledBorder("Plugins", false));
     wrapper.add(FormBuilder.createFormBuilder().addComponent(myPanel).addComponent(packagesNotificationPanel.getComponent()).getPanel());
     myComponent = wrapper;
   }
 
-  public void setupService(String path) {
+  public void setupService(PhoneGapCommandLine commandLine) {
     PhoneGapPackageManagementService service = null;
-    if (myCurrentPath == path) {
+
+    if (!commandLine.isCorrectExecutable()) {
+      packagesNotificationPanel.showError("Please correct path to phoneGap/cordova executable", null, null);
+      myPanel.updatePackages(null);
       return;
     }
 
@@ -44,20 +40,20 @@ public class PhoneGapPluginsView {
     packagesNotificationPanel.removeAllLinkHandlers();
 
     try {
-      if (!StringUtil.isEmpty(path)) {
-        ProcessOutput output = new PhoneGapCommands(path, myProject.getBasePath()).pluginListRaw();
+        ProcessOutput output = commandLine.pluginListRaw();
         if (StringUtil.isEmpty(output.getStderr())) {
-          service = new PhoneGapPackageManagementService(myProject, path);
+          service = new PhoneGapPackageManagementService(commandLine);
+          if (commandLine.isOld()) {
+            packagesNotificationPanel.showWarning("Phonegap/Cordova version before 3.5 doesn't support plugin version management");
+          }
         } else {
           packagesNotificationPanel.showError("Project root directory is not phonegap/cordova project", null, null);
         }
-      }
     }
     catch (Exception e) {
       packagesNotificationPanel.showError("Please correct path to phoneGap/cordova executable", null, null);
     }
 
-    myCurrentPath = path;
     myPanel.updatePackages(service);
   }
 

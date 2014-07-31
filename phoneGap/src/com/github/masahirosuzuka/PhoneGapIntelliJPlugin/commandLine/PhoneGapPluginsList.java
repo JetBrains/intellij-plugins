@@ -3,13 +3,13 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.net.NetUtils;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.RepoPackage;
-
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -35,9 +35,24 @@ public class PhoneGapPluginsList {
   public static final class PhoneGapRepoPackage extends RepoPackage {
     private final String myDesc;
 
-    public PhoneGapRepoPackage(String name, String desc, String repoUrl) {
-      super(name, repoUrl);
-      myDesc = desc;
+    public PhoneGapRepoPackage(String name, JsonObject jsonObject) {
+      super(name, PLUGINS_URL, getVersionLatest(jsonObject.getAsJsonObject()));
+      myDesc = getDescr(jsonObject);
+    }
+
+    private static String getDescr(JsonObject jsonObject) {
+      JsonElement descriptionElement = jsonObject.get("description");
+      return descriptionElement == null ? "" : descriptionElement.getAsString();
+    }
+
+    private static String getVersionLatest(JsonObject jsonObject) {
+      JsonElement element = jsonObject.get("dist-tags");
+      if (element == null || !element.isJsonObject()) {
+        return null;
+      }
+      JsonObject asObject = element.getAsJsonObject();
+      JsonElement latest = asObject.get("latest");
+      return latest == null ? null : latest.getAsString();
     }
 
     public String getDesc() {
@@ -45,9 +60,8 @@ public class PhoneGapPluginsList {
     }
   }
 
-  public static String getDescription(String name) {
-    PhoneGapRepoPackage aPackage = mapCached().get(name);
-    return aPackage == null ? "" : aPackage.getDesc();
+  public static PhoneGapRepoPackage getPackage(String name) {
+    return mapCached().get(name);
   }
 
   public static List<RepoPackage> listCached() {
@@ -88,9 +102,7 @@ public class PhoneGapPluginsList {
       JsonObject object = jsonElement.getAsJsonObject();
       for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
         if (!isExcluded(entry.getKey())) {
-          JsonElement descriptionElement = entry.getValue().getAsJsonObject().get("description");
-          String description = descriptionElement == null ? "" : descriptionElement.getAsString();
-          result.put(entry.getKey(), new PhoneGapRepoPackage(entry.getKey(), description, PLUGINS_URL));
+          result.put(entry.getKey(), new PhoneGapRepoPackage(entry.getKey(), entry.getValue().getAsJsonObject()));
         }
       }
     }
@@ -113,7 +125,10 @@ public class PhoneGapPluginsList {
     return ContainerUtil.map(names, new Function<String, InstalledPackage>() {
       @Override
       public InstalledPackage fun(String s) {
-        return new InstalledPackage(s, "");
+        String[] split = s.split(" ");
+        String name = ArrayUtil.getFirstElement(split);
+        String version = split.length > 1 ? split[1] : "";
+        return new InstalledPackage(name, version);
       }
     });
   }

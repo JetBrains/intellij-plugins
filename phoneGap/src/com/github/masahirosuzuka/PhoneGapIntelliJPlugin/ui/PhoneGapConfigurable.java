@@ -1,6 +1,7 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUIUtil;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.plugins.PhoneGapPluginsView;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.openapi.options.Configurable;
@@ -10,6 +11,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +34,7 @@ public class PhoneGapConfigurable implements Configurable {
   private PhoneGapPluginsView phoneGapPluginsView;
   private Project myProject;
   private JPanel myWrapper;
+  private JBLabel myVersion;
 
   public PhoneGapConfigurable(Project project) {
     myProject = project;
@@ -72,19 +75,33 @@ public class PhoneGapConfigurable implements Configurable {
 
     if (myWrapper == null) {
       myExecutablePath = PhoneGapUIUtil.createPhoneGapExecutableTextField(myProject);
+      myVersion = new JBLabel();
       myUIController = new UIController();
       myUIController.reset(mySettings.getState());
       phoneGapPluginsView = new PhoneGapPluginsView(myProject);
       JPanel panel = FormBuilder.createFormBuilder()
         .addLabeledComponent("PhoneGap/Cordova executable path:", myExecutablePath)
+        .addLabeledComponent("Phonegap/Cordova version:", myVersion)
         .addComponent(phoneGapPluginsView.getPanel()).getPanel();
       myWrapper = new JPanel(new BorderLayout());
       myWrapper.add(panel, BorderLayout.NORTH);
       setUpListener();
-      phoneGapPluginsView.setupService(myExecutablePath.getText());
+      if (!StringUtil.isEmpty(myExecutablePath.getText())) {
+        PhoneGapCommandLine line = getCommandLine();
+        phoneGapPluginsView.setupService(line);
+        setVersion(line);
+      }
     }
 
     return myWrapper;
+  }
+
+  private PhoneGapCommandLine getCommandLine() {
+    return new PhoneGapCommandLine(myExecutablePath.getText(), myProject.getBasePath());
+  }
+
+  private void setVersion(PhoneGapCommandLine line) {
+    myVersion.setText(line.isCorrectExecutable() ? line.version() : "");
   }
 
   public void setUpListener() {
@@ -96,7 +113,9 @@ public class PhoneGapConfigurable implements Configurable {
         String executablePath = StringUtil.notNullize(textField.getText());
         String prevExecutablePath = prevExecutablePathRef.get();
         if (!prevExecutablePath.equals(executablePath)) {
-          phoneGapPluginsView.setupService(executablePath);
+          PhoneGapCommandLine line = getCommandLine();
+          phoneGapPluginsView.setupService(line);
+          setVersion(line);
           prevExecutablePathRef.set(executablePath);
         }
       }
