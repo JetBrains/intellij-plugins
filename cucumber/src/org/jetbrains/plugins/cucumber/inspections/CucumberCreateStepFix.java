@@ -250,7 +250,18 @@ public class CucumberCreateStepFix implements LocalQuickFix {
         return 1;
       }
 
-      return pair1.getFirst().getName().compareTo(pair2.getFirst().getName());
+      final VirtualFile virtualFile1 = pair1.getFirst().getVirtualFile();
+      final VirtualFile virtualFile2 = pair2.getFirst().getVirtualFile();
+      if (virtualFile1 == null && virtualFile2 == null) {
+        return 0;
+      }
+      else if (virtualFile1 == null) {
+        return -1;
+      }
+      else if (virtualFile2 == null) {
+        return 1;
+      }
+      return virtualFile1.getPath().compareTo(virtualFile2.getPath());
     }
   }
 }
