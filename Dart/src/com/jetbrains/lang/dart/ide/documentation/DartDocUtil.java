@@ -194,10 +194,7 @@ public class DartDocUtil {
     if (type == null) {
       builder.append("var ");
     } else {
-      final PsiElement resolvedReference = type.resolveReference();
-      if (resolvedReference != null) {
-        builder.append(resolvedReference.getText()).append(" ");
-      }
+      builder.append(type.getReferenceExpression().getText()).append(" ");
     }
     builder.append("<b>").append(component.getName()).append("</b>");
   }
@@ -266,14 +263,15 @@ public class DartDocUtil {
   }
 
   private static void appendFunctionSignature(final StringBuilder builder, final DartComponent function, final DartReturnType returnType) {
-    final String returnString = returnType == null ? "void" : DartPresentableUtil.buildTypeText(null, returnType, null);
+    final String returnString = returnType == null ? "void" : StringUtil.escapeXml(
+      DartPresentableUtil.buildTypeText(null, returnType, null));
     appendFunctionSignature(builder, function, returnString);
   }
 
   private static void appendFunctionSignature(final StringBuilder builder, final DartComponent function, final String returnType) {
     builder.append("<b>").append(function.getName()).append("</b>");
     builder.append('(');
-    builder.append(DartPresentableUtil.getPresentableParameterList(function, new DartGenericSpecialization(), true));
+    builder.append(StringUtil.escapeXml(DartPresentableUtil.getPresentableParameterList(function, new DartGenericSpecialization(), true)));
     builder.append(')');
     builder.append(' ');
     builder.append(DartPresentableUtil.RIGHT_ARROW);

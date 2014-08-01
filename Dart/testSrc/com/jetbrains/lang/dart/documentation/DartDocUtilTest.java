@@ -101,7 +101,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testFunctionSig5() throws Exception {
-    doTest("<code><b>x</b>(List<E> e) " + RIGHT_ARROW + " E</code>",
+    doTest("<code><b>x</b>(List&lt;E&gt; e) " + RIGHT_ARROW + " E</code>",
            "E <caret>x(List<E> e) { }");
   }
 
@@ -111,6 +111,11 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testFunctionSig7() throws Exception {
+    doTest("<code><b>foo</b>(Map&lt;int, String&gt; p) " + RIGHT_ARROW + " Map&lt;String, int&gt;</code>",
+           "Map<String, int> <caret>foo(Map<int, String> p) => null;");
+  }
+
+  public void testFunctionSig8() throws Exception {
     doTest("<code><b>x</b>() " + RIGHT_ARROW + " void</code>",
            "<caret>x() => null;");
   }
