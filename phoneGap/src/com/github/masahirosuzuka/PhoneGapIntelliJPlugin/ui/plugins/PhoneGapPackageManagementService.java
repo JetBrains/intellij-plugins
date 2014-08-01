@@ -2,6 +2,7 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.plugins;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapPluginsList;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.util.Ref;
@@ -21,16 +22,18 @@ import java.util.List;
 
 public class PhoneGapPackageManagementService extends PackageManagementServiceEx {
   private final PhoneGapCommandLine myCommands;
-  private List<String> myRepos = ContainerUtil.newArrayList();
+  private PhoneGapConfigurable.RepositoryStore myRepositoryStore;
 
-  public PhoneGapPackageManagementService(PhoneGapCommandLine commandLine) {
+  public PhoneGapPackageManagementService(@NotNull PhoneGapCommandLine commandLine,
+                                          @NotNull PhoneGapConfigurable.RepositoryStore repositoryStore) {
+    myRepositoryStore = repositoryStore;
     myCommands = commandLine;
   }
 
   @Nullable
   @Override
   public List<String> getAllRepositories() {
-    return myRepos;
+    return myRepositoryStore.getRepositories();
   }
 
   @Override
@@ -40,12 +43,12 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
 
   @Override
   public void addRepository(String repositoryUrl) {
-    myRepos.add(repositoryUrl);
+    myRepositoryStore.addRepository(repositoryUrl);
   }
 
   @Override
   public void removeRepository(String repositoryUrl) {
-    myRepos.remove(repositoryUrl);
+    myRepositoryStore.remove(repositoryUrl);
   }
 
   @Override

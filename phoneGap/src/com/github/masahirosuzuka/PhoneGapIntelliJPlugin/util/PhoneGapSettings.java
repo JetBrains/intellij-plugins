@@ -36,11 +36,15 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
 
     public String executablePath;
 
+    public List<String> repositoriesList = ContainerUtil.newArrayList();
+
     @Override
     public boolean equals(Object o) {
       if (!(o instanceof State)) return false;
-
-      return StringUtil.equals(getExecutablePath(), ((State)o).getExecutablePath());
+      if(!StringUtil.equals(getExecutablePath(), ((State)o).getExecutablePath())) return false;
+      if (repositoriesList == ((State)o).repositoriesList) return true;
+      if (repositoriesList == null) return false;
+      return repositoriesList.equals(((State)o).repositoriesList);
     }
 
     @Override

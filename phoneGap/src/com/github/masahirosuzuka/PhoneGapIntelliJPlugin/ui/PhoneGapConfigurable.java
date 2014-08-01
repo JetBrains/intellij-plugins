@@ -11,6 +11,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
+import java.util.List;
 
 /**
  * PhoneGapSettingDialog.java
@@ -34,6 +36,35 @@ public class PhoneGapConfigurable implements Configurable {
   private Project myProject;
   private JPanel myWrapper;
   private JBLabel myVersion;
+  private RepositoryStore myRepositoryStore;
+
+  public static class RepositoryStore {
+    private List<String> myRepoList;
+
+    public RepositoryStore() {
+      setReposInner(ContainerUtil.<String>newArrayList());
+    }
+
+    private void setReposInner(List<String> repos) {
+      myRepoList = repos == null ? ContainerUtil.<String>newArrayList() : ContainerUtil.newArrayList(repos);
+    }
+
+    public List<String> getRepositories() {
+      return ContainerUtil.newArrayList(myRepoList);
+    }
+
+    public void addRepository(String repo) {
+      myRepoList.add(repo);
+    }
+
+    public void remove(String repo) {
+      myRepoList.remove(repo);
+    }
+
+    public void reset(List<String>  repos) {
+      setReposInner(repos);
+    }
+  }
 
   public PhoneGapConfigurable(Project project) {
     myProject = project;
@@ -43,6 +74,7 @@ public class PhoneGapConfigurable implements Configurable {
 
     public void reset(PhoneGapSettings.State state) {
       PhoneGapUIUtil.setExecutablePath(myExecutablePath, state.getExecutablePath());
+      myRepositoryStore.reset(state.repositoriesList);
     }
 
     public boolean isModified() {
@@ -52,6 +84,7 @@ public class PhoneGapConfigurable implements Configurable {
     private PhoneGapSettings.State getState() {
       PhoneGapSettings.State state = new PhoneGapSettings.State();
       state.executablePath = myExecutablePath.getText();
+      state.repositoriesList = myRepositoryStore.getRepositories();
       return state;
     }
   }
@@ -76,6 +109,7 @@ public class PhoneGapConfigurable implements Configurable {
       myExecutablePath = PhoneGapUIUtil.createPhoneGapExecutableTextField(myProject);
       myVersion = new JBLabel();
       myUIController = new UIController();
+      myRepositoryStore = new RepositoryStore();
       myUIController.reset(mySettings.getState());
       phoneGapPluginsView = new PhoneGapPluginsView(myProject);
       JPanel panel = FormBuilder.createFormBuilder()
@@ -86,7 +120,7 @@ public class PhoneGapConfigurable implements Configurable {
       myWrapper.add(panel, BorderLayout.NORTH);
       setUpListener();
       if (!StringUtil.isEmpty(myExecutablePath.getText())) {
-        phoneGapPluginsView.setupService(myExecutablePath.getText(), myProject.getBasePath(), getVersionCallback());
+        phoneGapPluginsView.setupService(myExecutablePath.getText(), myRepositoryStore, getVersionCallback());
       }
     }
 
@@ -106,7 +140,7 @@ public class PhoneGapConfigurable implements Configurable {
         String executablePath = StringUtil.notNullize(textField.getText());
         String prevExecutablePath = prevExecutablePathRef.get();
         if (!prevExecutablePath.equals(executablePath)) {
-          phoneGapPluginsView.setupService(myExecutablePath.getText(), myProject.getBasePath(), getVersionCallback());
+          phoneGapPluginsView.setupService(myExecutablePath.getText(), myRepositoryStore, getVersionCallback());
           prevExecutablePathRef.set(executablePath);
         }
       }
