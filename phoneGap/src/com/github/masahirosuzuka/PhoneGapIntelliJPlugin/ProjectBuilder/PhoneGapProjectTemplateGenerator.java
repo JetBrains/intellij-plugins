@@ -1,7 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.icons.PhoneGapIcons;
-import com.intellij.execution.configurations.GeneralCommandLine;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -14,13 +13,13 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
+import icons.PhoneGapIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings> {
 
@@ -46,11 +45,13 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
     try {
 
       File tempProject = createTemp();
-      GeneralCommandLine commandLine = new GeneralCommandLine(settings.getCommand());
-      commandLine.setWorkDirectory(tempProject);
-      commandLine.addParameters(settings.params());
-      Process process = commandLine.createProcess();
-      process.waitFor();
+      PhoneGapCommandLine commandLine = new PhoneGapCommandLine(settings.getExecutable(), tempProject.getPath());
+
+      if (!commandLine.isCorrectExecutable()) {
+        showErrorMessage(project, "Incorrect path");
+        return;
+      }
+      commandLine.createNewProject(settings.name());
 
       File[] array = tempProject.listFiles();
       assert array != null && array.length != 0;
@@ -96,22 +97,23 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
 
   @Override
   public Icon getIcon() {
-    return PhoneGapIcons.get16pxIcon();
+    return PhoneGapIcons.Phonegap_16px;
   }
 
   final static class PhoneGapProjectSettings {
+    private String name = "example";
     private String executable;
 
     public void setExecutable(String executable) {
       this.executable = executable;
     }
 
-    public String getCommand() {
+    public String getExecutable() {
       return executable;
     }
 
-    public List<String> params() {
-      return ContainerUtil.newArrayList("create", "example");
+    public String name() {
+      return name;
     }
   }
 

@@ -35,6 +35,11 @@ public class PhoneGapCommandLine {
   private final String myWorkDir;
 
   @NotNull
+  public String getPath() {
+    return myPath;
+  }
+
+  @NotNull
   private final String myPath;
 
   @Nullable
@@ -61,6 +66,10 @@ public class PhoneGapCommandLine {
     }
   }
 
+  public ProcessOutput platformAdd(String platform) throws ExecutionException {
+    return executeAndGetOut(new String[]{myPath, "platform", "add", platform});
+  }
+
   public boolean isCorrectExecutable() {
     return myIsCorrect;
   }
@@ -82,7 +91,7 @@ public class PhoneGapCommandLine {
   }
 
   public boolean isOld() {
-    if (StringUtil.isEmpty(version)) return false;
+    if (StringUtil.isEmpty(version) || !Character.isDigit(version.charAt(0))) return false;
 
     try {
       String[] split = version.split("\\.");
@@ -142,6 +151,14 @@ public class PhoneGapCommandLine {
     return KillableColoredProcessHandler.create(commandLine);
   }
 
+  public boolean needAddPlatform() {
+    return !isPhoneGap();
+  }
+
+  public void createNewProject(String name) throws Exception {
+    executeVoidCommand(myPath, (isIonic() ? "start" : "create"), name);
+  }
+
   private boolean isPhoneGap() {
     assert myWorkDir != null;
     File file = new File(myPath);
@@ -152,6 +169,18 @@ public class PhoneGapCommandLine {
     String s = executeAndReturnResult(myPath);
 
     return s.contains(PLATFORM_PHONEGAP);
+  }
+
+  private boolean isIonic() {
+    assert myWorkDir != null;
+    File file = new File(myPath);
+    if (file.getName().contains(PLATFORM_IONIC)) return true;
+    if (file.getName().contains(PLATFORM_PHONEGAP)) return false;
+    if (file.getName().contains(PLATFORM_CORDOVA)) return false;
+
+    String s = executeAndReturnResult(myPath);
+
+    return s.contains(PLATFORM_IONIC);
   }
 
   static List<String> parsePluginList(String out) {
@@ -201,8 +230,8 @@ public class PhoneGapCommandLine {
       }
 
       String stdout = output.getStdout();
-      if (StringUtil.isEmpty(stdout) && !StringUtil.isEmpty(stderr) && stderr.startsWith("v")) {
-        return stderr.substring(1);
+      if (StringUtil.isEmpty(stdout) && !StringUtil.isEmpty(stderr)) {
+        return stderr;
       }
 
       return stdout;
@@ -245,7 +274,7 @@ public class PhoneGapCommandLine {
       }
     });
     processHandler.startNotify();
-    if (processHandler.waitFor(TimeUnit.SECONDS.toMillis(60))) {
+    if (processHandler.waitFor(TimeUnit.SECONDS.toMillis(120))) {
       output.setExitCode(process.exitValue());
     }
     else {

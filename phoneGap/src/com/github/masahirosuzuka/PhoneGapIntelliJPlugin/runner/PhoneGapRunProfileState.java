@@ -39,19 +39,21 @@ public class PhoneGapRunProfileState extends CommandLineState {
   @Override
   protected ProcessHandler startProcess() throws ExecutionException {
     String projectDir = this.project.getBasePath();
-    if (PhoneGapCommandLine.COMMAND_RIPPLE.equals(this.phoneGapRunConfiguration.getCommand())) {
+    if (isRipple(phoneGapRunConfiguration)) {
       return runRipple(projectDir);
     }
     else {
-      String executable = phoneGapRunConfiguration.getExecutable();
-      assert executable != null;
-      PhoneGapCommandLine line = new PhoneGapCommandLine(executable, project.getBasePath());
+      PhoneGapCommandLine line = phoneGapRunConfiguration.getCommandLine();
       String command = phoneGapRunConfiguration.getCommand();
       assert command != null;
       String platform = phoneGapRunConfiguration.getPlatform();
       assert platform != null;
       return line.runCommand(command, platform);
     }
+  }
+
+  public static boolean isRipple(PhoneGapRunConfiguration configuration) {
+    return PhoneGapCommandLine.COMMAND_RIPPLE.equals(configuration.getCommand());
   }
 
   private static ProcessHandler runRipple(String projectDir) throws ExecutionException {

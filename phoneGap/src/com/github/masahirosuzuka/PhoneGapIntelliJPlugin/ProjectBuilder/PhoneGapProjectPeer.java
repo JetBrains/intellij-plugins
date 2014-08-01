@@ -30,23 +30,19 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
   @NotNull
   @Override
   public JComponent getComponent() {
-    myExecutablePathField = PhoneGapUIUtil.createPhoneGapExecutableTextField(null);
+    setFields();
     JPanel panel = FormBuilder.createFormBuilder()
-      .addLabeledComponent(getLabel(), myExecutablePathField)
+      .addLabeledComponent("Phonegap/Cordova executable:", myExecutablePathField)
       .getPanel();
 
     panel.setPreferredSize(new Dimension(600, 40));
     return panel;
   }
 
-  protected String getLabel() {
-    return "Phonegap/Cordova executable:";
-  }
-
   @Override
   public void buildUI(@NotNull SettingsStep settingsStep) {
-    myExecutablePathField = PhoneGapUIUtil.createPhoneGapExecutableTextField(null);
-    settingsStep.addSettingsField(getLabel(), myExecutablePathField);
+    setFields();
+    settingsStep.addSettingsField("Phonegap/Cordova executable:", myExecutablePathField);
   }
 
   @NotNull
@@ -54,7 +50,12 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
   public PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings getSettings() {
     PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings settings = new PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings();
     settings.setExecutable(myExecutablePathField.getText());
+
     return settings;
+  }
+
+  private void setFields() {
+    myExecutablePathField = PhoneGapUIUtil.createPhoneGapExecutableTextField(null);
   }
 
   @Nullable
