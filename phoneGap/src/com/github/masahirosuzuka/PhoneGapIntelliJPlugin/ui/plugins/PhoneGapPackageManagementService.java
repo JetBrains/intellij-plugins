@@ -21,30 +21,66 @@ import java.util.List;
 
 public class PhoneGapPackageManagementService extends PackageManagementServiceEx {
   private final PhoneGapCommandLine myCommands;
+  private List<String> myRepos = ContainerUtil.newArrayList();
 
   public PhoneGapPackageManagementService(PhoneGapCommandLine commandLine) {
     myCommands = commandLine;
   }
 
+  @Nullable
+  @Override
+  public List<String> getAllRepositories() {
+    return myRepos;
+  }
+
+  @Override
+  public boolean canModifyRepository(String repositoryUrl) {
+    return !PhoneGapPluginsList.PLUGINS_URL.equals(repositoryUrl);
+  }
+
+  @Override
+  public void addRepository(String repositoryUrl) {
+    myRepos.add(repositoryUrl);
+  }
+
+  @Override
+  public void removeRepository(String repositoryUrl) {
+    myRepos.remove(repositoryUrl);
+  }
+
   @Override
   public List<RepoPackage> getAllPackages() throws IOException {
-    return PhoneGapPluginsList.listCached();
+
+    List<RepoPackage> packages = PhoneGapPluginsList.listCached();
+    List<String> repositories = getAllRepositories();
+    assert repositories != null;
+
+    packages.addAll(PhoneGapPluginsList.wrapRepo(repositories));
+    return packages;
   }
 
   @Override
   public List<RepoPackage> reloadAllPackages() throws IOException {
     PhoneGapPluginsList.resetCache();
-    return PhoneGapPluginsList.listCached();
+    return getAllPackages();
   }
 
   @Override
   public Collection<InstalledPackage> getInstalledPackages() throws IOException {
-    return PhoneGapPluginsList.wrapInstalled(myCommands.pluginList());
+    List<String> names = myCommands.pluginList();
+
+
+    return PhoneGapPluginsList.wrapInstalled(names);
   }
 
   @Override
   public List<RepoPackage> getAllPackagesCached() {
-    return PhoneGapPluginsList.listCached();
+    try {
+      return getAllPackages();
+    }
+    catch (IOException e) {
+      throw new RuntimeException(e.getMessage(), e);
+    }
   }
 
   @Override

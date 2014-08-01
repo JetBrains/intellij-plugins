@@ -72,10 +72,15 @@ public class PhoneGapPluginsList {
     Map<String, PhoneGapRepoPackage> value = CACHED_REPO;
     if (value == null) {
       lock.lock();
-      value = CACHED_REPO;
-      if (value == null) {
-        value = listNoCache();
-        CACHED_REPO = value;
+      try {
+        value = CACHED_REPO;
+        if (value == null) {
+          value = listNoCache();
+          CACHED_REPO = value;
+        }
+      }
+      finally {
+        lock.unlock();
       }
     }
     return value;
@@ -129,6 +134,15 @@ public class PhoneGapPluginsList {
         String name = ArrayUtil.getFirstElement(split);
         String version = split.length > 1 ? split[1] : "";
         return new InstalledPackage(name, version);
+      }
+    });
+  }
+
+  public static List<RepoPackage> wrapRepo(List<String> names) {
+    return ContainerUtil.map(names, new Function<String, RepoPackage>() {
+      @Override
+      public RepoPackage fun(String s) {
+        return new RepoPackage(s, s);
       }
     });
   }
