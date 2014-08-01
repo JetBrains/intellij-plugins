@@ -32,13 +32,11 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActionHandler {
   @Override
-  public boolean isValidFor(Editor editor, PsiFile file) {
-    return file instanceof DartFile;
+  public boolean isValidFor(@NotNull final Editor editor, @NotNull final PsiFile file) {
+    return file instanceof DartFile &&
+           PsiTreeUtil.getParentOfType(file.findElementAt(editor.getCaretModel().getOffset()), DartClass.class) != null;
   }
 
   @Override
