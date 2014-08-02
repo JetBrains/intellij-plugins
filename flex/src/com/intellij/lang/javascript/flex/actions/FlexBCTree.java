@@ -55,8 +55,8 @@ public class FlexBCTree extends CheckboxTree {
     myDispatcher.addListener(listener);
   }
 
-  protected void checkNode(final CheckedTreeNode node, final boolean checked) {
-    super.checkNode(node, checked);
+  @Override
+  protected void onNodeStateChanged(CheckedTreeNode node) {
     myDispatcher.getMulticaster().stateChanged(new ChangeEvent(node));
   }
 
