@@ -97,7 +97,7 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
 
   @Override
   public Icon getIcon() {
-    return PhoneGapIcons.Phonegap_16px;
+    return PhoneGapIcons.PhonegapIntegration;
   }
 
   final static class PhoneGapProjectSettings {

@@ -33,7 +33,7 @@ public class PhoneGapConfigurationType implements ConfigurationType {
 
   @Override
   public Icon getIcon() {
-    return PhoneGapIcons.Phonegap_13px;
+    return PhoneGapIcons.PhonegapIntegration;
   }
 
   @NotNull

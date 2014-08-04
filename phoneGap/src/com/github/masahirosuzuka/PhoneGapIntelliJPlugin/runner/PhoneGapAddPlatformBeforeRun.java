@@ -52,7 +52,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
 
   @Override
   public Icon getIcon() {
-    return PhoneGapIcons.Phonegap_16px;
+    return PhoneGapIcons.PhonegapIntegration;
   }
 
   @Nullable
