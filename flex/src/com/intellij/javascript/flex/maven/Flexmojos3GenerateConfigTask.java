@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.idea.maven.model.MavenExplicitProfiles;
 import org.jetbrains.idea.maven.model.MavenWorkspaceMap;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.server.MavenEmbedderWrapper;
@@ -81,8 +82,9 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
           embedder.customizeForStrictResolve(workspaceMap, console, indicator);
           final String generateConfigGoal = FlexmojosImporter.FLEXMOJOS_GROUP_ID + ":" + FlexmojosImporter.FLEXMOJOS_ARTIFACT_ID +
                                             ":generate-config-" + myMavenProject.getPackaging();
+          final MavenExplicitProfiles profilesIds = myMavenProject.getActivatedProfilesIds();
           MavenServerExecutionResult result = embedder
-            .execute(myMavenProject.getFile(), myMavenProject.getActivatedProfilesIds(), Collections.singletonList(generateConfigGoal));
+            .execute(myMavenProject.getFile(), profilesIds.getEnabledProfiles(), profilesIds.getDisabledProfiles(), Collections.singletonList(generateConfigGoal));
           if (result.projectData == null) {
             myFlexConfigInformer.showFlexConfigWarningIfNeeded(project);
           }

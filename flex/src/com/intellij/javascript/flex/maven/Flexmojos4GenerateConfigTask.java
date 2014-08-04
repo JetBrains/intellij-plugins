@@ -198,7 +198,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
     //noinspection IOResourceOpenedButNotSafelyClosed
     out = new DataOutputStream(new BufferedOutputStream(process.getOutputStream()));
-    writeExplicitProfiles(mavenProjectsManager.getExplicitProfiles());
+    writeExplicitProfiles(mavenProjectsManager.getExplicitProfiles().getEnabledProfiles());
     writeWorkspaceMap(myTree.getProjects());
 
     out.writeUTF(FlexCommonUtils.getPathToBundledJar("flexmojos-idea-configurator.jar"));
