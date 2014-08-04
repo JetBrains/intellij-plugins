@@ -36,12 +36,12 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
 
   @Override
   public String getName() {
-    return "Init cordova platform";
+    return "Init PhoneGap/Cordova platform";
   }
 
   @Override
   public String getDescription(PhoneGapAddPlatformTask task) {
-    return "Init cordova platform (Run 'platform add' and 'build' if necessary)";
+    return "Init PhoneGap/Cordova platform";
   }
 
   @Override
@@ -95,7 +95,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
         FileDocumentManager.getInstance().saveAllDocuments();
         targetDone.down();
 
-        new Task.Backgroundable(project, "Run cordova platform add", true) {
+        new Task.Backgroundable(project, "Init PhoneGap/Cordova platform", true) {
 
           public boolean shouldStartInBackground() {
             return true;
@@ -107,7 +107,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
               assert platform != null;
               ProcessOutput output = line.platformAdd(platform);
               if (output.getExitCode() != 0) {
-                ExecutionHelper.showOutput(project, output, "Cordova platform add execution", null, false);
+                ExecutionHelper.showOutput(project, output, "Init PhoneGap/Cordova platform", null, false);
                 targetDone.up();
                 return;
               }
