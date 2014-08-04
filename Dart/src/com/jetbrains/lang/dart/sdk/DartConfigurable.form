@@ -87,7 +87,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="468b0" class="com.intellij.openapi.roots.libraries.ui.impl.CheckboxTreeTable" binding="myModulesCheckboxTreeTable" custom-create="true">
+                      <component id="468b0" class="com.intellij.ui.CheckboxTreeTable" binding="myModulesCheckboxTreeTable" custom-create="true">
                         <constraints/>
                         <properties>
                           <preferredScrollableViewportSize width="-1" height="-1"/>

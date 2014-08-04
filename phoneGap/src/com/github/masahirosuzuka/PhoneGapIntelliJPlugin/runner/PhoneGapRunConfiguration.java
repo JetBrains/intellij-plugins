@@ -1,6 +1,7 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurationEditor;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapRunConfigurationEditor;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
@@ -36,6 +37,8 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
 
   @Nullable
   public String myPlatform;
+
+  private volatile PhoneGapCommandLine myCommandLine;
 
   @Nullable
   public String getExecutable() {
@@ -88,7 +91,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   @NotNull
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-    return new PhoneGapConfigurationEditor(getProject());
+    return new PhoneGapRunConfigurationEditor(getProject());
   }
 
   @Override
@@ -104,6 +107,19 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
     if (StringUtil.isEmpty(myExecutable)) {
       throw new RuntimeConfigurationException("Executable is missing");
     }
+  }
+
+  public PhoneGapCommandLine getCommandLine() {
+    PhoneGapCommandLine current = myCommandLine;
+    String executable = getExecutable();
+    if (current != null && StringUtil.equals(current.getPath(), executable)) {
+      return current;
+    }
+    assert executable != null;
+    current = new PhoneGapCommandLine(executable, getProject().getBasePath());
+    myCommandLine = current;
+
+    return current;
   }
 
   @SuppressWarnings("CloneDoesntCallSuperClone")

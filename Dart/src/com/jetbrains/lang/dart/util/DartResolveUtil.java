@@ -469,9 +469,9 @@ public class DartResolveUtil {
   @Nullable
   public static DartReference getLeftReference(@Nullable final PsiElement node) {
     if (node == null) return null;
-    for (PsiElement sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpaces(node, true);
+    for (PsiElement sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(node, true);
          sibling != null;
-         sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpaces(sibling, true)) {
+         sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(sibling, true)) {
       if (".".equals(sibling.getText())) continue;
       PsiElement candidate = sibling;
       if (candidate instanceof DartType) {

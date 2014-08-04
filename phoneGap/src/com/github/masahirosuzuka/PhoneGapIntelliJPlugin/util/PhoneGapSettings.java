@@ -1,5 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.util.SystemInfo;
@@ -28,13 +29,6 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
   public static String ANDROID_SDK = "android";
   public static String IOS_SIM = "ios-sim";
 
-  // PhoneGap commands
-  public static String PHONEGAP_PLATFORM_ANDROID = "android";
-  public static String PHONEGAP_PLATFORM_IOS = "ios";
-  public static String PHONEGAP_PLATFORM_WP = "windowsphone";
-  public static String PHONEGAP_PLATFORM_RIPPLE = "ripple";
-
-
   public static class State {
     //don't touch for back compatibility
     public String phoneGapExecutablePath;
@@ -42,11 +36,15 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
 
     public String executablePath;
 
+    public List<String> repositoriesList = ContainerUtil.newArrayList();
+
     @Override
     public boolean equals(Object o) {
       if (!(o instanceof State)) return false;
-
-      return StringUtil.equals(getExecutablePath(), ((State)o).getExecutablePath());
+      if(!StringUtil.equals(getExecutablePath(), ((State)o).getExecutablePath())) return false;
+      if (repositoriesList == ((State)o).repositoriesList) return true;
+      if (repositoriesList == null) return false;
+      return repositoriesList.equals(((State)o).repositoriesList);
     }
 
     @Override
@@ -102,20 +100,16 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
   @NotNull
   public static List<String> getDefaultPaths() {
     List<String> paths = ContainerUtil.newArrayList();
-    ContainerUtil.addIfNotNull(paths, getCordovaDefaultPath());
-    ContainerUtil.addIfNotNull(paths, getPhonegapDefaultPath());
+    ContainerUtil.addIfNotNull(paths, getPath(PhoneGapCommandLine.PLATFORM_PHONEGAP));
+    ContainerUtil.addIfNotNull(paths, getPath(PhoneGapCommandLine.PLATFORM_IONIC));
+    ContainerUtil.addIfNotNull(paths, getPath(PhoneGapCommandLine.PLATFORM_CORDOVA));
     return paths;
   }
 
   @Nullable
-  public static String getCordovaDefaultPath() {
-    File path = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? "cordova.cmd" : "cordova");
+  private static String getPath(String name) {
+    File path = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? name +".cmd" : name);
     return (path != null && path.exists()) ? path.getAbsolutePath() : null;
   }
 
-  @Nullable
-  public static String getPhonegapDefaultPath() {
-    File path = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? "phonegap.cmd" : "phonegap");
-    return (path != null && path.exists()) ? path.getAbsolutePath() : null;
-  }
 }

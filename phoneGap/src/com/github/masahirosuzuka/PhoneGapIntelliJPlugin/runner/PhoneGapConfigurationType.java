@@ -1,17 +1,17 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.icons.PhoneGapIcons;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
+import icons.PhoneGapIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 /**
  * PhoneGapConfigurationType.java
- *
+ * <p/>
  * Created by Masahiro Suzuka on 2014/04/04.
  */
 public class PhoneGapConfigurationType implements ConfigurationType {
@@ -33,7 +33,7 @@ public class PhoneGapConfigurationType implements ConfigurationType {
 
   @Override
   public Icon getIcon() {
-    return PhoneGapIcons.get13pxIcon();
+    return PhoneGapIcons.PhonegapIntegration;
   }
 
   @NotNull
@@ -44,7 +44,7 @@ public class PhoneGapConfigurationType implements ConfigurationType {
 
   @Override
   public ConfigurationFactory[] getConfigurationFactories() {
-    return new PhoneGapConfigurationFactory[]{ myConfigurationFactory };
+    return new PhoneGapConfigurationFactory[]{myConfigurationFactory};
   }
 
   public class PhoneGapConfigurationFactory extends ConfigurationFactory {

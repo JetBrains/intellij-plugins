@@ -17,7 +17,7 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.ui.impl.CheckboxTreeTable;
+import com.intellij.ui.CheckboxTreeTable;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -643,14 +643,13 @@ public class DartConfigurable implements SearchableConfigurable {
       };
 
     myModulesCheckboxTreeTable =
-      new CheckboxTreeTable(null, checkboxTreeCellRenderer, new ColumnInfo[]{new TreeColumnInfo(""), CUSTOM_PACKAGE_ROOTS_COLUMN}) {
-        protected boolean toggleNode(final CheckedTreeNode node) {
-          final boolean result = super.toggleNode(node);
-          updateErrorLabel();
-          return result;
-        }
-      };
-
+      new CheckboxTreeTable(null, checkboxTreeCellRenderer, new ColumnInfo[]{new TreeColumnInfo(""), CUSTOM_PACKAGE_ROOTS_COLUMN});
+    myModulesCheckboxTreeTable.addCheckboxTreeListener(new CheckboxTreeAdapter() {
+      @Override
+      public void nodeStateChanged(@NotNull CheckedTreeNode node) {
+        updateErrorLabel();
+      }
+    });
     myModulesCheckboxTreeTable.setRowHeight(myModulesCheckboxTreeTable.getRowHeight() + 2);
 
     myModulesCheckboxTreeTable.getTree().addTreeWillExpandListener(new TreeWillExpandListener() {

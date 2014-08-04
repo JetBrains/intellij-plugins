@@ -1,11 +1,10 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.KillableColoredProcessHandler;
-import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
@@ -40,34 +39,39 @@ public class PhoneGapRunProfileState extends CommandLineState {
   @Override
   protected ProcessHandler startProcess() throws ExecutionException {
     String projectDir = this.project.getBasePath();
-    if (PhoneGapSettings.PHONEGAP_PLATFORM_RIPPLE.equals(this.phoneGapRunConfiguration.getPlatform())) { // ripple emu
-      // if server.js is missing
-      // Create server.js
-      try {
-        File serverScript = new File(projectDir + "/" + "server.js");
-        if (!serverScript.exists()) {
-          writeScript(serverScript);
-        }
-      }
-      catch (Exception e) {
-        throw new RuntimeException(e.getMessage(), e);
-      }
-
-      GeneralCommandLine commandLine = new GeneralCommandLine("node", "server.js");
-      commandLine.setWorkDirectory(projectDir);
-      return KillableColoredProcessHandler.create(commandLine);
+    if (isRipple(phoneGapRunConfiguration)) {
+      return runRipple(projectDir);
     }
-    else { // Android or iOS
-      GeneralCommandLine commandLine = new GeneralCommandLine(
-        phoneGapRunConfiguration.getExecutable(),
-        phoneGapRunConfiguration.getCommand(),
-        phoneGapRunConfiguration.getPlatform());
-
-      // Change working dir to project dir
-      commandLine.setWorkDirectory(projectDir);
-
-      return new OSProcessHandler(commandLine);
+    else {
+      PhoneGapCommandLine line = phoneGapRunConfiguration.getCommandLine();
+      String command = phoneGapRunConfiguration.getCommand();
+      assert command != null;
+      String platform = phoneGapRunConfiguration.getPlatform();
+      assert platform != null;
+      return line.runCommand(command, platform);
     }
+  }
+
+  public static boolean isRipple(PhoneGapRunConfiguration configuration) {
+    return PhoneGapCommandLine.COMMAND_RIPPLE.equals(configuration.getCommand());
+  }
+
+  private static ProcessHandler runRipple(String projectDir) throws ExecutionException {
+    // if server.js is missing
+    // Create server.js
+    try {
+      File serverScript = new File(projectDir + "/" + "server.js");
+      if (!serverScript.exists()) {
+        writeScript(serverScript);
+      }
+    }
+    catch (Exception e) {
+      throw new RuntimeException(e.getMessage(), e);
+    }
+
+    GeneralCommandLine commandLine = new GeneralCommandLine("node", "server.js");
+    commandLine.setWorkDirectory(projectDir);
+    return KillableColoredProcessHandler.create(commandLine);
   }
 
   private static void writeScript(File serverScript) throws IOException {

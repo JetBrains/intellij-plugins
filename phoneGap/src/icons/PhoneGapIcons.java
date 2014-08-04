@@ -13,7 +13,5 @@ public class PhoneGapIcons {
     return IconLoader.getIcon(path, PhoneGapIcons.class);
   }
 
-  public static final Icon Phonegap_13px = load("/com/github/masahirosuzuka/PhoneGapIntelliJPlugin/icons/phonegap_13px.png"); // 13x13
-  public static final Icon Phonegap_16px = load("/com/github/masahirosuzuka/PhoneGapIntelliJPlugin/icons/phonegap_16px.png"); // 16x16
-  public static final Icon Phonegap_24px = load("/com/github/masahirosuzuka/PhoneGapIntelliJPlugin/icons/phonegap_24px.png"); // 24x24
+  public static final Icon PhonegapIntegration = load("/com/github/masahirosuzuka/PhoneGapIntelliJPlugin/icons/PhonegapIntegration.png"); // 16x16
 }
