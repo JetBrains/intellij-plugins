@@ -278,6 +278,7 @@ public class PhoneGapCommandLine {
   private ProcessOutput executeAndGetOut(String[] command) throws ExecutionException {
     final GeneralCommandLine commandLine = new GeneralCommandLine(command);
     commandLine.setWorkDirectory(myWorkDir);
+    commandLine.setPassParentEnvironment(true);
     Process process = commandLine.createProcess();
     OSProcessHandler processHandler = new ColoredProcessHandler(process, commandLine.getCommandLineString(), Charsets.UTF_8);
     final ProcessOutput output = new ProcessOutput();

@@ -108,6 +108,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
               ProcessOutput output = line.platformAdd(platform);
               if (output.getExitCode() != 0) {
                 ExecutionHelper.showOutput(project, output, "Init PhoneGap/Cordova platform", null, false);
+                result.set(false);
                 targetDone.up();
                 return;
               }
