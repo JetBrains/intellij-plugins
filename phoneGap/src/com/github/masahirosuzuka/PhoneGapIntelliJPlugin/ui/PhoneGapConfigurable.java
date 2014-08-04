@@ -1,6 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUIUtil;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.plugins.PhoneGapPluginsView;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.openapi.options.Configurable;
@@ -73,7 +73,7 @@ public class PhoneGapConfigurable implements Configurable {
   private class UIController {
 
     public void reset(PhoneGapSettings.State state) {
-      PhoneGapUIUtil.setExecutablePath(myExecutablePath, state.getExecutablePath());
+      PhoneGapUtil.setExecutablePath(myExecutablePath, state.getExecutablePath());
       myRepositoryStore.reset(state.repositoriesList);
     }
 
@@ -106,7 +106,7 @@ public class PhoneGapConfigurable implements Configurable {
   public JComponent createComponent() {
 
     if (myWrapper == null) {
-      myExecutablePath = PhoneGapUIUtil.createPhoneGapExecutableTextField(myProject);
+      myExecutablePath = PhoneGapUtil.createPhoneGapExecutableTextField(myProject);
       myVersion = new JBLabel();
       myUIController = new UIController();
       myRepositoryStore = new RepositoryStore();
@@ -114,7 +114,7 @@ public class PhoneGapConfigurable implements Configurable {
       phoneGapPluginsView = new PhoneGapPluginsView(myProject);
       JPanel panel = FormBuilder.createFormBuilder()
         .addLabeledComponent("PhoneGap/Cordova executable path:", myExecutablePath)
-        .addLabeledComponent("Phonegap/Cordova version:", myVersion)
+        .addLabeledComponent("PhoneGap/Cordova version:", myVersion)
         .addComponent(phoneGapPluginsView.getPanel()).getPanel();
       myWrapper = new JPanel(new BorderLayout());
       myWrapper.add(panel, BorderLayout.NORTH);

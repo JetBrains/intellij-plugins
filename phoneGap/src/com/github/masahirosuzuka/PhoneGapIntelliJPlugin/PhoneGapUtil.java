@@ -13,20 +13,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class PhoneGapUIUtil {
+public class PhoneGapUtil {
 
   @NotNull
   public static TextFieldWithHistoryWithBrowseButton createPhoneGapExecutableTextField(@Nullable Project project) {
     TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
-        project, "Phonegap/Cordova executable",
-        FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), new NotNullProducer<List<String>>() {
-          @NotNull
-          @Override
-          public List<String> produce() {
-            return PhoneGapSettings
-              .getDefaultPaths();
-          }
-        });
+      project, "PhoneGap/Cordova executable",
+      FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), new NotNullProducer<List<String>>() {
+        @NotNull
+        @Override
+        public List<String> produce() {
+          return PhoneGapSettings
+            .getDefaultPaths();
+        }
+      });
     final TextFieldWithHistory textFieldWithHistory = field.getChildComponent();
 
     String executablePath = PhoneGapSettings.getInstance().getExecutablePath();

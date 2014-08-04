@@ -71,7 +71,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
 
   @Override
   public String suggestedName() {
-    return "Run phonegap";
+    return "Run PhoneGap";
   }
 
   @Override
