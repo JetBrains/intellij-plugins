@@ -36,7 +36,7 @@ public class DartDocUtil {
     builder.append("<code>");
 
     for (DartMetadata metadata : namedComponent.getMetadataList()) {
-      builder.append(StringUtil.join(metadata.getText(), "<br/>"));
+      builder.append(StringUtil.escapeXml(metadata.getText())).append("<br/>");
     }
 
     if (namedComponent instanceof DartClass) {
@@ -175,11 +175,11 @@ public class DartDocUtil {
     return buf == null ? null : buf.toString();
   }
 
-  private static void appendConstructorSignature(final StringBuilder builder, final DartComponent component, final DartClass type) {
+  private static void appendConstructorSignature(final StringBuilder builder, final DartComponent component, final DartClass dartClass) {
     if (component instanceof DartNamedConstructorDeclaration || component instanceof DartFactoryConstructorDeclaration) {
-      builder.append("<b>").append(type.getName()).append(".</b>");
+      builder.append("<b>").append(dartClass.getName()).append(".</b>");
     }
-    appendFunctionSignature(builder, component, type.getName());
+    appendFunctionSignature(builder, component, dartClass.getName());
   }
 
   private static void appendDeclaringClass(final StringBuilder builder, final DartComponent namedComponent) {
@@ -193,7 +193,8 @@ public class DartDocUtil {
   private static void appendVariableSignature(final StringBuilder builder, final DartComponent component, final DartType type) {
     if (type == null) {
       builder.append("var ");
-    } else {
+    }
+    else {
       builder.append(type.getReferenceExpression().getText()).append(" ");
     }
     builder.append("<b>").append(component.getName()).append("</b>");
@@ -215,7 +216,7 @@ public class DartDocUtil {
     }
 
     if (!mixins.isEmpty()) {
-      builder.append("<br/>with ");
+      builder.append(" with ");
       for (Iterator<DartType> iter = mixins.iterator(); iter.hasNext(); ) {
         builder.append(StringUtil.escapeXml(iter.next().getText()));
         if (iter.hasNext()) {
@@ -254,7 +255,7 @@ public class DartDocUtil {
         for (Iterator<DartTypeParameter> iter = parameters.iterator(); iter.hasNext(); ) {
           builder.append(iter.next().getText());
           if (iter.hasNext()) {
-            builder.append(",");
+            builder.append(", ");
           }
         }
         builder.append("&gt;");

@@ -32,7 +32,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testParamClassSig2() throws Exception {
-    doTest("<code>class <b>Foo</b>&lt;T,Z&gt;</code>",
+    doTest("<code>class <b>Foo</b>&lt;T, Z&gt;</code>",
            "<caret>class Foo<T,Z>{ }");
   }
 
@@ -47,7 +47,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testParamClassSig5() throws Exception {
-    doTest("<code>class <b>Foo</b>&lt;A,B&gt;<br/>extends Bar&lt;A,B&gt;</code>",
+    doTest("<code>class <b>Foo</b>&lt;A, B&gt;<br/>extends Bar&lt;A,B&gt;</code>",
            "class <caret>Foo<A,B> extends Bar<A,B> { }<br/>class Bar<A,B> { }");
   }
 
@@ -57,9 +57,9 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testMetaClassSig2() throws Exception {
-    doTest("<code>@Meta('foo')<br/>class <b>A</b></code>",
-           "@Meta(\'foo\') class <caret>A {};<br/>" +
-           "class Meta {<br/>" +
+    doTest("<code>@Meta(&#39;foo&#39;)<br/>class <b>A</b></code>",
+           "@Meta(\'foo\') class <caret>A {};\n" +
+           "class Meta {\n" +
            "  final String name;\n" +
            "  const Meta([this.name]);\n" +
            "}");
@@ -71,12 +71,12 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testMixinSig1() throws Exception {
-    doTest("<code>class <b>Foo2</b><br/>extends Bar1&lt;E&gt;<br/>with Baz1&lt;K&gt;, Baz2</code>",
+    doTest("<code>class <b>Foo2</b><br/>extends Bar1&lt;E&gt; with Baz1&lt;K&gt;, Baz2</code>",
            "<caret>class Foo2 = Bar1<E> with Baz1<K>, Baz2");
   }
 
   public void testMixinSig2() throws Exception {
-    doTest("<code>class <b>X</b><br/>extends Y<br/>with Z</code>",
+    doTest("<code>class <b>X</b><br/>extends Y with Z</code>",
            "<caret>class X extends Y with Z { }");
   }
 
