@@ -34,7 +34,7 @@ import com.intellij.facet.ui.libraries.FrameworkLibraryValidator;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PathMacroManager;
-import com.intellij.openapi.diagnostic.Log;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.util.InvalidDataException;
@@ -70,6 +70,7 @@ import static aQute.bnd.osgi.Constants.INCLUDE_RESOURCE;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsmorcFacetConfiguration implements FacetConfiguration {
+  private static final Logger LOG = Logger.getInstance(OsmorcFacetConfiguration.class);
 
   private OsmorcFacet myFacet;
   private String myManifestLocation;
@@ -552,7 +553,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
       p.load(new StringReader(getAdditionalProperties()));
     }
     catch (IOException e) {
-      Log.print("Error when reading properties", true);
+      LOG.warn(e);
       return result;
     }
 
