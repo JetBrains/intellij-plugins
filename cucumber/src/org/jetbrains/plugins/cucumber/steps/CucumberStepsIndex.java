@@ -18,6 +18,7 @@ import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.OptionalStepDefinitionExtensionPoint;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.*;
 
@@ -80,15 +81,22 @@ public class CucumberStepsIndex {
   }
 
 
+  /**
+   * Searches for step definition.
+   *
+   * @param featureFile file with steps
+   * @param step step itself
+   * @return definition or null if not found
+   */
   @Nullable
-  public AbstractStepDefinition findStepDefinition(final @NotNull PsiFile featureFile, final String stepName) {
+  public AbstractStepDefinition findStepDefinition(@NotNull final PsiFile featureFile, @NotNull final GherkinStep step) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) return null;
 
     AbstractStepDefinition result = null;
     List<AbstractStepDefinition> allSteps = loadStepsFor(featureFile, module);
     for (AbstractStepDefinition stepDefinition : allSteps) {
-      if (stepDefinition.matches(stepName)) {
+      if (stepDefinition.matches(step.getSubstitutedName()) && stepDefinition.supportsStep(step)) {
         if (result == null || result.getPattern().getPattern().length() < stepDefinition.getPattern().getPattern().length()) {
           result = stepDefinition;
         }

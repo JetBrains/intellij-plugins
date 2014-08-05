@@ -25,14 +25,20 @@ public abstract class AbstractCucumberExtension implements CucumberJvmExtensionP
       return Collections.emptyList();
     }
 
-    Set<String> stepVariants = getAllPossibleStepVariants(element);
+    final Set<String> stepVariants = getAllPossibleStepVariants(element);
 
     final List<AbstractStepDefinition> stepDefinitions = loadStepsFor(element.getContainingFile(), module);
     final List<PsiElement> result = new ArrayList<PsiElement>();
-    for (AbstractStepDefinition stepDefinition : stepDefinitions) {
 
-      for (String s : stepVariants) {
-        if (stepDefinition.matches(s)) {
+    if (! (element instanceof GherkinStep)) {
+      return result; // Not a step, so there is nothing to check
+    }
+
+    final GherkinStep step = (GherkinStep)element;
+
+    for (final AbstractStepDefinition stepDefinition : stepDefinitions) {
+      for (final String s : stepVariants) {
+        if (stepDefinition.matches(s) && stepDefinition.supportsStep(step)) {
           result.add(stepDefinition.getElement());
         }
       }

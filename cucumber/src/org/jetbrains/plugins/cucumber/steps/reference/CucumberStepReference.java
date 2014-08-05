@@ -108,6 +108,6 @@ public class CucumberStepReference implements PsiPolyVariantReference {
   @Nullable
   public AbstractStepDefinition resolveToDefinition() {
     final CucumberStepsIndex index = CucumberStepsIndex.getInstance(myStep.getProject());
-    return index.findStepDefinition(myStep.getContainingFile(), ((GherkinStepImpl)myStep).getSubstitutedName());
+    return index.findStepDefinition(myStep.getContainingFile(), ((GherkinStepImpl)myStep));
   }
 }
