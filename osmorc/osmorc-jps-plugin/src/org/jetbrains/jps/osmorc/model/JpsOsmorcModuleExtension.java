@@ -15,7 +15,6 @@ import java.util.Map;
  * @author michael.golubev
  */
 public interface JpsOsmorcModuleExtension extends JpsElement {
-
   @NotNull
   JpsModule getModule();
 
@@ -30,9 +29,20 @@ public interface JpsOsmorcModuleExtension extends JpsElement {
 
   boolean isOsmorcControlsManifest();
 
+  @NotNull
   String getBndFileLocation();
 
-  Map<String, String> getBndFileProperties();
+  @NotNull
+  Map<String, String> getAdditionalProperties();
+
+  @NotNull
+  String getBundleSymbolicName();
+
+  @NotNull
+  String getBundleVersion();
+
+  @Nullable
+  String getBundleActivator();
 
   @Nullable
   File getManifestFile();
@@ -45,9 +55,6 @@ public interface JpsOsmorcModuleExtension extends JpsElement {
 
   @NotNull
   List<OsmorcJarContentEntry> getAdditionalJARContents();
-
-  @NotNull
-  Map<String, String> getAdditionalPropertiesAsMap();
 
   @NotNull
   String getIgnoreFilePattern();

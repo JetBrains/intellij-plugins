@@ -17,14 +17,13 @@ import org.jetbrains.jps.osmorc.model.JpsOsmorcModuleExtension;
 import org.jetbrains.jps.osmorc.model.JpsOsmorcProjectExtension;
 import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
 import org.jetbrains.jps.osmorc.model.OutputPathType;
-import org.jetbrains.jps.osmorc.util.JpsOrderedProperties;
 import org.jetbrains.jps.util.JpsPathUtil;
-import org.osgi.framework.Constants;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -132,67 +131,27 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
   }
 
   @NotNull
-  public Map<String, String> getBndFileProperties() {
-    Map<String, String> result = getAdditionalPropertiesAsMap();
-    result.put(Constants.BUNDLE_SYMBOLICNAME, getBundleSymbolicName());
-    result.put(Constants.BUNDLE_VERSION, getBundleVersion());
-    final String bundleActivator = getBundleActivator();
-    if (!bundleActivator.isEmpty()) {
-      result.put(Constants.BUNDLE_ACTIVATOR, bundleActivator);
-    }
-    return result;
+  @Override
+  public Map<String, String> getAdditionalProperties() {
+    return Collections.unmodifiableMap(myProperties.myAdditionalProperties);
   }
 
   @NotNull
-  public Map<String, String> getAdditionalPropertiesAsMap() {
-    Map<String, String> result = new LinkedHashMap<String, String>();
-
-    Properties p = new JpsOrderedProperties();
-    try {
-      p.load(new StringReader(getAdditionalProperties()));
-    }
-    catch (IOException e) {
-      LOG.error("Error when reading properties");
-      return result;
-    }
-
-    Set<String> propNames = p.stringPropertyNames();
-    for (String propName : propNames) {
-      result.put(propName, p.getProperty(propName));
-    }
-
-    return result;
-  }
-
-  /**
-   * @return additional properties to be added to the bundle manifest
-   */
-  @NotNull
-  public String getAdditionalProperties() {
-    return StringUtil.notNullize(myProperties.myAdditionalProperties);
-  }
-
-  /**
-   * @return the symbolic name of the bundle to build
-   */
-  @NotNull
+  @Override
   public String getBundleSymbolicName() {
     return StringUtil.notNullize(myProperties.myBundleSymbolicName);
   }
 
-  /**
-   * @return the version of the bundle.
-   */
   @NotNull
+  @Override
   public String getBundleVersion() {
     return StringUtil.notNullize(myProperties.myBundleVersion, "1.0.0");
   }
 
-  /**
-   * @return the bundle activator class
-   */
+  @Nullable
+  @Override
   public String getBundleActivator() {
-    return StringUtil.notNullize(myProperties.myBundleActivator);
+    return myProperties.myBundleActivator;
   }
 
   /**
@@ -274,10 +233,7 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
 
   @NotNull
   public List<OsmorcJarContentEntry> getAdditionalJARContents() {
-    if (myProperties.myAdditionalJARContents == null) {
-      myProperties.myAdditionalJARContents = new ArrayList<OsmorcJarContentEntry>();
-    }
-    return myProperties.myAdditionalJARContents;
+    return Collections.unmodifiableList(myProperties.myAdditionalJARContents);
   }
 
   @NotNull

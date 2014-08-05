@@ -2,6 +2,7 @@ package org.jetbrains.jps.osmorc.build;
 
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
@@ -15,6 +16,7 @@ import org.jetbrains.jps.osmorc.model.JpsCachingBundleInfoProvider;
 import org.jetbrains.jps.osmorc.model.JpsOsmorcModuleExtension;
 import org.jetbrains.jps.osmorc.model.impl.OsmorcJarContentEntry;
 import org.jetbrains.jps.util.JpsPathUtil;
+import org.osgi.framework.Constants;
 
 import java.io.File;
 import java.util.*;
@@ -142,9 +144,7 @@ public class OsmorcBuildSession {
       if (bndFile != null && bndFile.canRead()) {
         return bndFile;
       }
-      else {
-        throw new OsmorcBuildException("The bnd file for the module does not exist", fileLocation);
-      }
+      throw new OsmorcBuildException("The bnd file for the module does not exist", fileLocation);
     }
 
     // use a linked hash map to keep the order of properties.
@@ -152,9 +152,13 @@ public class OsmorcBuildSession {
     if (myExtension.isManifestManuallyEdited() || myExtension.isOsmorcControlsManifest()) {
       if (myExtension.isOsmorcControlsManifest()) {
         // fully osmorc controlled, no bnd file, read in all  properties
-        buildProperties.putAll(myExtension.getBndFileProperties());
+        buildProperties.putAll(myExtension.getAdditionalProperties());
+        buildProperties.put(Constants.BUNDLE_SYMBOLICNAME, myExtension.getBundleSymbolicName());
+        buildProperties.put(Constants.BUNDLE_VERSION, myExtension.getBundleVersion());
+        String activator = myExtension.getBundleActivator();
+        if (!StringUtil.isEmptyOrSpaces(activator)) buildProperties.put(Constants.BUNDLE_ACTIVATOR, activator);
       }
-      else if (myExtension.isManifestManuallyEdited()) { // manually edited manifest
+      else { // manually edited manifest
         File manifestFile = myExtension.getManifestFile();
         if (manifestFile == null) {
           throw new OsmorcBuildException(
@@ -179,13 +183,9 @@ public class OsmorcBuildSession {
       // and tell bnd what resources to include
       StringBuilder includedResources = new StringBuilder();
       if (!myExtension.isManifestManuallyEdited()) {
-        String resources = myExtension.getAdditionalPropertiesAsMap().get("Include-Resource");
-        if (resources != null) {
-          includedResources.append(resources).append(",").append(pathBuilder);
-        }
-        else {
-          includedResources.append(pathBuilder);
-        }
+        String resources = myExtension.getAdditionalProperties().get("Include-Resource");
+        if (resources != null) includedResources.append(resources).append(',');
+        includedResources.append(pathBuilder);
       }
       else {
         includedResources.append(pathBuilder);
