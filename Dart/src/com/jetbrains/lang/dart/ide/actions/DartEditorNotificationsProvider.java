@@ -54,6 +54,8 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       createActionLabel("Get Dependencies", "Dart.pub.get");
       createActionLabel("Upgrade Dependencies", "Dart.pub.upgrade");
       createActionLabel("Build", "Dart.pub.build");
+      myLinksPanel.add(new JLabel("        "));
+      createActionLabel("Repair Cache", "Dart.pub.cache.repair");
     }
 
     @Override
