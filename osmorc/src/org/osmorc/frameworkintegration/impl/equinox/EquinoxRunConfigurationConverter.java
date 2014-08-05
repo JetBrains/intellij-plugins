@@ -31,25 +31,35 @@ import com.intellij.conversion.ProjectConverter;
 import com.intellij.conversion.RunManagerSettings;
 import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class EquinoxRunConfigurationConverter extends ProjectConverter {
+  private static final String EQUINOX_RUN_CONFIGURATION_TYPE = "#org.osmorc.EquinoxConfigurationType";
+  private static final String APPLICATION_ATTRIBUTE = "application";
+  private static final String PRODUCT_ATTRIBUTE = "product";
+  private static final String WORKING_DIR_ATTRIBUTE = "workingDir";
+  private static final String CONFIG_DIR_ATTRIBUTE = "configDir";
+  private static final String JVM_ARGS_ATTRIBUTE = "jvmArgs";
+  private static final String ADDITIONAL_ARGS_ATTRIBUTE = "additionalEquinoxArgs";
+  private static final String EQUINOX_CONSOLE = "equinoxConsole";
+  private static final String EQUINOX_DEBUG = "equinoxDebug";
+  private static final String USE_UPDATE_CONFIGURATOR = "useUpdateConfigurator";
+  private static final String CLEAN = "clean";
+
   @Override
   public ConversionProcessor<RunManagerSettings> createRunConfigurationsConverter() {
     return new ActualConverter();
   }
 
   private static final class ActualConverter extends ConversionProcessor<RunManagerSettings> {
-
     @Override
     public boolean isConversionNeeded(RunManagerSettings runManagerSettings) {
       for (Element element : runManagerSettings.getRunConfigurations()) {
@@ -67,7 +77,6 @@ public class EquinoxRunConfigurationConverter extends ProjectConverter {
       for (Element element : runManagerSettings.getRunConfigurations()) {
         final String confType = element.getAttributeValue("type");
         if (EQUINOX_RUN_CONFIGURATION_TYPE.equals(confType)) {
-
           String application = element.getAttributeValue(APPLICATION_ATTRIBUTE);
           String product = element.getAttributeValue(PRODUCT_ATTRIBUTE);
           String workingDir = element.getAttributeValue(WORKING_DIR_ATTRIBUTE);
@@ -102,11 +111,8 @@ public class EquinoxRunConfigurationConverter extends ProjectConverter {
           EquinoxRunProperties.setEquinoxApplication(properties, application);
           osgiRunConfiguration.putAdditionalProperties(properties);
 
-          ArrayList<SelectedBundle> bundles = new ArrayList<SelectedBundle>();
-          bundles.add(
-            new SelectedBundle("legacyLoader", "org.osmorc.frameworkintegration.impl.equinox.LegacyEquinoxOsgiRunConfigurationLoader",
-                               SelectedBundle.BundleType.FrameworkBundle));
-          osgiRunConfiguration.setBundlesToDeploy(bundles);
+          SelectedBundle legacyLoader = new SelectedBundle(SelectedBundle.BundleType.FrameworkBundle, "legacyLoader", "org.osmorc.frameworkintegration.impl.equinox.LegacyEquinoxOsgiRunConfigurationLoader");
+          osgiRunConfiguration.setBundlesToDeploy(Collections.singletonList(legacyLoader));
 
           element.setAttribute("type", "#org.osmorc.OsgiConfigurationType");
           element.setAttribute("factoryName", "OSGi Bundles");
@@ -120,27 +126,5 @@ public class EquinoxRunConfigurationConverter extends ProjectConverter {
         }
       }
     }
-
-    private static final String EQUINOX_RUN_CONFIGURATION_TYPE = "#org.osmorc.EquinoxConfigurationType";
-    @NonNls
-    private static final String APPLICATION_ATTRIBUTE = "application";
-    @NonNls
-    private static final String PRODUCT_ATTRIBUTE = "product";
-    @NonNls
-    private static final String WORKING_DIR_ATTRIBUTE = "workingDir";
-    @NonNls
-    private static final String CONFIG_DIR_ATTRIBUTE = "configDir";
-    @NonNls
-    private static final String JVM_ARGS_ATTRIBUTE = "jvmArgs";
-    @NonNls
-    private static final String ADDITIONAL_ARGS_ATTRIBUTE = "additionalEquinoxArgs";
-    @NonNls
-    private static final String EQUINOX_CONSOLE = "equinoxConsole";
-    @NonNls
-    private static final String EQUINOX_DEBUG = "equinoxDebug";
-    @NonNls
-    private static final String USE_UPDATE_CONFIGURATOR = "useUpdateConfigurator";
-    @NonNls
-    private static final String CLEAN = "clean";
   }
 }

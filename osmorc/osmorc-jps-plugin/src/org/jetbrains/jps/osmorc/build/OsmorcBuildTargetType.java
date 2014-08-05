@@ -1,5 +1,6 @@
 package org.jetbrains.jps.osmorc.build;
 
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.BuildTargetLoader;
@@ -9,8 +10,6 @@ import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.osmorc.model.JpsOsmorcExtensionService;
 import org.jetbrains.jps.osmorc.model.JpsOsmorcModuleExtension;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,23 +17,20 @@ import java.util.Map;
  * @author michael.golubev
  */
 public class OsmorcBuildTargetType extends ModuleBasedBuildTargetType<OsmorcBuildTarget> {
-
   public static final OsmorcBuildTargetType INSTANCE = new OsmorcBuildTargetType();
-  public static final String TYPE_ID = "osmorc";
 
   private OsmorcBuildTargetType() {
-    super(TYPE_ID);
+    super("osmorc");
   }
 
   @NotNull
   @Override
   public List<OsmorcBuildTarget> computeAllTargets(@NotNull JpsModel model) {
-    List<OsmorcBuildTarget> targets = new ArrayList<OsmorcBuildTarget>();
-    JpsOsmorcExtensionService service = JpsOsmorcExtensionService.getInstance();
+    List<OsmorcBuildTarget> targets = ContainerUtil.newArrayList();
     for (JpsModule module : model.getProject().getModules()) {
-      JpsOsmorcModuleExtension extension = service.getExtension(module);
+      JpsOsmorcModuleExtension extension = JpsOsmorcExtensionService.getExtension(module);
       if (extension != null) {
-        targets.add(new OsmorcBuildTarget(extension));
+        targets.add(new OsmorcBuildTarget(extension, module));
       }
     }
     return targets;
@@ -50,12 +46,11 @@ public class OsmorcBuildTargetType extends ModuleBasedBuildTargetType<OsmorcBuil
     private Map<String, OsmorcBuildTarget> myTargets;
 
     public Loader(JpsModel model) {
-      myTargets = new HashMap<String, OsmorcBuildTarget>();
-      JpsOsmorcExtensionService service = JpsOsmorcExtensionService.getInstance();
+      myTargets = ContainerUtil.newHashMap();
       for (JpsModule module : model.getProject().getModules()) {
-        JpsOsmorcModuleExtension extension = service.getExtension(module);
+        JpsOsmorcModuleExtension extension = JpsOsmorcExtensionService.getExtension(module);
         if (extension != null) {
-          myTargets.put(module.getName(), new OsmorcBuildTarget(extension));
+          myTargets.put(module.getName(), new OsmorcBuildTarget(extension, module));
         }
       }
     }

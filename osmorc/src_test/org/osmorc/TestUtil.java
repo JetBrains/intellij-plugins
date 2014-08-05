@@ -44,10 +44,12 @@ import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.util.io.ZipUtil;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.Manually;
@@ -68,17 +70,21 @@ public class TestUtil {
     return fixtureBuilder.getFixture();
   }
 
-  public static void loadModules(String projectName, final Project project, String projectDirPath) throws Exception {
+  public static File extractProject(String projectName, String projectDirPath) throws IOException {
     File projectZIP = new File(getTestDataDir(), projectName + ".zip");
     assert projectZIP.exists() : projectZIP.getAbsoluteFile() + " not found";
     assert !projectZIP.isDirectory() : projectZIP.getAbsolutePath() + " is a directory";
 
-    final File projectDir = new File(projectDirPath);
+    File projectDir = new File(projectDirPath);
     ZipUtil.extract(projectZIP, projectDir, null);
+    return projectDir;
+  }
 
+  public static void loadModules(String projectName, final Project project, String projectDirPath) throws Exception {
+    final File projectDir = extractProject(projectName, projectDirPath);
     new WriteAction() {
       @Override
-      protected void run(Result result) throws Throwable {
+      protected void run(@NotNull Result result) throws Throwable {
         VirtualFile virtualDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(projectDir);
         assertNotNull("Directory not found: " + projectDir, virtualDir);
         virtualDir.refresh(false, true);

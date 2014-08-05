@@ -38,7 +38,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.HttpConfigurable;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.*;
-import org.osmorc.util.OsgiFileUtil;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 
@@ -121,9 +120,9 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
       throw new CantRunException("Libraries required to start the framework not found - please check the installation");
     }
     for (SelectedBundle bundle : systemBundles) {
-      String url = bundle.getBundleUrl();
-      assert url != null : bundle;
-      params.getClassPath().add(OsgiFileUtil.urlToPath(url));
+      String path = bundle.getBundlePath();
+      assert path != null : bundle;
+      params.getClassPath().add(path);
     }
 
     if (GenericRunProperties.isStartConsole(myAdditionalProperties)) {
@@ -138,9 +137,9 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
 
     if (myRunConfiguration.isIncludeAllBundlesInClassPath()) {
       for (SelectedBundle bundle : myBundles) {
-        String url = bundle.getBundleUrl();
-        if (url != null) {
-          params.getClassPath().add(OsgiFileUtil.urlToPath(url));
+        String path = bundle.getBundlePath();
+        if (path != null) {
+          params.getClassPath().add(path);
         }
       }
     }

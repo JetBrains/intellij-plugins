@@ -1,23 +1,14 @@
 package org.jetbrains.jps.osmorc.model.impl;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.model.JpsElementChildRole;
-import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.ex.JpsElementBase;
-import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsModule;
-import org.jetbrains.jps.osmorc.model.JpsOsmorcModuleExtension;
-import org.jetbrains.jps.osmorc.model.JpsOsmorcProjectExtension;
-import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
-import org.jetbrains.jps.osmorc.model.OutputPathType;
-import org.jetbrains.jps.util.JpsPathUtil;
+import org.jetbrains.jps.osmorc.model.*;
+import org.jetbrains.jps.osmorc.util.OsgiBuildUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,27 +17,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * @author michael.golubev
  */
 public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModuleExtensionImpl> implements JpsOsmorcModuleExtension {
-
-  private static final Logger LOG = Logger.getInstance(JpsOsmorcModuleExtensionImpl.class);
-
-  public static final JpsElementChildRole<JpsOsmorcModuleExtension> ROLE = JpsElementChildRoleBase.create("Osmorc");
-
-
-  private OsmorcModuleExtensionProperties myProperties;
+  private final OsmorcModuleExtensionProperties myProperties;
 
   public JpsOsmorcModuleExtensionImpl(OsmorcModuleExtensionProperties properties) {
     myProperties = properties;
-  }
-
-  private JpsOsmorcModuleExtensionImpl(JpsOsmorcModuleExtensionImpl original) {
-    myProperties = XmlSerializerUtil.createCopy(original.myProperties);
   }
 
   public OsmorcModuleExtensionProperties getProperties() {
@@ -55,8 +34,8 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
 
   @NotNull
   @Override
-  public JpsModule getModule() {
-    return (JpsModule)getParent();
+  public JpsOsmorcModuleExtensionImpl createCopy() {
+    return new JpsOsmorcModuleExtensionImpl(XmlSerializerUtil.createCopy(myProperties));
   }
 
   @Override
@@ -66,66 +45,55 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
 
   @NotNull
   @Override
-  public JpsOsmorcModuleExtensionImpl createCopy() {
-    return new JpsOsmorcModuleExtensionImpl(this);
-  }
-
-  @NotNull
   public String getJarFileLocation() {
     String jarFileLocation = myProperties.myJarFileLocation;
     OutputPathType outputPathType = myProperties.myOutputPathType;
-
     String nullSafeLocation = jarFileLocation != null ? jarFileLocation : "";
-    if (outputPathType == null) {
-      return nullSafeLocation;
-    }
-    JpsModule module = getModule();
+    if (outputPathType == null) return nullSafeLocation;
+
     switch (outputPathType) {
       case CompilerOutputPath:
-        File outputDir = JpsJavaExtensionService.getInstance().getOutputDirectory(module, false);
-        if (outputDir != null) {
-          return new File(outputDir.getParent(), nullSafeLocation).getAbsolutePath();
-        }
-        else {
-          return nullSafeLocation;
-        }
+        File outputDir = JpsJavaExtensionService.getInstance().getOutputDirectory(getModule(), false);
+        return outputDir != null ? new File(outputDir.getParent(), nullSafeLocation).getAbsolutePath() : nullSafeLocation;
+
       case OsgiOutputPath:
-        JpsProject project = module.getProject();
         JpsOsmorcProjectExtension projectExtension = getProjectExtension();
-        String bundlesOutputPath = projectExtension == null ? null : projectExtension.getBundlesOutputPath();
-        if (bundlesOutputPath != null && bundlesOutputPath.trim().length() != 0) {
-          return bundlesOutputPath + "/" + nullSafeLocation;
+        if (projectExtension != null) {
+          String bundlesOutputPath = projectExtension.getBundlesOutputPath();
+          if (!StringUtil.isEmptyOrSpaces(bundlesOutputPath)) {
+            return bundlesOutputPath + "/" + nullSafeLocation;
+          }
         }
-        else {
-          return JpsOsmorcProjectExtensionImpl.getDefaultBundlesOutputPath(project) + "/" + nullSafeLocation;
-        }
+        return JpsOsmorcProjectExtensionImpl.getDefaultBundlesOutputPath(getModule().getProject()) + "/" + nullSafeLocation;
+
       case SpecificOutputPath:
       default:
         return nullSafeLocation;
     }
   }
 
+  @Override
   public boolean isUseBndFile() {
-    return getManifestGenerationMode() == ManifestGenerationMode.Bnd;
+    return myProperties.myManifestGenerationMode == ManifestGenerationMode.Bnd;
   }
 
+  @Override
   public boolean isUseBundlorFile() {
-    return getManifestGenerationMode() == ManifestGenerationMode.Bundlor;
+    return myProperties.myManifestGenerationMode == ManifestGenerationMode.Bundlor;
   }
 
+  @Override
   public boolean isManifestManuallyEdited() {
-    return getManifestGenerationMode() == ManifestGenerationMode.Manually;
+    return myProperties.myManifestGenerationMode == ManifestGenerationMode.Manually;
   }
 
+  @Override
   public boolean isOsmorcControlsManifest() {
-    return getManifestGenerationMode() == ManifestGenerationMode.OsmorcControlled;
-  }
-
-  public ManifestGenerationMode getManifestGenerationMode() {
-    return myProperties.myManifestGenerationMode;
+    return myProperties.myManifestGenerationMode == ManifestGenerationMode.OsmorcControlled;
   }
 
   @NotNull
+  @Override
   public String getBndFileLocation() {
     return StringUtil.notNullize(myProperties.myBndFileLocation);
   }
@@ -155,11 +123,10 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
   }
 
   /**
-   * Returns the manifest file for this facet.
-   *
-   * @return the manifest file. If the manifest is automatically generated, returns null.
+   * Returns the manifest file for this facet. If the manifest is automatically generated, returns null.
    */
   @Nullable
+  @Override
   public File getManifestFile() {
     if (isOsmorcControlsManifest()) {
       String pathToJar = getJarFileLocation();
@@ -187,84 +154,49 @@ public class JpsOsmorcModuleExtensionImpl extends JpsElementBase<JpsOsmorcModule
         return null;
       }
     }
+    else if (isManifestManuallyEdited()) {
+      return OsgiBuildUtil.findFileInModuleContentRoots(getModule(), getManifestLocation());
+    }
     else {
-      return findFileInModuleContentRoots(getManifestLocation());
+      return null;
     }
   }
 
-  private JpsOsmorcProjectExtension getProjectExtension() {
-    return JpsOsmorcProjectExtensionImpl.getExtension(getModule().getProject());
-  }
-
   @NotNull
+  @Override
   public String getManifestLocation() {
-    if (isUseProjectDefaultManifestFileLocation()) {
+    if (myProperties.myUseProjectDefaultManifestFileLocation) {
       JpsOsmorcProjectExtension projectExtension = getProjectExtension();
-      return projectExtension == null
-             ? OsmorcProjectExtensionProperties.DEFAULT_MANIFEST_LOCATION
-             : projectExtension.getDefaultManifestFileLocation();
+      return projectExtension == null ? JarFile.MANIFEST_NAME : projectExtension.getDefaultManifestFileLocation();
     }
     else {
-      return doGetManifestLocation();
+      return StringUtil.notNullize(myProperties.myManifestLocation);
     }
   }
 
-  /**
-   * @return the manifest location, relative to the module's content roots.
-   */
   @NotNull
-  public String doGetManifestLocation() {
-    return StringUtil.notNullize(myProperties.myManifestLocation);
-  }
-
-  @Nullable
-  public File findFileInModuleContentRoots(String relativePath) {
-    String ioRelativePath = FileUtil.toSystemDependentName(relativePath);
-
-    for (String rootUrl : getModule().getContentRootsList().getUrls()) {
-      File root = JpsPathUtil.urlToFile(rootUrl);
-      File result = new File(root, ioRelativePath);
-      if (result.exists()) {
-        return result;
-      }
-    }
-    return null;
-  }
-
-  @NotNull
-  public List<OsmorcJarContentEntry> getAdditionalJARContents() {
+  @Override
+  public List<OsmorcJarContentEntry> getAdditionalJarContents() {
     return Collections.unmodifiableList(myProperties.myAdditionalJARContents);
   }
 
-  @NotNull
+  @Nullable
+  @Override
   public String getIgnoreFilePattern() {
-    return StringUtil.notNullize(myProperties.myIgnoreFilePattern);
-  }
-
-  public boolean isIgnorePatternValid() {
-    String ignoreFilePattern = myProperties.myIgnoreFilePattern;
-    if (StringUtil.isEmpty(ignoreFilePattern)) {
-      return true; // empty pattern is ok
-    }
-    try {
-      Pattern.compile(ignoreFilePattern);
-      return true;
-    }
-    catch (PatternSyntaxException e) {
-      return false;
-    }
+    return myProperties.myIgnoreFilePattern;
   }
 
   @NotNull
+  @Override
   public String getBundlorFileLocation() {
     return StringUtil.notNullize(myProperties.myBundlorFileLocation);
   }
 
-  public void processAffectedModules(Consumer<JpsModule> consumer) {
-    JpsJavaExtensionService.dependencies(getModule()).recursively().productionOnly().processModules(consumer);
+  private JpsModule getModule() {
+    return (JpsModule)getParent();
   }
 
-  public boolean isUseProjectDefaultManifestFileLocation() {
-    return myProperties.myUseProjectDefaultManifestFileLocation;
+  private JpsOsmorcProjectExtension getProjectExtension() {
+    return JpsOsmorcExtensionService.getExtension(getModule().getProject());
   }
 }

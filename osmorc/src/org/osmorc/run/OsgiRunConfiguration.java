@@ -50,6 +50,7 @@ import org.osmorc.run.ui.OsgiRunConfigurationEditor;
 import org.osmorc.run.ui.SelectedBundle;
 import org.osmorc.settings.ApplicationSettings;
 import org.osmorc.settings.ProjectSettings;
+import org.osmorc.util.OsgiFileUtil;
 
 import java.util.*;
 
@@ -124,24 +125,18 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     alternativeJrePath = element.getAttributeValue(ALTERNATIVE_JRE_PATH, "");
     generateWorkingDir = Boolean.valueOf(element.getAttributeValue(GENERATE_WORKING_DIR_ATTRIBUTE));
 
-    String fwsl = element.getAttributeValue(FRAMEWORK_START_LEVEL);
-    if (fwsl != null) {
-      try {
-        frameworkStartLevel = Integer.parseInt(fwsl);
-      }
-      catch (NumberFormatException e) {
-        frameworkStartLevel = 1;
-      }
+    try {
+      frameworkStartLevel = Integer.parseInt(element.getAttributeValue(FRAMEWORK_START_LEVEL, "1"));
+    }
+    catch (NumberFormatException e) {
+      frameworkStartLevel = 1;
     }
 
-    String dfsl = element.getAttributeValue(DEFAULT_START_LEVEL);
-    if (dfsl != null) {
-      try {
-        defaultStartLevel = Integer.parseInt(dfsl);
-      }
-      catch (NumberFormatException e) {
-        defaultStartLevel = 5;
-      }
+    try {
+      defaultStartLevel = Integer.parseInt(element.getAttributeValue(DEFAULT_START_LEVEL, "5"));
+    }
+    catch (NumberFormatException e) {
+      defaultStartLevel = 5;
     }
 
     // noinspection unchecked
@@ -173,23 +168,25 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       try {
         type = SelectedBundle.BundleType.valueOf(typeName);
       }
-      catch (Exception e) {
+      catch (IllegalArgumentException e) {
         // legacy settings should have modules, only so this is a safe guess.
         type = SelectedBundle.BundleType.Module;
       }
-      SelectedBundle selectedBundle = new SelectedBundle(name, url, type);
+
+      SelectedBundle selectedBundle = new SelectedBundle(type, name, OsgiFileUtil.urlToPath(url));
+
       if (startLevel != null) { // avoid crashing on legacy settings.
         try {
           selectedBundle.setStartLevel(Integer.parseInt(startLevel));
         }
-        catch (NumberFormatException e) {
-          // ok.
-        }
+        catch (NumberFormatException ignored) { }
       }
+
       String startAfterInstallationString = child.getAttributeValue(START_AFTER_INSTALLATION_ATTRIBUTE);
       if (startAfterInstallationString != null) {
         selectedBundle.setStartAfterInstallation(Boolean.parseBoolean(startAfterInstallationString));
       }
+
       bundlesToDeploy.add(selectedBundle);
     }
 
@@ -233,7 +230,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       Element bundle = new Element(BUNDLE_ELEMENT);
       bundle.setAttribute(NAME_ATTRIBUTE, selectedBundle.getName());
       if (!selectedBundle.isModule()) {
-        bundle.setAttribute(URL_ATTRIBUTE, selectedBundle.getBundleUrl());
+        String path = selectedBundle.getBundlePath();
+        if (path != null) bundle.setAttribute(URL_ATTRIBUTE, OsgiFileUtil.pathToUrl(path));
       }
       bundle.setAttribute(START_LEVEL_ATTRIBUTE, String.valueOf(selectedBundle.getStartLevel()));
       bundle.setAttribute(TYPE_ATTRIBUTE, selectedBundle.getBundleType().name());

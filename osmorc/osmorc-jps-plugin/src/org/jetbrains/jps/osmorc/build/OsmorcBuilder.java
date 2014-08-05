@@ -15,9 +15,7 @@ import java.util.Collections;
  * @author michael.golubev
  */
 public class OsmorcBuilder extends TargetBuilder<BuildRootDescriptor, OsmorcBuildTarget> {
-
-  public static final String NAME = "OSGi Compiler";
-
+  public static final String ID = "osgi";
 
   public OsmorcBuilder() {
     super(Collections.singletonList(OsmorcBuildTargetType.INSTANCE));
@@ -26,7 +24,7 @@ public class OsmorcBuilder extends TargetBuilder<BuildRootDescriptor, OsmorcBuil
   @NotNull
   @Override
   public String getPresentableName() {
-    return NAME;
+    return ID;
   }
 
   @Override
@@ -34,6 +32,6 @@ public class OsmorcBuilder extends TargetBuilder<BuildRootDescriptor, OsmorcBuil
                     @NotNull DirtyFilesHolder<BuildRootDescriptor, OsmorcBuildTarget> holder,
                     @NotNull BuildOutputConsumer outputConsumer,
                     @NotNull CompileContext context) throws ProjectBuildException, IOException {
-    new OsmorcBuildSession().build(target, context);
+    new OsgiBuildSession().build(target, context);
   }
 }

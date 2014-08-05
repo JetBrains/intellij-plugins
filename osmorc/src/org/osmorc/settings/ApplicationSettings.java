@@ -32,9 +32,9 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.osmorc.model.LibraryBundlificationRule;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
-import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 
 import java.util.List;
 

@@ -42,14 +42,13 @@ import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
 import org.jetbrains.idea.maven.dom.model.MavenDomRepository;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.MavenArtifactUtil;
+import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.obrimport.MavenRepository;
 import org.osmorc.obrimport.ObrSearchDialog;
 import org.osmorc.obrimport.springsource.ObrMavenResult;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -107,18 +106,8 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
             .getArtifactFile(manager.getLocalRepository(), dependency.getGroupId().getStringValue(),
                              dependency.getArtifactId().getStringValue(),
                              dependency.getVersion().getStringValue(), "jar");
-          if (artifactFile.exists()) {
-            try {
-              String url = artifactFile.toURL().toString();
-              // it is no bundle
-              if (!CachingBundleInfoProvider.isBundle(url)) {
-                problemsHolder.registerProblem(xmltag, "Dependency is not OSGi-ready",
-                                               new FindOsgiCapableMavenDependencyQuickFix());
-              }
-            }
-            catch (MalformedURLException e) {
-              // ok
-            }
+          if (artifactFile.exists() && !CachingBundleInfoProvider.isBundle(artifactFile.getPath())) {
+            problemsHolder.registerProblem(xmltag, "Dependency is not OSGi-ready", new FindOsgiCapableMavenDependencyQuickFix());
           }
         }
       }
@@ -126,14 +115,13 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
   }
 
   @Override
-  public ProblemDescriptor[] checkFile(@NotNull PsiFile psiFile, @NotNull InspectionManager inspectionManager,
-                                       boolean b) {
+  public ProblemDescriptor[] checkFile(@NotNull PsiFile psiFile, @NotNull InspectionManager inspectionManager, boolean isOnTheFly) {
     // only run this for POM files in osmorc-controlled projects, its a waste of resources on other XML file types
     if (!MavenDomUtil.isMavenFile(psiFile) || !OsmorcFacet.hasOsmorcFacet(psiFile)) {
       return new ProblemDescriptor[0];
     }
     else {
-      return super.checkFile(psiFile, inspectionManager, b);
+      return super.checkFile(psiFile, inspectionManager, isOnTheFly);
     }
   }
 

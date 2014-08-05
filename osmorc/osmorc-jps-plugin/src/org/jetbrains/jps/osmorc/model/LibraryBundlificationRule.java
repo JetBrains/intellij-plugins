@@ -39,12 +39,12 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * A library bundlification rule contains a ruleset that is being used when converting a plain java library to an osgi
- * bundle using the bnd tool.
+ * A library bundlification rule contains a ruleset that is being used
+ * when converting a plain java library to an OSGi bundle using the Bnd tool.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class JpsLibraryBundlificationRule {
+public class LibraryBundlificationRule {
   private String myRuleRegex = ".*";
   private String myAdditionalProperties = Constants.IMPORT_PACKAGE + ": *;resolution:=optional";
   private boolean myDoNotBundle = false;
@@ -92,20 +92,17 @@ public class JpsLibraryBundlificationRule {
     myLastModified = lastModified;
   }
 
-  public JpsLibraryBundlificationRule copy() {
-    JpsLibraryBundlificationRule result = new JpsLibraryBundlificationRule();
-    doCopy(result);
+  public LibraryBundlificationRule copy() {
+    LibraryBundlificationRule result = new LibraryBundlificationRule();
+    result.myAdditionalProperties = myAdditionalProperties;
+    result.myRuleRegex = myRuleRegex;
+    result.myDoNotBundle = myDoNotBundle;
+    result.myStopAfterThisRule = myStopAfterThisRule;
     return result;
   }
 
-  protected void doCopy(JpsLibraryBundlificationRule copy) {
-    copy.myAdditionalProperties = myAdditionalProperties;
-    copy.myRuleRegex = myRuleRegex;
-    copy.myDoNotBundle = myDoNotBundle;
-    copy.myStopAfterThisRule = myStopAfterThisRule;
-  }
   /**
-   * Returns a map with properties to be added to the bundle manifest definition of all * libraries which this rule applies to.
+   * Returns a map with properties to be added to the bundle manifest definition of all libraries which this rule applies to.
    */
   @Transient
   public Map<String, String> getAdditionalPropertiesMap() {
@@ -124,7 +121,7 @@ public class JpsLibraryBundlificationRule {
   }
 
   /**
-   * Checks, if this rule applies to the  given library name.
+   * Checks, if this rule applies to the given library name.
    */
   public boolean appliesTo(@NotNull String libraryName) {
     try {
@@ -139,6 +136,7 @@ public class JpsLibraryBundlificationRule {
       throw new IllegalArgumentException("Empty regex");
     }
     if (!".*".equals(myRuleRegex)) {
+      //noinspection ResultOfMethodCallIgnored
       Pattern.compile(myRuleRegex);
     }
 
@@ -157,7 +155,7 @@ public class JpsLibraryBundlificationRule {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    JpsLibraryBundlificationRule rule = (JpsLibraryBundlificationRule)o;
+    LibraryBundlificationRule rule = (LibraryBundlificationRule)o;
 
     if (myDoNotBundle != rule.myDoNotBundle) return false;
     if (myStopAfterThisRule != rule.myStopAfterThisRule) return false;

@@ -46,13 +46,13 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.osmorc.model.OutputPathType;
+import org.jetbrains.jps.osmorc.util.OrderedProperties;
 import org.osgi.framework.Constants;
 import org.osmorc.OsmorcProjectComponent;
 import org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab;
 import org.osmorc.facet.ui.OsmorcFacetJAREditorTab;
 import org.osmorc.facet.ui.OsmorcFacetManifestGenerationEditorTab;
 import org.osmorc.settings.ProjectSettings;
-import org.osmorc.util.OrderedProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -546,23 +546,15 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
    */
   @NotNull
   public Map<String, String> getAdditionalPropertiesAsMap() {
-    Map<String, String> result = new LinkedHashMap<String, String>();
-
-    Properties p = new OrderedProperties();
     try {
+      OrderedProperties p = new OrderedProperties();
       p.load(new StringReader(getAdditionalProperties()));
+      return p.toMap();
     }
     catch (IOException e) {
       LOG.warn(e);
-      return result;
+      return Collections.emptyMap();
     }
-
-    Set<String> propNames = p.stringPropertyNames();
-    for (String propName : propNames) {
-      result.put(propName, p.getProperty(propName));
-    }
-
-    return result;
   }
 
   /**

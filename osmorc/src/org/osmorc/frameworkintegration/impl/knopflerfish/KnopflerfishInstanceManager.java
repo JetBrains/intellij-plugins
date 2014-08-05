@@ -30,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.run.ui.SelectedBundle;
-import org.osmorc.util.OsgiFileUtil;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -51,10 +50,10 @@ public class KnopflerfishInstanceManager extends AbstractFrameworkInstanceManage
   public String getVersion(@NotNull FrameworkInstanceDefinition instance) {
     Collection<SelectedBundle> bundles = getFrameworkBundles(instance, FrameworkBundleType.SYSTEM);
     if (bundles.size() == 1) {
-      String url = bundles.iterator().next().getBundleUrl();
-      if (url != null) {
+      String path = bundles.iterator().next().getBundlePath();
+      if (path != null) {
         try {
-          JarFile jar = new JarFile(OsgiFileUtil.urlToPath(url));
+          JarFile jar = new JarFile(path);
           try {
             ZipEntry entry = jar.getEntry("release");
             if (entry != null) {

@@ -22,48 +22,44 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.jetbrains.jps.osmorc.build;
 
 import aQute.bnd.osgi.Analyzer;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.text.MessageFormat;
 
 /**
- * Created by IntelliJ IDEA. User: kork Date: Jul 20, 2009 Time: 9:51:04 PM
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @since Jul 20, 2009
  */
-class ReportingAnalyzer extends Analyzer {
+public class ReportingAnalyzer extends Analyzer {
+  private final Reporter myReporter;
 
-  private final File mySourceFile;
-  private final OsmorcBuildSession mySession;
-
-  public ReportingAnalyzer(OsmorcBuildSession session, File sourceFile) {
-    super();
-    mySession = session;
-    mySourceFile = sourceFile;
+  public ReportingAnalyzer(@NotNull Reporter reporter) {
+    myReporter = reporter;
   }
 
   @Override
   public SetLocation error(String s, Object... objects) {
-    mySession.processException(new OsmorcBuildException(MessageFormat.format(s, objects), mySourceFile));
+    myReporter.error(MessageFormat.format(s, objects), null, null);
     return super.error(s, objects);
   }
 
   @Override
   public SetLocation error(String s, Throwable throwable, Object... objects) {
-    mySession.processException(new OsmorcBuildException(MessageFormat.format(s, objects), throwable, mySourceFile));
+    myReporter.error(MessageFormat.format(s, objects), throwable, null);
     return super.error(s, throwable, objects);
   }
 
   @Override
   public SetLocation warning(String s, Object... objects) {
-    mySession.processException(new OsmorcBuildException(MessageFormat.format(s, objects), mySourceFile).setWarning());
+    myReporter.warning(MessageFormat.format(s, objects), null, null);
     return super.warning(s, objects);
   }
 
   @Override
   public void progress(String s, Object... objects) {
-    mySession.progressMessage(MessageFormat.format(s, objects));
+    myReporter.progress(MessageFormat.format(s, objects));
   }
 }

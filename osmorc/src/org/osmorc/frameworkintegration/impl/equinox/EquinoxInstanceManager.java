@@ -45,7 +45,7 @@ public class EquinoxInstanceManager extends AbstractFrameworkInstanceManager {
   @Override
   public Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
     if (type == FrameworkBundleType.SHELL) {
-      return Collections.singleton(new SelectedBundle("Equinox built-in console", null, SelectedBundle.BundleType.FrameworkBundle));
+      return Collections.singleton(new SelectedBundle(SelectedBundle.BundleType.FrameworkBundle, "Equinox built-in console", null));
     }
     else {
       return collectBundles(instance, type, BUNDLE_DIRS, SYSTEM_BUNDLE, EquinoxRunner.MAIN_CLASS, 1, SHELL_BUNDLES, null, 0);

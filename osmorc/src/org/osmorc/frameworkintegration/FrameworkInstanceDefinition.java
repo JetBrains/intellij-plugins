@@ -24,8 +24,73 @@
  */
 package org.osmorc.frameworkintegration;
 
-import org.jetbrains.jps.osmorc.model.JpsFrameworkInstanceDefinition;
+import com.intellij.openapi.util.UserDataHolderBase;
+import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
-public class FrameworkInstanceDefinition extends JpsFrameworkInstanceDefinition {
+/**
+ * @author Robert F. Beeger (robert@beeger.net)
+ */
+public class FrameworkInstanceDefinition extends UserDataHolderBase {
+  private String myFrameworkIntegratorName;
+  private String myName;
+  private String myVersion;
+  private String myBaseFolder;
 
+  public String getFrameworkIntegratorName() {
+    return myFrameworkIntegratorName;
+  }
+
+  public void setFrameworkIntegratorName(@NotNull String frameworkIntegratorName) {
+    myFrameworkIntegratorName = frameworkIntegratorName;
+  }
+
+  public String getName() {
+    return myName;
+  }
+
+  public void setName(@NotNull String name) {
+    myName = name;
+  }
+
+  public String getVersion() {
+    return myVersion;
+  }
+
+  public void setVersion(String version) {
+    myVersion = version;
+  }
+
+  public String getBaseFolder() {
+    return myBaseFolder;
+  }
+
+  public void setBaseFolder(String baseFolder) {
+    myBaseFolder = baseFolder;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    FrameworkInstanceDefinition that = (FrameworkInstanceDefinition)o;
+
+    if (myName != null ? !myName.equals(that.myName) : that.myName != null) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return myName != null ? myName.hashCode() : 0;
+  }
+
+  @Override
+  public String toString() {
+    String description = myName != null ? myName : "undefined";
+    String frameworkIntegrator = myFrameworkIntegratorName != null ? myFrameworkIntegratorName : "undefined";
+    String version = !StringUtil.isEmptyOrSpaces(myVersion) ? " [" + myVersion + "]" : " [latest]";
+    return description + " (" + frameworkIntegrator + ")" + version;
+  }
 }

@@ -30,10 +30,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
+import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.ui.SelectedBundle;
+import org.osmorc.util.OsgiFileUtil;
 
 import java.util.List;
 
@@ -59,11 +60,11 @@ public class ConciergeRunner extends AbstractFrameworkRunner {
     List<String> installBundles = ContainerUtil.newSmartList();
 
     for (SelectedBundle bundle : myBundles) {
-      String bundleUrl = bundle.getBundleUrl();
-      if (bundleUrl == null) continue;
-      boolean isFragment = CachingBundleInfoProvider.isFragmentBundle(bundleUrl);
+      String bundlePath = bundle.getBundlePath();
+      if (bundlePath == null) continue;
+      boolean isFragment = CachingBundleInfoProvider.isFragmentBundle(bundlePath);
 
-      bundleUrl = bundleUrl.replaceAll(" ", "%20");
+      String bundleUrl = OsgiFileUtil.pathToUrl(bundlePath.replaceAll(" ", "%20"));
       if (bundle.isStartAfterInstallation() && !isFragment) {
         int startLevel = getBundleStartLevel(bundle);
         startBundles.putValue(startLevel, bundleUrl);

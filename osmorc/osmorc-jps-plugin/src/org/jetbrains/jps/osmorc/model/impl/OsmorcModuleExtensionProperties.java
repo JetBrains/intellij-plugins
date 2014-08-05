@@ -6,6 +6,7 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
+import org.jetbrains.jps.osmorc.model.OsmorcJarContentEntry;
 import org.jetbrains.jps.osmorc.model.OutputPathType;
 
 import java.util.List;

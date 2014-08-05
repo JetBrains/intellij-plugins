@@ -1,11 +1,10 @@
 package org.jetbrains.jps.osmorc.model;
 
-import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsElement;
-import org.jetbrains.jps.model.module.JpsModule;
-import org.jetbrains.jps.osmorc.model.impl.OsmorcJarContentEntry;
+import org.jetbrains.jps.model.JpsElementChildRole;
+import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 
 import java.io.File;
 import java.util.List;
@@ -15,8 +14,7 @@ import java.util.Map;
  * @author michael.golubev
  */
 public interface JpsOsmorcModuleExtension extends JpsElement {
-  @NotNull
-  JpsModule getModule();
+  JpsElementChildRole<JpsOsmorcModuleExtension> ROLE = JpsElementChildRoleBase.create("Osmorc");
 
   @NotNull
   String getJarFileLocation();
@@ -50,19 +48,12 @@ public interface JpsOsmorcModuleExtension extends JpsElement {
   @NotNull
   String getManifestLocation();
 
+  @NotNull
+  List<OsmorcJarContentEntry> getAdditionalJarContents();
+
   @Nullable
-  File findFileInModuleContentRoots(String relativePath);
-
-  @NotNull
-  List<OsmorcJarContentEntry> getAdditionalJARContents();
-
-  @NotNull
   String getIgnoreFilePattern();
-
-  boolean isIgnorePatternValid();
 
   @NotNull
   String getBundlorFileLocation();
-
-  void processAffectedModules(Consumer<JpsModule> consumer);
 }
