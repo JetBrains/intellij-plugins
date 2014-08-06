@@ -19,25 +19,25 @@ public class JavaClassTypeCoercionValidator implements Command {
     private static final Map<String, List<String>> CLASS_COERCION_MAP = new HashMap<String, List<String>>();
 
     static {
-        CLASS_COERCION_MAP.put("java.lang.String", Arrays.asList(
+        CLASS_COERCION_MAP.put(CommonClassNames.JAVA_LANG_STRING, Arrays.asList(
           CommonClassNames.JAVA_LANG_OBJECT));
 
         CLASS_COERCION_MAP.put("java.lang.Double", Arrays.asList(
-                "java.lang.String",
+                CommonClassNames.JAVA_LANG_STRING,
                 "java.math.BigDecimal",
                 "java.lang.Long",
                 "java.lang.Float"));
 
         CLASS_COERCION_MAP.put("java.math.BigDecimal", Arrays.asList(
-                "java.lang.String"
+                CommonClassNames.JAVA_LANG_STRING
         ));
 
         CLASS_COERCION_MAP.put("java.math.BigInteger", Arrays.asList(
-                "java.lang.String"
+                CommonClassNames.JAVA_LANG_STRING
         ));
 
         CLASS_COERCION_MAP.put("java.lang.Long", Arrays.asList(
-                "java.lang.String",
+                CommonClassNames.JAVA_LANG_STRING,
                 "java.lang.Number",
                 "org.apache.tapestry5.ioc.util.TimeInterval"
         ));
@@ -71,7 +71,11 @@ public class JavaClassTypeCoercionValidator implements Command {
         ));
 
         CLASS_COERCION_MAP.put("org.apache.tapestry5.ioc.util.TimeInterval", Arrays.asList(
-                "java.lang.String"
+          CommonClassNames.JAVA_LANG_STRING
+        ));
+
+        CLASS_COERCION_MAP.put("java.text.DateFormat", Arrays.asList(
+          CommonClassNames.JAVA_LANG_STRING
         ));
     }
 
