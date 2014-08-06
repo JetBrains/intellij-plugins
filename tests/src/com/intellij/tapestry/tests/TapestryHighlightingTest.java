@@ -2,9 +2,9 @@ package com.intellij.tapestry.tests;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
+import com.intellij.codeInspection.xml.DeprecatedClassUsageInspection;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.tapestry.intellij.inspections.TelReferencesInspection;
-import com.intellij.codeInspection.xml.DeprecatedClassUsageInspection;
 
 /**
  * @author Alexey Chmutov
@@ -67,6 +67,7 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
 
   public void testTmlIfWithElse() throws Throwable {
     addComponentToProject("If");
+    addComponentToProject("TestComp");
     doTest(true);
   }
 
@@ -75,6 +76,4 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     myFixture.enableInspections(tools);
     myFixture.testHighlighting(true, checkInfos, true, templateFile);
   }
-
-
 }
