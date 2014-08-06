@@ -3,7 +3,9 @@ package com.intellij.tapestry.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.util.PropertyUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +35,13 @@ public class TelReferenceExpression extends TelCompositeElement implements TelRe
       return findChildByClass(TelReferenceQualifier.class);
     }
 
-    public PsiElement handleElementRename(final String newElementName) throws IncorrectOperationException {
+    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+      PsiElement resolve = resolve();
+      // if we referenced property name before (without get) then rename should also strip get prefix
+      if (resolve instanceof PsiMethod && PropertyUtil.getPropertyName((PsiMethod)resolve) != null) {
+        String newPropertyName = PropertyUtil.getPropertyName(newElementName);
+        if (newPropertyName != null) newElementName = newPropertyName;
+      }
       final PsiElement newReferenceName = TelPsiUtil.parseReference(newElementName, getProject()).getReferenceNameElement();
       getNode().replaceChild(getReferenceNameElement().getNode(), newReferenceName.getNode());
       return TelReferenceExpression.this;
