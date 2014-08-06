@@ -6,7 +6,6 @@ import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.module.Module;
@@ -16,6 +15,7 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.java.IJavaType;
@@ -194,6 +194,9 @@ public class IdeaUtils {
 
       try {
         psiClass = ((PsiClassType)type).resolve();
+        if (psiClass instanceof PsiTypeParameter) { // lets consider generic type T as Object
+          psiClass = JavaPsiFacade.getInstance(module.getProject()).findClass("java.lang.Object", GlobalSearchScope.moduleWithLibrariesScope(module));
+        }
       }
       catch (ProcessCanceledException ex) {
         // ignore
