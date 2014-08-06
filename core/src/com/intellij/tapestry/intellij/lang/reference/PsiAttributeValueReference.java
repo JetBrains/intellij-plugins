@@ -3,6 +3,7 @@ package com.intellij.tapestry.intellij.lang.reference;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -11,23 +12,24 @@ import org.jetbrains.annotations.Nullable;
 
 public class PsiAttributeValueReference implements PsiReference {
 
-  private final XmlAttributeValue _attributeValue;
+  private final XmlAttribute _attribute;
   private final PsiElement _bindElement;
 
-  public PsiAttributeValueReference(XmlAttributeValue attributeValue, PsiElement bindElement) {
-    _attributeValue = attributeValue;
+  public PsiAttributeValueReference(XmlAttribute attributeValue, PsiElement bindElement) {
+    _attribute = attributeValue;
     _bindElement = bindElement;
   }
 
   public PsiElement getElement() {
-    return _attributeValue;
+    return _attribute;
   }
 
   public TextRange getRangeInElement() {
-    if (_attributeValue.getText().startsWith("\"") || _attributeValue.getText().startsWith("\'")) {
-      return TextRange.from(1, _attributeValue.getTextRange().getLength() - 2);
-    }
-    return TextRange.from(0, _attributeValue.getValue().length());
+    XmlAttributeValue element = _attribute.getValueElement();
+    if (element == null) return new TextRange(0, 0);
+    TextRange valueTextRange = element.getValueTextRange();
+
+    return valueTextRange.shiftRight(-_attribute.getTextRange().getStartOffset());
   }
 
   @Nullable
