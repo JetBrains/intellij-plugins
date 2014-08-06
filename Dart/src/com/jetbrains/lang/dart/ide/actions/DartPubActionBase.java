@@ -144,18 +144,20 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
 
         try {
-          final ProcessOutput processOutput = new CapturingProcessHandler(command).runProcess();
+          final ProcessOutput processOutput = new CapturingProcessHandler(command).runProcessWithProgressIndicator(indicator);
           final String err = processOutput.getStderr().trim();
 
           LOG.debug(presentableCommandLine + ", exit code: " + processOutput.getExitCode() + ", err:\n" +
                     err + "\nout:\n" + processOutput.getStdout());
 
-          if (err.isEmpty()) {
-            Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, DartPubActionBase.this.getTitle(), getSuccessMessage(),
-                                                      NotificationType.INFORMATION));
-          }
-          else {
-            Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, DartPubActionBase.this.getTitle(), err, NotificationType.ERROR));
+          if (!indicator.isCanceled()) {
+            if (err.isEmpty()) {
+              Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, DartPubActionBase.this.getTitle(), getSuccessMessage(),
+                                                        NotificationType.INFORMATION));
+            }
+            else {
+              Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, DartPubActionBase.this.getTitle(), err, NotificationType.ERROR));
+            }
           }
 
           ApplicationManager.getApplication().invokeLater(new Runnable() {
