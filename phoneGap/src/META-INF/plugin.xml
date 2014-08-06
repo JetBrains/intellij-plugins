@@ -11,16 +11,16 @@
 
     <description><![CDATA[
         <h4>PhoneGap/Cordova integration for InteliJ Platform.<h4>
-        <p>* PhoneGap/Cordova Project wizard (not stable)</p>
-        <p>* PhoneGap/Cordova Project importer</p>
+        <p>* PhoneGap/Cordova Project wizard</p>
         <p>* Run PhoneGap/Cordova application from IntelliJ toolbar</p>
-        <p>* Code completion</p>
-        <p>Ripple emulator support</p>
+        <p>* Code completion for event types</p>
+        <p>* Ionic support</p>
         <p>See README.md</p>
         <a href="https://github.com/masahirosuzuka/phonegap-intelliJ-plugin">masahirsuzuka/PhoneGapIntelliJPlugin</a>
     ]]></description>
 
     <change-notes><![CDATA[
+    <p>v0.8.2 Make work on Windows && Change jvm 1.6 -> 1.7</p>
     <p>v0.8.1 Fix request jvm version</p>
     <p>v0.8.0 Code complements</p>
     <p>v0.7.0 Cordova support</p>
@@ -37,7 +37,7 @@
     ]]>
     </change-notes>
 
-    <idea-version since-build="131"/>
+    <idea-version since-build="138.1498"/>
 
     <depends>com.intellij.modules.lang</depends>
 
