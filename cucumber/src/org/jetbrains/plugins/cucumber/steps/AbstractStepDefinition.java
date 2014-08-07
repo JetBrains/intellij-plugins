@@ -1,16 +1,23 @@
 package org.jetbrains.plugins.cucumber.steps;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.search.SearchScope;
+import com.intellij.util.CommonProcessors.CollectProcessor;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -87,6 +94,10 @@ public abstract class AbstractStepDefinition {
     return myElementPointer.hashCode();
   }
 
+  /**
+   * Set new value for step definitions (most likely provided by refactor->rename)
+   * @param newValue
+   */
   public void setCucumberRegex(@NotNull final String newValue) {
   }
 
@@ -98,5 +109,43 @@ public abstract class AbstractStepDefinition {
    */
   public boolean supportsStep(@NotNull final GherkinStep step) {
     return true;
+  }
+
+  /**
+   * Checks if step definition supports rename.
+   * @param newName if null -- check if definition supports renaming at all (regardless new name).
+   *                If not null -- check if it can be renamed to the new (provided) name.
+   * @return true if rename is supportged
+   */
+  public boolean supportsRename(@Nullable final String newName) {
+    return true;
+  }
+
+  /**
+   * Finds all steps points to this definition in some scope
+   *
+   * @param searchScope scope to find steps
+   * @return steps
+   */
+  @NotNull
+  public Collection<GherkinStep> findSteps(@NotNull final SearchScope searchScope) {
+    final String regex = getCucumberRegex();
+    final PsiElement element = getElement();
+    if ((regex == null) || (element == null)) {
+      return Collections.emptyList();
+    }
+
+    final CollectProcessor<PsiReference> consumer = new CollectProcessor<PsiReference>();
+    CucumberUtil.findGherkinReferencesToElement(element, regex, consumer, searchScope);
+
+    // We use hash to get rid of duplicates
+    final Collection<GherkinStep> results = new HashSet<GherkinStep>(consumer.getResults().size());
+    for (final PsiReference reference : consumer.getResults()) {
+      final PsiElement step = reference.getElement();
+      if (step instanceof GherkinStep) {
+        results.add((GherkinStep)step);
+      }
+    }
+    return results;
   }
 }

@@ -9,9 +9,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.rename.PsiElementRenameHandler;
 import com.intellij.refactoring.rename.RenameDialog;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
+import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 /**
  * User: avokin
@@ -31,8 +34,15 @@ public class GherkinStepRenameHandler extends PsiElementRenameHandler {
       return;
     }
 
+    if (!step.isRenameAllowed(null)) {
+      CommonRefactoringUtil.showErrorHint(project, editor, GherkinStep.RENAME_DISABLED_MESSAGE, "", null);
+      return;
+    }
+
+
     RenameDialog.showRenameDialog(dataContext, new CucumberStepRenameDialog(project, step, null, editor));
   }
+
 
   @Override
   public boolean isRenaming(DataContext dataContext) {

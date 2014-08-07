@@ -2,6 +2,7 @@ package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiCheckedRenameElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.TokenType;
@@ -16,20 +17,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.refactoring.GherkinChangeUtil;
+import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
+import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author yole
  */
-public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinStep {
+public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinStep, PsiCheckedRenameElement {
 
-  private static final TokenSet TEXT_FILTER = TokenSet.create(GherkinTokenTypes.TEXT, GherkinElementTypes.STEP_PARAMETER, TokenType.WHITE_SPACE, GherkinTokenTypes.STEP_PARAMETER_TEXT, GherkinTokenTypes.STEP_PARAMETER_BRACE);
+  private static final TokenSet TEXT_FILTER = TokenSet
+    .create(GherkinTokenTypes.TEXT, GherkinElementTypes.STEP_PARAMETER, TokenType.WHITE_SPACE, GherkinTokenTypes.STEP_PARAMETER_TEXT,
+            GherkinTokenTypes.STEP_PARAMETER_BRACE);
 
   private static final Pattern PARAMETER_SUBSTITUTION_PATTERN = Pattern.compile("<([^>\n\r]+)>");
   private final Object LOCK = new Object();
@@ -123,7 +125,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
           addSubstitutionFromText(tableText, substitutions);
         }
 
-        mySubstitutions = substitutions.isEmpty() ?  Collections.<String>emptyList() : substitutions;
+        mySubstitutions = substitutions.isEmpty() ? Collections.<String>emptyList() : substitutions;
       }
       return mySubstitutions;
     }
@@ -142,7 +144,8 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
         substitutions.add(substitution);
       }
       result = matcher.find();
-    } while (result);
+    }
+    while (result);
   }
 
   @Override
@@ -205,7 +208,9 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   private static String substituteText(String stepName, GherkinTableRow headerRow, GherkinTableRow row) {
     final List<GherkinTableCell> headerCells = headerRow.getPsiCells();
     final List<GherkinTableCell> dataCells = row.getPsiCells();
-    for (int i = 0, headerCellsNumber = headerCells.size(), dataCellsNumber = dataCells.size(); i < headerCellsNumber && i < dataCellsNumber; i++) {
+    for (int i = 0, headerCellsNumber = headerCells.size(), dataCellsNumber = dataCells.size();
+         i < headerCellsNumber && i < dataCellsNumber;
+         i++) {
       final String cellText = headerCells.get(i).getText().trim();
       stepName = stepName.replace("<" + cellText + ">", dataCells.get(i).getText().trim());
     }
@@ -224,5 +229,40 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
     final ASTNode keyword = getKeyword();
     final int keywordLength = keyword != null ? keyword.getTextLength() : 0;
     return getText().substring(keywordLength).trim();
+  }
+
+
+  @NotNull
+  @Override
+  public Collection<AbstractStepDefinition> findDefinitions() {
+    final List<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
+    for (final PsiReference reference : getReferences()) {
+      if (reference instanceof CucumberStepReference) {
+        result.addAll(((CucumberStepReference)reference).resolveToDefinitions());
+      }
+    }
+    return result;
+  }
+
+
+  @Override
+  public boolean isRenameAllowed(@Nullable final String newName) {
+    final Collection<AbstractStepDefinition> definitions = findDefinitions();
+    if (definitions.isEmpty()) {
+      return false; // No sense to rename step with out of definitions
+    }
+    for (final AbstractStepDefinition definition : definitions) {
+      if (!definition.supportsRename(newName)) {
+        return false; //At least one definition does not support renaming
+      }
+    }
+    return true; // Nothing prevents us from renaming
+  }
+
+  @Override
+  public void checkSetName(final String name) {
+    if (!isRenameAllowed(name)) {
+      throw new IncorrectOperationException(RENAME_DISABLED_MESSAGE);
+    }
   }
 }
