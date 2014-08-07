@@ -51,7 +51,7 @@ public class CucumberGoToRelatedProvider extends GotoRelatedProvider {
       final List<PsiFile> resultFiles = new ArrayList<PsiFile>();
       final List<GotoRelatedItem> result = new ArrayList<GotoRelatedItem>();
       for (GherkinStep step : steps) {
-        AbstractStepDefinition stepDef = index.findStepDefinition(gherkinFile, step.getSubstitutedName());
+        AbstractStepDefinition stepDef = index.findStepDefinition(gherkinFile, step);
         final PsiElement stepDefMethod = stepDef != null ? stepDef.getElement() : null;
 
         if (stepDefMethod != null) {

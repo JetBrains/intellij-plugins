@@ -9,6 +9,7 @@ import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.List;
 
@@ -87,5 +88,15 @@ public abstract class AbstractStepDefinition {
   }
 
   public void setCucumberRegex(@NotNull final String newValue) {
+  }
+
+  /**
+   * Checks if step definitions point supports certain step (i.e. some step definitions does not support some keywords)
+   *
+   * @param step Step to check
+   * @return true if supports.
+   */
+  public boolean supportsStep(@NotNull final GherkinStep step) {
+    return true;
   }
 }
