@@ -13,4 +13,7 @@ public interface DartVarDeclarationListPart extends DartComponent {
   @Nullable
   DartVarInit getVarInit();
 
+  @NotNull
+  List<DartMetadata> getMetadataList();
+
 }

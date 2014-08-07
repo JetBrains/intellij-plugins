@@ -1,6 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUIUtil;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -32,7 +32,7 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
   public JComponent getComponent() {
     setFields();
     JPanel panel = FormBuilder.createFormBuilder()
-      .addLabeledComponent("Phonegap/Cordova executable:", myExecutablePathField)
+      .addLabeledComponent("PhoneGap/Cordova executable:", myExecutablePathField)
       .getPanel();
 
     panel.setPreferredSize(new Dimension(600, 40));
@@ -42,7 +42,7 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
   @Override
   public void buildUI(@NotNull SettingsStep settingsStep) {
     setFields();
-    settingsStep.addSettingsField("Phonegap/Cordova executable:", myExecutablePathField);
+    settingsStep.addSettingsField("PhoneGap/Cordova executable:", myExecutablePathField);
   }
 
   @NotNull
@@ -55,7 +55,7 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
   }
 
   private void setFields() {
-    myExecutablePathField = PhoneGapUIUtil.createPhoneGapExecutableTextField(null);
+    myExecutablePathField = PhoneGapUtil.createPhoneGapExecutableTextField(null);
   }
 
   @Nullable
@@ -82,7 +82,7 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
       }
       myValidateCache.put(path, error);
     }
-    return error ? new ValidationInfo("Incorrect Phonegap/Cordova executable") : null;
+    return error ? new ValidationInfo("Incorrect PhoneGap/Cordova executable") : null;
   }
 
   @Override

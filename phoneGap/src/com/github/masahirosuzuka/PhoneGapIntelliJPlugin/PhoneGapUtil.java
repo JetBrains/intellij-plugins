@@ -13,27 +13,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class PhoneGapUIUtil {
+public class PhoneGapUtil {
 
   @NotNull
   public static TextFieldWithHistoryWithBrowseButton createPhoneGapExecutableTextField(@Nullable Project project) {
-    TextFieldWithHistoryWithBrowseButton textFieldWithHistoryWithBrowseButton = new TextFieldWithHistoryWithBrowseButton();
-    final TextFieldWithHistory textFieldWithHistory = textFieldWithHistoryWithBrowseButton.getChildComponent();
-    textFieldWithHistory.setHistorySize(-1);
-    textFieldWithHistory.setMinimumAndPreferredWidth(0);
-    SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new NotNullProducer<List<String>>() {
-      @NotNull
-      @Override
-      public List<String> produce() {
-        return PhoneGapSettings.getDefaultPaths();
-      }
-    });
-    SwingHelper.installFileCompletionAndBrowseDialog(
-      project,
-      textFieldWithHistoryWithBrowseButton,
-      "Phonegap/Cordova executable path:",
-      FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
-    );
+    TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
+      project, "PhoneGap/Cordova executable",
+      FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), new NotNullProducer<List<String>>() {
+        @NotNull
+        @Override
+        public List<String> produce() {
+          return PhoneGapSettings
+            .getDefaultPaths();
+        }
+      });
+    final TextFieldWithHistory textFieldWithHistory = field.getChildComponent();
 
     String executablePath = PhoneGapSettings.getInstance().getExecutablePath();
     if (StringUtil.isNotEmpty(executablePath)) {
@@ -41,7 +35,7 @@ public class PhoneGapUIUtil {
       textFieldWithHistory.addCurrentTextToHistory();
     }
 
-    return textFieldWithHistoryWithBrowseButton;
+    return field;
   }
 
   public static void setExecutablePath(TextFieldWithHistoryWithBrowseButton field, String executablePath) {

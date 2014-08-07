@@ -36,12 +36,12 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
 
   @Override
   public String getName() {
-    return "Cordova add platform";
+    return "Init PhoneGap/Cordova platform";
   }
 
   @Override
   public String getDescription(PhoneGapAddPlatformTask task) {
-    return "Run 'cordova platform add' command";
+    return "Init PhoneGap/Cordova platform";
   }
 
   @Override
@@ -78,11 +78,10 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
                              PhoneGapAddPlatformTask task) {
 
     final PhoneGapRunConfiguration phoneGapRunConfiguration = (PhoneGapRunConfiguration)configuration;
-    PhoneGapCommandLine line = phoneGapRunConfiguration.getCommandLine();
+    final PhoneGapCommandLine line = phoneGapRunConfiguration.getCommandLine();
 
     //skip for phonegap (it do platform add in run command)
-    //skip for ripple (external run)
-    if (!line.needAddPlatform() || PhoneGapRunProfileState.isRipple(phoneGapRunConfiguration)) {
+    if (!line.needAddPlatform()) {
       return true;
     }
 
@@ -96,7 +95,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
         FileDocumentManager.getInstance().saveAllDocuments();
         targetDone.down();
 
-        new Task.Backgroundable(project, "Run cordova platform add", true) {
+        new Task.Backgroundable(project, "Init PhoneGap/Cordova platform", true) {
 
           public boolean shouldStartInBackground() {
             return true;
@@ -104,11 +103,16 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
 
           public void run(@NotNull final ProgressIndicator indicator) {
             try {
-              String executable = phoneGapRunConfiguration.getExecutable();
-              assert executable != null;
-              ProcessOutput output =
-                new PhoneGapCommandLine(executable, project.getBasePath()).platformAdd(phoneGapRunConfiguration.getPlatform());
-              ExecutionHelper.showOutput(project, output, "Cordova platform add execution", null, false);
+              String platform = phoneGapRunConfiguration.getPlatform();
+              assert platform != null;
+              ProcessOutput output = line.platformAdd(platform);
+              if (output.getExitCode() != 0) {
+                ExecutionHelper.showOutput(project, output, "Init PhoneGap/Cordova platform", null, false);
+                result.set(false);
+                targetDone.up();
+                return;
+              }
+
               targetDone.up();
             }
             catch (final ExecutionException e) {

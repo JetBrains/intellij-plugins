@@ -1,6 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUIUtil;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfiguration;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.openapi.options.ConfigurationException;
@@ -15,14 +15,15 @@ import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.*;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_EMULATE;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_RUN;
 
 public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunConfiguration> {
 
+  public static final ArrayList<String> COMMANDS_LIST = ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN);
   private TextFieldWithHistoryWithBrowseButton myExecutablePathField;
   private ComboBox myPlatformField;
   private ComboBox myCommand;
@@ -36,16 +37,15 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   protected void resetEditorFrom(PhoneGapRunConfiguration s) {
 
     String executable = s.getExecutable();
-    PhoneGapUIUtil.setExecutablePath(myExecutablePathField,
-                                     !StringUtil.isEmpty(executable) ? executable : PhoneGapSettings.getInstance().getExecutablePath());
+    PhoneGapUtil.setExecutablePath(myExecutablePathField,
+                                   !StringUtil.isEmpty(executable) ? executable : PhoneGapSettings.getInstance().getExecutablePath());
     String item = getPlatformsMap().get(s.getPlatform());
     if (item != null) {
       myPlatformField.setSelectedItem(item);
     }
     String command = s.getCommand();
-    if (command != null) {
+    if (command != null && COMMANDS_LIST.contains(command)) {
       myCommand.setSelectedItem(command);
-      myPlatformField.setEnabled(!COMMAND_RIPPLE.equals(command));
     }
 
   }
@@ -62,29 +62,22 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   @NotNull
   @Override
   protected JComponent createEditor() {
-    myExecutablePathField = PhoneGapUIUtil.createPhoneGapExecutableTextField(myProject);
+    myExecutablePathField = PhoneGapUtil.createPhoneGapExecutableTextField(myProject);
     myPlatformField = new ComboBox();
     myCommand = new ComboBox();
-    myCommand.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        Object item = e.getItem();
-        myPlatformField.setEnabled(!COMMAND_RIPPLE.equals(item));
-      }
-    });
 
     addPlatformItems(myPlatformField);
     addCommandItems(myCommand);
 
     return FormBuilder.createFormBuilder()
-      .addLabeledComponent("Phonegap/Cordova executable path:", myExecutablePathField)
+      .addLabeledComponent("PhoneGap/Cordova executable path:", myExecutablePathField)
       .addLabeledComponent("Command:", myCommand)
       .addLabeledComponent("Platform:", myPlatformField)
       .getPanel();
   }
 
   private static void addCommandItems(ComboBox box) {
-    addItems(box, ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN, COMMAND_RIPPLE));
+    addItems(box, COMMANDS_LIST);
   }
 
 

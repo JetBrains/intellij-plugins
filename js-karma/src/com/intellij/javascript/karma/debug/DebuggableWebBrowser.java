@@ -27,9 +27,6 @@ public class DebuggableWebBrowser {
   @Nullable
   public static DebuggableWebBrowser create(@NotNull WebBrowser browser) {
     JavaScriptDebugEngine debugEngine = JavaScriptDebugEngine.findByBrowser(browser);
-    if (debugEngine != null) {
-      return new DebuggableWebBrowser(debugEngine, browser);
-    }
-    return null;
+    return debugEngine != null ? new DebuggableWebBrowser(debugEngine, browser) : null;
   }
 }

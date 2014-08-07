@@ -1,5 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.plugins;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable;
 import com.intellij.execution.process.ProcessOutput;
@@ -66,19 +67,20 @@ public class PhoneGapPluginsView {
               service.set(new PhoneGapPackageManagementService(commandLine, repositoryStore));
 
               if (commandLine.isOld()) {
-                warning.set("Phonegap/Cordova version before 3.5 doesn't support plugin version management");
+                warning.set(PhoneGapBundle.message("phonegap.plugins.executable.version.error"));
               }
             }
+
             else {
-              error.set("Project root directory is not phonegap/cordova project");
+              error.set("Project root directory is not " + commandLine.getPlatformName() + " project");
             }
           }
           else {
-            error.set("Please correct path to phoneGap/cordova executable");
+            error.set(PhoneGapBundle.message("phonegap.plugins.executable.error"));
           }
         }
         catch (Exception e) {
-          error.set("Please correct path to phoneGap/cordova executable");
+          error.set(PhoneGapBundle.message("phonegap.plugins.executable.error"));
         }
 
         UIUtil.invokeLaterIfNeeded(new Runnable() {

@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import static com.intellij.openapi.util.text.StringUtil.contains;
+
 public class PhoneGapCommandLine {
   private static final Logger LOGGER = Logger.getInstance(PhoneGapCommandLine.class);
 
@@ -66,8 +68,21 @@ public class PhoneGapCommandLine {
     }
   }
 
-  public ProcessOutput platformAdd(String platform) throws ExecutionException {
-    return executeAndGetOut(new String[]{myPath, "platform", "add", platform});
+  public ProcessOutput platformAdd(@NotNull String platform) throws ExecutionException {
+    String trimmedPlatform = platform.trim();
+    ProcessOutput output = executeAndGetOut(new String[]{myPath, "platform", "add", trimmedPlatform});
+
+    String message = "Platform " + trimmedPlatform + " already added";
+    if (output.getExitCode() != 0 && (contains(output.getStderr(), message) || contains(output.getStdout(), message))) {
+      return new ProcessOutput(0);
+    }
+
+    return output;
+  }
+
+  public ProcessOutput build(@NotNull String platform) throws ExecutionException {
+    String trimmedPlatform = platform.trim();
+    return executeAndGetOut(new String[]{myPath, "platform", "build", trimmedPlatform});
   }
 
   public boolean isCorrectExecutable() {
@@ -88,6 +103,10 @@ public class PhoneGapCommandLine {
 
   public ProcessOutput pluginListRaw() throws ExecutionException {
     return executeAndGetOut(new String[]{myPath, "plugin", "list"});
+  }
+
+  public String getPlatformName() {
+    return isIonic() ? "Ionic" : "PhoneGap/Cordova";
   }
 
   public boolean isOld() {
@@ -184,7 +203,7 @@ public class PhoneGapCommandLine {
   }
 
   static List<String> parsePluginList(String out) {
-    if (StringUtil.isEmpty(out) || StringUtil.contains(out.toLowerCase(Locale.getDefault()), "no plugins")) {
+    if (StringUtil.isEmpty(out) || contains(out.toLowerCase(Locale.getDefault()), "no plugins")) {
       return ContainerUtil.newArrayList();
     }
 
@@ -259,6 +278,7 @@ public class PhoneGapCommandLine {
   private ProcessOutput executeAndGetOut(String[] command) throws ExecutionException {
     final GeneralCommandLine commandLine = new GeneralCommandLine(command);
     commandLine.setWorkDirectory(myWorkDir);
+    commandLine.setPassParentEnvironment(true);
     Process process = commandLine.createProcess();
     OSProcessHandler processHandler = new ColoredProcessHandler(process, commandLine.getCommandLineString(), Charsets.UTF_8);
     final ProcessOutput output = new ProcessOutput();

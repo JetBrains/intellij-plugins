@@ -78,9 +78,6 @@
         <codeStyleSettingsProvider implementation="com.intellij.coldFusion.model.formatter.CfmlCodeStyleSettingsProvider"/>
         <langCodeStyleSettingsProvider implementation="com.intellij.coldFusion.model.formatter.CfmlLanguageCodeStyleSettingsProvider"/>
 
-        <predefinedCodeStyle implementation="com.intellij.coldFusion.model.formatter.CfmlLanguageCodeStyleSettingsProvider$ZendCodeStyle"/>
-        <predefinedCodeStyle implementation="com.intellij.coldFusion.model.formatter.CfmlLanguageCodeStyleSettingsProvider$PearCodeStyle"/>
-
         <annotator language="CFML" implementationClass="com.intellij.coldFusion.UI.highlighting.CfmlAnnotator"/>
       <internalFileTemplate name="ColdFusion File"/>
       <internalFileTemplate name="ColdFusion Tag Component"/>

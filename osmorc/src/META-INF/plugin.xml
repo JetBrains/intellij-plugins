@@ -144,7 +144,7 @@
     <projectConfigurable groupId="language" instance="org.osmorc.settings.ProjectSettingsEditor" id="reference.settings.project.osgi.project.settings"
                          displayName="OSGi"/>
 
-    <applicationConfigurable groupId="language" instance="org.osmorc.settings.ApplicationSettingsEditor" id="osmorc.ide.settings" displayName="OSGi">
+    <applicationConfigurable groupId="language" instance="org.osmorc.settings.ApplicationSettingsEditor" id="osmorc.ide.settings" displayName="OSGi Framework Instances">
       <configurable instance="org.osmorc.settings.LibraryBundlingEditor" id="reference.settings.project.osgi.library.bundling"
                     displayName="Library Bundling"/>
     </applicationConfigurable>
