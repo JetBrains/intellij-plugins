@@ -99,10 +99,10 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     return coveragePeer;
   }
 
-  private RunContentDescriptor showWarningConsole(@Nullable KarmaCoverageStartupStatus status,
-                                                  @NotNull KarmaServer server,
-                                                  @NotNull ExecutionEnvironment env,
-                                                  @Nullable RunContentDescriptor contentToReuse) {
+  private static RunContentDescriptor showWarningConsole(@Nullable KarmaCoverageStartupStatus status,
+                                                         @NotNull KarmaServer server,
+                                                         @NotNull ExecutionEnvironment env,
+                                                         @Nullable RunContentDescriptor contentToReuse) {
     if (status != null && status.isKarmaCoveragePackageNeededToBeInstalled()) {
       server.getRestarter().requestRestart();
     }
@@ -115,21 +115,21 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
       }
     });
     DefaultExecutionResult executionResult = new DefaultExecutionResult(console, processHandler);
-    RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
+    RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
     return contentBuilder.showRunContent(contentToReuse);
   }
 
   @NotNull
-  private RunContentDescriptor executeAfterSuccessfulInitialization(@NotNull Project project,
-                                                                    @NotNull KarmaRunProfileState state,
-                                                                    @Nullable RunContentDescriptor contentToReuse,
-                                                                    @NotNull ExecutionEnvironment env,
-                                                                    @NotNull KarmaServer server) throws ExecutionException {
+  private static RunContentDescriptor executeAfterSuccessfulInitialization(@NotNull Project project,
+                                                                           @NotNull KarmaRunProfileState state,
+                                                                           @Nullable RunContentDescriptor contentToReuse,
+                                                                           @NotNull ExecutionEnvironment env,
+                                                                           @NotNull KarmaServer server) throws ExecutionException {
     ExecutionResult executionResult = state.executeWithServer(env.getExecutor(), server);
     if (server.areBrowsersReady()) {
       return doCoverage(project, executionResult, contentToReuse, env, server);
     }
-    RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
+    RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
     server.onBrowsersReady(new Runnable() {
       @Override
@@ -141,20 +141,21 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
   }
 
   @NotNull
-  private RunContentDescriptor doCoverage(@NotNull final Project project,
-                                          @NotNull ExecutionResult executionResult,
-                                          @Nullable RunContentDescriptor contentToReuse,
-                                          @NotNull final ExecutionEnvironment env,
-                                          @NotNull final KarmaServer server) {
+  private static RunContentDescriptor doCoverage(@NotNull final Project project,
+                                                 @NotNull ExecutionResult executionResult,
+                                                 @Nullable RunContentDescriptor contentToReuse,
+                                                 @NotNull final ExecutionEnvironment env,
+                                                 @NotNull final KarmaServer server) {
     final KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration) env.getRunProfile();
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     CoverageHelper.resetCoverageSuit(runConfiguration);
     final String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
-    RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
+    RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
     if (coverageFilePath != null) {
       KarmaCoveragePeer coveragePeer = getCoveragePeer(server);
       coveragePeer.startCoverageSession(new KarmaCoverageSession() {
+        @Override
         public void onCoverageSessionFinished(@NotNull final File lcovFile) {
           UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
