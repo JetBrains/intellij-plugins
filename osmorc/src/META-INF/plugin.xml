@@ -107,8 +107,6 @@
     <completion.contributor language="Manifest" implementationClass="org.osmorc.manifest.completion.OsgiManifestCompletionContributor"/>
     <configurationType implementation="org.osmorc.run.OsgiConfigurationType"/>
 
-    <project.converterProvider implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxRunConfigurationConverterProvider"/>
-
     <localInspection bundle="org.osmorc.i18n.OsmorcBundle" key="UnregisteredActivatorInspection.name"
                      groupBundle="org.osmorc.i18n.OsmorcBundle" groupKey="inspection.group"
                      language="JAVA" enabledByDefault="true" level="ERROR"

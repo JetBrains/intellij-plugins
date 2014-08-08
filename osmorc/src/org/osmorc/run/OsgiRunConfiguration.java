@@ -83,7 +83,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   @NonNls private static final String GENERATE_WORKING_DIR_ATTRIBUTE = "generateWorkingDir";
 
   private OsgiRunConfigurationChecker checker;
-  private LegacyOsgiRunConfigurationLoader legacyOsgiRunConfigurationLoader;
   private List<SelectedBundle> bundlesToDeploy;
   private int frameworkStartLevel = 1;
   private int defaultStartLevel = 5;
@@ -148,34 +147,18 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       String startLevel = child.getAttributeValue(START_LEVEL_ATTRIBUTE);
       String typeName = child.getAttributeValue(TYPE_ATTRIBUTE);
 
-      if ("legacyLoader".equals(name)) {
-        try {
-          legacyOsgiRunConfigurationLoader = (LegacyOsgiRunConfigurationLoader)Class.forName(url).newInstance();
-        }
-        catch (InstantiationException e) {
-          throw new InvalidDataException(e);
-        }
-        catch (IllegalAccessException e) {
-          throw new InvalidDataException(e);
-        }
-        catch (ClassNotFoundException e) {
-          throw new InvalidDataException(e);
-        }
-        break;
-      }
-
       SelectedBundle.BundleType type;
       try {
         type = SelectedBundle.BundleType.valueOf(typeName);
       }
       catch (IllegalArgumentException e) {
-        // legacy settings should have modules, only so this is a safe guess.
+        LOG.error("unexpected bundle type '" + typeName + "'");
         type = SelectedBundle.BundleType.Module;
       }
 
       SelectedBundle selectedBundle = new SelectedBundle(type, name, OsgiFileUtil.urlToPath(url));
 
-      if (startLevel != null) { // avoid crashing on legacy settings.
+      if (startLevel != null) {
         try {
           selectedBundle.setStartLevel(Integer.parseInt(startLevel));
         }
@@ -266,10 +249,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
 
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
-    if (legacyOsgiRunConfigurationLoader != null) {
-      legacyOsgiRunConfigurationLoader.finishAfterModulesAreAvailable(this);
-      legacyOsgiRunConfigurationLoader = null;
-    }
     if (getInstanceToUse() == null) {
       throw new RuntimeConfigurationError(OsmorcBundle.message("run.configuration.no.instance"));
     }
