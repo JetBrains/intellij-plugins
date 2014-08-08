@@ -1,5 +1,6 @@
 package org.osmorc.frameworkintegration;
 
+import org.jetbrains.jps.osmorc.model.LibraryBundlificationRule;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

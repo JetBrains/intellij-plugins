@@ -26,7 +26,7 @@ package org.osmorc.frameworkintegration.impl.concierge;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
+import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.run.ui.SelectedBundle;
@@ -48,10 +48,11 @@ public class ConciergeInstanceManager extends AbstractFrameworkInstanceManager {
   public String getVersion(@NotNull FrameworkInstanceDefinition instance) {
     Collection<SelectedBundle> bundles = getFrameworkBundles(instance, FrameworkBundleType.SYSTEM);
     if (bundles.size() == 1) {
-      SelectedBundle bundle = bundles.iterator().next();
-      return CachingBundleInfoProvider.getBundleAttribute(bundle.getBundleUrl(), "PproApp-Version");
+      String path = bundles.iterator().next().getBundlePath();
+      if (path != null) {
+        return CachingBundleInfoProvider.getBundleAttribute(path, "PproApp-Version");
+      }
     }
-
     return null;
   }
 

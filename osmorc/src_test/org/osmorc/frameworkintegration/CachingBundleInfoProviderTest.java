@@ -22,76 +22,68 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.frameworkintegration;
 
-import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
-import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
-import com.intellij.testFramework.fixtures.TempDirTestFixture;
-import static org.hamcrest.Matchers.equalTo;
+import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.osmorc.SwingRunner;
 import org.osmorc.TestUtil;
+
+import java.io.File;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-@RunWith(SwingRunner.class)
 public class CachingBundleInfoProviderTest {
-    private IdeaProjectTestFixture fixture;
-    private TempDirTestFixture myTempDirFixture;
-    private String dirbundleUrl;
-    private String invaliddirbundleUrl;
-    private String jarbundleUrl;
+  private File myTempDir;
+  private String myDirBundle;
+  private String myInvalidDirBundle;
+  private String myJarBundle;
 
-    @Before
-    public void setUp() throws Exception {
-        fixture = TestUtil.createTestFixture();
-        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-        myTempDirFixture.setUp();
-        fixture.setUp();
-        String tempDirPath = myTempDirFixture.getTempDirPath();
-        TestUtil.loadModules("CachingBundleInfoProviderTest", fixture.getProject(), tempDirPath);
-        dirbundleUrl = myTempDirFixture.getFile("t0/dirbundle").getUrl();
-        invaliddirbundleUrl = myTempDirFixture.getFile("t0/invaliddirbundle").getUrl();
-        jarbundleUrl = myTempDirFixture.getFile("t0/jarbundle.jar").getUrl();
-    }
+  @Before
+  public void setUp() throws Exception {
+    myTempDir = FileUtil.createTempDirectory("osgi.", ".test");
+    TestUtil.extractProject("CachingBundleInfoProviderTest", myTempDir.getPath());
+    myDirBundle = new File(myTempDir, "t0/dirbundle").getPath();
+    myInvalidDirBundle = new File(myTempDir, "t0/invaliddirbundle").getPath();
+    myJarBundle = new File(myTempDir, "t0/jarbundle.jar").getPath();
+  }
 
-    @After
-    public void tearDown() throws Exception {
-        fixture.tearDown();
-        myTempDirFixture.tearDown();
-    }
+  @After
+  public void tearDown() throws Exception {
+    FileUtil.delete(myTempDir);
+  }
 
-    @Test
-    public void testIsBundle() throws Exception {
-        assertThat(CachingBundleInfoProvider.isBundle(dirbundleUrl), equalTo(true));
-        assertThat(CachingBundleInfoProvider.isBundle(jarbundleUrl), equalTo(true));
-        assertThat(CachingBundleInfoProvider.isBundle(invaliddirbundleUrl), equalTo(false));
-    }
+  @Test
+  public void testIsBundle() {
+    assertThat(CachingBundleInfoProvider.isBundle(myDirBundle), equalTo(true));
+    assertThat(CachingBundleInfoProvider.isBundle(myJarBundle), equalTo(true));
+    assertThat(CachingBundleInfoProvider.isBundle(myInvalidDirBundle), equalTo(false));
+  }
 
-    @Test
-    public void testGetBundleSymbolicName() throws Exception {
-        assertThat(CachingBundleInfoProvider.getBundleSymbolicName(dirbundleUrl), equalTo("dirbundle"));
-        assertThat(CachingBundleInfoProvider.getBundleSymbolicName(jarbundleUrl), equalTo("jarbundle"));
-        assertThat(CachingBundleInfoProvider.getBundleSymbolicName(invaliddirbundleUrl), equalTo(null));
-    }
+  @Test
+  public void testGetBundleSymbolicName() {
+    assertThat(CachingBundleInfoProvider.getBundleSymbolicName(myDirBundle), equalTo("dirbundle"));
+    assertThat(CachingBundleInfoProvider.getBundleSymbolicName(myJarBundle), equalTo("jarbundle"));
+    assertThat(CachingBundleInfoProvider.getBundleSymbolicName(myInvalidDirBundle), equalTo(null));
+  }
 
-    @Test
-    public void testGetBundleVersions() throws Exception {
-        assertThat(CachingBundleInfoProvider.getBundleVersion(dirbundleUrl), equalTo("1.0.0"));
-        assertThat(CachingBundleInfoProvider.getBundleVersion(jarbundleUrl), equalTo("1.0.0"));
-        assertThat(CachingBundleInfoProvider.getBundleVersion(invaliddirbundleUrl), equalTo(null));
-    }
+  @Test
+  public void testGetBundleVersions() {
+    assertThat(CachingBundleInfoProvider.getBundleVersion(myDirBundle), equalTo("1.0.0"));
+    assertThat(CachingBundleInfoProvider.getBundleVersion(myJarBundle), equalTo("1.0.0"));
+    assertThat(CachingBundleInfoProvider.getBundleVersion(myInvalidDirBundle), equalTo(null));
+  }
 
-    @Test
-    public void testIsFragmentBundle() throws Exception {
-        assertThat(CachingBundleInfoProvider.isFragmentBundle(dirbundleUrl), equalTo(true));
-        assertThat(CachingBundleInfoProvider.isFragmentBundle(jarbundleUrl), equalTo(false));
-        assertThat(CachingBundleInfoProvider.isFragmentBundle(invaliddirbundleUrl), equalTo(false));
-    }
+  @Test
+  public void testIsFragmentBundle() {
+    assertThat(CachingBundleInfoProvider.isFragmentBundle(myDirBundle), equalTo(true));
+    assertThat(CachingBundleInfoProvider.isFragmentBundle(myJarBundle), equalTo(false));
+    assertThat(CachingBundleInfoProvider.isFragmentBundle(myInvalidDirBundle), equalTo(false));
+  }
 }

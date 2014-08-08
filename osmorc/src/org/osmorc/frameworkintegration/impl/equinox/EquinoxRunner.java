@@ -29,10 +29,11 @@ import com.intellij.execution.configurations.ParametersList;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
+import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.ui.SelectedBundle;
+import org.osmorc.util.OsgiFileUtil;
 
 import java.util.List;
 
@@ -55,9 +56,10 @@ public class EquinoxRunner extends AbstractFrameworkRunner {
     List<String> bundles = ContainerUtil.newArrayList();
 
     for (SelectedBundle bundle : myBundles) {
-      String bundleUrl = bundle.getBundleUrl();
-      if (bundleUrl == null) continue;
-      boolean isFragment = CachingBundleInfoProvider.isFragmentBundle(bundleUrl);
+      String bundlePath = bundle.getBundlePath();
+      if (bundlePath == null) continue;
+      boolean isFragment = CachingBundleInfoProvider.isFragmentBundle(bundlePath);
+      String bundleUrl = OsgiFileUtil.pathToUrl(bundlePath.replaceAll(" ", "%20"));
 
       if (!isFragment) {
         int startLevel = getBundleStartLevel(bundle);

@@ -36,8 +36,8 @@ import com.intellij.ui.treeStructure.SimpleTree;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
@@ -94,7 +94,7 @@ public class BundleSelector extends DialogWrapper {
     Module[] modules = ModuleManager.getInstance(project).getModules();
     for (Module module : modules) {
       if (OsmorcFacet.hasOsmorcFacet(module)) {
-        SelectedBundle bundle = new SelectedBundle(module.getName(), null, SelectedBundle.BundleType.Module);
+        SelectedBundle bundle = new SelectedBundle(SelectedBundle.BundleType.Module, module.getName(), null);
         if (!toHide.contains(bundle)) {
           moduleNode.add(new DefaultMutableTreeNode(bundle));
         }
@@ -118,22 +118,20 @@ public class BundleSelector extends DialogWrapper {
 
     // all the libraries that are bundles already (doesn't make much sense to start bundlified libs as they have no activator).
     DefaultMutableTreeNode libraryNode = new DefaultMutableTreeNode(OsmorcBundle.message("bundle.selector.group.libraries"));
-    String[] urls = OrderEnumerator.orderEntries(project)
+    List<String> paths = OrderEnumerator.orderEntries(project)
       .withoutSdk()
       .withoutModuleSourceEntries()
       .withoutDepModules()
       .productionOnly()
       .runtimeOnly()
       .satisfying(BundleCompiler.NOT_FRAMEWORK_LIBRARY_CONDITION)
-      .classes().getUrls();
-    for (String url : urls) {
-      url = BundleCompiler.convertJarUrlToFileUrl(url);
-      url = BundleCompiler.fixFileURL(url);
+      .classes()
+      .getPathsList().getPathList();
 
-      String displayName = CachingBundleInfoProvider.getBundleSymbolicName(url);
+    for (String path : paths) {
+      String displayName = CachingBundleInfoProvider.getBundleSymbolicName(path);
       if (displayName != null) {
-        // okay its a start library
-        SelectedBundle bundle = new SelectedBundle(displayName, url, SelectedBundle.BundleType.StartLibrary);
+        SelectedBundle bundle = new SelectedBundle(SelectedBundle.BundleType.StartLibrary, displayName, path);
         if (!toHide.contains(bundle)) {
           libraryNode.add(new DefaultMutableTreeNode(bundle));
         }

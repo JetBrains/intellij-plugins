@@ -7,10 +7,9 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
+import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkInstanceManager;
-import org.osmorc.util.OsgiFileUtil;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.ui.SelectedBundle;
 
@@ -18,6 +17,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 /**
@@ -28,10 +28,11 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
   public String getVersion(@NotNull FrameworkInstanceDefinition instance) {
     Collection<SelectedBundle> bundles = getFrameworkBundles(instance, FrameworkBundleType.SYSTEM);
     if (bundles.size() == 1) {
-      SelectedBundle bundle = bundles.iterator().next();
-      return CachingBundleInfoProvider.getBundleVersion(bundle.getBundleUrl());
+      String path = bundles.iterator().next().getBundlePath();
+      if (path != null) {
+        return CachingBundleInfoProvider.getBundleVersion(path);
+      }
     }
-
     return null;
   }
 
@@ -120,7 +121,7 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
     FrameworkBundleType bundleType = null;
 
     String name = file.getName();
-    if (name.endsWith(".jar") && JarUtil.containsEntry(file, "META-INF/MANIFEST.MF")) {
+    if (name.endsWith(".jar") && JarUtil.containsEntry(file, JarFile.MANIFEST_NAME)) {
       if (sysPattern.matcher(name).matches() && (sysClass == null || JarUtil.containsClass(file, sysClass))) {
         bundleType = FrameworkBundleType.SYSTEM;
       }
@@ -128,7 +129,7 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
                (shellClass == null || JarUtil.containsClass(file, shellClass))) {
         bundleType = FrameworkBundleType.SHELL;
       }
-      else if (CachingBundleInfoProvider.isBundle(OsgiFileUtil.pathToUrl(file.getPath()))) {
+      else if (CachingBundleInfoProvider.isBundle(file.getPath())) {
         bundleType = FrameworkBundleType.OTHER;
       }
     }
@@ -137,11 +138,10 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
   }
 
   protected SelectedBundle makeBundle(File file) {
-    String url = OsgiFileUtil.pathToUrl(file.getPath());
-
-    String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(url);
+    String path = file.getPath();
+    String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(path);
     if (bundleName != null) {
-      String bundleVersion = CachingBundleInfoProvider.getBundleVersion(url);
+      String bundleVersion = CachingBundleInfoProvider.getBundleVersion(path);
       if (bundleVersion != null) {
         bundleName += " - " + bundleVersion;
       }
@@ -150,6 +150,6 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
       bundleName = file.getName();
     }
 
-    return new SelectedBundle(bundleName, url, SelectedBundle.BundleType.FrameworkBundle);
+    return new SelectedBundle(SelectedBundle.BundleType.FrameworkBundle, bundleName, path);
   }
 }

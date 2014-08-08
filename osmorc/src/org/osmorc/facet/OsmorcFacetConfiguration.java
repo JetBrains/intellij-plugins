@@ -34,7 +34,7 @@ import com.intellij.facet.ui.libraries.FrameworkLibraryValidator;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PathMacroManager;
-import com.intellij.openapi.diagnostic.Log;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.util.InvalidDataException;
@@ -46,13 +46,13 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.osmorc.model.OutputPathType;
+import org.jetbrains.jps.osmorc.util.OrderedProperties;
 import org.osgi.framework.Constants;
 import org.osmorc.OsmorcProjectComponent;
 import org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab;
 import org.osmorc.facet.ui.OsmorcFacetJAREditorTab;
 import org.osmorc.facet.ui.OsmorcFacetManifestGenerationEditorTab;
 import org.osmorc.settings.ProjectSettings;
-import org.osmorc.util.OrderedProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,6 +70,7 @@ import static aQute.bnd.osgi.Constants.INCLUDE_RESOURCE;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsmorcFacetConfiguration implements FacetConfiguration {
+  private static final Logger LOG = Logger.getInstance(OsmorcFacetConfiguration.class);
 
   private OsmorcFacet myFacet;
   private String myManifestLocation;
@@ -545,23 +546,15 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
    */
   @NotNull
   public Map<String, String> getAdditionalPropertiesAsMap() {
-    Map<String, String> result = new LinkedHashMap<String, String>();
-
-    Properties p = new OrderedProperties();
     try {
+      OrderedProperties p = new OrderedProperties();
       p.load(new StringReader(getAdditionalProperties()));
+      return p.toMap();
     }
     catch (IOException e) {
-      Log.print("Error when reading properties", true);
-      return result;
+      LOG.warn(e);
+      return Collections.emptyMap();
     }
-
-    Set<String> propNames = p.stringPropertyNames();
-    for (String propName : propNames) {
-      result.put(propName, p.getProperty(propName));
-    }
-
-    return result;
   }
 
   /**

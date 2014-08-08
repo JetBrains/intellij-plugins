@@ -83,26 +83,45 @@ public class CucumberStepsIndex {
 
   /**
    * Searches for step definition.
+   * More info is available in {@link #findStepDefinitions(com.intellij.psi.PsiFile, org.jetbrains.plugins.cucumber.psi.GherkinStep)} doc
+   *
    *
    * @param featureFile file with steps
-   * @param step step itself
+   * @param step        step itself
    * @return definition or null if not found
+   * @see #findStepDefinitions(com.intellij.psi.PsiFile, org.jetbrains.plugins.cucumber.psi.GherkinStep)
    */
   @Nullable
   public AbstractStepDefinition findStepDefinition(@NotNull final PsiFile featureFile, @NotNull final GherkinStep step) {
+    final Collection<AbstractStepDefinition> definitions = findStepDefinitions(featureFile, step);
+    return (definitions.isEmpty() ? null : definitions.iterator().next());
+  }
+
+  /**
+   * Searches for ALL step definitions, groups it by step definition class and sorts by pattern size.
+   * For each step definition class it finds the largest pattern.
+   *
+   * @param featureFile file with steps
+   * @param step        step itself
+   * @return definitions
+   */
+  @NotNull
+  public Collection<AbstractStepDefinition> findStepDefinitions(@NotNull final PsiFile featureFile, @NotNull final GherkinStep step) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) return null;
 
-    AbstractStepDefinition result = null;
+    Map<Class<? extends AbstractStepDefinition>, AbstractStepDefinition> definitionsByClass =
+      new java.util.HashMap<Class<? extends AbstractStepDefinition>, AbstractStepDefinition>();
     List<AbstractStepDefinition> allSteps = loadStepsFor(featureFile, module);
     for (AbstractStepDefinition stepDefinition : allSteps) {
       if (stepDefinition.matches(step.getSubstitutedName()) && stepDefinition.supportsStep(step)) {
+        final AbstractStepDefinition result = definitionsByClass.get(stepDefinition.getClass());
         if (result == null || result.getPattern().getPattern().length() < stepDefinition.getPattern().getPattern().length()) {
-          result = stepDefinition;
+          definitionsByClass.put(stepDefinition.getClass(), stepDefinition);
         }
       }
     }
-    return result;
+    return definitionsByClass.values();
   }
 
   // ToDo: use binary search here

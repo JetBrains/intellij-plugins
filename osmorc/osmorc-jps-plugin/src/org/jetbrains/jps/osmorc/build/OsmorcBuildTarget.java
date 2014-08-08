@@ -1,6 +1,7 @@
 package org.jetbrains.jps.osmorc.build;
 
 import com.intellij.util.Consumer;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.*;
@@ -11,6 +12,7 @@ import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.indices.ModuleExcludeIndex;
 import org.jetbrains.jps.model.JpsModel;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
+import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.jps.osmorc.model.JpsOsmorcExtensionService;
@@ -18,7 +20,6 @@ import org.jetbrains.jps.osmorc.model.JpsOsmorcModuleExtension;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -27,12 +28,15 @@ import java.util.List;
  * @author michael.golubev
  */
 public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
-
   private final JpsOsmorcModuleExtension myExtension;
 
-  public OsmorcBuildTarget(JpsOsmorcModuleExtension extension) {
-    super(OsmorcBuildTargetType.INSTANCE, extension.getModule());
+  public OsmorcBuildTarget(@NotNull JpsOsmorcModuleExtension extension, @NotNull JpsModule module) {
+    super(OsmorcBuildTargetType.INSTANCE, module);
     myExtension = extension;
+  }
+
+  public JpsOsmorcModuleExtension getExtension() {
+    return myExtension;
   }
 
   @Override
@@ -42,8 +46,9 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
 
   @Override
   public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry, TargetOutputIndex outputIndex) {
-    return Collections.<BuildTarget<?>>unmodifiableCollection(
-      targetRegistry.getModuleBasedTargets(myExtension.getModule(), BuildTargetRegistry.ModuleTargetSelector.PRODUCTION));
+    Collection<ModuleBasedTarget<?>> targets = targetRegistry.getModuleBasedTargets(getModule(),
+                                                                                    BuildTargetRegistry.ModuleTargetSelector.PRODUCTION);
+    return Collections.<BuildTarget<?>>unmodifiableCollection(targets);
   }
 
   @NotNull
@@ -52,24 +57,19 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
                                                           ModuleExcludeIndex index,
                                                           IgnoredFileIndex ignoredFileIndex,
                                                           BuildDataPaths dataPaths) {
-    final List<BuildRootDescriptor> roots = new ArrayList<BuildRootDescriptor>();
-
-    myExtension.processAffectedModules(new Consumer<JpsModule>() {
-
+    final List<BuildRootDescriptor> roots = ContainerUtil.newArrayList();
+    JpsJavaExtensionService.dependencies(getModule()).recursively().productionOnly().processModules(new Consumer<JpsModule>() {
       @Override
       public void consume(JpsModule module) {
-        JpsOsmorcModuleExtension extension = JpsOsmorcExtensionService.getInstance().getExtension(module);
-        if (extension == null) {
-          return;
-        }
-
-        for (JpsModuleSourceRoot sourceRoot : module.getSourceRoots(JavaSourceRootType.SOURCE)) {
-          final File root = JpsPathUtil.urlToFile(sourceRoot.getUrl());
-          roots.add(new BuildRootDescriptorImpl(OsmorcBuildTarget.this, root, true));
+        JpsOsmorcModuleExtension extension = JpsOsmorcExtensionService.getExtension(module);
+        if (extension != null) {
+          for (JpsModuleSourceRoot sourceRoot : module.getSourceRoots(JavaSourceRootType.SOURCE)) {
+            File root = JpsPathUtil.urlToFile(sourceRoot.getUrl());
+            roots.add(new BuildRootDescriptorImpl(OsmorcBuildTarget.this, root, true));
+          }
         }
       }
     });
-
     return roots;
   }
 
@@ -87,7 +87,7 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
   @NotNull
   @Override
   public String getPresentableName() {
-    return "OSGi in module '" + myExtension.getModule().getName() + "'";
+    return "OSGi in module '" + getModule().getName() + "'";
   }
 
   @NotNull
@@ -95,10 +95,6 @@ public class OsmorcBuildTarget extends ModuleBasedTarget<BuildRootDescriptor> {
   public Collection<File> getOutputRoots(CompileContext context) {
     String jarFileLocation = myExtension.getJarFileLocation();
     return jarFileLocation.isEmpty() ? Collections.<File>emptyList() : Collections.singleton(new File(jarFileLocation));
-  }
-
-  public JpsOsmorcModuleExtension getExtension() {
-    return myExtension;
   }
 
   @Override

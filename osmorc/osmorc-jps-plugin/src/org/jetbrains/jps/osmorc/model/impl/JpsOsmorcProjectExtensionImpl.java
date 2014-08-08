@@ -3,11 +3,8 @@ package org.jetbrains.jps.osmorc.model.impl;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.model.JpsElementChildRole;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.ex.JpsElementBase;
-import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.java.JpsJavaProjectExtension;
 import org.jetbrains.jps.osmorc.model.JpsOsmorcProjectExtension;
@@ -17,18 +14,10 @@ import org.jetbrains.jps.util.JpsPathUtil;
  * @author michael.golubev
  */
 public class JpsOsmorcProjectExtensionImpl extends JpsElementBase<JpsOsmorcProjectExtensionImpl> implements JpsOsmorcProjectExtension {
-
-  public static final JpsElementChildRole<JpsOsmorcProjectExtension> ROLE = JpsElementChildRoleBase.create("Osmorc");
-
-
   private OsmorcProjectExtensionProperties myProperties;
 
   public JpsOsmorcProjectExtensionImpl(OsmorcProjectExtensionProperties properties) {
     myProperties = properties;
-  }
-
-  private JpsOsmorcProjectExtensionImpl(JpsOsmorcProjectExtensionImpl original) {
-    myProperties = XmlSerializerUtil.createCopy(original.myProperties);
   }
 
   @Override
@@ -39,7 +28,7 @@ public class JpsOsmorcProjectExtensionImpl extends JpsElementBase<JpsOsmorcProje
   @NotNull
   @Override
   public JpsOsmorcProjectExtensionImpl createCopy() {
-    return new JpsOsmorcProjectExtensionImpl(this);
+    return new JpsOsmorcProjectExtensionImpl(XmlSerializerUtil.createCopy(myProperties));
   }
 
   @Override
@@ -50,11 +39,6 @@ public class JpsOsmorcProjectExtensionImpl extends JpsElementBase<JpsOsmorcProje
   @Override
   public String getDefaultManifestFileLocation() {
     return myProperties.myDefaultManifestFileLocation;
-  }
-
-  @Nullable
-  public static JpsOsmorcProjectExtension getExtension(@NotNull JpsProject project) {
-    return project.getContainer().getChild(ROLE);
   }
 
   @NotNull

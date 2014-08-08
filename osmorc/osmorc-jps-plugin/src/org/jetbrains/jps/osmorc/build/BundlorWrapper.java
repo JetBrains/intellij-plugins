@@ -14,7 +14,6 @@ import com.springsource.bundlor.support.properties.PropertiesPropertiesSource;
 import com.springsource.bundlor.support.properties.PropertiesSource;
 import com.springsource.util.parser.manifest.ManifestContents;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.osmorc.util.MavenIntegrationUtil;
 
 import java.io.File;
 import java.util.List;
@@ -26,23 +25,22 @@ import java.util.Properties;
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class BundlorWrapper {
-
-  public void wrapModule(@NotNull OsmorcBuildSession session,
-                         @NotNull File inputJar,
-                         @NotNull File manifestTemplateFile) throws OsmorcBuildException {
-    String inputPath = inputJar.getAbsolutePath();
+  public List<String> wrapModule(@NotNull Properties properties,
+                                 @NotNull File inputJar,
+                                 @NotNull File outputJar,
+                                 @NotNull File manifestTemplate) throws OsgiBuildException {
+    String inputPath = inputJar.getPath();
     ManifestContents manifest;
 
     try {
-      Properties properties = MavenIntegrationUtil.getMavenProjectProperties(session);
       PropertiesSource propertiesSource = new PropertiesPropertiesSource(properties);
 
       ManifestGenerator generator = new StandardManifestGenerator(DefaultManifestGeneratorContributorsFactory.create(propertiesSource));
       ClassPath classPath = new StandardClassPathFactory().create(inputPath);
-      ManifestContents contents = new StandardManifestTemplateFactory().create(manifestTemplateFile.getAbsolutePath(), null, null, null);
+      ManifestContents contents = new StandardManifestTemplateFactory().create(manifestTemplate.getPath(), null, null, null);
       manifest = generator.generate(contents, classPath);
 
-      ManifestWriter manifestWriter = new StandardManifestWriterFactory().create(inputPath, session.getOutputJarFile().getAbsolutePath());
+      ManifestWriter manifestWriter = new StandardManifestWriterFactory().create(inputPath, outputJar.getPath());
       try {
         manifestWriter.write(manifest);
       }
@@ -51,12 +49,9 @@ public class BundlorWrapper {
       }
     }
     catch (Exception e) {
-      throw new OsmorcBuildException("Bundlifying the file with Bundlor failed: error generating manifest", e, inputJar);
+      throw new OsgiBuildException("Bundlor failed: error generating manifest", e, null);
     }
 
-    List<String> warningsList = new StandardManifestValidator(DefaultManifestValidatorContributorsFactory.create()).validate(manifest);
-    for (String s : warningsList) {
-      session.warn(s, manifestTemplateFile);
-    }
+    return new StandardManifestValidator(DefaultManifestValidatorContributorsFactory.create()).validate(manifest);
   }
 }

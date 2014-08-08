@@ -1,12 +1,12 @@
 package org.osmorc.util;
 
+import org.jetbrains.jps.osmorc.util.OrderedProperties;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -15,41 +15,37 @@ import static org.junit.Assert.assertThat;
  * Test of {@link OrderedProperties}
  */
 public class OrderedPropertiesTest {
-
   @Test
   public void testRead() throws IOException {
-    String propsAsString = "Foo: Bar,\\\nnarf\nBar: narf\nBaz=narf\n";
     OrderedProperties props = new OrderedProperties();
-    props.load(new StringReader(propsAsString));
+    props.load(new StringReader("Foo: Bar,\\\nnaf\nBar: naf\nBaz=naf\n"));
 
     Enumeration<Object> keys = props.keys();
-    String key1  = (String)keys.nextElement();
-    String key2 = (String)keys.nextElement();
-    String key3 = (String)keys.nextElement();
-
-    assertThat(key1, equalTo("Foo"));
-    assertThat(key2, equalTo("Bar"));
-    assertThat(key3, equalTo("Baz"));
-
+    assertThat((String)keys.nextElement(), equalTo("Foo"));
+    assertThat((String)keys.nextElement(), equalTo("Bar"));
+    assertThat((String)keys.nextElement(), equalTo("Baz"));
 
     Enumeration<?> propertyNames = props.propertyNames();
-    key1 = (String)propertyNames.nextElement();
-    key2 = (String)propertyNames.nextElement();
-    key3 = (String)propertyNames.nextElement();
+    assertThat((String)propertyNames.nextElement(), equalTo("Foo"));
+    assertThat((String)propertyNames.nextElement(), equalTo("Bar"));
+    assertThat((String)propertyNames.nextElement(), equalTo("Baz"));
 
-    assertThat(key1, equalTo("Foo"));
-    assertThat(key2, equalTo("Bar"));
-    assertThat(key3, equalTo("Baz"));
+    Iterator<String> iterator = props.stringPropertyNames().iterator();
+    assertThat(iterator.next(), equalTo("Foo"));
+    assertThat(iterator.next(), equalTo("Bar"));
+    assertThat(iterator.next(), equalTo("Baz"));
+  }
 
-    Set<String> stringPropertyNames = props.stringPropertyNames();
-    Iterator<String> iterator = stringPropertyNames.iterator();
-    key1 = iterator.next();
-    key2 = iterator.next();
-    key3 = iterator.next();
+  @Test
+  public void testPopulate() throws Exception {
+    OrderedProperties props = new OrderedProperties();
+    props.setProperty("key1", "value1");
+    props.setProperty("key3", "value3");
+    props.setProperty("key2", "value2");
 
-    assertThat(key1, equalTo("Foo"));
-    assertThat(key2, equalTo("Bar"));
-    assertThat(key3, equalTo("Baz"));
-
+    Iterator<String> iterator = props.stringPropertyNames().iterator();
+    assertThat(iterator.next(), equalTo("key1"));
+    assertThat(iterator.next(), equalTo("key3"));
+    assertThat(iterator.next(), equalTo("key2"));
   }
 }

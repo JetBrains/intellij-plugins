@@ -36,21 +36,21 @@ import static org.junit.Assert.assertThat;
 public class SelectedBundleTest {
   @Test
   public void testToString() {
-    SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
-    assertThat(testObject.toString(), equalTo("testName (testURL)"));
-    testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
+    SelectedBundle testObject = new SelectedBundle(SelectedBundle.BundleType.Module, "testName", "/test/path");
+    assertThat(testObject.toString(), equalTo("testName (path)"));
+    testObject = new SelectedBundle(SelectedBundle.BundleType.Module, "testName", null);
     assertThat(testObject.toString(), equalTo("testName"));
   }
 
   @Test
   public void testEquals() {
-    SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
+    SelectedBundle testObject = new SelectedBundle(SelectedBundle.BundleType.Module, "testName", "/test/path");
     assertThat(testObject, equalTo(testObject));
-    testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
+    testObject = new SelectedBundle(SelectedBundle.BundleType.Module, "testName", null);
     assertThat(testObject, equalTo(testObject));
-    testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.PlainLibrary);
+    testObject = new SelectedBundle(SelectedBundle.BundleType.PlainLibrary, "testName", "/test/path");
     assertThat(testObject, equalTo(testObject));
-    testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.PlainLibrary);
+    testObject = new SelectedBundle(SelectedBundle.BundleType.PlainLibrary, "testName", null);
     assertThat(testObject, equalTo(testObject));
   }
 }

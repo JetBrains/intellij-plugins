@@ -1,4 +1,4 @@
-package org.jetbrains.jps.osmorc.model.impl;
+package org.jetbrains.jps.osmorc.model;
 
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Tag;
@@ -8,7 +8,6 @@ import com.intellij.util.xmlb.annotations.Tag;
  */
 @Tag("entry")
 public class OsmorcJarContentEntry {
-
   @Attribute("source")
   public String mySource;
 

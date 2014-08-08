@@ -29,7 +29,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.compiler.DummyCompileContext;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -38,12 +37,16 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.util.Ref;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
+import org.jetbrains.jps.osmorc.build.OsgiBuildException;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.frameworkintegration.*;
+import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.frameworkintegration.FrameworkIntegrator;
+import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
+import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.make.BundleCompiler;
 import org.osmorc.run.ui.SelectedBundle;
 
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -99,23 +102,21 @@ public class OsgiRunState extends JavaCommandLineState {
             SelectedBundle selectedBundle = myRunConfiguration.getBundlesToDeploy().get(i);
             if (selectedBundle.isModule()) {
               // use the output jar name if it is a module
-              Module module = moduleManager.findModuleByName(selectedBundle.getName());
+              String name = selectedBundle.getName();
+              Module module = moduleManager.findModuleByName(name);
               if (module == null) {
-                throw new CantRunException("Module '" + selectedBundle.getName() + "' does no longer exist." +
-                                           " Please check your run configuration.");
+                throw new CantRunException("Module '" + name + "' no longer exists. Please check your run configuration.");
               }
-              if (!OsmorcFacet.hasOsmorcFacet(module)) {
-                // actually this should not happen, but it seemed to happen once, so we check this here.
-                throw new CantRunException("Module '" + selectedBundle.getName() + "' has no OSGi facet, but should have." +
-                                           " Please re-add the OSGi facet to this module.");
+              OsmorcFacet facet = OsmorcFacet.getInstance(module);
+              if (facet == null) {
+                throw new CantRunException("Module '" + name + "' has no OSGi facet. Please check your run configuration.");
               }
-              selectedBundle.setBundleUrl(new URL("file", "/", BundleCompiler.getJarFileName(module)).toString());
+              selectedBundle.setBundlePath(facet.getConfiguration().getJarFileLocation());
               selectedBundles.add(selectedBundle);
               // add all the library dependencies of the bundle
-              String[] depUrls = BundleCompiler.bundlifyLibraries(module, progressIndicator, DummyCompileContext.getInstance());
-              for (String depUrl : depUrls) {
-                SelectedBundle dependency = new SelectedBundle("Dependency", depUrl, SelectedBundle.BundleType.PlainLibrary);
-                selectedBundles.add(dependency);
+              List<String> paths = new BundleCompiler().bundlifyLibraries(module, progressIndicator);
+              for (String path : paths) {
+                selectedBundles.add(new SelectedBundle(SelectedBundle.BundleType.PlainLibrary, "Dependency", path));
               }
             }
             else {
@@ -131,11 +132,14 @@ public class OsgiRunState extends JavaCommandLineState {
           // filter out bundles which have the same symbolic name
           Map<String, SelectedBundle> filteredBundles = new HashMap<String, SelectedBundle>();
           for (SelectedBundle selectedBundle : selectedBundles) {
-            String name = CachingBundleInfoProvider.getBundleSymbolicName(selectedBundle.getBundleUrl());
-            String version = CachingBundleInfoProvider.getBundleVersion(selectedBundle.getBundleUrl());
-            String key = name + version;
-            if (!filteredBundles.containsKey(key)) {
-              filteredBundles.put(key, selectedBundle);
+            String path = selectedBundle.getBundlePath();
+            if (path != null) {
+              String name = CachingBundleInfoProvider.getBundleSymbolicName(path);
+              String version = CachingBundleInfoProvider.getBundleVersion(path);
+              String key = name + version;
+              if (!filteredBundles.containsKey(key)) {
+                filteredBundles.put(key, selectedBundle);
+              }
             }
           }
 
@@ -145,6 +149,9 @@ public class OsgiRunState extends JavaCommandLineState {
         }
         catch (CantRunException e) {
           error.set(e);
+        }
+        catch (OsgiBuildException e) {
+          error.set(new CantRunException(e.getMessage()));
         }
         catch (Throwable t) {
           error.set(new CantRunException("Internal error: " + t.getMessage()));

@@ -22,34 +22,34 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.run;
+
+import org.junit.Test;
+import org.osmorc.run.ui.SelectedBundle;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import org.junit.Test;
-import org.osmorc.run.ui.SelectedBundle;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class StartLevelComparatorTest {
-    @Test
-    public void testCompare() {
-        OsgiRunState.StartLevelComparator testObject = new OsgiRunState.StartLevelComparator();
-        SelectedBundle bundle1 = new SelectedBundle("org.osmorc.testbundle1", null, SelectedBundle.BundleType.Module);
-        SelectedBundle bundle2 = new SelectedBundle("org.osmorc.testbundle2", null, SelectedBundle.BundleType.Module);
+  @Test
+  public void testCompare() {
+    OsgiRunState.StartLevelComparator testObject = new OsgiRunState.StartLevelComparator();
+    SelectedBundle bundle1 = new SelectedBundle(SelectedBundle.BundleType.Module, "org.osmorc.testBundle1", null);
+    SelectedBundle bundle2 = new SelectedBundle(SelectedBundle.BundleType.Module, "org.osmorc.testBundle2", null);
 
-        bundle1.setStartLevel(1);
-        bundle2.setStartLevel(1);
-        assertThat(testObject.compare(bundle1, bundle2), equalTo(0));
+    bundle1.setStartLevel(1);
+    bundle2.setStartLevel(1);
+    assertThat(testObject.compare(bundle1, bundle2), equalTo(0));
 
-        bundle1.setStartLevel(1);
-        bundle2.setStartLevel(2);
-        assertThat(testObject.compare(bundle1, bundle2), lessThan(0));
+    bundle1.setStartLevel(1);
+    bundle2.setStartLevel(2);
+    assertThat(testObject.compare(bundle1, bundle2), lessThan(0));
 
-        bundle1.setStartLevel(4);
-        bundle2.setStartLevel(2);
-        assertThat(testObject.compare(bundle1, bundle2), greaterThan(0));
-    }
+    bundle1.setStartLevel(4);
+    bundle2.setStartLevel(2);
+    assertThat(testObject.compare(bundle1, bundle2), greaterThan(0));
+  }
 }

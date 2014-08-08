@@ -63,18 +63,26 @@ public class SelectedBundle {
     }
   }
 
+  private final BundleType myBundleType;
   private String myDisplayName;
-  private String myBundleUrl;
+  private String myBundlePath;
   private int myStartLevel;
   private boolean myStartAfterInstallation;
-  private BundleType myBundleType;
 
-  public SelectedBundle(@NotNull String displayName, @Nullable String url, @NotNull BundleType bundleType) {
-    myDisplayName = displayName;
-    myBundleUrl = url;
+  public SelectedBundle(@NotNull BundleType bundleType, @NotNull String displayName, @Nullable String path) {
     myBundleType = bundleType;
-    myStartAfterInstallation = bundleType.autoStart;
+    myDisplayName = displayName;
+    myBundlePath = path;
     myStartLevel = 1;
+    myStartAfterInstallation = bundleType.autoStart;
+  }
+
+  public BundleType getBundleType() {
+    return myBundleType;
+  }
+
+  public boolean isModule() {
+    return myBundleType == BundleType.Module;
   }
 
   @NotNull
@@ -87,8 +95,12 @@ public class SelectedBundle {
   }
 
   @Nullable
-  public String getBundleUrl() {
-    return myBundleUrl;
+  public String getBundlePath() {
+    return myBundlePath;
+  }
+
+  public void setBundlePath(@Nullable String path) {
+    myBundlePath = path;
   }
 
   /**
@@ -107,22 +119,6 @@ public class SelectedBundle {
 
   public void setStartLevel(int startLevel) {
     myStartLevel = startLevel;
-  }
-
-  public void setBundleUrl(@Nullable String bundleUrl) {
-    myBundleUrl = bundleUrl;
-  }
-
-  public BundleType getBundleType() {
-    return myBundleType;
-  }
-
-  public void setBundleType(BundleType bundleType) {
-    myBundleType = bundleType;
-  }
-
-  public boolean isModule() {
-    return myBundleType == BundleType.Module;
   }
 
   public boolean isStartAfterInstallation() {
@@ -144,7 +140,7 @@ public class SelectedBundle {
 
     if (o instanceof SelectedBundle) {
       SelectedBundle other = (SelectedBundle)o;
-      return isModule() ? isEqual(myDisplayName, other.myDisplayName) : isEqual(myBundleUrl, other.myBundleUrl);
+      return isModule() ? isEqual(myDisplayName, other.myDisplayName) : isEqual(myBundlePath, other.myBundlePath);
     }
 
     return false;
@@ -156,11 +152,11 @@ public class SelectedBundle {
 
   @Override
   public int hashCode() {
-    return isModule() ? myDisplayName.hashCode() : (myBundleUrl != null ? myBundleUrl.hashCode() : 0);
+    return isModule() ? myDisplayName.hashCode() : (myBundlePath != null ? myBundlePath.hashCode() : 0);
   }
 
   @Override
   public String toString() {
-    return myDisplayName + (myBundleUrl != null ? (" (" + myBundleUrl.substring(myBundleUrl.lastIndexOf("/") + 1) + ")") : "");
+    return myDisplayName + (myBundlePath != null ? (" (" + myBundlePath.substring(myBundlePath.lastIndexOf("/") + 1) + ")") : "");
   }
 }

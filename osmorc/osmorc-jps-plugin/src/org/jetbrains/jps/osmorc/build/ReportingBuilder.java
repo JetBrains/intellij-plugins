@@ -25,65 +25,41 @@
 package org.jetbrains.jps.osmorc.build;
 
 import aQute.bnd.osgi.Builder;
-import org.jetbrains.jps.osmorc.model.JpsOsmorcModuleExtension;
-import org.jetbrains.jps.osmorc.util.MavenIntegrationUtil;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.text.MessageFormat;
 
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @since Jul 20, 2009
  */
-class ReportingBuilder extends Builder {
+public class ReportingBuilder extends Builder {
+  private final Reporter myReporter;
 
-  private final File mySourceFile;
-  private final OsmorcBuildSession mySession;
-
-  public ReportingBuilder(OsmorcBuildSession session, File sourceFile) {
-    mySession = session;
-
-    JpsOsmorcModuleExtension extension = session.getExtension();
-
-    // link back to the original manifest if it's manually edited
-    if (extension.isManifestManuallyEdited()) {
-      File manifestFile = extension.getManifestFile();
-      if (manifestFile != null) {
-        sourceFile = manifestFile;
-      }
-    }
-    else {
-      // try if module was imported from maven.
-      File mavenProjectFile = MavenIntegrationUtil.getMavenProjectPath(session);
-      if (mavenProjectFile != null) {
-        // ok it's imported from maven, link warnings/errors back to pom.xml
-        sourceFile = mavenProjectFile;
-      }
-    }
-
-    mySourceFile = sourceFile;
+  public ReportingBuilder(@NotNull Reporter reporter) {
+    myReporter = reporter;
   }
 
   @Override
   public SetLocation error(String s, Object... objects) {
-    mySession.processException(new OsmorcBuildException(MessageFormat.format(s, objects), mySourceFile));
+    myReporter.error(MessageFormat.format(s, objects), null, null);
     return super.error(s, objects);
   }
 
   @Override
   public SetLocation error(String s, Throwable throwable, Object... objects) {
-    mySession.processException(new OsmorcBuildException(MessageFormat.format(s, objects), throwable, mySourceFile));
+    myReporter.error(MessageFormat.format(s, objects), throwable, null);
     return super.error(s, throwable, objects);
   }
 
   @Override
   public SetLocation warning(String s, Object... objects) {
-    mySession.processException(new OsmorcBuildException(MessageFormat.format(s, objects), mySourceFile).setWarning());
+    myReporter.warning(MessageFormat.format(s, objects), null, null);
     return super.warning(s, objects);
   }
 
   @Override
   public void progress(String s, Object... objects) {
-    mySession.progressMessage(MessageFormat.format(s, objects));
+    myReporter.progress(MessageFormat.format(s, objects));
   }
 }

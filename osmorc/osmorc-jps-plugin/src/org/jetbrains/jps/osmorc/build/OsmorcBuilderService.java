@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class OsmorcBuilderService extends BuilderService {
-
   @NotNull
   @Override
   public List<? extends BuildTargetType<?>> getTargetTypes() {

@@ -1,19 +1,21 @@
 package org.jetbrains.jps.osmorc.model.impl;
 
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;
+import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
+import org.jetbrains.jps.osmorc.model.OsmorcJarContentEntry;
 import org.jetbrains.jps.osmorc.model.OutputPathType;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author michael.golubev
  */
 public class OsmorcModuleExtensionProperties {
-
   @Attribute("jarfileLocation")
   public String myJarFileLocation = "";
 
@@ -26,8 +28,9 @@ public class OsmorcModuleExtensionProperties {
   @Attribute("bndFileLocation")
   public String myBndFileLocation;
 
-  @Attribute("additionalProperties")
-  public String myAdditionalProperties;
+  @Tag("additionalProperties")
+  @MapAnnotation(surroundWithTag = false, entryTagName = "property")
+  public Map<String, String> myAdditionalProperties = ContainerUtil.newLinkedHashMap();
 
   @Attribute("bundleSymbolicName")
   public String myBundleSymbolicName;
@@ -43,7 +46,7 @@ public class OsmorcModuleExtensionProperties {
 
   @Tag("additionalJARContents")
   @AbstractCollection(surroundWithTag = false)
-  public List<OsmorcJarContentEntry> myAdditionalJARContents = new ArrayList<OsmorcJarContentEntry>();
+  public List<OsmorcJarContentEntry> myAdditionalJARContents = ContainerUtil.newArrayList();
 
   @Attribute("ignoreFilePattern")
   public String myIgnoreFilePattern;

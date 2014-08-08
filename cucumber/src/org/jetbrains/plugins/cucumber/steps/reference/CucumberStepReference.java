@@ -9,12 +9,13 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepImpl;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
-import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -105,9 +106,23 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     return result.toArray(new ResolveResult[result.size()]);
   }
 
+  /**
+   * @return first definition (if any) or null if no definition found
+   * @see #resolveToDefinitions()
+   */
   @Nullable
   public AbstractStepDefinition resolveToDefinition() {
+    final Collection<AbstractStepDefinition> definitions = resolveToDefinitions();
+    return (definitions.isEmpty() ? null : definitions.iterator().next());
+  }
+
+  /**
+   * @return step definitions
+   * @see #resolveToDefinition()
+   */
+  @NotNull
+  public Collection<AbstractStepDefinition> resolveToDefinitions() {
     final CucumberStepsIndex index = CucumberStepsIndex.getInstance(myStep.getProject());
-    return index.findStepDefinition(myStep.getContainingFile(), ((GherkinStepImpl)myStep));
+    return index.findStepDefinitions(myStep.getContainingFile(), ((GherkinStepImpl)myStep));
   }
 }
