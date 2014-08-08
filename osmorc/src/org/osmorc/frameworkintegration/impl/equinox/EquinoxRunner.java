@@ -33,7 +33,6 @@ import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.ui.SelectedBundle;
-import org.osmorc.util.OsgiFileUtil;
 
 import java.util.List;
 
@@ -59,7 +58,7 @@ public class EquinoxRunner extends AbstractFrameworkRunner {
       String bundlePath = bundle.getBundlePath();
       if (bundlePath == null) continue;
       boolean isFragment = CachingBundleInfoProvider.isFragmentBundle(bundlePath);
-      String bundleUrl = OsgiFileUtil.pathToUrl(bundlePath.replaceAll(" ", "%20"));
+      String bundleUrl = toFileUri(bundlePath);
 
       if (!isFragment) {
         int startLevel = getBundleStartLevel(bundle);

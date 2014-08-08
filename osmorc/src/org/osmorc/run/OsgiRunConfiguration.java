@@ -38,6 +38,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -50,7 +51,6 @@ import org.osmorc.run.ui.OsgiRunConfigurationEditor;
 import org.osmorc.run.ui.SelectedBundle;
 import org.osmorc.settings.ApplicationSettings;
 import org.osmorc.settings.ProjectSettings;
-import org.osmorc.util.OsgiFileUtil;
 
 import java.util.*;
 
@@ -156,7 +156,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
         type = SelectedBundle.BundleType.Module;
       }
 
-      SelectedBundle selectedBundle = new SelectedBundle(type, name, OsgiFileUtil.urlToPath(url));
+      SelectedBundle selectedBundle = new SelectedBundle(type, name, VfsUtilCore.urlToPath(url));
 
       if (startLevel != null) {
         try {
@@ -214,7 +214,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       bundle.setAttribute(NAME_ATTRIBUTE, selectedBundle.getName());
       if (!selectedBundle.isModule()) {
         String path = selectedBundle.getBundlePath();
-        if (path != null) bundle.setAttribute(URL_ATTRIBUTE, OsgiFileUtil.pathToUrl(path));
+        if (path != null) bundle.setAttribute(URL_ATTRIBUTE, VfsUtilCore.pathToUrl(path));
       }
       bundle.setAttribute(START_LEVEL_ATTRIBUTE, String.valueOf(selectedBundle.getStartLevel()));
       bundle.setAttribute(TYPE_ATTRIBUTE, selectedBundle.getBundleType().name());

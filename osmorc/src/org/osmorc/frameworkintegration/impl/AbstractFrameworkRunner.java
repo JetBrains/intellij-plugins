@@ -199,4 +199,9 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
       FileUtil.asyncDelete(myWorkingDir);
     }
   }
+
+  @NotNull
+  protected String toFileUri(@NotNull String path) {
+    return new File(path).toURI().toString();
+  }
 }

@@ -27,7 +27,6 @@ package org.osmorc.refactoring;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -42,13 +41,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.SwingRunner;
 import org.osmorc.TestUtil;
+import org.osmorc.facet.OsmorcFacet;
+import org.osmorc.facet.OsmorcFacetConfiguration;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -56,131 +56,120 @@ import static org.junit.Assert.assertThat;
  */
 @RunWith(SwingRunner.class)
 public class ActivatorRenamingTest {
-    public ActivatorRenamingTest() {
-    }
+  private TempDirTestFixture myTempDirFixture;
+  private IdeaProjectTestFixture myFixture;
 
-    @Before
-    public void setUp() throws Exception {
-        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-        myTempDirFixture.setUp();
-        fixture = TestUtil.createTestFixture();
-        fixture.setUp();
-        TestUtil.loadModules("ActivatorRenamingTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
-        TestUtil.createOsmorcFacetForAllModules(fixture.getProject());
-    }
+  @Before
+  public void setUp() throws Exception {
+    myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
+    myTempDirFixture.setUp();
+    myFixture = TestUtil.createTestFixture();
+    myFixture.setUp();
+    TestUtil.loadModules("ActivatorRenamingTest", myFixture.getProject(), myTempDirFixture.getTempDirPath());
+    TestUtil.createOsmorcFacetForAllModules(myFixture.getProject());
+  }
 
-    @After
-    public void tearDown() throws Exception {
-        fixture.tearDown();
-        fixture = null;
-        myTempDirFixture.tearDown();
-    }
+  @After
+  public void tearDown() throws Exception {
+    myFixture.tearDown();
+    myFixture = null;
+    myTempDirFixture.tearDown();
+    myTempDirFixture = null;
+  }
 
-    @Test
-    public void testRenameForManuallyEditedManifest() {
-        PsiFile activatorClassFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
-        PsiFile manifest = TestUtil.loadPsiFileUnderContent(fixture.getProject(), "t1", "META-INF/MANIFEST.MF");
+  @Test
+  public void testRenameForManuallyEditedManifest() {
+    PsiFile activatorClassFile = TestUtil.loadPsiFile(myFixture.getProject(), "t1", "t1/Activator.java");
+    PsiFile manifest = TestUtil.loadPsiFileUnderContent(myFixture.getProject(), "t1", "META-INF/MANIFEST.MF");
+    assertThat(manifest.getText(), endsWith("Bundle-Activator: t1.Activator\n"));
 
-        final PsiClass activatorClass = PsiTreeUtil.getChildOfType(activatorClassFile, PsiClass.class);
-
-        assertThat(manifest.getText(), endsWith("Bundle-Activator: t1.Activator\n"));
-
-        CommandProcessor.getInstance().executeCommand(fixture.getProject(), new Runnable() {
-            public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    public void run() {
-                        RefactoringFactory.getInstance(fixture.getProject()).createRename(activatorClass, "RenamedActivator").run();
-                    }
-                });
-            }
-        }, "test", "testid");
-
-        assertThat(manifest.getText(), endsWith("Bundle-Activator: t1.RenamedActivator\n"));
-    }
-
-
-    @Test
-    public void testMoveForManuallyEditedManifest() {
-        PsiFile activatorClassFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
-        PsiFile manifest = TestUtil.loadPsiFileUnderContent(fixture.getProject(), "t1", "META-INF/MANIFEST.MF");
-
-        final PsiClass activatorClass = PsiTreeUtil.getChildOfType(activatorClassFile, PsiClass.class);
-
-        assertThat(manifest.getText(), endsWith("Bundle-Activator: t1.Activator\n"));
-
-        CommandProcessor.getInstance().executeCommand(fixture.getProject(), new Runnable() {
-            public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    public void run() {
-                        final ModuleRootManager rootManager = TestUtil.getModuleRootManager(fixture.getProject(), "t1");
-                        final VirtualFile root = rootManager.getSourceRoots()[0];
-                        MoveDestination moveDestination = JavaRefactoringFactory.getInstance(fixture.getProject()).createSourceRootMoveDestination("tx", root);
-                        JavaRefactoringFactory.getInstance(fixture.getProject()).createMoveClassesOrPackages(new PsiElement[]{activatorClass}, moveDestination).run();
-                    }
-                });
-            }
-        }, "test", "testid");
-
-        assertThat(manifest.getText(), endsWith("Bundle-Activator: tx.Activator\n"));
-    }
-
-    @Test
-    public void testRenameForGeneratedManifest() {
-        PsiFile activatorClassFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
-        final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(activatorClassFile).getConfiguration();
+    final PsiClass activatorClass = PsiTreeUtil.getChildOfType(activatorClassFile, PsiClass.class);
+    CommandProcessor.getInstance().executeCommand(myFixture.getProject(), new Runnable() {
+      public void run() {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            public void run() {
-                configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
-                configuration.setBundleActivator("t1.Activator");
-            }
+          public void run() {
+            RefactoringFactory.getInstance(myFixture.getProject()).createRename(activatorClass, "RenamedActivator").run();
+          }
         });
+      }
+    }, "test", "testid");
+    assertThat(manifest.getText(), endsWith("Bundle-Activator: t1.RenamedActivator\n"));
+  }
 
-        final PsiClass activatorClass = PsiTreeUtil.getChildOfType(activatorClassFile, PsiClass.class);
+  @Test
+  public void testMoveForManuallyEditedManifest() {
+    PsiFile activatorClassFile = TestUtil.loadPsiFile(myFixture.getProject(), "t1", "t1/Activator.java");
+    PsiFile manifest = TestUtil.loadPsiFileUnderContent(myFixture.getProject(), "t1", "META-INF/MANIFEST.MF");
+    assertThat(manifest.getText(), endsWith("Bundle-Activator: t1.Activator\n"));
 
-        CommandProcessor.getInstance().executeCommand(fixture.getProject(), new Runnable() {
-            public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    public void run() {
-                        RefactoringFactory.getInstance(fixture.getProject()).createRename(activatorClass, "RenamedActivator").run();
-                    }
-                });
-            }
-        }, "test", "testid");
-
-        assertThat(configuration.getBundleActivator(), equalTo("t1.RenamedActivator"));
-    }
-
-
-    @Test
-    public void testMoveForGeneratedManifest() {
-        PsiFile activatorClassFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
-        final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(activatorClassFile).getConfiguration();
+    final PsiClass activatorClass = PsiTreeUtil.getChildOfType(activatorClassFile, PsiClass.class);
+    CommandProcessor.getInstance().executeCommand(myFixture.getProject(), new Runnable() {
+      public void run() {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            public void run() {
-                configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
-                configuration.setBundleActivator("t1.Activator");
-            }
+          public void run() {
+            ModuleRootManager rootManager = TestUtil.getModuleRootManager(myFixture.getProject(), "t1");
+            JavaRefactoringFactory factory = JavaRefactoringFactory.getInstance(myFixture.getProject());
+            MoveDestination moveDestination = factory.createSourceRootMoveDestination("tx", rootManager.getSourceRoots()[0]);
+            factory.createMoveClassesOrPackages(new PsiElement[]{activatorClass}, moveDestination).run();
+          }
         });
+      }
+    }, "test", "testid");
+    assertThat(manifest.getText(), endsWith("Bundle-Activator: tx.Activator\n"));
+  }
 
-        final PsiClass activatorClass = PsiTreeUtil.getChildOfType(activatorClassFile, PsiClass.class);
+  @Test
+  public void testRenameForGeneratedManifest() {
+    PsiFile activatorClassFile = TestUtil.loadPsiFile(myFixture.getProject(), "t1", "t1/Activator.java");
+    OsmorcFacet facet = OsmorcFacet.getInstance(activatorClassFile);
+    assertNotNull(facet);
+    final OsmorcFacetConfiguration configuration = facet.getConfiguration();
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      public void run() {
+        configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
+        configuration.setBundleActivator("t1.Activator");
+      }
+    });
 
-        CommandProcessor.getInstance().executeCommand(fixture.getProject(), new Runnable() {
-            public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    public void run() {
-                        final ModuleRootManager rootManager = TestUtil.getModuleRootManager(fixture.getProject(), "t1");
-                        final VirtualFile root = rootManager.getSourceRoots()[0];
-                        MoveDestination moveDestination = JavaRefactoringFactory.getInstance(fixture.getProject()).createSourceRootMoveDestination("tx", root);
-                        JavaRefactoringFactory.getInstance(fixture.getProject()).createMoveClassesOrPackages(new PsiElement[]{activatorClass}, moveDestination).run();
-                    }
-                });
-            }
-        }, "test", "testid");
+    final PsiClass activatorClass = PsiTreeUtil.getChildOfType(activatorClassFile, PsiClass.class);
+    CommandProcessor.getInstance().executeCommand(myFixture.getProject(), new Runnable() {
+      public void run() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          public void run() {
+            RefactoringFactory.getInstance(myFixture.getProject()).createRename(activatorClass, "RenamedActivator").run();
+          }
+        });
+      }
+    }, "test", "testid");
+    assertThat(configuration.getBundleActivator(), equalTo("t1.RenamedActivator"));
+  }
 
-        assertThat(configuration.getBundleActivator(), equalTo("tx.Activator"));
-    }
+  @Test
+  public void testMoveForGeneratedManifest() {
+    PsiFile activatorClassFile = TestUtil.loadPsiFile(myFixture.getProject(), "t1", "t1/Activator.java");
+    OsmorcFacet facet = OsmorcFacet.getInstance(activatorClassFile);
+    assertNotNull(facet);
+    final OsmorcFacetConfiguration configuration = facet.getConfiguration();
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      public void run() {
+        configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
+        configuration.setBundleActivator("t1.Activator");
+      }
+    });
 
-
-    private IdeaProjectTestFixture fixture;
-    private TempDirTestFixture myTempDirFixture;
+    final PsiClass activatorClass = PsiTreeUtil.getChildOfType(activatorClassFile, PsiClass.class);
+    CommandProcessor.getInstance().executeCommand(myFixture.getProject(), new Runnable() {
+      public void run() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          public void run() {
+            ModuleRootManager rootManager = TestUtil.getModuleRootManager(myFixture.getProject(), "t1");
+            JavaRefactoringFactory factory = JavaRefactoringFactory.getInstance(myFixture.getProject());
+            MoveDestination moveDestination = factory.createSourceRootMoveDestination("tx", rootManager.getSourceRoots()[0]);
+            factory.createMoveClassesOrPackages(new PsiElement[]{activatorClass}, moveDestination).run();
+          }
+        });
+      }
+    }, "test", "testid");
+    assertThat(configuration.getBundleActivator(), equalTo("tx.Activator"));
+  }
 }

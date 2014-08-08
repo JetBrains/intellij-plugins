@@ -34,7 +34,6 @@ import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.ui.SelectedBundle;
-import org.osmorc.util.OsgiFileUtil;
 
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class ConciergeRunner extends AbstractFrameworkRunner {
       if (bundlePath == null) continue;
       boolean isFragment = CachingBundleInfoProvider.isFragmentBundle(bundlePath);
 
-      String bundleUrl = OsgiFileUtil.pathToUrl(bundlePath.replaceAll(" ", "%20"));
+      String bundleUrl = toFileUri(bundlePath);
       if (bundle.isStartAfterInstallation() && !isFragment) {
         int startLevel = getBundleStartLevel(bundle);
         startBundles.putValue(startLevel, bundleUrl);
