@@ -41,6 +41,7 @@ public class DartRunner extends DefaultProgramRunner {
                                                            DefaultDebugExecutor.EXECUTOR_ID.equals(executorId));
   }
 
+  @Override
   protected RunContentDescriptor doExecute(final @NotNull Project project,
                                            final @NotNull RunProfileState state,
                                            final @Nullable RunContentDescriptor contentToReuse,
@@ -53,7 +54,7 @@ public class DartRunner extends DefaultProgramRunner {
 
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
       try {
-        return doExecuteDartDebug(state, contentToReuse, env);
+        return doExecuteDartDebug(state, env);
       }
       catch (RuntimeConfigurationError e) {
         throw new ExecutionException(e);
@@ -65,7 +66,6 @@ public class DartRunner extends DefaultProgramRunner {
   }
 
   private RunContentDescriptor doExecuteDartDebug(final @NotNull RunProfileState state,
-                                                  final @Nullable RunContentDescriptor contentToReuse,
                                                   final @NotNull ExecutionEnvironment env) throws RuntimeConfigurationError,
                                                                                                   ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
@@ -79,10 +79,10 @@ public class DartRunner extends DefaultProgramRunner {
     if (executionResult == null) return null;
 
     final XDebuggerManager debuggerManager = XDebuggerManager.getInstance(env.getProject());
-    final XDebugSession debugSession = debuggerManager.startSession(this, env, contentToReuse, new XDebugProcessStarter() {
+    final XDebugSession debugSession = debuggerManager.startSession(env, new XDebugProcessStarter() {
       @Override
       @NotNull
-      public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
+      public XDebugProcess start(@NotNull final XDebugSession session) {
         return new DartCommandLineDebugProcess(session, debuggingPort, executionResult, mainDartFile);
       }
     });

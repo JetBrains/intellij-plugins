@@ -188,7 +188,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
 
   @NotNull
   @Override
-  public String getDefaultStepFileName() {
+  public String getDefaultStepFileName(@NotNull final GherkinStep step) {
     return STEP_DEFINITION_SUFFIX;
   }
 
