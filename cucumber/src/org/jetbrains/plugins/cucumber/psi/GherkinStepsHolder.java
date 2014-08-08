@@ -1,5 +1,6 @@
 package org.jetbrains.plugins.cucumber.psi;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -11,6 +12,7 @@ public interface GherkinStepsHolder extends GherkinPsiElement, GherkinSuppressio
 
   String getScenarioName();
 
+  @NotNull
   GherkinStep[] getSteps();
 
   GherkinTag[] getTags();
