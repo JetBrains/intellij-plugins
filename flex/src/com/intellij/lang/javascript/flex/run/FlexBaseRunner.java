@@ -148,7 +148,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
           }
         }
 
-        return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, contentToReuse, env);
+        return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, env);
       }
 
       if (runProfile instanceof FlexUnitRunConfiguration) {
@@ -197,10 +197,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   protected RunContentDescriptor launchDebugProcess(final Module module,
                                                     final FlexBuildConfiguration bc,
                                                     final BCBasedRunnerParameters params,
-                                                    final RunContentDescriptor contentToReuse,
                                                     final ExecutionEnvironment env) throws ExecutionException {
     final XDebugSession debugSession =
-      XDebuggerManager.getInstance(module.getProject()).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
+      XDebuggerManager.getInstance(module.getProject()).startSession(env, new XDebugProcessStarter() {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {

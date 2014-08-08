@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -56,7 +55,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                    final String swfFilePath) throws ExecutionException {
     try {
       final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
-      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, contentToReuse, env);
+      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, env);
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e.getMessage());
@@ -70,7 +69,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                    final FlexUnitRunnerParameters params) throws ExecutionException {
     try {
       final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
-      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, contentToReuse, env);
+      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, env);
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e.getMessage());
@@ -160,6 +159,6 @@ public class FlexDebugRunner extends FlexBaseRunner {
       }
     }
 
-    return launchDebugProcess(module, bc, runnerParameters, contentToReuse, env);
+    return launchDebugProcess(module, bc, runnerParameters, env);
   }
 }

@@ -50,7 +50,7 @@ public class FlexRunner extends GenericProgramRunner {
       throws ExecutionException {
     final BCBasedRunnerParameters parameters = ((RemoteFlashRunConfiguration)env.getRunProfile()).getRunnerParameters();
 
-    RunContentDescriptor runContentDescriptor = XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse,
+    RunContentDescriptor runContentDescriptor = XDebuggerManager.getInstance(project).startSession(env,
       new XDebugProcessStarter() {
         @Override
         @NotNull
