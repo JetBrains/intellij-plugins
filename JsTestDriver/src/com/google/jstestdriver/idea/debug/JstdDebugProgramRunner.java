@@ -111,7 +111,7 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
         prepareDebuggerCallback.notifyWhenRejected(result).doWhenDone(new Runnable() {
           @Override
           public void run() {
-            result.setDone(new MyDebugStarter(server, debugBrowserInfo, JstdDebugProgramRunner.this));
+            result.setDone(new MyDebugStarter(server, debugBrowserInfo));
           }
         });
       }
@@ -135,17 +135,12 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
   }
 
   private static class MyDebugStarter extends RunProfileStarter {
-
     private final JstdServer myServer;
     private final JstdDebugBrowserInfo myDebugBrowserInfo;
-    private final JstdDebugProgramRunner myRunner;
 
-    private MyDebugStarter(@NotNull JstdServer server,
-                           @NotNull JstdDebugBrowserInfo debugBrowserInfo,
-                           @NotNull JstdDebugProgramRunner runner) {
+    private MyDebugStarter(@NotNull JstdServer server, @NotNull JstdDebugBrowserInfo debugBrowserInfo) {
       myServer = server;
       myDebugBrowserInfo = debugBrowserInfo;
-      myRunner = runner;
     }
 
     @Nullable
@@ -169,7 +164,7 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
 
       File configFile = new File(jstdState.getRunSettings().getConfigFile());
       final RemoteDebuggingFileFinder fileFinder = new JstdDebuggingFileFinderProvider(configFile, myServer).provideFileFinder();
-      XDebugSession session = XDebuggerManager.getInstance(project).startSession(myRunner, environment, contentToReuse, new XDebugProcessStarter() {
+      XDebugSession session = XDebuggerManager.getInstance(project).startSession(environment, new XDebugProcessStarter() {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull XDebugSession session) {

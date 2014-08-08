@@ -93,9 +93,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
           final Url url = Urls.newFromEncoded(karmaServer.formatUrl("/debug.html"));
           final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
           XDebugSession session = XDebuggerManager.getInstance(project).startSession(
-            KarmaDebugProgramRunner.this,
             env,
-            contentToReuse,
             new XDebugProcessStarter() {
               @Override
               @NotNull
