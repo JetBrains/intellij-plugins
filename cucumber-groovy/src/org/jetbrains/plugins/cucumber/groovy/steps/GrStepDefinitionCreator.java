@@ -229,7 +229,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
 
   @NotNull
   @Override
-  public String getDefaultStepFileName() {
+  public String getDefaultStepFileName(@NotNull final GherkinStep step) {
     return "StepDef";
   }
 }

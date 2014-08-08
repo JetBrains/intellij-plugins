@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 /**
@@ -43,7 +44,8 @@ public interface StepDefinitionCreator {
 
   /**
    * Provides default name of step definition file
+   * @param step step we want to create definition container for
    * @return String representing default name of step definition file
    */
-  @NotNull String getDefaultStepFileName();
+  @NotNull String getDefaultStepFileName(@NotNull GherkinStep step);
 }
