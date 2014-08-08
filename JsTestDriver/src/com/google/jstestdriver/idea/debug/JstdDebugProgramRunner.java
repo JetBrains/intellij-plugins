@@ -130,7 +130,7 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
       }
     }
     else {
-      result.setDone(new JstdRunProgramRunner.JstdRunStarter(server, this, true));
+      result.setDone(new JstdRunProgramRunner.JstdRunStarter(server, true));
     }
   }
 

@@ -121,7 +121,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
                                             @NotNull RunProfileState state,
                                             @Nullable RunContentDescriptor contentToReuse,
                                             @NotNull ExecutionEnvironment env) {
-          RunContentBuilder contentBuilder = new RunContentBuilder(KarmaDebugProgramRunner.this, executionResult, env);
+          RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
           final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
           karmaServer.onBrowsersReady(new Runnable() {
             @Override

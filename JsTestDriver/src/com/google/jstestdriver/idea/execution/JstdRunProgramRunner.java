@@ -15,7 +15,6 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.AsyncGenericProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -49,20 +48,20 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
                                                    @NotNull RunProfileState state) throws ExecutionException {
     JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
     if (jstdState.getRunSettings().isExternalServerType()) {
-      return AsyncResult.<RunProfileStarter>done(new JstdRunStarter(null, this, false));
+      return AsyncResult.<RunProfileStarter>done(new JstdRunStarter(null, false));
     }
     JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(project);
     jstdToolWindowManager.setAvailable(true);
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     if (server != null && !server.isStopped()) {
-      return AsyncResult.<RunProfileStarter>done(new JstdRunStarter(server, this, false));
+      return AsyncResult.<RunProfileStarter>done(new JstdRunStarter(server, false));
     }
     final AsyncResult<RunProfileStarter> result = new AsyncResult<RunProfileStarter>();
     jstdToolWindowManager.restartServer(new NullableConsumer<JstdServer>() {
       @Override
       public void consume(@Nullable JstdServer server) {
         if (server != null) {
-          result.setDone(new JstdRunStarter(server, JstdRunProgramRunner.this, false));
+          result.setDone(new JstdRunStarter(server, false));
         }
         else {
           result.setDone(null);
@@ -73,14 +72,11 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
   }
 
   public static class JstdRunStarter extends RunProfileStarter {
-
     private final JstdServer myServer;
-    private final ProgramRunner myRunner;
     private final boolean myFromDebug;
 
-    public JstdRunStarter(@Nullable JstdServer server, @NotNull ProgramRunner runner, boolean fromDebug) {
+    public JstdRunStarter(@Nullable JstdServer server, boolean fromDebug) {
       myServer = server;
-      myRunner = runner;
       myFromDebug = fromDebug;
     }
 
@@ -94,7 +90,7 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
       FileDocumentManager.getInstance().saveAllDocuments();
       JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
       ExecutionResult executionResult = jstdState.executeWithServer(myServer);
-      RunContentBuilder contentBuilder = new RunContentBuilder(myRunner, executionResult, environment);
+      RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, environment);
       final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
       if (myServer != null && executionResult.getProcessHandler() instanceof NopProcessHandler) {
         myServer.addLifeCycleListener(new JstdServerLifeCycleAdapter() {

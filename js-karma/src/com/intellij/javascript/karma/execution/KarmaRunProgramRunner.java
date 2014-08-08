@@ -48,8 +48,7 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
       LOG.error("Can't get KarmaConsoleView from executionResult!");
       return null;
     }
-    RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
-    final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
+    final RunContentDescriptor descriptor = new RunContentBuilder(executionResult, env).showRunContent(contentToReuse);
 
     KarmaServer server = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (!server.areBrowsersReady()) {
