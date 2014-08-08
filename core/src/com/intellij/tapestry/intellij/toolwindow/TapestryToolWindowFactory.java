@@ -7,6 +7,7 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -18,7 +19,7 @@ public class TapestryToolWindowFactory implements ToolWindowFactory {
   public static final String TAPESTRY_TOOLWINDOW_ID = "Tapestry";
   private static final Key<TapestryToolWindow> TAPESTRY_TOOL_WINDOW_KEY = Key.create("tapestry.toolWindow");
 
-  public void createToolWindowContent(Project project, ToolWindow toolWindow) {
+  public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
     toolWindow.setAvailable(true, null);
     TapestryToolWindow tapestryToolWindow = new TapestryToolWindow(project);
     Content content = ContentFactory.SERVICE.getInstance().createContent(tapestryToolWindow.getMainPanel(), "Tapestry", true);

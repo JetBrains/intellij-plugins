@@ -11,6 +11,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class TapestryIdeView implements IdeView {
     public void selectElement(PsiElement element) {
     }
 
+    @NotNull
     public PsiDirectory[] getDirectories() {
         final List<PsiDirectory> directories = new ArrayList<PsiDirectory>();
         final ModuleFileIndex moduleFileIndex = ModuleRootManager.getInstance((Module) _viewPane.getData(DataKeys.MODULE.getName())).getFileIndex();
