@@ -1,0 +1,97 @@
+diff --git a/JsTestDriver/src/com/google/jstestdriver/PathResolver.java b/JsTestDriver/src/com/google/jstestdriver/PathResolver.java
+index ce044fc..4100ade 100644
+--- a/JsTestDriver/src/com/google/jstestdriver/PathResolver.java
++++ b/JsTestDriver/src/com/google/jstestdriver/PathResolver.java
+@@ -14,7 +14,7 @@
+  * the License.
+  */
+ package com.google.jstestdriver;
+-
++
+ import com.google.common.base.Joiner;
+ import com.google.common.collect.Lists;
+ import com.google.inject.Inject;
+@@ -23,7 +23,6 @@ import com.google.jstestdriver.config.UnreadableFilesException;
+ import com.google.jstestdriver.hooks.FileParsePostProcessor;
+ import com.google.jstestdriver.model.BasePaths;
+ import com.google.jstestdriver.util.DisplayPathSanitizer;
+-
+ import org.apache.oro.io.GlobFilenameFilter;
+ import org.apache.oro.text.GlobCompiler;
+ import org.slf4j.Logger;
+@@ -31,9 +30,7 @@ import org.slf4j.LoggerFactory;
+ 
+ import java.io.File;
+ import java.io.FilenameFilter;
+-import java.io.IOException;
+ import java.util.Arrays;
+-import java.util.HashSet;
+ import java.util.LinkedHashSet;
+ import java.util.List;
+ import java.util.Set;
+@@ -76,7 +73,7 @@ public class PathResolver {
+     return consolidated;
+   }
+ 
+-  
++
+   /**
+    * Resolves files for a set of FileInfos:
+    *  - Expands glob paths (e.g. "*.js") into distinct FileInfos
+@@ -100,6 +97,7 @@ public class PathResolver {
+       throw new UnreadableFilesException(unreadable);
+     }
+ 
++
+     resolvedFiles = postProcessFiles(resolvedFiles);
+ 
+     return consolidatePatches(resolvedFiles);
+@@ -114,17 +112,23 @@ public class PathResolver {
+         if (absoluteDir.getName().equals("**")) {
+         	absoluteDir = absoluteDir.getParentFile();
+         }
+-        // Get all files for the current FileInfo. This will return one file
+-        // if the FileInfo doesn't represent a glob
+-        String[] expandedFileNames =
+-            expandGlob(absoluteDir.getAbsolutePath(), file.getName(), absoluteDir);
+-        if (expandedFileNames == null) {
+-          continue;
+-        }
++        boolean hasGlob = file.getName().contains("*");
++        if (hasGlob) {
++            // Get all files for the current FileInfo. This will return one file
++            // if the FileInfo doesn't represent a glob
++            String[] expandedFileNames =
++                    expandGlob(absoluteDir.getAbsolutePath(), file.getName(), absoluteDir);
++            if (expandedFileNames == null) {
++                continue;
++            }
+ 
+-        for (String fileName : expandedFileNames) {
+-          File sourceFile = new File(absoluteDir, fileName);
+-          createFileInfo(resolvedFiles, unreadable, fileInfo, sourceFile, basePath);
++            for (String fileName : expandedFileNames) {
++                File sourceFile = new File(absoluteDir, fileName);
++                createFileInfo(resolvedFiles, unreadable, fileInfo, sourceFile, basePath);
++            }
++        } else {
++            File sourceFile = new File(absoluteDir, file.getName());
++            createFileInfo(resolvedFiles, unreadable, fileInfo, sourceFile, basePath);
+         }
+         return;
+     }
+@@ -198,6 +202,7 @@ public class PathResolver {
+ 
+   /**
+    * This function is needed to deal with removing ".." from a path.
++   * Java absolute paths
+    * On a linux/unix based system, using the canonical file name can cause 
+    * some strange issues, as well as confusing debugging, as the file name
+    * may not match the users expectations.
+@@ -272,4 +277,4 @@ public class PathResolver {
+     }
+     return processedFiles;
+   }
+-}
+\ No newline at end of file
++}
