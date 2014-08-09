@@ -1,10 +1,7 @@
 package com.intellij.tapestry.tests.actions;
 
 import com.intellij.facet.FacetManager;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.DataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiManager;
@@ -14,11 +11,12 @@ import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
 import com.intellij.tapestry.intellij.facet.TapestryFacetType;
 import org.easymock.EasyMock;
-import static org.easymock.EasyMock.*;
 
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static org.easymock.EasyMock.*;
 
 public class ActionMockHelper {
 
@@ -57,7 +55,7 @@ public class ActionMockHelper {
 
       Presentation _presentation = new Presentation();
 
-        _event = new AnActionEvent(_inputEventMock, _dataContextMock, "", _presentation, null, 0);
+        _event = new AnActionEvent(_inputEventMock, _dataContextMock, "", _presentation, ActionManager.getInstance(), 0);
     }
 
     public AnActionEvent getEventMock() {

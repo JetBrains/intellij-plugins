@@ -1,10 +1,6 @@
 package com.intellij.tapestry.tests.core.util;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.tests.core.BaseTestCase;
 import com.intellij.testFramework.MapDataContext;
@@ -25,14 +21,14 @@ public class IdeaUtilsTest extends BaseTestCase {
         dataContext.put(CommonDataKeys.PROJECT.getName(), fixture.getProject());
         dataContext.put(LangDataKeys.MODULE_CONTEXT.getName(), fixture.getModule());
 
-        AnActionEvent actionEvent = new AnActionEvent(null, dataContext, "", new Presentation(), null, 0);
+        AnActionEvent actionEvent = new AnActionEvent(null, dataContext, "", new Presentation(), ActionManager.getInstance(), 0);
         assert IdeaUtils.isModuleNode(actionEvent);
 
 
       dataContext.put(CommonDataKeys.PROJECT.getName(), null);
       dataContext.put(LangDataKeys.MODULE_CONTEXT.getName(), null);
 
-        actionEvent = new AnActionEvent(null, dataContext, "", new Presentation(), null, 0);
+        actionEvent = new AnActionEvent(null, dataContext, "", new Presentation(), ActionManager.getInstance(), 0);
         assert !IdeaUtils.isModuleNode(actionEvent);
     }
 
