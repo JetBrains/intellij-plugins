@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
@@ -16,12 +15,12 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
-import org.osgi.framework.Constants;
+import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
 import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
+import org.osgi.framework.Constants;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
@@ -44,7 +43,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
   @Override
   protected OsmorcFacetConfiguration createConfiguration(Collection<VirtualFile> files) {
     OsmorcFacetConfiguration osmorcFacetConfiguration = getFacetType().createDefaultConfiguration();
-    osmorcFacetConfiguration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
+    osmorcFacetConfiguration.setManifestGenerationMode(ManifestGenerationMode.Manually);
     osmorcFacetConfiguration.setManifestLocation(ContainerUtil.getFirstItem(files).getPath());
     osmorcFacetConfiguration.setUseProjectDefaultManifestFileLocation(false);
     return osmorcFacetConfiguration;
@@ -57,7 +56,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
     VirtualFile manifestFile = LocalFileSystem.getInstance().findFileByPath(osmorcFacetConfiguration.getManifestLocation());
     if (manifestFile != null) {
       for (VirtualFile contentRoot : contentRoots) {
-        if (VfsUtil.isAncestor(contentRoot, manifestFile, false)) {
+        if (VfsUtilCore.isAncestor(contentRoot, manifestFile, false)) {
           // IDEADEV-40357
           osmorcFacetConfiguration.setManifestLocation(VfsUtilCore.getRelativePath(manifestFile, contentRoot, '/'));
           break;
@@ -72,7 +71,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
     if (manifestFileName.endsWith("template.mf")) { // this is a bundlor manifest template, so make the facet do bundlor
       osmorcFacetConfiguration.setManifestLocation("");
       osmorcFacetConfiguration.setBundlorFileLocation(manifestFileName);
-      osmorcFacetConfiguration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Bundlor);
+      osmorcFacetConfiguration.setManifestGenerationMode(ManifestGenerationMode.Bundlor);
     }
   }
 
@@ -97,39 +96,27 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
     List<String> headersToDetect = new ArrayList<String>(Arrays.asList(DETECTION_HEADERS));
 
     if (file != null && file.exists() && !file.isDirectory()) {
-      BufferedReader bufferedReader = null;
       try {
-        InputStream inputStream = file.getInputStream();
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-        bufferedReader = new BufferedReader(inputStreamReader);
-
-        String line;
-        while ((line = bufferedReader.readLine()) != null && headersToDetect.size() > 0) {
-          for (Iterator<String> headersToDetectIterator = headersToDetect.iterator();
-               headersToDetectIterator.hasNext(); ) {
-            String headerToDetect = headersToDetectIterator.next();
-            if (line.startsWith(headerToDetect)) {
-              headersToDetectIterator.remove();
-              break;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+        try {
+          String line;
+          while ((line = reader.readLine()) != null && headersToDetect.size() > 0) {
+            for (Iterator<String> iterator = headersToDetect.iterator(); iterator.hasNext(); ) {
+              String headerToDetect = iterator.next();
+              if (line.startsWith(headerToDetect)) {
+                iterator.remove();
+                break;
+              }
             }
           }
         }
+        finally {
+          reader.close();
+        }
       }
       catch (IOException e) {
-        // this should fix   IDEA-17977 (EA reported exception).
         logger.warn("There was an unexpected exception when accessing " + file.getName() + " (" + e.getMessage() + ")");
         return false;
-      }
-      finally {
-        if (bufferedReader != null) {
-          try {
-            bufferedReader.close();
-          }
-          catch (IOException e) {
-            logger.warn("There was an unexpected exception when closing stream to " + file.getName() + " (" + e.getMessage() + ")");
-            return false;
-          }
-        }
       }
     }
 

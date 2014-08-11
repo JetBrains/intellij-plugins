@@ -2,12 +2,10 @@ package org.osmorc.inspection;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
 import org.osmorc.AbstractOsgiTestCase;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.i18n.OsmorcBundle;
-
-import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.Bnd;
-import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.Manually;
 
 public class PackageAccessibilityInspectionTest extends AbstractOsgiTestCase {
   private static final String POSITIVE_TEST =
@@ -49,7 +47,7 @@ public class PackageAccessibilityInspectionTest extends AbstractOsgiTestCase {
     OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
     assert facet != null;
     try {
-      facet.getConfiguration().setManifestGenerationMode(Bnd);
+      facet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Bnd);
       doTest(
         "package pkg;\n" +
         "import org.osgi.framework.launch.*;\n" +
@@ -62,7 +60,7 @@ public class PackageAccessibilityInspectionTest extends AbstractOsgiTestCase {
         "}", "");
     }
     finally {
-      facet.getConfiguration().setManifestGenerationMode(Manually);
+      facet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Manually);
     }
   }
 

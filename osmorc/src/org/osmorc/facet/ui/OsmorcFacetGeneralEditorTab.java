@@ -39,6 +39,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.settings.ProjectSettings;
 
@@ -212,10 +213,10 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   public void apply() throws ConfigurationException {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
     configuration.setManifestGenerationMode(
-      myControlledByOsmorcRadioButton.isSelected() ? OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled :
-      myUseBndFileRadioButton.isSelected() ? OsmorcFacetConfiguration.ManifestGenerationMode.Bnd :
-      myUseBundlorFileRadioButton.isSelected() ? OsmorcFacetConfiguration.ManifestGenerationMode.Bundlor :
-      OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
+      myControlledByOsmorcRadioButton.isSelected() ? ManifestGenerationMode.OsmorcControlled :
+      myUseBndFileRadioButton.isSelected() ? ManifestGenerationMode.Bnd :
+      myUseBundlorFileRadioButton.isSelected() ? ManifestGenerationMode.Bundlor :
+      ManifestGenerationMode.Manually);
     configuration.setManifestLocation(FileUtil.toSystemIndependentName(myManifestFileChooser.getText()));
     configuration.setUseProjectDefaultManifestFileLocation(myUseProjectDefaultManifestFileLocation.isSelected());
     configuration.setBndFileLocation(FileUtil.toSystemIndependentName(myBndFile.getText()));

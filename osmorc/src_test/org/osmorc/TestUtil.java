@@ -45,14 +45,14 @@ import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.util.io.ZipUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
 import org.osmorc.facet.OsmorcFacet;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 
-import static junit.framework.Assert.assertNotNull;
-import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.Manually;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -114,7 +114,7 @@ public class TestUtil {
           final OsmorcFacet facet = new OsmorcFacet(module);
           facet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
           facet.getConfiguration().setManifestLocation("META-INF/MANIFEST.MF");
-          facet.getConfiguration().setManifestGenerationMode(Manually);
+          facet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Manually);
           modifiableFacetModel.addFacet(facet);
           modifiableFacetModel.commit();
         }

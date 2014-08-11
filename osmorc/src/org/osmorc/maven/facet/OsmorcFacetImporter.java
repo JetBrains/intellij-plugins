@@ -37,6 +37,7 @@ import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.utils.MavenJDOMUtil;
+import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
 import org.jetbrains.jps.osmorc.model.OutputPathType;
 import org.osgi.framework.Constants;
 import org.osmorc.facet.OsmorcFacet;
@@ -132,7 +133,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
 
         if (INCLUDE_MANIFEST.equals(name)) {
           conf.setManifestLocation(value);
-          conf.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
+          conf.setManifestGenerationMode(ManifestGenerationMode.Manually);
           conf.setUseProjectDefaultManifestFileLocation(false);
           useExistingManifest = true;
         }
@@ -153,7 +154,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
 
       if (!useExistingManifest) {
         conf.setManifestLocation("");
-        conf.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
+        conf.setManifestGenerationMode(ManifestGenerationMode.OsmorcControlled);
         conf.setUseProjectDefaultManifestFileLocation(true);
       }
 

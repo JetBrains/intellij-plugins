@@ -37,6 +37,7 @@ import com.intellij.refactoring.RefactoringFactory;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
+import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -126,7 +127,7 @@ public class ActivatorRenamingTest {
     final OsmorcFacetConfiguration configuration = facet.getConfiguration();
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
-        configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
+        configuration.setManifestGenerationMode(ManifestGenerationMode.OsmorcControlled);
         configuration.setBundleActivator("t1.Activator");
       }
     });
@@ -152,7 +153,7 @@ public class ActivatorRenamingTest {
     final OsmorcFacetConfiguration configuration = facet.getConfiguration();
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
-        configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
+        configuration.setManifestGenerationMode(ManifestGenerationMode.OsmorcControlled);
         configuration.setBundleActivator("t1.Activator");
       }
     });

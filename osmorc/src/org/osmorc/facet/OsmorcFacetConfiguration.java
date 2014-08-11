@@ -45,6 +45,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
 import org.jetbrains.jps.osmorc.model.OutputPathType;
 import org.jetbrains.jps.osmorc.util.OrderedProperties;
 import org.osmorc.OsmorcProjectComponent;
@@ -634,27 +635,5 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
    */
   public void setFacet(OsmorcFacet facet) {
     myFacet = facet;
-  }
-
-  /**
-   * How is the manifest generated.
-   */
-  public enum ManifestGenerationMode {
-    /**
-     * No generation at all. All is manual.
-     */
-    Manually,
-    /**
-     * Osmorc will generate it using facet settings.
-     */
-    OsmorcControlled,
-    /**
-     * Bnd will generate it using a bnd file.
-     */
-    Bnd,
-    /**
-     * Bundlor will generate it, using a bundlor file.
-     */
-    Bundlor
   }
 }
