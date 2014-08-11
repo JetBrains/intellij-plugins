@@ -22,13 +22,11 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.facet.ui;
 
 import com.intellij.CommonBundle;
-import com.intellij.facet.ui.FacetEditorContext;
-import com.intellij.facet.ui.FacetEditorTab;
-import com.intellij.facet.ui.FacetValidatorsManager;
+import com.intellij.facet.ui.*;
+import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -36,15 +34,14 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -52,12 +49,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.ui.*;
 import com.intellij.ui.table.JBTable;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.osmorc.model.OutputPathType;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.settings.MyErrorText;
 
 import javax.swing.*;
 import javax.swing.event.CellEditorListener;
@@ -69,7 +66,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 
 import static org.jetbrains.jps.osmorc.model.OutputPathType.*;
 
@@ -82,7 +78,7 @@ import static org.jetbrains.jps.osmorc.model.OutputPathType.*;
 public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   private JPanel myRoot;
   private JTable myAdditionalJARContentsTable;
-  private final EditorTextField myIgnoreFilePatternTextField;
+  private EditorTextField myIgnoreFilePatternTextField;
   private JCheckBox myAlwaysRebuildBundleJARCheckBox;
   private JLabel myFileIgnorePatternLabel;
   private JPanel myIgnoreFilePatternPanel;
@@ -91,27 +87,25 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   private JRadioButton myPlaceInProjectWideRadioButton;
   private JRadioButton myPlaceInThisPathRadioButton;
   private TextFieldWithBrowseButton myJarOutputPathChooser;
-  private MyErrorText myErrorText;
   private JPanel myAdditionalJarContentsPanel;
-  private boolean myModified;
+
   private final FacetEditorContext myEditorContext;
-  private FacetValidatorsManager myValidatorsManager;
+  private final FacetValidatorsManager myValidatorsManager;
   private final AdditionalJARContentsTableModel myAdditionalJARContentsTableModel;
+  private boolean myModified;
 
   public OsmorcFacetJAREditorTab(FacetEditorContext editorContext, FacetValidatorsManager validatorsManager) {
     myEditorContext = editorContext;
     myValidatorsManager = validatorsManager;
-    final Project project = editorContext.getProject();
 
+    Project project = editorContext.getProject();
     myIgnoreFilePatternTextField = new EditorTextField("", project, FileTypes.PLAIN_TEXT);
-    FileType fileType = FileTypeManager.getInstance().getFileTypeByFileName("*.regexp");
-    if (fileType == FileTypes.UNKNOWN) {
-      fileType = FileTypeManager.getInstance().getFileTypeByFileName("*.txt"); // RegExp plugin is not installed
+    FileType type = FileTypeManager.getInstance().getFileTypeByFileName("*.regexp");
+    if (type == FileTypes.UNKNOWN) {
+      type = FileTypeManager.getInstance().getFileTypeByFileName("*.txt"); // RegExp plugin is not installed
     }
-
-    final PsiFile file =
-      PsiFileFactory.getInstance(project).createFileFromText("*.regexp", fileType, myIgnoreFilePatternTextField.getText(), -1, true);
-    myIgnoreFilePatternTextField.setNewDocumentAndFileType(fileType, PsiDocumentManager.getInstance(project).getDocument(file));
+    PsiFile file = PsiFileFactory.getInstance(project).createFileFromText("*.regexp", type, myIgnoreFilePatternTextField.getText(), -1, true);
+    myIgnoreFilePatternTextField.setNewDocumentAndFileType(type, PsiDocumentManager.getInstance(project).getDocument(file));
     myIgnoreFilePatternPanel.add(myIgnoreFilePatternTextField, BorderLayout.CENTER);
 
     UserActivityWatcher watcher = new UserActivityWatcher();
@@ -121,6 +115,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
         updateGui();
       }
     });
+    watcher.register(myRoot);
 
     myJarOutputPathChooser.addActionListener(new ActionListener() {
       @Override
@@ -134,37 +129,27 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
         updateGui();
       }
     };
-
     myPlaceInProjectWideRadioButton.addChangeListener(listener);
     myPlaceInThisPathRadioButton.addChangeListener(listener);
     myPlaceInCompilerOutputPathRadioButton.addChangeListener(listener);
 
-    watcher.register(myRoot);
-
     myAdditionalJARContentsTableModel = new AdditionalJARContentsTableModel();
     myAdditionalJARContentsTable = new JBTable(myAdditionalJARContentsTableModel);
-
     TableColumn col = myAdditionalJARContentsTable.getColumnModel().getColumn(0);
-    final FileSelectorTableCellEditor selectorTableCellEditor = new FileSelectorTableCellEditor(project, myEditorContext.getModule());
+    FileSelectorTableCellEditor selectorTableCellEditor = new FileSelectorTableCellEditor(project, myEditorContext.getModule());
     col.setCellEditor(selectorTableCellEditor);
     selectorTableCellEditor.addCellEditorListener(new CellEditorListener() {
-      public void editingCanceled(ChangeEvent e) {
-      }
+      @Override
+      public void editingCanceled(ChangeEvent e) { }
 
+      @Override
       public void editingStopped(ChangeEvent e) {
         // ok we finished editing the left, now get the stuff from there, calculate a destination name and edit the other cell
         int row = myAdditionalJARContentsTable.getSelectedRow();
         if (row > -1) {
           Pair<String, String> additionalJARContent = myAdditionalJARContentsTableModel.getAdditionalJARContent(row);
           VirtualFile preselectedPath = LocalFileSystem.getInstance().findFileByPath(additionalJARContent.getFirst());
-          String destinationName;
-          if (preselectedPath != null) {
-            destinationName = determineMostLikelyLocationInJAR(preselectedPath);
-          }
-          else {
-            destinationName = "";
-          }
-
+          String destinationName = preselectedPath != null ? determineMostLikelyLocationInJar(preselectedPath) : "";
           myAdditionalJARContentsTableModel.changeAdditionalJARConent(row, additionalJARContent.first, destinationName);
           myAdditionalJARContentsTable.editCellAt(row, 1);
           myAdditionalJARContentsTable.getEditorComponent().requestFocus();
@@ -177,21 +162,35 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
         .setAddAction(new AnActionButtonRunnable() {
           @Override
           public void run(AnActionButton button) {
-            onAddAdditionalJARContent();
+            onAddAdditionalJarContent();
           }
-        }).setRemoveAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          onRemoveAdditionalJARContent();
+        })
+        .setRemoveAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            onRemoveAdditionalJarContent();
         }
-      }).setEditAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          onEditAdditionalJARContent();
+        })
+        .setEditAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            onEditAdditionalJARContent();
         }
-      }).disableUpDownActions().createPanel(), BorderLayout.CENTER);
+      })
+        .disableUpDownActions().createPanel(), BorderLayout.CENTER);
 
-    myValidatorsManager.registerValidator(new OsmorcFacetJarEditorValidator(myEditorContext, this));
+    myValidatorsManager.registerValidator(new FacetEditorValidator() {
+      @Override
+      public ValidationResult check() {
+        if (StringUtil.isEmptyOrSpaces(myJarFileTextField.getText())) {
+          return new ValidationResult(OsmorcBundle.message("facet.editor.jar.empty.jar.name"));
+        }
+        if (getSelectedOutputPathType() == SpecificOutputPath && StringUtil.isEmptyOrSpaces(myJarOutputPathChooser.getText())) {
+          return new ValidationResult(OsmorcBundle.message("facet.editor.jar.empty.output.path"));
+        }
+        return ValidationResult.OK;
+      }
+    });
   }
 
   private void onEditAdditionalJARContent() {
@@ -199,15 +198,14 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     if (row > -1) {
       Pair<String, String> additionalJARContent = myAdditionalJARContentsTableModel.getAdditionalJARContent(row);
       Project project = myEditorContext.getProject();
-      FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleLocalFileDescriptor();
-      descriptor.setTitle("Choose source file or folder");
+      FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleLocalFileDescriptor().withTitle(OsmorcBundle.message("facet.editor.select.source.title"));
       VirtualFile preselectedPath = LocalFileSystem.getInstance().findFileByPath(additionalJARContent.getFirst());
       if (preselectedPath == null) {
         Module module = myEditorContext.getModule();
         VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
         if (contentRoots.length > 0) {
           for (VirtualFile contentRoot : contentRoots) {
-            VirtualFile path = VfsUtil.findRelativeFile(additionalJARContent.getFirst(), contentRoot);
+            VirtualFile path = VfsUtilCore.findRelativeFile(additionalJARContent.getFirst(), contentRoot);
             if (path != null) {
               preselectedPath = path;
               break;
@@ -224,7 +222,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
       VirtualFile[] files = FileChooser.chooseFiles(descriptor, project, preselectedPath);
       if (files.length > 0) {
         String sourcePath = files[0].getPath();
-        String destPath = determineMostLikelyLocationInJAR(files[0]);
+        String destPath = determineMostLikelyLocationInJar(files[0]);
         myAdditionalJARContentsTableModel.changeAdditionalJARConent(row, sourcePath, destPath);
         myAdditionalJARContentsTable.editCellAt(row, 1);
         myAdditionalJARContentsTable.getEditorComponent().requestFocus();
@@ -232,7 +230,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     }
   }
 
-  private void onRemoveAdditionalJARContent() {
+  private void onRemoveAdditionalJarContent() {
     final int row = myAdditionalJARContentsTable.getSelectedRow();
     final int editingCol = myAdditionalJARContentsTable.getEditingColumn();
     final int editingRow = myAdditionalJARContentsTable.getEditingRow();
@@ -243,13 +241,11 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     myAdditionalJARContentsTableModel.deleteAdditionalJARContent(row);
   }
 
-  private void onAddAdditionalJARContent() {
+  private void onAddAdditionalJarContent() {
     Project project = myEditorContext.getProject();
-    FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createAllButJarContentsDescriptor();
-    descriptor.setTitle("Choose source file or folder");
+    FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createAllButJarContentsDescriptor().withTitle(OsmorcBundle.message("facet.editor.select.source.title"));
     VirtualFile rootFolder = null;
-    Module module = myEditorContext.getModule();
-    VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
+    VirtualFile[] contentRoots = ModuleRootManager.getInstance(myEditorContext.getModule()).getContentRoots();
     if (contentRoots.length > 0) {
       rootFolder = contentRoots[0];
     }
@@ -258,26 +254,22 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     }
     VirtualFile[] files = FileChooser.chooseFiles(descriptor, project, rootFolder);
     for (VirtualFile file : files) {
-      String destFile = determineMostLikelyLocationInJAR(file);
+      String destFile = determineMostLikelyLocationInJar(file);
       int row = myAdditionalJARContentsTableModel.addAdditionalJARContent(file.getPath(), destFile);
       myAdditionalJARContentsTable.editCellAt(row, 1);
       myAdditionalJARContentsTable.getEditorComponent().requestFocus();
     }
   }
 
-  private String determineMostLikelyLocationInJAR(@NotNull VirtualFile file) {
-    Project project = myEditorContext.getProject();
-    Module module = myEditorContext.getModule();
-
-    VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
+  private String determineMostLikelyLocationInJar(@NotNull VirtualFile file) {
+    VirtualFile[] contentRoots = ModuleRootManager.getInstance(myEditorContext.getModule()).getContentRoots();
     for (VirtualFile contentRoot : contentRoots) {
-      if (VfsUtil.isAncestor(contentRoot, file, false)) {
+      if (VfsUtilCore.isAncestor(contentRoot, file, false)) {
         return VfsUtilCore.getRelativePath(file, contentRoot, '/');
       }
     }
-
-    VirtualFile projectBaseFolder = project.getBaseDir();
-    if (projectBaseFolder != null && VfsUtil.isAncestor(projectBaseFolder, file, false)) {
+    VirtualFile projectBaseFolder = myEditorContext.getProject().getBaseDir();
+    if (projectBaseFolder != null && VfsUtilCore.isAncestor(projectBaseFolder, file, false)) {
       return VfsUtilCore.getRelativePath(file, projectBaseFolder, '/');
     }
     return file.getName();
@@ -286,7 +278,8 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   private void updateGui() {
     Boolean bnd = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY);
     Boolean bundlor = myEditorContext.getUserData(OsmorcFacetGeneralEditorTab.BUNDLOR_CREATION_KEY);
-    boolean useExternalTool = (bnd != null && bnd) || (bundlor != null && bundlor);
+    boolean useExternalTool = Boolean.TRUE.equals(bnd) || Boolean.TRUE.equals(bundlor);
+
     myJarOutputPathChooser.setEnabled(myPlaceInThisPathRadioButton.isSelected());
     myAdditionalJARContentsTable.setEnabled(!useExternalTool);
     myIgnoreFilePatternTextField.setEnabled(!useExternalTool);
@@ -294,85 +287,61 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     myAlwaysRebuildBundleJARCheckBox.setEnabled(!useExternalTool);
     myAdditionalJarContentsPanel.setEnabled(!useExternalTool);
     myFileIgnorePatternLabel.setEnabled(!useExternalTool);
+
     myValidatorsManager.validate();
-    if (myPlaceInThisPathRadioButton.isSelected() && myJarOutputPathChooser.getText().trim().length() == 0) {
-      myErrorText.setError("Please select an output path");
-    }
-    else {
-      myErrorText.setError(null);
-    }
   }
 
-
-  void onOutputPathSelect() {
-    String currentFile = getSelectedOutputPath();
-    VirtualFile moduleCompilerOutputPath = CompilerModuleExtension.getInstance(myEditorContext.getModule()).getCompilerOutputPath();
-
-    // okay there is some strange thing going on here. The method getCompilerOutputPath() returns null
-    // but getCompilerOutputPathUrl() returns something. I assume that we cannot get a VirtualFile object for a non-existing
-    // path, so we need to make sure the compiler output path exists.
-
-    if (moduleCompilerOutputPath == null) {
-      // get the url
-      String outputPathUrl = CompilerModuleExtension.getInstance(myEditorContext.getModule()).getCompilerOutputUrl();
-
-      // create the paths
-      try {
-        VfsUtil.createDirectories(VfsUtil.urlToPath(outputPathUrl));
+  private void onOutputPathSelect() {
+    String current = myJarOutputPathChooser.getText();
+    final VirtualFile moduleOutputDir = CompilerPaths.getModuleOutputDirectory(myEditorContext.getModule(), false);
+    VirtualFile toSelect = StringUtil.isNotEmpty(current) ? LocalFileSystem.getInstance().findFileByPath(current) : moduleOutputDir;
+    FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor().withTitle(OsmorcBundle.message("facet.editor.select.bundle.dir.title"));
+    FileChooser.chooseFile(descriptor, myEditorContext.getProject(), toSelect, new Consumer<VirtualFile>() {
+      @Override
+      public void consume(VirtualFile file) {
+        if (moduleOutputDir != null && VfsUtilCore.isAncestor(moduleOutputDir, file, false)) {
+          Messages.showErrorDialog(myRoot, OsmorcBundle.message("facet.editor.jar.cannot.be.in.output.path"), CommonBundle.message("title.error"));
+          myJarOutputPathChooser.setText("");
+        }
+        else {
+          myJarOutputPathChooser.setText(file.getPath());
+        }
       }
-      catch (IOException e) {
-        Messages.showErrorDialog(myRoot, OsmorcBundle.message("facet.editor.cannot.create.output.path"), CommonBundle.message("title.error"));
-        return;
-      }
-
-      // now try again to get VirtualFile object for it
-      moduleCompilerOutputPath = CompilerModuleExtension.getInstance(myEditorContext.getModule()).getCompilerOutputPath();
-      if (moduleCompilerOutputPath == null) {
-        // this should not happen
-        throw new IllegalStateException("Cannot access compiler output path.");
-      }
-    }
-
-    VirtualFile preselectedFile =
-      StringUtil.isNotEmpty(currentFile) ? LocalFileSystem.getInstance().findFileByPath(currentFile) : moduleCompilerOutputPath;
-
-    FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    descriptor.setTitle("Select bundle output directory");
-    VirtualFile file = FileChooser.chooseFile(descriptor, myEditorContext.getProject(), preselectedFile);
-    if (file != null) {
-      if (VfsUtilCore.isAncestor(moduleCompilerOutputPath, file, false)) {
-        Messages.showErrorDialog(myRoot, OsmorcBundle.message("facet.editor.jar.cannot.be.in.output.path"), CommonBundle.message("title.error"));
-        myJarOutputPathChooser.setText("");
-        return;
-      }
-      myJarOutputPathChooser.setText(file.getPath());
-    }
+    });
   }
 
   @Nls
+  @Override
   public String getDisplayName() {
-    return "Bundle JAR";
+    return "Bundle .jar";
   }
 
+  @Override
   public JComponent createComponent() {
     return myRoot;
   }
 
+  @Override
   public boolean isModified() {
     return myModified;
   }
 
+  @Override
+  public void apply() throws ConfigurationException {
+    String jarFileName = myJarFileTextField.getText();
+    if (StringUtil.isEmptyOrSpaces(jarFileName)) {
+      throw new ConfigurationException(OsmorcBundle.message("facet.editor.jar.empty.jar.name"));
+    }
 
-  public void apply() {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
-    String fileLocation = getSelectedOutputPath();
-    String jarFileName = getJarFileName();
-
 
     OutputPathType pathType = getSelectedOutputPathType();
-    // Build a complete path if the user wants to put the file into some specific path.
     if (pathType == SpecificOutputPath) {
-      String completeOutputPath = new File(fileLocation, jarFileName).getPath();
+      String location = myJarOutputPathChooser.getText();
+      if (StringUtil.isEmptyOrSpaces(location)) {
+        throw new ConfigurationException(OsmorcBundle.message("facet.editor.jar.empty.output.path"));
+      }
+      String completeOutputPath = new File(location, jarFileName).getPath();
       configuration.setJarFileLocation(completeOutputPath, pathType);
     }
     else {
@@ -380,34 +349,18 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     }
     configuration.setIgnoreFilePattern(myIgnoreFilePatternTextField.getText());
     configuration.setAlwaysRebuildBundleJAR(myAlwaysRebuildBundleJARCheckBox.isSelected());
-
     configuration.setAdditionalJARContents(myAdditionalJARContentsTableModel.getAdditionalContents());
     myModified = false;
   }
 
-  public String getJarFileName() {
-    return myJarFileTextField.getText();
-  }
-
-  String getSelectedOutputPath() {
-    return myJarOutputPathChooser.getText();
-  }
-
-  OutputPathType getSelectedOutputPathType() {
-    return myPlaceInProjectWideRadioButton.isSelected()
-           ? OsgiOutputPath
-           : myPlaceInCompilerOutputPathRadioButton.isSelected()
-             ? CompilerOutputPath
-             : SpecificOutputPath;
-  }
-
+  @Override
   public void reset() {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
+
     OutputPathType outputPathType = configuration.getOutputPathType();
     myPlaceInCompilerOutputPathRadioButton.setSelected(outputPathType == CompilerOutputPath);
     myPlaceInProjectWideRadioButton.setSelected(outputPathType == OsgiOutputPath);
     myPlaceInThisPathRadioButton.setSelected(outputPathType == SpecificOutputPath);
-
 
     myJarFileTextField.setText(configuration.getJarFileName());
     if (outputPathType == SpecificOutputPath) {
@@ -420,23 +373,27 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     myAdditionalJARContentsTableModel.replaceContent(configuration.getAdditionalJARContents());
     myIgnoreFilePatternTextField.setText(configuration.getIgnoreFilePattern());
     myAlwaysRebuildBundleJARCheckBox.setSelected(configuration.isAlwaysRebuildBundleJAR());
+
     updateGui();
     myModified = false;
   }
 
   @Override
   public void onTabEntering() {
-    super.onTabEntering();
     updateGui();
-    myValidatorsManager.validate();
   }
 
-  public void disposeUIResources() {
-
-  }
+  @Override
+  public void disposeUIResources() { }
 
   @Override
   public String getHelpTopic() {
     return "reference.settings.module.facet.osgi";
+  }
+
+  private OutputPathType getSelectedOutputPathType() {
+    return myPlaceInProjectWideRadioButton.isSelected() ? OsgiOutputPath :
+           myPlaceInCompilerOutputPathRadioButton.isSelected() ? CompilerOutputPath :
+           SpecificOutputPath;
   }
 }

@@ -116,7 +116,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     FrameworkLibraryValidator validator = OsgiCoreLibraryType.getValidator(context, validatorsManager);
     validatorsManager.registerValidator(validator);
     return new FacetEditorTab[]{
-      new OsmorcFacetGeneralEditorTab(context),
+      new OsmorcFacetGeneralEditorTab(context, validatorsManager),
       new OsmorcFacetJAREditorTab(context, validatorsManager),
       new OsmorcFacetManifestGenerationEditorTab(context)
     };
