@@ -77,7 +77,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (karmaServer.areBrowsersReady()) {
       final DebuggableWebBrowser debuggableWebBrowser =
-        new KarmaDebugBrowserSelector(project, karmaServer.getCapturedBrowsers(), environment, this).selectDebugEngine();
+        new KarmaDebugBrowserSelector(karmaServer.getCapturedBrowsers(), environment).selectDebugEngine();
       return prepareDebugger(project, debuggableWebBrowser, new RunProfileStarter() {
         @Nullable
         @Override
