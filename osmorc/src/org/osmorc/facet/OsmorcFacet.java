@@ -117,17 +117,6 @@ public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
   }
 
   /**
-   * Checks if the given file is the manifest for this facet.
-   *
-   * @param file the file to check
-   * @return true if the given file is the manifest for this facet, false otherwise.
-   */
-  public boolean isManifestForThisFacet(@NotNull VirtualFile file) {
-    VirtualFile manifestFile = getManifestFile();
-    return manifestFile != null && file.getPath().equals(manifestFile.getPath());
-  }
-
-  /**
    * Returns the manifest file for this facet.
    *
    * @return the manifest file. If the manifest is automatically generated, returns null.
