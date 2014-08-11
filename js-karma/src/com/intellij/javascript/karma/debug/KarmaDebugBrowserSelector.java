@@ -1,10 +1,8 @@
 package com.intellij.javascript.karma.debug;
 
 import com.google.common.collect.ImmutableList;
-import com.intellij.execution.ExecutionManager;
-import com.intellij.execution.ExecutorRegistry;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
@@ -31,16 +29,11 @@ public class KarmaDebugBrowserSelector {
   private final Project myProject;
   private final ImmutableList<CapturedBrowser> myCapturedBrowsers;
   private final ExecutionEnvironment myEnv;
-  private final ProgramRunner myProgramRunner;
 
-  protected KarmaDebugBrowserSelector(@NotNull Project project,
-                                      @NotNull Collection<CapturedBrowser> browsers,
-                                      @NotNull ExecutionEnvironment env,
-                                      @NotNull ProgramRunner programRunner) {
-    myProject = project;
+  protected KarmaDebugBrowserSelector(@NotNull Collection<CapturedBrowser> browsers, @NotNull ExecutionEnvironment environment) {
+    myProject = environment.getProject();
     myCapturedBrowsers = ImmutableList.copyOf(browsers);
-    myEnv = env;
-    myProgramRunner = programRunner;
+    myEnv = environment;
   }
 
   @Nullable
@@ -148,10 +141,7 @@ public class KarmaDebugBrowserSelector {
           WebBrowser browser = WebBrowserManager.getInstance().findBrowserById(e.getDescription());
           if (browser != null) {
             setWebBrowserToReuse(browser);
-            if (!ExecutorRegistry.getInstance().isStarting(myProject, myEnv.getExecutor().getId(), myProgramRunner.getRunnerId())) {
-              ExecutionManager executionManager = ExecutionManager.getInstance(myProject);
-              executionManager.restartRunProfile(myProgramRunner, myEnv, myEnv.getContentToReuse());
-            }
+            ExecutionUtil.restart(myEnv);
           }
         }
       }

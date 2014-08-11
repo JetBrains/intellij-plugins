@@ -262,7 +262,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   @Override
   public void checkSetName(final String name) {
     if (!isRenameAllowed(name)) {
-      throw new IncorrectOperationException(RENAME_DISABLED_MESSAGE);
+      throw new IncorrectOperationException(RENAME_BAD_SYMBOLS_MESSAGE);
     }
   }
 }
