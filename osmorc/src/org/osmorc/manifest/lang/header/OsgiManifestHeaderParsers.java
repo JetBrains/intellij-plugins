@@ -28,7 +28,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.header.HeaderParser;
 import org.jetbrains.lang.manifest.header.HeaderParserProvider;
-import org.osmorc.manifest.ManifestConstants;
+import aQute.bnd.osgi.Constants;
 
 import java.util.Map;
 
@@ -40,33 +40,20 @@ public class OsgiManifestHeaderParsers implements HeaderParserProvider {
 
   public OsgiManifestHeaderParsers() {
     myParsers = ContainerUtil.newHashMap();
-    myParsers.put(ManifestConstants.Headers.IMPORT_SERVICE, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.EXPORT_SERVICE, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.DYNAMIC_IMPORT_PACKAGE, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_VENDOR, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_UPDATE_LOCATION, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_NATIVE_CODE, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_LOCALIZATION, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_DOC_URL, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_DESCRIPTION, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_COPYRIGHT, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_CONTACT_ADDRESS, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_CLASS_PATH, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_CATEGORY, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_ACTIVATION_POLICY, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.FRAGMENT_HOST, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_REQUIRED_EXECUTION_ENV, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_SYMBOLIC_NAME, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_NAME, OsgiHeaderParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_MANIFEST_VERSION, OsgiHeaderParser.INSTANCE);
 
-    myParsers.put(ManifestConstants.Headers.BUNDLE_ACTIVATOR, BundleActivatorParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.REQUIRE_BUNDLE, RequireBundleParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.PRIVATE_PACKAGE, BasePackageParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.IGNORE_PACKAGE, BasePackageParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.IMPORT_PACKAGE, BasePackageParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.EXPORT_PACKAGE, ExportPackageParser.INSTANCE);
-    myParsers.put(ManifestConstants.Headers.BUNDLE_VERSION, BundleVersionParser.INSTANCE);
+    myParsers.put(Constants.BUNDLE_ACTIVATOR, BundleActivatorParser.INSTANCE);
+    myParsers.put(Constants.REQUIRE_BUNDLE, RequireBundleParser.INSTANCE);
+    myParsers.put(Constants.PRIVATE_PACKAGE, BasePackageParser.INSTANCE);
+    myParsers.put(Constants.IGNORE_PACKAGE, BasePackageParser.INSTANCE);
+    myParsers.put(Constants.IMPORT_PACKAGE, BasePackageParser.INSTANCE);
+    myParsers.put(Constants.EXPORT_PACKAGE, ExportPackageParser.INSTANCE);
+    myParsers.put(Constants.BUNDLE_VERSION, BundleVersionParser.INSTANCE);
+
+    for (String header : Constants.headers) {
+      if (!myParsers.containsKey(header)) {
+        myParsers.put(header, OsgiHeaderParser.INSTANCE);
+      }
+    }
   }
 
   @NotNull
