@@ -180,6 +180,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
         .disableUpDownActions().createPanel(), BorderLayout.CENTER);
 
     myValidatorsManager.registerValidator(new FacetEditorValidator() {
+      @NotNull
       @Override
       public ValidationResult check() {
         if (StringUtil.isEmptyOrSpaces(myJarFileTextField.getText())) {
