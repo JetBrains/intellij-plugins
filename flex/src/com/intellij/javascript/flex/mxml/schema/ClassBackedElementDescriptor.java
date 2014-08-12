@@ -755,10 +755,13 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     if (jsNamedElement instanceof JSVariable) {
       return ((JSVariable)jsNamedElement).getTypeString();
     }
-    else {
-      JSType type = JSResolveUtil.getTypeFromSetAccessor(jsNamedElement);
-      return type != null ? type.getTypeText() : null;
+    else if (jsNamedElement instanceof JSFunctionItem) {
+      final JSType type = JSResolveUtil.getTypeFromSetAccessor((JSFunctionItem)jsNamedElement);
+      if (type != null) {
+        return type.getTypeText();
+      }
     }
+    return null;
   }
 
   private void appendSuperClassDescriptors(final Map<String, AnnotationBackedDescriptor> map,
