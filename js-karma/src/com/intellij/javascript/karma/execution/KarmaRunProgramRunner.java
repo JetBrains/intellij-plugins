@@ -37,9 +37,9 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
   protected RunContentDescriptor doExecute(@NotNull Project project,
                                            @NotNull RunProfileState state,
                                            RunContentDescriptor contentToReuse,
-                                           @NotNull ExecutionEnvironment env) throws ExecutionException {
+                                           @NotNull ExecutionEnvironment environment) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
-    ExecutionResult executionResult = state.execute(env.getExecutor(), this);
+    ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) {
       return null;
     }
@@ -48,7 +48,7 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
       LOG.error("Can't get KarmaConsoleView from executionResult!");
       return null;
     }
-    final RunContentDescriptor descriptor = new RunContentBuilder(executionResult, env).showRunContent(contentToReuse);
+    final RunContentDescriptor descriptor = new RunContentBuilder(executionResult, environment).showRunContent(contentToReuse);
 
     KarmaServer server = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (!server.areBrowsersReady()) {
@@ -62,7 +62,7 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
     else {
       RerunTestsNotification.showRerunNotification(contentToReuse, executionResult.getExecutionConsole());
     }
-    RerunTestsAction.register(descriptor, env);
+    RerunTestsAction.register(environment);
     return descriptor;
   }
 

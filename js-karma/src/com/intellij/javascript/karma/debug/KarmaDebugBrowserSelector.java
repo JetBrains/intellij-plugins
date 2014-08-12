@@ -7,7 +7,6 @@ import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.CapturedBrowser;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
@@ -26,14 +25,12 @@ import java.util.List;
 public class KarmaDebugBrowserSelector {
   private static final Key<WebBrowser> WEB_BROWSER_KEY = Key.create("KARMA_WEB_BROWSER_ID");
 
-  private final Project myProject;
   private final ImmutableList<CapturedBrowser> myCapturedBrowsers;
-  private final ExecutionEnvironment myEnv;
+  private final ExecutionEnvironment environment;
 
   protected KarmaDebugBrowserSelector(@NotNull Collection<CapturedBrowser> browsers, @NotNull ExecutionEnvironment environment) {
-    myProject = environment.getProject();
     myCapturedBrowsers = ImmutableList.copyOf(browsers);
-    myEnv = environment;
+    this.environment = environment;
   }
 
   @Nullable
@@ -87,7 +84,7 @@ public class KarmaDebugBrowserSelector {
 
   @Nullable
   private WebBrowser getWebBrowserToReuse() {
-    KarmaRunConfiguration runConfiguration = ObjectUtils.tryCast(myEnv.getRunProfile(), KarmaRunConfiguration.class);
+    KarmaRunConfiguration runConfiguration = ObjectUtils.tryCast(environment.getRunProfile(), KarmaRunConfiguration.class);
     if (runConfiguration != null) {
       WebBrowser browser = WEB_BROWSER_KEY.get(runConfiguration);
       // we don't use isActive because we also want to check - is browser still exists or was removed?
@@ -101,7 +98,7 @@ public class KarmaDebugBrowserSelector {
   }
 
   private void setWebBrowserToReuse(@Nullable WebBrowser browser) {
-    KarmaRunConfiguration runConfiguration = ObjectUtils.tryCast(myEnv.getRunProfile(), KarmaRunConfiguration.class);
+    KarmaRunConfiguration runConfiguration = ObjectUtils.tryCast(environment.getRunProfile(), KarmaRunConfiguration.class);
     if (runConfiguration != null) {
       WEB_BROWSER_KEY.set(runConfiguration, browser);
     }
@@ -130,8 +127,8 @@ public class KarmaDebugBrowserSelector {
       message = formatBrowserSelectionHtml(debuggableActiveCapturedBrowsers);
     }
 
-    ToolWindowManager.getInstance(myProject).notifyByBalloon(
-      myEnv.getExecutor().getToolWindowId(),
+    ToolWindowManager.getInstance(environment.getProject()).notifyByBalloon(
+      environment.getExecutor().getToolWindowId(),
       MessageType.WARNING,
       message,
       null,
@@ -141,7 +138,7 @@ public class KarmaDebugBrowserSelector {
           WebBrowser browser = WebBrowserManager.getInstance().findBrowserById(e.getDescription());
           if (browser != null) {
             setWebBrowserToReuse(browser);
-            ExecutionUtil.restart(myEnv);
+            ExecutionUtil.restart(environment);
           }
         }
       }
