@@ -37,10 +37,10 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.osmorc.build.BndWrapper;
-import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
-import org.jetbrains.jps.osmorc.build.OsgiBuildException;
-import org.jetbrains.jps.osmorc.build.Reporter;
+import org.jetbrains.osgi.jps.build.BndWrapper;
+import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
+import org.jetbrains.osgi.jps.build.OsgiBuildException;
+import org.jetbrains.osgi.jps.build.Reporter;
 
 import java.io.File;
 import java.util.List;

@@ -39,7 +39,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.settings.ProjectSettings;
 

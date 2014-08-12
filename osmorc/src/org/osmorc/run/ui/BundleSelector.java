@@ -36,7 +36,7 @@ import com.intellij.ui.treeStructure.SimpleTree;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
+import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;

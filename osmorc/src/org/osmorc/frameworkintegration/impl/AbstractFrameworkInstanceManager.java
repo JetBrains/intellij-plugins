@@ -7,7 +7,7 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
+import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkInstanceManager;
 import org.osmorc.i18n.OsmorcBundle;

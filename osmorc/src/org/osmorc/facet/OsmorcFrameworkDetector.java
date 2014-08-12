@@ -15,7 +15,7 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
 import org.osgi.framework.Constants;
 

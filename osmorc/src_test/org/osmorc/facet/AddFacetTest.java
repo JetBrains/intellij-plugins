@@ -34,7 +34,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
-import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

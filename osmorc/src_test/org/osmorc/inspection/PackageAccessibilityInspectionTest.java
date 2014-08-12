@@ -2,7 +2,7 @@ package org.osmorc.inspection;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.jps.osmorc.model.ManifestGenerationMode;
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osmorc.AbstractOsgiTestCase;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.i18n.OsmorcBundle;

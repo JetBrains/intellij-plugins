@@ -29,7 +29,7 @@ import com.intellij.execution.configurations.ParametersList;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
+import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.ui.SelectedBundle;

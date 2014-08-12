@@ -33,7 +33,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.osmorc.model.OutputPathType;
+import org.jetbrains.osgi.jps.model.OutputPathType;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ProjectSettings;
 

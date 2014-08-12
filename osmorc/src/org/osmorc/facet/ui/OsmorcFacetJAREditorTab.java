@@ -52,7 +52,7 @@ import com.intellij.ui.table.JBTable;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.osmorc.model.OutputPathType;
+import org.jetbrains.osgi.jps.model.OutputPathType;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.i18n.OsmorcBundle;
 
@@ -67,7 +67,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import static org.jetbrains.jps.osmorc.model.OutputPathType.*;
+import static org.jetbrains.osgi.jps.model.OutputPathType.*;
 
 /**
  * The facet editor tab which is used to set up Osmorc facet settings concerning the bundle JAR created by Osmorc.

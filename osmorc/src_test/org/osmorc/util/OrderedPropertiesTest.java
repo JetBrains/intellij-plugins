@@ -1,6 +1,6 @@
 package org.osmorc.util;
 
-import org.jetbrains.jps.osmorc.util.OrderedProperties;
+import org.jetbrains.osgi.jps.util.OrderedProperties;
 import org.junit.Test;
 
 import java.io.IOException;

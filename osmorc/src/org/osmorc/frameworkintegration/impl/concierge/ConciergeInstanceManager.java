@@ -26,7 +26,7 @@ package org.osmorc.frameworkintegration.impl.concierge;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
+import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.run.ui.SelectedBundle;
