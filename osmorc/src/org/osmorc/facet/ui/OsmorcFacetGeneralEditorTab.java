@@ -39,6 +39,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.settings.ProjectSettings;
@@ -118,6 +119,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     watcher.register(myRoot);
 
     myValidatorsManager.registerValidator(new FacetEditorValidator() {
+      @NotNull
       @Override
       public ValidationResult check() {
         if (myManuallyEditedRadioButton.isSelected()) {
@@ -139,7 +141,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
             return new ValidationResult("No Bundlor file '" + location + "' found in module");
           }
         }
-        return null;
+        return ValidationResult.OK;
       }
     });
   }
