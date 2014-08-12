@@ -1,1 +1,1 @@
-org.jetbrains.jps.osmorc.model.impl.JpsOsmorcExtensionServiceImpl
+org.jetbrains.osgi.jps.model.impl.JpsOsmorcExtensionServiceImpl
