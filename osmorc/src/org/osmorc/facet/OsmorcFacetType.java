@@ -31,10 +31,10 @@ import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.text.StringUtil;
+import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.jps.model.OutputPathType;
-import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ProjectSettings;
 
 import javax.swing.*;
@@ -92,6 +92,6 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
 
   @Override
   public Icon getIcon() {
-    return OsmorcBundle.getSmallIcon();
+    return OsmorcIdeaIcons.Osmorc;
   }
 }

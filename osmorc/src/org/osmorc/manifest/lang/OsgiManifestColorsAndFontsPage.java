@@ -29,12 +29,12 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
+import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.highlighting.ManifestColorsAndFonts;
 import org.jetbrains.lang.manifest.highlighting.ManifestSyntaxHighlighterFactory;
-import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -80,7 +80,7 @@ public class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
   @Nullable
   @Override
   public Icon getIcon() {
-    return OsmorcBundle.getSmallIcon();
+    return OsmorcIdeaIcons.Osmorc;
   }
 
   @NotNull
