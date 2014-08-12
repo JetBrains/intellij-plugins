@@ -1,9 +1,8 @@
 package com.intellij.tapestry.core;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.impl.java.stubs.index.JavaMethodNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -26,7 +25,6 @@ import com.intellij.tapestry.core.util.LocalizationUtils;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -246,24 +244,37 @@ public class TapestryProject {
 
   @NotNull
   private Map<String, List<String>> findLibraryMapping() {
-    final Collection<PsiMethod> psiMethods = JavaMethodNameIndex.getInstance().get(
-      "contributeComponentClassResolver",
-      myModule.getProject(),
-      GlobalSearchScope.moduleScope(myModule)
-    );
-
     Map<String, List<String>> result = new THashMap<String, List<String>>();
 
-    for (PsiMethod psiMethod : psiMethods) {
-      final Map<String, String> computedMap = mappingData.compute(psiMethod.getContainingFile());
-      for (String key : computedMap.keySet()) {
-        List<String> strings = result.get(key);
-        if (strings == null) result.put(key, strings = new ArrayList<String>(2));
-        strings.add(computedMap.get(key));
-      }
+    GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(myModule);
+    for (PsiMethod psiMethod : JavaMethodNameIndex.getInstance().get(
+      "contributeComponentClassResolver",
+      myModule.getProject(),
+      scope
+    )) {
+      addFromMappingData(result, mappingData.compute(psiMethod.getContainingFile()));
     }
 
+    // method annotated with @Contribute(ComponentClassResolver.class)
+    Collection<PsiAnnotation> annotations = JavaAnnotationIndex.getInstance().get("Contribute", myModule.getProject(), scope);
+    for(PsiAnnotation annotation:annotations) {
+      PsiNameValuePair[] attributes = annotation.getParameterList().getAttributes();
+      if (attributes.length != 1) continue;
+      PsiAnnotationMemberValue value = attributes[0].getValue();
+      if (value instanceof PsiClassObjectAccessExpression && "ComponentClassResolver".equals(((PsiClassObjectAccessExpression)value).getOperand().getText())) {
+        addFromMappingData(result, mappingData.compute(annotation.getContainingFile()));
+      }
+    }
+    
     return result;
+  }
+
+  private static void addFromMappingData(Map<String, List<String>> result, Map<String, String> computedMap) {
+    for (String key : computedMap.keySet()) {
+      List<String> strings = result.get(key);
+      if (strings == null) result.put(key, strings = new ArrayList<String>(2));
+      strings.add(computedMap.get(key));
+    }
   }
 
   @NotNull
