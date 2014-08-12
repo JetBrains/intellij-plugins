@@ -25,7 +25,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -215,9 +214,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
 
   @Override
   protected boolean isPreviewUsages(UsageInfo[] usages) {
-    if (UsageViewUtil.hasNonCodeUsages(usages)) {
-      WindowManager.getInstance().getStatusBar(myProject).setInfo(
-        RefactoringBundle.message("occurrences.found.in.comments.strings.and.non.java.files"));
+    if (UsageViewUtil.reportNonRegularUsages(usages, myProject)) {
       return true;
     }
     else {
