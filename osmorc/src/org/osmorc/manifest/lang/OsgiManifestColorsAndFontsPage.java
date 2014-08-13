@@ -80,7 +80,7 @@ public class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
   @Nullable
   @Override
   public Icon getIcon() {
-    return OsmorcIdeaIcons.Osmorc;
+    return OsmorcIdeaIcons.Osgi;
   }
 
   @NotNull

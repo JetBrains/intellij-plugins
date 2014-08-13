@@ -92,6 +92,6 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
 
   @Override
   public Icon getIcon() {
-    return OsmorcIdeaIcons.Osmorc;
+    return OsmorcIdeaIcons.Osgi;
   }
 }
