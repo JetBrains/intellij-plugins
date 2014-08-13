@@ -25,7 +25,7 @@
 package org.osmorc.frameworkintegration;
 
 import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
+import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

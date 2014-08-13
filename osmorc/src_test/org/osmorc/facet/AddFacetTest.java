@@ -34,6 +34,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,7 +102,7 @@ public class AddFacetTest {
                 ModifiableFacetModel modifiableFacetModel =
                         FacetManager.getInstance(fixture.getModule()).createModifiableModel();
                 OsmorcFacet facet = new OsmorcFacet(fixture.getModule());
-                facet.getConfiguration().setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
+                facet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Manually);
                 modifiableFacetModel.addFacet(facet);
                 modifiableFacetModel.commit();
             }

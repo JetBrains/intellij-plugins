@@ -102,8 +102,10 @@ public class Dart2JSBeforeRunTaskProvider extends BeforeRunTaskProvider<Dart2JSB
 
     final BooleanValueHolder result = new BooleanValueHolder(true);
     UIUtil.invokeAndWaitIfNeeded(new Runnable() {
+      @Override
       public void run() {
         new Task.Modal(configuration.getProject(), DartBundle.message("dart2js.title"), false) {
+          @Override
           public void run(@NotNull ProgressIndicator indicator) {
             indicator.setIndeterminate(true);
             indicator.setText(DartBundle.message("dart2js.task.description", VfsUtil.extractFileName(task.getInputFilePath())));

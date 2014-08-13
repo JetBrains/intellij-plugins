@@ -32,7 +32,7 @@ import com.intellij.ui.components.JBList;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.jps.osmorc.model.LibraryBundlificationRule;
+import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

@@ -31,13 +31,12 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.ManifestConstants;
-import org.jetbrains.lang.manifest.psi.ManifestTokenType;
 import org.jetbrains.lang.manifest.header.HeaderParser;
-import org.osmorc.manifest.lang.psi.Attribute;
-import org.osmorc.manifest.lang.psi.Clause;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.jetbrains.lang.manifest.psi.ManifestToken;
+import org.jetbrains.lang.manifest.psi.ManifestTokenType;
+import org.osmorc.manifest.lang.psi.Attribute;
+import org.osmorc.manifest.lang.psi.Clause;
 
 import java.util.List;
 
@@ -46,6 +45,8 @@ import java.util.List;
  */
 public class ExportPackageParser extends BasePackageParser {
   public static final HeaderParser INSTANCE = new ExportPackageParser();
+
+  private static final String USES_DIRECTIVE = "uses";
 
   private static boolean isPackageRef(final PsiElement element) {
     final boolean result;
@@ -70,9 +71,8 @@ public class ExportPackageParser extends BasePackageParser {
       }
     }
     else if (headerValuePart.getParent() instanceof Attribute) {
-      final Attribute attribute = (Attribute)headerValuePart.getParent();
-      if (ManifestConstants.Attributes.USES.equals(attribute.getName()) &&
-          !ManifestConstants.Attributes.USES.equals(headerValuePart.getUnwrappedText())) {
+      Attribute attribute = (Attribute)headerValuePart.getParent();
+      if (USES_DIRECTIVE.equals(attribute.getName()) && !USES_DIRECTIVE.equals(headerValuePart.getUnwrappedText())) {
         List<PsiReference> references = ContainerUtil.newArrayList();
         for (ASTNode astNode : headerValuePart.getNode().getChildren(TokenSet.create(ManifestTokenType.HEADER_VALUE_PART))) {
           if (astNode instanceof ManifestToken) {

@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.settings;
 
 import com.intellij.openapi.components.*;
@@ -32,7 +31,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.osmorc.model.LibraryBundlificationRule;
+import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 

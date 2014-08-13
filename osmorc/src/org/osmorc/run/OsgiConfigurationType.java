@@ -29,6 +29,7 @@ import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.project.Project;
+import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacetType;
 import org.osmorc.i18n.OsmorcBundle;
@@ -43,7 +44,7 @@ public class OsgiConfigurationType extends ConfigurationTypeBase {
   private static final String ID = "#org.osmorc.OsgiConfigurationType";
 
   public OsgiConfigurationType() {
-    super(ID, OsmorcBundle.message("run.configuration.name"), OsmorcBundle.message("run.configuration.description"), OsmorcBundle.getSmallIcon());
+    super(ID, OsmorcBundle.message("run.configuration.name"), OsmorcBundle.message("run.configuration.description"), OsmorcIdeaIcons.Osmorc);
 
     addFactory(new ConfigurationFactory(this) {
       @Override

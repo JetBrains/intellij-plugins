@@ -1,1 +1,1 @@
-org.jetbrains.jps.osmorc.model.impl.JpsOsmorcModelSerializerExtension
+org.jetbrains.osgi.jps.model.impl.JpsOsmorcModelSerializerExtension

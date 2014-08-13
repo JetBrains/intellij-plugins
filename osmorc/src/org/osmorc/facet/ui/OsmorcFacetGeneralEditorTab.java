@@ -24,29 +24,24 @@
  */
 package org.osmorc.facet.ui;
 
-import com.intellij.facet.ui.FacetEditorContext;
-import com.intellij.facet.ui.FacetEditorTab;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.application.WriteAction;
+import com.intellij.facet.ui.*;
 import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleServiceManager;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.Nls;
-import org.osgi.framework.Constants;
-import org.osgi.framework.Version;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osmorc.facet.OsmorcFacetConfiguration;
-import org.osmorc.settings.MyErrorText;
 import org.osmorc.settings.ProjectSettings;
 
 import javax.swing.*;
@@ -55,8 +50,6 @@ import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.util.jar.Attributes;
 
 /**
  * The facet editor tab which is used to set up general Osmorc facet settings.
@@ -79,66 +72,76 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   private JPanel myManifestPanel;
   private TextFieldWithBrowseButton myBndFile;
   private JPanel myBndPanel;
-  private JPanel myWarningPanel;
-  private JButton myCreateButton;
-  private MyErrorText myErrorText;
   private JRadioButton myUseBundlorFileRadioButton;
   private TextFieldWithBrowseButton myBundlorFile;
   private JPanel myBundlorPanel;
   private JCheckBox myDoNotSynchronizeFacetCheckBox;
 
   private final FacetEditorContext myEditorContext;
+  private final FacetValidatorsManager myValidatorsManager;
   private final Module myModule;
   private boolean myModified;
 
-  public OsmorcFacetGeneralEditorTab(FacetEditorContext editorContext) {
+  public OsmorcFacetGeneralEditorTab(FacetEditorContext editorContext, FacetValidatorsManager validatorsManager) {
     myEditorContext = editorContext;
+    myValidatorsManager = validatorsManager;
     myModule = editorContext.getModule();
+
     myManifestFileChooser.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        onManifestFileSelect();
+        chooseFile(myManifestFileChooser);
       }
     });
     myBndFile.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        selectBuildFile(myBndFile);
+        chooseFile(myBndFile);
       }
     });
     myBundlorFile.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        selectBuildFile(myBundlorFile);
+        chooseFile(myBundlorFile);
       }
     });
-
-    ChangeListener listener = new ChangeListener() {
+    myUseProjectDefaultManifestFileLocation.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
-        updateGui();
+        manifestFileLocationSelectorChanged();
       }
-    };
-    myManuallyEditedRadioButton.addChangeListener(listener);
-    myUseBndFileRadioButton.addChangeListener(listener);
-    myUseBundlorFileRadioButton.addChangeListener(listener);
-    myControlledByOsmorcRadioButton.addChangeListener(listener);
+    });
 
     UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(new UserActivityListener() {
+      @Override
       public void stateChanged() {
         myModified = true;
-        checkFileExisting();
+        updateGui();
       }
     });
-
     watcher.register(myRoot);
 
-    myUseProjectDefaultManifestFileLocation.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        onUseProjectDefaultManifestFileLocationChanged();
-      }
-    });
-    myCreateButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        tryCreateBundleManifest();
-        checkFileExisting();
+    myValidatorsManager.registerValidator(new FacetEditorValidator() {
+      @NotNull
+      @Override
+      public ValidationResult check() {
+        if (myManuallyEditedRadioButton.isSelected()) {
+          String location = myUseModuleSpecificManifestFileLocation.isSelected() ? myManifestFileChooser.getText() :
+                            ProjectSettings.getInstance(myModule.getProject()).getDefaultManifestFileLocation();
+          if (findFileInContentRoots(location, myModule) == null) {
+            return new ValidationResult("No manifest file '" + location + "' found in module");
+          }
+        }
+        if (myUseBndFileRadioButton.isSelected()) {
+          String location = myBndFile.getText();
+          if (findFileInContentRoots(location, myModule) == null) {
+            return new ValidationResult("No Bnd file '" + location + "' found in module");
+          }
+        }
+        if (myUseBundlorFileRadioButton.isSelected()) {
+          String location = myBundlorFile.getText();
+          if (findFileInContentRoots(location, myModule) == null) {
+            return new ValidationResult("No Bundlor file '" + location + "' found in module");
+          }
+        }
+        return ValidationResult.OK;
       }
     });
   }
@@ -160,40 +163,31 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     myManifestFileChooser.setEnabled(isManuallyEdited && !myUseProjectDefaultManifestFileLocation.isSelected());
     myBndFile.setEnabled(isBnd);
     myBundlorFile.setEnabled(isBundlor);
-    checkFileExisting();
+
+    myValidatorsManager.validate();
   }
 
-  private void onUseProjectDefaultManifestFileLocationChanged() {
-    myManifestFileChooser.setEnabled(!myUseProjectDefaultManifestFileLocation.isSelected());
-    myModified = true;
-  }
-
-  private void onManifestFileSelect() {
-    VirtualFile[] roots = getContentRoots(myModule);
-    VirtualFile currentFile = findFileInContentRoots(myManifestFileChooser.getText(), myModule);
-
-    VirtualFile manifestFileLocation =
-      FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor(), myEditorContext.getProject(), currentFile);
-
-    if (manifestFileLocation != null) {
-      for (VirtualFile root : roots) {
-        String relativePath = VfsUtilCore.getRelativePath(manifestFileLocation, root, File.separatorChar);
+  private void chooseFile(TextFieldWithBrowseButton field) {
+    FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
+    VirtualFile toSelect = findFileInContentRoots(field.getText(), myModule);
+    VirtualFile file = FileChooser.chooseFile(descriptor, myEditorContext.getProject(), toSelect);
+    if (file != null) {
+      for (VirtualFile root : getContentRoots(myModule)) {
+        String relativePath = VfsUtilCore.getRelativePath(file, root, File.separatorChar);
         if (relativePath != null) {
-          // okay, it resides inside one of our content roots, so far so good.
-          if (manifestFileLocation.isDirectory()) {
-            // its a folder, so add "MANIFEST.MF" to it as a default.
+          if (field == myManifestFileChooser && file.isDirectory()) {
             relativePath += "/MANIFEST.MF";
           }
-
-          myManifestFileChooser.setText(relativePath);
+          field.setText(relativePath);
           break;
         }
       }
     }
   }
 
-  private static VirtualFile[] getContentRoots(Module module) {
-    return ModuleRootManager.getInstance(module).getContentRoots();
+  private void manifestFileLocationSelectorChanged() {
+    myManifestFileChooser.setEnabled(!myUseProjectDefaultManifestFileLocation.isSelected());
+    myModified = true;
   }
 
   @Nls
@@ -217,52 +211,27 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     return myModified;
   }
 
-  private void selectBuildFile(TextFieldWithBrowseButton field) {
-    VirtualFile[] roots = getContentRoots(myModule);
-    VirtualFile currentFile = findFileInContentRoots(field.getText(), myModule);
-
-    VirtualFile fileLocation =
-      FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), myEditorContext.getProject(), currentFile);
-
-
-    if (fileLocation != null) {
-      for (VirtualFile root : roots) {
-        String relativePath = VfsUtilCore
-          .getRelativePath(fileLocation, root, File.separatorChar);
-        if (relativePath != null) {
-          field.setText(relativePath);
-          break;
-        }
-      }
-    }
-    updateGui();
-  }
-
   @Override
-  public void apply() {
-    OsmorcFacetConfiguration configuration =
-      (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
+  public void apply() throws ConfigurationException {
+    OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
     configuration.setManifestGenerationMode(
-      myControlledByOsmorcRadioButton.isSelected() ? OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled :
-      myUseBndFileRadioButton.isSelected() ? OsmorcFacetConfiguration.ManifestGenerationMode.Bnd :
-      myUseBundlorFileRadioButton.isSelected() ? OsmorcFacetConfiguration.ManifestGenerationMode.Bundlor :
-      OsmorcFacetConfiguration.ManifestGenerationMode.Manually);
-
-    configuration.setManifestLocation(myManifestFileChooser.getText());
+      myControlledByOsmorcRadioButton.isSelected() ? ManifestGenerationMode.OsmorcControlled :
+      myUseBndFileRadioButton.isSelected() ? ManifestGenerationMode.Bnd :
+      myUseBundlorFileRadioButton.isSelected() ? ManifestGenerationMode.Bundlor :
+      ManifestGenerationMode.Manually);
+    configuration.setManifestLocation(FileUtil.toSystemIndependentName(myManifestFileChooser.getText()));
     configuration.setUseProjectDefaultManifestFileLocation(myUseProjectDefaultManifestFileLocation.isSelected());
-    String bndFileLocation = myBndFile.getText();
-    bndFileLocation = bndFileLocation.replace('\\', '/');
-    configuration.setBndFileLocation(bndFileLocation);
-
-    String bundlorFileLocation = myBundlorFile.getText();
-    bundlorFileLocation = bundlorFileLocation.replace('\\', '/');
-    configuration.setBundlorFileLocation(bundlorFileLocation);
+    configuration.setBndFileLocation(FileUtil.toSystemIndependentName(myBndFile.getText()));
+    configuration.setBundlorFileLocation(FileUtil.toSystemIndependentName(myBundlorFile.getText()));
     configuration.setDoNotSynchronizeWithMaven(myDoNotSynchronizeFacetCheckBox.isSelected());
+
+    myModified = false;
   }
 
   @Override
   public void reset() {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
+
     if (configuration.isUseBndFile()) {
       myUseBndFileRadioButton.setSelected(true);
     }
@@ -275,120 +244,31 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     else {
       myManuallyEditedRadioButton.setSelected(true);
     }
-    myManifestFileChooser.setText(configuration.getManifestLocation());
-
+    myManifestFileChooser.setText(FileUtil.toSystemDependentName(configuration.getManifestLocation()));
     if (configuration.isUseProjectDefaultManifestFileLocation()) {
       myUseProjectDefaultManifestFileLocation.setSelected(true);
     }
     else {
       myUseModuleSpecificManifestFileLocation.setSelected(true);
     }
-    myBndFile.setText(configuration.getBndFileLocation());
-    myBundlorFile.setText(configuration.getBundlorFileLocation());
+    myBndFile.setText(FileUtil.toSystemDependentName(configuration.getBndFileLocation()));
+    myBundlorFile.setText(FileUtil.toSystemDependentName(configuration.getBundlorFileLocation()));
     myDoNotSynchronizeFacetCheckBox.setSelected(configuration.isDoNotSynchronizeWithMaven());
+
     updateGui();
+    myModified = false;
   }
 
   @Override
   public void onTabEntering() {
-    super.onTabEntering();
     updateGui();
   }
 
   @Override
-  public void disposeUIResources() {
-  }
+  public void disposeUIResources() { }
 
-  private String getManifestLocation() {
-    if (myControlledByOsmorcRadioButton.isSelected() || myUseBndFileRadioButton.isSelected() || myUseBundlorFileRadioButton.isSelected()) {
-      return null;
-    }
-    if (myUseModuleSpecificManifestFileLocation.isSelected()) {
-      return myManifestFileChooser.getText();
-    }
-    if (myUseProjectDefaultManifestFileLocation.isSelected()) {
-      final ProjectSettings projectSettings = ModuleServiceManager.getService(myModule, ProjectSettings.class);
-      return projectSettings.getDefaultManifestFileLocation();
-    }
-    return null;
-  }
-
-  private void checkFileExisting() {
-    boolean showWarning;
-    if (myControlledByOsmorcRadioButton.isSelected() || myUseBndFileRadioButton.isSelected() || myUseBundlorFileRadioButton.isSelected()) {
-      showWarning = false;
-    }
-    else {
-      String location = getManifestLocation();
-      if (location == null) {
-        showWarning = false;
-      }
-      else {
-        VirtualFile file = findFileInContentRoots(location, myModule);
-        showWarning = file == null;
-      }
-    }
-
-    myWarningPanel.setVisible(showWarning);
-    myRoot.revalidate();
-  }
-
-  private void createUIComponents() {
-    myErrorText = new MyErrorText();
-    myErrorText.setError("The manifest file does not exist.");
-  }
-
-  private void tryCreateBundleManifest() {
-    // check if a manifest path has been set up
-    String manifestPath = getManifestLocation();
-    if (StringUtil.isEmpty(manifestPath)) {
-      return;
-    }
-    VirtualFile[] contentRoots = getContentRoots(myModule);
-    if (contentRoots.length <= 0) {
-      return;
-    }
-
-    // some heuristics for bundle name and version
-    String bundleName = myModule.getName();
-    Version bundleVersion = null;
-    int nextDotPos = bundleName.indexOf('.');
-    while (bundleVersion == null && nextDotPos >= 0) {
-      try {
-        bundleVersion = new Version(bundleName.substring(nextDotPos + 1));
-        bundleName = bundleName.substring(0, nextDotPos);
-      }
-      catch (IllegalArgumentException e) {
-        // Retry after next dot.
-      }
-      nextDotPos = bundleName.indexOf('.', nextDotPos + 1);
-    }
-
-    String text =
-      Attributes.Name.MANIFEST_VERSION + ": 1.0.0\n" +
-      Constants.BUNDLE_MANIFESTVERSION + ": 2\n" +
-      Constants.BUNDLE_NAME + ": " + bundleName + "\n" +
-      Constants.BUNDLE_SYMBOLICNAME + ": " + bundleName + "\n" +
-      Constants.BUNDLE_VERSION + ": " + (bundleVersion != null ? bundleVersion.toString() : "1.0.0") + "\n";
-
-    final File path = new File(contentRoots[0].getPath(), manifestPath);
-    try {
-      FileUtil.writeToFile(path, text);
-    }
-    catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
-    VirtualFile file = new WriteAction<VirtualFile>() {
-      @Override
-      protected void run(Result<VirtualFile> result) throws Throwable {
-        result.setResult(LocalFileSystem.getInstance().refreshAndFindFileByIoFile(path));
-      }
-    }.execute().getResultObject();
-
-    if (file == null) {
-      throw new RuntimeException("Not found: '" + path + "'");
-    }
+  private static VirtualFile[] getContentRoots(Module module) {
+    return ModuleRootManager.getInstance(module).getContentRoots();
   }
 
   private static VirtualFile findFileInContentRoots(String fileName, Module module) {

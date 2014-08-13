@@ -39,7 +39,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.osmorc.model.OutputPathType;
+import org.jetbrains.osgi.jps.model.OutputPathType;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;

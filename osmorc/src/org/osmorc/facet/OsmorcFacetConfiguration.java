@@ -33,10 +33,10 @@ import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.facet.ui.libraries.FrameworkLibraryValidator;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleServiceManager;
-import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.WriteExternalException;
@@ -45,9 +45,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.osmorc.model.OutputPathType;
-import org.jetbrains.jps.osmorc.util.OrderedProperties;
-import org.osgi.framework.Constants;
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
+import org.jetbrains.osgi.jps.model.OutputPathType;
+import org.jetbrains.osgi.jps.util.OrderedProperties;
 import org.osmorc.OsmorcProjectComponent;
 import org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab;
 import org.osmorc.facet.ui.OsmorcFacetJAREditorTab;
@@ -57,8 +57,10 @@ import org.osmorc.settings.ProjectSettings;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static aQute.bnd.osgi.Constants.INCLUDE_RESOURCE;
 
@@ -116,7 +118,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     FrameworkLibraryValidator validator = OsgiCoreLibraryType.getValidator(context, validatorsManager);
     validatorsManager.registerValidator(validator);
     return new FacetEditorTab[]{
-      new OsmorcFacetGeneralEditorTab(context),
+      new OsmorcFacetGeneralEditorTab(context, validatorsManager),
       new OsmorcFacetJAREditorTab(context, validatorsManager),
       new OsmorcFacetManifestGenerationEditorTab(context)
     };
@@ -348,15 +350,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
   /**
-   * @param osmorcControlsManifest
-   * @deprecated use {@link #setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode)}
-   */
-  @Deprecated
-  public void setOsmorcControlsManifest(boolean osmorcControlsManifest) {
-    setManifestGenerationMode(osmorcControlsManifest ? ManifestGenerationMode.OsmorcControlled : ManifestGenerationMode.Manually);
-  }
-
-  /**
    * @return the manifest location, relative to the module's content roots.
    */
   @NotNull
@@ -380,7 +373,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     }
     switch (myOutputPathType) {
       case CompilerOutputPath:
-        VirtualFile moduleCompilerOutputPath = CompilerModuleExtension.getInstance(myFacet.getModule()).getCompilerOutputPath();
+        VirtualFile moduleCompilerOutputPath = CompilerPaths.getModuleOutputDirectory(myFacet.getModule(), false);
         if (moduleCompilerOutputPath != null) {
           return moduleCompilerOutputPath.getParent().getPath() + "/" + nullSafeLocation;
         }
@@ -518,24 +511,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     return myAdditionalProperties != null ? myAdditionalProperties : "";
   }
 
-
-  /**
-   * Same as {@link #getAdditionalPropertiesAsMap()} but adds the Bundle-SymbolicName, Bundle-Version and Bundle-Activator properties
-   * so that the returned map can be used to create a full bnd file.
-   * @return
-   */
-  @NotNull
-  public Map<String,String> getBndFileProperties() {
-    Map<String, String> result = getAdditionalPropertiesAsMap();
-    result.put(Constants.BUNDLE_SYMBOLICNAME, getBundleSymbolicName());
-    result.put(Constants.BUNDLE_VERSION, getBundleVersion());
-    final String bundleActivator = getBundleActivator();
-    if(!bundleActivator.isEmpty()) {
-      result.put(Constants.BUNDLE_ACTIVATOR, bundleActivator);
-    }
-    return result;
-  }
-
   /**
    * Returns all additional properties as a map.Changes to this map will not change the facet configuration. If you want
    * to change additional properties use the {@link #importAdditionalProperties(Map, boolean)} method to re-import the
@@ -638,20 +613,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     myAlwaysRebuildBundleJAR = alwaysRebuildBundleJAR;
   }
 
-
-  public boolean isIgnorePatternValid() {
-    if (myIgnoreFilePattern == null || myIgnoreFilePattern.length() == 0) {
-      return true; // empty pattern is ok
-    }
-    try {
-      Pattern.compile(myIgnoreFilePattern);
-      return true;
-    }
-    catch (Exception e) {
-      return false;
-    }
-  }
-
   /**
    * When this is true, the facet settings will not be automatically synchronized with maven.
    *
@@ -674,27 +635,5 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
    */
   public void setFacet(OsmorcFacet facet) {
     myFacet = facet;
-  }
-
-  /**
-   * How is the manifest generated.
-   */
-  public enum ManifestGenerationMode {
-    /**
-     * No generation at all. All is manual.
-     */
-    Manually,
-    /**
-     * Osmorc will generate it using facet settings.
-     */
-    OsmorcControlled,
-    /**
-     * Bnd will generate it using a bnd file.
-     */
-    Bnd,
-    /**
-     * Bundlor will generate it, using a bundlor file.
-     */
-    Bundlor
   }
 }

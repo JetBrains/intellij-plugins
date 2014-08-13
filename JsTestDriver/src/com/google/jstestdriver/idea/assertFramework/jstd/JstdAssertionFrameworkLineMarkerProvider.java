@@ -150,7 +150,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
         @Override
         public void run() {
           int[] ids = list.getSelectedIndices();
-          if (ids == null || ids.length == 0) return;
+          if (ids.length == 0) return;
           Type type = ObjectUtils.tryCast(list.getSelectedValue(), Type.class);
           if (type != null) {
             if (psiElement.isValid()) {
@@ -233,8 +233,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
     runManager.setSelectedConfiguration(configuration);
     ProgramRunner programRunner = ProgramRunnerUtil.getRunner(executor.getId(), configuration);
     if (programRunner != null) {
-      ExecutionEnvironment env = new ExecutionEnvironment(executor, programRunner, configuration, project);
-      ExecutionManager.getInstance(project).restartRunProfile(programRunner, env, null);
+      ExecutionManager.getInstance(project).restartRunProfile(new ExecutionEnvironment(executor, programRunner, configuration, project));
     }
   }
 

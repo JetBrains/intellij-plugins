@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.jps.osmorc.build.FakeAnalyzer;
+import org.jetbrains.osgi.jps.build.FakeAnalyzer;
 import org.osmorc.OsmorcProjectComponent;
 
 import java.util.*;

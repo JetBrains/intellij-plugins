@@ -25,11 +25,8 @@
 package org.osmorc.i18n;
 
 import com.intellij.AbstractBundle;
-import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
-
-import javax.swing.*;
 
 /**
  * Internationalization bundle for Osmorc.
@@ -37,22 +34,14 @@ import javax.swing.*;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class OsmorcBundle extends AbstractBundle {
-
-  public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, @NotNull Object... params) {
-    return ourInstance.getMessage(key, params);
-  }
-
-  private static final String PATH_TO_BUNDLE = "org.osmorc.i18n.OsmorcBundle";
+  private static final String PATH_TO_BUNDLE = "messages.OsmorcBundle";
   private static final AbstractBundle ourInstance = new OsmorcBundle();
 
   private OsmorcBundle() {
     super(PATH_TO_BUNDLE);
   }
 
-  /**
-   * @return a small icon for Osmorc
-   */
-  public static Icon getSmallIcon() {
-    return OsmorcIdeaIcons.Osmorc_Icon_16x16;
+  public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, @NotNull Object... params) {
+    return ourInstance.getMessage(key, params);
   }
 }

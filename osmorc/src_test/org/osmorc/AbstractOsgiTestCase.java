@@ -10,10 +10,9 @@ import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetType;
-
-import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.Manually;
 
 public abstract class AbstractOsgiTestCase extends LightCodeInsightFixtureTestCase {
   private static final DefaultLightProjectDescriptor OSGi_DESCRIPTOR = new DefaultLightProjectDescriptor() {
@@ -27,7 +26,7 @@ public abstract class AbstractOsgiTestCase extends LightCodeInsightFixtureTestCa
       OsmorcFacet facet = FacetManager.getInstance(module).addFacet(OsmorcFacetType.getInstance(), "OSGi", null);
       facet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
       facet.getConfiguration().setManifestLocation("META-INF/MANIFEST.MF");
-      facet.getConfiguration().setManifestGenerationMode(Manually);
+      facet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Manually);
     }
   };
 

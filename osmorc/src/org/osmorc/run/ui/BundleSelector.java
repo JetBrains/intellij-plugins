@@ -34,9 +34,10 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.TreeUIHelper;
 import com.intellij.ui.treeStructure.SimpleTree;
 import com.intellij.util.containers.ContainerUtil;
+import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.osmorc.build.CachingBundleInfoProvider;
+import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
@@ -184,7 +185,7 @@ public class BundleSelector extends DialogWrapper {
             setIcon(AllIcons.Nodes.Module);
           }
           else if (bundle.getBundleType() == SelectedBundle.BundleType.FrameworkBundle) {
-            setIcon(OsmorcBundle.getSmallIcon());
+            setIcon(OsmorcIdeaIcons.Osmorc);
           }
           else {
             setIcon(AllIcons.Nodes.PpJar);

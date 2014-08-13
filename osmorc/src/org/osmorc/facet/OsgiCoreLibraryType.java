@@ -16,10 +16,10 @@ import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescri
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
+import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
-import org.osmorc.i18n.OsmorcBundle;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +32,7 @@ public class OsgiCoreLibraryType extends DownloadableLibraryType {
   private static final String DETECTOR_CLASS = "org.osgi.framework.Constants";
 
   public OsgiCoreLibraryType() {
-    super("OSGi Core API", ID, ID, OsmorcBundle.getSmallIcon(), OsgiCoreLibraryType.class.getResource("osgi.core.xml"));
+    super("OSGi Core API", ID, ID, OsmorcIdeaIcons.Osmorc, OsgiCoreLibraryType.class.getResource("osgi.core.xml"));
   }
 
   @Override
