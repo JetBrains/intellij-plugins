@@ -28,6 +28,9 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   public String myExecutable;
 
   @Nullable
+  public String myWorkDir;
+
+  @Nullable
   public String myCommand;
 
   @Nullable
@@ -39,6 +42,15 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   public String myPlatform;
 
   private volatile PhoneGapCommandLine myCommandLine;
+
+  @Nullable
+  public String getWorkDir() {
+    return myWorkDir;
+  }
+
+  public void setWorkDir(@Nullable String workDir) {
+    this.myWorkDir = workDir;
+  }
 
   @Nullable
   public String getExecutable() {
@@ -78,6 +90,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   public void readExternal(Element element) throws InvalidDataException {
     super.readExternal(element);
 
+    //noinspection deprecation
     DefaultJDOMExternalizer.readExternal(this, element);
   }
 
@@ -85,6 +98,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   public void writeExternal(Element element) throws WriteExternalException {
     super.writeExternal(element);
 
+    //noinspection deprecation
     DefaultJDOMExternalizer.writeExternal(this, element);
   }
 
@@ -112,11 +126,14 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   public PhoneGapCommandLine getCommandLine() {
     PhoneGapCommandLine current = myCommandLine;
     String executable = getExecutable();
-    if (current != null && StringUtil.equals(current.getPath(), executable)) {
+    String workDir = getWorkDir();
+    if (current != null && StringUtil.equals(current.getPath(), executable) && StringUtil.equals(current.getWorkDir(), workDir)) {
       return current;
     }
     assert executable != null;
-    current = new PhoneGapCommandLine(executable, getProject().getBasePath());
+    assert workDir != null;
+
+    current = new PhoneGapCommandLine(executable, workDir);
     myCommandLine = current;
 
     return current;

@@ -1,20 +1,25 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfiguration;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
+import com.intellij.ui.components.JBLabel;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +30,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
 
   public static final ArrayList<String> COMMANDS_LIST = ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN);
   private TextFieldWithHistoryWithBrowseButton myExecutablePathField;
+  private TextFieldWithHistoryWithBrowseButton myWorkDirField;
   private ComboBox myPlatformField;
   private ComboBox myCommand;
   private final Project myProject;
@@ -37,8 +43,8 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   protected void resetEditorFrom(PhoneGapRunConfiguration s) {
 
     String executable = s.getExecutable();
-    PhoneGapUtil.setExecutablePath(myExecutablePathField,
-                                   !StringUtil.isEmpty(executable) ? executable : PhoneGapSettings.getInstance().getExecutablePath());
+    PhoneGapUtil.setFieldWithHistoryPath(myExecutablePathField,
+                                         !StringUtil.isEmpty(executable) ? executable : PhoneGapSettings.getInstance().getExecutablePath());
     String item = getPlatformsMap().get(s.getPlatform());
     if (item != null) {
       myPlatformField.setSelectedItem(item);
@@ -48,6 +54,11 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
       myCommand.setSelectedItem(command);
     }
 
+    String workDir = s.getWorkDir();
+    PhoneGapUtil.setFieldWithHistoryPath(myWorkDirField,
+                                         !StringUtil.isEmpty(workDir)
+                                         ? workDir
+                                         : PhoneGapSettings.getInstance().getWorkingDirectory(myProject));
   }
 
   @Override
@@ -56,6 +67,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     String item = (String)myPlatformField.getSelectedItem();
     s.setPlatform(ContainerUtil.getFirstItem(getPlatformsMap().getKeysByValue(item)));
     s.setCommand((String)myCommand.getSelectedItem());
+    s.setWorkDir(myWorkDirField.getText());
   }
 
 
@@ -63,16 +75,29 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   @Override
   protected JComponent createEditor() {
     myExecutablePathField = PhoneGapUtil.createPhoneGapExecutableTextField(myProject);
+    myWorkDirField = PhoneGapUtil.createPhoneGapWorkingDirectoryField(myProject);
+
+
     myPlatformField = new ComboBox();
     myCommand = new ComboBox();
 
     addPlatformItems(myPlatformField);
     addCommandItems(myCommand);
 
+    JBLabel label = new JBLabel("edit");
+    label.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        ShowSettingsUtil.getInstance().editConfigurable(myProject, new PhoneGapConfigurable(myProject));
+      }
+    });
+
     return FormBuilder.createFormBuilder()
-      .addLabeledComponent("PhoneGap/Cordova executable path:", myExecutablePathField)
+      .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.executable.name"), myExecutablePathField)
+      .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.work.dir.name"), myWorkDirField)
       .addLabeledComponent("Command:", myCommand)
       .addLabeledComponent("Platform:", myPlatformField)
+      .addComponent(label)
       .getPanel();
   }
 

@@ -30,11 +30,15 @@ public class PhoneGapCommandLine {
   public static final String PLATFORM_IONIC = "ionic";
   public static final String COMMAND_RUN = "run";
   public static final String COMMAND_EMULATE = "emulate";
-  public static final String COMMAND_RIPPLE = "ripple";
 
 
   @Nullable
   private final String myWorkDir;
+
+  @Nullable
+  public String getWorkDir() {
+    return myWorkDir;
+  }
 
   @NotNull
   public String getPath() {
@@ -78,11 +82,6 @@ public class PhoneGapCommandLine {
     }
 
     return output;
-  }
-
-  public ProcessOutput build(@NotNull String platform) throws ExecutionException {
-    String trimmedPlatform = platform.trim();
-    return executeAndGetOut(new String[]{myPath, "platform", "build", trimmedPlatform});
   }
 
   public boolean isCorrectExecutable() {

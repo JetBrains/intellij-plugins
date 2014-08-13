@@ -1,5 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.plugins.PhoneGapPluginsView;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
@@ -29,6 +30,7 @@ import java.util.List;
 public class PhoneGapConfigurable implements Configurable {
 
   private TextFieldWithHistoryWithBrowseButton myExecutablePath;
+  private TextFieldWithHistoryWithBrowseButton myWorkingDirectory;
 
   private final PhoneGapSettings mySettings = PhoneGapSettings.getInstance();
   private UIController myUIController;
@@ -61,7 +63,7 @@ public class PhoneGapConfigurable implements Configurable {
       myRepoList.remove(repo);
     }
 
-    public void reset(List<String>  repos) {
+    public void reset(List<String> repos) {
       setReposInner(repos);
     }
   }
@@ -73,12 +75,13 @@ public class PhoneGapConfigurable implements Configurable {
   private class UIController {
 
     public void reset(PhoneGapSettings.State state) {
-      PhoneGapUtil.setExecutablePath(myExecutablePath, state.getExecutablePath());
+      PhoneGapUtil.setFieldWithHistoryPath(myExecutablePath, state.getExecutablePath());
       myRepositoryStore.reset(state.repositoriesList);
     }
 
     public boolean isModified() {
-      return !getState().equals(mySettings.getState());
+      return !getState().equals(mySettings.getState()) ||
+             !StringUtil.equals(getWorkingDirectory(), mySettings.getWorkingDirectory(myProject));
     }
 
     private PhoneGapSettings.State getState() {
@@ -86,6 +89,11 @@ public class PhoneGapConfigurable implements Configurable {
       state.executablePath = myExecutablePath.getText();
       state.repositoriesList = myRepositoryStore.getRepositories();
       return state;
+    }
+
+    @Nullable
+    private String getWorkingDirectory() {
+      return myWorkingDirectory.getText();
     }
   }
 
@@ -107,20 +115,22 @@ public class PhoneGapConfigurable implements Configurable {
 
     if (myWrapper == null) {
       myExecutablePath = PhoneGapUtil.createPhoneGapExecutableTextField(myProject);
+      myWorkingDirectory = PhoneGapUtil.createPhoneGapWorkingDirectoryField(myProject);
       myVersion = new JBLabel();
       myUIController = new UIController();
       myRepositoryStore = new RepositoryStore();
       myUIController.reset(mySettings.getState());
       phoneGapPluginsView = new PhoneGapPluginsView(myProject);
       JPanel panel = FormBuilder.createFormBuilder()
-        .addLabeledComponent("PhoneGap/Cordova executable path:", myExecutablePath)
-        .addLabeledComponent("PhoneGap/Cordova version:", myVersion)
+        .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.executable.name"), myExecutablePath)
+        .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.version.name"), myVersion)
+        .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.work.dir.name"), myWorkingDirectory)
         .addComponent(phoneGapPluginsView.getPanel()).getPanel();
       myWrapper = new JPanel(new BorderLayout());
       myWrapper.add(panel, BorderLayout.NORTH);
-      setUpListener();
+      setUpListeners();
       if (!StringUtil.isEmpty(myExecutablePath.getText())) {
-        phoneGapPluginsView.setupService(myExecutablePath.getText(), myRepositoryStore, getVersionCallback());
+        phoneGapPluginsView.setupService(myExecutablePath.getText(), myWorkingDirectory.getText(), myRepositoryStore, getVersionCallback());
       }
     }
 
@@ -131,8 +141,12 @@ public class PhoneGapConfigurable implements Configurable {
     myVersion.setText(version);
   }
 
-  public void setUpListener() {
-    final JTextField textField = myExecutablePath.getChildComponent().getTextEditor();
+  private void setUpListeners() {
+    setUpListener(myExecutablePath.getChildComponent().getTextEditor());
+    setUpListener(myWorkingDirectory.getChildComponent().getTextEditor());
+  }
+
+  private void setUpListener(final JTextField textField) {
     final Ref<String> prevExecutablePathRef = Ref.create(StringUtil.notNullize(textField.getText()));
     textField.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
@@ -140,12 +154,14 @@ public class PhoneGapConfigurable implements Configurable {
         String executablePath = StringUtil.notNullize(textField.getText());
         String prevExecutablePath = prevExecutablePathRef.get();
         if (!prevExecutablePath.equals(executablePath)) {
-          phoneGapPluginsView.setupService(myExecutablePath.getText(), myRepositoryStore, getVersionCallback());
+          phoneGapPluginsView
+            .setupService(myExecutablePath.getText(), myWorkingDirectory.getText(), myRepositoryStore, getVersionCallback());
           prevExecutablePathRef.set(executablePath);
         }
       }
     });
   }
+
 
   @Override
   public boolean isModified() {
@@ -155,6 +171,7 @@ public class PhoneGapConfigurable implements Configurable {
   @Override
   public void apply() throws ConfigurationException {
     mySettings.loadState(myUIController.getState());
+    mySettings.setWorkingDirectory(myProject, myUIController.getWorkingDirectory());
   }
 
   @Override
