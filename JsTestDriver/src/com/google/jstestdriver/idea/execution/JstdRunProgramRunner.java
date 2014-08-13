@@ -5,7 +5,6 @@ import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.server.JstdServerLifeCycleAdapter;
 import com.google.jstestdriver.idea.server.JstdServerRegistry;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowManager;
-import com.google.jstestdriver.idea.util.JstdUtil;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
@@ -15,6 +14,7 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.AsyncGenericProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -100,7 +100,7 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
               scheduleRestart(descriptor, 1000);
             }
             else {
-              JstdUtil.restart(descriptor);
+              ExecutionUtil.restartIfActive(descriptor);
             }
             myServer.removeLifeCycleListener(this);
           }
@@ -114,7 +114,7 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
       alarm.addRequest(new Runnable() {
         @Override
         public void run() {
-          JstdUtil.restart(descriptor);
+          ExecutionUtil.restartIfActive(descriptor);
         }
       }, timeoutMillis);
     }

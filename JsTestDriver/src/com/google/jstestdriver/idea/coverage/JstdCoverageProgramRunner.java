@@ -8,7 +8,6 @@ import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.server.JstdServerLifeCycleAdapter;
 import com.google.jstestdriver.idea.server.JstdServerRegistry;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowManager;
-import com.google.jstestdriver.idea.util.JstdUtil;
 import com.intellij.coverage.CoverageExecutor;
 import com.intellij.coverage.CoverageHelper;
 import com.intellij.coverage.CoverageRunnerData;
@@ -24,6 +23,7 @@ import com.intellij.execution.configurations.coverage.CoverageEnabledConfigurati
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.AsyncGenericProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -112,7 +112,7 @@ public class JstdCoverageProgramRunner extends AsyncGenericProgramRunner {
           myServer.addLifeCycleListener(new JstdServerLifeCycleAdapter() {
             @Override
             public void onBrowserCaptured(@NotNull JstdBrowserInfo info) {
-              JstdUtil.restart(descriptor);
+              ExecutionUtil.restartIfActive(descriptor);
               myServer.removeLifeCycleListener(this);
             }
           }, contentBuilder);

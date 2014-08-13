@@ -11,6 +11,7 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
@@ -18,7 +19,6 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.execution.KarmaRunProfileState;
 import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.karma.util.NopProcessHandler;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -134,7 +134,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     server.onBrowsersReady(new Runnable() {
       @Override
       public void run() {
-        KarmaUtil.restart(descriptor);
+        ExecutionUtil.restartIfActive(descriptor);
       }
     });
     return descriptor;

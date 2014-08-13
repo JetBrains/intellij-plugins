@@ -8,7 +8,6 @@ import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.*;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -55,7 +54,7 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
       server.onBrowsersReady(new Runnable() {
         @Override
         public void run() {
-          KarmaUtil.restart(descriptor);
+          ExecutionUtil.restartIfActive(descriptor);
         }
       });
     }
