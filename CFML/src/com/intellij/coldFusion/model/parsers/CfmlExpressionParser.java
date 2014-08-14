@@ -314,7 +314,7 @@ public class CfmlExpressionParser {
       return;
     }
     else if (!CfscriptTokenTypes.ASSIGN_OPERATORS.contains(getTokenType())) {
-      myBuilder.error(CfmlBundle.message("cfml.parsing.statemenet.expected"));
+      myBuilder.error(CfmlBundle.message("cfml.parsing.statement.expected"));
       if (CfscriptTokenTypes.OPERATIONS.contains(getTokenType())) {
         advance();
         myBuilder.error(CfmlBundle.message("cfml.parsing.assignment.expected"));
