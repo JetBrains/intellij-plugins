@@ -1,6 +1,5 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
-import com.google.inject.Provider;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
@@ -9,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.NotNullProducer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,11 +18,11 @@ import java.util.List;
 public class AddAdapterSupportIntentionAction implements IntentionAction {
 
   private final String myAssertionFrameworkName;
-  private final Provider<List<VirtualFile>> myAdapterSourceFilesProvider;
+  private final NotNullProducer<List<VirtualFile>> myAdapterSourceFilesProvider;
   private final String myAdapterHomePageUrl;
 
   public AddAdapterSupportIntentionAction(@NotNull String assertionFrameworkName,
-                                          @NotNull Provider<List<VirtualFile>> adapterSourceFilesProvider,
+                                          @NotNull NotNullProducer<List<VirtualFile>> adapterSourceFilesProvider,
                                           @Nullable String adapterHomePageUrl) {
     myAssertionFrameworkName = assertionFrameworkName;
     myAdapterSourceFilesProvider = adapterSourceFilesProvider;
@@ -55,7 +55,7 @@ public class AddAdapterSupportIntentionAction implements IntentionAction {
           project,
           file,
           myAssertionFrameworkName,
-          myAdapterSourceFilesProvider.get(),
+          myAdapterSourceFilesProvider.produce(),
           myAdapterHomePageUrl
         );
         final boolean result = dialog.showAndGet();

@@ -1,6 +1,5 @@
 package com.google.jstestdriver.idea.assertFramework.qunit;
 
-import com.google.inject.Provider;
 import com.google.jstestdriver.idea.assertFramework.qunit.jsSrc.QUnitAdapterSrcMarker;
 import com.google.jstestdriver.idea.assertFramework.support.AbstractAddAdapterSupportInspection;
 import com.google.jstestdriver.idea.util.VfsUtils;
@@ -9,6 +8,7 @@ import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.NotNullProducer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -18,9 +18,10 @@ public class QUnitAdapterSupportInspection extends AbstractAddAdapterSupportInsp
   public QUnitAdapterSupportInspection() {
     super(
       "QUnit",
-      new Provider<List<VirtualFile>>() {
+      new NotNullProducer<List<VirtualFile>>() {
+        @NotNull
         @Override
-        public List<VirtualFile> get() {
+        public List<VirtualFile> produce() {
           String[] relativePaths = new String[]{"equiv.js", "QUnitAdapter.js"};
           return VfsUtils.findVirtualFilesByResourceNames(QUnitAdapterSrcMarker.class, relativePaths);
         }
