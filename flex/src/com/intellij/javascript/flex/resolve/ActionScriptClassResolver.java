@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.JSResolveHelper;
 import com.intellij.lang.javascript.index.JSIndexedRootProvider;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
+import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
@@ -103,6 +104,7 @@ public class ActionScriptClassResolver extends JSClassResolver {
 
     for (Object _clazz : candidates) {
       if (!(_clazz instanceof JSQualifiedNamedElement)) continue;
+      if (_clazz instanceof JSFunction && ((JSFunction)_clazz).isConstructor()) continue;
       JSQualifiedNamedElement clazz = (JSQualifiedNamedElement)_clazz;
 
       if (link.equals(clazz.getQualifiedName())) {
