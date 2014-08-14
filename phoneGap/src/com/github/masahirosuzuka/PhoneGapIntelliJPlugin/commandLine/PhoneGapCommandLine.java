@@ -139,32 +139,44 @@ public class PhoneGapCommandLine {
   }
 
   @NotNull
-  public OSProcessHandler runCommand(@NotNull String command, @NotNull String platform) throws ExecutionException {
+  public OSProcessHandler runCommand(@NotNull String command, @NotNull String platform, @Nullable String target) throws ExecutionException {
     if (COMMAND_RUN.equals(command)) {
-      return run(platform);
+      return run(platform, target);
     }
 
     if (COMMAND_EMULATE.equals(command)) {
-      return emulate(platform);
+      return emulate(platform, target);
     }
 
     throw new IllegalStateException("Unsupported command");
   }
 
-  private OSProcessHandler emulate(@NotNull String platform) throws ExecutionException {
-    GeneralCommandLine commandLine;
-    if (isPhoneGap()) {
-      commandLine = new GeneralCommandLine(myPath, "run", platform, "--emulate");
+  private OSProcessHandler emulate(@NotNull String platform, @Nullable String target) throws ExecutionException {
+    String[] command;
+
+    if (!StringUtil.isEmpty(target)) {
+      command = new String[]{myPath, "run", "--emulator", "--target=" + target, platform};
     }
     else {
-      commandLine = new GeneralCommandLine(myPath, "emulate", platform);
+      command = new String[]{myPath, "run", "--emulator", platform};
     }
+
+    GeneralCommandLine commandLine = new GeneralCommandLine(command);
     commandLine.setWorkDirectory(myWorkDir);
     return KillableColoredProcessHandler.create(commandLine);
   }
 
-  private OSProcessHandler run(@NotNull String platform) throws ExecutionException {
-    GeneralCommandLine commandLine = new GeneralCommandLine(myPath, "run", platform);
+  private OSProcessHandler run(@NotNull String platform, @Nullable String target) throws ExecutionException {
+    String[] command;
+
+    if (!StringUtil.isEmpty(target)) {
+      command = new String[]{myPath, "run", "--target=\"" + target + "\"", platform};
+    }
+    else {
+      command = new String[]{myPath, "run", platform};
+    }
+
+    GeneralCommandLine commandLine = new GeneralCommandLine(command);
     commandLine.setWorkDirectory(myWorkDir);
     return KillableColoredProcessHandler.create(commandLine);
   }

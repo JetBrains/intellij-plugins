@@ -6,20 +6,20 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfig
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
-import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.JBCheckBox;
+import com.intellij.ui.components.JBTextField;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +34,8 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   private ComboBox myPlatformField;
   private ComboBox myCommand;
   private final Project myProject;
+  private JBCheckBox myHasTarget;
+  private JBTextField myTarget;
 
   public PhoneGapRunConfigurationEditor(Project project) {
     myProject = project;
@@ -59,6 +61,11 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
                                          !StringUtil.isEmpty(workDir)
                                          ? workDir
                                          : PhoneGapSettings.getInstance().getWorkingDirectory(myProject));
+
+    boolean hasTarget = s.hasTarget();
+    myHasTarget.setSelected(hasTarget);
+    myTarget.setEnabled(hasTarget);
+    myTarget.setText(s.getTarget());
   }
 
   @Override
@@ -68,6 +75,8 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     s.setPlatform(ContainerUtil.getFirstItem(getPlatformsMap().getKeysByValue(item)));
     s.setCommand((String)myCommand.getSelectedItem());
     s.setWorkDir(myWorkDirField.getText());
+    s.setTarget(myTarget.getText());
+    s.setHasTarget(myHasTarget.isSelected());
   }
 
 
@@ -80,24 +89,27 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
 
     myPlatformField = new ComboBox();
     myCommand = new ComboBox();
+    myHasTarget = new JBCheckBox("Specify target");
+    myTarget = new JBTextField();
+
+
+    myHasTarget.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        myTarget.setEnabled(myHasTarget.isSelected());
+      }
+    });
 
     addPlatformItems(myPlatformField);
     addCommandItems(myCommand);
 
-    JBLabel label = new JBLabel("edit");
-    label.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        ShowSettingsUtil.getInstance().editConfigurable(myProject, new PhoneGapConfigurable(myProject));
-      }
-    });
 
     return FormBuilder.createFormBuilder()
       .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.executable.name"), myExecutablePathField)
       .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.work.dir.name"), myWorkDirField)
       .addLabeledComponent("Command:", myCommand)
       .addLabeledComponent("Platform:", myPlatformField)
-      .addComponent(label)
+      .addLabeledComponent(myHasTarget, myTarget)
       .getPanel();
   }
 

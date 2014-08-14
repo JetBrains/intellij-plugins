@@ -41,6 +41,28 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   @Nullable
   public String myPlatform;
 
+  public boolean hasTarget() {
+    return hasTarget;
+  }
+
+  public void setHasTarget(boolean hasTarget) {
+    this.hasTarget = hasTarget;
+  }
+
+  @Nullable
+  public String getTarget() {
+    return target;
+  }
+
+  public void setTarget(@Nullable String target) {
+    this.target = target;
+  }
+
+  public boolean hasTarget;
+
+  @Nullable
+  public String target;
+
   private volatile PhoneGapCommandLine myCommandLine;
 
   @Nullable
