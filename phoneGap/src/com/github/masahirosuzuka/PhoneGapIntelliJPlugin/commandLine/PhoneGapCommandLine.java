@@ -170,7 +170,7 @@ public class PhoneGapCommandLine {
     String[] command;
 
     if (!StringUtil.isEmpty(target)) {
-      command = new String[]{myPath, "run", "--target=\"" + target + "\"", platform};
+      command = new String[]{myPath, "run", "--target=" + target, platform};
     }
     else {
       command = new String[]{myPath, "run", platform};
