@@ -1,0 +1,46 @@
+Index: src/com/google/jstestdriver/PathResolver.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/com/google/jstestdriver/PathResolver.java	(revision f527fd5bcbe216ba45b2237a9582c4e434aefd64)
++++ src/com/google/jstestdriver/PathResolver.java	(revision )
+@@ -109,13 +109,13 @@
+       List<UnreadableFile> unreadable, FileInfo fileInfo, String filePath) {
+     List<String> unresolvedPaths = Lists.newArrayListWithCapacity(basePaths.size());
+     for (File basePath : basePaths) {
+-        File file = new File(basePath, filePath);
+-        File absoluteDir = file.getParentFile().getAbsoluteFile();
+-        if (absoluteDir.getName().equals("**")) {
+-        	absoluteDir = absoluteDir.getParentFile();
+-        }
++      File file = new File(basePath, filePath);
++      File absoluteDir = file.getParentFile().getAbsoluteFile();
++      if (absoluteDir.getName().equals("**")) {
++        absoluteDir = absoluteDir.getParentFile();
++      }
+-        // Get all files for the current FileInfo. This will return one file
+-        // if the FileInfo doesn't represent a glob
++      if (file.getName().contains("*")) {
++        // Get all files for the current FileInfo
+         String[] expandedFileNames =
+             expandGlob(absoluteDir.getAbsolutePath(), file.getName(), absoluteDir);
+         if (expandedFileNames == null) {
+@@ -124,9 +124,13 @@
+ 
+         for (String fileName : expandedFileNames) {
+           File sourceFile = new File(absoluteDir, fileName);
++          createFileInfo(resolvedFiles, unreadable, fileInfo, sourceFile, basePath);
++        }
++      } else {
++        File sourceFile = new File(absoluteDir, file.getName());
+-          createFileInfo(resolvedFiles, unreadable, fileInfo, sourceFile, basePath);
+-        }
+-        return;
++        createFileInfo(resolvedFiles, unreadable, fileInfo, sourceFile, basePath);
++      }
++      return;
+     }
+     unreadable.add(new UnreadableFile(fileInfo.getFilePath(),
+         basePaths.toErrorString(fileInfo.getFilePath())));
+\ No newline at end of file
