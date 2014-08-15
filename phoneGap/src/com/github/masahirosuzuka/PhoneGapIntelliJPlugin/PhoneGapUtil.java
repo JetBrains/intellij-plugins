@@ -93,10 +93,10 @@ public class PhoneGapUtil {
   @NotNull
   public static List<String> getDefaultWorkingDirectory(@Nullable Project project) {
     List<String> paths = ContainerUtil.newArrayList();
-
     if (project == null) return paths;
-
     VirtualFile baseDir = project.getBaseDir();
+    if (baseDir == null) return paths;
+
     if (baseDir.findChild(FOLDER_PLATFORMS) != null ||
         baseDir.findChild(FOLDER_WWW) != null ||
         baseDir.findChild(FOLDER_CORDOVA) != null) {
