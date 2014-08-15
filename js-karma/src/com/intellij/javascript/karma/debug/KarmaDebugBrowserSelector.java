@@ -8,6 +8,7 @@ import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.CapturedBrowser;
 import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -26,23 +27,22 @@ public class KarmaDebugBrowserSelector {
   private static final Key<WebBrowser> WEB_BROWSER_KEY = Key.create("KARMA_WEB_BROWSER_ID");
 
   private final ImmutableList<CapturedBrowser> myCapturedBrowsers;
-  private final ExecutionEnvironment environment;
+  private final ExecutionEnvironment myEnvironment;
 
   protected KarmaDebugBrowserSelector(@NotNull Collection<CapturedBrowser> browsers, @NotNull ExecutionEnvironment environment) {
     myCapturedBrowsers = ImmutableList.copyOf(browsers);
-    this.environment = environment;
+    myEnvironment = environment;
   }
 
   @Nullable
   public DebuggableWebBrowser selectDebugEngine() {
-    List<WebBrowser> activeCapturedBrowsers = getActiveCapturedBrowsers();
-    List<DebuggableWebBrowser> debuggableActiveCapturedBrowsers = toDebuggableWebBrowsers(activeCapturedBrowsers);
-    if (debuggableActiveCapturedBrowsers.size() == 1) {
-      DebuggableWebBrowser debuggableWebBrowser = ContainerUtil.getFirstItem(debuggableActiveCapturedBrowsers);
-      if (debuggableWebBrowser != null) {
-        setWebBrowserToReuse(null);
-        return debuggableWebBrowser;
-      }
+    List<DebuggableWebBrowser> allDebuggableActiveBrowsers = toDebuggableWebBrowsers(WebBrowserManager.getInstance().getActiveBrowsers());
+    List<DebuggableWebBrowser> capturedDebuggableActiveBrowsers = filterCaptured(allDebuggableActiveBrowsers);
+
+    if (capturedDebuggableActiveBrowsers.size() == 1) {
+      DebuggableWebBrowser debuggableWebBrowser = capturedDebuggableActiveBrowsers.get(0);
+      setWebBrowserToReuse(null);
+      return ObjectUtils.assertNotNull(debuggableWebBrowser);
     }
 
     WebBrowser browserToReuse = getWebBrowserToReuse();
@@ -53,7 +53,11 @@ public class KarmaDebugBrowserSelector {
       }
     }
 
-    return showBrowserSelectionUiOrGetSingle(debuggableActiveCapturedBrowsers);
+    if (capturedDebuggableActiveBrowsers.isEmpty() && allDebuggableActiveBrowsers.size() == 1) {
+      return ObjectUtils.assertNotNull(allDebuggableActiveBrowsers.get(0));
+    }
+    showBrowserSelectionUi(allDebuggableActiveBrowsers, capturedDebuggableActiveBrowsers);
+    return null;
   }
 
   @NotNull
@@ -65,29 +69,32 @@ public class KarmaDebugBrowserSelector {
         debuggableWebBrowsers.add(debuggableBrowser);
       }
     }
-    return debuggableWebBrowsers;
+    return ImmutableList.copyOf(debuggableWebBrowsers);
   }
 
   @NotNull
-  private List<WebBrowser> getActiveCapturedBrowsers() {
-    List<WebBrowser> capturedBrowsers = new SmartList<WebBrowser>();
-    for (WebBrowser browser : WebBrowserManager.getInstance().getActiveBrowsers()) {
-      for (CapturedBrowser capturedBrowser : myCapturedBrowsers) {
-        if (StringUtil.containsIgnoreCase(capturedBrowser.getName(), browser.getFamily().getName())) {
-          capturedBrowsers.add(browser);
-          break;
+  private List<DebuggableWebBrowser> filterCaptured(@NotNull List<DebuggableWebBrowser> debuggableBrowsers) {
+    List<DebuggableWebBrowser> captured = ContainerUtil.filter(debuggableBrowsers, new Condition<DebuggableWebBrowser>() {
+      @Override
+      public boolean value(DebuggableWebBrowser debuggableBrowser) {
+        String browserName = debuggableBrowser.getWebBrowser().getFamily().getName();
+        for (CapturedBrowser capturedBrowser : myCapturedBrowsers) {
+          if (StringUtil.containsIgnoreCase(capturedBrowser.getName(), browserName)) {
+            return true;
+          }
         }
+        return false;
       }
-    }
-    return capturedBrowsers;
+    });
+    return ImmutableList.copyOf(captured);
   }
 
   @Nullable
   private WebBrowser getWebBrowserToReuse() {
-    KarmaRunConfiguration runConfiguration = ObjectUtils.tryCast(environment.getRunProfile(), KarmaRunConfiguration.class);
+    KarmaRunConfiguration runConfiguration = ObjectUtils.tryCast(myEnvironment.getRunProfile(), KarmaRunConfiguration.class);
     if (runConfiguration != null) {
       WebBrowser browser = WEB_BROWSER_KEY.get(runConfiguration);
-      // we don't use isActive because we also want to check - is browser still exists or was removed?
+      // browser can be removed or deactivated in "Settings | Web Browsers"
       if (!WebBrowserManager.getInstance().getActiveBrowsers().contains(browser)) {
         WEB_BROWSER_KEY.set(runConfiguration, null);
         return null;
@@ -98,37 +105,32 @@ public class KarmaDebugBrowserSelector {
   }
 
   private void setWebBrowserToReuse(@Nullable WebBrowser browser) {
-    KarmaRunConfiguration runConfiguration = ObjectUtils.tryCast(environment.getRunProfile(), KarmaRunConfiguration.class);
+    KarmaRunConfiguration runConfiguration = ObjectUtils.tryCast(myEnvironment.getRunProfile(), KarmaRunConfiguration.class);
     if (runConfiguration != null) {
       WEB_BROWSER_KEY.set(runConfiguration, browser);
     }
   }
 
-  @Nullable
-  private DebuggableWebBrowser showBrowserSelectionUiOrGetSingle(@NotNull Collection<DebuggableWebBrowser> debuggableActiveCapturedBrowsers) {
+  private void showBrowserSelectionUi(@NotNull List<DebuggableWebBrowser> allDebuggableActiveBrowsers,
+                                      @NotNull List<DebuggableWebBrowser> capturedDebuggableActiveBrowsers) {
     final String message;
-    if (debuggableActiveCapturedBrowsers.isEmpty()) {
-      List<DebuggableWebBrowser> debuggableActiveBrowsers = toDebuggableWebBrowsers(WebBrowserManager.getInstance().getActiveBrowsers());
-      if (debuggableActiveBrowsers.isEmpty()) {
+    if (capturedDebuggableActiveBrowsers.isEmpty()) {
+      if (allDebuggableActiveBrowsers.isEmpty()) {
         message = "<html><body>" +
                   "No supported browsers found." +
                   "<p/>" +
                   "JavaScript debugging is currently supported in Chrome or Firefox" +
                   "</body></html>";
       }
-      else if (debuggableActiveBrowsers.size() == 1) {
-        return debuggableActiveBrowsers.get(0);
-      }
       else {
-        message = formatBrowserSelectionHtml(debuggableActiveBrowsers);
+        message = formatBrowserSelectionHtml(allDebuggableActiveBrowsers);
       }
     }
     else {
-      message = formatBrowserSelectionHtml(debuggableActiveCapturedBrowsers);
+      message = formatBrowserSelectionHtml(capturedDebuggableActiveBrowsers);
     }
-
-    ToolWindowManager.getInstance(environment.getProject()).notifyByBalloon(
-      environment.getExecutor().getToolWindowId(),
+    ToolWindowManager.getInstance(myEnvironment.getProject()).notifyByBalloon(
+      myEnvironment.getExecutor().getToolWindowId(),
       MessageType.WARNING,
       message,
       null,
@@ -138,13 +140,11 @@ public class KarmaDebugBrowserSelector {
           WebBrowser browser = WebBrowserManager.getInstance().findBrowserById(e.getDescription());
           if (browser != null) {
             setWebBrowserToReuse(browser);
-            ExecutionUtil.restart(environment);
+            ExecutionUtil.restart(myEnvironment);
           }
         }
       }
     );
-
-    return null;
   }
 
   @NotNull
@@ -170,5 +170,4 @@ public class KarmaDebugBrowserSelector {
     builder.append("</body></html>");
     return builder.toString();
   }
-
 }
