@@ -20,15 +20,18 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_EMULATE;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_RUN;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_SERVE;
 
 public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunConfiguration> {
 
-  public static final ArrayList<String> COMMANDS_LIST = ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN);
+  public static final ArrayList<String> COMMANDS_LIST = ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN, COMMAND_SERVE);
   private TextFieldWithHistoryWithBrowseButton myExecutablePathField;
   private TextFieldWithHistoryWithBrowseButton myWorkDirField;
   private ComboBox myPlatformField;
@@ -63,9 +66,12 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
                                          : PhoneGapSettings.getInstance().getWorkingDirectory(myProject));
 
     boolean hasTarget = s.hasTarget();
+
     myHasTarget.setSelected(hasTarget);
     myTarget.setEnabled(hasTarget);
     myTarget.setText(s.getTarget());
+
+    setTargetEnable(!COMMAND_SERVE.equals(myCommand.getSelectedItem()));
   }
 
   @Override
@@ -89,6 +95,8 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
 
     myPlatformField = new ComboBox();
     myCommand = new ComboBox();
+
+
     myHasTarget = new JBCheckBox("Specify target");
     myTarget = new JBTextField();
 
@@ -102,6 +110,12 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
 
     addPlatformItems(myPlatformField);
     addCommandItems(myCommand);
+    myCommand.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        setTargetEnable(!COMMAND_SERVE.equals(myCommand.getSelectedItem()));
+      }
+    });
 
 
     return FormBuilder.createFormBuilder()
@@ -138,5 +152,10 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     map.put("ios", "iOS");
 
     return map;
+  }
+
+  private void setTargetEnable(boolean enable) {
+    myHasTarget.setEnabled(enable);
+    myTarget.setEnabled(enable && myHasTarget.isSelected());
   }
 }

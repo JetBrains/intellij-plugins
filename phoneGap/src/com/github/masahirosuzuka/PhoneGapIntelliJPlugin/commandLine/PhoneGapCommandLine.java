@@ -30,6 +30,7 @@ public class PhoneGapCommandLine {
   public static final String PLATFORM_IONIC = "ionic";
   public static final String COMMAND_RUN = "run";
   public static final String COMMAND_EMULATE = "emulate";
+  public static final String COMMAND_SERVE = "serve";
 
 
   @Nullable
@@ -138,6 +139,12 @@ public class PhoneGapCommandLine {
     }
   }
 
+  public OSProcessHandler serve() throws ExecutionException {
+    GeneralCommandLine commandLine = new GeneralCommandLine(myPath, "serve");
+    commandLine.setWorkDirectory(myWorkDir);
+    return KillableColoredProcessHandler.create(commandLine);
+  }
+
   @NotNull
   public OSProcessHandler runCommand(@NotNull String command, @NotNull String platform, @Nullable String target) throws ExecutionException {
     if (COMMAND_RUN.equals(command)) {
@@ -146,6 +153,10 @@ public class PhoneGapCommandLine {
 
     if (COMMAND_EMULATE.equals(command)) {
       return emulate(platform, target);
+    }
+    
+    if (COMMAND_SERVE.equals(command)) {
+      return serve();
     }
 
     throw new IllegalStateException("Unsupported command");
