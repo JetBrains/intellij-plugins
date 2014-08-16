@@ -105,15 +105,23 @@ public class PhoneGapUtil {
     }
     else {
       Collection<VirtualFile> results =
-        FilenameIndex.getVirtualFilesByName(project, "platforms", GlobalSearchScope.projectScope(project));
+        getPlatformsFolders(project);
 
       if (results.isEmpty()) {
-        results = FilenameIndex.getVirtualFilesByName(project, "www", GlobalSearchScope.projectScope(project));
+        results = getPhoneGapProjectRootFolders(project);
       }
       addPaths(paths, results);
     }
 
     return paths;
+  }
+
+  static Collection<VirtualFile> getPhoneGapProjectRootFolders(Project project) {
+    return FilenameIndex.getVirtualFilesByName(project, "www", GlobalSearchScope.projectScope(project));
+  }
+
+  static Collection<VirtualFile> getPlatformsFolders(Project project) {
+    return FilenameIndex.getVirtualFilesByName(project, "platforms", GlobalSearchScope.projectScope(project));
   }
 
   private static void addPaths(List<String> paths, Collection<VirtualFile> platforms) {

@@ -36,6 +36,8 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
 
     public String executablePath;
 
+    public boolean isExcludePlatformFolder = true;
+
     public List<String> repositoriesList = ContainerUtil.newArrayList();
 
     @Override
@@ -44,7 +46,7 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
       if (!StringUtil.equals(getExecutablePath(), ((State)o).getExecutablePath())) return false;
       if (repositoriesList == ((State)o).repositoriesList) return true;
       if (repositoriesList == null) return false;
-      return repositoriesList.equals(((State)o).repositoriesList);
+      return repositoriesList.equals(((State)o).repositoriesList) && ((State)o).isExcludePlatformFolder == isExcludePlatformFolder;
     }
 
     @Override
@@ -98,6 +100,11 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
     PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
     propertiesComponent.setValue(PHONEGAP_WORK_DIRECTORY, dir);
   }
+
+  public boolean isExcludePlatformFolder() {
+    return myState.isExcludePlatformFolder;
+  }
+
 
   @Nullable
   public String getExecutablePath() {
