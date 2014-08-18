@@ -1,6 +1,7 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapRunConfigurationEditor;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
@@ -21,45 +22,57 @@ public class PhoneGapTargets {
   private static Logger LOGGER = Logger.getInstance(PhoneGapTargets.class);
 
   private final Project myProject;
-  private List<String> androidTargets = null;
+  private List<String> androidVirtualDevices = null;
+  private List<String> androidDevices = null;
 
   public PhoneGapTargets(@NotNull Project project) {
     myProject = project;
   }
 
 
-  public List<String> getTargets(String platform) {
-    if (PhoneGapRunConfigurationEditor.PLATFORM_ANDROID.equals(platform)) {
-      return getAndroidTargets();
+  public List<String> getTargets(String platform, String commands) {
+    try {
+      if (PhoneGapRunConfigurationEditor.PLATFORM_ANDROID.equals(platform)) {
+        if (PhoneGapCommandLine.COMMAND_RUN.equals(commands)) {
+          return getAndroidDevices();
+        }
+
+        if (PhoneGapCommandLine.COMMAND_EMULATE.equals(commands)) {
+          return getAndroidVirtualDevices();
+        }
+      }
+    }
+    catch (ExecutionException e) {
+      LOGGER.debug(e.getMessage(), e);
     }
 
     return ContainerUtil.emptyList();
   }
 
-  private synchronized List<String> getAndroidTargets() {
-    if (androidTargets == null) {
-      androidTargets = ContainerUtil.newArrayList();
-      try {
-        File path = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? "android" + ".exe" : "android");
-
-        if (path != null && path.exists()) {
-          androidTargets.addAll(addAndroidDevices(ContainerUtil.newArrayList(path.getPath(), "-v", "list", "avd", "-c")));
-        }
-
-        File pathAdb = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? "adb" + ".exe" : "adb");
-        if (pathAdb != null && pathAdb.exists()) {
-          androidTargets.addAll(splitNames(addAndroidDevices(ContainerUtil.newArrayList(pathAdb.getPath(), "devices"))));
-        }
-      }
-      catch (ExecutionException e) {
-        LOGGER.debug(e.getMessage(), e);
+  private synchronized List<String> getAndroidVirtualDevices() throws ExecutionException {
+    if (androidVirtualDevices == null) {
+      androidVirtualDevices = ContainerUtil.newArrayList();
+      File path = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? "android" + ".exe" : "android");
+      if (path != null && path.exists()) {
+        androidVirtualDevices.addAll(getAndroidDevices(ContainerUtil.newArrayList(path.getPath(), "-v", "list", "avd", "-c")));
       }
     }
-    return androidTargets;
+    return androidVirtualDevices;
+  }
+
+  private synchronized List<String> getAndroidDevices() throws ExecutionException {
+    if (androidDevices == null) {
+      androidDevices = ContainerUtil.newArrayList();
+      File pathAdb = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? "adb" + ".exe" : "adb");
+      if (pathAdb != null && pathAdb.exists()) {
+        androidDevices.addAll(splitNames(getAndroidDevices(ContainerUtil.newArrayList(pathAdb.getPath(), "devices"))));
+      }
+    }
+    return androidDevices;
   }
 
 
-  private List<String> addAndroidDevices(List<String> commands) throws ExecutionException {
+  private List<String> getAndroidDevices(List<String> commands) throws ExecutionException {
     List<String> result = ContainerUtil.newArrayList();
     ProcessOutput output =
       ExecUtil.execAndGetOutput(commands, myProject.getBasePath());

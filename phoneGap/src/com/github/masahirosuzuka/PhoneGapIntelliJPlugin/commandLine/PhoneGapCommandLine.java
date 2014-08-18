@@ -204,14 +204,29 @@ public class PhoneGapCommandLine {
 
   private boolean isPhoneGap() {
     assert myWorkDir != null;
-    File file = new File(myPath);
-    if (file.getName().contains(PLATFORM_PHONEGAP)) return true;
-    if (file.getName().contains(PLATFORM_CORDOVA)) return false;
-    if (file.getName().contains(PLATFORM_IONIC)) return false;
+    Boolean isPhoneGapByName = isPhoneGapExecutableByPath(myPath);
+    if (isPhoneGapByName != null) return isPhoneGapByName;
 
     String s = executeAndReturnResult(myPath);
 
     return s.contains(PLATFORM_PHONEGAP);
+  }
+
+  /**
+   * @param path
+   * @return true - phonegap / false - not phonegap / null - cannot detect
+   */
+  @Nullable
+  public static Boolean isPhoneGapExecutableByPath(@Nullable String path) {
+    if (StringUtil.isEmpty(path)) return false;
+
+    File file = new File(path);
+    if (!file.exists()) return false;
+    if (file.getName().contains(PLATFORM_IONIC)) return false;
+    if (file.getName().contains(PLATFORM_CORDOVA)) return false;
+    if (file.getName().contains(PLATFORM_PHONEGAP)) return true;
+
+    return null;
   }
 
   private boolean isIonic() {
