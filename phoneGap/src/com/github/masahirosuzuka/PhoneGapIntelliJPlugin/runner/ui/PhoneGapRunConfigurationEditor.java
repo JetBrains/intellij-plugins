@@ -1,9 +1,8 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapTargets;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapTargets;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfiguration;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
 import com.intellij.openapi.application.ApplicationManager;
@@ -32,13 +31,14 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_EMULATE;
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_RUN;
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_SERVE;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.*;
 
 public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunConfiguration> {
 
   public static final ArrayList<String> COMMANDS_LIST = ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN, COMMAND_SERVE);
+  public static final ArrayList<String> COMMANDS_PHONEGAP_LIST =
+    ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN, COMMAND_SERVE, COMMAND_REMOTE_BUILD, COMMAND_REMOTE_RUN);
+
   public static final String PLATFORM_ANDROID = "android";
   public static final String PLATFORM_IOS = "ios";
   private final PhoneGapTargets myTargetsProvider;
@@ -68,7 +68,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
       myPlatformField.setSelectedItem(item);
     }
     String command = s.getCommand();
-    if (command != null && COMMANDS_LIST.contains(command)) {
+    if (command != null) {
       myCommand.setSelectedItem(command);
     }
 
@@ -147,7 +147,6 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     myPlatformField.setMinimumAndPreferredWidth(150);
 
     addPlatformItems(myPlatformField);
-    addCommandItems(myCommand);
     myTarget.setMinimumAndPreferredWidth(myPlatformField.getPreferredSize().width);
 
     setListenerForPlatforms();
@@ -202,17 +201,13 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
 
         String prevExecutablePath = prevExecutablePathRef.get();
         if (!prevExecutablePath.equals(executablePath)) {
+          updateCommandList();
           setTargetFieldsEnable();
           prevExecutablePathRef.set(executablePath);
         }
       }
     });
   }
-
-  private static void addCommandItems(ComboBox box) {
-    addItems(box, COMMANDS_LIST);
-  }
-
 
   private static void addPlatformItems(ComboBox box) {
     addItems(box, ContainerUtil.newArrayList(getPlatformsMap().values()));
@@ -226,6 +221,28 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     }
 
     box.setSelectedIndex(0);
+  }
+
+  private void updateCommandList() {
+
+    String selectedItem = (String)myCommand.getSelectedItem();
+    if (isPhoneGap()) {
+      if (myCommand.getItemCount() == COMMANDS_PHONEGAP_LIST.size()) return;
+
+      myCommand.removeAllItems();
+      addItems(myCommand, COMMANDS_PHONEGAP_LIST);
+      myCommand.setSelectedItem(selectedItem);
+    }
+    else {
+      if (myCommand.getItemCount() == COMMANDS_LIST.size()) return;
+
+      myCommand.removeAllItems();
+      addItems(myCommand, COMMANDS_LIST);
+
+      if (COMMANDS_LIST.contains(selectedItem)) {
+        myCommand.setSelectedItem(selectedItem);
+      }
+    }
   }
 
   private static BidirectionalMap<String, String> getPlatformsMap() {
@@ -244,6 +261,6 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   }
 
   private boolean isPhoneGap() {
-    return Boolean.TRUE.equals(PhoneGapCommandLine.isPhoneGapExecutableByPath(myExecutablePathField.getText()));
+    return Boolean.TRUE.equals(isPhoneGapExecutableByPath(myExecutablePathField.getText()));
   }
 }

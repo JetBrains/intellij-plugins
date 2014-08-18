@@ -31,7 +31,8 @@ public class PhoneGapCommandLine {
   public static final String COMMAND_RUN = "run";
   public static final String COMMAND_EMULATE = "emulate";
   public static final String COMMAND_SERVE = "serve";
-
+  public static final String COMMAND_REMOTE_RUN = "remote run";
+  public static final String COMMAND_REMOTE_BUILD = "remote build";
 
   @Nullable
   private final String myWorkDir;
@@ -159,7 +160,23 @@ public class PhoneGapCommandLine {
       return serve();
     }
 
+    if (COMMAND_REMOTE_RUN.equals(command)) {
+      return remoteRun(platform);
+    }
+
+    if (COMMAND_REMOTE_BUILD.equals(command)) {
+      return remoteBuild(platform);
+    }
+
     throw new IllegalStateException("Unsupported command");
+  }
+
+  private OSProcessHandler remoteRun(@NotNull String platform) throws ExecutionException {
+    return createProcessHandler(myPath, "remote", "run", platform);
+  }
+
+  private OSProcessHandler remoteBuild(@NotNull String platform) throws ExecutionException {
+    return createProcessHandler(myPath, "remote", "build", platform);
   }
 
   private OSProcessHandler emulate(@NotNull String platform, @Nullable String target) throws ExecutionException {
@@ -172,10 +189,7 @@ public class PhoneGapCommandLine {
     else {
       command = new String[]{myPath, "run", "--emulator", platform};
     }
-
-    GeneralCommandLine commandLine = new GeneralCommandLine(command);
-    commandLine.setWorkDirectory(myWorkDir);
-    return KillableColoredProcessHandler.create(commandLine);
+    return createProcessHandler(command);
   }
 
   private OSProcessHandler run(@NotNull String platform, @Nullable String target) throws ExecutionException {
@@ -188,10 +202,7 @@ public class PhoneGapCommandLine {
     else {
       command = new String[]{myPath, "run", platform};
     }
-
-    GeneralCommandLine commandLine = new GeneralCommandLine(command);
-    commandLine.setWorkDirectory(myWorkDir);
-    return KillableColoredProcessHandler.create(commandLine);
+    return createProcessHandler(command);
   }
 
   public boolean needAddPlatform() {
@@ -341,5 +352,11 @@ public class PhoneGapCommandLine {
       output.setTimeout();
     }
     return output;
+  }
+
+  private OSProcessHandler createProcessHandler(String... commands) throws ExecutionException {
+    GeneralCommandLine commandLine = new GeneralCommandLine(commands);
+    commandLine.setWorkDirectory(myWorkDir);
+    return KillableColoredProcessHandler.create(commandLine);
   }
 }
