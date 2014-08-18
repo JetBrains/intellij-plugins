@@ -1,4 +1,4 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.plugins;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.plugins;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.webcore.packaging.InstalledPackagesPanel;

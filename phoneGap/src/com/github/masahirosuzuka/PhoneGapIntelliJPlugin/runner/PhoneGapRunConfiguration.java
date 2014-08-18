@@ -1,7 +1,7 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapRunConfigurationEditor;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;

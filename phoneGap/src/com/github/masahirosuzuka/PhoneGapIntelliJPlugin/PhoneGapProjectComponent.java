@@ -1,6 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -35,7 +35,7 @@ public class PhoneGapProjectComponent extends AbstractProjectComponent {
   public void projectOpened() {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(new Runnable() {
       public void run() {
-        if (PhoneGapFacade.isPhoneGapProject(myProject) && PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
+        if (PhoneGapUtil.isPhoneGapProject(myProject) && PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
           excludePlatformFolders();
         }
       }
@@ -61,7 +61,7 @@ public class PhoneGapProjectComponent extends AbstractProjectComponent {
       }
 
       private boolean isProcess(@NotNull VirtualFileEvent event) {
-        return event.getFileName().equals(FOLDER_PLATFORMS) && PhoneGapFacade.isPhoneGapProject(myProject)
+        return event.getFileName().equals(FOLDER_PLATFORMS) && PhoneGapUtil.isPhoneGapProject(myProject)
                && PhoneGapSettings.getInstance().isExcludePlatformFolder();
       }
     }, myProject);

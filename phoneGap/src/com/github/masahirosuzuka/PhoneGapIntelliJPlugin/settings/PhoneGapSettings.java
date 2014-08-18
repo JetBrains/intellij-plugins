@@ -1,4 +1,4 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.intellij.ide.util.PropertiesComponent;

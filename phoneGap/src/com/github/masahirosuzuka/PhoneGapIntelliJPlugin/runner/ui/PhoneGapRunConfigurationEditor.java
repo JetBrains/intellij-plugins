@@ -1,11 +1,11 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapTargets;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapTargets;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfiguration;
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;

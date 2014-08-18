@@ -1,8 +1,8 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.plugins;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.plugins;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.PhoneGapConfigurable;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.application.ApplicationManager;
