@@ -201,7 +201,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
 
         String prevExecutablePath = prevExecutablePathRef.get();
         if (!prevExecutablePath.equals(executablePath)) {
-          updateCommandList();
+          setCommandList();
           setTargetFieldsEnable();
           prevExecutablePathRef.set(executablePath);
         }
@@ -223,25 +223,25 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     box.setSelectedIndex(0);
   }
 
-  private void updateCommandList() {
+  private void setCommandList() {
 
     String selectedItem = (String)myCommand.getSelectedItem();
     if (isPhoneGap()) {
-      if (myCommand.getItemCount() == COMMANDS_PHONEGAP_LIST.size()) return;
-
-      myCommand.removeAllItems();
-      addItems(myCommand, COMMANDS_PHONEGAP_LIST);
-      myCommand.setSelectedItem(selectedItem);
+      replaceCommandList(selectedItem, COMMANDS_PHONEGAP_LIST);
     }
     else {
-      if (myCommand.getItemCount() == COMMANDS_LIST.size()) return;
+      replaceCommandList(selectedItem, COMMANDS_LIST);
+    }
+  }
 
-      myCommand.removeAllItems();
-      addItems(myCommand, COMMANDS_LIST);
+  private void replaceCommandList(String selectedItem, List<String> commandList) {
+    if (myCommand.getItemCount() == commandList.size()) return;
 
-      if (COMMANDS_LIST.contains(selectedItem)) {
-        myCommand.setSelectedItem(selectedItem);
-      }
+    myCommand.removeAllItems();
+    addItems(myCommand, commandList);
+
+    if (commandList.contains(selectedItem)) {
+      myCommand.setSelectedItem(selectedItem);
     }
   }
 
