@@ -118,6 +118,11 @@ class DescriptorUtil {
 
   @Nullable
   public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName, @NotNull XmlTag context) {
+    String prefix = XmlUtil.findPrefixByQualifiedName(attributeName);
+    if (prefix.length() != 0 && context.getNamespaceByPrefix(prefix).length() == 0) {
+      return null; // skip attrs for non defined namespaces
+    }
+
     XmlAttribute attr = TapestryUtils.getIdentifyingAttribute(context);
     if (attr != null && attr.getName().equals(attributeName)) return new TapestryIdOrTypeAttributeDescriptor(attributeName, context);
     String id = getTAttributeName(context, "id");
