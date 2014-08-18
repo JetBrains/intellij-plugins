@@ -154,7 +154,7 @@ public class PhoneGapCommandLine {
     if (COMMAND_EMULATE.equals(command)) {
       return emulate(platform, target);
     }
-    
+
     if (COMMAND_SERVE.equals(command)) {
       return serve();
     }
@@ -166,6 +166,7 @@ public class PhoneGapCommandLine {
     String[] command;
 
     if (!StringUtil.isEmpty(target)) {
+      target = target.trim();
       command = new String[]{myPath, "run", "--emulator", "--target=" + target, platform};
     }
     else {
@@ -181,6 +182,7 @@ public class PhoneGapCommandLine {
     String[] command;
 
     if (!StringUtil.isEmpty(target)) {
+      target = target.trim();
       command = new String[]{myPath, "run", "--target=" + target, platform};
     }
     else {

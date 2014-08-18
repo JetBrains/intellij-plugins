@@ -75,7 +75,7 @@ public class PhoneGapConfigurable implements Configurable {
   private class UIController {
 
     public void reset(PhoneGapSettings.State state) {
-      PhoneGapUtil.setFieldWithHistoryPath(myExecutablePath, state.getExecutablePath());
+      PhoneGapUtil.setFieldWithHistoryWithBrowseButtonPath(myExecutablePath, state.getExecutablePath());
       myRepositoryStore.reset(state.repositoriesList);
     }
 

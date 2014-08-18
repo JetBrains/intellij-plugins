@@ -27,6 +27,8 @@ public class PhoneGapUtil {
   public static final String FOLDER_PLATFORMS = "platforms";
   public static final String FOLDER_WWW = "www";
   public static final String FOLDER_CORDOVA = ".cordova";
+  public static final String FOLDER_PLUGINS = "plugins";
+  public static final String[] POSSIBLE_FOLDERS_IN_PHONEGAP_ROOT = {FOLDER_PLATFORMS, FOLDER_PLUGINS, FOLDER_WWW};
 
   @NotNull
   public static TextFieldWithHistoryWithBrowseButton createPhoneGapExecutableTextField(@Nullable Project project) {
@@ -40,19 +42,14 @@ public class PhoneGapUtil {
             getDefaultExecutablePaths();
         }
       });
-    final TextFieldWithHistory textFieldWithHistory = field.getChildComponent();
-
     String executablePath = PhoneGapSettings.getInstance().getExecutablePath();
-    if (StringUtil.isNotEmpty(executablePath)) {
-      textFieldWithHistory.setText(executablePath);
-      textFieldWithHistory.addCurrentTextToHistory();
-    }
+    setDefaultValue(field, executablePath);
 
     return field;
   }
 
   @NotNull
-  public static TextFieldWithHistoryWithBrowseButton createPhoneGapWorkingDirectoryField(final @Nullable Project project) {
+  public static TextFieldWithHistoryWithBrowseButton createPhoneGapWorkingDirectoryField(@Nullable final Project project) {
     TextFieldWithHistoryWithBrowseButton field = SwingHelper.createTextFieldWithHistoryWithBrowseButton(
       project, PhoneGapBundle.message("phonegap.conf.work.dir.name"),
       FileChooserDescriptorFactory.createSingleFolderDescriptor(), new NotNullProducer<List<String>>() {
@@ -62,24 +59,16 @@ public class PhoneGapUtil {
           return getDefaultWorkingDirectory(project);
         }
       });
-    final TextFieldWithHistory textFieldWithHistory = field.getChildComponent();
-
-    String directory = PhoneGapSettings.getInstance().getWorkingDirectory(project);
-    if (StringUtil.isNotEmpty(directory)) {
-      textFieldWithHistory.setText(directory);
-      textFieldWithHistory.addCurrentTextToHistory();
-    }
+    setDefaultValue(field, PhoneGapSettings.getInstance().getWorkingDirectory(project));
 
     return field;
   }
 
-  public static void setFieldWithHistoryPath(TextFieldWithHistoryWithBrowseButton field, String executablePath) {
-    TextFieldWithHistory component = field.getChildComponent();
-    component.setText(executablePath);
-    if (!StringUtil.isEmpty(executablePath)) {
-      component.addCurrentTextToHistory();
-    }
+  public static void setFieldWithHistoryWithBrowseButtonPath(@NotNull TextFieldWithHistoryWithBrowseButton field,
+                                                             @Nullable String executablePath) {
+    setDefaultValue(field, executablePath);
   }
+
 
   @NotNull
   public static List<String> getDefaultExecutablePaths() {
@@ -104,34 +93,45 @@ public class PhoneGapUtil {
       ContainerUtil.addIfNotNull(paths, project.getBasePath());
     }
     else {
-      Collection<VirtualFile> results =
-        getPlatformsFolders(project);
-
-      if (results.isEmpty()) {
-        results = getPhoneGapProjectRootFolders(project);
-      }
-      addPaths(paths, results);
+      addPaths(paths, getFolders(project));
     }
 
     return paths;
   }
 
-  static Collection<VirtualFile> getPhoneGapProjectRootFolders(Project project) {
-    return FilenameIndex.getVirtualFilesByName(project, "www", GlobalSearchScope.projectScope(project));
+  private static void setDefaultValue(@NotNull TextFieldWithHistoryWithBrowseButton field, @Nullable String defaultValue) {
+    final TextFieldWithHistory textFieldWithHistory = field.getChildComponent();
+
+    setTextFieldWithHistory(textFieldWithHistory, defaultValue);
   }
 
-  static Collection<VirtualFile> getPlatformsFolders(Project project) {
-    return FilenameIndex.getVirtualFilesByName(project, "platforms", GlobalSearchScope.projectScope(project));
+  public static void setTextFieldWithHistory(TextFieldWithHistory textFieldWithHistory, String value) {
+    if (StringUtil.isNotEmpty(value)) {
+      textFieldWithHistory.setText(value);
+      textFieldWithHistory.addCurrentTextToHistory();
+    }
   }
 
-  private static void addPaths(List<String> paths, Collection<VirtualFile> platforms) {
+  private static Collection<VirtualFile> getFolders(@NotNull Project project) {
+    for (String folder : POSSIBLE_FOLDERS_IN_PHONEGAP_ROOT) {
+      Collection<VirtualFile> files =
+        FilenameIndex.getVirtualFilesByName(project, folder, GlobalSearchScope.projectScope(project));
+      if (!files.isEmpty()) {
+        return files;
+      }
+    }
+
+    return ContainerUtil.emptyList();
+  }
+
+  private static void addPaths(@NotNull List<String> paths, @NotNull Collection<VirtualFile> platforms) {
     for (VirtualFile platform : platforms) {
       ContainerUtil.addIfNotNull(paths, platform.getParent().getPath());
     }
   }
 
   @Nullable
-  private static String getPath(String name) {
+  private static String getPath(@NotNull String name) {
     File path = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? name + ".cmd" : name);
     return (path != null && path.exists()) ? path.getAbsolutePath() : null;
   }

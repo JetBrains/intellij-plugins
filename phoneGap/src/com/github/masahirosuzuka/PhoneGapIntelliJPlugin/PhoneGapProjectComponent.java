@@ -13,6 +13,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,7 +87,9 @@ public class PhoneGapProjectComponent extends AbstractProjectComponent {
   }
 
   private void excludePlatformFolders() {
-    final Collection<VirtualFile> platformsFolders = PhoneGapUtil.getPlatformsFolders(myProject);
+    final Collection<VirtualFile> platformsFolders = FilenameIndex.getVirtualFilesByName(myProject,
+                                                                                         FOLDER_PLATFORMS,
+                                                                                         GlobalSearchScope.projectScope(myProject));
 
     for (VirtualFile platformFolder : platformsFolders) {
       Module module = ModuleUtilCore.findModuleForFile(platformFolder, myProject);
