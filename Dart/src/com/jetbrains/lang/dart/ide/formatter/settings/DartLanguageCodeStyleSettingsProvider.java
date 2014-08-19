@@ -98,7 +98,8 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
       consumer.showStandardOptions("KEEP_BLANK_LINES_IN_CODE");
     }
     else if (settingsType == SettingsType.WRAPPING_AND_BRACES_SETTINGS) {
-      consumer.showStandardOptions("KEEP_LINE_BREAKS",
+      consumer.showStandardOptions("RIGHT_MARGIN",
+                                   "KEEP_LINE_BREAKS",
                                    "KEEP_FIRST_COLUMN_COMMENT",
                                    "BRACE_STYLE",
                                    "METHOD_BRACE_STYLE",
