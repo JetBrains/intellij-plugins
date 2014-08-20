@@ -51,6 +51,21 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("angular.js", resolve.getContainingFile().getName());
   }
 
+  public void testCustomAttributesInDirectiveCompletion() {
+    myFixture.testCompletion("customInDirective.html", "customInDirective.after.html", "custom.js", "angular.js");
+  }
+
+  public void testCustomAttributesInDirectiveResolve() {
+    myFixture.configureByFiles("customInDirective.after.html", "custom.js", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("custom.js", resolve.getContainingFile().getName());
+    assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+  }
+
   public void testCustomAttributesCompletion() {
     myFixture.testCompletion("custom.html", "custom.after.html", "custom.js");
   }

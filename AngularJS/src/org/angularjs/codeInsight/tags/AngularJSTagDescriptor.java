@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight.tags;
 
+import com.intellij.html.impl.RelaxedHtmlFromSchemaElementDescriptor;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
@@ -65,7 +66,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     for (int i = 0; i < split.length; i++) {
       result[i] = new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(split[i]));
     }
-    return result;
+    return RelaxedHtmlFromSchemaElementDescriptor.addAttrDescriptorsForFacelets(context, result);
   }
 
   @Nullable
