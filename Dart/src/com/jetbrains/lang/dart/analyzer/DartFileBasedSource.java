@@ -1,16 +1,16 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.dart.engine.context.AnalysisException;
 import com.google.dart.engine.internal.context.TimestampedData;
-import com.google.dart.engine.source.Source;
-import com.google.dart.engine.source.UriKind;
+import com.google.dart.engine.source.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
@@ -18,19 +18,35 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class DartFileBasedSource implements Source {
+  static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartFileBasedSource");
 
-  private final @NotNull Project myProject;
   private final @NotNull VirtualFile myFile;
-  private final @NotNull UriKind myUriKind;
+  private String encoding;
+  private final URI myUri;
   private long myModificationStampWhenFileContentWasRead = -1;
 
-  private DartFileBasedSource(final @NotNull Project project, final @NotNull VirtualFile file, final @NotNull UriKind uriKind) {
-    myProject = project;
+  private DartFileBasedSource(final @NotNull VirtualFile file)
+    throws URISyntaxException, MalformedURLException {
     myFile = file;
-    myUriKind = uriKind;
+    String url = file.getUrl();
+    URI uri = null;
+    try {
+      uri = new URL(url).toURI();
+    }
+    catch (MalformedURLException e) {
+      // Tests create dummy files with the temp protocol
+      if (url.startsWith("temp:")) {
+        url = url.replaceFirst("temp:", "file:");
+        uri = new URL(url).toURI();
+      }
+    }
+    myUri = uri;
   }
 
   @NotNull
@@ -68,7 +84,10 @@ public class DartFileBasedSource implements Source {
 
   @Override
   public String getEncoding() {
-    return myUriKind.getEncoding() + myFile.getUrl();
+    if (encoding == null) {
+      encoding = myUri.toString();
+    }
+    return encoding;
   }
 
   @Override
@@ -92,10 +111,25 @@ public class DartFileBasedSource implements Source {
     return myFile.getName();
   }
 
+  @Override
+  public URI getUri() {
+    return myUri;
+  }
+
   @NotNull
   @Override
   public UriKind getUriKind() {
-    return myUriKind;
+    String scheme = myUri.getScheme();
+    if (scheme.equals(PackageUriResolver.PACKAGE_SCHEME)) {
+      return UriKind.PACKAGE_URI;
+    }
+    else if (scheme.equals(DartUriResolver.DART_SCHEME)) {
+      return UriKind.DART_URI;
+    }
+    else if (scheme.equals(FileUriResolver.FILE_SCHEME)) {
+      return UriKind.FILE_URI;
+    }
+    return UriKind.FILE_URI;
   }
 
   @Override
@@ -109,12 +143,28 @@ public class DartFileBasedSource implements Source {
   }
 
   @Override
-  public Source resolveRelative(final URI containedUri) {
-    final VirtualFile file = containedUri.getScheme() == null
-                             ? VfsUtilCore.findRelativeFile(containedUri.toString(), myFile.getParent())
-                             : LocalFileSystem.getInstance().findFileByPath(containedUri.getPath());
-
-    return file == null ? null : getSource(myProject, file);
+  public URI resolveRelativeUri(URI containedUri) throws AnalysisException {
+    try {
+      URI baseUri = myUri;
+      boolean isOpaque = myUri.isOpaque();
+      if (isOpaque) {
+        String scheme = myUri.getScheme();
+        String part = myUri.getRawSchemeSpecificPart();
+        if (scheme.equals(DartUriResolver.DART_SCHEME) && part.indexOf('/') < 0) {
+          part = part + "/" + part + ".dart";
+        }
+        baseUri = new URI(scheme + ":/" + part);
+      }
+      URI result = baseUri.resolve(containedUri).normalize();
+      if (isOpaque) {
+        result = new URI(result.getScheme() + ":" + result.getRawSchemeSpecificPart().substring(1));
+      }
+      return result;
+    }
+    catch (Exception exception) {
+      throw new AnalysisException("Could not resolve URI (" + containedUri
+                                  + ") relative to source (" + myUri + ")", exception);
+    }
   }
 
   @Override
@@ -151,11 +201,22 @@ public class DartFileBasedSource implements Source {
     return Pair.create(contentsRef.get(), timestampRef.get());
   }
 
+  @Nullable
   public static DartFileBasedSource getSource(final @NotNull Project project, final @NotNull VirtualFile file) {
-    return DartAnalyzerService.getInstance(project).getOrCreateSource(file, new Function<VirtualFile, DartFileBasedSource>() {
-      public DartFileBasedSource fun(final VirtualFile file) {
-        return new DartFileBasedSource(project, file, UriKind.FILE_URI);
-      }
-    });
+    try {
+      final DartFileBasedSource source = new DartFileBasedSource(file);
+      return DartAnalyzerService.getInstance(project).getOrCreateSource(file, new Function<VirtualFile, DartFileBasedSource>() {
+        public DartFileBasedSource fun(final VirtualFile file) {
+          return source;
+        }
+      });
+    }
+    catch (URISyntaxException e) {
+      LOG.error(e);
+    }
+    catch (MalformedURLException e) {
+      LOG.error(e);
+    }
+    return null;
   }
 }
