@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Maxim.Mossienko
@@ -93,12 +94,12 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     }
 
     @Override
-    protected JSStructureViewElement createStructureViewElement(final PsiElement element) {
+    protected JSStructureViewElement createStructureViewElement(final PsiElement element, Set<String> parentReferencedNames) {
       if (element instanceof XmlBackedJSClassImpl) {
         PsiFile file = element.getContainingFile();
         return new FlexStructureViewElement((JSClass)element, (XmlFile)file, myIncludeInherited);
       } else {
-        return super.createStructureViewElement(element);
+        return super.createStructureViewElement(element, parentReferencedNames);
       }
     }
   }
