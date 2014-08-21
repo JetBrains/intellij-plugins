@@ -108,6 +108,13 @@
         </classpath>
 	  </taskdef>
     <!-- Compile the java code from ${src} into ${build} -->
+    <copy todir="${classes_impl}">
+      <fileset dir="${resources}">
+        <include name="*/**"/>
+      </fileset>
+    </copy>
+
+    <compile src="${resources}" dest="${classes_impl}"/>
 
     <compile src="${src}/core" dest="${classes_core}"/>
     <compile src="${src}/idea" dest="${classes_idea}"/>
@@ -116,11 +123,6 @@
     <compile src="${src}/jabber_idea" dest="${classes_jabber_idea}"/>
     <compile src="${src}/coreImpl" dest="${classes_impl}"/>
 
-    <copy todir="${classes_impl}">
-      <fileset dir="${resources}">
-        <include name="*/**"/>
-      </fileset>
-    </copy>
 
   </target>
 
