@@ -42,7 +42,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <configurationType
         implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapConfigurationType"/>
-    <programRunner implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunner"/>
+    <!--<programRunner implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunner"/>-->
 
     <applicationService serviceInterface="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings"
                         serviceImplementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings"/>

@@ -153,6 +153,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     setListenerForCommand();
     setListenerForHasTarget();
     setListenerForExecutablePath();
+    setCommandList();
 
     return FormBuilder.createFormBuilder()
       .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.executable.name"), myExecutablePathField)

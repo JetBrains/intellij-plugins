@@ -133,15 +133,15 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
     if (StringUtil.isEmpty(myCommand)) {
-      throw new RuntimeConfigurationException("Command is missing");
+      throw new RuntimeConfigurationError("Command is missing");
     }
 
     if (StringUtil.isEmpty(myPlatform)) {
-      throw new RuntimeConfigurationException("Platform is missing");
+      throw new RuntimeConfigurationError("Platform is missing");
     }
 
     if (StringUtil.isEmpty(myExecutable)) {
-      throw new RuntimeConfigurationException("Executable is missing");
+      throw new RuntimeConfigurationError("Executable is missing");
     }
   }
 
