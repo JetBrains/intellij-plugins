@@ -47,7 +47,7 @@ public class ApplicationSettingsEditor implements SearchableConfigurable, Config
   @Nls
   @Override
   public String getDisplayName() {
-    return "OSGi Framework Instances";
+    return "OSGi";
   }
 
   @Override

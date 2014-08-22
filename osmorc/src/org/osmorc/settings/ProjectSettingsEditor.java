@@ -46,7 +46,7 @@ public class ProjectSettingsEditor implements SearchableConfigurable {
   @Nls
   @Override
   public String getDisplayName() {
-    return "OSGi";
+    return "OSGi Project Defaults";
   }
 
   @NotNull
