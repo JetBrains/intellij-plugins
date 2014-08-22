@@ -52,7 +52,7 @@ public class ApplicationSettingsEditor implements SearchableConfigurable, Config
 
   @Override
   public String getHelpTopic() {
-    return "topicId642359";
+    return "reference.settings.project.osgi.framework.definitions";
   }
 
   @NotNull
