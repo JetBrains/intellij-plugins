@@ -25,14 +25,7 @@ public class TapestryProjectTreeStructure extends SimpleTreeStructure {
         return _rootNode;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean hasSomethingToCommit() {
-        return false;
-    }
-
-    /**
+  /**
      * {@inheritDoc}
      */
     public Object getParentElement(final Object element) {
