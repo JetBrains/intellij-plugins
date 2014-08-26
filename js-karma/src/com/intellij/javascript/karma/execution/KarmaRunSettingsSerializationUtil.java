@@ -4,14 +4,13 @@ import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * @author Sergey Simonchik
@@ -39,7 +38,7 @@ public class KarmaRunSettingsSerializationUtil {
       builder.setBrowsers(browsers);
     }
 
-    Map<String, String> envVars = ContainerUtil.newHashMap();
+    Map<String, String> envVars = new LinkedHashMap<String, String>();
     EnvironmentVariablesComponent.readExternal(element, envVars);
     builder.setEnvVars(envVars);
 
@@ -62,18 +61,9 @@ public class KarmaRunSettingsSerializationUtil {
     if (!settings.getBrowsers().isEmpty()) {
       element.setAttribute(BROWSERS, settings.getBrowsers());
     }
-    Map<String, String> envVars = getEnvVarsForWriting(settings.getEnvVars());
-    EnvironmentVariablesComponent.writeExternal(element, envVars);
+    EnvironmentVariablesComponent.writeExternal(element, settings.getEnvVars());
     if (settings.isPassParentEnvVars() != KarmaRunSettings.Builder.DEFAULT_PASS_PARENT_ENV_VARS) {
       element.setAttribute(PASS_PARENT_ENV_VAR, String.valueOf(settings.isPassParentEnvVars()));
     }
-  }
-
-  @NotNull
-  private static Map<String, String> getEnvVarsForWriting(@NotNull Map<String, String> envVars) {
-    if (envVars.size() <= 1) {
-      return envVars;
-    }
-    return new TreeMap<String, String>(envVars);
   }
 }
