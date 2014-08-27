@@ -25,25 +25,21 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.BrowserLauncher;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class CfmlRunner extends DefaultProgramRunner {
   @Override
-  protected RunContentDescriptor doExecute(@NotNull Project project,
-                                           @NotNull RunProfileState state,
-                                           RunContentDescriptor contentToReuse,
-                                           @NotNull ExecutionEnvironment env) throws ExecutionException {
+  protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
     final RunProfile runProfileRaw = env.getRunProfile();
     if (runProfileRaw instanceof CfmlRunConfiguration) {
       FileDocumentManager.getInstance().saveAllDocuments();
       final CfmlRunConfiguration runProfile = (CfmlRunConfiguration)runProfileRaw;
       final CfmlRunnerParameters params = runProfile.getRunnerParameters();
-      BrowserLauncher.getInstance().browse(params.getUrl(), params.getNonDefaultBrowser(), project);
+      BrowserLauncher.getInstance().browse(params.getUrl(), params.getNonDefaultBrowser(), env.getProject());
       return null;
     }
     else {
-      return super.doExecute(project, state, contentToReuse, env);
+      return super.doExecute(state, env);
     }
   }
 
