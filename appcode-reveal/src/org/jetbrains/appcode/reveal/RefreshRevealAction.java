@@ -102,10 +102,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     }
     catch (ExecutionException ex) {
       Reveal.LOG.info(ex);
-      ExecutionUtil.handleExecutionError(project,
-                                         myEnvironment.getExecutor().getToolWindowId(),
-                                         myEnvironment.getRunProfile(),
-                                         ex);
+      ExecutionUtil.handleExecutionError(myEnvironment, ex);
     }
   }
 
