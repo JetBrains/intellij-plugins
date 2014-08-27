@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 import org.angularjs.AngularTestUtil;
 import org.angularjs.lang.AngularJSLanguage;
 
@@ -134,6 +135,12 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testCustomDelimitersSameStartEnd() {
     myFixture.configureByFiles("customDelimitersSameStartEnd.html", "angular.js", "customDelimitersSameStartEnd.js");
     assertEquals(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+  }
+
+  public void testBadExpression() {
+    myFixture.enableInspections(BadExpressionStatementJSInspection.class);
+    myFixture.configureByFiles("badExpression.html", "angular.js", "custom.js");
+    myFixture.checkHighlighting();
   }
 
   private PsiElement checkVariableResolve(final String signature, final String varName, final Class<? extends JSNamedElement> varClass) {
