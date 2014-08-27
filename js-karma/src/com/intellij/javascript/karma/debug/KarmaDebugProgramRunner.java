@@ -63,7 +63,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
   protected AsyncResult<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     final ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) {
-      return new AsyncResult<RunProfileStarter>().setDone(null);
+      return AsyncResult.done(null);
     }
 
     final KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult);

@@ -68,12 +68,7 @@ public class JstdCoverageProgramRunner extends AsyncGenericProgramRunner {
     jstdToolWindowManager.restartServer(new NullableConsumer<JstdServer>() {
       @Override
       public void consume(@Nullable JstdServer server) {
-        if (server != null) {
-          result.setDone(new MyStarter(server));
-        }
-        else {
-          result.setDone(null);
-        }
+        result.setDone(server != null ? new MyStarter(server) : null);
       }
     });
     return result;
