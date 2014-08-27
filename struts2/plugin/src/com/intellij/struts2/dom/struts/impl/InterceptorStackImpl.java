@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,5 @@ import com.intellij.struts2.dom.struts.strutspackage.InterceptorStack;
 /**
  * @author Yann C&eacute;bron
  */
-@SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class InterceptorStackImpl extends BaseImpl implements InterceptorStack {
 }
