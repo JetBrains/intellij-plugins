@@ -96,10 +96,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   @Override
   @Nullable
-  protected RunContentDescriptor doExecute(@NotNull final Project project,
-                                           @NotNull final RunProfileState state,
-                                           final RunContentDescriptor contentToReuse,
-                                           @NotNull final ExecutionEnvironment env) throws ExecutionException {
+  protected RunContentDescriptor doExecute(@NotNull final RunProfileState state, @NotNull final ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
 
     final RunProfile runProfile = env.getRunProfile();
@@ -107,32 +104,32 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final boolean isDebug = this instanceof FlexDebugRunner;
     try {
       if (runProfile instanceof RunProfileWithCompileBeforeLaunchOption) {
-        checkMakeBeforeRunEnabled(project, runProfile);
+        checkMakeBeforeRunEnabled(env.getProject(), runProfile);
       }
 
       if (runProfile instanceof RemoteFlashRunConfiguration) {
         final RemoteFlashRunnerParameters params = ((RemoteFlashRunConfiguration)runProfile).getRunnerParameters();
-        final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
+        final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(env.getProject());
 
         if (params.getDebugTransport() == FlashRunnerParameters.AirMobileDebugTransport.USB) {
           final Sdk sdk = moduleAndBC.second.getSdk();
           assert sdk != null;
 
           if (params.getRemoteDebugTarget() == RemoteDebugTarget.AndroidDevice) {
-            if (!AirPackageUtil.startAdbServer(project, sdk) ||
-                !AirPackageUtil.scanAndroidDevices(project, sdk, params) ||
-                !AirPackageUtil.androidForwardTcpPort(project, sdk, params.getDeviceInfo(), params.getUsbDebugPort())) {
+            if (!AirPackageUtil.startAdbServer(env.getProject(), sdk) ||
+                !AirPackageUtil.scanAndroidDevices(env.getProject(), sdk, params) ||
+                !AirPackageUtil.androidForwardTcpPort(env.getProject(), sdk, params.getDeviceInfo(), params.getUsbDebugPort())) {
               return null;
             }
           }
           else if (params.getRemoteDebugTarget() == RemoteDebugTarget.iOSDevice) {
-            final String adtVersion = AirPackageUtil.getAdtVersion(project, sdk);
+            final String adtVersion = AirPackageUtil.getAdtVersion(env.getProject(), sdk);
 
-            if (!AirPackageUtil.checkAdtVersionForPackaging(project, adtVersion, "3.4", sdk.getName(),
+            if (!AirPackageUtil.checkAdtVersionForPackaging(env.getProject(), adtVersion, "3.4", sdk.getName(),
                                                             FlexBundle.message("air.ios.debug.via.usb.requires.3.4"))) {
               return null;
             }
-            if (!AirPackageUtil.scanIosDevices(project, sdk, params)) {
+            if (!AirPackageUtil.scanIosDevices(env.getProject(), sdk, params)) {
               return null;
             }
 
@@ -142,7 +139,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
               return null;
             }
 
-            if (!AirPackageUtil.iosForwardTcpPort(project, sdk, params.getUsbDebugPort(), deviceHandle)) {
+            if (!AirPackageUtil.iosForwardTcpPort(env.getProject(), sdk, params.getUsbDebugPort(), deviceHandle)) {
               return null;
             }
           }
@@ -153,23 +150,23 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       if (runProfile instanceof FlexUnitRunConfiguration) {
         final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)runProfile).getRunnerParameters();
-        final Pair<Module, FlexBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
+        final Pair<Module, FlexBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(env.getProject());
         final Module module = moduleAndConfig.first;
         final FlexBuildConfiguration bc = moduleAndConfig.second;
 
         if (bc.getTargetPlatform() == TargetPlatform.Web) {
           FlashPlayerTrustUtil.updateTrustedStatus(module, bc, isDebug, params.isTrusted());
-          return launchWebFlexUnit(project, contentToReuse, env, params, bc.getActualOutputFilePath());
+          return launchWebFlexUnit(env.getProject(), env.getContentToReuse(), env, params, bc.getActualOutputFilePath());
         }
         else {
-          return launchAirFlexUnit(project, state, contentToReuse, env, params);
+          return launchAirFlexUnit(env.getProject(), state, env.getContentToReuse(), env, params);
         }
       }
 
       if (runProfile instanceof FlashRunConfiguration) {
         final FlashRunnerParameters params = ((FlashRunConfiguration)runProfile).getRunnerParameters();
         params.setDeviceInfo(null);
-        final Pair<Module, FlexBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
+        final Pair<Module, FlexBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(env.getProject());
         final Module module = moduleAndConfig.first;
         final FlexBuildConfiguration bc = moduleAndConfig.second;
         if (bc.isSkipCompile()) {
@@ -177,14 +174,14 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         }
 
         if (isDebug && SystemInfo.isMac && bc.getTargetPlatform() == TargetPlatform.Web) {
-          checkDebuggerFromSdk4(project, runProfile, params, bc);
+          checkDebuggerFromSdk4(env.getProject(), runProfile, params, bc);
         }
 
         if (bc.getTargetPlatform() == TargetPlatform.Web && !params.isLaunchUrl()) {
           FlashPlayerTrustUtil.updateTrustedStatus(module, bc, isDebug, params.isRunTrusted());
         }
 
-        return launchFlexConfig(module, bc, params, state, contentToReuse, env);
+        return launchFlexConfig(module, bc, params, state, env.getContentToReuse(), env);
       }
     }
     catch (RuntimeConfigurationError e) {
