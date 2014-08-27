@@ -13,7 +13,6 @@ import com.intellij.coverage.CoverageHelper;
 import com.intellij.coverage.CoverageRunnerData;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
 import com.intellij.execution.RunProfileStarter;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
 import com.intellij.execution.configurations.RunProfile;
@@ -27,7 +26,6 @@ import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.util.NullableConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -55,14 +53,12 @@ public class JstdCoverageProgramRunner extends AsyncGenericProgramRunner {
 
   @NotNull
   @Override
-  protected AsyncResult<RunProfileStarter> prepare(@NotNull Project project,
-                                                   @NotNull ExecutionEnvironment environment,
-                                                   @NotNull RunProfileState state) throws ExecutionException {
+  protected AsyncResult<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
     if (jstdState.getRunSettings().isExternalServerType()) {
       return AsyncResult.<RunProfileStarter>done(new MyStarter(null));
     }
-    JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(project);
+    JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(environment.getProject());
     jstdToolWindowManager.setAvailable(true);
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     if (server != null && !server.isStopped()) {
@@ -92,20 +88,16 @@ public class JstdCoverageProgramRunner extends AsyncGenericProgramRunner {
 
     @Nullable
     @Override
-    public RunContentDescriptor execute(@NotNull Project project,
-                                        @NotNull Executor executor,
-                                        @NotNull RunProfileState state,
-                                        @Nullable RunContentDescriptor contentToReuse,
-                                        @NotNull ExecutionEnvironment environment) throws ExecutionException {
+    public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment environment) throws ExecutionException {
       FileDocumentManager.getInstance().saveAllDocuments();
       JstdRunConfiguration runConfiguration = (JstdRunConfiguration) environment.getRunProfile();
       CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
       String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
-      JstdRunProfileState jstdState = new JstdRunProfileState(project, environment, runConfiguration.getRunSettings(), coverageFilePath);
+      JstdRunProfileState jstdState = new JstdRunProfileState(environment, runConfiguration.getRunSettings(), coverageFilePath);
       ExecutionResult executionResult = jstdState.executeWithServer(myServer);
 
       RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, environment);
-      final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
+      final RunContentDescriptor descriptor = contentBuilder.showRunContent(environment.getContentToReuse());
       ProcessHandler processHandler = executionResult.getProcessHandler();
       if (processHandler instanceof NopProcessHandler) {
         if (myServer != null) {

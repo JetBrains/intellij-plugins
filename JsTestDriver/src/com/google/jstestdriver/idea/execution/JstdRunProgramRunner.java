@@ -7,7 +7,6 @@ import com.google.jstestdriver.idea.server.JstdServerRegistry;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowManager;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
 import com.intellij.execution.RunProfileStarter;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
@@ -18,7 +17,6 @@ import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.util.Alarm;
 import com.intellij.util.NullableConsumer;
@@ -43,14 +41,12 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
 
   @NotNull
   @Override
-  protected AsyncResult<RunProfileStarter> prepare(@NotNull Project project,
-                                                   @NotNull ExecutionEnvironment environment,
-                                                   @NotNull RunProfileState state) throws ExecutionException {
+  protected AsyncResult<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
     if (jstdState.getRunSettings().isExternalServerType()) {
       return AsyncResult.<RunProfileStarter>done(new JstdRunStarter(null, false));
     }
-    JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(project);
+    JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(environment.getProject());
     jstdToolWindowManager.setAvailable(true);
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     if (server != null && !server.isStopped()) {
@@ -82,16 +78,12 @@ public class JstdRunProgramRunner extends AsyncGenericProgramRunner {
 
     @Nullable
     @Override
-    public RunContentDescriptor execute(@NotNull Project project,
-                                        @NotNull Executor executor,
-                                        @NotNull RunProfileState state,
-                                        @Nullable RunContentDescriptor contentToReuse,
-                                        @NotNull ExecutionEnvironment environment) throws ExecutionException {
+    public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment environment) throws ExecutionException {
       FileDocumentManager.getInstance().saveAllDocuments();
       JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
       ExecutionResult executionResult = jstdState.executeWithServer(myServer);
       RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, environment);
-      final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
+      final RunContentDescriptor descriptor = contentBuilder.showRunContent(environment.getContentToReuse());
       if (myServer != null && executionResult.getProcessHandler() instanceof NopProcessHandler) {
         myServer.addLifeCycleListener(new JstdServerLifeCycleAdapter() {
           @Override

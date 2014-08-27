@@ -76,7 +76,7 @@ public class JstdRunConfiguration extends LocatableConfigurationBase implements 
     catch (RuntimeConfigurationException ignored) {
       // does nothing
     }
-    return new JstdRunProfileState(getProject(), env, myRunSettings, coverageFilePath);
+    return new JstdRunProfileState(env, myRunSettings, coverageFilePath);
   }
 
   public void setRunSettings(@NotNull JstdRunSettings runSettings) {

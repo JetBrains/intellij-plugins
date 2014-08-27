@@ -70,27 +70,25 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
 
   @NotNull
   @Override
-  protected AsyncResult<RunProfileStarter> prepare(@NotNull final Project project,
-                                                   @NotNull ExecutionEnvironment environment,
-                                                   @NotNull RunProfileState state) throws ExecutionException {
+  protected AsyncResult<RunProfileStarter> prepare(@NotNull final ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
     final JstdRunSettings runSettings = jstdState.getRunSettings();
     if (runSettings.isExternalServerType()) {
       throw new ExecutionException("Local JsTestDriver server running in IDE required for tests debugging");
     }
-    JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(project);
+    JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(environment.getProject());
     jstdToolWindowManager.setAvailable(true);
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     final AsyncResult<RunProfileStarter> result = new AsyncResult<RunProfileStarter>();
     if (server != null && !server.isStopped()) {
-      prepareWithServer(project, result, server, runSettings);
+      prepareWithServer(environment.getProject(), result, server, runSettings);
       return result;
     }
     jstdToolWindowManager.restartServer(new NullableConsumer<JstdServer>() {
       @Override
       public void consume(@Nullable JstdServer server) {
         if (server != null) {
-          prepareWithServer(project, result, server, runSettings);
+          prepareWithServer(environment.getProject(), result, server, runSettings);
         }
         else {
           result.setDone(null);
@@ -100,10 +98,10 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
     return result;
   }
 
-  private void prepareWithServer(@NotNull final Project project,
-                                 @NotNull final AsyncResult<RunProfileStarter> result,
-                                 @NotNull final JstdServer server,
-                                 @NotNull final JstdRunSettings runSettings) {
+  private static void prepareWithServer(@NotNull final Project project,
+                                        @NotNull final AsyncResult<RunProfileStarter> result,
+                                        @NotNull final JstdServer server,
+                                        @NotNull final JstdRunSettings runSettings) {
     if (server.isReadyForRunningTests()) {
       final JstdDebugBrowserInfo debugBrowserInfo = JstdDebugBrowserInfo.build(server, runSettings);
       if (debugBrowserInfo != null) {
@@ -119,11 +117,7 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
         result.setDone(new RunProfileStarter() {
           @Nullable
           @Override
-          public RunContentDescriptor execute(@NotNull Project project,
-                                              @NotNull Executor executor,
-                                              @NotNull RunProfileState state,
-                                              @Nullable RunContentDescriptor contentToReuse,
-                                              @NotNull ExecutionEnvironment environment) throws ExecutionException {
+          public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment environment) throws ExecutionException {
             throw new ExecutionException("Please capture Chrome or Firefox and try again");
           }
         });
@@ -145,11 +139,7 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
 
     @Nullable
     @Override
-    public RunContentDescriptor execute(@NotNull Project project,
-                                        @NotNull Executor executor,
-                                        @NotNull RunProfileState state,
-                                        @Nullable RunContentDescriptor contentToReuse,
-                                        @NotNull ExecutionEnvironment environment) throws ExecutionException {
+    public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment environment) throws ExecutionException {
       final WebBrowser browser = myDebugBrowserInfo.getBrowser();
       final Url url;
       if (browser.getFamily().equals(BrowserFamily.CHROME)) {
@@ -164,7 +154,7 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
 
       File configFile = new File(jstdState.getRunSettings().getConfigFile());
       final RemoteDebuggingFileFinder fileFinder = new JstdDebuggingFileFinderProvider(configFile, myServer).provideFileFinder();
-      XDebugSession session = XDebuggerManager.getInstance(project).startSession(environment, new XDebugProcessStarter() {
+      XDebugSession session = XDebuggerManager.getInstance(environment.getProject()).startSession(environment, new XDebugProcessStarter() {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull XDebugSession session) {
