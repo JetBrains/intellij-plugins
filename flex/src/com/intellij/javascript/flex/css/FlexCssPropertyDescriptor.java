@@ -201,7 +201,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     addValuesFromTypes2(infos, formats, children);
 
     CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData("", "", CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, shorthand ? -1 : 1, null, null, null, null);
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, shorthand ? -1 : 1, null, null, null, null, false);
     CssGroupValue result = CssGroupValue.create(commonDescriptorData, valueDescriptorData, true, null, CssGroupValue.Type.OR);
     if (!children.isEmpty()) {
       for (CssValueDescriptor child : children) {
@@ -223,41 +223,41 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   private static CssAnyValueImpl createCssAnyValue(@Nullable CssValueDescriptor parent) {
     String id = CssBundle.message("any.value.presentable.name");
     CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, parent, null);
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, parent, null, false);
     return new CssAnyValueImpl(commonDescriptorData, valueDescriptorData);
   }
   
   private static CssStringValue createCssStringValue(@Nullable CssValueDescriptor parent) {
     String id = CssBundle.message("string.value.presentable.name");
     CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, parent, null);
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, parent, null, false);
     return new CssStringValue(null, commonDescriptorData, valueDescriptorData);
   }
 
   private static CssNameValue createCssNameValue(@NotNull String name, @Nullable CssValueDescriptor parent) {
     CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(name, name, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, parent, null);
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, parent, null, false);
     return new CssNameValue(name, true, commonDescriptorData, valueDescriptorData);
   }
   
   private static CssColorValue createCssColorValue() {
     String id = CssBundle.message("color.value.presentable.name");
     CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null);
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null, false);
     return new CssColorValue(commonDescriptorData, valueDescriptorData);
   }
   
   private static CssLengthValue createCssLengthValue() {
     String id = CssBundle.message("length.value.presentable.name");
     CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null);
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null, false);
     return new CssLengthValue(commonDescriptorData, valueDescriptorData);
   }
   
   private static CssNumberValue createCssNumberValue() {
     String id = CssBundle.message("number.value.presentable.name");
     CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null);
+    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, null, null, false);
     return new CssNumberValue(commonDescriptorData, valueDescriptorData);
   }
 
