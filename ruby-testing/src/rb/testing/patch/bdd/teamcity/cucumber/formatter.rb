@@ -1,4 +1,4 @@
-# Copyright 2000-2012 JetBrains s.r.o.
+# Copyright 2000-2014 JetBrains s.r.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -58,6 +58,7 @@ module Teamcity
     # new formatter api, cucumber >= 0.3.103
 
     USE_OLD_API =  !same_or_newer?('1.2.0') && (defined? ::Cucumber::Ast::TreeWalker).nil?
+    CUCUMBER_VERSION_2 = (::Cucumber::VERSION.split('.')[0] == '2')
 
     if USE_OLD_API
       require File.expand_path(File.dirname(__FILE__) + '/old_formatter')

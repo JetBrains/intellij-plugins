@@ -1,4 +1,4 @@
-# Copyright 2000-2012 JetBrains s.r.o.
+# Copyright 2000-2014 JetBrains s.r.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -206,11 +206,11 @@ module Teamcity
 # @Processes: Scenario(real without examples' fake scenarios), ScenarioOutline
 # Here we can do cleanup for scenarios in current feature: Scenario, ScenarioOutline
       def scenario_outline?(feature_element)
-        if defined? ::Cucumber::Ast
-          feature_element.class == ::Cucumber::Ast::ScenarioOutline
-        else
-          # API changed in Cucumber 2.0 
+        if ::Teamcity::Cucumber::CUCUMBER_VERSION_2
+          # API changed in Cucumber 2.0
           feature_element.class == ::Cucumber::Core::Ast::ScenarioOutline
+        else
+          feature_element.class == ::Cucumber::Ast::ScenarioOutline
         end
       end
 
@@ -581,11 +581,19 @@ module Teamcity
                           ::Cucumber::Undefined === step_exception ? step_exception.step_name : step_name
                         end
 
-        step_multiline_class = step_multiline_arg ? step_multiline_arg.class : nil
-        snippet = @step_mother.snippet_text(step_keyword || "", step_def_name, step_multiline_class)
+        snippet = create_snippet_text(step_def_name, step_keyword, step_multiline_arg)
 
         text = " \nYou can implement step definitions for undefined steps with these snippets:\n\n#{snippet}"
         puts text
+      end
+
+      def create_snippet_text(step_def_name, step_keyword, step_multiline_arg)
+        if ::Teamcity::Cucumber::CUCUMBER_VERSION_2
+          @step_mother.snippet_text(step_keyword || '', step_def_name, step_multiline_arg)
+        else
+          step_multiline_class = step_multiline_arg ? step_multiline_arg.class : nil
+          @step_mother.snippet_text(step_keyword || '', step_def_name, step_multiline_class)
+        end
       end
 
       def ensure_trailing_column(keyword)
