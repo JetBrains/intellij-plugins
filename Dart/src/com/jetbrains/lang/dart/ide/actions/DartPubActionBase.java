@@ -4,6 +4,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -16,7 +17,6 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbAware;
@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartProjectComponent;
+import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import icons.DartIcons;
 import org.jetbrains.annotations.Nls;
@@ -97,7 +98,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
                                              getTitle(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
       if (answer != 0) return;
 
-      ShowSettingsUtil.getInstance().showSettingsDialog(module.getProject(), DartBundle.message("dart.title"));
+      ShowSettingsUtilImpl.showSettingsDialog(module.getProject(), DartConfigurable.DART_SETTINGS_PAGE_ID, "");
       sdk = DartSdk.getGlobalDartSdk();
     }
 
@@ -110,7 +111,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
                             getTitle(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
       if (answer != 0) return;
 
-      ShowSettingsUtil.getInstance().showSettingsDialog(module.getProject(), DartBundle.message("dart.title"));
+      ShowSettingsUtilImpl.showSettingsDialog(module.getProject(), DartConfigurable.DART_SETTINGS_PAGE_ID, "");
 
       sdk = DartSdk.getGlobalDartSdk();
       if (sdk == null) return;

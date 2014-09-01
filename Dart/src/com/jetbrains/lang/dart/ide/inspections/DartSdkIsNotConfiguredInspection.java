@@ -2,10 +2,10 @@ package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInspection.*;
+import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
@@ -93,7 +93,7 @@ public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
 
     @Override
     public void applyFix(final @NotNull Project project, final @NotNull PsiFile file, final @Nullable Editor editor) {
-      ShowSettingsUtil.getInstance().showSettingsDialog(project, DartConfigurable.DART_SETTINGS_PAGE_NAME);
+      ShowSettingsUtilImpl.showSettingsDialog(project, DartConfigurable.DART_SETTINGS_PAGE_ID, "");
     }
   }
 
