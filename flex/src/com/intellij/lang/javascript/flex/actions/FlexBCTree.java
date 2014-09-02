@@ -9,6 +9,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.CheckboxTree;
 import com.intellij.ui.CheckedTreeNode;
@@ -34,7 +35,7 @@ public class FlexBCTree extends CheckboxTree {
 
   public FlexBCTree(final Project project) {
     //noinspection unchecked
-    this(project, Condition.TRUE);
+    this(project, Conditions.<FlexBuildConfiguration>alwaysTrue());
   }
 
   public FlexBCTree(final Project project, final Condition<FlexBuildConfiguration> bcFilter) {

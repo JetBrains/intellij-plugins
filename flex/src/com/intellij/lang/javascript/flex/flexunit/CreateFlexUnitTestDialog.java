@@ -22,6 +22,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -307,6 +308,6 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
   }
 
   public JSMemberInfo[] getSelectedMemberInfos() {
-    return JSMemberInfo.getSelected(myMemberSelectionPanel.getTable().getSelectedMemberInfos(), myContextClass, Condition.TRUE);
+    return JSMemberInfo.getSelected(myMemberSelectionPanel.getTable().getSelectedMemberInfos(), myContextClass, Conditions.<JSMemberInfo>alwaysTrue());
   }
 }
