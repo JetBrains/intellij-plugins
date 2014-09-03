@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart;
 
+import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.TreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGES_FOLDER_NAME;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
@@ -38,38 +40,41 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
                                         : null;
 
     if (pubspecYamlFile != null && !pubspecYamlFile.isDirectory()) {
-      final ArrayList<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>(children);
+      final ArrayList<AbstractTreeNode> modifiedChildren = new ArrayList<AbstractTreeNode>(children);
 
       final DartUrlResolver resolver = DartUrlResolver.getInstance(project, pubspecYamlFile);
       resolver.processLivePackages(new PairConsumer<String, VirtualFile>() {
         public void consume(final @NotNull String packageName, final @NotNull VirtualFile packageDir) {
-          final AbstractTreeNode node = getFolderNode(children, packageName);
-          if (node != null) {
-            node.getPresentation().setLocationString(getLocationString(packageDir));
+          final VirtualFile folder = packagesDir.findChild(packageName);
+          if (folder != null) {
+            final AbstractTreeNode node = getFolderNode(children, folder);
+            if (node == null) {
+              modifiedChildren.add(new SymlinkToLivePackageNode(project, packageName, packageDir));
+            }
+            else {
+              node.getPresentation().setLocationString(getPackageLocationString(packageDir));
+            }
           }
         }
       });
 
-      return result;
+      return modifiedChildren;
     }
 
     return children;
   }
 
   @Nullable
-  private static AbstractTreeNode getFolderNode(final @NotNull Collection<AbstractTreeNode> nodes, final @NotNull String folderName) {
+  private static AbstractTreeNode getFolderNode(final @NotNull Collection<AbstractTreeNode> nodes, final @NotNull VirtualFile folder) {
     for (AbstractTreeNode node : nodes) {
-      if (node instanceof PsiDirectoryNode) {
-        final VirtualFile folder = ((PsiDirectoryNode)node).getVirtualFile();
-        if (folder != null && folder.getName().equals(folderName)) {
-          return node;
-        }
+      if (node instanceof PsiDirectoryNode && folder.equals(((PsiDirectoryNode)node).getVirtualFile())) {
+        return node;
       }
     }
     return null;
   }
 
-  private static String getLocationString(VirtualFile packageDir) {
+  private static String getPackageLocationString(@NotNull final VirtualFile packageDir) {
     final String path = packageDir.getPath();
     final int lastSlashIndex = path.lastIndexOf("/");
     final int prevSlashIndex = lastSlashIndex == -1 ? -1 : path.substring(0, lastSlashIndex).lastIndexOf("/");
@@ -79,5 +84,33 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
   @Nullable
   public Object getData(final Collection<AbstractTreeNode> selected, final String dataName) {
     return null;
+  }
+
+  private static class SymlinkToLivePackageNode extends AbstractTreeNode<String> {
+    @NotNull private final String mySymlinkPath;
+
+    public SymlinkToLivePackageNode(final @NotNull Project project,
+                                    final @NotNull String packageName,
+                                    final @NotNull VirtualFile packageDir) {
+      super(project, packageName);
+      myName = packageName;
+      mySymlinkPath = getPackageLocationString(packageDir);
+      setIcon(DartIconProvider.FOLDER_SYMLINK_ICON);
+    }
+
+    @NotNull
+    public Collection<? extends AbstractTreeNode> getChildren() {
+      return Collections.emptyList();
+    }
+
+    protected void update(final PresentationData presentation) {
+      presentation.setIcon(getIcon());
+      presentation.setPresentableText(myName);
+      presentation.setLocationString(mySymlinkPath);
+    }
+
+    public int getWeight() {
+      return 0;
+    }
   }
 }
