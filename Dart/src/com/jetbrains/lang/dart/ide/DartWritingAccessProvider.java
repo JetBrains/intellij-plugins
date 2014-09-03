@@ -48,7 +48,7 @@ public class DartWritingAccessProvider extends WritingAccessProvider {
       return true; // file in SDK or in custom package root
     }
 
-    if (fileIndex.isInContent(file) && isInDartPackagesFolder(fileIndex, file)) {
+    if (fileIndex.isExcluded(file) || (fileIndex.isInContent(file) && isInDartPackagesFolder(fileIndex, file))) {
       return true; // symlinked child of 'packages' folder. Real location is in user cache folder for Dart packages, not in project
     }
 
