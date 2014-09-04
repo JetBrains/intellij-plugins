@@ -1,6 +1,6 @@
 package com.intellij.javascript.flex;
 
-import com.intellij.lang.javascript.flex.MxmlFileType;
+import com.intellij.lang.javascript.flex.MxmlLanguage;
 import com.intellij.lang.xml.XMLParserDefinition;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
@@ -20,7 +20,7 @@ public class MxmlParserDefinition extends XMLParserDefinition{
   }
 
   public static class MxmlFile extends XmlFileImpl {
-    private static final IFileElementType MXML_FILE = new IFileElementType("MXML_FILE", MxmlFileType.LANGUAGE);
+    private static final IFileElementType MXML_FILE = new IFileElementType("MXML_FILE", MxmlLanguage.INSTANCE);
 
     public MxmlFile(FileViewProvider viewProvider) {
       super(viewProvider, MXML_FILE);

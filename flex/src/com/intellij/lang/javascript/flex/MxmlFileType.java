@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.highlighter.XmlLikeFileType;
-import com.intellij.lang.xml.XMLLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -13,10 +12,8 @@ import javax.swing.*;
  * Time: 13:50
  */
 public class MxmlFileType extends XmlLikeFileType {
-  public static final XMLLanguage LANGUAGE = new XMLLanguage(XMLLanguage.INSTANCE, "Mxml") {};
-
   public MxmlFileType() {
-    super(LANGUAGE);
+    super(MxmlLanguage.INSTANCE);
   }
 
   @NotNull
