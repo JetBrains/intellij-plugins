@@ -31,6 +31,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import icons.DartIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -104,7 +105,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
     if (sdk == null) return;
 
-    File pubFile = new File(sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/pub.bat" : "/bin/pub"));
+    File pubFile = new File(DartSdkUtil.getPubPath(sdk));
     if (!pubFile.isFile() && allowModalDialogs) {
       final int answer =
         Messages.showDialog(module.getProject(), DartBundle.message("dart.sdk.bad.dartpub.path", pubFile.getPath()),
