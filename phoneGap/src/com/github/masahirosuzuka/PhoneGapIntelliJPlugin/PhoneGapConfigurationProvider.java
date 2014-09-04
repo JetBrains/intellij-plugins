@@ -23,11 +23,11 @@ public class PhoneGapConfigurationProvider extends ConfigurableProvider {
   @Nullable
   @Override
   public Configurable createConfigurable() {
-    return Language.findLanguageByID("JavaScript") != null ? null : new PhoneGapConfigurable(myProject);
+    return new PhoneGapConfigurable(myProject);
   }
 
   @Override
-  public boolean isConfigurableProvided() {
+  public boolean canCreateConfigurable() {
     return Language.findLanguageByID("JavaScript") == null;
   }
 }
