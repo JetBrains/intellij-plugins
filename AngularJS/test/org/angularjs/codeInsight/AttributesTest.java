@@ -188,4 +188,24 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertContainsElements(myFixture.getLookupElementStrings(), "ng-copy");
     }
   }
+
+  public void testRepeatCompletion() {
+    myFixture.configureByFiles("ng-repeat.html", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("<div ng-rep<caret>", myFixture.getFile());
+    myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "ng-repeat", "ng-repeat-start", "ng-repeat-end");
+  }
+
+  public void testRepeatResolve() {
+    myFixture.configureByFiles("ng-repeat.resolve.html", "angular.js");
+    for (String suffix : new String[]{"", "-start", "-end"}) {
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng<caret>-repeat" + suffix, myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("angular.js", resolve.getContainingFile().getName());
+    }
+  }
 }
