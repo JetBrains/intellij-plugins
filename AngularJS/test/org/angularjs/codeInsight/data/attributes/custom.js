@@ -19,4 +19,11 @@ angular.module('docsSimpleDirective', [])
             },
             templateUrl: 'my-dialog-close.html'
         };
+    })
+    .directive('someOtherTag', function() {
+        return {
+            restrict: 'E',
+            transclude: true,
+            templateUrl: 'my-dialog-close.html'
+        };
     });
