@@ -1705,7 +1705,7 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar, @NotNull final DefaultActionGroup topToolbar) {
+  public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar, @NotNull final DefaultActionGroup topToolbar, @NotNull DefaultActionGroup settings) {
     topToolbar.addAction(ActionManager.getInstance().getAction("Flex.Debugger.FilterSwfLoadUnloadMessages"));
   }
 }
