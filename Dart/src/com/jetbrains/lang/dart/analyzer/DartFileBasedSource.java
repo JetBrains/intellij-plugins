@@ -121,13 +121,11 @@ public class DartFileBasedSource implements Source {
 
   @Override
   public URI getUri() {
-
-    //TODO: better error handling
     try {
       return new URI(myFile.getUrl());
     }
     catch (URISyntaxException e) {
-      e.printStackTrace();
+      //Won't happen from a file URL
     }
     return null;
   }
