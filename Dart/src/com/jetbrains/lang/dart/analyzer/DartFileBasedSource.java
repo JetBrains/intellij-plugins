@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.dart.engine.context.AnalysisException;
 import com.google.dart.engine.internal.context.TimestampedData;
 import com.google.dart.engine.source.Source;
 import com.google.dart.engine.source.UriKind;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 public class DartFileBasedSource implements Source {
 
@@ -109,12 +111,23 @@ public class DartFileBasedSource implements Source {
   }
 
   @Override
-  public Source resolveRelative(final URI containedUri) {
-    final VirtualFile file = containedUri.getScheme() == null
-                             ? VfsUtilCore.findRelativeFile(containedUri.toString(), myFile.getParent())
-                             : LocalFileSystem.getInstance().findFileByPath(containedUri.getPath());
+  public URI resolveRelativeUri(final URI relativeUri) throws AnalysisException {
+      final VirtualFile file = relativeUri.getScheme() == null
+                               ? VfsUtilCore.findRelativeFile(relativeUri.toString(), myFile.getParent())
+                               : LocalFileSystem.getInstance().findFileByPath(relativeUri.getPath());
 
-    return file == null ? null : getSource(myProject, file);
+      return file == null ? null : getSource(myProject, file).getUri();
+  }
+
+  @Override
+  public URI getUri() {
+    try {
+      return new URI(myFile.getUrl());
+    }
+    catch (URISyntaxException e) {
+      //Won't happen from a file URL
+    }
+    return null;
   }
 
   @Override
