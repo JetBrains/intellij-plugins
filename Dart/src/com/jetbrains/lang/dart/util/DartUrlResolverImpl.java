@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.util;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -13,6 +14,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.ex.temp.TempFileSystem;
 import com.intellij.util.PairConsumer;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
@@ -122,6 +124,10 @@ class DartUrlResolverImpl extends DartUrlResolver {
     if (url.startsWith(FILE_PREFIX)) {
       final String path = StringUtil.trimLeading(url.substring(FILE_PREFIX.length()), '/');
       return LocalFileSystem.getInstance().findFileByPath(SystemInfo.isWindows ? path : ("/" + path));
+    }
+
+    if (ApplicationManager.getApplication().isUnitTestMode() && url.startsWith(TEMP_PREFIX_WITH_SLASHES)) {
+      return TempFileSystem.getInstance().findFileByPath(url.substring((TEMP_PREFIX_WITH_SLASHES).length()));
     }
 
     return null;

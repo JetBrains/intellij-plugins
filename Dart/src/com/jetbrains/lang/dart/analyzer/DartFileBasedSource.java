@@ -112,11 +112,11 @@ public class DartFileBasedSource implements Source {
 
   @Override
   public URI resolveRelativeUri(final URI relativeUri) throws AnalysisException {
-      final VirtualFile file = relativeUri.getScheme() == null
-                               ? VfsUtilCore.findRelativeFile(relativeUri.toString(), myFile.getParent())
-                               : LocalFileSystem.getInstance().findFileByPath(relativeUri.getPath());
+    final VirtualFile file = relativeUri.getScheme() == null
+                             ? VfsUtilCore.findRelativeFile(relativeUri.toString(), myFile.getParent())
+                             : LocalFileSystem.getInstance().findFileByPath(relativeUri.getPath());
 
-      return file == null ? null : getSource(myProject, file).getUri();
+    return file == null ? null : getSource(myProject, file).getUri();
   }
 
   @Override
