@@ -1,6 +1,8 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -79,6 +81,8 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
       ApplicationManager.getApplication().runWriteAction(new Runnable() {
         @Override
         public void run() {
+          PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+          propertiesComponent.setValue(PhoneGapSettings.PHONEGAP_WORK_DIRECTORY, project.getBasePath());
           baseDir.refresh(false, true);
         }
       });

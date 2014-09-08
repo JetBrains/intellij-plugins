@@ -51,7 +51,7 @@ public class PhoneGapTargets {
   private synchronized List<String> getAndroidVirtualDevices() throws ExecutionException {
     if (androidVirtualDevices == null) {
       androidVirtualDevices = ContainerUtil.newArrayList();
-      File path = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? "android" + ".exe" : "android");
+      File path = PathEnvironmentVariableUtil.findInPath(getAndroidName());
       if (path != null && path.exists()) {
         androidVirtualDevices.addAll(getAndroidDevices(ContainerUtil.newArrayList(path.getPath(), "-v", "list", "avd", "-c")));
       }
@@ -59,15 +59,28 @@ public class PhoneGapTargets {
     return androidVirtualDevices;
   }
 
+  @NotNull
+  public static String getAndroidName() {
+    return SystemInfo.isWindows ? "android" + ".exe" : "android";
+  }
+
+  public static String getIosSimName() {
+    return "ios-sim";
+  }
+
   private synchronized List<String> getAndroidDevices() throws ExecutionException {
     if (androidDevices == null) {
       androidDevices = ContainerUtil.newArrayList();
-      File pathAdb = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? "adb" + ".exe" : "adb");
+      File pathAdb = PathEnvironmentVariableUtil.findInPath(getAdbName());
       if (pathAdb != null && pathAdb.exists()) {
         androidDevices.addAll(splitNames(getAndroidDevices(ContainerUtil.newArrayList(pathAdb.getPath(), "devices"))));
       }
     }
     return androidDevices;
+  }
+
+  private static String getAdbName() {
+    return SystemInfo.isWindows ? "adb" + ".exe" : "adb";
   }
 
 

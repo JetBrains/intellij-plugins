@@ -1,6 +1,7 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapTargets;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
@@ -15,6 +16,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.PLATFORM_ANDROID;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.PLATFORM_IOS;
 
 /**
  * PhoneGapRunConfiguration.java
@@ -143,6 +149,17 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
     if (StringUtil.isEmpty(myExecutable)) {
       throw new RuntimeConfigurationError("Executable is missing");
     }
+
+    if (StringUtil.isEmpty(myWorkDir)) {
+      throw new RuntimeConfigurationError("Working directory is missing");
+    }
+
+    if (myPlatform.equals(PLATFORM_ANDROID)) {
+      checkExistsSdkWithWarning(PhoneGapTargets.getAndroidName(), "Cannot detect android SDK in path");
+    }
+    if (myPlatform.equals(PLATFORM_IOS)) {
+      checkExistsSdkWithWarning(PhoneGapTargets.getIosSimName(), "Cannot detect ios-sim in path");
+    }
   }
 
   public PhoneGapCommandLine getCommandLine() {
@@ -184,5 +201,16 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
                                   @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
 
     return new PhoneGapRunProfileState(getProject(), executionEnvironment, this);
+  }
+
+  private static void checkExistsSdkWithWarning(@Nullable String path, @NotNull String error) throws RuntimeConfigurationWarning {
+    if (path == null) return;
+
+    File file = PathEnvironmentVariableUtil.findInPath(path);
+    if (file != null && file.exists()) {
+      return;
+    }
+
+    throw new RuntimeConfigurationWarning(error);
   }
 }

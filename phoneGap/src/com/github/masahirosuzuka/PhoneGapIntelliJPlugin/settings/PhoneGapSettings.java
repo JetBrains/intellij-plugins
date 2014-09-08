@@ -22,7 +22,7 @@ import java.util.List;
     file = StoragePathMacros.APP_CONFIG + "/phonegap.xml")})
 public final class PhoneGapSettings implements PersistentStateComponent<PhoneGapSettings.State> {
 
-  private static String PHONEGAP_WORK_DIRECTORY = "js.phonegap.settings.workdir";
+  public static String PHONEGAP_WORK_DIRECTORY = "js.phonegap.settings.workdir";
 
   // External tools PATH
   public static String NODEJS_PATH = "/usr/local/bin/node";
