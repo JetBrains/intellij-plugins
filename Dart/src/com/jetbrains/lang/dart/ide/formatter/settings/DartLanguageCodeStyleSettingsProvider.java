@@ -9,9 +9,6 @@ import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
 import com.jetbrains.lang.dart.DartLanguage;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
 
   @NotNull
@@ -127,8 +124,8 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
   }
 
   public static final String SPACING_CODE_SAMPLE = "class Foo {\n" +
-                                                   "    Array<Array<Int>> tmp;\n" +
-                                                   "    function foo(int x, z) {\n" +
+                                                   "    List<List<int>> tmp;\n" +
+                                                   "    foo(int x, z) {\n" +
                                                    "        new Foo(x, 2);\n" +
                                                    "        int absSum(int a, int b) {\n" +
                                                    "            int value = a + b;\n" +
@@ -136,7 +133,7 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
                                                    "        }\n" +
                                                    "        var arr = [\"zero\", \"one\"];\n" +
                                                    "        var y = (x ^ 0x123) << 2;\n" +
-                                                   "        for (i in tmp) {\n" +
+                                                   "        for (var i in tmp) {\n" +
                                                    "            y = (y ^ 0x123) << 2;\n" +
                                                    "        }\n" +
                                                    "        var k = x % 2 == 1 ? 0 : 1;\n" +
@@ -155,38 +152,40 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
                                                    "                switch (k) {\n" +
                                                    "                    case 0:\n" +
                                                    "                        var s1 = 'zero';\n" +
+                                                   "                        break;\n" +
                                                    "                    case 2:\n" +
                                                    "                        var s1 = 'two';\n" +
+                                                   "                        break;\n" +
                                                    "                    default:\n" +
                                                    "                        var s1 = 'other';\n" +
                                                    "                }\n" +
-                                                   "            } catch (string e) {\n" +
+                                                   "            } catch (e) {\n" +
                                                    "                var message = arr[0];\n" +
                                                    "            }\n" +
                                                    "        } while (x < 0);\n" +
                                                    "    }\n" +
                                                    "\n" +
                                                    "    Foo(int n, int m) {\n" +
-                                                   "        tmp = new Array<Array<Int>>();\n" +
-                                                   "        for (int i; i < 10; ++i) tmp.push(new Array<Int>());\n" +
+                                                   "        tmp = new List<List<int>>();\n" +
+                                                   "        for (int i; i < 10; ++i) tmp.add(new List<int>());\n" +
                                                    "    }\n" +
                                                    "}";
 
   public static final String WRAPPING_CODE_SAMPLE = "class Foo {\n" +
                                                     "    // function fBar (x,y);\n" +
                                                     "    fOne(argA, argB, argC, argD, argE, argF, argG, argH) {\n" +
-                                                    "        Array<string> numbers   = ['one', 'two', 'three', 'four', 'five', 'six'];\n" +
+                                                    "        List<String> numbers = ['one', 'two', 'three', 'four', 'five', 'six'];\n" +
                                                     "        var x = (\"\" + argA) + argB + argC + argD + argE + argF + argG + argH;\n" +
                                                     "        try {\n" +
                                                     "            this.fTwo(argA, argB, argC, this.fThree(\"\", argE, argF, argG, argH));\n" +
-                                                    "        } catch (string ignored) {}\n" +
+                                                    "        } catch (ignored) {}\n" +
                                                     "        var z = argA == 'Some string' ? 'yes' : 'no';\n" +
                                                     "        var colors = ['red', 'green', 'blue', 'black', 'white', 'gray'];\n" +
-                                                    "        for (colorIndex in colors) {\n" +
+                                                    "        for (var colorIndex in colors) {\n" +
                                                     "            var colorString = numbers[colorIndex];\n" +
                                                     "        }\n" +
                                                     "        do {\n" +
-                                                    "            colors.pop();\n" +
+                                                    "            colors.removeLast();\n" +
                                                     "        } while (colors.length > 0);\n" +
                                                     "    }\n" +
                                                     "\n" +
