@@ -108,7 +108,9 @@ public class CucumberStepsIndex {
   @NotNull
   public Collection<AbstractStepDefinition> findStepDefinitions(@NotNull final PsiFile featureFile, @NotNull final GherkinStep step) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
-    if (module == null) return null;
+    if (module == null) {
+      return Collections.emptyList();
+    }
 
     Map<Class<? extends AbstractStepDefinition>, AbstractStepDefinition> definitionsByClass =
       new java.util.HashMap<Class<? extends AbstractStepDefinition>, AbstractStepDefinition>();
