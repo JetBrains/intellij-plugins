@@ -99,6 +99,10 @@ public class DartAnalyzerService {
     Disposer.register(project, new Disposable() {
       public void dispose() {
         LocalFileSystem.getInstance().removeVirtualFileListener(listener);
+
+        if (myAnalysisContextRef != null) {
+          myAnalysisContextRef.clear();
+        }
       }
     });
   }
