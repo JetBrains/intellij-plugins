@@ -53,6 +53,9 @@ public class DartAnalyzerService {
   private final Map<VirtualFile, DartFileBasedSource> myFileToSourceMap =
     Collections.synchronizedMap(new THashMap<VirtualFile, DartFileBasedSource>());
 
+  private final Map<String, DirectoryBasedDartSdk> mySdkMap =
+    Collections.synchronizedMap(new THashMap<String, DirectoryBasedDartSdk>());
+
   public DartAnalyzerService(final Project project) {
     myProject = project;
 
@@ -146,7 +149,7 @@ public class DartAnalyzerService {
       myCreatedFiles.clear();
     }
     else {
-      final DirectoryBasedDartSdk dirBasedSdk = new DirectoryBasedDartSdk(new File(sdkPath));
+      final DirectoryBasedDartSdk dirBasedSdk = getSdk(sdkPath);
       final DartUriResolver dartUriResolver = new DartUriResolver(dirBasedSdk);
       final DartFileAndPackageUriResolver fileAndPackageUriResolver = new DartFileAndPackageUriResolver(myProject, dartUrlResolver);
 
@@ -166,6 +169,15 @@ public class DartAnalyzerService {
     }
 
     return analysisContext;
+  }
+
+  private DirectoryBasedDartSdk getSdk(String sdkPath) {
+    DirectoryBasedDartSdk sdk = mySdkMap.get(sdkPath);
+    if (sdk == null) {
+      sdk = new DirectoryBasedDartSdk(new File(sdkPath));
+      mySdkMap.put(sdkPath, sdk);
+    }
+    return sdk;
   }
 
   private void applyChangeSet(final AnalysisContext context, final VirtualFile annotatedFile) {
