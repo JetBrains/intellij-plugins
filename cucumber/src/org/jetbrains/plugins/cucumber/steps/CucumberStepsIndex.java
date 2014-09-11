@@ -12,6 +12,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.HashMap;
+import org.apache.oro.text.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
@@ -85,7 +86,6 @@ public class CucumberStepsIndex {
    * Searches for step definition.
    * More info is available in {@link #findStepDefinitions(com.intellij.psi.PsiFile, org.jetbrains.plugins.cucumber.psi.GherkinStep)} doc
    *
-   *
    * @param featureFile file with steps
    * @param step        step itself
    * @return definition or null if not found
@@ -108,20 +108,38 @@ public class CucumberStepsIndex {
   @NotNull
   public Collection<AbstractStepDefinition> findStepDefinitions(@NotNull final PsiFile featureFile, @NotNull final GherkinStep step) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
-    if (module == null) return null;
+    if (module == null) {
+      return Collections.emptyList();
+    }
 
     Map<Class<? extends AbstractStepDefinition>, AbstractStepDefinition> definitionsByClass =
       new java.util.HashMap<Class<? extends AbstractStepDefinition>, AbstractStepDefinition>();
     List<AbstractStepDefinition> allSteps = loadStepsFor(featureFile, module);
     for (AbstractStepDefinition stepDefinition : allSteps) {
       if (stepDefinition.matches(step.getSubstitutedName()) && stepDefinition.supportsStep(step)) {
-        final AbstractStepDefinition result = definitionsByClass.get(stepDefinition.getClass());
-        if (result == null || result.getPattern().getPattern().length() < stepDefinition.getPattern().getPattern().length()) {
+        final Pattern currentLongestPattern = getPatternByDefinition(definitionsByClass.get(stepDefinition.getClass()));
+        final Pattern newPattern = getPatternByDefinition(stepDefinition);
+        final int newPatternLength = ((newPattern != null) ? newPattern.getPattern().length() : -1);
+        if ((currentLongestPattern == null) || (currentLongestPattern.getPattern().length() < newPatternLength)) {
           definitionsByClass.put(stepDefinition.getClass(), stepDefinition);
         }
       }
     }
     return definitionsByClass.values();
+  }
+
+  /**
+   * Returns pattern from step definition (if exists)
+   *
+   * @param definition step definition
+   * @return pattern or null if does not exist
+   */
+  @Nullable
+  private static Pattern getPatternByDefinition(@Nullable final AbstractStepDefinition definition) {
+    if (definition == null) {
+      return null;
+    }
+    return definition.getPattern();
   }
 
   // ToDo: use binary search here

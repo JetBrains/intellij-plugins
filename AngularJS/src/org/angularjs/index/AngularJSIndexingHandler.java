@@ -203,7 +203,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static String calculateRestrictions(PsiElement element) {
     final Ref<String> restrict = Ref.create("A");
     final Ref<String> scope = Ref.create("");
-    final JSFunction function = PsiTreeUtil.getNextSiblingOfType(element, JSFunction.class);
+    JSFunction function = PsiTreeUtil.getNextSiblingOfType(element, JSFunction.class);
+    if (function == null) {
+      JSArrayLiteralExpression array = PsiTreeUtil.getNextSiblingOfType(element, JSArrayLiteralExpression.class);
+      function = PsiTreeUtil.findChildOfType(array, JSFunction.class);
+    }
     if (function != null) {
       function.accept(new JSRecursiveElementVisitor() {
         @Override

@@ -2,6 +2,6 @@
   <extensions defaultExtensionNs="com.intellij">
     <completion.contributor language="JavaScript"
                             implementationClass="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.javascriptDependency.codecompletion.PhoneGapCodeCompletion"/>
-    <projectConfigurable id="settings.phonegap" bundle="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle" key="phonegap.conf.name" parentId="Settings.JavaScript" instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable"/>
+    <projectConfigurable id="settings.phonegap" bundle="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle" key="phonegap.conf.name" parentId="Settings.JavaScript" instance="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.PhoneGapConfigurable" order="last"/>
   </extensions>
 </idea-plugin>

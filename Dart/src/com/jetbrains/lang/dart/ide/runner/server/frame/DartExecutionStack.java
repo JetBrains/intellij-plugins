@@ -7,8 +7,8 @@ import com.jetbrains.lang.dart.ide.runner.server.google.VmCallFrame;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class DartExecutionStack extends XExecutionStack {
@@ -30,15 +30,22 @@ public class DartExecutionStack extends XExecutionStack {
   }
 
   @Override
-  public void computeStackFrames(final int firstFrameIndex, final XStackFrameContainer container) {
-    final Iterator<VmCallFrame> iterator = myVmCallFrames.iterator();
-    if (iterator.hasNext()) iterator.next(); // skip top frame
-
-    while (iterator.hasNext()) {
-      final VmCallFrame frame = iterator.next();
-      container.addStackFrames(Collections.singletonList(new DartStackFrame(myDebugProcess, frame)), false);
+  public void computeStackFrames(int firstFrameIndex, final XStackFrameContainer container) {
+    List<DartStackFrame> res = new ArrayList<DartStackFrame>();
+    // add top frame if needed
+    if (firstFrameIndex == 0 && !myVmCallFrames.isEmpty()) {
+      res.add(myTopFrame);
+      firstFrameIndex = 1;
     }
 
-    container.addStackFrames(Collections.<XStackFrame>emptyList(), true);
+    List<VmCallFrame> toAdd = firstFrameIndex >= myVmCallFrames.size() ?
+                              Collections.<VmCallFrame>emptyList()
+                              : myVmCallFrames.subList(firstFrameIndex, myVmCallFrames.size());
+
+    for (VmCallFrame frame : toAdd) {
+      res.add(new DartStackFrame(myDebugProcess, frame));
+    }
+
+    container.addStackFrames(res, true);
   }
 }

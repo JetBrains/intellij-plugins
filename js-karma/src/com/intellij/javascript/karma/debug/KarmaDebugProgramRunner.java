@@ -4,13 +4,13 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
 import com.intellij.execution.RunProfileStarter;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.AsyncGenericProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.WebBrowser;
@@ -21,7 +21,6 @@ import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
@@ -61,12 +60,10 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
 
   @NotNull
   @Override
-  protected AsyncResult<RunProfileStarter> prepare(@NotNull Project project,
-                                                   @NotNull ExecutionEnvironment environment,
-                                                   @NotNull RunProfileState state) throws ExecutionException {
+  protected AsyncResult<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     final ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) {
-      return new AsyncResult<RunProfileStarter>().setDone(null);
+      return AsyncResult.done(null);
     }
 
     final KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult);
@@ -78,21 +75,17 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
     if (karmaServer.areBrowsersReady()) {
       final DebuggableWebBrowser debuggableWebBrowser =
         new KarmaDebugBrowserSelector(karmaServer.getCapturedBrowsers(), environment).selectDebugEngine();
-      return prepareDebugger(project, debuggableWebBrowser, new RunProfileStarter() {
+      return prepareDebugger(environment.getProject(), debuggableWebBrowser, new RunProfileStarter() {
         @Nullable
         @Override
-        public RunContentDescriptor execute(@NotNull Project project,
-                                            @NotNull Executor executor,
-                                            @NotNull RunProfileState state,
-                                            @Nullable RunContentDescriptor contentToReuse,
-                                            @NotNull ExecutionEnvironment env) throws ExecutionException {
+        public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
           if (debuggableWebBrowser == null) {
             return null;
           }
 
           final Url url = Urls.newFromEncoded(karmaServer.formatUrl("/debug.html"));
           final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
-          XDebugSession session = XDebuggerManager.getInstance(project).startSession(
+          XDebugSession session = XDebuggerManager.getInstance(env.getProject()).startSession(
             env,
             new XDebugProcessStarter() {
               @Override
@@ -116,17 +109,13 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
       return AsyncResult.<RunProfileStarter>done(new RunProfileStarter() {
         @Nullable
         @Override
-        public RunContentDescriptor execute(@NotNull Project project,
-                                            @NotNull Executor executor,
-                                            @NotNull RunProfileState state,
-                                            @Nullable RunContentDescriptor contentToReuse,
-                                            @NotNull ExecutionEnvironment env) {
+        public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) {
           RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
-          final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
+          final RunContentDescriptor descriptor = contentBuilder.showRunContent(env.getContentToReuse());
           karmaServer.onBrowsersReady(new Runnable() {
             @Override
             public void run() {
-              KarmaUtil.restart(descriptor);
+              ExecutionUtil.restartIfActive(descriptor);
             }
           });
           return descriptor;

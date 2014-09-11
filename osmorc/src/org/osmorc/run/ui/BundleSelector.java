@@ -185,7 +185,7 @@ public class BundleSelector extends DialogWrapper {
             setIcon(AllIcons.Nodes.Module);
           }
           else if (bundle.getBundleType() == SelectedBundle.BundleType.FrameworkBundle) {
-            setIcon(OsmorcIdeaIcons.Osmorc);
+            setIcon(OsmorcIdeaIcons.Osgi);
           }
           else {
             setIcon(AllIcons.Nodes.PpJar);

@@ -32,7 +32,8 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
 
   @Override
   public PsiElement getDeclaration() {
-    final JSNamedElementProxy declaration = AngularIndexUtil.resolve(myProject, AngularDirectivesIndex.INDEX_ID, getName());
+    final String name = DirectiveUtil.normalizeAttributeName(getName());
+    final JSNamedElementProxy declaration = AngularIndexUtil.resolve(myProject, AngularDirectivesIndex.INDEX_ID, name);
     return declaration != null ? declaration :
            AngularIndexUtil.resolve(myProject, AngularDirectivesDocIndex.INDEX_ID, getName());
   }

@@ -1,7 +1,8 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapRunConfigurationEditor;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapTargets;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
@@ -16,6 +17,11 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.PLATFORM_ANDROID;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.PLATFORM_IOS;
+
 /**
  * PhoneGapRunConfiguration.java
  * <p/>
@@ -28,6 +34,9 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   public String myExecutable;
 
   @Nullable
+  public String myWorkDir;
+
+  @Nullable
   public String myCommand;
 
   @Nullable
@@ -38,7 +47,38 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   @Nullable
   public String myPlatform;
 
+  public boolean hasTarget() {
+    return hasTarget;
+  }
+
+  public void setHasTarget(boolean hasTarget) {
+    this.hasTarget = hasTarget;
+  }
+
+  @Nullable
+  public String getTarget() {
+    return target;
+  }
+
+  public void setTarget(@Nullable String target) {
+    this.target = target;
+  }
+
+  public boolean hasTarget;
+
+  @Nullable
+  public String target;
+
   private volatile PhoneGapCommandLine myCommandLine;
+
+  @Nullable
+  public String getWorkDir() {
+    return myWorkDir;
+  }
+
+  public void setWorkDir(@Nullable String workDir) {
+    this.myWorkDir = workDir;
+  }
 
   @Nullable
   public String getExecutable() {
@@ -78,6 +118,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   public void readExternal(Element element) throws InvalidDataException {
     super.readExternal(element);
 
+    //noinspection deprecation
     DefaultJDOMExternalizer.readExternal(this, element);
   }
 
@@ -85,6 +126,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   public void writeExternal(Element element) throws WriteExternalException {
     super.writeExternal(element);
 
+    //noinspection deprecation
     DefaultJDOMExternalizer.writeExternal(this, element);
   }
 
@@ -97,26 +139,40 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
     if (StringUtil.isEmpty(myCommand)) {
-      throw new RuntimeConfigurationException("Command is missing");
+      throw new RuntimeConfigurationError("Command is missing");
     }
 
     if (StringUtil.isEmpty(myPlatform)) {
-      throw new RuntimeConfigurationException("Platform is missing");
+      throw new RuntimeConfigurationError("Platform is missing");
     }
 
     if (StringUtil.isEmpty(myExecutable)) {
-      throw new RuntimeConfigurationException("Executable is missing");
+      throw new RuntimeConfigurationError("Executable is missing");
+    }
+
+    if (StringUtil.isEmpty(myWorkDir)) {
+      throw new RuntimeConfigurationError("Working directory is missing");
+    }
+
+    if (myPlatform.equals(PLATFORM_ANDROID)) {
+      checkExistsSdkWithWarning(PhoneGapTargets.getAndroidName(), "Cannot detect android SDK in path");
+    }
+    if (myPlatform.equals(PLATFORM_IOS)) {
+      checkExistsSdkWithWarning(PhoneGapTargets.getIosSimName(), "Cannot detect ios-sim in path");
     }
   }
 
   public PhoneGapCommandLine getCommandLine() {
     PhoneGapCommandLine current = myCommandLine;
     String executable = getExecutable();
-    if (current != null && StringUtil.equals(current.getPath(), executable)) {
+    String workDir = getWorkDir();
+    if (current != null && StringUtil.equals(current.getPath(), executable) && StringUtil.equals(current.getWorkDir(), workDir)) {
       return current;
     }
     assert executable != null;
-    current = new PhoneGapCommandLine(executable, getProject().getBasePath());
+    assert workDir != null;
+
+    current = new PhoneGapCommandLine(executable, workDir);
     myCommandLine = current;
 
     return current;
@@ -145,5 +201,16 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
                                   @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
 
     return new PhoneGapRunProfileState(getProject(), executionEnvironment, this);
+  }
+
+  private static void checkExistsSdkWithWarning(@Nullable String path, @NotNull String error) throws RuntimeConfigurationWarning {
+    if (path == null) return;
+
+    File file = PathEnvironmentVariableUtil.findInPath(path);
+    if (file != null && file.exists()) {
+      return;
+    }
+
+    throw new RuntimeConfigurationWarning(error);
   }
 }

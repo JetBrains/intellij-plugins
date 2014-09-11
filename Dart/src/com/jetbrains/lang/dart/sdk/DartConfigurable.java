@@ -17,7 +17,6 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.ui.CheckboxTreeTable;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -70,7 +69,8 @@ import java.util.List;
 
 public class DartConfigurable implements SearchableConfigurable {
 
-  public static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
+  public static final String DART_SETTINGS_PAGE_ID = "dart.settings";
+  private static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
 
   private static final String CUSTOM_PACKAGE_ROOTS_LIB_NAME = "Dart custom package roots";
   private static final String SEMICOLON = ";";

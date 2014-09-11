@@ -13,5 +13,5 @@ public class OsmorcIdeaIcons {
     return IconLoader.getIcon(path, OsmorcIdeaIcons.class);
   }
 
-  public static final Icon Osmorc = load("/icons/osmorc.png"); // 16x16
+  public static final Icon Osgi = load("/icons/osgi.png"); // 16x16
 }

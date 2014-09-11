@@ -45,6 +45,10 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("custom.html", "custom.after.html", "angular.js", "custom.js");
   }
 
+  public void testCustomTagsArrayCompletion() {
+    myFixture.testCompletion("customArray.html", "customArray.after.html", "angular.js", "custom.js");
+  }
+
   public void testCustomAttributesCompletion() {
     myFixture.testCompletion("customAttributes.html", "customAttributes.after.html", "angular.js", "custom.js");
   }
@@ -58,6 +62,17 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
     assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+  }
+
+  public void testCustomTagsArrayResolve() {
+    myFixture.configureByFiles("customArray.after.html", "angular.js", "custom.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("her-cus<caret>tomer", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("custom.js", resolve.getContainingFile().getName());
+    assertEquals("'herCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
   }
 
   public void testOverride() {

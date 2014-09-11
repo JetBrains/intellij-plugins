@@ -1,6 +1,8 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -8,6 +10,8 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
@@ -38,36 +42,50 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
   }
 
   @Override
-  public void generateProject(@NotNull Project project,
+  public void generateProject(@NotNull final Project project,
                               final @NotNull VirtualFile baseDir,
-                              @NotNull PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings settings,
+                              @NotNull final PhoneGapProjectTemplateGenerator.PhoneGapProjectSettings settings,
                               @NotNull Module module) {
     try {
 
-      File tempProject = createTemp();
-      PhoneGapCommandLine commandLine = new PhoneGapCommandLine(settings.getExecutable(), tempProject.getPath());
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
+        @Override
+        public void run() {
 
-      if (!commandLine.isCorrectExecutable()) {
-        showErrorMessage(project, "Incorrect path");
-        return;
-      }
-      commandLine.createNewProject(settings.name());
+          try {
+            ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+            indicator.setText("Creating...");
+            File tempProject = createTemp();
+            PhoneGapCommandLine commandLine = new PhoneGapCommandLine(settings.getExecutable(), tempProject.getPath());
 
-      File[] array = tempProject.listFiles();
-      assert array != null && array.length != 0;
-      File from = ContainerUtil.getFirstItem(ContainerUtil.newArrayList(array));
-      assert from != null;
+            if (!commandLine.isCorrectExecutable()) {
+              showErrorMessage(project, "Incorrect path");
+              return;
+            }
+            commandLine.createNewProject(settings.name());
 
-      FileUtil.copyDir(from, new File(baseDir.getPath()));
+            File[] array = tempProject.listFiles();
+            assert array != null && array.length != 0;
+            File from = ContainerUtil.getFirstItem(ContainerUtil.newArrayList(array));
+            assert from != null;
+            FileUtil.copyDir(from, new File(baseDir.getPath()));
+
+            deleteTemp(tempProject);
+          }
+          catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+          }
+        }
+      }, "Creating Phonegap/Cordova project", false, project);
 
       ApplicationManager.getApplication().runWriteAction(new Runnable() {
         @Override
         public void run() {
+          PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+          propertiesComponent.setValue(PhoneGapSettings.PHONEGAP_WORK_DIRECTORY, project.getBasePath());
           baseDir.refresh(false, true);
         }
       });
-
-      deleteTemp(tempProject);
     }
     catch (Exception e) {
       LOG.warn(e);

@@ -32,18 +32,26 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project);
       for (String directiveName : docDirectives) {
         if (isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesDocIndex.INDEX_ID) == ThreeState.YES) {
-          result.put(directiveName, createDescriptor(project, directiveName));
+          addAttributes(project, result, directiveName);
         }
       }
       for (String directiveName : AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project)) {
         if (!docDirectives.contains(directiveName) &&
             isApplicable(project, directiveName, xmlTag.getName(), AngularDirectivesIndex.INDEX_ID) == ThreeState.YES) {
-          result.put(directiveName, createDescriptor(project, directiveName));
+          addAttributes(project, result, directiveName);
         }
       }
       return result.values().toArray(new XmlAttributeDescriptor[result.size()]);
     }
     return XmlAttributeDescriptor.EMPTY;
+  }
+
+  protected void addAttributes(Project project, Map<String, XmlAttributeDescriptor> result, String directiveName) {
+    result.put(directiveName, createDescriptor(project, directiveName));
+    if ("ng-repeat".equals(directiveName)) {
+      result.put(directiveName + "-start", createDescriptor(project, directiveName + "-start"));
+      result.put(directiveName + "-end", createDescriptor(project, directiveName + "-end"));
+    }
   }
 
   private static ThreeState isApplicable(Project project, String directiveName, String tagName, final ID<String, Void> index) {

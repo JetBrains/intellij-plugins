@@ -10,6 +10,11 @@
 
 /**
  * @ngdoc directive
+ * @name ng.directive:ngRepeat
+ */
+
+/**
+ * @ngdoc directive
  * @name ng.directive:ngApp
  */
 

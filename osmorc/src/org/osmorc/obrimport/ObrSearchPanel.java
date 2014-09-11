@@ -31,7 +31,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.CollectionListModel;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.net.HTTPProxySettingsDialog;
+import com.intellij.util.net.HttpConfigurable;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -104,8 +104,7 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
                     switch (dialogResult) {
                       case 2:
                         // show proxy settings
-                        HTTPProxySettingsDialog dialog = new HTTPProxySettingsDialog();
-                        dialog.show();
+                        HttpConfigurable.editConfigurable(_rootPanel);
                         // fall through..
                       case 0:
                         search();

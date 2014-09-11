@@ -12,7 +12,6 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xdebugger.XDebugProcess;
@@ -23,7 +22,6 @@ import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class DartRunner extends DefaultProgramRunner {
 
@@ -42,14 +40,11 @@ public class DartRunner extends DefaultProgramRunner {
   }
 
   @Override
-  protected RunContentDescriptor doExecute(final @NotNull Project project,
-                                           final @NotNull RunProfileState state,
-                                           final @Nullable RunContentDescriptor contentToReuse,
-                                           final @NotNull ExecutionEnvironment env) throws ExecutionException {
+  protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
     final String executorId = env.getExecutor().getId();
 
     if (DefaultRunExecutor.EXECUTOR_ID.equals(executorId)) {
-      return super.doExecute(project, state, contentToReuse, env);
+      return super.doExecute(state, env);
     }
 
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {

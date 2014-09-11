@@ -24,6 +24,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +56,17 @@ public class CucumberCreateStepFix implements LocalQuickFix {
   }
 
   public static Set<Pair<PsiFile, BDDFrameworkType>> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
-    return CucumberStepsIndex.getInstance(featureFile.getProject()).getStepDefinitionContainers(featureFile);
+    final Set<Pair<PsiFile, BDDFrameworkType>> result =
+      CucumberStepsIndex.getInstance(featureFile.getProject()).getStepDefinitionContainers(featureFile);
+
+    CucumberStepsIndex stepsIndex = CucumberStepsIndex.getInstance(featureFile.getProject());
+    for (Pair<PsiFile, BDDFrameworkType> item : result) {
+      if (stepsIndex.getExtensionMap().get(item.getSecond()) == null) {
+        result.remove(item);
+      }
+    }
+
+    return result;
   }
 
   public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
@@ -63,7 +74,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     final GherkinFile featureFile = (GherkinFile)step.getContainingFile();
     // TODO + step defs pairs from other content roots
     //Tree is used to prevent duplicates (if several frameworks take care about one file)
-    final SortedSet<Pair<PsiFile, BDDFrameworkType>> pairSortedSet = ContainerUtil.newTreeSet(FILE_FRAMEWORK_COMPARATOR);
+    final SortedSet<Pair<PsiFile, BDDFrameworkType>> pairSortedSet = ContainerUtilRt.newTreeSet(FILE_FRAMEWORK_COMPARATOR);
     pairSortedSet.addAll(getStepDefinitionContainers(featureFile));
     final List<Pair<PsiFile, BDDFrameworkType>> pairs = ContainerUtil.newArrayList(pairSortedSet);
     if (!pairs.isEmpty()) {

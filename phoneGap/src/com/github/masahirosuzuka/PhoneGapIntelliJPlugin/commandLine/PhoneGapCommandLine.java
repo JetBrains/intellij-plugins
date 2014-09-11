@@ -30,11 +30,17 @@ public class PhoneGapCommandLine {
   public static final String PLATFORM_IONIC = "ionic";
   public static final String COMMAND_RUN = "run";
   public static final String COMMAND_EMULATE = "emulate";
-  public static final String COMMAND_RIPPLE = "ripple";
-
+  public static final String COMMAND_SERVE = "serve";
+  public static final String COMMAND_REMOTE_RUN = "remote run";
+  public static final String COMMAND_REMOTE_BUILD = "remote build";
 
   @Nullable
   private final String myWorkDir;
+
+  @Nullable
+  public String getWorkDir() {
+    return myWorkDir;
+  }
 
   @NotNull
   public String getPath() {
@@ -78,11 +84,6 @@ public class PhoneGapCommandLine {
     }
 
     return output;
-  }
-
-  public ProcessOutput build(@NotNull String platform) throws ExecutionException {
-    String trimmedPlatform = platform.trim();
-    return executeAndGetOut(new String[]{myPath, "platform", "build", trimmedPlatform});
   }
 
   public boolean isCorrectExecutable() {
@@ -139,35 +140,69 @@ public class PhoneGapCommandLine {
     }
   }
 
+  public OSProcessHandler serve() throws ExecutionException {
+    GeneralCommandLine commandLine = new GeneralCommandLine(myPath, "serve");
+    commandLine.setWorkDirectory(myWorkDir);
+    return KillableColoredProcessHandler.create(commandLine);
+  }
+
   @NotNull
-  public OSProcessHandler runCommand(@NotNull String command, @NotNull String platform) throws ExecutionException {
+  public OSProcessHandler runCommand(@NotNull String command, @NotNull String platform, @Nullable String target) throws ExecutionException {
     if (COMMAND_RUN.equals(command)) {
-      return run(platform);
+      return run(platform, target);
     }
 
     if (COMMAND_EMULATE.equals(command)) {
-      return emulate(platform);
+      return emulate(platform, target);
+    }
+
+    if (COMMAND_SERVE.equals(command)) {
+      return serve();
+    }
+
+    if (COMMAND_REMOTE_RUN.equals(command)) {
+      return remoteRun(platform);
+    }
+
+    if (COMMAND_REMOTE_BUILD.equals(command)) {
+      return remoteBuild(platform);
     }
 
     throw new IllegalStateException("Unsupported command");
   }
 
-  private OSProcessHandler emulate(@NotNull String platform) throws ExecutionException {
-    GeneralCommandLine commandLine;
-    if (isPhoneGap()) {
-      commandLine = new GeneralCommandLine(myPath, "run", platform, "--emulate");
-    }
-    else {
-      commandLine = new GeneralCommandLine(myPath, "emulate", platform);
-    }
-    commandLine.setWorkDirectory(myWorkDir);
-    return KillableColoredProcessHandler.create(commandLine);
+  private OSProcessHandler remoteRun(@NotNull String platform) throws ExecutionException {
+    return createProcessHandler(myPath, "remote", "run", platform);
   }
 
-  private OSProcessHandler run(@NotNull String platform) throws ExecutionException {
-    GeneralCommandLine commandLine = new GeneralCommandLine(myPath, "run", platform);
-    commandLine.setWorkDirectory(myWorkDir);
-    return KillableColoredProcessHandler.create(commandLine);
+  private OSProcessHandler remoteBuild(@NotNull String platform) throws ExecutionException {
+    return createProcessHandler(myPath, "remote", "build", platform);
+  }
+
+  private OSProcessHandler emulate(@NotNull String platform, @Nullable String target) throws ExecutionException {
+    String[] command;
+
+    if (!StringUtil.isEmpty(target)) {
+      target = target.trim();
+      command = new String[]{myPath, "run", "--emulator", "--target=" + target, platform};
+    }
+    else {
+      command = new String[]{myPath, "run", "--emulator", platform};
+    }
+    return createProcessHandler(command);
+  }
+
+  private OSProcessHandler run(@NotNull String platform, @Nullable String target) throws ExecutionException {
+    String[] command;
+
+    if (!StringUtil.isEmpty(target)) {
+      target = target.trim();
+      command = new String[]{myPath, "run", "--target=" + target, platform};
+    }
+    else {
+      command = new String[]{myPath, "run", platform};
+    }
+    return createProcessHandler(command);
   }
 
   public boolean needAddPlatform() {
@@ -180,14 +215,29 @@ public class PhoneGapCommandLine {
 
   private boolean isPhoneGap() {
     assert myWorkDir != null;
-    File file = new File(myPath);
-    if (file.getName().contains(PLATFORM_PHONEGAP)) return true;
-    if (file.getName().contains(PLATFORM_CORDOVA)) return false;
-    if (file.getName().contains(PLATFORM_IONIC)) return false;
+    Boolean isPhoneGapByName = isPhoneGapExecutableByPath(myPath);
+    if (isPhoneGapByName != null) return isPhoneGapByName;
 
     String s = executeAndReturnResult(myPath);
 
     return s.contains(PLATFORM_PHONEGAP);
+  }
+
+  /**
+   * @param path
+   * @return true - phonegap / false - not phonegap / null - cannot detect
+   */
+  @Nullable
+  public static Boolean isPhoneGapExecutableByPath(@Nullable String path) {
+    if (StringUtil.isEmpty(path)) return false;
+
+    File file = new File(path);
+    if (!file.exists()) return false;
+    if (file.getName().contains(PLATFORM_IONIC)) return false;
+    if (file.getName().contains(PLATFORM_CORDOVA)) return false;
+    if (file.getName().contains(PLATFORM_PHONEGAP)) return true;
+
+    return null;
   }
 
   private boolean isIonic() {
@@ -302,5 +352,11 @@ public class PhoneGapCommandLine {
       output.setTimeout();
     }
     return output;
+  }
+
+  private OSProcessHandler createProcessHandler(String... commands) throws ExecutionException {
+    GeneralCommandLine commandLine = new GeneralCommandLine(commands);
+    commandLine.setWorkDirectory(myWorkDir);
+    return KillableColoredProcessHandler.create(commandLine);
   }
 }

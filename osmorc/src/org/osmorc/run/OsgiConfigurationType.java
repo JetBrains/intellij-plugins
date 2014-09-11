@@ -44,7 +44,7 @@ public class OsgiConfigurationType extends ConfigurationTypeBase {
   private static final String ID = "#org.osmorc.OsgiConfigurationType";
 
   public OsgiConfigurationType() {
-    super(ID, OsmorcBundle.message("run.configuration.name"), OsmorcBundle.message("run.configuration.description"), OsmorcIdeaIcons.Osmorc);
+    super(ID, OsmorcBundle.message("run.configuration.name"), OsmorcBundle.message("run.configuration.description"), OsmorcIdeaIcons.Osgi);
 
     addFactory(new ConfigurationFactory(this) {
       @Override

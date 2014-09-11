@@ -14,8 +14,7 @@ import com.intellij.execution.actions.ConfigurationFromContext;
 import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.executors.DefaultRunExecutor;
-import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
@@ -231,9 +230,9 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
       runManager.setTemporaryConfiguration(configuration);
     }
     runManager.setSelectedConfiguration(configuration);
-    ProgramRunner programRunner = ProgramRunnerUtil.getRunner(executor.getId(), configuration);
-    if (programRunner != null) {
-      ExecutionManager.getInstance(project).restartRunProfile(new ExecutionEnvironment(executor, programRunner, configuration, project));
+    ExecutionEnvironmentBuilder builder = ExecutionEnvironmentBuilder.createOrNull(executor, configuration);
+    if (builder != null) {
+      ExecutionManager.getInstance(project).restartRunProfile(builder.build());
     }
   }
 

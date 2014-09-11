@@ -17,7 +17,7 @@ CfmlFile:infiniteCycleWhileCaseParsing.cfml
         PsiElement(DOTDOT)(':')
         ReferenceExpression
           PsiElement(IDENTIFIER)('a')
-        PsiErrorElement:Not a statemenet
+        PsiErrorElement:Not a statement
           <empty list>
         ReferenceExpression
           PsiElement(CASE_KEYWORD)('case')

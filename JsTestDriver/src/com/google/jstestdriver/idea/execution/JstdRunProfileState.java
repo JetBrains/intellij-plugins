@@ -63,17 +63,14 @@ public class JstdRunProfileState implements RunProfileState {
     }
   };
 
-  private final Project myProject;
   private final ExecutionEnvironment myEnvironment;
   private final JstdRunSettings myRunSettings;
   private final String myCoverageFilePath;
   private final boolean myDebug;
 
-  public JstdRunProfileState(@NotNull Project project,
-                             @NotNull ExecutionEnvironment environment,
+  public JstdRunProfileState(@NotNull ExecutionEnvironment environment,
                              @NotNull JstdRunSettings runSettings,
                              @Nullable String coverageFilePath) {
-    myProject = project;
     myEnvironment = environment;
     myRunSettings = runSettings;
     myCoverageFilePath = coverageFilePath;
@@ -112,7 +109,7 @@ public class JstdRunProfileState implements RunProfileState {
   }
 
   @Nullable
-  private String getServerUrl(@Nullable JstdServer ideServer) throws ExecutionException {
+  private String getServerUrl(@Nullable JstdServer ideServer) {
     if (myRunSettings.isExternalServerType()) {
       return myRunSettings.getServerAddress();
     }
@@ -142,12 +139,12 @@ public class JstdRunProfileState implements RunProfileState {
                                                       myEnvironment,
                                                       splitterPropertyName,
                                                       ideServer);
-    Disposer.register(myProject, consoleView);
+    Disposer.register(myEnvironment.getProject(), consoleView);
     SMTestRunnerConnectionUtil.initConsoleView(consoleView,
                                                JSTD_FRAMEWORK_NAME,
                                                new JstdTestLocationProvider(),
                                                true,
-                                               new JstdTestProxyFilterProvider(myProject));
+                                               new JstdTestProxyFilterProvider(myEnvironment.getProject()));
     return consoleView;
   }
 
@@ -164,7 +161,7 @@ public class JstdRunProfileState implements RunProfileState {
         public void onServerTerminated(int exitCode) {
           nopProcessHandler.destroyProcess();
         }
-      }, myProject);
+      }, myEnvironment.getProject());
     }
     return nopProcessHandler;
   }
@@ -230,12 +227,12 @@ public class JstdRunProfileState implements RunProfileState {
     if (testType == TestType.ALL_CONFIGS_IN_DIRECTORY) {
       parameters.put(TestRunner.ParameterKey.ALL_CONFIGS_IN_DIRECTORY, myRunSettings.getDirectory());
     }
-    List<VirtualFile> jstdConfigs = JstdSettingsUtil.collectJstdConfigs(myProject, myRunSettings);
+    List<VirtualFile> jstdConfigs = JstdSettingsUtil.collectJstdConfigs(myEnvironment.getProject(), myRunSettings);
     if (jstdConfigs.isEmpty()) {
       throw new ExecutionException("Can't find JsTestDriver configuration file.");
     }
     parameters.put(TestRunner.ParameterKey.CONFIG_FILES, joinJstdConfigs(jstdConfigs));
-    TestFileScope testFileScope = buildTestFileScope(myProject, myRunSettings);
+    TestFileScope testFileScope = buildTestFileScope(myEnvironment.getProject(), myRunSettings);
     if (!testFileScope.isAll()) {
       parameters.put(TestRunner.ParameterKey.TESTS, testFileScope.serialize());
     }

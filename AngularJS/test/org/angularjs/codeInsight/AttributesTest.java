@@ -51,6 +51,36 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("angular.js", resolve.getContainingFile().getName());
   }
 
+  public void testCustomAttributesInDirectiveCompletion() {
+    myFixture.testCompletion("customInDirective.html", "customInDirective.after.html", "custom.js", "angular.js");
+  }
+
+  public void testCustomAttributesInDirectiveResolve() {
+    myFixture.configureByFiles("customInDirective.after.html", "custom.js", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("custom.js", resolve.getContainingFile().getName());
+    assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+  }
+
+  public void testCustomAttributesInDirectiveEmptyCompletion() {
+    myFixture.testCompletion("customInDirectiveEmpty.html", "customInDirectiveEmpty.after.html", "custom.js", "angular.js");
+  }
+
+  public void testCustomAttributesInDirectiveEmptyResolve() {
+    myFixture.configureByFiles("customInDirectiveEmpty.after.html", "custom.js", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("custom.js", resolve.getContainingFile().getName());
+    assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+  }
+
   public void testCustomAttributesCompletion() {
     myFixture.testCompletion("custom.html", "custom.after.html", "custom.js");
   }
@@ -171,6 +201,26 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "ng-copy");
+    }
+  }
+
+  public void testRepeatCompletion() {
+    myFixture.configureByFiles("ng-repeat.html", "angular.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("<div ng-rep<caret>", myFixture.getFile());
+    myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "ng-repeat", "ng-repeat-start", "ng-repeat-end");
+  }
+
+  public void testRepeatResolve() {
+    myFixture.configureByFiles("ng-repeat.resolve.html", "angular.js");
+    for (String suffix : new String[]{"", "-start", "-end"}) {
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng<caret>-repeat" + suffix, myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("angular.js", resolve.getContainingFile().getName());
     }
   }
 }

@@ -57,7 +57,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-    return new JavaApplicationCommandLineState(CucumberJavaRunConfiguration.this, env) {
+    return new JavaApplicationCommandLineState<CucumberJavaRunConfiguration>(CucumberJavaRunConfiguration.this, env) {
       protected JavaParameters createJavaParameters() throws ExecutionException {
         final JavaParameters params = new JavaParameters();
         final JavaRunConfigurationModule module = getConfigurationModule();

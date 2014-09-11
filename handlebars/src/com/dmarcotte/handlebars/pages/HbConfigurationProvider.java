@@ -23,6 +23,11 @@ public class HbConfigurationProvider extends ConfigurableProvider {
   @Nullable
   @Override
   public Configurable createConfigurable() {
-    return Extensions.getArea(myProject).hasExtensionPoint("JavaScript.lang.templates") ? null : new HbConfigurationPage(myProject);
+    return new HbConfigurationPage(myProject);
+  }
+
+  @Override
+  public boolean canCreateConfigurable() {
+    return !Extensions.getArea(myProject).hasExtensionPoint("JavaScript.lang.templates");
   }
 }

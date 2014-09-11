@@ -27,7 +27,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
                                              final @NotNull Collection<AbstractTreeNode> children,
                                              final ViewSettings settings) {
     // root/packages/ThisProject and root/packages/PathPackage folders are excluded in dart projects (see DartProjectComponent.excludePackagesFolders),
-    // this provider shows empty nodes instead with names like "ThisProject (ThisProject/lib)"
+    // this provider adds location string tho these nodes in Project View like "ThisProject (ThisProject/lib)"
     final Project project = parentNode.getProject();
     final VirtualFile packagesDir = parentNode instanceof PsiDirectoryNode && project != null
                                     ? ((PsiDirectoryNode)parentNode).getVirtualFile()
@@ -40,31 +40,45 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
                                         : null;
 
     if (pubspecYamlFile != null && !pubspecYamlFile.isDirectory()) {
-      final ArrayList<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>(children);
+      final ArrayList<AbstractTreeNode> modifiedChildren = new ArrayList<AbstractTreeNode>(children);
 
       final DartUrlResolver resolver = DartUrlResolver.getInstance(project, pubspecYamlFile);
       resolver.processLivePackages(new PairConsumer<String, VirtualFile>() {
         public void consume(final @NotNull String packageName, final @NotNull VirtualFile packageDir) {
-          if (packagesDir.findChild(packageName) != null && !containsFolderNode(children, packageName)) {
-            result.add(new SymlinkToLivePackageNode(project, packageName, packageDir));
+          final VirtualFile folder = packagesDir.findChild(packageName);
+          if (folder != null) {
+            final AbstractTreeNode node = getFolderNode(children, folder);
+            if (node == null) {
+              modifiedChildren.add(new SymlinkToLivePackageNode(project, packageName, packageDir));
+            }
+            else {
+              node.getPresentation().setLocationString(getPackageLocationString(packageDir));
+            }
           }
         }
       });
 
-      return result;
+      return modifiedChildren;
     }
 
     return children;
   }
 
-  private static boolean containsFolderNode(final @NotNull Collection<AbstractTreeNode> nodes, final @NotNull String folderName) {
+  @Nullable
+  private static AbstractTreeNode getFolderNode(final @NotNull Collection<AbstractTreeNode> nodes, final @NotNull VirtualFile folder) {
     for (AbstractTreeNode node : nodes) {
-      final VirtualFile file = node instanceof PsiDirectoryNode ? ((PsiDirectoryNode)node).getVirtualFile() : null;
-      if (file != null && folderName.equals(file.getName())) {
-        return true;
+      if (node instanceof PsiDirectoryNode && folder.equals(((PsiDirectoryNode)node).getVirtualFile())) {
+        return node;
       }
     }
-    return false;
+    return null;
+  }
+
+  private static String getPackageLocationString(@NotNull final VirtualFile packageDir) {
+    final String path = packageDir.getPath();
+    final int lastSlashIndex = path.lastIndexOf("/");
+    final int prevSlashIndex = lastSlashIndex == -1 ? -1 : path.substring(0, lastSlashIndex).lastIndexOf("/");
+    return FileUtil.toSystemDependentName(prevSlashIndex < 0 ? path : path.substring(prevSlashIndex + 1));
   }
 
   @Nullable
@@ -80,12 +94,8 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
                                     final @NotNull VirtualFile packageDir) {
       super(project, packageName);
       myName = packageName;
+      mySymlinkPath = getPackageLocationString(packageDir);
       setIcon(DartIconProvider.FOLDER_SYMLINK_ICON);
-
-      final String path = packageDir.getPath();
-      final int lastSlashIndex = path.lastIndexOf("/");
-      final int prevSlashIndex = lastSlashIndex == -1 ? -1 : path.substring(0, lastSlashIndex).lastIndexOf("/");
-      mySymlinkPath = FileUtil.toSystemDependentName(prevSlashIndex < 0 ? path : path.substring(prevSlashIndex + 1));
     }
 
     @NotNull

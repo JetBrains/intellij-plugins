@@ -1,15 +1,14 @@
-package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util;
+package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
-import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.components.*;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -23,6 +22,7 @@ import java.util.List;
     file = StoragePathMacros.APP_CONFIG + "/phonegap.xml")})
 public final class PhoneGapSettings implements PersistentStateComponent<PhoneGapSettings.State> {
 
+  public static String PHONEGAP_WORK_DIRECTORY = "js.phonegap.settings.workdir";
 
   // External tools PATH
   public static String NODEJS_PATH = "/usr/local/bin/node";
@@ -36,15 +36,17 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
 
     public String executablePath;
 
+    public boolean isExcludePlatformFolder = true;
+
     public List<String> repositoriesList = ContainerUtil.newArrayList();
 
     @Override
     public boolean equals(Object o) {
       if (!(o instanceof State)) return false;
-      if(!StringUtil.equals(getExecutablePath(), ((State)o).getExecutablePath())) return false;
+      if (!StringUtil.equals(getExecutablePath(), ((State)o).getExecutablePath())) return false;
       if (repositoriesList == ((State)o).repositoriesList) return true;
       if (repositoriesList == null) return false;
-      return repositoriesList.equals(((State)o).repositoriesList);
+      return repositoriesList.equals(((State)o).repositoriesList) && ((State)o).isExcludePlatformFolder == isExcludePlatformFolder;
     }
 
     @Override
@@ -70,6 +72,7 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
     }
   }
 
+
   public static PhoneGapSettings getInstance() {
     return ServiceManager.getService(PhoneGapSettings.class);
   }
@@ -83,6 +86,27 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
   }
 
   @Nullable
+  public String getWorkingDirectory(@Nullable Project project) {
+    if (project == null) return null;
+    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+    String value = propertiesComponent.getValue(PHONEGAP_WORK_DIRECTORY);
+    if (value != null) return value;
+
+    return ContainerUtil.getFirstItem(PhoneGapUtil.getDefaultWorkingDirectory(project));
+  }
+
+  public void setWorkingDirectory(@Nullable Project project, @Nullable String dir) {
+    if (project == null) return;
+    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+    propertiesComponent.setValue(PHONEGAP_WORK_DIRECTORY, dir);
+  }
+
+  public boolean isExcludePlatformFolder() {
+    return myState.isExcludePlatformFolder;
+  }
+
+
+  @Nullable
   public String getExecutablePath() {
     return myState.getExecutablePath();
   }
@@ -94,22 +118,6 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
 
   @Nullable
   private static String detectDefaultPath() {
-    return ContainerUtil.getFirstItem(getDefaultPaths());
+    return ContainerUtil.getFirstItem(PhoneGapUtil.getDefaultExecutablePaths());
   }
-
-  @NotNull
-  public static List<String> getDefaultPaths() {
-    List<String> paths = ContainerUtil.newArrayList();
-    ContainerUtil.addIfNotNull(paths, getPath(PhoneGapCommandLine.PLATFORM_PHONEGAP));
-    ContainerUtil.addIfNotNull(paths, getPath(PhoneGapCommandLine.PLATFORM_IONIC));
-    ContainerUtil.addIfNotNull(paths, getPath(PhoneGapCommandLine.PLATFORM_CORDOVA));
-    return paths;
-  }
-
-  @Nullable
-  private static String getPath(String name) {
-    File path = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? name +".cmd" : name);
-    return (path != null && path.exists()) ? path.getAbsolutePath() : null;
-  }
-
 }

@@ -9,7 +9,7 @@ public class DebuggableWebBrowser {
   private final JavaScriptDebugEngine myDebugEngine;
   private final WebBrowser myWebBrowser;
 
-  public DebuggableWebBrowser(@NotNull JavaScriptDebugEngine debugEngine, @NotNull WebBrowser webBrowser) {
+  private DebuggableWebBrowser(@NotNull JavaScriptDebugEngine debugEngine, @NotNull WebBrowser webBrowser) {
     myDebugEngine = debugEngine;
     myWebBrowser = webBrowser;
   }

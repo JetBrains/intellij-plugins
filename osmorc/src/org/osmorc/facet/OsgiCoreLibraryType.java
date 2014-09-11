@@ -32,7 +32,7 @@ public class OsgiCoreLibraryType extends DownloadableLibraryType {
   private static final String DETECTOR_CLASS = "org.osgi.framework.Constants";
 
   public OsgiCoreLibraryType() {
-    super("OSGi Core API", ID, ID, OsmorcIdeaIcons.Osmorc, OsgiCoreLibraryType.class.getResource("osgi.core.xml"));
+    super("OSGi Core API", ID, ID, OsmorcIdeaIcons.Osgi, OsgiCoreLibraryType.class.getResource("osgi.core.xml"));
   }
 
   @Override

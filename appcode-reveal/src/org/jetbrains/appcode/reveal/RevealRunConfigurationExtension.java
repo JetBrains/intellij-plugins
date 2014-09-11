@@ -31,7 +31,7 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.cidr.execution.*;
 import com.jetbrains.cidr.execution.deviceSupport.AMDevice;
 import com.jetbrains.cidr.execution.deviceSupport.AMDeviceUtil;
-import com.jetbrains.cidr.frameworks.AppleSdk;
+import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.model.*;
 import com.jetbrains.cidr.xcode.plist.Plist;
 import com.jetbrains.cidr.xcode.plist.PlistDriver;

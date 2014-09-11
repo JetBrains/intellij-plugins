@@ -9,4 +9,21 @@ angular.module('docsSimpleDirective', [])
         return {
             template: 'Name: {{customer.name}} Address: {{customer.address}}'
         };
+    })
+    .directive('someTag', function() {
+        return {
+            restrict: 'E',
+            transclude: true,
+            scope: {
+                'close': '&onClose'
+            },
+            templateUrl: 'my-dialog-close.html'
+        };
+    })
+    .directive('someOtherTag', function() {
+        return {
+            restrict: 'E',
+            transclude: true,
+            templateUrl: 'my-dialog-close.html'
+        };
     });

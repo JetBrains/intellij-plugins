@@ -1,6 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.javascriptDependency.codecompletion;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapFacade;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.JSTokenTypes;
@@ -29,7 +29,7 @@ public class PhoneGapCodeCompletion extends CompletionContributor {
                                     @NotNull CompletionResultSet completionResultSet) {
         Project project = completionParameters.getEditor().getProject();
 
-        if (null == project || !PhoneGapFacade.isPhoneGapProject(project)) {
+        if (null == project || !PhoneGapUtil.isPhoneGapProject(project)) {
           return;
         }
         completionResultSet.addElement(LookupElementBuilder.create("deviceready"));

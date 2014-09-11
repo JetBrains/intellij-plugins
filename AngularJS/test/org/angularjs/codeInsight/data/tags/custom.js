@@ -20,4 +20,10 @@ angular.module('docsSimpleDirective', [])
                      homeAddress: ""
                    }
                  };
-               });
+               })
+    .directive('herCustomer', ["$bar", function ($bar) {
+                 return {
+                   template: 'Name: {{customer.name}} Address: {{customer.address}}',
+                   restrict: 'E'
+                 };
+               }]);

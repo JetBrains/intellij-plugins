@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -27,7 +28,6 @@ import com.intellij.rt.coverage.data.ProjectData;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mortbay.log.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +39,7 @@ import java.util.*;
 public class JstdCoverageEngine extends CoverageEngine {
 
   public static final String ID = "JstdCoverage";
+  private static final Logger LOG = Logger.getInstance(JstdCoverageEngine.class);
 
   @Override
   public boolean isApplicableTo(@Nullable RunConfigurationBase configuration) {
@@ -187,7 +188,7 @@ public class JstdCoverageEngine extends CoverageEngine {
                                "</html>", title);
     }
     catch (IOException e) {
-      Log.warn("Can not export coverage data", e);
+      LOG.warn("Can not export coverage data", e);
       Messages.showErrorDialog("Can not generate coverage report: " + e.getMessage(), title);
     }
   }

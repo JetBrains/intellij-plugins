@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight.tags;
 
+import com.intellij.html.impl.RelaxedHtmlFromSchemaElementDescriptor;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
@@ -60,12 +61,16 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     final String string = getDeclaration().getIndexItem().getTypeString();
     final String attributes = string.split(";", -1)[3];
     final String[] split = attributes.split(",");
-    if (split.length == 1 && split[0].isEmpty()) return XmlAttributeDescriptor.EMPTY;
-    final XmlAttributeDescriptor[] result = new XmlAttributeDescriptor[split.length];
-    for (int i = 0; i < split.length; i++) {
-      result[i] = new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(split[i]));
+    final XmlAttributeDescriptor[] result;
+    if (split.length == 1 && split[0].isEmpty()) {
+      result = XmlAttributeDescriptor.EMPTY;
+    } else {
+      result = new XmlAttributeDescriptor[split.length];
+      for (int i = 0; i < split.length; i++) {
+        result[i] = new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(split[i]));
+      }
     }
-    return result;
+    return RelaxedHtmlFromSchemaElementDescriptor.addAttrDescriptorsForFacelets(context, result);
   }
 
   @Nullable

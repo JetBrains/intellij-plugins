@@ -1,6 +1,6 @@
 package com.intellij.javascript.karma.util;
 
-import com.intellij.javascript.nodejs.NodeSettings;
+import com.intellij.javascript.nodejs.NodePathSettings;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +24,7 @@ public class NodeInstalledPackagesLocator {
   @Nullable
   public NodeInstalledPackage findInstalledPackages(@NotNull String packageName,
                                                     @NotNull File currentDir,
-                                                    @Nullable NodeSettings nodeSettings) {
+                                                    @Nullable NodePathSettings nodeSettings) {
     NodeInstalledPackage pkg = findPackageInNodeModulesDir(packageName, currentDir);
     if (pkg != null) {
       return pkg;
@@ -40,7 +40,7 @@ public class NodeInstalledPackagesLocator {
 
   @Nullable
   private static NodeInstalledPackage findPackageInGlobalFolders(@NotNull String packageName,
-                                                                 @NotNull NodeSettings nodeSettings) {
+                                                                 @NotNull NodePathSettings nodeSettings) {
     List<VirtualFile> globalFolders = nodeSettings.getGlobalFolders();
     for (VirtualFile dir : globalFolders) {
       if (dir.isValid() && dir.isDirectory()) {

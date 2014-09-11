@@ -48,6 +48,9 @@ public abstract class AbstractStepDefinition {
     return myElementPointer.getElement();
   }
 
+  /**
+   * @return regexp pattern for step or null if regexp is malformed
+   */
   @Nullable
   public Pattern getPattern() {
     try {
@@ -64,8 +67,8 @@ public abstract class AbstractStepDefinition {
 
       return new Perl5Compiler().compile(patternText.toString());
     }
-    catch (MalformedPatternException e) {
-      return null;
+    catch (final MalformedPatternException ignored) {
+      return null; // Bad regex?
     }
   }
 

@@ -1,6 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ui.PhoneGapConfigurable;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.PhoneGapConfigurable;
 import com.intellij.lang.Language;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableProvider;
@@ -23,6 +23,11 @@ public class PhoneGapConfigurationProvider extends ConfigurableProvider {
   @Nullable
   @Override
   public Configurable createConfigurable() {
-    return Language.findLanguageByID("JavaScript") != null ? null : new PhoneGapConfigurable(myProject);
+    return new PhoneGapConfigurable(myProject);
+  }
+
+  @Override
+  public boolean canCreateConfigurable() {
+    return Language.findLanguageByID("JavaScript") == null;
   }
 }

@@ -35,6 +35,11 @@ public class DirectiveUtil {
     }
     name = name.replace(':', '-');
     name = name.replace('_', '-');
+    if (name.endsWith("-start")) {
+      name = name.substring(0, name.length() - 6);
+    } else if (name.endsWith("-end")) {
+      name = name.substring(0, name.length() - 4);
+    }
     return name;
   }
 

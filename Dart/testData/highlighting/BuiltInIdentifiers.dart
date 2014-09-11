@@ -10,7 +10,7 @@
 <info textAttributesKey="DART_KEYWORD">typedef</info> <error descr="The built-in identifier 'typedef' cannot be used as a type alias name"><info>typedef</info></error>();
 
 <info textAttributesKey="DART_KEYWORD">abstract</info> class <info>Functions</info> <info textAttributesKey="DART_KEYWORD">implements</info> <error descr="Classes can only implement other classes">implements</error> {
-  <info textAttributesKey="DART_KEYWORD">factory</info> <error descr="The name of the immediately enclosing class expected"><info>factory</info></error>() {}
+  <info textAttributesKey="DART_KEYWORD">factory</info> <error descr="Instance members cannot be accessed from a factory constructor"><error descr="The name of the immediately enclosing class expected"><info>factory</info></error></error>() {}
   <info textAttributesKey="DART_KEYWORD">operator</info> +(<info>a</info>){}
 
   <info>bool</info> <info>abstract</info>() => false;

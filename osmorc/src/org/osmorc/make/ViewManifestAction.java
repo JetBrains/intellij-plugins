@@ -29,7 +29,6 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -77,7 +76,7 @@ public class ViewManifestAction extends AnAction implements DumbAware {
       final VirtualFile manifestFile = jarRoot.findFileByRelativePath("META-INF/MANIFEST.MF");
 
       if (manifestFile == null) {
-        Messages.showErrorDialog(project, "There is no manifest in the bundle jar. Please check the facet settings, rebuild and try again.",
+        Messages.showErrorDialog(project, "There is no manifest in the bundle JAR. Please check the facet settings, rebuild and try again.",
                                  "Cannot open manifest");
         return;
       }

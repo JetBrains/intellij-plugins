@@ -1,6 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapFacade;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
@@ -40,7 +40,7 @@ public class ExternalToolsDetector implements ProjectComponent {
     StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
       @Override
       public void run() {
-        if (!PhoneGapFacade.isPhoneGapProject(project))
+        if (!PhoneGapUtil.isPhoneGapProject(project))
         {
           return;
         }

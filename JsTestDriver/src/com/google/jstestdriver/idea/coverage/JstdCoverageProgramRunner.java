@@ -8,13 +8,11 @@ import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.server.JstdServerLifeCycleAdapter;
 import com.google.jstestdriver.idea.server.JstdServerRegistry;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowManager;
-import com.google.jstestdriver.idea.util.JstdUtil;
 import com.intellij.coverage.CoverageExecutor;
 import com.intellij.coverage.CoverageHelper;
 import com.intellij.coverage.CoverageRunnerData;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
 import com.intellij.execution.RunProfileStarter;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
 import com.intellij.execution.configurations.RunProfile;
@@ -24,10 +22,10 @@ import com.intellij.execution.configurations.coverage.CoverageEnabledConfigurati
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.AsyncGenericProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.util.NullableConsumer;
 import org.jetbrains.annotations.NotNull;
@@ -55,14 +53,12 @@ public class JstdCoverageProgramRunner extends AsyncGenericProgramRunner {
 
   @NotNull
   @Override
-  protected AsyncResult<RunProfileStarter> prepare(@NotNull Project project,
-                                                   @NotNull ExecutionEnvironment environment,
-                                                   @NotNull RunProfileState state) throws ExecutionException {
+  protected AsyncResult<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
     if (jstdState.getRunSettings().isExternalServerType()) {
       return AsyncResult.<RunProfileStarter>done(new MyStarter(null));
     }
-    JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(project);
+    JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(environment.getProject());
     jstdToolWindowManager.setAvailable(true);
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     if (server != null && !server.isStopped()) {
@@ -72,12 +68,7 @@ public class JstdCoverageProgramRunner extends AsyncGenericProgramRunner {
     jstdToolWindowManager.restartServer(new NullableConsumer<JstdServer>() {
       @Override
       public void consume(@Nullable JstdServer server) {
-        if (server != null) {
-          result.setDone(new MyStarter(server));
-        }
-        else {
-          result.setDone(null);
-        }
+        result.setDone(server != null ? new MyStarter(server) : null);
       }
     });
     return result;
@@ -92,27 +83,23 @@ public class JstdCoverageProgramRunner extends AsyncGenericProgramRunner {
 
     @Nullable
     @Override
-    public RunContentDescriptor execute(@NotNull Project project,
-                                        @NotNull Executor executor,
-                                        @NotNull RunProfileState state,
-                                        @Nullable RunContentDescriptor contentToReuse,
-                                        @NotNull ExecutionEnvironment environment) throws ExecutionException {
+    public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment environment) throws ExecutionException {
       FileDocumentManager.getInstance().saveAllDocuments();
       JstdRunConfiguration runConfiguration = (JstdRunConfiguration) environment.getRunProfile();
       CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
       String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
-      JstdRunProfileState jstdState = new JstdRunProfileState(project, environment, runConfiguration.getRunSettings(), coverageFilePath);
+      JstdRunProfileState jstdState = new JstdRunProfileState(environment, runConfiguration.getRunSettings(), coverageFilePath);
       ExecutionResult executionResult = jstdState.executeWithServer(myServer);
 
       RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, environment);
-      final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
+      final RunContentDescriptor descriptor = contentBuilder.showRunContent(environment.getContentToReuse());
       ProcessHandler processHandler = executionResult.getProcessHandler();
       if (processHandler instanceof NopProcessHandler) {
         if (myServer != null) {
           myServer.addLifeCycleListener(new JstdServerLifeCycleAdapter() {
             @Override
             public void onBrowserCaptured(@NotNull JstdBrowserInfo info) {
-              JstdUtil.restart(descriptor);
+              ExecutionUtil.restartIfActive(descriptor);
               myServer.removeLifeCycleListener(this);
             }
           }, contentBuilder);

@@ -15,7 +15,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.util.concurrency.Semaphore;
@@ -24,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGapAddPlatformBeforeRun.PhoneGapAddPlatformTask> {
 
@@ -88,6 +89,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
     final Project project = configuration.getProject();
     final Semaphore targetDone = new Semaphore();
     final Ref<Boolean> result = new Ref<Boolean>(true);
+    final List<Exception> exceptions = new ArrayList<Exception>();
     ApplicationManager.getApplication().invokeAndWait(new Runnable() {
       public void run() {
 
@@ -107,7 +109,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
               assert platform != null;
               ProcessOutput output = line.platformAdd(platform);
               if (output.getExitCode() != 0) {
-                ExecutionHelper.showOutput(project, output, "Init PhoneGap/Cordova platform", null, false);
+                ExecutionHelper.showOutput(project, output, "Init PhoneGap/Cordova platform", null, true);
                 result.set(false);
                 targetDone.up();
                 return;
@@ -116,7 +118,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
               targetDone.up();
             }
             catch (final ExecutionException e) {
-              Messages.showErrorDialog(project, e.getMessage(), "Cannot Add Platform");
+              exceptions.add(e);
               result.set(false);
               targetDone.up();
             }
@@ -125,6 +127,10 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
       }
     }, ModalityState.NON_MODAL);
     targetDone.waitFor();
+    if (!exceptions.isEmpty()) {
+      ExecutionHelper.showErrors(project, exceptions, "Cannot Init Platform", null);
+    }
+
 
     return result.get();
   }

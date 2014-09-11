@@ -4,7 +4,7 @@ import com.intellij.execution.configuration.EnvironmentVariablesTextFieldWithBro
 import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
-import com.intellij.javascript.nodejs.NodeSettings;
+import com.intellij.javascript.nodejs.NodePathSettings;
 import com.intellij.javascript.nodejs.NodeUIUtil;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -25,8 +25,8 @@ import com.intellij.util.NotNullProducer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.StatusText;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.SwingHelper;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -93,7 +93,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       @NotNull
       @Override
       public List<String> produce() {
-        NodeSettings nodeSettings = KarmaGlobalSettingsUtil.getNodeSettings();
+        NodePathSettings nodeSettings = KarmaGlobalSettingsUtil.getNodeSettings();
         if (nodeSettings != null) {
           nodeSettings.initGlobalNodeModulesDir();
         }

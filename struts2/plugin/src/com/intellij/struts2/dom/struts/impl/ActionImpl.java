@@ -34,7 +34,6 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-@SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class ActionImpl implements Action {
 
   @Nullable

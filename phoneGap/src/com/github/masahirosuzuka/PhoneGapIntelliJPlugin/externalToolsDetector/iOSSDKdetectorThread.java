@@ -1,6 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector;
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.util.PhoneGapSettings;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;

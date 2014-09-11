@@ -1,7 +1,10 @@
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.javascript.nodejs.*;
+import com.intellij.javascript.nodejs.CompletionModuleInfo;
+import com.intellij.javascript.nodejs.NodeDetectionUtil;
+import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
+import com.intellij.javascript.nodejs.NodePathSettings;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -22,7 +25,7 @@ public class KarmaGlobalSettingsUtil {
   public static final String NODE_PACKAGE_NAME = "karma";
   private static final String KARMA_PACKAGE_DIR__KEY = "karma_support.karma_node_package_dir";
   private static final String NODE_INTERPRETER_PATH__KEY = "karma_support.node_interpreter_path";
-  private static volatile NodeSettings CURRENT_NODE_SETTINGS = null;
+  private static volatile NodePathSettings CURRENT_NODE_SETTINGS = null;
 
   public static void storeKarmaPackageDir(@NotNull Project project, @NotNull String karmaPackageDir) {
     KarmaPackageDirSetting karmaPackageDirSetting = KarmaPackageDirSetting.getInstance(project);
@@ -94,12 +97,12 @@ public class KarmaGlobalSettingsUtil {
   }
 
   @Nullable
-  public static NodeSettings getNodeSettings() {
-    NodeSettings nodeSettings = CURRENT_NODE_SETTINGS;
+  public static NodePathSettings getNodeSettings() {
+    NodePathSettings nodeSettings = CURRENT_NODE_SETTINGS;
     if (nodeSettings == null) {
       String interpreterPath = getNodeInterpreterPath();
       if (interpreterPath != null) {
-        nodeSettings = new NodeSettings(interpreterPath);
+        nodeSettings = new NodePathSettings(interpreterPath);
         CURRENT_NODE_SETTINGS = nodeSettings;
       }
     }
