@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 @State(
   name = "JsKarmaPackageDirSetting",
   storages = {
-    @Storage( file = StoragePathMacros.WORKSPACE_FILE)
+    @Storage(file = StoragePathMacros.WORKSPACE_FILE)
   }
 )
 public class KarmaPackageDirSetting implements PersistentStateComponent<Element> {
