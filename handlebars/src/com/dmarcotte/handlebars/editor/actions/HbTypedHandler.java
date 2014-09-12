@@ -64,7 +64,7 @@ public class HbTypedHandler extends TypedHandlerDelegate {
     int offset = editor.getCaretModel().getOffset();
     FileViewProvider provider = file.getViewProvider();
 
-    if (provider.getBaseLanguage() != HbLanguage.INSTANCE) {
+    if (!provider.getBaseLanguage().isKindOf(HbLanguage.INSTANCE)) {
       return Result.CONTINUE;
     }
 

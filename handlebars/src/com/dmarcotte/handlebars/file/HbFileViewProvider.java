@@ -1,7 +1,6 @@
 package com.dmarcotte.handlebars.file;
 
 import com.dmarcotte.handlebars.HbLanguage;
-import com.dmarcotte.handlebars.parsing.HbTokenTypes;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.ParserDefinition;
@@ -14,11 +13,16 @@ import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.templateLanguages.ConfigurableTemplateLanguageFileViewProvider;
 import com.intellij.psi.templateLanguages.TemplateDataElementType;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
+import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
+
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.CONTENT;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OUTER_ELEMENT_TYPE;
 
 public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider
   implements ConfigurableTemplateLanguageFileViewProvider {
@@ -26,8 +30,18 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
   private final Language myBaseLanguage;
   private final Language myTemplateLanguage;
 
-  private static final TemplateDataElementType TEMPLATE_DATA_ELEMENT_TYPE =
-    new TemplateDataElementType("HB_TEMPLATE_DATA", HbLanguage.INSTANCE, HbTokenTypes.CONTENT, HbTokenTypes.OUTER_ELEMENT_TYPE);
+  private static final ConcurrentMap<String, TemplateDataElementType> TEMPLATE_DATA_TO_LANG = ContainerUtil.newConcurrentMap();
+
+  private static TemplateDataElementType getTemplateDataElementType(Language lang) {
+    TemplateDataElementType result = TEMPLATE_DATA_TO_LANG.get(lang.getID());
+
+    if (result != null) return result;
+    TemplateDataElementType created = new TemplateDataElementType("HB_TEMPLATE_DATA", lang, CONTENT, OUTER_ELEMENT_TYPE);
+    TemplateDataElementType prevValue = TEMPLATE_DATA_TO_LANG.putIfAbsent(lang.getID(), created);
+
+    return prevValue == null ? created : prevValue;
+  }
+
 
   public HbFileViewProvider(PsiManager manager, VirtualFile file, boolean physical, Language baseLanguage) {
     this(manager, file, physical, baseLanguage, getTemplateDataLanguage(manager, file));
@@ -76,7 +90,7 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
   @NotNull
   @Override
   public Set<Language> getLanguages() {
-    return new THashSet<Language>(Arrays.asList(new Language[]{HbLanguage.INSTANCE, myBaseLanguage, getTemplateDataLanguage()}));
+    return new THashSet<Language>(Arrays.asList(new Language[]{myBaseLanguage, getTemplateDataLanguage()}));
   }
 
   @Override
@@ -91,12 +105,12 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
       return null;
     }
 
-    if (lang == getTemplateDataLanguage()) {
+    if (lang.is(getTemplateDataLanguage())) {
       PsiFileImpl file = (PsiFileImpl)parserDefinition.createFile(this);
-      file.setContentElementType(TEMPLATE_DATA_ELEMENT_TYPE);
+      file.setContentElementType(getTemplateDataElementType(getBaseLanguage()));
       return file;
     }
-    else if (lang == HbLanguage.INSTANCE) {
+    else if (lang.isKindOf(getBaseLanguage())) {
       return parserDefinition.createFile(this);
     }
     else {

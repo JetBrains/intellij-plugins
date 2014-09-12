@@ -25,7 +25,11 @@ public class HbFileType extends LanguageFileType implements TemplateLanguageFile
   public static final String DEFAULT_EXTENSION = "handlebars;hbs;mustache";
 
   private HbFileType() {
-    super(HbLanguage.INSTANCE);
+    this(HbLanguage.INSTANCE);
+  }
+
+  protected HbFileType(Language lang) {
+    super(lang);
 
     FileTypeEditorHighlighterProviders.INSTANCE.addExplicitExtension(this, new EditorHighlighterProvider() {
       public EditorHighlighter getEditorHighlighter(@Nullable Project project,

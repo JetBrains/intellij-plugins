@@ -19,7 +19,7 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
  * Places where we've gone off book to make the live syntax detection a more pleasant experience are
  * marked HB_CUSTOMIZATION.  If we find bugs, or the grammar is ever updated, these are the first candidates to check.
  */
-class HbParsing {
+public class HbParsing {
   private final PsiBuilder builder;
 
   // the set of tokens which, if we encounter them while in a bad state, we'll try to
@@ -290,7 +290,7 @@ class HbParsing {
    * | OPEN_UNESCAPED inMustache CLOSE_UNESCAPED
    * ;
    */
-  private void parseMustache(PsiBuilder builder) {
+  protected void parseMustache(PsiBuilder builder) {
     PsiBuilder.Marker mustacheMarker = builder.mark();
     if (builder.getTokenType() == OPEN) {
       parseLeafToken(builder, OPEN);
@@ -315,7 +315,7 @@ class HbParsing {
    * | OPEN_PARTIAL partialName path CLOSE { $$ = new yy.PartialNode($2, $3); }
    * ;
    */
-  private void parsePartial(PsiBuilder builder) {
+  protected void parsePartial(PsiBuilder builder) {
     PsiBuilder.Marker partialMarker = builder.mark();
 
     parseLeafToken(builder, OPEN_PARTIAL);
@@ -390,7 +390,7 @@ class HbParsing {
    * | dataName
    * ;
    */
-  private boolean parseInMustache(PsiBuilder builder) {
+  protected boolean parseInMustache(PsiBuilder builder) {
     PsiBuilder.Marker inMustacheMarker = builder.mark();
     PsiBuilder.Marker mustacheNameMarker = builder.mark();
 
@@ -765,7 +765,7 @@ class HbParsing {
   /**
    * Tries to parse the given token, marking an error if any other token is found
    */
-  private boolean parseLeafToken(PsiBuilder builder, IElementType leafTokenType) {
+  protected boolean parseLeafToken(PsiBuilder builder, IElementType leafTokenType) {
     PsiBuilder.Marker leafTokenMark = builder.mark();
     if (builder.getTokenType() == leafTokenType) {
       builder.advanceLexer();
@@ -793,7 +793,7 @@ class HbParsing {
    * Will also stop if it encounters a {@link #RECOVERY_SET} token
    */
   @SuppressWarnings("SameParameterValue") // though this method is only being used for CLOSE right now, it reads better this way
-  private void parseLeafTokenGreedy(PsiBuilder builder, IElementType expectedToken) {
+  protected void parseLeafTokenGreedy(PsiBuilder builder, IElementType expectedToken) {
     // failed to parse expected token... chew up tokens marking this error until we encounter
     // a token which give the parser a good shot at resuming
     if (builder.getTokenType() != expectedToken) {

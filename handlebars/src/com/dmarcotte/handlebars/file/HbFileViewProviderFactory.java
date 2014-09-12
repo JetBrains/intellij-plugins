@@ -16,7 +16,8 @@ public class HbFileViewProviderFactory implements FileViewProviderFactory {
                                                  Language language,
                                                  @NotNull PsiManager psiManager,
                                                  boolean eventSystemEnabled) {
-    return new HbFileViewProvider(psiManager, virtualFile, eventSystemEnabled, HbLanguage.INSTANCE);
+    assert language.isKindOf(HbLanguage.INSTANCE);
+    return new HbFileViewProvider(psiManager, virtualFile, eventSystemEnabled, language);
   }
 }
 

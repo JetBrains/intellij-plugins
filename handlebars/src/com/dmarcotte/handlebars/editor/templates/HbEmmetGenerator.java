@@ -15,6 +15,6 @@ public class HbEmmetGenerator extends XmlZenCodingGeneratorImpl {
 
   @Override
   protected boolean isMyLanguage(Language language) {
-    return language.is(HbLanguage.INSTANCE);
+    return language.isKindOf(HbLanguage.INSTANCE);
   }
 }
