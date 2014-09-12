@@ -156,7 +156,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
       "import 'package<caret expected=''>:<caret expected='packages/SomePackage'>SomePackage<caret expected='packages/SomePackage'>/<caret expected='packages/SomePackage/src'>src<caret expected='packages/SomePackage/src'>/<caret expected='packages/SomePackage/src/somePack2.dart'>somePack2.dart<caret expected='packages/SomePackage/src/somePack2.dart'>';\n" +
       ""
     );
-    ((CodeInsightTestFixtureImpl)myFixture).openFileInEditor(psiFile.getVirtualFile());
+    myFixture.openFileInEditor(psiFile.getVirtualFile());
 
     doTest();
   }
@@ -262,7 +262,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                                        "<script src='<caret expected='packages'>packages/<caret expected='lib'>ProjectName/<caret expected='lib/projectFile.dart'>projectFile.dart'/>\n" +
                                                        "<script src='packages<caret expected='packages'>/PathPackage<caret expected='local_package/lib'>/localPackageFile.html<caret expected='local_package/lib/localPackageFile.html'>'/>\n" +
                                                        "<script src='<caret expected='packages'>packages/<caret expected='packages/browser'>browser/<caret expected='packages/browser/dart.js'>dart.js'/>\n");
-    ((CodeInsightTestFixtureImpl)myFixture).openFileInEditor(psiFile.getVirtualFile());
+    myFixture.openFileInEditor(psiFile.getVirtualFile());
     doTest();
   }
 

@@ -317,7 +317,7 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
     myFixture.addFileToProject("packages/browser/dart.js", "");
     myFixture.addFileToProject("web/other.dart", "");
     final PsiFile psiFile = myFixture.addFileToProject("web/file.html", "<link href=''>");
-    ((CodeInsightTestFixtureImpl)myFixture).openFileInEditor(psiFile.getVirtualFile());
+    myFixture.openFileInEditor(psiFile.getVirtualFile());
     myFixture.getEditor().getCaretModel().moveToOffset(12);
 
     doTestVariantsInner(getTestName(false) + ".txt");
@@ -332,7 +332,7 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
     myFixture.addFileToProject("local_package/lib/localPackageFile.html", "");
     myFixture.addFileToProject("packages/browser/dart.js", "");
     final PsiFile psiFile = myFixture.addFileToProject("web/file.html", "<link href='packages/'>");
-    ((CodeInsightTestFixtureImpl)myFixture).openFileInEditor(psiFile.getVirtualFile());
+    myFixture.openFileInEditor(psiFile.getVirtualFile());
     myFixture.getEditor().getCaretModel().moveToOffset(21);
 
     doTestVariantsInner(getTestName(false) + ".txt");
@@ -342,7 +342,7 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
     myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
     myFixture.addFileToProject("lib/projectFile.dart", "");
     final PsiFile psiFile = myFixture.addFileToProject("web/file.html", "<link href='packages/ProjectName/xxx'>");
-    ((CodeInsightTestFixtureImpl)myFixture).openFileInEditor(psiFile.getVirtualFile());
+    myFixture.openFileInEditor(psiFile.getVirtualFile());
     myFixture.getEditor().getCaretModel().moveToOffset(33);
 
     doTestVariantsInner(getTestName(false) + ".txt");
