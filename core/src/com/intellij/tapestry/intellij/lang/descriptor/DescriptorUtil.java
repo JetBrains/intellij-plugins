@@ -282,7 +282,8 @@ class DescriptorUtil {
       return Collections.emptyList();
     }
     final List<Mixin> result = new ArrayList<Mixin>();
-    final String[] components = mixinsAttribute.getValue().split(",");
+    String value = mixinsAttribute.getValue();
+    final String[] components = value != null ? value.split(",") : ArrayUtil.EMPTY_STRING_ARRAY;
     for (String mixinName : components) {
       final Mixin mixin = tapestryProject.findMixin(mixinName);
       if (mixin != null) {
