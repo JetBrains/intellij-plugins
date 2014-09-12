@@ -26,6 +26,8 @@ public class HbKeywordCompletionContributor extends CompletionContributor {
                if (prevSiblingNode != null && prevSiblingNode.getElementType() == HbTokenTypes.OPEN_BLOCK) {
                  result.addElement(LookupElementBuilder.create("if"));
                  result.addElement(LookupElementBuilder.create("each"));
+                 result.addElement(LookupElementBuilder.create("unless"));
+                 result.addElement(LookupElementBuilder.create("with"));
                }
              }
            });
