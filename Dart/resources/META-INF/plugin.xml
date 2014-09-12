@@ -142,6 +142,8 @@
                     serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
+    <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerService"
+                    serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerService"/>
 
     <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
     <codeInspection.InspectionExtension id="dartGlobalInspection"
@@ -176,6 +178,10 @@
     <localInspection language="Dart" bundle="com.jetbrains.lang.dart.DartBundle" key="dart.deprecated.api.usage"
                      groupName="Dart" enabledByDefault="true" level="WEAK WARNING"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartDeprecatedApiUsageInspection"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains">
+    <webServerPathHandler implementation="com.jetbrains.lang.dart.pubServer.PubServerPathHandler"/>
   </extensions>
 
   <actions>
