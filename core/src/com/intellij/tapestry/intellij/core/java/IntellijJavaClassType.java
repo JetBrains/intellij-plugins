@@ -258,9 +258,6 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
       processPsiClassType();
       res = _psiClassType != null ? _psiClassType.resolve() : null;
     }
-    if (res == null) {
-      ourLogger.error((_psiClassType != null) + ", unresolved: " + _classFilePath);
-    }
     return res;
   }
 
