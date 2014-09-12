@@ -264,9 +264,12 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
 
           for (XmlAttribute attribute : tag.getAttributes()) {
             if (attribute.getLocalName().equals("type") && attribute.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
-              component = _project.findComponent(attribute.getValue());
-              injectedElement = new InjectedElement(tag, component);
-              hasAttributeType = true;
+              String value = attribute.getValue();
+              if (value != null) {
+                component = _project.findComponent(value);
+                injectedElement = new InjectedElement(tag, component);
+                hasAttributeType = true;
+              }
             }
           }
 
