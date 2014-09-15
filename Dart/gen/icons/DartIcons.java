@@ -13,6 +13,7 @@ public class DartIcons {
     return IconLoader.getIcon(path, DartIcons.class);
   }
 
+  public static final Icon Dart_13 = load("/icons/dart_13.png"); // 13x13
   public static final Icon Dart_16 = load("/icons/dart_16.png"); // 16x16
   public static final Icon Dart_file = load("/icons/dart_file.png"); // 16x16
   public static final Icon Dart_test = load("/icons/dart_test.png"); // 16x16

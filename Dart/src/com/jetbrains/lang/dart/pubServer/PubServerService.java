@@ -84,7 +84,7 @@ public class PubServerService extends NetService {
   @Override
   @NotNull
   protected Icon getConsoleToolWindowIcon() {
-    return DartIcons.Dart_16;
+    return DartIcons.Dart_13;
   }
 
   @Override
@@ -164,7 +164,9 @@ public class PubServerService extends NetService {
     }
   }
 
-  private static void connect(@NotNull final Bootstrap bootstrap, @NotNull final SocketAddress remoteAddress, final @NotNull Consumer<Channel> channelConsumer) {
+  private static void connect(@NotNull final Bootstrap bootstrap,
+                              @NotNull final SocketAddress remoteAddress,
+                              final @NotNull Consumer<Channel> channelConsumer) {
     final AtomicInteger attemptCounter = new AtomicInteger(1);
     bootstrap.connect(remoteAddress).addListener(new ChannelFutureListener() {
       @Override
@@ -186,7 +188,9 @@ public class PubServerService extends NetService {
     });
   }
 
-  private void sendToServer(@NotNull final ChannelHandlerContext clientContext, @NotNull final FullHttpRequest clientRequest, @NotNull final String pathToPubServe) {
+  private void sendToServer(@NotNull final ChannelHandlerContext clientContext,
+                            @NotNull final FullHttpRequest clientRequest,
+                            @NotNull final String pathToPubServe) {
     final Attribute<Channel> serverChannelAttribute = clientContext.attr(SERVER_CHANNEL_KEY);
     Channel serverChannel = serverChannelAttribute.get();
 
