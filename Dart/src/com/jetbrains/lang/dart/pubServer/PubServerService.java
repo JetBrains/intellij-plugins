@@ -103,7 +103,6 @@ public class PubServerService extends NetService {
     final GeneralCommandLine commandLine = new GeneralCommandLine();
     commandLine.setExePath(DartSdkUtil.getPubPath(dartSdk));
     commandLine.addParameter("serve");
-    commandLine.addParameter("--hostname=127.0.0.1");
     commandLine.addParameter("--port=" + String.valueOf(port));
     commandLine.addParameter("web");
 
