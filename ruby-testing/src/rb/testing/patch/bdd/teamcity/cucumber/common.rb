@@ -31,6 +31,7 @@ module Teamcity
 
       attr_writer :indent
       attr_reader :step_mother
+      alias :runtime :step_mother
 
       def tc_initialize (options, delim, path_or_io)
         redirect_output_via_drb = !path_or_io.nil? && (defined? DRb::DRbObject) && path_or_io.kind_of?(DRb::DRbObject)
