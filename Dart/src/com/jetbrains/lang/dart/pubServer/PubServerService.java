@@ -52,11 +52,12 @@ public class PubServerService extends NetService {
       ChannelHandlerContext clientContext = serverToClientContext.remove(channel);
       if (clientContext != null) {
         clientContext.attr(SERVER_CHANNEL_KEY).remove();
+        sendBadGateway(clientContext.channel());
       }
     }
   };
 
-  protected PubServerService(@NotNull final Project project) {
+  protected PubServerService(@NotNull Project project) {
     super(project);
 
     bootstrap = NettyUtil.nioClientBootstrap();
@@ -264,8 +265,9 @@ public class PubServerService extends NetService {
 
       Channel serverChannel = context.attr(SERVER_CHANNEL_KEY).getAndRemove();
       if (serverChannel != null) {
-        serverToClientContext.remove(serverChannel);
-        freeServerChannels.add(serverChannel);
+        if (serverToClientContext.remove(serverChannel, context)) {
+          freeServerChannels.add(serverChannel);
+        }
       }
     }
   }
