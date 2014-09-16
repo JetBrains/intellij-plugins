@@ -6,6 +6,7 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ConcurrentHashSet;
 import com.intellij.util.containers.ContainerUtil;
@@ -137,6 +138,7 @@ public class PubServerService extends NetService {
 
   public void sendToPubServe(@NotNull final ChannelHandlerContext clientContext,
                              @NotNull final FullHttpRequest clientRequest,
+                             @NotNull final VirtualFile servedDir,
                              @NotNull final String pathForPubServer) {
     clientRequest.retain();
 
