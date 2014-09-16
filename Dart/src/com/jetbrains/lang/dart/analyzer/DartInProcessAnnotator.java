@@ -15,7 +15,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -39,12 +38,26 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBasedSource, AnalysisContext>, AnalysisContext> {
+public class DartInProcessAnnotator extends ExternalAnnotator<DartInProcessAnnotator.DartAnnotatorInfo, AnalysisContext> {
   static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator");
+
+  public static class DartAnnotatorInfo {
+    @NotNull private final AnalysisContext analysisContext;
+    @NotNull private final DartFileBasedSource annotatedFile;
+    @NotNull private final DartFileBasedSource libraryFile;
+
+    public DartAnnotatorInfo(@NotNull final AnalysisContext analysisContext,
+                             @NotNull final DartFileBasedSource annotatedFile,
+                             @NotNull final DartFileBasedSource libraryFile) {
+      this.analysisContext = analysisContext;
+      this.annotatedFile = annotatedFile;
+      this.libraryFile = libraryFile;
+    }
+  }
 
   @Override
   @Nullable
-  public Pair<DartFileBasedSource, AnalysisContext> collectInformation(@NotNull final PsiFile psiFile) {
+  public DartAnnotatorInfo collectInformation(@NotNull final PsiFile psiFile) {
     final Project project = psiFile.getProject();
 
     if (psiFile instanceof DartExpressionCodeFragment) return null;
@@ -63,10 +76,11 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
     if (FileUtil.isAncestor(sdk.getHomePath(), annotatedFile.getPath(), true)) return null;
 
     final List<VirtualFile> libraries = DartResolveUtil.findLibrary(psiFile, GlobalSearchScope.projectScope(project));
-    final VirtualFile fileToAnalyze = libraries.isEmpty() || libraries.contains(annotatedFile) ? annotatedFile : libraries.get(0);
+    final VirtualFile libraryFile = libraries.isEmpty() || libraries.contains(annotatedFile) ? annotatedFile : libraries.get(0);
 
-    return Pair.create(DartFileBasedSource.getSource(project, fileToAnalyze),
-                       DartAnalyzerService.getInstance(project).getAnalysisContext(annotatedFile, sdk.getHomePath()));
+    return new DartAnnotatorInfo(DartAnalyzerService.getInstance(project).getAnalysisContext(annotatedFile, sdk.getHomePath()),
+                                 DartFileBasedSource.getSource(project, annotatedFile),
+                                 DartFileBasedSource.getSource(project, libraryFile));
   }
 
   private static boolean containsDartEmbeddedContent(final XmlFile file) {
@@ -84,10 +98,13 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
 
   @Override
   @Nullable
-  public AnalysisContext doAnnotate(final Pair<DartFileBasedSource, AnalysisContext> sourceAndContext) {
+  public AnalysisContext doAnnotate(final DartAnnotatorInfo annotatorInfo) {
     try {
-      sourceAndContext.second.computeErrors(sourceAndContext.first);
-      return sourceAndContext.second;
+      if (annotatorInfo.annotatedFile != annotatorInfo.libraryFile) {
+        annotatorInfo.analysisContext.computeErrors(annotatorInfo.libraryFile);
+      }
+      annotatorInfo.analysisContext.computeErrors(annotatorInfo.annotatedFile);
+      return annotatorInfo.analysisContext;
     }
     catch (AnalysisException e) {
       LOG.info(e);
@@ -96,7 +113,9 @@ public class DartInProcessAnnotator extends ExternalAnnotator<Pair<DartFileBased
   }
 
   @Override
-  public void apply(@NotNull PsiFile psiFile, @Nullable AnalysisContext analysisContext, @NotNull AnnotationHolder holder) {
+  public void apply(@NotNull final PsiFile psiFile,
+                    @Nullable final AnalysisContext analysisContext,
+                    @NotNull final AnnotationHolder holder) {
     if (analysisContext == null || !psiFile.isValid()) return;
 
     final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
