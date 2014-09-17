@@ -53,8 +53,7 @@ public class DartAnalyzerService {
   private final Map<VirtualFile, DartFileBasedSource> myFileToSourceMap =
     Collections.synchronizedMap(new THashMap<VirtualFile, DartFileBasedSource>());
 
-  private final Map<String, DirectoryBasedDartSdk> mySdkMap =
-    Collections.synchronizedMap(new THashMap<String, DirectoryBasedDartSdk>());
+  private static final Map<String, DirectoryBasedDartSdk> ourSdkMap = new THashMap<String, DirectoryBasedDartSdk>();
 
   public DartAnalyzerService(final Project project) {
     myProject = project;
@@ -171,11 +170,11 @@ public class DartAnalyzerService {
     return analysisContext;
   }
 
-  private DirectoryBasedDartSdk getSdk(String sdkPath) {
-    DirectoryBasedDartSdk sdk = mySdkMap.get(sdkPath);
+  private static synchronized DirectoryBasedDartSdk getSdk(@NotNull final String sdkPath) {
+    DirectoryBasedDartSdk sdk = ourSdkMap.get(sdkPath);
     if (sdk == null) {
       sdk = new DirectoryBasedDartSdk(new File(sdkPath));
-      mySdkMap.put(sdkPath, sdk);
+      ourSdkMap.put(sdkPath, sdk);
     }
     return sdk;
   }
