@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -43,10 +42,10 @@ public class DartAnalyzerService {
 
   private @Nullable String mySdkPath;
   private long myPubspecYamlTimestamp;
-  private @NotNull VirtualFile[] myDartPackageRoots;
+  private @Nullable VirtualFile[] myDartPackageRoots;
   private @Nullable VirtualFile myContentRoot; // checked only in case of ExplicitPackageUriResolver
 
-  private @Nullable WeakReference<AnalysisContext> myAnalysisContextRef;
+  private @Nullable SoftReference<AnalysisContext> myAnalysisContextRef;
 
   private final Collection<VirtualFile> myCreatedFiles = Collections.synchronizedSet(new THashSet<VirtualFile>());
 
@@ -164,7 +163,7 @@ public class DartAnalyzerService {
       myPubspecYamlTimestamp = pubspecYamlTimestamp;
       myDartPackageRoots = packageRoots;
       myContentRoot = contentRoot;
-      myAnalysisContextRef = new WeakReference<AnalysisContext>(analysisContext);
+      myAnalysisContextRef = new SoftReference<AnalysisContext>(analysisContext);
     }
 
     return analysisContext;
