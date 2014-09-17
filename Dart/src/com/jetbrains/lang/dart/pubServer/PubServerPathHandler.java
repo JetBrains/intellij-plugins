@@ -21,7 +21,7 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
     if (servedDirAndPathForPubServer == null) return false;
 
     final PubServerService pubServer = PubServerService.getInstance(project);
-    pubServer.sendToPubServe(context, request, servedDirAndPathForPubServer.first, servedDirAndPathForPubServer.second);
+    pubServer.sendToPubServer(context, request, servedDirAndPathForPubServer.first, servedDirAndPathForPubServer.second);
 
     return true;
   }
