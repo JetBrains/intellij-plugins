@@ -99,7 +99,7 @@ public class DartVmListener implements VmListener {
         final boolean suspend =
           myDebugProcess.getSession().breakpointReached(breakpoint,
                                                         evaluateExpression(isolate, topFrame, breakpoint.getLogExpressionObject()),
-                                                        new DartSuspendContext(myDebugProcess, frames));
+                                                        new DartSuspendContext(myDebugProcess, frames, exception));
         if (!suspend) {
           resume(isolate);
         }
@@ -108,7 +108,7 @@ public class DartVmListener implements VmListener {
       }
     }
 
-    myDebugProcess.getSession().positionReached(new DartSuspendContext(myDebugProcess, frames));
+    myDebugProcess.getSession().positionReached(new DartSuspendContext(myDebugProcess, frames, exception));
   }
 
   private void resume(final VmIsolate isolate) {

@@ -4,6 +4,7 @@ import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmCallFrame;
+import com.jetbrains.lang.dart.ide.runner.server.google.VmValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,14 +13,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class DartExecutionStack extends XExecutionStack {
-  private final @NotNull DartCommandLineDebugProcess myDebugProcess;
-  private @Nullable DartStackFrame myTopFrame;
-  private final @NotNull List<VmCallFrame> myVmCallFrames;
+  @NotNull private final DartCommandLineDebugProcess myDebugProcess;
+  @Nullable private DartStackFrame myTopFrame;
+  @NotNull private final List<VmCallFrame> myVmCallFrames;
 
-  public DartExecutionStack(final @NotNull DartCommandLineDebugProcess debugProcess, final @NotNull List<VmCallFrame> vmCallFrames) {
+  public DartExecutionStack(@NotNull final DartCommandLineDebugProcess debugProcess,
+                            @NotNull final List<VmCallFrame> vmCallFrames,
+                            @Nullable final VmValue exception) {
     super("");
     myDebugProcess = debugProcess;
-    myTopFrame = vmCallFrames.isEmpty() ? null : new DartStackFrame(myDebugProcess, vmCallFrames.get(0));
+    myTopFrame = vmCallFrames.isEmpty() ? null : new DartStackFrame(myDebugProcess, vmCallFrames.get(0), exception);
     myVmCallFrames = vmCallFrames;
   }
 
@@ -43,7 +46,7 @@ public class DartExecutionStack extends XExecutionStack {
                               : myVmCallFrames.subList(firstFrameIndex, myVmCallFrames.size());
 
     for (VmCallFrame frame : toAdd) {
-      res.add(new DartStackFrame(myDebugProcess, frame));
+      res.add(new DartStackFrame(myDebugProcess, frame, null));
     }
 
     container.addStackFrames(res, true);

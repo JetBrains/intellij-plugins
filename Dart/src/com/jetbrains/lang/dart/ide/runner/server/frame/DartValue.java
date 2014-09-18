@@ -23,9 +23,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 // todo navigate to source, type
 public class DartValue extends XNamedValue {
+  public static final String NODE_NAME_RESULT = "result";
+  public static final String NODE_NAME_EXCEPTION = "exception";
+
   private final @NotNull DartCommandLineDebugProcess myDebugProcess;
   private final @Nullable VmVariable myVmVariable;
   private @Nullable VmValue myVmValue;
+  private final boolean myIsException;
 
   private int myListOrMapChildrenAlreadyShown = 0;
 
@@ -35,15 +39,18 @@ public class DartValue extends XNamedValue {
     super(StringUtil.notNullize(DebuggerUtils.demangleVmName(vmVariable.getName()), "<unknown>"));
     myDebugProcess = debugProcess;
     myVmVariable = vmVariable;
+    myIsException = false;
   }
 
   public DartValue(@NotNull final DartCommandLineDebugProcess debugProcess,
                    @NotNull final String nodeName,
-                   @NotNull @SuppressWarnings("NullableProblems") final VmValue vmValue) {
+                   @NotNull @SuppressWarnings("NullableProblems") final VmValue vmValue,
+                   final boolean isException) {
     super(nodeName);
     myDebugProcess = debugProcess;
     myVmVariable = null;
     myVmValue = vmValue;
+    myIsException = isException;
   }
 
   @Override
@@ -95,15 +102,16 @@ public class DartValue extends XNamedValue {
                                          myVmValue.isNull() ||
                                          myVmValue.isFunction() ||
                                          myVmValue.isList() && myVmValue.getLength() == 0;
-        node.setPresentation(getIcon(myVmValue), presentation, !neverHasChildren);
+        node.setPresentation(getIcon(), presentation, !neverHasChildren);
       }
     });
   }
 
-  private static Icon getIcon(final @NotNull VmValue vmValue) {
-    if (vmValue.isList()) return AllIcons.Debugger.Db_array;
-    if (vmValue.isPrimitive()) return AllIcons.Debugger.Db_primitive;
-    if (vmValue.isFunction()) return AllIcons.Nodes.Function;
+  private Icon getIcon() {
+    if (myIsException) return AllIcons.Debugger.Db_exception_breakpoint;
+    if (myVmValue != null && myVmValue.isList()) return AllIcons.Debugger.Db_array;
+    if (myVmValue != null && myVmValue.isPrimitive()) return AllIcons.Debugger.Db_primitive;
+    if (myVmValue != null && myVmValue.isFunction()) return AllIcons.Nodes.Function;
 
     return AllIcons.Debugger.Value; // todo m.b. resolve and show corresponding icon?
   }
@@ -189,7 +197,7 @@ public class DartValue extends XNamedValue {
                                return;
                              }
 
-                             sortedChildren.add(new DartValue(myDebugProcess, nodeName, vmResult.getResult()));
+                             sortedChildren.add(new DartValue(myDebugProcess, nodeName, vmResult.getResult(), false));
 
                              if (responsesAmount == childrenToShow) {
                                final XValueChildrenList resultList = new XValueChildrenList(sortedChildren.size());

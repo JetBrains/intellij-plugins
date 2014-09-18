@@ -29,19 +29,20 @@ class DartDebuggerEvaluator extends XDebuggerEvaluator {
                        @NotNull final XEvaluationCallback callback,
                        @Nullable final XSourcePosition expressionPosition) {
     try {
-      myDebugProcess.getVmConnection().evaluateOnCallFrame(myVmCallFrame.getIsolate(), myVmCallFrame, expression,
-                                                           new VmCallback<VmValue>() {
-                                                             public void handleResult(final VmResult<VmValue> result) {
-                                                               if (result.isError()) {
-                                                                 callback.errorOccurred(result.getError());
-                                                               }
-                                                               else {
-                                                                 final VmValue vmValue = result.getResult();
-                                                                 callback.evaluated(new DartValue(myDebugProcess, "result", vmValue));
-                                                               }
-                                                             }
-                                                           }
-      );
+      myDebugProcess.getVmConnection()
+        .evaluateOnCallFrame(myVmCallFrame.getIsolate(), myVmCallFrame, expression,
+                             new VmCallback<VmValue>() {
+                               public void handleResult(final VmResult<VmValue> result) {
+                                 if (result.isError()) {
+                                   callback.errorOccurred(result.getError());
+                                 }
+                                 else {
+                                   final VmValue vmValue = result.getResult();
+                                   callback.evaluated(new DartValue(myDebugProcess, DartValue.NODE_NAME_RESULT, vmValue, false));
+                                 }
+                               }
+                             }
+        );
     }
     catch (IOException e) {
       callback.errorOccurred(e.toString());
