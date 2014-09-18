@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.p2p;
 
+import com.intellij.util.TimeoutUtil;
 import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserImpl;
 import jetbrains.communicator.core.users.PresenceMode;
@@ -52,10 +53,7 @@ public class UserMonitorThread_WaitingForNextSearch_Test extends BaseTestCase {
       @Override
       public void run() {
         myStarted = true;
-        try {
-          sleep(10000);
-        } catch (InterruptedException e) {
-        }
+        TimeoutUtil.sleep(10000);
       }
 
       @Override
