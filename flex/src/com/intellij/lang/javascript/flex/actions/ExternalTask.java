@@ -15,6 +15,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
+import com.intellij.util.TimeoutUtil;
 import com.intellij.util.text.StringTokenizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -242,10 +243,7 @@ public abstract class ExternalTask {
               task.cancel();
               break;
             }
-            try {
-              Thread.sleep(200);
-            }
-            catch (InterruptedException e) {/*ignore*/}
+            TimeoutUtil.sleep(200);
           }
         }
         finally {
