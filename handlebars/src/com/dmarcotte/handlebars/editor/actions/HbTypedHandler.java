@@ -14,7 +14,10 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +82,7 @@ public class HbTypedHandler extends TypedHandlerDelegate {
       if (HbConfig.isAutocompleteMustachesEnabled() && c == '}' && !previousChar.equals("}")) {
         // we may be able to complete the second brace
         PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
-        PsiElement elementAt = provider.findElementAt(offset - 1, HbLanguage.class);
+        PsiElement elementAt = provider.findElementAt(offset - 1, provider.getBaseLanguage());
         ASTNode node = elementAt != null ? elementAt.getNode() : null;
         if (node != null && node.getElementType() == HbTokenTypes.INVALID) {
           // we should be looking at the beginning of a close brace.  Find its matching open brace and auto-complete based on its type

@@ -50,7 +50,7 @@ public class HbCommenter implements Commenter {
     if (commenterLanguage == null) {
       commenterLanguage = HbLanguage.getDefaultTemplateLang().getLanguage();
     }
-    else if (commenterLanguage.getID().equals(HbLanguage.INSTANCE.getID())) {
+    else if (commenterLanguage.isKindOf(HbLanguage.INSTANCE)) {
       return ourHandlebarsCommenter;
     }
 
