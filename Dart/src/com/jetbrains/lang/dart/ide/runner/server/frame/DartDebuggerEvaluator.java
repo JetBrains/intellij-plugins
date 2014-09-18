@@ -37,7 +37,7 @@ class DartDebuggerEvaluator extends XDebuggerEvaluator {
                                                                }
                                                                else {
                                                                  final VmValue vmValue = result.getResult();
-                                                                 callback.evaluated(new DartValue(myDebugProcess, vmValue));
+                                                                 callback.evaluated(new DartValue(myDebugProcess, "result", vmValue));
                                                                }
                                                              }
                                                            }

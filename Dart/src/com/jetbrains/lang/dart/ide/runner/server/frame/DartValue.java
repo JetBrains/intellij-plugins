@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.runner.server.frame;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.SortedList;
 import com.intellij.xdebugger.frame.*;
 import com.intellij.xdebugger.frame.presentation.XNumericValuePresentation;
 import com.intellij.xdebugger.frame.presentation.XRegularValuePresentation;
@@ -15,13 +16,18 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 // todo navigate to source, type
 public class DartValue extends XNamedValue {
   private final @NotNull DartCommandLineDebugProcess myDebugProcess;
   private final @Nullable VmVariable myVmVariable;
   private @Nullable VmValue myVmValue;
+
+  private int myListOrMapChildrenAlreadyShown = 0;
 
   private static final String OBJECT_OF_TYPE_PREFIX = "object of type ";
 
@@ -32,8 +38,9 @@ public class DartValue extends XNamedValue {
   }
 
   public DartValue(@NotNull final DartCommandLineDebugProcess debugProcess,
+                   @NotNull final String nodeName,
                    @NotNull @SuppressWarnings("NullableProblems") final VmValue vmValue) {
-    super("result");
+    super(nodeName);
     myDebugProcess = debugProcess;
     myVmVariable = null;
     myVmValue = vmValue;
@@ -58,7 +65,7 @@ public class DartValue extends XNamedValue {
         final XValuePresentation presentation;
 
         final int objectId = myVmValue.getObjectId();
-        final String objectIdPostfix = objectId == 0 ? "" : "[id=" + objectId + "]";
+        final String objectIdPostfix = /*objectId == 0 ? "" :*/ "[id=" + objectId + "]"; // 0 is also a valid id
 
         if (myVmValue.isNull()) {
           presentation = new XRegularValuePresentation("null", null);
@@ -105,6 +112,11 @@ public class DartValue extends XNamedValue {
 
     // see com.google.dart.tools.debug.core.server.ServerDebugValue#fillInFieldsSync()
     try {
+      if (myVmValue.isList()) {
+        computeListChildren(node);
+        return;
+      }
+
       myDebugProcess.getVmConnection()
         .getObjectProperties(myVmValue.getIsolate(),
                              myVmValue.getObjectId(),
@@ -131,6 +143,61 @@ public class DartValue extends XNamedValue {
     }
     catch (IOException e) {
       DartCommandLineDebugProcess.LOG.error(e);
+    }
+  }
+
+  private void computeListChildren(@NotNull final XCompositeNode node) throws IOException {
+    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null && myVmValue.isList(), myVmValue);
+
+    final int childrenToShow = Math.min(myVmValue.getLength() - myListOrMapChildrenAlreadyShown, XCompositeNode.MAX_CHILDREN_TO_SHOW);
+    final AtomicInteger handledResponsesAmount = new AtomicInteger(0);
+
+    final List<DartValue> sortedChildren = Collections.synchronizedList(new SortedList<DartValue>(new Comparator<DartValue>() {
+      public int compare(DartValue o1, DartValue o2) {
+        return StringUtil.naturalCompare(o1.getName(), o2.getName());
+      }
+    }));
+
+    for (int listIndex = myListOrMapChildrenAlreadyShown; listIndex < myListOrMapChildrenAlreadyShown + childrenToShow; listIndex++) {
+      final String nodeName = String.valueOf(listIndex);
+      myDebugProcess.getVmConnection()
+        .getListElements(myVmValue.getIsolate(), myVmValue.getObjectId(), listIndex,
+                         new VmCallback<VmValue>() {
+                           @Override
+                           public void handleResult(VmResult<VmValue> vmResult) {
+                             final int responsesAmount = handledResponsesAmount.addAndGet(1);
+
+                             if (node.isObsolete()) {
+                               return;
+                             }
+
+                             if (vmResult.isError()) {
+                               node.setErrorMessage(vmResult.getError());
+                               return;
+                             }
+
+                             if (vmResult.getResult() == null) {
+                               node.setErrorMessage("<no response from the Dart VM>");
+                               return;
+                             }
+
+                             sortedChildren.add(new DartValue(myDebugProcess, nodeName, vmResult.getResult()));
+
+                             if (responsesAmount == childrenToShow) {
+                               final XValueChildrenList resultList = new XValueChildrenList(sortedChildren.size());
+                               for (DartValue value : sortedChildren) {
+                                 resultList.add(value);
+                               }
+
+                               node.addChildren(resultList, true);
+                               myListOrMapChildrenAlreadyShown += childrenToShow;
+
+                               if (myVmValue.getLength() > myListOrMapChildrenAlreadyShown) {
+                                 node.tooManyChildren(myVmValue.getLength() - myListOrMapChildrenAlreadyShown);
+                               }
+                             }
+                           }
+                         });
     }
   }
 }
