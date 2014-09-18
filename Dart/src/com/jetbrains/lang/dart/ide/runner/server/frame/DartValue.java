@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.runner.server.frame;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.SortedList;
 import com.intellij.xdebugger.frame.*;
@@ -25,13 +26,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DartValue extends XNamedValue {
   public static final String NODE_NAME_RESULT = "result";
   public static final String NODE_NAME_EXCEPTION = "exception";
+  private static final String NO_RESPONSE_FROM_DART_VM = "<no response from the Dart VM>";
 
   private final @NotNull DartCommandLineDebugProcess myDebugProcess;
   private final @Nullable VmVariable myVmVariable;
   private @Nullable VmValue myVmValue;
   private final boolean myIsException;
 
-  private int myListOrMapChildrenAlreadyShown = 0;
+  private Ref<Integer> myListOrMapChildrenAlreadyShown = new Ref<Integer>(0);
 
   private static final String OBJECT_OF_TYPE_PREFIX = "object of type ";
 
@@ -117,29 +119,172 @@ public class DartValue extends XNamedValue {
   }
 
   @Override
-  public void computeChildren(final @NotNull XCompositeNode node) {
+  public void computeChildren(@NotNull final XCompositeNode node) {
+    computeChildren(node, myListOrMapChildrenAlreadyShown);
+  }
+
+  private void computeChildren(@NotNull final XCompositeNode node, @NotNull final Ref<Integer> listChildrenAlreadyShown) {
     // myVmValue is already calculated in computePresentation()
     if (myVmValue == null) node.addChildren(XValueChildrenList.EMPTY, true);
 
     // see com.google.dart.tools.debug.core.server.ServerDebugValue#fillInFieldsSync()
     try {
       if (myVmValue.isList()) {
-        computeListChildren(node);
+        computeListChildren(node, listChildrenAlreadyShown);
         return;
       }
 
+      myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, "this is Iterable", new VmCallback<VmValue>() {
+        public void handleResult(final VmResult<VmValue> result) {
+          if (node.isObsolete()) {
+            return;
+          }
+
+          if (result.isError()) {
+            node.setErrorMessage(result.getError());
+            return;
+          }
+
+          if (result.getResult() == null) {
+            node.setErrorMessage(NO_RESPONSE_FROM_DART_VM);
+            return;
+          }
+
+          if ("boolean".equals(result.getResult().getKind()) && "true".equals(result.getResult().getText())) {
+            computeIterableChildren(node);
+          }
+          else {
+            computeObjectChildren(node);
+          }
+        }
+      });
+    }
+    catch (IOException e) {
+      DartCommandLineDebugProcess.LOG.error(e);
+    }
+  }
+
+  private void computeListChildren(@NotNull final XCompositeNode node, @NotNull final Ref<Integer> listChildrenAlreadyShown)
+    throws IOException {
+    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null && myVmValue.isList(), myVmValue);
+
+    final int childrenToShow = Math.min(myVmValue.getLength() - listChildrenAlreadyShown.get(), XCompositeNode.MAX_CHILDREN_TO_SHOW);
+    if (childrenToShow == 0) {
+      node.addChildren(XValueChildrenList.EMPTY, true);
+      return;
+    }
+
+    final AtomicInteger handledResponsesAmount = new AtomicInteger(0);
+
+    final List<DartValue> sortedChildren = Collections.synchronizedList(new SortedList<DartValue>(new Comparator<DartValue>() {
+      public int compare(DartValue o1, DartValue o2) {
+        return StringUtil.naturalCompare(o1.getName(), o2.getName());
+      }
+    }));
+
+    for (int listIndex = listChildrenAlreadyShown.get(); listIndex < listChildrenAlreadyShown.get() + childrenToShow; listIndex++) {
+      final String nodeName = String.valueOf(listIndex);
+      myDebugProcess.getVmConnection()
+        .getListElements(myVmValue.getIsolate(), myVmValue.getObjectId(), listIndex,
+                         new VmCallback<VmValue>() {
+                           @Override
+                           public void handleResult(final VmResult<VmValue> vmResult) {
+                             final int responsesAmount = handledResponsesAmount.addAndGet(1);
+
+                             if (node.isObsolete()) {
+                               return;
+                             }
+
+                             if (vmResult.isError()) {
+                               node.setErrorMessage(vmResult.getError());
+                               return;
+                             }
+
+                             if (vmResult.getResult() == null) {
+                               node.setErrorMessage(NO_RESPONSE_FROM_DART_VM);
+                               return;
+                             }
+
+                             sortedChildren.add(new DartValue(myDebugProcess, nodeName, vmResult.getResult(), false));
+
+                             if (responsesAmount == childrenToShow) {
+                               final XValueChildrenList resultList = new XValueChildrenList(sortedChildren.size());
+                               for (DartValue value : sortedChildren) {
+                                 resultList.add(value);
+                               }
+
+                               node.addChildren(resultList, true);
+                               listChildrenAlreadyShown.set(listChildrenAlreadyShown.get() + childrenToShow);
+
+                               if (myVmValue.getLength() > listChildrenAlreadyShown.get()) {
+                                 node.tooManyChildren(myVmValue.getLength() - listChildrenAlreadyShown.get());
+                               }
+                             }
+                           }
+                         });
+    }
+  }
+
+  private void computeIterableChildren(@NotNull final XCompositeNode node) {
+    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null);
+
+    try {
+      myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, "toList()", new VmCallback<VmValue>() {
+        @Override
+        public void handleResult(final VmResult<VmValue> result) {
+          if (node.isObsolete()) {
+            return;
+          }
+
+          if (result.isError()) {
+            node.setErrorMessage(result.getError());
+            return;
+          }
+
+          if (result.getResult() == null) {
+            node.setErrorMessage(NO_RESPONSE_FROM_DART_VM);
+            return;
+          }
+
+          // result.getResult() is a list that will return list contents
+          new DartValue(myDebugProcess, "fake node", result.getResult(), false).computeChildren(node, myListOrMapChildrenAlreadyShown);
+        }
+      });
+    }
+    catch (IOException e) {
+      DartCommandLineDebugProcess.LOG.error(e);
+    }
+  }
+
+  private void computeObjectChildren(@NotNull final XCompositeNode node) {
+    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null);
+
+    try {
       myDebugProcess.getVmConnection()
         .getObjectProperties(myVmValue.getIsolate(),
                              myVmValue.getObjectId(),
                              new VmCallback<VmObject>() {
                                @Override
                                public void handleResult(final VmResult<VmObject> result) {
-                                 if (node.isObsolete()) return;
+                                 if (node.isObsolete()) {
+                                   return;
+                                 }
 
-                                 final VmObject vmObject = result == null ? null : result.getResult();
-                                 final List<VmVariable> fields = vmObject == null ? null : vmObject.getFields();
+                                 if (result.isError()) {
+                                   node.setErrorMessage(result.getError());
+                                   return;
+                                 }
 
-                                 if (fields == null || result.isError()) return;
+                                 if (result.getResult() == null) {
+                                   node.setErrorMessage(NO_RESPONSE_FROM_DART_VM);
+                                   return;
+                                 }
+
+                                 final List<VmVariable> fields = result.getResult().getFields();
+                                 if (fields == null) {
+                                   node.addChildren(XValueChildrenList.EMPTY, true);
+                                   return;
+                                 }
 
                                  // todo sort somehow?
                                  final XValueChildrenList childrenList = new XValueChildrenList(fields.size());
@@ -154,66 +299,6 @@ public class DartValue extends XNamedValue {
     }
     catch (IOException e) {
       DartCommandLineDebugProcess.LOG.error(e);
-    }
-  }
-
-  private void computeListChildren(@NotNull final XCompositeNode node) throws IOException {
-    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null && myVmValue.isList(), myVmValue);
-
-    final int childrenToShow = Math.min(myVmValue.getLength() - myListOrMapChildrenAlreadyShown, XCompositeNode.MAX_CHILDREN_TO_SHOW);
-    if (childrenToShow == 0) {
-      node.addChildren(XValueChildrenList.EMPTY, true);
-      return;
-    }
-
-    final AtomicInteger handledResponsesAmount = new AtomicInteger(0);
-
-    final List<DartValue> sortedChildren = Collections.synchronizedList(new SortedList<DartValue>(new Comparator<DartValue>() {
-      public int compare(DartValue o1, DartValue o2) {
-        return StringUtil.naturalCompare(o1.getName(), o2.getName());
-      }
-    }));
-
-    for (int listIndex = myListOrMapChildrenAlreadyShown; listIndex < myListOrMapChildrenAlreadyShown + childrenToShow; listIndex++) {
-      final String nodeName = String.valueOf(listIndex);
-      myDebugProcess.getVmConnection()
-        .getListElements(myVmValue.getIsolate(), myVmValue.getObjectId(), listIndex,
-                         new VmCallback<VmValue>() {
-                           @Override
-                           public void handleResult(VmResult<VmValue> vmResult) {
-                             final int responsesAmount = handledResponsesAmount.addAndGet(1);
-
-                             if (node.isObsolete()) {
-                               return;
-                             }
-
-                             if (vmResult.isError()) {
-                               node.setErrorMessage(vmResult.getError());
-                               return;
-                             }
-
-                             if (vmResult.getResult() == null) {
-                               node.setErrorMessage("<no response from the Dart VM>");
-                               return;
-                             }
-
-                             sortedChildren.add(new DartValue(myDebugProcess, nodeName, vmResult.getResult(), false));
-
-                             if (responsesAmount == childrenToShow) {
-                               final XValueChildrenList resultList = new XValueChildrenList(sortedChildren.size());
-                               for (DartValue value : sortedChildren) {
-                                 resultList.add(value);
-                               }
-
-                               node.addChildren(resultList, true);
-                               myListOrMapChildrenAlreadyShown += childrenToShow;
-
-                               if (myVmValue.getLength() > myListOrMapChildrenAlreadyShown) {
-                                 node.tooManyChildren(myVmValue.getLength() - myListOrMapChildrenAlreadyShown);
-                               }
-                             }
-                           }
-                         });
     }
   }
 }
