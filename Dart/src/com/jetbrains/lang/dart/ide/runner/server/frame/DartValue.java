@@ -91,7 +91,10 @@ public class DartValue extends XNamedValue {
           }
         }
 
-        final boolean neverHasChildren = myVmValue.isPrimitive() || myVmValue.isNull() || myVmValue.isFunction();
+        final boolean neverHasChildren = myVmValue.isPrimitive() ||
+                                         myVmValue.isNull() ||
+                                         myVmValue.isFunction() ||
+                                         myVmValue.isList() && myVmValue.getLength() == 0;
         node.setPresentation(getIcon(myVmValue), presentation, !neverHasChildren);
       }
     });
@@ -150,6 +153,11 @@ public class DartValue extends XNamedValue {
     DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null && myVmValue.isList(), myVmValue);
 
     final int childrenToShow = Math.min(myVmValue.getLength() - myListOrMapChildrenAlreadyShown, XCompositeNode.MAX_CHILDREN_TO_SHOW);
+    if (childrenToShow == 0) {
+      node.addChildren(XValueChildrenList.EMPTY, true);
+      return;
+    }
+
     final AtomicInteger handledResponsesAmount = new AtomicInteger(0);
 
     final List<DartValue> sortedChildren = Collections.synchronizedList(new SortedList<DartValue>(new Comparator<DartValue>() {
