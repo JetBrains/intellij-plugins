@@ -57,6 +57,9 @@ public class DartValue extends XNamedValue {
         final String value = StringUtil.notNullize(myVmValue.getText(), "null");
         final XValuePresentation presentation;
 
+        final int objectId = myVmValue.getObjectId();
+        final String objectIdPostfix = objectId == 0 ? "" : "[id=" + objectId + "]";
+
         if (myVmValue.isNull()) {
           presentation = new XRegularValuePresentation("null", null);
         }
@@ -66,15 +69,18 @@ public class DartValue extends XNamedValue {
         else if (myVmValue.isNumber()) {
           presentation = new XNumericValuePresentation(value);
         }
+        else if ("boolean".equals(myVmValue.getKind())) {
+          presentation = new XRegularValuePresentation(value, null);
+        }
+        else if (myVmValue.isList()) {
+          presentation = new XRegularValuePresentation("size = " + myVmValue.getLength(), "List" + objectIdPostfix);
+        }
         else {
-          final int objectId = myVmValue.getObjectId();
-          final String postfix = objectId == 0 ? "" : "[id=" + objectId + "]";
-
           if (value.startsWith(OBJECT_OF_TYPE_PREFIX)) {
-            presentation = new XRegularValuePresentation("", value.substring(OBJECT_OF_TYPE_PREFIX.length()) + postfix);
+            presentation = new XRegularValuePresentation("", value.substring(OBJECT_OF_TYPE_PREFIX.length()) + objectIdPostfix);
           }
           else {
-            presentation = new XRegularValuePresentation(value, DebuggerUtils.demangleVmName(myVmValue.getKind()) + postfix);
+            presentation = new XRegularValuePresentation(value, DebuggerUtils.demangleVmName(myVmValue.getKind()) + objectIdPostfix);
           }
         }
 
@@ -86,7 +92,7 @@ public class DartValue extends XNamedValue {
 
   private static Icon getIcon(final @NotNull VmValue vmValue) {
     if (vmValue.isList()) return AllIcons.Debugger.Db_array;
-    if (vmValue.isPrimitive() || vmValue.isNull()) return AllIcons.Debugger.Db_primitive;
+    if (vmValue.isPrimitive()) return AllIcons.Debugger.Db_primitive;
     if (vmValue.isFunction()) return AllIcons.Nodes.Function;
 
     return AllIcons.Debugger.Value; // todo m.b. resolve and show corresponding icon?
