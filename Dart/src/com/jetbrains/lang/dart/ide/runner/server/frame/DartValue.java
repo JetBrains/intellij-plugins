@@ -70,7 +70,8 @@ public class DartValue extends XNamedValue {
           return;
         }
 
-        final String value = StringUtil.notNullize(myVmValue.getText(), "null");
+        final String value = myVmValue.isList() ? "size = " + myVmValue.getLength()
+                                                : StringUtil.notNullize(myVmValue.getText(), "null");
         final XValuePresentation presentation;
 
         final int objectId = myVmValue.getObjectId();
@@ -89,7 +90,7 @@ public class DartValue extends XNamedValue {
           presentation = new XRegularValuePresentation(value, null);
         }
         else if (myVmValue.isList()) {
-          presentation = new XRegularValuePresentation("size = " + myVmValue.getLength(), "List" + objectIdPostfix);
+          presentation = new XRegularValuePresentation(value, "List" + objectIdPostfix); // VmValue doesn't contain real List subclass name
         }
         else {
           if (value.startsWith(OBJECT_OF_TYPE_PREFIX)) {
@@ -106,32 +107,38 @@ public class DartValue extends XNamedValue {
                                          myVmValue.isList() && myVmValue.getLength() == 0;
         node.setPresentation(getIcon(), presentation, !neverHasChildren);
 
-        if (!myVmValue.isList()) {
-          schedulePresentationIfMapOrIterable(node, presentation.getType());
+        if (!myVmValue.isList() && !myVmValue.isPrimitive() && !myVmValue.isNull() && !myVmValue.isFunction()) {
+          scheduleToStringOrCollectionSizePresentation(node, presentation.getType());
         }
       }
     });
   }
 
-  private void schedulePresentationIfMapOrIterable(@NotNull final XValueNode node, final String objectType) {
+  private void scheduleToStringOrCollectionSizePresentation(@NotNull final XValueNode node, final String objectType) {
     DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null && !myVmValue.isList(), myVmValue);
 
     try {
-      final String expression = "(this is Iterable || this is Map) ? this.length : -1";
+      final String expression = "(this is Iterable || this is Map) ? ('IntelliJ marker:${this.length}') : toString()";
       myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, expression, new VmCallback<VmValue>() {
         public void handleResult(final VmResult<VmValue> result) {
-          if (node.isObsolete() || result.isError() || result.getResult() == null ||
-              (!"number".equals(result.getResult().getKind()) && !"integer".equals(result.getResult().getKind()))) {
+          if (node.isObsolete() || result.isError() || result.getResult() == null || !"string".equals(result.getResult().getKind())) {
             return;
           }
 
-          try {
-            final int collectionSize = Integer.parseInt(result.getResult().getText());
-            if (collectionSize >= 0) {
-              node.setPresentation(AllIcons.Debugger.Db_array, objectType, "size = " + collectionSize, collectionSize > 0);
+          final String text = StringUtil.stripQuotesAroundValue(result.getResult().getText());
+          if (text.startsWith("IntelliJ marker:")) {
+            try {
+              final int collectionSize = Integer.parseInt(text.substring("IntelliJ marker:".length()));
+              if (collectionSize >= 0) {
+                node.setPresentation(AllIcons.Debugger.Db_array, objectType, "size = " + collectionSize, collectionSize > 0);
+              }
             }
+            catch (NumberFormatException ignore) {/**/}
           }
-          catch (NumberFormatException ignore) {/**/}
+          // default toString() implementation returns "Instance of 'ClassName'" - do not show it
+          else if (!text.startsWith("Instance of '") || !text.endsWith("'")) {
+            node.setPresentation(getIcon(), objectType, text, true);
+          }
         }
       });
     }
@@ -277,7 +284,7 @@ public class DartValue extends XNamedValue {
             return;
           }
 
-          // result.getResult() is a list that will return list contents
+          // result.getResult() is a list that will return collection contents
           new DartValue(myDebugProcess, "fake node", result.getResult(), false).computeChildren(node, myListOrMapChildrenAlreadyShown);
         }
       });
