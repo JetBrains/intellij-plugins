@@ -20,15 +20,13 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
     final Pair<VirtualFile, String> servedDirAndPathForPubServer = getServedDirAndPathForPubServer(project, path);
     if (servedDirAndPathForPubServer == null) return false;
 
-    final PubServerService pubServer = PubServerService.getInstance(project);
-    pubServer.sendToPubServer(context, request, servedDirAndPathForPubServer.first, servedDirAndPathForPubServer.second);
-
+    PubServerManager.getInstance(project).send(context, request, servedDirAndPathForPubServer.first, servedDirAndPathForPubServer.second);
     return true;
   }
 
   @Nullable
   private static Pair<VirtualFile, String> getServedDirAndPathForPubServer(@NotNull final Project project, @NotNull final String path) {
-    if (true) return null; // disabled until stable enough
+    //if (true) return null; // disabled until stable enough
 
     // File with requested path may not exist, pub server will generate and serve it.
     // Here we find deepest (if nested) Dart project (aka Dart package) folder and its existing subfolder that can be served by pub server.

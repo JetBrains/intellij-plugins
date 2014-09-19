@@ -66,6 +66,7 @@
     </orderEntry>
     <orderEntry type="library" name="markdownj" level="project" />
     <orderEntry type="library" name="Netty" level="project" />
+    <orderEntry type="library" name="Guava" level="project" />
   </component>
 </module>
 

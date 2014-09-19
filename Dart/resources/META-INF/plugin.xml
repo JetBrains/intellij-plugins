@@ -142,8 +142,8 @@
                     serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
-    <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerService"
-                    serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerService"/>
+    <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerManager"
+                    serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerManager"/>
 
     <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
     <codeInspection.InspectionExtension id="dartGlobalInspection"
