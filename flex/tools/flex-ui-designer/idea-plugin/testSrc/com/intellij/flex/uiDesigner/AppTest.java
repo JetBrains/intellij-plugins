@@ -15,6 +15,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,6 +89,7 @@ public class AppTest extends AppTestBase {
     File temp = createTempDirectory();
     final Project alienProject = createProject(new File(temp, "t.ipr"), DebugUtil.currentStackTrace());
     assertTrue(ProjectManagerEx.getInstanceEx().openProject(alienProject));
+    UIUtil.dispatchAllInvocationEvents(); // startup activities
 
     openAndWait(configureByFiles("injectedAS/Transitions.mxml")[0], "injectedAS/Transitions.mxml");
   }
