@@ -150,7 +150,7 @@ final class PubServerService extends NetService {
                                       @NotNull final FullHttpRequest clientRequest,
                                       @NotNull final VirtualFile servedDir,
                                       @NotNull final String pathForPubServer) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException(); // todo this code is not reachable because of commented out /*.getParent()*/ in PubServerManager.send()
   }
 
   static void sendBadGateway(@NotNull final Channel channel) {

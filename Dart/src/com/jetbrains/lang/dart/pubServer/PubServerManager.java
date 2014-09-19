@@ -22,12 +22,13 @@ public class PubServerManager implements Disposable {
   private final Project project;
   private final ConsoleManager consoleManager = new ConsoleManager();
 
-  private final LoadingCache<VirtualFile, PubServerService> dartProjectToPubService = CacheBuilder.newBuilder().build(new CacheLoader<VirtualFile, PubServerService>() {
-    @Override
-    public PubServerService load(@NotNull VirtualFile key) throws Exception {
-      return new PubServerService(project, consoleManager);
-    }
-  });
+  private final LoadingCache<VirtualFile, PubServerService> dartProjectToPubService =
+    CacheBuilder.newBuilder().build(new CacheLoader<VirtualFile, PubServerService>() {
+      @Override
+      public PubServerService load(@NotNull VirtualFile key) throws Exception {
+        return new PubServerService(project, consoleManager);
+      }
+    });
 
   @NotNull
   public static PubServerManager getInstance(@NotNull Project project) {
@@ -45,7 +46,8 @@ public class PubServerManager implements Disposable {
     try {
       // servedDir - web or test, direct child of directory containing pubspec.yaml
       // "pub serve" process per dart project
-      dartProjectToPubService.get(servedDir.getParent()).sendToPubServer(clientContext, clientRequest, servedDir, pathForPubServer);
+      // todo uncomment /*.getParent()*/ below, serve subfolders of the same Dart project using the same pub serve process, manage it via admin port
+      dartProjectToPubService.get(servedDir/*.getParent()*/).sendToPubServer(clientContext, clientRequest, servedDir, pathForPubServer);
     }
     catch (ExecutionException e) {
       LOG.error(e);
