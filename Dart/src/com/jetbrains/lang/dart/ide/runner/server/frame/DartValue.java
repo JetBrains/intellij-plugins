@@ -172,30 +172,18 @@ public class DartValue extends XNamedValue {
         return;
       }
 
-      myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, "this is Iterable", new VmCallback<VmValue>() {
-        public void handleResult(final VmResult<VmValue> result) {
-          if (node.isObsolete()) {
-            return;
+      myDebugProcess.getVmConnection()
+        .evaluateObject(myVmValue.getIsolate(), myVmValue, "this is Iterable", new VmCallbackAdapter<VmValue>(node) {
+          @Override
+          protected void handleGoodResult(@NotNull final VmValue result) {
+            if ("boolean".equals(result.getKind()) && "true".equals(result.getText())) {
+              computeIterableChildren(node);
+            }
+            else {
+              computeObjectChildren(node);
+            }
           }
-
-          if (result.isError()) {
-            node.setErrorMessage(result.getError());
-            return;
-          }
-
-          if (result.getResult() == null) {
-            node.setErrorMessage(NO_RESPONSE_FROM_DART_VM);
-            return;
-          }
-
-          if ("boolean".equals(result.getResult().getKind()) && "true".equals(result.getResult().getText())) {
-            computeIterableChildren(node);
-          }
-          else {
-            computeObjectChildren(node);
-          }
-        }
-      });
+        });
     }
     catch (IOException e) {
       DartCommandLineDebugProcess.LOG.error(e);
@@ -223,43 +211,32 @@ public class DartValue extends XNamedValue {
     for (int listIndex = listChildrenAlreadyShown.get(); listIndex < listChildrenAlreadyShown.get() + childrenToShow; listIndex++) {
       final String nodeName = String.valueOf(listIndex);
       myDebugProcess.getVmConnection()
-        .getListElements(myVmValue.getIsolate(), myVmValue.getObjectId(), listIndex,
-                         new VmCallback<VmValue>() {
-                           @Override
-                           public void handleResult(final VmResult<VmValue> vmResult) {
-                             final int responsesAmount = handledResponsesAmount.addAndGet(1);
+        .getListElements(myVmValue.getIsolate(), myVmValue.getObjectId(), listIndex, new VmCallbackAdapter<VmValue>(node) {
+          @Override
+          public void handleResult(final VmResult<VmValue> result) {
+            handledResponsesAmount.addAndGet(1);
+            super.handleResult(result);
+          }
 
-                             if (node.isObsolete()) {
-                               return;
-                             }
+          @Override
+          protected void handleGoodResult(@NotNull final VmValue result) {
+            sortedChildren.add(new DartValue(myDebugProcess, nodeName, result, false));
 
-                             if (vmResult.isError()) {
-                               node.setErrorMessage(vmResult.getError());
-                               return;
-                             }
+            if (handledResponsesAmount.get() == childrenToShow) {
+              final XValueChildrenList resultList = new XValueChildrenList(sortedChildren.size());
+              for (DartValue value : sortedChildren) {
+                resultList.add(value);
+              }
 
-                             if (vmResult.getResult() == null) {
-                               node.setErrorMessage(NO_RESPONSE_FROM_DART_VM);
-                               return;
-                             }
+              node.addChildren(resultList, true);
+              listChildrenAlreadyShown.set(listChildrenAlreadyShown.get() + childrenToShow);
 
-                             sortedChildren.add(new DartValue(myDebugProcess, nodeName, vmResult.getResult(), false));
-
-                             if (responsesAmount == childrenToShow) {
-                               final XValueChildrenList resultList = new XValueChildrenList(sortedChildren.size());
-                               for (DartValue value : sortedChildren) {
-                                 resultList.add(value);
-                               }
-
-                               node.addChildren(resultList, true);
-                               listChildrenAlreadyShown.set(listChildrenAlreadyShown.get() + childrenToShow);
-
-                               if (myVmValue.getLength() > listChildrenAlreadyShown.get()) {
-                                 node.tooManyChildren(myVmValue.getLength() - listChildrenAlreadyShown.get());
-                               }
-                             }
-                           }
-                         });
+              if (myVmValue.getLength() > listChildrenAlreadyShown.get()) {
+                node.tooManyChildren(myVmValue.getLength() - listChildrenAlreadyShown.get());
+              }
+            }
+          }
+        });
     }
   }
 
@@ -267,25 +244,11 @@ public class DartValue extends XNamedValue {
     DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null);
 
     try {
-      myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, "toList()", new VmCallback<VmValue>() {
+      myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, "toList()", new VmCallbackAdapter<VmValue>(node) {
         @Override
-        public void handleResult(final VmResult<VmValue> result) {
-          if (node.isObsolete()) {
-            return;
-          }
-
-          if (result.isError()) {
-            node.setErrorMessage(result.getError());
-            return;
-          }
-
-          if (result.getResult() == null) {
-            node.setErrorMessage(NO_RESPONSE_FROM_DART_VM);
-            return;
-          }
-
-          // result.getResult() is a list that will return collection contents
-          new DartValue(myDebugProcess, "fake node", result.getResult(), false).computeChildren(node, myListOrMapChildrenAlreadyShown);
+        protected void handleGoodResult(@NotNull final VmValue result) {
+          // result is a list that will return collection contents
+          new DartValue(myDebugProcess, "fake node", result, false).computeChildren(node, myListOrMapChildrenAlreadyShown);
         }
       });
     }
@@ -299,26 +262,10 @@ public class DartValue extends XNamedValue {
 
     try {
       myDebugProcess.getVmConnection()
-        .getObjectProperties(myVmValue.getIsolate(),
-                             myVmValue.getObjectId(),
-                             new VmCallback<VmObject>() {
+        .getObjectProperties(myVmValue.getIsolate(), myVmValue.getObjectId(), new VmCallbackAdapter<VmObject>(node) {
                                @Override
-                               public void handleResult(final VmResult<VmObject> result) {
-                                 if (node.isObsolete()) {
-                                   return;
-                                 }
-
-                                 if (result.isError()) {
-                                   node.setErrorMessage(result.getError());
-                                   return;
-                                 }
-
-                                 if (result.getResult() == null) {
-                                   node.setErrorMessage(NO_RESPONSE_FROM_DART_VM);
-                                   return;
-                                 }
-
-                                 final List<VmVariable> fields = result.getResult().getFields();
+                               protected void handleGoodResult(@NotNull final VmObject result) {
+                                 final List<VmVariable> fields = result.getFields();
                                  if (fields == null) {
                                    node.addChildren(XValueChildrenList.EMPTY, true);
                                    return;
@@ -338,5 +285,30 @@ public class DartValue extends XNamedValue {
     catch (IOException e) {
       DartCommandLineDebugProcess.LOG.error(e);
     }
+  }
+
+  private abstract static class VmCallbackAdapter<T> implements VmCallback<T> {
+    @NotNull private final XCompositeNode myNode;
+
+    protected VmCallbackAdapter(@NotNull final XCompositeNode node) {
+      myNode = node;
+    }
+
+    @Override
+    public void handleResult(final VmResult<T> result) {
+      if (!myNode.isObsolete()) {
+        if (result.isError()) {
+          myNode.setErrorMessage(result.getError());
+        }
+        else if (result.getResult() == null) {
+          myNode.setErrorMessage(NO_RESPONSE_FROM_DART_VM);
+        }
+        else {
+          handleGoodResult(result.getResult());
+        }
+      }
+    }
+
+    protected abstract void handleGoodResult(@NotNull final T result);
   }
 }
