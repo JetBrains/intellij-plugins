@@ -105,8 +105,39 @@ public class DartValue extends XNamedValue {
                                          myVmValue.isFunction() ||
                                          myVmValue.isList() && myVmValue.getLength() == 0;
         node.setPresentation(getIcon(), presentation, !neverHasChildren);
+
+        if (!myVmValue.isList()) {
+          schedulePresentationIfMapOrIterable(node, presentation.getType());
+        }
       }
     });
+  }
+
+  private void schedulePresentationIfMapOrIterable(@NotNull final XValueNode node, final String objectType) {
+    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null && !myVmValue.isList(), myVmValue);
+
+    try {
+      final String expression = "(this is Iterable || this is Map) ? this.length : -1";
+      myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, expression, new VmCallback<VmValue>() {
+        public void handleResult(final VmResult<VmValue> result) {
+          if (node.isObsolete() || result.isError() || result.getResult() == null ||
+              (!"number".equals(result.getResult().getKind()) && !"integer".equals(result.getResult().getKind()))) {
+            return;
+          }
+
+          try {
+            final int collectionSize = Integer.parseInt(result.getResult().getText());
+            if (collectionSize >= 0) {
+              node.setPresentation(AllIcons.Debugger.Db_array, objectType, "size = " + collectionSize, collectionSize > 0);
+            }
+          }
+          catch (NumberFormatException ignore) {/**/}
+        }
+      });
+    }
+    catch (IOException e) {
+      DartCommandLineDebugProcess.LOG.error(e);
+    }
   }
 
   private Icon getIcon() {
@@ -164,8 +195,8 @@ public class DartValue extends XNamedValue {
     }
   }
 
-  private void computeListChildren(@NotNull final XCompositeNode node, @NotNull final Ref<Integer> listChildrenAlreadyShown)
-    throws IOException {
+  private void computeListChildren(@NotNull final XCompositeNode node,
+                                   @NotNull final Ref<Integer> listChildrenAlreadyShown) throws IOException {
     DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null && myVmValue.isList(), myVmValue);
 
     final int childrenToShow = Math.min(myVmValue.getLength() - listChildrenAlreadyShown.get(), XCompositeNode.MAX_CHILDREN_TO_SHOW);
