@@ -238,4 +238,22 @@ public class HbLexerFreeFormTest extends HbLexerTest {
     result = tokenize("{{~{ foo }~}}");
     result.shouldMatchTokenTypes(OPEN_UNESCAPED, WHITE_SPACE, ID, WHITE_SPACE, CLOSE_UNESCAPED);
   }
+
+  public void testDecimalNumberAsMustacheParam() {
+    TokenizerResult result = tokenize("{{name 10.123}}");
+    result.shouldMatchTokenTypes(OPEN, ID, WHITE_SPACE, NUMBER, CLOSE);
+    result.shouldMatchTokenContent("{{", "name", " ", "10.123", "}}");
+  }
+
+  public void testThreeDecimalNumberAsMustacheParam() {
+    TokenizerResult result = tokenize("{{name 42 10.1 42}}");
+    result.shouldMatchTokenTypes(OPEN, ID, WHITE_SPACE, NUMBER, WHITE_SPACE, NUMBER, WHITE_SPACE, NUMBER, CLOSE);
+    result.shouldMatchTokenContent("{{", "name", " ", "42", " ", "10.1", " ", "42", "}}");
+  }
+
+  public void testDecimalNumberAsMustacheHashParam() {
+    TokenizerResult result = tokenize("{{name paramValue=10.1}}");
+    result.shouldMatchTokenTypes(OPEN, ID, WHITE_SPACE, ID, EQUALS, NUMBER, CLOSE);
+    result.shouldMatchTokenContent("{{", "name", " ", "paramValue", "=", "10.1", "}}");
+  }
 }

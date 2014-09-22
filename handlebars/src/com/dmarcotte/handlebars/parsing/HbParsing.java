@@ -481,12 +481,12 @@ public class HbParsing {
    * param
    * : path
    * | STRING
-   * | INTEGER
+   * | NUMBER
    * | BOOLEAN
    * | dataName
    * ;
    */
-  private boolean parseParam(PsiBuilder builder) {
+  protected boolean parseParam(PsiBuilder builder) {
     PsiBuilder.Marker paramMarker = builder.mark();
 
     if (parsePath(builder)) {
@@ -505,7 +505,7 @@ public class HbParsing {
     }
 
     PsiBuilder.Marker integerMarker = builder.mark();
-    if (parseLeafToken(builder, INTEGER)) {
+    if (parseLeafToken(builder, NUMBER)) {
       integerMarker.drop();
       paramMarker.done(PARAM);
       return true;
@@ -590,7 +590,7 @@ public class HbParsing {
    * hashSegment
    * : ID EQUALS path
    * | ID EQUALS STRING
-   * | ID EQUALS INTEGER
+   * | ID EQUALS NUMBER
    * | ID EQUALS BOOLEAN
    * | ID EQUALS dataName
    * ;
@@ -609,7 +609,7 @@ public class HbParsing {
    * partialName
    * : path
    * | STRING
-   * | INTEGER
+   * | NUMBER
    * ;
    */
   private boolean parsePartialName(PsiBuilder builder) {
@@ -635,7 +635,7 @@ public class HbParsing {
     }
 
     PsiBuilder.Marker integerMarker = builder.mark();
-    if (parseLeafToken(builder, INTEGER)) {
+    if (parseLeafToken(builder, NUMBER)) {
       integerMarker.drop();
       partialNameMarker.done(PARTIAL_NAME);
       return true;
@@ -702,7 +702,7 @@ public class HbParsing {
    * : <epsilon>
    * | SEP ID pathSegments'
    */
-  private boolean parsePathSegments(PsiBuilder builder) {
+  protected boolean parsePathSegments(PsiBuilder builder) {
     PsiBuilder.Marker pathSegmentsMarker = builder.mark();
 
         /* HB_CUSTOMIZATION: see isHashNextLookAhead docs for details */
@@ -725,7 +725,7 @@ public class HbParsing {
   /**
    * See {@link #parsePathSegments(com.intellij.lang.PsiBuilder)} for more info on this method
    */
-  private void parsePathSegmentsPrime(PsiBuilder builder) {
+  protected void parsePathSegmentsPrime(PsiBuilder builder) {
     PsiBuilder.Marker pathSegmentsPrimeMarker = builder.mark();
 
     if (!parseLeafToken(builder, SEP)) {

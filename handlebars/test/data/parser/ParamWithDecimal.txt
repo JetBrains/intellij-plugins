@@ -1,4 +1,4 @@
-HbFile:MustachesWithIntegerParameters.hbs
+HbFile:ParamWithDecimal.hbs
   HbStatementsImpl(STATEMENTS)
     HbSimpleMustacheImpl(MUSTACHE)
       HbPsiElementImpl([Hb] OPEN)
@@ -6,10 +6,10 @@ HbFile:MustachesWithIntegerParameters.hbs
       HbMustacheNameImpl(MUSTACHE_NAME)
         HbPathImpl(PATH)
           HbPsiElementImpl([Hb] ID)
-            PsiElement([Hb] ID)('foo')
+            PsiElement([Hb] ID)('name')
       PsiWhiteSpace(' ')
       HbParamImpl(PARAM)
         HbPsiElementImpl([Hb] NUMBER)
-          PsiElement([Hb] NUMBER)('1')
+          PsiElement([Hb] NUMBER)('10.1')
       HbPsiElementImpl([Hb] CLOSE)
         PsiElement([Hb] CLOSE)('}}')

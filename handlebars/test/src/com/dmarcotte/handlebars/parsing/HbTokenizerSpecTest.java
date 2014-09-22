@@ -356,12 +356,12 @@ public class HbTokenizerSpecTest extends HbLexerTest {
    */
   public void testTokenizesNumbers() {
     TokenizerResult result = tokenize("{{ foo 1 }}");
-    result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, ID, WHITE_SPACE, INTEGER, WHITE_SPACE, CLOSE);
-    result.shouldBeToken(4, INTEGER, "1");
+    result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, ID, WHITE_SPACE, NUMBER, WHITE_SPACE, CLOSE);
+    result.shouldBeToken(4, NUMBER, "1");
 
     result = tokenize("{{ foo -1 }}");
-    result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, ID, WHITE_SPACE, INTEGER, WHITE_SPACE, CLOSE);
-    result.shouldBeToken(4, INTEGER, "-1");
+    result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, ID, WHITE_SPACE, NUMBER, WHITE_SPACE, CLOSE);
+    result.shouldBeToken(4, NUMBER, "-1");
   }
 
   /**
@@ -388,7 +388,7 @@ public class HbTokenizerSpecTest extends HbLexerTest {
     result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, ID, WHITE_SPACE, ID, WHITE_SPACE, ID, EQUALS, ID, WHITE_SPACE, CLOSE);
 
     result = tokenize("{{ foo bar baz=1 }}");
-    result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, ID, WHITE_SPACE, ID, WHITE_SPACE, ID, EQUALS, INTEGER, WHITE_SPACE, CLOSE);
+    result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, ID, WHITE_SPACE, ID, WHITE_SPACE, ID, EQUALS, NUMBER, WHITE_SPACE, CLOSE);
 
     result = tokenize("{{ foo bar baz=true }}");
     result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, ID, WHITE_SPACE, ID, WHITE_SPACE, ID, EQUALS, BOOLEAN, WHITE_SPACE, CLOSE);

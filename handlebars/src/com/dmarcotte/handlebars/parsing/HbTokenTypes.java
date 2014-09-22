@@ -49,7 +49,7 @@ public class HbTokenTypes {
   public static final IElementType CLOSE_UNESCAPED = new HbElementType("CLOSE_UNESCAPED", "hb.parsing.element.expected.close.unescaped");
   public static final IElementType ELSE = new HbElementType("ELSE", "");
   public static final IElementType BOOLEAN = new HbElementType("BOOLEAN", "hb.parsing.element.expected.boolean");
-  public static final IElementType INTEGER = new HbElementType("INTEGER", "hb.parsing.element.expected.integer");
+  public static final IElementType NUMBER = new HbElementType("NUMBER", "hb.parsing.element.expected.integer");
   public static final IElementType STRING = new HbElementType("STRING", "hb.parsing.element.expected.string");
   public static final IElementType ESCAPE_CHAR = new HbElementType("ESCAPE_CHAR", "");
   public static final IElementType INVALID = new HbElementType("INVALID", "hb.parsing.element.expected.invalid");

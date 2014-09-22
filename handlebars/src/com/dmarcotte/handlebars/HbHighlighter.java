@@ -81,7 +81,7 @@ public class HbHighlighter extends SyntaxHighlighterBase {
     keys1.put(HbTokenTypes.UNCLOSED_COMMENT, COMMENTS);
     keys1.put(HbTokenTypes.EQUALS, OPERATORS);
     keys1.put(HbTokenTypes.SEP, OPERATORS);
-    keys1.put(HbTokenTypes.INTEGER, VALUES);
+    keys1.put(HbTokenTypes.NUMBER, VALUES);
     keys1.put(HbTokenTypes.ELSE, IDENTIFIERS);
     keys1.put(HbTokenTypes.BOOLEAN, VALUES);
     keys1.put(HbTokenTypes.STRING, STRINGS);
