@@ -224,7 +224,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     getSession().rebuildViews();
   }
 
-  void setMainIsolate(@NotNull final VmIsolate vmIsolate) {
+  void setMainIsolate(@SuppressWarnings("NullableProblems") @NotNull final VmIsolate vmIsolate) {
     myMainIsolate = vmIsolate;
   }
 
@@ -241,6 +241,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar,
                                         @NotNull final DefaultActionGroup topToolbar,
                                         @NotNull final DefaultActionGroup settings) {
+    // For Run tool window this action is added in DartCommandLineRunningState.createActions()
     topToolbar.addSeparator();
 
     topToolbar.addAction(new OpenDartObservatoryUrlAction(myObservatoryPort, new Computable<Boolean>() {

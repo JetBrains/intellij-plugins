@@ -47,7 +47,8 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
     final ConsoleView consoleView = createConsole(getEnvironment());
     consoleView.attachToProcess(processHandler);
 
-    final DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
+    final DefaultExecutionResult executionResult =
+      new DefaultExecutionResult(consoleView, processHandler, createActions(consoleView, processHandler, executor));
     executionResult.setRestartActions(new ToggleAutoTestAction(getEnvironment()));
     return executionResult;
   }

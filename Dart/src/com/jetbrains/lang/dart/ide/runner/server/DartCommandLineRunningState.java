@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -12,7 +13,11 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.net.NetUtils;
@@ -56,6 +61,25 @@ public class DartCommandLineRunningState extends CommandLineState {
     catch (RuntimeConfigurationError e) {
       builder.addFilter(new DartConsoleFilter(env.getProject(), null)); // can't happen because already checked
     }
+  }
+
+  @Override
+  protected AnAction[] createActions(final ConsoleView console, final ProcessHandler processHandler, final Executor executor) {
+    // These action is effectively added only to the Run tool window. For Debug see DartCommandLineDebugProcess.registerAdditionalActions()
+    final AnAction[] actions = super.createActions(console, processHandler, executor);
+    final AnAction[] newActions = new AnAction[actions.length + 2];
+    System.arraycopy(actions, 0, newActions, 0, actions.length);
+
+    newActions[newActions.length - 2] = new Separator();
+
+    newActions[newActions.length - 1] = new OpenDartObservatoryUrlAction(myObservatoryPort, new Computable<Boolean>() {
+      @Override
+      public Boolean compute() {
+        return !processHandler.isProcessTerminated();
+      }
+    });
+
+    return newActions;
   }
 
   @NotNull
