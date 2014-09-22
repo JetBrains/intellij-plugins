@@ -38,7 +38,6 @@ public class DartVmListener implements VmListener {
 
   public void isolateCreated(final VmIsolate isolate) {
     LOG.debug("isolate created: " + isolate.getId());
-    myDebugProcess.isolateCreated(isolate);
   }
 
   public void isolateShutdown(final VmIsolate isolate) {
@@ -63,6 +62,7 @@ public class DartVmListener implements VmListener {
       myFirstBreak = false;
 
       // init everything
+      myDebugProcess.setMainIsolate(isolate);
       firstIsolateInit(isolate);
 
       if (PausedReason.breakpoint == reason) {

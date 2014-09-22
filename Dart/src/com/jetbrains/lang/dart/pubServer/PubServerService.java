@@ -26,7 +26,6 @@ import org.jetbrains.builtInWebServer.NetService;
 import org.jetbrains.io.*;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Collection;
@@ -126,7 +125,7 @@ final class PubServerService extends NetService {
     commandLine.addParameter("serve");
     commandLine.addParameter(firstServedDir.getName());
     commandLine.addParameter("--port=" + String.valueOf(port));
-    commandLine.addParameter("--admin-port=" + String.valueOf(findAvailablePort(port)));
+    //commandLine.addParameter("--admin-port=" + String.valueOf(PubServerManager.findOneMoreAvailablePort(port))); // todo uncomment and use
 
     commandLine.setWorkDirectory(firstServedDir.getParent().getPath());
 
@@ -156,20 +155,6 @@ final class PubServerService extends NetService {
   static void sendBadGateway(@NotNull final Channel channel) {
     if (channel.isActive()) {
       Responses.sendStatus(HttpResponseStatus.BAD_GATEWAY, channel);
-    }
-  }
-
-  private static int findAvailablePort(int forbiddenPort) throws ExecutionException {
-    try {
-      while (true) {
-        final int adminPort = NetUtils.findAvailableSocketPort();
-        if (adminPort != forbiddenPort) {
-          return adminPort;
-        }
-      }
-    }
-    catch (IOException e) {
-      throw new ExecutionException(e);
     }
   }
 

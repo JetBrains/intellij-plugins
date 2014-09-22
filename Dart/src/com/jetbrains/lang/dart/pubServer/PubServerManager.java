@@ -9,11 +9,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.net.NetUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class PubServerManager implements Disposable {
@@ -63,6 +65,20 @@ public class PubServerManager implements Disposable {
       catch (Exception e) {
         LOG.error(e);
       }
+    }
+  }
+
+  public static int findOneMoreAvailablePort(final int forbiddenPort) throws com.intellij.execution.ExecutionException {
+    try {
+      while (true) {
+        final int port = NetUtils.findAvailableSocketPort();
+        if (port != forbiddenPort) {
+          return port;
+        }
+      }
+    }
+    catch (IOException e) {
+      throw new com.intellij.execution.ExecutionException(e);
     }
   }
 }

@@ -4,8 +4,10 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.xdebugger.XDebugProcess;
@@ -31,14 +33,16 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   private final VmConnection myVmConnection;
   private final DartCommandLineBreakpointsHandler myBreakpointsHandler;
   private final @NotNull DartUrlResolver myDartUrlResolver;
+  private final int myObservatoryPort;
   private boolean myVmConnected;
   private @Nullable VmIsolate myMainIsolate;
 
   public DartCommandLineDebugProcess(final @NotNull XDebugSession session,
-                                     final int debuggingPort,
+                                     final DartCommandLineRunningState commandLineState,
                                      final @Nullable ExecutionResult executionResult,
                                      final @NotNull VirtualFile dartFile) {
     super(session);
+    myObservatoryPort = commandLineState.getObservatoryPort();
 
     myDartUrlResolver = DartUrlResolver.getInstance(session.getProject(), dartFile);
 
@@ -46,7 +50,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     myExecutionResult = executionResult;
 
     // see com.google.dart.tools.debug.core.server.ServerDebugTarget
-    myVmConnection = new VmConnection(null, debuggingPort);
+    myVmConnection = new VmConnection(null, commandLineState.getDebuggingPort());
     myVmConnection.addListener(new DartVmListener(this));
     connect();
   }
@@ -220,10 +224,8 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     getSession().rebuildViews();
   }
 
-  void isolateCreated(final VmIsolate vmIsolate) {
-    if (myMainIsolate == null) {
-      myMainIsolate = vmIsolate;
-    }
+  void setMainIsolate(@NotNull final VmIsolate vmIsolate) {
+    myMainIsolate = vmIsolate;
   }
 
   @Override
@@ -233,6 +235,20 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
            : myVmConnected
              ? XDebuggerBundle.message("debugger.state.message.connected")
              : DartBundle.message("debugger.waiting.vm.to.connect");
+  }
+
+  @Override
+  public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar,
+                                        @NotNull final DefaultActionGroup topToolbar,
+                                        @NotNull final DefaultActionGroup settings) {
+    topToolbar.addSeparator();
+
+    topToolbar.addAction(new OpenDartObservatoryUrlAction(myObservatoryPort, new Computable<Boolean>() {
+      @Override
+      public Boolean compute() {
+        return myVmConnected && !getSession().isStopped();
+      }
+    }));
   }
 
   public static String threeSlashizeFileUrl(final String fileUrl) {

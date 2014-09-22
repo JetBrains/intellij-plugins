@@ -13,7 +13,6 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.net.NetUtils;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
@@ -68,8 +67,6 @@ public class DartRunner extends DefaultProgramRunner {
     final DartRunConfigurationBase configuration = (DartRunConfigurationBase)env.getRunProfile();
     final VirtualFile mainDartFile = configuration.getRunnerParameters().getDartFile();
 
-    final int debuggingPort = NetUtils.tryToFindAvailableSocketPort();
-    ((DartCommandLineRunningState)state).setDebuggingPort(debuggingPort);
     final ExecutionResult executionResult = state.execute(env.getExecutor(), this);
     if (executionResult == null) return null;
 
@@ -78,7 +75,7 @@ public class DartRunner extends DefaultProgramRunner {
       @Override
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
-        return new DartCommandLineDebugProcess(session, debuggingPort, executionResult, mainDartFile);
+        return new DartCommandLineDebugProcess(session, (DartCommandLineRunningState)state, executionResult, mainDartFile);
       }
     });
 

@@ -156,10 +156,6 @@ public class DartSdkUtil {
     return null;
   }
 
-  public static String getDart2jsPath(final @NotNull DartSdk sdk) {
-    return sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/dart2js.bat" : "/bin/dart2js");
-  }
-
   public static String getDartExePath(final @NotNull DartSdk sdk) {
     return sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/dart.exe" : "/bin/dart");
   }
