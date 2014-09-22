@@ -149,7 +149,6 @@
     <codeInspection.InspectionExtension id="dartGlobalInspection"
                                         implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>
 
-    <stepsBeforeRunProvider implementation="com.jetbrains.lang.dart.ide.runner.before.Dart2JSBeforeRunTaskProvider"/>
     <consoleFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.DartConsoleFilterProvider" order="first"/>
 
     <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType"/>
@@ -211,7 +210,6 @@
     </action>
 
     <group>
-      <action id="Dart.dart2js" class="com.jetbrains.lang.dart.ide.actions.Dart2JSAction" text="Compile Dart to JavaScript" description="Run 'dart2js' compiler"/>
       <action id="Dart.pub.get" class="com.jetbrains.lang.dart.ide.actions.DartPubGetAction" text="Pub: Get Dependencies" description="Run 'pub get'"/>
       <action id="Dart.pub.upgrade" class="com.jetbrains.lang.dart.ide.actions.DartPubUpgradeAction" text="Pub: Upgrade Dependencies" description="Run 'pub upgrade'"/>
       <action id="Dart.pub.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction" text="Pub: Build..." description="Run 'pub build'"/>
