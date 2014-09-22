@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner;
 
+import com.intellij.execution.filters.BrowserHyperlinkInfo;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.openapi.project.Project;
@@ -25,6 +26,8 @@ public class DartConsoleFilter implements Filter {
   private final @Nullable DartUrlResolver myDartUrlResolver;
   private Collection<VirtualFile> myAllPubspecYamlFiles;
 
+  private static final String OBSERVATORY_LISTENING_ON = "Observatory listening on ";
+
   public DartConsoleFilter(final @NotNull Project project) {
     this(project, null);
   }
@@ -37,6 +40,10 @@ public class DartConsoleFilter implements Filter {
 
   @Nullable
   public Result applyFilter(final String line, final int entireLength) {
+    if (line.startsWith(OBSERVATORY_LISTENING_ON + "http://")) {
+      return getObservatoryUrlResult(line, entireLength - line.length());
+    }
+
     final DartPositionInfo info = DartPositionInfo.parsePositionInfo(line);
     if (info == null) return null;
 
@@ -76,6 +83,26 @@ public class DartConsoleFilter implements Filter {
       final int highlightEndOffset = entireLength - line.length() + info.highlightingEndIndex;
       return new Result(highlightStartOffset, highlightEndOffset, new OpenFileHyperlinkInfo(myProject, file, info.line, info.column));
     }
+
+    return null;
+  }
+
+  @Nullable
+  private static Result getObservatoryUrlResult(final String line, final int lineStartOffset) {
+    assert line.startsWith(OBSERVATORY_LISTENING_ON + "http://") : line;
+
+    final String url = line.trim().substring(OBSERVATORY_LISTENING_ON.length());
+    final int colonIndex = url.indexOf(":", "http://".length());
+    if (colonIndex <= 0) return null;
+
+    final String port = url.substring(colonIndex + 1);
+    try {
+      //noinspection ResultOfMethodCallIgnored
+      Integer.parseInt(port);
+      final int startOffset = lineStartOffset + OBSERVATORY_LISTENING_ON.length();
+      return new Result(startOffset, startOffset + url.length(), new BrowserHyperlinkInfo(url));
+    }
+    catch (NumberFormatException ignore) {/**/}
 
     return null;
   }
