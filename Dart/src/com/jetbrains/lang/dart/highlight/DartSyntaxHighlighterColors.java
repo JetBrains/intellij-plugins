@@ -49,6 +49,8 @@ public class DartSyntaxHighlighterColors {
   private static final String DART_DOT = "DART_DOT";
   private static final String DART_SEMICOLON = "DART_SEMICOLON";
   private static final String DART_BAD_CHARACTER = "DART_BAD_CHARACTER";
+  private static final String DART_SYMBOL_LITERAL = "DART_SYMBOL_LITERAL";
+
 
 
   public static final TextAttributesKey LINE_COMMENT =
@@ -69,6 +71,8 @@ public class DartSyntaxHighlighterColors {
     createTextAttributesKey(DART_VALID_STRING_ESCAPE, DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE);
   public static final TextAttributesKey INVALID_STRING_ESCAPE =
     createTextAttributesKey(DART_INVALID_STRING_ESCAPE, DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
+  public static final TextAttributesKey SYMBOL_LITERAL =
+    createTextAttributesKey(DART_SYMBOL_LITERAL, DefaultLanguageHighlighterColors.KEYWORD);
   public static final TextAttributesKey OPERATION_SIGN =
     createTextAttributesKey(DART_OPERATION_SIGN, DefaultLanguageHighlighterColors.OPERATION_SIGN);
   public static final TextAttributesKey PARENTHS =

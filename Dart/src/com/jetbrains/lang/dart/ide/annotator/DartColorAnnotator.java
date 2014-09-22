@@ -57,6 +57,11 @@ public class DartColorAnnotator implements Annotator {
       return;
     }
 
+    if (element instanceof DartSymbolLiteralExpression) {
+      createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.SYMBOL_LITERAL);
+      return;
+    }
+
     if (element instanceof DartReference && element.getParent() instanceof DartType && "dynamic".equals(element.getText())) {
       createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_BUILTIN);
       return;

@@ -29,6 +29,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.keyword"), KEYWORD),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.number"), NUMBER),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.string"), STRING),
+      new AttributesDescriptor(DartBundle.message("dart.color.settings.description.symbol.literal"), SYMBOL_LITERAL),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.valid.string.escape"), VALID_STRING_ESCAPE),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.invalid.string.escape"), INVALID_STRING_ESCAPE),
       new AttributesDescriptor(DartBundle.message("dart.color.settings.description.operator"), OPERATION_SIGN),
@@ -79,6 +80,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     ourTags.put("keyword", KEYWORD);
     ourTags.put("metadata", METADATA);
     ourTags.put("builtin", BUILTIN);
+    ourTags.put("symbol", SYMBOL_LITERAL);
     ourTags.put("instance.member.function", INSTANCE_MEMBER_FUNCTION);
     ourTags.put("instance.member.function.call", INSTANCE_MEMBER_FUNCTION_CALL);
     ourTags.put("static.member.function", STATIC_MEMBER_FUNCTION);
@@ -153,6 +155,7 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
            "  <builtin>int</builtin> g() => <abstract.call>f</abstract.call>();\n" +
            "  <builtin>int</builtin> f();\n" +
            "}\n\n" +
+           "const className = <symbol>#MyClass</symbol>;\n\n" +
            "var <top.level.var.decl>topLevelVar</top.level.var.decl> = new SomeClass(null).<inherited.call>g</inherited.call>();\n\n" +
            "<top.level.func.decl>main</top.level.func.decl>() {\n" +
            "  <top.level.func.call>print</top.level.func.call>(<top.level.var.call>topLevelVar</top.level.var.call>);\n" +
