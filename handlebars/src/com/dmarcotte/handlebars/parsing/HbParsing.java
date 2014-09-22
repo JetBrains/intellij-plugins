@@ -677,7 +677,7 @@ public class HbParsing {
    * : pathSegments { $$ = new yy.IdNode($1); }
    * ;
    */
-  private boolean parsePath(PsiBuilder builder) {
+  protected boolean parsePath(PsiBuilder builder) {
     PsiBuilder.Marker pathMarker = builder.mark();
     if (parsePathSegments(builder)) {
       pathMarker.done(PATH);
@@ -755,7 +755,7 @@ public class HbParsing {
    * We check this in a couple of places to determine whether something should be parsed as
    * a param, or left alone to grabbed by the hash parser later
    */
-  private boolean isHashNextLookAhead(PsiBuilder builder) {
+  protected boolean isHashNextLookAhead(PsiBuilder builder) {
     PsiBuilder.Marker hashLookAheadMarker = builder.mark();
     boolean isHashUpcoming = parseHashSegment(builder);
     hashLookAheadMarker.rollbackTo();
