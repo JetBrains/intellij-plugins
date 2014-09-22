@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "AWS CloudFormation Sample Template WordPress_Single_Instance_With_RDS: WordPress is web software you can use to create a beautiful website or blog. This template installs a single-instance WordPress deployment using an Amazon RDS database instance for storage. It demonstrates using the AWS CloudFormation bootstrap scripts to install packages and files at instance launch time. **WARNING** This template creates an Amazon EC2 instance and an Amazon RDS database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "AWS CloudFormation Sample Template WordPress_Single_Instance_With_RDS: WordPress is web software you can use to create a website or blog. This template installs a single-instance WordPress deployment that uses an Amazon RDS database instance for storage. It demonstrates using the AWS CloudFormation bootstrap scripts to install packages and files when an instance is launched. **WARNING** This template creates an Amazon EC2 instance and an Amazon RDS database instance. You will be billed for the AWS resources used if you create a stack from this template.",
 
   "Parameters" : {
 
@@ -17,16 +17,16 @@
     "InstanceType" : {
       "Description" : "WebServer EC2 instance type",
       "Type" : "String",
-      "Default" : "m1.small",
-      "AllowedValues" : [ "t1.micro","m1.small","m1.medium","m1.large","m1.xlarge","m2.xlarge","m2.2xlarge","m2.4xlarge","m3.xlarge","m3.2xlarge","c1.medium","c1.xlarge","cc1.4xlarge","cc2.8xlarge","cg1.4xlarge"],
+      "Default" : "t1.micro",
+      "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge" ],
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
 
     "DBClass" : {
-      "Default" : "db.m1.small",
+      "Default" : "db.t1.micro",
       "Description" : "Database instance class",
       "Type" : "String",
-      "AllowedValues" : [ "db.m1.small", "db.m1.large", "db.m1.xlarge", "db.m2.xlarge", "db.m2.2xlarge", "db.m2.4xlarge" ],
+      "AllowedValues" : [ "db.t1.micro", "db.t2.micro", "db.t2.small", "db.t2.medium", "db.m3.medium", "db.m3.large", "db.m3.xlarge", "db.m3.2xlarge" ],
       "ConstraintDescription" : "must select a valid database instance type."
     },
 
@@ -82,33 +82,28 @@
   },
 
   "Mappings" : {
-    "AWSInstanceType2Arch" : {
-      "t1.micro"    : { "Arch" : "64" },
-      "m1.small"    : { "Arch" : "64" },
-      "m1.medium"   : { "Arch" : "64" },
-      "m1.large"    : { "Arch" : "64" },
-      "m1.xlarge"   : { "Arch" : "64" },
-      "m2.xlarge"   : { "Arch" : "64" },
-      "m2.2xlarge"  : { "Arch" : "64" },
-      "m2.4xlarge"  : { "Arch" : "64" },
-      "m3.xlarge"   : { "Arch" : "64" },
-      "m3.2xlarge"  : { "Arch" : "64" },
-      "c1.medium"   : { "Arch" : "64" },
-      "c1.xlarge"   : { "Arch" : "64" },
-      "cc1.4xlarge" : { "Arch" : "64HVM" },
-      "cc2.8xlarge" : { "Arch" : "64HVM" },
-      "cg1.4xlarge" : { "Arch" : "64HVM" }
+      "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "PV64"  },
+      "t2.micro"    : { "Arch" : "HVM64"  },
+      "t2.small"    : { "Arch" : "HVM64"  },
+      "t2.medium"   : { "Arch" : "HVM64"  },
+      "m3.medium"   : { "Arch" : "PV64"   },
+      "m3.large"    : { "Arch" : "PV64"   },
+      "m3.xlarge"   : { "Arch" : "PV64"   },
+      "m3.2xlarge"  : { "Arch" : "PV64"   }
     },
 
     "AWSRegionArch2AMI" : {
-      "us-east-1"      : { "32" : "ami-31814f58", "64" : "ami-1b814f72", "64HVM" : "ami-0da96764" },
-      "us-west-2"      : { "32" : "ami-38fe7308", "64" : "ami-30fe7300", "64HVM" : "NOT_YET_SUPPORTED" },
-      "us-west-1"      : { "32" : "ami-11d68a54", "64" : "ami-1bd68a5e", "64HVM" : "NOT_YET_SUPPORTED" },
-      "eu-west-1"      : { "32" : "ami-973b06e3", "64" : "ami-953b06e1", "64HVM" : "NOT_YET_SUPPORTED" },
-      "ap-southeast-1" : { "32" : "ami-b4b0cae6", "64" : "ami-beb0caec", "64HVM" : "NOT_YET_SUPPORTED" },
-      "ap-southeast-2" : { "32" : "ami-b3990e89", "64" : "ami-bd990e87", "64HVM" : "NOT_YET_SUPPORTED" },
-      "ap-northeast-1" : { "32" : "ami-0644f007", "64" : "ami-0a44f00b", "64HVM" : "NOT_YET_SUPPORTED" },
-      "sa-east-1"      : { "32" : "ami-3e3be423", "64" : "ami-3c3be421", "64HVM" : "NOT_YET_SUPPORTED" }
+      "us-east-1"      : { "PV64" : "ami-7c807d14", "HVM64" : "ami-76817c1e" },
+      "us-west-2"      : { "PV64" : "ami-1b3b462b", "HVM64" : "ami-d13845e1" },
+      "us-west-1"      : { "PV64" : "ami-a8d3d4ed", "HVM64" : "ami-f0d3d4b5" },
+      "eu-west-1"      : { "PV64" : "ami-672ce210", "HVM64" : "ami-892fe1fe" },
+      "ap-southeast-1" : { "PV64" : "ami-56b7eb04", "HVM64" : "ami-a6b6eaf4" },
+      "ap-northeast-1" : { "PV64" : "ami-25dd9324", "HVM64" : "ami-29dc9228" },
+      "ap-southeast-2" : { "PV64" : "ami-6bf99c51", "HVM64" : "ami-d9fe9be3" },
+      "sa-east-1"      : { "PV64" : "ami-c7e649da", "HVM64" : "ami-c9e649d4" },
+      "us-gov-west-1"  : { "PV64" : "ami-ab4a2d88", "HVM64" : "ami-a54a2d86" },
+      "cn-north-1"     : { "PV64" : "ami-cab82af3", "HVM64" : "ami-ccb82af5" }
     }
   },
 

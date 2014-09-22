@@ -122,7 +122,7 @@
         "PolicyDocument" : {
           "Statement"  : [ {
             "Effect"   : "Allow",
-            "Action"   : "*",
+            "Action"   : "elasticache:DescribeCacheClusters",
             "Resource" : "*"
           } ]
         },

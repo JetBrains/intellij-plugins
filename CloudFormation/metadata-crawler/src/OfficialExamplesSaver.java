@@ -20,7 +20,8 @@ public class OfficialExamplesSaver {
           name.equalsIgnoreCase("RDS_MySQL_With_Read_Replica.template") ||
           name.equalsIgnoreCase("RDSDatabaseWithOptionalReadReplica.template") ||
           name.equalsIgnoreCase("auto_scaling_with_instance_profile.template") ||
-          name.equalsIgnoreCase("DynamoDB_Table.template")) {
+          name.equalsIgnoreCase("DynamoDB_Table.template") ||
+          name.equalsIgnoreCase("AutoScalingMultiAZSample-1.0.0.template")) {
         // Known to be broken
         continue;
       }

@@ -48,7 +48,7 @@
         <ResourceProperty>
           <name>LoadBalancerNames</name>
           <description></description>
-          <type>List of Strings</type>
+          <type>A list of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -56,6 +56,12 @@
           <description></description>
           <type>String</type>
           <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MetricsCollection</name>
+          <description></description>
+          <type>A list of Auto Scaling MetricsCollection</type>
+          <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>MinSize</name>
@@ -67,6 +73,12 @@
           <name>NotificationConfiguration</name>
           <description></description>
           <type>NotificationConfiguration</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>PlacementGroup</name>
+          <description></description>
+          <type>String</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -259,84 +271,6 @@
       <attributes/>
     </ResourceType>
     <ResourceType>
-      <name>AWS::AutoScaling::Trigger</name>
-      <properties>
-        <ResourceProperty>
-          <name>AutoScalingGroupName</name>
-          <description></description>
-          <type>String</type>
-          <required>true</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>BreachDuration</name>
-          <description></description>
-          <type>String</type>
-          <required>true</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>Dimensions</name>
-          <description></description>
-          <type>List of CloudWatch dimensions</type>
-          <required>true</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>LowerBreachScaleIncrement</name>
-          <description></description>
-          <type>String</type>
-          <required>false</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>LowerThreshold</name>
-          <description></description>
-          <type>String</type>
-          <required>true</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>MetricName</name>
-          <description></description>
-          <type>String</type>
-          <required>true</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>Namespace</name>
-          <description></description>
-          <type>String</type>
-          <required>true</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>Period</name>
-          <description></description>
-          <type>String</type>
-          <required>true</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>Statistic</name>
-          <description></description>
-          <type>String</type>
-          <required>true</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>Unit</name>
-          <description></description>
-          <type>String</type>
-          <required>false</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>UpperBreachScaleIncrement</name>
-          <description></description>
-          <type>String</type>
-          <required>false</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>UpperThreshold</name>
-          <description></description>
-          <type>String</type>
-          <required>true</required>
-        </ResourceProperty>
-      </properties>
-      <attributes/>
-    </ResourceType>
-    <ResourceType>
       <name>AWS::CloudFormation::Authentication</name>
       <properties>
         <ResourceProperty>
@@ -484,18 +418,54 @@
       </attributes>
     </ResourceType>
     <ResourceType>
-      <name>AWS::CloudWatch::Alarm</name>
+      <name>AWS::CloudTrail::Trail</name>
       <properties>
         <ResourceProperty>
-          <name>ActionsEnabled</name>
+          <name>IncludeGlobalServiceEvents</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>IsLogging</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>S3BucketName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>S3KeyPrefix</name>
           <description></description>
           <type>String</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>SnsTopicName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::CloudWatch::Alarm</name>
+      <properties>
+        <ResourceProperty>
+          <name>ActionsEnabled</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>AlarmActions</name>
           <description></description>
-          <type>List of String</type>
+          <type>A list of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -519,7 +489,7 @@
         <ResourceProperty>
           <name>Dimensions</name>
           <description></description>
-          <type>List of Metric Dimension type</type>
+          <type>List of Metric Dimension</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -531,7 +501,7 @@
         <ResourceProperty>
           <name>InsufficientDataActions</name>
           <description></description>
-          <type>List of String</type>
+          <type>A list of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -549,7 +519,7 @@
         <ResourceProperty>
           <name>OKActions</name>
           <description></description>
-          <type>List of String</type>
+          <type>A list of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -790,6 +760,12 @@
           <description></description>
           <type>String</type>
           <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>InstanceInitiatedShutdownBehavior</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>InstanceType</name>
@@ -1201,7 +1177,7 @@
         <ResourceProperty>
           <name>FromPort</name>
           <description></description>
-          <type>String</type>
+          <type>Integer</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -1219,7 +1195,7 @@
         <ResourceProperty>
           <name>ToPort</name>
           <description></description>
-          <type>String</type>
+          <type>Integer</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -1229,13 +1205,25 @@
       <name>AWS::EC2::SecurityGroupIngress</name>
       <properties>
         <ResourceProperty>
-          <name>GroupName</name>
+          <name>CidrIp</name>
           <description></description>
           <type>String</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>FromPort</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>GroupId</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>GroupName</name>
           <description></description>
           <type>String</type>
           <required>false</required>
@@ -1247,7 +1235,7 @@
           <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
-          <name>CidrIp</name>
+          <name>SourceSecurityGroupId</name>
           <description></description>
           <type>String</type>
           <required>false</required>
@@ -1259,19 +1247,7 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
-          <name>SourceSecurityGroupId</name>
-          <description></description>
-          <type>String</type>
-          <required>false</required>
-        </ResourceProperty>
-        <ResourceProperty>
           <name>SourceSecurityGroupOwnerId</name>
-          <description></description>
-          <type>String</type>
-          <required>false</required>
-        </ResourceProperty>
-        <ResourceProperty>
-          <name>FromPort</name>
           <description></description>
           <type>String</type>
           <required>false</required>
@@ -1279,7 +1255,7 @@
         <ResourceProperty>
           <name>ToPort</name>
           <description></description>
-          <type>String</type>
+          <type>Integer</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -1313,7 +1289,12 @@
           <required>true</required>
         </ResourceProperty>
       </properties>
-      <attributes/>
+      <attributes>
+        <ResourceAttribute>
+          <name>AvailabilityZone</name>
+          <description></description>
+        </ResourceAttribute>
+      </attributes>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::SubnetNetworkAclAssociation</name>
@@ -1435,6 +1416,30 @@
       <attributes/>
     </ResourceType>
     <ResourceType>
+      <name>AWS::EC2::VPCPeeringConnection</name>
+      <properties>
+        <ResourceProperty>
+          <name>PeerVpcId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>List of EC2 Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VpcId</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
       <name>AWS::EC2::VPNConnection</name>
       <properties>
         <ResourceProperty>
@@ -1513,7 +1518,7 @@
           <name>RouteTableIds</name>
           <description></description>
           <type>List of route table IDs</type>
-          <required>false</required>
+          <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>VpnGatewayId</name>
@@ -1532,6 +1537,12 @@
           <description></description>
           <type>String</type>
           <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Encrypted</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>Iops</name>
@@ -2113,7 +2124,12 @@
           <required>true</required>
         </ResourceProperty>
       </properties>
-      <attributes/>
+      <attributes>
+        <ResourceAttribute>
+          <name>Arn</name>
+          <description></description>
+        </ResourceAttribute>
+      </attributes>
     </ResourceType>
     <ResourceType>
       <name>AWS::IAM::Policy</name>
@@ -2173,7 +2189,12 @@
           <required>false</required>
         </ResourceProperty>
       </properties>
-      <attributes/>
+      <attributes>
+        <ResourceAttribute>
+          <name>Arn</name>
+          <description></description>
+        </ResourceAttribute>
+      </attributes>
     </ResourceType>
     <ResourceType>
       <name>AWS::IAM::User</name>
@@ -2223,6 +2244,54 @@
           <name>Users</name>
           <description></description>
           <type>List of users</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::Kinesis::Stream</name>
+      <properties>
+        <ResourceProperty>
+          <name>ShardCount</name>
+          <description></description>
+          <type>Integer</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::Logs::LogGroup</name>
+      <properties>
+        <ResourceProperty>
+          <name>RetentionInDays</name>
+          <description></description>
+          <type>Integer</type>
+          <required>false</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::Logs::MetricFilter</name>
+      <properties>
+        <ResourceProperty>
+          <name>FilterPattern</name>
+          <description></description>
+          <type>A list of strings</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LogGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>MetricTransformations</name>
+          <description></description>
+          <type>A list of CloudWatch Logs MetricFilter MetricTransformation Property</type>
           <required>true</required>
         </ResourceProperty>
       </properties>
@@ -2706,6 +2775,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>PubliclyAccessible</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>SourceDBInstanceIdentifier</name>
           <description></description>
           <type>String</type>
@@ -2742,13 +2817,13 @@
           <name>Description</name>
           <description></description>
           <type>String</type>
-          <required>false</required>
+          <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>Family</name>
           <description></description>
           <type>String</type>
-          <required>false</required>
+          <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>Parameters</name>
@@ -3215,9 +3290,39 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>CorsConfiguration</name>
+          <description></description>
+          <type>Amazon S3 Cors Configuration</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LifecycleConfiguration</name>
+          <description></description>
+          <type>Amazon S3 Lifecycle Configuration</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>LoggingConfiguration</name>
+          <description></description>
+          <type>Amazon S3 Logging Configuration</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>NotificationConfiguration</name>
+          <description></description>
+          <type>Amazon S3 Notification Configuration</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>Tags</name>
           <description></description>
           <type>AWS CloudFormation Resource Tags</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>VersioningConfiguration</name>
+          <description></description>
+          <type>Amazon S3 Versioning Configuration</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -3371,13 +3476,13 @@
         <ResourceProperty>
           <name>PolicyDocument</name>
           <description></description>
-          <type>JSON</type>
+          <type>JSON object</type>
           <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>Queues</name>
           <description></description>
-          <type>List of queue URLs</type>
+          <type>A list of strings</type>
           <required>true</required>
         </ResourceProperty>
       </properties>

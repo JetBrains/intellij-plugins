@@ -143,6 +143,8 @@ public class ResourceTypesSaver {
 
         if (typeValue != null) {
           property.type = typeValue;
+        } else if (resourceType.name.equals("AWS::Redshift::Cluster") && property.name.equals("SnapshotClusterIdentifier")) {
+          property.type = "String";
         } else {
           // TODO
           if (!resourceType.name.equals("AWS::Route53::RecordSet")) {
@@ -176,7 +178,9 @@ public class ResourceTypesSaver {
           }
         } else {
           // TODO
-          if (!resourceType.name.equals("AWS::RDS::DBParameterGroup") && !resourceType.name.equals("AWS::Route53::RecordSet")) {
+          if (!resourceType.name.equals("AWS::RDS::DBParameterGroup") &&
+              !resourceType.name.equals("AWS::Route53::RecordSet") &&
+              !resourceType.name.equals("AWS::RDS::DBSecurityGroupIngress")) {
             throw new RuntimeException("Required is not found in property " + property.name + " in " + url);
           }
         }
