@@ -164,6 +164,7 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
     commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
+    commandLine.addParameter("--trace_service_pause_events");
 
     commandLine.addParameter(overriddenMainFilePath == null ? dartFile.getPath() : overriddenMainFilePath);
 
