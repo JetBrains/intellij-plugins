@@ -35,3 +35,5 @@ class <info>C</info> extends <info>B</info> {
   <info>templateMethod</info>() => null;
   <info>c</info>() => <info textAttributesKey="DART_INHERITED_MEMBER_FUNCTION_CALL">f</info>();
 }
+
+const <info>className</info> = <info textAttributesKey="DART_SYMBOL_LITERAL">#MyClass</info>;
