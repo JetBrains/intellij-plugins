@@ -56,8 +56,19 @@ public class PubServerManager implements Disposable {
     }
   }
 
+  public boolean hasAlivePubServerProcesses() {
+    for (PubServerService service : dartProjectToPubService.asMap().values()) {
+      if (service.isPubServerProcessAlive()) return true;
+    }
+    return false;
+  }
+
   @Override
   public void dispose() {
+    stopAllPubServerProcesses();
+  }
+
+  public void stopAllPubServerProcesses() {
     for (PubServerService service : dartProjectToPubService.asMap().values()) {
       try {
         Disposer.dispose(service);

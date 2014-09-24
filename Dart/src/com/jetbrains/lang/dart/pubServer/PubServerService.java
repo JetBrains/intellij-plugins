@@ -3,6 +3,9 @@ package com.jetbrains.lang.dart.pubServer;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
@@ -86,6 +89,16 @@ final class PubServerService extends NetService {
   @NotNull
   protected Icon getConsoleToolWindowIcon() {
     return DartIcons.Dart_13;
+  }
+
+  @NotNull
+  @Override
+  public ActionGroup getConsoleToolWindowActions() {
+    return new DefaultActionGroup(ActionManager.getInstance().getAction("Dart.stop.pub.server"));
+  }
+
+  public boolean isPubServerProcessAlive() {
+    return processHandler.has() && !processHandler.get().getResult().isProcessTerminated();
   }
 
   public void sendToPubServer(@NotNull final ChannelHandlerContext clientContext,

@@ -188,6 +188,8 @@
     <action id="Dart.pub.list.package.dirs" class="com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction"
             text="Configure Dart package roots using 'pub list-package-dirs'"/>
 
+    <action id="Dart.stop.pub.server" class="com.jetbrains.lang.dart.pubServer.StopPubServerAction" text="Stop Pub Serve"/>
+
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
             text="Dart File" description="Create new Dart file/class/interface">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
