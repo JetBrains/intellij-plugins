@@ -317,6 +317,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     return "Bundle .jar";
   }
 
+  @NotNull
   @Override
   public JComponent createComponent() {
     return myRoot;

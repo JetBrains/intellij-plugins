@@ -201,6 +201,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     return "reference.settings.module.facet.osgi";
   }
 
+  @NotNull
   @Override
   public JComponent createComponent() {
     return myRoot;

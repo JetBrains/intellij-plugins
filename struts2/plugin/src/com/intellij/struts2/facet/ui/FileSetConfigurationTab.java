@@ -296,6 +296,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     return StrutsBundle.message("facet.fileset.title");
   }
 
+  @NotNull
   public JComponent createComponent() {
     return myPanel;
   }

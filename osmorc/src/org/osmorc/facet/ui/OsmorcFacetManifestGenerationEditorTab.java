@@ -37,6 +37,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ManifestEditor;
@@ -125,6 +126,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     return "Manifest Generation";
   }
 
+  @NotNull
   public JComponent createComponent() {
     return _root;
   }

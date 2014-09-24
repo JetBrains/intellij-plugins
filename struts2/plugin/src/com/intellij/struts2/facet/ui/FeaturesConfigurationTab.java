@@ -19,6 +19,7 @@ import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -45,6 +46,7 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
     return StrutsBundle.message("facet.features.title");
   }
 
+  @NotNull
   public JComponent createComponent() {
     return myPanel;
   }
