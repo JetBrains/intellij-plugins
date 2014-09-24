@@ -66,8 +66,11 @@ public class DocumentProblemManager {
     //  title == null ? FlashUIDesignerBundle.message("plugin.name") : title, message, NotificationType.ERROR);
     //notification.notify(project);
 
-    final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, messageType, new BrowserHyperlinkListener()).setShowCallout(false)
-      .setHideOnAction(false).createBalloon();
+    final Balloon balloon = JBPopupFactory.getInstance()
+      .createHtmlTextBalloonBuilder(message, messageType, BrowserHyperlinkListener.INSTANCE)
+      .setShowCallout(false)
+      .setHideOnAction(false)
+      .createBalloon();
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
