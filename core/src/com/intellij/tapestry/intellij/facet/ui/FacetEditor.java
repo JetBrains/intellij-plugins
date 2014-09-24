@@ -41,6 +41,7 @@ public class FacetEditor extends FacetEditorTab {
         return "Tapestry";
     }
 
+    @NotNull
     public JComponent createComponent() {
         return _mainPanel;
     }
