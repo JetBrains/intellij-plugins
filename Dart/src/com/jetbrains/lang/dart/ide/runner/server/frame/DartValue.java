@@ -121,7 +121,7 @@ public class DartValue extends XNamedValue {
       myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, expression, new VmCallback<VmValue>() {
         public void handleResult(final VmResult<VmValue> result) {
           if (node.isObsolete() || result.isError() || result.getResult() == null || !"string".equals(result.getResult().getKind())) {
-            return;
+            return; // stay with existing presentation returned in computePresentation()
           }
 
           final String text = StringUtil.stripQuotesAroundValue(result.getResult().getText());
@@ -172,20 +172,24 @@ public class DartValue extends XNamedValue {
       }
 
       final String expression = "this is Iterable ? 'Iterable' : this is Map ? 'Map' : ''";
-      myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, expression, new VmCallbackAdapter<VmValue>(node) {
+      myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, expression, new VmCallback<VmValue>() {
         @Override
-        protected void handleGoodResult(@NotNull final VmValue result) {
-          final String text = StringUtil.stripQuotesAroundValue(result.getText());
+        public void handleResult(@NotNull final VmResult<VmValue> result) {
+          if (node.isObsolete()) return;
 
-          if ("string".equals(result.getKind()) && "Map".equals(text)) {
-            computeMapChildren(node);
+          if (!result.isError() && result.getResult() != null && "string".equals(result.getResult().getKind())) {
+            final String text = StringUtil.stripQuotesAroundValue(result.getResult().getText());
+            if ("Map".equals(text)) {
+              computeMapChildren(node);
+              return;
+            }
+            else if ("Iterable".equals(text)) {
+              computeIterableChildren(node);
+              return;
+            }
           }
-          else if ("string".equals(result.getKind()) && "Iterable".equals(text)) {
-            computeIterableChildren(node);
-          }
-          else {
-            computeObjectChildren(node);
-          }
+
+          computeObjectChildren(node);
         }
       });
     }
@@ -269,14 +273,16 @@ public class DartValue extends XNamedValue {
 
     try {
       myDebugProcess.getVmConnection()
-        .evaluateObject(myVmValue.getIsolate(), myVmValue, "keys.toList()", new VmCallbackAdapter<VmValue>(node) {
+        .evaluateObject(myVmValue.getIsolate(), myVmValue, "keys.toList()", new VmCallback<VmValue>() {
           @Override
-          protected void handleGoodResult(@NotNull final VmValue result) {
-            if (result.isList()) { // result is a list of map keys
-              computeMapChildrenForKeys(node, result);
+          public void handleResult(@NotNull final VmResult<VmValue> result) {
+            if (node.isObsolete()) return;
+
+            if (!result.isError() && result.getResult() != null && result.getResult().isList()) {
+              computeMapChildrenForKeys(node, result.getResult());
             }
             else {
-              computeObjectChildren(node); // shouldn't happen
+              computeObjectChildren(node);
             }
           }
         });
@@ -291,14 +297,16 @@ public class DartValue extends XNamedValue {
 
     try {
       myDebugProcess.getVmConnection()
-        .evaluateObject(myVmValue.getIsolate(), myVmValue, "values.toList()", new VmCallbackAdapter<VmValue>(node) {
+        .evaluateObject(myVmValue.getIsolate(), myVmValue, "values.toList()", new VmCallback<VmValue>() {
           @Override
-          protected void handleGoodResult(@NotNull final VmValue result) {
-            if (result.isList()) { // result is a list of map values
-              computeMapChildrenForKeysAndValues(node, mapKeysList, result);
+          public void handleResult(@NotNull final VmResult<VmValue> result) {
+            if (node.isObsolete()) return;
+
+            if (!result.isError() && result.getResult() != null && result.getResult().isList()) {
+              computeMapChildrenForKeysAndValues(node, mapKeysList, result.getResult());
             }
             else {
-              computeObjectChildren(node); // shouldn't happen
+              computeObjectChildren(node);
             }
           }
         });
@@ -370,11 +378,20 @@ public class DartValue extends XNamedValue {
     DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null);
 
     try {
-      myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, "toList()", new VmCallbackAdapter<VmValue>(node) {
+      myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, "toList()", new VmCallback<VmValue>() {
         @Override
-        protected void handleGoodResult(@NotNull final VmValue result) {
-          // result is a list that will return collection contents
-          new DartValue(myDebugProcess, "fake node", result, false).computeChildren(node, myListOrMapChildrenAlreadyShown);
+        public void handleResult(final VmResult<VmValue> result) {
+          if (node.isObsolete()) return;
+
+          if (!result.isError() && result.getResult() != null && result.getResult().isList()) {
+            try {
+              new DartValue(myDebugProcess, "fake node", result.getResult(), false)
+                .computeListChildren(node, myListOrMapChildrenAlreadyShown);
+            }
+            catch (IOException e) {
+              DartCommandLineDebugProcess.LOG.error(e);
+            }
+          }
         }
       });
     }
