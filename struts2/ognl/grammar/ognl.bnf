@@ -259,7 +259,9 @@ private arrayConstructorExpression ::= '[' expression? ']' sequenceExpression? {
 private constructorExpression ::= '(' methodCallParameters ')' {pin=1}
 newExpression ::= "new" fqnTypeExpression (arrayConstructorExpression | constructorExpression) {
   methods=[
+    expression=""
     objectType="expression[0]"
+    constructorExpression="expression[1]"
   ]
   pin=1
 }

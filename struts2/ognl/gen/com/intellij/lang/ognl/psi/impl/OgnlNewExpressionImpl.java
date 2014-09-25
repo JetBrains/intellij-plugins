@@ -38,16 +38,17 @@ public class OgnlNewExpressionImpl extends OgnlExpressionImpl implements OgnlNew
   }
 
   @Override
-  @NotNull
-  public List<OgnlExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
+  @Nullable
+  public OgnlExpression getObjectType() {
+    List<OgnlExpression> p1 = PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
+    return p1.size() < 1 ? null : p1.get(0);
   }
 
   @Override
   @Nullable
-  public OgnlExpression getObjectType() {
-    List<OgnlExpression> p1 = getExpressionList();
-    return p1.size() < 1 ? null : p1.get(0);
+  public OgnlExpression getConstructorExpression() {
+    List<OgnlExpression> p1 = PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
+    return p1.size() < 2 ? null : p1.get(1);
   }
 
 }

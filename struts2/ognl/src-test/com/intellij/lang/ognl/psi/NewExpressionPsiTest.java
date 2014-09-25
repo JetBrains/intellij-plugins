@@ -16,6 +16,8 @@
 package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
+import com.intellij.lang.ognl.OgnlTypes;
+import com.intellij.psi.PsiType;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -30,7 +32,9 @@ public class NewExpressionPsiTest extends PsiTestCase {
   }
 
   public void testQualifiedClassnameWithNoParameters() {
-    assertConstructorExpression("new java.util.ArrayList()", "java.util.ArrayList");
+    final OgnlNewExpression newExpression = assertConstructorExpression("new java.util.ArrayList()", "java.util.ArrayList");
+
+    assertNull(newExpression.getConstructorExpression());
   }
 
   public void testClassnameWithOneParameter() {
@@ -42,11 +46,18 @@ public class NewExpressionPsiTest extends PsiTestCase {
   }
 
   public void testIntArrayEmpty() {
-    assertConstructorExpression("new int[0]", "int");
+    final OgnlNewExpression newExpression = assertConstructorExpression("new int[0]", "int");
+
+    final OgnlExpression constructorExpression = newExpression.getConstructorExpression();
+    assertElementType(OgnlTypes.LITERAL_EXPRESSION, constructorExpression);
+    assertEquals(PsiType.INT, constructorExpression.getType());
   }
 
   public void testIntArrayWithSequence() {
-    assertConstructorExpression("new int[] {1, 2}", "int");
+    final OgnlNewExpression newExpression = assertConstructorExpression("new int[] {1, 2}", "int");
+
+    final OgnlExpression constructorExpression = newExpression.getConstructorExpression();
+    assertElementType(OgnlTypes.SEQUENCE_EXPRESSION, constructorExpression);
   }
 
   private OgnlNewExpression assertConstructorExpression(
