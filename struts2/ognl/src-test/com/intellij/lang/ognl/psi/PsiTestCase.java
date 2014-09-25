@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +27,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightIdeaTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.Contract;
 
 /**
  * Basic PSI-building "happy-path" test case.
@@ -63,8 +64,10 @@ public abstract class PsiTestCase extends LightIdeaTestCase {
     return expression;
   }
 
+  @Contract("_, null -> fail")
   protected static void assertElementType(final IElementType expectedType,
                                           final OgnlExpression expression) {
+    assertNotNull(expression);
     assertEquals(expectedType, expression.getNode().getElementType());
   }
 
