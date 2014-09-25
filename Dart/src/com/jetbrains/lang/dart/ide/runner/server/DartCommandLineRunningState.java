@@ -25,6 +25,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
+import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitConsoleFilter;
 import com.jetbrains.lang.dart.pubServer.PubServerManager;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
@@ -57,6 +58,12 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     try {
       builder.addFilter(new DartConsoleFilter(env.getProject(), myRunnerParameters.getDartFile()));
+
+      // unit tests can be run as normal Dart apps, so add DartUnitConsoleFilter as well
+      final String workingDir = StringUtil.isEmptyOrSpaces(myRunnerParameters.getWorkingDirectory())
+                                ? myRunnerParameters.getDartFile().getParent().getPath()
+                                : myRunnerParameters.getWorkingDirectory();
+      builder.addFilter(new DartUnitConsoleFilter(env.getProject(), workingDir));
     }
     catch (RuntimeConfigurationError e) {
       builder.addFilter(new DartConsoleFilter(env.getProject(), null)); // can't happen because already checked

@@ -5,6 +5,7 @@ import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.Trinity;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.ide.runner.DartPositionInfo;
@@ -23,24 +24,25 @@ public class DartUnitConsoleFilter implements Filter {
 
   @Nullable
   public Result applyFilter(final String text, final int entireLength) {
-    final Trinity<String, Integer, Integer> fileRelPathLineAndColumn = getFileRelPathLineAndColumn(text);
+    final String trimmedText = StringUtil.trimLeading(text);
+    final Trinity<String, Integer, Integer> fileRelPathLineAndColumn = getFileRelPathLineAndColumn(trimmedText);
     if (fileRelPathLineAndColumn == null) return null;
 
     final String fileRelPath = fileRelPathLineAndColumn.first;
     final int line = fileRelPathLineAndColumn.second;
     final int column = fileRelPathLineAndColumn.third;
 
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(myWorkingDir + "/" + text.substring(0, fileRelPath.length()));
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(myWorkingDir + "/" + trimmedText.substring(0, fileRelPath.length()));
     if (file == null || file.isDirectory()) return null;
 
-    return new Result(entireLength - text.length(),
-                      entireLength - text.length() + fileRelPath.length(),
+    return new Result(entireLength - trimmedText.length(),
+                      entireLength - trimmedText.length() + fileRelPath.length(),
                       new OpenFileHyperlinkInfo(myProject, file, line, column));
   }
 
   @Nullable
   public static Trinity<String, Integer, Integer> getFileRelPathLineAndColumn(@NotNull final String text) {
-    // "subdir/someFile.dart 73:29         main.<fn>"
+    // "  ../subdir/someFile.dart 73:29         main.<fn>"
     if (text.isEmpty()) return null;
     if (text.charAt(0) != '.' && !Character.isJavaIdentifierStart(text.charAt(0))) return null;
 
