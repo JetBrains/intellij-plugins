@@ -39,14 +39,15 @@ public class OgnlIndexedExpressionImpl extends OgnlExpressionImpl implements Ogn
 
   @Override
   @NotNull
-  public List<OgnlExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
+  public OgnlExpression getReferenceQualifier() {
+    List<OgnlExpression> p1 = PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
+    return p1.get(0);
   }
 
   @Override
   @Nullable
   public OgnlExpression getIndexExpression() {
-    List<OgnlExpression> p1 = getExpressionList();
+    List<OgnlExpression> p1 = PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
     return p1.size() < 2 ? null : p1.get(1);
   }
 

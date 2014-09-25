@@ -192,6 +192,8 @@ mapExpression ::= ('#{' | '#@' fqnTypeExpression '@{') mapExpressionSequence '}'
 
 indexedExpression ::= (referenceExpression | variableExpression) '[' expression ']' {
   methods=[
+    expression=""
+    referenceQualifier="expression[0]"
     indexExpression="expression[1]"
   ]
   pin=2

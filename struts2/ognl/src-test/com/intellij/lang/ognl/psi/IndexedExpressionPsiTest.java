@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,43 +29,58 @@ public class IndexedExpressionPsiTest extends PsiTestCase {
 
   public void testIdentifierSimpleIntegerIndex() {
     final OgnlIndexedExpression indexedExpression = parse("identifier[0]");
-    assertEquals(PsiType.INT, indexedExpression.getType());
+    final OgnlExpression qualifier = indexedExpression.getReferenceQualifier();
+    assertElementType(OgnlTypes.REFERENCE_EXPRESSION, qualifier);
+    assertNull(qualifier.getType());
 
-    final OgnlExpression ognlExpression = indexedExpression.getIndexExpression();
-    assertElementType(OgnlTypes.LITERAL_EXPRESSION, ognlExpression);
-    final OgnlLiteralExpression expression = assertInstanceOf(ognlExpression, OgnlLiteralExpression.class);
+    final OgnlExpression index = indexedExpression.getIndexExpression();
+    assertElementType(OgnlTypes.LITERAL_EXPRESSION, index);
+    final OgnlLiteralExpression expression = assertInstanceOf(index, OgnlLiteralExpression.class);
     assertEquals("0", expression.getText());
     assertEquals(PsiType.INT, expression.getType());
   }
 
   public void testIdentifierExpressionIntegerIndex() {
     final OgnlIndexedExpression indexedExpression = parse("identifier[1+2]");
-    assertElementType(OgnlTypes.BINARY_EXPRESSION, indexedExpression.getIndexExpression());
-    assertEquals(PsiType.INT, indexedExpression.getType());
+    assertElementType(OgnlTypes.REFERENCE_EXPRESSION, indexedExpression.getReferenceQualifier());
+
+    final OgnlExpression index = indexedExpression.getIndexExpression();
+    assertElementType(OgnlTypes.BINARY_EXPRESSION, index);
+    assertEquals(PsiType.INT, index.getType());
   }
 
   public void testVarSimpleIntegerIndex() {
     final OgnlIndexedExpression indexedExpression = parse("#var[0]");
+    assertElementType(OgnlTypes.VARIABLE_EXPRESSION, indexedExpression.getReferenceQualifier());
+
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, indexedExpression.getIndexExpression());
   }
 
   public void testVarExpressionIntegerIndex() {
     final OgnlIndexedExpression indexedExpression = parse("#var[1+2]");
+    assertElementType(OgnlTypes.VARIABLE_EXPRESSION, indexedExpression.getReferenceQualifier());
+
     assertElementType(OgnlTypes.BINARY_EXPRESSION, indexedExpression.getIndexExpression());
   }
 
   public void testReferenceIndex() {
     final OgnlIndexedExpression indexedExpression = parse("identifier[length]");
+    assertElementType(OgnlTypes.REFERENCE_EXPRESSION, indexedExpression.getReferenceQualifier());
+
     assertElementType(OgnlTypes.REFERENCE_EXPRESSION, indexedExpression.getIndexExpression());
   }
 
   public void testPropertyReferenceIndex() {
     final OgnlIndexedExpression indexedExpression = parse("identifier[\"length\"]");
+    assertElementType(OgnlTypes.REFERENCE_EXPRESSION, indexedExpression.getReferenceQualifier());
+
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, indexedExpression.getIndexExpression());
   }
 
   public void testPropertyExpressionReferenceIndex() {
     final OgnlIndexedExpression indexedExpression = parse("identifier[\"len\" + \"gth\"]");
+    assertElementType(OgnlTypes.REFERENCE_EXPRESSION, indexedExpression.getReferenceQualifier());
+
     assertElementType(OgnlTypes.BINARY_EXPRESSION, indexedExpression.getIndexExpression());
   }
 

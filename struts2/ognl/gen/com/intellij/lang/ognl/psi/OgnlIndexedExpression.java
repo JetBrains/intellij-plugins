@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 public interface OgnlIndexedExpression extends OgnlExpression {
 
   @NotNull
-  List<OgnlExpression> getExpressionList();
+  OgnlExpression getReferenceQualifier();
 
   @Nullable
   OgnlExpression getIndexExpression();
