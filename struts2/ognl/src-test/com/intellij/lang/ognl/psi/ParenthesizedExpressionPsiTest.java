@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@ public class ParenthesizedExpressionPsiTest extends PsiTestCase {
     assertNotNull(expression);
     assertElementType(OgnlTypes.BINARY_EXPRESSION, expression);
     assertEquals(PsiType.INT, expression.getType());
+    assertEquals(PsiType.INT, parenthesizedExpression.getType());
 
     final OgnlBinaryExpression binaryExpression = (OgnlBinaryExpression)expression;
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, binaryExpression.getLeft());
@@ -63,6 +64,7 @@ public class ParenthesizedExpressionPsiTest extends PsiTestCase {
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, nestedBinaryExpression.getLeft());
     assertEquals(OgnlTypes.MULTIPLY, nestedBinaryExpression.getOperator());
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, nestedBinaryExpression.getRight());
+    assertEquals(PsiType.INT, nestedBinaryExpression.getType());
   }
 
   public void testNestedParenthesesWithMethodCall() {

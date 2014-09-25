@@ -79,6 +79,11 @@ class OgnlPsiUtil {
       return getType(assignment);
     }
 
+    if (expression instanceof OgnlParenthesizedExpression) {
+      OgnlExpression argument = ((OgnlParenthesizedExpression)expression).getExpression();
+      return getType(argument);
+    }
+
     return null;
   }
 
