@@ -47,6 +47,13 @@ class OgnlPsiUtil {
     return (OgnlTokenType)node.getElementType();
   }
 
+  @NotNull
+  static String getVariableName(OgnlVariableAssignmentExpression expression) {
+    final ASTNode nameNode = expression.getNode().findChildByType(OgnlTypes.IDENTIFIER);
+    assert nameNode != null;
+    return nameNode.getText();
+  }
+
   @Nullable
   static PsiType getType(@Nullable OgnlExpression expression) {
     if (expression == null) {

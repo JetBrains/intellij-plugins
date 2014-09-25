@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,9 +29,11 @@ public class VariableAssignmentExpressionPsiTest extends PsiTestCase {
 
   public void testVariableAssignment() {
     final OgnlVariableAssignmentExpression expression = parse("#varName = 1 + 2");
+    assertEquals("varName", expression.getVariableName());
+    assertEquals(PsiType.INT, expression.getType());
+
     final OgnlExpression assignment = expression.getAssignment();
     assertElementType(OgnlTypes.BINARY_EXPRESSION, assignment);
-    assertEquals(PsiType.INT, expression.getType());
   }
 
   private OgnlVariableAssignmentExpression parse(@Language(value = OgnlLanguage.ID,

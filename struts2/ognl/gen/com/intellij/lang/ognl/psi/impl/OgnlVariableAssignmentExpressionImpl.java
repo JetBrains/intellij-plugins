@@ -37,6 +37,11 @@ public class OgnlVariableAssignmentExpressionImpl extends OgnlExpressionImpl imp
     else super.accept(visitor);
   }
 
+  @NotNull
+  public String getVariableName() {
+    return OgnlPsiUtil.getVariableName(this);
+  }
+
   @Override
   @Nullable
   public OgnlExpression getAssignment() {

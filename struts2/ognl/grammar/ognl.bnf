@@ -154,7 +154,10 @@ variableExpression ::= '#' IDENTIFIER {
 }
 
 variableAssignmentExpression ::= '#' IDENTIFIER '=' expression {
-  methods=[assignment="expression"]
+  methods=[
+    getVariableName
+    assignment="expression"
+  ]
   pin=3
 }
 

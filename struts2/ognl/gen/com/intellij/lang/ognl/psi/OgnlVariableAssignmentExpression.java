@@ -23,6 +23,9 @@ import com.intellij.psi.PsiElement;
 
 public interface OgnlVariableAssignmentExpression extends OgnlExpression {
 
+  @NotNull
+  String getVariableName();
+
   @Nullable
   OgnlExpression getAssignment();
 
