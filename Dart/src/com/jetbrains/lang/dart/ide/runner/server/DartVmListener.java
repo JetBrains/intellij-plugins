@@ -108,7 +108,9 @@ public class DartVmListener implements VmListener {
       }
     }
 
-    myDebugProcess.getSession().positionReached(new DartSuspendContext(myDebugProcess, frames, exception));
+    final DartSuspendContext suspendContext = new DartSuspendContext(myDebugProcess, frames, exception);
+    myDebugProcess.getSession().positionReached(suspendContext);
+    suspendContext.selectUpperNavigatableStackFrame(myDebugProcess.getSession());
   }
 
   private void resume(final VmIsolate isolate) {

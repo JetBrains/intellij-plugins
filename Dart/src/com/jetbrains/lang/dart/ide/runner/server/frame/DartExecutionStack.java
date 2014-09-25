@@ -1,5 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.server.frame;
 
+import com.intellij.openapi.util.Condition;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
@@ -18,10 +20,17 @@ public class DartExecutionStack extends XExecutionStack {
                             @NotNull final List<VmCallFrame> vmCallFrames,
                             @Nullable VmValue exception) {
     super("");
+
     myStackFrames = new ArrayList<DartStackFrame>(vmCallFrames.size());
+
     for (VmCallFrame vmCallFrame : vmCallFrames) {
-      myStackFrames.add(new DartStackFrame(debugProcess, vmCallFrame, exception));
-      exception = null; // add exception to the top frame only
+      final DartStackFrame frame = new DartStackFrame(debugProcess, vmCallFrame, exception);
+      myStackFrames.add(frame);
+
+      if (frame.getSourcePosition() != null) {
+        // exception (if any) is added to the frame where debugger stops (the highest frame with not null source position) and to the upper frames
+        exception = null;
+      }
     }
   }
 
@@ -35,5 +44,15 @@ public class DartExecutionStack extends XExecutionStack {
   public void computeStackFrames(int firstFrameIndex, @NotNull final XStackFrameContainer container) {
     final List<DartStackFrame> result = firstFrameIndex == 0 ? myStackFrames : myStackFrames.subList(firstFrameIndex, myStackFrames.size());
     container.addStackFrames(result, true);
+  }
+
+  @Nullable
+  public DartStackFrame getFrameToStopAt() {
+    return ContainerUtil.find(myStackFrames, new Condition<DartStackFrame>() {
+      @Override
+      public boolean value(final DartStackFrame frame) {
+        return frame.getSourcePosition() != null;
+      }
+    });
   }
 }
