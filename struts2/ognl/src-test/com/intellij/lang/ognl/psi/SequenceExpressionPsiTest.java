@@ -30,9 +30,9 @@ public class SequenceExpressionPsiTest extends PsiTestCase {
 
   public void testSimpleIntegerLiteralSequence() {
     final OgnlSequenceExpression expression = parse("{1,2,3}");
-    assertSize(3, expression.getExpressionList());
+    assertSize(3, expression.getElementsList());
 
-    final OgnlExpression firstExpression = ContainerUtil.getFirstItem(expression.getExpressionList());
+    final OgnlExpression firstExpression = ContainerUtil.getFirstItem(expression.getElementsList());
     assertNotNull(firstExpression);
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, firstExpression);
     assertEquals(PsiType.INT, firstExpression.getType());
@@ -40,9 +40,9 @@ public class SequenceExpressionPsiTest extends PsiTestCase {
 
   public void testSimpleStringLiteralSequence() {
     final OgnlSequenceExpression expression = parse("{ 'A', \"B\"}");
-    assertSize(2, expression.getExpressionList());
+    assertSize(2, expression.getElementsList());
 
-    final OgnlExpression firstExpression = ContainerUtil.getFirstItem(expression.getExpressionList());
+    final OgnlExpression firstExpression = ContainerUtil.getFirstItem(expression.getElementsList());
     assertNotNull(firstExpression);
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, firstExpression);
     assertEquals(PsiType.CHAR, firstExpression.getType());

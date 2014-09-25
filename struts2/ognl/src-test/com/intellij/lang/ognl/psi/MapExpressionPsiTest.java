@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,7 +49,7 @@ public class MapExpressionPsiTest extends PsiTestCase {
     final OgnlExpression valueExpression = mapEntryElement.getValueExpression();
     assertElementType(OgnlTypes.SEQUENCE_EXPRESSION, valueExpression);
     final OgnlSequenceExpression sequenceExpression = assertInstanceOf(valueExpression, OgnlSequenceExpression.class);
-    assertSize(3, sequenceExpression.getExpressionList());
+    assertSize(3, sequenceExpression.getElementsList());
   }
 
   public void testTwoMapEntryElements() {

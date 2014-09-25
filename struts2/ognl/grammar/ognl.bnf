@@ -171,7 +171,12 @@ methodCallExpression ::= referenceExpression '(' methodCallParameters ')'  {
 }
 
 private expressionSequenceRequired ::= expression (',' expression)+  { pin(".*")=1 }
-sequenceExpression ::= '{' expressionSequenceRequired '}' { pin=1 }
+sequenceExpression ::= '{' expressionSequenceRequired '}' {
+  methods=[
+    elements="expression"
+  ]
+  pin=1
+}
 
 mapEntryElement ::= expression ':' expression {
   methods=[
