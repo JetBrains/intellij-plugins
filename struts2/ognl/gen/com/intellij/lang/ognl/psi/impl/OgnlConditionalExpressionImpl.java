@@ -39,28 +39,22 @@ public class OgnlConditionalExpressionImpl extends OgnlExpressionImpl implements
 
   @Override
   @NotNull
-  public List<OgnlExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
-  }
-
-  @Override
-  @NotNull
   public OgnlExpression getCondition() {
-    List<OgnlExpression> p1 = getExpressionList();
+    List<OgnlExpression> p1 = PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
     return p1.get(0);
   }
 
   @Override
   @Nullable
   public OgnlExpression getThen() {
-    List<OgnlExpression> p1 = getExpressionList();
+    List<OgnlExpression> p1 = PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
     return p1.size() < 2 ? null : p1.get(1);
   }
 
   @Override
   @Nullable
   public OgnlExpression getElse() {
-    List<OgnlExpression> p1 = getExpressionList();
+    List<OgnlExpression> p1 = PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
     return p1.size() < 3 ? null : p1.get(2);
   }
 

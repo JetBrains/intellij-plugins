@@ -24,9 +24,6 @@ import com.intellij.psi.PsiElement;
 public interface OgnlConditionalExpression extends OgnlExpression {
 
   @NotNull
-  List<OgnlExpression> getExpressionList();
-
-  @NotNull
   OgnlExpression getCondition();
 
   @Nullable

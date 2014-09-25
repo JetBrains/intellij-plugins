@@ -172,6 +172,7 @@ sequenceExpression ::= '{' expressionSequenceRequired '}' { pin=1 }
 
 mapEntryElement ::= expression ':' expression {
   methods=[
+    expression=""
     keyExpression="expression[0]"
     valueExpression="expression[1]"
   ]
@@ -223,6 +224,7 @@ private binaryOperations ::=
                            { name="operator" }
 binaryExpression ::= expression binaryOperations expression {
   methods=[
+    expression=""
     left="expression[0]"
     right="expression[1]"
     getOperator
@@ -241,6 +243,7 @@ unaryExpression ::= unaryOperator expression {
 private conditionalExpressionTail ::= ':' expression {pin=1}
 conditionalExpression ::= expression '?' expression conditionalExpressionTail {
   methods=[
+    expression=""
     condition="expression[0]"
     then="expression[1]"
     else="expression[2]"

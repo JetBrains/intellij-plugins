@@ -24,9 +24,6 @@ import com.intellij.psi.PsiElement;
 public interface OgnlMapEntryElement extends OgnlPsiCompositeElement {
 
   @NotNull
-  List<OgnlExpression> getExpressionList();
-
-  @NotNull
   OgnlExpression getKeyExpression();
 
   @Nullable
