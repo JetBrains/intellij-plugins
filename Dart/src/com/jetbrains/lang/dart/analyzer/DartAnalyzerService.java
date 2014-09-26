@@ -19,6 +19,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.LowMemoryWatcher;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.*;
 import com.intellij.reference.SoftReference;
@@ -35,6 +37,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DartAnalyzerService {
 
@@ -52,10 +55,26 @@ public class DartAnalyzerService {
   private final Map<VirtualFile, DartFileBasedSource> myFileToSourceMap =
     Collections.synchronizedMap(new THashMap<VirtualFile, DartFileBasedSource>());
 
-  private static final Map<String, DirectoryBasedDartSdk> ourSdkMap = new THashMap<String, DirectoryBasedDartSdk>();
+  private static final AtomicInteger ourOpenDartProjectsCount = new AtomicInteger(0);
+
+  private @Nullable static DirectoryBasedDartSdk ourDirectoryBasedDartSdk;
+
+  static {
+    // no need in stopping this LowMemoryWatcher ever
+    //noinspection ResultOfMethodCallIgnored
+    LowMemoryWatcher.register(new Runnable() {
+      @Override
+      public void run() {
+        AnalysisEngine.getInstance().clearCaches();
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
+        ourDirectoryBasedDartSdk = null;
+      }
+    });
+  }
 
   public DartAnalyzerService(final Project project) {
     myProject = project;
+    ourOpenDartProjectsCount.incrementAndGet();
 
     final VirtualFileAdapter listener = new VirtualFileAdapter() {
       public void beforePropertyChange(@NotNull final VirtualFilePropertyEvent event) {
@@ -104,6 +123,12 @@ public class DartAnalyzerService {
         if (myAnalysisContextRef != null) {
           myAnalysisContextRef.clear();
         }
+
+        if (ourOpenDartProjectsCount.decrementAndGet() == 0) {
+          AnalysisEngine.getInstance().clearCaches();
+          //noinspection AssignmentToStaticFieldFromInstanceMethod
+          ourDirectoryBasedDartSdk = null;
+        }
       }
     });
   }
@@ -147,7 +172,7 @@ public class DartAnalyzerService {
       myCreatedFiles.clear();
     }
     else {
-      final DirectoryBasedDartSdk dirBasedSdk = getSdk(sdkPath);
+      final DirectoryBasedDartSdk dirBasedSdk = getDirectoryBasedDartSdkSdk(sdkPath);
       final DartUriResolver dartUriResolver = new DartUriResolver(dirBasedSdk);
       final DartFileAndPackageUriResolver fileAndPackageUriResolver = new DartFileAndPackageUriResolver(myProject, dartUrlResolver);
 
@@ -169,13 +194,13 @@ public class DartAnalyzerService {
     return analysisContext;
   }
 
-  private static synchronized DirectoryBasedDartSdk getSdk(@NotNull final String sdkPath) {
-    DirectoryBasedDartSdk sdk = ourSdkMap.get(sdkPath);
-    if (sdk == null) {
-      sdk = new DirectoryBasedDartSdk(new File(sdkPath));
-      ourSdkMap.put(sdkPath, sdk);
+  private static synchronized DirectoryBasedDartSdk getDirectoryBasedDartSdkSdk(@NotNull final String sdkPath) {
+    final File sdkDir = new File(sdkPath);
+    if (ourDirectoryBasedDartSdk == null || !FileUtil.filesEqual(sdkDir, ourDirectoryBasedDartSdk.getDirectory())) {
+      AnalysisEngine.getInstance().clearCaches();
+      ourDirectoryBasedDartSdk = new DirectoryBasedDartSdk(sdkDir);
     }
-    return sdk;
+    return ourDirectoryBasedDartSdk;
   }
 
   private void applyChangeSet(final AnalysisContext context, final VirtualFile annotatedFile) {
