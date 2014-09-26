@@ -107,12 +107,7 @@ class JetBrainsUnitConfig extends Configuration {
   }
 
   void onTestResult(TestCase testCase) {
-    String messageName = 'internalError';
-    switch (testCase.result) {
-      case 'pass': messageName = 'testFinished'; break;
-      case 'fail': messageName = 'testFailed'; break;
-    }
-    printTCMessage(messageName, {
+    printTCMessage(testCase.result == 'pass' ? 'testFinished' : 'testFailed', {
         'nodeId' : (testCase.id + 1),
         'message': '${testCase.message}\n${testCase.stackTrace}'
     });
