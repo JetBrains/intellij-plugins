@@ -12,9 +12,6 @@ import com.jetbrains.lang.dart.DartFileType;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartCommandLineRunConfigurationType extends ConfigurationTypeBase {
   public static DartCommandLineRunConfigurationType getInstance() {
     return ConfigurationTypeUtil.findConfigurationType(DartCommandLineRunConfigurationType.class);
@@ -23,9 +20,14 @@ public class DartCommandLineRunConfigurationType extends ConfigurationTypeBase {
   public DartCommandLineRunConfigurationType() {
     super("DartCommandLineRunConfigurationType",
           DartBundle.message("runner.command.line.configuration.name"),
-          DartBundle.message("runner.command.line.configuration.name"),
+          DartBundle.message("runner.command.line.configuration.description"),
           DartIcons.Dart_16);
     addFactory(new ConfigurationFactory(this) {
+      @Override
+      public String getName() {
+        return "Dart Command Line Application"; // compatibility
+      }
+
       @Override
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new DartCommandLineRunConfiguration("Dart", project, DartCommandLineRunConfigurationType.this);
