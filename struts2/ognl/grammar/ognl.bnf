@@ -120,6 +120,7 @@ expression ::= mapExpression |
                variableAssignmentExpression |
                conditionalExpression |
                binaryExpression |
+               newArrayExpression |
                newExpression |
                methodCallExpression |
                indexedExpression |
@@ -161,11 +162,15 @@ variableAssignmentExpression ::= '#' IDENTIFIER '=' expression {
   pin=3
 }
 
-private methodCallParameters ::= expression? (',' expression)*
-methodCallExpression ::= referenceExpression '(' methodCallParameters ')'  {
+parameterList ::= expression? (',' expression)* {
   methods=[
-    method="expression[0]"
+    parameters="expression"
     getParameterCount
+  ]
+}
+methodCallExpression ::= referenceExpression '(' parameterList ')'  {
+  methods=[
+    method="expression"
   ]
   pin(".*")="'\('"
 }
@@ -260,15 +265,21 @@ conditionalExpression ::= expression '?' expression conditionalExpressionTail {
   ]
 }
 
+private constructorExpression ::= '(' parameterList ')' {pin=1}
+newExpression ::= "new" fqnTypeExpression constructorExpression {
+  methods=[
+    objectType="expression"
+  ]
+  pin=1
+}
+
 private arrayConstructorExpression ::= '[' expression? ']' sequenceExpression? {pin=1}
-private constructorExpression ::= '(' methodCallParameters ')' {pin=1}
-newExpression ::= "new" fqnTypeExpression (arrayConstructorExpression | constructorExpression) {
+newArrayExpression ::= "new" fqnTypeExpression arrayConstructorExpression {
   methods=[
     expression=""
     objectType="expression[0]"
     constructorExpression="expression[1]"
   ]
-  pin=1
 }
 
 

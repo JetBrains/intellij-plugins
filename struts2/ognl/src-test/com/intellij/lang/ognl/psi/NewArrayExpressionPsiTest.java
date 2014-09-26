@@ -16,45 +16,39 @@
 package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
+import com.intellij.lang.ognl.OgnlTypes;
+import com.intellij.psi.PsiType;
 import org.intellij.lang.annotations.Language;
 
 /**
- * {@link OgnlNewExpression}.
+ * {@link com.intellij.lang.ognl.psi.OgnlNewExpression}.
  *
  * @author Yann C&eacute;bron
  */
-public class NewExpressionPsiTest extends PsiTestCase {
+public class NewArrayExpressionPsiTest extends PsiTestCase {
 
-  public void testClassnameWithNoParameters() {
-    assertConstructorExpression("new Something()", "Something");
+  public void testIntArrayEmpty() {
+    final OgnlNewArrayExpression newExpression = assertConstructorExpression("new int[0]", "int");
+
+    final OgnlExpression constructorExpression = newExpression.getConstructorExpression();
+    assertElementType(OgnlTypes.LITERAL_EXPRESSION, constructorExpression);
+    assertEquals(PsiType.INT, constructorExpression.getType());
   }
 
-  public void testQualifiedClassnameWithNoParameters() {
-    final OgnlNewExpression newExpression = assertConstructorExpression("new java.util.ArrayList()", "java.util.ArrayList");
+  public void testIntArrayWithSequence() {
+    final OgnlNewArrayExpression newExpression = assertConstructorExpression("new int[] {1, 2}", "int");
 
-    assertNotNull(newExpression.getParameterList());
+    final OgnlExpression constructorExpression = newExpression.getConstructorExpression();
+    assertElementType(OgnlTypes.SEQUENCE_EXPRESSION, constructorExpression);
   }
 
-  public void testClassnameWithOneParameter() {
-    final OgnlNewExpression newExpression = assertConstructorExpression("new Integer(1)", "Integer");
-
-    final OgnlParameterList parameterList = newExpression.getParameterList();
-    assertNotNull(parameterList);
-    assertSize(1, parameterList.getParametersList());
-    assertEquals(1, parameterList.getParameterCount());
-  }
-
-  public void testClassnameWithMultipleParameters() {
-    assertConstructorExpression("new Something(1, 2)", "Something");
-  }
-
-  private OgnlNewExpression assertConstructorExpression(
+  private OgnlNewArrayExpression assertConstructorExpression(
     @Language(value = OgnlLanguage.ID,
       prefix = OgnlLanguage.EXPRESSION_PREFIX,
       suffix = OgnlLanguage.EXPRESSION_SUFFIX)
     final String expression,
     final String objectTypeText) {
-    final OgnlNewExpression newExpression = parse(expression);
+    final OgnlNewArrayExpression newExpression = parse(expression);
 
     final OgnlExpression objectTypeExpression = newExpression.getObjectType();
     assertNotNull(objectTypeExpression);
@@ -63,9 +57,9 @@ public class NewExpressionPsiTest extends PsiTestCase {
     return newExpression;
   }
 
-  private OgnlNewExpression parse(@Language(value = OgnlLanguage.ID,
+  private OgnlNewArrayExpression parse(@Language(value = OgnlLanguage.ID,
     prefix = OgnlLanguage.EXPRESSION_PREFIX,
     suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
-    return (OgnlNewExpression)parseSingleExpression(expression);
+    return (OgnlNewArrayExpression)parseSingleExpression(expression);
   }
 }

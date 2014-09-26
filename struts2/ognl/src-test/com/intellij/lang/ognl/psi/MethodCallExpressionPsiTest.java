@@ -26,7 +26,9 @@ public class MethodCallExpressionPsiTest extends PsiTestCase {
 
   public void testMethodCallNoParams() {
     final OgnlMethodCallExpression methodCallExpression = parse("methodName()");
-    assertEquals(0, methodCallExpression.getParameterCount());
+    final OgnlParameterList parameterList = methodCallExpression.getParameterList();
+    assertNotNull(parameterList);
+    assertEmpty(parameterList.getParametersList());
   }
 
   public void testMethodCallOneParameter() {
@@ -34,25 +36,40 @@ public class MethodCallExpressionPsiTest extends PsiTestCase {
     final OgnlExpression method = methodCallExpression.getMethod();
     assertElementType(OgnlTypes.REFERENCE_EXPRESSION, method);
     assertEquals("methodName", method.getText());
-    assertEquals(1, methodCallExpression.getParameterCount());
-    final OgnlExpression parameter = methodCallExpression.getExpressionList().get(1);
+
+    OgnlParameterList parameterList = methodCallExpression.getParameterList();
+    assertNotNull(parameterList);
+    assertEquals(1, parameterList.getParameterCount());
+    final OgnlExpression parameter = assertOneElement(parameterList.getParametersList());
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, parameter);
   }
 
   public void testMethodCallTwoParameters() {
     final OgnlMethodCallExpression methodCallExpression = parse("methodName(1, 'someText')");
-    assertEquals(2, methodCallExpression.getParameterCount());
-    final OgnlExpression parameter = methodCallExpression.getExpressionList().get(1);
+
+    OgnlParameterList parameterList = methodCallExpression.getParameterList();
+    assertNotNull(parameterList);
+    assertEquals(2, parameterList.getParameterCount());
+    final OgnlExpression parameter = parameterList.getParametersList().get(1);
     assertElementType(OgnlTypes.LITERAL_EXPRESSION, parameter);
   }
 
   public void testNestedMethodCalls() {
     final OgnlMethodCallExpression methodCallExpression = parse("method(ensureLoaded(1,2), name)");
-    assertEquals(2, methodCallExpression.getParameterCount());
-    final OgnlExpression parameter0 = methodCallExpression.getExpressionList().get(1);
-    assertElementType(OgnlTypes.METHOD_CALL_EXPRESSION, parameter0);
-    assertEquals(2, ((OgnlMethodCallExpression)parameter0).getParameterCount());
-    final OgnlExpression parameter1 = methodCallExpression.getExpressionList().get(2);
+
+    OgnlParameterList parameterList = methodCallExpression.getParameterList();
+    assertNotNull(parameterList);
+    assertEquals(2, parameterList.getParameterCount());
+
+    final OgnlExpression ensureLoaded = parameterList.getParametersList().get(0);
+    assertElementType(OgnlTypes.METHOD_CALL_EXPRESSION, ensureLoaded);
+
+    final OgnlParameterList ensureLoadedParameterList = ((OgnlMethodCallExpression)ensureLoaded).getParameterList();
+    assertNotNull(ensureLoadedParameterList);
+    assertEquals(2, ensureLoadedParameterList.getParameterCount());
+
+    // name
+    final OgnlExpression parameter1 = parameterList.getParametersList().get(1);
     assertElementType(OgnlTypes.REFERENCE_EXPRESSION, parameter1);
   }
 
@@ -70,8 +87,8 @@ public class MethodCallExpressionPsiTest extends PsiTestCase {
   }
 
   private OgnlMethodCallExpression parse(@Language(value = OgnlLanguage.ID,
-                                                   prefix = OgnlLanguage.EXPRESSION_PREFIX,
-                                                   suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
+    prefix = OgnlLanguage.EXPRESSION_PREFIX,
+    suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
     return (OgnlMethodCallExpression)parseSingleExpression(expression);
   }
 }

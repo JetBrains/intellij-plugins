@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,23 +41,4 @@ public class NewExpressionParsingTest extends OgnlParsingTestCase {
   public void testMissingClosingRightParenthesis() {
     doTest(true);
   }
-
-
-  // array
-
-  public void testMissingArrayExpression() {
-    doTest(true);
-  }
-
-  public void testMissingClosingRightBrace() {
-    doTest(true);
-  }
-
-
-  // array + init sequence
-
-  public void testMissingSequenceClosingRightBrace() {
-    doTest(true);
-  }
-
 }

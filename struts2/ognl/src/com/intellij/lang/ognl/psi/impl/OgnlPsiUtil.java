@@ -157,7 +157,7 @@ class OgnlPsiUtil {
     throw new IllegalArgumentException("could not resolve constant value for literal " + type + " / " + text);
   }
 
-  static int getParameterCount(OgnlMethodCallExpression expression) {
-    return expression.getExpressionList().size() - 1;
+  static int getParameterCount(OgnlParameterList parameterList) {
+    return parameterList.getParametersList().size();
   }
 }

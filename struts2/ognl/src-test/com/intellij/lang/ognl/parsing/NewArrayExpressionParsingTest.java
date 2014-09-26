@@ -13,20 +13,29 @@
  * limitations under the License.
  */
 
+package com.intellij.lang.ognl.parsing;
 
-// Generated from ognl.bnf, do not modify
-package com.intellij.lang.ognl.psi;
+/**
+ * @author Yann C&eacute;bron
+ */
+public class NewArrayExpressionParsingTest extends OgnlParsingTestCase {
 
-import java.util.List;
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
+  public NewArrayExpressionParsingTest() {
+    super("newArrayExpression");
+  }
 
-public interface OgnlNewExpression extends OgnlExpression {
+  public void testMissingArrayExpression() {
+    doTest(true);
+  }
 
-  @Nullable
-  OgnlParameterList getParameterList();
+  public void testMissingClosingRightBrace() {
+    doTest(true);
+  }
 
-  @Nullable
-  OgnlExpression getObjectType();
 
+  // array + init sequence
+
+  public void testMissingSequenceClosingRightBrace() {
+    doTest(true);
+  }
 }

@@ -21,12 +21,11 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface OgnlNewExpression extends OgnlExpression {
+public interface OgnlParameterList extends OgnlPsiCompositeElement {
 
-  @Nullable
-  OgnlParameterList getParameterList();
+  @NotNull
+  List<OgnlExpression> getParametersList();
 
-  @Nullable
-  OgnlExpression getObjectType();
+  int getParameterCount();
 
 }

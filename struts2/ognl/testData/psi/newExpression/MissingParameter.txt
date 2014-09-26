@@ -6,6 +6,8 @@ OgnlFile:MissingParameter.ognl
     EXPRESSION
       PsiElement(IDENTIFIER)('Integer')
     PsiElement(()('(')
+    PARAMETER_LIST
+      <empty list>
     PsiErrorElement:')', ',' or <expression> expected, got '}'
       <empty list>
   PsiElement(EXPRESSION_END)('}')

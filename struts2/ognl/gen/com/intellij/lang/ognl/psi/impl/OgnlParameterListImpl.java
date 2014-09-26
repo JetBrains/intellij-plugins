@@ -26,27 +26,25 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import com.intellij.lang.ognl.psi.*;
 
-public class OgnlMethodCallExpressionImpl extends OgnlExpressionImpl implements OgnlMethodCallExpression {
+public class OgnlParameterListImpl extends OgnlPsiCompositeElementBase implements OgnlParameterList {
 
-  public OgnlMethodCallExpressionImpl(ASTNode node) {
+  public OgnlParameterListImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitMethodCallExpression(this);
+    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitParameterList(this);
     else super.accept(visitor);
   }
 
   @Override
-  @Nullable
-  public OgnlParameterList getParameterList() {
-    return findChildByClass(OgnlParameterList.class);
+  @NotNull
+  public List<OgnlExpression> getParametersList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
   }
 
-  @Override
-  @Nullable
-  public OgnlExpression getMethod() {
-    return findChildByClass(OgnlExpression.class);
+  public int getParameterCount() {
+    return OgnlPsiUtil.getParameterCount(this);
   }
 
 }

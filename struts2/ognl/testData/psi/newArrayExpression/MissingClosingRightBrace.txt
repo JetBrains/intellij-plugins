@@ -1,6 +1,6 @@
 OgnlFile:MissingClosingRightBrace.ognl
   PsiElement(%{)('%{')
-  NEW_EXPRESSION
+  NEW_ARRAY_EXPRESSION
     PsiElement(new)('new')
     PsiWhiteSpace(' ')
     EXPRESSION

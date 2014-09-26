@@ -23,12 +23,10 @@ import com.intellij.psi.PsiElement;
 
 public interface OgnlMethodCallExpression extends OgnlExpression {
 
-  @NotNull
-  List<OgnlExpression> getExpressionList();
+  @Nullable
+  OgnlParameterList getParameterList();
 
-  @NotNull
+  @Nullable
   OgnlExpression getMethod();
-
-  int getParameterCount();
 
 }
