@@ -61,7 +61,7 @@ public class PhoneGapTargets {
 
   @NotNull
   public static String getAndroidName() {
-    return SystemInfo.isWindows ? "android" + ".exe" : "android";
+    return SystemInfo.isWindows ? "android" + ".bat" : "android";
   }
 
   public static String getIosSimName() {
