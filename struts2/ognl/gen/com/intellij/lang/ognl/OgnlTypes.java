@@ -29,6 +29,7 @@ public interface OgnlTypes {
   IElementType CONDITIONAL_EXPRESSION = new OgnlTokenType("CONDITIONAL_EXPRESSION");
   IElementType EXPRESSION = new OgnlTokenType("EXPRESSION");
   IElementType INDEXED_EXPRESSION = new OgnlTokenType("INDEXED_EXPRESSION");
+  IElementType LAMBDA_EXPRESSION = new OgnlTokenType("LAMBDA_EXPRESSION");
   IElementType LITERAL_EXPRESSION = new OgnlTokenType("LITERAL_EXPRESSION");
   IElementType MAP_ENTRY_ELEMENT = new OgnlTokenType("MAP_ENTRY_ELEMENT");
   IElementType MAP_EXPRESSION = new OgnlTokenType("MAP_EXPRESSION");
@@ -124,6 +125,9 @@ public interface OgnlTypes {
       }
       else if (type == INDEXED_EXPRESSION) {
         return new OgnlIndexedExpressionImpl(node);
+      }
+      else if (type == LAMBDA_EXPRESSION) {
+        return new OgnlLambdaExpressionImpl(node);
       }
       else if (type == LITERAL_EXPRESSION) {
         return new OgnlLiteralExpressionImpl(node);

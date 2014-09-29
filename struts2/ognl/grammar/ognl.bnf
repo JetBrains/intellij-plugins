@@ -114,7 +114,8 @@ root ::= EXPRESSION_START rootElement EXPRESSION_END { pin=1 }
 private rootRecover ::= !(EXPRESSION_END)
 private rootElement ::= expression {recoverWhile="rootRecover"}
 
-expression ::= mapExpression |
+expression ::= lambdaExpression |
+               mapExpression |
                sequenceExpression |
                parenthesizedExpression |
                variableAssignmentExpression |
@@ -197,6 +198,10 @@ mapExpression ::= ('#{' | '#@' fqnTypeExpression '@{') mapExpressionSequence '}'
   methods=[
     mapType="expression"
   ]
+  pin=1
+}
+
+lambdaExpression ::= ':' '[' expression "]" {
   pin=1
 }
 

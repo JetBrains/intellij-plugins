@@ -38,6 +38,10 @@ public class OgnlVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
+  public void visitLambdaExpression(@NotNull OgnlLambdaExpression o) {
+    visitExpression(o);
+  }
+
   public void visitLiteralExpression(@NotNull OgnlLiteralExpression o) {
     visitExpression(o);
   }
