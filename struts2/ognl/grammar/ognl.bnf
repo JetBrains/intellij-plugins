@@ -295,5 +295,4 @@ fqnTypeExpression ::= IDENTIFIER ('.' IDENTIFIER)* {
 // sub-expression: e1.(e2)
 // chained sub-expression: headline.parent.(ensureLoaded(), name)
 // list creation: { e, ... } --> already via sequence?
-// array creation: new array-component-class[] { e, ... }
 // lambda: :[ e ]
