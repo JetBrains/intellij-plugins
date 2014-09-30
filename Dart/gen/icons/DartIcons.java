@@ -17,6 +17,5 @@ public class DartIcons {
   public static final Icon Dart_16 = load("/icons/dart_16.png"); // 16x16
   public static final Icon Dart_file = load("/icons/dart_file.png"); // 16x16
   public static final Icon Dart_test = load("/icons/dart_test.png"); // 16x16
-  public static final Icon Label = load("/icons/label.png"); // 16x16
   public static final Icon Package_root = load("/icons/package_root.png"); // 16x16
 }
