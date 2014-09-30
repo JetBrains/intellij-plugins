@@ -5,7 +5,7 @@ OgnlFile:MissingExpression.ognl
     PsiElement(IDENTIFIER)('varName')
     PsiWhiteSpace(' ')
     PsiElement(=)('=')
-  PsiErrorElement:<expression> expected, got '}'
-    <empty list>
+    PsiErrorElement:<expression> expected, got '}'
+      <empty list>
   PsiWhiteSpace(' ')
   PsiElement(EXPRESSION_END)('}')

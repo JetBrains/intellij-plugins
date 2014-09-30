@@ -206,8 +206,8 @@ Dart File
                       STATEMENTS
                         RETHROW_STATEMENT
                           PsiElement(rethrow)('rethrow')
-                        PsiErrorElement:';' expected, got 'rethrow'
-                          <empty list>
+                          PsiErrorElement:';' expected, got 'rethrow'
+                            <empty list>
                         RETHROW_STATEMENT
                           PsiElement(rethrow)('rethrow')
                           PsiElement(;)(';')

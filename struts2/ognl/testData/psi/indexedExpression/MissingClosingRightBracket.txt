@@ -6,6 +6,6 @@ OgnlFile:MissingClosingRightBracket.ognl
     PsiElement([)('[')
     LITERAL_EXPRESSION
       PsiElement(INTEGER_LITERAL)('12')
-  PsiErrorElement:<operator> or ']' expected, got '}'
-    <empty list>
+    PsiErrorElement:<operator> or ']' expected, got '}'
+      <empty list>
   PsiElement(EXPRESSION_END)('}')

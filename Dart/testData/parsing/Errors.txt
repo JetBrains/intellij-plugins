@@ -26,8 +26,8 @@ Dart File
             PsiElement(return)('return')
             LITERAL_EXPRESSION
               PsiElement(NUMBER)('42')
-          PsiErrorElement:';' expected, got '}'
-            <empty list>
+            PsiErrorElement:';' expected, got '}'
+              <empty list>
         PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     COMPONENT_NAME

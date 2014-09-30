@@ -18,6 +18,6 @@ OgnlFile:MissingClosingRightParenthesisNested.ognl
           LITERAL_EXPRESSION
             PsiElement(INTEGER_LITERAL)('3')
         PsiElement())(')')
-  PsiErrorElement:')' or <operator> expected, got '}'
-    <empty list>
+    PsiErrorElement:')' or <operator> expected, got '}'
+      <empty list>
   PsiElement(EXPRESSION_END)('}')

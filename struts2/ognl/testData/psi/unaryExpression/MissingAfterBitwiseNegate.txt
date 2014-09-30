@@ -2,6 +2,6 @@ OgnlFile:MissingAfterBitwiseNegate.ognl
   PsiElement(%{)('%{')
   UNARY_EXPRESSION
     PsiElement(!)('!')
-  PsiErrorElement:<expression> expected, got '}'
-    <empty list>
+    PsiErrorElement:<expression> expected, got '}'
+      <empty list>
   PsiElement(EXPRESSION_END)('}')

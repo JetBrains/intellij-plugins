@@ -10,8 +10,8 @@ OgnlFile:MissingValueAfterColon.ognl
         PsiElement(CHARACTER_LITERAL)(''key'')
       PsiWhiteSpace(' ')
       PsiElement(:)(':')
-    PsiErrorElement:<expression> expected, got '}'
-      <empty list>
+      PsiErrorElement:<expression> expected, got '}'
+        <empty list>
     PsiWhiteSpace(' ')
     PsiElement(})('}')
   PsiWhiteSpace(' ')
