@@ -16,6 +16,8 @@ import com.intellij.lang.ognl.OgnlTypes;
   public _OgnlLexer(){
     this((java.io.Reader)null);
   }
+
+  int braceCount;
 %}
 
 %unicode
@@ -54,8 +56,8 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 <YYINITIAL> "%{"      { return OgnlTypes.EXPRESSION_START; }
 <YYINITIAL> "}"       { return OgnlTypes.EXPRESSION_END; }
 
-"{"                   { yybegin(SEQUENCE_EXPRESSION); return OgnlTypes.LBRACE; }
-<SEQUENCE_EXPRESSION> "}"   { yybegin(YYINITIAL); return OgnlTypes.RBRACE; }
+"{"                         { if (++braceCount > 0) yybegin(SEQUENCE_EXPRESSION); return OgnlTypes.LBRACE; }
+<SEQUENCE_EXPRESSION> "}"   { if (--braceCount == 0) yybegin(YYINITIAL); return OgnlTypes.RBRACE; }
 
 {WHITE_SPACE_CHAR}+   { return TokenType.WHITE_SPACE; }
 
