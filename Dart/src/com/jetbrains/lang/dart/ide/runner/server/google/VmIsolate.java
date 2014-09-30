@@ -22,14 +22,16 @@ import java.util.Map;
  */
 public class VmIsolate {
   private int id;
-  private boolean paused = true;
+  private boolean paused = false;
+  private boolean firstBreak = true;
 
   private Map<Integer, VmClass> classInfoMap = new HashMap<Integer, VmClass>();
   private Map<Integer, VmLibrary> libraryInfoMap = new HashMap<Integer, VmLibrary>();
   private boolean myTemporarilyInterrupted;
 
-  protected VmIsolate(int isolateId) {
+  protected VmIsolate(int isolateId, boolean paused) {
     this.id = isolateId;
+    this.paused = paused;
   }
 
   @Override
@@ -78,8 +80,16 @@ public class VmIsolate {
     return libraryInfoMap.containsKey(libraryId);
   }
 
+  public boolean isFirstBreak() {
+    return firstBreak;
+  }
+
   public boolean isPaused() {
     return paused;
+  }
+
+  public void setFirstBreak(boolean value) {
+    firstBreak = value;
   }
 
   public void setPaused(boolean value) {

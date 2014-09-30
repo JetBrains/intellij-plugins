@@ -30,7 +30,6 @@ public class VmInterruptResult {
 
   private VmConnection connection;
   private VmIsolate isolate;
-  ;
 
   private VmInterruptResult() {
 

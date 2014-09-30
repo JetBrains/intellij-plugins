@@ -25,15 +25,18 @@ import java.util.List;
  * A VM frame object.
  */
 public class VmCallFrame extends VmRef {
+  private static final int MAX_STACK_DEPTH = 2000;
 
   static List<VmCallFrame> createFrom(VmIsolate isolate, JSONArray arr) throws JSONException {
     List<VmCallFrame> frames = new ArrayList<VmCallFrame>();
 
-    for (int i = 0; i < arr.length(); i++) {
+    int stackDepth = Math.min(arr.length(), MAX_STACK_DEPTH);
+
+    for (int i = 0; i < stackDepth; i++) {
       VmCallFrame frame = createFrom(isolate, arr.getJSONObject(i), i);
 
       // If we are on the first frame and there are at least 3 frames:
-      if (i == 0 && arr.length() > 2) {
+      if (i == 0 && stackDepth > 2) {
         if (DebuggerUtils.isInternalMethodName(frame.getFunctionName())) {
           // Strip out the first frame if it's _noSuchMethod. There will be another
           // "Object.noSuchMethod" on the stack. This sucks, but it's where we're choosing to put
