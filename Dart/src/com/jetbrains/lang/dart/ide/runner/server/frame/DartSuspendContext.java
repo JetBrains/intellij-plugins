@@ -36,7 +36,7 @@ public class DartSuspendContext extends XSuspendContext {
         @Override
         public void stackFrameChanged() {
           if (session.getCurrentStackFrame() != frameToStopAt) {
-            //session.removeSessionListener(this);
+            session.removeSessionListener(this);
             session.setCurrentStackFrame(myExecutionStack, frameToStopAt, false);
           }
         }
