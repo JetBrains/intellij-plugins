@@ -65,3 +65,8 @@ ASTWrapperPsiElement(FILE)
   JSExpressionStatement
     JSReferenceExpression
       PsiElement(JS:IDENTIFIER)('u')
+------
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSLiteralExpression
+      PsiElement(JS:STRING_LITERAL)('"I'd like"')

@@ -9,6 +9,10 @@ import static com.intellij.psi.TokenType.WHITE_SPACE;
 
 %%
 
+%{
+  private char quote;
+%}
+
 %unicode
 //%debug
 %class _AngularJSLexer
@@ -27,7 +31,6 @@ FP_LITERAL3=({DIGIT})+({EXPONENT_PART})
 FP_LITERAL4=({DIGIT})+
 EXPONENT_PART=[Ee]["+""-"]?({DIGIT})*
 
-QUOTE = [\'\"]
 
 IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
 
@@ -36,7 +39,8 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
 %%
 
 <YYINITIAL> {
-  {QUOTE}                     { yybegin(YYSTRING); return STRING_LITERAL; }
+  "'"                         { yybegin(YYSTRING); quote = '\''; return STRING_LITERAL; }
+  "\""                        { yybegin(YYSTRING); quote = '"'; return STRING_LITERAL; }
   {NUMBER}                    { return NUMERIC_LITERAL; }
   {WHITE_SPACE}               { return WHITE_SPACE; }
 
@@ -92,7 +96,8 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
   [\\]u[0-9a-fA-F]{4}         { return ESCAPE_SEQUENCE; }
   [\\]u[^0-9a-fA-F]           { yypushback(1); return INVALID_ESCAPE_SEQUENCE; }
   [\\]u[0-9a-fA-F]{1,3}       { return INVALID_ESCAPE_SEQUENCE; }
-  {QUOTE}                     { yybegin(YYINITIAL); return STRING_LITERAL; }
+  "'"                         { if (quote == '\'') yybegin(YYINITIAL); return STRING_LITERAL; }
+  "\""                        { if (quote == '"') yybegin(YYINITIAL); return STRING_LITERAL; }
   [^\'\"\n\r\\]+              { return STRING_LITERAL; }
   [^]                         { yypushback(yytext().length()); yybegin(YYINITIAL); }
 }
