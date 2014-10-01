@@ -53,6 +53,10 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("customAttributes.html", "customAttributes.after.html", "angular.js", "custom.js");
   }
 
+  public void testCommonAttributesCompletion() {
+    myFixture.testCompletion("commonAttributes.html", "commonAttributes.after.html", "angular.js", "custom.js");
+  }
+
   public void testCustomTagsResolve() {
     myFixture.configureByFiles("custom.after.html", "angular.js", "custom.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());

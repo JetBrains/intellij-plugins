@@ -70,7 +70,9 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
         result[i] = new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(split[i]));
       }
     }
-    return RelaxedHtmlFromSchemaElementDescriptor.addAttrDescriptorsForFacelets(context, result);
+
+    final XmlAttributeDescriptor[] commonAttributes = RelaxedHtmlFromSchemaElementDescriptor.getCommonAttributeDescriptors(context);
+    return RelaxedHtmlFromSchemaElementDescriptor.addAttrDescriptorsForFacelets(context, ArrayUtil.mergeArrays(result, commonAttributes));
   }
 
   @Nullable

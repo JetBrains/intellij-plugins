@@ -66,6 +66,7 @@
  * @name ng.directive:ngScript
  * @restrict E
  * @param {string} type Must be set to `'text/ng-template'`.
+ * @param {string} crayzee Some non existing attribute used for completion
  * @param {string} id Cache name of the template.
  */
 angular.directive({ngModel: ngModelDirective})
