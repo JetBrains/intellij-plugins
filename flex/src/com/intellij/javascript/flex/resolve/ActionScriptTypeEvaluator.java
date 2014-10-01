@@ -35,7 +35,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected boolean addTypeFromDialectSpecificElements(JSReferenceExpression expression, PsiElement resolveResult, boolean wasPrototype) {
+  protected boolean addTypeFromDialectSpecificElements(JSReferenceExpression expression, PsiElement resolveResult) {
     if (resolveResult instanceof JSPackageWrapper) {
       if (myTypeProcessor instanceof PsiScopeProcessor) {
         if (myTypeProcessor instanceof ResolveProcessor) ((ResolveProcessor)myTypeProcessor).prefixResolved();
@@ -83,7 +83,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected void addTypeFromClass(JSReferenceExpression expression, PsiElement parent, boolean wasPrototype, PsiElement resolveResult) {
+  protected void addTypeFromClass(JSReferenceExpression expression, PsiElement parent, PsiElement resolveResult) {
     if (resolveResult instanceof JSFunction) {
       resolveResult = resolveResult.getParent();
     }
@@ -110,7 +110,6 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   protected boolean addTypeFromElementResolveResult(JSReferenceExpression expression,
                                                     PsiElement parent,
                                                     PsiElement resolveResult,
-                                                    boolean wasPrototype,
                                                     boolean hasSomeType) {
     if (resolveResult instanceof JSNamedElementProxy && JavaScriptSupportLoader.isFlexMxmFile(resolveResult.getContainingFile())) {
       resolveResult = ((JSNamedElementProxy)resolveResult).getElement();
@@ -151,10 +150,10 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
       }
       return hasSomeType;
     }
-    return super.addTypeFromElementResolveResult(expression, parent, resolveResult, wasPrototype, hasSomeType);
+    return super.addTypeFromElementResolveResult(expression, parent, resolveResult, hasSomeType);
   }
 
-  private static boolean isInsideRepeaterTag(final @NotNull XmlTag xmlTag) {
+  private static boolean isInsideRepeaterTag(@NotNull final XmlTag xmlTag) {
     PsiElement parent = xmlTag;
     while ((parent = parent.getParent()) instanceof XmlTag) {
       if (REPEATER_CLASS_FQN.equals(new BaseJSSymbolProcessor.TagContextBuilder(parent, "").typeName)) {
