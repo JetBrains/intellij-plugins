@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.parsing.ExpressionParser;
 import com.intellij.lang.javascript.parsing.FunctionParser;
 import com.intellij.lang.javascript.parsing.JavaScriptParser;
 import com.intellij.lang.javascript.parsing.StatementParser;
-import com.intellij.openapi.util.Key;
 import com.intellij.psi.tree.IElementType;
 import org.angularjs.lang.lexer.AngularJSTokenTypes;
 
@@ -68,8 +67,6 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
   }
 
   protected class AngularJSExpressionParser extends ExpressionParser<AngularJSParser> {
-    private final Key<Boolean> IN_FILTER = Key.create("angular.filter.started");
-
     public AngularJSExpressionParser() {
       super(AngularJSParser.this);
     }
@@ -77,6 +74,13 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
     @Override
     protected boolean parseUnaryExpression() {
       final IElementType tokenType = builder.getTokenType();
+      if (tokenType == JSTokenTypes.OR) {
+        builder.advanceLexer();
+        if (!parseFilter()) {
+          builder.error("expected filter");
+        }
+        return true;
+      }
       if (tokenType == AngularJSTokenTypes.ONE_TIME_BINDING) {
         final PsiBuilder.Marker expr = builder.mark();
         builder.advanceLexer();
@@ -120,31 +124,8 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
 
     @Override
     protected int getCurrentBinarySignPriority(boolean allowIn, boolean advance) {
-      if (builder.getTokenType() == JSTokenTypes.OR) return -1;
+      if (builder.getTokenType() == JSTokenTypes.OR) return 10;
       return super.getCurrentBinarySignPriority(allowIn, advance);
-    }
-
-    @Override
-    protected boolean parseBinaryExpression(boolean allowIn) {
-      PsiBuilder.Marker expr = builder.mark();
-      if (!super.parseBinaryExpression(allowIn)) {
-        expr.drop();
-        return false;
-      }
-
-      if (builder.getUserData(IN_FILTER) == null) {
-        while (builder.getTokenType() == JSTokenTypes.OR) {
-          builder.advanceLexer();
-          if (!parseFilter()) {
-            builder.error("expected filter");
-          }
-          expr.done(JSElementTypes.BINARY_EXPRESSION);
-          expr = expr.precede();
-        }
-      }
-
-      expr.drop();
-      return true;
     }
 
     private boolean parseFilter() {
@@ -154,11 +135,8 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
       while (builder.getTokenType() == JSTokenTypes.COLON) {
         arguments = arguments == null ? builder.mark() : arguments;
         builder.advanceLexer();
-        try {
-          builder.putUserData(IN_FILTER, true);
-          parseExpression();
-        } finally {
-          builder.putUserData(IN_FILTER, null);
+        if (!super.parseUnaryExpression()) {
+          builder.error(JSBundle.message("javascript.parser.message.expected.expression"));
         }
       }
       if (arguments != null) {

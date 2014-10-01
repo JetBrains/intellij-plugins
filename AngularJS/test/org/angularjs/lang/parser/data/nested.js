@@ -1,0 +1,1 @@
+meta.l10nPrefix + '.HEADER' | tranzlate:{name: ((meta.nameFunction($$entity) || ui.name) | escape) }

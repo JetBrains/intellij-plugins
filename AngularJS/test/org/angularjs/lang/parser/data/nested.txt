@@ -1,0 +1,63 @@
+ASTWrapperPsiElement(FILE)
+  JSExpressionStatement
+    JSBinaryExpression
+      JSReferenceExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('meta')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('l10nPrefix')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:PLUS)('+')
+      PsiWhiteSpace(' ')
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''.HEADER'')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:OR)('|')
+        PsiWhiteSpace(' ')
+        AngularJSFilterExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('tranzlate')
+          JSArgumentList
+            PsiElement(JS:COLON)(':')
+            JSObjectLiteralExpression
+              PsiElement(JS:LBRACE)('{')
+              JSProperty
+                PsiElement(JS:IDENTIFIER)('name')
+                PsiElement(JS:COLON)(':')
+                PsiWhiteSpace(' ')
+                JSParenthesizedExpression
+                  PsiElement(JS:LPAR)('(')
+                  JSBinaryExpression
+                    JSParenthesizedExpression
+                      PsiElement(JS:LPAR)('(')
+                      JSBinaryExpression
+                        JSCallExpression
+                          JSReferenceExpression
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('meta')
+                            PsiElement(JS:DOT)('.')
+                            PsiElement(JS:IDENTIFIER)('nameFunction')
+                          JSArgumentList
+                            PsiElement(JS:LPAR)('(')
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('$$entity')
+                            PsiElement(JS:RPAR)(')')
+                        PsiWhiteSpace(' ')
+                        PsiElement(JS:OROR)('||')
+                        PsiWhiteSpace(' ')
+                        JSReferenceExpression
+                          JSReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('ui')
+                          PsiElement(JS:DOT)('.')
+                          PsiElement(JS:IDENTIFIER)('name')
+                      PsiElement(JS:RPAR)(')')
+                    PsiWhiteSpace(' ')
+                    PsiElement(JS:OR)('|')
+                    PsiWhiteSpace(' ')
+                    AngularJSFilterExpression
+                      JSReferenceExpression
+                        PsiElement(JS:IDENTIFIER)('escape')
+                  PsiElement(JS:RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:RBRACE)('}')
