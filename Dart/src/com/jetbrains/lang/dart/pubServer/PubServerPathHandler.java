@@ -42,6 +42,10 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
 
       final VirtualFile parentDir = dir.getParent();
       if (parentDir != null && parentDir.findChild(PubspecYamlUtil.PUBSPEC_YAML) != null) {
+        if ("build".equals(dir.getName())) {
+          return null; // contents of "build" folder should be served by the IDE internal web server directly, i.e. without pub serve
+        }
+
         servedDir = dir;
         pubServePath = path.substring(slashIndex);
         // continue looking for nested Dart project
