@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.documentation.JSDocumentationProcessor;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.*;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
@@ -26,7 +27,7 @@ import java.util.regex.Pattern;
 public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, ID<String, Void>> INDEXERS = new HashMap<String, ID<String, Void>>();
   private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<String, Function<String, String>>();
-  private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<String, Function<PsiElement, String>>();
+  private static final Map<String, Function<Pair<JSSymbolVisitor, PsiElement>, String>> DATA_CALCULATORS = new HashMap<String, Function<Pair<JSSymbolVisitor, PsiElement>, String>>();
 
   public static final Set<String> INTERESTING_METHODS = new HashSet<String>();
   public static final String CONTROLLER = "controller";
@@ -44,10 +45,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         return DirectiveUtil.getAttributeName(s);
       }
     });
-    DATA_CALCULATORS.put(DIRECTIVE, new Function<PsiElement, String>() {
+    DATA_CALCULATORS.put(DIRECTIVE, new Function<Pair<JSSymbolVisitor, PsiElement>, String>() {
       @Override
-      public String fun(PsiElement element) {
-        return calculateRestrictions(element);
+      public String fun(Pair<JSSymbolVisitor, PsiElement> pair) {
+        return calculateRestrictions(pair.first, pair.second);
       }
     });
 
@@ -77,8 +78,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
           final String argumentText = argument.getText();
-          final Function<PsiElement, String> calculator = DATA_CALCULATORS.get(command);
-          final String data = calculator != null ? calculator.fun(argument) : null;
+          final Function<Pair<JSSymbolVisitor, PsiElement>, String> calculator = DATA_CALCULATORS.get(command);
+          final String data = calculator != null ? calculator.fun(Pair.<JSSymbolVisitor, PsiElement>create(visitor, argument)) : null;
           storeAdditionalData(visitor, index, argument, command, argumentText, argument.getTextOffset(), data);
         } else if (argument instanceof JSObjectLiteralExpression) {
           for (JSProperty property : ((JSObjectLiteralExpression)argument).getProperties()) {
@@ -200,14 +201,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return previousValue;
   }
 
-  private static String calculateRestrictions(PsiElement element) {
+  private static String calculateRestrictions(JSSymbolVisitor visitor, PsiElement element) {
     final Ref<String> restrict = Ref.create("A");
     final Ref<String> scope = Ref.create("");
-    JSFunction function = PsiTreeUtil.getNextSiblingOfType(element, JSFunction.class);
-    if (function == null) {
-      JSArrayLiteralExpression array = PsiTreeUtil.getNextSiblingOfType(element, JSArrayLiteralExpression.class);
-      function = PsiTreeUtil.findChildOfType(array, JSFunction.class);
-    }
+    final JSFunction function = findFunction(visitor, element);
     if (function != null) {
       function.accept(new JSRecursiveElementVisitor() {
         @Override
@@ -232,6 +229,28 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       });
     }
     return restrict.get().trim() + ";;;" + scope.get();
+  }
+
+  private static JSFunction findFunction(JSSymbolVisitor visitor, PsiElement element) {
+    JSFunction function = PsiTreeUtil.getNextSiblingOfType(element, JSFunction.class);
+    if (function == null) {
+      final JSExpression expression = PsiTreeUtil.getNextSiblingOfType(element, JSExpression.class);
+      function = findDeclaredFunction(visitor, expression);
+    }
+    if (function == null) {
+      JSArrayLiteralExpression array = PsiTreeUtil.getNextSiblingOfType(element, JSArrayLiteralExpression.class);
+      function = PsiTreeUtil.findChildOfType(array, JSFunction.class);
+      if (function == null) {
+        final JSExpression candidate = array != null ?PsiTreeUtil.getPrevSiblingOfType(array.getLastChild(), JSExpression.class) : null;
+        function = findDeclaredFunction(visitor, candidate);
+      }
+    }
+    return function;
+  }
+
+  private static JSFunction findDeclaredFunction(JSSymbolVisitor visitor, JSExpression expression) {
+    final JSElement candidate = visitor.getOperandFromVarContext(expression);
+    return candidate instanceof JSFunction ? (JSFunction)candidate : null;
   }
 
   public static class Factory extends JSFileIndexerFactory {

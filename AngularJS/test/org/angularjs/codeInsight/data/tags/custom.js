@@ -1,3 +1,7 @@
+function my_directive_factory() {
+  return { restrict: 'E' }
+}
+
 angular.module('docsSimpleDirective', [])
     .controller('SupaController', function ($scope) {
                   $scope.customer = {
@@ -26,4 +30,6 @@ angular.module('docsSimpleDirective', [])
                    template: 'Name: {{customer.name}} Address: {{customer.address}}',
                    restrict: 'E'
                  };
-               }]);
+               }])
+    .directive('functionCustomer', my_directive_factory)
+    .directive('arrayCustomer', my_directive_factory);
