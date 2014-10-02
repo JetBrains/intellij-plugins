@@ -18,8 +18,4 @@ public class DartPubCacheRepairAction extends DartPubActionBase {
       Messages.showOkCancelDialog(project, DartBundle.message("dart.pub.cache.repair.message"), getTitle(), Messages.getWarningIcon());
     return choice == Messages.OK ? new String[]{"cache", "repair"} : null;
   }
-
-  protected String getSuccessMessage() {
-    return DartBundle.message("dart.pub.cache.repair.success");
-  }
 }

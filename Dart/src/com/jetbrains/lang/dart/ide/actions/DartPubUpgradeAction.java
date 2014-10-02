@@ -16,9 +16,4 @@ public class DartPubUpgradeAction extends DartPubActionBase {
   protected String[] calculatePubParameters(final Project project) {
     return new String[]{"upgrade"};
   }
-
-  @Override
-  protected String getSuccessMessage() {
-    return DartBundle.message("dart.pub.upgrade.success");
-  }
 }
