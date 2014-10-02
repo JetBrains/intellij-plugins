@@ -104,4 +104,9 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     final List<String> variants = myFixture.getCompletionVariants("standard.xml", "angular.js");
     assertDoesntContain(variants, "ng-form", "form", "script");
   }
+
+  public void testUnclosed() {
+    myFixture.configureByFiles("unclosed.html", "angular.js", "custom.js");
+    myFixture.checkHighlighting();
+  }
 }

@@ -1,6 +1,8 @@
 package org.angularjs.lang;
 
 import com.intellij.codeInsight.highlighting.HighlightErrorFilter;
+import com.intellij.lang.Language;
+import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -8,6 +10,9 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.xml.XmlElementDescriptor;
+import org.angularjs.codeInsight.tags.AngularJSTagDescriptor;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +23,8 @@ public class AngularJSErrorFilter extends HighlightErrorFilter {
   @Override
   public boolean shouldHighlightErrorElement(@NotNull PsiErrorElement error) {
     final Project project = error.getProject();
-    if ("CSS".equals(error.getLanguage().getID()) && PsiTreeUtil.getParentOfType(error, XmlAttribute.class) != null &&
+    final Language language = error.getLanguage();
+    if ("CSS".equals(language.getID()) && PsiTreeUtil.getParentOfType(error, XmlAttribute.class) != null &&
         AngularIndexUtil.hasAngularJS(project)) {
       final PsiFile file = error.getContainingFile();
 
@@ -27,6 +33,11 @@ public class AngularJSErrorFilter extends HighlightErrorFilter {
         if (hasAngularInjectionAt(project, file, nextError.getTextOffset())) return false;
         nextError = PsiTreeUtil.getNextSiblingOfType(nextError, PsiErrorElement.class);
       }
+    }
+    if (HTMLLanguage.INSTANCE.is(language) && error.getErrorDescription().endsWith("not closed")) {
+      final PsiElement parent = error.getParent();
+      final XmlElementDescriptor descriptor = parent instanceof XmlTag ? ((XmlTag)parent).getDescriptor() : null;
+      return !(descriptor instanceof AngularJSTagDescriptor);
     }
     return true;
   }
