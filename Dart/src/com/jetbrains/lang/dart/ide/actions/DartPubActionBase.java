@@ -13,6 +13,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.actions.CloseActiveTabAction;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -58,7 +59,7 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 abstract public class DartPubActionBase extends AnAction implements DumbAware {
   private static final String GROUP_DISPLAY_ID = "Dart Pub Tool";
-  private static final Key<Boolean> PUB_ACTION_KEY = Key.create("PUB_ACTION_KEY");
+  private static final Key<PubToolWindowContentInfo> PUB_TOOL_WINDOW_CONTENT_INFO_KEY = Key.create("PUB_TOOL_WINDOW_CONTENT_INFO_KEY");
 
   private static final AtomicBoolean ourInProgress = new AtomicBoolean(false);
 
@@ -145,9 +146,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     final String[] pubParameters = calculatePubParameters(module.getProject());
 
     if (pubParameters != null) {
-      final GeneralCommandLine command = new GeneralCommandLine();
+      final GeneralCommandLine command = new GeneralCommandLine().withWorkDirectory(pubspecYamlFile.getParent().getPath());
       command.setExePath(pubFile.getPath());
-      command.setWorkDirectory(pubspecYamlFile.getParent().getPath());
       command.addParameters(pubParameters);
 
       doPerformPubAction(module, pubspecYamlFile, command, getTitle());
@@ -179,7 +179,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
           }
         });
 
-        showPubOutputConsole(module.getProject(), processHandler, pubspecYamlFile, actionTitle);
+        showPubOutputConsole(module, command, processHandler, pubspecYamlFile, actionTitle);
       }
     }
     catch (ExecutionException e) {
@@ -191,42 +191,44 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     }
   }
 
-  private static void showPubOutputConsole(@NotNull final Project project,
+  private static void showPubOutputConsole(@NotNull final Module module,
+                                           @NotNull final GeneralCommandLine command,
                                            @NotNull final OSProcessHandler processHandler,
                                            @NotNull final VirtualFile pubspecYamlFile,
-                                           @NotNull final String tabTitle) {
-    final ConsoleView console = createConsole(project, processHandler, pubspecYamlFile);
-    final ActionToolbar actionToolbar = createToolWindowActionsBar(processHandler);
+                                           @NotNull final String actionTitle) {
+    final ConsoleView console;
+    PubToolWindowContentInfo info = findExistingInfoForCommand(module.getProject(), command);
 
-    final SimpleToolWindowPanel toolWindowPanel = new SimpleToolWindowPanel(false, true);
-    toolWindowPanel.setContent(console.getComponent());
-    toolWindowPanel.setToolbar(actionToolbar.getComponent());
+    if (info != null) {
+      // rerunning the same pub command in the same tool window tab (corresponding tool window action invoked)
+      console = info.console;
+      console.clear();
+    }
+    else {
+      console = createConsole(module.getProject(), pubspecYamlFile);
+      info = new PubToolWindowContentInfo(module, pubspecYamlFile, command, actionTitle, console);
 
-    final Content content = ContentFactory.SERVICE.getInstance().createContent(toolWindowPanel.getComponent(), tabTitle, true);
-    content.putUserData(PUB_ACTION_KEY, Boolean.TRUE);
-    Disposer.register(content, console);
+      final ActionToolbar actionToolbar = createToolWindowActionsBar(info);
 
-    final ContentManager contentManager = MessageView.SERVICE.getInstance(project).getContentManager();
-    removeOldTabs(contentManager);
-    contentManager.addContent(content);
-    contentManager.setSelectedContent(content);
+      final SimpleToolWindowPanel toolWindowPanel = new SimpleToolWindowPanel(false, true);
+      toolWindowPanel.setContent(console.getComponent());
+      toolWindowPanel.setToolbar(actionToolbar.getComponent());
 
-    final ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.MESSAGES_WINDOW);
-    toolWindow.activate(null, true);
+      final Content content = ContentFactory.SERVICE.getInstance().createContent(toolWindowPanel.getComponent(), actionTitle, true);
+      content.putUserData(PUB_TOOL_WINDOW_CONTENT_INFO_KEY, info);
+      Disposer.register(content, console);
 
-    console.attachToProcess(processHandler);
-    processHandler.startNotify();
-  }
+      final ContentManager contentManager = MessageView.SERVICE.getInstance(module.getProject()).getContentManager();
+      removeOldTabs(contentManager);
+      contentManager.addContent(content);
+      contentManager.setSelectedContent(content);
 
-  @NotNull
-  private static ConsoleView createConsole(@NotNull final Project project,
-                                           @NotNull final OSProcessHandler processHandler,
-                                           @NotNull final VirtualFile pubspecYamlFile) {
-    final TextConsoleBuilder consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
-    consoleBuilder.setViewer(true);
-    consoleBuilder.addFilter(new DartConsoleFilter(project, pubspecYamlFile));
-    consoleBuilder.addFilter(new DartRelativePathsConsoleFilter(project, pubspecYamlFile.getParent().getPath()));
-    final ConsoleView console = consoleBuilder.getConsole();
+      final ToolWindow toolWindow = ToolWindowManager.getInstance(module.getProject()).getToolWindow(ToolWindowId.MESSAGES_WINDOW);
+      toolWindow.activate(null, true);
+    }
+
+    info.rerunPubCommandAction.setProcessHandler(processHandler);
+    info.stopProcessAction.setProcessHandler(processHandler);
 
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
@@ -234,29 +236,122 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
         console.print(IdeBundle.message("finished.with.exit.code.text.message", event.getExitCode()), ConsoleViewContentType.SYSTEM_OUTPUT);
       }
     });
-    return console;
+
+    console.attachToProcess(processHandler);
+    processHandler.startNotify();
+  }
+
+  @Nullable
+  private static PubToolWindowContentInfo findExistingInfoForCommand(final Project project, @NotNull final GeneralCommandLine command) {
+    for (Content content : MessageView.SERVICE.getInstance(project).getContentManager().getContents()) {
+      final PubToolWindowContentInfo info = content.getUserData(PUB_TOOL_WINDOW_CONTENT_INFO_KEY);
+      if (info != null && info.command == command) {
+        return info;
+      }
+    }
+    return null;
   }
 
   @NotNull
-  private static ActionToolbar createToolWindowActionsBar(@NotNull final OSProcessHandler processHandler) {
+  private static ConsoleView createConsole(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
+    final TextConsoleBuilder consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
+    consoleBuilder.setViewer(true);
+    consoleBuilder.addFilter(new DartConsoleFilter(project, pubspecYamlFile));
+    consoleBuilder.addFilter(new DartRelativePathsConsoleFilter(project, pubspecYamlFile.getParent().getPath()));
+    return consoleBuilder.getConsole();
+  }
+
+  @NotNull
+  private static ActionToolbar createToolWindowActionsBar(@NotNull final PubToolWindowContentInfo info) {
     final DefaultActionGroup actionGroup = new DefaultActionGroup();
-    actionGroup.addAction(new StopProcessAction(DartBundle.message("stop.pub.process.action"),
-                                                DartBundle.message("stop.pub.process.action"),
-                                                processHandler));
+
+    final RerunPubCommandAction rerunPubCommandAction = new RerunPubCommandAction(info);
+    info.rerunPubCommandAction = rerunPubCommandAction;
+    actionGroup.addAction(rerunPubCommandAction);
+
+    final StopProcessAction stopProcessAction = new StopProcessAction(DartBundle.message("stop.pub.process.action"),
+                                                                      DartBundle.message("stop.pub.process.action"),
+                                                                      null);
+    info.stopProcessAction = stopProcessAction;
+    actionGroup.addAction(stopProcessAction);
+
     actionGroup.add(PinToolwindowTabAction.getPinAction());
-    final AnAction closeContentAction = ActionManager.getInstance().getAction(IdeActions.ACTION_CLOSE_ACTIVE_TAB);
+
+    final AnAction closeContentAction = new CloseActiveTabAction();
     closeContentAction.getTemplatePresentation().setIcon(AllIcons.Actions.Cancel);
     closeContentAction.getTemplatePresentation().setText(UIBundle.message("tabbed.pane.close.tab.action.name"));
     actionGroup.add(closeContentAction);
-    return ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actionGroup, false);
+
+    final ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actionGroup, false);
+    toolbar.setTargetComponent(info.console.getComponent());
+    return toolbar;
   }
 
   private static void removeOldTabs(@NotNull final ContentManager contentManager) {
     for (Content content : contentManager.getContents()) {
-      final Boolean pubActionContent = content.getUserData(PUB_ACTION_KEY);
-      if (!content.isPinned() && content.isCloseable() && pubActionContent != null && pubActionContent) {
+      if (!content.isPinned() && content.isCloseable() && content.getUserData(PUB_TOOL_WINDOW_CONTENT_INFO_KEY) != null) {
         contentManager.removeContent(content, false);
       }
+    }
+  }
+
+  private static class PubToolWindowContentInfo {
+    private @NotNull final Module module;
+    private @NotNull final VirtualFile pubspecYamlFile;
+    private @NotNull final GeneralCommandLine command;
+    private @NotNull final String actionTitle;
+    private @NotNull final ConsoleView console;
+    private RerunPubCommandAction rerunPubCommandAction;
+    private StopProcessAction stopProcessAction;
+
+    public PubToolWindowContentInfo(@NotNull final Module module,
+                                    @NotNull final VirtualFile pubspecYamlFile,
+                                    @NotNull final GeneralCommandLine command,
+                                    @NotNull final String actionTitle,
+                                    @NotNull final ConsoleView console) {
+      this.module = module;
+      this.pubspecYamlFile = pubspecYamlFile;
+      this.command = command;
+      this.actionTitle = actionTitle;
+      this.console = console;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+      return o instanceof PubToolWindowContentInfo && command == ((PubToolWindowContentInfo)o).command;
+    }
+
+    @Override
+    public int hashCode() {
+      return command.hashCode();
+    }
+  }
+
+  private static class RerunPubCommandAction extends AnAction {
+    @NotNull private final PubToolWindowContentInfo myInfo;
+    private OSProcessHandler myProcessHandler;
+
+    public RerunPubCommandAction(@NotNull final PubToolWindowContentInfo info) {
+      super(DartBundle.message("rerun.pub.command.action.name"),
+            DartBundle.message("rerun.pub.command.action.description"),
+            AllIcons.Actions.Execute);
+      myInfo = info;
+
+      registerCustomShortcutSet(CommonShortcuts.getRerun(), info.console.getComponent());
+    }
+
+    public void setProcessHandler(@NotNull final OSProcessHandler processHandler) {
+      myProcessHandler = processHandler;
+    }
+
+    @Override
+    public void update(@NotNull final AnActionEvent e) {
+      e.getPresentation().setEnabled(!ourInProgress.get() && myProcessHandler != null && myProcessHandler.isProcessTerminated());
+    }
+
+    @Override
+    public void actionPerformed(@NotNull final AnActionEvent e) {
+      doPerformPubAction(myInfo.module, myInfo.pubspecYamlFile, myInfo.command, myInfo.actionTitle);
     }
   }
 }
