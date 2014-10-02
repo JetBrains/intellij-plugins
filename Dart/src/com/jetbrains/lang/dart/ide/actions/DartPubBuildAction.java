@@ -21,9 +21,4 @@ public class DartPubBuildAction extends DartPubActionBase {
            ? new String[]{"build", "--mode=" + dialog.getPubBuildMode()}
            : null;
   }
-
-  @Override
-  protected String getSuccessMessage() {
-    return DartBundle.message("dart.pub.build.success");
-  }
 }
