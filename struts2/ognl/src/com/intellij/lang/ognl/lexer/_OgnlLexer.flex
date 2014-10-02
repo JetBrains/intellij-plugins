@@ -32,7 +32,7 @@ ALPHA=[:letter:]
 DIGIT=[0-9]
 WHITE_SPACE_CHAR=[\ \n\r\t\f]
 
-IDENTIFIER=[:jletter:] [:jletterdigit:]*
+IDENTIFIER={ALPHA} [:jletterdigit:]*
 
 INTEGER_LITERAL=(0|([1-9]({DIGIT})*))
 BIG_INTEGER_LITERAL=({INTEGER_LITERAL})(["h""H"]?)
