@@ -29,7 +29,7 @@ public class PhoneGapPluginsView {
 
   public PhoneGapPluginsView(@NotNull Project project) {
     myProject = project;
-    packagesNotificationPanel = new PackagesNotificationPanel(project);
+    packagesNotificationPanel = new PackagesNotificationPanel();
     myPanel = new PhoneGapInstalledPluginsPanel(project, packagesNotificationPanel);
     myPanel.setPreferredSize(new Dimension(400, 400));
     JPanel wrapper = new JPanel(new BorderLayout());

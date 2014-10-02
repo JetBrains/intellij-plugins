@@ -110,7 +110,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
           ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-              listener.operationFinished(repoPackage.getName(), errorMessage.get());
+              listener.operationFinished(repoPackage.getName(), ErrorDescription.fromMessage(errorMessage.get()));
               scheduleFileSystemRefresh();
             }
           }, ModalityState.any());
@@ -139,7 +139,7 @@ public class PhoneGapPackageManagementService extends PackageManagementServiceEx
               ApplicationManager.getApplication().invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                  listener.operationFinished(aPackage.getName(), errorMessage.get());
+                  listener.operationFinished(aPackage.getName(), ErrorDescription.fromMessage(errorMessage.get()));
                   scheduleFileSystemRefresh();
                 }
               }, ModalityState.any());
