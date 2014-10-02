@@ -41,8 +41,8 @@ public abstract class PsiTestCase extends LightIdeaTestCase {
                                                            suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String text) {
     final PsiElement expression = doParse(text);
 
-    final PsiErrorElement[] errorElements = PsiTreeUtil.getChildrenOfType(expression, PsiErrorElement.class);
-    if (errorElements != null) {
+    if (!(expression instanceof OgnlExpression) ||
+        PsiTreeUtil.getChildrenOfType(expression, PsiErrorElement.class) != null) {
       fail(text + " parsed with errors:\n" + DebugUtil.psiToString(expression, true));
     }
 
