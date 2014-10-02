@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.ide.runner.unittest;
+package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
@@ -8,18 +8,17 @@ import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.lang.dart.ide.runner.DartPositionInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-// resolves paths relative to working dir that are reported by unittest framework
-public class DartUnitConsoleFilter implements Filter {
+// resolves paths relative to working dir that are reported by unittest framework or 'pub build'
+public class DartRelativePathsConsoleFilter implements Filter {
   @NotNull private final Project myProject;
-  @NotNull private final String myWorkingDir;
+  @NotNull private final String myBaseDirPath;
 
-  public DartUnitConsoleFilter(@NotNull final Project project, @NotNull final String workingDir) {
+  public DartRelativePathsConsoleFilter(@NotNull final Project project, @NotNull final String baseDirPath) {
     myProject = project;
-    myWorkingDir = workingDir;
+    myBaseDirPath = baseDirPath;
   }
 
   @Nullable
@@ -32,7 +31,8 @@ public class DartUnitConsoleFilter implements Filter {
     final int line = fileRelPathLineAndColumn.second;
     final int column = fileRelPathLineAndColumn.third;
 
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(myWorkingDir + "/" + trimmedText.substring(0, fileRelPath.length()));
+    final VirtualFile file =
+      LocalFileSystem.getInstance().findFileByPath(myBaseDirPath + "/" + trimmedText.substring(0, fileRelPath.length()));
     if (file == null || file.isDirectory()) return null;
 
     return new Result(entireLength - trimmedText.length(),
@@ -42,6 +42,7 @@ public class DartUnitConsoleFilter implements Filter {
 
   @Nullable
   public static Trinity<String, Integer, Integer> getFileRelPathLineAndColumn(@NotNull final String text) {
+    // "web\anagram.dart:23:8:"
     // "  ../subdir/someFile.dart 73:29         main.<fn>"
     if (text.isEmpty()) return null;
     if (text.charAt(0) != '.' && !Character.isJavaIdentifierStart(text.charAt(0))) return null;
@@ -52,10 +53,10 @@ public class DartUnitConsoleFilter implements Filter {
       if (ch != '/' && ch != '\\' && ch != '.' && !Character.isJavaIdentifierPart(ch)) break;
     }
 
-    if (text.length() <= index + 3) return null; // at least 4 symbols more: " 1:1"
+    if (text.length() <= index + 3) return null; // at least 4 symbols more: " 1:1" or ":1:1"
 
     final String relPath = text.substring(0, index);
-    if (!relPath.endsWith(".dart") || text.charAt(index) != ' ') return null;
+    if (!relPath.endsWith(".dart") || (text.charAt(index) != ' ' && text.charAt(index) != ':')) return null;
 
     final Couple<Integer> lineAndColumn = DartPositionInfo.parseLineAndColumnInColonFormat(text.substring(index + 1));
     final int line = lineAndColumn == null ? -1 : lineAndColumn.first >= 0 ? lineAndColumn.first - 1 : lineAndColumn.first;

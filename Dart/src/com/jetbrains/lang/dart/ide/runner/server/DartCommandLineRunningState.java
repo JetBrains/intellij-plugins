@@ -25,7 +25,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
-import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitConsoleFilter;
+import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.pubServer.PubServerManager;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
@@ -63,7 +63,7 @@ public class DartCommandLineRunningState extends CommandLineState {
       final String workingDir = StringUtil.isEmptyOrSpaces(myRunnerParameters.getWorkingDirectory())
                                 ? myRunnerParameters.getDartFile().getParent().getPath()
                                 : myRunnerParameters.getWorkingDirectory();
-      builder.addFilter(new DartUnitConsoleFilter(env.getProject(), workingDir));
+      builder.addFilter(new DartRelativePathsConsoleFilter(env.getProject(), workingDir));
     }
     catch (RuntimeConfigurationError e) {
       builder.addFilter(new DartConsoleFilter(env.getProject(), null)); // can't happen because already checked

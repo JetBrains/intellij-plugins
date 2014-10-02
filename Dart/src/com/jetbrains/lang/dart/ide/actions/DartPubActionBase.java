@@ -41,6 +41,8 @@ import com.intellij.ui.content.MessageView;
 import com.intellij.ui.content.tabs.PinToolwindowTabAction;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartProjectComponent;
+import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
+import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
@@ -177,7 +179,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
           }
         });
 
-        showPubOutputConsole(module.getProject(), processHandler, actionTitle);
+        showPubOutputConsole(module.getProject(), processHandler, pubspecYamlFile, actionTitle);
       }
     }
     catch (ExecutionException e) {
@@ -191,8 +193,9 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
   private static void showPubOutputConsole(@NotNull final Project project,
                                            @NotNull final OSProcessHandler processHandler,
+                                           @NotNull final VirtualFile pubspecYamlFile,
                                            @NotNull final String tabTitle) {
-    final ConsoleView console = createConsole(project, processHandler);
+    final ConsoleView console = createConsole(project, processHandler, pubspecYamlFile);
     final ActionToolbar actionToolbar = createToolWindowActionsBar(processHandler);
 
     final SimpleToolWindowPanel toolWindowPanel = new SimpleToolWindowPanel(false, true);
@@ -216,9 +219,13 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   }
 
   @NotNull
-  private static ConsoleView createConsole(@NotNull final Project project, @NotNull final OSProcessHandler processHandler) {
+  private static ConsoleView createConsole(@NotNull final Project project,
+                                           @NotNull final OSProcessHandler processHandler,
+                                           @NotNull final VirtualFile pubspecYamlFile) {
     final TextConsoleBuilder consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
     consoleBuilder.setViewer(true);
+    consoleBuilder.addFilter(new DartConsoleFilter(project, pubspecYamlFile));
+    consoleBuilder.addFilter(new DartRelativePathsConsoleFilter(project, pubspecYamlFile.getParent().getPath()));
     final ConsoleView console = consoleBuilder.getConsole();
 
     processHandler.addProcessListener(new ProcessAdapter() {

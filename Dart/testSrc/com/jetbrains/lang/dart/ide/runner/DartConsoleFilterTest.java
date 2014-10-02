@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Trinity;
-import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitConsoleFilter;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,12 +30,12 @@ public class DartConsoleFilterTest extends TestCase {
     assertEquals(column, info.column);
   }
 
-  private static void doNegativeDartUnitFilterTest(@NotNull final String text) {
-    assertNull(DartUnitConsoleFilter.getFileRelPathLineAndColumn(text));
+  private static void doNegativeRelativePathsFilterTest(@NotNull final String text) {
+    assertNull(DartRelativePathsConsoleFilter.getFileRelPathLineAndColumn(text));
   }
 
-  private static void doPositiveDartUnitFilterTest(final String text, final String relPath, final int line, final int column) {
-    final Trinity<String, Integer, Integer> relPathLineAndColumn = DartUnitConsoleFilter.getFileRelPathLineAndColumn(text);
+  private static void doPositiveRelativePathsFilterTest(final String text, final String relPath, final int line, final int column) {
+    final Trinity<String, Integer, Integer> relPathLineAndColumn = DartRelativePathsConsoleFilter.getFileRelPathLineAndColumn(text);
     assertNotNull(relPathLineAndColumn);
     assertEquals(relPath, relPathLineAndColumn.first);
     assertEquals(line, relPathLineAndColumn.second.intValue());
@@ -86,19 +85,19 @@ public class DartConsoleFilterTest extends TestCase {
                    "foo.dart/bar.dart_baz.dart.more.dart", -1, -1);
   }
 
-  public void testDartUnitConsoleFilter() throws Exception {
-    doNegativeDartUnitFilterTest("");
-    doNegativeDartUnitFilterTest("foo.dart");
-    doNegativeDartUnitFilterTest("foo.dart ");
-    doNegativeDartUnitFilterTest("foo.dart 4   ");
-    doNegativeDartUnitFilterTest("foo.dart 4:   ");
-    doNegativeDartUnitFilterTest("foo.dart 4:x");
-    doNegativeDartUnitFilterTest(" foo.dart 4:15");
-    doNegativeDartUnitFilterTest("foo.txt 4:15");
-    doNegativeDartUnitFilterTest("foo.dart:4:15 ");
-    doNegativeDartUnitFilterTest("foo.dart 4:x");
+  public void testRelativePathsConsoleFilter() throws Exception {
+    doNegativeRelativePathsFilterTest("");
+    doNegativeRelativePathsFilterTest("foo.dart");
+    doNegativeRelativePathsFilterTest("foo.dart ");
+    doNegativeRelativePathsFilterTest("foo.dart 4   ");
+    doNegativeRelativePathsFilterTest("foo.dart 4:   ");
+    doNegativeRelativePathsFilterTest("foo.dart 4:x");
+    doNegativeRelativePathsFilterTest(" foo.dart 4:15");
+    doNegativeRelativePathsFilterTest("foo.txt 4:15");
+    doNegativeRelativePathsFilterTest("foo.dart 4:x");
 
-    doPositiveDartUnitFilterTest("foo.dart 1:1", "foo.dart", 0, 0);
-    doPositiveDartUnitFilterTest("../foo\\bar.dart 4:15 x", "../foo\\bar.dart", 3, 14);
+    doPositiveRelativePathsFilterTest("foo.dart 1:1", "foo.dart", 0, 0);
+    doPositiveRelativePathsFilterTest("../foo\\bar.dart 4:15 x", "../foo\\bar.dart", 3, 14);
+    doPositiveRelativePathsFilterTest("web\\foo.dart:566:1:", "web\\foo.dart", 565, 0);
   }
 }
