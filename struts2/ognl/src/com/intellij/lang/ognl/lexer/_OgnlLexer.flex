@@ -49,15 +49,15 @@ STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
 
 ESCAPE_SEQUENCE=\\[^\r\n]
 
-%state SEQUENCE_EXPRESSION
+%state NESTED_BRACE
 
 %%
 
 <YYINITIAL> "%{"      { return OgnlTypes.EXPRESSION_START; }
 <YYINITIAL> "}"       { return OgnlTypes.EXPRESSION_END; }
 
-"{"                         { if (++braceCount > 0) yybegin(SEQUENCE_EXPRESSION); return OgnlTypes.LBRACE; }
-<SEQUENCE_EXPRESSION> "}"   { if (--braceCount == 0) yybegin(YYINITIAL); return OgnlTypes.RBRACE; }
+"{"                   { if (++braceCount > 0)  yybegin(NESTED_BRACE); return OgnlTypes.LBRACE; }
+<NESTED_BRACE> "}"    { if (--braceCount == 0) yybegin(YYINITIAL); return OgnlTypes.RBRACE; }
 
 {WHITE_SPACE_CHAR}+   { return TokenType.WHITE_SPACE; }
 
