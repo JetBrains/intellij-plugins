@@ -1,32 +1,44 @@
 package com.jetbrains.lang.dart.ide.actions;
 
+import com.intellij.CommonBundle;
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.actions.StopProcessAction;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.CapturingProcessHandler;
-import com.intellij.execution.process.ProcessOutput;
+import com.intellij.execution.filters.TextConsoleBuilder;
+import com.intellij.execution.filters.TextConsoleBuilderFactory;
+import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.SimpleToolWindowPanel;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowId;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.ui.UIBundle;
+import com.intellij.ui.content.Content;
+import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.content.ContentManager;
+import com.intellij.ui.content.MessageView;
+import com.intellij.ui.content.tabs.PinToolwindowTabAction;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
@@ -43,8 +55,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 abstract public class DartPubActionBase extends AnAction implements DumbAware {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.actions.DartPubActionBase");
   private static final String GROUP_DISPLAY_ID = "Dart Pub Tool";
+  private static final Key<Boolean> PUB_ACTION_KEY = Key.create("PUB_ACTION_KEY");
 
   private static final AtomicBoolean ourInProgress = new AtomicBoolean(false);
 
@@ -53,7 +65,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull final AnActionEvent e) {
     //e.getPresentation().setText(getTitle());  "Pub: Build..." action name set in plugin.xml is different from its "Pub: Build" title
     final boolean visible = getModuleAndPubspecYamlFile(e) != null;
     e.getPresentation().setVisible(visible);
@@ -78,10 +90,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   @Nullable
   protected abstract String[] calculatePubParameters(final Project project);
 
-  protected abstract String getSuccessMessage();
-
   @Override
-  public void actionPerformed(final AnActionEvent e) {
+  public void actionPerformed(@NotNull final AnActionEvent e) {
     final Pair<Module, VirtualFile> moduleAndPubspecYamlFile = getModuleAndPubspecYamlFile(e);
     if (moduleAndPubspecYamlFile == null) return;
 
@@ -95,9 +105,13 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     DartSdk sdk = DartSdk.getGlobalDartSdk();
 
     if (sdk == null && allowModalDialogs) {
-      final int answer = Messages.showDialog(module.getProject(), "Dart SDK is not configured",
-                                             getTitle(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
-      if (answer != 0) return;
+      final int answer = Messages.showDialog(module.getProject(),
+                                             DartBundle.message("dart.sdk.is.not.configured"),
+                                             getTitle(),
+                                             new String[]{DartBundle.message("setup.dart.sdk"), CommonBundle.getCancelButtonText()},
+                                             Messages.OK,
+                                             Messages.getErrorIcon());
+      if (answer != Messages.OK) return;
 
       ShowSettingsUtilImpl.showSettingsDialog(module.getProject(), DartConfigurable.DART_SETTINGS_PAGE_ID, "");
       sdk = DartSdk.getGlobalDartSdk();
@@ -108,100 +122,134 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     File pubFile = new File(DartSdkUtil.getPubPath(sdk));
     if (!pubFile.isFile() && allowModalDialogs) {
       final int answer =
-        Messages.showDialog(module.getProject(), DartBundle.message("dart.sdk.bad.dartpub.path", pubFile.getPath()),
-                            getTitle(), new String[]{"Configure SDK", "Cancel"}, 0, Messages.getErrorIcon());
-      if (answer != 0) return;
+        Messages.showDialog(module.getProject(),
+                            DartBundle.message("dart.sdk.bad.dartpub.path", pubFile.getPath()),
+                            getTitle(),
+                            new String[]{DartBundle.message("setup.dart.sdk"), CommonBundle.getCancelButtonText()},
+                            Messages.OK,
+                            Messages.getErrorIcon());
+      if (answer != Messages.OK) return;
 
       ShowSettingsUtilImpl.showSettingsDialog(module.getProject(), DartConfigurable.DART_SETTINGS_PAGE_ID, "");
 
       sdk = DartSdk.getGlobalDartSdk();
       if (sdk == null) return;
 
-      pubFile = new File(sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/pub.bat" : "/bin/pub"));
+      pubFile = new File(DartSdkUtil.getPubPath(sdk));
     }
 
     if (!pubFile.isFile()) return;
 
     final String[] pubParameters = calculatePubParameters(module.getProject());
+
     if (pubParameters != null) {
-      queuePubTask(module, pubspecYamlFile, pubFile.getPath(), pubParameters, getTitle(), getSuccessMessage());
+      final GeneralCommandLine command = new GeneralCommandLine();
+      command.setExePath(pubFile.getPath());
+      command.setWorkDirectory(pubspecYamlFile.getParent().getPath());
+      command.addParameters(pubParameters);
+
+      doPerformPubAction(module, pubspecYamlFile, command, getTitle());
     }
   }
 
-  private static void queuePubTask(@NotNull final Module module,
-                                   @NotNull final VirtualFile pubspecYamlFile,
-                                   @NotNull final String pubPath,
-                                   @NotNull final String[] pubParameters,
-                                   @NotNull final String actionTitle,
-                                   @NotNull final String successMessage) {
-    final Task.Backgroundable task = new Task.Backgroundable(module.getProject(), actionTitle, true) {
-      public void run(@NotNull final ProgressIndicator indicator) {
-        if (ourInProgress.compareAndSet(false, true)) {
-          try {
-            runPubProcessAndHandleItsResult(module, pubspecYamlFile, pubPath, pubParameters, actionTitle, successMessage, indicator);
-          }
-          finally {
-            ourInProgress.set(false);
-          }
-        }
-      }
-    };
-
-    task.queue();
-  }
-
-  private static void runPubProcessAndHandleItsResult(@NotNull final Module module,
-                                                      @NotNull final VirtualFile pubspecYamlFile,
-                                                      @NotNull final String pubPath,
-                                                      @NotNull final String[] pubParameters,
-                                                      @NotNull final String actionTitle,
-                                                      @NotNull final String successMessage,
-                                                      @NotNull final ProgressIndicator indicator) {
-    final String presentableCommandLine = "pub " + StringUtil.join(pubParameters, " ");
-
-    indicator.setText(DartBundle.message("dart.0.in.progress", presentableCommandLine));
-    indicator.setIndeterminate(true);
-    final GeneralCommandLine command = new GeneralCommandLine();
-    command.setExePath(pubPath);
-    command.setWorkDirectory(pubspecYamlFile.getParent().getPath());
-    command.addParameters(pubParameters);
-
-    ApplicationManager.getApplication().invokeAndWait(new Runnable() {
-      @Override
-      public void run() {
-        FileDocumentManager.getInstance().saveAllDocuments();
-      }
-    }, ModalityState.defaultModalityState());
-
+  private static void doPerformPubAction(@NotNull final Module module,
+                                         @NotNull final VirtualFile pubspecYamlFile,
+                                         @NotNull final GeneralCommandLine command,
+                                         @NotNull final String actionTitle) {
+    FileDocumentManager.getInstance().saveAllDocuments();
 
     try {
-      final ProcessOutput processOutput = new CapturingProcessHandler(command).runProcessWithProgressIndicator(indicator);
-      final String err = processOutput.getStderr().trim();
+      if (ourInProgress.compareAndSet(false, true)) {
+        final OSProcessHandler processHandler = new OSProcessHandler(command);
 
-      LOG.debug(presentableCommandLine + ", exit code: " + processOutput.getExitCode() + ", err:\n" +
-                err + "\nout:\n" + processOutput.getStdout());
+        processHandler.addProcessListener(new ProcessAdapter() {
+          @Override
+          public void processTerminated(final ProcessEvent event) {
+            ourInProgress.set(false);
 
-      if (!indicator.isCanceled()) {
-        if (err.isEmpty()) {
-          Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, actionTitle, successMessage, NotificationType.INFORMATION));
-        }
-        else {
-          Notifications.Bus.notify(new Notification(GROUP_DISPLAY_ID, actionTitle, err, NotificationType.ERROR));
-        }
+            ApplicationManager.getApplication().invokeLater(new Runnable() {
+              public void run() {
+                DartProjectComponent.excludePackagesFolders(module, pubspecYamlFile);
+                // refresh later than exclude, otherwise IDE may start indexing excluded folders
+                pubspecYamlFile.getParent().refresh(true, true);
+              }
+            });
+          }
+        });
+
+        showPubOutputConsole(module.getProject(), processHandler, actionTitle);
       }
-
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        public void run() {
-          DartProjectComponent.excludePackagesFolders(module, pubspecYamlFile);
-          // refresh later than exclude, otherwise IDE may start indexing excluded folders
-          pubspecYamlFile.getParent().refresh(true, true);
-        }
-      });
     }
-    catch (ExecutionException ex) {
-      LOG.error(ex);
+    catch (ExecutionException e) {
+      ourInProgress.set(false);
+
+      // may be better show it in Messages tool window console?
       Notifications.Bus.notify(
-        new Notification(GROUP_DISPLAY_ID, actionTitle, DartBundle.message("dart.pub.exception", ex.getMessage()), NotificationType.ERROR));
+        new Notification(GROUP_DISPLAY_ID, actionTitle, DartBundle.message("dart.pub.exception", e.getMessage()), NotificationType.ERROR));
+    }
+  }
+
+  private static void showPubOutputConsole(@NotNull final Project project,
+                                           @NotNull final OSProcessHandler processHandler,
+                                           @NotNull final String tabTitle) {
+    final ConsoleView console = createConsole(project, processHandler);
+    final ActionToolbar actionToolbar = createToolWindowActionsBar(processHandler);
+
+    final SimpleToolWindowPanel toolWindowPanel = new SimpleToolWindowPanel(false, true);
+    toolWindowPanel.setContent(console.getComponent());
+    toolWindowPanel.setToolbar(actionToolbar.getComponent());
+
+    final Content content = ContentFactory.SERVICE.getInstance().createContent(toolWindowPanel.getComponent(), tabTitle, true);
+    content.putUserData(PUB_ACTION_KEY, Boolean.TRUE);
+    Disposer.register(content, console);
+
+    final ContentManager contentManager = MessageView.SERVICE.getInstance(project).getContentManager();
+    removeOldTabs(contentManager);
+    contentManager.addContent(content);
+    contentManager.setSelectedContent(content);
+
+    final ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.MESSAGES_WINDOW);
+    toolWindow.activate(null, true);
+
+    console.attachToProcess(processHandler);
+    processHandler.startNotify();
+  }
+
+  @NotNull
+  private static ConsoleView createConsole(@NotNull final Project project, @NotNull final OSProcessHandler processHandler) {
+    final TextConsoleBuilder consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
+    consoleBuilder.setViewer(true);
+    final ConsoleView console = consoleBuilder.getConsole();
+
+    processHandler.addProcessListener(new ProcessAdapter() {
+      @Override
+      public void processTerminated(final ProcessEvent event) {
+        console.print(IdeBundle.message("finished.with.exit.code.text.message", event.getExitCode()), ConsoleViewContentType.SYSTEM_OUTPUT);
+      }
+    });
+    return console;
+  }
+
+  @NotNull
+  private static ActionToolbar createToolWindowActionsBar(@NotNull final OSProcessHandler processHandler) {
+    final DefaultActionGroup actionGroup = new DefaultActionGroup();
+    actionGroup.addAction(new StopProcessAction(DartBundle.message("stop.pub.process.action"),
+                                                DartBundle.message("stop.pub.process.action"),
+                                                processHandler));
+    actionGroup.add(PinToolwindowTabAction.getPinAction());
+    final AnAction closeContentAction = ActionManager.getInstance().getAction(IdeActions.ACTION_CLOSE_ACTIVE_TAB);
+    closeContentAction.getTemplatePresentation().setIcon(AllIcons.Actions.Cancel);
+    closeContentAction.getTemplatePresentation().setText(UIBundle.message("tabbed.pane.close.tab.action.name"));
+    actionGroup.add(closeContentAction);
+    return ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actionGroup, false);
+  }
+
+  private static void removeOldTabs(@NotNull final ContentManager contentManager) {
+    for (Content content : contentManager.getContents()) {
+      final Boolean pubActionContent = content.getUserData(PUB_ACTION_KEY);
+      if (!content.isPinned() && content.isCloseable() && pubActionContent != null && pubActionContent) {
+        contentManager.removeContent(content, false);
+      }
     }
   }
 }

@@ -16,9 +16,4 @@ public class DartPubGetAction extends DartPubActionBase {
   protected String[] calculatePubParameters(final Project project) {
     return new String[]{"get"};
   }
-
-  @Override
-  protected String getSuccessMessage() {
-    return DartBundle.message("dart.pub.get.success");
-  }
 }
