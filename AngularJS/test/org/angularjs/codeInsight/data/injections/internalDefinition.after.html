@@ -1,0 +1,4 @@
+<div ng-repeat="item in ordered = (items | orderBy:'groupName')">
+  <h1 ng-if="item.groupName !== ordered<caret>[$index - 1].groupName">Group {{ item.groupName }}</h1>
+  {{ item.text }}
+</div>

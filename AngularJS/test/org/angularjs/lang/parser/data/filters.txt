@@ -56,9 +56,11 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:IDENTIFIER)('uppercase')
 ------
 ASTWrapperPsiElement(FILE)
-  JSVarStatement
-    JSVariable
-      PsiElement(JS:IDENTIFIER)('n')
+  JSExpressionStatement
+    JSAssignmentExpression
+      JSDefinitionExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('n')
       PsiWhiteSpace(' ')
       PsiElement(JS:EQ)('=')
       PsiWhiteSpace(' ')

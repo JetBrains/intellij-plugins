@@ -33,7 +33,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgInitResolve() {
     myFixture.configureByFiles("ngInit.resolve.html", "angular.js");
-    checkVariableResolve("fri<caret>ends", "friends", JSVariable.class);
+    checkVariableResolve("fri<caret>ends", "friends", JSDefinitionExpression.class);
   }
 
   public void testNgRepeatImplicitCompletion() {
@@ -57,6 +57,10 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("ngRepeatExplicit.html", "ngRepeatExplicit.after.html", "angular.js");
   }
 
+  public void testInternalDefinitionCompletion() {
+    myFixture.testCompletion("ngRepeatExplicit.html", "ngRepeatExplicit.after.html", "angular.js");
+  }
+
   public void testNgRepeatExplicitCompletionInScript() {
     myFixture.testCompletion("ngRepeatExplicitInScript.html", "ngRepeatExplicitInScript.after.html", "angular.js");
   }
@@ -68,6 +72,11 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testNgRepeatExplicitResolve() {
     myFixture.configureByFiles("ngRepeatExplicit.resolve.html", "angular.js");
     checkVariableResolve("per<caret>son", "person", JSDefinitionExpression.class);
+  }
+
+  public void testInternalDefinitionResolve() {
+    myFixture.configureByFiles("internalDefinition.after.html", "angular.js");
+    checkVariableResolve("ord<caret>ered[", "ordered", JSDefinitionExpression.class);
   }
 
   public void testNgRepeatExplicitResolveInScript() {

@@ -27,13 +27,7 @@ public class AngularJSParser extends JavaScriptParser<AngularJSParser.AngularJSE
         }
         if (isIdentifierToken(firstToken)) {
           final IElementType nextToken = builder.lookAhead(1);
-          if (nextToken == JSTokenTypes.EQ) {
-            PsiBuilder.Marker marker = builder.mark();
-            parseVarDeclaration(false);
-            checkForSemicolon();
-            marker.done(JSStubElementTypes.VAR_STATEMENT);
-            return;
-          } else if (nextToken == JSTokenTypes.IN_KEYWORD) {
+          if (nextToken == JSTokenTypes.IN_KEYWORD) {
             parseInStatement();
             return;
           }

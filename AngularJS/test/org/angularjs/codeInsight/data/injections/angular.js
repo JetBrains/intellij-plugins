@@ -39,4 +39,10 @@
  * @param {repeat_expression} ngRepeat The expression indicating how to enumerate a collection. These
  *   formats are currently supported:
  */
+/**
+ * @ngdoc directive
+ * @name ng.directive:ngIf
+ * @param {expression} ngRepeat The expression indicating how to enumerate a collection. These
+ *   formats are currently supported:
+ */
 angular.directive({ngModel: ngModelDirective})

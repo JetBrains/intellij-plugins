@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSNamedElement;
-import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiElement;
@@ -50,11 +49,11 @@ public class AngularJSProcessor {
       protected void process(JSFile file) {
         file.accept(new AngularJSRecursiveVisitor() {
           @Override
-          public void visitJSVariable(JSVariable node) {
+          public void visitJSDefinitionExpression(JSDefinitionExpression node) {
             if (scopeMatches(original, node)) {
               consumer.consume(node);
             }
-            super.visitJSVariable(node);
+            super.visitJSDefinitionExpression(node);
           }
 
           @Override
@@ -68,9 +67,6 @@ public class AngularJSProcessor {
           @Override
           public void visitAngularJSRepeatExpression(AngularJSRepeatExpression repeatExpression) {
             if (scopeMatches(original, repeatExpression)) {
-              for (JSDefinitionExpression def : repeatExpression.getDefinitions()) {
-                consumer.consume(def);
-              }
               for (Map.Entry<String, String> entry : NG_REPEAT_IMPLICITS.entrySet()) {
                 consumer.consume(new ImplicitJSVariableImpl(entry.getKey(), entry.getValue(), repeatExpression));
               }
