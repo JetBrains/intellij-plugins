@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,8 +20,6 @@ import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.impl.actions.ListTemplatesAction;
 import com.intellij.lang.ognl.OgnlFileType;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 
 /**
@@ -46,15 +44,9 @@ public class OgnlLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCa
   }
 
   private void expandLiveTemplate() {
-    new WriteCommandAction(myFixture.getProject()) {
-      @Override
-      protected void run(final Result result) throws Throwable {
-        new ListTemplatesAction().actionPerformedImpl(myFixture.getProject(), myFixture.getEditor());
-        final LookupImpl lookup = (LookupImpl) LookupManager.getActiveLookup(myFixture.getEditor());
-        assert lookup != null;
-        lookup.finishLookup(Lookup.NORMAL_SELECT_CHAR);
-      }
-    }.execute();
+    new ListTemplatesAction().actionPerformedImpl(myFixture.getProject(), myFixture.getEditor());
+    LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(myFixture.getEditor());
+    assertNotNull(lookup);
+    lookup.finishLookup(Lookup.NORMAL_SELECT_CHAR);
   }
-
 }
