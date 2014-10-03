@@ -127,7 +127,7 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
   }
 
   public void testReference8() throws Throwable {
-    doTest("Reference8.dart", "additional/foo.dart");
+    doTest("Reference8.dart", "additional/Foo.dart");
   }
 
   public void testReference9() throws Throwable {
