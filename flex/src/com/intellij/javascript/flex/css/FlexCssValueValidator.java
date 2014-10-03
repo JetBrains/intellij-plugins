@@ -3,9 +3,11 @@ package com.intellij.javascript.flex.css;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssTerm;
+import com.intellij.psi.css.CssTermType;
 import com.intellij.psi.css.descriptor.value.CssValueDescriptor;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.descriptor.value.CssColorValue;
+import com.intellij.psi.css.impl.descriptor.value.CssLengthValue;
 import com.intellij.psi.css.impl.descriptor.value.CssStringValue;
 import com.intellij.psi.css.impl.descriptor.value.CssValueValidatorImpl;
 import com.intellij.xml.util.ColorMap;
@@ -27,6 +29,10 @@ class FlexCssValueValidator extends CssValueValidatorImpl {
     else if (valueDescriptor instanceof CssStringValue) {
       return term != null && isValidString(term);
     }
+    else if (valueDescriptor instanceof CssLengthValue) {
+      return term != null && term instanceof CssTerm && 
+             (super.isValid(term, valueDescriptor) || isValidLength((CssTerm)term));
+    }
 
     return super.isValid(term, valueDescriptor);
   }
@@ -34,6 +40,11 @@ class FlexCssValueValidator extends CssValueValidatorImpl {
 
   private static boolean isValidString(@NotNull PsiElement element) {
     return FlexCssUtil.inQuotes(element.getText().trim());
+  }
+  
+  private static boolean isValidLength(@NotNull CssTerm cssTerm) {
+    final CssTermType termType = cssTerm.getTermType();
+    return termType == CssTermTypes.NEGATIVE_NUMBER  || termType == CssTermTypes.NUMBER || termType == CssTermTypes.INTEGER;
   }
 
   private static boolean isValidColor(@NotNull PsiElement element) {
