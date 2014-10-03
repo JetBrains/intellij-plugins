@@ -74,26 +74,15 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   private static TextRange foldFileHeader(@NotNull final List<FoldingDescriptor> descriptors,
                                           @NotNull final DartFile dartFile,
                                           @NotNull final Document document) {
-    final TextRange fileHeaderCommentsRange = getFileHeaderCommentsRange(dartFile);
-    if (fileHeaderCommentsRange != null &&
-        fileHeaderCommentsRange.getLength() > 1 &&
-        document.getLineNumber(fileHeaderCommentsRange.getEndOffset()) > document.getLineNumber(fileHeaderCommentsRange.getStartOffset())) {
-      descriptors.add(new FoldingDescriptor(dartFile, fileHeaderCommentsRange));
-      return fileHeaderCommentsRange;
-    }
-
-    return null;
-  }
-
-  @Nullable
-  private static TextRange getFileHeaderCommentsRange(@NotNull final DartFile file) {
-    PsiElement firstComment = file.getFirstChild();
+    PsiElement firstComment = dartFile.getFirstChild();
     if (firstComment instanceof PsiWhiteSpace) firstComment = firstComment.getNextSibling();
 
     if (!(firstComment instanceof PsiComment)) return null;
 
+    boolean containsCustomRegionMarker = false;
     PsiElement nextAfterComments = firstComment;
     while (nextAfterComments instanceof PsiComment || nextAfterComments instanceof PsiWhiteSpace) {
+      containsCustomRegionMarker |= isCustomRegionElement(nextAfterComments);
       nextAfterComments = nextAfterComments.getNextSibling();
     }
 
@@ -104,13 +93,17 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         nextAfterComments instanceof DartPartOfStatement ||
         nextAfterComments instanceof DartImportOrExportStatement) {
       if (nextAfterComments.getPrevSibling() instanceof PsiWhiteSpace) nextAfterComments = nextAfterComments.getPrevSibling();
-      if (nextAfterComments == null || nextAfterComments.equals(firstComment)) return null;
-      return new UnfairTextRange(firstComment.getTextOffset(), nextAfterComments.getTextOffset());
+      if (nextAfterComments.equals(firstComment)) return null;
+      final TextRange fileHeaderCommentsRange = new UnfairTextRange(firstComment.getTextOffset(), nextAfterComments.getTextOffset());
+      if (fileHeaderCommentsRange.getLength() > 1 &&
+          document.getLineNumber(fileHeaderCommentsRange.getEndOffset()) > document.getLineNumber(fileHeaderCommentsRange.getStartOffset())) {
+        if (!containsCustomRegionMarker) {
+          descriptors.add(new FoldingDescriptor(dartFile, fileHeaderCommentsRange));
+        }
+        return fileHeaderCommentsRange;
+      }
     }
-    else {
-      // this is not a file-level comment, but class, function or var doc
-      return null;
-    }
+    return null;
   }
 
   private static void foldImportExportStatements(@NotNull final List<FoldingDescriptor> descriptors, final @NotNull DartFile dartFile) {
@@ -145,21 +138,24 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
 
       if (child instanceof PsiComment) {
         final IElementType elementType = child.getNode().getElementType();
-        if (elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT || elementType == DartTokenTypesSets.MULTI_LINE_COMMENT) {
+        if ((elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT || elementType == DartTokenTypesSets.MULTI_LINE_COMMENT)
+            && !isCustomRegionElement(child)) {
           descriptors.add(new FoldingDescriptor(child, child.getTextRange()));
         }
         else if (elementType == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT || elementType == DartTokenTypesSets.SINGLE_LINE_COMMENT) {
           final PsiElement firstCommentInSequence = child;
           PsiElement lastCommentInSequence = firstCommentInSequence;
           PsiElement nextElement = firstCommentInSequence;
+          boolean containsCustomRegionMarker = isCustomRegionElement(nextElement);
           while ((nextElement = nextElement.getNextSibling()) != null &&
                  (nextElement instanceof PsiWhiteSpace || nextElement.getNode().getElementType() == elementType)) {
             if (nextElement.getNode().getElementType() == elementType) {
               lastCommentInSequence = nextElement;
+              containsCustomRegionMarker |= isCustomRegionElement(nextElement);
             }
           }
 
-          if (lastCommentInSequence != firstCommentInSequence) {
+          if (lastCommentInSequence != firstCommentInSequence && !containsCustomRegionMarker) {
             final TextRange range =
               TextRange.create(firstCommentInSequence.getTextOffset(), lastCommentInSequence.getTextRange().getEndOffset());
             descriptors.add(new FoldingDescriptor(firstCommentInSequence, range));
