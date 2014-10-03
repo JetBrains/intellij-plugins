@@ -23,9 +23,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
+import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
-import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.pubServer.PubServerManager;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
@@ -167,6 +167,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
       myDebuggingPort = NetUtils.tryToFindAvailableSocketPort();
       commandLine.addParameter("--debug:" + myDebuggingPort);
+      commandLine.addParameter("--break-at-isolate-spawn");
     }
 
     myObservatoryPort = PubServerManager.findOneMoreAvailablePort(myDebuggingPort);
