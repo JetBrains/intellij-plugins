@@ -51,6 +51,13 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         return calculateRestrictions(pair.first, pair.second);
       }
     });
+    DATA_CALCULATORS.put(CONTROLLER, new Function<Pair<JSSymbolVisitor, PsiElement>, String>() {
+      @Override
+      public String fun(Pair<JSSymbolVisitor, PsiElement> pair) {
+        generateControllerNamespace(pair.first, pair.second);
+        return null;
+      }
+    });
 
     INDEXERS.put(CONTROLLER, AngularControllerIndex.INDEX_ID);
     INDEXERS.put(MODULE, AngularModuleIndex.INDEX_ID);
@@ -199,6 +206,17 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       }
     }
     return previousValue;
+  }
+
+
+  private static void generateControllerNamespace(JSSymbolVisitor visitor, PsiElement second) {
+    final String namespace = StringUtil.unquoteString(second.getText());
+    visitor.addClassFromQName((JSExpression)second, namespace);
+    final JSFunction function = findFunction(visitor, second);
+    final JSNamespace ns = visitor.findNsForExpr((JSExpression)second);
+    if (function != null && ns != null) {
+      visitor.visitWithNamespace(ns, function, false);
+    }
   }
 
   private static String calculateRestrictions(JSSymbolVisitor visitor, PsiElement element) {

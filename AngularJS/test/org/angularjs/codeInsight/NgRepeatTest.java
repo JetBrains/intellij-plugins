@@ -36,6 +36,14 @@ public class NgRepeatTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("lastName", variants.get(1));
   }
 
+  public void testControllerWithAliasNoVar() {
+    final List<String> variants = myFixture.getCompletionVariants("controllerWithAlias.html", "angular.js", "customNoVar.js");
+    assertNotNull(variants);
+    assertTrue(variants.size() >= 2);
+    assertEquals("firstName", variants.get(0));
+    assertEquals("lastName", variants.get(1));
+  }
+
   public void testControllerWithoutAlias() {
     final List<String> variants = myFixture.getCompletionVariants("controllerWithoutAlias.html", "angular.js", "custom.js");
     assertNotNull(variants);
