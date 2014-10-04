@@ -17,11 +17,13 @@ import static com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProc
 
 // see com.google.dart.tools.debug.core.server.ServerDebugTarget
 public class DartVmListener implements VmListener {
-  private final DartCommandLineDebugProcess myDebugProcess;
-  private boolean myFirstBreak = true;
+  @NotNull private final DartCommandLineDebugProcess myDebugProcess;
+  @NotNull private final DartCommandLineBreakpointHandler myBreakpointsHandler;
 
-  public DartVmListener(final DartCommandLineDebugProcess debugProcess) {
+  public DartVmListener(@NotNull final DartCommandLineDebugProcess debugProcess,
+                        @NotNull final DartCommandLineBreakpointHandler breakpointsHandler) {
     myDebugProcess = debugProcess;
+    myBreakpointsHandler = breakpointsHandler;
   }
 
   public void connectionOpened(final VmConnection connection) {
@@ -38,15 +40,31 @@ public class DartVmListener implements VmListener {
 
   public void isolateCreated(final VmIsolate isolate) {
     LOG.debug("isolate created: " + isolate.getId());
+    myDebugProcess.isolateCreated(isolate);
+
+    // do not call BreakpointsHandler.handleIsolateCreated() from here, it is called from first isolatePaused()!
+
+    // Actually enableAllStepping() doesn't do anything except calling getLibraries(). Stepping works without this call.
+    // VmConnection.enableAllSteppingSync(isolate);
+
+    try {
+      // todo add an option for BreakOnExceptionsType (WEB-13268)
+      myDebugProcess.getVmConnection().setPauseOnExceptionSync(isolate, VmConnection.BreakOnExceptionsType.unhandled);
+    }
+    catch (IOException e) {
+      LOG.error(e);
+    }
   }
 
   public void isolateShutdown(final VmIsolate isolate) {
     LOG.debug("isolate shutdown: " + isolate.getId());
+    myDebugProcess.isolateShutdown(isolate);
+    myBreakpointsHandler.handleIsolateShutdown(isolate);
   }
 
   public void breakpointResolved(final VmIsolate isolate, final VmBreakpoint breakpoint) {
     LOG.debug("breakpoint resolved: " + breakpoint.getBreakpointId());
-    myDebugProcess.getDartBreakpointsHandler().breakpointResolved(breakpoint);
+    myBreakpointsHandler.breakpointResolved(breakpoint);
   }
 
   public void debuggerPaused(final PausedReason reason,
@@ -56,60 +74,49 @@ public class DartVmListener implements VmListener {
                              final boolean isStepping) {
     LOG.debug("debugger paused, reason: " + reason.name());
     final VmCallFrame topFrame = frames.isEmpty() ? null : frames.get(0);
+    final XLineBreakpoint<?> breakpoint;
 
-    // todo handle exception
-    if (myFirstBreak) {
-      myFirstBreak = false;
+    if (isolate.isFirstBreak()) {
+      isolate.setFirstBreak(false);
 
-      // init everything
-      myDebugProcess.setMainIsolate(isolate);
-      firstIsolateInit(isolate);
+      final VmLocation vmLocation = topFrame == null ? null : topFrame.getLocation();
+      breakpoint = myBreakpointsHandler.handleIsolateCreatedAndReturnBreakpointAtPosition(isolate, vmLocation);
 
-      if (PausedReason.breakpoint == reason) {
-        // If this is our first break, and there is no user breakpoint here, and the stop is on the main() method, then resume.
-        if (topFrame != null && topFrame.isMain() &&
-            !myDebugProcess.getDartBreakpointsHandler().hasInitialBreakpointHere(frames.get(0).getLocation())) {
-          resume(isolate);
-          return;
-        }
-      }
-    }
-
-      /*
-      ServerDebugThread thread = findThread(isolate);
-
-      if (thread != null) {
-        if (exception != null) {
-          printExceptionToStdout(exception);
-        }
-
-        thread.handleDebuggerPaused(reason, frames, exception);
-      }
-      */
-
-    if (PausedReason.breakpoint == reason && !isStepping && topFrame != null) {
-      final XLineBreakpoint<?> breakpoint = myDebugProcess.getDartBreakpointsHandler().getBreakpointForLocation(topFrame.getLocation());
-
-      if (breakpoint != null) {
-        if ("false".equals(evaluateExpression(isolate, topFrame, breakpoint.getConditionExpression()))) {
-          resume(isolate);
-          return;
-        }
-
-        final boolean suspend =
-          myDebugProcess.getSession().breakpointReached(breakpoint,
-                                                        evaluateExpression(isolate, topFrame, breakpoint.getLogExpressionObject()),
-                                                        new DartSuspendContext(myDebugProcess, frames, exception));
-        if (!suspend) {
-          resume(isolate);
-        }
-
+      // If this is our first break, and there is no user breakpoint here, and the stop is on the main() method, then resume.
+      if (PausedReason.breakpoint == reason && breakpoint == null) {
+        resume(isolate);
         return;
       }
     }
+    else if (PausedReason.breakpoint == reason && !isStepping && topFrame != null) {
+      breakpoint = myBreakpointsHandler.getBreakpointForLocation(topFrame.getLocation());
+    }
+    else {
+      breakpoint = null;
+    }
 
-    final DartSuspendContext suspendContext = new DartSuspendContext(myDebugProcess, frames, exception);
+    if (breakpoint != null) {
+      if ("false".equals(evaluateExpression(isolate, topFrame, breakpoint.getConditionExpression()))) {
+        resume(isolate);
+        return;
+      }
+
+      final boolean suspend =
+        myDebugProcess.getSession().breakpointReached(breakpoint,
+                                                      evaluateExpression(isolate, topFrame, breakpoint.getLogExpressionObject()),
+                                                      new DartSuspendContext(myDebugProcess, isolate, frames, exception));
+      myDebugProcess.setSuspendedIsolate(isolate);
+
+      if (!suspend) {
+        resume(isolate);
+      }
+
+      return;
+    }
+
+    final DartSuspendContext suspendContext = new DartSuspendContext(myDebugProcess, isolate, frames, exception);
     myDebugProcess.getSession().positionReached(suspendContext);
+    myDebugProcess.setSuspendedIsolate(isolate);
     suspendContext.selectUpperNavigatableStackFrame(myDebugProcess.getSession());
   }
 
@@ -124,10 +131,10 @@ public class DartVmListener implements VmListener {
 
   @Nullable
   private String evaluateExpression(final @NotNull VmIsolate isolate,
-                                    final @NotNull VmCallFrame topFrame,
+                                    final @Nullable VmCallFrame topFrame,
                                     final @Nullable XExpression xExpression) {
     final String evalText = xExpression == null ? null : xExpression.getExpression();
-    if (StringUtil.isEmptyOrSpaces(evalText)) return null;
+    if (topFrame == null || StringUtil.isEmptyOrSpaces(evalText)) return null;
 
     final Ref<String> evalResult = new Ref<String>();
     final Semaphore semaphore = new Semaphore();
@@ -150,26 +157,8 @@ public class DartVmListener implements VmListener {
     return evalResult.get();
   }
 
-  private void firstIsolateInit(final VmIsolate isolate) {
-    myDebugProcess.getDartBreakpointsHandler().registerInitialBreakpoints();
-
-    try {
-      myDebugProcess.getVmConnection().enableAllSteppingSync(isolate);
-    }
-    catch (IOException e) {
-      LOG.error(e);
-    }
-
-    try {
-      myDebugProcess.getVmConnection()
-        .setPauseOnExceptionSync(isolate, VmConnection.BreakOnExceptionsType.unhandled); // todo add an option for BreakOnExceptionsType
-    }
-    catch (IOException e) {
-      LOG.error(e);
-    }
-  }
-
   public void debuggerResumed(final VmIsolate isolate) {
     LOG.debug("debugger resumed: " + isolate.getId());
+    myDebugProcess.setSuspendedIsolate(null);
   }
 }

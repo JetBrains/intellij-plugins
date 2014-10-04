@@ -6,6 +6,7 @@ import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmCallFrame;
+import com.jetbrains.lang.dart.ide.runner.server.google.VmIsolate;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,9 +18,10 @@ public class DartExecutionStack extends XExecutionStack {
   @NotNull private final List<DartStackFrame> myStackFrames;
 
   public DartExecutionStack(@NotNull final DartCommandLineDebugProcess debugProcess,
+                            @NotNull final VmIsolate isolate,
                             @NotNull final List<VmCallFrame> vmCallFrames,
                             @Nullable VmValue exception) {
-    super("");
+    super("Isolate id=" + isolate.getId());
 
     myStackFrames = new ArrayList<DartStackFrame>(vmCallFrames.size());
 

@@ -31,7 +31,8 @@ public class AngularAttributesRegistry {
     final JSNamedElementProxy directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.INDEX_ID, attributeName);
     if (directive != null) {
       final String restrict = directive.getIndexItem().getTypeString();
-      return restrict.split(";", -1)[2].endsWith("expression");
+      final String param = restrict.split(";", -1)[2];
+      return param.endsWith("expression") || param.startsWith("string");
     }
     return false;
   }

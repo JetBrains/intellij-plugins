@@ -30,6 +30,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, Function<Pair<JSSymbolVisitor, PsiElement>, String>> DATA_CALCULATORS = new HashMap<String, Function<Pair<JSSymbolVisitor, PsiElement>, String>>();
 
   public static final Set<String> INTERESTING_METHODS = new HashSet<String>();
+  public static final Set<String> INJECTABLE_METHODS = new HashSet<String>();
   public static final String CONTROLLER = "controller";
   public static final String DIRECTIVE = "directive";
   public static final String MODULE = "module";
@@ -37,6 +38,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
   static {
     Collections.addAll(INTERESTING_METHODS, "service", "factory", "value", "constant", "provider");
+
+    INJECTABLE_METHODS.addAll(INTERESTING_METHODS);
+    Collections.addAll(INJECTABLE_METHODS, CONTROLLER, DIRECTIVE, MODULE);
 
     INDEXERS.put(DIRECTIVE, AngularDirectivesIndex.INDEX_ID);
     NAME_CONVERTERS.put(DIRECTIVE, new Function<String, String>() {
@@ -62,6 +66,16 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final String PARAM = "@param";
   private static final Pattern RESTRICT_PATTERN = Pattern.compile(RESTRICT + "\\s*(.*)");
   private static final Pattern ELEMENT_PATTERN = Pattern.compile(ELEMENT + "\\s*(.*)");
+
+  public static boolean isInjectable(PsiElement context) {
+    final JSCallExpression call = PsiTreeUtil.getParentOfType(context, JSCallExpression.class, false, JSBlockStatement.class);
+    if (call != null) {
+      JSReferenceExpression callee = (JSReferenceExpression)call.getMethodExpression();
+      JSExpression qualifier = callee.getQualifier();
+      return qualifier != null && INJECTABLE_METHODS.contains(callee.getReferencedName());
+    }
+    return false;
+  }
 
   @Override
   public void processCallExpression(JSCallExpression callExpression, JSSymbolVisitor visitor) {
@@ -97,6 +111,16 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
           visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), StringUtil.unquoteString(argument.getText()),
                                       argument.getTextOffset(), null);
+        }
+      }
+    }
+
+    if (INJECTABLE_METHODS.contains(command)) {
+      JSExpression[] arguments = callExpression.getArguments();
+      if (arguments.length > 0) {
+        JSExpression argument = arguments[0];
+        if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
+          generateNamespace(visitor, argument);
         }
       }
     }
@@ -199,6 +223,17 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       }
     }
     return previousValue;
+  }
+
+
+  private static void generateNamespace(JSSymbolVisitor visitor, PsiElement second) {
+    final String namespace = StringUtil.unquoteString(second.getText());
+    visitor.addClassFromQName((JSExpression)second, namespace);
+    final JSFunction function = findFunction(visitor, second);
+    final JSNamespace ns = visitor.findNsForExpr((JSExpression)second);
+    if (function != null && ns != null) {
+      visitor.visitWithNamespace(ns, function, false);
+    }
   }
 
   private static String calculateRestrictions(JSSymbolVisitor visitor, PsiElement element) {

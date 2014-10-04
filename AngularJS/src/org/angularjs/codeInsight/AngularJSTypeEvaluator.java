@@ -2,15 +2,12 @@ package org.angularjs.codeInsight;
 
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.impl.JSFunctionImpl;
 import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
-import com.intellij.lang.javascript.psi.types.JSArrayTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.angularjs.index.AngularControllerIndex;
 import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.index.AngularJSIndexingHandler;
 import org.angularjs.lang.psi.AngularJSAsExpression;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSRepeatExpression;
@@ -32,21 +29,23 @@ public class AngularJSTypeEvaluator extends JSTypeEvaluator {
     if (resolveResult instanceof JSDefinitionExpression) {
       final PsiElement resolveParent = resolveResult.getParent();
       if (resolveParent instanceof AngularJSAsExpression) {
-        final JSNamedElementProxy controller = AngularIndexUtil.resolve(parent.getProject(), AngularControllerIndex.INDEX_ID,
-                                                                     resolveParent.getFirstChild().getText());
-        final PsiElement element = controller != null ? controller.getElement() : null;
-        final PsiElement controllerLiteral = element != null ? element.getParent() : null;
-        final JSFunction function = controllerLiteral != null ?
-                                    PsiTreeUtil.getNextSiblingOfType(controllerLiteral, JSFunction.class) : null;
-        if (function != null) {
-          addType(JSFunctionImpl.getReturnTypeInContext(function, expression), resolveResult);
-          return true;
-        }
+        final String name = resolveParent.getFirstChild().getText();
+        final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
+        final JSType type = JSNamedType.createType(name, source, JSNamedType.StaticOrInstance.INSTANCE);
+        addType(type, resolveResult);
+        return true;
       } else if (resolveParent instanceof AngularJSRepeatExpression) {
         if (calculateRepeatParameterType((AngularJSRepeatExpression)resolveParent)) {
           return true;
         }
       }
+    }
+    if (resolveResult instanceof JSParameter && AngularJSIndexingHandler.isInjectable(resolveResult) &&
+        AngularIndexUtil.hasAngularJS(resolveResult.getProject())) {
+      final String name = ((JSParameter)resolveResult).getName();
+      final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
+      final JSType type = JSNamedType.createType(name, source, JSNamedType.StaticOrInstance.INSTANCE);
+      addType(type, resolveResult);
     }
     return super.addTypeFromElementResolveResult(expression, parent, resolveResult, hasSomeType);
   }

@@ -128,6 +128,7 @@ public class GherkinParser implements PsiParser {
     }
     final IElementType tokenType = builder.lookAhead(i);
     return tokenType == null ||
+           tokenType == GherkinTokenTypes.BACKGROUND_KEYWORD ||
            tokenType == GherkinTokenTypes.SCENARIO_KEYWORD ||
            tokenType == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD;
   }

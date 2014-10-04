@@ -48,6 +48,16 @@ public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("\"templateId.htm\"", resolve.getText());
   }
 
+  public void testNgIncludeResolve() {
+    myFixture.configureByFiles("ng-include.html", "custom.js", "angular.js", "index.html");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("ind<caret>ex.html", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertInstanceOf(resolve, PsiFile.class);
+    assertEquals("index.html", ((PsiFile)resolve).getName());
+  }
+
   public void testPartialCompletion() {
     myFixture.configureByFiles("custom.js", "angular.js", "index.html", "partials/phone-details.html", "partials/phone-list.html");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("<caret>partials/phone-details", myFixture.getFile());
