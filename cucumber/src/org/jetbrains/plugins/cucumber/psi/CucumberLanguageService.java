@@ -1,8 +1,11 @@
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author yole
@@ -14,22 +17,25 @@ public class CucumberLanguageService {
     return ServiceManager.getService(project, CucumberLanguageService.class);
   }
 
+  @SuppressWarnings("UnusedParameters")
   public CucumberLanguageService(Project project) {
-    // TODO - more correct is to use attached version or at least
-    // refresh keyword provider after roots changed event
-    final GherkinKeywordProviderBuilder[] builders = Extensions.getExtensions(GherkinKeywordProviderBuilder.EP_NAME);
-    for (GherkinKeywordProviderBuilder builder : builders) {
-      myKeywordProvider = builder.getKeywordProvider(project);
-      if (myKeywordProvider != null) {
-        break;
-      }
-    }
-    if (myKeywordProvider == null) {
-      myKeywordProvider = new PlainGherkinKeywordProvider();
-    }
   }
 
   public GherkinKeywordProvider getKeywordProvider() {
+    if (myKeywordProvider == null) {
+      final ClassLoader classLoader = CucumberLanguageService.class.getClassLoader();
+      if (classLoader != null) {
+        @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+        final InputStream inputStream = classLoader.getResourceAsStream("i18n.json");
+        if (inputStream != null) {
+          myKeywordProvider = new JsonGherkinKeywordProvider(inputStream);
+        }
+      }
+
+      if (myKeywordProvider == null) {
+        myKeywordProvider = new PlainGherkinKeywordProvider();
+      }
+    }
     return myKeywordProvider;
   }
 }
