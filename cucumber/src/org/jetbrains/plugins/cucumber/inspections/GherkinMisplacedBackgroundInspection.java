@@ -45,4 +45,10 @@ public class GherkinMisplacedBackgroundInspection extends GherkinInspection {
   public String getDisplayName() {
     return CucumberBundle.message("inspection.gherkin.background.after.scenario.name");
   }
+
+  @NotNull
+  @Override
+  public String getShortName() {
+    return "GherkinMisplacedBackground";
+  }
 }
