@@ -13,10 +13,10 @@ public class DartTabCompletionTest extends LightPlatformCodeInsightFixtureTestCa
   }
 
   public void doTest() {
-    myFixture.configureByFile(getTestName(true) + ".dart");
+    myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.complete(CompletionType.BASIC);
     myFixture.finishLookup(Lookup.REPLACE_SELECT_CHAR);
-    myFixture.checkResultByFile(getTestName(true) + "_expected.dart");
+    myFixture.checkResultByFile(getTestName(false) + "_expected.dart");
   }
 
   public void testExpression1() {
