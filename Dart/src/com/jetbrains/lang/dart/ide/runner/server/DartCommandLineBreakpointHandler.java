@@ -35,7 +35,7 @@ public class DartCommandLineBreakpointHandler extends XBreakpointHandler<XLineBr
   }
 
   public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint) {
-    myDebugProcess.processAliveIsolates(new Consumer<VmIsolate>() {
+    myDebugProcess.processAllIsolates(new Consumer<VmIsolate>() {
       @Override
       public void consume(@NotNull final VmIsolate isolate) {
         doRegisterBreakpoint(isolate, xBreakpoint);
@@ -44,7 +44,7 @@ public class DartCommandLineBreakpointHandler extends XBreakpointHandler<XLineBr
   }
 
   public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint, final boolean temporary) {
-    myDebugProcess.processAliveIsolates(new Consumer<VmIsolate>() {
+    myDebugProcess.processAllIsolates(new Consumer<VmIsolate>() {
       @Override
       public void consume(@NotNull final VmIsolate isolate) {
         doUnregisterBreakpoint(isolate, xBreakpoint);
