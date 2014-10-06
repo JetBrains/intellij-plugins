@@ -9,7 +9,7 @@
   <category>HTML/JavaScript Development</category>
 
   <version>999.999</version>
-  <idea-version since-build="138.1638" until-build="139.0"/>
+  <idea-version since-build="138.1638" until-build="140.0"/>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>JavaScript</depends>
