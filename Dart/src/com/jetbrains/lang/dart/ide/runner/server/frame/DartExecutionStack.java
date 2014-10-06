@@ -4,34 +4,54 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
-import com.jetbrains.lang.dart.ide.runner.server.google.VmCallFrame;
-import com.jetbrains.lang.dart.ide.runner.server.google.VmIsolate;
-import com.jetbrains.lang.dart.ide.runner.server.google.VmValue;
+import com.jetbrains.lang.dart.ide.runner.server.google.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static com.intellij.icons.AllIcons.Debugger.*;
+import static com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess.LOG;
+
 public class DartExecutionStack extends XExecutionStack {
-  @NotNull private final List<DartStackFrame> myStackFrames;
+  @NotNull private final DartCommandLineDebugProcess myDebugProcess;
+  @NotNull private final VmIsolate myIsolate;
+  private List<DartStackFrame> myStackFrames;
 
   public DartExecutionStack(@NotNull final DartCommandLineDebugProcess debugProcess,
                             @NotNull final VmIsolate isolate,
-                            @NotNull final List<VmCallFrame> vmCallFrames,
+                            @Nullable final List<VmCallFrame> vmCallFrames,
                             @Nullable VmValue exception) {
-    super("Isolate id=" + isolate.getId());
+    // active stack has vmCallFrames != null, but debugProcess.isIsolateSuspended(isolate) returns false at this point
+    // for non-active suspended stacks debugProcess.isIsolateSuspended(isolate) is true
+    // if vmCallFrames is null and debugProcess.isIsolateSuspended(isolate) is false -> isolate is running
+    super(vmCallFrames != null || debugProcess.isIsolateSuspended(isolate)
+          ? DartBundle.message("isolate.0.suspended", String.valueOf(isolate.getId()))
+          : DartBundle.message("isolate.0.running", String.valueOf(isolate.getId())),
 
-    myStackFrames = new ArrayList<DartStackFrame>(vmCallFrames.size());
+          vmCallFrames != null ? ThreadCurrent
+                               : debugProcess.isIsolateSuspended(isolate) ? ThreadAtBreakpoint
+                                                                          : ThreadRunning);
 
-    for (VmCallFrame vmCallFrame : vmCallFrames) {
-      final DartStackFrame frame = new DartStackFrame(debugProcess, vmCallFrame, exception);
-      myStackFrames.add(frame);
+    myDebugProcess = debugProcess;
+    myIsolate = isolate;
 
-      if (frame.getSourcePosition() != null) {
-        // exception (if any) is added to the frame where debugger stops (the highest frame with not null source position) and to the upper frames
-        exception = null;
+    if (vmCallFrames != null) {
+      myStackFrames = new ArrayList<DartStackFrame>(vmCallFrames.size());
+
+      for (VmCallFrame vmCallFrame : vmCallFrames) {
+        final DartStackFrame frame = new DartStackFrame(debugProcess, vmCallFrame, exception);
+        myStackFrames.add(frame);
+
+        if (frame.getSourcePosition() != null) {
+          // exception (if any) is added to the frame where debugger stops (the highest frame with not null source position) and to the upper frames
+          exception = null;
+        }
       }
     }
   }
@@ -39,13 +59,51 @@ public class DartExecutionStack extends XExecutionStack {
   @Override
   @Nullable
   public XStackFrame getTopFrame() {
+    // engine calls getTopFrame for active execution stack only for which we have myStackFrames initialized in constructor
+    LOG.assertTrue(myStackFrames != null, myIsolate.getId());
     return myStackFrames.isEmpty() ? null : myStackFrames.get(0);
   }
 
   @Override
-  public void computeStackFrames(int firstFrameIndex, @NotNull final XStackFrameContainer container) {
-    final List<DartStackFrame> result = firstFrameIndex == 0 ? myStackFrames : myStackFrames.subList(firstFrameIndex, myStackFrames.size());
-    container.addStackFrames(result, true);
+  public void computeStackFrames(final int firstFrameIndex, @NotNull final XStackFrameContainer container) {
+    if (!myDebugProcess.isIsolateSuspended(myIsolate)) {
+      container.addStackFrames(Collections.<XStackFrame>emptyList(), true);
+      return;
+    }
+
+    if (myStackFrames == null) {
+      myStackFrames = new ArrayList<DartStackFrame>();
+
+      try {
+        myDebugProcess.getVmConnection().getStackTrace(myIsolate, new VmCallback<List<VmCallFrame>>() {
+          @Override
+          public void handleResult(VmResult<List<VmCallFrame>> result) {
+            if (result.isError()) {
+              LOG.info(result.getError());
+              container.addStackFrames(Collections.<XStackFrame>emptyList(), true);
+            }
+            else {
+              for (VmCallFrame vmCallFrame : result.getResult()) {
+                myStackFrames.add(new DartStackFrame(myDebugProcess, vmCallFrame, null));
+              }
+
+              final List<DartStackFrame> subList = firstFrameIndex == 0 ? myStackFrames
+                                                                        : myStackFrames.subList(firstFrameIndex, myStackFrames.size());
+              container.addStackFrames(subList, true);
+            }
+          }
+        });
+      }
+      catch (IOException e) {
+        container.addStackFrames(Collections.<XStackFrame>emptyList(), true);
+        LOG.info(e);
+      }
+    }
+    else {
+      final List<DartStackFrame> subList = firstFrameIndex == 0 ? myStackFrames
+                                                                : myStackFrames.subList(firstFrameIndex, myStackFrames.size());
+      container.addStackFrames(subList, true);
+    }
   }
 
   @Nullable
@@ -56,5 +114,10 @@ public class DartExecutionStack extends XExecutionStack {
         return frame.getSourcePosition() != null;
       }
     });
+  }
+
+  @NotNull
+  public VmIsolate getIsolate() {
+    return myIsolate;
   }
 }

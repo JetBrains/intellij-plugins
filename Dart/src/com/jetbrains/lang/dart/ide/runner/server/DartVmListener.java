@@ -40,7 +40,7 @@ public class DartVmListener implements VmListener {
 
   public void isolateCreated(final VmIsolate isolate) {
     LOG.debug("isolate created: " + isolate.getId());
-    myDebugProcess.isolateCreated(isolate);
+    //myDebugProcess.isolateCreated(isolate); // isolateCreated() will be called when isolate is paused for the first time, otherwise breakpoint handler tries to set initial breakpoints in this isolate
 
     // do not call BreakpointsHandler.handleIsolateCreated() from here, it is called from first isolatePaused()!
 
@@ -63,7 +63,7 @@ public class DartVmListener implements VmListener {
   }
 
   public void breakpointResolved(final VmIsolate isolate, final VmBreakpoint breakpoint) {
-    LOG.debug("breakpoint resolved: " + breakpoint.getBreakpointId());
+    LOG.debug("breakpoint resolved, isolate = " + breakpoint.getIsolate() + ", id = " + breakpoint.getBreakpointId());
     myBreakpointsHandler.breakpointResolved(breakpoint);
   }
 
@@ -78,6 +78,8 @@ public class DartVmListener implements VmListener {
 
     if (isolate.isFirstBreak()) {
       isolate.setFirstBreak(false);
+
+      myDebugProcess.isolateCreated(isolate);
 
       final VmLocation vmLocation = topFrame == null ? null : topFrame.getLocation();
       breakpoint = myBreakpointsHandler.handleIsolateCreatedAndReturnBreakpointAtPosition(isolate, vmLocation);
@@ -105,9 +107,10 @@ public class DartVmListener implements VmListener {
         myDebugProcess.getSession().breakpointReached(breakpoint,
                                                       evaluateExpression(isolate, topFrame, breakpoint.getLogExpressionObject()),
                                                       new DartSuspendContext(myDebugProcess, isolate, frames, exception));
-      myDebugProcess.setSuspendedIsolate(isolate);
-
-      if (!suspend) {
+      if (suspend) {
+        myDebugProcess.isolateSuspended(isolate);
+      }
+      else {
         resume(isolate);
       }
 
@@ -116,7 +119,7 @@ public class DartVmListener implements VmListener {
 
     final DartSuspendContext suspendContext = new DartSuspendContext(myDebugProcess, isolate, frames, exception);
     myDebugProcess.getSession().positionReached(suspendContext);
-    myDebugProcess.setSuspendedIsolate(isolate);
+    myDebugProcess.isolateSuspended(isolate);
     suspendContext.selectUpperNavigatableStackFrame(myDebugProcess.getSession());
   }
 
@@ -159,6 +162,6 @@ public class DartVmListener implements VmListener {
 
   public void debuggerResumed(final VmIsolate isolate) {
     LOG.debug("debugger resumed: " + isolate.getId());
-    myDebugProcess.setSuspendedIsolate(null);
+    myDebugProcess.isolateResumed(isolate);
   }
 }

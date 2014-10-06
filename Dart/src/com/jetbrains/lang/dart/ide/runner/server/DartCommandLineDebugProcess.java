@@ -36,9 +36,9 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   private final @NotNull VmConnection myVmConnection;
   private final int myObservatoryPort;
 
-  private final @NotNull LinkedList<VmIsolate> myAliveIsolates = new LinkedList<VmIsolate>();
+  private final @NotNull LinkedList<VmIsolate> myAllIsolates = new LinkedList<VmIsolate>();
+  private final @NotNull LinkedList<VmIsolate> mySuspendedIsolates = new LinkedList<VmIsolate>();
   private boolean myVmConnected = false;
-  private VmIsolate mySuspendedIsolate;
 
   public DartCommandLineDebugProcess(@NotNull final XDebugSession session,
                                      @NotNull final DartCommandLineRunningState commandLineState,
@@ -123,9 +123,9 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   @Override
   public void startStepOver() {
-    if (mySuspendedIsolate != null) {
+    if (!mySuspendedIsolates.isEmpty()) {
       try {
-        myVmConnection.stepOver(mySuspendedIsolate);
+        myVmConnection.stepOver(mySuspendedIsolates.getLast());
       }
       catch (IOException e) {
         LOG.error(e);
@@ -135,9 +135,9 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   @Override
   public void startStepInto() {
-    if (mySuspendedIsolate != null) {
+    if (!mySuspendedIsolates.isEmpty()) {
       try {
-        myVmConnection.stepInto(mySuspendedIsolate);
+        myVmConnection.stepInto(mySuspendedIsolates.getLast());
       }
       catch (IOException e) {
         LOG.error(e);
@@ -147,9 +147,9 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   @Override
   public void startStepOut() {
-    if (mySuspendedIsolate != null) {
+    if (!mySuspendedIsolates.isEmpty()) {
       try {
-        myVmConnection.stepOut(mySuspendedIsolate);
+        myVmConnection.stepOut(mySuspendedIsolates.getLast());
       }
       catch (IOException e) {
         LOG.error(e);
@@ -170,21 +170,23 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   @Override
   public void resume() {
-    if (mySuspendedIsolate != null) {
-      try {
-        myVmConnection.resume(mySuspendedIsolate);
+    try {
+      for (VmIsolate isolate : mySuspendedIsolates) {
+        myVmConnection.resume(isolate);
       }
-      catch (IOException e) {
-        LOG.error(e);
-      }
+    }
+    catch (IOException e) {
+      LOG.error(e);
     }
   }
 
   @Override
   public void startPausing() {
-    if (!myAliveIsolates.isEmpty()) {
+    if (!myAllIsolates.isEmpty() && mySuspendedIsolates.isEmpty()) {
       try {
-        myVmConnection.interrupt(myAliveIsolates.getLast());
+        for (VmIsolate isolate : myAllIsolates) {
+          myVmConnection.interrupt(isolate);
+        }
       }
       catch (IOException e) {
         LOG.error(e);
@@ -213,23 +215,31 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   }
 
   public void isolateCreated(final VmIsolate isolate) {
-    myAliveIsolates.add(isolate);
+    myAllIsolates.add(isolate);
   }
 
   public void isolateShutdown(final VmIsolate isolate) {
-    myAliveIsolates.remove(isolate);
+    myAllIsolates.remove(isolate);
   }
 
-  public void setSuspendedIsolate(final VmIsolate suspendedIsolate) {
-    mySuspendedIsolate = suspendedIsolate; // todo can several isolates be suspended?
+  public void isolateSuspended(@NotNull final VmIsolate isolate) {
+    mySuspendedIsolates.add(isolate);
   }
 
-  public void processAliveIsolates(@NotNull final Consumer<VmIsolate> consumer) {
+  public void isolateResumed(@NotNull final VmIsolate isolate) {
+    mySuspendedIsolates.remove(isolate);
+  }
+
+  public void processAllIsolates(@NotNull final Consumer<VmIsolate> isolateConsumer) {
     if (!myVmConnected) return;
 
-    for (VmIsolate isolate : myAliveIsolates) {
-      consumer.consume(isolate);
+    for (VmIsolate isolate : myAllIsolates) {
+      isolateConsumer.consume(isolate);
     }
+  }
+
+  public boolean isIsolateSuspended(@NotNull final VmIsolate isolate) {
+    return mySuspendedIsolates.contains(isolate);
   }
 
   @Override
