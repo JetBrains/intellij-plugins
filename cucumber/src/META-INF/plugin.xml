@@ -56,7 +56,7 @@
                       key="inspection.gherkin.table.is.broken.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                       level="ERROR" implementationClass="org.jetbrains.plugins.cucumber.inspections.GherkinBrokenTableInspection"/>
 
-    <localInspection language="Gherkin" shortName="GherkinBrokenTableInspection" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
+    <localInspection language="Gherkin" shortName="GherkinMisplacedBackgroundInspection" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
                      key="inspection.gherkin.background.after.scenario.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                      level="ERROR" implementationClass="org.jetbrains.plugins.cucumber.inspections.GherkinMisplacedBackgroundInspection"/>
 
