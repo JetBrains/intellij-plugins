@@ -56,7 +56,7 @@
                       key="inspection.gherkin.table.is.broken.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                       level="ERROR" implementationClass="org.jetbrains.plugins.cucumber.inspections.GherkinBrokenTableInspection"/>
 
-    <localInspection language="Gherkin" shortName="GherkinMisplacedBackgroundInspection" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
+    <localInspection language="Gherkin" shortName="GherkinMisplacedBackground" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
                      key="inspection.gherkin.background.after.scenario.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                      level="ERROR" implementationClass="org.jetbrains.plugins.cucumber.inspections.GherkinMisplacedBackgroundInspection"/>
 
@@ -88,8 +88,6 @@
   </extensions>
 
   <extensionPoints>
-    <extensionPoint qualifiedName="cucumber.KeywordProvider" interface="org.jetbrains.plugins.cucumber.psi.GherkinKeywordProviderBuilder"/>
-
     <extensionPoint qualifiedName="org.jetbrains.plugins.cucumber.steps.cucumberJvmExtensionPoint"
                     interface="org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint"/>
   </extensionPoints>
