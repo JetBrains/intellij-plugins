@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.pubServer;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -15,6 +16,8 @@ import com.intellij.util.containers.ConcurrentHashSet;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.net.NetUtils;
+import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
+import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import icons.DartIcons;
@@ -97,6 +100,12 @@ final class PubServerService extends NetService {
     return new DefaultActionGroup(ActionManager.getInstance().getAction("Dart.stop.pub.server"));
   }
 
+  @Override
+  protected void configureConsole(@NotNull final TextConsoleBuilder consoleBuilder) {
+    consoleBuilder.addFilter(new DartConsoleFilter(project, firstServedDir));
+    consoleBuilder.addFilter(new DartRelativePathsConsoleFilter(project, firstServedDir.getParent().getPath()));
+  }
+
   public boolean isPubServerProcessAlive() {
     return processHandler.has() && !processHandler.get().getResult().isProcessTerminated();
   }
@@ -133,14 +142,12 @@ final class PubServerService extends NetService {
     final DartSdk dartSdk = DartSdk.getGlobalDartSdk();
     if (dartSdk == null) return null;
 
-    final GeneralCommandLine commandLine = new GeneralCommandLine();
+    final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(firstServedDir.getParent().getPath());
     commandLine.setExePath(DartSdkUtil.getPubPath(dartSdk));
     commandLine.addParameter("serve");
     commandLine.addParameter(firstServedDir.getName());
     commandLine.addParameter("--port=" + String.valueOf(port));
     //commandLine.addParameter("--admin-port=" + String.valueOf(PubServerManager.findOneMoreAvailablePort(port))); // todo uncomment and use
-
-    commandLine.setWorkDirectory(firstServedDir.getParent().getPath());
 
     return new OSProcessHandler(commandLine);
   }
