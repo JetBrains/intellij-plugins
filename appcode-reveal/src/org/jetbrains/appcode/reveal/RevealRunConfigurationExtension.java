@@ -44,6 +44,7 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExtension {
   private static final String REVEAL_SETTINGS_TAG = "REVEAL_SETTINGS";
@@ -281,8 +282,13 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       throw new ExecutionException("Cannot create a temporary copy of Reveal library", e);
     }
 
-    AppCodeInstaller.codesignBinary(buildConfiguration, mainExecutable, tempDir.getAbsolutePath(), libRevealInTempDir.getName());
-    AMDeviceUtil.transferPathToApplicationBundle(device, libRevealInTempDir.getParent(), "/tmp", bundleId);
+    try {
+      AppCodeInstaller.codesignBinary(buildConfiguration, mainExecutable, tempDir.getAbsolutePath(), libRevealInTempDir.getName());
+      AMDeviceUtil.transferPathToApplicationBundle(device, libRevealInTempDir.getParent(), "/tmp", bundleId);
+    } finally {
+      FileUtil.delete(tempDir);
+    }
+
     Map<String,String> environmentVariables = commandLine.getUserData(AMDeviceUtil.APPLICATION_ENVIRONMENT_VARIABLES);
     if (environmentVariables == null)
       throw new ExecutionException(AppCodeBundle.message("device.appBundleHasNoEnvironment"));
