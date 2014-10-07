@@ -42,7 +42,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExtension {
@@ -270,9 +269,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                       @NotNull GeneralCommandLine commandLine,
                                       @NotNull AMDevice device,
                                       @NotNull String bundleId) throws ExecutionException {
+    File tempDir;
     File libRevealInTempDir;
     try {
-      File tempDir = FileUtil.createTempDirectory("libReveal", null);
+      tempDir = FileUtil.createTempDirectory("libReveal", null);
       libRevealInTempDir = new File(tempDir, libReveal.getName());
 
       FileUtil.copy(libReveal, libRevealInTempDir);
@@ -280,45 +280,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     catch (IOException e) {
       throw new ExecutionException("Cannot create a temporary copy of Reveal library", e);
     }
-    String signature = null;
-    try {
-      File tmpDir = FileUtil.createTempDirectory("revealCodesign", null);
 
-      try {
-        Reveal.LOG.info("Reading executable signature from " + mainExecutable);
-        AppCodeInstaller.runTool(tmpDir.getPath(), "Cannot sign Reveal library",
-                                 Arrays.asList("/usr/bin/codesign", "-d", "--extract-certificates", mainExecutable.getPath()));
-
-        Reveal.LOG.info("Reading fingerprint from " + new File(tmpDir, "codesign0"));
-        String fingerprint
-          = AppCodeInstaller.runTool(tmpDir.getPath(), "Cannot read certificate fingerprint using openssl",
-                                     Arrays
-                                       .asList("/usr/bin/openssl", "x509", "-inform", "der", "-in", "codesign0", "-fingerprint", "-noout"))
-          .getStdout();
-        signature = AppCodeInstaller.readFingerprint(fingerprint);
-      }
-      finally {
-        FileUtil.delete(tmpDir);
-      }
-    }
-    catch (IOException ignore) {
-    }
-
-    if (signature == null) {
-      signature = ApplicationManager.getApplication().runReadAction(new Computable<String>() {
-        @Override
-        public String compute() {
-          return buildConfiguration.getBuildSetting("CODE_SIGN_IDENTITY").getString();
-        }
-      });
-      Reveal.LOG.warn("Executable signature not found, using the default: " + signature);
-    }
-
-
-    Reveal.LOG.info("Signing " + libRevealInTempDir + " with " + signature);
-    AppCodeInstaller.runTool(libRevealInTempDir.getParent(), "Cannot sign Reveal library.",
-                             Arrays.asList("/usr/bin/codesign", "-fs", signature, libRevealInTempDir.getPath()));
-
+    AppCodeInstaller.codesignBinary(buildConfiguration, mainExecutable, tempDir.getAbsolutePath(), libRevealInTempDir.getName());
     AMDeviceUtil.transferPathToApplicationBundle(device, libRevealInTempDir.getParent(), "/tmp", bundleId);
 
     String homeDir = AMDeviceUtil.getHomeDirFromAppEnvironment(commandLine);
