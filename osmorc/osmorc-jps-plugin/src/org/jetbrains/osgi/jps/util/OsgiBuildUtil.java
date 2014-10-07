@@ -22,6 +22,8 @@ public class OsgiBuildUtil {
   public static Properties getMavenProjectProperties(@NotNull CompileContext context, @NotNull JpsModule module) {
     final MavenProjectConfiguration projectConfig = getProjectConfig(context);
     final Properties result = new Properties();
+    if (projectConfig == null) return result;
+
     JpsJavaExtensionService.dependencies(module).recursively().productionOnly().processModules(new Consumer<JpsModule>() {
       @Override
       public void consume(JpsModule module) {
@@ -39,10 +41,13 @@ public class OsgiBuildUtil {
 
   @Nullable
   public static File getMavenProjectPath(@NotNull CompileContext context, @NotNull JpsModule module) {
-    MavenModuleResourceConfiguration moduleConfig = getProjectConfig(context).moduleConfigurations.get(module.getName());
+    MavenProjectConfiguration projectConfig = getProjectConfig(context);
+    if (projectConfig == null) return null;
+    MavenModuleResourceConfiguration moduleConfig = projectConfig.moduleConfigurations.get(module.getName());
     return moduleConfig == null ? null : new File(FileUtil.toSystemDependentName(moduleConfig.directory), "pom.xml");
   }
 
+  @Nullable
   private static MavenProjectConfiguration getProjectConfig(CompileContext context) {
     BuildDataPaths dataPaths = context.getProjectDescriptor().dataManager.getDataPaths();
     return JpsMavenExtensionService.getInstance().getMavenProjectConfiguration(dataPaths);
