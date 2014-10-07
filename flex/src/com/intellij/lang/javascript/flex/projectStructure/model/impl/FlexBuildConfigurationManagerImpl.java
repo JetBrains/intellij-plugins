@@ -7,6 +7,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.ModuleAdapter;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.text.MessageFormat;
 import java.util.*;
 
-@State(name = FlexBuildConfigurationManagerImpl.COMPONENT_NAME, storages = {@Storage(file = "$MODULE_FILE$")})
+@State(name = FlexBuildConfigurationManagerImpl.COMPONENT_NAME, storages = @Storage(file = StoragePathMacros.MODULE_FILE))
 public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationManager
   implements PersistentStateComponent<FlexBuildConfigurationManagerImpl.State> {
 
