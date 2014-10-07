@@ -26,7 +26,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
   public Collection<AbstractTreeNode> modify(final @NotNull AbstractTreeNode parentNode,
                                              final @NotNull Collection<AbstractTreeNode> children,
                                              final ViewSettings settings) {
-    // root/packages/ThisProject and root/packages/PathPackage folders are excluded in dart projects (see DartProjectComponent.excludePackagesFolders),
+    // root/packages/ThisProject and root/packages/PathPackage folders are excluded in dart projects (see DartProjectComponent.excludeBuildAndPackagesFolders),
     // this provider adds location string tho these nodes in Project View like "ThisProject (ThisProject/lib)"
     final Project project = parentNode.getProject();
     final VirtualFile packagesDir = parentNode instanceof PsiDirectoryNode && project != null
