@@ -1,0 +1,13 @@
+OgnlFile:ExpressionExpectedAfterSelectorType.ognl
+  PsiElement(%{)('%{')
+  PsiWhiteSpace(' ')
+  REFERENCE_EXPRESSION
+    PsiElement(IDENTIFIER)('myList')
+  PsiElement(.)('.')
+  PsiElement({)('{')
+  PsiElement($)('$')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:<expression> expected, got '}'
+    PsiElement(})('}')
+  PsiWhiteSpace(' ')
+  PsiElement(EXPRESSION_END)('}')

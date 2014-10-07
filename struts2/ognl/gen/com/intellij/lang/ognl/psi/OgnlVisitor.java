@@ -74,7 +74,15 @@ public class OgnlVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
+  public void visitProjectionExpression(@NotNull OgnlProjectionExpression o) {
+    visitExpression(o);
+  }
+
   public void visitReferenceExpression(@NotNull OgnlReferenceExpression o) {
+    visitExpression(o);
+  }
+
+  public void visitSelectionExpression(@NotNull OgnlSelectionExpression o) {
     visitExpression(o);
   }
 

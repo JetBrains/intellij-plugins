@@ -26,21 +26,21 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import com.intellij.lang.ognl.psi.*;
 
-public class OgnlReferenceExpressionImpl extends OgnlReferenceExpressionBase implements OgnlReferenceExpression {
+public class OgnlProjectionExpressionImpl extends OgnlExpressionImpl implements OgnlProjectionExpression {
 
-  public OgnlReferenceExpressionImpl(ASTNode node) {
+  public OgnlProjectionExpressionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitReferenceExpression(this);
+    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitProjectionExpression(this);
     else super.accept(visitor);
   }
 
   @Override
   @NotNull
-  public List<OgnlExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
+  public OgnlExpression getProjectionExpression() {
+    return findNotNullChildByClass(OgnlExpression.class);
   }
 
 }
