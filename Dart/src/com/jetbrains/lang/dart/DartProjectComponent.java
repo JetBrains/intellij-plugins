@@ -78,7 +78,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
         for (VirtualFile pubspecYamlFile : pubspecYamlFiles) {
           final Module module = ModuleUtilCore.findModuleForFile(pubspecYamlFile, myProject);
           if (module != null && FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, module.getModuleContentScope())) {
-            excludePackagesFolders(module, pubspecYamlFile);
+            excludeBuildAndPackagesFolders(module, pubspecYamlFile);
 
             if (dartSdkGlobalLibName != null &&
                 dartSdkWasEnabledInOldModel &&
@@ -136,7 +136,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
         final WebBrowser browser = DartiumUtil.ensureDartiumBrowserConfigured(DartiumUtil.getDartiumPathForSdk(oldDartSdkPath));
         final BrowserSpecificSettings browserSpecificSettings = browser.getSpecificSettings();
         if (browserSpecificSettings instanceof ChromeSettings) {
-          DartiumUtil.setCheckedMode(((ChromeSettings)browserSpecificSettings).getEnvironmentVariables(), true);
+          DartiumUtil.setCheckedMode(browserSpecificSettings.getEnvironmentVariables(), true);
         }
       }
 
@@ -210,7 +210,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
     return false;
   }
 
-  public static void excludePackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {
+  public static void excludeBuildAndPackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {
     final VirtualFile root = pubspecYamlFile.getParent();
     final VirtualFile contentRoot =
       root == null ? null : ProjectRootManager.getInstance(module.getProject()).getFileIndex().getContentRootForFile(root);
@@ -229,7 +229,8 @@ public class DartProjectComponent extends AbstractProjectComponent {
         final String rootUrl = root.getUrl();
 
         public boolean value(final String url) {
-          if (!url.startsWith(rootUrl + "/packages/") &&
+          if (!url.equals(rootUrl + "/build") &&
+              !url.startsWith(rootUrl + "/packages/") &&
               !url.startsWith(rootUrl + "/bin/") &&
               !url.startsWith(rootUrl + "/benchmark/") &&
               !url.startsWith(rootUrl + "/example/") &&
@@ -239,6 +240,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
             return false;
           }
 
+          if (url.equals(rootUrl + "/build")) return true;
           if (url.endsWith("/packages")) return true;
 
           // excluded subfolder of 'packages' folder
@@ -259,6 +261,12 @@ public class DartProjectComponent extends AbstractProjectComponent {
     final THashSet<String> newExcludedPackagesUrls = new THashSet<String>();
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
     final VirtualFile root = pubspecYamlFile.getParent();
+
+    // java.io.File is used here because exclusion is done before FS refresh (in order not to trigger indexing of files that are going to be excluded)
+    final File buildFolder = new File(root.getPath() + "/build");
+    if (buildFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild("build") != null) {
+      newExcludedPackagesUrls.add(root.getUrl() + "/build");
+    }
 
     final VirtualFile binFolder = root.findChild("bin");
     if (binFolder != null && binFolder.isDirectory() && fileIndex.isInContent(binFolder)) {
