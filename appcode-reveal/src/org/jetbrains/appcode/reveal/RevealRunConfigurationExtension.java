@@ -281,8 +281,12 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       throw new ExecutionException("Cannot create a temporary copy of Reveal library", e);
     }
 
-    AppCodeInstaller.codesignBinary(buildConfiguration, mainExecutable, tempDir.getAbsolutePath(), libRevealInTempDir.getName());
-    AMDeviceUtil.transferPathToApplicationBundle(device, libRevealInTempDir.getParent(), "/tmp", bundleId);
+    try {
+      AppCodeInstaller.codesignBinary(buildConfiguration, mainExecutable, tempDir.getAbsolutePath(), libRevealInTempDir.getName());
+      AMDeviceUtil.transferPathToApplicationBundle(device, libRevealInTempDir.getParent(), "/tmp", bundleId);
+    } finally {
+      FileUtil.delete(tempDir);
+    }
 
     String homeDir = AMDeviceUtil.getHomeDirFromAppEnvironment(commandLine);
 
