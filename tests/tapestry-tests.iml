@@ -14,7 +14,7 @@
     <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
     <orderEntry type="library" name="CGLIB" level="project" />
     <orderEntry type="module" module-name="testFramework-java" />
-    <orderEntry type="library" name="TestNG" level="project" />
+    <orderEntry type="library" scope="TEST" name="TestNG" level="project" />
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
@@ -26,4 +26,3 @@
     </orderEntry>
   </component>
 </module>
-
