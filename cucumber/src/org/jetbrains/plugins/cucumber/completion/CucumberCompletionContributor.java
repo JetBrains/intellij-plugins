@@ -2,11 +2,13 @@ package org.jetbrains.plugins.cucumber.completion;
 
 import com.intellij.codeInsight.TailType;
 import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.AutoCompletionPolicy;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.TailTypeDecorator;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -166,6 +168,9 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
   private static LookupElement createKeywordLookupElement(final String keyword, boolean withSpace) {
     LookupElement result = LookupElementBuilder.create(keyword);
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      result = ((LookupElementBuilder)result).withAutoCompletionPolicy(AutoCompletionPolicy.NEVER_AUTOCOMPLETE);
+    }
     if (withSpace) {
       result = TailTypeDecorator.withTail(result, TailType.SPACE);
     }
