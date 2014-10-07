@@ -11,21 +11,22 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.TimeoutUtil;
-import com.intellij.xdebugger.XDebugProcess;
-import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebuggerBundle;
-import com.intellij.xdebugger.XSourcePosition;
+import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
+import com.jetbrains.lang.dart.ide.runner.server.frame.DartStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmConnection;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmIsolate;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class DartCommandLineDebugProcess extends XDebugProcess {
   public static final Logger LOG = Logger.getInstance(DartCommandLineDebugProcess.class.getName());
@@ -37,7 +38,9 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   private final int myObservatoryPort;
 
   private final @NotNull LinkedList<VmIsolate> myAllIsolates = new LinkedList<VmIsolate>();
-  private final @NotNull LinkedList<VmIsolate> mySuspendedIsolates = new LinkedList<VmIsolate>();
+  private final @NotNull Set<VmIsolate> mySuspendedIsolates = new THashSet<VmIsolate>();
+  private VmIsolate myLatestCurrentIsolate;
+
   private boolean myVmConnected = false;
 
   public DartCommandLineDebugProcess(@NotNull final XDebugSession session,
@@ -55,6 +58,19 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     // see com.google.dart.tools.debug.core.server.ServerDebugTarget
     myVmConnection = new VmConnection(null, commandLineState.getDebuggingPort());
     myVmConnection.addListener(new DartVmListener(this, dartBreakpointHandler));
+
+    session.addSessionListener(new XDebugSessionAdapter() {
+      @Override
+      public void sessionPaused() {
+        stackFrameChanged();
+      }
+
+      @Override
+      public void stackFrameChanged() {
+        final XStackFrame stackFrame = getSession().getCurrentStackFrame();
+        myLatestCurrentIsolate = stackFrame instanceof DartStackFrame ? ((DartStackFrame)stackFrame).getIsolate() : null;
+      }
+    });
 
     connect();
   }
@@ -123,9 +139,9 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   @Override
   public void startStepOver() {
-    if (!mySuspendedIsolates.isEmpty()) {
+    if (myLatestCurrentIsolate != null && mySuspendedIsolates.contains(myLatestCurrentIsolate)) {
       try {
-        myVmConnection.stepOver(mySuspendedIsolates.getLast());
+        myVmConnection.stepOver(myLatestCurrentIsolate);
       }
       catch (IOException e) {
         LOG.error(e);
@@ -135,9 +151,9 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   @Override
   public void startStepInto() {
-    if (!mySuspendedIsolates.isEmpty()) {
+    if (myLatestCurrentIsolate != null && mySuspendedIsolates.contains(myLatestCurrentIsolate)) {
       try {
-        myVmConnection.stepInto(mySuspendedIsolates.getLast());
+        myVmConnection.stepInto(myLatestCurrentIsolate);
       }
       catch (IOException e) {
         LOG.error(e);
@@ -147,9 +163,9 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   @Override
   public void startStepOut() {
-    if (!mySuspendedIsolates.isEmpty()) {
+    if (myLatestCurrentIsolate != null && mySuspendedIsolates.contains(myLatestCurrentIsolate)) {
       try {
-        myVmConnection.stepOut(mySuspendedIsolates.getLast());
+        myVmConnection.stepOut(myLatestCurrentIsolate);
       }
       catch (IOException e) {
         LOG.error(e);

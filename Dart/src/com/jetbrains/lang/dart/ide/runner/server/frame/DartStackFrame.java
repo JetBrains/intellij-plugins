@@ -43,6 +43,11 @@ public class DartStackFrame extends XStackFrame {
     }
   }
 
+  @NotNull
+  public VmIsolate getIsolate() {
+    return myVmCallFrame.getIsolate();
+  }
+
   @Nullable
   public Object getEqualityObject() {
     return myLocationUrl + "#" + myVmCallFrame.getFunctionName();
