@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,17 +33,17 @@ import java.util.Map;
 public class OgnlColorSettingsPage implements ColorSettingsPage {
 
   private static final AttributesDescriptor[] ATTRIBUTES_DESCRIPTORS = new AttributesDescriptor[]{
-      new AttributesDescriptor("Background", OgnlHighlighter.BACKGROUND),
-      new AttributesDescriptor("Expression bounds", OgnlHighlighter.EXPRESSION_BOUNDS),
-      new AttributesDescriptor("Keyword", OgnlHighlighter.KEYWORDS),
-      new AttributesDescriptor("Operations", OgnlHighlighter.OPERATIONS),
-      new AttributesDescriptor("Identifier", OgnlHighlighter.IDENTIFIER),
-      new AttributesDescriptor("String", OgnlHighlighter.STRING),
-      new AttributesDescriptor("Number", OgnlHighlighter.NUMBER),
-      new AttributesDescriptor("Comma", OgnlHighlighter.COMMA),
-      new AttributesDescriptor("Parentheses", OgnlHighlighter.PARENTHESES),
-      new AttributesDescriptor("Brackets", OgnlHighlighter.BRACKETS),
-      new AttributesDescriptor("Braces", OgnlHighlighter.BRACES)
+    new AttributesDescriptor("Background", OgnlHighlighter.BACKGROUND),
+    new AttributesDescriptor("Expression bounds", OgnlHighlighter.EXPRESSION_BOUNDS),
+    new AttributesDescriptor("Keyword", OgnlHighlighter.KEYWORDS),
+    new AttributesDescriptor("Operations", OgnlHighlighter.OPERATIONS),
+    new AttributesDescriptor("Identifier", OgnlHighlighter.IDENTIFIER),
+    new AttributesDescriptor("String", OgnlHighlighter.STRING),
+    new AttributesDescriptor("Number", OgnlHighlighter.NUMBER),
+    new AttributesDescriptor("Comma", OgnlHighlighter.COMMA),
+    new AttributesDescriptor("Parentheses", OgnlHighlighter.PARENTHESES),
+    new AttributesDescriptor("Brackets", OgnlHighlighter.BRACKETS),
+    new AttributesDescriptor("Braces", OgnlHighlighter.BRACES)
   };
 
   @NotNull
@@ -79,23 +79,24 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
   @Override
   public String getDemoText() {
     return "%{booleanArray[3] == true ? this : 'nothing'}" +
-        "\n" +
-        "%{\"valid escapes: My App\\nVersion 1.0 \\u00a9 2013 My Company\"}"+
-        "\n" +
-        "%{\"invalid escape: \\uXXX \"}"+
-        "\n" +
-        "%{ 1 shl 3 && 3 gt 5}" +
-        "\n" +
-        "%{myAction.method()}"+
-        "\n" +
-        "%{#myBigInteger * 452H}" +
-        "\n"+
-        "%{id not in {1, 2}}";
+           "\n" +
+           "%{\"valid escapes: My App\\nVersion 1.0 \\u00a9 2014 My Company\"}" +
+           "\n" +
+           "%{\"invalid escape: \\uXXX \"}" +
+           "\n" +
+           "%{ 1 shl 3 && 3 gt 5}" +
+           "\n" +
+           "%{myAction.method()}" +
+           "\n" +
+           "%{#myBigInteger * 452H}" +
+           "\n" +
+           "%{id not in {1, 2}}" +
+           "\n" +
+           "%{listeners.{? #this instanceof ActionListener}}";
   }
 
   @Override
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return null;
   }
-
 }

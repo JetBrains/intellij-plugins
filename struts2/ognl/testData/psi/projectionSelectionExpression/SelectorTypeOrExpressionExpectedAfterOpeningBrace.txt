@@ -1,0 +1,10 @@
+OgnlFile:SelectorTypeOrExpressionExpectedAfterOpeningBrace.ognl
+  PsiElement(%{)('%{')
+  PsiWhiteSpace(' ')
+  REFERENCE_EXPRESSION
+    PsiElement(IDENTIFIER)('myList')
+  PsiElement(.)('.')
+  PsiElement({)('{')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:$, <expression>, '?' or '^' expected, got '}'
+    PsiElement(})('}')

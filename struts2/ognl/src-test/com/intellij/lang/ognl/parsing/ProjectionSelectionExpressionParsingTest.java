@@ -13,17 +13,22 @@
  * limitations under the License.
  */
 
+package com.intellij.lang.ognl.parsing;
 
-// Generated from ognl.bnf, do not modify
-package com.intellij.lang.ognl.psi;
+/**
+ * @author Yann C&eacute;bron
+ */
+public class ProjectionSelectionExpressionParsingTest extends OgnlParsingTestCase {
 
-import java.util.List;
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
+  public ProjectionSelectionExpressionParsingTest() {
+    super("projectionSelectionExpression");
+  }
 
-public interface OgnlReferenceExpression extends OgnlExpression {
+  public void testSelectorTypeOrExpressionExpectedAfterOpeningBrace() {
+    doTest(true);
+  }
 
-  @NotNull
-  List<OgnlExpression> getExpressionList();
-
+  public void testExpressionExpectedAfterSelectorType() {
+    doTest(true);
+  }
 }

@@ -147,7 +147,24 @@ literalExpression ::= numberLiteralExpression |
   ]
 }
 
-referenceExpression ::= (variableExpression | ('@')? IDENTIFIER) ('.' IDENTIFIER)* ('@' IDENTIFIER)? {
+projectionExpression ::= '{' expression '}'
+{
+  methods=[
+    projectionExpression="expression"
+  ]
+}
+selectionExpression ::= '{' ('?' | '^' | '$') expression '}'
+{
+  methods=[
+    selectorExpression="expression"
+  ]
+}
+
+referenceExpression ::= (variableExpression | ('@')? IDENTIFIER)
+                        ('.' IDENTIFIER)* ('@' IDENTIFIER)?
+                        ('.'  selectionExpression)?
+                        ('.'  projectionExpression )?
+{
   mixin="com.intellij.lang.ognl.psi.impl.OgnlReferenceExpressionBase"
 }
 
@@ -294,10 +311,3 @@ fqnTypeExpression ::= IDENTIFIER ('.' IDENTIFIER)* {
   name="FQN type"
   elementType="expression" // todo own PSI/resolve etc.
 }
-
-// TODO:
-// projection/selection: e1.{e2} / e1.{?e2}
-// sub-expression: e1.(e2)
-// chained sub-expression: headline.parent.(ensureLoaded(), name)
-// list creation: { e, ... } --> already via sequence?
-// lambda: :[ e ]

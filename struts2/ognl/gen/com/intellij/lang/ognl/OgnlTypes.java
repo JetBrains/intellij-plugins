@@ -38,7 +38,9 @@ public interface OgnlTypes {
   IElementType NEW_EXPRESSION = new OgnlTokenType("NEW_EXPRESSION");
   IElementType PARAMETER_LIST = new OgnlTokenType("PARAMETER_LIST");
   IElementType PARENTHESIZED_EXPRESSION = new OgnlTokenType("PARENTHESIZED_EXPRESSION");
+  IElementType PROJECTION_EXPRESSION = new OgnlTokenType("PROJECTION_EXPRESSION");
   IElementType REFERENCE_EXPRESSION = new OgnlTokenType("REFERENCE_EXPRESSION");
+  IElementType SELECTION_EXPRESSION = new OgnlTokenType("SELECTION_EXPRESSION");
   IElementType SEQUENCE_EXPRESSION = new OgnlTokenType("SEQUENCE_EXPRESSION");
   IElementType UNARY_EXPRESSION = new OgnlTokenType("UNARY_EXPRESSION");
   IElementType VARIABLE_ASSIGNMENT_EXPRESSION = new OgnlTokenType("VARIABLE_ASSIGNMENT_EXPRESSION");
@@ -153,8 +155,14 @@ public interface OgnlTypes {
       else if (type == PARENTHESIZED_EXPRESSION) {
         return new OgnlParenthesizedExpressionImpl(node);
       }
+      else if (type == PROJECTION_EXPRESSION) {
+        return new OgnlProjectionExpressionImpl(node);
+      }
       else if (type == REFERENCE_EXPRESSION) {
         return new OgnlReferenceExpressionImpl(node);
+      }
+      else if (type == SELECTION_EXPRESSION) {
+        return new OgnlSelectionExpressionImpl(node);
       }
       else if (type == SEQUENCE_EXPRESSION) {
         return new OgnlSequenceExpressionImpl(node);
