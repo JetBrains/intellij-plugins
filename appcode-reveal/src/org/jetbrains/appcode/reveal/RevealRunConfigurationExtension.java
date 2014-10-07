@@ -5,10 +5,8 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessOutput;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
-import com.intellij.execution.util.ExecUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -22,7 +20,6 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
@@ -47,15 +44,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExtension {
   private static final String REVEAL_SETTINGS_TAG = "REVEAL_SETTINGS";
   private static final Key<RevealSettings> REVEAL_SETTINGS_KEY = Key.create(REVEAL_SETTINGS_TAG);
   private static final Key<String> BUNDLE_ID_KEY = Key.create("BUNDLE_INFO");
-  private static final Pattern FINGERPRINT_PATTERN =
-    Pattern.compile("^.* Fingerprint=(\\p{XDigit}{2}(:\\p{XDigit}{2})+)$", Pattern.MULTILINE);
 
   @NotNull
   public static RevealSettings getRevealSettings(@NotNull AppCodeRunConfiguration config) {
@@ -158,7 +151,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                       @NotNull File mainExecutable,
                       @NotNull GeneralCommandLine commandLine) throws ExecutionException {
     super.install(configuration, product, environment, buildConfiguration, mainExecutable, commandLine);
-    
+
     if (!Reveal.isCompatible()) return;
 
     RevealSettings settings = getRevealSettings(configuration);
@@ -167,7 +160,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     File toInject = installReveal(configuration, product, environment, buildConfiguration, commandLine, mainExecutable, settings);
     if (toInject == null) return;
     Reveal.LOG.info("Injecting Reveal lib: " + toInject);
-                              
+
     UsageTrigger.trigger("appcode.reveal.inject");
 
     CidrExecUtil.appendSearchPath(commandLine.getEnvironment(), EnvParameterNames.DYLD_INSERT_LIBRARIES, toInject.getPath());
@@ -189,7 +182,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     if (hasBundledRevealLib(buildConfiguration, libReveal)) {
       return new File(commandLine.getExePath(), libReveal.getName());
     }
-    
+
     BuildDestination destination = buildConfiguration.getDestination();
     if (!destination.isIOSDevice()) {
       return libReveal;
@@ -247,7 +240,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     }
 
     UsageTrigger.trigger("appcode.reveal.installOnDevice");
-    
+
     AMDevice device = destination.getIOSDeviceSafe();
     return installOnDevice(libReveal, buildConfiguration, mainExecutable, commandLine, device,
                            getBundleID(environment, product));
@@ -293,14 +286,16 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
       try {
         Reveal.LOG.info("Reading executable signature from " + mainExecutable);
-        runTool(tmpDir.getPath(), "Cannot sign Reveal library",
-                Arrays.asList("/usr/bin/codesign", "-d", "--extract-certificates", mainExecutable.getPath()));
+        AppCodeInstaller.runTool(tmpDir.getPath(), "Cannot sign Reveal library",
+                                 Arrays.asList("/usr/bin/codesign", "-d", "--extract-certificates", mainExecutable.getPath()));
 
         Reveal.LOG.info("Reading fingerprint from " + new File(tmpDir, "codesign0"));
         String fingerprint
-          = runTool(tmpDir.getPath(), "Cannot read certificate fingerprint using openssl",
-                    Arrays.asList("/usr/bin/openssl", "x509", "-inform", "der", "-in", "codesign0", "-fingerprint", "-noout")).getStdout();
-        signature = readFingerprint(fingerprint);
+          = AppCodeInstaller.runTool(tmpDir.getPath(), "Cannot read certificate fingerprint using openssl",
+                                     Arrays
+                                       .asList("/usr/bin/openssl", "x509", "-inform", "der", "-in", "codesign0", "-fingerprint", "-noout"))
+          .getStdout();
+        signature = AppCodeInstaller.readFingerprint(fingerprint);
       }
       finally {
         FileUtil.delete(tmpDir);
@@ -321,8 +316,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
 
     Reveal.LOG.info("Signing " + libRevealInTempDir + " with " + signature);
-    runTool(libRevealInTempDir.getParent(), "Cannot sign Reveal library.",
-            Arrays.asList("/usr/bin/codesign", "-fs", signature, libRevealInTempDir.getPath()));
+    AppCodeInstaller.runTool(libRevealInTempDir.getParent(), "Cannot sign Reveal library.",
+                             Arrays.asList("/usr/bin/codesign", "-fs", signature, libRevealInTempDir.getPath()));
 
     AMDeviceUtil.transferPathToApplicationBundle(device, libRevealInTempDir.getParent(), "/tmp", bundleId);
 
@@ -331,36 +326,6 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     return new File(new File(homeDir), "tmp/" + libRevealInTempDir.getParentFile().getName() + "/" + libRevealInTempDir.getName());
   }
 
-  
-  @Nullable
-  public static String readFingerprint(String fingerprint) {
-    Matcher matcher = FINGERPRINT_PATTERN.matcher(fingerprint);
-    if (matcher.find()) {
-      String ids = matcher.group(1);
-      return ids.replaceAll(":", "");
-    }
-    return null;
-  }
-
-  @NotNull
-  private static ProcessOutput runTool(String workingDir, final String errorMessage, List<String> commands) throws ExecutionException {
-    ProcessOutput output;
-
-    try {
-      output = ExecUtil.execAndGetOutput(commands, workingDir);
-    }
-    catch (ExecutionException e) {
-      Reveal.LOG.info("execution failed: " + StringUtil.join(commands, " ") + "\n", e);
-      throw e;
-    }
-
-    if (output.getExitCode() != 0) {
-      String stderr = output.getStderr();
-      Reveal.LOG.info("execution failed: " + StringUtil.join(commands, " ") + "\n" + stderr);
-      throw new ExecutionException(errorMessage + ":\n\n" + stderr);
-    }
-    return output;
-  }
 
   @NotNull
   private static String getBundleID(@NotNull ExecutionEnvironment environment,
