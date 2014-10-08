@@ -2,9 +2,10 @@ package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
-import com.intellij.psi.PsiFile;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiFile;
 
 /**
 * Created by IntelliJ IDEA.
@@ -21,19 +22,21 @@ public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionInt
   }
 
   @Override
-  protected void writeFunctionAndName(Template template, String referencedName, boolean ecma) {
+  protected void writeFunctionAndName(Template template, String referencedName, PsiFile file, JSClass clazz) {
     template.addTextSegment("function ");
     template.addTextSegment(myIsGetter ? "get ":"set ");
     template.addTextSegment(referencedName);
   }
 
-  protected void addParameters(Template template, JSReferenceExpression refExpr, PsiFile file, boolean ecma) {
+  @Override
+  protected void addParameters(Template template, JSReferenceExpression refExpr, PsiFile file) {
     if (!myIsGetter) {
       template.addTextSegment(refExpr.getReferencedName() +":");
       guessTypeAndAddTemplateVariable(template, refExpr, file, false);
     }
   }
 
+  @Override
   protected void addReturnType(Template template, JSReferenceExpression referenceExpression, PsiFile file) {
     if (myIsGetter) {
       guessTypeAndAddTemplateVariable(template, referenceExpression, file, false);
@@ -42,6 +45,7 @@ public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionInt
     }
   }
 
+  @Override
   protected void addBody(Template template, JSReferenceExpression refExpr, PsiFile file) {
     String varName = refExpr.getReferencedName();
     String paramName = varName;

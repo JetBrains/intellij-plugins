@@ -89,7 +89,6 @@ public class CreateEventMetadataByMxmlAttributeFix extends BaseCreateFix {
 
   protected void buildTemplate(final Template template,
                                final JSReferenceExpression referenceExpression,
-                               final boolean ecma,
                                final boolean staticContext,
                                final PsiFile file,
                                final PsiElement anchorParent) {

@@ -22,8 +22,8 @@ public class CreateJSEventMethod extends CreateJSFunctionIntentionActionBase {
     myEventTypeGenerator = eventTypeGenerator;
   }
 
-
-  protected void addParameters(Template template, JSReferenceExpression refExpr, PsiFile file, boolean ecma) {
+  @Override
+  protected void addParameters(Template template, JSReferenceExpression refExpr, PsiFile file) {
     Expression expression = new MyExpression("event");
 
     template.addVariable("$event$", expression, expression, true);
@@ -33,10 +33,12 @@ public class CreateJSEventMethod extends CreateJSFunctionIntentionActionBase {
     template.addTextSegment(text);
   }
 
+  @Override
   protected void addReturnType(Template template, JSReferenceExpression referenceExpression, PsiFile psifile) {
     template.addTextSegment("void");
   }
 
+  @Override
   protected void addBody(Template template, JSReferenceExpression refExpr, PsiFile file) {
     template.addTextSegment("\n");
     template.addEndVariable();

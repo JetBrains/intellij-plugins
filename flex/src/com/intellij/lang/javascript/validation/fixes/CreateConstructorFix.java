@@ -182,7 +182,6 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
   @Override
   protected void buildTemplate(Template template,
                                JSReferenceExpression referenceExpression,
-                               boolean ecma,
                                boolean staticContext,
                                PsiFile file,
                                PsiElement anchorParent) {
@@ -190,9 +189,9 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
       template.addTextSegment("public ");
     }
 
-    writeFunctionAndName(template, myClass.getName(), true);
+    writeFunctionAndName(template, myClass.getName(), file, null);
     template.addTextSegment("(");
-    addParameters(template, myNode.getArgumentList(), myNode, file, true);
+    addParameters(template, myNode.getArgumentList(), myNode, file);
     template.addTextSegment("){");
     addBody(template, referenceExpression, file);
     template.addTextSegment("}");

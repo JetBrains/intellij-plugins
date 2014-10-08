@@ -21,12 +21,11 @@ public class CreateSetterByMxmlAttributeFix extends CreateJSPropertyAccessorInte
   @Override
   protected void buildTemplate(final Template template,
                                final JSReferenceExpression referenceExpression,
-                               final boolean ecma,
                                final boolean staticContext,
                                final PsiFile file,
                                final PsiElement anchorParent) {
     template.addTextSegment("public ");
-    writeFunctionAndName(template, myReferencedName, ecma);
+    writeFunctionAndName(template, myReferencedName, file, null);
 
     template.addTextSegment("(");
     template.addTextSegment(myReferencedName + ":");
