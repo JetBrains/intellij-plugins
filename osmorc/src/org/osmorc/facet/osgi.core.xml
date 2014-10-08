@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
+  <artifact version="6.0.0">
+    <item url="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/6.0.0/org.osgi.core-6.0.0.jar"
+          srcUrl="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/6.0.0/org.osgi.core-6.0.0-sources.jar"/>
+  </artifact>
   <artifact version="5.0.0">
     <item url="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/5.0.0/org.osgi.core-5.0.0.jar"
           srcUrl="https://repo1.maven.org/maven2/org/osgi/org.osgi.core/5.0.0/org.osgi.core-5.0.0-sources.jar"/>
