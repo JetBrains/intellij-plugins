@@ -63,12 +63,15 @@ public class CucumberStepInspection extends GherkinInspection implements UnfairL
           CucumberStepReference reference = (CucumberStepReference)references[0];
           final AbstractStepDefinition definition = reference.resolveToDefinition();
           if (definition == null) {
-            CucumberCreateStepFix fix = null;
+            CucumberCreateStepFix createStepFix = null;
+            CucumberCreateAllStepsFix createAllStepsFix = null;
             if (CucumberStepsIndex.getInstance(step.getProject()).getExtensionCount() > 0) {
-              fix = new CucumberCreateStepFix();
+              createStepFix = new CucumberCreateStepFix();
+              createAllStepsFix = new CucumberCreateAllStepsFix();
             }
-            holder.registerProblem(reference.getElement(), reference.getRangeInElement(), CucumberBundle.message(
-              "cucumber.inspection.undefined.step.msg.name") + " #loc #ref", fix);
+            holder.registerProblem(reference.getElement(), reference.getRangeInElement(),
+                                   CucumberBundle.message("cucumber.inspection.undefined.step.msg.name") + " #loc #ref",
+                                   createStepFix, createAllStepsFix);
           }
           else if (isOnTheFly) {
             // highlighting for regexp params
