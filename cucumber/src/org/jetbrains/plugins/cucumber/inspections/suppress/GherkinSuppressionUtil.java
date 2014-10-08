@@ -27,8 +27,8 @@ public class GherkinSuppressionUtil {
   private GherkinSuppressionUtil() {
   }
 
-  public static SuppressQuickFix[] getDefaultSuppressActions(@Nullable final PsiElement element,
-                                                                    @NotNull final String actionShortName) {
+  @NotNull
+  public static SuppressQuickFix[] getDefaultSuppressActions(@NotNull final String actionShortName) {
     return new SuppressQuickFix[]{
       new GherkinSuppressForStepCommentFix(actionShortName),
       new GherkinSuppressForScenarioCommentFix(actionShortName),
