@@ -1,15 +1,21 @@
 package org.jetbrains.plugins.cucumber.inspections;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * User: Andrey.Vokin
@@ -29,6 +35,7 @@ public class CucumberCreateAllStepsFix extends CucumberCreateStepFixBase {
       return;
     }
 
+    final Set<String> createdStepDefPatterns = new HashSet<String>();
     final GherkinFile gherkinFile = (GherkinFile)probableGherkinFile;
     for (GherkinFeature feature : gherkinFile.getFeatures()) {
       for (GherkinStepsHolder stepsHolder : feature.getScenarios()) {
@@ -39,7 +46,13 @@ public class CucumberCreateAllStepsFix extends CucumberCreateStepFixBase {
 
             final AbstractStepDefinition definition = ((CucumberStepReference)reference).resolveToDefinition();
             if (definition == null) {
-              createFileOrStepDefinition(step, file);
+              String pattern = Pattern.quote(step.getStepName());
+              pattern = StringUtil.trimEnd(StringUtil.trimStart(pattern, "\\Q"), "\\E");
+              pattern = CucumberUtil.prepareStepRegexp(pattern);
+              if (!createdStepDefPatterns.contains(pattern)) {
+                createFileOrStepDefinition(step, file);
+                createdStepDefPatterns.add(pattern);
+              }
             }
           }
         }
