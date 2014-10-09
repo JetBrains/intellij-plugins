@@ -1,13 +1,14 @@
 package com.jetbrains.lang.dart.ide.runner;
 
-import com.intellij.execution.filters.BrowserHyperlinkInfo;
 import com.intellij.execution.filters.Filter;
+import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
@@ -100,10 +101,23 @@ public class DartConsoleFilter implements Filter {
       //noinspection ResultOfMethodCallIgnored
       Integer.parseInt(port);
       final int startOffset = lineStartOffset + OBSERVATORY_LISTENING_ON.length();
-      return new Result(startOffset, startOffset + url.length(), new BrowserHyperlinkInfo(url));
+      return new Result(startOffset, startOffset + url.length(), new ObservatoryHyperlinkInfo(url));
     }
     catch (NumberFormatException ignore) {/**/}
 
     return null;
+  }
+
+  private static class ObservatoryHyperlinkInfo implements HyperlinkInfo {
+    private final String myUrl;
+
+    public ObservatoryHyperlinkInfo(@NotNull final String url) {
+      myUrl = url;
+    }
+
+    @Override
+    public void navigate(final Project project) {
+      OpenDartObservatoryUrlAction.openUrlInChromeFamilyBrowser(myUrl);
+    }
   }
 }
