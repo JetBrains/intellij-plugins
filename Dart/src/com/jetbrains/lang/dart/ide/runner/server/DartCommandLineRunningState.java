@@ -18,6 +18,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.net.NetUtils;
@@ -122,9 +123,8 @@ public class DartCommandLineRunningState extends CommandLineState {
                               ? dartFile.getParent().getPath()
                               : myRunnerParameters.getWorkingDirectory();
 
-    final GeneralCommandLine commandLine = new GeneralCommandLine();
-    commandLine.setExePath(dartExePath);
-    commandLine.setWorkDirectory(workingDir);
+    final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(workingDir);
+    commandLine.setExePath(FileUtil.toSystemDependentName(dartExePath));
     commandLine.getEnvironment().putAll(myRunnerParameters.getEnvs());
     commandLine.setPassParentEnvironment(myRunnerParameters.isIncludeParentEnvs());
     setupParameters(getEnvironment().getProject(), commandLine, myRunnerParameters, overriddenMainFilePath);
@@ -161,7 +161,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     final VirtualFile[] packageRoots = DartUrlResolver.getInstance(project, dartFile).getPackageRoots();
     if (packageRoots.length > 0) {
       // more than one package root is not supported by the [SDK]/bin/dart tool
-      commandLine.addParameter("--package-root=" + packageRoots[0].getPath());
+      commandLine.addParameter("--package-root=" + FileUtil.toSystemDependentName(packageRoots[0].getPath()));
     }
 
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(getEnvironment().getExecutor().getId())) {
@@ -174,7 +174,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     commandLine.addParameter("--enable-vm-service:" + myObservatoryPort);
     commandLine.addParameter("--trace_service_pause_events");
 
-    commandLine.addParameter(overriddenMainFilePath == null ? dartFile.getPath() : overriddenMainFilePath);
+    commandLine.addParameter(FileUtil.toSystemDependentName(overriddenMainFilePath == null ? dartFile.getPath() : overriddenMainFilePath));
 
     final String arguments = runnerParameters.getArguments();
     if (arguments != null) {
