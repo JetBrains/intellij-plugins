@@ -8,10 +8,7 @@ import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSParameterList;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
@@ -332,11 +329,17 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
       
       if (newName.equals(varName) && 
           codeStyleSettings.FIELD_PREFIX.length() > 0 &&
-          varName != null &&
           !varName.startsWith(codeStyleSettings.FIELD_PREFIX)) {
         //RefactoringFactory.getInstance(jsVariable.getProject())
         //  .createRename(jsVariable, codeStyleSettings.FIELD_PREFIX + varName).run();
-        JSVariable copy = (JSVariable)jsVariable.copy();
+        JSVarStatement statementCopy = (JSVarStatement)jsVariable.getParent().copy();
+        JSVariable copy = null;
+        for (JSVariable variable : statementCopy.getVariables()) {
+          if (varName.equals(variable.getName())) {
+            copy = variable;
+            break;
+          }
+        }
         String newVarName = codeStyleSettings.FIELD_PREFIX + varName;
         copy.setName(newVarName);
         for(PsiReference ref:ReferencesSearch.search(jsVariable, GlobalSearchScope.fileScope(jsVariable.getContainingFile())).findAll()) {
