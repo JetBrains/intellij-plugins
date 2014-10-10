@@ -5,6 +5,7 @@ import com.intellij.xdebugger.frame.*;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmIsolate;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmLibrary;
+import com.jetbrains.lang.dart.ide.runner.server.google.VmValue;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmVariable;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +42,10 @@ public class DartLibraryValue extends XNamedValue {
         if (globals != null) {
           final XValueChildrenList childrenList = new XValueChildrenList(globals.size());
           for (VmVariable vmVariable : globals) {
-            childrenList.add(new DartValue(myDebugProcess, vmVariable));
+            final VmValue vmValue = vmVariable.getValue();
+            if (vmValue != null) {
+              childrenList.add(new DartValue(myDebugProcess, vmVariable.getName(), vmValue, false));
+            }
           }
 
           node.addChildren(childrenList, true);
