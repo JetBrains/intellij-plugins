@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner.server.frame;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
@@ -28,93 +27,68 @@ public class DartValue extends XNamedValue {
   public static final String NODE_NAME_EXCEPTION = "exception";
 
   private final @NotNull DartCommandLineDebugProcess myDebugProcess;
-  private final @Nullable VmVariable myVmVariable;
-  private @Nullable VmValue myVmValue;
+  private final @NotNull VmValue myVmValue;
   private final boolean myIsException;
 
   private Ref<Integer> myListOrMapChildrenAlreadyShown = new Ref<Integer>(0);
 
   static final String OBJECT_OF_TYPE_PREFIX = "object of type ";
 
-  public DartValue(final @NotNull DartCommandLineDebugProcess debugProcess, final @NotNull VmVariable vmVariable) {
-    super(StringUtil.notNullize(DebuggerUtils.demangleVmName(vmVariable.getName()), "<unknown>"));
-    myDebugProcess = debugProcess;
-    myVmVariable = vmVariable;
-    myIsException = false;
-  }
-
   public DartValue(@NotNull final DartCommandLineDebugProcess debugProcess,
-                   @NotNull final String nodeName,
-                   @NotNull @SuppressWarnings("NullableProblems") final VmValue vmValue,
+                   @Nullable final String rawNodeName,
+                   @NotNull final VmValue vmValue,
                    final boolean isException) {
-    super(nodeName);
+    super(StringUtil.notNullize(DebuggerUtils.demangleVmName(rawNodeName), "<unknown>"));
     myDebugProcess = debugProcess;
-    myVmVariable = null;
     myVmValue = vmValue;
     myIsException = isException;
   }
 
   @Override
   public void computePresentation(final @NotNull XValueNode node, final @NotNull XValuePlace place) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        if (node.isObsolete()) return;
+    final String value = myVmValue.isList() ? "size = " + myVmValue.getLength()
+                                            : StringUtil.notNullize(myVmValue.getText(), "null");
+    final String objectIdPostfix = "[id=" + myVmValue.getObjectId() + "]";
 
-        if (myVmValue == null && myVmVariable != null) {
-          myVmValue = myVmVariable.getValue();
-        }
+    final XValuePresentation presentation;
 
-        if (myVmValue == null) {
-          node.setPresentation(AllIcons.Debugger.Value, null, "<no value>", false);
-          return;
-        }
-
-        final String value = myVmValue.isList() ? "size = " + myVmValue.getLength()
-                                                : StringUtil.notNullize(myVmValue.getText(), "null");
-        final XValuePresentation presentation;
-
-        final int objectId = myVmValue.getObjectId();
-        final String objectIdPostfix = /*objectId == 0 ? "" :*/ "[id=" + objectId + "]"; // 0 is also a valid id
-
-        if (myVmValue.isNull()) {
-          presentation = new XRegularValuePresentation("null", null);
-        }
-        else if (myVmValue.isString()) {
-          presentation = new XStringValuePresentation(StringUtil.stripQuotesAroundValue(value));
-        }
-        else if (myVmValue.isNumber()) {
-          presentation = new XNumericValuePresentation(value);
-        }
-        else if ("boolean".equals(myVmValue.getKind())) {
-          presentation = new XRegularValuePresentation(value, null);
-        }
-        else if (myVmValue.isList()) {
-          presentation = new XRegularValuePresentation(value, "List" + objectIdPostfix); // VmValue doesn't contain real List subclass name
-        }
-        else {
-          if (value.startsWith(OBJECT_OF_TYPE_PREFIX)) {
-            presentation = new XRegularValuePresentation("", value.substring(OBJECT_OF_TYPE_PREFIX.length()) + objectIdPostfix);
-          }
-          else {
-            presentation = new XRegularValuePresentation(value, DebuggerUtils.demangleVmName(myVmValue.getKind()) + objectIdPostfix);
-          }
-        }
-
-        final boolean neverHasChildren = myVmValue.isPrimitive() ||
-                                         myVmValue.isNull() ||
-                                         myVmValue.isFunction() ||
-                                         myVmValue.isList() && myVmValue.getLength() == 0;
-        node.setPresentation(getIcon(), presentation, !neverHasChildren);
-
-        if (!myVmValue.isList() && !myVmValue.isPrimitive() && !myVmValue.isNull() && !myVmValue.isFunction()) {
-          scheduleToStringOrCollectionSizePresentation(node, presentation.getType());
-        }
+    if (myVmValue.isNull()) {
+      presentation = new XRegularValuePresentation("null", null);
+    }
+    else if (myVmValue.isString()) {
+      presentation = new XStringValuePresentation(StringUtil.stripQuotesAroundValue(value));
+    }
+    else if (myVmValue.isNumber()) {
+      presentation = new XNumericValuePresentation(value);
+    }
+    else if ("boolean".equals(myVmValue.getKind())) {
+      presentation = new XRegularValuePresentation(value, null);
+    }
+    else if (myVmValue.isList()) {
+      presentation = new XRegularValuePresentation(value, "List" + objectIdPostfix); // VmValue doesn't contain real List subclass name
+    }
+    else {
+      if (value.startsWith(OBJECT_OF_TYPE_PREFIX)) {
+        presentation = new XRegularValuePresentation("", value.substring(OBJECT_OF_TYPE_PREFIX.length()) + objectIdPostfix);
       }
-    });
+      else {
+        presentation = new XRegularValuePresentation(value, DebuggerUtils.demangleVmName(myVmValue.getKind()) + objectIdPostfix);
+      }
+    }
+
+    final boolean neverHasChildren = myVmValue.isPrimitive() ||
+                                     myVmValue.isNull() ||
+                                     myVmValue.isFunction() ||
+                                     myVmValue.isList() && myVmValue.getLength() == 0;
+    node.setPresentation(getIcon(), presentation, !neverHasChildren);
+
+    if (!myVmValue.isList() && !myVmValue.isPrimitive() && !myVmValue.isNull() && !myVmValue.isFunction()) {
+      scheduleToStringOrCollectionSizePresentation(node, presentation.getType());
+    }
   }
 
   private void scheduleToStringOrCollectionSizePresentation(@NotNull final XValueNode node, final String objectType) {
-    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null && !myVmValue.isList(), myVmValue);
+    DartCommandLineDebugProcess.LOG.assertTrue(!myVmValue.isList(), myVmValue);
 
     try {
       final String expression = "(this is Iterable || this is Map) ? ('IntelliJ marker:${this.length}') : toString()";
@@ -148,26 +122,18 @@ public class DartValue extends XNamedValue {
 
   private Icon getIcon() {
     if (myIsException) return AllIcons.Debugger.Db_exception_breakpoint;
-    if (myVmValue != null && myVmValue.isList()) return AllIcons.Debugger.Db_array;
-    if (myVmValue != null && myVmValue.isPrimitive()) return AllIcons.Debugger.Db_primitive;
-    if (myVmValue != null && myVmValue.isFunction()) return AllIcons.Nodes.Function;
+    if (myVmValue.isList()) return AllIcons.Debugger.Db_array;
+    if (myVmValue.isPrimitive()) return AllIcons.Debugger.Db_primitive;
+    if (myVmValue.isFunction()) return AllIcons.Nodes.Function;
 
-    return AllIcons.Debugger.Value; // todo m.b. resolve and show corresponding icon?
+    return AllIcons.Debugger.Value;
   }
 
   @Override
   public void computeChildren(@NotNull final XCompositeNode node) {
-    computeChildren(node, myListOrMapChildrenAlreadyShown);
-  }
-
-  private void computeChildren(@NotNull final XCompositeNode node, @NotNull final Ref<Integer> listChildrenAlreadyShown) {
-    // myVmValue is already calculated in computePresentation()
-    if (myVmValue == null) node.addChildren(XValueChildrenList.EMPTY, true);
-
-    // see com.google.dart.tools.debug.core.server.ServerDebugValue#fillInFieldsSync()
     try {
       if (myVmValue.isList()) {
-        computeListChildren(node, listChildrenAlreadyShown);
+        computeListChildren(node, myListOrMapChildrenAlreadyShown);
         return;
       }
 
@@ -200,7 +166,7 @@ public class DartValue extends XNamedValue {
 
   private void computeListChildren(@NotNull final XCompositeNode node,
                                    @NotNull final Ref<Integer> listChildrenAlreadyShown) throws IOException {
-    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null && myVmValue.isList(), myVmValue);
+    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue.isList(), myVmValue);
 
     final Integer fromIndex = listChildrenAlreadyShown.get();
     final int childrenToShow = Math.min(myVmValue.getLength() - fromIndex, XCompositeNode.MAX_CHILDREN_TO_SHOW);
@@ -269,8 +235,6 @@ public class DartValue extends XNamedValue {
   }
 
   private void computeMapChildren(@NotNull final XCompositeNode node) {
-    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null);
-
     try {
       myDebugProcess.getVmConnection()
         .evaluateObject(myVmValue.getIsolate(), myVmValue, "keys.toList()", new VmCallback<VmValue>() {
@@ -293,7 +257,7 @@ public class DartValue extends XNamedValue {
   }
 
   private void computeMapChildrenForKeys(@NotNull final XCompositeNode node, @NotNull final VmValue mapKeysList) {
-    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null && mapKeysList.isList());
+    DartCommandLineDebugProcess.LOG.assertTrue(mapKeysList.isList());
 
     try {
       myDebugProcess.getVmConnection()
@@ -361,8 +325,6 @@ public class DartValue extends XNamedValue {
     for (int i = 0; i < mapKeys.size(); i++) {
       final DartValue mapKey = mapKeys.get(i);
       final DartValue mapValue = mapValues.get(i);
-      DartCommandLineDebugProcess.LOG.assertTrue(mapKey.myVmValue != null && mapValue.myVmValue != null);
-
       resultList.add(new DartMapEntryValue(myDebugProcess, mapKey.getName(), mapKey.myVmValue, mapValue.myVmValue));
     }
 
@@ -375,8 +337,6 @@ public class DartValue extends XNamedValue {
   }
 
   private void computeIterableChildren(@NotNull final XCompositeNode node) {
-    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null);
-
     try {
       myDebugProcess.getVmConnection().evaluateObject(myVmValue.getIsolate(), myVmValue, "toList()", new VmCallback<VmValue>() {
         @Override
@@ -401,8 +361,6 @@ public class DartValue extends XNamedValue {
   }
 
   private void computeObjectChildren(@NotNull final XCompositeNode node) {
-    DartCommandLineDebugProcess.LOG.assertTrue(myVmValue != null);
-
     try {
       myDebugProcess.getVmConnection()
         .getObjectProperties(myVmValue.getIsolate(), myVmValue.getObjectId(), new VmCallbackAdapter<VmObject>(node) {
@@ -417,7 +375,10 @@ public class DartValue extends XNamedValue {
                                  // todo sort somehow?
                                  final XValueChildrenList childrenList = new XValueChildrenList(fields.size());
                                  for (final VmVariable field : fields) {
-                                   childrenList.add(new DartValue(myDebugProcess, field));
+                                   final VmValue vmValue = field.getValue();
+                                   if (vmValue != null) {
+                                     childrenList.add(new DartValue(myDebugProcess, field.getName(), vmValue, false));
+                                   }
                                  }
 
                                  node.addChildren(childrenList, true);
