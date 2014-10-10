@@ -4,18 +4,31 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.util.AsyncResult;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ConcurrentHashSet;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.net.NetUtils;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -32,15 +45,20 @@ import org.jetbrains.builtInWebServer.NetService;
 import org.jetbrains.io.*;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 final class PubServerService extends NetService {
   private static final Logger LOG = Logger.getInstance(PubServerService.class.getName());
+
+  private static final String PUB_SERVE = "Pub Serve";
+  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup(PUB_SERVE, PUB_SERVE, false);
 
   private volatile VirtualFile firstServedDir;
 
@@ -85,7 +103,7 @@ final class PubServerService extends NetService {
   @Override
   @NotNull
   protected String getConsoleToolWindowId() {
-    return "Pub Serve";
+    return PUB_SERVE;
   }
 
   @Override
@@ -143,13 +161,16 @@ final class PubServerService extends NetService {
     if (dartSdk == null) return null;
 
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(firstServedDir.getParent().getPath());
-    commandLine.setExePath(DartSdkUtil.getPubPath(dartSdk));
+    commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(dartSdk)));
     commandLine.addParameter("serve");
     commandLine.addParameter(firstServedDir.getName());
     commandLine.addParameter("--port=" + String.valueOf(port));
     //commandLine.addParameter("--admin-port=" + String.valueOf(PubServerManager.findOneMoreAvailablePort(port))); // todo uncomment and use
 
-    return new OSProcessHandler(commandLine);
+    final OSProcessHandler processHandler = new OSProcessHandler(commandLine);
+    processHandler.addProcessListener(new PubServeOutputListener(project));
+
+    return processHandler;
   }
 
   @Override
@@ -338,6 +359,60 @@ final class PubServerService extends NetService {
           }
         }
       }
+    }
+  }
+
+  private static class PubServeOutputListener extends ProcessAdapter {
+    private final Project myProject;
+    private boolean myNotificationAboutErrors;
+    private Notification myNotification;
+
+    public PubServeOutputListener(final Project project) {
+      myProject = project;
+    }
+
+    @Override
+    public void onTextAvailable(final ProcessEvent event, final Key outputType) {
+      if (outputType == ProcessOutputTypes.STDERR) {
+        final boolean error = event.getText().toLowerCase(Locale.US).contains("error");
+
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            showNotificationIfNeeded(error);
+          }
+        });
+      }
+    }
+
+    private void showNotificationIfNeeded(final boolean isError) {
+      if (ToolWindowManager.getInstance(myProject).getToolWindow(PUB_SERVE).isVisible()) {
+        return;
+      }
+
+      if (myNotification != null && !myNotification.isExpired()) {
+        final Balloon balloon1 = myNotification.getBalloon();
+        final Balloon balloon2 = ToolWindowManager.getInstance(myProject).getToolWindowBalloon(PUB_SERVE);
+        if ((balloon1 != null || balloon2 != null) && (myNotificationAboutErrors || !isError)) {
+          return; // already showing correct balloon
+        }
+        myNotification.expire();
+      }
+
+      myNotificationAboutErrors = isError; // previous errors are already reported, so reset our flag
+
+      final String message = myNotificationAboutErrors ? DartBundle.message("pub.serve.output.contains.errors")
+                                                       : DartBundle.message("pub.serve.output.contains.warnings");
+
+      myNotification = NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener.Adapter() {
+        @Override
+        protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
+          notification.expire();
+          ToolWindowManager.getInstance(myProject).getToolWindow(PUB_SERVE).activate(null);
+        }
+      });
+
+      myNotification.notify(myProject);
     }
   }
 }
