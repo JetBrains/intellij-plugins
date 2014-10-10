@@ -1,5 +1,6 @@
 package org.osmorc.run.ui;
 
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -30,6 +31,10 @@ public class JSpinnerCellEditor extends AbstractCellEditor implements TableCellE
 
   @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    if (value == null || !(value instanceof Number)) {
+      Logger.getInstance(getClass()).error("value:" + value);
+      value = 0;
+    }
     mySpinner.setValue(value);
     adjust(table, column);
     return mySpinner;
