@@ -246,9 +246,10 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
             MessageFormat.format("public static const {0}:String = \"{1}\";", eventConstantName, eventName);
 
           new CreateJSVariableIntentionAction(eventConstantName, true, true) {
+
+            @Override
             protected void buildTemplate(final Template template,
                                          final JSReferenceExpression referenceExpression,
-                                         final boolean ecma,
                                          final boolean staticContext,
                                          final PsiFile file,
                                          final PsiElement anchorParent) {
