@@ -104,8 +104,7 @@
     <treeStructureProvider implementation="com.jetbrains.lang.dart.DartTreeStructureProvider"/>
     <iconProvider implementation="com.jetbrains.lang.dart.DartIconProvider" order="first"/>
 
-    <internalFileTemplate name="Dart Class"/>
-    <internalFileTemplate name="Dart Empty File"/>
+    <internalFileTemplate name="Dart File"/>
 
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartListVariableMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartIterableVariableMacro"/>
@@ -191,7 +190,7 @@
     <action id="Dart.stop.pub.server" class="com.jetbrains.lang.dart.pubServer.StopPubServerAction" text="Stop Pub Serve"/>
 
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
-            text="Dart File" description="Create new Dart file/class/interface">
+            text="Dart File" description="Create new Dart file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
     <action id="Generate.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateConstructorAction"
