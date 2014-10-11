@@ -3,9 +3,9 @@ package com.dmarcotte.handlebars.parsing;
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
 
 /**
- * Java representation of the validations in the tokenizer_spec.rb revision which corresponds
+ * Java representation of the validations in the spec/tokenizer.js revision which corresponds
  * to the revision of handlesbars.l that our lexer is based on
- * (https://github.com/wycats/handlebars.js/blob/932e2970ad29b16d6d6874ad0bfb44b07b4cd765/spec/tokenizer_spec.rb)
+ * (https://github.com/wycats/handlebars.js/blob/b09333db7946d20ba7dbc6d32d5496ab8295b8e1/spec/tokenizer.js)
  * <p/>
  * All the tests should be nearly identical except that we generate whitespace tokens to give IDEA a better picture
  * of the text, vs. the actual Handlebars lexer which can just toss whitespace out
@@ -19,6 +19,25 @@ public class HbTokenizerSpecTest extends HbLexerTest {
     TokenizerResult result = tokenize("{{foo}}");
     result.shouldMatchTokenTypes(OPEN, ID, CLOSE);
     result.shouldBeToken(1, ID, "foo");
+  }
+
+  /**
+   * supports unescaping with &
+   */
+  public void testUnescapingWithAmp() {
+    TokenizerResult result = tokenize("{{&bar}}");
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE);
+    result.shouldBeToken(0, OPEN, "{{&");
+    result.shouldBeToken(1, ID, "bar");
+  }
+
+  /**
+   * supports unescaping with {{{
+   */
+  public void testUnescapingWithTripleStache() {
+    TokenizerResult result = tokenize("{{{bar}}}");
+    result.shouldMatchTokenTypes(OPEN_UNESCAPED, ID, CLOSE_UNESCAPED);
+    result.shouldBeToken(1, ID, "bar");
   }
 
   /**
@@ -59,6 +78,17 @@ public class HbTokenizerSpecTest extends HbLexerTest {
    * supports escaping escape character
    */
   public void testEscapingEscapeCharacter() {
+    TokenizerResult result = tokenize("{{foo}} \\\\{{bar}} {{baz}}");
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, CONTENT, OPEN, ID, CLOSE, WHITE_SPACE, OPEN, ID, CLOSE);
+
+    result.shouldBeToken(3, CONTENT, " \\\\");
+    result.shouldBeToken(5, ID, "bar");
+  }
+
+  /**
+   * supports escaping multiple escape characters
+   */
+  public void testEscapingMultipleEscapeCharacter() {
     TokenizerResult result = tokenize("{{foo}} \\\\{{bar}} \\\\{{baz}}");
     result.shouldMatchTokenTypes(OPEN, ID, CLOSE, CONTENT, OPEN, ID, CLOSE, CONTENT, OPEN, ID, CLOSE);
 
@@ -69,7 +99,7 @@ public class HbTokenizerSpecTest extends HbLexerTest {
   }
 
   /**
-   * supports mixed escaped delimiters and escaped escape characters
+   * supports escaped mustaches after escaped escape characters
    */
   public void testMixedEscapedDelimitersAndEscapedEscapes() {
     TokenizerResult result = tokenize("{{foo}} \\\\{{bar}} \\{{baz}}");
@@ -79,8 +109,13 @@ public class HbTokenizerSpecTest extends HbLexerTest {
     result.shouldBeToken(4, OPEN, "{{");
     result.shouldBeToken(5, ID, "bar");
     result.shouldBeToken(9, CONTENT, "{{baz}}");
+  }
 
-    result = tokenize("{{foo}} \\{{bar}} \\\\{{baz}}");
+  /**
+   * supports escaped escape characters after escaped mustaches
+   */
+  public void testEscapedEscapeCharactersAfterEscapedStaches() {
+    TokenizerResult result = tokenize("{{foo}} \\{{bar}} \\\\{{baz}}");
     result.shouldMatchTokenTypes(OPEN, ID, CLOSE, WHITE_SPACE, ESCAPE_CHAR, CONTENT, CONTENT, OPEN, ID, CLOSE);
 
     result.shouldBeToken(4, ESCAPE_CHAR, "\\");
