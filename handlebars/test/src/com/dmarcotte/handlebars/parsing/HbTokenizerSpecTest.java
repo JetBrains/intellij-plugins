@@ -463,4 +463,40 @@ public class HbTokenizerSpecTest extends HbLexerTest {
     result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, ID, WHITE_SPACE, ID, EQUALS, DATA_PREFIX, ID, WHITE_SPACE, CLOSE);
     result.shouldBeToken(7, ID, "baz");
   }
+
+  /**
+   * tokenizes subexpressions
+   */
+  public void testTokenizesSubexpressions() {
+    TokenizerResult result = tokenize("{{foo (bar)}}");
+    result.shouldMatchTokenTypes(OPEN, ID, WHITE_SPACE, OPEN_SEXPR, ID, CLOSE_SEXPR, CLOSE);
+    result.shouldBeToken(1, ID, "foo");
+    result.shouldBeToken(4, ID, "bar");
+
+    result = tokenize("{{foo (a-x b-y)}}");
+    result.shouldMatchTokenTypes(OPEN, ID, WHITE_SPACE, OPEN_SEXPR, ID, WHITE_SPACE, ID, CLOSE_SEXPR, CLOSE);
+    result.shouldBeToken(1, ID, "foo");
+    result.shouldBeToken(4, ID, "a-x");
+    result.shouldBeToken(6, ID, "b-y");
+  }
+
+  /**
+   * tokenizes nested subexpressions
+   */
+  public void testTokenizesNestedSubexpressions() {
+    TokenizerResult result = tokenize("{{foo (bar (lol rofl)) (baz)}}");
+    result.shouldMatchTokenTypes(OPEN, ID, WHITE_SPACE, OPEN_SEXPR, ID, WHITE_SPACE, OPEN_SEXPR, ID, WHITE_SPACE, ID, CLOSE_SEXPR, CLOSE_SEXPR, WHITE_SPACE, OPEN_SEXPR, ID, CLOSE_SEXPR, CLOSE);
+    result.shouldBeToken(4, ID, "bar");
+    result.shouldBeToken(7, ID, "lol");
+    result.shouldBeToken(9, ID, "rofl");
+    result.shouldBeToken(14, ID, "baz");
+  }
+
+  /**
+   * tokenizes nested subexpressions: literals
+   */
+  public void testTokenizesNestedSubexpressionLiterals() {
+    TokenizerResult result = tokenize("{{foo (bar (lol true) false) (baz 1) (blah 'b') (blorg \"c\")}}");
+    result.shouldMatchTokenTypes(OPEN, ID, WHITE_SPACE, OPEN_SEXPR, ID,  WHITE_SPACE, OPEN_SEXPR, ID, WHITE_SPACE, BOOLEAN, CLOSE_SEXPR, WHITE_SPACE, BOOLEAN, CLOSE_SEXPR, WHITE_SPACE, OPEN_SEXPR, ID, WHITE_SPACE, NUMBER, CLOSE_SEXPR, WHITE_SPACE, OPEN_SEXPR, ID, WHITE_SPACE, STRING, CLOSE_SEXPR, WHITE_SPACE, OPEN_SEXPR, ID, WHITE_SPACE, STRING, CLOSE_SEXPR, CLOSE);
+  }
 }

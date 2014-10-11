@@ -104,6 +104,9 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 }
 
 <mu> {
+  "(" { return HbTokenTypes.OPEN_SEXPR; }
+  ")" { return HbTokenTypes.CLOSE_SEXPR; }
+
   "{{"\~?">" { return HbTokenTypes.OPEN_PARTIAL; }
   "{{"\~?"#" { return HbTokenTypes.OPEN_BLOCK; }
   "{{"\~?"/" { return HbTokenTypes.OPEN_ENDBLOCK; }
@@ -123,10 +126,10 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   \"([^\"\\]|\\.)*\" { return HbTokenTypes.STRING; }
   '([^'\\]|\\.)*' { return HbTokenTypes.STRING; }
   "@" { return HbTokenTypes.DATA_PREFIX; }
-  "else"/["}"\t \n\x0B\f\r] { return HbTokenTypes.ELSE; } // create a custom token for "else" so that we can highlight it independently of the "{{" but still parse it as an inverse operator
-  "true"/["}"\t \n\x0B\f\r] { return HbTokenTypes.BOOLEAN; }
-  "false"/["}"\t \n\x0B\f\r] { return HbTokenTypes.BOOLEAN; }
-  \-?[0-9]+(\.[0-9]+)?/[}\t \n\x0B\f\r]  { return HbTokenTypes.NUMBER; }
+  "else"/[}\)\t \n\x0B\f\r] { return HbTokenTypes.ELSE; } // create a custom token for "else" so that we can highlight it independently of the "{{" but still parse it as an inverse operator
+  "true"/[}\)\t \n\x0B\f\r] { return HbTokenTypes.BOOLEAN; }
+  "false"/[}\)\t \n\x0B\f\r] { return HbTokenTypes.BOOLEAN; }
+  \-?[0-9]+(\.[0-9]+)?/[}\)\t \n\x0B\f\r]  { return HbTokenTypes.NUMBER; }
   /*
     ID is the inverse of control characters.
     Control characters ranges:
@@ -136,7 +139,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
       [\[-\^`]      [, \, ], ^, `,                          Exceptions in range: _
       [\{-~]        {, |, }, ~
     */
-  [^\t \n\x0B\f\r!\"#%-,\.\/;->@\[-\^`\{-~]+/[\~=}\t \n\x0B\f\r\/.]   { return HbTokenTypes.ID; }
+  [^\t \n\x0B\f\r!\"#%-,\.\/;->@\[-\^`\{-~]+/[\~=}\)\t \n\x0B\f\r\/.]   { return HbTokenTypes.ID; }
   // TODO handlesbars.l extracts the id from within the square brackets.  Fix it to match handlebars.l?
   "["[^\]]*"]" { return HbTokenTypes.ID; }
 }
