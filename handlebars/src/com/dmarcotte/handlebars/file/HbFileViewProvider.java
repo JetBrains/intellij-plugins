@@ -100,7 +100,7 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
 
   @Override
   protected PsiFile createFile(@NotNull Language lang) {
-    ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
+    ParserDefinition parserDefinition = getDefinition(lang);
     if (parserDefinition == null) {
       return null;
     }
@@ -116,6 +116,16 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
     else {
       return null;
     }
+  }
+
+  private ParserDefinition getDefinition(Language lang) {
+    ParserDefinition parserDefinition;
+    if (lang.isKindOf(getBaseLanguage())) {
+      parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang.is(getBaseLanguage()) ? lang : getBaseLanguage());
+    } else {
+      parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
+    }
+    return parserDefinition;
   }
 }
 
