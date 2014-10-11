@@ -221,7 +221,6 @@ Search: [Go]
                 + EC2 Network Interface Private IP Specification
                 + EC2 PortRange
                 + EC2 Security Group Rule
-                + EC2 Tag
                 + AWS Elastic Beanstalk Environment Tier
                 + AWS Elastic Beanstalk OptionSettings Property Type
                 + AWS Elastic Beanstalk SourceBundle Property Type
@@ -234,6 +233,7 @@ Search: [Go]
                 + ElasticLoadBalancing Listener
                 + ElasticLoadBalancing Policy
                 + Name Type
+                + AWS OpsWorks ChefConfiguration Type
                 + AWS OpsWorks Recipes Type
                 + AWS OpsWorks Source Type
                 + AWS OpsWorks SslConfiguration Type
@@ -296,6 +296,7 @@ Search: [Go]
                 + Sample Solutions
                 + Application Frameworks
                 + Services
+          o China (Beijing) Region
           o EU (Ireland) Region
                 + Sample Solutions
                 + Application Frameworks
@@ -348,6 +349,44 @@ The following table describes the important changes to the documentation
 since the last release of AWS CloudFormation.
 
 Change 	API Version 	Description 	Release Date
+
+Amazon CloudFront forwarded values
+
+2010-05-15
+
+For cache behaviors, you can forward headers to the origin. See CloudFront 
+ForwardedValues.
+
+September 29, 2014
+
+AWS OpsWorks update
+
+2010-05-15
+
+For Chef 11.10, you can use the ChefConfiguration property to enable 
+Berkshelf. You can also use the AWS OpsWorks built-in security groups with 
+your AWS OpsWorks stacks. For more information, see AWS::OpsWorks::Stack.
+
+September 29, 2014
+
+Elastic Load Balancing tagging support
+
+2010-05-15
+
+AWS CloudFormation tags Elastic Load Balancing load balancers with 
+stack-level tags. You can also add your own tags to a load balancer. See 
+AWS::ElasticLoadBalancing::LoadBalancer.
+
+September 29, 2014
+
+Amazon Simple Notification Service topic policy
+
+2010-05-15
+
+You can now update Amazon SNS topic policies. For more information, see 
+AWS::SNS::TopicPolicy.
+
+September 29, 2014
 
 Amazon RDS database instance update
 

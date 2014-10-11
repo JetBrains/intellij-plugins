@@ -657,7 +657,7 @@
         <ResourceProperty>
           <name>Tags</name>
           <description></description>
-          <type>A list of EC2 Tags</type>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -842,7 +842,7 @@
         <ResourceProperty>
           <name>Tags</name>
           <description></description>
-          <type>A list of EC2 Tags</type>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -893,7 +893,7 @@
         <ResourceProperty>
           <name>Tags</name>
           <description></description>
-          <type>A list of EC2 Tags</type>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -905,7 +905,7 @@
         <ResourceProperty>
           <name>Tags</name>
           <description></description>
-          <type>List of EC2 Tags</type>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -1019,7 +1019,7 @@
         <ResourceProperty>
           <name>Tags</name>
           <description></description>
-          <type>List of EC2 Tag</type>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -1112,7 +1112,7 @@
         <ResourceProperty>
           <name>Tags</name>
           <description></description>
-          <type>List of EC2 Tags</type>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -1279,7 +1279,7 @@
         <ResourceProperty>
           <name>Tags</name>
           <description></description>
-          <type>A list of EC2 Tags</type>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -1367,7 +1367,7 @@
         <ResourceProperty>
           <name>Tags</name>
           <description></description>
-          <type>List of EC2 Tags</type>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -1427,7 +1427,7 @@
         <ResourceProperty>
           <name>Tags</name>
           <description></description>
-          <type>List of EC2 Tags</type>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -1505,7 +1505,7 @@
         <ResourceProperty>
           <name>Tags</name>
           <description></description>
-          <type>List of EC2 Tags</type>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -1565,7 +1565,7 @@
         <ResourceProperty>
           <name>Tags</name>
           <description></description>
-          <type>List of EC2 Tags</type>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2030,6 +2030,12 @@
           <name>Subnets</name>
           <description></description>
           <type>A list of strings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Tags</name>
+          <description></description>
+          <type>AWS CloudFormation Resource Tags</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -2553,6 +2559,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>ChefConfiguration</name>
+          <description></description>
+          <type>AWS OpsWorks ChefConfiguration Type</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>ConfigurationManager</name>
           <description></description>
           <type>AWS OpsWorks StackConfigurationManager Type</type>
@@ -2626,6 +2638,12 @@
         </ResourceProperty>
         <ResourceProperty>
           <name>UseCustomCookbooks</name>
+          <description></description>
+          <type>Boolean</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>UseOpsworksSecurityGroups</name>
           <description></description>
           <type>Boolean</type>
           <required>false</required>
@@ -3401,13 +3419,13 @@
         <ResourceProperty>
           <name>PolicyDocument</name>
           <description></description>
-          <type>JSON</type>
+          <type>JSON object</type>
           <required>true</required>
         </ResourceProperty>
         <ResourceProperty>
           <name>Topics</name>
           <description></description>
-          <type>Array of SNS topic ARNs</type>
+          <type>A list of Amazon SNS topics ARNs</type>
           <required>true</required>
         </ResourceProperty>
       </properties>
