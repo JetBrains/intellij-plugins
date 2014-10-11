@@ -65,7 +65,7 @@
     <replace
       token="SNAPSHOT"
       value="${build.number}"
-      file="${basedir}/resources/META-INF/plugin.xml" />
+      file="${basedir}/src/main/resources/META-INF/plugin.xml" />
   </target>
 
   <target name="fetch.dependencies" depends="fetch.ant.contrib,fetch.idea,fetch.kotlin" />
