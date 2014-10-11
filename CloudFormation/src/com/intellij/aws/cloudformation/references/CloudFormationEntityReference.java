@@ -35,12 +35,12 @@ public class CloudFormationEntityReference extends CloudFormationReferenceBase {
   @Override
   public PsiElement resolve() {
     final String entityName = StringUtil.stripQuotesAroundValue(StringUtil.notNullize(myElement.getText()));
-    return CloudFormationResolve.OBJECT$.resolveEntity(myElement.getContainingFile(), entityName, myPossibleSections);
+    return CloudFormationResolve.object$.resolveEntity(myElement.getContainingFile(), entityName, myPossibleSections);
   }
 
   @NotNull
   public String[] getCompletionVariants() {
-    Set<String> entities = CloudFormationResolve.OBJECT$.getEntities(myElement.getContainingFile(), myPossibleSections);
+    Set<String> entities = CloudFormationResolve.object$.getEntities(myElement.getContainingFile(), myPossibleSections);
 
     if (myExcludeFromVariants != null) {
       entities.removeAll(myExcludeFromVariants);

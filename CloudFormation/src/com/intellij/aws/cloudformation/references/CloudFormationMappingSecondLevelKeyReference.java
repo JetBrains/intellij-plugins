@@ -19,13 +19,13 @@ public class CloudFormationMappingSecondLevelKeyReference extends CloudFormation
   @Nullable
   @Override
   public PsiElement resolve() {
-    final String entityName = CloudFormationResolve.OBJECT$.getTargetName(myElement);
-    return CloudFormationResolve.OBJECT$.resolveSecondLevelMappingKey(myElement.getContainingFile(), myMappingName, myTopLevelKey, entityName);
+    final String entityName = CloudFormationResolve.object$.getTargetName(myElement);
+    return CloudFormationResolve.object$.resolveSecondLevelMappingKey(myElement.getContainingFile(), myMappingName, myTopLevelKey, entityName);
   }
 
   @NotNull
   public String[] getCompletionVariants() {
-    final String[] keys = CloudFormationResolve.OBJECT$.getSecondLevelMappingKeys(myElement.getContainingFile(), myMappingName, myTopLevelKey);
+    final String[] keys = CloudFormationResolve.object$.getSecondLevelMappingKeys(myElement.getContainingFile(), myMappingName, myTopLevelKey);
     return keys == null ? new String[0] : keys;
   }
 }

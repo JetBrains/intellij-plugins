@@ -138,7 +138,7 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
   }
 
   private void completeAttribute(PsiFile file, CompletionResultSet rs, boolean quoteResult, String resourceName) {
-    final JSProperty resource = CloudFormationResolve.OBJECT$.resolveEntity(file, resourceName, CloudFormationSections.Resources);
+    final JSProperty resource = CloudFormationResolve.object$.resolveEntity(file, resourceName, CloudFormationSections.Resources);
     if (resource == null) {
       return;
     }
@@ -196,7 +196,7 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
       return;
     }
 
-    final String type = CloudFormationResolve.OBJECT$.getTargetName(typeValue);
+    final String type = CloudFormationResolve.object$.getTargetName(typeValue);
 
     final CloudFormationResourceType resourceTypeMetadata = CloudFormationMetadataProvider.METADATA.findResourceType(type);
     if (resourceTypeMetadata == null) {
