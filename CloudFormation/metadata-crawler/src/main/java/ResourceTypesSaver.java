@@ -34,7 +34,7 @@ public class ResourceTypesSaver {
 
     fetchResourceAttributes(metadata);
 
-    try (OutputStream outputStream = new FileOutputStream(new File("generated/cloudformation-metadata.xml"))) {
+    try (OutputStream outputStream = new FileOutputStream(new File("src/main/resources/cloudformation-metadata.xml"))) {
       MetadataSerializer.toXML(metadata, outputStream);
     }
   }
