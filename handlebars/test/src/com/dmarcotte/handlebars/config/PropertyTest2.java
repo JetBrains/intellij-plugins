@@ -30,6 +30,9 @@ public class PropertyTest2 {
 
     PROPERTY_TEST_DEFINITIONS.add(new PropertyTestDefinition(Property.COMMENTER_LANGUAGE_ID,
                                                              "HbCommenterLanguageId"));
+
+    PROPERTY_TEST_DEFINITIONS.add(new PropertyTestDefinition(Property.SHOULD_OPEN_HTML,
+                                                             "HbShouldOpenHtmlAsHb"));
   }
 
   @Parameterized.Parameters

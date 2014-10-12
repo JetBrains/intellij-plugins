@@ -19,7 +19,7 @@ public class PropertyTest1 {
   @Test
   public void testPropertiesChange() {
     // expectedNumberOfPropertyFields represents the number of enum entries plus that static members, plus one for the $VALUES that every enum gets
-    int expectedNumberOfPropertyFields = 8;
+    int expectedNumberOfPropertyFields = 9;
 
     Assert.assertEquals("Declared properties in enum \"" +
                         Property.class.getSimpleName() +
@@ -49,7 +49,7 @@ public class PropertyTest1 {
 
     for (Property property : Property.values()) {
       String propertyNameString = property.getStringName();
-      junit.framework.Assert.assertFalse("Property string name \"" + propertyNameString + "\" is not unique in Property",
+      Assert.assertFalse("Property string name \"" + propertyNameString + "\" is not unique in Property",
                                          propertyNameStrings.contains(propertyNameString));
       propertyNameStrings.add(propertyNameString);
     }
