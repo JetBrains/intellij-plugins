@@ -77,4 +77,7 @@ public class HbParserFreeFormTest extends HbParserTest {
     doTest(true);
   }
 
+  public void testSubexpressions() {
+    doTest(true);
+  }
 }
