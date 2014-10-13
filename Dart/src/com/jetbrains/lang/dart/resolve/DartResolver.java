@@ -83,6 +83,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     });
   }
 
+  @NotNull
   private static List<PsiElement> toResult(@Nullable PsiElement element) {
     if (element == null) {
       return Collections.emptyList();
@@ -133,6 +134,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     return filteredResult;
   }
 
+  @NotNull
   public static List<? extends PsiElement> resolveSimpleReference(PsiElement scopeElement, String name) {
     final List<DartComponentName> result = new ArrayList<DartComponentName>();
     // local
