@@ -14,6 +14,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import icons.PhoneGapIcons;
@@ -85,6 +86,10 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
         public void run() {
           PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
           propertiesComponent.setValue(PhoneGapSettings.PHONEGAP_WORK_DIRECTORY, project.getBasePath());
+          PhoneGapSettings.State state = PhoneGapSettings.getInstance().getState();
+          if (!StringUtil.equals(settings.getExecutable(), state.getExecutablePath())) {
+            PhoneGapSettings.getInstance().loadState(new PhoneGapSettings.State(settings.executable, state.repositoriesList));
+          }
           baseDir.refresh(false, true);
         }
       });

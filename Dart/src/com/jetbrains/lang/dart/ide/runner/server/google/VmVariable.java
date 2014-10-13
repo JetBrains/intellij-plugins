@@ -76,6 +76,7 @@ public class VmVariable extends VmRef implements Comparable<VmVariable> {
     }
   }
 
+  /*
   static VmVariable createArrayEntry(VmConnection connection, VmValue listValue, int index) {
     VmVariable var = new VmVariable(listValue.getIsolate());
 
@@ -85,6 +86,7 @@ public class VmVariable extends VmRef implements Comparable<VmVariable> {
 
     return var;
   }
+  */
 
   static List<VmVariable> createFrom(VmIsolate isolate, JSONArray arr, boolean isLocal)
     throws JSONException {
@@ -154,10 +156,10 @@ public class VmVariable extends VmRef implements Comparable<VmVariable> {
   }
 
   public VmValue getValue() {
-    if (lazyValue != null) {
-      value = lazyValue.evaluate(getIsolate());
-      lazyValue = null;
-    }
+    //if (lazyValue != null) {
+    //  value = lazyValue.evaluate(getIsolate());
+    //  lazyValue = null;
+    //}
 
     return value;
   }

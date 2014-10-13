@@ -75,8 +75,11 @@ public class DartStackFrame extends XStackFrame {
     }
 
     if (locals != null) {
-      for (final VmVariable local : locals) {
-        childrenList.add(new DartValue(myDebugProcess, local));
+      for (final VmVariable localVar : locals) {
+        final VmValue vmValue = localVar.getValue();
+        if (vmValue != null) {
+          childrenList.add(new DartValue(myDebugProcess, localVar.getName(), localVar.getValue(), false));
+        }
       }
     }
 
