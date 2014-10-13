@@ -187,7 +187,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   @Override
   public void resume() {
     try {
-      for (VmIsolate isolate : mySuspendedIsolates) {
+      for (VmIsolate isolate : new THashSet<VmIsolate>(mySuspendedIsolates)) {
         myVmConnection.resume(isolate);
       }
     }
