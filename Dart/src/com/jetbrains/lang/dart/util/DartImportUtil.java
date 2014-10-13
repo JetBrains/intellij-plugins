@@ -32,7 +32,7 @@ public class DartImportUtil {
       if (importStatements != null) {
         for (DartImportStatement importStatement : importStatements) {
           final PsiElement importTarget = importStatement.getLibraryExpression().resolve();
-          if (importTarget != null && DartResolver.resolveSimpleReference(importTarget, componentName) != null) {
+          if (importTarget != null && !DartResolver.resolveSimpleReference(importTarget, componentName).isEmpty()) {
             addShowOrRemoveHide(importStatement, componentName);
             continue libraryRootLoop;
           }
