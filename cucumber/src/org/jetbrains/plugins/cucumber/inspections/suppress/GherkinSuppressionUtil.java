@@ -45,7 +45,7 @@ public class GherkinSuppressionUtil {
   }
 
   @Nullable
-  private static PsiComment getSuppressedIn(final PsiElement place, final String toolId) {
+  private static PsiComment getSuppressedIn(@NotNull PsiElement place, @NotNull String toolId) {
     // find suppression holder with suppression comment about given inspection tool
     PsiElement suppressionHolder = PsiTreeUtil.getNonStrictParentOfType(place, GherkinSuppressionHolder.class);
     while (suppressionHolder != null) {
@@ -59,16 +59,14 @@ public class GherkinSuppressionUtil {
   }
 
   @Nullable
-  private static PsiComment getSuppressionComment(final String toolId,
-                                                  @Nullable final PsiElement element) {
-    if (element != null) {
-      final PsiElement comment = PsiTreeUtil.skipSiblingsBackward(element, PsiWhiteSpace.class);
-      if (comment instanceof PsiComment) {
-        String text = comment.getText();
-        Matcher matcher = SUPPRESS_IN_LINE_COMMENT_PATTERN.matcher(text);
-        if (matcher.matches() && SuppressionUtil.isInspectionToolIdMentioned(matcher.group(1), toolId)) {
-          return (PsiComment)comment;
-        }
+  private static PsiComment getSuppressionComment(@NotNull String toolId,
+                                                  @NotNull PsiElement element) {
+    final PsiElement comment = PsiTreeUtil.skipSiblingsBackward(element, PsiWhiteSpace.class);
+    if (comment instanceof PsiComment) {
+      String text = comment.getText();
+      Matcher matcher = SUPPRESS_IN_LINE_COMMENT_PATTERN.matcher(text);
+      if (matcher.matches() && SuppressionUtil.isInspectionToolIdMentioned(matcher.group(1), toolId)) {
+        return (PsiComment)comment;
       }
     }
     return null;

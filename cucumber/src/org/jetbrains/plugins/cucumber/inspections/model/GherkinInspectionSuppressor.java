@@ -9,7 +9,7 @@ import org.jetbrains.plugins.cucumber.inspections.suppress.GherkinSuppressionUti
 
 public class GherkinInspectionSuppressor implements InspectionSuppressor {
   @Override
-  public boolean isSuppressedFor(@NotNull PsiElement element, String toolId) {
+  public boolean isSuppressedFor(@NotNull PsiElement element, @NotNull String toolId) {
     return GherkinSuppressionUtil.isSuppressedFor(element, toolId);
   }
 
