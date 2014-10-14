@@ -27,7 +27,13 @@ public class DartFileAndPackageUriResolver extends UriResolver {
     if (FILE_SCHEME.equals(scheme) ||
         PACKAGE_SCHEME.equals(scheme) ||
         (ApplicationManager.getApplication().isUnitTestMode() && TEMP_SCHEME.equals(scheme))) {
-      final VirtualFile file = myDartUrlResolver.findFileByDartUrl(uri.toString());
+
+      String path = uri.getPath();
+      if (path == null) {
+        path = uri.getSchemeSpecificPart();
+      }
+
+      final VirtualFile file = myDartUrlResolver.findFileByDartUrl(uri.getScheme() + ":" + path);
       return file == null ? null : DartFileBasedSource.getSource(myProject, file);
     }
 

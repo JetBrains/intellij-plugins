@@ -126,8 +126,8 @@ class DartUrlResolverImpl extends DartUrlResolver {
       return LocalFileSystem.getInstance().findFileByPath(SystemInfo.isWindows ? path : ("/" + path));
     }
 
-    if (ApplicationManager.getApplication().isUnitTestMode() && url.startsWith(TEMP_PREFIX_WITH_SLASHES)) {
-      return TempFileSystem.getInstance().findFileByPath(url.substring((TEMP_PREFIX_WITH_SLASHES).length()));
+    if (ApplicationManager.getApplication().isUnitTestMode() && url.startsWith(TEMP_PREFIX)) {
+      return TempFileSystem.getInstance().findFileByPath(url.substring((TEMP_PREFIX).length()));
     }
 
     return null;
