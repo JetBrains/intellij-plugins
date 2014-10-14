@@ -1,4 +1,4 @@
-out
-.idea/workspace.xml
-.idea/dictionaries
-/CloudFormation.zip
+build
+.idea
+.gradle
+*.iml
