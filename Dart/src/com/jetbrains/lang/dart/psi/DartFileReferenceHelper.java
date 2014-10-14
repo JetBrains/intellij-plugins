@@ -57,7 +57,7 @@ public class DartFileReferenceHelper extends FileReferenceHelper {
     return hasDart(project, file);
   }
 
-  private static boolean hasDart(final Project project, final VirtualFile file) {
+  public static boolean hasDart(final Project project, final VirtualFile file) {
     DartUrlResolver dartResolver = DartUrlResolver.getInstance(project, file);
     return dartResolver.getPubspecYamlFile() != null || dartResolver.getPackageRoots().length > 0;
   }

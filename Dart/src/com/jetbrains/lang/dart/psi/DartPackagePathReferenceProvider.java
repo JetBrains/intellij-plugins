@@ -1,26 +1,25 @@
 package com.jetbrains.lang.dart.psi;
 
-import com.intellij.openapi.paths.PathReference;
-import com.intellij.openapi.paths.PathReferenceProvider;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.filters.ElementFilter;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ProcessingContext;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGES_FOLDER_NAME;
 
@@ -28,39 +27,61 @@ import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGES_FOLDER_NAME;
  * Resolves path in <code>&lt;script src="packages/browser/dart.js"/&gt;</code> to base Dart <code>packages</code> folder because relative symlinked <code>packages</code> folder is excluded.<br/>
  * Another example: <code>&lt;link rel="import" href="packages/click_counter/click_counter.html"&gt;</code> is resolved to ./lib/click_counter.html if 'click_counter' is a Dart project name in pubspec.yaml
  */
-public class DartPackagePathReferenceProvider implements PathReferenceProvider {
+public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
+  public static ElementFilter getFilter() {
+    return new ElementFilter() {
+      @Override
+      public boolean isAcceptable(Object _element, PsiElement context) {
+        PsiElement element = (PsiElement)_element;
+        PsiFile file = element.getContainingFile().getOriginalFile();
 
-  @Override
-  @Nullable
-  public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
-    return null;
-  }
+        if (HtmlUtil.hasHtml(file) && DartFileReferenceHelper.hasDart(file.getProject(), file.getVirtualFile())) {
+          final PsiElement parent = element.getParent();
 
-  @Override
-  public boolean createReferences(@NotNull final PsiElement psiElement, final @NotNull List<PsiReference> references, final boolean soft) {
-    if (!(psiElement instanceof XmlAttributeValue) || !HtmlUtil.isHtmlFile(psiElement.getContainingFile())) return false;
+          if (parent instanceof XmlAttribute) {
+            XmlAttribute xmlAttribute = (XmlAttribute)parent;
+            @NonNls final String attrName = xmlAttribute.getName();
+            XmlTag tag = xmlAttribute.getParent();
+            @NonNls final String tagName = tag.getName();
 
-    final PsiElement parent = psiElement.getParent();
-    if (!(parent instanceof XmlAttribute)) return false;
-
-    final XmlTag tag = ((XmlAttribute)parent).getParent();
-    if (tag == null) return false;
-
-    final VirtualFile file = DartResolveUtil.getRealVirtualFile(psiElement.getContainingFile());
-    if (file == null) return false;
-
-    // What are other cases of file references in HTML? May be we should always provide Dart references, not only in <script/> and <link/>?
-    if (HtmlUtil.isScriptTag(tag) && "src".equalsIgnoreCase(((XmlAttribute)parent).getName()) ||
-        tag.getLocalName().equalsIgnoreCase("link") && "href".equalsIgnoreCase(((XmlAttribute)parent).getName())) {
-      final DartUrlResolver dartResolver = DartUrlResolver.getInstance(psiElement.getProject(), file);
-      if (dartResolver.getPubspecYamlFile() == null && dartResolver.getPackageRoots().length == 0) {
-        return false; // no Dart at all
+            return isFileAttribute(attrName, tagName);
+          }
+        }
+        return false;
       }
 
-      return Collections.addAll(references, getDartPackageReferences(psiElement, dartResolver));
+      @Override
+      public boolean isClassAcceptable(Class hintClass) {
+        return true;
+      }
+    };
+  }
+
+  public static boolean isFileAttribute(String attrName, String tagName) {
+    return ("href".equals(attrName) || "src".equals(attrName)) &&
+           ("link".equals(tagName) || "script".equals(tagName) || "img".equals(tagName));
+  }
+
+  @NotNull
+  @Override
+  public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext context) {
+    if (!(psiElement instanceof XmlAttributeValue) || !HtmlUtil.isHtmlFile(psiElement.getContainingFile())) return PsiReference.EMPTY_ARRAY;
+
+    final PsiElement parent = psiElement.getParent();
+    if (!(parent instanceof XmlAttribute)) return PsiReference.EMPTY_ARRAY;
+
+    final XmlTag tag = ((XmlAttribute)parent).getParent();
+    if (tag == null) return PsiReference.EMPTY_ARRAY;
+
+    final VirtualFile file = DartResolveUtil.getRealVirtualFile(psiElement.getContainingFile());
+    if (file == null) return PsiReference.EMPTY_ARRAY;
+
+    // What are other cases of file references in HTML? May be we should always provide Dart references, not only in <script/> and <link/>?
+    if (isFileAttribute(((XmlAttribute)parent).getName(), tag.getName())) {
+      return getDartPackageReferences(psiElement, DartUrlResolver.getInstance(psiElement.getProject(), file));
     }
 
-    return false;
+    return PsiReference.EMPTY_ARRAY;
   }
 
   private static FileReference[] getDartPackageReferences(@NotNull final PsiElement psiElement,
@@ -91,7 +112,7 @@ public class DartPackagePathReferenceProvider implements PathReferenceProvider {
 
     @NotNull
     protected ResolveResult[] innerResolve(final boolean caseSensitive, @NotNull final PsiFile containingFile) {
-      if (getIndex() == 0 && PACKAGES_FOLDER_NAME.equals(getText())) {
+      if (PACKAGES_FOLDER_NAME.equals(getText())) {
         final VirtualFile pubspecYamlFile = myDartResolver.getPubspecYamlFile();
         final VirtualFile packagesDir = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild(PACKAGES_FOLDER_NAME);
         final PsiDirectory psiDirectory = packagesDir == null ? null : containingFile.getManager().findDirectory(packagesDir);
@@ -100,7 +121,8 @@ public class DartPackagePathReferenceProvider implements PathReferenceProvider {
         }
       }
 
-      if (getIndex() == 1 && PACKAGES_FOLDER_NAME.equals(getFileReferenceSet().getReference(0).getText())) {
+      final int index = getIndex();
+      if (index > 0 && PACKAGES_FOLDER_NAME.equals(getFileReferenceSet().getReference(index - 1).getText())) {
         final VirtualFile packageDir = myDartResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(getText());
         final PsiDirectory psiDirectory = packageDir == null ? null : containingFile.getManager().findDirectory(packageDir);
         if (psiDirectory != null) {

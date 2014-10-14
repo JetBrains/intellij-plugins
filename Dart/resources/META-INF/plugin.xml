@@ -57,7 +57,7 @@
                                         implementationClass="com.jetbrains.lang.dart.ide.DartImplementationTextSelectioner"/>
     <lang.formatter language="Dart" implementationClass="com.jetbrains.lang.dart.ide.formatter.DartFormattingModelBuilder"/>
     <lang.psiStructureViewFactory language="Dart" implementationClass="com.jetbrains.lang.dart.ide.structure.DartStructureViewFactory"/>
-    <pathReferenceProvider implementation="com.jetbrains.lang.dart.psi.DartPackagePathReferenceProvider"/>
+    <psi.referenceContributor implementation="com.jetbrains.lang.dart.psi.DartPackagePathReferenceContributor" order="last"/>
     <psi.fileReferenceHelper implementation="com.jetbrains.lang.dart.psi.DartFileReferenceHelper" order="first"/>
     <include.provider implementation="com.jetbrains.lang.dart.psi.DartFileReferenceHelper$DartPackageAwareFileIncludeProvider" order="first" />
     <lang.elementManipulator forClass="com.jetbrains.lang.dart.psi.DartPathOrLibraryReference"
