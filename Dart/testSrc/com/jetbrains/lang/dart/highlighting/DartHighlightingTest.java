@@ -65,4 +65,13 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting(true, false, true);
   }
+
+  public void testPathsWithSpaces() {
+    myFixture.addFileToProject("pubspec.yaml", "");
+    myFixture.addFileToProject("packages/pack name/pack file.dart", "library pack;");
+    myFixture.addFileToProject("other file.dart", "library other;");
+    myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.checkHighlighting(true, false, true);
+  }
+
 }

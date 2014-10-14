@@ -20,7 +20,7 @@ public abstract class DartUrlResolver {
   public static final String FILE_SCHEME = "file";
   public static final String FILE_PREFIX = "file:";
   public static final String TEMP_SCHEME = "temp";                 // TempFileSystem in tests only
-  public static final String TEMP_PREFIX_WITH_SLASHES = "temp://"; // TempFileSystem in tests only
+  public static final String TEMP_PREFIX = "temp:";                // TempFileSystem in tests only
   public static final String PACKAGES_FOLDER_NAME = "packages";
 
   /**

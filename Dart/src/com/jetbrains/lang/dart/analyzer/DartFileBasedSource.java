@@ -5,13 +5,13 @@ import com.google.dart.engine.internal.context.TimestampedData;
 import com.google.dart.engine.source.Source;
 import com.google.dart.engine.source.UriKind;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
@@ -112,20 +112,22 @@ public class DartFileBasedSource implements Source {
 
   @Override
   public URI resolveRelativeUri(final URI relativeUri) throws AnalysisException {
-    final VirtualFile file = relativeUri.getScheme() == null
-                             ? VfsUtilCore.findRelativeFile(relativeUri.toString(), myFile.getParent())
-                             : LocalFileSystem.getInstance().findFileByPath(relativeUri.getPath());
-
+    final VirtualFile file = VfsUtilCore.findRelativeFile(relativeUri.getPath(), myFile.getParent());
     return file == null ? null : getSource(myProject, file).getUri();
   }
 
   @Override
   public URI getUri() {
+    String path = myFile.getPath();
+    if (!path.startsWith("/")) {
+      path = "/" + path; // like in java.io.File.toURI()
+    }
+
     try {
-      return new URI(myFile.getUrl());
+      return new URI(myFile.getFileSystem().getProtocol(), null, path, null);
     }
     catch (URISyntaxException e) {
-      //Won't happen from a file URL
+      Logger.getInstance(DartFileBasedSource.class).error(myFile.getUrl(), e);
     }
     return null;
   }
