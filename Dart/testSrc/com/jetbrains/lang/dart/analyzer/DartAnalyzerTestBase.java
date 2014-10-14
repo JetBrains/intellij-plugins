@@ -47,21 +47,17 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
     assertNotNull("Can't find fixes", quickFixes);
     assertFalse(quickFixes.isEmpty());
 
-    final Annotation.QuickFixInfo quickFixInfo = ContainerUtil.find(quickFixes, new Condition<Annotation.QuickFixInfo>() {
+    final List<Annotation.QuickFixInfo> quickFixInfos = ContainerUtil.findAll(quickFixes, new Condition<Annotation.QuickFixInfo>() {
       @Override
       public boolean value(Annotation.QuickFixInfo info) {
         return fixSimpleClassName == null || info.quickFix.getClass().getSimpleName().equals(fixSimpleClassName);
       }
     });
-    assertNotNull("Can't find fixes", quickFixInfo);
+    assertEquals("One quick fix expected", 1, quickFixInfos.size());
+    final Annotation.QuickFixInfo quickFixInfo = quickFixInfos.get(0);
     assertTrue("Fix not available", quickFixInfo.quickFix.isAvailable(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile()));
 
-    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-      @Override
-      public void run() {
-        quickFixInfo.quickFix.invoke(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile());
-      }
-    });
+    myFixture.launchAction(quickFixInfo.quickFix);
   }
 
   private String getExtension() {

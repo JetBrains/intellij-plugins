@@ -113,6 +113,10 @@ public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
     doTest("The name 'Foo' is not a type and cannot be used in an 'as' expression", "foo.dart");
   }
 
+  public void testImportClassFromSdk$DartImportFix() throws Throwable {
+    doTest("Undefined class 'JsObject'");
+  }
+
   public void testNoSuchType2() throws Throwable {
     doTest("Undefined class 'Foo'");
   }

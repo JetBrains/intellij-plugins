@@ -1,4 +1,5 @@
-import 'printer';
+import 'subfolder/cannotResolveMethod4PrinterLibrary.dart';
+
 main() {
   superPrint();
 }

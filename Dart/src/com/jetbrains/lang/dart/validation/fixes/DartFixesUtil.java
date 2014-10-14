@@ -12,8 +12,9 @@ import com.jetbrains.lang.dart.psi.DartCallExpression;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartReference;
+import com.jetbrains.lang.dart.util.DartImportUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import org.jetbrains.annotations.Nls;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -79,18 +80,29 @@ public class DartFixesUtil {
     return result;
   }
 
-  public static void suggestImports(final List<BaseCreateFix> result, @NotNull PsiElement context, @Nls final String name) {
+  public static void suggestImports(@NotNull final List<BaseCreateFix> quickFixes,
+                                    @NotNull final PsiElement context,
+                                    @NotNull final String componentName) {
+    final THashSet<String> processedUrlsToImport = new THashSet<String>();
+
     DartComponentIndex.processComponentsByName(context, new Processor<DartComponentInfo>() {
       @Override
       public boolean process(DartComponentInfo info) {
         final DartComponentType componentType = info.getType();
         if (componentType == DartComponentType.CLASS ||
             componentType == DartComponentType.FUNCTION ||
+            componentType == DartComponentType.TYPEDEF ||
             componentType == DartComponentType.VARIABLE) {
-          result.add(new DartImportFix(name, info));
+          final String libraryName = info.getLibraryId();
+          if (libraryName != null) {
+            final String urlToImport = DartImportUtil.getUrlToImport(context, libraryName);
+            if (urlToImport != null && processedUrlsToImport.add(urlToImport)) {
+              quickFixes.add(new DartImportFix(urlToImport, componentName));
+            }
+          }
         }
         return true;
       }
-    }, name);
+    }, componentName);
   }
 }
