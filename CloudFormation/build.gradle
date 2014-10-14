@@ -1,0 +1,118 @@
+ext.kotlinVersion = "0.8.1527"
+ext.ideaVersion = "13"
+ext.ideaPath = file("$buildDir/download/idea")
+ext.ideaArchiveDirName = "idea-IC-133.SNAPSHOT"
+ext.ideaArtifactName = "ideaIC-133.SNAPSHOT.tar"
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:0.8.1527"
+        classpath 'de.undercouch:gradle-download-task:1.0'
+    }
+}
+
+allprojects {
+    apply plugin: 'kotlin'
+
+    repositories {
+        mavenCentral()
+    }
+
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+
+    dependencies {
+        compile 'org.jetbrains:annotations:13.0'
+    }
+}
+
+project(':metadata-model') {
+    dependencies {
+        compile 'com.thoughtworks.xstream:xstream:1.4.7'
+    }
+}
+
+project(':metadata-crawler') {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+
+    dependencies {
+        compile project(':metadata-model')
+
+        compile 'commons-io:commons-io:2.4'
+        compile 'org.apache.commons:commons-lang3:3.3.2'
+        compile 'net.htmlparser.jericho:jericho-html:3.3'
+        compile 'org.jsoup:jsoup:1.8.1'
+    }
+}
+
+repositories {
+    ivy {
+        url = "https://teamcity.jetbrains.com/guestAuth/repository/download"
+        layout 'pattern', {
+            artifact '[module]/[revision]/[artifact](.[ext])'
+            ivy '[module]/[revision]/teamcity-ivy.xml'
+        }
+    }
+}
+
+configurations { ivydeps }
+
+dependencies {
+    compile project(':metadata-model')
+
+    compile fileTree(dir: new File(ideaPath, "$ideaArchiveDirName/lib"), include: '*.jar')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    ivydeps('org:bt410:105342.tcbuildid') {
+        artifact {
+            name = ideaArtifactName
+            type = 'gz'
+        }
+    }
+}
+
+task extractIdea(type: Copy) {
+    from tarTree(configurations.ivydeps.files.find { it.name.startsWith(ideaArtifactName) })
+    into ideaPath
+}
+
+task zip(type: Zip) {
+    baseName 'CloudFormation'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    into('CloudFormation/lib') {
+        from configurations.compile.files.findAll {
+            // Filter out IntelliJ IDEA files
+            File parent = it.getParentFile()
+            while (parent != null) {
+                if (parent.equals(ideaPath))
+                    return false;
+                parent = parent.getParentFile();
+            }
+            return true;
+        }
+        from configurations.runtime.artifacts.files
+    }
+}
+
+artifacts {
+    archives zip
+}
+
+//task ss(dependsOn: [configurations.compile, configurations.runtime, configurations.archives]) << {
+//    // configurations.runtime.allArtifacts.files.each { File file -> println "xxx " + file }
+//    configurations.compile.files.each { xxx -> println "compile " + xxx }
+//    println new File(ideaPath, "$ideaArchiveDirName/lib")
+//
+//    println "\nconfigurations.compile.allArtifacts.files = ${configurations.compile.allArtifacts.files}"
+//    println "\nconfigurations.compile.artifacts.files = ${configurations.compile.artifacts.files.asPath}"
+//
+//    println "\nconfigurations.runtime.allArtifacts.files = ${configurations.runtime.allArtifacts.files}"
+//    println "\nconfigurations.runtime.artifacts.files = ${configurations.runtime.artifacts.files.asPath}"
+//
+//    println "\nconfigurations.archives.allArtifacts.files = ${configurations.archives.allArtifacts.files}"
+//    println "\nconfigurations.archives.artifacts.files = ${configurations.archives.artifacts.files.asPath}"
+//}
