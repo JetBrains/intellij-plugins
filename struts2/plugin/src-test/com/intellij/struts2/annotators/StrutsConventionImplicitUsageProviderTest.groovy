@@ -15,8 +15,7 @@
 package com.intellij.struts2.annotators
 
 import com.intellij.codeInspection.InspectionProfileEntry
-import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
-import com.intellij.codeInspection.unusedSymbol.UnusedSymbolLocalInspection
+import com.intellij.codeInspection.deadCode.UnusedDeclarationInspectionBase
 import com.intellij.struts2.BasicLightHighlightingTestCase
 import com.intellij.struts2.Struts2ProjectDescriptorBuilder
 import com.intellij.struts2.StrutsConstants
@@ -48,7 +47,7 @@ class StrutsConventionImplicitUsageProviderTest extends BasicLightHighlightingTe
 
   @Override
   protected InspectionProfileEntry[] getHighlightingInspections() {
-    return [new UnusedDeclarationInspection(), new UnusedSymbolLocalInspection()]
+    return [new UnusedDeclarationInspectionBase(true)]
   }
 
   void testUnusedPublicClass() {

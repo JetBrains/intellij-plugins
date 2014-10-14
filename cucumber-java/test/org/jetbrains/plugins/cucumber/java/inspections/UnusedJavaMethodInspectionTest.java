@@ -1,7 +1,6 @@
 package org.jetbrains.plugins.cucumber.java.inspections;
 
-import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection;
-import com.intellij.codeInspection.unusedSymbol.UnusedSymbolLocalInspection;
+import com.intellij.codeInspection.deadCode.UnusedDeclarationInspectionBase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
 /**
@@ -10,7 +9,7 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
  */
 public class UnusedJavaMethodInspectionTest extends CucumberJavaBaseInspectionTest {
   protected void doTest(final String file) {
-    myFixture.enableInspections(new UnusedDeclarationInspection(), new UnusedSymbolLocalInspection());
+    myFixture.enableInspections(new UnusedDeclarationInspectionBase(true));
     myFixture.configureByFile(file);
     myFixture.testHighlighting(true, false, true);
   }
