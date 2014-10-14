@@ -93,6 +93,19 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
       public FileReference createFileReference(final TextRange range, final int index, final String text) {
         return new DartPackageAwareFileReference(this, range, index, text, dartResolver);
       }
+
+      @NotNull
+      @Override
+      public Collection<PsiFileSystemItem> computeDefaultContexts() {
+        final Collection<PsiFileSystemItem> items = super.computeDefaultContexts();
+        final VirtualFile pubspec = dartResolver.getPubspecYamlFile();
+        final VirtualFile projectRoot = pubspec != null ? pubspec.getParent() : null;
+        final VirtualFile packages = projectRoot != null ? projectRoot.findChild(PACKAGES_FOLDER_NAME) : null;
+        if (packages != null) {
+          items.remove(psiElement.getManager().findDirectory(packages));
+        }
+        return items;
+      }
     };
 
     return referenceSet.getAllReferences();
