@@ -177,16 +177,12 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
       createStepDefinitionFile(step);
     }
     else {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        public void run() {
-          new WriteCommandAction.Simple(step.getProject()) {
-            @Override
-            protected void run() throws Throwable {
-              createStepDefinition(step, psiFile);
-            }
-          }.execute();
+      new WriteCommandAction.Simple(step.getProject()) {
+        @Override
+        protected void run() throws Throwable {
+          createStepDefinition(step, psiFile);
         }
-      });
+      }.execute();
     }
   }
 
