@@ -1,4 +1,5 @@
-import 'foo';
+import 'foo.dart';
+
 process(x) {}
 
 main() {

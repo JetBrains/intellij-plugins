@@ -6,6 +6,7 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.Condition;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
@@ -22,9 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by fedorkorotkov.
- */
 public class DartGlobalVariantsCompletionHelper {
   private DartGlobalVariantsCompletionHelper() {
   }
@@ -74,14 +72,19 @@ public class DartGlobalVariantsCompletionHelper {
     @Override
     public void handleInsert(InsertionContext context, LookupElement item) {
       DartComponentInfo info = (DartComponentInfo)item.getObject();
-      final String libraryId = info.getLibraryId();
-      if (libraryId == null) {
+      final String libraryName = info.getLibraryId();
+      if (libraryName == null) {
         return;
       }
-      final PsiElement at = context.getFile().findElementAt(context.getStartOffset());
-      final DartReference dartReference = PsiTreeUtil.getParentOfType(at, DartReference.class);
+
+      final PsiElement contextElement = context.getFile().findElementAt(context.getStartOffset());
+      final DartReference dartReference = PsiTreeUtil.getParentOfType(contextElement, DartReference.class);
       if (dartReference != null && dartReference.resolve() == null) {
-        DartImportUtil.insertImport(at.getContainingFile(), item.getLookupString(), libraryId);
+        final String urlToImport = DartImportUtil.getUrlToImport(contextElement, libraryName);
+        if (urlToImport != null) {
+          PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument());
+          DartImportUtil.insertImport(context.getFile(), item.getLookupString(), urlToImport);
+        }
       }
     }
   };
