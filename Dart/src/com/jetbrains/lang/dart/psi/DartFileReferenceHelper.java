@@ -38,7 +38,7 @@ public class DartFileReferenceHelper extends FileReferenceHelper {
     final Set<PsiFileSystemItem> result = new LinkedHashSet<PsiFileSystemItem>(ContainerUtil.mapNotNull(resolver.getPackageRoots(), new NullableFunction<VirtualFile, PsiFileSystemItem>() {
         @Override
         public PsiFileSystemItem fun(VirtualFile file) {
-          return psiManager.findDirectory(file);
+          return file.isValid() ? psiManager.findDirectory(file) : null;
         }
       }));
 
