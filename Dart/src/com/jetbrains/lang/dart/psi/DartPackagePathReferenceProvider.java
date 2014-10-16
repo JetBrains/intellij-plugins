@@ -9,46 +9,36 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-
-import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGES_FOLDER_NAME;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Resolves path in <code>&lt;script src="packages/browser/dart.js"/&gt;</code> to base Dart <code>packages</code> folder because relative symlinked <code>packages</code> folder is excluded.<br/>
  * Another example: <code>&lt;link rel="import" href="packages/click_counter/click_counter.html"&gt;</code> is resolved to ./lib/click_counter.html if 'click_counter' is a Dart project name in pubspec.yaml
  */
 public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
+
   public static ElementFilter getFilter() {
     return new ElementFilter() {
       @Override
       public boolean isAcceptable(Object _element, PsiElement context) {
-        PsiElement element = (PsiElement)_element;
-        PsiFile file = element.getContainingFile().getOriginalFile();
+        if (!(_element instanceof PsiElement)) return false;
+        final PsiElement element = (PsiElement)_element;
+        final PsiElement parentElement = element.getParent();
+        final PsiFile file = element.getContainingFile().getOriginalFile();
+        final VirtualFile vFile = file.getVirtualFile();
 
-        if (HtmlUtil.hasHtml(file) && PubspecYamlUtil.findPubspecYamlFile(file.getProject(), file.getVirtualFile()) != null) {
-          final PsiElement parent = element.getParent();
-
-          if (parent instanceof XmlAttribute) {
-            XmlAttribute xmlAttribute = (XmlAttribute)parent;
-            @NonNls final String attrName = xmlAttribute.getName();
-            XmlTag tag = xmlAttribute.getParent();
-            @NonNls final String tagName = tag.getName();
-
-            return isFileAttribute(attrName, tagName);
-          }
-        }
-        return false;
+        return vFile != null &&
+               HtmlUtil.hasHtml(file) &&
+               parentElement instanceof XmlAttribute &&
+               canContainDartPackageReference(((XmlAttribute)parentElement).getParent().getLocalName(),
+                                              ((XmlAttribute)parentElement).getName()) &&
+               PubspecYamlUtil.findPubspecYamlFile(element.getProject(), vFile) != null;
       }
 
       @Override
@@ -58,9 +48,10 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
     };
   }
 
-  public static boolean isFileAttribute(String attrName, String tagName) {
-    return ("href".equals(attrName) || "src".equals(attrName)) &&
-           ("link".equals(tagName) || "script".equals(tagName) || "img".equals(tagName));
+  private static boolean canContainDartPackageReference(@Nullable final String tagName, @Nullable final String attrName) {
+    return ("link".equalsIgnoreCase(tagName) && "href".equalsIgnoreCase(attrName)) ||
+           ("script".equalsIgnoreCase(tagName) && "src".equalsIgnoreCase(attrName)) ||
+           ("img".equalsIgnoreCase(tagName) && "src".equalsIgnoreCase(attrName));
   }
 
   @NotNull
@@ -77,12 +68,11 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
     final VirtualFile file = DartResolveUtil.getRealVirtualFile(psiElement.getContainingFile());
     if (file == null) return PsiReference.EMPTY_ARRAY;
 
-    // What are other cases of file references in HTML? May be we should always provide Dart references, not only in <script/> and <link/>?
-    if (isFileAttribute(((XmlAttribute)parent).getName(), tag.getName())) {
-      return getDartPackageReferences(psiElement, DartUrlResolver.getInstance(psiElement.getProject(), file));
-    }
+    if (!canContainDartPackageReference(tag.getName(), ((XmlAttribute)parent).getName())) return PsiReference.EMPTY_ARRAY;
 
-    return PsiReference.EMPTY_ARRAY;
+    if (PubspecYamlUtil.findPubspecYamlFile(psiElement.getProject(), file) == null) return PsiReference.EMPTY_ARRAY;
+
+    return getDartPackageReferences(psiElement, DartUrlResolver.getInstance(psiElement.getProject(), file));
   }
 
   private static FileReference[] getDartPackageReferences(@NotNull final PsiElement psiElement,
@@ -94,81 +84,8 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
       public FileReference createFileReference(final TextRange range, final int index, final String text) {
         return new DartPackageAwareFileReference(this, range, index, text, dartResolver);
       }
-
-      @NotNull
-      @Override
-      public Collection<PsiFileSystemItem> computeDefaultContexts() {
-        final Collection<PsiFileSystemItem> items = super.computeDefaultContexts();
-        final VirtualFile pubspec = dartResolver.getPubspecYamlFile();
-        final VirtualFile projectRoot = pubspec != null ? pubspec.getParent() : null;
-        final VirtualFile packages = projectRoot != null ? projectRoot.findChild(PACKAGES_FOLDER_NAME) : null;
-        if (packages != null) {
-          items.remove(psiElement.getManager().findDirectory(packages));
-        }
-        return items;
-      }
     };
 
     return referenceSet.getAllReferences();
-  }
-
-  private static class DartPackageAwareFileReference extends FileReference {
-    @NotNull private final DartUrlResolver myDartResolver;
-
-    public DartPackageAwareFileReference(@NotNull final FileReferenceSet fileReferenceSet,
-                                         final TextRange range,
-                                         final int index,
-                                         final String text,
-                                         @NotNull final DartUrlResolver dartResolver) {
-      super(fileReferenceSet, range, index, text);
-      myDartResolver = dartResolver;
-    }
-
-    @NotNull
-    protected ResolveResult[] innerResolve(final boolean caseSensitive, @NotNull final PsiFile containingFile) {
-      if (PACKAGES_FOLDER_NAME.equals(getText())) {
-        final VirtualFile pubspecYamlFile = myDartResolver.getPubspecYamlFile();
-        final VirtualFile packagesDir = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild(PACKAGES_FOLDER_NAME);
-        final PsiDirectory psiDirectory = packagesDir == null ? null : containingFile.getManager().findDirectory(packagesDir);
-        if (psiDirectory != null) {
-          return new ResolveResult[]{new PsiElementResolveResult(psiDirectory)};
-        }
-      }
-
-      final int index = getIndex();
-      if (index > 0 && PACKAGES_FOLDER_NAME.equals(getFileReferenceSet().getReference(index - 1).getText())) {
-        final VirtualFile packageDir = myDartResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(getText());
-        final PsiDirectory psiDirectory = packageDir == null ? null : containingFile.getManager().findDirectory(packageDir);
-        if (psiDirectory != null) {
-          return new ResolveResult[]{new PsiElementResolveResult(psiDirectory)};
-        }
-      }
-
-      return super.innerResolve(caseSensitive, containingFile);
-    }
-
-    @NotNull
-    public Object[] getVariants() {
-      final Object[] superVariants = super.getVariants();
-
-      if (getIndex() == 0) {
-        final VirtualFile pubspecYamlFile = myDartResolver.getPubspecYamlFile();
-        final VirtualFile packagesDir = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild(PACKAGES_FOLDER_NAME);
-        final PsiDirectory psiDirectory = packagesDir == null ? null : getElement().getManager().findDirectory(packagesDir);
-        if (psiDirectory != null) {
-          return ArrayUtil.append(superVariants, psiDirectory);
-        }
-      }
-
-      if (getIndex() == 1 && PACKAGES_FOLDER_NAME.equals(getFileReferenceSet().getReference(0).getText())) {
-        final Collection<Object> result = new ArrayList<Object>(myDartResolver.getLivePackageNames());
-        if (!result.isEmpty()) {
-          Collections.addAll(result, superVariants);
-          return ArrayUtil.toObjectArray(result);
-        }
-      }
-
-      return superVariants;
-    }
   }
 }
