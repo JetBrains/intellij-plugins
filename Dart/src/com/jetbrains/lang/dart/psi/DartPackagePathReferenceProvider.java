@@ -14,6 +14,7 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +36,7 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
         PsiElement element = (PsiElement)_element;
         PsiFile file = element.getContainingFile().getOriginalFile();
 
-        if (HtmlUtil.hasHtml(file) && DartFileReferenceHelper.hasDart(file.getProject(), file.getVirtualFile())) {
+        if (HtmlUtil.hasHtml(file) && PubspecYamlUtil.findPubspecYamlFile(file.getProject(), file.getVirtualFile()) != null) {
           final PsiElement parent = element.getParent();
 
           if (parent instanceof XmlAttribute) {
