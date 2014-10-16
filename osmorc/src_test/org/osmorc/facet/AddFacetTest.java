@@ -32,6 +32,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TestDialog;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
@@ -90,6 +91,7 @@ public class AddFacetTest {
                             "Bundle-Name: Test\n" +
                             "Bundle-SymbolicName: test\n" +
                             "Bundle-Version: 1.0.0\n");
+                    PsiDocumentManager.getInstance(fixture.getProject()).commitAllDocuments();
                 }
                 catch (IOException e) {
                     throw new RuntimeException(e);
