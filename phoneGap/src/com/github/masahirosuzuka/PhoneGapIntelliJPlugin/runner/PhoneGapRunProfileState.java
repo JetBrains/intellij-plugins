@@ -37,6 +37,6 @@ public class PhoneGapRunProfileState extends CommandLineState {
     assert command != null;
     String platform = phoneGapRunConfiguration.getPlatform();
     assert platform != null;
-    return line.runCommand(command, platform, phoneGapRunConfiguration.hasTarget() ? phoneGapRunConfiguration.getTarget() : null);
+    return line.runCommand(command, platform, phoneGapRunConfiguration.hasTarget() ? phoneGapRunConfiguration.getTarget() : null, phoneGapRunConfiguration.getExtraArgs());
   }
 }

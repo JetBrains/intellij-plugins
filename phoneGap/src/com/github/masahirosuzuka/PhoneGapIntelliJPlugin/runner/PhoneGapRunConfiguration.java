@@ -47,6 +47,17 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   @Nullable
   public String myPlatform;
 
+
+  public String getExtraArgs() {
+    return myExtraArgs;
+  }
+
+  public void setExtraArgs(String extraArgs) {
+    myExtraArgs = extraArgs;
+  }
+
+  public String myExtraArgs;
+
   public boolean hasTarget() {
     return hasTarget;
   }

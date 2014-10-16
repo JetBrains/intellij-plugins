@@ -16,6 +16,7 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.ui.components.JBTextField;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
@@ -49,7 +50,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   private final Project myProject;
   private JBCheckBox myHasTarget;
   private TextFieldWithHistory myTarget;
-
+  private JBTextField myExtraArgsTextField;
   public PhoneGapRunConfigurationEditor(Project project) {
     myProject = project;
     myTargetsProvider = new PhoneGapTargets(project);
@@ -81,7 +82,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     boolean hasTarget = s.hasTarget();
 
     myHasTarget.setSelected(hasTarget);
-
+    myExtraArgsTextField.setText(s.getExtraArgs());
     PhoneGapUtil.setTextFieldWithHistory(myTarget, s.getTarget());
     fillTargetValuesAndSetVisible();
   }
@@ -129,6 +130,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     s.setWorkDir(myWorkDirField.getText());
     s.setTarget(myTarget.getText());
     s.setHasTarget(myHasTarget.isSelected());
+    s.setExtraArgs(myExtraArgsTextField.getText());
   }
 
 
@@ -142,10 +144,9 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     myCommand = new ComboBox();
     myHasTarget = new JBCheckBox("Specify target");
     myTarget = new TextFieldWithHistory();
-
-    myCommand.setMinimumAndPreferredWidth(150);
-    myPlatformField.setMinimumAndPreferredWidth(150);
-
+    myExtraArgsTextField = new JBTextField(15);
+    myCommand.setMinimumAndPreferredWidth(200);
+    myPlatformField.setMinimumAndPreferredWidth(200);
     addPlatformItems(myPlatformField);
     myTarget.setMinimumAndPreferredWidth(myPlatformField.getPreferredSize().width);
 
@@ -160,6 +161,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
       .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.work.dir.name"), myWorkDirField)
       .addLabeledComponent("Command:", myCommand)
       .addLabeledComponent("Platform:", myPlatformField)
+      .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.extra.args.name"), myExtraArgsTextField)
       .addLabeledComponent(myHasTarget, myTarget)
       .getPanel();
   }
