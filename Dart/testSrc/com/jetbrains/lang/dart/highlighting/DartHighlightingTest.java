@@ -77,7 +77,12 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
 
   public void testSimplePolymer() {
     myFixture.enableInspections(HtmlUnknownTagInspection.class);
-    myFixture.addFileToProject("pubspec.yaml", "");
+    myFixture.addFileToProject("pubspec.yaml", "name: ThisProject\n" +
+                                               "dependencies:\n" +
+                                               "  PathPackage:\n" +
+                                               "    path: PathPackage\n");
+    myFixture.addFileToProject("lib/custom_element.html", "<polymer-element name='custom-element'/>");
+    myFixture.addFileToProject("PathPackage/lib/in_path_package.html", "<polymer-element name='path-package-element'/>");
     addStandardPackage("polymer");
     addStandardPackage("core_elements");
     myFixture.configureByFile(getTestName(false) + "/web/" + getTestName(false) + ".html");
