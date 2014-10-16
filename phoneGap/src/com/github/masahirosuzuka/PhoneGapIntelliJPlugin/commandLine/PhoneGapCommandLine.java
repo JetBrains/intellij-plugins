@@ -6,6 +6,7 @@ import com.intellij.execution.process.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.apache.commons.codec.Charsets;
@@ -13,12 +14,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import static com.intellij.openapi.util.text.StringUtil.contains;
+import static com.intellij.util.containers.ContainerUtil.concat;
+import static com.intellij.util.containers.ContainerUtil.newArrayList;
 
 public class PhoneGapCommandLine {
   private static final Logger LOGGER = Logger.getInstance(PhoneGapCommandLine.class);
@@ -140,46 +144,54 @@ public class PhoneGapCommandLine {
     }
   }
 
-  public OSProcessHandler serve() throws ExecutionException {
-    GeneralCommandLine commandLine = new GeneralCommandLine(myPath, "serve");
-    commandLine.setWorkDirectory(myWorkDir);
+  private OSProcessHandler serve(String extraArg) throws ExecutionException {
+    GeneralCommandLine commandLine = new GeneralCommandLine(concat(newArrayList(myPath, "serve"), parseArgs(extraArg)));
+    commandLine.withWorkDirectory(myWorkDir);
     return KillableColoredProcessHandler.create(commandLine);
   }
 
   @NotNull
-  public OSProcessHandler runCommand(@NotNull String command, @NotNull String platform, @Nullable String target) throws ExecutionException {
+  public OSProcessHandler runCommand(@NotNull String command,
+                                     @NotNull String platform,
+                                     @Nullable String target,
+                                     @Nullable String extraArgs
+
+  ) throws ExecutionException {
     if (COMMAND_RUN.equals(command)) {
-      return run(platform, target);
+      return run(platform, target, extraArgs);
     }
 
     if (COMMAND_EMULATE.equals(command)) {
-      return emulate(platform, target);
+      return emulate(platform, target, extraArgs);
     }
 
     if (COMMAND_SERVE.equals(command)) {
-      return serve();
+      return serve(extraArgs);
     }
 
     if (COMMAND_REMOTE_RUN.equals(command)) {
-      return remoteRun(platform);
+      return remoteRun(platform, extraArgs);
     }
 
     if (COMMAND_REMOTE_BUILD.equals(command)) {
-      return remoteBuild(platform);
+      return remoteBuild(platform, extraArgs);
     }
 
     throw new IllegalStateException("Unsupported command");
   }
 
-  private OSProcessHandler remoteRun(@NotNull String platform) throws ExecutionException {
-    return createProcessHandler(myPath, "remote", "run", platform);
+  private OSProcessHandler remoteRun(@NotNull String platform, @Nullable String extraArg) throws ExecutionException {
+    return createProcessHandler(concat(newArrayList(myPath, "remote", "run", platform), parseArgs(extraArg)));
   }
 
-  private OSProcessHandler remoteBuild(@NotNull String platform) throws ExecutionException {
-    return createProcessHandler(myPath, "remote", "build", platform);
+  private OSProcessHandler remoteBuild(@NotNull String platform, @Nullable String extraArg) throws ExecutionException {
+
+    return createProcessHandler(concat(newArrayList(myPath, "remote", "build", platform), parseArgs(extraArg)));
   }
 
-  private OSProcessHandler emulate(@NotNull String platform, @Nullable String target) throws ExecutionException {
+  private OSProcessHandler emulate(@NotNull String platform,
+                                   @Nullable String target,
+                                   @Nullable String extraArg) throws ExecutionException {
     String[] command;
 
     if (!StringUtil.isEmpty(target)) {
@@ -189,10 +201,12 @@ public class PhoneGapCommandLine {
     else {
       command = new String[]{myPath, "run", "--emulator", platform};
     }
-    return createProcessHandler(command);
+    return createProcessHandler(concat(newArrayList(command), parseArgs(extraArg)));
   }
 
-  private OSProcessHandler run(@NotNull String platform, @Nullable String target) throws ExecutionException {
+  private OSProcessHandler run(@NotNull String platform,
+                               @Nullable String target,
+                               @Nullable String extraArg) throws ExecutionException {
     String[] command;
 
     if (!StringUtil.isEmpty(target)) {
@@ -202,7 +216,7 @@ public class PhoneGapCommandLine {
     else {
       command = new String[]{myPath, "run", platform};
     }
-    return createProcessHandler(command);
+    return createProcessHandler(concat(newArrayList(command), parseArgs(extraArg)));
   }
 
   public boolean needAddPlatform() {
@@ -254,7 +268,7 @@ public class PhoneGapCommandLine {
 
   static List<String> parsePluginList(String out) {
     if (StringUtil.isEmpty(out) || contains(out.toLowerCase(Locale.getDefault()), "no plugins")) {
-      return ContainerUtil.newArrayList();
+      return newArrayList();
     }
 
     if (out.startsWith("[") && out.endsWith("]")) {
@@ -327,7 +341,7 @@ public class PhoneGapCommandLine {
 
   private ProcessOutput executeAndGetOut(String[] command) throws ExecutionException {
     final GeneralCommandLine commandLine = new GeneralCommandLine(command);
-    commandLine.setWorkDirectory(myWorkDir);
+    commandLine.withWorkDirectory(myWorkDir);
     commandLine.setPassParentEnvironment(true);
     Process process = commandLine.createProcess();
     OSProcessHandler processHandler = new ColoredProcessHandler(process, commandLine.getCommandLineString(), Charsets.UTF_8);
@@ -354,9 +368,28 @@ public class PhoneGapCommandLine {
     return output;
   }
 
+  private OSProcessHandler createProcessHandler(List<String> commands) throws ExecutionException {
+    return createProcessHandler(ArrayUtil.toStringArray(commands));
+  }
+
   private OSProcessHandler createProcessHandler(String... commands) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine(commands);
-    commandLine.setWorkDirectory(myWorkDir);
+    commandLine.withWorkDirectory(myWorkDir);
     return KillableColoredProcessHandler.create(commandLine);
+  }
+
+  private static List<String> parseArgs(String paramList) {
+    ArrayList<String> list = newArrayList();
+
+    if (StringUtil.isEmpty(paramList)) return list;
+
+    for (String s : paramList.split(" ")) {
+      String trim = StringUtil.trim(s);
+      if (trim != null && !trim.isEmpty()) {
+        list.add(trim);
+      }
+    }
+
+    return list;
   }
 }
