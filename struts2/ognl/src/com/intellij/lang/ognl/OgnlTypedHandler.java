@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,11 +55,16 @@ public class OgnlTypedHandler extends TypedHandlerDelegate {
       }
     }
 
-    if (handleExpressionPrefix(editor)) {
+    final int offset = editor.getCaretModel().getOffset();
+    if (offset < OgnlLanguage.EXPRESSION_PREFIX.length()) {
+      return Result.CONTINUE;
+    }
+
+    if (handleExpressionPrefix(editor, offset)) {
       return Result.STOP;
     }
 
-    if (handleOpeningBrace(editor)) {
+    if (handleOpeningBrace(editor, offset)) {
       return Result.STOP;
     }
 
@@ -72,14 +77,16 @@ public class OgnlTypedHandler extends TypedHandlerDelegate {
    * @param editor Current editor.
    * @return {@code true} if handled.
    */
-  private boolean handleExpressionPrefix(final Editor editor) {
-    final int offset = editor.getCaretModel().getOffset();
-    final CharSequence before = editor.getDocument().getCharsSequence().subSequence(offset - 2, offset);
+  private boolean handleExpressionPrefix(final Editor editor,
+                                         int offset) {
+    final CharSequence sequence = editor.getDocument().getCharsSequence();
+    final CharSequence before = sequence.subSequence(offset - OgnlLanguage.EXPRESSION_PREFIX.length(),
+                                                     offset);
     if (!OgnlLanguage.EXPRESSION_PREFIX.equals(before.toString())) {
       return false;
     }
 
-    editor.getDocument().insertString(editor.getCaretModel().getOffset(), OgnlLanguage.EXPRESSION_SUFFIX);
+    editor.getDocument().insertString(offset, OgnlLanguage.EXPRESSION_SUFFIX);
     return true;
   }
 
@@ -89,9 +96,10 @@ public class OgnlTypedHandler extends TypedHandlerDelegate {
    * @param editor Current editor.
    * @return {@code true} if handled.
    */
-  private boolean handleOpeningBrace(final Editor editor) {
+  private boolean handleOpeningBrace(final Editor editor,
+                                     int offset) {
+    if (offset < OgnlLanguage.EXPRESSION_PREFIX.length()) return false;
     editor.getDocument().insertString(editor.getCaretModel().getOffset(), "}");
     return true;
   }
-
 }

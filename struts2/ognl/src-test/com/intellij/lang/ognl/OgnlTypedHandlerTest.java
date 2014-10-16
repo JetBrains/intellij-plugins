@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,6 +34,13 @@ public class OgnlTypedHandlerTest extends LightPlatformCodeInsightFixtureTestCas
                               OgnlLanguage.EXPRESSION_PREFIX + " a in <caret>" + OgnlLanguage.EXPRESSION_SUFFIX);
     myFixture.type('{');
     myFixture.checkResult(OgnlLanguage.EXPRESSION_PREFIX + " a in {}" + OgnlLanguage.EXPRESSION_SUFFIX);
+  }
+
+  public void testTypeOpeningBraceWithoutExpressionPrefix() {
+    myFixture.configureByText(OgnlFileType.INSTANCE,
+                              "<caret>");
+    myFixture.type('{');
+    myFixture.checkResult("{}");
   }
 
 }
