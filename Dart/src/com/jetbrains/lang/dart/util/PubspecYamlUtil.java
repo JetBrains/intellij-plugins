@@ -2,6 +2,9 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -34,7 +37,19 @@ public class PubspecYamlUtil {
   private static final Key<Pair<Long, Map<String, Object>>> MOD_STAMP_TO_PUBSPEC_NAME = Key.create("MOD_STAMP_TO_PUBSPEC_NAME");
 
   @Nullable
-  public static Map<String, Object> getPubspecYamlInfo(final @NotNull VirtualFile pubspecYamlFile) {
+  public static VirtualFile findPubspecYamlFile(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    VirtualFile parent = contextFile;
+    while ((parent = parent.getParent()) != null && fileIndex.isInContent(parent)) {
+      final VirtualFile file = parent.findChild(PUBSPEC_YAML);
+      if (file != null && !file.isDirectory()) return file;
+    }
+
+    return null;
+  }
+
+  @Nullable
+  static Map<String, Object> getPubspecYamlInfo(final @NotNull VirtualFile pubspecYamlFile) {
     // do not use Yaml plugin here - IntelliJ IDEA Community Edition doesn't contain it.
     Pair<Long, Map<String, Object>> data = pubspecYamlFile.getUserData(MOD_STAMP_TO_PUBSPEC_NAME);
 

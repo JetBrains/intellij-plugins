@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.highlighting;
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.inspections.DartDeprecatedApiUsageInspection;
@@ -74,4 +75,12 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.checkHighlighting(true, false, true);
   }
 
+  public void testSimplePolymer() {
+    myFixture.enableInspections(HtmlUnknownTagInspection.class);
+    myFixture.addFileToProject("pubspec.yaml", "");
+    addStandardPackage("polymer");
+    addStandardPackage("core_elements");
+    myFixture.configureByFile(getTestName(false) + "/web/" + getTestName(false) + ".html");
+    myFixture.checkHighlighting(true, false, true);
+  }
 }
