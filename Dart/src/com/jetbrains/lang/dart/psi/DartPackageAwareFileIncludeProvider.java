@@ -19,6 +19,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,10 +90,28 @@ public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
     final VirtualFile pubspecYamlFile = contextFile == null ? null : PubspecYamlUtil.findPubspecYamlFile(context.getProject(), contextFile);
     if (pubspecYamlFile == null) return null;
 
-    final VirtualFile targetFile = VfsUtilCore.findRelativeFile(PACKAGES_FOLDER_NAME + "/" + info.path, pubspecYamlFile);
-    if (targetFile == null) return null;
+    VirtualFile targetFile = null;
 
-    return targetFile.isDirectory() ? context.getManager().findDirectory(targetFile) : context.getManager().findFile(targetFile);
+    final int slashIndex = info.path.indexOf('/');
+    if (slashIndex > 0) {
+      final String packageName = info.path.substring(0, slashIndex);
+      final String relPath = info.path.substring(slashIndex + 1);
+      final DartUrlResolver urlResolver = DartUrlResolver.getInstance(context.getProject(), contextFile);
+      final VirtualFile packageDir = urlResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(packageName);
+      if (packageDir != null) {
+        targetFile = packageDir.findFileByRelativePath(relPath);
+      }
+    }
+
+    if (targetFile == null) {
+      targetFile = VfsUtilCore.findRelativeFile(PACKAGES_FOLDER_NAME + "/" + info.path, pubspecYamlFile);
+    }
+
+    if (targetFile != null) {
+      return targetFile.isDirectory() ? context.getManager().findDirectory(targetFile) : context.getManager().findFile(targetFile);
+    }
+
+    return null;
   }
 
   @Nullable
