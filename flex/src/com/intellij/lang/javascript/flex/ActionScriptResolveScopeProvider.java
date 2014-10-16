@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.ActionScriptFileType;
+import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.TypeScriptFileType;
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider;
 import com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider;
@@ -46,8 +47,15 @@ public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvi
 
       final GlobalSearchScope moduleScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, includeTests);
       // TODO [Konstantin.Ulitin] add package and swc file types
-      //final GlobalSearchScope fileTypesScope = GlobalSearchScope.getScopeRestrictedByFileTypes(moduleScope, ActionScriptFileType.INSTANCE, FlexApplicationComponent.SWF_FILE_TYPE, FlexApplicationComponent.MXML);
-      final GlobalSearchScope fileTypesScope = moduleScope.intersectWith(GlobalSearchScope.notScope(GlobalSearchScope.getScopeRestrictedByFileTypes(moduleScope, TypeScriptFileType.INSTANCE)));
+      //final GlobalSearchScope fileTypesScope =
+      //  GlobalSearchScope.getScopeRestrictedByFileTypes(moduleScope, ActionScriptFileType.INSTANCE,
+      //                                                  FlexApplicationComponent.SWF_FILE_TYPE, FlexApplicationComponent.MXML);
+      final GlobalSearchScope fileTypesScope =
+        moduleScope.intersectWith(GlobalSearchScope.notScope(
+          GlobalSearchScope.getScopeRestrictedByFileTypes(
+            moduleScope, TypeScriptFileType.INSTANCE, JavaScriptFileType.INSTANCE
+          )
+        ));
       return fileTypesScope.union(GlobalSearchScope.filesScope(project, JSCorePredefinedLibrariesProvider.getActionScriptPredefinedLibraryFiles()));
     }
     return null;
