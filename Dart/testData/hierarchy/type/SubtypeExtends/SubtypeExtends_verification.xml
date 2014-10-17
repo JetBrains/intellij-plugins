@@ -1,0 +1,8 @@
+<node text="A (lib)">
+  <node text="B (lib)" base="true">
+    <node text="C (lib)"/>
+    <node text="D (lib)">
+      <node text="E (lib)"/>
+    </node>
+  </node>
+</node>
