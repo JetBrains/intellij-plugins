@@ -57,5 +57,10 @@ public class PhoneGapConfigurationType implements ConfigurationType {
     public RunConfiguration createTemplateConfiguration(Project project) {
       return new PhoneGapRunConfiguration(project, myConfigurationFactory, "PhoneGap");
     }
+
+    @Override
+    public boolean isConfigurationSingletonByDefault() {
+      return true;
+    }
   }
 }
