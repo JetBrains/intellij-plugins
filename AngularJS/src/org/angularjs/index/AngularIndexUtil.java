@@ -1,6 +1,5 @@
 package org.angularjs.index;
 
-import com.intellij.lang.javascript.index.JSEntryIndex;
 import com.intellij.lang.javascript.index.JSIndexEntry;
 import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
@@ -10,7 +9,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -37,22 +35,18 @@ public class AngularIndexUtil {
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
 
   public static JSNamedElementProxy resolve(final Project project, final ID<String, Void> index, final String lookupKey) {
-    final Ref<JSNamedElementProxy> result = Ref.create();
+    JSNamedElementProxy result = null;
+    final JavaScriptIndex jsIndex = JavaScriptIndex.getInstance(project);
     final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     for (VirtualFile file : FileBasedIndex.getInstance().getContainingFiles(index, lookupKey, scope)) {
-      final int id = FileBasedIndex.getFileId(file);
-      if (!FileBasedIndex.getInstance().processValues(JSEntryIndex.INDEX_ID, id, null, new FileBasedIndex.ValueProcessor<JSIndexEntry>() {
-        @Override
-        public boolean process(VirtualFile file, JSIndexEntry value) {
-          final JSNamedElementProxy resolve = value.resolveAdditionalData(JavaScriptIndex.getInstance(project), index.toString(), lookupKey);
-          if (resolve != null) result.set(resolve);
-          return result.isNull();
-        }
-      }, scope) && result.get().canNavigate()) {
+      final JSIndexEntry value = jsIndex.getEntryForFile(file, scope);
+      final JSNamedElementProxy resolve = value != null ? value.resolveAdditionalData(jsIndex, index.toString(), lookupKey) : null;
+      result = resolve != null ? resolve : result;
+      if (result != null && result.canNavigate()) {
         break;
       }
     }
-    return result.get();
+    return result;
   }
 
   public static Collection<String> getAllKeys(final ID<String, Void> index, final Project project) {
@@ -79,7 +73,8 @@ public class AngularIndexUtil {
     @Nullable
     @Override
     public CachedValueProvider.Result<List<String>> compute(final Pair<Project, ID<String, Void>> projectAndIndex) {
-      Set<String> allKeys = new THashSet<String>();
+      final Set<String> allKeys = new THashSet<String>();
+      final FileBasedIndex index = FileBasedIndex.getInstance();
       final GlobalSearchScope scope = GlobalSearchScope.allScope(projectAndIndex.first);
       final CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<String>(allKeys) {
         @Override
@@ -87,16 +82,11 @@ public class AngularIndexUtil {
           return true;
         }
       };
-      FileBasedIndex.getInstance().processAllKeys(projectAndIndex.second, processor, scope, null);
+      index.processAllKeys(projectAndIndex.second, processor, scope, null);
       return CachedValueProvider.Result.create(ContainerUtil.filter(allKeys, new Condition<String>() {
         @Override
         public boolean value(String key) {
-          return !FileBasedIndex.getInstance().processValues(projectAndIndex.second, key, null, new FileBasedIndex.ValueProcessor<Void>() {
-            @Override
-            public boolean process(VirtualFile file, Void value) {
-              return false;
-            }
-          }, scope);
+          return index.getContainingFiles(projectAndIndex.second, key, scope).size() > 0;
         }
       }), PsiManager.getInstance(projectAndIndex.first).getModificationTracker());
     }
