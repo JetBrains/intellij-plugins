@@ -60,6 +60,7 @@
     <lang.psiStructureViewFactory language="Dart" implementationClass="com.jetbrains.lang.dart.ide.structure.DartStructureViewFactory"/>
     <psi.referenceContributor implementation="com.jetbrains.lang.dart.psi.DartPackagePathReferenceContributor" order="last"/>
     <include.provider implementation="com.jetbrains.lang.dart.psi.DartPackageAwareFileIncludeProvider" order="first"/>
+    <typeHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyProvider"/>
     <lang.elementManipulator forClass="com.jetbrains.lang.dart.psi.DartPathOrLibraryReference"
                              implementationClass="com.jetbrains.lang.dart.psi.impl.DartFileReferenceImpl$DartPathOrLibraryManipulator"/>
     <lang.refactoringSupport language="Dart"
@@ -221,5 +222,24 @@
       <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
     </group>
     <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction" text="Pub: Repair Cache..." description="Run 'pub cache repair'"/>
+
+    <action id="DartTypeHierarchy.BaseOnThisType" class="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyBrowser$BaseOnThisTypeAction"/>
+    <group id="DartClassHierarchyPopupMenu">
+      <reference ref="DartTypeHierarchy.BaseOnThisType"/>
+      <reference ref="TypeHierarchy.Class"/>
+      <reference ref="TypeHierarchy.Subtypes"/>
+      <reference ref="TypeHierarchy.Supertypes"/>
+      <separator/>
+      <reference ref="EditSource"/>
+      <separator/>
+      <reference ref="FindUsages"/>
+      <reference ref="RefactoringMenu"/>
+      <separator/>
+      <reference ref="AddToFavorites"/>
+      <separator/>
+      <reference ref="VersionControlsGroup"/>
+      <separator/>
+    </group>
+
   </actions>
 </idea-plugin>
