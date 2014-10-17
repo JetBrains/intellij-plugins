@@ -39,11 +39,11 @@ public class AngularIndexUtil {
     final JavaScriptIndex jsIndex = JavaScriptIndex.getInstance(project);
     final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     for (VirtualFile file : FileBasedIndex.getInstance().getContainingFiles(index, lookupKey, scope)) {
-      final JSIndexEntry value = jsIndex.getEntryForFile(file, scope);
-      final JSNamedElementProxy resolve = value != null ? value.resolveAdditionalData(jsIndex, index.toString(), lookupKey) : null;
-      result = resolve != null ? resolve : result;
-      if (result != null && result.canNavigate()) {
-        break;
+      final JSIndexEntry entry = jsIndex.getEntryForFile(file, scope);
+      final JSNamedElementProxy resolve = entry != null ? entry.resolveAdditionalData(jsIndex, index.toString(), lookupKey) : null;
+      if (resolve != null) {
+        result = resolve;
+        if (result.canNavigate()) break;
       }
     }
     return result;
@@ -86,7 +86,12 @@ public class AngularIndexUtil {
       return CachedValueProvider.Result.create(ContainerUtil.filter(allKeys, new Condition<String>() {
         @Override
         public boolean value(String key) {
-          return index.getContainingFiles(projectAndIndex.second, key, scope).size() > 0;
+          return !index.processValues(projectAndIndex.second, key, null, new FileBasedIndex.ValueProcessor<Void>() {
+            @Override
+            public boolean process(VirtualFile file, Void value) {
+              return false;
+            }
+          }, scope);
         }
       }), PsiManager.getInstance(projectAndIndex.first).getModificationTracker());
     }
