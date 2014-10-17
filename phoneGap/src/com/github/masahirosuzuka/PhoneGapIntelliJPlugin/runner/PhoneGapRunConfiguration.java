@@ -3,6 +3,9 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapTargets;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor;
+import com.intellij.diagnostic.logging.DefaultLogFilterModel;
+import com.intellij.diagnostic.logging.LogConsole;
+import com.intellij.diagnostic.logging.LogFilterModel;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
@@ -12,12 +15,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.PLATFORM_ANDROID;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.PLATFORM_IOS;
@@ -29,6 +35,7 @@ import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGa
  */
 public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
 
+  private static final String CORDOVA_IOS_LOG_PATH = "/platforms/ios/cordova/console.log";
   //public for serializer
   @Nullable
   public String myExecutable;
@@ -223,5 +230,26 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
     }
 
     throw new RuntimeConfigurationWarning(error);
+  }
+
+  @Override
+  public final void customizeLogConsole(final LogConsole console) {
+    LogFilterModel model = console.getFilterModel();
+    if( model instanceof DefaultLogFilterModel) {
+      ((DefaultLogFilterModel)model).setCheckStandartFilters(false);
+    }
+  }
+
+  @NotNull
+  @Override
+  public ArrayList<LogFileOptions> getAllLogFiles() {
+    if (!PLATFORM_IOS.equals(myPlatform) || StringUtil.isEmpty(myWorkDir)) super.getAllLogFiles();
+    return ContainerUtil.newArrayList(new LogFileOptions("console.log", getPathToLog(), true, false, true));
+  }
+
+  private String getPathToLog() {
+    assert myWorkDir != null;
+    return FileUtil
+      .toCanonicalPath(FileUtil.toSystemIndependentName(StringUtil.trimEnd(myWorkDir, File.separator)) + CORDOVA_IOS_LOG_PATH);
   }
 }
