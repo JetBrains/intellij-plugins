@@ -15,6 +15,7 @@ import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import com.petebevin.markdown.MarkdownProcessor;
+import com.petebevin.markdown.TextEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -229,7 +230,10 @@ public class DartDocUtil {
     if (!implementsList.isEmpty()) {
       builder.append("<br/>implements ");
       for (Iterator<DartType> iter = implementsList.iterator(); iter.hasNext(); ) {
-        builder.append(iter.next().getText());
+        TextEditor textEditor = new TextEditor(iter.next().getText());
+        textEditor.replaceAll("<", "&lt;");
+        textEditor.replaceAll(">", "&gt;");
+        builder.append(textEditor.toString());
         if (iter.hasNext()) {
           builder.append(", ");
         }
