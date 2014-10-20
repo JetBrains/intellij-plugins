@@ -95,7 +95,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider {
       super(project, packageName);
       myName = packageName;
       mySymlinkPath = getPackageLocationString(packageDir);
-      setIcon(DartIconProvider.FOLDER_SYMLINK_ICON);
+      setIcon(DartIconProvider.EXCLUDED_FOLDER_SYMLINK_ICON);
     }
 
     @NotNull
