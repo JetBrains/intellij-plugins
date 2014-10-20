@@ -60,8 +60,7 @@ public class DartExecutionStack extends XExecutionStack {
   @Nullable
   public XStackFrame getTopFrame() {
     // engine calls getTopFrame for active execution stack only for which we have myStackFrames initialized in constructor
-    LOG.assertTrue(myStackFrames != null, myIsolate.getId());
-    return myStackFrames.isEmpty() ? null : myStackFrames.get(0);
+    return myStackFrames == null || myStackFrames.isEmpty() ? null : myStackFrames.get(0);
   }
 
   @Override
@@ -79,8 +78,7 @@ public class DartExecutionStack extends XExecutionStack {
           @Override
           public void handleResult(VmResult<List<VmCallFrame>> result) {
             if (result.isError()) {
-              LOG.info(result.getError());
-              container.addStackFrames(Collections.<XStackFrame>emptyList(), true);
+              container.errorOccurred(result.getError());
             }
             else {
               for (VmCallFrame vmCallFrame : result.getResult()) {
