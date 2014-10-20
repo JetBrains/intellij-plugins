@@ -5,7 +5,7 @@ import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusContainer;
-import org.sonatype.aether.RepositorySystemSession;
+import org.eclipse.aether.RepositorySystemSession;
 
 class ThreadSafeMavenSession extends MavenSession {
   private final ThreadLocal<MavenProject> threadLocalCurrentProject = new ThreadLocal<MavenProject>();

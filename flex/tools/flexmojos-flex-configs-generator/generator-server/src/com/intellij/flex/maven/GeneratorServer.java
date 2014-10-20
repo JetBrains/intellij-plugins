@@ -3,7 +3,6 @@ package com.intellij.flex.maven;
 import org.apache.maven.DefaultMaven;
 import org.apache.maven.artifact.InvalidRepositoryException;
 import org.apache.maven.execution.*;
-import org.apache.maven.lifecycle.internal.ThreadConfigurationService;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.*;
@@ -23,13 +22,13 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.Logger;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.impl.LocalRepositoryProvider;
-import org.sonatype.aether.impl.internal.DefaultLocalRepositoryProvider;
-import org.sonatype.aether.impl.internal.DefaultRepositorySystem;
-import org.sonatype.aether.repository.RepositoryPolicy;
-import org.sonatype.aether.spi.localrepo.LocalRepositoryManagerFactory;
-import org.sonatype.aether.util.DefaultRepositorySystemSession;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.impl.LocalRepositoryProvider;
+import org.eclipse.aether.internal.impl.DefaultLocalRepositoryProvider;
+import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
+import org.eclipse.aether.repository.RepositoryPolicy;
+import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -39,6 +38,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class GeneratorServer {
@@ -86,8 +86,7 @@ public class GeneratorServer {
     generators.add(in.readUTF());
 
     final int projectsCount = in.readUnsignedShort();
-    final ExecutorService executorService = plexusContainer.lookup(ThreadConfigurationService.class)
-      .getExecutorService("1", true, projectsCount);
+    final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     try {
       for (int i = 0; i < projectsCount; i++) {
         final String pathname = in.readUTF();
@@ -329,7 +328,7 @@ public class GeneratorServer {
     final String mavenVersion = container.lookup(RuntimeInformation.class).getMavenVersion();
     // tracked impl is not suitable for us (our list of remote repo may be not equals — we don't want think about it)
     if (mavenVersion.length() >= 5 && mavenVersion.charAt(2) == '0' && mavenVersion.charAt(4) < '4') {
-      final DefaultRepositorySystem repositorySystem = (DefaultRepositorySystem)container.lookup(org.sonatype.aether.RepositorySystem.class);
+      final DefaultRepositorySystem repositorySystem = (DefaultRepositorySystem)container.lookup(RepositorySystem.class);
       try {
         repositorySystem.getClass().getMethod("setLocalRepositoryManagerFactories", List.class).invoke(repositorySystem, factoryList);
       }

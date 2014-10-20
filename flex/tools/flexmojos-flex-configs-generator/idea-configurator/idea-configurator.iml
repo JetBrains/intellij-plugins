@@ -7,7 +7,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="shared" />
-    <orderEntry type="library" name="maven-3.1" level="project" />
     <orderEntry type="module-library">
       <library name="flexmojos">
         <CLASSES>
@@ -18,6 +17,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="maven3.2" level="project" />
   </component>
 </module>
-

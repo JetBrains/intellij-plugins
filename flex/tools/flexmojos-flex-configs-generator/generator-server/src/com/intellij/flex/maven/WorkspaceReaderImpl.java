@@ -1,8 +1,8 @@
 package com.intellij.flex.maven;
 
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.repository.WorkspaceReader;
-import org.sonatype.aether.repository.WorkspaceRepository;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.repository.WorkspaceReader;
+import org.eclipse.aether.repository.WorkspaceRepository;
 
 import java.io.DataInputStream;
 import java.io.File;
