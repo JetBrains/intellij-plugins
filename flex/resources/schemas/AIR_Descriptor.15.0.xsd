@@ -338,15 +338,19 @@
       <xs:element name="image32x32" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image36x36" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image40x40" type="xs:anyURI" minOccurs="0"/>
+      <xs:element name="image44x44" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image48x48" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image50x50" type="xs:anyURI" minOccurs="0"/>
       <!-- 57x57 is never used by file icons -->
       <xs:element name="image57x57" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image58x58" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image60x60" type="xs:anyURI" minOccurs="0"/>
+      <xs:element name="image66x66" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image72x72" type="xs:anyURI" minOccurs="0"/>
+      <xs:element name="image75x75" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image76x76" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image80x80" type="xs:anyURI" minOccurs="0"/>
+      <xs:element name="image87x87" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image96x96" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image100x100" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image114x114" type="xs:anyURI" minOccurs="0"/>
@@ -354,6 +358,7 @@
       <xs:element name="image128x128" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image144x144" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image152x152" type="xs:anyURI" minOccurs="0"/>
+      <xs:element name="image180x180" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image192x192" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image512x512" type="xs:anyURI" minOccurs="0"/>
       <xs:element name="image732x412" type="xs:anyURI" minOccurs="0"/>
