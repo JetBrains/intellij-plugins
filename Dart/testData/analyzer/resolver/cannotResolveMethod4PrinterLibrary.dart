@@ -1,4 +1,0 @@
-library printer;
-
-superPrint() {
-}

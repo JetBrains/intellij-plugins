@@ -14,8 +14,6 @@
 
 package com.jetbrains.lang.dart.ide.runner.server.google;
 
-import java.net.URI;
-
 /**
  * A utility class for the VM debugger. This normalizes between the url format that the VM expects
  * and the format the the editor uses.
@@ -28,28 +26,14 @@ public class VmUtils {
    * Convert the given URL from Eclipse format (file:/) to VM format (file:///).
    */
   public static String eclipseUrlToVm(String url) {
-    // file:/ --> file:///
-
     if (url == null) {
       return null;
     }
-
-    // Use the URI class to convert things like '%20' ==> ' '.
-    URI uri = URI.create(url);
-
-    // If there's no provided uri scheme, then return the original url.
-    if (uri.getScheme() == null) {
-      return url;
-    }
-
+    // The VM wants file urls to start with file:///, not file:/.
     if (url.startsWith(ECLIPSE_FORMAT)) {
-      // The VM also wants file urls to start with file:///, not file:/.
-      url = uri.getScheme() + "://" + uri.getPath();
+      url = VM_FORMAT + url.substring(ECLIPSE_FORMAT.length());
     }
-    else {
-      url = uri.getScheme() + ":" + uri.getSchemeSpecificPart();
-    }
-
+    // done
     return url;
   }
 
@@ -60,13 +44,11 @@ public class VmUtils {
     if (url == null) {
       return null;
     }
-
+    // file:/// -> file:/
     if (url.startsWith(VM_FORMAT)) {
       url = ECLIPSE_FORMAT + url.substring(VM_FORMAT.length());
     }
-
-    url = URIUtilities.uriEncode(url);
-
+    // done
     return url;
   }
 }

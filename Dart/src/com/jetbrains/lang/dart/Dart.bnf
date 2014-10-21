@@ -61,6 +61,7 @@
 // BUILT_IN_IDENTIFIER
   ABSTRACT="abstract"
   AS="as"
+  DEFERRED="deferred"
   EXPORT="export"
   EXTERNAL="external"
   FACTORY="factory"
@@ -142,7 +143,6 @@ private topLevelDefinition ::= libraryStatement
                              | exportStatement
                              | partStatement
                              | classDefinition
-                             | classTypeAlias
                              | functionTypeAlias
                              | getterOrSetterDeclaration
                              | functionDeclarationWithBodyOrNative
@@ -163,7 +163,7 @@ libraryStatement ::= metadata* 'library' qualifiedComponentName ';' {
   methods = [ getLibraryName ]
 }
 
-importStatement ::= metadata* 'import' pathOrLibraryReference ('as' componentName )? combinator* ';' {
+importStatement ::= metadata* 'import' pathOrLibraryReference ('deferred'? 'as' componentName )? combinator* ';' {
   pin=3
   implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
   methods = [
@@ -210,18 +210,22 @@ private finalOrConst ::= 'final' | 'const'
 private varDeclarationListWithSemicolon ::= varDeclarationList ';'{pin=1}
 varDeclarationList ::= varAccessDeclaration varInit? (',' varDeclarationListPart)* {pin = 3}
 varDeclarationListPart ::= componentName varInit?
-{mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+{
+  mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl"
+  implements="com.jetbrains.lang.dart.psi.DartComponent"
+  methods= [getMetadataList]
+}
 
 operatorDeclaration ::= operatorDeclarationWithReturnType | operatorDeclarationWithoutReturnType // 'operator' is a valid identifier, so can be a returnType
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartOperator" implements="com.jetbrains.lang.dart.psi.DartOperator"}
 private operatorDeclarationWithReturnType    ::= metadata* 'external'? returnType 'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative) {pin=5}
 private operatorDeclarationWithoutReturnType ::= metadata* 'external'?            'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative) {pin=4}
 
-classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? ((superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody |
-                                                                                 '=' mixinApplication ';')
+classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
 {pin=4 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
-mixinApplication ::= type mixins? interfaces?
+mixinApplication ::= '=' type mixins? interfaces? ';' {pin = 1}
+private standardClassDeclarationTail ::= (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody?
 
 classBody ::= '{' classMembers '}' {pin=1}
 classMembers ::= classMemberDefinition*
@@ -289,9 +293,6 @@ private super_call_or_field_initializer_recover ::= !(<<nonStrictID>> | ',' | ':
 functionTypeAlias ::= metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'
 {pin=5 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private functionPrefix ::= returnType componentName | componentName
-
-classTypeAlias ::= metadata* 'typedef' componentName typeParameters? '=' type mixins? ';'
-{pin=5 mixin="com.jetbrains.lang.dart.psi.impl.TypedefDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
 factoryConstructorDeclaration ::= metadata* ('external' | 'const')* 'factory' referenceExpression ('.' componentName)? formalParameterList factoryTail?
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
@@ -376,7 +377,7 @@ private statement_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrapp
                                 '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
                                  ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
                                  '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
-                                 'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
+                                 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
                                  'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
                                  'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
@@ -403,7 +404,11 @@ private nonLabelledStatement ::= block // Guard to break tie with map literal.  
 private statementFollowedBySemiColon ::= (varDeclarationList | expression) ';' {pin=1}
 
 label::= componentName ':'
-{mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+{
+  mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl"
+  implements="com.jetbrains.lang.dart.psi.DartComponent"
+  methods = [getMetadataList]
+}
 
 private expressionWithRecoverUntilParen ::= expression {recoverWhile="not_paren_recover"}
 private not_paren_recover ::= !')'
@@ -437,9 +442,9 @@ switchCase ::= label? ('case' expression ':')+ statements {recoverWhile="switch_
 private switch_case_recover ::= !('case' | 'default' | '}' | <<nonStrictID>>)
 defaultCase::= label? ('case' expression ':')* 'default' ':' statements
 
-tryStatement ::= 'try' block ((onPart | catchPart)+ finallyPart? | finallyPart) {pin=1}
-onPart ::= 'on' type catchPart? {pin=1}
-catchPart ::= 'catch' formalParameterList block {pin=1}
+tryStatement ::= 'try' block (onPart+ finallyPart? | finallyPart) {pin=1}
+onPart ::= catchPart block | 'on' type catchPart? block {pin=1}
+catchPart ::= 'catch' '(' componentName (',' componentName)? ')' {pin=1}
 finallyPart::= 'finally' block {pin=1}
 
 varInit ::= '=' expression {pin=1}
@@ -467,7 +472,7 @@ private expression_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrap
                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' |
-                                 'continue' | 'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
+                                 'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' |
                                  'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |

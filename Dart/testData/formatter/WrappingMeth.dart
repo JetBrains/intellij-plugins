@@ -10,7 +10,7 @@ argD, argE, argF, argG, argH) {
             this.fTwo (
             argA, argB, argC, this.fThree (
             "", argE, argF, argG, argH));
-        } catch (string ignored) {}
+        } catch (e,s) {}
         var z =
           argA == 'Some string' ?
         'yes' : 'no';

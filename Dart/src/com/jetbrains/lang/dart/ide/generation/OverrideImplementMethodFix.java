@@ -3,15 +3,27 @@ package com.jetbrains.lang.dart.ide.generation;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartReturnType;
 import com.jetbrains.lang.dart.psi.DartType;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
+import org.jetbrains.annotations.NotNull;
 
 public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartComponent> {
-  public OverrideImplementMethodFix(final DartClass dartClass) {
+  final boolean myImplementNotOverride;
+
+  public OverrideImplementMethodFix(final DartClass dartClass, final boolean implementNotOverride) {
     super(dartClass);
+    myImplementNotOverride = implementNotOverride;
+  }
+
+  @Override
+  @NotNull
+  protected String getNothingFoundMessage() {
+    return myImplementNotOverride ? DartBundle.message("dart.fix.implement.none.found")
+                                  : DartBundle.message("dart.fix.override.none.found");
   }
 
   @Override

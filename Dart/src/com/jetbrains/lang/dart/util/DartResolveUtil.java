@@ -41,6 +41,8 @@ import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
 
 public class DartResolveUtil {
 
+  public static final String OBJECT = "Object";
+
   public static List<PsiElement> findDartRoots(PsiFile psiFile) {
     if (psiFile instanceof XmlFile) {
       return findDartRootsInXml((XmlFile)psiFile);
@@ -139,6 +141,7 @@ public class DartResolveUtil {
     return null;
   }
 
+  @NotNull
   public static DartClassResolveResult findCoreClass(PsiElement context, String className) {
     final List<VirtualFile> libraryFile = DartLibraryIndex.findLibraryClass(context, "dart:core");
     final List<DartComponentName> result = new ArrayList<DartComponentName>();
@@ -164,7 +167,9 @@ public class DartResolveUtil {
   }
 
   private static boolean checkInheritanceBySuperAndImplementationList(DartClass dartClass, DartClass superCandidate) {
-    if (typeResolvesToClass(dartClass.getSuperClass(), superCandidate)) return true;
+    final DartType superClass = dartClass.getSuperClass();
+    if (superClass == null && OBJECT.equals(superCandidate.getName())) return true;
+    if (typeResolvesToClass(superClass, superCandidate)) return true;
     for (DartType dartType : getImplementsAndMixinsList(dartClass)) {
       if (typeResolvesToClass(dartType, superCandidate)) return true;
     }
@@ -180,15 +185,6 @@ public class DartResolveUtil {
       return false;
     }
     return resolveClassByType(dartType).getDartClass() == classCandidate;
-  }
-
-  @Nullable
-  public static PsiComment findDocumentation(PsiElement element) {
-    final PsiElement candidate = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpaces(element, true);
-    if (candidate instanceof PsiComment) {
-      return (PsiComment)candidate;
-    }
-    return null;
   }
 
   @Nullable
@@ -473,9 +469,9 @@ public class DartResolveUtil {
   @Nullable
   public static DartReference getLeftReference(@Nullable final PsiElement node) {
     if (node == null) return null;
-    for (PsiElement sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpaces(node, true);
+    for (PsiElement sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(node, true);
          sibling != null;
-         sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpaces(sibling, true)) {
+         sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(sibling, true)) {
       if (".".equals(sibling.getText())) continue;
       PsiElement candidate = sibling;
       if (candidate instanceof DartType) {
@@ -554,6 +550,7 @@ public class DartResolveUtil {
     final Set<DartClass> processedClasses = new THashSet<DartClass>();
     final LinkedList<DartClass> classes = new LinkedList<DartClass>();
     classes.addAll(Arrays.asList(rootDartClasses));
+
     while (!classes.isEmpty()) {
       final DartClass dartClass = classes.pollFirst();
       if (dartClass == null || processedClasses.contains(dartClass)) {
@@ -563,12 +560,14 @@ public class DartResolveUtil {
         return false;
       }
 
-      tryAddClassByType(classes, dartClass.getSuperClass());
+      ContainerUtil.addIfNotNull(classes, dartClass.getSuperClassResolvedOrObjectClass().getDartClass());
+
       for (DartType type : getImplementsAndMixinsList(dartClass)) {
-        tryAddClassByType(classes, type);
+        ContainerUtil.addIfNotNull(classes, resolveClassByType(type).getDartClass());
       }
       processedClasses.add(dartClass);
     }
+
     return true;
   }
 
@@ -625,7 +624,7 @@ public class DartResolveUtil {
         }
       }
 
-      currentClass = resolveClassByType(currentClass.getSuperClass()).getDartClass();
+      currentClass = currentClass.getSuperClassResolvedOrObjectClass().getDartClass();
       if (currentClass == null || processedClasses.contains(currentClass)) {
         break;
       }
@@ -634,13 +633,6 @@ public class DartResolveUtil {
           return;
         }
       }
-    }
-  }
-
-  private static void tryAddClassByType(LinkedList<DartClass> classes, DartType type) {
-    final DartClassResolveResult result = resolveClassByType(type);
-    if (result.getDartClass() != null) {
-      classes.add(result.getDartClass());
     }
   }
 
@@ -713,14 +705,9 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  public static PsiElement getBody(@Nullable DartClass dartClass) {
-    PsiElement body = null;
-    final DartComponentType type = DartComponentType.typeOf(dartClass);
-    if (type == DartComponentType.CLASS) {
-      final DartClassBody classBody = PsiTreeUtil.getChildOfAnyType(dartClass, DartClassBody.class);
-      body = classBody != null ? classBody.getClassMembers() : null;
-    }
-    return body;
+  public static DartClassMembers getBody(@Nullable final DartClass dartClass) {
+    final DartClassBody body = dartClass == null ? null : ((DartClassDefinition)dartClass).getClassBody();
+    return body == null ? null : body.getClassMembers();
   }
 
   public static List<DartComponent> filterComponentsByType(List<DartComponent> components, final DartComponentType type) {
@@ -1077,7 +1064,7 @@ public class DartResolveUtil {
       return ContainerUtilRt.emptyList();
     }
     final List<DartClass> supers = new ArrayList<DartClass>();
-    final DartClassResolveResult dartClassResolveResult = resolveClassByType(dartClass.getSuperClass());
+    final DartClassResolveResult dartClassResolveResult = dartClass.getSuperClassResolvedOrObjectClass();
     if (dartClassResolveResult.getDartClass() != null) {
       supers.add(dartClassResolveResult.getDartClass());
     }

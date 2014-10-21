@@ -78,7 +78,7 @@ public class VmLineNumberTable {
       return ret.intValue();
     }
 
-    LOG.error("no line mapping found for " + location);
+    LOG.warn("no line mapping found for " + location);
 
     return 0;
   }

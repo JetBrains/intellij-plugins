@@ -125,9 +125,9 @@ public class UsefulPsiTreeUtil {
   }
 
   @Nullable
-  public static PsiElement getPrevSiblingSkippingCondition(@Nullable PsiElement sibling,
-                                                           Condition<PsiElement> condition,
-                                                           boolean strictly) {
+  private static PsiElement getPrevSiblingSkippingCondition(@Nullable PsiElement sibling,
+                                                            Condition<PsiElement> condition,
+                                                            boolean strictly) {
     return getSiblingSkippingCondition(sibling, new Function<PsiElement, PsiElement>() {
       @Nullable
       @Override
@@ -138,10 +138,10 @@ public class UsefulPsiTreeUtil {
   }
 
   @Nullable
-  public static PsiElement getSiblingSkippingCondition(@Nullable PsiElement sibling,
-                                                       Function<PsiElement, PsiElement> nextSibling,
-                                                       Condition<PsiElement> condition,
-                                                       boolean strictly) {
+  private static PsiElement getSiblingSkippingCondition(@Nullable PsiElement sibling,
+                                                        Function<PsiElement, PsiElement> nextSibling,
+                                                        Condition<PsiElement> condition,
+                                                        boolean strictly) {
     if (sibling == null) return null;
     if (sibling instanceof PsiFile) return sibling;
     PsiElement result = strictly ? nextSibling.fun(sibling) : sibling;
@@ -149,26 +149,6 @@ public class UsefulPsiTreeUtil {
       result = nextSibling.fun(result);
     }
     return result;
-  }
-
-  @Nullable
-  public static <T extends PsiElement> T[] getChildrenOfType(@Nullable PsiElement element,
-                                                             @NotNull Class<T> aClass,
-                                                             @Nullable PsiElement lastParent) {
-    if (element == null) return null;
-
-    List<T> result = null;
-    for (PsiElement child = element.getFirstChild(); child != null; child = child.getNextSibling()) {
-      if (lastParent == child) {
-        break;
-      }
-      if (aClass.isInstance(child)) {
-        if (result == null) result = new SmartList<T>();
-        //noinspection unchecked
-        result.add((T)child);
-      }
-    }
-    return result == null ? null : ArrayUtil.toObjectArray(result, aClass);
   }
 
   public static boolean isAncestor(@NotNull PsiElement element, List<PsiElement> children, boolean strict) {

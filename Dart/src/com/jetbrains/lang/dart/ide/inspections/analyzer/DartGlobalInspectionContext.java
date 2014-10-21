@@ -14,7 +14,6 @@ import com.intellij.openapi.progress.util.ProgressWrapper;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -65,23 +64,23 @@ public class DartGlobalInspectionContext implements GlobalInspectionContextExten
   private void analyzeFile(@NotNull final VirtualFile virtualFile, @NotNull final Project project) {
     final DartInProcessAnnotator annotator = new DartInProcessAnnotator();
 
-    final Pair<DartFileBasedSource, AnalysisContext> sourceAndContext =
-      ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<DartFileBasedSource, AnalysisContext>>() {
+    final DartInProcessAnnotator.DartAnnotatorInfo annotatorInfo =
+      ApplicationManager.getApplication().runReadAction(new NullableComputable<DartInProcessAnnotator.DartAnnotatorInfo>() {
         @Nullable
-        public Pair<DartFileBasedSource, AnalysisContext> compute() {
+        public DartInProcessAnnotator.DartAnnotatorInfo compute() {
           final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
           if (psiFile == null) return null;
           return annotator.collectInformation(psiFile);
         }
       });
 
-    if (sourceAndContext == null) {
+    if (annotatorInfo == null) {
       return;
     }
 
     setIndicatorText("Analyzing " + virtualFile.getName() + "...");
 
-    final AnalysisContext analysisContext = annotator.doAnnotate(sourceAndContext);
+    final AnalysisContext analysisContext = annotator.doAnnotate(annotatorInfo);
     if (analysisContext == null) return;
 
 

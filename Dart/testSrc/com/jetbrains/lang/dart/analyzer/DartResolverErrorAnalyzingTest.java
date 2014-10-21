@@ -21,7 +21,7 @@ public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
   }
 
   public void testCannotResolveMethod4$DartImportFix() throws Throwable {
-    doTest("The function 'superPrint' is not defined", "cannotResolveMethod4PrinterLibrary.dart");
+    doTest("The function 'superPrint' is not defined", "subfolder/cannotResolveMethod4PrinterLibrary.dart");
   }
 
   public void testCannotResolveMethodInClass1() throws Throwable {

@@ -87,6 +87,10 @@ public class VmConnection {
     listeners.add(listener);
   }
 
+  public void callToString(final VmValue object, final VmCallback<VmValue> callback) throws IOException {
+    evaluateObject(object.getIsolate(), object, "toString()", callback);
+  }
+
   public void close() throws IOException {
     if (socket != null) {
       socket.close();
@@ -97,7 +101,7 @@ public class VmConnection {
   /**
    * Connect to the VM debug server.
    *
-   * @throws IOException
+   * @throws java.io.IOException
    */
   public void connect() throws IOException {
     socket = new Socket(host, port);
@@ -146,7 +150,7 @@ public class VmConnection {
   /**
    * Enable stepping for all libraries (except for certain core ones).
    *
-   * @throws IOException
+   * @throws java.io.IOException
    */
   public void enableAllSteppingSync(final VmIsolate isolate) throws IOException {
     final CountDownLatch latch = new CountDownLatch(1);
@@ -157,11 +161,13 @@ public class VmConnection {
         try {
           if (!result.isError()) {
             for (VmLibraryRef ref : result.getResult()) {
-              try {
-                setLibraryProperties(isolate, ref.getId(), true);
-              }
-              catch (IOException e) {
+              if (!ref.isInternal() && !ref.isAsync()) {
+                try {
+                  setLibraryProperties(isolate, ref.getId(), true);
+                }
+                catch (IOException e) {
 
+                }
               }
             }
           }
@@ -264,12 +270,40 @@ public class VmConnection {
     }
   }
 
-  public void evaluateOnCallFrame(VmIsolate isolate, VmCallFrame callFrame, String expression,
-                                  final VmCallback<VmValue> callback) {
-    // TODO(devoncarew): call through to the VM implementation when available
+  public void evaluateOnCallFrame(final VmIsolate isolate, VmCallFrame callFrame,
+                                  String expression, final VmCallback<VmValue> callback) throws IOException {
+    if (callback == null) {
+      throw new IllegalArgumentException("a callback is required");
+    }
 
-    VmResult<VmValue> result = VmResult.createErrorResult("unimplemented");
-    callback.handleResult(result);
+    try {
+      JSONObject request = new JSONObject();
+
+      request.put("command", "evaluateExpr");
+      request.put(
+        "params",
+        new JSONObject().put("frameId", callFrame.getFrameId()).put("expression", expression));
+
+      sendRequest(request, isolate.getId(), new Callback() {
+        @Override
+        public void handleResult(JSONObject result) throws JSONException {
+          VmResult<VmValue> evalResult = convertEvaluateObjectResult(isolate, result);
+
+          callback.handleResult(evalResult);
+        }
+      });
+    }
+    catch (JSONException exception) {
+      throw new IOException(exception);
+    }
+  }
+
+  public VmClass getClassInfoSync(VmIsolate isolate, int classId) {
+    if (!isolate.hasClassInfo(classId)) {
+      populateClassInfo(isolate, classId);
+    }
+
+    return isolate.getClassInfo(classId);
   }
 
   public VmClass getClassInfoSync(VmObject obj) {
@@ -277,13 +311,7 @@ public class VmConnection {
       return null;
     }
 
-    VmIsolate isolate = obj.getIsolate();
-
-    if (!isolate.hasClassInfo(obj.getClassId())) {
-      populateClassInfo(isolate, obj.getClassId());
-    }
-
-    return isolate.getClassInfo(obj.getClassId());
+    return getClassInfoSync(obj.getIsolate(), obj.getClassId());
   }
 
   public String getClassNameSync(VmObject obj) {
@@ -363,8 +391,7 @@ public class VmConnection {
     });
   }
 
-  public void getLibraries(VmIsolate isolate, final VmCallback<List<VmLibraryRef>> callback)
-    throws IOException {
+  public void getLibraries(VmIsolate isolate, final VmCallback<List<VmLibraryRef>> callback) throws IOException {
     if (isolate.isPaused()) {
       sendSimpleCommand("getLibraries", isolate.getId(), new Callback() {
         @Override
@@ -446,8 +473,7 @@ public class VmConnection {
 
               latch.countDown();
             }
-          }
-        );
+          });
       }
       catch (IOException ex) {
         latch.countDown();
@@ -654,8 +680,7 @@ public class VmConnection {
     }
   }
 
-  public void getStackTrace(final VmIsolate isolate, final VmCallback<List<VmCallFrame>> callback)
-    throws IOException {
+  public void getStackTrace(final VmIsolate isolate, final VmCallback<List<VmCallFrame>> callback) throws IOException {
     sendSimpleCommand("getStackTrace", isolate.getId(), new Callback() {
       @Override
       public void handleResult(JSONObject result) throws JSONException {
@@ -668,7 +693,7 @@ public class VmConnection {
    * Send an interrupt command to the given isolate.
    *
    * @param isolate
-   * @throws IOException
+   * @throws java.io.IOException
    */
   public void interrupt(VmIsolate isolate) throws IOException {
     sendSimpleCommand("interrupt", isolate.getId());
@@ -689,7 +714,7 @@ public class VmConnection {
    *
    * @param isolate
    * @return
-   * @throws IOException
+   * @throws java.io.IOException
    */
   public VmInterruptResult interruptConditionally(VmIsolate isolate) throws IOException {
     if (!isolate.isPaused()) {
@@ -753,7 +778,7 @@ public class VmConnection {
    * @param url
    * @param line
    * @param callback
-   * @throws IOException
+   * @throws java.io.IOException
    */
   public void setBreakpoint(final VmIsolate isolate, final String url, final int line,
                             final VmCallback<VmBreakpoint> callback) throws IOException {
@@ -816,24 +841,24 @@ public class VmConnection {
    * @param debuggingEnabled
    * @throws IOException
    */
-  public void setLibraryProperties(VmIsolate isolate, int libraryId, boolean debuggingEnabled)
-    throws IOException {
-    try {
-      JSONObject request = new JSONObject();
-
-      request.put("command", "setLibraryProperties");
-      request.put(
-        "params",
-        new JSONObject().put("libraryId", libraryId).put(
-          "debuggingEnabled",
-          Boolean.toString(debuggingEnabled))
-      );
-
-      sendRequest(request, isolate.getId(), null);
-    }
-    catch (JSONException exception) {
-      throw new IOException(exception);
-    }
+  public void setLibraryProperties(VmIsolate isolate, int libraryId, boolean debuggingEnabled) throws IOException {
+    // TODO(scheglov) commented out on 2014-09-25
+    // I still can step into SDK libraries without it.
+    // And with it VM sometimes ignores "resume" command and application just hangs.
+    //    try {
+    //      JSONObject request = new JSONObject();
+    //
+    //      request.put("command", "setLibraryProperties");
+    //      request.put(
+    //          "params",
+    //          new JSONObject().put("libraryId", libraryId).put(
+    //              "debuggingEnabled",
+    //              Boolean.toString(debuggingEnabled)));
+    //
+    //      sendRequest(request, isolate.getId(), null);
+    //    } catch (JSONException exception) {
+    //      throw new IOException(exception);
+    //    }
   }
 
   /**
@@ -841,7 +866,7 @@ public class VmConnection {
    *
    * @param isolate
    * @param kind
-   * @throws IOException
+   * @throws java.io.IOException
    */
   public void setPauseOnException(VmIsolate isolate, BreakOnExceptionsType kind) throws IOException {
     setPauseOnException(isolate, kind, null);
@@ -853,7 +878,7 @@ public class VmConnection {
    * @param isolate
    * @param kind
    * @param callback
-   * @throws IOException
+   * @throws java.io.IOException
    */
   public void setPauseOnException(VmIsolate isolate, BreakOnExceptionsType kind,
                                   final VmCallback<Boolean> callback) throws IOException {
@@ -887,10 +912,9 @@ public class VmConnection {
    *
    * @param isolate
    * @param kind
-   * @throws IOException
+   * @throws java.io.IOException
    */
-  public void setPauseOnExceptionSync(VmIsolate isolate, BreakOnExceptionsType kind)
-    throws IOException {
+  public void setPauseOnExceptionSync(VmIsolate isolate, BreakOnExceptionsType kind) throws IOException {
     final CountDownLatch latch = new CountDownLatch(1);
 
     try {
@@ -937,7 +961,7 @@ public class VmConnection {
 
   public synchronized void handleTerminated() {
     // Clean up the callbackMap on termination.
-    List<Callback> callbacks = new ArrayList<VmConnection.Callback>(callbackMap.values());
+    List<Callback> callbacks = new ArrayList<Callback>(callbackMap.values());
 
     for (Callback callback : callbacks) {
       try {
@@ -984,8 +1008,7 @@ public class VmConnection {
     sendSimpleCommand(command, isolateId, null);
   }
 
-  protected void sendSimpleCommand(String command, int isolateId, Callback callback)
-    throws IOException {
+  protected void sendSimpleCommand(String command, int isolateId, Callback callback) throws IOException {
     try {
       JSONObject request = new JSONObject();
 
@@ -1053,8 +1076,7 @@ public class VmConnection {
     }
   }
 
-  private VmResult<VmValue> convertEvaluateObjectResult(VmIsolate isolate, JSONObject object)
-    throws JSONException {
+  private VmResult<VmValue> convertEvaluateObjectResult(VmIsolate isolate, JSONObject object) throws JSONException {
     VmResult<VmValue> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1089,8 +1111,7 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<List<Integer>> convertGetIsolateIdsResult(JSONObject object)
-    throws JSONException {
+  private VmResult<List<Integer>> convertGetIsolateIdsResult(JSONObject object) throws JSONException {
     VmResult<List<Integer>> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1108,8 +1129,7 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<List<VmLibraryRef>> convertGetLibrariesResult(JSONObject object)
-    throws JSONException {
+  private VmResult<List<VmLibraryRef>> convertGetLibrariesResult(JSONObject object) throws JSONException {
     VmResult<List<VmLibraryRef>> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1146,8 +1166,7 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<VmValue> convertGetListElementsResult(VmIsolate isolate, JSONObject object)
-    throws JSONException {
+  private VmResult<VmValue> convertGetListElementsResult(VmIsolate isolate, JSONObject object) throws JSONException {
     VmResult<VmValue> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1213,39 +1232,41 @@ public class VmConnection {
   }
 
   private VmIsolate getCreateIsolate(int isolateId) {
+    return getCreateIsolate(isolateId, false);
+  }
+
+  private VmIsolate getCreateIsolate(int isolateId, boolean paused) {
     if (isolateId == -1) {
       return null;
     }
 
     if (isolateMap.get(isolateId) == null) {
-      isolateMap.put(isolateId, new VmIsolate(isolateId));
+      isolateMap.put(isolateId, new VmIsolate(isolateId, paused));
     }
 
     return isolateMap.get(isolateId);
   }
 
   private void handleBreakpointResolved(VmIsolate isolate, int breakpointId, VmLocation location) {
-    VmBreakpoint breakpoint = null;
-
+    boolean foundBreakpoint = false;
     synchronized (breakpoints) {
-      for (VmBreakpoint bp : breakpoints) {
-        if (bp.getBreakpointId() == breakpointId) {
-          breakpoint = bp;
-
-          break;
+      for (VmBreakpoint breakpoint : breakpoints) {
+        if (breakpoint.getBreakpointId() == breakpointId) {
+          foundBreakpoint = true;
+          breakpoint.updateLocation(location);
+          notifyBreakpointResolved(isolate, breakpoint);
         }
       }
     }
 
-    if (breakpoint == null) {
-      breakpoint = new VmBreakpoint(isolate, location, breakpointId);
-
+    if (!foundBreakpoint) {
+      VmBreakpoint breakpoint = new VmBreakpoint(isolate, location, breakpointId);
       breakpoints.add(breakpoint);
+      notifyBreakpointResolved(isolate, breakpoint);
     }
-    else {
-      breakpoint.updateLocation(location);
-    }
+  }
 
+  private void notifyBreakpointResolved(VmIsolate isolate, VmBreakpoint breakpoint) {
     for (VmListener listener : listeners) {
       listener.breakpointResolved(isolate, breakpoint);
     }
@@ -1469,8 +1490,6 @@ public class VmConnection {
   }
 
   private Callback resumeOnSuccess(final VmIsolate isolate) {
-    //isolate.resumeCommandAdded();
-
     return new Callback() {
       @Override
       public void handleResult(JSONObject result) throws JSONException {
@@ -1517,6 +1536,9 @@ public class VmConnection {
 
   private void sendDelayedDebuggerPaused(final PausedReason reason, final VmIsolate isolate,
                                          final VmLocation location, final VmValue exception) throws JSONException, IOException {
+    // Request lines now, while the isolate is current.
+    // Otherwise VM will never respond to the "getLineNumberTable" request.
+    getLineNumberFromLocation(location.getIsolate(), location);
     // If we're stepping, check here to see if we should continue stepping.
     if (reason == PausedReason.breakpoint && isStepping && sameSourceLine(currentLocation, location)) {
       sendSimpleCommand(stepCommand, isolate.getId());
@@ -1526,18 +1548,21 @@ public class VmConnection {
         getStackTrace(isolate, new VmCallback<List<VmCallFrame>>() {
           @Override
           public void handleResult(VmResult<List<VmCallFrame>> result) {
-            currentLocation = location;
-            isStepping = false;
-
-            if (result.isError()) {
-              LOG.info(result.getError());
-            }
-            else {
-              List<VmCallFrame> frames = result.getResult();
-
-              for (VmListener listener : listeners) {
-                listener.debuggerPaused(reason, isolate, frames, exception);
+            try {
+              if (result.isError()) {
+                LOG.info(result.getError());
               }
+              else {
+                List<VmCallFrame> frames = result.getResult();
+
+                for (VmListener listener : listeners) {
+                  listener.debuggerPaused(reason, isolate, frames, exception, isStepping);
+                }
+              }
+            }
+            finally {
+              currentLocation = location;
+              isStepping = false;
             }
           }
         });

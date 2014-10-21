@@ -1,4 +1,4 @@
-typedef ObservableBase = Object with ObservableMixin;
+class ObservableBase = Super with Mixin1, Mixin2 implements Inter1, Inter2;
 
 @DocsEditable
 @DomName('AbstractWorker')

@@ -1,6 +1,10 @@
 package com.jetbrains.lang.dart;
 
+import com.intellij.ide.browsers.BrowserSpecificSettings;
+import com.intellij.ide.browsers.WebBrowser;
+import com.intellij.ide.browsers.chrome.ChromeSettings;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.module.Module;
@@ -22,6 +26,7 @@ import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.Consumer;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebuggerManager;
@@ -48,6 +53,8 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartProjectComponent extends AbstractProjectComponent {
 
+  private static final String DARTIUM_CHECKED_MODE_INITIALLY_ENABLED_KEY = "DARTIUM_CHECKED_MODE_INITIALLY_ENABLED";
+
   protected DartProjectComponent(final Project project) {
     super(project);
   }
@@ -62,13 +69,15 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
         final String dartSdkGlobalLibName = importKnowledgeAboutOldDartSdkAndReturnGlobalLibName(myProject);
 
+        initiallyEnableDartiumCheckedModeIfNeeded();
+
         final Collection<VirtualFile> pubspecYamlFiles =
           FilenameIndex.getVirtualFilesByName(myProject, PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));
 
         for (VirtualFile pubspecYamlFile : pubspecYamlFiles) {
           final Module module = ModuleUtilCore.findModuleForFile(pubspecYamlFile, myProject);
           if (module != null && FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, module.getModuleContentScope())) {
-            excludePackagesFolders(module, pubspecYamlFile);
+            excludeBuildAndPackagesFolders(module, pubspecYamlFile);
 
             if (dartSdkGlobalLibName != null &&
                 dartSdkWasEnabledInOldModel &&
@@ -123,7 +132,11 @@ public class DartProjectComponent extends AbstractProjectComponent {
     else if (DartSdkUtil.isDartSdkHome(oldDartSdkPath)) {
       if (DartiumUtil.getDartiumBrowser() == null) {
         // configure even if getDartiumPathForSdk() returns null
-        DartiumUtil.ensureDartiumBrowserConfigured(DartiumUtil.getDartiumPathForSdk(oldDartSdkPath));
+        final WebBrowser browser = DartiumUtil.ensureDartiumBrowserConfigured(DartiumUtil.getDartiumPathForSdk(oldDartSdkPath));
+        final BrowserSpecificSettings browserSpecificSettings = browser.getSpecificSettings();
+        if (browserSpecificSettings instanceof ChromeSettings) {
+          //DartiumUtil.setCheckedMode(browserSpecificSettings.getEnvironmentVariables(), true);
+        }
       }
 
       return ApplicationManager.getApplication().runWriteAction(new Computable<String>() {
@@ -134,6 +147,19 @@ public class DartProjectComponent extends AbstractProjectComponent {
     }
 
     return null;
+  }
+
+  private static void initiallyEnableDartiumCheckedModeIfNeeded() {
+    if (PropertiesComponent.getInstance().getBoolean(DARTIUM_CHECKED_MODE_INITIALLY_ENABLED_KEY, false)) {
+      return;
+    }
+    PropertiesComponent.getInstance().setValue(DARTIUM_CHECKED_MODE_INITIALLY_ENABLED_KEY, "true");
+
+    final WebBrowser dartium = DartiumUtil.getDartiumBrowser();
+    final BrowserSpecificSettings browserSpecificSettings = dartium == null ? null : dartium.getSpecificSettings();
+    if (browserSpecificSettings instanceof ChromeSettings) {
+      //DartiumUtil.setCheckedMode(browserSpecificSettings.getEnvironmentVariables(), true);
+    }
   }
 
   private static void deleteDartSdkGlobalLibConfiguredInOldIde() {
@@ -183,7 +209,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
     return false;
   }
 
-  public static void excludePackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {
+  public static void excludeBuildAndPackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {
     final VirtualFile root = pubspecYamlFile.getParent();
     final VirtualFile contentRoot =
       root == null ? null : ProjectRootManager.getInstance(module.getProject()).getFileIndex().getContentRootForFile(root);
@@ -202,7 +228,8 @@ public class DartProjectComponent extends AbstractProjectComponent {
         final String rootUrl = root.getUrl();
 
         public boolean value(final String url) {
-          if (!url.startsWith(rootUrl + "/packages/") &&
+          if (!url.equals(rootUrl + "/.pub") &&
+              !url.startsWith(rootUrl + "/packages/") &&
               !url.startsWith(rootUrl + "/bin/") &&
               !url.startsWith(rootUrl + "/benchmark/") &&
               !url.startsWith(rootUrl + "/example/") &&
@@ -212,6 +239,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
             return false;
           }
 
+          if (url.equals(rootUrl + "/.pub")) return true;
           if (url.endsWith("/packages")) return true;
 
           // excluded subfolder of 'packages' folder
@@ -232,6 +260,19 @@ public class DartProjectComponent extends AbstractProjectComponent {
     final THashSet<String> newExcludedPackagesUrls = new THashSet<String>();
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
     final VirtualFile root = pubspecYamlFile.getParent();
+
+    // java.io.File is used here because exclusion is done before FS refresh (in order not to trigger indexing of files that are going to be excluded)
+    final File pubFolder = new File(root.getPath() + "/.pub");
+    if (pubFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild(".pub") != null) {
+      newExcludedPackagesUrls.add(root.getUrl() + "/.pub");
+    }
+
+    /*
+    final File buildFolder = new File(root.getPath() + "/build");
+    if (buildFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild("build") != null) {
+      newExcludedPackagesUrls.add(root.getUrl() + "/build");
+    }
+    */
 
     final VirtualFile binFolder = root.findChild("bin");
     if (binFolder != null && binFolder.isDirectory() && fileIndex.isInContent(binFolder)) {
@@ -283,31 +324,62 @@ public class DartProjectComponent extends AbstractProjectComponent {
     });
   }
 
-  private static void updateExcludedFolders(final Module module,
-                                            final VirtualFile contentRoot,
-                                            final Collection<String> urlsToUnexclude,
-                                            final Collection<String> urlsToExclude) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
-        try {
-          for (final ContentEntry contentEntry : modifiableModel.getContentEntries()) {
-            if (contentEntry.getFile() == contentRoot) {
-              for (String url : urlsToUnexclude) {
-                contentEntry.removeExcludeFolder(url);
-              }
-              for (String url : urlsToExclude) {
-                contentEntry.addExcludeFolder(url);
-              }
-              break;
+  public static void updateExcludedFolders(final Module module,
+                                           @NotNull final VirtualFile contentRoot,
+                                           final Collection<String> urlsToUnExclude,
+                                           final Collection<String> urlsToExclude) {
+    updateModel(module, new Consumer<ModifiableRootModel>() {
+      @Override
+      public void consume(ModifiableRootModel modifiableModel) {
+        for (final ContentEntry contentEntry : modifiableModel.getContentEntries()) {
+          if (contentRoot.equals(contentEntry.getFile())) {
+            for (String url : urlsToUnExclude) {
+              contentEntry.removeExcludeFolder(url);
             }
+            for (String url : urlsToExclude) {
+              contentEntry.addExcludeFolder(url);
+            }
+            break;
           }
-          modifiableModel.commit();
-        }
-        catch (Exception e) {
-          modifiableModel.dispose();
         }
       }
     });
   }
+
+  public static void updateModel(@NotNull final Module module, @NotNull Consumer<ModifiableRootModel> task) {
+    final ModifiableRootModel model = ApplicationManager.getApplication().runReadAction(new Computable<ModifiableRootModel>() {
+      @Override
+      public ModifiableRootModel compute() {
+        return ModuleRootManager.getInstance(module).getModifiableModel();
+      }
+    });
+    try {
+      task.consume(model);
+      doWriteAction(new Runnable() {
+        @Override
+        public void run() {
+          model.commit();
+        }
+      });
+    }
+    catch (RuntimeException e) {
+      model.dispose();
+      throw e;
+    }
+    catch (Error e) {
+      model.dispose();
+      throw e;
+    }
+  }
+
+  private static void doWriteAction(final Runnable action) {
+    final Application application = ApplicationManager.getApplication();
+    application.invokeAndWait(new Runnable() {
+      @Override
+      public void run() {
+        application.runWriteAction(action);
+      }
+    }, application.getDefaultModalityState());
+  }
+
 }

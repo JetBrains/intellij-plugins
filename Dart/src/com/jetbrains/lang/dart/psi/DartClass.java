@@ -1,11 +1,15 @@
 package com.jetbrains.lang.dart.psi;
 
+import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public interface DartClass extends DartComponent {
+
+  DartClassResolveResult getSuperClassResolvedOrObjectClass();
+
   @Nullable
   DartType getSuperClass();
 
@@ -22,10 +26,6 @@ public interface DartClass extends DartComponent {
 
   @NotNull
   List<DartComponent> getFields();
-
-  /**
-   * @return named and factory constructors
-   */
 
   @NotNull
   List<DartComponent> getConstructors();

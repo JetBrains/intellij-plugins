@@ -95,7 +95,7 @@ public class DartPathIndex extends FileBasedIndexExtension<String, List<String>>
   private static class MyDataIndexer implements DataIndexer<String, List<String>, FileContent> {
     @Override
     @NotNull
-    public Map<String, List<String>> map(final FileContent inputData) {
+    public Map<String, List<String>> map(@NotNull final FileContent inputData) {
       return Collections.singletonMap(inputData.getFileName(), DartIndexUtil.indexFile(inputData).getPaths());
     }
   }

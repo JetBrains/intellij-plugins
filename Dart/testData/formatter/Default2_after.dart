@@ -4,11 +4,13 @@ main() {
         print("Usage: dart embiggen.dart phrase");
         return;
     }
-    var phrase = args[0];
+    var
+    phrase = args[0];
     print(embiggen(phrase));
 }
 
-String embiggen(String msg) {
+String embiggen
+    (String msg) {
     if (msg == null) {
         throw new ArgumentError("must not be null");
     }

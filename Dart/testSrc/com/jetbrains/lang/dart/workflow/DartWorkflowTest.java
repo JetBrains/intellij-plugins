@@ -18,7 +18,9 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     final String rootUrl = ModuleRootManager.getInstance(myModule).getContentEntries()[0].getUrl();
 
     myFixture.addFileToProject("dir1/pubspec.yaml", "name: project1");
+    myFixture.addFileToProject("dir1/someFolder/lib/foo.dart", "");
     final VirtualFile pubspec2 = myFixture.addFileToProject("dir2/pubspec.yaml", "name: project2").getVirtualFile();
+    myFixture.addFileToProject("dir2/.pub/foo.txt", "");
     myFixture.addFileToProject("dir2/bin/foo.dart", "");
     myFixture.addFileToProject("dir2/bin/sub/foo.dart", "");
     myFixture.addFileToProject("dir2/lib/foo.dart", "");
@@ -36,7 +38,9 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     final VirtualFile pubspec3 = myFixture.addFileToProject("dir2/example/pubspec.yaml", "name: project3\n" +
                                                                                          "dependencies:\n" +
                                                                                          "  project2:\n" +
-                                                                                         "    path: ..").getVirtualFile();
+                                                                                         "    path: ..\n" +
+                                                                                         "  outside_project:\n" +
+                                                                                         "    path: ../../dir1/someFolder").getVirtualFile();
     myFixture.addFileToProject("dir2/example/lib/foo.dart", "");
     myFixture.addFileToProject("dir2/example/lib/sub/foo.dart", "");
     myFixture.addFileToProject("dir2/example/web/foo.dart", "");
@@ -58,12 +62,14 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
       }
     });
 
-    DartProjectComponent.excludePackagesFolders(myModule, pubspec2);
+    DartProjectComponent.excludeBuildAndPackagesFolders(myModule, pubspec2);
 
     assertSameElements(ModuleRootManager.getInstance(myModule).getContentEntries()[0].getExcludeFolderUrls(),
                        rootUrl + "/dir1/someFolder",
                        rootUrl + "/dir1/packages/project1",
                        rootUrl + "/dir1/web/packages",
+                       rootUrl + "/dir2/.pub",
+                       //rootUrl + "/dir2/build",
                        rootUrl + "/dir2/packages/project2",
                        rootUrl + "/dir2/someFolder",
                        rootUrl + "/dir2/lib/someFolder",
@@ -83,12 +89,14 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                        rootUrl + "/dir2/example/packages/oldProject3Name"
     );
 
-    DartProjectComponent.excludePackagesFolders(myModule, pubspec3);
+    DartProjectComponent.excludeBuildAndPackagesFolders(myModule, pubspec3);
 
     assertSameElements(ModuleRootManager.getInstance(myModule).getContentEntries()[0].getExcludeFolderUrls(),
                        rootUrl + "/dir1/someFolder",
                        rootUrl + "/dir1/packages/project1",
                        rootUrl + "/dir1/web/packages",
+                       rootUrl + "/dir2/.pub",
+                       //rootUrl + "/dir2/build",
                        rootUrl + "/dir2/packages/project2",
                        rootUrl + "/dir2/someFolder",
                        rootUrl + "/dir2/lib/someFolder",
@@ -132,22 +140,27 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     VirtualFile file;
 
     file = resolver.findFileByDartUrl("dart:collection");
+    assertNotNull(file);
     assertEquals(DartTestUtils.SDK_HOME_PATH + "/lib/collection/collection.dart", file.getPath());
     assertEquals("dart:collection", resolver.getDartUrlForFile(file));
 
     file = resolver.findFileByDartUrl("dart:collection/hash_map.dart");
+    assertNotNull(file);
     assertEquals(DartTestUtils.SDK_HOME_PATH + "/lib/collection/hash_map.dart", file.getPath());
     assertEquals("dart:collection/hash_map.dart", resolver.getDartUrlForFile(file));
 
     file = resolver.findFileByDartUrl("package:NestedProject/src/nestedlib.dart");
+    assertNotNull(file);
     assertEquals(rootPath + "/example/lib/src/nestedlib.dart", file.getPath());
     assertEquals("package:NestedProject/src/nestedlib.dart", resolver.getDartUrlForFile(file));
 
     file = resolver.findFileByDartUrl("package:RootProject/rootlib.dart");
+    assertNotNull(file);
     assertEquals(rootPath + "/lib/rootlib.dart", file.getPath());
     assertEquals("package:RootProject/rootlib.dart", resolver.getDartUrlForFile(file));
 
     file = resolver.findFileByDartUrl("package:SomePackage/somepack.dart");
+    assertNotNull(file);
     assertEquals(rootPath + "/example/packages/SomePackage/somepack.dart", file.getPath());
     assertEquals("package:SomePackage/somepack.dart", resolver.getDartUrlForFile(file));
 
@@ -174,10 +187,12 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     assertNull(file);
 
     file = resolver.findFileByDartUrl("package:RootProject/rootlib.dart");
+    assertNotNull(file);
     assertEquals(rootPath + "/custom_pack1/RootProject/rootlib.dart", file.getPath());
     assertEquals("package:RootProject/rootlib.dart", resolver.getDartUrlForFile(file));
 
     file = resolver.findFileByDartUrl("package:SomePackage/somepack.dart");
+    assertNotNull(file);
     assertEquals(rootPath + "/custom_pack2/SomePackage/somepack.dart", file.getPath());
     assertEquals("package:SomePackage/somepack.dart", resolver.getDartUrlForFile(file));
   }

@@ -64,7 +64,7 @@ public class DartSourceIndex extends ScalarIndexExtension<String> {
   private static class MyDataIndexer implements DataIndexer<String, Void, FileContent> {
     @Override
     @NotNull
-    public Map<String, Void> map(final FileContent inputData) {
+    public Map<String, Void> map(@NotNull final FileContent inputData) {
       final Map<String, Void> result = new THashMap<String, Void>();
       for (String pathValue : DartIndexUtil.indexFile(inputData).getPaths()) {
         result.put(pathValue.substring(pathValue.lastIndexOf('/') + 1), null);

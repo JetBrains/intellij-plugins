@@ -77,9 +77,6 @@ public class DartParser implements PsiParser {
     else if (root_ == CLASS_MEMBERS) {
       result_ = classMembers(builder_, 0);
     }
-    else if (root_ == CLASS_TYPE_ALIAS) {
-      result_ = classTypeAlias(builder_, 0);
-    }
     else if (root_ == COMPARE_EXPRESSION) {
       result_ = compareExpression(builder_, 0);
     }
@@ -428,7 +425,7 @@ public class DartParser implements PsiParser {
   public static boolean additiveExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "additiveExpression")) return false;
     if (!nextTokenIs(builder_, "<additive expression>", PLUS, MINUS)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<additive expression>");
     result_ = additiveOperator(builder_, level_ + 1);
     result_ = result_ && multiplicativeExpressionWrapper(builder_, level_ + 1);
@@ -440,7 +437,7 @@ public class DartParser implements PsiParser {
   // multiplicativeExpressionWrapper additiveExpression*
   static boolean additiveExpressionWrapper(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "additiveExpressionWrapper")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = multiplicativeExpressionWrapper(builder_, level_ + 1);
     result_ = result_ && additiveExpressionWrapper_1(builder_, level_ + 1);
@@ -465,7 +462,7 @@ public class DartParser implements PsiParser {
   public static boolean additiveOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "additiveOperator")) return false;
     if (!nextTokenIs(builder_, "<additive operator>", PLUS, MINUS)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<additive operator>");
     result_ = consumeToken(builder_, PLUS);
     if (!result_) result_ = consumeToken(builder_, MINUS);
@@ -477,7 +474,7 @@ public class DartParser implements PsiParser {
   // argumentListPart (',' argumentListPart)*
   public static boolean argumentList(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "argumentList")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<argument list>");
     result_ = argumentListPart(builder_, level_ + 1);
     result_ = result_ && argumentList_1(builder_, level_ + 1);
@@ -500,7 +497,7 @@ public class DartParser implements PsiParser {
   // ',' argumentListPart
   private static boolean argumentList_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "argumentList_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     result_ = result_ && argumentListPart(builder_, level_ + 1);
@@ -512,7 +509,7 @@ public class DartParser implements PsiParser {
   // namedArgument | expression
   static boolean argumentListPart(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "argumentListPart")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = namedArgument(builder_, level_ + 1);
     if (!result_) result_ = expression(builder_, level_ + 1);
@@ -524,7 +521,7 @@ public class DartParser implements PsiParser {
   // !(')' | ',')
   static boolean argument_list_part_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "argument_list_part_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !argument_list_part_recover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -534,7 +531,7 @@ public class DartParser implements PsiParser {
   // ')' | ','
   private static boolean argument_list_part_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "argument_list_part_recover_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, RPAREN);
     if (!result_) result_ = consumeToken(builder_, COMMA);
@@ -546,7 +543,7 @@ public class DartParser implements PsiParser {
   // !(')')
   static boolean argument_list_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "argument_list_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !argument_list_recover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -556,7 +553,7 @@ public class DartParser implements PsiParser {
   // (')')
   private static boolean argument_list_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "argument_list_recover_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, RPAREN);
     exit_section_(builder_, marker_, null, result_);
@@ -568,7 +565,7 @@ public class DartParser implements PsiParser {
   public static boolean arguments(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "arguments")) return false;
     if (!nextTokenIs(builder_, LPAREN)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, LPAREN);
     result_ = result_ && arguments_1(builder_, level_ + 1);
@@ -589,8 +586,8 @@ public class DartParser implements PsiParser {
   static boolean arrayAccess(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "arrayAccess")) return false;
     if (!nextTokenIs(builder_, LBRACKET)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, LBRACKET);
     pinned_ = result_; // pin = 1
@@ -612,7 +609,7 @@ public class DartParser implements PsiParser {
   public static boolean arrayAccessExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "arrayAccessExpression")) return false;
     if (!nextTokenIs(builder_, LBRACKET)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, null);
     result_ = arrayAccess(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, ARRAY_ACCESS_EXPRESSION, result_, false, null);
@@ -624,8 +621,8 @@ public class DartParser implements PsiParser {
   static boolean arrowBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "arrowBody")) return false;
     if (!nextTokenIs(builder_, EXPRESSION_BODY_DEF)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, EXPRESSION_BODY_DEF);
     pinned_ = result_; // pin = 1
@@ -637,7 +634,7 @@ public class DartParser implements PsiParser {
   // expression | throwStatement
   private static boolean arrowBody_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "arrowBody_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = expression(builder_, level_ + 1);
     if (!result_) result_ = throwStatement(builder_, level_ + 1);
@@ -650,8 +647,8 @@ public class DartParser implements PsiParser {
   static boolean arrowBodyWithSemi(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "arrowBodyWithSemi")) return false;
     if (!nextTokenIs(builder_, EXPRESSION_BODY_DEF)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = arrowBody(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
@@ -665,7 +662,7 @@ public class DartParser implements PsiParser {
   public static boolean asExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "asExpression")) return false;
     if (!nextTokenIs(builder_, AS)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, null);
     result_ = consumeToken(builder_, AS);
     result_ = result_ && type(builder_, level_ + 1);
@@ -678,8 +675,8 @@ public class DartParser implements PsiParser {
   public static boolean assertStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "assertStatement")) return false;
     if (!nextTokenIs(builder_, ASSERT)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, ASSERT);
     pinned_ = result_; // pin = 1
@@ -698,8 +695,8 @@ public class DartParser implements PsiParser {
     if (!nextTokenIs(builder_, "<assign expression>", REM_EQ, AND_EQ,
       MUL_EQ, PLUS_EQ, MINUS_EQ, DIV_EQ, LT_LT_EQ, EQ,
       GT_GT_EQ, XOR_EQ, OR_EQ, INT_DIV_EQ)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<assign expression>");
     result_ = assignmentOperator(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
@@ -712,7 +709,7 @@ public class DartParser implements PsiParser {
   // ternaryExpressionWrapper assignExpression*
   static boolean assignExpressionWrapper(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "assignExpressionWrapper")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = ternaryExpressionWrapper(builder_, level_ + 1);
     result_ = result_ && assignExpressionWrapper_1(builder_, level_ + 1);
@@ -739,7 +736,7 @@ public class DartParser implements PsiParser {
     if (!nextTokenIs(builder_, "<assignment operator>", REM_EQ, AND_EQ,
       MUL_EQ, PLUS_EQ, MINUS_EQ, DIV_EQ, LT_LT_EQ, EQ,
       GT_GT_EQ, XOR_EQ, OR_EQ, INT_DIV_EQ)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<assignment operator>");
     result_ = consumeToken(builder_, EQ);
     if (!result_) result_ = consumeToken(builder_, MUL_EQ);
@@ -769,7 +766,7 @@ public class DartParser implements PsiParser {
     if (!nextTokenIs(builder_, "", REM, AND,
       MUL, PLUS, MINUS, DIV, LT, LT_LT,
       LT_EQ, EQ_EQ, GT, GT_EQ, XOR, OR, INT_DIV)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = multiplicativeOperator(builder_, level_ + 1);
     if (!result_) result_ = additiveOperator(builder_, level_ + 1);
@@ -786,7 +783,7 @@ public class DartParser implements PsiParser {
   public static boolean bitwiseExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "bitwiseExpression")) return false;
     if (!nextTokenIs(builder_, "<bitwise expression>", AND, XOR, OR)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<bitwise expression>");
     result_ = bitwiseOperator(builder_, level_ + 1);
     result_ = result_ && shiftExpressionWrapper(builder_, level_ + 1);
@@ -798,7 +795,7 @@ public class DartParser implements PsiParser {
   // shiftExpressionWrapper bitwiseExpression*
   static boolean bitwiseExpressionWrapper(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "bitwiseExpressionWrapper")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = shiftExpressionWrapper(builder_, level_ + 1);
     result_ = result_ && bitwiseExpressionWrapper_1(builder_, level_ + 1);
@@ -823,7 +820,7 @@ public class DartParser implements PsiParser {
   public static boolean bitwiseOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "bitwiseOperator")) return false;
     if (!nextTokenIs(builder_, "<bitwise operator>", AND, XOR, OR)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<bitwise operator>");
     result_ = consumeToken(builder_, AND);
     if (!result_) result_ = consumeToken(builder_, XOR);
@@ -837,8 +834,8 @@ public class DartParser implements PsiParser {
   public static boolean block(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "block")) return false;
     if (!nextTokenIs(builder_, LBRACE)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, LBRACE);
     pinned_ = result_; // pin = 1
@@ -853,8 +850,8 @@ public class DartParser implements PsiParser {
   public static boolean breakStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "breakStatement")) return false;
     if (!nextTokenIs(builder_, BREAK)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, BREAK);
     pinned_ = result_; // pin = 1
@@ -876,7 +873,7 @@ public class DartParser implements PsiParser {
   public static boolean callExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "callExpression")) return false;
     if (!nextTokenIs(builder_, LPAREN)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, null);
     result_ = arguments(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, CALL_EXPRESSION, result_, false, null);
@@ -899,7 +896,7 @@ public class DartParser implements PsiParser {
   // callExpression | arrayAccessExpression | qualifiedReferenceExpression
   private static boolean callOrArrayAccessOrQualifiedRefExpression_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "callOrArrayAccessOrQualifiedRefExpression_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = callExpression(builder_, level_ + 1);
     if (!result_) result_ = arrayAccessExpression(builder_, level_ + 1);
@@ -913,7 +910,7 @@ public class DartParser implements PsiParser {
   public static boolean cascadeReferenceExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cascadeReferenceExpression")) return false;
     if (!nextTokenIs(builder_, DOT)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, null);
     result_ = consumeToken(builder_, DOT);
     result_ = result_ && consumeToken(builder_, DOT);
@@ -927,7 +924,7 @@ public class DartParser implements PsiParser {
   // arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression
   private static boolean cascadeReferenceExpression_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cascadeReferenceExpression_3")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = arrayAccess(builder_, level_ + 1);
     if (!result_) result_ = cascadeReferenceExpression_3_1(builder_, level_ + 1);
@@ -938,7 +935,7 @@ public class DartParser implements PsiParser {
   // refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression
   private static boolean cascadeReferenceExpression_3_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cascadeReferenceExpression_3_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = refOrThisOrSuperOrParenExpression(builder_, level_ + 1);
     result_ = result_ && callOrArrayAccessOrQualifiedRefExpression(builder_, level_ + 1);
@@ -947,19 +944,39 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // 'catch' formalParameterList block
+  // 'catch' '(' componentName (',' componentName)? ')'
   public static boolean catchPart(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "catchPart")) return false;
     if (!nextTokenIs(builder_, CATCH)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, CATCH);
     pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, formalParameterList(builder_, level_ + 1));
-    result_ = pinned_ && block(builder_, level_ + 1) && result_;
+    result_ = result_ && report_error_(builder_, consumeToken(builder_, LPAREN));
+    result_ = pinned_ && report_error_(builder_, componentName(builder_, level_ + 1)) && result_;
+    result_ = pinned_ && report_error_(builder_, catchPart_3(builder_, level_ + 1)) && result_;
+    result_ = pinned_ && consumeToken(builder_, RPAREN) && result_;
     exit_section_(builder_, level_, marker_, CATCH_PART, result_, pinned_, null);
     return result_ || pinned_;
+  }
+
+  // (',' componentName)?
+  private static boolean catchPart_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "catchPart_3")) return false;
+    catchPart_3_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // ',' componentName
+  private static boolean catchPart_3_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "catchPart_3_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, COMMA);
+    result_ = result_ && componentName(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -967,8 +984,8 @@ public class DartParser implements PsiParser {
   public static boolean classBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classBody")) return false;
     if (!nextTokenIs(builder_, LBRACE)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, LBRACE);
     pinned_ = result_; // pin = 1
@@ -979,13 +996,12 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'abstract'? 'class' componentName typeParameters? ((superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody |
-  //                                                                                  '=' mixinApplication ';')
+  // metadata* 'abstract'? 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
   public static boolean classDefinition(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classDefinition")) return false;
     if (!nextTokenIs(builder_, "<class definition>", AT, ABSTRACT, CLASS)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<class definition>");
     result_ = classDefinition_0(builder_, level_ + 1);
     result_ = result_ && classDefinition_1(builder_, level_ + 1);
@@ -1024,96 +1040,13 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody |
-  //                                                                                  '=' mixinApplication ';'
+  // mixinApplication | standardClassDeclarationTail
   private static boolean classDefinition_5(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classDefinition_5")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = classDefinition_5_0(builder_, level_ + 1);
-    if (!result_) result_ = classDefinition_5_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody
-  private static boolean classDefinition_5_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_5_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = classDefinition_5_0_0(builder_, level_ + 1);
-    result_ = result_ && classDefinition_5_0_1(builder_, level_ + 1);
-    result_ = result_ && classDefinition_5_0_2(builder_, level_ + 1);
-    result_ = result_ && classBody(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // (superclass mixins?)?
-  private static boolean classDefinition_5_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_5_0_0")) return false;
-    classDefinition_5_0_0_0(builder_, level_ + 1);
-    return true;
-  }
-
-  // superclass mixins?
-  private static boolean classDefinition_5_0_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_5_0_0_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = superclass(builder_, level_ + 1);
-    result_ = result_ && classDefinition_5_0_0_0_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // mixins?
-  private static boolean classDefinition_5_0_0_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_5_0_0_0_1")) return false;
-    mixins(builder_, level_ + 1);
-    return true;
-  }
-
-  // interfaces?
-  private static boolean classDefinition_5_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_5_0_1")) return false;
-    interfaces(builder_, level_ + 1);
-    return true;
-  }
-
-  // ('native' stringLiteralExpression?)?
-  private static boolean classDefinition_5_0_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_5_0_2")) return false;
-    classDefinition_5_0_2_0(builder_, level_ + 1);
-    return true;
-  }
-
-  // 'native' stringLiteralExpression?
-  private static boolean classDefinition_5_0_2_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_5_0_2_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, NATIVE);
-    result_ = result_ && classDefinition_5_0_2_0_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // stringLiteralExpression?
-  private static boolean classDefinition_5_0_2_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_5_0_2_0_1")) return false;
-    stringLiteralExpression(builder_, level_ + 1);
-    return true;
-  }
-
-  // '=' mixinApplication ';'
-  private static boolean classDefinition_5_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classDefinition_5_1")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, EQ);
-    result_ = result_ && mixinApplication(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, SEMICOLON);
+    result_ = mixinApplication(builder_, level_ + 1);
+    if (!result_) result_ = standardClassDeclarationTail(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -1128,7 +1061,7 @@ public class DartParser implements PsiParser {
   //                                 | incompleteDeclaration
   static boolean classMemberDefinition(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classMemberDefinition")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = factoryConstructorDeclaration(builder_, level_ + 1);
     if (!result_) result_ = namedConstructorDeclaration(builder_, level_ + 1);
@@ -1157,57 +1090,10 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'typedef' componentName typeParameters? '=' type mixins? ';'
-  public static boolean classTypeAlias(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classTypeAlias")) return false;
-    if (!nextTokenIs(builder_, "<class type alias>", AT, TYPEDEF)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<class type alias>");
-    result_ = classTypeAlias_0(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, TYPEDEF);
-    result_ = result_ && componentName(builder_, level_ + 1);
-    result_ = result_ && classTypeAlias_3(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, EQ);
-    pinned_ = result_; // pin = 5
-    result_ = result_ && report_error_(builder_, type(builder_, level_ + 1));
-    result_ = pinned_ && report_error_(builder_, classTypeAlias_6(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
-    exit_section_(builder_, level_, marker_, CLASS_TYPE_ALIAS, result_, pinned_, null);
-    return result_ || pinned_;
-  }
-
-  // metadata*
-  private static boolean classTypeAlias_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classTypeAlias_0")) return false;
-    int pos_ = current_position_(builder_);
-    while (true) {
-      if (!metadata(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "classTypeAlias_0", pos_)) break;
-      pos_ = current_position_(builder_);
-    }
-    return true;
-  }
-
-  // typeParameters?
-  private static boolean classTypeAlias_3(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classTypeAlias_3")) return false;
-    typeParameters(builder_, level_ + 1);
-    return true;
-  }
-
-  // mixins?
-  private static boolean classTypeAlias_6(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classTypeAlias_6")) return false;
-    mixins(builder_, level_ + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
   // !(<<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'export' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'library' | 'operator' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '}' )
   static boolean class_member_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "class_member_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !class_member_recover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -1217,7 +1103,7 @@ public class DartParser implements PsiParser {
   // <<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'export' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'library' | 'operator' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '}'
   private static boolean class_member_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "class_member_recover_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = nonStrictID(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, AT);
@@ -1248,7 +1134,7 @@ public class DartParser implements PsiParser {
   static boolean combinator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "combinator")) return false;
     if (!nextTokenIs(builder_, "", HIDE, SHOW)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = showCombinator(builder_, level_ + 1);
     if (!result_) result_ = hideCombinator(builder_, level_ + 1);
@@ -1262,7 +1148,7 @@ public class DartParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "compareExpression")) return false;
     if (!nextTokenIs(builder_, "<compare expression>", NEQ, LT,
       LT_EQ, EQ_EQ, GT, GT_EQ)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<compare expression>");
     result_ = compareExpression_0(builder_, level_ + 1);
     result_ = result_ && bitwiseExpressionWrapper(builder_, level_ + 1);
@@ -1273,7 +1159,7 @@ public class DartParser implements PsiParser {
   // relationalOperator | equalityOperator
   private static boolean compareExpression_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "compareExpression_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = relationalOperator(builder_, level_ + 1);
     if (!result_) result_ = equalityOperator(builder_, level_ + 1);
@@ -1285,7 +1171,7 @@ public class DartParser implements PsiParser {
   // bitwiseExpressionWrapper compareExpression*
   static boolean compareExpressionWrapper(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "compareExpressionWrapper")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = bitwiseExpressionWrapper(builder_, level_ + 1);
     result_ = result_ && compareExpressionWrapper_1(builder_, level_ + 1);
@@ -1309,7 +1195,7 @@ public class DartParser implements PsiParser {
   // << nonStrictID >>
   public static boolean componentName(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "componentName")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<component name>");
     result_ = nonStrictID(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, COMPONENT_NAME, result_, false, null);
@@ -1321,8 +1207,8 @@ public class DartParser implements PsiParser {
   public static boolean constConstructorExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constConstructorExpression")) return false;
     if (!nextTokenIs(builder_, CONST)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, CONST);
     pinned_ = result_; // pin = 1
@@ -1343,7 +1229,7 @@ public class DartParser implements PsiParser {
   // '.' referenceExpression
   private static boolean constConstructorExpression_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constConstructorExpression_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
     result_ = result_ && referenceExpression(builder_, level_ + 1);
@@ -1356,8 +1242,8 @@ public class DartParser implements PsiParser {
   public static boolean continueStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "continueStatement")) return false;
     if (!nextTokenIs(builder_, CONTINUE)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, CONTINUE);
     pinned_ = result_; // pin = 1
@@ -1391,7 +1277,7 @@ public class DartParser implements PsiParser {
   // metadata* finalConstVarOrTypeAndComponentName
   static boolean declaredIdentifier(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "declaredIdentifier")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = declaredIdentifier_0(builder_, level_ + 1);
     result_ = result_ && finalConstVarOrTypeAndComponentName(builder_, level_ + 1);
@@ -1415,7 +1301,7 @@ public class DartParser implements PsiParser {
   // label? ('case' expression ':')* 'default' ':' statements
   public static boolean defaultCase(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "defaultCase")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<default case>");
     result_ = defaultCase_0(builder_, level_ + 1);
     result_ = result_ && defaultCase_1(builder_, level_ + 1);
@@ -1448,7 +1334,7 @@ public class DartParser implements PsiParser {
   // 'case' expression ':'
   private static boolean defaultCase_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "defaultCase_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, CASE);
     result_ = result_ && expression(builder_, level_ + 1);
@@ -1461,7 +1347,7 @@ public class DartParser implements PsiParser {
   // normalFormalParameter (('=' | ':') expression)?
   public static boolean defaultFormalNamedParameter(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "defaultFormalNamedParameter")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<default formal named parameter>");
     result_ = normalFormalParameter(builder_, level_ + 1);
     result_ = result_ && defaultFormalNamedParameter_1(builder_, level_ + 1);
@@ -1479,7 +1365,7 @@ public class DartParser implements PsiParser {
   // ('=' | ':') expression
   private static boolean defaultFormalNamedParameter_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "defaultFormalNamedParameter_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = defaultFormalNamedParameter_1_0_0(builder_, level_ + 1);
     result_ = result_ && expression(builder_, level_ + 1);
@@ -1490,7 +1376,7 @@ public class DartParser implements PsiParser {
   // '=' | ':'
   private static boolean defaultFormalNamedParameter_1_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "defaultFormalNamedParameter_1_0_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, EQ);
     if (!result_) result_ = consumeToken(builder_, COLON);
@@ -1502,7 +1388,7 @@ public class DartParser implements PsiParser {
   // !(')' | ',' | ']' | '}')
   static boolean default_formal_parameter_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "default_formal_parameter_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !default_formal_parameter_recover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -1512,7 +1398,7 @@ public class DartParser implements PsiParser {
   // ')' | ',' | ']' | '}'
   private static boolean default_formal_parameter_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "default_formal_parameter_recover_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, RPAREN);
     if (!result_) result_ = consumeToken(builder_, COMMA);
@@ -1527,8 +1413,8 @@ public class DartParser implements PsiParser {
   public static boolean doWhileStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "doWhileStatement")) return false;
     if (!nextTokenIs(builder_, DO)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, DO);
     pinned_ = result_; // pin = 1
@@ -1547,7 +1433,7 @@ public class DartParser implements PsiParser {
   public static boolean equalityOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "equalityOperator")) return false;
     if (!nextTokenIs(builder_, "<equality operator>", NEQ, EQ_EQ)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<equality operator>");
     result_ = consumeToken(builder_, EQ_EQ);
     if (!result_) result_ = consumeToken(builder_, NEQ);
@@ -1560,8 +1446,8 @@ public class DartParser implements PsiParser {
   public static boolean exportStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "exportStatement")) return false;
     if (!nextTokenIs(builder_, "<export statement>", AT, EXPORT)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<export statement>");
     result_ = exportStatement_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, EXPORT);
@@ -1601,7 +1487,7 @@ public class DartParser implements PsiParser {
   // assignExpressionWrapper
   public static boolean expression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expression")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<expression>");
     result_ = assignExpressionWrapper(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, EXPRESSION, result_, false, expression_recover_parser_);
@@ -1612,7 +1498,7 @@ public class DartParser implements PsiParser {
   // expression | statement
   static boolean expressionInParentheses(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expressionInParentheses")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = expression(builder_, level_ + 1);
     if (!result_) result_ = statement(builder_, level_ + 1);
@@ -1624,7 +1510,7 @@ public class DartParser implements PsiParser {
   // expression (',' expression)*
   public static boolean expressionList(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expressionList")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<expression list>");
     result_ = expression(builder_, level_ + 1);
     result_ = result_ && expressionList_1(builder_, level_ + 1);
@@ -1647,7 +1533,7 @@ public class DartParser implements PsiParser {
   // ',' expression
   private static boolean expressionList_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expressionList_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     result_ = result_ && expression(builder_, level_ + 1);
@@ -1659,7 +1545,7 @@ public class DartParser implements PsiParser {
   // expression
   static boolean expressionWithRecoverUntilParen(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expressionWithRecoverUntilParen")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = expression(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, not_paren_recover_parser_);
@@ -1671,7 +1557,7 @@ public class DartParser implements PsiParser {
   //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
   //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' |
-  //                                  'continue' | 'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
+  //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
   //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
   //                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' |
   //                                  'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
@@ -1680,7 +1566,7 @@ public class DartParser implements PsiParser {
   //                                   SHORT_TEMPLATE_ENTRY_START | TRUE)
   static boolean expression_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expression_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !expression_recover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -1691,7 +1577,7 @@ public class DartParser implements PsiParser {
   //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
   //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' |
-  //                                  'continue' | 'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
+  //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
   //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
   //                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' |
   //                                  'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
@@ -1700,7 +1586,7 @@ public class DartParser implements PsiParser {
   //                                   SHORT_TEMPLATE_ENTRY_START | TRUE
   private static boolean expression_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expression_recover_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = nonStrictID(builder_, level_ + 1);
     if (!result_) result_ = parenthesizedExpressionWrapper(builder_, level_ + 1);
@@ -1753,6 +1639,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, CONST);
     if (!result_) result_ = consumeToken(builder_, CONTINUE);
     if (!result_) result_ = consumeToken(builder_, DEFAULT);
+    if (!result_) result_ = consumeToken(builder_, DEFERRED);
     if (!result_) result_ = consumeToken(builder_, DO);
     if (!result_) result_ = consumeToken(builder_, ELSE);
     if (!result_) result_ = consumeToken(builder_, EXPORT);
@@ -1817,8 +1704,8 @@ public class DartParser implements PsiParser {
   public static boolean factoryConstructorDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factoryConstructorDeclaration")) return false;
     if (!nextTokenIs(builder_, "<factory constructor declaration>", AT, CONST, EXTERNAL, FACTORY)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<factory constructor declaration>");
     result_ = factoryConstructorDeclaration_0(builder_, level_ + 1);
     result_ = result_ && factoryConstructorDeclaration_1(builder_, level_ + 1);
@@ -1859,7 +1746,7 @@ public class DartParser implements PsiParser {
   // 'external' | 'const'
   private static boolean factoryConstructorDeclaration_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factoryConstructorDeclaration_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, CONST);
@@ -1877,7 +1764,7 @@ public class DartParser implements PsiParser {
   // '.' componentName
   private static boolean factoryConstructorDeclaration_4_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factoryConstructorDeclaration_4_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -1898,7 +1785,7 @@ public class DartParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "factoryTail")) return false;
     if (!nextTokenIs(builder_, "", SEMICOLON, EQ,
       EXPRESSION_BODY_DEF, NATIVE, LBRACE)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = factoryTail_0(builder_, level_ + 1);
     if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
@@ -1910,8 +1797,8 @@ public class DartParser implements PsiParser {
   // varFactoryDeclaration ';'
   private static boolean factoryTail_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factoryTail_0")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = varFactoryDeclaration(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
@@ -1924,7 +1811,7 @@ public class DartParser implements PsiParser {
   // metadata* finalConstVarOrType? 'this' '.' referenceExpression formalParameterList?
   public static boolean fieldFormalParameter(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "fieldFormalParameter")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<field formal parameter>");
     result_ = fieldFormalParameter_0(builder_, level_ + 1);
     result_ = result_ && fieldFormalParameter_1(builder_, level_ + 1);
@@ -1966,8 +1853,8 @@ public class DartParser implements PsiParser {
   // ('this' '.')? referenceExpression '=' expression
   public static boolean fieldInitializer(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "fieldInitializer")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<field initializer>");
     result_ = fieldInitializer_0(builder_, level_ + 1);
     result_ = result_ && referenceExpression(builder_, level_ + 1);
@@ -1988,7 +1875,7 @@ public class DartParser implements PsiParser {
   // 'this' '.'
   private static boolean fieldInitializer_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "fieldInitializer_0_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, THIS);
     result_ = result_ && consumeToken(builder_, DOT);
@@ -2000,7 +1887,7 @@ public class DartParser implements PsiParser {
   // 'final' type? | 'const' type? | 'var' | type
   static boolean finalConstVarOrType(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finalConstVarOrType")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = finalConstVarOrType_0(builder_, level_ + 1);
     if (!result_) result_ = finalConstVarOrType_1(builder_, level_ + 1);
@@ -2013,7 +1900,7 @@ public class DartParser implements PsiParser {
   // 'final' type?
   private static boolean finalConstVarOrType_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finalConstVarOrType_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, FINAL);
     result_ = result_ && finalConstVarOrType_0_1(builder_, level_ + 1);
@@ -2031,7 +1918,7 @@ public class DartParser implements PsiParser {
   // 'const' type?
   private static boolean finalConstVarOrType_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finalConstVarOrType_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, CONST);
     result_ = result_ && finalConstVarOrType_1_1(builder_, level_ + 1);
@@ -2055,7 +1942,7 @@ public class DartParser implements PsiParser {
   //                                                         type componentName
   static boolean finalConstVarOrTypeAndComponentName(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finalConstVarOrTypeAndComponentName")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = finalConstVarOrTypeAndComponentName_0(builder_, level_ + 1);
     if (!result_) result_ = finalConstVarOrTypeAndComponentName_1(builder_, level_ + 1);
@@ -2070,7 +1957,7 @@ public class DartParser implements PsiParser {
   // 'final' type componentName
   private static boolean finalConstVarOrTypeAndComponentName_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finalConstVarOrTypeAndComponentName_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, FINAL);
     result_ = result_ && type(builder_, level_ + 1);
@@ -2082,7 +1969,7 @@ public class DartParser implements PsiParser {
   // 'final'      componentName
   private static boolean finalConstVarOrTypeAndComponentName_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finalConstVarOrTypeAndComponentName_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, FINAL);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -2093,7 +1980,7 @@ public class DartParser implements PsiParser {
   // 'const' type componentName
   private static boolean finalConstVarOrTypeAndComponentName_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finalConstVarOrTypeAndComponentName_2")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, CONST);
     result_ = result_ && type(builder_, level_ + 1);
@@ -2105,7 +1992,7 @@ public class DartParser implements PsiParser {
   // 'const'      componentName
   private static boolean finalConstVarOrTypeAndComponentName_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finalConstVarOrTypeAndComponentName_3")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, CONST);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -2116,7 +2003,7 @@ public class DartParser implements PsiParser {
   // 'var'        componentName
   private static boolean finalConstVarOrTypeAndComponentName_4(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finalConstVarOrTypeAndComponentName_4")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, VAR);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -2127,7 +2014,7 @@ public class DartParser implements PsiParser {
   // type componentName
   private static boolean finalConstVarOrTypeAndComponentName_5(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finalConstVarOrTypeAndComponentName_5")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = type(builder_, level_ + 1);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -2140,7 +2027,7 @@ public class DartParser implements PsiParser {
   static boolean finalOrConst(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finalOrConst")) return false;
     if (!nextTokenIs(builder_, "", CONST, FINAL)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, FINAL);
     if (!result_) result_ = consumeToken(builder_, CONST);
@@ -2153,8 +2040,8 @@ public class DartParser implements PsiParser {
   public static boolean finallyPart(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "finallyPart")) return false;
     if (!nextTokenIs(builder_, FINALLY)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, FINALLY);
     pinned_ = result_; // pin = 1
@@ -2167,7 +2054,7 @@ public class DartParser implements PsiParser {
   // (varAccessDeclaration | componentName) 'in' expression
   public static boolean forInPart(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "forInPart")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<for in part>");
     result_ = forInPart_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, IN);
@@ -2179,7 +2066,7 @@ public class DartParser implements PsiParser {
   // varAccessDeclaration | componentName
   private static boolean forInPart_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "forInPart_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = varAccessDeclaration(builder_, level_ + 1);
     if (!result_) result_ = componentName(builder_, level_ + 1);
@@ -2193,7 +2080,7 @@ public class DartParser implements PsiParser {
   //               | expressionList? ';' expression? ';' expressionList?
   public static boolean forLoopParts(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "forLoopParts")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<for loop parts>");
     result_ = forLoopParts_0(builder_, level_ + 1);
     if (!result_) result_ = forInPart(builder_, level_ + 1);
@@ -2205,7 +2092,7 @@ public class DartParser implements PsiParser {
   // varDeclarationList ';' expression? ';' expressionList?
   private static boolean forLoopParts_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "forLoopParts_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = varDeclarationList(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, SEMICOLON);
@@ -2233,7 +2120,7 @@ public class DartParser implements PsiParser {
   // expressionList? ';' expression? ';' expressionList?
   private static boolean forLoopParts_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "forLoopParts_2")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = forLoopParts_2_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, SEMICOLON);
@@ -2270,7 +2157,7 @@ public class DartParser implements PsiParser {
   public static boolean forLoopPartsInBraces(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "forLoopPartsInBraces")) return false;
     if (!nextTokenIs(builder_, LPAREN)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, LPAREN);
     result_ = result_ && forLoopParts(builder_, level_ + 1);
@@ -2284,8 +2171,8 @@ public class DartParser implements PsiParser {
   public static boolean forStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "forStatement")) return false;
     if (!nextTokenIs(builder_, FOR)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, FOR);
     pinned_ = result_; // pin = 1
@@ -2299,7 +2186,7 @@ public class DartParser implements PsiParser {
   // !')'
   static boolean for_loops_parts_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "for_loops_parts_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !consumeToken(builder_, RPAREN);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -2312,7 +2199,7 @@ public class DartParser implements PsiParser {
   public static boolean formalParameterList(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "formalParameterList")) return false;
     if (!nextTokenIs(builder_, LPAREN)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = formalParameterList_0(builder_, level_ + 1);
     if (!result_) result_ = formalParameterList_1(builder_, level_ + 1);
@@ -2323,7 +2210,7 @@ public class DartParser implements PsiParser {
   // '(' normalFormalParameter (',' normalFormalParameter)* (',' namedFormalParameters)? ')'
   private static boolean formalParameterList_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "formalParameterList_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, LPAREN);
     result_ = result_ && normalFormalParameter(builder_, level_ + 1);
@@ -2349,7 +2236,7 @@ public class DartParser implements PsiParser {
   // ',' normalFormalParameter
   private static boolean formalParameterList_0_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "formalParameterList_0_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     result_ = result_ && normalFormalParameter(builder_, level_ + 1);
@@ -2367,7 +2254,7 @@ public class DartParser implements PsiParser {
   // ',' namedFormalParameters
   private static boolean formalParameterList_0_3_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "formalParameterList_0_3_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     result_ = result_ && namedFormalParameters(builder_, level_ + 1);
@@ -2378,7 +2265,7 @@ public class DartParser implements PsiParser {
   // '(' namedFormalParameters? ')'
   private static boolean formalParameterList_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "formalParameterList_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, LPAREN);
     result_ = result_ && formalParameterList_1_1(builder_, level_ + 1);
@@ -2399,7 +2286,7 @@ public class DartParser implements PsiParser {
   public static boolean functionBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionBody")) return false;
     if (!nextTokenIs(builder_, "<function body>", EXPRESSION_BODY_DEF, LBRACE)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function body>");
     result_ = arrowBodyWithSemi(builder_, level_ + 1);
     if (!result_) result_ = block(builder_, level_ + 1);
@@ -2414,7 +2301,7 @@ public class DartParser implements PsiParser {
   static boolean functionBodyOrNative(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionBodyOrNative")) return false;
     if (!nextTokenIs(builder_, "", EXPRESSION_BODY_DEF, NATIVE, LBRACE)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = functionBodyOrNative_0(builder_, level_ + 1);
     if (!result_) result_ = functionNative(builder_, level_ + 1);
@@ -2426,7 +2313,7 @@ public class DartParser implements PsiParser {
   // 'native' functionBody
   private static boolean functionBodyOrNative_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionBodyOrNative_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, NATIVE);
     result_ = result_ && functionBody(builder_, level_ + 1);
@@ -2438,7 +2325,7 @@ public class DartParser implements PsiParser {
   // returnType componentName formalParameterList | componentName formalParameterList
   static boolean functionDeclarationPrivate(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionDeclarationPrivate")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = functionDeclarationPrivate_0(builder_, level_ + 1);
     if (!result_) result_ = functionDeclarationPrivate_1(builder_, level_ + 1);
@@ -2449,7 +2336,7 @@ public class DartParser implements PsiParser {
   // returnType componentName formalParameterList
   private static boolean functionDeclarationPrivate_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionDeclarationPrivate_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = returnType(builder_, level_ + 1);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -2461,7 +2348,7 @@ public class DartParser implements PsiParser {
   // componentName formalParameterList
   private static boolean functionDeclarationPrivate_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionDeclarationPrivate_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = componentName(builder_, level_ + 1);
     result_ = result_ && formalParameterList(builder_, level_ + 1);
@@ -2473,7 +2360,7 @@ public class DartParser implements PsiParser {
   // metadata*  (returnType componentName formalParameterList | componentName formalParameterList) functionBody
   public static boolean functionDeclarationWithBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionDeclarationWithBody")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function declaration with body>");
     result_ = functionDeclarationWithBody_0(builder_, level_ + 1);
     result_ = result_ && functionDeclarationWithBody_1(builder_, level_ + 1);
@@ -2497,7 +2384,7 @@ public class DartParser implements PsiParser {
   // returnType componentName formalParameterList | componentName formalParameterList
   private static boolean functionDeclarationWithBody_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionDeclarationWithBody_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = functionDeclarationWithBody_1_0(builder_, level_ + 1);
     if (!result_) result_ = functionDeclarationWithBody_1_1(builder_, level_ + 1);
@@ -2508,7 +2395,7 @@ public class DartParser implements PsiParser {
   // returnType componentName formalParameterList
   private static boolean functionDeclarationWithBody_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionDeclarationWithBody_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = returnType(builder_, level_ + 1);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -2520,7 +2407,7 @@ public class DartParser implements PsiParser {
   // componentName formalParameterList
   private static boolean functionDeclarationWithBody_1_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionDeclarationWithBody_1_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = componentName(builder_, level_ + 1);
     result_ = result_ && formalParameterList(builder_, level_ + 1);
@@ -2532,7 +2419,7 @@ public class DartParser implements PsiParser {
   // metadata* 'external'? (returnType componentName formalParameterList | componentName formalParameterList) ( ';' | functionBodyOrNative)
   public static boolean functionDeclarationWithBodyOrNative(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionDeclarationWithBodyOrNative")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function declaration with body or native>");
     result_ = functionDeclarationWithBodyOrNative_0(builder_, level_ + 1);
     result_ = result_ && functionDeclarationWithBodyOrNative_1(builder_, level_ + 1);
@@ -2564,7 +2451,7 @@ public class DartParser implements PsiParser {
   // returnType componentName formalParameterList | componentName formalParameterList
   private static boolean functionDeclarationWithBodyOrNative_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionDeclarationWithBodyOrNative_2")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = functionDeclarationWithBodyOrNative_2_0(builder_, level_ + 1);
     if (!result_) result_ = functionDeclarationWithBodyOrNative_2_1(builder_, level_ + 1);
@@ -2575,7 +2462,7 @@ public class DartParser implements PsiParser {
   // returnType componentName formalParameterList
   private static boolean functionDeclarationWithBodyOrNative_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionDeclarationWithBodyOrNative_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = returnType(builder_, level_ + 1);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -2587,7 +2474,7 @@ public class DartParser implements PsiParser {
   // componentName formalParameterList
   private static boolean functionDeclarationWithBodyOrNative_2_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionDeclarationWithBodyOrNative_2_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = componentName(builder_, level_ + 1);
     result_ = result_ && formalParameterList(builder_, level_ + 1);
@@ -2598,7 +2485,7 @@ public class DartParser implements PsiParser {
   // ';' | functionBodyOrNative
   private static boolean functionDeclarationWithBodyOrNative_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionDeclarationWithBodyOrNative_3")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SEMICOLON);
     if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
@@ -2611,7 +2498,7 @@ public class DartParser implements PsiParser {
   public static boolean functionExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionExpression")) return false;
     if (!nextTokenIs(builder_, LPAREN)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = formalParameterList(builder_, level_ + 1);
     result_ = result_ && functionExpressionBody(builder_, level_ + 1);
@@ -2624,7 +2511,7 @@ public class DartParser implements PsiParser {
   public static boolean functionExpressionBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionExpressionBody")) return false;
     if (!nextTokenIs(builder_, "<function expression body>", EXPRESSION_BODY_DEF, LBRACE)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function expression body>");
     result_ = arrowBody(builder_, level_ + 1);
     if (!result_) result_ = block(builder_, level_ + 1);
@@ -2637,7 +2524,7 @@ public class DartParser implements PsiParser {
   static boolean functionNative(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionNative")) return false;
     if (!nextTokenIs(builder_, NATIVE)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, NATIVE);
     result_ = result_ && functionNative_1(builder_, level_ + 1);
@@ -2648,7 +2535,7 @@ public class DartParser implements PsiParser {
   // stringLiteralExpression ';' | ';' | stringLiteralExpression functionBody
   private static boolean functionNative_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionNative_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = functionNative_1_0(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, SEMICOLON);
@@ -2660,7 +2547,7 @@ public class DartParser implements PsiParser {
   // stringLiteralExpression ';'
   private static boolean functionNative_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionNative_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = stringLiteralExpression(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, SEMICOLON);
@@ -2671,7 +2558,7 @@ public class DartParser implements PsiParser {
   // stringLiteralExpression functionBody
   private static boolean functionNative_1_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionNative_1_2")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = stringLiteralExpression(builder_, level_ + 1);
     result_ = result_ && functionBody(builder_, level_ + 1);
@@ -2683,7 +2570,7 @@ public class DartParser implements PsiParser {
   // returnType componentName | componentName
   static boolean functionPrefix(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionPrefix")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = functionPrefix_0(builder_, level_ + 1);
     if (!result_) result_ = componentName(builder_, level_ + 1);
@@ -2694,7 +2581,7 @@ public class DartParser implements PsiParser {
   // returnType componentName
   private static boolean functionPrefix_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionPrefix_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = returnType(builder_, level_ + 1);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -2706,7 +2593,7 @@ public class DartParser implements PsiParser {
   // metadata* functionDeclarationPrivate
   public static boolean functionSignature(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionSignature")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function signature>");
     result_ = functionSignature_0(builder_, level_ + 1);
     result_ = result_ && functionDeclarationPrivate(builder_, level_ + 1);
@@ -2731,8 +2618,8 @@ public class DartParser implements PsiParser {
   public static boolean functionTypeAlias(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionTypeAlias")) return false;
     if (!nextTokenIs(builder_, "<function type alias>", AT, TYPEDEF)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function type alias>");
     result_ = functionTypeAlias_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, TYPEDEF);
@@ -2768,7 +2655,7 @@ public class DartParser implements PsiParser {
   // getterDeclarationWithReturnType | getterDeclarationWithoutReturnType
   public static boolean getterDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "getterDeclaration")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<getter declaration>");
     result_ = getterDeclarationWithReturnType(builder_, level_ + 1);
     if (!result_) result_ = getterDeclarationWithoutReturnType(builder_, level_ + 1);
@@ -2780,8 +2667,8 @@ public class DartParser implements PsiParser {
   // metadata* ('external' | 'static')* returnType 'get' componentName formalParameterList? (';' | functionBodyOrNative)
   static boolean getterDeclarationWithReturnType(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "getterDeclarationWithReturnType")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = getterDeclarationWithReturnType_0(builder_, level_ + 1);
     result_ = result_ && getterDeclarationWithReturnType_1(builder_, level_ + 1);
@@ -2822,7 +2709,7 @@ public class DartParser implements PsiParser {
   // 'external' | 'static'
   private static boolean getterDeclarationWithReturnType_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "getterDeclarationWithReturnType_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, STATIC);
@@ -2840,7 +2727,7 @@ public class DartParser implements PsiParser {
   // ';' | functionBodyOrNative
   private static boolean getterDeclarationWithReturnType_6(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "getterDeclarationWithReturnType_6")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SEMICOLON);
     if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
@@ -2853,8 +2740,8 @@ public class DartParser implements PsiParser {
   static boolean getterDeclarationWithoutReturnType(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "getterDeclarationWithoutReturnType")) return false;
     if (!nextTokenIs(builder_, "", AT, EXTERNAL, GET, STATIC)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = getterDeclarationWithoutReturnType_0(builder_, level_ + 1);
     result_ = result_ && getterDeclarationWithoutReturnType_1(builder_, level_ + 1);
@@ -2894,7 +2781,7 @@ public class DartParser implements PsiParser {
   // 'external' | 'static'
   private static boolean getterDeclarationWithoutReturnType_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "getterDeclarationWithoutReturnType_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, STATIC);
@@ -2912,7 +2799,7 @@ public class DartParser implements PsiParser {
   // ';' | functionBodyOrNative
   private static boolean getterDeclarationWithoutReturnType_5(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "getterDeclarationWithoutReturnType_5")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SEMICOLON);
     if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
@@ -2924,7 +2811,7 @@ public class DartParser implements PsiParser {
   // getterDeclaration | setterDeclaration
   static boolean getterOrSetterDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "getterOrSetterDeclaration")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = getterDeclaration(builder_, level_ + 1);
     if (!result_) result_ = setterDeclaration(builder_, level_ + 1);
@@ -2937,7 +2824,7 @@ public class DartParser implements PsiParser {
   public static boolean hideCombinator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "hideCombinator")) return false;
     if (!nextTokenIs(builder_, HIDE)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, HIDE);
     result_ = result_ && libraryReferenceList(builder_, level_ + 1);
@@ -2950,7 +2837,7 @@ public class DartParser implements PsiParser {
   public static boolean id(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "id")) return false;
     if (!nextTokenIs(builder_, IDENTIFIER)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, IDENTIFIER);
     exit_section_(builder_, marker_, ID, result_);
@@ -2962,8 +2849,8 @@ public class DartParser implements PsiParser {
   public static boolean ifStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ifStatement")) return false;
     if (!nextTokenIs(builder_, IF)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, IF);
     pinned_ = result_; // pin = 1
@@ -2986,7 +2873,7 @@ public class DartParser implements PsiParser {
   // 'else' statement
   private static boolean ifStatement_5_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ifStatement_5_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, ELSE);
     result_ = result_ && statement(builder_, level_ + 1);
@@ -2995,12 +2882,12 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'import' pathOrLibraryReference ('as' componentName )? combinator* ';'
+  // metadata* 'import' pathOrLibraryReference ('deferred'? 'as' componentName )? combinator* ';'
   public static boolean importStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "importStatement")) return false;
     if (!nextTokenIs(builder_, "<import statement>", AT, IMPORT)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<import statement>");
     result_ = importStatement_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, IMPORT);
@@ -3025,22 +2912,30 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // ('as' componentName )?
+  // ('deferred'? 'as' componentName )?
   private static boolean importStatement_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "importStatement_3")) return false;
     importStatement_3_0(builder_, level_ + 1);
     return true;
   }
 
-  // 'as' componentName
+  // 'deferred'? 'as' componentName
   private static boolean importStatement_3_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "importStatement_3_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, AS);
+    result_ = importStatement_3_0_0(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, AS);
     result_ = result_ && componentName(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
+  }
+
+  // 'deferred'?
+  private static boolean importStatement_3_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "importStatement_3_0_0")) return false;
+    consumeToken(builder_, DEFERRED);
+    return true;
   }
 
   // combinator*
@@ -3059,7 +2954,7 @@ public class DartParser implements PsiParser {
   // metadata* ('external' | 'static' | 'final' | 'const')* type | metadata+
   public static boolean incompleteDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "incompleteDeclaration")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<incomplete declaration>");
     result_ = incompleteDeclaration_0(builder_, level_ + 1);
     if (!result_) result_ = incompleteDeclaration_1(builder_, level_ + 1);
@@ -3070,7 +2965,7 @@ public class DartParser implements PsiParser {
   // metadata* ('external' | 'static' | 'final' | 'const')* type
   private static boolean incompleteDeclaration_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "incompleteDeclaration_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = incompleteDeclaration_0_0(builder_, level_ + 1);
     result_ = result_ && incompleteDeclaration_0_1(builder_, level_ + 1);
@@ -3106,7 +3001,7 @@ public class DartParser implements PsiParser {
   // 'external' | 'static' | 'final' | 'const'
   private static boolean incompleteDeclaration_0_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "incompleteDeclaration_0_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, STATIC);
@@ -3119,7 +3014,7 @@ public class DartParser implements PsiParser {
   // metadata+
   private static boolean incompleteDeclaration_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "incompleteDeclaration_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = metadata(builder_, level_ + 1);
     int pos_ = current_position_(builder_);
@@ -3137,7 +3032,7 @@ public class DartParser implements PsiParser {
   public static boolean initializers(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "initializers")) return false;
     if (!nextTokenIs(builder_, COLON)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COLON);
     result_ = result_ && superCallOrFieldInitializer(builder_, level_ + 1);
@@ -3161,7 +3056,7 @@ public class DartParser implements PsiParser {
   // ',' superCallOrFieldInitializer
   private static boolean initializers_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "initializers_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     result_ = result_ && superCallOrFieldInitializer(builder_, level_ + 1);
@@ -3174,8 +3069,8 @@ public class DartParser implements PsiParser {
   public static boolean interfaces(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "interfaces")) return false;
     if (!nextTokenIs(builder_, IMPLEMENTS)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, IMPLEMENTS);
     pinned_ = result_; // pin = 1
@@ -3189,7 +3084,7 @@ public class DartParser implements PsiParser {
   public static boolean isExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "isExpression")) return false;
     if (!nextTokenIs(builder_, IS)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, null);
     result_ = consumeToken(builder_, IS);
     result_ = result_ && isExpression_1(builder_, level_ + 1);
@@ -3209,7 +3104,7 @@ public class DartParser implements PsiParser {
   // componentName ':'
   public static boolean label(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "label")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<label>");
     result_ = componentName(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, COLON);
@@ -3221,7 +3116,7 @@ public class DartParser implements PsiParser {
   // << nonStrictID >>
   public static boolean libraryComponentReferenceExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "libraryComponentReferenceExpression")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<library component reference expression>");
     result_ = nonStrictID(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, LIBRARY_COMPONENT_REFERENCE_EXPRESSION, result_, false, null);
@@ -3232,7 +3127,7 @@ public class DartParser implements PsiParser {
   // <<nonStrictID>> ('.' <<nonStrictID>>)*
   public static boolean libraryId(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "libraryId")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<library id>");
     result_ = nonStrictID(builder_, level_ + 1);
     result_ = result_ && libraryId_1(builder_, level_ + 1);
@@ -3255,7 +3150,7 @@ public class DartParser implements PsiParser {
   // '.' <<nonStrictID>>
   private static boolean libraryId_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "libraryId_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
     result_ = result_ && nonStrictID(builder_, level_ + 1);
@@ -3267,7 +3162,7 @@ public class DartParser implements PsiParser {
   // libraryComponentReferenceExpression (',' libraryComponentReferenceExpression)*
   public static boolean libraryReferenceList(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "libraryReferenceList")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<library reference list>");
     result_ = libraryComponentReferenceExpression(builder_, level_ + 1);
     result_ = result_ && libraryReferenceList_1(builder_, level_ + 1);
@@ -3290,7 +3185,7 @@ public class DartParser implements PsiParser {
   // ',' libraryComponentReferenceExpression
   private static boolean libraryReferenceList_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "libraryReferenceList_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     result_ = result_ && libraryComponentReferenceExpression(builder_, level_ + 1);
@@ -3303,8 +3198,8 @@ public class DartParser implements PsiParser {
   public static boolean libraryStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "libraryStatement")) return false;
     if (!nextTokenIs(builder_, "<library statement>", AT, LIBRARY)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<library statement>");
     result_ = libraryStatement_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, LIBRARY);
@@ -3332,7 +3227,7 @@ public class DartParser implements PsiParser {
   public static boolean listLiteralExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "listLiteralExpression")) return false;
     if (!nextTokenIs(builder_, "<list literal expression>", LT, LBRACKET, CONST)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<list literal expression>");
     result_ = listLiteralExpression_0(builder_, level_ + 1);
     result_ = result_ && listLiteralExpression_1(builder_, level_ + 1);
@@ -3367,7 +3262,7 @@ public class DartParser implements PsiParser {
   // expressionList ','?
   private static boolean listLiteralExpression_3_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "listLiteralExpression_3_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = expressionList(builder_, level_ + 1);
     result_ = result_ && listLiteralExpression_3_0_1(builder_, level_ + 1);
@@ -3389,7 +3284,7 @@ public class DartParser implements PsiParser {
     if (!nextTokenIs(builder_, "<literal expression>", LT, LBRACKET,
       CONST, LBRACE, FALSE, HASH, HEX_NUMBER, NULL,
       NUMBER, OPEN_QUOTE, RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING, TRUE)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<literal expression>");
     result_ = consumeToken(builder_, NULL);
     if (!result_) result_ = consumeToken(builder_, TRUE);
@@ -3409,7 +3304,7 @@ public class DartParser implements PsiParser {
   public static boolean logicAndExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "logicAndExpression")) return false;
     if (!nextTokenIs(builder_, AND_AND)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, null);
     result_ = consumeToken(builder_, AND_AND);
     result_ = result_ && compareExpressionWrapper(builder_, level_ + 1);
@@ -3421,7 +3316,7 @@ public class DartParser implements PsiParser {
   // compareExpressionWrapper logicAndExpression*
   static boolean logicAndExpressionWrapper(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "logicAndExpressionWrapper")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = compareExpressionWrapper(builder_, level_ + 1);
     result_ = result_ && logicAndExpressionWrapper_1(builder_, level_ + 1);
@@ -3446,7 +3341,7 @@ public class DartParser implements PsiParser {
   public static boolean logicOrExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "logicOrExpression")) return false;
     if (!nextTokenIs(builder_, OR_OR)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, null);
     result_ = consumeToken(builder_, OR_OR);
     result_ = result_ && logicAndExpressionWrapper(builder_, level_ + 1);
@@ -3458,7 +3353,7 @@ public class DartParser implements PsiParser {
   // logicAndExpressionWrapper logicOrExpression*
   static boolean logicOrExpressionWrapper(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "logicOrExpressionWrapper")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = logicAndExpressionWrapper(builder_, level_ + 1);
     result_ = result_ && logicOrExpressionWrapper_1(builder_, level_ + 1);
@@ -3483,8 +3378,8 @@ public class DartParser implements PsiParser {
   public static boolean longTemplateEntry(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "longTemplateEntry")) return false;
     if (!nextTokenIs(builder_, LONG_TEMPLATE_ENTRY_START)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, LONG_TEMPLATE_ENTRY_START);
     pinned_ = result_; // pin = 1
@@ -3498,7 +3393,7 @@ public class DartParser implements PsiParser {
   // expression ':' expression
   public static boolean mapLiteralEntry(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "mapLiteralEntry")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<map literal entry>");
     result_ = expression(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, COLON);
@@ -3512,7 +3407,7 @@ public class DartParser implements PsiParser {
   public static boolean mapLiteralExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "mapLiteralExpression")) return false;
     if (!nextTokenIs(builder_, "<map literal expression>", LT, CONST, LBRACE)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<map literal expression>");
     result_ = mapLiteralExpression_0(builder_, level_ + 1);
     result_ = result_ && mapLiteralExpression_1(builder_, level_ + 1);
@@ -3547,7 +3442,7 @@ public class DartParser implements PsiParser {
   // mapLiteralEntry (',' mapLiteralEntry)* ','?
   private static boolean mapLiteralExpression_3_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "mapLiteralExpression_3_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = mapLiteralEntry(builder_, level_ + 1);
     result_ = result_ && mapLiteralExpression_3_0_1(builder_, level_ + 1);
@@ -3571,7 +3466,7 @@ public class DartParser implements PsiParser {
   // ',' mapLiteralEntry
   private static boolean mapLiteralExpression_3_0_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "mapLiteralExpression_3_0_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     result_ = result_ && mapLiteralEntry(builder_, level_ + 1);
@@ -3590,7 +3485,7 @@ public class DartParser implements PsiParser {
   // !(',' | '}')
   static boolean map_literal_entry_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "map_literal_entry_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !map_literal_entry_recover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -3600,7 +3495,7 @@ public class DartParser implements PsiParser {
   // ',' | '}'
   private static boolean map_literal_entry_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "map_literal_entry_recover_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     if (!result_) result_ = consumeToken(builder_, RBRACE);
@@ -3613,7 +3508,7 @@ public class DartParser implements PsiParser {
   public static boolean metadata(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "metadata")) return false;
     if (!nextTokenIs(builder_, AT)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, AT);
     result_ = result_ && simpleQualifiedReferenceExpression(builder_, level_ + 1);
@@ -3633,8 +3528,8 @@ public class DartParser implements PsiParser {
   // metadata* ('external' | 'static' | 'const')* functionDeclarationPrivate initializers? (';' | functionBodyOrNative | redirection)?
   public static boolean methodDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "methodDeclaration")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<method declaration>");
     result_ = methodDeclaration_0(builder_, level_ + 1);
     result_ = result_ && methodDeclaration_1(builder_, level_ + 1);
@@ -3673,7 +3568,7 @@ public class DartParser implements PsiParser {
   // 'external' | 'static' | 'const'
   private static boolean methodDeclaration_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "methodDeclaration_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, STATIC);
@@ -3699,7 +3594,7 @@ public class DartParser implements PsiParser {
   // ';' | functionBodyOrNative | redirection
   private static boolean methodDeclaration_4_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "methodDeclaration_4_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SEMICOLON);
     if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
@@ -3709,28 +3604,33 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // type mixins? interfaces?
+  // '=' type mixins? interfaces? ';'
   public static boolean mixinApplication(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "mixinApplication")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<mixin application>");
-    result_ = type(builder_, level_ + 1);
-    result_ = result_ && mixinApplication_1(builder_, level_ + 1);
-    result_ = result_ && mixinApplication_2(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, MIXIN_APPLICATION, result_, false, null);
-    return result_;
+    if (!nextTokenIs(builder_, EQ)) return false;
+    boolean result_;
+    boolean pinned_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, EQ);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, type(builder_, level_ + 1));
+    result_ = pinned_ && report_error_(builder_, mixinApplication_2(builder_, level_ + 1)) && result_;
+    result_ = pinned_ && report_error_(builder_, mixinApplication_3(builder_, level_ + 1)) && result_;
+    result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
+    exit_section_(builder_, level_, marker_, MIXIN_APPLICATION, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   // mixins?
-  private static boolean mixinApplication_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "mixinApplication_1")) return false;
+  private static boolean mixinApplication_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mixinApplication_2")) return false;
     mixins(builder_, level_ + 1);
     return true;
   }
 
   // interfaces?
-  private static boolean mixinApplication_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "mixinApplication_2")) return false;
+  private static boolean mixinApplication_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mixinApplication_3")) return false;
     interfaces(builder_, level_ + 1);
     return true;
   }
@@ -3740,8 +3640,8 @@ public class DartParser implements PsiParser {
   public static boolean mixins(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "mixins")) return false;
     if (!nextTokenIs(builder_, WITH)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, WITH);
     pinned_ = result_; // pin = 1
@@ -3755,7 +3655,7 @@ public class DartParser implements PsiParser {
   public static boolean multiplicativeExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "multiplicativeExpression")) return false;
     if (!nextTokenIs(builder_, "<multiplicative expression>", REM, MUL, DIV, INT_DIV)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<multiplicative expression>");
     result_ = multiplicativeOperator(builder_, level_ + 1);
     result_ = result_ && prefixExpression(builder_, level_ + 1);
@@ -3767,7 +3667,7 @@ public class DartParser implements PsiParser {
   // prefixExpression multiplicativeExpression*
   static boolean multiplicativeExpressionWrapper(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "multiplicativeExpressionWrapper")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = prefixExpression(builder_, level_ + 1);
     result_ = result_ && multiplicativeExpressionWrapper_1(builder_, level_ + 1);
@@ -3792,7 +3692,7 @@ public class DartParser implements PsiParser {
   public static boolean multiplicativeOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "multiplicativeOperator")) return false;
     if (!nextTokenIs(builder_, "<multiplicative operator>", REM, MUL, DIV, INT_DIV)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<multiplicative operator>");
     result_ = consumeToken(builder_, MUL);
     if (!result_) result_ = consumeToken(builder_, DIV);
@@ -3806,7 +3706,7 @@ public class DartParser implements PsiParser {
   // parameterNameReferenceExpression ':' expression
   public static boolean namedArgument(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedArgument")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<named argument>");
     result_ = parameterNameReferenceExpression(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, COLON);
@@ -3819,8 +3719,8 @@ public class DartParser implements PsiParser {
   // metadata* ('external' | 'const')* referenceExpression '.' componentName formalParameterList initializers? (';' | functionBodyOrNative | redirection)?
   public static boolean namedConstructorDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedConstructorDeclaration")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<named constructor declaration>");
     result_ = namedConstructorDeclaration_0(builder_, level_ + 1);
     result_ = result_ && namedConstructorDeclaration_1(builder_, level_ + 1);
@@ -3862,7 +3762,7 @@ public class DartParser implements PsiParser {
   // 'external' | 'const'
   private static boolean namedConstructorDeclaration_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedConstructorDeclaration_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, CONST);
@@ -3887,7 +3787,7 @@ public class DartParser implements PsiParser {
   // ';' | functionBodyOrNative | redirection
   private static boolean namedConstructorDeclaration_7_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedConstructorDeclaration_7_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SEMICOLON);
     if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
@@ -3902,7 +3802,7 @@ public class DartParser implements PsiParser {
   public static boolean namedFormalParameters(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedFormalParameters")) return false;
     if (!nextTokenIs(builder_, "<named formal parameters>", LBRACKET, LBRACE)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<named formal parameters>");
     result_ = namedFormalParameters_0(builder_, level_ + 1);
     if (!result_) result_ = namedFormalParameters_1(builder_, level_ + 1);
@@ -3913,7 +3813,7 @@ public class DartParser implements PsiParser {
   // '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ']'
   private static boolean namedFormalParameters_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedFormalParameters_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, LBRACKET);
     result_ = result_ && defaultFormalNamedParameter(builder_, level_ + 1);
@@ -3938,7 +3838,7 @@ public class DartParser implements PsiParser {
   // ',' defaultFormalNamedParameter
   private static boolean namedFormalParameters_0_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedFormalParameters_0_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     result_ = result_ && defaultFormalNamedParameter(builder_, level_ + 1);
@@ -3949,7 +3849,7 @@ public class DartParser implements PsiParser {
   // '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* '}'
   private static boolean namedFormalParameters_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedFormalParameters_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, LBRACE);
     result_ = result_ && defaultFormalNamedParameter(builder_, level_ + 1);
@@ -3974,7 +3874,7 @@ public class DartParser implements PsiParser {
   // ',' defaultFormalNamedParameter
   private static boolean namedFormalParameters_1_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedFormalParameters_1_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     result_ = result_ && defaultFormalNamedParameter(builder_, level_ + 1);
@@ -3987,8 +3887,8 @@ public class DartParser implements PsiParser {
   public static boolean newExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "newExpression")) return false;
     if (!nextTokenIs(builder_, NEW)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, NEW);
     pinned_ = result_; // pin = 1
@@ -4009,7 +3909,7 @@ public class DartParser implements PsiParser {
   // '.' referenceExpression
   private static boolean newExpression_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "newExpression_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
     result_ = result_ && referenceExpression(builder_, level_ + 1);
@@ -4036,7 +3936,7 @@ public class DartParser implements PsiParser {
   //                                | ';'
   static boolean nonLabelledStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = block(builder_, level_ + 1);
     if (!result_) result_ = nonLabelledStatement_1(builder_, level_ + 1);
@@ -4061,7 +3961,7 @@ public class DartParser implements PsiParser {
   // functionDeclarationWithBody ';'?
   private static boolean nonLabelledStatement_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = functionDeclarationWithBody(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement_1_1(builder_, level_ + 1);
@@ -4079,7 +3979,7 @@ public class DartParser implements PsiParser {
   // forStatement ';'?
   private static boolean nonLabelledStatement_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement_2")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = forStatement(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement_2_1(builder_, level_ + 1);
@@ -4097,7 +3997,7 @@ public class DartParser implements PsiParser {
   // whileStatement ';'?
   private static boolean nonLabelledStatement_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement_3")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = whileStatement(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement_3_1(builder_, level_ + 1);
@@ -4115,7 +4015,7 @@ public class DartParser implements PsiParser {
   // doWhileStatement ';'?
   private static boolean nonLabelledStatement_4(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement_4")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = doWhileStatement(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement_4_1(builder_, level_ + 1);
@@ -4133,7 +4033,7 @@ public class DartParser implements PsiParser {
   // switchStatement ';'?
   private static boolean nonLabelledStatement_5(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement_5")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = switchStatement(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement_5_1(builder_, level_ + 1);
@@ -4151,7 +4051,7 @@ public class DartParser implements PsiParser {
   // ifStatement ';'?
   private static boolean nonLabelledStatement_6(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement_6")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = ifStatement(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement_6_1(builder_, level_ + 1);
@@ -4172,7 +4072,7 @@ public class DartParser implements PsiParser {
   //                         | simpleFormalParameter
   public static boolean normalFormalParameter(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "normalFormalParameter")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<normal formal parameter>");
     result_ = functionSignature(builder_, level_ + 1);
     if (!result_) result_ = fieldFormalParameter(builder_, level_ + 1);
@@ -4185,7 +4085,7 @@ public class DartParser implements PsiParser {
   // !')'
   static boolean not_paren_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "not_paren_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !consumeToken(builder_, RPAREN);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -4193,24 +4093,45 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // 'on' type catchPart?
+  // catchPart block | 'on' type catchPart? block
   public static boolean onPart(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "onPart")) return false;
-    if (!nextTokenIs(builder_, ON)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    if (!nextTokenIs(builder_, "<on part>", CATCH, ON)) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<on part>");
+    result_ = onPart_0(builder_, level_ + 1);
+    if (!result_) result_ = onPart_1(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, ON_PART, result_, false, null);
+    return result_;
+  }
+
+  // catchPart block
+  private static boolean onPart_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "onPart_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = catchPart(builder_, level_ + 1);
+    result_ = result_ && block(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // 'on' type catchPart? block
+  private static boolean onPart_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "onPart_1")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, ON);
-    pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, type(builder_, level_ + 1));
-    result_ = pinned_ && onPart_2(builder_, level_ + 1) && result_;
-    exit_section_(builder_, level_, marker_, ON_PART, result_, pinned_, null);
-    return result_ || pinned_;
+    result_ = result_ && type(builder_, level_ + 1);
+    result_ = result_ && onPart_1_2(builder_, level_ + 1);
+    result_ = result_ && block(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   // catchPart?
-  private static boolean onPart_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "onPart_2")) return false;
+  private static boolean onPart_1_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "onPart_1_2")) return false;
     catchPart(builder_, level_ + 1);
     return true;
   }
@@ -4219,7 +4140,7 @@ public class DartParser implements PsiParser {
   // operatorDeclarationWithReturnType | operatorDeclarationWithoutReturnType
   public static boolean operatorDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "operatorDeclaration")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<operator declaration>");
     result_ = operatorDeclarationWithReturnType(builder_, level_ + 1);
     if (!result_) result_ = operatorDeclarationWithoutReturnType(builder_, level_ + 1);
@@ -4231,8 +4152,8 @@ public class DartParser implements PsiParser {
   // metadata* 'external'? returnType 'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative)
   static boolean operatorDeclarationWithReturnType(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "operatorDeclarationWithReturnType")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = operatorDeclarationWithReturnType_0(builder_, level_ + 1);
     result_ = result_ && operatorDeclarationWithReturnType_1(builder_, level_ + 1);
@@ -4268,7 +4189,7 @@ public class DartParser implements PsiParser {
   // ';' | functionBodyOrNative
   private static boolean operatorDeclarationWithReturnType_6(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "operatorDeclarationWithReturnType_6")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SEMICOLON);
     if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
@@ -4281,8 +4202,8 @@ public class DartParser implements PsiParser {
   static boolean operatorDeclarationWithoutReturnType(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "operatorDeclarationWithoutReturnType")) return false;
     if (!nextTokenIs(builder_, "", AT, EXTERNAL, OPERATOR)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = operatorDeclarationWithoutReturnType_0(builder_, level_ + 1);
     result_ = result_ && operatorDeclarationWithoutReturnType_1(builder_, level_ + 1);
@@ -4317,7 +4238,7 @@ public class DartParser implements PsiParser {
   // ';' | functionBodyOrNative
   private static boolean operatorDeclarationWithoutReturnType_5(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "operatorDeclarationWithoutReturnType_5")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SEMICOLON);
     if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
@@ -4329,7 +4250,7 @@ public class DartParser implements PsiParser {
   // << nonStrictID >>
   public static boolean parameterNameReferenceExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "parameterNameReferenceExpression")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<parameter name reference expression>");
     result_ = nonStrictID(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, PARAMETER_NAME_REFERENCE_EXPRESSION, result_, false, null);
@@ -4340,7 +4261,7 @@ public class DartParser implements PsiParser {
   // !')'
   static boolean parenthesesRecovery(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "parenthesesRecovery")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !consumeToken(builder_, RPAREN);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -4352,8 +4273,8 @@ public class DartParser implements PsiParser {
   public static boolean parenthesizedExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "parenthesizedExpression")) return false;
     if (!nextTokenIs(builder_, LPAREN)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, LPAREN);
     pinned_ = result_; // pin = 1
@@ -4368,8 +4289,8 @@ public class DartParser implements PsiParser {
   public static boolean partOfStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "partOfStatement")) return false;
     if (!nextTokenIs(builder_, "<part of statement>", AT, PART)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<part of statement>");
     result_ = partOfStatement_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, PART);
@@ -4398,8 +4319,8 @@ public class DartParser implements PsiParser {
   public static boolean partStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "partStatement")) return false;
     if (!nextTokenIs(builder_, "<part statement>", AT, PART)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<part statement>");
     result_ = partStatement_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, PART);
@@ -4427,7 +4348,7 @@ public class DartParser implements PsiParser {
   public static boolean pathOrLibraryReference(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "pathOrLibraryReference")) return false;
     if (!nextTokenIs(builder_, "<path or library reference>", OPEN_QUOTE, RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<path or library reference>");
     result_ = stringLiteralExpression(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, PATH_OR_LIBRARY_REFERENCE, result_, false, null);
@@ -4438,7 +4359,7 @@ public class DartParser implements PsiParser {
   // (prefixOperator prefixExpression) | suffixExpressionWrapper
   public static boolean prefixExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "prefixExpression")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<prefix expression>");
     result_ = prefixExpression_0(builder_, level_ + 1);
     if (!result_) result_ = suffixExpressionWrapper(builder_, level_ + 1);
@@ -4449,7 +4370,7 @@ public class DartParser implements PsiParser {
   // prefixOperator prefixExpression
   private static boolean prefixExpression_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "prefixExpression_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = prefixOperator(builder_, level_ + 1);
     result_ = result_ && prefixExpression(builder_, level_ + 1);
@@ -4463,7 +4384,7 @@ public class DartParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "prefixOperator")) return false;
     if (!nextTokenIs(builder_, "<prefix operator>", NOT, PLUS,
       PLUS_PLUS, MINUS, MINUS_MINUS, QUEST, BIN_NOT)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<prefix operator>");
     result_ = consumeToken(builder_, MINUS);
     if (!result_) result_ = consumeToken(builder_, PLUS);
@@ -4484,7 +4405,7 @@ public class DartParser implements PsiParser {
   //                      refOrThisOrSuperOrParenExpression
   static boolean primary(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "primary")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = literalExpression(builder_, level_ + 1);
     if (!result_) result_ = functionExpression(builder_, level_ + 1);
@@ -4499,7 +4420,7 @@ public class DartParser implements PsiParser {
   // << nonStrictID >> ('.' << nonStrictID >>)*
   public static boolean qualifiedComponentName(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "qualifiedComponentName")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<qualified component name>");
     result_ = nonStrictID(builder_, level_ + 1);
     result_ = result_ && qualifiedComponentName_1(builder_, level_ + 1);
@@ -4522,7 +4443,7 @@ public class DartParser implements PsiParser {
   // '.' << nonStrictID >>
   private static boolean qualifiedComponentName_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "qualifiedComponentName_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
     result_ = result_ && nonStrictID(builder_, level_ + 1);
@@ -4535,7 +4456,7 @@ public class DartParser implements PsiParser {
   public static boolean qualifiedReferenceExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "qualifiedReferenceExpression")) return false;
     if (!nextTokenIs(builder_, DOT)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, null);
     result_ = consumeToken(builder_, DOT);
     result_ = result_ && referenceExpression(builder_, level_ + 1);
@@ -4548,8 +4469,8 @@ public class DartParser implements PsiParser {
   public static boolean redirection(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "redirection")) return false;
     if (!nextTokenIs(builder_, COLON)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, COLON);
     result_ = result_ && consumeToken(builder_, THIS);
@@ -4570,7 +4491,7 @@ public class DartParser implements PsiParser {
   // '.' referenceExpression
   private static boolean redirection_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "redirection_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
     result_ = result_ && referenceExpression(builder_, level_ + 1);
@@ -4582,7 +4503,7 @@ public class DartParser implements PsiParser {
   // referenceExpression | thisExpression | superExpression | << parenthesizedExpressionWrapper >>
   static boolean refOrThisOrSuperOrParenExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "refOrThisOrSuperOrParenExpression")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = referenceExpression(builder_, level_ + 1);
     if (!result_) result_ = thisExpression(builder_, level_ + 1);
@@ -4596,7 +4517,7 @@ public class DartParser implements PsiParser {
   // << nonStrictID >>
   public static boolean referenceExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "referenceExpression")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<reference expression>");
     result_ = nonStrictID(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, REFERENCE_EXPRESSION, result_, false, null);
@@ -4608,7 +4529,7 @@ public class DartParser implements PsiParser {
   public static boolean relationalOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "relationalOperator")) return false;
     if (!nextTokenIs(builder_, "<relational operator>", LT, LT_EQ, GT, GT_EQ)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<relational operator>");
     result_ = consumeToken(builder_, GT_EQ);
     if (!result_) result_ = consumeToken(builder_, GT);
@@ -4623,8 +4544,8 @@ public class DartParser implements PsiParser {
   public static boolean rethrowStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "rethrowStatement")) return false;
     if (!nextTokenIs(builder_, RETHROW)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, RETHROW);
     pinned_ = result_; // pin = 1
@@ -4638,8 +4559,8 @@ public class DartParser implements PsiParser {
   public static boolean returnStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "returnStatement")) return false;
     if (!nextTokenIs(builder_, RETURN)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, RETURN);
     pinned_ = result_; // pin = 1
@@ -4660,7 +4581,7 @@ public class DartParser implements PsiParser {
   // 'void' | type
   public static boolean returnType(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "returnType")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<return type>");
     result_ = consumeToken(builder_, VOID);
     if (!result_) result_ = type(builder_, level_ + 1);
@@ -4672,7 +4593,7 @@ public class DartParser implements PsiParser {
   // !(';')
   static boolean semicolon_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "semicolon_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !semicolon_recover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -4682,7 +4603,7 @@ public class DartParser implements PsiParser {
   // (';')
   private static boolean semicolon_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "semicolon_recover_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SEMICOLON);
     exit_section_(builder_, marker_, null, result_);
@@ -4693,7 +4614,7 @@ public class DartParser implements PsiParser {
   // setterDeclarationWithReturnType | setterDeclarationWithoutReturnType
   public static boolean setterDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "setterDeclaration")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<setter declaration>");
     result_ = setterDeclarationWithReturnType(builder_, level_ + 1);
     if (!result_) result_ = setterDeclarationWithoutReturnType(builder_, level_ + 1);
@@ -4705,8 +4626,8 @@ public class DartParser implements PsiParser {
   // metadata* ('external' | 'static')* returnType 'set' componentName formalParameterList (';' | functionBodyOrNative)
   static boolean setterDeclarationWithReturnType(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "setterDeclarationWithReturnType")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = setterDeclarationWithReturnType_0(builder_, level_ + 1);
     result_ = result_ && setterDeclarationWithReturnType_1(builder_, level_ + 1);
@@ -4747,7 +4668,7 @@ public class DartParser implements PsiParser {
   // 'external' | 'static'
   private static boolean setterDeclarationWithReturnType_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "setterDeclarationWithReturnType_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, STATIC);
@@ -4758,7 +4679,7 @@ public class DartParser implements PsiParser {
   // ';' | functionBodyOrNative
   private static boolean setterDeclarationWithReturnType_6(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "setterDeclarationWithReturnType_6")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SEMICOLON);
     if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
@@ -4771,8 +4692,8 @@ public class DartParser implements PsiParser {
   static boolean setterDeclarationWithoutReturnType(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "setterDeclarationWithoutReturnType")) return false;
     if (!nextTokenIs(builder_, "", AT, EXTERNAL, SET, STATIC)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = setterDeclarationWithoutReturnType_0(builder_, level_ + 1);
     result_ = result_ && setterDeclarationWithoutReturnType_1(builder_, level_ + 1);
@@ -4812,7 +4733,7 @@ public class DartParser implements PsiParser {
   // 'external' | 'static'
   private static boolean setterDeclarationWithoutReturnType_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "setterDeclarationWithoutReturnType_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, STATIC);
@@ -4823,7 +4744,7 @@ public class DartParser implements PsiParser {
   // ';' | functionBodyOrNative
   private static boolean setterDeclarationWithoutReturnType_5(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "setterDeclarationWithoutReturnType_5")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SEMICOLON);
     if (!result_) result_ = functionBodyOrNative(builder_, level_ + 1);
@@ -4836,7 +4757,7 @@ public class DartParser implements PsiParser {
   public static boolean shiftExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "shiftExpression")) return false;
     if (!nextTokenIs(builder_, "<shift expression>", LT_LT, GT)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<shift expression>");
     result_ = shiftOperator(builder_, level_ + 1);
     result_ = result_ && additiveExpressionWrapper(builder_, level_ + 1);
@@ -4848,7 +4769,7 @@ public class DartParser implements PsiParser {
   // additiveExpressionWrapper shiftExpression*
   static boolean shiftExpressionWrapper(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "shiftExpressionWrapper")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = additiveExpressionWrapper(builder_, level_ + 1);
     result_ = result_ && shiftExpressionWrapper_1(builder_, level_ + 1);
@@ -4873,7 +4794,7 @@ public class DartParser implements PsiParser {
   public static boolean shiftOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "shiftOperator")) return false;
     if (!nextTokenIs(builder_, "<shift operator>", LT_LT, GT)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<shift operator>");
     result_ = consumeToken(builder_, LT_LT);
     if (!result_) result_ = shiftRightOperator(builder_, level_ + 1);
@@ -4886,7 +4807,7 @@ public class DartParser implements PsiParser {
   public static boolean shiftRightOperator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "shiftRightOperator")) return false;
     if (!nextTokenIs(builder_, GT)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, GT);
     result_ = result_ && consumeToken(builder_, GT);
@@ -4899,8 +4820,8 @@ public class DartParser implements PsiParser {
   public static boolean shortTemplateEntry(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "shortTemplateEntry")) return false;
     if (!nextTokenIs(builder_, SHORT_TEMPLATE_ENTRY_START)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, SHORT_TEMPLATE_ENTRY_START);
     pinned_ = result_; // pin = 1
@@ -4912,7 +4833,7 @@ public class DartParser implements PsiParser {
   // thisExpression | referenceExpression
   private static boolean shortTemplateEntry_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "shortTemplateEntry_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = thisExpression(builder_, level_ + 1);
     if (!result_) result_ = referenceExpression(builder_, level_ + 1);
@@ -4925,7 +4846,7 @@ public class DartParser implements PsiParser {
   public static boolean showCombinator(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "showCombinator")) return false;
     if (!nextTokenIs(builder_, SHOW)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SHOW);
     result_ = result_ && libraryReferenceList(builder_, level_ + 1);
@@ -4937,7 +4858,7 @@ public class DartParser implements PsiParser {
   // declaredIdentifier | metadata* componentName
   public static boolean simpleFormalParameter(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "simpleFormalParameter")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<simple formal parameter>");
     result_ = declaredIdentifier(builder_, level_ + 1);
     if (!result_) result_ = simpleFormalParameter_1(builder_, level_ + 1);
@@ -4948,7 +4869,7 @@ public class DartParser implements PsiParser {
   // metadata* componentName
   private static boolean simpleFormalParameter_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "simpleFormalParameter_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = simpleFormalParameter_1_0(builder_, level_ + 1);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -4972,7 +4893,7 @@ public class DartParser implements PsiParser {
   // referenceExpression qualifiedReferenceExpression*
   public static boolean simpleQualifiedReferenceExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "simpleQualifiedReferenceExpression")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<simple qualified reference expression>");
     result_ = referenceExpression(builder_, level_ + 1);
     result_ = result_ && simpleQualifiedReferenceExpression_1(builder_, level_ + 1);
@@ -4996,7 +4917,7 @@ public class DartParser implements PsiParser {
   // !'}'
   static boolean simple_scope_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "simple_scope_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !consumeToken(builder_, RBRACE);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -5004,10 +4925,88 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody?
+  static boolean standardClassDeclarationTail(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "standardClassDeclarationTail")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = standardClassDeclarationTail_0(builder_, level_ + 1);
+    result_ = result_ && standardClassDeclarationTail_1(builder_, level_ + 1);
+    result_ = result_ && standardClassDeclarationTail_2(builder_, level_ + 1);
+    result_ = result_ && standardClassDeclarationTail_3(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // (superclass mixins?)?
+  private static boolean standardClassDeclarationTail_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "standardClassDeclarationTail_0")) return false;
+    standardClassDeclarationTail_0_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // superclass mixins?
+  private static boolean standardClassDeclarationTail_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "standardClassDeclarationTail_0_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = superclass(builder_, level_ + 1);
+    result_ = result_ && standardClassDeclarationTail_0_0_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // mixins?
+  private static boolean standardClassDeclarationTail_0_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "standardClassDeclarationTail_0_0_1")) return false;
+    mixins(builder_, level_ + 1);
+    return true;
+  }
+
+  // interfaces?
+  private static boolean standardClassDeclarationTail_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "standardClassDeclarationTail_1")) return false;
+    interfaces(builder_, level_ + 1);
+    return true;
+  }
+
+  // ('native' stringLiteralExpression?)?
+  private static boolean standardClassDeclarationTail_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "standardClassDeclarationTail_2")) return false;
+    standardClassDeclarationTail_2_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // 'native' stringLiteralExpression?
+  private static boolean standardClassDeclarationTail_2_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "standardClassDeclarationTail_2_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, NATIVE);
+    result_ = result_ && standardClassDeclarationTail_2_0_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // stringLiteralExpression?
+  private static boolean standardClassDeclarationTail_2_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "standardClassDeclarationTail_2_0_1")) return false;
+    stringLiteralExpression(builder_, level_ + 1);
+    return true;
+  }
+
+  // classBody?
+  private static boolean standardClassDeclarationTail_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "standardClassDeclarationTail_3")) return false;
+    classBody(builder_, level_ + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // label* nonLabelledStatement
   static boolean statement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = statement_0(builder_, level_ + 1);
     result_ = result_ && nonLabelledStatement(builder_, level_ + 1);
@@ -5031,8 +5030,8 @@ public class DartParser implements PsiParser {
   // (varDeclarationList | expression) ';'
   static boolean statementFollowedBySemiColon(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statementFollowedBySemiColon")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = statementFollowedBySemiColon_0(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
@@ -5044,7 +5043,7 @@ public class DartParser implements PsiParser {
   // varDeclarationList | expression
   private static boolean statementFollowedBySemiColon_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statementFollowedBySemiColon_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = varDeclarationList(builder_, level_ + 1);
     if (!result_) result_ = expression(builder_, level_ + 1);
@@ -5057,7 +5056,7 @@ public class DartParser implements PsiParser {
   //                                 '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
   //                                  ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
   //                                  '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
-  //                                  'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
+  //                                  'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
   //                                  'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
   //                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
   //                                  'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
@@ -5066,7 +5065,7 @@ public class DartParser implements PsiParser {
   //                                  TRUE)
   static boolean statement_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !statement_recover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -5077,7 +5076,7 @@ public class DartParser implements PsiParser {
   //                                 '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
   //                                  ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
   //                                  '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
-  //                                  'default' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
+  //                                  'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
   //                                  'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
   //                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
   //                                  'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
@@ -5086,7 +5085,7 @@ public class DartParser implements PsiParser {
   //                                  TRUE
   private static boolean statement_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement_recover_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = nonStrictID(builder_, level_ + 1);
     if (!result_) result_ = parenthesizedExpressionWrapper(builder_, level_ + 1);
@@ -5140,6 +5139,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, CONST);
     if (!result_) result_ = consumeToken(builder_, CONTINUE);
     if (!result_) result_ = consumeToken(builder_, DEFAULT);
+    if (!result_) result_ = consumeToken(builder_, DEFERRED);
     if (!result_) result_ = consumeToken(builder_, DO);
     if (!result_) result_ = consumeToken(builder_, ELSE);
     if (!result_) result_ = consumeToken(builder_, EXPORT);
@@ -5219,7 +5219,7 @@ public class DartParser implements PsiParser {
   public static boolean stringLiteralExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "stringLiteralExpression")) return false;
     if (!nextTokenIs(builder_, "<string literal expression>", OPEN_QUOTE, RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<string literal expression>");
     result_ = stringLiteralExpression_0(builder_, level_ + 1);
     int pos_ = current_position_(builder_);
@@ -5235,7 +5235,7 @@ public class DartParser implements PsiParser {
   // RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | stringTemplate
   private static boolean stringLiteralExpression_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "stringLiteralExpression_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, RAW_SINGLE_QUOTED_STRING);
     if (!result_) result_ = consumeToken(builder_, RAW_TRIPLE_QUOTED_STRING);
@@ -5249,8 +5249,8 @@ public class DartParser implements PsiParser {
   static boolean stringTemplate(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "stringTemplate")) return false;
     if (!nextTokenIs(builder_, OPEN_QUOTE)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, OPEN_QUOTE);
     pinned_ = result_; // pin = 1
@@ -5275,7 +5275,7 @@ public class DartParser implements PsiParser {
   // REGULAR_STRING_PART | shortTemplateEntry | longTemplateEntry
   private static boolean stringTemplate_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "stringTemplate_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, REGULAR_STRING_PART);
     if (!result_) result_ = shortTemplateEntry(builder_, level_ + 1);
@@ -5289,7 +5289,7 @@ public class DartParser implements PsiParser {
   public static boolean suffixExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "suffixExpression")) return false;
     if (!nextTokenIs(builder_, "<suffix expression>", PLUS_PLUS, MINUS_MINUS)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, "<suffix expression>");
     result_ = consumeToken(builder_, MINUS_MINUS);
     if (!result_) result_ = consumeToken(builder_, PLUS_PLUS);
@@ -5301,7 +5301,7 @@ public class DartParser implements PsiParser {
   // valueExpression suffixExpression*
   static boolean suffixExpressionWrapper(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "suffixExpressionWrapper")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = valueExpression(builder_, level_ + 1);
     result_ = result_ && suffixExpressionWrapper_1(builder_, level_ + 1);
@@ -5326,7 +5326,7 @@ public class DartParser implements PsiParser {
   //                               | fieldInitializer
   public static boolean superCallOrFieldInitializer(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "superCallOrFieldInitializer")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<super call or field initializer>");
     result_ = superCallOrFieldInitializer_0(builder_, level_ + 1);
     if (!result_) result_ = fieldInitializer(builder_, level_ + 1);
@@ -5337,7 +5337,7 @@ public class DartParser implements PsiParser {
   // ('super' | 'this') ('.' referenceExpression)? arguments
   private static boolean superCallOrFieldInitializer_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "superCallOrFieldInitializer_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = superCallOrFieldInitializer_0_0(builder_, level_ + 1);
     result_ = result_ && superCallOrFieldInitializer_0_1(builder_, level_ + 1);
@@ -5349,7 +5349,7 @@ public class DartParser implements PsiParser {
   // 'super' | 'this'
   private static boolean superCallOrFieldInitializer_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "superCallOrFieldInitializer_0_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SUPER);
     if (!result_) result_ = consumeToken(builder_, THIS);
@@ -5367,7 +5367,7 @@ public class DartParser implements PsiParser {
   // '.' referenceExpression
   private static boolean superCallOrFieldInitializer_0_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "superCallOrFieldInitializer_0_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, DOT);
     result_ = result_ && referenceExpression(builder_, level_ + 1);
@@ -5380,7 +5380,7 @@ public class DartParser implements PsiParser {
   public static boolean superExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "superExpression")) return false;
     if (!nextTokenIs(builder_, SUPER)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SUPER);
     exit_section_(builder_, marker_, SUPER_EXPRESSION, result_);
@@ -5394,7 +5394,7 @@ public class DartParser implements PsiParser {
   //                                                       '}' )
   static boolean super_call_or_field_initializer_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "super_call_or_field_initializer_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !super_call_or_field_initializer_recover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -5407,7 +5407,7 @@ public class DartParser implements PsiParser {
   //                                                       '}'
   private static boolean super_call_or_field_initializer_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "super_call_or_field_initializer_recover_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = nonStrictID(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, COMMA);
@@ -5444,8 +5444,8 @@ public class DartParser implements PsiParser {
   public static boolean superclass(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "superclass")) return false;
     if (!nextTokenIs(builder_, EXTENDS)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, EXTENDS);
     pinned_ = result_; // pin = 1
@@ -5458,7 +5458,7 @@ public class DartParser implements PsiParser {
   // label? ('case' expression ':')+ statements
   public static boolean switchCase(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "switchCase")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<switch case>");
     result_ = switchCase_0(builder_, level_ + 1);
     result_ = result_ && switchCase_1(builder_, level_ + 1);
@@ -5477,7 +5477,7 @@ public class DartParser implements PsiParser {
   // ('case' expression ':')+
   private static boolean switchCase_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "switchCase_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = switchCase_1_0(builder_, level_ + 1);
     int pos_ = current_position_(builder_);
@@ -5493,7 +5493,7 @@ public class DartParser implements PsiParser {
   // 'case' expression ':'
   private static boolean switchCase_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "switchCase_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, CASE);
     result_ = result_ && expression(builder_, level_ + 1);
@@ -5507,8 +5507,8 @@ public class DartParser implements PsiParser {
   public static boolean switchStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "switchStatement")) return false;
     if (!nextTokenIs(builder_, SWITCH)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, SWITCH);
     pinned_ = result_; // pin = 1
@@ -5546,7 +5546,7 @@ public class DartParser implements PsiParser {
   // !('case' | 'default' | '}' | <<nonStrictID>>)
   static boolean switch_case_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "switch_case_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !switch_case_recover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -5556,7 +5556,7 @@ public class DartParser implements PsiParser {
   // 'case' | 'default' | '}' | <<nonStrictID>>
   private static boolean switch_case_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "switch_case_recover_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, CASE);
     if (!result_) result_ = consumeToken(builder_, DEFAULT);
@@ -5571,8 +5571,8 @@ public class DartParser implements PsiParser {
   public static boolean symbolLiteralExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "symbolLiteralExpression")) return false;
     if (!nextTokenIs(builder_, HASH)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, HASH);
     pinned_ = result_; // pin = 1
@@ -5584,7 +5584,7 @@ public class DartParser implements PsiParser {
   // userDefinableOperator | simpleQualifiedReferenceExpression
   private static boolean symbolLiteralExpression_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "symbolLiteralExpression_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = userDefinableOperator(builder_, level_ + 1);
     if (!result_) result_ = simpleQualifiedReferenceExpression(builder_, level_ + 1);
@@ -5597,7 +5597,7 @@ public class DartParser implements PsiParser {
   public static boolean ternaryExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ternaryExpression")) return false;
     if (!nextTokenIs(builder_, QUEST)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _LEFT_, null);
     result_ = consumeToken(builder_, QUEST);
     result_ = result_ && expression(builder_, level_ + 1);
@@ -5611,7 +5611,7 @@ public class DartParser implements PsiParser {
   // logicOrExpressionWrapper ternaryExpression?
   static boolean ternaryExpressionWrapper(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "ternaryExpressionWrapper")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = logicOrExpressionWrapper(builder_, level_ + 1);
     result_ = result_ && ternaryExpressionWrapper_1(builder_, level_ + 1);
@@ -5631,7 +5631,7 @@ public class DartParser implements PsiParser {
   public static boolean thisExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "thisExpression")) return false;
     if (!nextTokenIs(builder_, THIS)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, THIS);
     exit_section_(builder_, marker_, THIS_EXPRESSION, result_);
@@ -5643,8 +5643,8 @@ public class DartParser implements PsiParser {
   public static boolean throwStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "throwStatement")) return false;
     if (!nextTokenIs(builder_, THROW)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, THROW);
     pinned_ = result_; // pin = 1
@@ -5665,8 +5665,8 @@ public class DartParser implements PsiParser {
   static boolean throwStatementWithSemicolon(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "throwStatementWithSemicolon")) return false;
     if (!nextTokenIs(builder_, THROW)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = throwStatement(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
@@ -5682,7 +5682,6 @@ public class DartParser implements PsiParser {
   //                              | exportStatement
   //                              | partStatement
   //                              | classDefinition
-  //                              | classTypeAlias
   //                              | functionTypeAlias
   //                              | getterOrSetterDeclaration
   //                              | functionDeclarationWithBodyOrNative
@@ -5690,7 +5689,7 @@ public class DartParser implements PsiParser {
   //                              | incompleteDeclaration
   static boolean topLevelDefinition(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "topLevelDefinition")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = libraryStatement(builder_, level_ + 1);
     if (!result_) result_ = partOfStatement(builder_, level_ + 1);
@@ -5698,7 +5697,6 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = exportStatement(builder_, level_ + 1);
     if (!result_) result_ = partStatement(builder_, level_ + 1);
     if (!result_) result_ = classDefinition(builder_, level_ + 1);
-    if (!result_) result_ = classTypeAlias(builder_, level_ + 1);
     if (!result_) result_ = functionTypeAlias(builder_, level_ + 1);
     if (!result_) result_ = getterOrSetterDeclaration(builder_, level_ + 1);
     if (!result_) result_ = functionDeclarationWithBodyOrNative(builder_, level_ + 1);
@@ -5712,7 +5710,7 @@ public class DartParser implements PsiParser {
   // !(<<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'export' | 'external' | 'final' | 'get' | 'import' | 'library' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void')
   static boolean top_level_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "top_level_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !top_level_recover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -5722,7 +5720,7 @@ public class DartParser implements PsiParser {
   // <<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'export' | 'external' | 'final' | 'get' | 'import' | 'library' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void'
   private static boolean top_level_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "top_level_recover_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = nonStrictID(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, AT);
@@ -5746,12 +5744,12 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // 'try' block ((onPart | catchPart)+ finallyPart? | finallyPart)
+  // 'try' block (onPart+ finallyPart? | finallyPart)
   public static boolean tryStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tryStatement")) return false;
     if (!nextTokenIs(builder_, TRY)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, TRY);
     pinned_ = result_; // pin = 1
@@ -5761,10 +5759,10 @@ public class DartParser implements PsiParser {
     return result_ || pinned_;
   }
 
-  // (onPart | catchPart)+ finallyPart? | finallyPart
+  // onPart+ finallyPart? | finallyPart
   private static boolean tryStatement_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tryStatement_2")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = tryStatement_2_0(builder_, level_ + 1);
     if (!result_) result_ = finallyPart(builder_, level_ + 1);
@@ -5772,10 +5770,10 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // (onPart | catchPart)+ finallyPart?
+  // onPart+ finallyPart?
   private static boolean tryStatement_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tryStatement_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = tryStatement_2_0_0(builder_, level_ + 1);
     result_ = result_ && tryStatement_2_0_1(builder_, level_ + 1);
@@ -5783,29 +5781,18 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // (onPart | catchPart)+
+  // onPart+
   private static boolean tryStatement_2_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tryStatement_2_0_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = tryStatement_2_0_0_0(builder_, level_ + 1);
+    result_ = onPart(builder_, level_ + 1);
     int pos_ = current_position_(builder_);
     while (result_) {
-      if (!tryStatement_2_0_0_0(builder_, level_ + 1)) break;
+      if (!onPart(builder_, level_ + 1)) break;
       if (!empty_element_parsed_guard_(builder_, "tryStatement_2_0_0", pos_)) break;
       pos_ = current_position_(builder_);
     }
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // onPart | catchPart
-  private static boolean tryStatement_2_0_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "tryStatement_2_0_0_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = onPart(builder_, level_ + 1);
-    if (!result_) result_ = catchPart(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -5821,8 +5808,8 @@ public class DartParser implements PsiParser {
   // simpleQualifiedReferenceExpression typeArguments?
   public static boolean type(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "type")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<type>");
     result_ = simpleQualifiedReferenceExpression(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
@@ -5843,7 +5830,7 @@ public class DartParser implements PsiParser {
   public static boolean typeArguments(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typeArguments")) return false;
     if (!nextTokenIs(builder_, LT)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, LT);
     result_ = result_ && typeList(builder_, level_ + 1);
@@ -5856,7 +5843,7 @@ public class DartParser implements PsiParser {
   // type (',' type)*
   public static boolean typeList(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typeList")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<type list>");
     result_ = type(builder_, level_ + 1);
     result_ = result_ && typeList_1(builder_, level_ + 1);
@@ -5879,7 +5866,7 @@ public class DartParser implements PsiParser {
   // ',' type
   private static boolean typeList_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typeList_1_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     result_ = result_ && type(builder_, level_ + 1);
@@ -5891,7 +5878,7 @@ public class DartParser implements PsiParser {
   // metadata* componentName ('extends' type)?
   public static boolean typeParameter(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typeParameter")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<type parameter>");
     result_ = typeParameter_0(builder_, level_ + 1);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -5922,7 +5909,7 @@ public class DartParser implements PsiParser {
   // 'extends' type
   private static boolean typeParameter_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typeParameter_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, EXTENDS);
     result_ = result_ && type(builder_, level_ + 1);
@@ -5935,8 +5922,8 @@ public class DartParser implements PsiParser {
   public static boolean typeParameters(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typeParameters")) return false;
     if (!nextTokenIs(builder_, LT)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, LT);
     pinned_ = result_; // pin = 1
@@ -5962,7 +5949,7 @@ public class DartParser implements PsiParser {
   // ',' typeParameter
   private static boolean typeParameters_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "typeParameters_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     result_ = result_ && typeParameter(builder_, level_ + 1);
@@ -5976,7 +5963,7 @@ public class DartParser implements PsiParser {
   //                                      'static' | 'typedef' | 'var' | 'void' | '{')
   static boolean type_parameter_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "type_parameter_recover")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
     result_ = !type_parameter_recover_0(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, null);
@@ -5988,7 +5975,7 @@ public class DartParser implements PsiParser {
   //                                      'static' | 'typedef' | 'var' | 'void' | '{'
   private static boolean type_parameter_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "type_parameter_recover_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = nonStrictID(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, LPAREN);
@@ -6029,7 +6016,7 @@ public class DartParser implements PsiParser {
       MUL, PLUS, MINUS, DIV, LT, LT_LT,
       LT_EQ, EQ_EQ, GT, GT_EQ, LBRACKET, XOR,
       OR, BIN_NOT, INT_DIV)) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<user definable operator>");
     result_ = binaryOperator(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, BIN_NOT);
@@ -6041,7 +6028,7 @@ public class DartParser implements PsiParser {
   // '[' ']' '='?
   private static boolean userDefinableOperator_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "userDefinableOperator_2")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, LBRACKET);
     result_ = result_ && consumeToken(builder_, RBRACKET);
@@ -6061,7 +6048,7 @@ public class DartParser implements PsiParser {
   // primary callOrArrayAccessOrQualifiedRefExpression cascadeReferenceExpression* (isExpression | asExpression)?
   public static boolean valueExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "valueExpression")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<value expression>");
     result_ = primary(builder_, level_ + 1);
     result_ = result_ && callOrArrayAccessOrQualifiedRefExpression(builder_, level_ + 1);
@@ -6093,7 +6080,7 @@ public class DartParser implements PsiParser {
   // isExpression | asExpression
   private static boolean valueExpression_3_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "valueExpression_3_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = isExpression(builder_, level_ + 1);
     if (!result_) result_ = asExpression(builder_, level_ + 1);
@@ -6105,7 +6092,7 @@ public class DartParser implements PsiParser {
   // metadata* 'static'? (finalOrConst type componentName | finalOrConst componentName | type componentName | 'var' componentName)
   public static boolean varAccessDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varAccessDeclaration")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<var access declaration>");
     result_ = varAccessDeclaration_0(builder_, level_ + 1);
     result_ = result_ && varAccessDeclaration_1(builder_, level_ + 1);
@@ -6136,7 +6123,7 @@ public class DartParser implements PsiParser {
   // finalOrConst type componentName | finalOrConst componentName | type componentName | 'var' componentName
   private static boolean varAccessDeclaration_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varAccessDeclaration_2")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = varAccessDeclaration_2_0(builder_, level_ + 1);
     if (!result_) result_ = varAccessDeclaration_2_1(builder_, level_ + 1);
@@ -6149,7 +6136,7 @@ public class DartParser implements PsiParser {
   // finalOrConst type componentName
   private static boolean varAccessDeclaration_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varAccessDeclaration_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = finalOrConst(builder_, level_ + 1);
     result_ = result_ && type(builder_, level_ + 1);
@@ -6161,7 +6148,7 @@ public class DartParser implements PsiParser {
   // finalOrConst componentName
   private static boolean varAccessDeclaration_2_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varAccessDeclaration_2_1")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = finalOrConst(builder_, level_ + 1);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -6172,7 +6159,7 @@ public class DartParser implements PsiParser {
   // type componentName
   private static boolean varAccessDeclaration_2_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varAccessDeclaration_2_2")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = type(builder_, level_ + 1);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -6183,7 +6170,7 @@ public class DartParser implements PsiParser {
   // 'var' componentName
   private static boolean varAccessDeclaration_2_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varAccessDeclaration_2_3")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, VAR);
     result_ = result_ && componentName(builder_, level_ + 1);
@@ -6195,7 +6182,7 @@ public class DartParser implements PsiParser {
   // varAccessDeclaration varInit? (',' varDeclarationListPart)*
   public static boolean varDeclarationList(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varDeclarationList")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<var declaration list>");
     result_ = varAccessDeclaration(builder_, level_ + 1);
     result_ = result_ && varDeclarationList_1(builder_, level_ + 1);
@@ -6226,7 +6213,7 @@ public class DartParser implements PsiParser {
   // ',' varDeclarationListPart
   private static boolean varDeclarationList_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varDeclarationList_2_0")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
     result_ = result_ && varDeclarationListPart(builder_, level_ + 1);
@@ -6238,7 +6225,7 @@ public class DartParser implements PsiParser {
   // componentName varInit?
   public static boolean varDeclarationListPart(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varDeclarationListPart")) return false;
-    boolean result_ = false;
+    boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<var declaration list part>");
     result_ = componentName(builder_, level_ + 1);
     result_ = result_ && varDeclarationListPart_1(builder_, level_ + 1);
@@ -6257,8 +6244,8 @@ public class DartParser implements PsiParser {
   // varDeclarationList ';'
   static boolean varDeclarationListWithSemicolon(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varDeclarationListWithSemicolon")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = varDeclarationList(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
@@ -6272,8 +6259,8 @@ public class DartParser implements PsiParser {
   static boolean varFactoryDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varFactoryDeclaration")) return false;
     if (!nextTokenIs(builder_, EQ)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, EQ);
     pinned_ = result_; // pin = 1
@@ -6293,8 +6280,8 @@ public class DartParser implements PsiParser {
   // '.' referenceExpression
   private static boolean varFactoryDeclaration_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varFactoryDeclaration_2_0")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, DOT);
     pinned_ = result_; // pin = 1
@@ -6308,8 +6295,8 @@ public class DartParser implements PsiParser {
   public static boolean varInit(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varInit")) return false;
     if (!nextTokenIs(builder_, EQ)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, EQ);
     pinned_ = result_; // pin = 1
@@ -6323,8 +6310,8 @@ public class DartParser implements PsiParser {
   public static boolean whileStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "whileStatement")) return false;
     if (!nextTokenIs(builder_, WHILE)) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
+    boolean result_;
+    boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, WHILE);
     pinned_ = result_; // pin = 1

@@ -3,16 +3,20 @@
   <description>Support for Dart programming language</description>
   <version>999.999</version>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="135.690" until-build="135.*"/>
+  <idea-version since-build="135.1289" until-build="135.*"/>
   <depends>com.intellij.modules.xml</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
-  <depends optional="true" config-file="dart-file-watcher.xml">com.intellij.plugins.watcher</depends>
+
+  <!-- Uncomment the following lines when running Dart tests for the 'Dart-plugin' project. Do not commit these lines uncommented! -->
+  <!--<depends>HtmlTools</depends>-->
+  <!--<depends>com.intellij.css</depends>-->
+  <!--<depends>com.intellij.plugins.webcomponents</depends>-->
+
   <change-notes>
     <![CDATA[
         <ul>
-          <li>Major performance improvements in code highlighting/completion/analysis/etc</li>
-          <li>Bug fixes</li>
+          <li>Various improvements and bug fixes</li>
         </ul>
       ]]>
   </change-notes>
@@ -42,7 +46,7 @@
     <languageInjector implementation="com.jetbrains.lang.dart.psi.DartLanguageInjector"/>
 
     <colorSettingsPage implementation="com.jetbrains.lang.dart.highlight.DartColorsAndFontsPage"/>
-    <lang.foldingBuilder language="Dart" implementationClass="com.jetbrains.lang.dart.ide.folding.DartFoldingBuilder"/>
+    <lang.foldingBuilder language="Dart" implementationClass="com.jetbrains.lang.dart.folding.DartFoldingBuilder"/>
 
     <html.scriptContentProvider language="Dart" implementationClass="com.jetbrains.lang.dart.DartScriptContentProvider"/>
     <writingAccessProvider implementation="com.jetbrains.lang.dart.ide.DartWritingAccessProvider"/>
@@ -54,7 +58,9 @@
                                         implementationClass="com.jetbrains.lang.dart.ide.DartImplementationTextSelectioner"/>
     <lang.formatter language="Dart" implementationClass="com.jetbrains.lang.dart.ide.formatter.DartFormattingModelBuilder"/>
     <lang.psiStructureViewFactory language="Dart" implementationClass="com.jetbrains.lang.dart.ide.structure.DartStructureViewFactory"/>
-    <pathReferenceProvider implementation="com.jetbrains.lang.dart.psi.HtmlScriptSrcToDartPackagesPathReferenceProvider"/>
+    <psi.referenceContributor implementation="com.jetbrains.lang.dart.psi.DartPackagePathReferenceContributor" order="last"/>
+    <!--<include.provider implementation="com.jetbrains.lang.dart.psi.DartPackageAwareFileIncludeProvider" order="first"/>-->
+    <typeHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyProvider"/>
     <lang.elementManipulator forClass="com.jetbrains.lang.dart.psi.DartPathOrLibraryReference"
                              implementationClass="com.jetbrains.lang.dart.psi.impl.DartFileReferenceImpl$DartPathOrLibraryManipulator"/>
     <lang.refactoringSupport language="Dart"
@@ -90,17 +96,18 @@
 
     <definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>
 
-    <projectTemplatesFactory implementation="com.jetbrains.lang.dart.ide.template.DartTemplatesFactory"/>
-    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartApplicationGenerator"/>
+    <projectTemplatesFactory implementation="com.jetbrains.lang.dart.projectWizard.DartTemplatesFactory"/>
+    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.projectWizard.DartCmdLineAppGenerator"/>
+    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.projectWizard.DartWebAppGenerator"/>
 
     <projectConfigurable instance="com.jetbrains.lang.dart.sdk.DartConfigurable"
                          id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
     <library.presentationProvider implementation="com.jetbrains.lang.dart.sdk.DartSdkLibraryPresentationProvider"/>
+    <library.type implementation="com.jetbrains.lang.dart.sdk.listPackageDirs.DartListPackageDirsLibraryType"/>
     <treeStructureProvider implementation="com.jetbrains.lang.dart.DartTreeStructureProvider"/>
     <iconProvider implementation="com.jetbrains.lang.dart.DartIconProvider" order="first"/>
 
-    <internalFileTemplate name="Dart Class"/>
-    <internalFileTemplate name="Dart Empty File"/>
+    <internalFileTemplate name="Dart File"/>
 
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartListVariableMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartIterableVariableMacro"/>
@@ -137,26 +144,26 @@
                     serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
+<!--
+    <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerManager"
+                    serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerManager"/>
+-->
 
     <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
     <codeInspection.InspectionExtension id="dartGlobalInspection"
                                         implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>
 
-    <stepsBeforeRunProvider implementation="com.jetbrains.lang.dart.ide.runner.before.Dart2JSBeforeRunTaskProvider"/>
     <consoleFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.DartConsoleFilterProvider" order="first"/>
+
     <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType"/>
 
-    <!--command line-->
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer"/>
-    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunner"/>
-    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugRunner"/>
 
-    <!--unit test-->
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationProducer"/>
-    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunner"/>
-    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitDebugRunner"/>
+
+    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.DartRunner"/>
 
     <!--inspections-->
 
@@ -168,10 +175,6 @@
                       level="WARNING"
                       implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartGlobalInspectionTool"/>
 
-    <localInspection language="Dart" shortName="DartUnresolvedImport" bundle="com.jetbrains.lang.dart.DartBundle"
-                     key="inspections.unresolved.import.name"
-                     groupName="Dart" enabledByDefault="true" level="WARNING"
-                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartUnresolvedImportInspection"/>
     <localInspection language="Dart" bundle="com.jetbrains.lang.dart.DartBundle" key="dart.sdk.is.not.configured"
                      groupName="Dart" enabledByDefault="true" level="WARNING"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartSdkIsNotConfiguredInspection"/>
@@ -180,9 +183,21 @@
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartDeprecatedApiUsageInspection"/>
   </extensions>
 
+<!--
+  <extensions defaultExtensionNs="org.jetbrains">
+    <webServerPathHandler implementation="com.jetbrains.lang.dart.pubServer.PubServerPathHandler"/>
+  </extensions>
+-->
+
   <actions>
+    <!-- Action for Google internal developers only, action can be found only using 'Find Action' -->
+    <action id="Dart.pub.list.package.dirs" class="com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction"
+            text="Configure Dart package roots using 'pub list-package-dirs'"/>
+
+    <!--<action id="Dart.stop.pub.server" class="com.jetbrains.lang.dart.pubServer.StopPubServerAction" text="Stop Pub Serve"/>-->
+
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
-            text="Dart File" description="Create new Dart file/class/interface">
+            text="Dart File" description="Create new Dart file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
     <action id="Generate.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateConstructorAction"
@@ -203,13 +218,32 @@
     </action>
 
     <group>
-      <action id="Dart.dart2js" class="com.jetbrains.lang.dart.ide.actions.Dart2JSAction" text="Compile Dart to JavaScript" description="Run 'dart2js' compiler"/>
       <action id="Dart.pub.get" class="com.jetbrains.lang.dart.ide.actions.DartPubGetAction" text="Pub: Get Dependencies" description="Run 'pub get'"/>
       <action id="Dart.pub.upgrade" class="com.jetbrains.lang.dart.ide.actions.DartPubUpgradeAction" text="Pub: Upgrade Dependencies" description="Run 'pub upgrade'"/>
-      <action id="Dart.pub.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction" text="Pub: Build" description="Run 'pub build'"/>
+      <action id="Dart.pub.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction" text="Pub: Build..." description="Run 'pub build'"/>
       <separator/>
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
     </group>
+    <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction" text="Pub: Repair Cache..." description="Run 'pub cache repair'"/>
+
+    <action id="DartTypeHierarchy.BaseOnThisType" class="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyBrowser$BaseOnThisTypeAction"/>
+    <group id="DartClassHierarchyPopupMenu">
+      <reference ref="DartTypeHierarchy.BaseOnThisType"/>
+      <reference ref="TypeHierarchy.Class"/>
+      <reference ref="TypeHierarchy.Subtypes"/>
+      <reference ref="TypeHierarchy.Supertypes"/>
+      <separator/>
+      <reference ref="EditSource"/>
+      <separator/>
+      <reference ref="FindUsages"/>
+      <reference ref="RefactoringMenu"/>
+      <separator/>
+      <reference ref="AddToFavorites"/>
+      <separator/>
+      <reference ref="VersionControlsGroup"/>
+      <separator/>
+    </group>
+
   </actions>
 </idea-plugin>

@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.resolve;
 
+import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -8,6 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
+import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +31,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
       final int column = caretOffset - myFixture.getEditor().getDocument().getLineStartOffset(line);
       final String fileNameAndPosition = myFixture.getFile().getName() + ":" + (line + 1) + ":" + (column + 1);
 
-      final PsiReference reference = myFixture.getFile().findReferenceAt(caretOffset);
+      final PsiReference reference = TargetElementUtilBase.findReference(myFixture.getEditor(), caretOffset);
       assertNotNull("No reference in " + fileNameAndPosition, reference);
 
       final PsiElement resolve = reference.resolve();
@@ -43,14 +45,18 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
     if (element == null) return "";
 
     final StringBuilder buf = new StringBuilder(element.getText());
-    DartComponentName componentName = PsiTreeUtil.getParentOfType(element, DartComponentName.class);
-    while (componentName != null) {
-      buf.insert(0, componentName.getName() + " -> ");
-      componentName = PsiTreeUtil.getParentOfType(componentName, DartComponentName.class);
+    DartComponent component = PsiTreeUtil.getParentOfType(element, DartComponent.class);
+    while (component != null) {
+      final DartComponentName componentName = component.getComponentName();
+      if (componentName != null && componentName != element) {
+        buf.insert(0, component.getName() + " -> ");
+      }
+      component = PsiTreeUtil.getParentOfType(component, DartComponent.class);
     }
     String path = element instanceof PsiDirectoryImpl ? ((PsiDirectoryImpl)element).getVirtualFile().getPath()
                                                       : element.getContainingFile().getVirtualFile().getPath();
     if (path.startsWith("/src/")) path = path.substring("/src/".length());
+    if (path.startsWith(DartTestUtils.SDK_HOME_PATH)) path = "[Dart SDK]" + path.substring(DartTestUtils.SDK_HOME_PATH.length());
     if (buf.length() > 0) buf.insert(0, " -> ");
     buf.insert(0, path);
 
@@ -198,6 +204,74 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                                "  <caret expected=''>foo8;\n" +
                                                "  <caret expected=''>foo9;\n" +
                                                "}");
+    doTest();
+  }
+
+  public void testMixinApplication() throws Exception {
+    myFixture.configureByText("file.dart", "class Super  { inSuper(){}   }\n" +
+                                           "class Mixin1 { inMixin1(){}  }\n" +
+                                           "class Mixin2 { var inMixin2; }\n" +
+                                           "class Inter1 { var inInter1; }\n" +
+                                           "class Inter2 { inInter2(){}  }\n" +
+                                           "class Foo = Super with Mixin1, Mixin2 implements Inter1, Inter2;\n" +
+                                           "main(){\n" +
+                                           "  var foo = new Foo();\n" +
+                                           "  foo.<caret expected='file.dart -> Super -> inSuper'>inSuper();\n" +
+                                           "  foo.inMixin1<caret expected='file.dart -> Mixin1 -> inMixin1'>();\n" +
+                                           "  foo.inMixin2<caret expected='file.dart -> Mixin2 -> inMixin2'>;\n" +
+                                           "  foo.inInter1<caret expected='file.dart -> Inter1 -> inInter1'>;\n" +
+                                           "  foo.inInter2<caret expected='file.dart -> Inter2 -> inInter2'>();\n" +
+                                           "}");
+    doTest();
+  }
+
+  public void testExceptionParameters() throws Exception {
+    myFixture.configureByText("file.dart", "main(){\n" +
+                                           "  try{} on Error catch (e1){<caret expected='file.dart -> main -> e1'>e1;}\n" +
+                                           "  try{} on Error catch (e2, s2){<caret expected='file.dart -> main -> e2'>e2 + <caret expected='file.dart -> main -> s2'>s2; <caret expected=''>e1;}\n" +
+                                           "  try{} catch (e3){<caret expected='file.dart -> main -> e3'>e3; <caret expected=''>e1; <caret expected=''>e2; <caret expected=''>s2;}\n" +
+                                           "  try{} catch (e4, s4){print(<caret expected='file.dart -> main -> e4'>e4 + <caret expected='file.dart -> main -> s4'>s4); <caret expected=''>e1; <caret expected=''>e2; <caret expected=''>s2; <caret expected=''>e3;}\n" +
+                                           "}");
+
+    doTest();
+  }
+
+  public void testObjectMembers() throws Exception {
+    myFixture.configureByText("file.dart", "class Bar{}\n" +
+                                           "class Foo extends Bar{\n" +
+                                           "  String toString(){\n" +
+                                           "    var i = hashCode<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> hashCode'>;\n" +
+                                           "    var b = new Bar();\n" +
+                                           "    b.runtimeType<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> runtimeType'>;\n" +
+                                           "    return super.toString<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> toString'>();\n" +
+                                           "  }\n" +
+                                           "}");
+
+    doTest();
+  }
+
+  public void testPackageReferencesInHtml() throws Exception {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n" +
+                                               "dependencies:\n" +
+                                               "  PathPackage:\n" +
+                                               "    path: local_package\n");
+    myFixture.addFileToProject("lib/projectFile.dart", "");
+    myFixture.addFileToProject("local_package/lib/localPackageFile.html", "");
+    myFixture.addFileToProject("packages/browser/dart.js", "");
+    final PsiFile psiFile = myFixture.addFileToProject("web/file.html",
+                                                       "<script src='<caret expected='packages'>packages/<caret expected='lib'>ProjectName/<caret expected='lib/projectFile.dart'>projectFile.dart'/>\n" +
+                                                       "<script src='packages<caret expected='packages'>/PathPackage<caret expected='local_package/lib'>/localPackageFile.html<caret expected='local_package/lib/localPackageFile.html'>'/>\n" +
+                                                       "<script src='<caret expected='packages'>packages/<caret expected='packages/browser'>browser/<caret expected='packages/browser/dart.js'>dart.js'/>\n");
+    ((CodeInsightTestFixtureImpl)myFixture).openFileInEditor(psiFile.getVirtualFile());
+    doTest();
+  }
+
+  public void testCommentsInsideCallExpression() throws Exception {
+    myFixture.configureByText("file.dart", "main(){\n" +
+                                           "  '1 2 3 4'.<caret expected='[Dart SDK]/lib/core/string.dart -> String -> split'>split(' ')  // comment\n" +
+                                           "  .map<caret expected='[Dart SDK]/lib/core/iterable.dart -> Iterable -> map'>((e) => int.<caret expected='[Dart SDK]/lib/core/int.dart -> int -> parse'>parse(e) * 2);\n" +
+                                           "}");
+
     doTest();
   }
 }

@@ -94,10 +94,17 @@ main() {
 
   try {
     dispatcher.on(()=> print(foo('a')));
-  } on IllegalArgumentException catch(ex) {
-
-  }
-
+  } catch(ex) {
+  } catch(e, s) {
+  } on IllegalArgumentException {
+  } on IllegalArgumentException catch(e) {
+  } on IllegalArgumentException catch(e, s) {}
+  try {} finally {}
+  try {} catch(e) {} finally {}
+  try {} catch(e, s) {} finally {}
+  try {} on IllegalArgumentException {} finally {}
+  try {} on IllegalArgumentException catch(e) {} finally {}
+  try {} on IllegalArgumentException catch(e, s) {} finally {}
 }
 
 foo(p){

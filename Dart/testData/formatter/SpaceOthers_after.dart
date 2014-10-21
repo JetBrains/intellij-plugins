@@ -37,7 +37,7 @@ class Foo {
                     default:
                         var s1 = 'other';
                 }
-            }catch (string e) {
+            }catch (e) {
                 var message = arr[0];
             }
         }while (x < 0);

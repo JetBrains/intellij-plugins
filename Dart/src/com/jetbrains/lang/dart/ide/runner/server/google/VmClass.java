@@ -73,4 +73,9 @@ public class VmClass extends VmRef {
   public void setClassId(int classId) {
     this.classId = classId;
   }
+
+  @Override
+  public String toString() {
+    return "VmClass " + getName();
+  }
 }

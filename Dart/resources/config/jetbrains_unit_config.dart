@@ -1,10 +1,16 @@
 import 'DART_UNITTEST';
 import 'TEST_FILE_PATH' as testPrefix;
 
-main() {
+typedef F1(args);
+
+main(List<String> args) {
   var config = new JetBrainsUnitConfig();
   unittestConfiguration = config;
-  testPrefix.main();
+  if (testPrefix.main is F1) {
+    testPrefix.main(args);
+  } else {
+    testPrefix.main();
+  }
 }
 
 class JetBrainsUnitConfig extends Configuration {
@@ -21,6 +27,7 @@ class JetBrainsUnitConfig extends Configuration {
     testCases.forEach((TestCase testCase) => maxId = maxId < testCase.id ? testCase.id : maxId);
     maxId += 2;
     group2id = {'': 0};
+    print('\n'); // without it test output goes to the same line where "Observatory listening on http://127.0.0.1:52511" is already printed
     printTCMessage('enteredTheMatrix', {});
     _createGroups();
     testCases.forEach((TestCase testCase){
@@ -101,12 +108,7 @@ class JetBrainsUnitConfig extends Configuration {
   }
 
   void onTestResult(TestCase testCase) {
-    String messageName = 'internalError';
-    switch (testCase.result) {
-      case 'pass': messageName = 'testFinished'; break;
-      case 'fail': messageName = 'testFailed'; break;
-    }
-    printTCMessage(messageName, {
+    printTCMessage(testCase.result == 'pass' ? 'testFinished' : 'testFailed', {
         'nodeId' : (testCase.id + 1),
         'message': '${testCase.message}\n${testCase.stackTrace}'
     });

@@ -25,6 +25,7 @@ public class DartSpacingProcessor {
     OPERATOR,
     PART,
     EXPORT,
+    DEFERRED,
     AS,
     SHOW,
     HIDE,
@@ -36,6 +37,7 @@ public class DartSpacingProcessor {
     SET,
     EXTENDS,
     IMPLEMENTS,
+    DEFERRED,
     AS
   );
 
@@ -63,7 +65,8 @@ public class DartSpacingProcessor {
     if (METADATA == type1) return Spacing.createSpacing(1, 1, 0, true, 0);
 
     if (FUNCTION_DEFINITION.contains(type2)) {
-      return Spacing.createSpacing(0, 0, 2, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      final int lineFeeds = COMMENTS.contains(type1) ? 1 : 2;
+      return Spacing.createSpacing(0, 0, lineFeeds, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
     if (DOC_COMMENT_CONTENTS.contains(type2)) {
       return Spacing.createSpacing(0, Integer.MAX_VALUE, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
@@ -114,7 +117,7 @@ public class DartSpacingProcessor {
       else if (elementType == TRY_STATEMENT) {
         return addSingleSpaceIf(mySettings.SPACE_BEFORE_TRY_PARENTHESES);
       }
-      else if (elementType == CATCH_PART) {
+      else if (elementType == ON_PART || elementType == CATCH_PART) {
         return addSingleSpaceIf(mySettings.SPACE_BEFORE_CATCH_PARENTHESES);
       }
     }
@@ -150,7 +153,7 @@ public class DartSpacingProcessor {
       else if (elementType == TRY_STATEMENT) {
         return setBraceSpace(mySettings.SPACE_BEFORE_TRY_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
       }
-      else if (elementType == CATCH_PART) {
+      else if (elementType == ON_PART) {
         return setBraceSpace(mySettings.SPACE_BEFORE_CATCH_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
       }
     }
@@ -300,7 +303,7 @@ public class DartSpacingProcessor {
     if (type2 == WHILE) {
       return addSingleSpaceIf(mySettings.SPACE_BEFORE_WHILE_KEYWORD, mySettings.WHILE_ON_NEW_LINE);
     }
-    if (type2 == CATCH_PART) {
+    if (type2 == ON_PART) {
       return addSingleSpaceIf(mySettings.SPACE_BEFORE_CATCH_KEYWORD, mySettings.CATCH_ON_NEW_LINE);
     }
 

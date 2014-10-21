@@ -1,103 +1,109 @@
-<error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">library</info></error> library;
-<error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">part</info></error> <error descr="Target of URI does not exist: 'part'">"part"</error>;
-<info descr="highlighted as keyword">part</info> <info descr="highlighted as keyword">of</info> part.of;
+<error descr="The part-of directive must be the only directive in a part"><info textAttributesKey="DART_KEYWORD">library</info></error> library;
 
-<error descr="Import directives must preceed part directives"><error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">import</info></error></error> <error descr="Target of URI does not exist: 'foo'">"foo"</error> <info descr="highlighted as keyword">as</info> as <info descr="highlighted as keyword">hide</info> hide <info descr="highlighted as keyword">show</info> show;
-<error descr="Export directives must preceed part directives"><error descr="The part-of directive must be the only directive in a part"><info descr="highlighted as keyword">export</info></error></error> <error descr="Target of URI does not exist: 'bar'">"bar"</error> <info descr="highlighted as keyword">show</info> hide <info descr="highlighted as keyword">hide</info> show;
+<error descr="The part-of directive must be the only directive in a part"><info textAttributesKey="DART_KEYWORD">import</info></error> <error descr="Target of URI does not exist: 'foo'">"foo"</error> <info textAttributesKey="DART_KEYWORD">as</info> as <info textAttributesKey="DART_KEYWORD">hide</info> hide <info textAttributesKey="DART_KEYWORD">show</info> show;
+<error descr="The part-of directive must be the only directive in a part"><info textAttributesKey="DART_KEYWORD">import</info></error> <error descr="Target of URI does not exist: 'foo'">"foo"</error> <info textAttributesKey="DART_KEYWORD">deferred</info> <info textAttributesKey="DART_KEYWORD">as</info> deferred;
+<error descr="The part-of directive must be the only directive in a part"><info textAttributesKey="DART_KEYWORD">export</info></error> <error descr="Target of URI does not exist: 'bar'">"bar"</error> <info textAttributesKey="DART_KEYWORD">show</info> hide <info textAttributesKey="DART_KEYWORD">hide</info> show;
 
-<info descr="highlighted as keyword">typedef</info> <error descr="The built-in identifier 'typedef' cannot be used as a type alias name"><info descr="null">typedef</info></error>();
+<error descr="The part-of directive must be the only directive in a part"><info textAttributesKey="DART_KEYWORD">part</info></error> <error descr="Target of URI does not exist: 'part'">"part"</error>;
+<info textAttributesKey="DART_KEYWORD">part</info> <info textAttributesKey="DART_KEYWORD">of</info> part.of;
 
-<info descr="highlighted as keyword">abstract</info> class <info descr="null">Functions</info> <info descr="highlighted as keyword">implements</info> <error descr="Classes can only implement other classes">implements</error> {
-  <info descr="highlighted as keyword">factory</info> <error descr="The name of the immediately enclosing class expected"><info descr="null">factory</info></error>() {}
-  <info descr="highlighted as keyword">operator</info> +(<info descr="null">a</info>){}
+<info textAttributesKey="DART_KEYWORD">typedef</info> <error descr="The built-in identifier 'typedef' cannot be used as a type alias name"><info>typedef</info></error>();
 
-  <info descr="null">bool</info> <info descr="null">abstract</info>() => false;
-  <info descr="metadata">@<info descr="null">Object</info></info>() void <info descr="null">as</info>() => null;
-  void <info descr="null">export</info>() => null;
-  <info descr="highlighted as keyword">external</info> void <info descr="null">external</info>();
-  void <info descr="null">factory</info>() => null;
-  <info descr="highlighted as keyword">get</info> <info descr="null">get</info> => null;
-  void <info descr="null">implements</info>() => null;
-  void <info descr="null">import</info>() => null;
-  void <info descr="null">library</info>() => null;
-  void <info descr="null">operator</info>() => null;
-  void <info descr="null">part</info>() => null;
-  <info descr="highlighted as keyword">set</info> <info descr="null">set</info>(<info descr="null">a</info>) => null;
-  <info descr="highlighted as keyword">static</info> void <info descr="null">static</info>() => null;
-  void <info descr="null">typedef</info>() => null;
+<info textAttributesKey="DART_KEYWORD">abstract</info> class <info>Functions</info> <info textAttributesKey="DART_KEYWORD">implements</info> <error descr="Classes can only implement other classes">implements</error> {
+  <info textAttributesKey="DART_KEYWORD">factory</info> <error descr="Instance members cannot be accessed from a factory constructor"><error descr="The name of the immediately enclosing class expected"><info>factory</info></error></error>() {}
+  <info textAttributesKey="DART_KEYWORD">operator</info> +(<info>a</info>){}
 
-  void <info descr="null">on</info>() => null;
-  void <info descr="null">of</info>() => null;
-  void <info descr="null">show</info>() => null;
-  void <info descr="null">hide</info>() => null;
+  <info>bool</info> <info>abstract</info>() => false;
+  <info textAttributesKey="DART_METADATA">@<info>Object</info></info>() void <info>as</info>() => null;
+  void <info>deferred</info>() => null;
+  void <info>export</info>() => null;
+  <info textAttributesKey="DART_KEYWORD">external</info> void <info>external</info>();
+  void <info>factory</info>() => null;
+  <info textAttributesKey="DART_KEYWORD">get</info> <info>get</info> => null;
+  void <info>implements</info>() => null;
+  void <info>import</info>() => null;
+  void <info>library</info>() => null;
+  void <info>operator</info>() => null;
+  void <info>part</info>() => null;
+  <info textAttributesKey="DART_KEYWORD">set</info> <info>set</info>(<info>a</info>) => null;
+  <info textAttributesKey="DART_KEYWORD">static</info> void <info>static</info>() => null;
+  void <info>typedef</info>() => null;
 
-  <info descr="null">callFunctions</info>() {
-    <info descr="null">print</info>(<info descr="null">abstract</info>());
-    <info descr="null">print</info>(as());
-    <info descr="null">print</info>(<info descr="null">export</info>());
-    <info descr="null">print</info>(<info descr="null">external</info>());
-    <info descr="null">print</info>(<info descr="null">factory</info>());
-    <info descr="null">print</info>(<info descr="null">get</info>());
-    <info descr="null">print</info>(<info descr="null">implements</info>());
-    <info descr="null">print</info>(<info descr="null">import</info>());
-    <info descr="null">print</info>(<info descr="null">library</info>());
-    <info descr="null">print</info>(<info descr="null">operator</info>());
-    <info descr="null">print</info>(<info descr="null">part</info>());
-    <info descr="null">print</info>(set());
-    <info descr="null">print</info>(<info descr="null">static</info>());
-    <info descr="null">print</info>(<info descr="null">typedef</info>());
+  void <info>on</info>() => null;
+  void <info>of</info>() => null;
+  void <info>show</info>() => null;
+  void <info>hide</info>() => null;
 
-    <info descr="null">print</info>(<info descr="null">on</info>());
-    <info descr="null">print</info>(<info descr="null">of</info>());
-    <info descr="null">print</info>(<info descr="null">show</info>());
-    <info descr="null">print</info>(<info descr="null">hide</info>());
+  <info>callFunctions</info>() {
+    <info>print</info>(<info>abstract</info>());
+    <info>print</info>(as());
+    <info>print</info>(deferred());
+    <info>print</info>(<info>export</info>());
+    <info>print</info>(<info>external</info>());
+    <info>print</info>(<info>factory</info>());
+    <info>print</info>(<info>get</info>());
+    <info>print</info>(<info>implements</info>());
+    <info>print</info>(<info>import</info>());
+    <info>print</info>(<info>library</info>());
+    <info>print</info>(<info>operator</info>());
+    <info>print</info>(<info>part</info>());
+    <info>print</info>(set());
+    <info>print</info>(<info>static</info>());
+    <info>print</info>(<info>typedef</info>());
+
+    <info>print</info>(<info>on</info>());
+    <info>print</info>(<info>of</info>());
+    <info>print</info>(<info>show</info>());
+    <info>print</info>(<info>hide</info>());
   }
 }
 
-<info descr="null">main</info>() {
-  try{} <info descr="highlighted as keyword">on</info> <error descr="Local variables cannot be referenced before they are declared">on</error>{}
-  
-  <info descr="null">int</info> <info descr="null">abstract</info> = 1;
-  <info descr="metadata">@<info descr="null">Object</info></info>() var <info descr="null">as</info> = 2;
-  <info descr="null">dynamic</info> <info descr="null">export</info> = 3;
-  var <info descr="null">external</info> = 4;
-  var <info descr="null">factory</info> = 5;
-  var <info descr="null">get</info> = 6;
-  var <info descr="null">implements</info> = 7;
-  var <info descr="null">import</info> = 8;
-  var <info descr="null">library</info> = 9;
-  var <info descr="null">operator</info> = 10;
-  var <info descr="null">part</info> = 11;
-  var <info descr="null">set</info> = 12;
-  var <info descr="null">static</info> = 13;
-  var <info descr="null">typedef</info> = 14;
+<info>main</info>() {
+  try{} <info textAttributesKey="DART_KEYWORD">on</info> <error descr="Local variables cannot be referenced before they are declared">on</error>{}
 
-  var <info descr="null">on</info> = 15;
-  var <info descr="null">of</info> = 16;
-  var <info descr="null">show</info> = 17;
-  var <info descr="null">hide</info> = 18;
-  var <info descr="null">native</info> = 19;
+  <info>int</info> <info>abstract</info> = 1;
+  <info textAttributesKey="DART_METADATA">@<info>Object</info></info>() var <info>as</info> = 2;
+  <info>dynamic</info> <info>deferred</info> = 2.5;
+  <info>dynamic</info> <info>export</info> = 3;
+  var <info>external</info> = 4;
+  var <info>factory</info> = 5;
+  var <info>get</info> = 6;
+  var <info>implements</info> = 7;
+  var <info>import</info> = 8;
+  var <info>library</info> = 9;
+  var <info>operator</info> = 10;
+  var <info>part</info> = 11;
+  var <info>set</info> = 12;
+  var <info>static</info> = 13;
+  var <info>typedef</info> = 14;
 
-  <info descr="null">print</info>(<info descr="null">abstract</info> + 1);
-  <info descr="null">print</info>(<info descr="null">as</info> + 1);
-  <info descr="null">print</info>(<info descr="null">export</info> + 1);
-  <info descr="null">print</info>(<info descr="null">external</info> + 1);
-  <info descr="null">print</info>(<info descr="null">factory</info> + 1);
-  <info descr="null">print</info>(<info descr="null">get</info> + 1);
-  <info descr="null">print</info>(<info descr="null">implements</info> + 1);
-  <info descr="null">print</info>(<info descr="null">import</info> + 1);
-  <info descr="null">print</info>(<info descr="null">library</info> + 1);
-  <info descr="null">print</info>(<info descr="null">operator</info> + 1);
-  <info descr="null">print</info>(<info descr="null">part</info> + 1);
-  <info descr="null">print</info>(<info descr="null">set</info> + 1);
-  <info descr="null">print</info>(<info descr="null">static</info> + 1);
-  <info descr="null">print</info>(<info descr="null">typedef</info> + 1);
+  var <info>on</info> = 15;
+  var <info>of</info> = 16;
+  var <info>show</info> = 17;
+  var <info>hide</info> = 18;
+  var <info>native</info> = 19;
 
-  <info descr="null">print</info>(<info descr="null">on</info> + 1);
-  <info descr="null">print</info>(<info descr="null">of</info> + 1);
-  <info descr="null">print</info>(<info descr="null">show</info> + 1);
-  <info descr="null">print</info>(<info descr="null">hide</info> + 1);
-  <info descr="null">print</info>(<info descr="null">native</info> + 1);
+  <info>print</info>(<info>abstract</info> + 1);
+  <info>print</info>(<info>as</info> + 1);
+  <info>print</info>(<info>deferred</info> + 1);
+  <info>print</info>(<info>export</info> + 1);
+  <info>print</info>(<info>external</info> + 1);
+  <info>print</info>(<info>factory</info> + 1);
+  <info>print</info>(<info>get</info> + 1);
+  <info>print</info>(<info>implements</info> + 1);
+  <info>print</info>(<info>import</info> + 1);
+  <info>print</info>(<info>library</info> + 1);
+  <info>print</info>(<info>operator</info> + 1);
+  <info>print</info>(<info>part</info> + 1);
+  <info>print</info>(<info>set</info> + 1);
+  <info>print</info>(<info>static</info> + 1);
+  <info>print</info>(<info>typedef</info> + 1);
 
-  new <info descr="null">Functions</info>().<info descr="null">callFunctions</info>();
+  <info>print</info>(<info>on</info> + 1);
+  <info>print</info>(<info>of</info> + 1);
+  <info>print</info>(<info>show</info> + 1);
+  <info>print</info>(<info>hide</info> + 1);
+  <info>print</info>(<info>native</info> + 1);
+
+  new <info>Functions</info>().<info>callFunctions</info>();
 }

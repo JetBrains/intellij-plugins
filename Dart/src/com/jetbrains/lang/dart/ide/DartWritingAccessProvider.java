@@ -6,6 +6,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.WritingAccessProvider;
+import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,12 @@ public class DartWritingAccessProvider extends WritingAccessProvider {
     return !isInDartSdkOrDartPackagesFolder(myProject, file);
   }
 
-  public static boolean isInDartSdkOrDartPackagesFolder(final Project project, final VirtualFile file) {
+  public static boolean isInDartSdkOrDartPackagesFolder(final @NotNull PsiFile psiFile) {
+    final VirtualFile vFile = psiFile.getOriginalFile().getVirtualFile();
+    return vFile != null && isInDartSdkOrDartPackagesFolder(psiFile.getProject(), vFile);
+  }
+
+  public static boolean isInDartSdkOrDartPackagesFolder(final @NotNull Project project, final @NotNull VirtualFile file) {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
     if (fileIndex.isInLibraryClasses(file)) {

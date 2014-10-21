@@ -10,9 +10,6 @@ public interface DartTryStatement extends DartPsiCompositeElement {
   @Nullable
   DartBlock getBlock();
 
-  @NotNull
-  List<DartCatchPart> getCatchPartList();
-
   @Nullable
   DartFinallyPart getFinallyPart();
 

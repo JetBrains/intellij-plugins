@@ -7,6 +7,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,27 +20,43 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     super(node);
   }
 
+  @NotNull
+  public DartClassResolveResult getSuperClassResolvedOrObjectClass() {
+    if (DartResolveUtil.OBJECT.equals(getName())) return DartClassResolveResult.EMPTY;
+
+    final DartType superClass = getSuperClass();
+    return superClass != null ? DartResolveUtil.resolveClassByType(superClass)
+                              : DartResolveUtil.findCoreClass(this, DartResolveUtil.OBJECT);
+  }
+
   @Nullable
   @Override
   public DartType getSuperClass() {
     final DartSuperclass superclass = PsiTreeUtil.getChildOfType(this, DartSuperclass.class);
-    return superclass == null ? null : superclass.getType();
+    if (superclass != null) return superclass.getType();
+
+    final DartMixinApplication mixinApp = PsiTreeUtil.getChildOfType(this, DartMixinApplication.class);
+    if (mixinApp != null) return mixinApp.getType();
+
+    return null;
   }
 
   @NotNull
   @Override
   public List<DartType> getImplementsList() {
-    final DartInterfaces interfaces = PsiTreeUtil.getChildOfType(this, DartInterfaces.class);
-    if (interfaces != null) {
-      return DartResolveUtil.getTypes(interfaces.getTypeList());
-    }
+    final DartMixinApplication mixinApp = PsiTreeUtil.getChildOfType(this, DartMixinApplication.class);
+    final DartInterfaces interfaces = mixinApp != null ? mixinApp.getInterfaces() : PsiTreeUtil.getChildOfType(this, DartInterfaces.class);
+    if (interfaces != null) return DartResolveUtil.getTypes(interfaces.getTypeList());
+
     return Collections.emptyList();
   }
 
   @NotNull
   @Override
   public List<DartType> getMixinsList() {
-    final DartMixins mixins = PsiTreeUtil.getChildOfType(this, DartMixins.class);
+    final DartMixinApplication mixinApp = PsiTreeUtil.getChildOfType(this, DartMixinApplication.class);
+
+    final DartMixins mixins = PsiTreeUtil.getChildOfType(mixinApp != null ? mixinApp : this, DartMixins.class);
     if (mixins != null) {
       return DartResolveUtil.getTypes(mixins.getTypeList());
     }

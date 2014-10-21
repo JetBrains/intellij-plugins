@@ -6,28 +6,30 @@ import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
+import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
-import com.jetbrains.lang.dart.ide.runner.server.google.DebuggerUtils;
-import com.jetbrains.lang.dart.ide.runner.server.google.VmCallFrame;
-import com.jetbrains.lang.dart.ide.runner.server.google.VmLocation;
-import com.jetbrains.lang.dart.ide.runner.server.google.VmVariable;
+import com.jetbrains.lang.dart.ide.runner.server.google.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class DartStackFrame extends XStackFrame {
-  private final @NotNull DartCommandLineDebugProcess myDebugProcess;
-  private final @NotNull VmCallFrame myVmCallFrame;
-  private final @Nullable XSourcePosition mySourcePosition;
-  private final @Nullable String myLocationUrl;
+  @NotNull private final DartCommandLineDebugProcess myDebugProcess;
+  @NotNull private final VmCallFrame myVmCallFrame;
+  @Nullable private final VmValue myException;
+  @Nullable private final XSourcePosition mySourcePosition;
+  @Nullable private final String myLocationUrl;
 
-  public DartStackFrame(@NotNull final DartCommandLineDebugProcess debugProcess, final @NotNull VmCallFrame vmCallFrame) {
+  public DartStackFrame(@NotNull final DartCommandLineDebugProcess debugProcess,
+                        @NotNull final VmCallFrame vmCallFrame,
+                        @Nullable final VmValue exception) {
     myDebugProcess = debugProcess;
     myVmCallFrame = vmCallFrame;
+    myException = exception;
 
     final VmLocation location = vmCallFrame.getLocation();
     myLocationUrl = location == null ? null : location.getUnescapedUrl();
@@ -41,10 +43,25 @@ public class DartStackFrame extends XStackFrame {
     }
   }
 
+  @NotNull
+  public VmIsolate getIsolate() {
+    return myVmCallFrame.getIsolate();
+  }
+
+  @Nullable
+  public Object getEqualityObject() {
+    return myLocationUrl + "#" + myVmCallFrame.getFunctionName();
+  }
+
   @Nullable
   @Override
   public XSourcePosition getSourcePosition() {
     return mySourcePosition;
+  }
+
+  @Nullable
+  public XDebuggerEvaluator getEvaluator() {
+    return new DartDebuggerEvaluator(myDebugProcess, myVmCallFrame);
   }
 
   @Override
@@ -53,9 +70,16 @@ public class DartStackFrame extends XStackFrame {
 
     final XValueChildrenList childrenList = new XValueChildrenList(locals == null ? 1 : locals.size() + 1);
 
+    if (myException != null) {
+      childrenList.add(new DartValue(myDebugProcess, DartValue.NODE_NAME_EXCEPTION, myException, true));
+    }
+
     if (locals != null) {
-      for (final VmVariable local : locals) {
-        childrenList.add(new DartValue(myDebugProcess, local));
+      for (final VmVariable localVar : locals) {
+        final VmValue vmValue = localVar.getValue();
+        if (vmValue != null) {
+          childrenList.add(new DartValue(myDebugProcess, localVar.getName(), localVar.getValue(), false));
+        }
       }
     }
 

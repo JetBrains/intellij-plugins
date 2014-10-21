@@ -1,0 +1,4 @@
+library printer;
+
+superPrint() {
+}

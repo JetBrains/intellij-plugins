@@ -1,7 +1,9 @@
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.Trinity;
 import junit.framework.TestCase;
+import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.lang.dart.ide.runner.DartPositionInfo.Type;
 
@@ -26,6 +28,18 @@ public class DartConsoleFilterTest extends TestCase {
     assertEquals(highlightedText, text.substring(info.highlightingStartIndex, info.highlightingEndIndex));
     assertEquals(line, info.line);
     assertEquals(column, info.column);
+  }
+
+  private static void doNegativeRelativePathsFilterTest(@NotNull final String text) {
+    assertNull(DartRelativePathsConsoleFilter.getFileRelPathLineAndColumn(text));
+  }
+
+  private static void doPositiveRelativePathsFilterTest(final String text, final String relPath, final int line, final int column) {
+    final Trinity<String, Integer, Integer> relPathLineAndColumn = DartRelativePathsConsoleFilter.getFileRelPathLineAndColumn(text);
+    assertNotNull(relPathLineAndColumn);
+    assertEquals(relPath, relPathLineAndColumn.first);
+    assertEquals(line, relPathLineAndColumn.second.intValue());
+    assertEquals(column, relPathLineAndColumn.third.intValue());
   }
 
   public void testPositionInfo() {
@@ -69,5 +83,21 @@ public class DartConsoleFilterTest extends TestCase {
                    "foo.dart/bar.dart_baz.dart.more.dart", -1, -1);
     doPositiveTest("file:foo.dart/bar.dart_baz.dart.more.dart,evenmore.dart", Type.FILE, "file:foo.dart/bar.dart_baz.dart.more.dart",
                    "foo.dart/bar.dart_baz.dart.more.dart", -1, -1);
+  }
+
+  public void testRelativePathsConsoleFilter() throws Exception {
+    doNegativeRelativePathsFilterTest("");
+    doNegativeRelativePathsFilterTest("foo.dart");
+    doNegativeRelativePathsFilterTest("foo.dart ");
+    doNegativeRelativePathsFilterTest("foo.dart 4   ");
+    doNegativeRelativePathsFilterTest("foo.dart 4:   ");
+    doNegativeRelativePathsFilterTest("foo.dart 4:x");
+    doNegativeRelativePathsFilterTest(" foo.dart 4:15");
+    doNegativeRelativePathsFilterTest("foo.txt 4:15");
+    doNegativeRelativePathsFilterTest("foo.dart 4:x");
+
+    doPositiveRelativePathsFilterTest("foo.dart 1:1", "foo.dart", 0, 0);
+    doPositiveRelativePathsFilterTest("../foo\\bar.dart 4:15 x", "../foo\\bar.dart", 3, 14);
+    doPositiveRelativePathsFilterTest("web\\foo.dart:566:1:", "web\\foo.dart", 565, 0);
   }
 }

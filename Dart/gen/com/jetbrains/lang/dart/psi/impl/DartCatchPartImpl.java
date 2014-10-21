@@ -23,15 +23,9 @@ public class DartCatchPartImpl extends DartPsiCompositeElementImpl implements Da
   }
 
   @Override
-  @Nullable
-  public DartBlock getBlock() {
-    return findChildByClass(DartBlock.class);
-  }
-
-  @Override
-  @Nullable
-  public DartFormalParameterList getFormalParameterList() {
-    return findChildByClass(DartFormalParameterList.class);
+  @NotNull
+  public List<DartComponentName> getComponentNameList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartComponentName.class);
   }
 
 }

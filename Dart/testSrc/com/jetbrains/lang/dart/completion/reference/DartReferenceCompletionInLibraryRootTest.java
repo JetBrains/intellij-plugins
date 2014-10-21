@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.completion.reference;
 
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.completion.base.DartCompletionTestBase;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 
@@ -51,10 +52,6 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
   }
 
   public void testMixin1() throws Throwable {
-    doTest();
-  }
-
-  public void testMixin2() throws Throwable {
     doTest();
   }
 
@@ -130,7 +127,7 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
   }
 
   public void testReference8() throws Throwable {
-    doTest("Reference8.dart", "additional/foo.dart");
+    doTest("Reference8.dart", "additional/Foo.dart");
   }
 
   public void testReference9() throws Throwable {
@@ -278,6 +275,10 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
   }
 
   public void testClassLevelType() throws Throwable {
+    doTestSdkClassesInCompletion("class Foo extends <caret>");
+    doTestSdkClassesInCompletion("class Foo implements <caret>");
+    doTestSdkClassesInCompletion("class Foo extends Object implements <caret>");
+    doTestSdkClassesInCompletion("class Foo = <caret>");
     doTestSdkClassesInCompletion("class Foo {<caret>}");
     doTestSdkClassesInCompletion("class Foo {@<caret>}");
     doTestSdkClassesInCompletion("class Foo {@Object @<caret>}");
@@ -295,4 +296,55 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
     doTestNoSdkClassesInCompletion("class Foo{const Foo <caret>}");
   }
 
+  public void testExceptionParameter1() throws Throwable {
+    doTest();
+  }
+
+  public void testExceptionParameter2() throws Throwable {
+    doTest();
+  }
+
+  public void testExceptionParameter3() throws Throwable {
+    doTest();
+  }
+
+  public void testExceptionParameter4() throws Throwable {
+    doTest();
+  }
+
+  public void testPackageFolderCompletionInHtml() throws Throwable {
+    myFixture.addFileToProject("pubspec.yaml", "");
+    myFixture.addFileToProject("packages/browser/dart.js", "");
+    myFixture.addFileToProject("web/other.dart", "");
+    final PsiFile psiFile = myFixture.addFileToProject("web/file.html", "<link href=''>");
+    ((CodeInsightTestFixtureImpl)myFixture).openFileInEditor(psiFile.getVirtualFile());
+    myFixture.getEditor().getCaretModel().moveToOffset(12);
+
+    doTestVariantsInner(getTestName(false) + ".txt");
+  }
+
+  public void testLivePackageNameCompletionInHtml() throws Throwable {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n" +
+                                               "dependencies:\n" +
+                                               "  PathPackage:\n" +
+                                               "    path: local_package\n");
+    myFixture.addFileToProject("lib/projectFile.dart", "");
+    myFixture.addFileToProject("local_package/lib/localPackageFile.html", "");
+    myFixture.addFileToProject("packages/browser/dart.js", "");
+    final PsiFile psiFile = myFixture.addFileToProject("web/file.html", "<link href='packages/'>");
+    ((CodeInsightTestFixtureImpl)myFixture).openFileInEditor(psiFile.getVirtualFile());
+    myFixture.getEditor().getCaretModel().moveToOffset(21);
+
+    doTestVariantsInner(getTestName(false) + ".txt");
+  }
+
+  public void testLivePackageContentCompletionInHtml() throws Throwable {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
+    myFixture.addFileToProject("lib/projectFile.dart", "");
+    final PsiFile psiFile = myFixture.addFileToProject("web/file.html", "<link href='packages/ProjectName/xxx'>");
+    ((CodeInsightTestFixtureImpl)myFixture).openFileInEditor(psiFile.getVirtualFile());
+    myFixture.getEditor().getCaretModel().moveToOffset(33);
+
+    doTestVariantsInner(getTestName(false) + ".txt");
+  }
 }

@@ -1,16 +1,17 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.dart.engine.context.AnalysisException;
 import com.google.dart.engine.internal.context.TimestampedData;
 import com.google.dart.engine.source.Source;
 import com.google.dart.engine.source.UriKind;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 public class DartFileBasedSource implements Source {
 
@@ -109,12 +111,25 @@ public class DartFileBasedSource implements Source {
   }
 
   @Override
-  public Source resolveRelative(final URI containedUri) {
-    final VirtualFile file = containedUri.getScheme() == null
-                             ? VfsUtilCore.findRelativeFile(containedUri.toString(), myFile.getParent())
-                             : LocalFileSystem.getInstance().findFileByPath(containedUri.getPath());
+  public URI resolveRelativeUri(final URI relativeUri) throws AnalysisException {
+    final VirtualFile file = VfsUtilCore.findRelativeFile(relativeUri.getPath(), myFile.getParent());
+    return file == null ? null : getSource(myProject, file).getUri();
+  }
 
-    return file == null ? null : getSource(myProject, file);
+  @Override
+  public URI getUri() {
+    String path = myFile.getPath();
+    if (!path.startsWith("/")) {
+      path = "/" + path; // like in java.io.File.toURI()
+    }
+
+    try {
+      return new URI(myFile.getFileSystem().getProtocol(), null, path, null);
+    }
+    catch (URISyntaxException e) {
+      Logger.getInstance(DartFileBasedSource.class).error(myFile.getUrl(), e);
+    }
+    return null;
   }
 
   @Override

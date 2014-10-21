@@ -1,11 +1,9 @@
 package com.jetbrains.lang.dart.rename;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartRenameTest extends DartCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
@@ -84,5 +82,13 @@ public class DartRenameTest extends DartCodeInsightFixtureTestCase {
 
   public void testWEB_7218() throws Throwable {
     doTest("colorTextNew");
+  }
+
+  public void testReferencedHtmlInPackage() throws Throwable {
+    myFixture.addFileToProject("pubspec.yaml", "name: ThisProject\n");
+    myFixture.configureByFile(getTestName(false) + ".html");
+    final PsiFile htmlFile = myFixture.addFileToProject("lib/sub/foo.html", "");
+    myFixture.renameElement(htmlFile, "bar.html", true, true);
+    myFixture.checkResultByFile(getTestName(false) + "After.html");
   }
 }

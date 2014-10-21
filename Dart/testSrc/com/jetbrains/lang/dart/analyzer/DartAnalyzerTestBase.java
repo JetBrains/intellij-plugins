@@ -7,7 +7,6 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationSession;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pair;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -48,21 +47,17 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
     assertNotNull("Can't find fixes", quickFixes);
     assertFalse(quickFixes.isEmpty());
 
-    final Annotation.QuickFixInfo quickFixInfo = ContainerUtil.find(quickFixes, new Condition<Annotation.QuickFixInfo>() {
+    final List<Annotation.QuickFixInfo> quickFixInfos = ContainerUtil.findAll(quickFixes, new Condition<Annotation.QuickFixInfo>() {
       @Override
       public boolean value(Annotation.QuickFixInfo info) {
         return fixSimpleClassName == null || info.quickFix.getClass().getSimpleName().equals(fixSimpleClassName);
       }
     });
-    assertNotNull("Can't find fixes", quickFixInfo);
+    assertEquals("One quick fix expected", 1, quickFixInfos.size());
+    final Annotation.QuickFixInfo quickFixInfo = quickFixInfos.get(0);
     assertTrue("Fix not available", quickFixInfo.quickFix.isAvailable(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile()));
 
-    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-      @Override
-      public void run() {
-        quickFixInfo.quickFix.invoke(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile());
-      }
-    });
+    myFixture.launchAction(quickFixInfo.quickFix);
   }
 
   private String getExtension() {
@@ -74,8 +69,8 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
     final AnnotationHolderImpl annotationHolder = new AnnotationHolderImpl(new AnnotationSession(myFixture.getFile()));
 
     final DartInProcessAnnotator annotator = new DartInProcessAnnotator();
-    final Pair<DartFileBasedSource, AnalysisContext> information = annotator.collectInformation(myFixture.getFile());
-    final AnalysisContext analysisContext = annotator.doAnnotate(information);
+    final DartInProcessAnnotator.DartAnnotatorInfo annotatorInfo = annotator.collectInformation(myFixture.getFile());
+    final AnalysisContext analysisContext = annotator.doAnnotate(annotatorInfo);
     annotator.apply(myFixture.getFile(), analysisContext, annotationHolder);
 
     return ContainerUtil.find(annotationHolder, new Condition<Annotation>() {
@@ -88,9 +83,9 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
 
   protected AnalysisError[] getErrorsFromAnnotator() {
     final DartInProcessAnnotator annotator = new DartInProcessAnnotator();
-    final Pair<DartFileBasedSource, AnalysisContext> information = annotator.collectInformation(myFixture.getFile());
-    if (information == null) return AnalysisError.NO_ERRORS;
-    final AnalysisContext analysisContext = annotator.doAnnotate(information);
+    final DartInProcessAnnotator.DartAnnotatorInfo annotatorInfo = annotator.collectInformation(myFixture.getFile());
+    if (annotatorInfo == null) return AnalysisError.NO_ERRORS;
+    final AnalysisContext analysisContext = annotator.doAnnotate(annotatorInfo);
     final DartFileBasedSource source = DartFileBasedSource.getSource(getProject(), myFixture.getFile().getVirtualFile());
     return analysisContext == null ? AnalysisError.NO_ERRORS : analysisContext.getErrors(source).getErrors();
   }

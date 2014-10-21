@@ -31,7 +31,7 @@ public abstract class DartPsiScopeProcessor implements PsiScopeProcessor {
   public void importedFileProcessingFinished(final @NotNull VirtualFile importedFile) {
     LOG.assertTrue(myShowHideFilters.size() > 0, importedFile.getPath());
     final Pair<VirtualFile, DartShowHideInfo> removed = myShowHideFilters.remove(myShowHideFilters.size() - 1);
-    LOG.assertTrue(importedFile == removed.first, "expected: " + removed.first.getPath() + ", actual: " + importedFile.getPath());
+    LOG.assertTrue(importedFile.equals(removed.first), "expected: " + removed.first.getPath() + ", actual: " + importedFile.getPath());
   }
 
   public void processFilteredOutElementsForImportedFile(final @NotNull VirtualFile importedFile) {

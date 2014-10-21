@@ -14,7 +14,6 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
@@ -71,7 +70,8 @@ import java.util.List;
 
 public class DartConfigurable implements SearchableConfigurable {
 
-  public static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
+  public static final String DART_SETTINGS_PAGE_ID = "dart.settings";
+  private static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
 
   private static final String CUSTOM_PACKAGE_ROOTS_LIB_NAME = "Dart custom package roots";
   private static final String SEMICOLON = ";";
@@ -85,6 +85,7 @@ public class DartConfigurable implements SearchableConfigurable {
 
   private TextFieldWithBrowseButton myDartiumPathTextWithBrowse;
   private JButton myDartiumSettingsButton;
+  private JBCheckBox myCheckedModeCheckBox;
 
   private JPanel myCustomPackageRootsPanel;
   private JBCheckBox myCustomPackageRootsCheckBox;
@@ -130,6 +131,12 @@ public class DartConfigurable implements SearchableConfigurable {
   }
 
   private void initDartSdkAndDartiumControls() {
+    final Computable<ChromeSettings> currentDartiumSettingsRetriever = new Computable<ChromeSettings>() {
+      public ChromeSettings compute() {
+        return myDartiumSettingsCurrent;
+      }
+    };
+
     final Computable<Boolean> isResettingControlsComputable = new Computable<Boolean>() {
       public Boolean compute() {
         return myInReset;
@@ -137,6 +144,7 @@ public class DartConfigurable implements SearchableConfigurable {
     };
 
     DartSdkUtil.initDartSdkAndDartiumControls(myProject, mySdkPathTextWithBrowse, myVersionLabel, myDartiumPathTextWithBrowse,
+                                              currentDartiumSettingsRetriever, myDartiumSettingsButton, myCheckedModeCheckBox,
                                               isResettingControlsComputable);
 
     final DocumentAdapter documentListener = new DocumentAdapter() {
@@ -147,13 +155,6 @@ public class DartConfigurable implements SearchableConfigurable {
 
     mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(documentListener);
     myDartiumPathTextWithBrowse.getTextField().getDocument().addDocumentListener(documentListener);
-
-    myDartiumSettingsButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        ShowSettingsUtil.getInstance().editConfigurable(myProject, myDartiumSettingsCurrent.createConfigurable());
-      }
-    });
   }
 
   private void initCustomPackageRootsPanel() {
@@ -182,7 +183,7 @@ public class DartConfigurable implements SearchableConfigurable {
                                                                            myCustomPackageRootsTextWithBrowse,
                                                                            myProject,
                                                                            // this descriptor is not used because overridden in selectCustomPackageRoots()
-                                                                           FileChooserDescriptorFactory.createMultipleFoldersDescriptor(),
+                                                                           FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                                                                            TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT) {
         public void actionPerformed(final ActionEvent e) {
           selectCustomPackageRoots(myCustomPackageRootsTextWithBrowse.getTextField());
@@ -336,6 +337,9 @@ public class DartConfigurable implements SearchableConfigurable {
                                         ? ""
                                         : FileUtilRt.toSystemDependentName(StringUtil.notNullize(myDartiumInitial.getPath())));
 
+    //final boolean checkedMode = myDartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
+    //myCheckedModeCheckBox.setSelected(checkedMode);
+
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
       final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTreeTable.getTree().getModel().getRoot();
       rootNode.setChecked(false);
@@ -362,7 +366,7 @@ public class DartConfigurable implements SearchableConfigurable {
 
   @Override
   public void apply() throws ConfigurationException {
-    // similar to DartApplicationGenerator.setupSdkAndDartium()
+    // similar to DartProjectGenerator.setupSdkAndDartium()
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {

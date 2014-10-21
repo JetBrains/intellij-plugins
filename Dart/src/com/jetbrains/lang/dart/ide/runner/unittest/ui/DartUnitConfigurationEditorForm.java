@@ -1,145 +1,118 @@
 package com.jetbrains.lang.dart.ide.runner.unittest.ui;
 
-import com.intellij.ide.util.TreeFileChooser;
-import com.intellij.ide.util.TreeFileChooserFactory;
+import com.intellij.execution.ExecutionBundle;
+import com.intellij.execution.configuration.EnvironmentVariablesComponent;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
+import com.intellij.ui.EnumComboBoxModel;
+import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
-import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.ui.components.JBCheckBox;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
 import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunnerParameters;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Locale;
 
-/**
- * @author: Fedor.Korotkov
- */
+import static com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunnerParameters.Scope;
+
 public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunConfiguration> {
   private JPanel myMainPanel;
-  private TextFieldWithBrowseButton myFileField;
-  private RawCommandLineEditor myVMOptions;
-  private RawCommandLineEditor myArguments;
   private JComboBox myScopeCombo;
+  private JLabel myTestFileLabel;
+  private TextFieldWithBrowseButton myFileField;
   private JLabel myTestNameLabel;
   private JTextField myTestNameField;
-  private JPanel myTestNamePanel;
-  private JPanel myAdditionalPanel;
+  private RawCommandLineEditor myVMOptions;
+  private JBCheckBox myCheckedModeCheckBox;
+  private RawCommandLineEditor myArguments;
+  private TextFieldWithBrowseButton myWorkingDirectory;
+  private EnvironmentVariablesComponent myEnvironmentVariables;
 
   public DartUnitConfigurationEditorForm(final Project project) {
-    myFileField.getButton().addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        TreeFileChooser fileChooser = TreeFileChooserFactory.getInstance(project).createFileChooser(
-          DartBundle.message("choose.dart.main.file"),
-          null,
-          DartFileType.INSTANCE,
-          new TreeFileChooser.PsiFileFilter() {
-            public boolean accept(PsiFile file) {
-              return true;
-            }
-          });
+    DartCommandLineConfigurationEditorForm.initDartFileTextWithBrowse(project, myFileField);
 
-        fileChooser.showDialog();
+    myWorkingDirectory.addBrowseFolderListener(ExecutionBundle.message("select.working.directory.message"), null, project,
+                                               FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
-        PsiFile selectedFile = fileChooser.getSelectedFile();
-        final VirtualFile virtualFile = selectedFile == null ? null : selectedFile.getVirtualFile();
-        if (virtualFile != null) {
-          final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
-          myFileField.setText(path);
-        }
+    myScopeCombo.setModel(new EnumComboBoxModel<Scope>(Scope.class));
+    myScopeCombo.setRenderer(new ListCellRendererWrapper<Scope>() {
+      @Override
+      public void customize(final JList list, final Scope value, final int index, final boolean selected, final boolean hasFocus) {
+        setText(StringUtil.capitalize(value.toString().toLowerCase(Locale.US)));
       }
     });
-
-    for (DartUnitRunnerParameters.Scope scope : DartUnitRunnerParameters.Scope.values()) {
-      myScopeCombo.addItem(StringUtil.capitalize(scope.toString().toLowerCase()));
-    }
 
     myScopeCombo.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        updateScope(getScope());
+        onScopeChanged();
       }
     });
+
+    myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
+    myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
+
+    // 'Environment variables' is the widest label, anchored by myTestFileLabel
+    myTestFileLabel.setPreferredSize(myEnvironmentVariables.getLabel().getPreferredSize());
+    myEnvironmentVariables.setAnchor(myTestFileLabel);
   }
 
   @Override
   protected void resetEditorFrom(DartUnitRunConfiguration configuration) {
     final DartUnitRunnerParameters parameters = configuration.getRunnerParameters();
+
+    myScopeCombo.setSelectedItem(parameters.getScope());
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getFilePath())));
+    myTestNameField.setText(parameters.getScope() == Scope.ALL ? "" : StringUtil.notNullize(parameters.getTestName()));
     myArguments.setText(StringUtil.notNullize(parameters.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(parameters.getVMOptions()));
-    if (parameters.getScope() != DartUnitRunnerParameters.Scope.ALL) {
-      myTestNameField.setText(StringUtil.notNullize(parameters.getTestName()));
-    }
-    else {
-      myTestNameField.setText("");
-    }
-    setScope(parameters.getScope());
-  }
+    myCheckedModeCheckBox.setSelected(parameters.isCheckedMode());
+    myWorkingDirectory.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(parameters.getWorkingDirectory())));
+    myEnvironmentVariables.setEnvs(parameters.getEnvs());
+    myEnvironmentVariables.setPassParentEnvs(parameters.isIncludeParentEnvs());
 
-  private void setScope(DartUnitRunnerParameters.Scope scope) {
-    myScopeCombo.setSelectedItem(StringUtil.capitalize(scope.toString().toLowerCase()));
-    updateScope(scope);
-  }
-
-  private void updateScope(DartUnitRunnerParameters.Scope scope) {
-    boolean contains = false;
-    Component[] components = myAdditionalPanel.getComponents();
-    for (Component component : components) {
-      if (component == myTestNamePanel) {
-        contains = true;
-        break;
-      }
-    }
-    if (scope == DartUnitRunnerParameters.Scope.ALL && contains) {
-      myAdditionalPanel.remove(myTestNamePanel);
-    }
-    else if (scope != DartUnitRunnerParameters.Scope.ALL && !contains) {
-      final GridConstraints constraints = new GridConstraints();
-      constraints.setRow(0);
-      constraints.setFill(GridConstraints.FILL_HORIZONTAL);
-      myAdditionalPanel.add(myTestNamePanel, constraints);
-
-      myTestNameLabel.setText(scope == DartUnitRunnerParameters.Scope.GROUP
-                              ? DartBundle.message("dart.unit.group.name")
-                              : DartBundle.message("dart.unit.method.name"));
-    }
+    onScopeChanged();
   }
 
   @Override
   protected void applyEditorTo(DartUnitRunConfiguration configuration) throws ConfigurationException {
     final DartUnitRunnerParameters parameters = configuration.getRunnerParameters();
-    parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText()), true));
+
+    final Scope scope = (Scope)myScopeCombo.getSelectedItem();
+    parameters.setScope(scope);
+    parameters.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText().trim()), true));
+    parameters.setTestName(scope == Scope.ALL ? null : StringUtil.nullize(myTestNameField.getText()));
     parameters.setArguments(StringUtil.nullize(myArguments.getText(), true));
     parameters.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
-    parameters.setScope(getScope());
-    if (getScope() != DartUnitRunnerParameters.Scope.ALL) {
-      parameters.setTestName(StringUtil.nullize(myTestNameField.getText()));
-    }
-    else {
-      parameters.setTestName(null);
-    }
+    parameters.setCheckedMode(myCheckedModeCheckBox.isSelected());
+    parameters.setWorkingDirectory(StringUtil.nullize(FileUtil.toSystemIndependentName(myWorkingDirectory.getText().trim()), true));
+    parameters.setEnvs(myEnvironmentVariables.getEnvs());
+    parameters.setIncludeParentEnvs(myEnvironmentVariables.isPassParentEnvs());
+  }
+
+  private void onScopeChanged() {
+    final Scope scope = (Scope)myScopeCombo.getSelectedItem();
+    myTestNameLabel.setVisible(scope == Scope.GROUP || scope == Scope.METHOD);
+    myTestNameField.setVisible(scope == Scope.GROUP || scope == Scope.METHOD);
+    myTestNameLabel.setText(scope == Scope.GROUP
+                            ? DartBundle.message("dart.unit.group.name")
+                            : DartBundle.message("dart.unit.method.name"));
   }
 
   @NotNull
   @Override
   protected JComponent createEditor() {
     return myMainPanel;
-  }
-
-  public DartUnitRunnerParameters.Scope getScope() {
-    final String selectedScope = myScopeCombo.getSelectedItem().toString();
-    return DartUnitRunnerParameters.Scope.valueOf(selectedScope.toUpperCase());
   }
 }

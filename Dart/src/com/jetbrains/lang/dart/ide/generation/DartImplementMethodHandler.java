@@ -9,9 +9,6 @@ import gnu.trove.THashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartImplementMethodHandler extends BaseDartGenerateHandler {
   @Override
   protected String getTitle() {
@@ -37,6 +34,6 @@ public class DartImplementMethodHandler extends BaseDartGenerateHandler {
 
   @Override
   protected BaseCreateMethodsFix createFix(DartClass dartClass) {
-    return new OverrideImplementMethodFix(dartClass);
+    return new OverrideImplementMethodFix(dartClass, true);
   }
 }

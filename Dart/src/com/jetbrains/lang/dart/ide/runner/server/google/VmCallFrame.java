@@ -25,15 +25,18 @@ import java.util.List;
  * A VM frame object.
  */
 public class VmCallFrame extends VmRef {
+  private static final int MAX_STACK_DEPTH = 2000;
 
   static List<VmCallFrame> createFrom(VmIsolate isolate, JSONArray arr) throws JSONException {
     List<VmCallFrame> frames = new ArrayList<VmCallFrame>();
 
-    for (int i = 0; i < arr.length(); i++) {
-      VmCallFrame frame = createFrom(isolate, arr.getJSONObject(i));
+    int stackDepth = Math.min(arr.length(), MAX_STACK_DEPTH);
+
+    for (int i = 0; i < stackDepth; i++) {
+      VmCallFrame frame = createFrom(isolate, arr.getJSONObject(i), i);
 
       // If we are on the first frame and there are at least 3 frames:
-      if (i == 0 && arr.length() > 2) {
+      if (i == 0 && stackDepth > 2) {
         if (DebuggerUtils.isInternalMethodName(frame.getFunctionName())) {
           // Strip out the first frame if it's _noSuchMethod. There will be another
           // "Object.noSuchMethod" on the stack. This sucks, but it's where we're choosing to put
@@ -48,24 +51,43 @@ public class VmCallFrame extends VmRef {
     return frames;
   }
 
-  private static VmCallFrame createFrom(VmIsolate isolate, JSONObject object) throws JSONException {
-    VmCallFrame frame = new VmCallFrame(isolate);
+  private static VmCallFrame createFrom(VmIsolate isolate, JSONObject object, int frameIndex)
+      throws JSONException {
+    VmCallFrame frame = new VmCallFrame(isolate, frameIndex);
 
     frame.functionName = JsonUtils.getString(object, "functionName");
     frame.location = VmLocation.createFrom(isolate, object.getJSONObject("location"));
     frame.locals = VmVariable.createFrom(isolate, object.optJSONArray("locals"), true);
+    frame.classId = object.optInt("classId", -1);
 
     return frame;
   }
 
+  private int frameId;
+
   private String functionName;
+
+  private int classId;
 
   private VmLocation location;
 
   private List<VmVariable> locals;
 
-  private VmCallFrame(VmIsolate isolate) {
+  private VmCallFrame(VmIsolate isolate, int frameId) {
     super(isolate);
+
+    this.frameId = frameId;
+  }
+
+  /**
+   * Return the classId for this frame; returns -1 if this is not a static or instance frame.
+   */
+  public int getClassId() {
+    return classId;
+  }
+
+  public int getFrameId() {
+    return frameId;
   }
 
   /**
@@ -98,6 +120,10 @@ public class VmCallFrame extends VmRef {
     }
 
     return null;
+  }
+
+  public boolean hasClassId() {
+    return getClassId() != -1;
   }
 
   public boolean isMain() {

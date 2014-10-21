@@ -81,7 +81,7 @@ public class DartClassIndex extends ScalarIndexExtension<String> {
   private static class MyDataIndexer implements DataIndexer<String, Void, FileContent> {
     @Override
     @NotNull
-    public Map<String, Void> map(final FileContent inputData) {
+    public Map<String, Void> map(@NotNull final FileContent inputData) {
       DartFileIndexData indexData = DartIndexUtil.indexFile(inputData);
       final Map<String, Void> result = new THashMap<String, Void>();
       for (String componentName : indexData.getClassNames()) {

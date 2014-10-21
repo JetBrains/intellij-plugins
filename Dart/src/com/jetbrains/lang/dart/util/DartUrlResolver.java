@@ -9,6 +9,8 @@ import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 public abstract class DartUrlResolver {
 
   public static final String DART_SCHEME = "dart";
@@ -17,6 +19,8 @@ public abstract class DartUrlResolver {
   public static final String PACKAGE_PREFIX = "package:";
   public static final String FILE_SCHEME = "file";
   public static final String FILE_PREFIX = "file:";
+  public static final String TEMP_SCHEME = "temp";                 // TempFileSystem in tests only
+  public static final String TEMP_PREFIX = "temp:";                // TempFileSystem in tests only
   public static final String PACKAGES_FOLDER_NAME = "packages";
 
   /**
@@ -43,12 +47,16 @@ public abstract class DartUrlResolver {
    */
   public abstract void processLivePackages(final @NotNull PairConsumer<String, VirtualFile> packageNameAndDirConsumer);
 
+  public abstract Collection<String> getLivePackageNames();
+
+  @Nullable
+  public abstract VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(final @NotNull String packageName);
+
   /**
    * Dart url has <code>dart:</code>, <code>package:</code> or <code>file:</code> scheme
    */
   @Nullable
   public abstract VirtualFile findFileByDartUrl(@NotNull String url);
-
 
   @Nullable
   public static VirtualFile findFileInDartSdkLibFolder(final @NotNull Project project,

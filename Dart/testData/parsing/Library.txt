@@ -9,6 +9,14 @@ Dart File
     PsiElement(import)('import')
     PATH_OR_LIBRARY_REFERENCE
       STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('foo')
+        PsiElement(CLOSING_QUOTE)('"')
+    PsiElement(;)(';')
+  IMPORT_STATEMENT
+    PsiElement(import)('import')
+    PATH_OR_LIBRARY_REFERENCE
+      STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''')
         PsiElement(REGULAR_STRING_PART)('dart:html')
         PsiElement(CLOSING_QUOTE)(''')
@@ -16,6 +24,91 @@ Dart File
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('html')
+    PsiElement(;)(';')
+  IMPORT_STATEMENT
+    PsiElement(import)('import')
+    PATH_OR_LIBRARY_REFERENCE
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)(''''')
+        PsiElement(REGULAR_STRING_PART)('package:z')
+        PsiElement(CLOSING_QUOTE)(''''')
+    HIDE_COMBINATOR
+      PsiElement(hide)('hide')
+      LIBRARY_REFERENCE_LIST
+        LIBRARY_COMPONENT_REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('x')
+        PsiElement(,)(',')
+        LIBRARY_COMPONENT_REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('y')
+        PsiElement(,)(',')
+        LIBRARY_COMPONENT_REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('z')
+    SHOW_COMBINATOR
+      PsiElement(show)('show')
+      LIBRARY_REFERENCE_LIST
+        LIBRARY_COMPONENT_REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('a')
+        PsiElement(,)(',')
+        LIBRARY_COMPONENT_REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('b')
+        PsiElement(,)(',')
+        LIBRARY_COMPONENT_REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('c')
+    PsiElement(;)(';')
+  IMPORT_STATEMENT
+    PsiElement(import)('import')
+    PATH_OR_LIBRARY_REFERENCE
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"""')
+        PsiElement(REGULAR_STRING_PART)('bar')
+        PsiElement(CLOSING_QUOTE)('"""')
+    SHOW_COMBINATOR
+      PsiElement(show)('show')
+      LIBRARY_REFERENCE_LIST
+        LIBRARY_COMPONENT_REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('a')
+    PsiElement(;)(';')
+  IMPORT_STATEMENT
+    PsiElement(import)('import')
+    PATH_OR_LIBRARY_REFERENCE
+      STRING_LITERAL_EXPRESSION
+        PsiElement(RAW_TRIPLE_QUOTED_STRING)('r"""bar"""')
+    HIDE_COMBINATOR
+      PsiElement(hide)('hide')
+      LIBRARY_REFERENCE_LIST
+        LIBRARY_COMPONENT_REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('a')
+    PsiElement(;)(';')
+  IMPORT_STATEMENT
+    PsiElement(import)('import')
+    PATH_OR_LIBRARY_REFERENCE
+      STRING_LITERAL_EXPRESSION
+        PsiElement(RAW_TRIPLE_QUOTED_STRING)('r'''bar'''')
+    PsiElement(deferred)('deferred')
+    PsiElement(as)('as')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('prefix')
+    SHOW_COMBINATOR
+      PsiElement(show)('show')
+      LIBRARY_REFERENCE_LIST
+        LIBRARY_COMPONENT_REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('x')
+    HIDE_COMBINATOR
+      PsiElement(hide)('hide')
+      LIBRARY_REFERENCE_LIST
+        LIBRARY_COMPONENT_REFERENCE_EXPRESSION
+          ID
+            PsiElement(IDENTIFIER)('a')
     PsiElement(;)(';')
   PART_STATEMENT
     PsiElement(part)('part')

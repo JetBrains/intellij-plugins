@@ -81,7 +81,7 @@ public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
   }
 
   public void testConcreteClassHasUnimplementedMembers2() throws Throwable {
-    doTest("Missing concrete implementation of 'I.foo'");
+    doTest("Missing concrete implementation of setter 'I.foo'");
   }
 
   public void testFieldHasNoGetter1() throws Throwable {
@@ -89,7 +89,7 @@ public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
   }
 
   public void _testFieldHasNoSetter1() throws Throwable {
-    // poor error message instead: "'bar' cannot be used as a setter, it is final", see https://code.google.com/p/dart/issues/detail?id=14962
+    // poor error message instead: "'bar' cannot be used as a setter, it is final", see https://code.google.com/p/dart/issues/detail?id=18674
     doTest("Field 'bar' has no setter");
   }
 
@@ -111,6 +111,10 @@ public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
 
   public void testNoSuchType1$DartImportFix() throws Throwable {
     doTest("The name 'Foo' is not a type and cannot be used in an 'as' expression", "foo.dart");
+  }
+
+  public void testImportClassFromSdk$DartImportFix() throws Throwable {
+    doTest("Undefined class 'JsObject'");
   }
 
   public void testNoSuchType2() throws Throwable {

@@ -11,9 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.Set;
 
-/**
- * Created by fedorkorotkov.
- */
 public class CreateConstructorFix extends BaseCreateMethodsFix<DartComponent> {
   public CreateConstructorFix(DartClass dartClass) {
     super(dartClass);
@@ -23,6 +20,12 @@ public class CreateConstructorFix extends BaseCreateMethodsFix<DartComponent> {
   protected void processElements(@NotNull Project project, @NotNull Editor editor, Set<DartComponent> elementsToProcess) {
     final TemplateManager templateManager = TemplateManager.getInstance(project);
     anchor = doAddMethodsForOne(editor, templateManager, buildFunctionsText(templateManager, elementsToProcess), anchor);
+  }
+
+  @Override
+  @NotNull
+  protected String getNothingFoundMessage() {
+    return ""; // can't be called actually because processElements() is overridden
   }
 
   protected Template buildFunctionsText(TemplateManager templateManager, Set<DartComponent> elementsToProcess) {

@@ -89,6 +89,10 @@ public class DartIndexUtil {
     if (superClass != null) {
       result.addInheritor(superClass.getReferenceExpression().getText(), value);
     }
+    else {
+      result.addInheritor(DartResolveUtil.OBJECT, value);
+    }
+
     for (DartType dartType : DartResolveUtil.getImplementsAndMixinsList(dartClass)) {
       if (dartType == null) continue;
       result.addInheritor(dartType.getReferenceExpression().getText(), value);
