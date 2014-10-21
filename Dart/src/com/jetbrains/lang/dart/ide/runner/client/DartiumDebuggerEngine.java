@@ -35,7 +35,7 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
                                                final boolean usePreliminaryPage) {
     final ChromeDebugProcess debugProcess =
       super.createDebugProcess(session, browser, fileFinder, initialUrl, executionResult, usePreliminaryPage);
-    debugProcess.setProcessBreakpointConditionsAtIDESide(true);
+    debugProcess.setProcessBreakpointConditionsAtIdeSide(true);
     return debugProcess;
   }
 
