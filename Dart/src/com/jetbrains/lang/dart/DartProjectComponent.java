@@ -224,12 +224,13 @@ public class DartProjectComponent extends AbstractProjectComponent {
     //
     // the same can be seen in the pub tool source code: [repo root]/sdk/lib/_internal/pub/lib/src/entrypoint.dart
 
-    final Collection<String> oldExcludedPackagesUrls =
+    final Collection<String> oldExcludedUrls =
       ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(), new Condition<String>() {
         final String rootUrl = root.getUrl();
 
         public boolean value(final String url) {
-          if (!url.equals(rootUrl + "/build") &&
+          if (!url.equals(rootUrl + "/.pub") &&
+              !url.equals(rootUrl + "/build") &&
               !url.startsWith(rootUrl + "/packages/") &&
               !url.startsWith(rootUrl + "/bin/") &&
               !url.startsWith(rootUrl + "/benchmark/") &&
@@ -240,6 +241,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
             return false;
           }
 
+          if (url.equals(rootUrl + "/.pub")) return true;
           if (url.equals(rootUrl + "/build")) return true;
           if (url.endsWith("/packages")) return true;
 
@@ -250,10 +252,10 @@ public class DartProjectComponent extends AbstractProjectComponent {
         }
       });
 
-    final THashSet<String> newExcludedPackagesUrls = collectFoldersToExclude(module, pubspecYamlFile);
+    final THashSet<String> newExcludedUrls = collectFoldersToExclude(module, pubspecYamlFile);
 
-    if (oldExcludedPackagesUrls.size() != newExcludedPackagesUrls.size() || !newExcludedPackagesUrls.containsAll(oldExcludedPackagesUrls)) {
-      ModuleRootModificationUtil.updateExcludedFolders(module, contentRoot, oldExcludedPackagesUrls, newExcludedPackagesUrls);
+    if (oldExcludedUrls.size() != newExcludedUrls.size() || !newExcludedUrls.containsAll(oldExcludedUrls)) {
+      ModuleRootModificationUtil.updateExcludedFolders(module, contentRoot, oldExcludedUrls, newExcludedUrls);
     }
   }
 
@@ -263,14 +265,14 @@ public class DartProjectComponent extends AbstractProjectComponent {
     final VirtualFile root = pubspecYamlFile.getParent();
 
     // java.io.File is used here because exclusion is done before FS refresh (in order not to trigger indexing of files that are going to be excluded)
-    final File buildFolder = new File(root.getPath() + "/build");
-    if (buildFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild("build") != null) {
-      newExcludedPackagesUrls.add(root.getUrl() + "/build");
-    }
-
     final File pubFolder = new File(root.getPath() + "/.pub");
     if (pubFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild(".pub") != null) {
       newExcludedPackagesUrls.add(root.getUrl() + "/.pub");
+    }
+
+    final File buildFolder = new File(root.getPath() + "/build");
+    if (buildFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild("build") != null) {
+      newExcludedPackagesUrls.add(root.getUrl() + "/build");
     }
 
     final VirtualFile binFolder = root.findChild("bin");
