@@ -268,6 +268,11 @@ public class DartProjectComponent extends AbstractProjectComponent {
       newExcludedPackagesUrls.add(root.getUrl() + "/build");
     }
 
+    final File pubFolder = new File(root.getPath() + "/.pub");
+    if (pubFolder.isDirectory() || ApplicationManager.getApplication().isUnitTestMode() && root.findChild(".pub") != null) {
+      newExcludedPackagesUrls.add(root.getUrl() + "/.pub");
+    }
+
     final VirtualFile binFolder = root.findChild("bin");
     if (binFolder != null && binFolder.isDirectory() && fileIndex.isInContent(binFolder)) {
       newExcludedPackagesUrls.add(binFolder.getUrl() + "/packages");
