@@ -35,6 +35,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static final String DIRECTIVE = "directive";
   public static final String MODULE = "module";
   public static final String FILTER = "filter";
+  public static final String DEFAULT_RESTRICTIONS = "D";
 
   static {
     Collections.addAll(INTERESTING_METHODS, "service", "factory", "value", "constant", "provider");
@@ -195,7 +196,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static String calculateRestrictions(final String[] commentLines) {
-    String restrict = "A";
+    String restrict = DEFAULT_RESTRICTIONS;
     String tag = "";
     String param = "";
     StringBuilder attributes = new StringBuilder();
@@ -237,7 +238,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static String calculateRestrictions(JSSymbolVisitor visitor, PsiElement element) {
-    final Ref<String> restrict = Ref.create("A");
+    final Ref<String> restrict = Ref.create(DEFAULT_RESTRICTIONS);
     final Ref<String> scope = Ref.create("");
     final JSFunction function = findFunction(visitor, element);
     if (function != null) {

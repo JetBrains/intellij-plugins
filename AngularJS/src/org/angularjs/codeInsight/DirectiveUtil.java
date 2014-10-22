@@ -86,7 +86,7 @@ public class DirectiveUtil {
     final String restrictions = directive != null ? directive.getIndexItem().getTypeString() : null;
     if (restrictions != null) {
       final String[] split = restrictions.split(";", -1);
-      final String restrict = split[0];
+      final String restrict = AngularIndexUtil.convertRestrictions(project, split[0]);
       if (!StringUtil.isEmpty(restrict) && StringUtil.containsIgnoreCase(restrict, "E")) {
         return directive;
       }

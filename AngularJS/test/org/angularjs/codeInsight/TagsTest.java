@@ -45,6 +45,10 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("custom.html", "custom.after.html", "angular.js", "custom.js");
   }
 
+  public void testCustomTagsCompletion13() {
+    myFixture.testCompletion("custom13.html", "custom13.after.html", "angular13.js", "custom.js");
+  }
+
   public void testCustomTagsViaFunctionCompletion() {
     myFixture.testCompletion("customViaFunction.html", "customViaFunction.after.html", "angular.js", "custom.js");
   }

@@ -30,7 +30,7 @@ import java.util.Set;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 15;
+  public static final int BASE_VERSION = 16;
   private static final ConcurrentHashMap<String, Key<ParameterizedCachedValue<List<String>, Pair<Project, ID<String, Void>>>>> ourCacheKeys = new ConcurrentHashMap<String, Key<ParameterizedCachedValue<List<String>, Pair<Project, ID<String, Void>>>>>();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
 
@@ -57,16 +57,31 @@ public class AngularIndexUtil {
 
   public static boolean hasAngularJS(final Project project) {
     if (ApplicationManager.getApplication().isUnitTestMode() && "disabled".equals(System.getProperty("angular.js"))) return false;
+    return getAngularJSVersion(project) > 0;
+  }
 
-    if (DumbService.isDumb(project)) return false;
-    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<Boolean>() {
+  private static int getAngularJSVersion(final Project project) {
+    if (DumbService.isDumb(project)) return -1;
+    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<Integer>() {
       @Nullable
       @Override
-      public Result<Boolean> compute() {
-        final boolean hasNgModel = resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-model") != null;
-        return Result.create(hasNgModel, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+      public Result<Integer> compute() {
+        int version = -1;
+        if (resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-messages") != null) {
+          version = 13;
+        } else if (resolve(project, AngularDirectivesIndex.INDEX_ID, "ng-model") != null) {
+          version = 12;
+        }
+        return Result.create(version, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
       }
     });
+  }
+
+  public static String convertRestrictions(final Project project, String restrictions) {
+    if (AngularJSIndexingHandler.DEFAULT_RESTRICTIONS.equals(restrictions)) {
+      return getAngularJSVersion(project) >= 13 ? "AE" : "A";
+    }
+    return restrictions;
   }
 
   private static class AngularKeysProvider implements ParameterizedCachedValueProvider<List<String>, Pair<Project, ID<String, Void>>> {

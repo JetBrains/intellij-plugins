@@ -63,7 +63,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     final String restrictions = directive.getIndexItem().getTypeString();
     if (restrictions != null) {
       final String[] split = restrictions.split(";", -1);
-      final String restrict = split[0];
+      final String restrict = AngularIndexUtil.convertRestrictions(project, split[0]);
       final String tag = split[1];
       if (!StringUtil.isEmpty(restrict) && !StringUtil.containsIgnoreCase(restrict, "A")) {
         return ThreeState.NO;
