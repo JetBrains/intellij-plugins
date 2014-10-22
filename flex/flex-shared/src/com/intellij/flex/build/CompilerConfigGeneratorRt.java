@@ -746,7 +746,7 @@ public class CompilerConfigGeneratorRt {
   private static File getOrCreateConfigFile(final String fileName, final String text) throws IOException {
     final File tempFolder = new File(FlexCommonUtils.getTempFlexConfigsDirPath());
     final File configFile = new File(tempFolder, fileName);
-    final byte[] textBytes = text.getBytes();
+    final byte[] textBytes = text.getBytes("UTF-8");
 
     /*
     try {
