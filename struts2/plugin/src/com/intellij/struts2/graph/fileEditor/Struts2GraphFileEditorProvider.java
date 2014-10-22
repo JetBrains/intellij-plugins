@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,13 +14,15 @@
  */
 package com.intellij.struts2.graph.fileEditor;
 
+import com.intellij.jam.model.util.JamCommonUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
@@ -42,17 +44,18 @@ public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvide
       return false;
     }
 
-    final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+    final PsiFile psiFile = ApplicationManager.getApplication().runReadAction(new Computable<PsiFile>() {
+      @Override
+      public PsiFile compute() {
+        return PsiManager.getInstance(project).findFile(file);
+      }
+    });
 
-    if (!(psiFile instanceof XmlFile)) {
+    if (!JamCommonUtil.isPlainXmlFile(psiFile)) {
       return false;
     }
 
-    if (psiFile instanceof JspFile) {
-      return false;
-    }
-
-    if (!StrutsManager.getInstance(project).isStruts2ConfigFile((XmlFile) psiFile)) {
+    if (!StrutsManager.getInstance(project).isStruts2ConfigFile((XmlFile)psiFile)) {
       return false;
     }
 
@@ -79,5 +82,4 @@ public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvide
   public double getWeight() {
     return 0;
   }
-
 }
