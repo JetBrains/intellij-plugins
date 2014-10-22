@@ -125,7 +125,10 @@ public class FlexBreakpointsHandler {
       final Project project = myDebugProcess.getSession().getProject();
       final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
       final VirtualFile file = position.getFile();
-      final VirtualFile rootForFile = fileIndex.getSourceRootForFile(file);
+      VirtualFile rootForFile = fileIndex.getSourceRootForFile(file); // project sources, SDK or or SWC library sources
+      if (rootForFile == null) {
+        rootForFile = fileIndex.getClassRootForFile(file); // raw AS library sources
+      }
       if (rootForFile == null) {
         return false;
       }
