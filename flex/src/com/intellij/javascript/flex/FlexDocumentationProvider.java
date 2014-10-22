@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.*;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -100,7 +101,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       return doc;
     }
 
-    if (_element instanceof JSNamedElementProxy) _element = ((JSNamedElementProxy)_element).getElement();
+    if (_element instanceof JSOffsetBasedImplicitElement) _element = ((JSOffsetBasedImplicitElement)_element).getElementAtOffset();
     
     XmlTag parent = null;
     if (_element instanceof XmlBackedJSClassImpl) {
