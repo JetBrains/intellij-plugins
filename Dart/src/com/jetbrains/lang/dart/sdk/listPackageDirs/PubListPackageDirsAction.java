@@ -1,7 +1,14 @@
 package com.jetbrains.lang.dart.sdk.listPackageDirs;
 
+import com.google.dart.engine.context.AnalysisContext;
+import com.google.dart.engine.element.CompilationUnitElement;
+import com.google.dart.engine.element.ExportElement;
+import com.google.dart.engine.element.ImportElement;
+import com.google.dart.engine.element.LibraryElement;
+import com.google.dart.engine.internal.context.InternalAnalysisContext;
 import com.google.dart.engine.sdk.DirectoryBasedDartSdk;
 import com.google.dart.engine.source.ExplicitPackageUriResolver;
+import com.google.dart.engine.source.Source;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -21,17 +28,62 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.analyzer.DartAnalyzerService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashSet;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
 
 public class PubListPackageDirsAction extends AnAction {
+
+  private static class LibraryDependencyCollector {
+
+    private final InternalAnalysisContext myContext;
+    private final Set<LibraryElement> myVisitedLibraries = new HashSet<LibraryElement>();
+    private final Set<String> myDependencies = new TreeSet<String>();
+
+    LibraryDependencyCollector(@NotNull InternalAnalysisContext context) {
+      this.myContext = context;
+    }
+
+    Set<String> collectFolderDependencies() {
+      for (Source source : myContext.getLibrarySources()) {
+        addDependencies(myContext.getLibraryElement(source));
+      }
+      return myDependencies;
+    }
+
+    private String getFolderName(@Nullable String fullPath) {
+      if (fullPath == null) {
+        return null;
+      }
+      return fullPath.substring(0, Math.max(0, fullPath.lastIndexOf(File.separator)));
+    }
+
+    private void addDependencies(@Nullable LibraryElement libraryElement) {
+      if (libraryElement == null) {
+        return;
+      }
+      if (myVisitedLibraries.add(libraryElement)) {
+        for (CompilationUnitElement cu : libraryElement.getUnits()) {
+          myDependencies.add(getFolderName(cu.getSource().getFullName()));
+        }
+        for (ImportElement importElement : libraryElement.getImports()) {
+          addDependencies(importElement.getImportedLibrary());
+        }
+        for (ExportElement exportElement : libraryElement.getExports()) {
+          addDependencies(exportElement.getExportedLibrary());
+        }
+      }
+    }
+  }
+
 
   public static final String PUB_LIST_PACKAGE_DIRS_LIB_NAME = "Dart pub list-package-dirs";
 
@@ -39,12 +91,14 @@ public class PubListPackageDirsAction extends AnAction {
     super("Configure Dart package roots using 'pub list-package-dirs'", null, DartIcons.Dart_16);
   }
 
-  public void update(final AnActionEvent e) {
+  @Override
+  public void update(final @NotNull AnActionEvent e) {
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
     e.getPresentation().setEnabled(sdk != null);
   }
 
-  public void actionPerformed(final AnActionEvent e) {
+  @Override
+  public void actionPerformed(final @NotNull AnActionEvent e) {
     final Project project = e.getProject();
     if (project == null) return;
 
@@ -190,14 +244,16 @@ public class PubListPackageDirsAction extends AnAction {
 
     final LibraryEx.ModifiableModelEx libModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
     try {
+
+      AnalysisContext context = DartAnalyzerService.getInstance(project).createFreshContext();
+      Set<String> folders = new LibraryDependencyCollector((InternalAnalysisContext)context).collectFolderDependencies();
+
       for (String url : libModel.getUrls(OrderRootType.CLASSES)) {
         libModel.removeRoot(url, OrderRootType.CLASSES);
       }
 
-      for (Set<String> packageDirs : packageMap.values()) {
-        for (String packageDir : packageDirs) {
-          libModel.addRoot(VfsUtilCore.pathToUrl(packageDir), OrderRootType.CLASSES);
-        }
+      for (String packageDir : folders) {
+        libModel.addRoot(VfsUtilCore.pathToUrl(packageDir), OrderRootType.CLASSES);
       }
 
       final DartListPackageDirsLibraryProperties libraryProperties = new DartListPackageDirsLibraryProperties();
