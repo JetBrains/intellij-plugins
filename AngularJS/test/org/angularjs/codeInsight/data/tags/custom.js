@@ -31,5 +31,10 @@ angular.module('docsSimpleDirective', [])
                    restrict: 'E'
                  };
                }])
+    .directive('newCustomer', ["$bar", function ($bar) {
+                 return {
+                   template: 'Name: {{customer.name}} Address: {{customer.address}}'
+                 };
+               }])
     .directive('functionCustomer', my_directive_factory)
     .directive('arrayCustomer', my_directive_factory);
