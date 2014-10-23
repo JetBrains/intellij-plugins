@@ -189,16 +189,26 @@ public class DartResolveUtil {
 
   @Nullable
   public static String getLibraryName(@NotNull PsiFile psiFile) {
-    DartLibraryStatement libraryStatement = null;
-    for (PsiElement root : findDartRoots(psiFile)) {
-      libraryStatement = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
-      if (libraryStatement != null) break;
+    if(isLibraryRoot(psiFile)) {
+      DartLibraryStatement libraryStatement = null;
+      for (PsiElement root : findDartRoots(psiFile)) {
+        libraryStatement = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
+        if (libraryStatement != null) break;
+      }
+      final DartPartStatement[] sources = PsiTreeUtil.getChildrenOfType(psiFile, DartPartStatement.class);
+      if (libraryStatement == null && sources == null) {
+        return getMainFunction(psiFile) == null ? null : psiFile.getName();
+      }
+      return getLibraryName(psiFile, libraryStatement);
+    } else {
+      for (PsiElement root : findDartRoots(psiFile)) {
+        DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
+        if (partOfStatement != null) {
+          return partOfStatement.getLibraryName();
+        }
+      }
+      return null;
     }
-    final DartPartStatement[] sources = PsiTreeUtil.getChildrenOfType(psiFile, DartPartStatement.class);
-    if (libraryStatement == null && sources == null) {
-      return getMainFunction(psiFile) == null ? null : psiFile.getName();
-    }
-    return getLibraryName(psiFile, libraryStatement);
   }
 
   @NotNull

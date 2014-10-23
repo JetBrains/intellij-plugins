@@ -45,6 +45,16 @@ public final class DartSupertypesHierarchyTreeStructure extends HierarchyTreeStr
       }
     }
 
+    if(supers.size() == 0) {
+      final DartClassResolveResult dartClassResolveResult = dartClass.getSuperClassResolvedOrObjectClass();
+      if(dartClassResolveResult != null) {
+        final DartClass superDartClass = dartClassResolveResult.getDartClass();
+        if (superDartClass != null && superDartClass.getName().equals(DartResolveUtil.OBJECT)) {
+          supers.add(superDartClass);
+        }
+      }
+    }
+
     final List<DartTypeHierarchyNodeDescriptor> descriptors = new ArrayList<DartTypeHierarchyNodeDescriptor>(supers.size());
     for (DartClass aSuper : supers) {
       descriptors.add(new DartTypeHierarchyNodeDescriptor(myProject, descriptor, aSuper, false));
