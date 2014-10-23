@@ -70,6 +70,11 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "library c.b.a;\nclass <caret>A {}");
   }
 
+  public void testImplementsSig1() throws Exception {
+    doTest("<code>abstract class <b>Foo</b><br/>implements Bar&lt;T&gt;</code>",
+           "<caret>abstract class Foo implements Bar<T> { }\nclass Bar { }");
+  }
+
   public void testMixinSig1() throws Exception {
     doTest("<code>class <b>Foo2</b><br/>extends Bar1&lt;E&gt; with Baz1&lt;K&gt;, Baz2</code>",
            "<caret>class Foo2 = Bar1<E> with Baz1<K>, Baz2");
