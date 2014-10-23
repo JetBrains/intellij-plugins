@@ -43,13 +43,14 @@ public class FlexStackTraceFilter implements Filter {
 
   @Nullable
   public Result applyFilter(final String line, final int entireLength) {
+    //    [trace]    at org.flexunit::Assert$/fail()[E:\hudson\jobs\FlexUnit4-Flex4.1\workspace\FlexUnit4\src\org\flexunit\Assert.as:294]
     //    at org.flexunit::Assert$/fail()[E:\hudson\jobs\FlexUnit4-Flex4.1\workspace\FlexUnit4\src\org\flexunit\Assert.as:294]
     //    at global/org.flexunit.asserts::fail()[E:\hudson\jobs\FlexUnit4-Flex4.1\workspace\FlexUnit4\src\org\flexunit\asserts\fail.as:39]
     //    at foo::SomeTest/testSmth()[/untitled5/app/testSrc/foo/SomeTest.as:19]
     //    at Function/http://adobe.com/AS3/2006/builtin::apply()
     //    at mx.core::UIComponent/set initialized()[C:\autobuild\3.3.0\frameworks\projects\framework\src\mx\core\UIComponent.as:1169]
 
-    final String trimmed = line.trim();
+    final String trimmed = StringUtil.trimStart(line, "[trace]").trim();
     final int bracketOpenIndex = line.lastIndexOf('[');
 
     if (!trimmed.startsWith(AT) || bracketOpenIndex < 0 || !trimmed.endsWith("]")) return null;
