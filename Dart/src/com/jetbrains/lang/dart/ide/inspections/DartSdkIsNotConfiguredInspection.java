@@ -9,9 +9,11 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +36,10 @@ public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
   @Override
   public ProblemDescriptor[] checkFile(final @NotNull PsiFile file, final @NotNull InspectionManager manager, final boolean isOnTheFly) {
     if (!isOnTheFly) return ProblemDescriptor.EMPTY_ARRAY;
+
+    if (file.getLanguage() != DartLanguage.INSTANCE && !PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName())) {
+      return ProblemDescriptor.EMPTY_ARRAY;
+    }
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(file);
     if (module == null) return ProblemDescriptor.EMPTY_ARRAY;

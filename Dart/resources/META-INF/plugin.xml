@@ -173,7 +173,7 @@
                       level="WARNING"
                       implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartGlobalInspectionTool"/>
 
-    <localInspection language="Dart" bundle="com.jetbrains.lang.dart.DartBundle" key="dart.sdk.is.not.configured"
+    <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="dart.sdk.is.not.configured"
                      groupName="Dart" enabledByDefault="true" level="WARNING"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartSdkIsNotConfiguredInspection"/>
     <localInspection language="Dart" bundle="com.jetbrains.lang.dart.DartBundle" key="dart.deprecated.api.usage"
