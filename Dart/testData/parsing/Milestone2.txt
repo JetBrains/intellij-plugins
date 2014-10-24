@@ -10,6 +10,41 @@ Dart File
     PsiElement(of)('of')
     LIBRARY_ID
       ID
+        PsiElement(IDENTIFIER)('nonterminated')
+    PsiErrorElement:'.' or ';' expected, got 'part'
+      <empty list>
+  PART_OF_STATEMENT
+    PsiElement(part)('part')
+    PsiElement(of)('of')
+    LIBRARY_ID
+      ID
+        PsiElement(IDENTIFIER)('non')
+      PsiElement(.)('.')
+      ID
+        PsiElement(IDENTIFIER)('ter')
+      PsiElement(.)('.')
+      ID
+        PsiElement(IDENTIFIER)('mi')
+      PsiElement(.)('.')
+      ID
+        PsiElement(IDENTIFIER)('na')
+      PsiElement(.)('.')
+      ID
+        PsiElement(IDENTIFIER)('ted')
+    PsiErrorElement:'.' or ';' expected, got 'part'
+      <empty list>
+  PART_OF_STATEMENT
+    PsiElement(part)('part')
+    PsiElement(of)('of')
+    LIBRARY_ID
+      ID
+        PsiElement(IDENTIFIER)('other')
+    PsiElement(;)(';')
+  PART_OF_STATEMENT
+    PsiElement(part)('part')
+    PsiElement(of)('of')
+    LIBRARY_ID
+      ID
         PsiElement(IDENTIFIER)('Mega')
       PsiElement(.)('.')
       ID

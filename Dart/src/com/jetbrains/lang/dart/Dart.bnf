@@ -158,6 +158,9 @@ partOfStatement ::= metadata* 'part' 'of' libraryId ';' {
   methods = [ getLibraryName ]
 }
 
+libraryId ::= <<nonStrictID>> ('.' <<nonStrictID>>)*
+{mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+
 libraryStatement ::= metadata* 'library' qualifiedComponentName ';' {
   pin=3
   methods = [ getLibraryName ]
@@ -197,12 +200,6 @@ metadata ::= '@' simpleQualifiedReferenceExpression arguments?
 
 pathOrLibraryReference ::= stringLiteralExpression
 {mixin="com.jetbrains.lang.dart.psi.impl.DartFileReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
-
-libraryId ::= <<nonStrictID>> ('.' <<nonStrictID>>)*
-{mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"
-recoverWhile="semicolon_recover"}
-
-private semicolon_recover ::= !(';')
 
 varAccessDeclaration ::= metadata* 'static'? (finalOrConst type componentName | finalOrConst componentName | type componentName | 'var' componentName)
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
