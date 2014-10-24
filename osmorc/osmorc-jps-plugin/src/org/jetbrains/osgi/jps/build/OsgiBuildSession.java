@@ -118,7 +118,7 @@ public class OsgiBuildSession implements Reporter {
       String bundlorPath = myExtension.getBundlorFileLocation();
       File bundlorFile = OsgiBuildUtil.findFileInModuleContentRoots(myModule, bundlorPath);
       if (bundlorFile == null) {
-        throw new OsgiBuildException("Bnd file missing '" + bundlorPath + "' - please check OSGi facet settings.");
+        throw new OsgiBuildException("Bundlor file missing '" + bundlorPath + "' - please check OSGi facet settings.");
       }
 
       try {
