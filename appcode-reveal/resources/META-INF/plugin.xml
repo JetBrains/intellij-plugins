@@ -14,6 +14,10 @@
   <vendor>JetBrains</vendor>
   <depends>com.intellij.modules.appcode</depends>
   
+  <extensions defaultExtensionNs="com.intellij">
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+  </extensions>
+  
   <extensions defaultExtensionNs="appcode">
     <runConfigurationExtension implementation="org.jetbrains.appcode.reveal.RevealRunConfigurationExtension"/>
   </extensions>
