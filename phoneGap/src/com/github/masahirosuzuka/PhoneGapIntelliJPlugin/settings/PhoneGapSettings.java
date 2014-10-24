@@ -92,14 +92,15 @@ public final class PhoneGapSettings implements PersistentStateComponent<PhoneGap
     return myState;
   }
 
-  @Nullable
+  @NotNull
   public String getWorkingDirectory(@Nullable Project project) {
-    if (project == null) return null;
+    if (project == null) return "";
     PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
     String value = propertiesComponent.getValue(PHONEGAP_WORK_DIRECTORY);
     if (value != null) return value;
 
-    return ContainerUtil.getFirstItem(PhoneGapUtil.getDefaultWorkingDirectory(project));
+    String item = ContainerUtil.getFirstItem(PhoneGapUtil.getDefaultWorkingDirectory(project));
+    return item == null ? "" : item;
   }
 
   public void setWorkingDirectory(@Nullable Project project, @Nullable String dir) {
