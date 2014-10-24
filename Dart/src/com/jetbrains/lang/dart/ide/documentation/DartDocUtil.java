@@ -217,22 +217,21 @@ public class DartDocUtil {
 
     if (!mixins.isEmpty()) {
       builder.append(" with ");
-      for (Iterator<DartType> iter = mixins.iterator(); iter.hasNext(); ) {
-        builder.append(StringUtil.escapeXml(iter.next().getText()));
-        if (iter.hasNext()) {
-          builder.append(", ");
-        }
-      }
+      appendDartTypeList(builder, mixins);
     }
 
     final List<DartType> implementsList = dartClass.getImplementsList();
     if (!implementsList.isEmpty()) {
       builder.append("<br/>implements ");
-      for (Iterator<DartType> iter = implementsList.iterator(); iter.hasNext(); ) {
-        builder.append(iter.next().getText());
-        if (iter.hasNext()) {
-          builder.append(", ");
-        }
+      appendDartTypeList(builder, implementsList);
+    }
+  }
+
+  private static void appendDartTypeList(final StringBuilder builder, final List<DartType> dartTypes) {
+    for (Iterator<DartType> iter = dartTypes.iterator(); iter.hasNext(); ) {
+      builder.append(StringUtil.escapeXml(iter.next().getText()));
+      if (iter.hasNext()) {
+        builder.append(", ");
       }
     }
   }
