@@ -55,6 +55,7 @@ public class DartFileBasedSource implements Source {
     return myFile.exists() && !myFile.isDirectory();
   }
 
+  @Override
   public TimestampedData<CharSequence> getContents() throws Exception {
     final Pair<CharSequence, Long> contentsAndTimestamp = loadFile(myFile);
     myModificationStampWhenFileContentWasRead = contentsAndTimestamp.second;
