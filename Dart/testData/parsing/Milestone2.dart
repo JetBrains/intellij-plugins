@@ -1,5 +1,8 @@
 library lib;
 
+part of nonterminated
+part of non.ter.mi.na.ted
+part of other;
 part of Mega.Lib;
 
 export 'a.dart' show A, B hide C, D;
