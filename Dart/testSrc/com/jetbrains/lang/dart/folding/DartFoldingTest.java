@@ -87,4 +87,16 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
   public void testCustomRegionsOverlappingWithCommentFoldings() throws Exception {
     doTest();
   }
+
+  public void testTypeArguments() throws Exception {
+    doTest();
+  }
+
+  public void testTypeArgumentsByDefault() throws Exception {
+    doTestWithSpecificSettings(new Consumer<CodeFoldingSettings>() {
+      public void consume(final CodeFoldingSettings settings) {
+        settings.COLLAPSE_CUSTOM_FOLDING_REGIONS = true;
+      }
+    });
+  }
 }
