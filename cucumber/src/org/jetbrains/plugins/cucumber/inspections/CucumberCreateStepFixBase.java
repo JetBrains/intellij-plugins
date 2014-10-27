@@ -96,7 +96,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
           public PopupStep onChosen(final Pair<PsiFile, BDDFrameworkType> selectedValue, boolean finalChoice) {
             return doFinalStep(new Runnable() {
               public void run() {
-                createStepOrSteps(step, selectedValue.first);
+                createStepOrSteps(step, selectedValue != null ? selectedValue.first : null);
               }
             });
           }
