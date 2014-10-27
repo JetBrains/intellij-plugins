@@ -179,6 +179,10 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "set"                  { return SET; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "static"               { return STATIC; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "typedef"              { return TYPEDEF; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "sync"                 { return SYNC; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "async"                { return ASYNC; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "await"                { return AWAIT; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "yield"                { return YIELD; }
 
 // next are not listed in spec, but they seem to have the same sense as BUILT_IN_IDENTIFIER: somewhere treated as keywords, but can be used as normal identifiers
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "on"                   { return ON; }
