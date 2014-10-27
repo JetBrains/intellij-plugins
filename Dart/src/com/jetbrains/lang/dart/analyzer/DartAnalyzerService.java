@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.analyzer;
 import com.google.dart.engine.AnalysisEngine;
 import com.google.dart.engine.context.AnalysisContext;
 import com.google.dart.engine.context.ChangeSet;
+import com.google.dart.engine.internal.context.AnalysisOptionsImpl;
 import com.google.dart.engine.sdk.DirectoryBasedDartSdk;
 import com.google.dart.engine.source.DartUriResolver;
 import com.google.dart.engine.source.ExplicitPackageUriResolver;
@@ -183,6 +184,9 @@ public class DartAnalyzerService {
 
       analysisContext = AnalysisEngine.getInstance().createAnalysisContext();
       analysisContext.setSourceFactory(sourceFactory);
+      AnalysisOptionsImpl contextOptions = new AnalysisOptionsImpl();
+      contextOptions.setEnableEnum(true);
+      analysisContext.setAnalysisOptions(contextOptions);
 
       mySdkPath = sdkPath;
       myPubspecYamlTimestamp = pubspecYamlTimestamp;

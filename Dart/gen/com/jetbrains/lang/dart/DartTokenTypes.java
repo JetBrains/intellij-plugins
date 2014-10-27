@@ -34,6 +34,7 @@ public interface DartTokenTypes {
   IElementType DEFAULT_CASE = new DartElementType("DEFAULT_CASE");
   IElementType DEFAULT_FORMAL_NAMED_PARAMETER = new DartElementType("DEFAULT_FORMAL_NAMED_PARAMETER");
   IElementType DO_WHILE_STATEMENT = new DartElementType("DO_WHILE_STATEMENT");
+  IElementType ENUM_DEFINITION = new DartElementType("ENUM_DEFINITION");
   IElementType EQUALITY_OPERATOR = new DartElementType("EQUALITY_OPERATOR");
   IElementType EXPORT_STATEMENT = new DartElementType("EXPORT_STATEMENT");
   IElementType EXPRESSION = new DartElementType("EXPRESSION");
@@ -159,6 +160,7 @@ public interface DartTokenTypes {
   IElementType DO = new DartElementType("do");
   IElementType DOT = new DartElementType(".");
   IElementType ELSE = new DartElementType("else");
+  IElementType ENUM = new DartElementType("enum");
   IElementType EQ = new DartElementType("=");
   IElementType EQ_EQ = new DartElementType("==");
   IElementType EXPORT = new DartElementType("export");
@@ -327,6 +329,9 @@ public interface DartTokenTypes {
       }
       else if (type == DO_WHILE_STATEMENT) {
         return new DartDoWhileStatementImpl(node);
+      }
+      else if (type == ENUM_DEFINITION) {
+        return new DartEnumDefinitionImpl(node);
       }
       else if (type == EQUALITY_OPERATOR) {
         return new DartEqualityOperatorImpl(node);
