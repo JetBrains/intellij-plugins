@@ -138,6 +138,7 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "default"              { return DEFAULT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "do"                   { return DO; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "else"                 { return ELSE; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "enum"                 { return ENUM; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "extends"              { return EXTENDS; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "false"                { return FALSE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "final"                { return FINAL; }

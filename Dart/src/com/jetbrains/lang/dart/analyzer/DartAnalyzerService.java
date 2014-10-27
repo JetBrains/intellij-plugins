@@ -184,6 +184,9 @@ public class DartAnalyzerService {
 
       analysisContext = AnalysisEngine.getInstance().createAnalysisContext();
       analysisContext.setSourceFactory(sourceFactory);
+      AnalysisOptionsImpl contextOptions = new AnalysisOptionsImpl();
+      contextOptions.setEnableEnum(true);
+      analysisContext.setAnalysisOptions(contextOptions);
 
       final AnalysisOptionsImpl contextOptions = new AnalysisOptionsImpl();
       contextOptions.setEnableAsync(true);
