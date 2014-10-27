@@ -26,11 +26,13 @@ import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.CssPropertyValue;
 import com.intellij.psi.css.descriptor.BrowserVersion;
 import com.intellij.psi.css.descriptor.CssContextType;
+import com.intellij.psi.css.descriptor.value.CssAnyValue;
 import com.intellij.psi.css.descriptor.value.CssValueDescriptor;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.descriptor.CssCommonDescriptorData;
 import com.intellij.psi.css.impl.descriptor.value.*;
 import com.intellij.psi.css.impl.util.completion.LengthUserLookup;
+import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.css.impl.util.scheme.CssValueDescriptorModificator;
 import com.intellij.psi.css.impl.util.table.AbstractCssPropertyDescriptor;
 import com.intellij.psi.css.impl.util.table.CssLookupValue;
@@ -220,11 +222,8 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     
   }
   
-  private static CssAnyValueImpl createCssAnyValue(@Nullable CssValueDescriptor parent) {
-    String id = CssBundle.message("any.value.presentable.name");
-    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, parent, null, false);
-    return new CssAnyValueImpl(commonDescriptorData, valueDescriptorData);
+  private static CssAnyValue createCssAnyValue(@Nullable CssValueDescriptor parent) {
+    return CssElementDescriptorFactory2.getInstance().createAnyValueDescriptor(1, 1, parent);
   }
   
   private static CssStringValue createCssStringValue(@Nullable CssValueDescriptor parent) {

@@ -37,11 +37,13 @@ import com.intellij.psi.css.descriptor.CssFunctionDescriptor;
 import com.intellij.psi.css.descriptor.CssFunctionDescriptorStub;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
+import com.intellij.psi.css.descriptor.value.CssAnyValue;
 import com.intellij.psi.css.descriptor.value.CssNullValue;
 import com.intellij.psi.css.descriptor.value.CssValueDescriptor;
 import com.intellij.psi.css.descriptor.value.CssValueValidator;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.util.references.HtmlCssClassOrIdReference;
+import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -237,7 +239,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   @NotNull
   @Override
   public Collection<? extends CssFunctionDescriptor> findFunctionDescriptors(@NotNull String functionName, @Nullable PsiElement context) {
-    return ContainerUtil.newArrayList(new CssFunctionDescriptorStub(functionName));
+    final CssAnyValue anyValueDescriptor = CssElementDescriptorFactory2.getInstance().createAnyValueDescriptor(0, -1, null);
+    return ContainerUtil.createMaybeSingletonList(new CssFunctionDescriptorStub(functionName, anyValueDescriptor));
   }
 
   public boolean isPossibleSelector(@NotNull String selector, @NotNull PsiElement context) {
