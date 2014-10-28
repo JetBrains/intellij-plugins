@@ -121,7 +121,7 @@ class AbcMerger extends AbcTranscoder {
       b.limit(b.capacity());
     }
 
-    // write footer — ShowFrame and End
+    // write footer - ShowFrame and End
     buffer.clear();
     SwfUtil.footer(buffer);
     buffer.flip();

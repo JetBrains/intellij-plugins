@@ -206,7 +206,7 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
           destinationDirectory.setLastModified(artifactFile.lastModified());
 
           for (String from : sourceDirectory.list()) {
-            // build.xml — published flex sdk contains unneeded ant file
+            // build.xml - published flex sdk contains unneeded ant file
             if (from.charAt(0) != '.' && !from.equals("build.xml")) {
               File fromFile = new File(sourceDirectory, from);
               File toFile = new File(destinationDirectory, from);

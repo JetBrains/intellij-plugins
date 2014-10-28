@@ -341,7 +341,7 @@ class PropertyProcessor implements ValueWriter {
           valueWriter = injectedASWriter.processProperty(child, tagLocalName, null, false, objectReferenceProvider);
         }
         catch (InvalidPropertyException e) {
-          // we don't need any out rollback — nothing is written yet
+          // we don't need any out rollback - nothing is written yet
           mxmlWriter.problemsHolder.add(e);
           return -1;
         }

@@ -295,7 +295,7 @@ public class Client implements Disposable {
   }
 
   /**
-   * final, full render document — responsible for handle problemsHolder and assetCounter — you must not do it
+   * final, full render document - responsible for handle problemsHolder and assetCounter - you must not do it
    */
   public AsyncResult<DocumentInfo> renderDocument(Module module, XmlFile psiFile, ProblemsHolder problemsHolder) {
     VirtualFile virtualFile = psiFile.getVirtualFile();

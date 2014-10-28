@@ -20,11 +20,11 @@ public class MovieSymbolTranscoder extends SymbolTranscoderBase {
   private byte[] symbolName;
 
   private TIntObjectHashMap<PlacedObject> placedObjects;
-  // we cannot mark placedObject as used and iterate existing map (placedObjects) — order of items in map is not predictable,
+  // we cannot mark placedObject as used and iterate existing map (placedObjects) - order of items in map is not predictable,
   // but we must write placed object in the same order as it was read
   private List<PlacedObject> usedPlacedObjects;
 
-  // symbolName — utf8 bytes
+  // symbolName - utf8 bytes
   @TestOnly
   public void transcode(File in, File out, byte[] symbolName) throws IOException {
     this.symbolName = symbolName;
@@ -217,7 +217,7 @@ public class MovieSymbolTranscoder extends SymbolTranscoderBase {
     }
 
     // swf spec: "CharacterId is used only when a new character is being added. If a character that is already on the display map is being modified, the CharacterId field is absent."
-    // but in any case we check and use flag referredObject.used — swf may be invalid (but this problem is not encountered yet, develar 05.08.11)
+    // but in any case we check and use flag referredObject.used - swf may be invalid (but this problem is not encountered yet, develar 05.08.11)
     if (objectIdPosition != -1) {
       final int objectId = buffer.getShort(objectIdPosition);
       final PlacedObject referredObject = placedObjects.get(objectId);
@@ -366,7 +366,7 @@ public class MovieSymbolTranscoder extends SymbolTranscoderBase {
     private boolean used;
     private int newId = -1;
 
-    // we cannot calculate tagStart by length and start — length may be less than 63, but encoded as long tag header
+    // we cannot calculate tagStart by length and start - length may be less than 63, but encoded as long tag header
     private final int tagStart;
     private final int start;
     private final int length;

@@ -928,7 +928,7 @@ public class Encoder {
     int newIndex = history.getNewIndex(insertionIndex);
     if (newIndex == 0) {
       // E:\dev\hero_private\frameworks\projects\framework\src => _
-      // but for included file (include "someFile.as") another format — just 'debugfile "C:\Vellum\branches\v2\2.0\dev\output\openSource\textLayout\src\flashx\textLayout\formats\TextLayoutFormatInc.as' — we don't support it yet
+      // but for included file (include "someFile.as") another format - just 'debugfile "C:\Vellum\branches\v2\2.0\dev\output\openSource\textLayout\src\flashx\textLayout\formats\TextLayoutFormatInc.as' - we don't support it yet
       final int originalPosition = in.position();
       final int start = history.getRawPartPoolPositions(IndexHistory.STRING)[oldIndex];
       in.seek(start);

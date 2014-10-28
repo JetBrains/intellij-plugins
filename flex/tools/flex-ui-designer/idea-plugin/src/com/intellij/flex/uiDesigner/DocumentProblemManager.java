@@ -56,9 +56,9 @@ public class DocumentProblemManager {
     }
   }
 
-  // Notification.notify is not suitable for us —
+  // Notification.notify is not suitable for us -
   // 1) it is not suitable for content with <ul> tags (due to <p> around message, see NotificationsUtil.buildHtml)
-  // 2) it is buggy — balloon disappeared while user selects message text
+  // 2) it is buggy - balloon disappeared while user selects message text
   // 3) in any case, event log cannot show our message, may be due to <ul> tags?
   // todo fix platform Notification impl or how use it correctly?
   public void report(@Nullable final Project project, String message, MessageType messageType) {

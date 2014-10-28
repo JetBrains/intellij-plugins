@@ -136,7 +136,7 @@ public class AbcFilter extends AbcTranscoder {
       return;
     }
 
-    // -2 — include id length (short)
+    // -2 - include id length (short)
     exportAssets.put(id, new TagPositionInfo(start - 2, end));
   }
 

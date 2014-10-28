@@ -110,7 +110,7 @@ public final class Decoder {
   public static final class ClassInfo {
     final int instanceEstimatedSize;
     final int classEstimatedSize;
-    // first half — instance, second half — class
+    // first half - instance, second half - class
     private final int[] positions;
 
     ClassInfo(final DataBuffer in) throws DecoderException {

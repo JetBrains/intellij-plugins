@@ -72,7 +72,7 @@ public class IdeaConfiguratorFlexmojos5 implements FlexConfigGenerator {
   }
 
   protected String getConfigFilePath(MavenProject project, String classifier) {
-    // artifact id is first in path — it is convenient for us
+    // artifact id is first in path - it is convenient for us
     StringBuilder pathBuilder = new StringBuilder(32).append(project.getArtifactId()).append('-').append(project.getGroupId());
     if (classifier != null) {
       pathBuilder.append('-').append(classifier);
@@ -219,7 +219,7 @@ public class IdeaConfiguratorFlexmojos5 implements FlexConfigGenerator {
       }
       else if (returnType.isArray() || value instanceof Collection<?>) {
         Object[] values = returnType.isArray() ? (Object[])value : ((Collection<?>)value).toArray();
-        // ability to compile pure AS3 project without themes — node must be present, but empty (relevant only for "theme")
+        // ability to compile pure AS3 project without themes - node must be present, but empty (relevant only for "theme")
         if (values.length == 0) {
           if (name.equals("theme") || name.equals("locale")) {
             out.append(indent).append('<').append(name).append("/>");

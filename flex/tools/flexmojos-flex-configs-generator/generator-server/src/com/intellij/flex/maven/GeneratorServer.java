@@ -246,7 +246,7 @@ public class GeneratorServer {
           //noinspection unchecked
           ((Map<String, String>)Flexmojos.invokePublicMethod(localeMojo, "getCache")).put("getProjectType", "rb.swc");
           data.localeOutputFilepathPattern = Flexmojos.getOutput(localeMojo).replace(firstLocale, "{_locale_}");
-          // we don't release localeMojo (plexusContainer.release) — flexmojos doesn't do it too
+          // we don't release localeMojo (plexusContainer.release) - flexmojos doesn't do it too
         }
       }
       finally {
@@ -326,7 +326,7 @@ public class GeneratorServer {
 
     final List<LocalRepositoryManagerFactory> factoryList = Collections.singletonList(container.lookup(LocalRepositoryManagerFactory.class, "simple"));
     final String mavenVersion = container.lookup(RuntimeInformation.class).getMavenVersion();
-    // tracked impl is not suitable for us (our list of remote repo may be not equals — we don't want think about it)
+    // tracked impl is not suitable for us (our list of remote repo may be not equals - we don't want think about it)
     if (mavenVersion.length() >= 5 && mavenVersion.charAt(2) == '0' && mavenVersion.charAt(4) < '4') {
       final DefaultRepositorySystem repositorySystem = (DefaultRepositorySystem)container.lookup(RepositorySystem.class);
       try {

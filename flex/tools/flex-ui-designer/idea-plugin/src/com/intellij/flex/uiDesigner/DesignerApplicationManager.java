@@ -452,7 +452,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
     });
 
-    // unregistered module is more complicated — we cannot just remove all document factories which belong to project as in case of close project
+    // unregistered module is more complicated - we cannot just remove all document factories which belong to project as in case of close project
     // we must remove all document factories belong to module and all dependents (dependent may be from another module, so, we process moduleRemoved synchronous
     // one by one)
     connection.subscribe(ProjectTopics.MODULES, new ModuleAdapter() {

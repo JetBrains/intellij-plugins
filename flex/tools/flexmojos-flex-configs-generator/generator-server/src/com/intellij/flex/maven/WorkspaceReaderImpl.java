@@ -87,7 +87,7 @@ class WorkspaceReaderImpl implements WorkspaceReader {
       return data.outputFile;
     }
     else if (!(ext.equals(POM_EXTENSION) || ext.equals("jar") || ext.equals("css") || ext.isEmpty())) {
-      // about jar — We have quite some jar dependencies in our flex modules in order to be able to generate code from the flexmojos generate goal
+      // about jar - We have quite some jar dependencies in our flex modules in order to be able to generate code from the flexmojos generate goal
       generatorServer.getLogger().warn("Found artifact must be flash artifact (swc or swf), css or jar: " + artifact);
     }
 

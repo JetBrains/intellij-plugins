@@ -165,7 +165,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
       boolean isMxml = JavaScriptSupportLoader.isFlexMxmFile(file);
       if (isMxml || file.getFileType() == CssFileType.INSTANCE) {
         if (!collectChangedLocalStyleSources(localStyleSources, file) && onlyStyle) {
-          // if onlyStyle and we didn't find changed local style sources, so, it is new style source — we must collect style sources for appropriate module
+          // if onlyStyle and we didn't find changed local style sources, so, it is new style source - we must collect style sources for appropriate module
           Project p = ProjectUtil.guessProjectForFile(file);
           if (p != null) {
             ModuleInfo info = client.getRegisteredModules().getNullableInfo(ModuleUtilCore.findModuleForFile(file, p));

@@ -15,7 +15,7 @@ import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-// isCollapseWhiteSpace — only for tag: https://bugs.adobe.com/jira/browse/SDK-3983
+// isCollapseWhiteSpace - only for tag: https://bugs.adobe.com/jira/browse/SDK-3983
 class XmlTagValueProvider implements XmlElementValueProvider {
   private XmlTag tag;
 

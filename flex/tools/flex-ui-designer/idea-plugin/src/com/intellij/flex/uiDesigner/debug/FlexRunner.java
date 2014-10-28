@@ -199,7 +199,7 @@ public class FlexRunner extends GenericProgramRunner {
         }
       }
 
-      // must be wrapped — we check type (may be rb.swc, i. e. resource bundle)
+      // must be wrapped - we check type (may be rb.swc, i. e. resource bundle)
       final String libName = ":" + line.substring(StringUtil.lastIndexOf(line, '/', 1, srcFirstSlashIndex - 1) + 1, srcFirstSlashIndex) + ":swc";
       String fullPath = libNameToSourceRoot.get(libName);
       if (fullPath == null) {

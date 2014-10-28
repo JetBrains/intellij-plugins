@@ -59,7 +59,7 @@ class LibraryStyleInfoCollector {
           bytes.writeUInt29(stringWriter.getReference(firstInfo.getAttributeName()) - 1);
         }
 
-        // If the property is defined in the library — we it consider that unique for all library — we make an assumption that
+        // If the property is defined in the library - we it consider that unique for all library - we make an assumption that
         // may not be in a class stylePName be inherited, and another class of the same library not inherited
         return false;
       }

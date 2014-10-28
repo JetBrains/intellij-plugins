@@ -168,7 +168,7 @@ public class MxmlWriter {
 
     for (final XmlAttribute attribute : tag.getAttributes()) {
       if (attribute.getValueElement() == null) {
-        // skip invalid — "<Button label/>"
+        // skip invalid - "<Button label/>"
         continue;
       }
 
@@ -190,7 +190,7 @@ public class MxmlWriter {
                 context = new DynamicObjectContext(tagAttributeProcessContext);
               }
 
-              // must be before stateWriter.includeIn — start object data range before state data range
+              // must be before stateWriter.includeIn - start object data range before state data range
               dataRange = writer.getBlockOut().startRange(dataPosition, dataRangeAfterAnchor);
               ((DynamicObjectContext)context).setDataRange(dataRange);
 
@@ -265,7 +265,7 @@ public class MxmlWriter {
     tagAttributeProcessContext.reset();
 
     processTagChildren(tag, context, parentContext, true, null);
-    // initializeReference must be after process all elements — after sub tag also, due to <RadioButton id="visa" label="Visa" 
+    // initializeReference must be after process all elements - after sub tag also, due to <RadioButton id="visa" label="Visa"
     // width="150"><group>{cardtype} !!id (for binding target, RadioButton id="visa") allocation here!!</group></RadioButton>
     if (dataPosition != -1) {
       writer.endObject();
@@ -305,7 +305,7 @@ public class MxmlWriter {
     int validAndStaticChildrenCount = 0;
     final XmlTagChild[] children = tag.getValue().getChildren();
 
-    // if we process property tag value — if we cannot set value due to invalid content, so, we don't write property,
+    // if we process property tag value - if we cannot set value due to invalid content, so, we don't write property,
     // otherwise if there is no content, we write explicit null
     boolean invalidValue = false;
 
@@ -426,7 +426,7 @@ public class MxmlWriter {
               valueWriter = propertyProcessor.processXmlTextAsDefaultPropertyWithComplexType(valueProvider, tag, context);
             }
             catch (InvalidPropertyException e) {
-              // we don't need any out rollback — nothing is written yet
+              // we don't need any out rollback - nothing is written yet
               problemsHolder.add(e);
               continue;
             }

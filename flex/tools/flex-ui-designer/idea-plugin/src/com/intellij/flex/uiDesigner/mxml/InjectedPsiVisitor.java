@@ -62,7 +62,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
   @Override
   public void visit(@NotNull PsiFile injectedPsi, @NotNull List<Shred> places) {
     // todo <s:Label text="{demandSelectedTO.journalist.nom} {demandSelectedTO.journalist.prenom}"/>
-    // will be called 2 — first for {demandSelectedTO.journalist.nom} and second for {demandSelectedTO.journalist.prenom}
+    // will be called 2 - first for {demandSelectedTO.journalist.nom} and second for {demandSelectedTO.journalist.prenom}
     if (visited) {
       return;
     }
