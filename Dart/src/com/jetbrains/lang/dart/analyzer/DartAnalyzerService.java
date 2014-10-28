@@ -188,6 +188,10 @@ public class DartAnalyzerService {
       contextOptions.setEnableEnum(true);
       analysisContext.setAnalysisOptions(contextOptions);
 
+      final AnalysisOptionsImpl contextOptions = new AnalysisOptionsImpl();
+      contextOptions.setEnableAsync(true);
+      analysisContext.setAnalysisOptions(contextOptions);
+
       mySdkPath = sdkPath;
       myPubspecYamlTimestamp = pubspecYamlTimestamp;
       myDartPackageRoots = packageRoots;

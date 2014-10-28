@@ -98,10 +98,10 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
     @Override
     @NotNull
     public Map<String, Void> map(@NotNull final FileContent inputData) {
-      final String libraryName = DartIndexUtil.indexFile(inputData).getLibraryName();
-      return libraryName == null
-             ? Collections.<String, Void>emptyMap()
-             : Collections.<String, Void>singletonMap(libraryName, null);
+      final DartFileIndexData indexData = DartIndexUtil.indexFile(inputData);
+
+      return indexData.isPart() ? Collections.<String, Void>emptyMap()
+                                : Collections.<String, Void>singletonMap(indexData.getLibraryName(), null);
     }
   }
 

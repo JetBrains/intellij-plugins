@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.annotator;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -41,6 +42,14 @@ public class DartColorAnnotator implements Annotator {
       if (element.getNode().getTreeParent().getElementType() != DartTokenTypes.ID) {
         createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_KEYWORD);
         return;
+      }
+    }
+
+    // sync* and async*
+    if (DartTokenTypes.MUL == element.getNode().getElementType()) {
+      final ASTNode previous = element.getNode().getTreePrev();
+      if (previous != null && (previous.getElementType() == DartTokenTypes.SYNC || previous.getElementType() == DartTokenTypes.ASYNC)) {
+        createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_KEYWORD);
       }
     }
 

@@ -13,9 +13,10 @@ public class DartFileIndexData {
   private List<DartImportOrExportInfo> myImportAndExportInfos = new ArrayList<DartImportOrExportInfo>();
   private Map<String, DartComponentInfo> myComponentInfoMap = new THashMap<String, DartComponentInfo>();
   final Map<String, List<DartComponentInfo>> myInheritorsMap = new THashMap<String, List<DartComponentInfo>>();
-  @Nullable private String myLibraryName;
+  @NotNull private String myLibraryName;
   private List<String> myPaths = new ArrayList<String>();
   private List<String> mySymbols = new ArrayList<String>();
+  private boolean myIsPart;
 
   public List<String> getClassNames() {
     return myClassNames;
@@ -58,12 +59,12 @@ public class DartFileIndexData {
     list.add(inheritor);
   }
 
-  @Nullable
+  @NotNull
   public String getLibraryName() {
     return myLibraryName;
   }
 
-  public void setLibraryName(@Nullable String libraryName) {
+  public void setLibraryName(@NotNull String libraryName) {
     myLibraryName = libraryName;
   }
 
@@ -83,5 +84,13 @@ public class DartFileIndexData {
     if (name != null) {
       mySymbols.add(name);
     }
+  }
+
+  public void setIsPart(final boolean isPart) {
+    myIsPart = isPart;
+  }
+
+  public boolean isPart() {
+    return myIsPart;
   }
 }

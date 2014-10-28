@@ -82,6 +82,10 @@
   NATIVE="native"
   SHOW="show"
   HIDE="hide"
+  SYNC="sync"
+  ASYNC="async"
+  AWAIT="await"
+  YIELD="yield"
 
   LBRACE="{"
   RBRACE="}"
@@ -604,9 +608,10 @@ functionDeclarationWithBodyOrNative ::= metadata* 'external'? (returnType compon
 functionDeclarationWithBody ::= metadata*  (returnType componentName formalParameterList | componentName formalParameterList) functionBody // todo merge with functionDeclarationWithBodyOrNative
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
-functionBody ::= arrowBodyWithSemi | block
+functionBody ::= arrowBodyWithSemi | blockBody
 private arrowBodyWithSemi ::= arrowBody ';' {pin=1}
 
-functionExpressionBody ::= arrowBody | block
-private arrowBody ::= '=>' (expression | throwStatement) {pin=1}
+functionExpressionBody ::= arrowBody | blockBody
+private arrowBody ::= ('async' '*'? | 'sync' '*'?)? '=>' (expression | throwStatement) {pin=2}
+private blockBody ::= ('async' '*'? | 'sync' '*'?)? block
 

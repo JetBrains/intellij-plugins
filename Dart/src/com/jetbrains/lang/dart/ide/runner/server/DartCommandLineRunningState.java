@@ -137,6 +137,7 @@ public class DartCommandLineRunningState extends CommandLineState {
                                final @NotNull DartCommandLineRunnerParameters runnerParameters,
                                final @Nullable String overriddenMainFilePath) throws ExecutionException {
     commandLine.addParameter("--ignore-unrecognized-flags");
+    commandLine.addParameter("--enable_async");
 
     final String vmOptions = runnerParameters.getVMOptions();
     if (vmOptions != null) {

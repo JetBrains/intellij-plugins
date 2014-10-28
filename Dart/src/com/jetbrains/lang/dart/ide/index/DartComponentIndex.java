@@ -73,15 +73,15 @@ public class DartComponentIndex extends FileBasedIndexExtension<String, DartComp
       FileBasedIndex.getInstance().getContainingFiles(DART_COMPONENT_INDEX, componentName, GlobalSearchScope.allScope(project)));
   }
 
-  public static void processAllComponents(@NotNull PsiElement contex,
+  public static void processAllComponents(@NotNull PsiElement context,
                                           final PairProcessor<String, DartComponentInfo> processor,
                                           Condition<String> nameFilter) {
-    final Collection<String> allKeys = FileBasedIndex.getInstance().getAllKeys(DART_COMPONENT_INDEX, contex.getProject());
+    final Collection<String> allKeys = FileBasedIndex.getInstance().getAllKeys(DART_COMPONENT_INDEX, context.getProject());
     for (final String componentName : allKeys) {
       if (nameFilter.value(componentName)) {
         continue;
       }
-      if (processComponentsByName(contex, new Processor<DartComponentInfo>() {
+      if (processComponentsByName(context, new Processor<DartComponentInfo>() {
         @Override
         public boolean process(DartComponentInfo info) {
           return processor.process(componentName, info);
@@ -92,11 +92,11 @@ public class DartComponentIndex extends FileBasedIndexExtension<String, DartComp
     }
   }
 
-  public static boolean processComponentsByName(PsiElement contex,
+  public static boolean processComponentsByName(PsiElement context,
                                                 Processor<DartComponentInfo> processor,
                                                 String componentName) {
     final List<DartComponentInfo> allComponents = FileBasedIndex.getInstance().getValues(
-      DART_COMPONENT_INDEX, componentName, contex.getResolveScope()
+      DART_COMPONENT_INDEX, componentName, context.getResolveScope()
     );
     for (DartComponentInfo componentInfo : allComponents) {
       if (!processor.process(componentInfo)) return true;
