@@ -131,7 +131,7 @@ public class DartPositionInfo {
     final int libNameStartIndex = pathStartIndex + "dart:".length();
 
     int index = libNameStartIndex;
-    while (text.length() > index && Character.isLetter(text.charAt(index))) index++;
+    while (text.length() > index && ('_' == text.charAt(index) || Character.isLetter(text.charAt(index)))) index++;
 
     if (index == libNameStartIndex) return null;
 

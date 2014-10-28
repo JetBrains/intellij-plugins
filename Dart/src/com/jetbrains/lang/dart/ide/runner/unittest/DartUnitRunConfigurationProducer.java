@@ -35,7 +35,7 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
   protected boolean setupConfigurationFromContext(final @NotNull DartUnitRunConfiguration configuration,
                                                   final @NotNull ConfigurationContext context,
                                                   final @NotNull Ref<PsiElement> sourceElement) {
-    final VirtualFile dartFile = DartCommandLineRuntimeConfigurationProducer.findRunnableDartFile(context);
+    final VirtualFile dartFile = DartCommandLineRuntimeConfigurationProducer.getRunnableDartFileFromContext(context);
     if (dartFile == null) return false;
 
     final DartUrlResolver urlResolver = DartUrlResolver.getInstance(context.getProject(), dartFile);

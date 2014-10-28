@@ -229,6 +229,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
         public boolean value(final String url) {
           if (!url.equals(rootUrl + "/.pub") &&
+              !url.equals(rootUrl + "/build") &&
               !url.startsWith(rootUrl + "/packages/") &&
               !url.startsWith(rootUrl + "/bin/") &&
               !url.startsWith(rootUrl + "/benchmark/") &&
@@ -240,6 +241,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
           }
 
           if (url.equals(rootUrl + "/.pub")) return true;
+          if (url.equals(rootUrl + "/build")) return true;
           if (url.endsWith("/packages")) return true;
 
           // excluded subfolder of 'packages' folder

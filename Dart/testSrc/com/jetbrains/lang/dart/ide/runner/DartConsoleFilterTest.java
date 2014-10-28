@@ -57,6 +57,7 @@ public class DartConsoleFilterTest extends TestCase {
     doNegativeTest("abc.dart ef.dart file:foo.dart/bar.dart_baz.dart.more");
 
     doPositiveTest("dart:libName", Type.DART, "dart:libName", "libName", -1, -1);
+    doPositiveTest("library 'dart:html_common' is", Type.DART, "dart:html_common", "html_common", -1, -1);
     doPositiveTest("packages:file:dart:libName:70: line 5 pos 9", Type.DART, "dart:libName", "libName", 69, -1);
     doPositiveTest("package:foo/bar.dart", Type.PACKAGE, "package:foo/bar.dart", "foo/bar.dart", -1, -1);
     doPositiveTest("(dart:.dart)", Type.DART, "dart:.dart", ".dart", -1, -1);

@@ -217,22 +217,21 @@ public class DartDocUtil {
 
     if (!mixins.isEmpty()) {
       builder.append(" with ");
-      for (Iterator<DartType> iter = mixins.iterator(); iter.hasNext(); ) {
-        builder.append(StringUtil.escapeXml(iter.next().getText()));
-        if (iter.hasNext()) {
-          builder.append(", ");
-        }
-      }
+      appendDartTypeList(builder, mixins);
     }
 
     final List<DartType> implementsList = dartClass.getImplementsList();
     if (!implementsList.isEmpty()) {
       builder.append("<br/>implements ");
-      for (Iterator<DartType> iter = implementsList.iterator(); iter.hasNext(); ) {
-        builder.append(iter.next().getText());
-        if (iter.hasNext()) {
-          builder.append(", ");
-        }
+      appendDartTypeList(builder, implementsList);
+    }
+  }
+
+  private static void appendDartTypeList(final StringBuilder builder, final List<DartType> dartTypes) {
+    for (Iterator<DartType> iter = dartTypes.iterator(); iter.hasNext(); ) {
+      builder.append(StringUtil.escapeXml(iter.next().getText()));
+      if (iter.hasNext()) {
+        builder.append(", ");
       }
     }
   }
@@ -240,10 +239,7 @@ public class DartDocUtil {
   private static void appendLibraryName(final StringBuilder builder, final PsiElement element) {
     final PsiFile file = element.getContainingFile();
     if (file != null) {
-      final String libraryName = DartResolveUtil.getLibraryName(file);
-      if (libraryName != null) {
-        builder.append(StringUtil.join("<code><small><b>", libraryName, "</b></small></code><br/><br/>"));
-      }
+      builder.append(StringUtil.join("<code><small><b>", DartResolveUtil.getLibraryName(file), "</b></small></code><br/><br/>"));
     }
   }
 

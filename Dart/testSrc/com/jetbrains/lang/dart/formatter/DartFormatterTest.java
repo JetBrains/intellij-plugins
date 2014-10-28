@@ -28,13 +28,6 @@ public class DartFormatterTest extends FormatterTestCase {
     setTestStyleSettings();
   }
 
-  @Override
-  protected void doTest(String resultNumber) throws Exception {
-    String testName = getTestName(false);
-    doTest(testName + "." + getFileExtension(), testName + "_after." + getFileExtension(), resultNumber);
-  }
-
-
   private static void setTestStyleSettings() {
     final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
     CodeStyleSettings.IndentOptions indentOptions = settings.getIndentOptions();
