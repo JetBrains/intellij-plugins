@@ -5,6 +5,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
 
@@ -13,14 +14,30 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
   }
 
   private void doTestWithSpecificSettings(@NotNull final Consumer<CodeFoldingSettings> settingsConsumer) {
+    doTestWithSpecificSettings(settingsConsumer, null);
+  }
+
+  private void doTestWithSpecificSettings(@NotNull final Consumer<CodeFoldingSettings> settingsConsumer, @Nullable final Consumer<DartCodeFoldingSettings> dartCodeFoldingSettingsConsumer) {
     final CodeFoldingSettings settings = CodeFoldingSettings.getInstance();
     final CodeFoldingSettings originalSettings = XmlSerializerUtil.createCopy(settings);
+    DartCodeFoldingSettings dartSettings = null;
+    DartCodeFoldingSettings dartOriginalSettings = null;
+    if(dartCodeFoldingSettingsConsumer != null) {
+      dartSettings = DartCodeFoldingSettings.getInstance();
+      dartOriginalSettings = XmlSerializerUtil.createCopy(dartSettings);
+    }
     try {
       settingsConsumer.consume(settings);
+      if(dartCodeFoldingSettingsConsumer != null) {
+        dartCodeFoldingSettingsConsumer.consume(dartSettings);
+      }
       doTest();
     }
     finally {
       XmlSerializerUtil.copyBean(originalSettings, settings);
+      if(dartCodeFoldingSettingsConsumer != null) {
+        XmlSerializerUtil.copyBean(dartOriginalSettings, dartSettings);
+      }
     }
   }
 
@@ -86,5 +103,20 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
 
   public void testCustomRegionsOverlappingWithCommentFoldings() throws Exception {
     doTest();
+  }
+
+  public void testTypeArguments() throws Exception {
+    doTest();
+  }
+
+  public void testTypeArgumentsByDefault() throws Exception {
+    doTestWithSpecificSettings(new Consumer<CodeFoldingSettings>() {
+      @Override
+      public void consume(final CodeFoldingSettings settings) {}
+    }, new Consumer<DartCodeFoldingSettings>() {
+      public void consume(final DartCodeFoldingSettings settings) {
+        settings.COLLAPSE_GENERIC_PARAMETERS = true;
+      }
+    });
   }
 }
