@@ -8,7 +8,6 @@ import com.jetbrains.lang.dart.psi.DartComponent;
 
 import static com.jetbrains.lang.dart.util.DartPresentableUtil.RIGHT_ARROW;
 
-
 public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   private void doTest(String expectedDoc, String fileContents) throws Exception {
@@ -22,42 +21,42 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testAbstractClassSig() throws Exception {
-    doTest("<code>abstract class <b>Foo</b><br/>extends Bar</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>abstract class <b>Foo</b><br/>extends Bar</code>",
            "<caret>abstract class Foo extends Bar { }\nclass Bar { }");
   }
 
   public void testParamClassSig() throws Exception {
-    doTest("<code>class <b>Foo</b>&lt;T&gt;</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>class <b>Foo</b>&lt;T&gt;</code>",
            "<caret>class Foo<T>{ }");
   }
 
   public void testParamClassSig2() throws Exception {
-    doTest("<code>class <b>Foo</b>&lt;T, Z&gt;</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>class <b>Foo</b>&lt;T, Z&gt;</code>",
            "<caret>class Foo<T,Z>{ }");
   }
 
   public void testParamClassSig3() throws Exception {
-    doTest("<code>class <b>Foo</b><br/>implements Bar</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>class <b>Foo</b><br/>implements Bar</code>",
            "<caret>class Foo implements Bar { }<br/>class Bar { }");
   }
 
   public void testParamClassSig4() throws Exception {
-    doTest("<code>class <b>Foo</b><br/>implements Bar, Baz</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>class <b>Foo</b><br/>implements Bar, Baz</code>",
            "<caret>class Foo implements Bar, Baz { }<br/>class Bar { }<br/>class Baz { }");
   }
 
   public void testParamClassSig5() throws Exception {
-    doTest("<code>class <b>Foo</b>&lt;A, B&gt;<br/>extends Bar&lt;A,B&gt;</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>class <b>Foo</b>&lt;A, B&gt;<br/>extends Bar&lt;A,B&gt;</code>",
            "class <caret>Foo<A,B> extends Bar<A,B> { }<br/>class Bar<A,B> { }");
   }
 
   public void testMetaClassSig1() throws Exception {
-    doTest("<code>@deprecated<br/>class <b>A</b></code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>@deprecated<br/>class <b>A</b></code>",
            " @deprecated class <caret>A {}");
   }
 
   public void testMetaClassSig2() throws Exception {
-    doTest("<code>@Meta(&#39;foo&#39;)<br/>class <b>A</b></code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>@Meta(&#39;foo&#39;)<br/>class <b>A</b></code>",
            "@Meta(\'foo\') class <caret>A {};\n" +
            "class Meta {\n" +
            "  final String name;\n" +
@@ -71,97 +70,101 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testImplementsSig1() throws Exception {
-    doTest("<code>abstract class <b>Foo</b><br/>implements Bar&lt;T&gt;</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>abstract class <b>Foo</b><br/>implements Bar&lt;T&gt;</code>",
            "<caret>abstract class Foo implements Bar<T> { }\nclass Bar { }");
   }
 
   public void testMixinSig1() throws Exception {
-    doTest("<code>class <b>Foo2</b><br/>extends Bar1&lt;E&gt; with Baz1&lt;K&gt;, Baz2</code>",
-           "<caret>class Foo2 = Bar1<E> with Baz1<K>, Baz2");
+    doTest(
+      "<code><small><b>test.dart</b></small></code><br/><br/><code>class <b>Foo2</b><br/>extends Bar1&lt;E&gt; with Baz1&lt;K&gt;, Baz2</code>",
+      "<caret>class Foo2 = Bar1<E> with Baz1<K>, Baz2");
   }
 
   public void testMixinSig2() throws Exception {
-    doTest("<code>class <b>X</b><br/>extends Y with Z</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>class <b>X</b><br/>extends Y with Z</code>",
            "<caret>class X extends Y with Z { }");
   }
 
   public void testFunctionSig1() throws Exception {
-    doTest("<code><b>calc</b>(int x) " + RIGHT_ARROW + " int</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>calc</b>(int x) " + RIGHT_ARROW + " int</code>",
            "<caret>int calc(int x) => x + 42;");
   }
 
   public void testFunctionSig2() throws Exception {
-    doTest("<code><b>foo</b>([int x]) " + RIGHT_ARROW + " void</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>foo</b>([int x]) " + RIGHT_ARROW + " void</code>",
            "<caret>foo([int x = 3]) { print(x); }");
   }
 
   public void testFunctionSig3() throws Exception {
-    doTest("<code><b>foo</b>([int x]) " + RIGHT_ARROW + " void</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>foo</b>([int x]) " + RIGHT_ARROW + " void</code>",
            "<caret>void foo([int x = 3]) { print(x); }");
   }
 
   public void testFunctionSig4() throws Exception {
-    doTest("<code><b>foo</b>(int x, {int y, int z}) " + RIGHT_ARROW + " void</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>foo</b>(int x, {int y, int z}) " + RIGHT_ARROW + " void</code>",
            "<caret>void foo(int x, {int y, int z}) { }");
   }
 
   public void testFunctionSig5() throws Exception {
-    doTest("<code><b>x</b>(List&lt;E&gt; e) " + RIGHT_ARROW + " E</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>x</b>(List&lt;E&gt; e) " + RIGHT_ARROW + " E</code>",
            "E <caret>x(List<E> e) { }");
   }
 
   public void testFunctionSig6() throws Exception {
-    doTest("<code><b>calc</b>(x() " + RIGHT_ARROW + " int) " + RIGHT_ARROW + " int</code>",
-           "<caret>int calc(int x()) => null;");
+    doTest(
+      "<code><small><b>test.dart</b></small></code><br/><br/><code><b>calc</b>(x() " + RIGHT_ARROW + " int) " + RIGHT_ARROW + " int</code>",
+      "<caret>int calc(int x()) => null;");
   }
 
   public void testFunctionSig7() throws Exception {
-    doTest("<code><b>foo</b>(Map&lt;int, String&gt; p) " + RIGHT_ARROW + " Map&lt;String, int&gt;</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>foo</b>(Map&lt;int, String&gt; p) " +
+           RIGHT_ARROW +
+           " Map&lt;String, int&gt;</code>",
            "Map<String, int> <caret>foo(Map<int, String> p) => null;");
   }
 
   public void testFunctionSig8() throws Exception {
-    doTest("<code><b>x</b>() " + RIGHT_ARROW + " void</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>x</b>() " + RIGHT_ARROW + " void</code>",
            "<caret>x() => null;");
   }
 
   public void testTypedefSig() throws Exception {
-    doTest("<code>typedef <b>a</b>(int x) " + RIGHT_ARROW + " int</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>typedef <b>a</b>(int x) " + RIGHT_ARROW + " int</code>",
            "<caret>typedef int a(int x);");
   }
 
   public void testFieldSig1() throws Exception {
-    doTest("<code>Z<br/><br/>int <b>y</b></code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/>int <b>y</b></code>",
            "class Z { <caret>int y = 42; }");
   }
 
   public void testFieldSig2() throws Exception {
-    doTest("<code>Z<br/><br/>int <b>y</b></code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/>int <b>y</b></code>",
            "class Z { <caret>int y; }");
   }
 
   public void testMethodSig1() throws Exception {
-    doTest("<code>Z<br/><br/><b>y</b>() " + RIGHT_ARROW + " int</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/><b>y</b>() " + RIGHT_ARROW + " int</code>",
            "class Z { <caret>int y() => 42; }");
   }
 
   public void testNamedConstructorSig() throws Exception {
-    doTest("<code>Z<br/><br/><b>Z.</b><b>z</b>() " + RIGHT_ARROW + " Z</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/><b>Z.</b><b>z</b>() " + RIGHT_ARROW + " Z</code>",
            "class Z { <caret>Z.z(); }");
   }
 
   public void testConstructorSig() throws Exception {
-    doTest("<code>Z<br/><br/><b>Z</b>() " + RIGHT_ARROW + " Z</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/><b>Z</b>() " + RIGHT_ARROW + " Z</code>",
            "class Z { <caret>Z(); }");
   }
 
   public void testGetterSig() throws Exception {
-    doTest("<code>Z<br/><br/>get <b>x</b>() " + RIGHT_ARROW + " int</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/>get <b>x</b>() " + RIGHT_ARROW + " int</code>",
            "class Z { <caret>int get x => 0; }");
   }
 
   public void testSetterSig() throws Exception {
-    doTest("<code>Z<br/><br/>set <b>x</b>(int x) " + RIGHT_ARROW + " void</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/>set <b>x</b>(int x) " + RIGHT_ARROW + " void</code>",
            "class Z { <caret>void set x(int x) { } }");
   }
 
@@ -176,14 +179,14 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testFunctionDoc1() throws Exception {
-    doTest("<code><b>foo</b>(int x) " + RIGHT_ARROW + " void</code>" +
-           "<br/><br/><p>A function on [x]s.</p>\n",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>foo</b>(int x) " + RIGHT_ARROW +
+           " void</code><br/><br/><p>A function on [x]s.</p>\n",
            "/// A function on [x]s.\n<caret>void foo(int x) { }");
   }
 
 
   public void testFunctionDoc2() throws Exception {
-    doTest("<code><b>foo</b>(int x) " + RIGHT_ARROW + " void</code>" +
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>foo</b>(int x) " + RIGHT_ARROW + " void</code>" +
            "<br/><br/><p> Good for:</p>\n\n" +
            "<ul>\n" +
            "<li>this</li>\n" +
@@ -197,7 +200,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testClassMultilineDoc1() throws Exception {
-    doTest("<code>class <b>A</b></code><br/><br/><p>     doc1\n" +
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>class <b>A</b></code><br/><br/><p>     doc1\n" +
            "doc2\n" +
            " doc3</p>\n" +
            "\n" +
@@ -221,8 +224,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testClassMultilineDoc2() throws Exception {
-    doTest("<code>@deprecated<br/>" +
-           "abstract class <b>A</b></code><br/><br/><p>doc1\n" +
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>@deprecated<br/>abstract class <b>A</b></code><br/><br/><p>doc1\n" +
            "doc2\n" +
            " doc3\n" +
            "doc4\n" +
@@ -242,7 +244,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testClassSingleLineDocs1() throws Exception {
-    doTest("<code>class <b>A</b></code><br/><br/><p>doc1\n" +
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>class <b>A</b></code><br/><br/><p>doc1\n" +
            "doc2</p>\n",
 
            "// not doc \n" +
@@ -254,8 +256,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testClassSingleLineDocs2() throws Exception {
-    doTest("<code>@deprecated<br/>" +
-           "class <b>A</b></code><br/><br/><p>doc1\n" +
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>@deprecated<br/>class <b>A</b></code><br/><br/><p>doc1\n" +
            "doc2</p>\n",
 
            "@deprecated" +
@@ -268,7 +269,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testMethodMultilineDoc() throws Exception {
-    doTest("<code>A<br/><br/><b>foo</b>() " + RIGHT_ARROW + " void</code>" +
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>A<br/><br/><b>foo</b>() " + RIGHT_ARROW + " void</code>" +
            "<br/><br/><p>     doc1\n" +
            "doc2\n" +
            " doc3</p>\n" +
@@ -295,7 +296,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testMethodSingleLineDocs() throws Exception {
-    doTest("<code>A<br/><br/><b>foo</b>() " + RIGHT_ARROW + " void</code>" +
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>A<br/><br/><b>foo</b>() " + RIGHT_ARROW + " void</code>" +
            "<br/><br/><p>doc1\n" +
            "doc2</p>\n",
 

@@ -1,9 +1,7 @@
 package com.jetbrains.lang.dart.ide.documentation;
 
 import com.intellij.lang.documentation.DocumentationProvider;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -13,9 +11,10 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +37,7 @@ public class DartDocumentationProvider implements DocumentationProvider {
   }
 
   @Override
+  @Nullable
   public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
     if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {
       return null;
@@ -48,20 +48,8 @@ public class DartDocumentationProvider implements DocumentationProvider {
       return null;
     }
 
-    final List<String> result = new ArrayList<String>();
-
-    final PsiManager psiManager = element.getManager();
-    List<VirtualFile> library = DartResolveUtil.findLibrary(element.getContainingFile());
-    for (VirtualFile libraryRoot : library) {
-      final PsiFile libPsiFile = psiManager.findFile(libraryRoot);
-      String libName = libPsiFile != null ? DartResolveUtil.getLibraryName(libPsiFile) : null;
-      final String docUrl = libName != null ? constructDocUrl(namedComponent, componentName, libName) : null;
-      if (docUrl != null) {
-        result.add(docUrl);
-      }
-    }
-
-    return result;
+    final String docUrl = constructDocUrl(namedComponent, componentName, DartResolveUtil.getLibraryName(element.getContainingFile()));
+    return docUrl == null ? null : Collections.singletonList(docUrl);
   }
 
   @Nls
@@ -74,7 +62,7 @@ public class DartDocumentationProvider implements DocumentationProvider {
     if (libName.startsWith(STD_LIB_PREFIX)) {
       resultUrl.append("dart_").append(libName.substring(STD_LIB_PREFIX.length()));
     }
-    else if (APIDOC_HOSTED_PACKAGES.contains(libName)){
+    else if (APIDOC_HOSTED_PACKAGES.contains(libName)) {
       resultUrl.append(libName);
     }
     else {
