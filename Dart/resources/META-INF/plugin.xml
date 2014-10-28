@@ -147,6 +147,11 @@
     <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerManager"
                     serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerManager"/>
 
+    <applicationService serviceInterface="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"
+                        serviceImplementation="com.jetbrains.lang.dart.folding.DartCodeFoldingSettingsImpl"/>
+    <exportable serviceInterface="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>
+    <codeFoldingOptionsProvider instance="com.jetbrains.lang.dart.application.options.editor.DartCodeFoldingOptionsProvider"/>
+
     <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
     <codeInspection.InspectionExtension id="dartGlobalInspection"
                                         implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>
