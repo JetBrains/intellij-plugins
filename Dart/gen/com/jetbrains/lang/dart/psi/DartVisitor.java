@@ -123,7 +123,7 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitEnumConstantDeclaration(@NotNull DartEnumConstantDeclaration o) {
-    visitPsiCompositeElement(o);
+    visitComponent(o);
   }
 
   public void visitEnumConstantDeclarationList(@NotNull DartEnumConstantDeclarationList o) {

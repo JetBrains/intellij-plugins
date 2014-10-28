@@ -73,6 +73,11 @@ public class DartClassIndex extends ScalarIndexExtension<String> {
             result.add(component.getComponentName());
           }
         }
+        for (DartComponent component : DartResolveUtil.getEnumDeclarations(root)) {
+          if (name.equals(component.getName())) {
+            result.add(component.getComponentName());
+          }
+        }
       }
     }
     return new ArrayList<DartComponentName>(result);

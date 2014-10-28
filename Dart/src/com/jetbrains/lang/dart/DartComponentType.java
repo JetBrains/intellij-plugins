@@ -16,6 +16,7 @@ public enum DartComponentType {
       return component.isAbstract() ? AllIcons.Nodes.AbstractClass : getIcon();
     }
   },
+  ENUM(AllIcons.Nodes.Enum),
   FUNCTION(AllIcons.Nodes.Function),
   METHOD(AllIcons.Nodes.Method) {
     @Override
@@ -73,6 +74,12 @@ public enum DartComponentType {
     }
     if (element instanceof DartClassDefinition) {
       return CLASS;
+    }
+    if (element instanceof  DartEnumDefinition) {
+      return ENUM;
+    }
+    if (element instanceof DartEnumConstantDeclaration) {
+      return FIELD;
     }
     if (element instanceof DartFunctionTypeAlias) {
       return TYPEDEF;

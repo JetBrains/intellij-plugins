@@ -48,6 +48,11 @@ public class DartPsiImplUtil {
   }
 
   @NotNull
+  public static List<DartMetadata> getMetadataList(@NotNull DartEnumConstantDeclaration label) {
+    return PsiTreeUtil.getChildrenOfTypeAsList(label, DartMetadata.class);
+  }
+
+  @NotNull
   public static List<DartMetadata> getMetadataList(@NotNull DartVarDeclarationListPart varDeclarationListPart) {
     return PsiTreeUtil.getChildrenOfTypeAsList(varDeclarationListPart, DartMetadata.class);
   }

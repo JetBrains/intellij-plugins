@@ -68,6 +68,12 @@ public class DartIndexUtil {
             result.addSymbol(subComponent.getName());
           }
         }
+        if (parent instanceof  DartEnum) {
+          result.addClassName(name);
+          for (DartEnumConstantDeclaration enumConstantDeclaration : ((DartEnum)parent).getConstants()) {
+            result.addSymbol(enumConstantDeclaration.getName());
+          }
+        }
       }
 
       for (PsiElement child : children) {

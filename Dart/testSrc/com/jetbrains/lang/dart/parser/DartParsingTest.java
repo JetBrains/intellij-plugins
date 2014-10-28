@@ -40,6 +40,10 @@ public class DartParsingTest extends ParsingTestCase {
     doTest();
   }
 
+  public void testEnum() throws Throwable {
+    doTest();
+  }
+
   public void testErrors() throws Throwable {
     doTest();
   }

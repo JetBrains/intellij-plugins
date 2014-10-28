@@ -15,6 +15,7 @@ import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartEnum;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +43,7 @@ public class DartStructureViewModel extends StructureViewModelBase implements St
   @Override
   public boolean isAlwaysLeaf(StructureViewTreeElement element) {
     final Object value = element.getValue();
-    return value instanceof DartComponent && !(value instanceof DartClass);
+    return value instanceof DartComponent && !(value instanceof DartClass || value instanceof DartEnum);
   }
 
   @Override

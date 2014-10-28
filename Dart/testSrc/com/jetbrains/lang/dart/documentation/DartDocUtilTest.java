@@ -85,6 +85,11 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "<caret>class X extends Y with Z { }");
   }
 
+  public void testEnumSig() throws Exception {
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>enum <b>Foo</b></code>",
+           "<caret>enum Foo { BAR }");
+  }
+
   public void testFunctionSig1() throws Exception {
     doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>calc</b>(int x) " + RIGHT_ARROW + " int</code>",
            "<caret>int calc(int x) => x + 42;");

@@ -16,7 +16,6 @@ public abstract class AbstractDartPsiEnum extends AbstractDartComponentImpl impl
     super(node);
   }
 
-
   @NotNull
   @Override
   public List<DartEnumConstantDeclaration> getConstants() {
