@@ -25,7 +25,7 @@ import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 
 public class DartIndexUtil {
   // inc when change parser
-  public static final int BASE_VERSION = 7;
+  public static final int BASE_VERSION = 8;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
@@ -43,12 +43,12 @@ public class DartIndexUtil {
 
   private static DartFileIndexData indexFileRoots(PsiFile psiFile) {
     DartFileIndexData result = new DartFileIndexData();
+
     result.setLibraryName(DartResolveUtil.getLibraryName(psiFile));
+    result.setIsPart(PsiTreeUtil.getChildOfType(psiFile, DartPartOfStatement.class) != null);
+
     for (PsiElement rootElement : findDartRoots(psiFile)) {
       PsiElement[] children = rootElement.getChildren();
-
-      final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(rootElement, DartPartOfStatement.class);
-      String libraryId = partOfStatement != null ? partOfStatement.getLibraryName() : result.getLibraryName();
 
       for (DartComponentName componentName : DartControlFlowUtil.getSimpleDeclarations(children, null, false)) {
         final String name = componentName.getName();
@@ -59,11 +59,11 @@ public class DartIndexUtil {
         PsiElement parent = componentName.getParent();
         final DartComponentType type = DartComponentType.typeOf(parent);
         if (type != null) {
-          result.addComponentInfo(name, new DartComponentInfo(psiFile.getName(), type, libraryId));
+          result.addComponentInfo(name, new DartComponentInfo(psiFile.getName(), type, result.getLibraryName()));
         }
         if (parent instanceof DartClass) {
           result.addClassName(name);
-          processInheritors(result, name, (DartClass)parent, libraryId);
+          processInheritors(result, name, (DartClass)parent, result.getLibraryName());
           for (DartComponent subComponent : DartResolveUtil.getNamedSubComponents((DartClass)parent)) {
             result.addSymbol(subComponent.getName());
           }

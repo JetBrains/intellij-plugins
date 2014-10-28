@@ -35,9 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
-import static com.jetbrains.lang.dart.util.DartUrlResolver.DART_PREFIX;
-import static com.jetbrains.lang.dart.util.DartUrlResolver.FILE_PREFIX;
-import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.*;
 
 public class DartResolveUtil {
 
@@ -187,37 +185,21 @@ public class DartResolveUtil {
     return resolveClassByType(dartType).getDartClass() == classCandidate;
   }
 
-  @Nullable
-  public static String getLibraryName(@NotNull PsiFile psiFile) {
-    if(isLibraryRoot(psiFile)) {
-      DartLibraryStatement libraryStatement = null;
-      for (PsiElement root : findDartRoots(psiFile)) {
-        libraryStatement = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
-        if (libraryStatement != null) break;
-      }
-      final DartPartStatement[] sources = PsiTreeUtil.getChildrenOfType(psiFile, DartPartStatement.class);
-      if (libraryStatement == null && sources == null) {
-        return getMainFunction(psiFile) == null ? null : psiFile.getName();
-      }
-      return getLibraryName(psiFile, libraryStatement);
-    } else {
-      for (PsiElement root : findDartRoots(psiFile)) {
-        DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
-        if (partOfStatement != null) {
-          return partOfStatement.getLibraryName();
-        }
-      }
-      return null;
-    }
-  }
-
   @NotNull
-  private static String getLibraryName(PsiFile psiFile, @Nullable DartLibraryStatement libraryStatement) {
-    if (libraryStatement == null) {
-      return psiFile.getName();
+  public static String getLibraryName(@NotNull final PsiFile psiFile) {
+    for (PsiElement root : findDartRoots(psiFile)) {
+      final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
+      if (libraryStatement != null) {
+        return libraryStatement.getLibraryName();
+      }
+
+      final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
+      if (partOfStatement != null) {
+        return partOfStatement.getLibraryName();
+      }
     }
-    final String libraryName = libraryStatement.getLibraryName();
-    return libraryName.isEmpty() ? psiFile.getName() : libraryName;
+
+    return psiFile.getName();
   }
 
   @NotNull

@@ -239,10 +239,7 @@ public class DartDocUtil {
   private static void appendLibraryName(final StringBuilder builder, final PsiElement element) {
     final PsiFile file = element.getContainingFile();
     if (file != null) {
-      final String libraryName = DartResolveUtil.getLibraryName(file);
-      if (libraryName != null) {
-        builder.append(StringUtil.join("<code><small><b>", libraryName, "</b></small></code><br/><br/>"));
-      }
+      builder.append(StringUtil.join("<code><small><b>", DartResolveUtil.getLibraryName(file), "</b></small></code><br/><br/>"));
     }
   }
 
