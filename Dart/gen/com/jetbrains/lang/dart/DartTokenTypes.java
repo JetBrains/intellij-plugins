@@ -34,6 +34,8 @@ public interface DartTokenTypes {
   IElementType DEFAULT_CASE = new DartElementType("DEFAULT_CASE");
   IElementType DEFAULT_FORMAL_NAMED_PARAMETER = new DartElementType("DEFAULT_FORMAL_NAMED_PARAMETER");
   IElementType DO_WHILE_STATEMENT = new DartElementType("DO_WHILE_STATEMENT");
+  IElementType ENUM_CONSTANT_DECLARATION = new DartElementType("ENUM_CONSTANT_DECLARATION");
+  IElementType ENUM_CONSTANT_DECLARATION_LIST = new DartElementType("ENUM_CONSTANT_DECLARATION_LIST");
   IElementType ENUM_DEFINITION = new DartElementType("ENUM_DEFINITION");
   IElementType EQUALITY_OPERATOR = new DartElementType("EQUALITY_OPERATOR");
   IElementType EXPORT_STATEMENT = new DartElementType("EXPORT_STATEMENT");
@@ -329,6 +331,12 @@ public interface DartTokenTypes {
       }
       else if (type == DO_WHILE_STATEMENT) {
         return new DartDoWhileStatementImpl(node);
+      }
+      else if (type == ENUM_CONSTANT_DECLARATION) {
+        return new DartEnumConstantDeclarationImpl(node);
+      }
+      else if (type == ENUM_CONSTANT_DECLARATION_LIST) {
+        return new DartEnumConstantDeclarationListImpl(node);
       }
       else if (type == ENUM_DEFINITION) {
         return new DartEnumDefinitionImpl(node);
