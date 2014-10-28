@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAware {
@@ -35,10 +36,11 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
 
     final TextRange fileHeaderRange = foldFileHeader(descriptors, (DartFile)root, document); // 1. File header
     foldImportExportStatements(descriptors, (DartFile)root);                                 // 2. Import and export statements
-    foldComments(descriptors, root, fileHeaderRange);                                        // 3. Comments and comment sequences
+    Collection<PsiElement> psiElements = PsiTreeUtil.collectElementsOfType(root, new Class[]{DartTypeArguments.class, PsiComment.class});
+    foldComments(descriptors, psiElements, fileHeaderRange);                                 // 3. Comments and comment sequences
     foldClassBodies(descriptors, (DartFile)root);                                            // 4. Class body
     foldFunctionBodies(descriptors, root);                                                   // 5. Function body
-    foldTypeArguments(descriptors, root);                                                    // 6. Type arguments
+    foldTypeArguments(descriptors, psiElements);                                             // 6. Type arguments
   }
 
   public DartFoldingBuilder() {
@@ -144,45 +146,43 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   }
 
   private static void foldComments(@NotNull final List<FoldingDescriptor> descriptors,
-                                   @NotNull final PsiElement root,
+                                   @NotNull final Collection<PsiElement> psiElements,
                                    @Nullable final TextRange fileHeaderRange) {
-    for (PsiElement child = root.getFirstChild(); child != null; child = child.getNextSibling()) {
-      if (fileHeaderRange != null && fileHeaderRange.intersects(child.getTextRange())) {
+    PsiElement psiElement;
+    for (Iterator<PsiElement> iter = psiElements.iterator(); iter.hasNext(); ) {
+      psiElement = iter.next();
+      if (!(psiElement instanceof PsiComment)) {
+        continue;
+      }
+      if (fileHeaderRange != null && fileHeaderRange.intersects(psiElement.getTextRange())) {
         continue;
       }
 
-      if (child instanceof PsiComment) {
-        final IElementType elementType = child.getNode().getElementType();
-        if ((elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT || elementType == DartTokenTypesSets.MULTI_LINE_COMMENT)
-            && !isCustomRegionElement(child)) {
-          descriptors.add(new FoldingDescriptor(child, child.getTextRange()));
-        }
-        else if (elementType == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT || elementType == DartTokenTypesSets.SINGLE_LINE_COMMENT) {
-          final PsiElement firstCommentInSequence = child;
-          PsiElement lastCommentInSequence = firstCommentInSequence;
-          PsiElement nextElement = firstCommentInSequence;
-          boolean containsCustomRegionMarker = isCustomRegionElement(nextElement);
-          while ((nextElement = nextElement.getNextSibling()) != null &&
-                 (nextElement instanceof PsiWhiteSpace || nextElement.getNode().getElementType() == elementType)) {
-            if (nextElement.getNode().getElementType() == elementType) {
-              lastCommentInSequence = nextElement;
-              containsCustomRegionMarker |= isCustomRegionElement(nextElement);
-            }
-          }
-
-          if (lastCommentInSequence != firstCommentInSequence && !containsCustomRegionMarker) {
-            final TextRange range =
-              TextRange.create(firstCommentInSequence.getTextOffset(), lastCommentInSequence.getTextRange().getEndOffset());
-            descriptors.add(new FoldingDescriptor(firstCommentInSequence, range));
-          }
-
-          // need to skip processed comments sequence
-          //noinspection AssignmentToForLoopParameter
-          child = lastCommentInSequence;
-        }
+      final IElementType elementType = psiElement.getNode().getElementType();
+      if ((elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT || elementType == DartTokenTypesSets.MULTI_LINE_COMMENT)
+          && !isCustomRegionElement(psiElement)) {
+        descriptors.add(new FoldingDescriptor(psiElement, psiElement.getTextRange()));
       }
-      else {
-        foldComments(descriptors, child, fileHeaderRange);
+      else if (elementType == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT || elementType == DartTokenTypesSets.SINGLE_LINE_COMMENT) {
+        final PsiElement firstCommentInSequence = psiElement;
+        PsiElement lastCommentInSequence = firstCommentInSequence;
+        PsiElement nextElement = firstCommentInSequence;
+        boolean containsCustomRegionMarker = isCustomRegionElement(nextElement);
+        while (iter.hasNext() && (nextElement = nextElement.getNextSibling()) != null &&
+               (nextElement instanceof PsiWhiteSpace || nextElement.getNode().getElementType() == elementType)) {
+          if (nextElement.getNode().getElementType() == elementType) {
+            // advance iterator to skip processed comments sequence
+            iter.next();
+            lastCommentInSequence = nextElement;
+            containsCustomRegionMarker |= isCustomRegionElement(nextElement);
+          }
+        }
+
+        if (lastCommentInSequence != firstCommentInSequence && !containsCustomRegionMarker) {
+          final TextRange range =
+            TextRange.create(firstCommentInSequence.getTextOffset(), lastCommentInSequence.getTextRange().getEndOffset());
+          descriptors.add(new FoldingDescriptor(firstCommentInSequence, range));
+        }
       }
     }
   }
@@ -231,12 +231,15 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     }
   }
 
-  private static void foldTypeArguments(@NotNull final List<FoldingDescriptor> descriptors, @NotNull final PsiElement root) {
-    Collection<DartTypeArguments> dartTypeArgumentsList = PsiTreeUtil.collectElementsOfType(root, DartTypeArguments.class);
-    for (DartTypeArguments dartTypeArguments : dartTypeArgumentsList) {
-      if (PsiTreeUtil.getParentOfType(dartTypeArguments, DartNewExpression.class) != null) {
-        descriptors.add(new FoldingDescriptor(dartTypeArguments, TextRange
-          .create(dartTypeArguments.getTextOffset(), dartTypeArguments.getTextRange().getEndOffset())));
+  private static void foldTypeArguments(@NotNull final List<FoldingDescriptor> descriptors,
+                                        @NotNull final Collection<PsiElement> psiElements) {
+    for (PsiElement psiElement : psiElements) {
+      if (psiElement instanceof DartTypeArguments) {
+        DartTypeArguments dartTypeArguments = (DartTypeArguments)psiElement;
+        if (PsiTreeUtil.getParentOfType(dartTypeArguments, DartNewExpression.class) != null) {
+          descriptors.add(new FoldingDescriptor(dartTypeArguments, TextRange
+            .create(dartTypeArguments.getTextOffset(), dartTypeArguments.getTextRange().getEndOffset())));
+        }
       }
     }
   }
