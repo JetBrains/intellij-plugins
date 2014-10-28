@@ -1,11 +1,12 @@
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.stubs.impl.*;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.SmartList;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +59,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
                                boolean rest) {
     new JSParameterStubImpl(
       name,
-      rest ?JSParameterStubImpl.REST_MASK:0,
+      rest,
       getTypeRef(type, parentName),
       getValueRepr(value),
       parents.getLast()
@@ -73,9 +74,10 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
     parents.add(
       new JSFunctionStubImpl(
         methodInfo.name.name,
-        methodInfo.isGetMethod() ? JSFunctionStubImpl.GET_PROPERTY_MASK:
-        methodInfo.isSetMethod() ? JSFunctionStubImpl.SET_PROPERTY_MASK:
-        methodInfo.parentTraits != null && methodInfo.parentTraits.name == methodInfo.name ? JSFunctionStubImpl.CONSTRUCTOR_MASK:0,
+        methodInfo.isGetMethod() ? JSFunction.FunctionKind.GETTER :
+        methodInfo.isSetMethod() ? JSFunction.FunctionKind.SETTER :
+        methodInfo.parentTraits != null && methodInfo.parentTraits.name == methodInfo.name ? JSFunction.FunctionKind.CONSTRUCTOR :
+        JSFunction.FunctionKind.SIMPLE,
         getMultinameAsPackageName(methodInfo.name,methodInfo.parentTraits != null ? methodInfo.parentTraits.getClassName():null),
         getTypeRef(methodInfo.returnType, methodInfo.getParentName()),
         parents.getLast()
@@ -92,7 +94,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
     String parentName = info.getParentName();
     String qName = getMultinameAsPackageName(info.name, parentName);
     new JSVariableStubImpl(qName.substring(qName.lastIndexOf('.') + 1),
-      info.isConst() ? JSVariableStubImpl.CONST_MASK:0,
+      info.isConst(),
       getTypeRef(info.type, parentName),
       getValueRepr(info.value),
       qName,
@@ -106,7 +108,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
     parents.add(
       new JSClassStubImpl(
         slotInfo.name.name,
-        slotInfo.isInterfaceClass() ? JSClassStubImpl.INTERFACE_MASK:0,
+        slotInfo.isInterfaceClass(),
         getMultinameAsPackageName(slotInfo.name, null),
         parents.getLast()
       )
