@@ -118,6 +118,17 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
         ),
         needFilterPrivateMembers
       ));
+    } else {
+      // check for enum
+      if (leftReference != null) {
+        final PsiElement resolvedElement = leftReference.resolve();
+        if (resolvedElement != null) {
+          final PsiElement parent = resolvedElement.getParent();
+          if (parent instanceof DartEnumDefinition) {
+            suggestedVariants.addAll(DartResolveUtil.getComponentNames(((DartEnumDefinition)parent).getConstants()));
+          }
+        }
+      }
     }
 
     final boolean typeInNew = reference.getParent() instanceof DartType && reference.getParent().getParent() instanceof DartNewExpression;

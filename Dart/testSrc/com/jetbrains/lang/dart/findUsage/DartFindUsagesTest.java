@@ -4,6 +4,11 @@ package com.jetbrains.lang.dart.findUsage;
  * @author: Fedor.Korotkov
  */
 public class DartFindUsagesTest extends DartFindUsagesTestBase {
+
+  public void testEnum() throws  Throwable {
+    doTest(1);
+  }
+
   public void testForLoop1() throws Throwable {
     doTest(3);
   }

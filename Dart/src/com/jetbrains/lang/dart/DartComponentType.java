@@ -10,6 +10,7 @@ import javax.swing.*;
 
 public enum DartComponentType {
   CLASS(AllIcons.Nodes.Class),
+  ENUM(AllIcons.Nodes.Enum),
   FUNCTION(AllIcons.Nodes.Function),
   METHOD(AllIcons.Nodes.Method),
   VARIABLE(AllIcons.Nodes.Variable),
@@ -50,6 +51,12 @@ public enum DartComponentType {
     }
     if (element instanceof DartClassDefinition) {
       return CLASS;
+    }
+    if (element instanceof  DartEnumDefinition) {
+      return ENUM;
+    }
+    if (element instanceof DartEnumConstantDeclaration) {
+      return FIELD;
     }
     if (element instanceof DartFunctionTypeAlias) {
       return TYPEDEF;

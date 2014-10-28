@@ -86,6 +86,13 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
         result.add(new DartStructureViewElement(subNamedComponent));
       }
     }
+    else if (myElement instanceof DartEnum) {
+      final DartEnum dartEnum = (DartEnum)myElement;
+      final List<DartEnumConstantDeclaration> enumConstants = dartEnum.getConstants();
+      for (DartEnumConstantDeclaration enumConstant : enumConstants) {
+        result.add(new DartStructureViewElement(enumConstant));
+      }
+    }
     return result.toArray(new TreeElement[result.size()]);
   }
 

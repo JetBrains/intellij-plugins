@@ -122,3 +122,5 @@
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">foo2</info>() <info textAttributesKey="DART_KEYWORD">async</info> => 1;
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">foo3</info>() <error descr="The modifier 'sync' is not allowed for an exrpression function body"><info textAttributesKey="DART_KEYWORD">sync</info></error><info textAttributesKey="DART_KEYWORD">*</info> => 1;
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">foo4</info>() <info textAttributesKey="DART_KEYWORD">async</info><error descr="The modifier 'async*' is not allowed for an expression function body"><info textAttributesKey="DART_KEYWORD">*</info></error> => 1;
+
+enum Foo { <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">BAR</info> }
