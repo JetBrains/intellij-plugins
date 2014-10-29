@@ -110,4 +110,9 @@ public class DartPsiImplUtil {
     final DartExpression[] expressions = PsiTreeUtil.getChildrenOfType(argument, DartExpression.class);
     return expressions != null && expressions.length > 1 ? expressions[expressions.length - 1] : null;
   }
+
+  @Nullable
+  public static DartBlock getBlock(DartFunctionBody functionBody) {
+    return PsiTreeUtil.getChildOfType(functionBody, DartBlock.class);
+  }
 }

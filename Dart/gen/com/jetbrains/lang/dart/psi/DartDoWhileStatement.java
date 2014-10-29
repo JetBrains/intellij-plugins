@@ -58,4 +58,10 @@ public interface DartDoWhileStatement extends DartPsiCompositeElement {
   @Nullable
   DartWhileStatement getWhileStatement();
 
+  @Nullable
+  DartYieldEachStatement getYieldEachStatement();
+
+  @Nullable
+  DartYieldStatement getYieldStatement();
+
 }

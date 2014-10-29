@@ -48,3 +48,39 @@ class Baz extends Kuk implements A, B, C {
     return new Whatever()(3, param);
   }();
 }
+
+fun0() async {
+  inner() {
+    await a;
+  }
+  await a;
+}
+fun1() async {async a;}
+fun2() async {yield a;}
+fun3() async {sync a;}
+fun4() sync* {await a; await for(a in a);}
+fun5() sync* {async a;}
+fun6() sync* {yield a;}
+fun7() sync* {sync a;}
+fun8(){
+  await a;
+  await for(a in a);
+  await for(;;);
+  var a = b * -await c[1];
+  b = await baz() * 6;
+}
+fun9(){async a;}
+fun10(){yield a;}
+fun11(){sync a;}
+fun12(){
+  yield a;
+  yield*a*b;
+  inner() async {
+    yield a;
+    yield*a*b;
+    inner2() {
+      yield a;
+      yield*a*b;
+    }
+  }
+}

@@ -124,4 +124,16 @@ public class DartStatementsImpl extends DartPsiCompositeElementImpl implements D
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartWhileStatement.class);
   }
 
+  @Override
+  @NotNull
+  public List<DartYieldEachStatement> getYieldEachStatementList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartYieldEachStatement.class);
+  }
+
+  @Override
+  @NotNull
+  public List<DartYieldStatement> getYieldStatementList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartYieldStatement.class);
+  }
+
 }

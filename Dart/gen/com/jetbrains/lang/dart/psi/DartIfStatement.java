@@ -58,4 +58,10 @@ public interface DartIfStatement extends DartPsiCompositeElement {
   @NotNull
   List<DartWhileStatement> getWhileStatementList();
 
+  @NotNull
+  List<DartYieldEachStatement> getYieldEachStatementList();
+
+  @NotNull
+  List<DartYieldStatement> getYieldStatementList();
+
 }

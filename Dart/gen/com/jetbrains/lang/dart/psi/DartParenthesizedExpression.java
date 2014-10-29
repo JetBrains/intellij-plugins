@@ -58,4 +58,10 @@ public interface DartParenthesizedExpression extends DartExpression, DartReferen
   @Nullable
   DartWhileStatement getWhileStatement();
 
+  @Nullable
+  DartYieldEachStatement getYieldEachStatement();
+
+  @Nullable
+  DartYieldStatement getYieldStatement();
+
 }

@@ -5,6 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartFunctionExpressionBody extends DartPsiCompositeElement {
+public interface DartYieldStatement extends DartPsiCompositeElement {
+
+  @Nullable
+  DartExpression getExpression();
 
 }

@@ -10,10 +10,4 @@ public interface DartFunctionBody extends DartPsiCompositeElement {
   @Nullable
   DartBlock getBlock();
 
-  @Nullable
-  DartExpression getExpression();
-
-  @Nullable
-  DartThrowStatement getThrowStatement();
-
 }

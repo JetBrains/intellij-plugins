@@ -17,6 +17,7 @@ public interface DartTokenTypes {
   IElementType ASSIGNMENT_OPERATOR = new DartElementType("ASSIGNMENT_OPERATOR");
   IElementType ASSIGN_EXPRESSION = new DartElementType("ASSIGN_EXPRESSION");
   IElementType AS_EXPRESSION = new DartElementType("AS_EXPRESSION");
+  IElementType AWAIT_EXPRESSION = new DartElementType("AWAIT_EXPRESSION");
   IElementType BITWISE_EXPRESSION = new DartElementType("BITWISE_EXPRESSION");
   IElementType BITWISE_OPERATOR = new DartElementType("BITWISE_OPERATOR");
   IElementType BLOCK = new DartElementType("BLOCK");
@@ -134,6 +135,8 @@ public interface DartTokenTypes {
   IElementType VAR_DECLARATION_LIST_PART = new DartElementType("VAR_DECLARATION_LIST_PART");
   IElementType VAR_INIT = new DartElementType("VAR_INIT");
   IElementType WHILE_STATEMENT = new DartElementType("WHILE_STATEMENT");
+  IElementType YIELD_EACH_STATEMENT = new DartElementType("YIELD_EACH_STATEMENT");
+  IElementType YIELD_STATEMENT = new DartElementType("YIELD_STATEMENT");
 
   IElementType ABSTRACT = new DartElementType("abstract");
   IElementType AND = new DartElementType("&");
@@ -280,6 +283,9 @@ public interface DartTokenTypes {
       }
       else if (type == AS_EXPRESSION) {
         return new DartAsExpressionImpl(node);
+      }
+      else if (type == AWAIT_EXPRESSION) {
+        return new DartAwaitExpressionImpl(node);
       }
       else if (type == BITWISE_EXPRESSION) {
         return new DartBitwiseExpressionImpl(node);
@@ -631,6 +637,12 @@ public interface DartTokenTypes {
       }
       else if (type == WHILE_STATEMENT) {
         return new DartWhileStatementImpl(node);
+      }
+      else if (type == YIELD_EACH_STATEMENT) {
+        return new DartYieldEachStatementImpl(node);
+      }
+      else if (type == YIELD_STATEMENT) {
+        return new DartYieldStatementImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }
