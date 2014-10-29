@@ -49,6 +49,10 @@ public class DartTypeHierarchyTest extends HierarchyViewTestBase {
     }, fileNames);
   }
 
+  public void testPartOfExtends() throws Exception {
+    doDartTypeHierarchyTest("B", true, "PartOfExtends.dart", "SomePart.dart");
+  }
+
   public void testSubtypeExtends() throws Exception {
     doDartTypeHierarchyTest("B", true, "SubtypeExtends.dart");
   }
