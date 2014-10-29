@@ -48,7 +48,9 @@ public class DartColorAnnotator implements Annotator {
     // sync* and async*
     if (DartTokenTypes.MUL == element.getNode().getElementType()) {
       final ASTNode previous = element.getNode().getTreePrev();
-      if (previous != null && (previous.getElementType() == DartTokenTypes.SYNC || previous.getElementType() == DartTokenTypes.ASYNC)) {
+      if (previous != null && (previous.getElementType() == DartTokenTypes.SYNC ||
+                               previous.getElementType() == DartTokenTypes.ASYNC ||
+                               previous.getElementType() == DartTokenTypes.YIELD)) {
         createInfoAnnotation(holder, element, DartSyntaxHighlighterColors.DART_KEYWORD);
       }
     }

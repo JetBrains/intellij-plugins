@@ -45,6 +45,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitAwaitExpression(@NotNull DartAwaitExpression o) {
+    visitExpression(o);
+  }
+
   public void visitBitwiseExpression(@NotNull DartBitwiseExpression o) {
     visitExpression(o);
     // visitReference(o);
@@ -532,6 +536,14 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitWhileStatement(@NotNull DartWhileStatement o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitYieldEachStatement(@NotNull DartYieldEachStatement o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitYieldStatement(@NotNull DartYieldStatement o) {
     visitPsiCompositeElement(o);
   }
 

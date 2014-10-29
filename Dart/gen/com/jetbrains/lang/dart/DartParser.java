@@ -47,6 +47,9 @@ public class DartParser implements PsiParser {
     else if (root_ == ASSIGNMENT_OPERATOR) {
       result_ = assignmentOperator(builder_, 0);
     }
+    else if (root_ == AWAIT_EXPRESSION) {
+      result_ = awaitExpression(builder_, 0);
+    }
     else if (root_ == BITWISE_EXPRESSION) {
       result_ = bitwiseExpression(builder_, 0);
     }
@@ -398,6 +401,12 @@ public class DartParser implements PsiParser {
     else if (root_ == WHILE_STATEMENT) {
       result_ = whileStatement(builder_, 0);
     }
+    else if (root_ == YIELD_EACH_STATEMENT) {
+      result_ = yieldEachStatement(builder_, 0);
+    }
+    else if (root_ == YIELD_STATEMENT) {
+      result_ = yieldStatement(builder_, 0);
+    }
     else {
       result_ = parse_root_(root_, builder_, 0);
     }
@@ -411,13 +420,14 @@ public class DartParser implements PsiParser {
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(ADDITIVE_EXPRESSION, ARRAY_ACCESS_EXPRESSION, ASSIGN_EXPRESSION, AS_EXPRESSION,
-      BITWISE_EXPRESSION, CALL_EXPRESSION, CASCADE_REFERENCE_EXPRESSION, COMPARE_EXPRESSION,
-      CONST_CONSTRUCTOR_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION, IS_EXPRESSION,
-      LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION, LOGIC_AND_EXPRESSION,
-      LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION, NEW_EXPRESSION,
-      PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION, REFERENCE_EXPRESSION,
-      SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION, SUPER_EXPRESSION,
-      SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION, VALUE_EXPRESSION),
+      AWAIT_EXPRESSION, BITWISE_EXPRESSION, CALL_EXPRESSION, CASCADE_REFERENCE_EXPRESSION,
+      COMPARE_EXPRESSION, CONST_CONSTRUCTOR_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION,
+      IS_EXPRESSION, LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION,
+      LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION,
+      NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION,
+      REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION,
+      SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION,
+      VALUE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -698,14 +708,13 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // arrowBody ';'
+  // <<arrowBodyWrapper>> ';'
   static boolean arrowBodyWithSemi(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "arrowBodyWithSemi")) return false;
-    if (!nextTokenIs(builder_, "", EXPRESSION_BODY_DEF, ASYNC, SYNC)) return false;
     boolean result_;
     boolean pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
-    result_ = arrowBody(builder_, level_ + 1);
+    result_ = arrowBodyWrapper(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
     result_ = result_ && consumeToken(builder_, SEMICOLON);
     exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
@@ -806,6 +815,19 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, XOR_EQ);
     if (!result_) result_ = consumeToken(builder_, OR_EQ);
     exit_section_(builder_, level_, marker_, ASSIGNMENT_OPERATOR, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // 'await' prefixExpression
+  public static boolean awaitExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "awaitExpression")) return false;
+    if (!nextTokenIs(builder_, AWAIT)) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, AWAIT);
+    result_ = result_ && prefixExpression(builder_, level_ + 1);
+    exit_section_(builder_, marker_, AWAIT_EXPRESSION, result_);
     return result_;
   }
 
@@ -1678,10 +1700,10 @@ public class DartParser implements PsiParser {
   // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
   //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
-  //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' |
+  //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
   //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
   //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
-  //                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' |
+  //                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' |
   //                                  'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
   //                                   FALSE | HASH | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
   //                                   OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART |
@@ -1698,10 +1720,10 @@ public class DartParser implements PsiParser {
   // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
   //                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
-  //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' |
+  //                                  ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
   //                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
   //                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
-  //                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' |
+  //                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' |
   //                                  'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
   //                                   FALSE | HASH | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
   //                                   OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART |
@@ -1754,6 +1776,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, ABSTRACT);
     if (!result_) result_ = consumeToken(builder_, AS);
     if (!result_) result_ = consumeToken(builder_, ASSERT);
+    if (!result_) result_ = consumeToken(builder_, ASYNC);
     if (!result_) result_ = consumeToken(builder_, BREAK);
     if (!result_) result_ = consumeToken(builder_, CASE);
     if (!result_) result_ = consumeToken(builder_, CATCH);
@@ -1788,6 +1811,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, STATIC);
     if (!result_) result_ = consumeToken(builder_, SUPER);
     if (!result_) result_ = consumeToken(builder_, SWITCH);
+    if (!result_) result_ = consumeToken(builder_, SYNC);
     if (!result_) result_ = consumeToken(builder_, THIS);
     if (!result_) result_ = consumeToken(builder_, THROW);
     if (!result_) result_ = consumeToken(builder_, TRY);
@@ -1905,8 +1929,6 @@ public class DartParser implements PsiParser {
   // varFactoryDeclaration ';' | functionBodyOrNative | ';'
   static boolean factoryTail(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factoryTail")) return false;
-    if (!nextTokenIs(builder_, "", SEMICOLON, EQ,
-      EXPRESSION_BODY_DEF, ASYNC, NATIVE, SYNC, LBRACE)) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = factoryTail_0(builder_, level_ + 1);
@@ -2289,19 +2311,27 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // 'for' forLoopPartsInBraces statement
+  // 'await'? 'for' forLoopPartsInBraces statement
   public static boolean forStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "forStatement")) return false;
-    if (!nextTokenIs(builder_, FOR)) return false;
+    if (!nextTokenIs(builder_, "<for statement>", AWAIT, FOR)) return false;
     boolean result_;
     boolean pinned_;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
-    result_ = consumeToken(builder_, FOR);
-    pinned_ = result_; // pin = 1
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<for statement>");
+    result_ = forStatement_0(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, FOR);
+    pinned_ = result_; // pin = 2
     result_ = result_ && report_error_(builder_, forLoopPartsInBraces(builder_, level_ + 1));
     result_ = pinned_ && statement(builder_, level_ + 1) && result_;
     exit_section_(builder_, level_, marker_, FOR_STATEMENT, result_, pinned_, null);
     return result_ || pinned_;
+  }
+
+  // 'await'?
+  private static boolean forStatement_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "forStatement_0")) return false;
+    consumeToken(builder_, AWAIT);
+    return true;
   }
 
   /* ********************************************************** */
@@ -2404,14 +2434,13 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // arrowBodyWithSemi | blockBody
+  // arrowBodyWithSemi | <<blockBodyWrapper>>
   public static boolean functionBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionBody")) return false;
-    if (!nextTokenIs(builder_, "<function body>", EXPRESSION_BODY_DEF, ASYNC, SYNC, LBRACE)) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function body>");
     result_ = arrowBodyWithSemi(builder_, level_ + 1);
-    if (!result_) result_ = blockBody(builder_, level_ + 1);
+    if (!result_) result_ = blockBodyWrapper(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, FUNCTION_BODY, result_, false, null);
     return result_;
   }
@@ -2422,8 +2451,6 @@ public class DartParser implements PsiParser {
   //                                | functionBody
   static boolean functionBodyOrNative(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionBodyOrNative")) return false;
-    if (!nextTokenIs(builder_, "", EXPRESSION_BODY_DEF, ASYNC,
-      NATIVE, SYNC, LBRACE)) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = functionBodyOrNative_0(builder_, level_ + 1);
@@ -2630,14 +2657,13 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // arrowBody | blockBody
+  // <<arrowBodyWrapper>> | <<blockBodyWrapper>>
   public static boolean functionExpressionBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionExpressionBody")) return false;
-    if (!nextTokenIs(builder_, "<function expression body>", EXPRESSION_BODY_DEF, ASYNC, SYNC, LBRACE)) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<function expression body>");
-    result_ = arrowBody(builder_, level_ + 1);
-    if (!result_) result_ = blockBody(builder_, level_ + 1);
+    result_ = arrowBodyWrapper(builder_, level_ + 1);
+    if (!result_) result_ = blockBodyWrapper(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, FUNCTION_EXPRESSION_BODY, result_, false, null);
     return result_;
   }
@@ -4056,6 +4082,8 @@ public class DartParser implements PsiParser {
   //                                | throwStatementWithSemicolon
   //                                | assertStatement
   //                                | statementFollowedBySemiColon
+  //                                | yieldEachStatement
+  //                                | yieldStatement
   //                                | ';'
   static boolean nonLabelledStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "nonLabelledStatement")) return false;
@@ -4076,6 +4104,8 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = throwStatementWithSemicolon(builder_, level_ + 1);
     if (!result_) result_ = assertStatement(builder_, level_ + 1);
     if (!result_) result_ = statementFollowedBySemiColon(builder_, level_ + 1);
+    if (!result_) result_ = yieldEachStatement(builder_, level_ + 1);
+    if (!result_) result_ = yieldStatement(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, SEMICOLON);
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -4479,12 +4509,13 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (prefixOperator prefixExpression) | suffixExpressionWrapper
+  // (prefixOperator prefixExpression) | awaitExpression | suffixExpressionWrapper
   public static boolean prefixExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "prefixExpression")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<prefix expression>");
     result_ = prefixExpression_0(builder_, level_ + 1);
+    if (!result_) result_ = awaitExpression(builder_, level_ + 1);
     if (!result_) result_ = suffixExpressionWrapper(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, PREFIX_EXPRESSION, result_, false, null);
     return result_;
@@ -5157,10 +5188,10 @@ public class DartParser implements PsiParser {
   // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | <<varInitWrapper>> | '!' | '!=' | '%' | '%=' | '&&' |
   //                                 '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
   //                                  ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
-  //                                  '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
+  //                                  '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
   //                                  'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
   //                                  'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
-  //                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
+  //                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
   //                                  'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
   //                                  HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE |
   //                                  RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START |
@@ -5177,10 +5208,10 @@ public class DartParser implements PsiParser {
   // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | <<varInitWrapper>> | '!' | '!=' | '%' | '%=' | '&&' |
   //                                 '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
   //                                  ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
-  //                                  '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
+  //                                  '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
   //                                  'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
   //                                  'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
-  //                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
+  //                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
   //                                  'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
   //                                  HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE |
   //                                  RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START |
@@ -5234,6 +5265,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, ABSTRACT);
     if (!result_) result_ = consumeToken(builder_, AS);
     if (!result_) result_ = consumeToken(builder_, ASSERT);
+    if (!result_) result_ = consumeToken(builder_, ASYNC);
     if (!result_) result_ = consumeToken(builder_, BREAK);
     if (!result_) result_ = consumeToken(builder_, CASE);
     if (!result_) result_ = consumeToken(builder_, CATCH);
@@ -5268,6 +5300,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, STATIC);
     if (!result_) result_ = consumeToken(builder_, SUPER);
     if (!result_) result_ = consumeToken(builder_, SWITCH);
+    if (!result_) result_ = consumeToken(builder_, SYNC);
     if (!result_) result_ = consumeToken(builder_, THIS);
     if (!result_) result_ = consumeToken(builder_, THROW);
     if (!result_) result_ = consumeToken(builder_, TRY);
@@ -5490,9 +5523,9 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !(<<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'class' | 'const' |
+  // !(<<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'async' | 'class' | 'const' |
   //                                                       'export' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'library' |
-  //                                                       'native' | 'operator' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '{' |
+  //                                                       'native' | 'operator' | 'part' | 'set' | 'static' | 'sync' | 'typedef' | 'var' | 'void' | '{' |
   //                                                       '}' )
   static boolean super_call_or_field_initializer_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "super_call_or_field_initializer_recover")) return false;
@@ -5503,9 +5536,9 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // <<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'class' | 'const' |
+  // <<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'async' | 'class' | 'const' |
   //                                                       'export' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'library' |
-  //                                                       'native' | 'operator' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '{' |
+  //                                                       'native' | 'operator' | 'part' | 'set' | 'static' | 'sync' | 'typedef' | 'var' | 'void' | '{' |
   //                                                       '}'
   private static boolean super_call_or_field_initializer_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "super_call_or_field_initializer_recover_0")) return false;
@@ -5518,6 +5551,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, EXPRESSION_BODY_DEF);
     if (!result_) result_ = consumeToken(builder_, AT);
     if (!result_) result_ = consumeToken(builder_, ABSTRACT);
+    if (!result_) result_ = consumeToken(builder_, ASYNC);
     if (!result_) result_ = consumeToken(builder_, CLASS);
     if (!result_) result_ = consumeToken(builder_, CONST);
     if (!result_) result_ = consumeToken(builder_, EXPORT);
@@ -5532,6 +5566,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, PART);
     if (!result_) result_ = consumeToken(builder_, SET);
     if (!result_) result_ = consumeToken(builder_, STATIC);
+    if (!result_) result_ = consumeToken(builder_, SYNC);
     if (!result_) result_ = consumeToken(builder_, TYPEDEF);
     if (!result_) result_ = consumeToken(builder_, VAR);
     if (!result_) result_ = consumeToken(builder_, VOID);
@@ -6422,6 +6457,39 @@ public class DartParser implements PsiParser {
     result_ = pinned_ && report_error_(builder_, consumeToken(builder_, RPAREN)) && result_;
     result_ = pinned_ && statement(builder_, level_ + 1) && result_;
     exit_section_(builder_, level_, marker_, WHILE_STATEMENT, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // 'yield' '*' expression ';'
+  public static boolean yieldEachStatement(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "yieldEachStatement")) return false;
+    if (!nextTokenIs(builder_, YIELD)) return false;
+    boolean result_;
+    boolean pinned_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, YIELD);
+    result_ = result_ && consumeToken(builder_, MUL);
+    pinned_ = result_; // pin = 2
+    result_ = result_ && report_error_(builder_, expression(builder_, level_ + 1));
+    result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
+    exit_section_(builder_, level_, marker_, YIELD_EACH_STATEMENT, result_, pinned_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // 'yield' expression ';'
+  public static boolean yieldStatement(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "yieldStatement")) return false;
+    if (!nextTokenIs(builder_, YIELD)) return false;
+    boolean result_;
+    boolean pinned_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, YIELD);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, expression(builder_, level_ + 1));
+    result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
+    exit_section_(builder_, level_, marker_, YIELD_STATEMENT, result_, pinned_, null);
     return result_ || pinned_;
   }
 

@@ -286,9 +286,9 @@ fieldInitializer ::= ('this' '.')? referenceExpression '=' expression {pin=2}
 superCallOrFieldInitializer ::= ('super' | 'this') ('.' referenceExpression)? arguments
                               | fieldInitializer
                               {recoverWhile="super_call_or_field_initializer_recover"}
-private super_call_or_field_initializer_recover ::= !(<<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'class' | 'const' |
+private super_call_or_field_initializer_recover ::= !(<<nonStrictID>> | ',' | ':' | ';' | '=>' | '@' | 'abstract' | 'async' | 'class' | 'const' |
                                                       'export' | 'external' | 'factory' | 'final' | 'get' | 'import' | 'library' |
-                                                      'native' | 'operator' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void' | '{' |
+                                                      'native' | 'operator' | 'part' | 'set' | 'static' | 'sync' | 'typedef' | 'var' | 'void' | '{' |
                                                       '}' )
 
 functionTypeAlias ::= metadata* 'typedef' functionPrefix typeParameters? formalParameterList ';'
@@ -377,10 +377,10 @@ private statement ::= label* nonLabelledStatement {pin=2 recoverWhile="statement
 private statement_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | <<varInitWrapper>> | '!' | '!=' | '%' | '%=' | '&&' |
                                 '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
                                  ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
-                                 '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
+                                 '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
                                  'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
                                  'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
-                                 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
+                                 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
                                  'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
                                  HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE |
                                  RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START |
@@ -401,6 +401,8 @@ private nonLabelledStatement ::= block // Guard to break tie with map literal.  
                                | throwStatementWithSemicolon
                                | assertStatement
                                | statementFollowedBySemiColon
+                               | yieldEachStatement
+                               | yieldStatement
                                | ';'
 private statementFollowedBySemiColon ::= (varDeclarationList | expression) ';' {pin=1}
 
@@ -416,9 +418,11 @@ private not_paren_recover ::= !')'
 
 whileStatement ::= 'while' '(' expressionWithRecoverUntilParen ')' statement {pin=1}
 doWhileStatement ::= 'do' statement 'while' '(' expressionWithRecoverUntilParen ')' ';' {pin=1}
-forStatement ::= 'for' forLoopPartsInBraces statement {pin=1}
+forStatement ::= 'await'? 'for' forLoopPartsInBraces statement {pin=2}
 //todo component
 assertStatement ::= 'assert' '(' expressionWithRecoverUntilParen ')' ';' {pin=1}
+yieldEachStatement ::= 'yield' '*' expression ';' {pin=2}
+yieldStatement ::= 'yield' expression ';' {pin=1}
 breakStatement ::= 'break' referenceExpression? ';' {pin=1}
 continueStatement ::= 'continue' referenceExpression? ';' {pin=1}
 returnStatement ::= 'return' expression? ';' {pin=1}
@@ -472,10 +476,10 @@ expression ::= assignExpressionWrapper {recoverWhile="expression_recover"}
 private expression_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
                                  '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' |
                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' |
-                                 ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'break' | 'case' | 'catch' | 'class' | 'const' |
+                                 ']' | '^' | '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
-                                 'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'try' |
+                                 'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' |
                                  'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
                                   FALSE | HASH | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
                                   OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART |
@@ -515,9 +519,11 @@ private multiplicativeExpressionWrapper ::= prefixExpression multiplicativeExpre
 left multiplicativeExpression ::= multiplicativeOperator prefixExpression
 {mixin="com.jetbrains.lang.dart.psi.impl.DartOperatorExpressionImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-prefixExpression ::= (prefixOperator prefixExpression) | suffixExpressionWrapper
+prefixExpression ::= (prefixOperator prefixExpression) | awaitExpression | suffixExpressionWrapper
 {mixin="com.jetbrains.lang.dart.psi.impl.DartOperatorExpressionImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 prefixOperator ::= '-' | '+' | '--' | '++' | '!' | '~' | '?'
+
+awaitExpression ::= 'await' prefixExpression
 
 private suffixExpressionWrapper ::= valueExpression suffixExpression*
 left suffixExpression ::= ('--' | '++')
@@ -601,10 +607,14 @@ functionDeclarationWithBodyOrNative ::= metadata* 'external'? (returnType compon
 functionDeclarationWithBody ::= metadata*  (returnType componentName formalParameterList | componentName formalParameterList) functionBody // todo merge with functionDeclarationWithBodyOrNative
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
-functionBody ::= arrowBodyWithSemi | blockBody
-private arrowBodyWithSemi ::= arrowBody ';' {pin=1}
+functionBody ::= arrowBodyWithSemi | <<blockBodyWrapper>> {methods=[getBlock]}
+private arrowBodyWithSemi ::= <<arrowBodyWrapper>> ';' {pin=1}
+functionExpressionBody ::= <<arrowBodyWrapper>> | <<blockBodyWrapper>>
 
-functionExpressionBody ::= arrowBody | blockBody
+//functionBody ::= arrowBodyWithSemi | blockBody {methods=[getBlock]}
+//private arrowBodyWithSemi ::= arrowBody ';' {pin=1}
+//functionExpressionBody ::= arrowBody | blockBody
+
 private arrowBody ::= ('async' '*'? | 'sync' '*'?)? '=>' (expression | throwStatement) {pin=2}
 private blockBody ::= ('async' '*'? | 'sync' '*'?)? block
 

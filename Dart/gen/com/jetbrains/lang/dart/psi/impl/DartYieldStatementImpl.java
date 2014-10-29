@@ -11,20 +11,21 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartFunctionBodyImpl extends DartPsiCompositeElementImpl implements DartFunctionBody {
+public class DartYieldStatementImpl extends DartPsiCompositeElementImpl implements DartYieldStatement {
 
-  public DartFunctionBodyImpl(ASTNode node) {
+  public DartYieldStatementImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFunctionBody(this);
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitYieldStatement(this);
     else super.accept(visitor);
   }
 
+  @Override
   @Nullable
-  public DartBlock getBlock() {
-    return DartPsiImplUtil.getBlock(this);
+  public DartExpression getExpression() {
+    return findChildByClass(DartExpression.class);
   }
 
 }

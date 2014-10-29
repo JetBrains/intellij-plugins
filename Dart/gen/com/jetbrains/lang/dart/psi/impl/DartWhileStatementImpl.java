@@ -124,4 +124,16 @@ public class DartWhileStatementImpl extends DartPsiCompositeElementImpl implemen
     return findChildByClass(DartWhileStatement.class);
   }
 
+  @Override
+  @Nullable
+  public DartYieldEachStatement getYieldEachStatement() {
+    return findChildByClass(DartYieldEachStatement.class);
+  }
+
+  @Override
+  @Nullable
+  public DartYieldStatement getYieldStatement() {
+    return findChildByClass(DartYieldStatement.class);
+  }
+
 }

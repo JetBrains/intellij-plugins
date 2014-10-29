@@ -58,4 +58,10 @@ public interface DartStatements extends DartExecutionScope {
   @NotNull
   List<DartWhileStatement> getWhileStatementList();
 
+  @NotNull
+  List<DartYieldEachStatement> getYieldEachStatementList();
+
+  @NotNull
+  List<DartYieldStatement> getYieldStatementList();
+
 }

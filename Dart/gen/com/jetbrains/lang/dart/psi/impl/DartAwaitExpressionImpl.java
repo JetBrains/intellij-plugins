@@ -11,20 +11,21 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartFunctionBodyImpl extends DartPsiCompositeElementImpl implements DartFunctionBody {
+public class DartAwaitExpressionImpl extends DartExpressionImpl implements DartAwaitExpression {
 
-  public DartFunctionBodyImpl(ASTNode node) {
+  public DartAwaitExpressionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFunctionBody(this);
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitAwaitExpression(this);
     else super.accept(visitor);
   }
 
-  @Nullable
-  public DartBlock getBlock() {
-    return DartPsiImplUtil.getBlock(this);
+  @Override
+  @NotNull
+  public DartPrefixExpression getPrefixExpression() {
+    return findNotNullChildByClass(DartPrefixExpression.class);
   }
 
 }

@@ -731,7 +731,7 @@ Dart File
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     COMPONENT_NAME
       ID
-        PsiElement(IDENTIFIER)('foo')
+        PsiElement(IDENTIFIER)('foo1')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       PsiElement())(')')
@@ -746,7 +746,7 @@ Dart File
       PsiElement(void)('void')
     COMPONENT_NAME
       ID
-        PsiElement(IDENTIFIER)('foo')
+        PsiElement(IDENTIFIER)('foo2')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       PsiElement())(')')
@@ -768,7 +768,7 @@ Dart File
             PsiElement(IDENTIFIER)('int')
     COMPONENT_NAME
       ID
-        PsiElement(IDENTIFIER)('foo')
+        PsiElement(IDENTIFIER)('foo3')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       PsiElement())(')')
@@ -809,7 +809,7 @@ Dart File
           PsiElement(>)('>')
     COMPONENT_NAME
       ID
-        PsiElement(IDENTIFIER)('foo')
+        PsiElement(IDENTIFIER)('foo4')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       PsiElement())(')')
@@ -828,7 +828,7 @@ Dart File
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     COMPONENT_NAME
       ID
-        PsiElement(IDENTIFIER)('foo')
+        PsiElement(IDENTIFIER)('foo5')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       PsiElement())(')')
@@ -867,7 +867,7 @@ Dart File
       PsiElement(void)('void')
     COMPONENT_NAME
       ID
-        PsiElement(IDENTIFIER)('foo')
+        PsiElement(IDENTIFIER)('foo6')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       PsiElement())(')')
@@ -912,7 +912,7 @@ Dart File
             PsiElement(IDENTIFIER)('int')
     COMPONENT_NAME
       ID
-        PsiElement(IDENTIFIER)('foo')
+        PsiElement(IDENTIFIER)('foo7')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       PsiElement())(')')
@@ -970,7 +970,7 @@ Dart File
           PsiElement(>)('>')
     COMPONENT_NAME
       ID
-        PsiElement(IDENTIFIER)('foo')
+        PsiElement(IDENTIFIER)('foo8')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
       PsiElement())(')')
@@ -1004,6 +1004,5 @@ Dart File
             MAP_LITERAL_EXPRESSION
               PsiElement({)('{')
               PsiElement(})('}')
-          PsiErrorElement:';' expected, got '}'
-            <empty list>
+          PsiElement(;)(';')
         PsiElement(})('}')

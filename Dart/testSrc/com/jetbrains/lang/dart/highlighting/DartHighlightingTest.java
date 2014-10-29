@@ -88,4 +88,10 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.configureByFile(getTestName(false) + "/web/" + getTestName(false) + ".html");
     myFixture.checkHighlighting(true, false, true);
   }
+
+  public void testSyncAsyncAwaitYield() {
+    myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.checkHighlighting(true, true, true);
+  }
+
 }
