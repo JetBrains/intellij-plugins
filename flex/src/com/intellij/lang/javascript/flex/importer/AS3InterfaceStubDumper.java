@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.importer;
 
+import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptVariableStubImpl;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -93,7 +94,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
     super.processVariable(info, indent, attr);
     String parentName = info.getParentName();
     String qName = getMultinameAsPackageName(info.name, parentName);
-    new JSVariableStubImpl(qName.substring(qName.lastIndexOf('.') + 1),
+    new ActionScriptVariableStubImpl(qName.substring(qName.lastIndexOf('.') + 1),
       info.isConst(),
       getTypeRef(info.type, parentName),
       getValueRepr(info.value),
