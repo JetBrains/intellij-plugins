@@ -13,29 +13,45 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
     myFixture.testFoldingWithCollapseStatus(getTestDataPath() + "/folding/" + getTestName(false) + ".dart");
   }
 
-  private void doTestWithSpecificSettings(@NotNull final Consumer<CodeFoldingSettings> settingsConsumer) {
-    doTestWithSpecificSettings(settingsConsumer, null);
+  private void doTestWithSpecificSettings(@NotNull final Consumer<CodeFoldingSettings> commonSettingsConsumer) {
+    doTestWithSpecificSettings(commonSettingsConsumer, null);
   }
 
-  private void doTestWithSpecificSettings(@NotNull final Consumer<CodeFoldingSettings> settingsConsumer, @Nullable final Consumer<DartCodeFoldingSettings> dartCodeFoldingSettingsConsumer) {
-    final CodeFoldingSettings settings = CodeFoldingSettings.getInstance();
-    final CodeFoldingSettings originalSettings = XmlSerializerUtil.createCopy(settings);
+  private void doTestWithSpecificSettings(@Nullable final Consumer<CodeFoldingSettings> commonSettingsConsumer,
+                                          @Nullable final Consumer<DartCodeFoldingSettings> dartCodeFoldingSettingsConsumer) {
+    CodeFoldingSettings commonSettings = null;
+    CodeFoldingSettings commonOriginalSettings = null;
+
     DartCodeFoldingSettings dartSettings = null;
     DartCodeFoldingSettings dartOriginalSettings = null;
-    if(dartCodeFoldingSettingsConsumer != null) {
+
+    if (commonSettingsConsumer != null) {
+      commonSettings = CodeFoldingSettings.getInstance();
+      commonOriginalSettings = XmlSerializerUtil.createCopy(commonSettings);
+    }
+
+    if (dartCodeFoldingSettingsConsumer != null) {
       dartSettings = DartCodeFoldingSettings.getInstance();
       dartOriginalSettings = XmlSerializerUtil.createCopy(dartSettings);
     }
+
     try {
-      settingsConsumer.consume(settings);
-      if(dartCodeFoldingSettingsConsumer != null) {
+      if (commonSettingsConsumer != null) {
+        commonSettingsConsumer.consume(commonSettings);
+      }
+
+      if (dartCodeFoldingSettingsConsumer != null) {
         dartCodeFoldingSettingsConsumer.consume(dartSettings);
       }
+
       doTest();
     }
     finally {
-      XmlSerializerUtil.copyBean(originalSettings, settings);
-      if(dartCodeFoldingSettingsConsumer != null) {
+      if (commonSettingsConsumer != null) {
+        XmlSerializerUtil.copyBean(commonOriginalSettings, commonSettings);
+      }
+
+      if (dartCodeFoldingSettingsConsumer != null) {
         XmlSerializerUtil.copyBean(dartOriginalSettings, dartSettings);
       }
     }
@@ -110,12 +126,9 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testTypeArgumentsByDefault() throws Exception {
-    doTestWithSpecificSettings(new Consumer<CodeFoldingSettings>() {
-      @Override
-      public void consume(final CodeFoldingSettings settings) {}
-    }, new Consumer<DartCodeFoldingSettings>() {
+    doTestWithSpecificSettings(null, new Consumer<DartCodeFoldingSettings>() {
       public void consume(final DartCodeFoldingSettings settings) {
-        settings.COLLAPSE_GENERIC_PARAMETERS = true;
+        settings.setCollapseGenericParameters(true);
       }
     });
   }

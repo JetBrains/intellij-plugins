@@ -43,10 +43,6 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     foldTypeArguments(descriptors, psiElements);                                             // 6. Type arguments
   }
 
-  public DartFoldingBuilder() {
-    super();
-  }
-
   protected String getLanguagePlaceholderText(@NotNull final ASTNode node, @NotNull final TextRange range) {
     final IElementType elementType = node.getElementType();
     final PsiElement psiElement = node.getPsi();
@@ -236,7 +232,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     for (PsiElement psiElement : psiElements) {
       if (psiElement instanceof DartTypeArguments) {
         DartTypeArguments dartTypeArguments = (DartTypeArguments)psiElement;
-        if (PsiTreeUtil.getParentOfType(dartTypeArguments, DartNewExpression.class) != null) {
+        if (PsiTreeUtil.getParentOfType(dartTypeArguments, DartNewExpression.class, DartTypeArguments.class) instanceof DartNewExpression) {
           descriptors.add(new FoldingDescriptor(dartTypeArguments, TextRange
             .create(dartTypeArguments.getTextOffset(), dartTypeArguments.getTextRange().getEndOffset())));
         }

@@ -10,16 +10,13 @@ import java.io.File;
 
 @State(
   name = "DartCodeFoldingSettings",
-  storages= {
+  storages = {
     @Storage(
       file = StoragePathMacros.APP_CONFIG + "/editor.codeinsight.xml"
     )}
 )
-public class DartCodeFoldingSettings
-  implements PersistentStateComponent<DartCodeFoldingSettings>, ExportableComponent {
-
-
-  @SuppressWarnings({"WeakerAccess"}) public boolean DART_COLLAPSE_GENERIC_PARAMETERS = true;
+public class DartCodeFoldingSettings implements PersistentStateComponent<DartCodeFoldingSettings>, ExportableComponent {
+  private boolean myCollapseGenericParams = false;
 
   public static DartCodeFoldingSettings getInstance() {
     return ServiceManager.getService(DartCodeFoldingSettings.class);
@@ -47,11 +44,12 @@ public class DartCodeFoldingSettings
     XmlSerializerUtil.copyBean(state, this);
   }
 
+  // property name must be equal to checkBox() argument in DartCodeFoldingOptionsProvider
   public boolean isCollapseGenericParameters() {
-    return DART_COLLAPSE_GENERIC_PARAMETERS;
+    return myCollapseGenericParams;
   }
 
-  public void setCollapseGenericParameters(final boolean value) {
-    DART_COLLAPSE_GENERIC_PARAMETERS = value;
+  public void setCollapseGenericParameters(final boolean collapseGenericParams) {
+    myCollapseGenericParams = collapseGenericParams;
   }
 }
