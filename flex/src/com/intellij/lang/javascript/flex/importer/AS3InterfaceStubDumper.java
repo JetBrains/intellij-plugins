@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.importer;
 
+import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptFunctionStubImpl;
 import com.intellij.lang.actionscript.psi.stubs.impl.ActionScriptVariableStubImpl;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -73,7 +74,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   @Override
   public void processFunction(MethodInfo methodInfo, boolean referenceNameRequested, Abc abc, String indent, String attr) {
     parents.add(
-      new JSFunctionStubImpl(
+      new ActionScriptFunctionStubImpl(
         methodInfo.name.name,
         methodInfo.isGetMethod() ? JSFunction.FunctionKind.GETTER :
         methodInfo.isSetMethod() ? JSFunction.FunctionKind.SETTER :
