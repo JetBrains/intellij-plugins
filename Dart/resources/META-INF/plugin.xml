@@ -223,7 +223,7 @@
     </group>
     <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction" text="Pub: Repair Cache..." description="Run 'pub cache repair'"/>
 
-    <action id="DartTypeHierarchy.BaseOnThisType" class="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyBrowser$BaseOnThisTypeAction"/>
+    <action id="DartTypeHierarchy.BaseOnThisType" text="Base on This Type" class="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyBrowser$BaseOnThisTypeAction"/>
     <group id="DartClassHierarchyPopupMenu">
       <reference ref="DartTypeHierarchy.BaseOnThisType"/>
       <reference ref="TypeHierarchy.Class"/>

@@ -84,9 +84,9 @@
 
   <actions>
     <group id="JstdGenerateCodeInsideGroup">
-      <action id="JstdCreateTestAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateNewTestAction"/>
-      <action id="JstdCreateSetupAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateSetupAction"/>
-      <action id="JstdCreateTearDownAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateTearDownAction"/>
+      <action id="JstdCreateTestAction" text="JsTestDriver Test" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateNewTestAction"/>
+      <action id="JstdCreateSetupAction" text="JsTestDriver Setup" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateSetupAction"/>
+      <action id="JstdCreateTearDownAction" text="JsTestDriver TearDown" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateTearDownAction"/>
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
   </actions>
