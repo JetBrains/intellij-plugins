@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.documentation;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
@@ -9,6 +10,7 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +23,8 @@ import java.util.Set;
 public class DartDocumentationProvider implements DocumentationProvider {
   private static final String BASE_DART_DOC_URL = "http://api.dartlang.org/docs/releases/latest/";
   private static final String STD_LIB_PREFIX = "dart.";
+  private static final String DOM_LIB_PREFIX = "dart.dom.";
+
 
   // Scraped 08/16/2014
   private static final Set<String> APIDOC_HOSTED_PACKAGES = new THashSet<String>(Arrays.asList(
@@ -58,16 +62,8 @@ public class DartDocumentationProvider implements DocumentationProvider {
     // method:    http://api.dartlang.org/docs/releases/latest/args/ArgParser.html#addCommand
     // function:  http://api.dartlang.org/docs/releases/latest/observe.html#toObservable
 
-    final StringBuilder resultUrl = new StringBuilder(BASE_DART_DOC_URL);
-    if (libName.startsWith(STD_LIB_PREFIX)) {
-      resultUrl.append("dart_").append(libName.substring(STD_LIB_PREFIX.length()));
-    }
-    else if (APIDOC_HOSTED_PACKAGES.contains(libName)) {
-      resultUrl.append(libName);
-    }
-    else {
-      return null;
-    }
+    final StringBuilder resultUrl = constructDocUrlPrefix(libName);
+    if (resultUrl == null) return null;
 
     final DartClass dartClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class, true);
     final DartComponentType componentType = DartComponentType.typeOf(namedComponent);
@@ -86,6 +82,24 @@ public class DartDocumentationProvider implements DocumentationProvider {
     }
 
     return resultUrl.toString();
+  }
+
+  @VisibleForTesting
+  public static StringBuilder constructDocUrlPrefix(String libName) {
+    final StringBuilder resultUrl = new StringBuilder(BASE_DART_DOC_URL);
+    if (libName.startsWith(STD_LIB_PREFIX)) {
+      final String toReplace = libName.startsWith(DOM_LIB_PREFIX) ? DOM_LIB_PREFIX : STD_LIB_PREFIX;
+      resultUrl.append("dart_").append(libName.substring(toReplace.length()));
+    } else {
+      libName = StringUtils.substringBefore(libName, ".");
+      if (APIDOC_HOSTED_PACKAGES.contains(libName)) {
+        resultUrl.append(libName);
+      }
+      else {
+        return null;
+      }
+    }
+    return resultUrl;
   }
 
   @Override
