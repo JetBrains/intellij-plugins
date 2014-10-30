@@ -662,8 +662,8 @@ public class DartResolveUtil {
   }
 
   @NotNull
-  public static List<DartComponent> getNamedSubComponentsInOrder(DartClass haxeClass) {
-    final List<DartComponent> result = getNamedSubComponents(haxeClass);
+  public static List<DartComponent> getNamedSubComponentsInOrder(DartClass dartClass) {
+    final List<DartComponent> result = getNamedSubComponents(dartClass);
     Collections.sort(result, new Comparator<DartComponent>() {
       @Override
       public int compare(DartComponent o1, DartComponent o2) {
