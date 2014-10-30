@@ -1018,8 +1018,8 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     ResolveProcessor processor = new ResolveProcessor(null) {
       @Override
       public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {
-        if (element instanceof JSNamedElement) {
-          names.add(((JSNamedElement)element).getName());
+        if (element instanceof JSNamedElementBase) {
+          names.add(((JSNamedElementBase)element).getName());
         }
         return true;
       }
