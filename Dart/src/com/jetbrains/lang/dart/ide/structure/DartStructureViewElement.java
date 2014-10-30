@@ -10,7 +10,6 @@ import com.intellij.psi.ResolveState;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.psi.impl.DartPsiCompositeElementImpl;
 import com.jetbrains.lang.dart.resolve.ComponentNameScopeProcessor;
-import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -69,20 +68,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
       }
     }
     else if (myElement instanceof DartClass) {
-      final DartClass dartClass = (DartClass)myElement;
-      final DartClassResolveResult superClass = dartClass.getSuperClassResolvedOrObjectClass();
-      if (superClass.getDartClass() != null) {
-        result.add(new DartStructureViewElement(superClass.getDartClass()));
-      }
-      List<DartClassResolveResult> implementsAndMixinsList =
-        DartResolveUtil.resolveClassesByTypes(DartResolveUtil.getImplementsAndMixinsList(dartClass));
-      for (DartClassResolveResult superInterface : implementsAndMixinsList) {
-        if (superInterface.getDartClass() == null) {
-          continue;
-        }
-        result.add(new DartStructureViewElement(superInterface.getDartClass()));
-      }
-      for (DartComponent subNamedComponent : DartResolveUtil.getNamedSubComponentsInOrder(dartClass)) {
+      for (DartComponent subNamedComponent : DartResolveUtil.getNamedSubComponentsInOrder((DartClass)myElement)) {
         result.add(new DartStructureViewElement(subNamedComponent));
       }
     }
