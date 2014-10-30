@@ -42,6 +42,8 @@
     <localInspection language="JAVA" shortName="CucumberJavaStepDefClassInDefaultPackage" displayName="Step definition class is in default package"
                      groupBundle="org.jetbrains.plugins.cucumber.java.CucumberJavaBundle" groupKey="cucumber.java.inspection.group.name" enabledByDefault="true"
                      level="WARNING" implementationClass="org.jetbrains.plugins.cucumber.java.inspections.CucumberJavaStepDefClassInDefaultPackageInspection"/>
+
+    <multiHostInjector implementation="org.jetbrains.plugins.cucumber.java.CucumberJavaInjector"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">

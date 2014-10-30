@@ -26,6 +26,6 @@
     <orderEntry type="module" module-name="cucumber-jvm-formatter" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" scope="TEST" name="EasyMock" level="project" />
+    <orderEntry type="module" module-name="java-psi-api" />
   </component>
 </module>
-
