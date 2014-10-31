@@ -10,7 +10,7 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -90,7 +90,8 @@ public class DartDocumentationProvider implements DocumentationProvider {
     if (libName.startsWith(STD_LIB_PREFIX)) {
       final String toReplace = libName.startsWith(DOM_LIB_PREFIX) ? DOM_LIB_PREFIX : STD_LIB_PREFIX;
       resultUrl.append("dart_").append(libName.substring(toReplace.length()));
-    } else {
+    }
+    else {
       libName = StringUtils.substringBefore(libName, ".");
       if (APIDOC_HOSTED_PACKAGES.contains(libName)) {
         resultUrl.append(libName);
