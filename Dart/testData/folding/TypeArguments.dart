@@ -1,5 +1,5 @@
 library foo;
-sclass A<T>{}
+class A<T>{}
 // verify the type arguments in class declarations aren't folded
 class B<T> extends A<T> {}
 
