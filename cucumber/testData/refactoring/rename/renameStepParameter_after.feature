@@ -4,10 +4,10 @@ Feature: Foo
 
   Scenario Outline: inline rename test
     Given <step> like <newDescription>
-  Examples:
-    | step | newDescription |
-    | 1    | first          |
-    | 2    | second         |
+    Examples:
+      | step | newDescription |
+      | 1    | first          |
+      | 2    | second         |
 
 
 
