@@ -14,7 +14,7 @@ Prerequisites:
          [IDEA Installation]/plugins/JavaScriptDebugger/lib/*.jar
          [IDEA Installation]/plugins/htmltools/lib/*.jar
          [IDEA Installation]/plugins/CSS/lib/*.jar
-         [IDEA Installation]/plugins/WebComponents/lib/*.jar
+         [IDEA Plugins folder]/WebComponents/lib/*.jar (see here how to locate [IDEA Plugins folder]: https://intellij-support.jetbrains.com/entries/23358108)
   3.4. Clone IntelliJ IDEA Community Edition repo (git clone https://github.com/JetBrains/intellij-community) anywhere on the computer (it takes some time), open Sources tab of the Plugin SDK and add path to the cloned repo root. After some scanning IDE will find all src folders - accept them. To have IntelliJ IDEA Community sources matching IntelliJ IDEA Ultimate installation it is recommended to update Community repo (git pull) at the day when Ultimate is released and switch Community repo to the branch that corresponds to the Ultimate installation.
   3.5. Open Plugin SDK Annotations tab and add [IDEA Installation]/lib/jdkAnnotations.jar
 4. Clone IntelliJ IDEA plugins source code (https://github.com/JetBrains/intellij-plugins) and open the project in the 'Dart' folder. It is ready to use. Two run configurations are already configured: 'All tests' (run it each time before commit) and 'Dart plugin' that launches IntelliJ IDEA with the Dart plugin built from sources. Important note: to have all tests passing successfully uncomment lines with <depends>...</depends> tags in the resources/META-INF/plugin.xml file. Do not commit plugin.xml with uncommented <depends/> tags!
