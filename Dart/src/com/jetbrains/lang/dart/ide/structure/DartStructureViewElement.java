@@ -15,6 +15,8 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class DartStructureViewElement implements StructureViewTreeElement, SortableTreeElement {
@@ -55,7 +57,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
   @NotNull
   @Override
   public TreeElement[] getChildren() {
-    final List<TreeElement> result = new ArrayList<TreeElement>();
+    final List<DartComponent> dartComponents = new ArrayList<DartComponent>();
     if (myElement instanceof DartFile || myElement instanceof DartEmbeddedContent) {
       THashSet<DartComponentName> componentNames = new THashSet<DartComponentName>();
       DartPsiCompositeElementImpl
@@ -63,16 +65,28 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
       for (DartComponentName componentName : componentNames) {
         PsiElement parent = componentName.getParent();
         if (parent instanceof DartComponent) {
-          result.add(new DartStructureViewElement(parent));
+          dartComponents.add((DartComponent)parent);
         }
       }
     }
     else if (myElement instanceof DartClass) {
-      for (DartComponent subNamedComponent : DartResolveUtil.getNamedSubComponentsInOrder((DartClass)myElement)) {
-        result.add(new DartStructureViewElement(subNamedComponent));
+      for (DartComponent subNamedComponent : DartResolveUtil.getNamedSubComponents((DartClass)myElement)) {
+        dartComponents.add(subNamedComponent);
       }
     }
-    return result.toArray(new TreeElement[result.size()]);
+
+    Collections.sort(dartComponents, new Comparator<DartComponent>() {
+      @Override
+      public int compare(DartComponent o1, DartComponent o2) {
+        return o1.getTextOffset() - o2.getTextOffset();
+      }
+    });
+
+    final TreeElement[] result = new TreeElement[dartComponents.size()];
+    for (int i = 0; i < result.length; i++) {
+      result[i] = new DartStructureViewElement(dartComponents.get(i));
+    }
+    return result;
   }
 
   @NotNull
