@@ -1,14 +1,20 @@
 package com.jetbrains.lang.dart.sdk.listPackageDirs;
 
+import com.google.dart.engine.AnalysisEngine;
 import com.google.dart.engine.context.AnalysisContext;
+import com.google.dart.engine.context.AnalysisException;
+import com.google.dart.engine.context.ChangeSet;
 import com.google.dart.engine.element.CompilationUnitElement;
 import com.google.dart.engine.element.ExportElement;
 import com.google.dart.engine.element.ImportElement;
 import com.google.dart.engine.element.LibraryElement;
+import com.google.dart.engine.internal.context.AnalysisOptionsImpl;
 import com.google.dart.engine.internal.context.InternalAnalysisContext;
 import com.google.dart.engine.sdk.DirectoryBasedDartSdk;
+import com.google.dart.engine.source.DartUriResolver;
 import com.google.dart.engine.source.ExplicitPackageUriResolver;
 import com.google.dart.engine.source.Source;
+import com.google.dart.engine.source.SourceFactory;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -28,9 +34,11 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.lang.dart.analyzer.DartAnalyzerService;
+import com.jetbrains.lang.dart.analyzer.DartFileAndPackageUriResolver;
+import com.jetbrains.lang.dart.analyzer.DartFileBasedSource;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashSet;
 import icons.DartIcons;
@@ -190,7 +198,7 @@ public class PubListPackageDirsAction extends AnAction {
     );
   }
 
-  private static void doConfigurePubListPackageDirsLibrary(final Project project,
+  private static void doConfigurePubListPackageDirsLibrary(@NotNull final Project project,
                                                            final Set<Module> modules,
                                                            final Map<String, Set<String>> packageMap) {
     final Library library = createPubListPackageDirsLibrary(project, packageMap);
@@ -233,7 +241,7 @@ public class PubListPackageDirsAction extends AnAction {
     }
   }
 
-  private static Library createPubListPackageDirsLibrary(final Project project, final Map<String, Set<String>> packageMap) {
+  private static Library createPubListPackageDirsLibrary(@NotNull final Project project, final Map<String, Set<String>> packageMap) {
     Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(PUB_LIST_PACKAGE_DIRS_LIB_NAME);
     if (library == null) {
       final LibraryTableBase.ModifiableModelEx libTableModel =
@@ -245,8 +253,7 @@ public class PubListPackageDirsAction extends AnAction {
     final LibraryEx.ModifiableModelEx libModel = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
     try {
 
-      AnalysisContext context = DartAnalyzerService.getInstance(project).createFreshContext();
-      Set<String> folders = new LibraryDependencyCollector((InternalAnalysisContext)context).collectFolderDependencies();
+      Set<String> folders = gatherReachableFilesInProject(project);
 
       for (String url : libModel.getUrls(OrderRootType.CLASSES)) {
         libModel.removeRoot(url, OrderRootType.CLASSES);
@@ -259,7 +266,6 @@ public class PubListPackageDirsAction extends AnAction {
       final DartListPackageDirsLibraryProperties libraryProperties = new DartListPackageDirsLibraryProperties();
       libraryProperties.setPackageNameToDirsMap(packageMap);
       libModel.setProperties(libraryProperties);
-
       libModel.commit();
     }
     finally {
@@ -268,6 +274,66 @@ public class PubListPackageDirsAction extends AnAction {
       }
     }
     return library;
+  }
+
+  private static Set<String> gatherReachableFilesInProject(@NotNull final Project project) {
+    final VirtualFile contentRoot = project.getBaseDir();
+    final DartUrlResolver dartUrlResolver = DartUrlResolver.getInstance(project, contentRoot);
+    final DirectoryBasedDartSdk dirBasedSdk = new DirectoryBasedDartSdk(new File(DartSdk.getGlobalDartSdk().getHomePath()));
+    final DartUriResolver dartUriResolver = new DartUriResolver(dirBasedSdk);
+    final DartFileAndPackageUriResolver fileAndPackageUriResolver = new DartFileAndPackageUriResolver(project, dartUrlResolver);
+
+    final SourceFactory sourceFactory = new SourceFactory(dartUriResolver, fileAndPackageUriResolver,
+                                                          new ExplicitPackageUriResolver(dirBasedSdk, new File(contentRoot.getPath())));
+
+    final AnalysisContext analysisContext = AnalysisEngine.getInstance().createAnalysisContext();
+    analysisContext.setSourceFactory(sourceFactory);
+
+    final AnalysisOptionsImpl contextOptions = new AnalysisOptionsImpl();
+    contextOptions.setAnalyzeFunctionBodies(false);
+    contextOptions.setGenerateSdkErrors(false);
+
+    contextOptions.setEnableAsync(true);
+    contextOptions.setEnableDeferredLoading(true);
+    contextOptions.setEnableEnum(true);
+    analysisContext.setAnalysisOptions(contextOptions);
+
+    ChangeSet changeSet = new ChangeSet();
+    Set<VirtualFile> dartFiles = getAllDartFilesFromRoot(contentRoot, null);
+    Set<Source> sources = new HashSet<Source>();
+    for (VirtualFile virtualFile : dartFiles) {
+      Source source = DartFileBasedSource.getSource(project, virtualFile);
+      changeSet.addedSource(source);
+      sources.add(source);
+    }
+    analysisContext.applyChanges(changeSet);
+
+    try {
+      for (Source source : sources) {
+        analysisContext.computeLibraryElement(source);
+      }
+    }
+    catch (AnalysisException e) {
+    }
+
+    return new LibraryDependencyCollector((InternalAnalysisContext)analysisContext).collectFolderDependencies();
+  }
+
+  private static Set<VirtualFile> getAllDartFilesFromRoot(@NotNull VirtualFile root, @Nullable HashSet<VirtualFile> result) {
+    if (result == null) {
+      result = new HashSet<VirtualFile>();
+    }
+    for (VirtualFile file : root.getChildren()) {
+      if (file.exists()) {
+        if (file.isDirectory()) {
+          getAllDartFilesFromRoot(file, result);
+        }
+        else if (file.getName().endsWith(".dart")) {
+          result.add(file);
+        }
+      }
+    }
+    return result;
   }
 
   static void removePubListPackageDirsLibrary(final @NotNull Project project) {
