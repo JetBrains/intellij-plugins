@@ -12,8 +12,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class DartListPackageDirsDialog extends DialogWrapper {
 
@@ -22,9 +23,9 @@ public class DartListPackageDirsDialog extends DialogWrapper {
   private JPanel myMainPanel;
   private JBTable myTable;
 
-  private @NotNull final Map<String, Set<String>> myPackageMap;
+  private @NotNull final Map<String, List<File>> myPackageMap;
 
-  protected DartListPackageDirsDialog(final @NotNull Project project, final @NotNull Map<String, Set<String>> packageMap) {
+  protected DartListPackageDirsDialog(final @NotNull Project project, final @NotNull Map<String, List<File>> packageMap) {
     super(project);
     myPackageMap = packageMap;
     setTitle("Dart Package List");
@@ -38,7 +39,7 @@ public class DartListPackageDirsDialog extends DialogWrapper {
     final String[][] data = new String[myPackageMap.size()][2];
 
     int i = 0;
-    for (Map.Entry<String, Set<String>> entry : myPackageMap.entrySet()) {
+    for (Map.Entry<String, List<File>> entry : myPackageMap.entrySet()) {
       data[i][0] = entry.getKey();
       data[i][1] = FileUtil.toSystemDependentName(StringUtil.join(entry.getValue(), "; "));
       i++;
