@@ -9,6 +9,7 @@ import com.google.dart.engine.source.DartUriResolver;
 import com.google.dart.engine.source.ExplicitPackageUriResolver;
 import com.google.dart.engine.source.Source;
 import com.google.dart.engine.source.SourceFactory;
+import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
@@ -24,6 +25,8 @@ import com.intellij.openapi.util.LowMemoryWatcher;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.*;
+import com.intellij.psi.search.FileTypeIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.reference.SoftReference;
 import com.intellij.util.Function;
 import com.jetbrains.lang.dart.DartFileType;
@@ -134,11 +137,6 @@ public class DartAnalyzerService {
     });
   }
 
-  public AnalysisContext createFreshContext() {
-    // A HACK --- rather than reaching in for the cached reference, we want a fresh context
-    return SoftReference.dereference(myAnalysisContextRef);
-  }
-
   @NotNull
   public static DartAnalyzerService getInstance(final @NotNull Project project) {
     return ServiceManager.getService(project, DartAnalyzerService.class);
@@ -193,6 +191,17 @@ public class DartAnalyzerService {
       contextOptions.setEnableAsync(true);
       contextOptions.setEnableEnum(true);
       analysisContext.setAnalysisOptions(contextOptions);
+
+      ChangeSet changeSet = new ChangeSet();
+      Collection<VirtualFile> dartFiles = FileTypeIndex.getFiles(DartFileType.INSTANCE, GlobalSearchScope.projectScope(myProject));
+      Collection<VirtualFile> htmlFiles = FileTypeIndex.getFiles(HtmlFileType.INSTANCE, GlobalSearchScope.projectScope(myProject));
+      for(VirtualFile file : dartFiles) {
+        changeSet.addedSource(DartFileBasedSource.getSource(myProject, file));
+      }
+      for(VirtualFile file : htmlFiles) {
+        changeSet.addedSource(DartFileBasedSource.getSource(myProject, file));
+      }
+      analysisContext.applyChanges(changeSet);
 
       mySdkPath = sdkPath;
       myPubspecYamlTimestamp = pubspecYamlTimestamp;
