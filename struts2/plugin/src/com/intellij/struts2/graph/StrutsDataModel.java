@@ -33,14 +33,11 @@ import com.intellij.struts2.graph.beans.ActionNode;
 import com.intellij.struts2.graph.beans.BasicStrutsEdge;
 import com.intellij.struts2.graph.beans.BasicStrutsNode;
 import com.intellij.struts2.graph.beans.ResultNode;
-import com.intellij.ui.Colors;
-import com.intellij.ui.Gray;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -143,11 +140,9 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
           public GroupNodeRealizer getGroupNodeRealizer() {
             final GroupNodeRealizer groupNodeRealizer = super.getGroupNodeRealizer();
             assert groupNodeRealizer != null;
-            groupNodeRealizer.setFillColor(Gray._239);
 
             final NodeLabel nodeLabel = groupNodeRealizer.getLabel();
             nodeLabel.setText("      " + getGroupName());
-            nodeLabel.setBackgroundColor(Colors.DISABLED_COLOR);
             nodeLabel.setModel(NodeLabel.INTERNAL);
             nodeLabel.setPosition(NodeLabel.TOP_RIGHT);
 
