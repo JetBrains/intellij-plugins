@@ -29,6 +29,9 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -56,6 +59,8 @@ import java.util.*;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsgiRunState extends JavaCommandLineState {
+  private static final Logger LOG = Logger.getInstance(OsgiRunState.class);
+
   private final OsgiRunConfiguration myRunConfiguration;
   private final FrameworkRunner myRunner;
 
@@ -91,6 +96,7 @@ public class OsgiRunState extends JavaCommandLineState {
       public void run(@NotNull ProgressIndicator progressIndicator) {
         progressIndicator.setIndeterminate(false);
 
+        AccessToken token = ApplicationManager.getApplication().acquireReadActionLock();
         try {
           Set<SelectedBundle> selectedBundles = new HashSet<SelectedBundle>();
           // the bundles are module names, by now we try to find jar files in the output directory which we can then install
@@ -151,10 +157,15 @@ public class OsgiRunState extends JavaCommandLineState {
           error.set(e);
         }
         catch (OsgiBuildException e) {
+          LOG.warn(e);
           error.set(new CantRunException(e.getMessage()));
         }
         catch (Throwable t) {
+          LOG.error(t);
           error.set(new CantRunException("Internal error: " + t.getMessage()));
+        }
+        finally {
+          token.finish();
         }
       }
     });
