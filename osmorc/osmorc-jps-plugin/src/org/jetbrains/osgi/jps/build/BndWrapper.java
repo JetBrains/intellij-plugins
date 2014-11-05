@@ -33,12 +33,12 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
 import org.jetbrains.osgi.jps.util.OrderedProperties;
 import org.osgi.framework.Constants;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.jar.Attributes;
@@ -63,7 +63,7 @@ public class BndWrapper {
    * Uses bundlification rules for the library that have been set in Settings/OSGi/Library Bundling.
    */
   @Nullable
-  public File wrapLibrary(@NotNull File sourceFile, @NotNull File outputDir) throws OsgiBuildException {
+  public File wrapLibrary(@NotNull File sourceFile, @NotNull File outputDir, @NotNull List<LibraryBundlificationRule> rules) throws OsgiBuildException {
     if (!sourceFile.isFile()) {
       throw new OsgiBuildException("The library '" + sourceFile + "' does not exist - please check module dependencies.");
     }
@@ -72,7 +72,7 @@ public class BndWrapper {
     Map<String, String> additionalProperties = ContainerUtil.newHashMap();
 
     long lastModified = Long.MIN_VALUE;
-    for (LibraryBundlificationRule bundlificationRule : JpsOsmorcExtensionService.getInstance().getLibraryBundlificationRules()) {
+    for (LibraryBundlificationRule bundlificationRule : rules) {
       if (bundlificationRule.appliesTo(sourceFile.getName())) {
         if (bundlificationRule.isDoNotBundle()) {
           return null;

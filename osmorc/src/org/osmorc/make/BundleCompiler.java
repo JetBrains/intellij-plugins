@@ -41,6 +41,8 @@ import org.jetbrains.osgi.jps.build.BndWrapper;
 import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.jetbrains.osgi.jps.build.OsgiBuildException;
 import org.jetbrains.osgi.jps.build.Reporter;
+import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
+import org.osmorc.settings.ApplicationSettings;
 
 import java.io.File;
 import java.util.List;
@@ -83,6 +85,7 @@ public class BundleCompiler implements Reporter {
     indicator.setText("Bundling non-OSGi libraries for module '" + module.getName() + "'");
 
     File outputDir = BndWrapper.getOutputDir(getModuleOutputDir(module));
+    List<LibraryBundlificationRule> libRules = ApplicationSettings.getInstance().getLibraryBundlificationRules();
 
     List<String> paths = OrderEnumerator.orderEntries(module)
       .withoutSdk()
@@ -102,7 +105,7 @@ public class BundleCompiler implements Reporter {
       if (CachingBundleInfoProvider.canBeBundlified(path)) {
         indicator.setText2(path);
         try {
-          File bundledDependency = wrapper.wrapLibrary(new File(path), outputDir);
+          File bundledDependency = wrapper.wrapLibrary(new File(path), outputDir, libRules);
           if (bundledDependency != null) {
             result.add(bundledDependency.getPath());
           }
