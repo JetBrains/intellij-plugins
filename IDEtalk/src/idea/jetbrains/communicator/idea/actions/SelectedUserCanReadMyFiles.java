@@ -19,6 +19,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import jetbrains.communicator.commands.ToggleFileAccessCommand;
 import jetbrains.communicator.core.Pico;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Kir
@@ -37,18 +38,19 @@ public class SelectedUserCanReadMyFiles extends ToggleAction {
     getCommand(anActionEvent).execute();
   }
 
-  public void update(AnActionEvent anActionEvent) {
-    super.update(anActionEvent);
-    ToggleFileAccessCommand command = getCommand(anActionEvent);
+  public void update(@NotNull AnActionEvent e) {
+    super.update(e);
+    if (e.getProject() == null) {
+      e.getPresentation().setEnabled(false);
+      return;
+    }
+    ToggleFileAccessCommand command = getCommand(e);
     boolean enabled = command.isEnabled();
-    anActionEvent.getPresentation().setEnabled(enabled);
-    anActionEvent.getPresentation().setText(command.getText());
+    e.getPresentation().setEnabled(enabled);
+    e.getPresentation().setText(command.getText());
   }
 
-  private ToggleFileAccessCommand getCommand(AnActionEvent anActionEvent) {
-    return
-        Pico.getCommandManager().getCommand(ToggleFileAccessCommand.class, BaseAction.getContainer(anActionEvent));
+  private static ToggleFileAccessCommand getCommand(AnActionEvent e) {
+    return Pico.getCommandManager().getCommand(ToggleFileAccessCommand.class, BaseAction.getContainer(e));
   }
-
-
 }
