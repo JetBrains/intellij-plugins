@@ -50,7 +50,7 @@ import org.osmorc.run.ui.SelectedBundle;
 import java.util.*;
 
 /**
- * RunState for launching the OSGI framework.
+ * RunState for launching the OSGi framework.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
@@ -144,7 +144,7 @@ public class OsgiRunState extends JavaCommandLineState {
           }
 
           List<SelectedBundle> sortedBundles = ContainerUtil.newArrayList(filteredBundles.values());
-          Collections.sort(sortedBundles, new StartLevelComparator());
+          Collections.sort(sortedBundles, START_LEVEL_COMPARATOR);
           result.set(sortedBundles);
         }
         catch (CantRunException e) {
@@ -167,9 +167,10 @@ public class OsgiRunState extends JavaCommandLineState {
     }
   }
 
-  public static class StartLevelComparator implements Comparator<SelectedBundle> {
-    public int compare(SelectedBundle selectedBundle, SelectedBundle selectedBundle2) {
-      return selectedBundle.getStartLevel() - selectedBundle2.getStartLevel();
+  public static final Comparator<SelectedBundle> START_LEVEL_COMPARATOR = new Comparator<SelectedBundle>() {
+    @Override
+    public int compare(@NotNull SelectedBundle b1, @NotNull SelectedBundle b2) {
+      return b1.getStartLevel() - b2.getStartLevel();
     }
-  }
+  };
 }

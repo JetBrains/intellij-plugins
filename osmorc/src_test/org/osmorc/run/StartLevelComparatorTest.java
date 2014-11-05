@@ -27,6 +27,8 @@ package org.osmorc.run;
 import org.junit.Test;
 import org.osmorc.run.ui.SelectedBundle;
 
+import java.util.Comparator;
+
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -36,7 +38,7 @@ import static org.junit.Assert.assertThat;
 public class StartLevelComparatorTest {
   @Test
   public void testCompare() {
-    OsgiRunState.StartLevelComparator testObject = new OsgiRunState.StartLevelComparator();
+    Comparator<SelectedBundle> testObject = OsgiRunState.START_LEVEL_COMPARATOR;
     SelectedBundle bundle1 = new SelectedBundle(SelectedBundle.BundleType.Module, "org.osmorc.testBundle1", null);
     SelectedBundle bundle2 = new SelectedBundle(SelectedBundle.BundleType.Module, "org.osmorc.testBundle2", null);
 
