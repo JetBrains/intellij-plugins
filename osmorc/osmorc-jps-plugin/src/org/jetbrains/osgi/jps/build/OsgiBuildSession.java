@@ -15,7 +15,9 @@ import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsDependencyElement;
 import org.jetbrains.jps.model.module.JpsLibraryDependency;
 import org.jetbrains.jps.model.module.JpsModule;
+import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
+import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
 import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry;
 import org.jetbrains.osgi.jps.util.OsgiBuildUtil;
 import org.jetbrains.jps.util.JpsPathUtil;
@@ -247,6 +249,8 @@ public class OsgiBuildSession implements Reporter {
    */
   @NotNull
   private List<String> bundlifyLibraries() {
+    List<LibraryBundlificationRule> libRules = JpsOsmorcExtensionService.getInstance().getLibraryBundlificationRules();
+
     Collection<File> dependencies = JpsJavaExtensionService.getInstance().enumerateDependencies(Collections.singletonList(myModule))
       .withoutSdk()
       .withoutModuleSourceEntries()
@@ -264,7 +268,7 @@ public class OsgiBuildSession implements Reporter {
       String path = dependency.getPath();
       if (CachingBundleInfoProvider.canBeBundlified(path)) {
         try {
-          File bundledDependency = myBndWrapper.wrapLibrary(dependency, myOutputDir);
+          File bundledDependency = myBndWrapper.wrapLibrary(dependency, myOutputDir, libRules);
           if (bundledDependency != null) {
             result.add(bundledDependency.getPath());
           }
