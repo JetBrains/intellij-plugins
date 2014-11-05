@@ -33,7 +33,6 @@ import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
 import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -132,12 +131,10 @@ public class JstdRunProfileState implements RunProfileState {
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_IGNORED_TEST, true);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.SCROLL_TO_SOURCE, true);
-    String splitterPropertyName = SMTestRunnerConnectionUtil.getSplitterPropertyName(JSTD_FRAMEWORK_NAME);
-    PropertiesComponent.getInstance().setValue(splitterPropertyName, String.valueOf(0.2f));
 
     JstdConsoleView consoleView = new JstdConsoleView(testConsoleProperties,
                                                       myEnvironment,
-                                                      splitterPropertyName,
+                                                      SMTestRunnerConnectionUtil.getSplitterPropertyName(JSTD_FRAMEWORK_NAME),
                                                       ideServer);
     Disposer.register(myEnvironment.getProject(), consoleView);
     SMTestRunnerConnectionUtil.initConsoleView(consoleView,
