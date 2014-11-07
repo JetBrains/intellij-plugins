@@ -39,11 +39,12 @@ public class DartDocumentationProvider implements DocumentationProvider {
     }
 
     final String libraryName = getLibraryName(element);
-    final String docUrl = constructDocUrl(namedComponent, componentName, libraryName);
+    final String docUrl = libraryName == null ? null : constructDocUrl(namedComponent, componentName, libraryName);
     return docUrl == null ? null : Collections.singletonList(docUrl);
   }
 
-  private String getLibraryName(@NotNull final PsiElement element) {
+  @Nullable
+  private static String getLibraryName(@NotNull final PsiElement element) {
     final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(element.getContainingFile());
     if (virtualFile == null) {
       return null;
@@ -55,12 +56,12 @@ public class DartDocumentationProvider implements DocumentationProvider {
     final String dartUrl = urlResolver.getDartUrlForFile(virtualFile);
     final String prefix = StringUtils.substringBefore(dartUrl, "/");
     // "dart:html" -> "dart_html"
-    if (prefix.startsWith("dart:")) {
-      return prefix.replaceFirst(":", "_");
+    if (prefix.startsWith(DartUrlResolver.DART_PREFIX)) {
+      return "dart_" + prefix.substring(DartUrlResolver.DART_PREFIX.length());
     }
     // "package:unittest" -> "unittest"
-    if (prefix.startsWith("package:")) {
-      return prefix.substring(8);
+    if (prefix.startsWith(DartUrlResolver.PACKAGE_PREFIX)) {
+      return prefix.substring(DartUrlResolver.PACKAGE_PREFIX.length());
     }
 
     return null;
