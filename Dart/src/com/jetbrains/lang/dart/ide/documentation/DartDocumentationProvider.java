@@ -8,6 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartSetterDeclaration;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.apache.commons.lang3.StringUtils;
@@ -83,6 +84,9 @@ public class DartDocumentationProvider implements DocumentationProvider {
     if (dartClass != null) {
       // method
       resultUrl.append('/').append(dartClass.getName()).append(".html#id_").append(componentName);
+      if (namedComponent instanceof DartSetterDeclaration) {
+        resultUrl.append('=');
+      }
     }
     else if (componentType == DartComponentType.CLASS) {
       // class

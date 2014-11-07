@@ -64,6 +64,16 @@ public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCas
            "var s = new Object().<caret>toString();\n");
   }
 
+  public void testListLengthGetter() throws Exception {
+    doTest("http://api.dartlang.org/docs/releases/latest/dart_core/List.html#id_length",
+           "f() { int len = [].<caret>length; }\n");
+  }
+
+  public void testListLengthSetter() throws Exception {
+    doTest("http://api.dartlang.org/docs/releases/latest/dart_core/List.html#id_length=",
+           "f() { [].<caret>length = 3; }\n");
+  }
+
   public void testNoDocUrl() throws Exception {
     doTest(null, "class Fo<caret>o {}");
   }
