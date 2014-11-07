@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.projectWizard;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
@@ -26,7 +27,7 @@ public class DartCmdLineAppGenerator extends DartEmptyProjectGenerator {
   }
 
   @NotNull
-  protected VirtualFile[] doGenerateProject(final Module module, final VirtualFile baseDir) throws IOException {
+  protected VirtualFile[] doGenerateProject(final Project project, final Module module, final VirtualFile baseDir) throws IOException {
     final VirtualFile pubspecFile = baseDir.createChildData(this, PubspecYamlUtil.PUBSPEC_YAML);
     pubspecFile.setBinaryContent(("name: " + module.getName() + "\n" +
                                   "version: 0.0.1\n" +
