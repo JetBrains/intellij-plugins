@@ -1,11 +1,14 @@
 package com.jetbrains.lang.dart.psi.impl;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.ui.RowIcon;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
@@ -48,7 +51,39 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
   @Override
   public Icon getIcon(int flags) {
     final DartComponentType type = DartComponentType.typeOf(this);
-    return type == null ? super.getIcon(flags) : type.getIcon();
+    Icon icon =  type == null ? super.getIcon(flags) : type.getIcon(this);
+
+    icon = doOverlays(icon);
+
+    RowIcon baseIcon = new RowIcon(2);
+    baseIcon.setIcon(icon, 0);
+    Icon visibility = isPublic() ? PlatformIcons.PUBLIC_ICON : PlatformIcons.PRIVATE_ICON;
+    baseIcon.setIcon(visibility, 1);
+
+    return baseIcon;
+  }
+
+  private Icon doOverlays(Icon icon) {
+    if (isStatic()) {
+      icon = overlayIcons(icon, AllIcons.Nodes.StaticMark);
+    }
+    if (isFinal()) {
+      icon = overlayIcons(icon, AllIcons.Nodes.FinalMark);
+    }
+    if (isConst()) {
+      //TODO: find a distinct const icon
+      icon = overlayIcons(icon, AllIcons.Nodes.FinalMark);
+    }
+
+    return icon;
+  }
+
+  public boolean isConst() {
+    return findChildByType(DartTokenTypes.CONST) != null;
+  }
+
+  public boolean isFinal() {
+    return findChildByType(DartTokenTypes.FINAL) != null;
   }
 
   @Override

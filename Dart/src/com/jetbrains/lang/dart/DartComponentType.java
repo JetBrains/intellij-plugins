@@ -4,14 +4,25 @@ import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.psi.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 public enum DartComponentType {
-  CLASS(AllIcons.Nodes.Class),
+  CLASS(AllIcons.Nodes.Class){
+    @Override
+    public Icon getIcon(@NotNull DartComponent component) {
+      return component.isAbstract() ? AllIcons.Nodes.AbstractClass : getIcon();
+    }
+  },
   FUNCTION(AllIcons.Nodes.Function),
-  METHOD(AllIcons.Nodes.Method),
+  METHOD(AllIcons.Nodes.Method) {
+    @Override
+    public Icon getIcon(@NotNull DartComponent component) {
+      return component.isAbstract() ? AllIcons.Nodes.AbstractMethod : getIcon();
+    }
+  },
   VARIABLE(AllIcons.Nodes.Variable),
   FIELD(AllIcons.Nodes.Field),
   PARAMETER(AllIcons.Nodes.Parameter),
@@ -19,6 +30,7 @@ public enum DartComponentType {
   CONSTRUCTOR(AllIcons.Nodes.Method),
   OPERATOR(AllIcons.Nodes.ClassInitializer),
   LABEL(AllIcons.Nodes.Variable);
+
 
   private final Icon myIcon;
 
@@ -32,6 +44,11 @@ public enum DartComponentType {
 
   public Icon getIcon() {
     return myIcon;
+  }
+
+  public Icon getIcon(@NotNull DartComponent component) {
+    // Overridden in appropriate subclasses
+    return getIcon();
   }
 
   @Nullable
