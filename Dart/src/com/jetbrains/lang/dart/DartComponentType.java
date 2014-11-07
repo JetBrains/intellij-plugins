@@ -20,6 +20,12 @@ public enum DartComponentType {
   METHOD(AllIcons.Nodes.Method) {
     @Override
     public Icon getIcon(@NotNull DartComponent component) {
+      if (component.isGetter()) {
+        return AllIcons.Nodes.PropertyRead;
+      }
+      if (component.isSetter()) {
+        return AllIcons.Nodes.PropertyWrite;
+      }
       return component.isAbstract() ? AllIcons.Nodes.AbstractMethod : getIcon();
     }
   },
