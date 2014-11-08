@@ -21,10 +21,10 @@ public enum DartComponentType {
     @Override
     public Icon getIcon(@NotNull DartComponent component) {
       if (component.isGetter()) {
-        return AllIcons.Nodes.PropertyRead;
+        return component.isStatic() ? AllIcons.Nodes.PropertyReadStatic : AllIcons.Nodes.PropertyRead;
       }
       if (component.isSetter()) {
-        return AllIcons.Nodes.PropertyWrite;
+        return component.isStatic() ? AllIcons.Nodes.PropertyWriteStatic : AllIcons.Nodes.PropertyWrite;
       }
       return component.isAbstract() ? AllIcons.Nodes.AbstractMethod : getIcon();
     }
