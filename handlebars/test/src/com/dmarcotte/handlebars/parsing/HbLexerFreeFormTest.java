@@ -256,4 +256,10 @@ public class HbLexerFreeFormTest extends HbLexerTest {
     result.shouldMatchTokenTypes(OPEN, ID, WHITE_SPACE, ID, EQUALS, NUMBER, CLOSE);
     result.shouldMatchTokenContent("{{", "name", " ", "paramValue", "=", "10.1", "}}");
   }
+
+  public void testDataParamsForPartials() {
+    TokenizerResult result = tokenize("{{>foo @bar.baz}}");
+    result.shouldMatchTokenTypes(OPEN_PARTIAL, ID, WHITE_SPACE, DATA_PREFIX, ID, SEP, ID, CLOSE);
+    result.shouldMatchTokenContent("{{>", "foo", " ", "@", "bar", ".", "baz", "}}");
+  }
 }
