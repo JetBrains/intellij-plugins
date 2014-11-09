@@ -1,4 +1,4 @@
-HbFile:PartialWithContext.hbs
+HbFile:ParsesPartialWithContextAndHash.hbs
   HbStatementsImpl(STATEMENTS)
     HbPartialImpl(PARTIAL_STACHE)
       HbPsiElementImpl([Hb] OPEN_PARTIAL)
@@ -13,5 +13,14 @@ HbFile:PartialWithContext.hbs
         HbPathImpl(PATH)
           HbPsiElementImpl([Hb] ID)
             PsiElement([Hb] ID)('bar')
+      PsiWhiteSpace(' ')
+      HbPsiElementImpl([Hb] ID)
+        PsiElement([Hb] ID)('bat')
+      HbPsiElementImpl([Hb] EQUALS)
+        PsiElement([Hb] EQUALS)('=')
+      HbParamImpl(PARAM)
+        HbPathImpl(PATH)
+          HbPsiElementImpl([Hb] ID)
+            PsiElement([Hb] ID)('baz')
       HbPsiElementImpl([Hb] CLOSE)
         PsiElement([Hb] CLOSE)('}}')
