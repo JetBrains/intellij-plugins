@@ -76,7 +76,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
     }
     else if (myElement instanceof DartEnum) {
       final DartEnum dartEnum = (DartEnum)myElement;
-      final List<DartEnumConstantDeclaration> enumConstants = dartEnum.getConstants();
+      final List<DartEnumConstantDeclaration> enumConstants = dartEnum.getEnumConstantDeclarationList();
       for (DartEnumConstantDeclaration enumConstant : enumConstants) {
         dartComponents.add(enumConstant);
       }
@@ -93,6 +93,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
     for (int i = 0; i < result.length; i++) {
       result[i] = new DartStructureViewElement(dartComponents.get(i));
     }
+
     return result;
   }
 

@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,18 +44,18 @@ public class DartPsiImplUtil {
   }
 
   @NotNull
-  public static List<DartMetadata> getMetadataList(@NotNull DartLabel label) {
-    return PsiTreeUtil.getChildrenOfTypeAsList(label, DartMetadata.class);
+  public static List<DartMetadata> getMetadataList(@NotNull DartLabel element) {
+    return Collections.emptyList();
   }
 
   @NotNull
-  public static List<DartMetadata> getMetadataList(@NotNull DartEnumConstantDeclaration label) {
-    return PsiTreeUtil.getChildrenOfTypeAsList(label, DartMetadata.class);
+  public static List<DartMetadata> getMetadataList(@NotNull DartEnumConstantDeclaration element) {
+    return Collections.emptyList();
   }
 
   @NotNull
-  public static List<DartMetadata> getMetadataList(@NotNull DartVarDeclarationListPart varDeclarationListPart) {
-    return PsiTreeUtil.getChildrenOfTypeAsList(varDeclarationListPart, DartMetadata.class);
+  public static List<DartMetadata> getMetadataList(@NotNull DartVarDeclarationListPart element) {
+    return Collections.emptyList();
   }
 
   @Nullable

@@ -118,4 +118,4 @@
   new <info>Functions</info>().<info>callFunctions</info>();
 }
 
-enum Foo { <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">BAR</info> }
+<info textAttributesKey="DART_KEYWORD">enum</info> Foo { <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">BAR</info> }

@@ -70,7 +70,7 @@ public class DartIndexUtil {
         }
         if (parent instanceof  DartEnum) {
           result.addClassName(name);
-          for (DartEnumConstantDeclaration enumConstantDeclaration : ((DartEnum)parent).getConstants()) {
+          for (DartEnumConstantDeclaration enumConstantDeclaration : ((DartEnum)parent).getEnumConstantDeclarationList()) {
             result.addSymbol(enumConstantDeclaration.getName());
           }
         }

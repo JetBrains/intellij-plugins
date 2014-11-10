@@ -11,7 +11,7 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartEnumDefinitionImpl extends AbstractDartPsiEnum implements DartEnumDefinition {
+public class DartEnumDefinitionImpl extends AbstractDartComponentImpl implements DartEnumDefinition {
 
   public DartEnumDefinitionImpl(ASTNode node) {
     super(node);
@@ -30,8 +30,8 @@ public class DartEnumDefinitionImpl extends AbstractDartPsiEnum implements DartE
 
   @Override
   @NotNull
-  public DartEnumConstantDeclarationList getEnumConstantDeclarationList() {
-    return findNotNullChildByClass(DartEnumConstantDeclarationList.class);
+  public List<DartEnumConstantDeclaration> getEnumConstantDeclarationList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartEnumConstantDeclaration.class);
   }
 
   @Override

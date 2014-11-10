@@ -11,7 +11,7 @@ public interface DartEnumDefinition extends DartEnum {
   DartComponentName getComponentName();
 
   @NotNull
-  DartEnumConstantDeclarationList getEnumConstantDeclarationList();
+  List<DartEnumConstantDeclaration> getEnumConstantDeclarationList();
 
   @NotNull
   List<DartMetadata> getMetadataList();

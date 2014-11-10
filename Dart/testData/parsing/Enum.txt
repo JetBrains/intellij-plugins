@@ -5,16 +5,62 @@ Dart File
       ID
         PsiElement(IDENTIFIER)('Foo')
     PsiElement({)('{')
-    ENUM_CONSTANT_DECLARATION_LIST
-      ENUM_CONSTANT_DECLARATION
-        COMPONENT_NAME
-          ID
-            PsiElement(IDENTIFIER)('FOO')
-      PsiElement(,)(',')
-      ENUM_CONSTANT_DECLARATION
-        COMPONENT_NAME
-          ID
-            PsiElement(IDENTIFIER)('BAR')
+    ENUM_CONSTANT_DECLARATION
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('FOO')
+    PsiElement(,)(',')
+    ENUM_CONSTANT_DECLARATION
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('BAR')
+    PsiElement(})('}')
+  ENUM_DEFINITION
+    METADATA
+      PsiElement(@)('@')
+      REFERENCE_EXPRESSION
+        ID
+          PsiElement(IDENTIFIER)('meta')
+    METADATA
+      PsiElement(@)('@')
+      REFERENCE_EXPRESSION
+        ID
+          PsiElement(IDENTIFIER)('data')
+    PsiElement(enum)('enum')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('Foo')
+    PsiElement({)('{')
+    PsiErrorElement:IDENTIFIER expected, got '}'
+      <empty list>
+    PsiElement(})('}')
+  ENUM_DEFINITION
+    PsiElement(enum)('enum')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('Foo')
+    PsiElement({)('{')
+    ENUM_CONSTANT_DECLARATION
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+    PsiElement(})('}')
+  ENUM_DEFINITION
+    PsiElement(enum)('enum')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('Foo')
+    PsiElement({)('{')
+    ENUM_CONSTANT_DECLARATION
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+    PsiElement(,)(',')
+    ENUM_CONSTANT_DECLARATION
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('b')
+    PsiElement(,)(',')
     PsiElement(})('}')
   VAR_DECLARATION_LIST
     VAR_ACCESS_DECLARATION

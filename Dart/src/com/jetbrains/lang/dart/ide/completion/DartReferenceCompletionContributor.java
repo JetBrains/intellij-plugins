@@ -125,7 +125,7 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
         if (resolvedElement != null) {
           final PsiElement parent = resolvedElement.getParent();
           if (parent instanceof DartEnumDefinition) {
-            suggestedVariants.addAll(DartResolveUtil.getComponentNames(((DartEnumDefinition)parent).getConstants()));
+            suggestedVariants.addAll(DartResolveUtil.getComponentNames(((DartEnumDefinition)parent).getEnumConstantDeclarationList()));
           }
         }
       }
