@@ -1,0 +1,6 @@
+-InsideClass.dart
+ -InsideClass
+  num1:int
+  [num2:int]
+  Field()
+  method():void
