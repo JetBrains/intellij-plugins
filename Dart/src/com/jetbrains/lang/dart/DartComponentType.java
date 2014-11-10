@@ -10,17 +10,13 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public enum DartComponentType {
-<<<<<<< HEAD
-  CLASS(AllIcons.Nodes.Class){
+  CLASS(AllIcons.Nodes.Class) {
     @Override
     public Icon getIcon(@NotNull DartComponent component) {
       return component.isAbstract() ? AllIcons.Nodes.AbstractClass : getIcon();
     }
   },
-=======
-  CLASS(AllIcons.Nodes.Class),
   ENUM(AllIcons.Nodes.Enum),
->>>>>>> 7c39b4ddd4e871fca950d3f1128b44255d77eefe
   FUNCTION(AllIcons.Nodes.Function),
   METHOD(AllIcons.Nodes.Method) {
     @Override
@@ -73,7 +69,7 @@ public enum DartComponentType {
     if (element instanceof DartClassDefinition) {
       return CLASS;
     }
-    if (element instanceof  DartEnumDefinition) {
+    if (element instanceof DartEnumDefinition) {
       return ENUM;
     }
     if (element instanceof DartEnumConstantDeclaration) {
