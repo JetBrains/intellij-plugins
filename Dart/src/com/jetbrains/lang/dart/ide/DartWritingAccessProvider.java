@@ -1,13 +1,18 @@
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.WritingAccessProvider;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +50,13 @@ public class DartWritingAccessProvider extends WritingAccessProvider {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
     if (fileIndex.isInLibraryClasses(file)) {
-      return true; // file in SDK or in custom package root
+      for (OrderEntry orderEntry : fileIndex.getOrderEntriesForFile(file)) {
+        if (orderEntry instanceof LibraryOrderEntry &&
+            ((LibraryOrderEntry)orderEntry).getLibraryLevel() == LibraryTablesRegistrar.APPLICATION_LEVEL &&
+            StringUtil.notNullize(((LibraryOrderEntry)orderEntry).getLibraryName()).startsWith(DartSdk.DART_SDK_GLOBAL_LIB_NAME)) {
+          return true; // file in SDK
+        }
+      }
     }
 
     if (fileIndex.isExcluded(file) || (fileIndex.isInContent(file) && isInDartPackagesFolder(fileIndex, file))) {

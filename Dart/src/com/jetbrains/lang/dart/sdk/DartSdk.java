@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartSdk {
-  static final String DART_SDK_GLOBAL_LIB_NAME = "Dart SDK";
+  public static final String DART_SDK_GLOBAL_LIB_NAME = "Dart SDK";
   private static final String UNKNOWN_VERSION = "unknown";
 
   private final @NotNull String myHomePath;
