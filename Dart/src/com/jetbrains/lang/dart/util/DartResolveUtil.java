@@ -231,6 +231,22 @@ public class DartResolveUtil {
     return result;
   }
 
+  public static Set<DartEnum> getEnumDeclarations(PsiElement context) {
+    final DartComponent[] components = PsiTreeUtil.getChildrenOfType(context, DartComponent.class);
+    if (components == null) {
+      return Collections.emptySet();
+    }
+    final Set<DartEnum> result = new THashSet<DartEnum>();
+    for (DartComponent component : components) {
+      final DartComponentType type = DartComponentType.typeOf(component);
+      if (type == DartComponentType.ENUM) {
+        result.add((DartEnum)component);
+      }
+    }
+    return result;
+  }
+
+
   @Nullable
   public static VirtualFile getImportedFileByImportPrefix(final @NotNull PsiElement context, final @NotNull String prefix) {
     final Project project = context.getProject();

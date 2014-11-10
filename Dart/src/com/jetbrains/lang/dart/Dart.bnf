@@ -33,6 +33,7 @@
   DEFAULT="default"
   DO="do"
   ELSE="else"
+  ENUM="enum"
   EXTENDS="extends"
   FALSE="false"
   FINAL="final"
@@ -147,13 +148,14 @@ private topLevelDefinition ::= libraryStatement
                              | exportStatement
                              | partStatement
                              | classDefinition
+                             | enumDefinition
                              | functionTypeAlias
                              | getterOrSetterDeclaration
                              | functionDeclarationWithBodyOrNative
                              | varDeclarationListWithSemicolon
                              | incompleteDeclaration // not valid according to spec, but we'd like it to be parsed in order to have completion
                              {recoverWhile="top_level_recover"}
-private top_level_recover ::= !(<<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'export' | 'external' | 'final' | 'get' | 'import' | 'library' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void')
+private top_level_recover ::= !(<<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'enum' | 'export' | 'external' | 'final' | 'get' | 'import' | 'library' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void')
 
 incompleteDeclaration ::= metadata* ('external' | 'static' | 'final' | 'const')* type | metadata+;
 
@@ -224,6 +226,16 @@ private operatorDeclarationWithoutReturnType ::= metadata* 'external'?          
 
 classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
 {pin=4 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
+
+enumDefinition ::= metadata* 'enum' componentName '{' enumConstantDeclarationList '}'
+{mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiEnum" implements="com.jetbrains.lang.dart.psi.DartEnum"}
+enumConstantDeclarationList ::= enumConstantDeclaration (',' enumConstantDeclaration)*
+enumConstantDeclaration ::= componentName
+{
+  mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl"
+  implements="com.jetbrains.lang.dart.psi.DartComponent"
+  methods = [getMetadataList]
+}
 
 mixinApplication ::= '=' type mixins? interfaces? ';' {pin = 1}
 private standardClassDeclarationTail ::= (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody?

@@ -101,6 +101,15 @@ public class DartParser implements PsiParser {
     else if (root_ == DO_WHILE_STATEMENT) {
       result_ = doWhileStatement(builder_, 0);
     }
+    else if (root_ == ENUM_CONSTANT_DECLARATION) {
+      result_ = enumConstantDeclaration(builder_, 0);
+    }
+    else if (root_ == ENUM_CONSTANT_DECLARATION_LIST) {
+      result_ = enumConstantDeclarationList(builder_, 0);
+    }
+    else if (root_ == ENUM_DEFINITION) {
+      result_ = enumDefinition(builder_, 0);
+    }
     else if (root_ == EQUALITY_OPERATOR) {
       result_ = equalityOperator(builder_, 0);
     }
@@ -1570,6 +1579,81 @@ public class DartParser implements PsiParser {
     result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
     exit_section_(builder_, level_, marker_, DO_WHILE_STATEMENT, result_, pinned_, null);
     return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // componentName
+  public static boolean enumConstantDeclaration(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "enumConstantDeclaration")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<enum constant declaration>");
+    result_ = componentName(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, ENUM_CONSTANT_DECLARATION, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // enumConstantDeclaration (',' enumConstantDeclaration)*
+  public static boolean enumConstantDeclarationList(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "enumConstantDeclarationList")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<enum constant declaration list>");
+    result_ = enumConstantDeclaration(builder_, level_ + 1);
+    result_ = result_ && enumConstantDeclarationList_1(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, ENUM_CONSTANT_DECLARATION_LIST, result_, false, null);
+    return result_;
+  }
+
+  // (',' enumConstantDeclaration)*
+  private static boolean enumConstantDeclarationList_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "enumConstantDeclarationList_1")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!enumConstantDeclarationList_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "enumConstantDeclarationList_1", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
+  }
+
+  // ',' enumConstantDeclaration
+  private static boolean enumConstantDeclarationList_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "enumConstantDeclarationList_1_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, COMMA);
+    result_ = result_ && enumConstantDeclaration(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // metadata* 'enum' componentName '{' enumConstantDeclarationList '}'
+  public static boolean enumDefinition(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "enumDefinition")) return false;
+    if (!nextTokenIs(builder_, "<enum definition>", AT, ENUM)) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<enum definition>");
+    result_ = enumDefinition_0(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, ENUM);
+    result_ = result_ && componentName(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, LBRACE);
+    result_ = result_ && enumConstantDeclarationList(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, RBRACE);
+    exit_section_(builder_, level_, marker_, ENUM_DEFINITION, result_, false, null);
+    return result_;
+  }
+
+  // metadata*
+  private static boolean enumDefinition_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "enumDefinition_0")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!metadata(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "enumDefinition_0", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
   }
 
   /* ********************************************************** */
@@ -5819,6 +5903,7 @@ public class DartParser implements PsiParser {
   //                              | exportStatement
   //                              | partStatement
   //                              | classDefinition
+  //                              | enumDefinition
   //                              | functionTypeAlias
   //                              | getterOrSetterDeclaration
   //                              | functionDeclarationWithBodyOrNative
@@ -5834,6 +5919,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = exportStatement(builder_, level_ + 1);
     if (!result_) result_ = partStatement(builder_, level_ + 1);
     if (!result_) result_ = classDefinition(builder_, level_ + 1);
+    if (!result_) result_ = enumDefinition(builder_, level_ + 1);
     if (!result_) result_ = functionTypeAlias(builder_, level_ + 1);
     if (!result_) result_ = getterOrSetterDeclaration(builder_, level_ + 1);
     if (!result_) result_ = functionDeclarationWithBodyOrNative(builder_, level_ + 1);
@@ -5844,7 +5930,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // !(<<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'export' | 'external' | 'final' | 'get' | 'import' | 'library' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void')
+  // !(<<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'enum' | 'export' | 'external' | 'final' | 'get' | 'import' | 'library' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void')
   static boolean top_level_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "top_level_recover")) return false;
     boolean result_;
@@ -5854,7 +5940,7 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // <<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'export' | 'external' | 'final' | 'get' | 'import' | 'library' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void'
+  // <<nonStrictID>> | '@' | 'abstract' | 'class' | 'const' | 'enum' | 'export' | 'external' | 'final' | 'get' | 'import' | 'library' | 'part' | 'set' | 'static' | 'typedef' | 'var' | 'void'
   private static boolean top_level_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "top_level_recover_0")) return false;
     boolean result_;
@@ -5864,6 +5950,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, ABSTRACT);
     if (!result_) result_ = consumeToken(builder_, CLASS);
     if (!result_) result_ = consumeToken(builder_, CONST);
+    if (!result_) result_ = consumeToken(builder_, ENUM);
     if (!result_) result_ = consumeToken(builder_, EXPORT);
     if (!result_) result_ = consumeToken(builder_, EXTERNAL);
     if (!result_) result_ = consumeToken(builder_, FINAL);

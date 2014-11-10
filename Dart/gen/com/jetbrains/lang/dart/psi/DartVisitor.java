@@ -122,6 +122,18 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitEnumConstantDeclaration(@NotNull DartEnumConstantDeclaration o) {
+    visitComponent(o);
+  }
+
+  public void visitEnumConstantDeclarationList(@NotNull DartEnumConstantDeclarationList o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitEnumDefinition(@NotNull DartEnumDefinition o) {
+    visitEnum(o);
+  }
+
   public void visitEqualityOperator(@NotNull DartEqualityOperator o) {
     visitPsiCompositeElement(o);
   }
@@ -552,6 +564,10 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitComponent(@NotNull DartComponent o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitEnum(@NotNull DartEnum o) {
     visitPsiCompositeElement(o);
   }
 
