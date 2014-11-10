@@ -6,7 +6,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.file.PsiDirectoryImpl;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.psi.DartComponent;
@@ -232,7 +231,6 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                            "  try{} catch (e3){<caret expected='file.dart -> main -> e3'>e3; <caret expected=''>e1; <caret expected=''>e2; <caret expected=''>s2;}\n" +
                                            "  try{} catch (e4, s4){print(<caret expected='file.dart -> main -> e4'>e4 + <caret expected='file.dart -> main -> s4'>s4); <caret expected=''>e1; <caret expected=''>e2; <caret expected=''>s2; <caret expected=''>e3;}\n" +
                                            "}");
-
     doTest();
   }
 
@@ -246,7 +244,6 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                            "    return super.toString<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> toString'>();\n" +
                                            "  }\n" +
                                            "}");
-
     doTest();
   }
 
@@ -271,7 +268,14 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                            "  '1 2 3 4'.<caret expected='[Dart SDK]/lib/core/string.dart -> String -> split'>split(' ')  // comment\n" +
                                            "  .map<caret expected='[Dart SDK]/lib/core/iterable.dart -> Iterable -> map'>((e) => int.<caret expected='[Dart SDK]/lib/core/int.dart -> int -> parse'>parse(e) * 2);\n" +
                                            "}");
+    doTest();
+  }
 
+  public void testEnum() throws Exception {
+    myFixture.configureByText("file.dart", "enum Foo {FooA, FooB, }\n" +
+                                           "main() {\n" +
+                                           "  print(<caret expected='file.dart -> Foo'>Foo.FooB);\n" +
+                                           "}");
     doTest();
   }
 }

@@ -17,6 +17,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.BooleanValueHolder;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -216,36 +217,17 @@ public class DartResolveUtil {
     return Collections.emptyList();
   }
 
-  public static Set<DartClass> getClassDeclarations(PsiElement context) {
-    final DartComponent[] components = PsiTreeUtil.getChildrenOfType(context, DartComponent.class);
-    if (components == null) {
-      return Collections.emptySet();
-    }
-    final Set<DartClass> result = new THashSet<DartClass>();
-    for (DartComponent component : components) {
-      final DartComponentType type = DartComponentType.typeOf(component);
-      if (type == DartComponentType.CLASS) {
-        result.add((DartClass)component);
+  @NotNull
+  public static Collection<DartComponent> getClassAndEnumDeclarations(@NotNull final PsiElement root) {
+    final List<DartComponent> result = new SmartList<DartComponent>();
+    for (PsiElement child = root.getFirstChild(); child != null; child = child.getNextSibling()) {
+      if (child instanceof DartClassDefinition || child instanceof DartEnumDefinition) {
+        result.add((DartComponent)child);
       }
     }
+
     return result;
   }
-
-  public static Set<DartEnum> getEnumDeclarations(PsiElement context) {
-    final DartComponent[] components = PsiTreeUtil.getChildrenOfType(context, DartComponent.class);
-    if (components == null) {
-      return Collections.emptySet();
-    }
-    final Set<DartEnum> result = new THashSet<DartEnum>();
-    for (DartComponent component : components) {
-      final DartComponentType type = DartComponentType.typeOf(component);
-      if (type == DartComponentType.ENUM) {
-        result.add((DartEnum)component);
-      }
-    }
-    return result;
-  }
-
 
   @Nullable
   public static VirtualFile getImportedFileByImportPrefix(final @NotNull PsiElement context, final @NotNull String prefix) {

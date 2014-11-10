@@ -347,4 +347,12 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
 
     doTestVariantsInner(getTestName(false) + ".txt");
   }
+
+  public void testEnum() throws Throwable {
+    doTest();
+  }
+
+  public void testEnumConstant() throws Throwable {
+    doTest();
+  }
 }

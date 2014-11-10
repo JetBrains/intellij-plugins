@@ -68,12 +68,7 @@ public class DartClassIndex extends ScalarIndexExtension<String> {
     for (VirtualFile vFile : files) {
       final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
       for (PsiElement root : DartResolveUtil.findDartRoots(psiFile)) {
-        for (DartComponent component : DartResolveUtil.getClassDeclarations(root)) {
-          if (name.equals(component.getName())) {
-            result.add(component.getComponentName());
-          }
-        }
-        for (DartComponent component : DartResolveUtil.getEnumDeclarations(root)) {
+        for (DartComponent component : DartResolveUtil.getClassAndEnumDeclarations(root)) {
           if (name.equals(component.getName())) {
             result.add(component.getComponentName());
           }
