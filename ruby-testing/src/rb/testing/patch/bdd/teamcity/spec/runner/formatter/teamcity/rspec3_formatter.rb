@@ -35,7 +35,7 @@ module Spec
                                          :example_group_started, :example_group_finished,
                                          :example_started, :example_passed,
                                          :example_pending, :example_failed,
-                                         :dump_summary
+                                         :dump_summary, :seed
 
         RUNNER_ISNT_COMPATIBLE_MESSAGE = "TeamCity Rake Runner Plugin isn't compatible with this RSpec version.\n\n"
         TEAMCITY_FORMATTER_INTERNAL_ERRORS =[]
@@ -264,6 +264,10 @@ module Spec
           @@RUNNING_EXAMPLES_STORAGE.clear
 
           debug_log("Summary finished.")
+        end
+        
+        def seed(notification)
+          log(notification.fully_formatted) if notification.seed_used?
         end
 
         def close(notification)
