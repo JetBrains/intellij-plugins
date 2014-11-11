@@ -26,7 +26,6 @@ import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.CssPropertyValue;
 import com.intellij.psi.css.descriptor.BrowserVersion;
 import com.intellij.psi.css.descriptor.CssContextType;
-import com.intellij.psi.css.descriptor.value.CssAnyValue;
 import com.intellij.psi.css.descriptor.value.CssValueDescriptor;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.descriptor.CssCommonDescriptorData;
@@ -108,7 +107,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
     if (constantSet.size() > 0) {
       for (String constant : constantSet) {
-        children.add(createCssNameValue(constant.trim(), null));
+        children.add(CssElementDescriptorFactory2.getInstance().createNameValueDescriptor(constant.trim(), 1, 1, null));
       }
     }
   }
@@ -180,6 +179,9 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     if (types.contains(JSCommonTypeNames.NUMBER_CLASS_NAME) && !formats.contains(LENGTH_FORMAT)) {
       children.add(createCssNumberValue());
     }
+    if (types.contains("Class")) {
+      children.add(CssElementDescriptorFactory2.getInstance().createFunctionInvocationValueDescriptor("ClassReference", 1, 1, null));
+    }
   }
 
   private static void addValuesFromTypes(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssPropertyValue> children) {
@@ -202,43 +204,25 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     addValuesFromEnumerations2(infos, children);
     addValuesFromTypes2(infos, formats, children);
 
-    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData("", "", CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, shorthand ? -1 : 1, null, null, null, null, false);
-    CssGroupValue result = CssGroupValue.create(commonDescriptorData, valueDescriptorData, true, null, CssGroupValue.Type.OR);
+    CssGroupValue result = CssElementDescriptorFactory2.getInstance().createGroupValue(CssGroupValue.Type.OR, -1, 1, null, null);    
     if (!children.isEmpty()) {
       for (CssValueDescriptor child : children) {
         result.addChild(CssValueDescriptorModificator.withParent(child, result));
       }
       if (!formats.contains(COLOR_FORMAT)) {
-        result.addChild(createCssStringValue(result));
+        result.addChild(CssElementDescriptorFactory2.getInstance().createStringValueDescriptor(null, 1, 1, result));
       }
     }
     else {
-      result.addChild(createCssAnyValue(result));
+      result.addChild(CssElementDescriptorFactory2.getInstance().createAnyValueDescriptor(1, 1, result));
     }
 
-    result.addChild(createCssNameValue("undefined", result));
+    result.addChild(CssElementDescriptorFactory2.getInstance().createNameValueDescriptor("undefined", 1, 1, result));
+    result.addChild(CssElementDescriptorFactory2.getInstance().createFunctionInvocationValueDescriptor("PropertyReference", 1, 1, result));
+    result.addChild(CssElementDescriptorFactory2.getInstance().createFunctionInvocationValueDescriptor("Embed", 1, 1, result));
     return result;
-    
-  }
-  
-  private static CssAnyValue createCssAnyValue(@Nullable CssValueDescriptor parent) {
-    return CssElementDescriptorFactory2.getInstance().createAnyValueDescriptor(1, 1, parent);
-  }
-  
-  private static CssStringValue createCssStringValue(@Nullable CssValueDescriptor parent) {
-    String id = CssBundle.message("string.value.presentable.name");
-    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, parent, null, false);
-    return new CssStringValue(null, commonDescriptorData, valueDescriptorData);
   }
 
-  private static CssNameValue createCssNameValue(@NotNull String name, @Nullable CssValueDescriptor parent) {
-    CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(name, name, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");
-    CssValueDescriptorData valueDescriptorData = new CssValueDescriptorData(true, 1, 1, null, null, parent, null, false);
-    return new CssNameValue(name, true, commonDescriptorData, valueDescriptorData);
-  }
-  
   private static CssColorValue createCssColorValue() {
     String id = CssBundle.message("color.value.presentable.name");
     CssCommonDescriptorData commonDescriptorData = new CssCommonDescriptorData(id, id, CssContextType.EMPTY_ARRAY, BrowserVersion.EMPTY_ARRAY, CssVersion.UNKNOWN, null, "");

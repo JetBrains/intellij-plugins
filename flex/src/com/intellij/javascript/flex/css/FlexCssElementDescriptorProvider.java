@@ -37,11 +37,12 @@ import com.intellij.psi.css.descriptor.CssFunctionDescriptor;
 import com.intellij.psi.css.descriptor.CssFunctionDescriptorStub;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
-import com.intellij.psi.css.descriptor.value.CssAnyValue;
 import com.intellij.psi.css.descriptor.value.CssNullValue;
 import com.intellij.psi.css.descriptor.value.CssValueDescriptor;
 import com.intellij.psi.css.descriptor.value.CssValueValidator;
 import com.intellij.psi.css.impl.CssTermTypes;
+import com.intellij.psi.css.impl.descriptor.value.CssGroupValue;
+import com.intellij.psi.css.impl.descriptor.value.CssStringValue;
 import com.intellij.psi.css.impl.util.references.HtmlCssClassOrIdReference;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
@@ -70,8 +71,59 @@ import static com.intellij.psi.util.PsiUtilCore.toPsiElementArray;
  * @author Eugene.Kudelevsky
  */
 public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvider {
-
   private final FlexCssValueValidator FLEX_CSS_VALUE_VALIDATOR = new FlexCssValueValidator(this);
+  private final Map<String, CssFunctionDescriptor> myFunctionDescriptors = ContainerUtil.newHashMap();
+
+  public FlexCssElementDescriptorProvider(@NotNull CssElementDescriptorFactory2 descriptorFactory) {
+    CssStringValue singleStringValue = descriptorFactory.createStringValueDescriptor(null, 1, 1, null);
+
+    CssGroupValue embedFunctionValue = descriptorFactory.createGroupValue(CssGroupValue.Type.OR, 1, 1, null, null);
+
+    CssValueDescriptor commaSeparator = descriptorFactory.createTextValueDescriptor(",", 1, 1, null);
+    CssGroupValue attributes = descriptorFactory.createGroupValue(CssGroupValue.Type.AND, 1, 1, embedFunctionValue, commaSeparator);
+    attributes.addChild(createAttributeValueDescriptor("source", true, descriptorFactory, attributes));
+    attributes.addChild(createAttributeValueDescriptor("mimeType", false, descriptorFactory, attributes));
+    attributes.addChild(createBooleanAttributeValueDescriptor("smoothing", false, descriptorFactory, attributes));
+    attributes.addChild(createBooleanAttributeValueDescriptor("compression", false, descriptorFactory, attributes));
+    attributes.addChild(createAttributeValueDescriptor("quality", false, descriptorFactory, attributes));
+    attributes.addChild(createAttributeValueDescriptor("scaleGridTop", false, descriptorFactory, attributes));
+    attributes.addChild(createAttributeValueDescriptor("scaleGridBottom", false, descriptorFactory, attributes));
+    attributes.addChild(createAttributeValueDescriptor("scaleGridLeft", false, descriptorFactory, attributes));
+    attributes.addChild(createAttributeValueDescriptor("scaleGridRight", false, descriptorFactory, attributes));
+    attributes.addChild(createAttributeValueDescriptor("symbol", false, descriptorFactory, attributes));
+    
+    embedFunctionValue.addChild(descriptorFactory.createStringValueDescriptor(null, 1, 1, embedFunctionValue));
+    embedFunctionValue.addChild(attributes);
+
+    myFunctionDescriptors.put("Embed", new CssFunctionDescriptorStub("Embed", embedFunctionValue));
+    myFunctionDescriptors.put("ClassReference", new CssFunctionDescriptorStub("ClassReference", singleStringValue));
+    myFunctionDescriptors.put("PropertyReference", new CssFunctionDescriptorStub("PropertyReference", singleStringValue));
+  }
+
+  private static CssGroupValue createAttributeValueDescriptor(@NotNull String attributeName, boolean required,
+                                                              @NotNull CssElementDescriptorFactory2 descriptorFactory,
+                                                              @NotNull CssGroupValue parent) {
+    CssGroupValue attributeValue = descriptorFactory.createGroupValue(CssGroupValue.Type.ALL, required ? 1 : 0, 1, parent, null);
+    attributeValue.addChild(descriptorFactory.createNameValueDescriptor(attributeName, 1, 1, attributeValue));
+    attributeValue.addChild(descriptorFactory.createTextValueDescriptor("=", 1, 1, attributeValue));
+    attributeValue.addChild(descriptorFactory.createStringValueDescriptor(null, 1, 1, attributeValue));
+    return attributeValue;
+  }
+  
+  private static CssGroupValue createBooleanAttributeValueDescriptor(@NotNull String attributeName, boolean required,
+                                                              @NotNull CssElementDescriptorFactory2 descriptorFactory,
+                                                              @NotNull CssGroupValue parent) {
+    CssGroupValue attributeValue = descriptorFactory.createGroupValue(CssGroupValue.Type.ALL, required ? 1 : 0, 1, parent, null);
+    attributeValue.addChild(descriptorFactory.createNameValueDescriptor(attributeName, 1, 1, attributeValue));
+    attributeValue.addChild(descriptorFactory.createTextValueDescriptor("=", 1, 1, attributeValue));
+    
+    CssGroupValue booleanValue = descriptorFactory.createGroupValue(CssGroupValue.Type.OR, 1, 1, attributeValue, null);
+    booleanValue.addChild(descriptorFactory.createStringValueDescriptor("true", 1, 1, booleanValue));
+    booleanValue.addChild(descriptorFactory.createStringValueDescriptor("false", 1, 1, booleanValue));
+    
+    attributeValue.addChild(booleanValue);
+    return attributeValue;
+  }
 
   public boolean isMyContext(@Nullable PsiElement context) {
     if (context == null) return false;
@@ -239,8 +291,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   @NotNull
   @Override
   public Collection<? extends CssFunctionDescriptor> findFunctionDescriptors(@NotNull String functionName, @Nullable PsiElement context) {
-    final CssAnyValue anyValueDescriptor = CssElementDescriptorFactory2.getInstance().createAnyValueDescriptor(0, -1, null);
-    return ContainerUtil.createMaybeSingletonList(new CssFunctionDescriptorStub(functionName, anyValueDescriptor));
+    return ContainerUtil.createMaybeSingletonList(myFunctionDescriptors.get(functionName));
   }
 
   public boolean isPossibleSelector(@NotNull String selector, @NotNull PsiElement context) {
