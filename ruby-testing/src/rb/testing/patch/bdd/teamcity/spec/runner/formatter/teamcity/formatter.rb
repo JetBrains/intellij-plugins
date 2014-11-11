@@ -420,6 +420,11 @@ module Spec
 
           debug_log("Summary finished.")
         end
+        
+        # Report the used seed
+        def seed(number)
+          log("Randomized with seed #{number}")
+        end
 
         # RSPec >= 2.0
         def close
