@@ -3,12 +3,10 @@ package com.jetbrains.lang.dart.projectWizard;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.projectWizard.Stagehand.StagehandException;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +37,10 @@ public class StagehandTemplateGenerator extends DartEmptyProjectGenerator {
   }
 
   @NotNull
-  protected VirtualFile[] doGenerateProject(final Project project, final Module module, final VirtualFile baseDir) throws IOException {
+  protected VirtualFile[] doGenerateProject(@NotNull final Module module, final VirtualFile baseDir) throws IOException {
 
     try {
-      final String path = baseDir.getCanonicalPath();
-      if (path == null) {
-        throw new IOException(DartBundle.message("dart.pub.stagehand.exception.invalid.basedir.path"));
-      }
-      myStagehand.generateInto(new File(path), myId);
+      myStagehand.generateInto(baseDir, myId);
     }
     catch (StagehandException e) {
       throw new IOException(e);
@@ -54,10 +48,10 @@ public class StagehandTemplateGenerator extends DartEmptyProjectGenerator {
 
     List<VirtualFile> projectFiles = new ArrayList<VirtualFile>();
 
-    addIfExists(projectFiles, project, myEntrypoint);
-    addIfExists(projectFiles, project, PubspecYamlUtil.PUBSPEC_YAML);
+    addIfExists(projectFiles, module.getProject(), myEntrypoint);
+    addIfExists(projectFiles, module.getProject(), PubspecYamlUtil.PUBSPEC_YAML);
 
-    return projectFiles.toArray(VirtualFile.EMPTY_ARRAY);
+    return projectFiles.toArray(new VirtualFile[projectFiles.size()]);
   }
 
 

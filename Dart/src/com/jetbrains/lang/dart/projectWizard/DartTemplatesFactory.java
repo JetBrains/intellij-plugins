@@ -18,8 +18,8 @@ public class DartTemplatesFactory extends ProjectTemplatesFactory {
 
   private static final String GROUP_NAME = "Dart";
 
-  private static final Stagehand myStagehand = new Stagehand();
-  private static List<DartEmptyProjectGenerator> myTemplateCache;
+  private static final Stagehand STAGEHAND = new Stagehand();
+  private static List<DartEmptyProjectGenerator> ourTemplateCache;
 
   @NotNull
   @Override
@@ -39,7 +39,7 @@ public class DartTemplatesFactory extends ProjectTemplatesFactory {
     final List<DartEmptyProjectGenerator> templates = getStagehandTemplates();
 
     if (!templates.isEmpty()) {
-      return templates.toArray(StagehandTemplateGenerator.EMPTY_ARRAY);
+      return templates.toArray(new ProjectTemplate[templates.size()]);
     }
 
     // Fall back
@@ -52,42 +52,42 @@ public class DartTemplatesFactory extends ProjectTemplatesFactory {
 
   private static List<DartEmptyProjectGenerator> getStagehandTemplates() {
 
-    if (myTemplateCache != null) {
-      return myTemplateCache;
+    if (ourTemplateCache != null) {
+      return ourTemplateCache;
     }
 
     boolean doUpgradeCheck = true;
 
-    if (!myStagehand.isInstalled()) {
+    if (!STAGEHAND.isInstalled()) {
       doUpgradeCheck = false;
-      myStagehand.install();
+      STAGEHAND.install();
     }
 
-    List<StagehandTuple> templates = myStagehand.getAvailableTemplates();
+    List<StagehandTuple> templates = STAGEHAND.getAvailableTemplates();
 
     // Make sure we're on a reasonably latest version of Stagehand.
     if (doUpgradeCheck) {
       new Thread() {
         @Override
         public void run() {
-          myStagehand.upgrade();
+          STAGEHAND.upgrade();
         }
       }.start();
     }
 
-    myTemplateCache = new ArrayList<DartEmptyProjectGenerator>();
+    ourTemplateCache = new ArrayList<DartEmptyProjectGenerator>();
 
     for (StagehandTuple template : templates) {
-      myTemplateCache.add(new StagehandTemplateGenerator(
-        myStagehand,
+      ourTemplateCache.add(new StagehandTemplateGenerator(
+        STAGEHAND,
         template.myId,
         template.myDescription,
         template.myEntrypoint));
     }
 
-    Collections.sort(myTemplateCache);
+    Collections.sort(ourTemplateCache);
 
-    return myTemplateCache;
+    return ourTemplateCache;
   }
 
 

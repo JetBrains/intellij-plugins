@@ -74,7 +74,7 @@ public class DartEmptyProjectGenerator extends WebProjectTemplate<DartProjectWiz
       public void run() {
         setupSdkAndDartium(module, data);
         try {
-          final VirtualFile[] filesToOpen = doGenerateProject(project, module, baseDir);
+          final VirtualFile[] filesToOpen = doGenerateProject(module, baseDir);
           if (filesToOpen.length > 0) {
             scheduleFilesOpeningAndPubGet(project, filesToOpen);
           }
@@ -90,7 +90,7 @@ public class DartEmptyProjectGenerator extends WebProjectTemplate<DartProjectWiz
   }
 
   @NotNull
-  protected VirtualFile[] doGenerateProject(final Project project, final Module module, final VirtualFile baseDir) throws IOException {
+  protected VirtualFile[] doGenerateProject(@NotNull final Module module, final VirtualFile baseDir) throws IOException {
     return VirtualFile.EMPTY_ARRAY;
   }
 

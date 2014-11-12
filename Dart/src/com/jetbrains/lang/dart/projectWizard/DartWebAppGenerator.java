@@ -7,7 +7,6 @@ import com.intellij.ide.browsers.impl.WebBrowserServiceImpl;
 import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
 import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -35,7 +34,7 @@ public class DartWebAppGenerator extends DartEmptyProjectGenerator {
   }
 
   @NotNull
-  protected VirtualFile[] doGenerateProject(final Project project, final Module module, final VirtualFile baseDir) throws IOException {
+  protected VirtualFile[] doGenerateProject(@NotNull final Module module, final VirtualFile baseDir) throws IOException {
     final String projectTitle = StringUtil.toTitleCase(module.getName());
     final String lowercaseName = module.getName().toLowerCase(Locale.US);
 
