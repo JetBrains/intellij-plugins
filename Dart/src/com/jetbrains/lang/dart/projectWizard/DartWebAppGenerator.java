@@ -34,7 +34,7 @@ public class DartWebAppGenerator extends DartEmptyProjectGenerator {
   }
 
   @NotNull
-  protected VirtualFile[] doGenerateProject(final Module module, final VirtualFile baseDir) throws IOException {
+  protected VirtualFile[] doGenerateProject(@NotNull final Module module, final VirtualFile baseDir) throws IOException {
     final String projectTitle = StringUtil.toTitleCase(module.getName());
     final String lowercaseName = module.getName().toLowerCase(Locale.US);
 
