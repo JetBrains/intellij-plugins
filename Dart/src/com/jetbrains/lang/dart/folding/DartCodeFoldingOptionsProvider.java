@@ -7,7 +7,8 @@ import com.jetbrains.lang.dart.DartBundle;
 public class DartCodeFoldingOptionsProvider extends BeanConfigurable<DartCodeFoldingSettings> implements CodeFoldingOptionsProvider {
   public DartCodeFoldingOptionsProvider() {
     super(DartCodeFoldingSettings.getInstance());
-    // argument must be equal to property in DartCodeFoldingSettings
+    // arguments must be equal to property in DartCodeFoldingSettings
+    checkBox("CollapseParts", DartBundle.message("checkbox.collapse.parts"));
     checkBox("CollapseGenericParameters", DartBundle.message("checkbox.collapse.generic.parameters"));
   }
 }

@@ -16,6 +16,7 @@ import java.io.File;
     )}
 )
 public class DartCodeFoldingSettings implements PersistentStateComponent<DartCodeFoldingSettings>, ExportableComponent {
+  private boolean myCollapseParts = true;
   private boolean myCollapseGenericParams = false;
 
   public static DartCodeFoldingSettings getInstance() {
@@ -51,5 +52,14 @@ public class DartCodeFoldingSettings implements PersistentStateComponent<DartCod
 
   public void setCollapseGenericParameters(final boolean collapseGenericParams) {
     myCollapseGenericParams = collapseGenericParams;
+  }
+
+  // property name must be equal to checkBox() argument in DartCodeFoldingOptionsProvider
+  public boolean isCollapseParts() {
+    return myCollapseParts;
+  }
+
+  public void setCollapseParts(final boolean collapseParts) {
+    myCollapseParts = collapseParts;
   }
 }

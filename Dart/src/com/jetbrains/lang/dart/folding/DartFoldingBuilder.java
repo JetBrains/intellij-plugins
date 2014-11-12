@@ -34,13 +34,15 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
                                           final boolean quick) {
     if (!(root instanceof DartFile)) return;
 
-    final TextRange fileHeaderRange = foldFileHeader(descriptors, (DartFile)root, document); // 1. File header
-    foldImportExportStatements(descriptors, (DartFile)root);                                 // 2. Import and export statements
-    Collection<PsiElement> psiElements = PsiTreeUtil.collectElementsOfType(root, new Class[]{DartTypeArguments.class, PsiComment.class});
-    foldComments(descriptors, psiElements, fileHeaderRange);                                 // 3. Comments and comment sequences
-    foldClassBodies(descriptors, (DartFile)root);                                            // 4. Class body
-    foldFunctionBodies(descriptors, root);                                                   // 5. Function body
-    foldTypeArguments(descriptors, psiElements);                                             // 6. Type arguments
+    final DartFile dartFile = (DartFile)root;
+    final TextRange fileHeaderRange = foldFileHeader(descriptors, dartFile, document); // 1. File header
+    foldImportExportStatements(descriptors, dartFile);                                 // 2. Import and export statements
+    foldPartStatements(descriptors, dartFile);                                         // 3. Part statements
+    final Collection<PsiElement> psiElements = PsiTreeUtil.collectElementsOfType(root, new Class[]{DartTypeArguments.class, PsiComment.class});
+    foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
+    foldClassBodies(descriptors, dartFile);                                            // 5. Class body
+    foldFunctionBodies(descriptors, root);                                             // 6. Function body
+    foldTypeArguments(descriptors, psiElements);                                       // 7. Type arguments
   }
 
   protected String getLanguagePlaceholderText(@NotNull final ASTNode node, @NotNull final TextRange range) {
@@ -49,13 +51,14 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
 
     if (psiElement instanceof DartFile) return "/.../";                              // 1.   File header
     if (psiElement instanceof DartImportOrExportStatement) return "...";             // 2.   Import and export statements
-    if (elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT) return "/**...*/"; // 3.1. Multiline doc comments
-    if (elementType == DartTokenTypesSets.MULTI_LINE_COMMENT) return "/*...*/";      // 3.2. Multiline comments
-    if (elementType == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) return "///...";  // 3.3. Consequent single line doc comments
-    if (elementType == DartTokenTypesSets.SINGLE_LINE_COMMENT) return "//...";       // 3.4. Consequent single line comments
-    if (psiElement instanceof DartClassBody) return "{...}";                         // 4.   Class body
-    if (psiElement instanceof DartFunctionBody) return "{...}";                      // 5.   Function body
-    if (psiElement instanceof DartTypeArguments) return SMILEY;                      // 6.   Type arguments
+    if (psiElement instanceof DartPartStatement) return "...";                       // 3.   Part statements
+    if (elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT) return "/**...*/"; // 4.1. Multiline doc comments
+    if (elementType == DartTokenTypesSets.MULTI_LINE_COMMENT) return "/*...*/";      // 4.2. Multiline comments
+    if (elementType == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) return "///...";  // 4.3. Consequent single line doc comments
+    if (elementType == DartTokenTypesSets.SINGLE_LINE_COMMENT) return "//...";       // 4.4. Consequent single line comments
+    if (psiElement instanceof DartClassBody) return "{...}";                         // 5.   Class body
+    if (psiElement instanceof DartFunctionBody) return "{...}";                      // 6.   Function body
+    if (psiElement instanceof DartTypeArguments) return SMILEY;                      // 7.   Type arguments
 
     return "...";
   }
@@ -64,20 +67,20 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     final IElementType elementType = node.getElementType();
     final PsiElement psiElement = node.getPsi();
     final CodeFoldingSettings settings = CodeFoldingSettings.getInstance();
+    final DartCodeFoldingSettings dartSettings = DartCodeFoldingSettings.getInstance();
 
     if (psiElement instanceof DartFile) return settings.COLLAPSE_FILE_HEADER;                        // 1. File header
     if (psiElement instanceof DartImportOrExportStatement) return settings.COLLAPSE_IMPORTS;         // 2. Import and export statements
+    if (psiElement instanceof DartPartStatement) return dartSettings.isCollapseParts();              // 3. Part statements
 
-    if (elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT ||                                  // 3.1. Multiline doc comments
+    if (elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT ||                                  // 4.1. Multiline doc comments
         elementType ==
-        DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) {                                                // 3.3. Consequent single line doc comments
-      return settings.COLLAPSE_DOC_COMMENTS;                                                         // 3.2 and 3.4 never collapsed by default
+        DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) {                                                // 4.3. Consequent single line doc comments
+      return settings.COLLAPSE_DOC_COMMENTS;                                                         // 4.2 and 4.4 never collapsed by default
     }
-    //                                                                                                  4. Class body never collapsed by default
-    if (psiElement instanceof DartFunctionBody) return settings.COLLAPSE_METHODS;                    // 5. Function body
-
-    DartCodeFoldingSettings dartSettings = DartCodeFoldingSettings.getInstance();
-    if (psiElement instanceof DartTypeArguments) return dartSettings.isCollapseGenericParameters();  // 6. Type arguments
+    //                                                                                                  5. Class body never collapsed by default
+    if (psiElement instanceof DartFunctionBody) return settings.COLLAPSE_METHODS;                    // 6. Function body
+    if (psiElement instanceof DartTypeArguments) return dartSettings.isCollapseGenericParameters();  // 7. Type arguments
 
     return false;
   }
@@ -138,6 +141,28 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       final int startOffset = firstImport.getTextOffset() + firstImport.getFirstChild().getTextLength() + 1; // after "import " or "export "
       final int endOffset = lastImport.getTextRange().getEndOffset();
       descriptors.add(new FoldingDescriptor(firstImport, TextRange.create(startOffset, endOffset)));
+    }
+  }
+
+  private static void foldPartStatements(@NotNull final List<FoldingDescriptor> descriptors, final @NotNull DartFile dartFile) {
+    final DartPartStatement firstPart = PsiTreeUtil.findChildOfType(dartFile, DartPartStatement.class);
+    if (firstPart == null) return;
+
+    PsiElement lastPart = firstPart;
+    PsiElement nextElement = firstPart;
+    while (nextElement instanceof DartPartStatement ||
+           nextElement instanceof PsiComment ||
+           nextElement instanceof PsiWhiteSpace) {
+      if (nextElement instanceof DartPartStatement) {
+        lastPart = nextElement;
+      }
+      nextElement = nextElement.getNextSibling();
+    }
+
+    if (lastPart != firstPart) {
+      final int startOffset = firstPart.getTextOffset() + firstPart.getFirstChild().getTextLength() + 1; // after "part"
+      final int endOffset = lastPart.getTextRange().getEndOffset();
+      descriptors.add(new FoldingDescriptor(firstPart, TextRange.create(startOffset, endOffset)));
     }
   }
 
