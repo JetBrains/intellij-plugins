@@ -13,9 +13,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.DartComponentType;
-import com.jetbrains.lang.dart.psi.DartClass;
-import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartEnum;
+import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +24,11 @@ import org.jetbrains.annotations.Nullable;
 public class DartStructureViewModel extends StructureViewModelBase implements StructureViewModel.ElementInfoProvider {
   public DartStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
     super(psiFile, editor, new DartStructureViewElement(psiFile));
-    withSuitableClasses(DartComponent.class, DartClass.class);
+    // order matters, first elements are compared first when walking up parents in AST:
+    withSuitableClasses(DartVarAccessDeclaration.class, DartFunctionDeclarationWithBodyOrNative.class, DartMethodDeclaration.class,
+                        DartFunctionTypeAlias.class, DartGetterDeclaration.class, DartSetterDeclaration.class,
+                        DartEnumConstantDeclaration.class, DartEnum.class,
+                        DartClass.class);
   }
 
   @Override
