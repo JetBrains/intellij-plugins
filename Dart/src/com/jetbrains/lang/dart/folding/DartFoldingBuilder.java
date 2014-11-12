@@ -36,9 +36,10 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
 
     final DartFile dartFile = (DartFile)root;
     final TextRange fileHeaderRange = foldFileHeader(descriptors, dartFile, document); // 1. File header
-    foldImportExportStatements(descriptors, dartFile);                                 // 2. Import and export statements
-    foldPartStatements(descriptors, dartFile);                                         // 3. Part statements
-    final Collection<PsiElement> psiElements = PsiTreeUtil.collectElementsOfType(root, new Class[]{DartTypeArguments.class, PsiComment.class});
+    foldConsequentStatements(descriptors, dartFile, DartImportOrExportStatement.class);// 2. Import and export statements
+    foldConsequentStatements(descriptors, dartFile, DartPartStatement.class);          // 3. Part statements
+    final Collection<PsiElement> psiElements =
+      PsiTreeUtil.collectElementsOfType(root, new Class[]{DartTypeArguments.class, PsiComment.class});
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
     foldClassBodies(descriptors, dartFile);                                            // 5. Class body
     foldFunctionBodies(descriptors, root);                                             // 6. Function body
@@ -122,47 +123,28 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     return null;
   }
 
-  private static void foldImportExportStatements(@NotNull final List<FoldingDescriptor> descriptors, final @NotNull DartFile dartFile) {
-    final DartImportOrExportStatement firstImport = PsiTreeUtil.findChildOfType(dartFile, DartImportOrExportStatement.class);
-    if (firstImport == null) return;
+  private static <T extends PsiElement> void foldConsequentStatements(@NotNull final List<FoldingDescriptor> descriptors,
+                                                                      @NotNull final DartFile dartFile,
+                                                                      @NotNull final Class<T> aClass) {
+    final T firstStatement = PsiTreeUtil.findChildOfType(dartFile, aClass);
+    if (firstStatement == null) return;
 
-    PsiElement lastImport = firstImport;
-    PsiElement nextElement = firstImport;
-    while (nextElement instanceof DartImportOrExportStatement ||
+    PsiElement lastStatement = firstStatement;
+    PsiElement nextElement = firstStatement;
+    while (aClass.isInstance(nextElement) ||
            nextElement instanceof PsiComment ||
            nextElement instanceof PsiWhiteSpace) {
-      if (nextElement instanceof DartImportOrExportStatement) {
-        lastImport = nextElement;
+      if (aClass.isInstance(nextElement)) {
+        lastStatement = nextElement;
       }
       nextElement = nextElement.getNextSibling();
     }
 
-    if (lastImport != firstImport) {
-      final int startOffset = firstImport.getTextOffset() + firstImport.getFirstChild().getTextLength() + 1; // after "import " or "export "
-      final int endOffset = lastImport.getTextRange().getEndOffset();
-      descriptors.add(new FoldingDescriptor(firstImport, TextRange.create(startOffset, endOffset)));
-    }
-  }
-
-  private static void foldPartStatements(@NotNull final List<FoldingDescriptor> descriptors, final @NotNull DartFile dartFile) {
-    final DartPartStatement firstPart = PsiTreeUtil.findChildOfType(dartFile, DartPartStatement.class);
-    if (firstPart == null) return;
-
-    PsiElement lastPart = firstPart;
-    PsiElement nextElement = firstPart;
-    while (nextElement instanceof DartPartStatement ||
-           nextElement instanceof PsiComment ||
-           nextElement instanceof PsiWhiteSpace) {
-      if (nextElement instanceof DartPartStatement) {
-        lastPart = nextElement;
-      }
-      nextElement = nextElement.getNextSibling();
-    }
-
-    if (lastPart != firstPart) {
-      final int startOffset = firstPart.getTextOffset() + firstPart.getFirstChild().getTextLength() + 1; // after "part"
-      final int endOffset = lastPart.getTextRange().getEndOffset();
-      descriptors.add(new FoldingDescriptor(firstPart, TextRange.create(startOffset, endOffset)));
+    if (lastStatement != firstStatement) {
+      // after "import " or "export " or "part "
+      final int startOffset = firstStatement.getTextOffset() + firstStatement.getFirstChild().getTextLength() + 1;
+      final int endOffset = lastStatement.getTextRange().getEndOffset();
+      descriptors.add(new FoldingDescriptor(firstStatement, TextRange.create(startOffset, endOffset)));
     }
   }
 
