@@ -64,7 +64,7 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
   }
 
   private Icon doOverlays(Icon icon) {
-    if (isStatic()) {
+    if (isStatic() && !isGetter() && !isSetter()) {
       icon = overlayIcons(icon, AllIcons.Nodes.StaticMark);
     }
     if (isFinal()) {
