@@ -18,14 +18,12 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartStructureViewModel extends StructureViewModelBase implements StructureViewModel.ElementInfoProvider {
   public DartStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
     super(psiFile, editor, new DartStructureViewElement(psiFile));
     // order matters, first elements are compared first when walking up parents in AST:
     withSuitableClasses(DartVarAccessDeclaration.class, DartFunctionDeclarationWithBodyOrNative.class, DartMethodDeclaration.class,
+                        DartFactoryConstructorDeclaration.class, DartNamedConstructorDeclaration.class,
                         DartFunctionTypeAlias.class, DartGetterDeclaration.class, DartSetterDeclaration.class,
                         DartEnumConstantDeclaration.class, DartEnum.class,
                         DartClass.class);
