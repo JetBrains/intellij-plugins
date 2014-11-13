@@ -218,7 +218,32 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     return result;
   }
 
+  public static void collectDependencies(Module module, Set<Module> modules) {
+    if (modules.contains(module)) return;
+    Module[] dependencies = ModuleRootManager.getInstance(module).getDependencies();
+    for (Module dependency : dependencies) {
+      modules.add(dependency);
+      if (!modules.contains(dependency)) {
+        collectDependencies(dependency, modules);
+      }
+    }
+  }
+
+
+
   public List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module) {
+    final Set<Module> modules = new HashSet<Module>();
+    collectDependencies(module, modules);
+    modules.add(module);
+
+    final List<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
+    for (Module current : modules) {
+      result.addAll(loadStepsForModule(featureFile, current));
+    }
+    return result;
+  }
+
+  public List<AbstractStepDefinition> loadStepsForModule(@Nullable final PsiFile featureFile, @NotNull final Module module) {
     final DataObject dataObject = (DataObject)CucumberStepsIndex.getInstance(module.getProject()).getExtensionDataObject(this);
     // New step definitions folders roots
     final List<PsiDirectory> notLoadedStepDefinitionsRoots = new ArrayList<PsiDirectory>();
