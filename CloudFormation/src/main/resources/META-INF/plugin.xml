@@ -9,10 +9,9 @@
     Amazon AWS CloudFormation language support
   ]]></description>
 
-  <idea-version since-build="133.193"/>
+  <idea-version since-build="139.224"/>
 
   <depends>com.intellij.modules.lang</depends>
-  <depends>JavaScript</depends>
 
   <application-components>
   </application-components>
@@ -27,11 +26,11 @@
     <fileTypeFactory implementation="com.intellij.aws.cloudformation.CloudFormationFileType"/>
     <psi.referenceContributor implementation="com.intellij.aws.cloudformation.CloudFormationReferenceContributor"/>
 
-    <localInspection language="JavaScript" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
+    <localInspection language="JSON" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
                      key="aws.cloudformation.inspections.formatViolation"
                      groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="com.intellij.aws.cloudformation.inspections.FormatViolationInspection"/>
-    <completion.contributor language="JavaScript"
+    <completion.contributor language="JSON"
                             order="first"
                             implementationClass="com.intellij.aws.cloudformation.CloudFormationCompletionContributor"/>
 

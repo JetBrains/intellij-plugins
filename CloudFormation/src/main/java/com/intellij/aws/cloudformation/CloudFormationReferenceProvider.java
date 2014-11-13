@@ -3,7 +3,7 @@ package com.intellij.aws.cloudformation;
 import com.intellij.aws.cloudformation.references.CloudFormationEntityReference;
 import com.intellij.aws.cloudformation.references.CloudFormationMappingSecondLevelKeyReference;
 import com.intellij.aws.cloudformation.references.CloudFormationMappingTopLevelKeyReference;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.json.psi.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -34,74 +34,71 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
 
   @NotNull
   public static List<PsiReference> buildFromElement(PsiElement element) {
-    final JSLiteralExpression literalExpression = ObjectUtils.tryCast(element, JSLiteralExpression.class);
-    if (literalExpression == null) {
+    final JsonStringLiteral stringLiteral = ObjectUtils.tryCast(element, JsonStringLiteral.class);
+    if (stringLiteral == null) {
       return Collections.emptyList();
     }
 
     List<PsiReference> result = new ArrayList<PsiReference>();
 
-    if (handleRef(literalExpression, result)) {
+    if (handleRef(stringLiteral, result)) {
       return result;
     }
 
-    if (isInCondition(literalExpression)) {
+    if (isInCondition(stringLiteral)) {
       result.add(new CloudFormationEntityReference(
-        literalExpression,
-        CloudFormationSections.Conditions));
+          stringLiteral,
+          CloudFormationSections.Conditions));
       return result;
     }
 
-    final JSArrayLiteralExpression parametersArray = ObjectUtils.tryCast(element.getParent(), JSArrayLiteralExpression.class);
+    final JsonArray parametersArray = ObjectUtils.tryCast(element.getParent(), JsonArray.class);
     if (parametersArray != null) {
-      final JSProperty funcProperty = ObjectUtils.tryCast(parametersArray.getParent(), JSProperty.class);
+      final JsonProperty funcProperty = ObjectUtils.tryCast(parametersArray.getParent(), JsonProperty.class);
       final boolean isFindInMap = funcProperty != null && CloudFormationIntrinsicFunctions.FnFindInMap.equals(funcProperty.getName());
       final boolean isGetAtt = funcProperty != null && CloudFormationIntrinsicFunctions.FnGetAtt.equals(funcProperty.getName());
       final boolean isIf = funcProperty != null && CloudFormationIntrinsicFunctions.FnIf.equals(funcProperty.getName());
 
       if (isGetAtt || isFindInMap || isIf) {
-        final JSObjectLiteralExpression obj = ObjectUtils.tryCast(funcProperty.getParent(), JSObjectLiteralExpression.class);
+        final JsonObject obj = ObjectUtils.tryCast(funcProperty.getParent(), JsonObject.class);
         if (obj != null) {
-          final JSExpression[] allParameters = parametersArray.getExpressions();
-          if (allParameters.length > 0 && element == allParameters[0]) {
-            final JSProperty[] properties = obj.getProperties();
-            if (properties.length == 1) {
+          final List<JsonValue> allParameters = parametersArray.getValueList();
+          if (allParameters.size() > 0 && element == allParameters.get(0)) {
+            final List<JsonProperty> properties = obj.getPropertyList();
+            if (properties.size() == 1) {
               if (isGetAtt) {
-                result.add(new CloudFormationEntityReference(literalExpression, CloudFormationSections.Resources));
+                result.add(new CloudFormationEntityReference(stringLiteral, CloudFormationSections.Resources));
                 return result;
               }
 
               if (isFindInMap) {
-                result.add(new CloudFormationEntityReference(literalExpression, CloudFormationSections.Mappings));
+                result.add(new CloudFormationEntityReference(stringLiteral, CloudFormationSections.Mappings));
                 return result;
               }
 
               if (isIf) {
-                result.add(new CloudFormationEntityReference(literalExpression, CloudFormationSections.Conditions));
+                result.add(new CloudFormationEntityReference(stringLiteral, CloudFormationSections.Conditions));
                 return result;
               }
             }
-          } else if (allParameters.length > 1 && element == allParameters[1]) {
+          } else if (allParameters.size() > 1 && element == allParameters.get(1)) {
             if (isFindInMap) {
-              JSLiteralExpression mappingNameExpression = ObjectUtils.tryCast(allParameters[0], JSLiteralExpression.class);
-              if (mappingNameExpression != null && mappingNameExpression.isQuotedLiteral()) {
-                result.add(new CloudFormationMappingTopLevelKeyReference(literalExpression,
-                                                                         CloudFormationResolve.OBJECT$.getTargetName(mappingNameExpression)));
+              JsonStringLiteral mappingNameExpression = ObjectUtils.tryCast(allParameters.get(0), JsonStringLiteral.class);
+              if (mappingNameExpression != null) {
+                result.add(new CloudFormationMappingTopLevelKeyReference(stringLiteral,
+                    CloudFormationResolve.OBJECT$.getTargetName(mappingNameExpression)));
                 return result;
               }
             }
-          } else if (allParameters.length > 2 && element == allParameters[2]) {
+          } else if (allParameters.size() > 2 && element == allParameters.get(2)) {
             if (isFindInMap) {
-              JSLiteralExpression mappingNameExpression = ObjectUtils.tryCast(allParameters[0], JSLiteralExpression.class);
-              JSLiteralExpression topLevelKeyExpression = ObjectUtils.tryCast(allParameters[1], JSLiteralExpression.class);
-              if (mappingNameExpression != null &&
-                  mappingNameExpression.isQuotedLiteral() &&
-                  topLevelKeyExpression != null &&
-                  topLevelKeyExpression.isQuotedLiteral()) {
+              JsonStringLiteral mappingNameExpression = ObjectUtils.tryCast(allParameters.get(0), JsonStringLiteral.class);
+              JsonStringLiteral topLevelKeyExpression = ObjectUtils.tryCast(allParameters.get(1), JsonStringLiteral.class);
+              if (mappingNameExpression != null && topLevelKeyExpression != null) {
                 result.add(new CloudFormationMappingSecondLevelKeyReference(
-                  literalExpression,
-                  CloudFormationResolve.OBJECT$.getTargetName(mappingNameExpression),
-                  CloudFormationResolve.OBJECT$.getTargetName(topLevelKeyExpression)));
+                    stringLiteral,
+                    CloudFormationResolve.OBJECT$.getTargetName(mappingNameExpression),
+                    CloudFormationResolve.OBJECT$.getTargetName(topLevelKeyExpression)));
                 return result;
               }
             }
@@ -110,37 +107,37 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
       }
     }
 
-    if (handleDependsOnSingle(literalExpression, result)) {
+    if (handleDependsOnSingle(stringLiteral, result)) {
       return result;
     }
 
-    if (handleDependsOnMultiple(literalExpression, result)) {
+    if (handleDependsOnMultiple(stringLiteral, result)) {
       return result;
     }
 
     if (isInConditionOnResource(element)) {
       result.add(new CloudFormationEntityReference(
-        literalExpression,
-        CloudFormationSections.Conditions));
+          stringLiteral,
+          CloudFormationSections.Conditions));
       return result;
     }
 
     return result;
   }
 
-  public static boolean handleRef(JSLiteralExpression element, List<PsiReference> result) {
-    final JSProperty refProperty = ObjectUtils.tryCast(element.getParent(), JSProperty.class);
+  public static boolean handleRef(JsonStringLiteral element, List<PsiReference> result) {
+    final JsonProperty refProperty = ObjectUtils.tryCast(element.getParent(), JsonProperty.class);
     if (refProperty == null || !CloudFormationIntrinsicFunctions.Ref.equals(refProperty.getName())) {
       return false;
     }
 
-    final JSObjectLiteralExpression obj = ObjectUtils.tryCast(refProperty.getParent(), JSObjectLiteralExpression.class);
+    final JsonObject obj = ObjectUtils.tryCast(refProperty.getParent(), JsonObject.class);
     if (obj == null) {
       return false;
     }
 
-    final JSProperty[] properties = obj.getProperties();
-    if (properties.length != 1) {
+    final List<JsonProperty> properties = obj.getPropertyList();
+    if (properties.size() != 1) {
       return false;
     }
 
@@ -150,91 +147,91 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
     }
 
     result.add(new CloudFormationEntityReference(
-      element,
-      CloudFormationSections.Parameters,
-      CloudFormationSections.Resources));
+        element,
+        CloudFormationSections.Parameters,
+        CloudFormationSections.Resources));
     return true;
   }
 
-  public static boolean isInCondition(JSLiteralExpression element) {
-    final JSProperty conditionProperty = ObjectUtils.tryCast(element.getParent(), JSProperty.class);
+  public static boolean isInCondition(JsonLiteral element) {
+    final JsonProperty conditionProperty = ObjectUtils.tryCast(element.getParent(), JsonProperty.class);
     if (conditionProperty == null || !CloudFormationConstants.ConditionPropertyName.equals(conditionProperty.getName())) {
       return false;
     }
 
-    final JSObjectLiteralExpression obj = ObjectUtils.tryCast(conditionProperty.getParent(), JSObjectLiteralExpression.class);
-    return obj != null && obj.getProperties().length == 1;
+    final JsonObject obj = ObjectUtils.tryCast(conditionProperty.getParent(), JsonObject.class);
+    return obj != null && obj.getPropertyList().size() == 1;
   }
 
-  public static boolean handleDependsOnSingle(JSLiteralExpression element, List<PsiReference> result) {
-    final JSProperty dependsOnProperty = ObjectUtils.tryCast(element.getParent(), JSProperty.class);
+  public static boolean handleDependsOnSingle(JsonLiteral element, List<PsiReference> result) {
+    final JsonProperty dependsOnProperty = ObjectUtils.tryCast(element.getParent(), JsonProperty.class);
     if (dependsOnProperty == null || !CloudFormationConstants.DependsOnPropertyName.equals(dependsOnProperty.getName())) {
       return false;
     }
 
-    final JSObjectLiteralExpression resourceProperties =
-      ObjectUtils.tryCast(dependsOnProperty.getParent(), JSObjectLiteralExpression.class);
+    final JsonObject resourceProperties =
+        ObjectUtils.tryCast(dependsOnProperty.getParent(), JsonObject.class);
     if (resourceProperties == null) {
       return false;
     }
 
-    final JSProperty resource = ObjectUtils.tryCast(resourceProperties.getParent(), JSProperty.class);
+    final JsonProperty resource = ObjectUtils.tryCast(resourceProperties.getParent(), JsonProperty.class);
     if (resource == null || !isResourceElement(resource)) {
       return false;
     }
 
     result.add(new CloudFormationEntityReference(
-      element,
-      Arrays.asList(resource.getName()),
-      CloudFormationSections.Resources));
+        element,
+        Arrays.asList(resource.getName()),
+        CloudFormationSections.Resources));
     return true;
   }
 
   public static boolean isInConditionOnResource(PsiElement element) {
-    final JSProperty conditionProperty = ObjectUtils.tryCast(element.getParent(), JSProperty.class);
+    final JsonProperty conditionProperty = ObjectUtils.tryCast(element.getParent(), JsonProperty.class);
     if (conditionProperty == null || !CloudFormationConstants.ConditionPropertyName.equals(conditionProperty.getName())) {
       return false;
     }
 
-    final JSObjectLiteralExpression resourceProperties =
-      ObjectUtils.tryCast(conditionProperty.getParent(), JSObjectLiteralExpression.class);
+    final JsonObject resourceProperties =
+        ObjectUtils.tryCast(conditionProperty.getParent(), JsonObject.class);
     if (resourceProperties == null) {
       return false;
     }
 
-    final JSProperty resource = ObjectUtils.tryCast(resourceProperties.getParent(), JSProperty.class);
+    final JsonProperty resource = ObjectUtils.tryCast(resourceProperties.getParent(), JsonProperty.class);
     return resource != null && isResourceElement(resource);
   }
 
-  public static boolean handleDependsOnMultiple(JSLiteralExpression element, List<PsiReference> result) {
-    final JSArrayLiteralExpression refArray = ObjectUtils.tryCast(element.getParent(), JSArrayLiteralExpression.class);
+  public static boolean handleDependsOnMultiple(JsonLiteral element, List<PsiReference> result) {
+    final JsonArray refArray = ObjectUtils.tryCast(element.getParent(), JsonArray.class);
     if (refArray == null) {
       return false;
     }
 
-    final JSProperty dependsOnProperty = ObjectUtils.tryCast(refArray.getParent(), JSProperty.class);
+    final JsonProperty dependsOnProperty = ObjectUtils.tryCast(refArray.getParent(), JsonProperty.class);
     if (dependsOnProperty == null || !CloudFormationConstants.DependsOnPropertyName.equals(dependsOnProperty.getName())) {
       return false;
     }
 
-    final JSObjectLiteralExpression resourceProperties =
-      ObjectUtils.tryCast(dependsOnProperty.getParent(), JSObjectLiteralExpression.class);
+    final JsonObject resourceProperties =
+        ObjectUtils.tryCast(dependsOnProperty.getParent(), JsonObject.class);
     if (resourceProperties == null) {
       return false;
     }
 
-    final JSProperty resource = ObjectUtils.tryCast(resourceProperties.getParent(), JSProperty.class);
+    final JsonProperty resource = ObjectUtils.tryCast(resourceProperties.getParent(), JsonProperty.class);
     if (resource == null || !isResourceElement(resource)) {
       return false;
     }
 
     Collection<String> excludes = new HashSet<String>();
-    for (JSExpression childExpression : refArray.getExpressions()) {
+    for (JsonValue childExpression : refArray.getValueList()) {
       if (childExpression == element) {
         continue;
       }
 
-      if (childExpression instanceof JSLiteralExpression) {
+      if (childExpression instanceof JsonLiteral) {
         excludes.add(StringUtil.unquoteString(StringUtil.notNullize(childExpression.getText())));
       }
     }
@@ -242,19 +239,19 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
     excludes.add(resource.getName());
 
     result.add(new CloudFormationEntityReference(
-      element,
-      excludes,
-      CloudFormationSections.Resources));
+        element,
+        excludes,
+        CloudFormationSections.Resources));
     return true;
   }
 
-  private static boolean isResourceElement(JSProperty element) {
-    JSObjectLiteralExpression resourcesProperties = ObjectUtils.tryCast(element.getParent(), JSObjectLiteralExpression.class);
+  private static boolean isResourceElement(JsonProperty element) {
+    JsonObject resourcesProperties = ObjectUtils.tryCast(element.getParent(), JsonObject.class);
     if (resourcesProperties == null) {
       return false;
     }
 
-    JSProperty resourcesProperty = ObjectUtils.tryCast(resourcesProperties.getParent(), JSProperty.class);
+    JsonProperty resourcesProperty = ObjectUtils.tryCast(resourcesProperties.getParent(), JsonProperty.class);
     if (resourcesProperty == null || !CloudFormationSections.Resources.equals(resourcesProperty.getName())) {
       return false;
     }

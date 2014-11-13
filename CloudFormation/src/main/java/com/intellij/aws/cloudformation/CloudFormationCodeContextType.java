@@ -1,21 +1,22 @@
 package com.intellij.aws.cloudformation;
 
 import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.lang.javascript.JavaScriptCodeContextType;
+import com.intellij.json.JsonContextType;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class CloudFormationCodeContextType extends TemplateContextType {
-  @NonNls private static final String CLOUDFORMATION_TEMPLATE = "AWS_CLOUD_FORMATION";
+    @NonNls
+    private static final String CLOUDFORMATION_TEMPLATE = "AWS_CLOUD_FORMATION";
 
-  public CloudFormationCodeContextType() {
-    super(CLOUDFORMATION_TEMPLATE, CloudFormationBundle.getString("aws.cloudformation.template.context.type"),
-          JavaScriptCodeContextType.class);
-  }
+    public CloudFormationCodeContextType() {
+        super(CLOUDFORMATION_TEMPLATE, CloudFormationBundle.getString("aws.cloudformation.template.context.type"),
+                JsonContextType.class);
+    }
 
-  @Override
-  public boolean isInContext(@NotNull PsiFile file, int offset) {
-    return CloudFormationPsiUtils.isCloudFormationFile(file);
-  }
+    @Override
+    public boolean isInContext(@NotNull PsiFile file, int offset) {
+        return CloudFormationPsiUtils.isCloudFormationFile(file);
+    }
 }

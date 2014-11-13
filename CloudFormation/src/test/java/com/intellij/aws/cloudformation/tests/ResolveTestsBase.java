@@ -1,7 +1,7 @@
 package com.intellij.aws.cloudformation.tests;
 
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -25,10 +25,12 @@ public abstract class ResolveTestsBase extends ResolveTestCase {
   }
 
   protected void assertEntityResolve(String testName, Object... entityNames) throws Exception {
-    final String filePath = getTestDataPath() + testName + ".template";
+    final String templateFileName = testName + ".template";
 
-    final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath.replace(File.separatorChar, '/'));
-    assertNotNull("file " + filePath + " not found", vFile);
+    FileUtil.copy(new File(getTestDataPath(), templateFileName), new File(myProject.getBasePath(), templateFileName));
+
+    final VirtualFile vFile = myProject.getBaseDir().findChild(templateFileName);
+    assertNotNull(vFile);
 
     String fileText = StringUtil.convertLineSeparators(VfsUtil.loadText(vFile));
 
@@ -50,16 +52,16 @@ public abstract class ResolveTestsBase extends ResolveTestCase {
 
     myFile = createFile(myModule, fileName, fileText);
     Assert.assertFalse(
-      "File " + myFile.getName() + " contains error(s)",
-      ErrorUtil.containsError(myFile));
+        "File " + myFile.getName() + " contains error(s)",
+        ErrorUtil.containsError(myFile));
 
     for (int i = 0; i < offsets.size(); i++) {
       PsiReference ref = myFile.findReferenceAt(offsets.get(i));
       assertNotNull("Reference not found at marker #" + (i + 1), ref);
 
       Assert.assertTrue("Ref should be " + myReferenceClass.getName() +
-                        ", but got " + ref.getClass().getName(),
-                        myReferenceClass.isAssignableFrom(ref.getClass()));
+              ", but got " + ref.getClass().getName(),
+          myReferenceClass.isAssignableFrom(ref.getClass()));
 
       final PsiElement resolved = ref.resolve();
       final Object expectedEntity = entityNames[i];

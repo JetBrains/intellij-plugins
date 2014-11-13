@@ -1,23 +1,23 @@
 package com.intellij.aws.cloudformation
 
 import com.intellij.psi.PsiFile
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSProperty
 import java.util.HashSet
 import com.intellij.util.ObjectUtils
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.json.psi.JsonObject
+import com.intellij.json.psi.JsonStringLiteral
+import com.intellij.json.psi.JsonProperty
 
 public open class CloudFormationResolve() {
   class object {
-    public open fun getSectionNode(file: PsiFile, name: String): JSObjectLiteralExpression? =
+    public open fun getSectionNode(file: PsiFile, name: String): JsonObject? =
         CloudFormationPsiUtils.getObjectLiteralExpressionChild(CloudFormationPsiUtils.getRootExpression(file), name)
 
-    public open fun getTargetName(element: JSLiteralExpression): String = StringUtil.stripQuotesAroundValue(element.getText() ?: "")
+    public open fun getTargetName(element: JsonStringLiteral): String = StringUtil.stripQuotesAroundValue(element.getText() ?: "")
 
-    public open fun resolveEntity(file: PsiFile, entityName: String, vararg sections: String): JSProperty? {
+    public open fun resolveEntity(file: PsiFile, entityName: String, vararg sections: String): JsonProperty? {
       return sections
           .map { getSectionNode(file, it) }
           .filterNotNull()
@@ -34,13 +34,10 @@ public open class CloudFormationResolve() {
         val section = getSectionNode(file, sectionName)
         if (section != null)
         {
-          for (property in section.getProperties()!!)
+          for (property in section.getPropertyList())
           {
             val name = property.getName()
-
-            if (name != null) {
-              result.add(name)
-            }
+            result.add(name)
           }
         }
       }
@@ -48,13 +45,13 @@ public open class CloudFormationResolve() {
       return result
     }
 
-    public open fun resolveTopLevelMappingKey(file: PsiFile, mappingName: String, topLevelKey: String): JSProperty? {
-      val mappingExpression = resolveEntity(file, mappingName, CloudFormationSections.Mappings)?.getValue() as? JSObjectLiteralExpression
+    public open fun resolveTopLevelMappingKey(file: PsiFile, mappingName: String, topLevelKey: String): JsonProperty? {
+      val mappingExpression = resolveEntity(file, mappingName, CloudFormationSections.Mappings)?.getValue() as? JsonObject
       return mappingExpression?.findProperty(topLevelKey)
     }
 
     public open fun resolveSecondLevelMappingKey(file: PsiFile, mappingName: String, topLevelKey: String, secondLevelKey: String): PsiElement? {
-      val topLevelKeyExpression = resolveTopLevelMappingKey(file, mappingName, topLevelKey)?.getValue() as? JSObjectLiteralExpression
+      val topLevelKeyExpression = resolveTopLevelMappingKey(file, mappingName, topLevelKey)?.getValue() as? JsonObject
       return topLevelKeyExpression?.findProperty(secondLevelKey)
     }
 
@@ -65,13 +62,13 @@ public open class CloudFormationResolve() {
         return null
       }
 
-      val objectLiteralExpression = ObjectUtils.tryCast(mappingElement.getValue(), javaClass<JSObjectLiteralExpression>())
+      val objectLiteralExpression = ObjectUtils.tryCast(mappingElement.getValue(), javaClass<JsonObject>())
       if (objectLiteralExpression == null)
       {
         return null
       }
 
-      return getPropertiesName(objectLiteralExpression.getProperties())
+      return getPropertiesName(objectLiteralExpression.getPropertyList())
     }
 
     public open fun getSecondLevelMappingKeys(file: PsiFile, mappingName: String, topLevelKey: String): Array<String>? {
@@ -81,16 +78,16 @@ public open class CloudFormationResolve() {
         return null
       }
 
-      val objectLiteralExpression = ObjectUtils.tryCast(topLevelKeyElement.getValue(), javaClass<JSObjectLiteralExpression>())
+      val objectLiteralExpression = ObjectUtils.tryCast(topLevelKeyElement.getValue(), javaClass<JsonObject>())
       if (objectLiteralExpression == null)
       {
         return null
       }
 
-      return getPropertiesName(objectLiteralExpression.getProperties())
+      return getPropertiesName(objectLiteralExpression.getPropertyList())
     }
 
-    private fun getPropertiesName(properties: Array<JSProperty>?): Array<String>? {
+    private fun getPropertiesName(properties: MutableList<JsonProperty>?): Array<String>? {
       if (properties == null)
       {
         return null
@@ -100,10 +97,7 @@ public open class CloudFormationResolve() {
       for (property in properties)
       {
         val name = property.getName()
-
-        if (name != null) {
-          result.add(name)
-        }
+        result.add(name)
       }
       return ArrayUtil.toStringArray(result)
     }

@@ -1,7 +1,7 @@
 package com.intellij.aws.cloudformation.references;
 
 import com.intellij.aws.cloudformation.CloudFormationResolve;
-import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.json.psi.JsonStringLiteral;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +10,7 @@ public class CloudFormationMappingSecondLevelKeyReference extends CloudFormation
   private final String myMappingName;
   private final String myTopLevelKey;
 
-  public CloudFormationMappingSecondLevelKeyReference(@NotNull JSLiteralExpression element, String mappingName, String topLevelKey) {
+  public CloudFormationMappingSecondLevelKeyReference(@NotNull JsonStringLiteral element, String mappingName, String topLevelKey) {
     super(element);
     myMappingName = mappingName;
     myTopLevelKey = topLevelKey;
@@ -19,7 +19,7 @@ public class CloudFormationMappingSecondLevelKeyReference extends CloudFormation
   @Nullable
   @Override
   public PsiElement resolve() {
-    final String entityName = CloudFormationResolve.OBJECT$.getTargetName(myElement);
+    final String entityName = CloudFormationResolve.OBJECT$.getTargetName((JsonStringLiteral) myElement);
     return CloudFormationResolve.OBJECT$.resolveSecondLevelMappingKey(myElement.getContainingFile(), myMappingName, myTopLevelKey, entityName);
   }
 

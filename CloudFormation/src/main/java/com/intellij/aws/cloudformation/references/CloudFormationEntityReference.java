@@ -1,7 +1,7 @@
 package com.intellij.aws.cloudformation.references;
 
 import com.intellij.aws.cloudformation.CloudFormationResolve;
-import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.json.psi.JsonLiteral;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
@@ -17,7 +17,7 @@ public class CloudFormationEntityReference extends CloudFormationReferenceBase {
   @Nullable
   private final Collection<String> myExcludeFromVariants;
 
-  public CloudFormationEntityReference(@NotNull JSLiteralExpression element,
+  public CloudFormationEntityReference(@NotNull JsonLiteral element,
                                        @Nullable Collection<String> variantsToExclude,
                                        String... possibleSections) {
     super(element);
@@ -27,7 +27,7 @@ public class CloudFormationEntityReference extends CloudFormationReferenceBase {
     myPossibleSections = possibleSections;
   }
 
-  public CloudFormationEntityReference(@NotNull JSLiteralExpression element, String... possibleSections) {
+  public CloudFormationEntityReference(@NotNull JsonLiteral element, String... possibleSections) {
     this(element, null, possibleSections);
   }
 

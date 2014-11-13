@@ -5,10 +5,10 @@ import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.JSLiteralExpression;
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
-import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.json.psi.JsonObject;
+import com.intellij.json.psi.JsonProperty;
+import com.intellij.json.psi.JsonStringLiteral;
+import com.intellij.json.psi.JsonValue;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -47,18 +47,18 @@ public class CloudFormationFormatChecker {
       ProblemHighlightType.GENERIC_ERROR_OR_WARNING));
   }
 
-  private void addProblemOnNameElement(@NotNull JSProperty property, @NotNull String description) {
+  private void addProblemOnNameElement(@NotNull JsonProperty property, @NotNull String description) {
     addProblem(
       property.getFirstChild() != null ? property.getFirstChild() : property,
       description);
   }
 
-  private void root(JSObjectLiteralExpression root) {
-    for (JSProperty property : root.getProperties()) {
+  private void root(JsonObject root) {
+    for (JsonProperty property : root.getPropertyList()) {
       final String name = property.getName();
-      final JSExpression value = property.getValue();
+      final JsonValue value = property.getValue();
 
-      if (name == null || value == null) {
+      if (name.isEmpty() || value == null) {
         continue;
       }
 
@@ -88,16 +88,16 @@ public class CloudFormationFormatChecker {
     }
   }
 
-  private void outputs(JSExpression outputsExpression) {
-    final JSObjectLiteralExpression obj = checkAndGetObject(outputsExpression);
+  private void outputs(JsonValue outputsExpression) {
+    final JsonObject obj = checkAndGetObject(outputsExpression);
     if (obj == null) {
       return;
     }
 
-    for (JSProperty property : obj.getProperties()) {
+    for (JsonProperty property : obj.getPropertyList()) {
       final String name = property.getName();
-      final JSExpression value = property.getValue();
-      if (name == null || value == null) {
+      final JsonValue value = property.getValue();
+      if (name.isEmpty() || value == null) {
         continue;
       }
 
@@ -105,66 +105,66 @@ public class CloudFormationFormatChecker {
       stringValue(value);
     }
 
-    if (obj.getProperties().length == 0) {
+    if (obj.getPropertyList().size() == 0) {
       addProblemOnNameElement(
-        (JSProperty)obj.getParent(),
+        (JsonProperty)obj.getParent(),
         CloudFormationBundle.getString("format.no.outputs.declared"));
     }
 
-    if (obj.getProperties().length > CloudFormationMetadataProvider.METADATA.limits.maxOutputs) {
+    if (obj.getPropertyList().size() > CloudFormationMetadataProvider.METADATA.limits.maxOutputs) {
       addProblemOnNameElement(
-        (JSProperty)obj.getParent(),
+        (JsonProperty)obj.getParent(),
         CloudFormationBundle.getString("format.max.outputs.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxOutputs));
     }
   }
 
-  private void parameters(JSExpression parametersExpression) {
-    final JSObjectLiteralExpression obj = checkAndGetObject(parametersExpression);
+  private void parameters(JsonValue parametersExpression) {
+    final JsonObject obj = checkAndGetObject(parametersExpression);
     if (obj == null) {
       return;
     }
 
-    if (obj.getProperties().length == 0) {
+    if (obj.getPropertyList().size() == 0) {
       addProblemOnNameElement(
-        (JSProperty)obj.getParent(),
+        (JsonProperty)obj.getParent(),
         CloudFormationBundle.getString("format.no.parameters.declared"));
     }
 
-    if (obj.getProperties().length > CloudFormationMetadataProvider.METADATA.limits.maxParameters) {
+    if (obj.getPropertyList().size() > CloudFormationMetadataProvider.METADATA.limits.maxParameters) {
       addProblemOnNameElement(
-        (JSProperty)obj.getParent(),
+        (JsonProperty)obj.getParent(),
         CloudFormationBundle.getString("format.max.parameters.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxParameters));
     }
   }
 
-  private void mappings(JSExpression mappingsExpression) {
-    final JSObjectLiteralExpression obj = checkAndGetObject(mappingsExpression);
+  private void mappings(JsonValue mappingsExpression) {
+    final JsonObject obj = checkAndGetObject(mappingsExpression);
     if (obj == null) {
       return;
     }
 
-    if (obj.getProperties().length == 0) {
+    if (obj.getPropertyList().size() == 0) {
       addProblemOnNameElement(
-        (JSProperty)obj.getParent(),
+        (JsonProperty)obj.getParent(),
         CloudFormationBundle.getString("format.no.mappings.declared"));
     }
 
-    if (obj.getProperties().length > CloudFormationMetadataProvider.METADATA.limits.maxMappings) {
+    if (obj.getPropertyList().size() > CloudFormationMetadataProvider.METADATA.limits.maxMappings) {
       addProblemOnNameElement(
-        (JSProperty)obj.getParent(),
+        (JsonProperty)obj.getParent(),
         CloudFormationBundle.getString("format.max.mappings.exceeded", CloudFormationMetadataProvider.METADATA.limits.maxMappings));
     }
   }
 
-  private void stringValue(JSExpression expression) {
-    final JSLiteralExpression literalExpression = ObjectUtils.tryCast(expression, JSLiteralExpression.class);
-    if (literalExpression != null && literalExpression.isQuotedLiteral()) {
-      return;
+  private void stringValue(JsonValue expression) {
+    final JsonStringLiteral literalExpression = ObjectUtils.tryCast(expression, JsonStringLiteral.class);
+    if (literalExpression != null) {
+      // TODO
     }
   }
 
-  private void checkKeyName(JSProperty property) {
-    if (property == null || property.getName() == null) {
+  private void checkKeyName(JsonProperty property) {
+    if (property == null || property.getName().isEmpty()) {
       return;
     }
 
@@ -175,20 +175,20 @@ public class CloudFormationFormatChecker {
     }
   }
 
-  private void description(JSExpression value) {
+  private void description(JsonValue value) {
     checkAndGetQuotedStringText(value);
   }
 
-  private void resources(JSExpression value) {
-    final JSObjectLiteralExpression obj = checkAndGetObject(value);
+  private void resources(JsonValue value) {
+    final JsonObject obj = checkAndGetObject(value);
     if (obj == null) {
       return;
     }
 
-    for (JSProperty property : obj.getProperties()) {
+    for (JsonProperty property : obj.getPropertyList()) {
       final String resourceName = property.getName();
-      final JSExpression resourceObj = property.getValue();
-      if (resourceName == null || resourceObj == null) {
+      final JsonValue resourceObj = property.getValue();
+      if (resourceName.isEmpty() || resourceObj == null) {
         continue;
       }
 
@@ -197,19 +197,19 @@ public class CloudFormationFormatChecker {
     }
   }
 
-  private void resource(JSProperty resourceProperty) {
-    final JSObjectLiteralExpression obj = checkAndGetObject(resourceProperty.getValue());
+  private void resource(JsonProperty resourceProperty) {
+    final JsonObject obj = checkAndGetObject(resourceProperty.getValue());
     if (obj == null) {
       return;
     }
 
-    final JSProperty typeProperty = obj.findProperty(CloudFormationConstants.TypePropertyName);
+    final JsonProperty typeProperty = obj.findProperty(CloudFormationConstants.TypePropertyName);
     if (typeProperty == null) {
       addProblemOnNameElement(resourceProperty, CloudFormationBundle.getString("format.type.property.required"));
       return;
     }
 
-    for (JSProperty property : obj.getProperties()) {
+    for (JsonProperty property : obj.getPropertyList()) {
       final String propertyName = property.getName();
 
       if (!CloudFormationConstants.AllTopLevelResourceProperties.contains(propertyName)) {
@@ -219,7 +219,7 @@ public class CloudFormationFormatChecker {
 
     resourceType(typeProperty);
 
-    final JSProperty propertiesProperty = obj.findProperty(CloudFormationConstants.PropertiesPropertyName);
+    final JsonProperty propertiesProperty = obj.findProperty(CloudFormationConstants.PropertiesPropertyName);
     if (propertiesProperty != null) {
       resourceProperties(propertiesProperty, typeProperty);
     } else {
@@ -239,8 +239,8 @@ public class CloudFormationFormatChecker {
     }
   }
 
-  private void resourceProperties(JSProperty propertiesProperty, JSProperty typeProperty) {
-    final JSObjectLiteralExpression properties = ObjectUtils.tryCast(propertiesProperty.getValue(), JSObjectLiteralExpression.class);
+  private void resourceProperties(JsonProperty propertiesProperty, JsonProperty typeProperty) {
+    final JsonObject properties = ObjectUtils.tryCast(propertiesProperty.getValue(), JsonObject.class);
     if (properties == null) {
       addProblemOnNameElement(propertiesProperty, CloudFormationBundle.getString("format.properties.property.should.properties.list"));
       return;
@@ -262,9 +262,9 @@ public class CloudFormationFormatChecker {
 
     Set<String> requiredProperties = new HashSet<String>(resourceType.getRequiredProperties());
 
-    for (JSProperty property : properties.getProperties()) {
+    for (JsonProperty property : properties.getPropertyList()) {
       final String propertyName = property.getName();
-      if (propertyName == null) {
+      if (propertyName.isEmpty()) {
         continue;
       }
 
@@ -282,7 +282,7 @@ public class CloudFormationFormatChecker {
     }
   }
 
-  private void resourceType(JSProperty typeProperty) {
+  private void resourceType(JsonProperty typeProperty) {
     final String value = checkAndGetUnquotedStringText(typeProperty.getValue());
     if (value == null) {
       return;
@@ -301,8 +301,8 @@ public class CloudFormationFormatChecker {
     return value.equals(CloudFormationConstants.CustomResourceType) || value.startsWith(CloudFormationConstants.CustomResourceTypePrefix);
   }
 
-  private JSObjectLiteralExpression checkAndGetObject(JSExpression expression) {
-    final JSObjectLiteralExpression obj = ObjectUtils.tryCast(expression, JSObjectLiteralExpression.class);
+  private JsonObject checkAndGetObject(JsonValue expression) {
+    final JsonObject obj = ObjectUtils.tryCast(expression, JsonObject.class);
     if (obj == null) {
       addProblem(
         expression,
@@ -315,7 +315,7 @@ public class CloudFormationFormatChecker {
   }
 
 
-  private void formatVersion(JSExpression value) {
+  private void formatVersion(JsonValue value) {
     final String text = checkAndGetQuotedStringText(value);
     if (text == null) {
       return;
@@ -336,14 +336,14 @@ public class CloudFormationFormatChecker {
   }
 
   @Nullable
-  private String checkAndGetQuotedStringText(@Nullable JSExpression expression) {
+  private String checkAndGetQuotedStringText(@Nullable JsonValue expression) {
     if (expression == null) {
       // Do not threat value absense as error
       return null;
     }
 
-    final JSLiteralExpression literal = ObjectUtils.tryCast(expression, JSLiteralExpression.class);
-    if (literal == null || !literal.isQuotedLiteral()) {
+    final JsonStringLiteral literal = ObjectUtils.tryCast(expression, JsonStringLiteral.class);
+    if (literal == null) {
       myProblems.add(
         myInspectionManager.createProblemDescriptor(
           expression,
@@ -360,7 +360,7 @@ public class CloudFormationFormatChecker {
   }
 
   @Nullable
-  private String checkAndGetUnquotedStringText(@Nullable JSExpression expression) {
+  private String checkAndGetUnquotedStringText(@Nullable JsonValue expression) {
     final String quoted = checkAndGetQuotedStringText(expression);
     if (quoted == null) {
       return null;
@@ -372,7 +372,7 @@ public class CloudFormationFormatChecker {
   public void file(PsiFile psiFile) {
     assert CloudFormationPsiUtils.isCloudFormationFile(psiFile) : psiFile.getName() + " is not a cfn file";
 
-    final JSObjectLiteralExpression root = CloudFormationPsiUtils.getRootExpression(psiFile);
+    final JsonObject root = CloudFormationPsiUtils.getRootExpression(psiFile);
     if (root == null) {
       return;
     }

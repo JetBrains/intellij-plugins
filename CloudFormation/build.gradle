@@ -1,9 +1,3 @@
-ext.kotlinVersion = "0.8.1527"
-ext.ideaVersion = "13"
-ext.ideaPath = file("$buildDir/download/idea")
-ext.ideaArchiveDirName = "idea-IC-133.SNAPSHOT"
-ext.ideaArtifactName = "ideaIC-133.SNAPSHOT.tar"
-
 buildscript {
     repositories {
         mavenCentral()
@@ -14,11 +8,23 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.github.jk1.tcdeps' version '0.2'
+}
+
+ext.kotlinVersion = "0.8.1527"
+ext.ideaVersion = "13"
+ext.ideaPath = file("$buildDir/download/idea")
+ext.ideaArtifactName = "ideaIC-139.SNAPSHOT.win"
+
 allprojects {
     apply plugin: 'kotlin'
 
     repositories {
         mavenCentral()
+        teamcityServer {
+            url = 'https://teamcity.jetbrains.com'
+        }
     }
 
     sourceCompatibility = 1.6
@@ -64,18 +70,17 @@ configurations { ivydeps }
 dependencies {
     compile project(':metadata-model')
 
-    compile fileTree(dir: new File(ideaPath, "$ideaArchiveDirName/lib"), include: '*.jar')
+    compile fileTree(dir: new File(ideaPath, "lib"), include: '*.jar')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    ivydeps('org:bt410:105342.tcbuildid') {
-        artifact {
-            name = ideaArtifactName
-            type = 'gz'
-        }
+    ivydeps tc("bt410:183846.tcbuildid:${ideaArtifactName}.zip")
+
+    testCompile fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar')
+}
     }
 }
 
 task extractIdea(type: Copy) {
-    from tarTree(configurations.ivydeps.files.find { it.name.startsWith(ideaArtifactName) })
+    from zipTree(configurations.ivydeps.files.find { it.name.startsWith(ideaArtifactName) })
     into ideaPath
 }
 
