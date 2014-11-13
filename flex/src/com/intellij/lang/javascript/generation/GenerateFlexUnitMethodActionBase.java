@@ -17,7 +17,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class GenerateFlexUnitMethodActionBase extends BaseJSGenerateAction {
+public abstract class GenerateFlexUnitMethodActionBase extends ActionScriptBaseJSGenerateAction {
   protected BaseJSGenerateHandler getGenerateHandler() {
     return new BaseJSGenerateHandler() {
       protected String getTitleKey() {
