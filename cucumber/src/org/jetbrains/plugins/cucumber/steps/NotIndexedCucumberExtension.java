@@ -220,16 +220,14 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
 
   public static void collectDependencies(Module module, Set<Module> modules) {
     if (modules.contains(module)) return;
-    Module[] dependencies = ModuleRootManager.getInstance(module).getDependencies();
+    final Module[] dependencies = ModuleRootManager.getInstance(module).getDependencies();
     for (Module dependency : dependencies) {
-      modules.add(dependency);
       if (!modules.contains(dependency)) {
+        modules.add(dependency);
         collectDependencies(dependency, modules);
       }
     }
   }
-
-
 
   public List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module) {
     final Set<Module> modules = new HashSet<Module>();
