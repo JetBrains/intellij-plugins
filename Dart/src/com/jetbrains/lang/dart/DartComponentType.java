@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public enum DartComponentType {
-  CLASS(AllIcons.Nodes.Class){
+  CLASS(AllIcons.Nodes.Class) {
     @Override
     public Icon getIcon(@NotNull DartComponent component) {
       return component.isAbstract() ? AllIcons.Nodes.AbstractClass : getIcon();
@@ -75,7 +75,7 @@ public enum DartComponentType {
     if (element instanceof DartClassDefinition) {
       return CLASS;
     }
-    if (element instanceof  DartEnumDefinition) {
+    if (element instanceof DartEnumDefinition) {
       return ENUM;
     }
     if (element instanceof DartEnumConstantDeclaration) {
