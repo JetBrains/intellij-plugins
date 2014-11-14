@@ -3507,12 +3507,9 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | mapLiteralExpression | listLiteralExpression
+  // NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | <<mapLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>>
   public static boolean literalExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "literalExpression")) return false;
-    if (!nextTokenIs(builder_, "<literal expression>", LT, LBRACKET,
-      CONST, LBRACE, FALSE, HASH, HEX_NUMBER, NULL,
-      NUMBER, OPEN_QUOTE, RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING, TRUE)) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<literal expression>");
     result_ = consumeToken(builder_, NULL);
@@ -3522,8 +3519,8 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = consumeToken(builder_, HEX_NUMBER);
     if (!result_) result_ = stringLiteralExpression(builder_, level_ + 1);
     if (!result_) result_ = symbolLiteralExpression(builder_, level_ + 1);
-    if (!result_) result_ = mapLiteralExpression(builder_, level_ + 1);
-    if (!result_) result_ = listLiteralExpression(builder_, level_ + 1);
+    if (!result_) result_ = mapLiteralExpressionWrapper(builder_, level_ + 1);
+    if (!result_) result_ = listLiteralExpressionWrapper(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, LITERAL_EXPRESSION, result_, false, null);
     return result_;
   }
