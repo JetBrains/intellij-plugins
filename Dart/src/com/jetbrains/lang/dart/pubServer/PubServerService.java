@@ -24,7 +24,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.Consumer;
-import com.intellij.util.containers.ConcurrentHashSet;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.net.NetUtils;
@@ -51,6 +50,7 @@ import java.net.SocketAddress;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -68,7 +68,7 @@ final class PubServerService extends NetService {
   // client context could point to several server channels (because client connected to IDEA server, not to proxied server)
   private final MultiMap<ChannelHandlerContext, Channel> clientContextToServerChannels = MultiMap.createConcurrentSet();
 
-  private final ConcurrentHashSet<Channel> freeServerChannels = new ConcurrentHashSet<Channel>();
+  private final Set<Channel> freeServerChannels = ContainerUtil.newConcurrentSet();
   private final ChannelInboundHandlerAdapter clientChannelStateHandler = new ClientChannelStateHandler();
   private final ChannelRegistrar serverChannelRegistrar = new ChannelRegistrar();
 
