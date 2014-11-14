@@ -174,8 +174,11 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testTopLevelVarDoc1() throws Exception {
-    doTest("<code><small><b>a.b.c</b></small></code><br/><br/><code>@deprecated<br/>var <b>x</b></code>",
-           "library a.b.c;\n<caret>@deprecated var x = 'foo';\n");
+    doTest("<code><small><b>a.b.c</b></small></code><br/><br/><code>@deprecated<br/>var <b>x</b></code><br/><br/><p>docs1\ndocs2</p>\n",
+           "library a.b.c;\n" +
+           "/// docs1\n" +
+           "/// docs2\n" +
+           "<caret>@deprecated var x = 'foo';");
   }
 
   public void testTopLevelVarDoc2() throws Exception {

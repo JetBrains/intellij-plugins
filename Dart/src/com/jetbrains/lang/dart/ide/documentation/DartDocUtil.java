@@ -42,7 +42,7 @@ public class DartDocUtil {
     if (namedComponent instanceof DartClass) {
       appendClassSignature(builder, (DartClass)namedComponent);
     }
-    else if (namedComponent instanceof  DartEnum) {
+    else if (namedComponent instanceof DartEnum) {
       appendEnumSignature(builder, (DartEnum)namedComponent);
     }
     else if (namedComponent instanceof DartFunctionDeclarationWithBodyOrNative) {
@@ -107,8 +107,13 @@ public class DartDocUtil {
       if (docText != null) return docText;
     }
 
+    PsiElement anchorElement = dartComponent;
+
     final PsiElement parent = dartComponent.getParent();
-    final PsiElement anchorElement = parent instanceof DartClassMembers && parent.getFirstChild() == dartComponent ? parent : dartComponent;
+    if (parent instanceof DartClassMembers && parent.getFirstChild() == dartComponent ||
+        dartComponent instanceof DartVarAccessDeclaration) {
+      anchorElement = parent;
+    }
 
     // 3. Look for multiline doc comment or line doc comments as previous siblings
     final List<PsiComment> siblingComments = new ArrayList<PsiComment>();
