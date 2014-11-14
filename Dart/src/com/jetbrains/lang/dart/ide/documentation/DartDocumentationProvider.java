@@ -8,14 +8,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartSetterDeclaration;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-<<<<<<< HEAD
-import gnu.trove.THashSet;
-import org.apache.commons.lang.StringUtils;
-=======
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.apache.commons.lang3.StringUtils;
->>>>>>> 7a6685d... Dart documentation URL fixes.
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,6 +84,9 @@ public class DartDocumentationProvider implements DocumentationProvider {
     if (dartClass != null) {
       // method
       resultUrl.append('/').append(dartClass.getName()).append(".html#id_").append(componentName);
+      if (namedComponent instanceof DartSetterDeclaration) {
+        resultUrl.append('=');
+      }
     }
     else if (componentType == DartComponentType.CLASS) {
       // class
@@ -101,27 +100,6 @@ public class DartDocumentationProvider implements DocumentationProvider {
     return resultUrl.toString();
   }
 
-<<<<<<< HEAD
-  @VisibleForTesting
-  public static StringBuilder constructDocUrlPrefix(String libName) {
-    final StringBuilder resultUrl = new StringBuilder(BASE_DART_DOC_URL);
-    if (libName.startsWith(STD_LIB_PREFIX)) {
-      final String toReplace = libName.startsWith(DOM_LIB_PREFIX) ? DOM_LIB_PREFIX : STD_LIB_PREFIX;
-      resultUrl.append("dart_").append(libName.substring(toReplace.length()));
-    } else {
-      libName = StringUtils.substringBefore(libName, ".");
-      if (APIDOC_HOSTED_PACKAGES.contains(libName)) {
-        resultUrl.append(libName);
-      }
-      else {
-        return null;
-      }
-    }
-    return resultUrl;
-  }
-
-=======
->>>>>>> 7a6685d... Dart documentation URL fixes.
   @Override
   public String generateDoc(PsiElement element, PsiElement originalElement) {
     return DartDocUtil.generateDoc(element);
