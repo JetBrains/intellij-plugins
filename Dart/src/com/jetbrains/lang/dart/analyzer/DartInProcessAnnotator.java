@@ -83,7 +83,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<DartInProcessAnnot
                                  DartFileBasedSource.getSource(project, libraryFile));
   }
 
-  private static boolean containsDartEmbeddedContent(final XmlFile file) {
+  private static boolean containsDartEmbeddedContent(@NotNull final XmlFile file) {
     final String text = file.getText();
     int i = -1;
     while ((i = text.indexOf("application/dart", i + 1)) != -1) {
@@ -123,55 +123,58 @@ public class DartInProcessAnnotator extends ExternalAnnotator<DartInProcessAnnot
     if (source == null) return;
 
     // analysisContext.getErrors() doesn't perform analysis and returns already calculated errors
-    final AnalysisError[] messages = analysisContext.getErrors(source).getErrors();
-    if (messages == null || messages.length == 0) return;
+    final AnalysisError[] errors = analysisContext.getErrors(source).getErrors();
+    if (errors == null || errors.length == 0) return;
 
     final int fileTextLength = psiFile.getTextLength();
 
-    for (AnalysisError message : messages) {
-      if (shouldIgnoreMessageFromDartAnalyzer(message)) continue;
+    for (AnalysisError error : errors) {
+      if (shouldIgnoreMessageFromDartAnalyzer(error)) continue;
 
-      if (source != message.getSource()) {
-        LOG.warn("Unexpected Source: " + message.getSource() + ",\nfile: " + annotatedFile.getPath());
+      if (source != error.getSource()) {
+        LOG.warn("Unexpected Source: " + error.getSource() + ",\nfile: " + annotatedFile.getPath());
         continue;
       }
 
-      final Annotation annotation = annotate(holder, message, fileTextLength);
+      final Annotation annotation = annotate(holder, error, fileTextLength);
       if (annotation != null) {
-        registerFixes(psiFile, annotation, message);
+        registerFixes(psiFile, annotation, error);
       }
     }
   }
 
-  public static boolean shouldIgnoreMessageFromDartAnalyzer(final @NotNull AnalysisError message) {
+  public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final AnalysisError message) {
     if (message.getErrorCode() == TodoCode.TODO) return true; // // already done using IDE engine
     if (message.getErrorCode() == HintCode.DEPRECATED_MEMBER_USE) return true; // already done as DartDeprecatedApiUsageInspection
     return false;
   }
 
-  private static void registerFixes(final PsiFile psiFile, final Annotation annotation, final AnalysisError message) {
+  private static void registerFixes(@NotNull final PsiFile psiFile,
+                                    @NotNull final Annotation annotation,
+                                    @NotNull final AnalysisError error) {
     List<? extends IntentionAction> fixes = Collections.emptyList();
 
     //noinspection EnumSwitchStatementWhichMissesCases
-    switch (message.getErrorCode().getType()) {
+    final ErrorCode errorCode = error.getErrorCode();
+    final String errorMessage = error.getMessage();
+    switch (errorCode.getType()) {
       case STATIC_WARNING:
-        final DartResolverErrorCode resolverErrorCode = DartResolverErrorCode.findError(message.getErrorCode().toString());
+        final DartResolverErrorCode resolverErrorCode = DartResolverErrorCode.findError(errorCode.toString());
         if (resolverErrorCode != null) {
-          fixes = resolverErrorCode.getFixes(psiFile, message.getOffset(), message.getMessage());
+          fixes = resolverErrorCode.getFixes(psiFile, error.getOffset(), errorMessage);
         }
         break;
       case STATIC_TYPE_WARNING:
       case COMPILE_TIME_ERROR:
-        final DartTypeErrorCode typeErrorCode = DartTypeErrorCode.findError(message.getErrorCode().toString());
+        final DartTypeErrorCode typeErrorCode = DartTypeErrorCode.findError(errorCode.toString());
         if (typeErrorCode != null) {
-          fixes = typeErrorCode.getFixes(psiFile, message.getOffset(), message.getMessage());
+          fixes = typeErrorCode.getFixes(psiFile, error.getOffset(), errorMessage);
         }
         break;
     }
 
-
     if (!fixes.isEmpty()) {
-      PsiElement element = psiFile.findElementAt(message.getOffset() + message.getLength() / 2);
+      PsiElement element = psiFile.findElementAt(error.getOffset() + error.getLength() / 2);
       while (element != null && ((annotation.getStartOffset() < element.getTextOffset()) ||
                                  annotation.getEndOffset() > element.getTextRange().getEndOffset())) {
         element = element.getParent();
@@ -192,28 +195,28 @@ public class DartInProcessAnnotator extends ExternalAnnotator<DartInProcessAnnot
   }
 
   @Nullable
-  private static Annotation annotate(final AnnotationHolder holder, final AnalysisError message, final int fileTextLength) {
-    int highlightingStart = message.getOffset();
-    int highlightingEnd = message.getOffset() + message.getLength();
+  private static Annotation annotate(@NotNull final AnnotationHolder holder, @NotNull final AnalysisError error, final int fileTextLength) {
+    int highlightingStart = error.getOffset();
+    int highlightingEnd = error.getOffset() + error.getLength();
     if (highlightingEnd > fileTextLength) highlightingEnd = fileTextLength;
     if (highlightingStart >= highlightingEnd) highlightingStart = highlightingEnd - 1;
 
     final TextRange textRange = new TextRange(highlightingStart, highlightingEnd);
-    final ErrorCode errorCode = message.getErrorCode();
+    final ErrorCode errorCode = error.getErrorCode();
 
     switch (errorCode.getErrorSeverity()) {
       case NONE:
         return null;
       case INFO:
-        final Annotation annotation = holder.createWeakWarningAnnotation(textRange, message.getMessage());
+        final Annotation annotation = holder.createWeakWarningAnnotation(textRange, error.getMessage());
         if (errorCode == HintCode.UNUSED_IMPORT || errorCode == HintCode.DUPLICATE_IMPORT) {
           annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
         }
         return annotation;
       case WARNING:
-        return holder.createWarningAnnotation(textRange, message.getMessage());
+        return holder.createWarningAnnotation(textRange, error.getMessage());
       case ERROR:
-        return holder.createErrorAnnotation(textRange, message.getMessage());
+        return holder.createErrorAnnotation(textRange, error.getMessage());
     }
     return null;
   }
