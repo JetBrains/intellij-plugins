@@ -1,12 +1,13 @@
 package com.jetbrains.lang.dart.folding;
 
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.ide.IdeBundle;
+import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.components.*;
+import com.intellij.util.xmlb.XmlSerializerUtil;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class DartCodeFoldingSettings {
+import java.io.File;
 
-<<<<<<< HEAD
-  @SuppressWarnings({"WeakerAccess"}) public boolean COLLAPSE_GENERIC_PARAMETERS = false;
-=======
 @State(
   name = "DartCodeFoldingSettings",
   storages = {
@@ -16,17 +17,33 @@ public abstract class DartCodeFoldingSettings {
 )
 public class DartCodeFoldingSettings implements PersistentStateComponent<DartCodeFoldingSettings>, ExportableComponent {
   private boolean myCollapseGenericParams = false;
->>>>>>> 0531d5f... Optimization and fixes for Dart generics folding
 
   public static DartCodeFoldingSettings getInstance() {
     return ServiceManager.getService(DartCodeFoldingSettings.class);
   }
 
-  public abstract boolean isCollapseGenericParameters();
+  @Override
+  @NotNull
+  public File[] getExportFiles() {
+    return new File[]{PathManager.getOptionsFile("editor.codeinsight")};
+  }
 
-<<<<<<< HEAD
-  public abstract void setCollapseGenericParameters(boolean value);
-=======
+  @Override
+  @NotNull
+  public String getPresentableName() {
+    return IdeBundle.message("code.folding.settings");
+  }
+
+  @Override
+  public DartCodeFoldingSettings getState() {
+    return this;
+  }
+
+  @Override
+  public void loadState(final DartCodeFoldingSettings state) {
+    XmlSerializerUtil.copyBean(state, this);
+  }
+
   // property name must be equal to checkBox() argument in DartCodeFoldingOptionsProvider
   public boolean isCollapseGenericParameters() {
     return myCollapseGenericParams;
@@ -35,5 +52,4 @@ public class DartCodeFoldingSettings implements PersistentStateComponent<DartCod
   public void setCollapseGenericParameters(final boolean collapseGenericParams) {
     myCollapseGenericParams = collapseGenericParams;
   }
->>>>>>> 0531d5f... Optimization and fixes for Dart generics folding
 }
