@@ -18,6 +18,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -59,6 +60,16 @@ public class PubListPackageDirsAction extends AnAction {
 
   private static final Logger LOG = Logger.getInstance(PubListPackageDirsAction.class.getName());
 
+  private static final com.google.dart.engine.utilities.logging.Logger.NullLogger PROCESS_CANCELLING_LOGGER =
+    new com.google.dart.engine.utilities.logging.Logger.NullLogger() {
+      @Override
+      public void logError(final String message, final Throwable exception) {
+        if (exception instanceof ProcessCanceledException) {
+          throw (ProcessCanceledException)exception;
+        }
+      }
+    };
+
   public PubListPackageDirsAction() {
     super("Configure Dart package roots using 'pub list-package-dirs'", null, DartIcons.Dart_16);
   }
@@ -93,6 +104,7 @@ public class PubListPackageDirsAction extends AnAction {
         final Module[] modules = ModuleManager.getInstance(project).getModules();
         for (final Module module : modules) {
           if (indicator != null) {
+            indicator.checkCanceled();
             indicator.setText("pub list-package-dirs");
           }
 
@@ -113,6 +125,7 @@ public class PubListPackageDirsAction extends AnAction {
 
         if (!packageNameToDirMap.isEmpty()) {
           if (indicator != null) {
+            indicator.checkCanceled();
             indicator.setText("Analyzing project dependencies");
           }
           collectRootsToAddToLib(project, dirBasedSdk, rootsToAddToLib, packageNameToDirMap);
@@ -250,21 +263,20 @@ public class PubListPackageDirsAction extends AnAction {
                                              @NotNull final DirectoryBasedDartSdk dirBasedSdk,
                                              @NotNull final Collection<String> rootsToAddToLib,
                                              @NotNull final Map<String, List<File>> packageMap) {
-    final AnalysisContext analysisContext = AnalysisEngine.getInstance().createAnalysisContext();
+    AnalysisEngine.getInstance().setLogger(PROCESS_CANCELLING_LOGGER);
+    try {
+      doCollectRootsToAddToLib(project, dirBasedSdk, rootsToAddToLib, packageMap);
+    }
+    finally {
+      AnalysisEngine.getInstance().setLogger(null);
+    }
+  }
 
-    final SourceFactory sourceFactory = new SourceFactory(new DartUriResolver(dirBasedSdk),
-                                                          new FileUriResolver(),
-                                                          new MyExplicitPackageUriResolverMapProvided(dirBasedSdk, packageMap));
-    analysisContext.setSourceFactory(sourceFactory);
-
-    final AnalysisOptionsImpl contextOptions = new AnalysisOptionsImpl();
-    contextOptions.setAnalyzeFunctionBodies(false);
-    contextOptions.setGenerateSdkErrors(false);
-    contextOptions.setEnableAsync(true);
-    contextOptions.setEnableDeferredLoading(true);
-    contextOptions.setEnableEnum(true);
-    analysisContext.setAnalysisOptions(contextOptions);
-
+  private static void doCollectRootsToAddToLib(@NotNull final Project project,
+                                               @NotNull final DirectoryBasedDartSdk dirBasedSdk,
+                                               @NotNull final Collection<String> rootsToAddToLib,
+                                               @NotNull final Map<String, List<File>> packageMap) {
+    final AnalysisContext analysisContext = setupAnalysisContext(dirBasedSdk, packageMap);
     final Collection<Source> sources = initSources(project, analysisContext, packageMap);
 
     for (Source source : sources) {
@@ -272,6 +284,11 @@ public class PubListPackageDirsAction extends AnAction {
         analysisContext.computeLibraryElement(source);
       }
       catch (AnalysisException e) {
+        final Throwable cause = e.getCause();
+        if (cause instanceof ProcessCanceledException) {
+          throw (ProcessCanceledException)cause;
+        }
+
         LOG.warn("source=" + source.getUri(), e);
       }
     }
@@ -293,6 +310,37 @@ public class PubListPackageDirsAction extends AnAction {
         rootsToAddToLib.add(path);
       }
     }
+  }
+
+  private static AnalysisContext setupAnalysisContext(@NotNull final DirectoryBasedDartSdk dirBasedSdk,
+                                                      @NotNull final Map<String, List<File>> packageMap) {
+    final UriResolver checkCancelledUriResolver = new UriResolver() {
+      @Override
+      public Source resolveAbsolute(final URI uri) {
+        final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+        if (indicator != null) {
+          indicator.checkCanceled();
+        }
+        return null;
+      }
+    };
+
+    final SourceFactory sourceFactory = new SourceFactory(checkCancelledUriResolver,
+                                                          new DartUriResolver(dirBasedSdk),
+                                                          new FileUriResolver(),
+                                                          new MyExplicitPackageUriResolverMapProvided(dirBasedSdk, packageMap));
+
+    final AnalysisOptionsImpl contextOptions = new AnalysisOptionsImpl();
+    contextOptions.setAnalyzeFunctionBodies(false);
+    contextOptions.setGenerateSdkErrors(false);
+    contextOptions.setEnableAsync(true);
+    contextOptions.setEnableDeferredLoading(true);
+    contextOptions.setEnableEnum(true);
+
+    final AnalysisContext analysisContext = AnalysisEngine.getInstance().createAnalysisContext();
+    analysisContext.setSourceFactory(sourceFactory);
+    analysisContext.setAnalysisOptions(contextOptions);
+    return analysisContext;
   }
 
   @NotNull
