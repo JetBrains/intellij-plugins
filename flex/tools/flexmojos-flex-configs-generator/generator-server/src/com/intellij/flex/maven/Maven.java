@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 final class Maven {
-  private final ConcurrentHashMap<File, AtomicNotNullLazyValue<MavenProject>> projectsCache = new ConcurrentHashMap<File, AtomicNotNullLazyValue<MavenProject>>();
+  private final ConcurrentMap<File, AtomicNotNullLazyValue<MavenProject>> projectsCache = new ConcurrentHashMap<File, AtomicNotNullLazyValue<MavenProject>>();
   private final PlexusContainer plexusContainer;
   private final MavenSession session;
 
