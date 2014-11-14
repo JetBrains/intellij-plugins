@@ -6,7 +6,6 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.SystemInfo;
@@ -146,7 +145,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
     result = getUrlIfFileFromPackageRoot(file, myPackageRoots);
     if (result != null) return result;
 
-    result = getUrlIfFileFromPubListPackageDirs(myProject, file, myPubListPackageDirsMap);
+    result = getUrlIfFileFromPubListPackageDirs(file, myPubListPackageDirsMap);
     if (result != null) return result;
 
     // see com.google.dart.tools.debug.core.server.ServerBreakpointManager#getAbsoluteUrlForResource()
@@ -195,24 +194,14 @@ class DartUrlResolverImpl extends DartUrlResolver {
   }
 
   @Nullable
-  private static String getUrlIfFileFromPubListPackageDirs(final @NotNull Project project,
-                                                           final @NotNull VirtualFile file,
+  private static String getUrlIfFileFromPubListPackageDirs(final @NotNull VirtualFile file,
                                                            final @NotNull Map<String, Set<String>> pubListPackageDirsMap) {
-    final String filePath = file.getPath();
-
-    for (OrderEntry orderEntry : ProjectRootManager.getInstance(project).getFileIndex().getOrderEntriesForFile(file)) {
-      if (orderEntry instanceof LibraryOrderEntry &&
-          LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
-          PubListPackageDirsAction.PUB_LIST_PACKAGE_DIRS_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName())) {
-        for (Map.Entry<String, Set<String>> mapEntry : pubListPackageDirsMap.entrySet()) {
-          for (String dirPath : mapEntry.getValue()) {
-            if (filePath.startsWith(dirPath + "/")) {
-              final String packageName = mapEntry.getKey();
-              return PACKAGE_PREFIX + packageName + filePath.substring(dirPath.length());
-            }
-          }
+    for (Map.Entry<String, Set<String>> mapEntry : pubListPackageDirsMap.entrySet()) {
+      for (String dirPath : mapEntry.getValue()) {
+        if (file.getPath().startsWith(dirPath + "/")) {
+          final String packageName = mapEntry.getKey();
+          return PACKAGE_PREFIX + packageName + file.getPath().substring(dirPath.length());
         }
-        return null;
       }
     }
     return null;
@@ -299,8 +288,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
       if (orderEntry instanceof LibraryOrderEntry &&
           LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
           PubListPackageDirsAction.PUB_LIST_PACKAGE_DIRS_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName())) {
-        final LibraryEx library =
-          (LibraryEx)ProjectLibraryTable.getInstance(myProject).getLibraryByName(PubListPackageDirsAction.PUB_LIST_PACKAGE_DIRS_LIB_NAME);
+        final LibraryEx library = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();
         final LibraryProperties properties = library == null ? null : library.getProperties();
 
         if (properties instanceof DartListPackageDirsLibraryProperties) {
