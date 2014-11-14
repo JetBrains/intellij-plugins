@@ -36,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
-import static com.jetbrains.lang.dart.util.DartUrlResolver.*;
 
 public class DartResolveUtil {
 
@@ -302,12 +301,19 @@ public class DartResolveUtil {
       }
     }
 
-    for (String relativePathOrUrl : DartPathIndex.getPaths(context.getProject(), virtualFile)) {
-      if (fileNames != null && !fileNames.contains(PathUtil.getFileName(relativePathOrUrl))) {
+    for (String partUrl : DartPathIndex.getPaths(context.getProject(), virtualFile)) {
+      if (fileNames != null && !fileNames.contains(PathUtil.getFileName(partUrl))) {
         continue;
       }
-      VirtualFile childFile = findRelativeFile(virtualFile, relativePathOrUrl);
-      childFile = childFile != null ? childFile : VirtualFileManager.getInstance().findFileByUrl(relativePathOrUrl);
+
+      final VirtualFile childFile;
+      if (partUrl.startsWith(DartUrlResolver.PACKAGE_PREFIX) || partUrl.startsWith(DartUrlResolver.FILE_PREFIX)) {
+        childFile = DartUrlResolver.getInstance(context.getProject(), virtualFile).findFileByDartUrl(partUrl);
+      }
+      else {
+        childFile = findRelativeFile(virtualFile, partUrl);
+      }
+
       if (childFile == null || processedFiles.contains(childFile)) {
         continue;
       }
@@ -349,7 +355,9 @@ public class DartResolveUtil {
   private static VirtualFile getImportedFile(final @NotNull Project project,
                                              final @NotNull VirtualFile contextFile,
                                              final @NotNull String importText) {
-    if (importText.startsWith(DART_PREFIX) || importText.startsWith(PACKAGE_PREFIX) || importText.startsWith(FILE_PREFIX)) {
+    if (importText.startsWith(DartUrlResolver.DART_PREFIX) ||
+        importText.startsWith(DartUrlResolver.PACKAGE_PREFIX) ||
+        importText.startsWith(DartUrlResolver.FILE_PREFIX)) {
       return DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(importText);
     }
 
@@ -657,18 +665,6 @@ public class DartResolveUtil {
         return component.getComponentName();
       }
     }), Condition.NOT_NULL);
-  }
-
-  @NotNull
-  public static List<DartComponent> getNamedSubComponentsInOrder(DartClass dartClass) {
-    final List<DartComponent> result = getNamedSubComponents(dartClass);
-    Collections.sort(result, new Comparator<DartComponent>() {
-      @Override
-      public int compare(DartComponent o1, DartComponent o2) {
-        return o1.getTextOffset() - o2.getTextOffset();
-      }
-    });
-    return result;
   }
 
   @NotNull
