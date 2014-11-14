@@ -1,109 +1,96 @@
 package com.jetbrains.lang.dart.ide.structure;
 
+import com.intellij.ide.IdeBundle;
+import com.intellij.ide.structureView.StructureViewModel;
+import com.intellij.ide.structureView.StructureViewModelBase;
 import com.intellij.ide.structureView.StructureViewTreeElement;
-import com.intellij.ide.util.treeView.smartTree.SortableTreeElement;
+import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
+import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
+import com.intellij.ide.util.treeView.smartTree.Filter;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.NavigationItem;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.ResolveState;
+import com.intellij.psi.PsiFile;
+import com.intellij.util.PlatformIcons;
+import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
-import com.jetbrains.lang.dart.psi.impl.DartPsiCompositeElementImpl;
-import com.jetbrains.lang.dart.resolve.ComponentNameScopeProcessor;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
-import gnu.trove.THashSet;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-public class DartStructureViewElement implements StructureViewTreeElement, SortableTreeElement {
-  private final PsiElement myElement;
-
-  public DartStructureViewElement(final PsiElement element) {
-    myElement = element;
+public class DartStructureViewModel extends StructureViewModelBase implements StructureViewModel.ElementInfoProvider {
+  public DartStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
+    super(psiFile, editor, new DartStructureViewElement(psiFile));
+    // order matters, first elements are compared first when walking up parents in AST:
+    withSuitableClasses(DartVarAccessDeclaration.class, DartFunctionDeclarationWithBodyOrNative.class, DartMethodDeclaration.class,
+                        DartFactoryConstructorDeclaration.class, DartNamedConstructorDeclaration.class,
+                        DartFunctionTypeAlias.class, DartGetterDeclaration.class, DartSetterDeclaration.class,
+                        DartEnumConstantDeclaration.class, DartEnum.class,
+                        DartClass.class);
   }
 
   @Override
-  public Object getValue() {
-    return myElement;
-  }
-
-  @Override
-  public void navigate(boolean requestFocus) {
-    if (myElement instanceof NavigationItem) {
-      ((NavigationItem)myElement).navigate(requestFocus);
-    }
-  }
-
-  @Override
-  public boolean canNavigate() {
-    return myElement instanceof NavigationItem && ((NavigationItem)myElement).canNavigate();
-  }
-
-  @Override
-  public boolean canNavigateToSource() {
-    return myElement instanceof NavigationItem && ((NavigationItem)myElement).canNavigateToSource();
+  public boolean isAlwaysShowsPlus(StructureViewTreeElement element) {
+    return false;
   }
 
   @NotNull
   @Override
-  public ItemPresentation getPresentation() {
-    return myElement instanceof NavigationItem ? ((NavigationItem)myElement).getPresentation() : null;
+  public Filter[] getFilters() {
+    return new Filter[]{ourFieldsFilter};
   }
 
-  @NotNull
   @Override
-  public TreeElement[] getChildren() {
-    final List<DartComponent> dartComponents = new ArrayList<DartComponent>();
-    if (myElement instanceof DartFile || myElement instanceof DartEmbeddedContent) {
-      THashSet<DartComponentName> componentNames = new THashSet<DartComponentName>();
-      DartPsiCompositeElementImpl
-        .processDeclarationsImpl(myElement, new ComponentNameScopeProcessor(componentNames), ResolveState.initial(), null);
-      for (DartComponentName componentName : componentNames) {
-        PsiElement parent = componentName.getParent();
-        if (parent instanceof DartComponent) {
-          dartComponents.add((DartComponent)parent);
-        }
-      }
-    }
-    else if (myElement instanceof DartClass) {
-      for (DartComponent subNamedComponent : DartResolveUtil.getNamedSubComponents((DartClass)myElement)) {
-        dartComponents.add(subNamedComponent);
-      }
-    }
-    else if (myElement instanceof DartEnum) {
-      final DartEnum dartEnum = (DartEnum)myElement;
-      final List<DartEnumConstantDeclaration> enumConstants = dartEnum.getConstants();
-      for (DartEnumConstantDeclaration enumConstant : enumConstants) {
-        dartComponents.add(enumConstant);
-      }
-    }
-
-    Collections.sort(dartComponents, new Comparator<DartComponent>() {
-      @Override
-      public int compare(DartComponent o1, DartComponent o2) {
-        return o1.getTextOffset() - o2.getTextOffset();
-      }
-    });
-
-    final TreeElement[] result = new TreeElement[dartComponents.size()];
-    for (int i = 0; i < result.length; i++) {
-      result[i] = new DartStructureViewElement(dartComponents.get(i));
-    }
-    return result;
+  public boolean isAlwaysLeaf(StructureViewTreeElement element) {
+    final Object value = element.getValue();
+    return value instanceof DartComponent && !(value instanceof DartClass || value instanceof DartEnum);
   }
 
-  @NotNull
   @Override
-  public String getAlphaSortKey() {
-    final String result = myElement instanceof NavigationItem ? ((NavigationItem)myElement).getName() : null;
-    return result == null ? "" : result;
+  public boolean shouldEnterElement(Object element) {
+    return element instanceof DartClass;
   }
 
-  public PsiElement getRealElement() {
-    return myElement;
-  }
+
+  private static final Filter ourFieldsFilter = new Filter() {
+    @NonNls public static final String ID = "SHOW_FIELDS";
+
+    @Override
+    public boolean isVisible(TreeElement treeNode) {
+      if (!(treeNode instanceof DartStructureViewElement)) return true;
+      final PsiElement element = ((DartStructureViewElement)treeNode).getRealElement();
+
+      DartComponentType type = DartComponentType.typeOf(element);
+      if (type == DartComponentType.FIELD || type == DartComponentType.VARIABLE) {
+        return false;
+      }
+
+      if (element instanceof DartComponent && (((DartComponent)element).isGetter() || ((DartComponent)element).isGetter())) {
+        return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public boolean isReverted() {
+      return true;
+    }
+
+    @Override
+    @NotNull
+    public ActionPresentation getPresentation() {
+      return new ActionPresentationData(
+        IdeBundle.message("action.structureview.show.fields"),
+        null,
+        PlatformIcons.FIELD_ICON
+      );
+    }
+
+    @Override
+    @NotNull
+    public String getName() {
+      return ID;
+    }
+  };
 }
