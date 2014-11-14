@@ -69,3 +69,6 @@ main() {
    ..import()..check(4, 7)
    ..check(7, 4);
 }
+
+var BANG = new A()..x = ["foo"..padLeft(1)];
+var BANG2 = new B()..x..y = {"bar"..padLeft(1) : baz..q..w()};
