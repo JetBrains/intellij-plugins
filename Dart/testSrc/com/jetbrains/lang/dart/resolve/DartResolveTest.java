@@ -278,4 +278,15 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                            "}");
     doTest();
   }
+
+  public void testPartViaPackageUrl() throws Exception {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
+    myFixture.addFileToProject("lib/lib.dart", "part 'package:ProjectName/part.dart';");
+    myFixture.addFileToProject("lib/part.dart", "var foo;");
+    myFixture.configureByText("file.dart", "import 'package:ProjectName/lib.dart';'\n" +
+                                           "main() {\n" +
+                                           "  var a = <caret expected='lib/part.dart -> foo'>foo;\n" +
+                                           "}");
+    doTest();
+  }
 }
