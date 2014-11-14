@@ -74,8 +74,6 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
         dartComponents.add(subNamedComponent);
       }
     }
-<<<<<<< HEAD
-=======
     else if (myElement instanceof DartEnum) {
       final DartEnum dartEnum = (DartEnum)myElement;
       final List<DartEnumConstantDeclaration> enumConstants = dartEnum.getEnumConstantDeclarationList();
@@ -83,7 +81,6 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
         dartComponents.add(enumConstant);
       }
     }
->>>>>>> e531da1... Dart enums support: cleanup, more tests, trailing comma parsing, allow usage as identifier
 
     Collections.sort(dartComponents, new Comparator<DartComponent>() {
       @Override
