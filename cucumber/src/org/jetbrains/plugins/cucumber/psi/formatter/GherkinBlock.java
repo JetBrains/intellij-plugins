@@ -4,6 +4,7 @@ import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.TokenType;
+import com.intellij.psi.formatter.xml.ReadOnlyBlock;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -110,7 +111,11 @@ public class GherkinBlock implements ASTBlock {
           indent = Indent.getSpaceIndent(whiteSpaceText.length() - lineBreakIndex - 1 - parentIndent);
         }
       }
-      result.add(new GherkinBlock(child, indent));
+      if (child.getElementType() == GherkinElementTypes.PYSTRING) {
+        result.add(new ReadOnlyBlock(child));
+      } else {
+        result.add(new GherkinBlock(child, indent));
+      }
     }
     return result;
   }
