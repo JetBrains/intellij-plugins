@@ -5,4 +5,4 @@ env:
   - TERM=dumb
 
 script:
-  - ./gradlew build
+  - ./gradlew --stacktrace --info build
