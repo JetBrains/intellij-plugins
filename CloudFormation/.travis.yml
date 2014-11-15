@@ -5,4 +5,4 @@ env:
   - TERM=dumb
 
 script:
-  - gradle build
+  - ./gradlew build
