@@ -1,17 +1,10 @@
 package com.intellij.aws.cloudformation.tests;
 
 import com.intellij.aws.cloudformation.inspections.FormatViolationInspection;
-import com.intellij.testFramework.InspectionTestCase;
+import com.intellij.testFramework.InspectionFixtureTestCase;
 
-public class OfficialExamplesTests extends InspectionTestCase {
-  public void testFormatViolationInspection() {
-    TestUtil.refreshVfs();
-    final FormatViolationInspection inspection = new FormatViolationInspection();
-    doTest(".", inspection);
-  }
-
-  @Override
-  protected String getTestDataPath() {
-    return TestUtil.getTestDataPath("officialExamples");
+public class OfficialExamplesTests extends InspectionFixtureTestCase {
+  public void testFormatViolationInspection() throws Exception {
+    doTest(TestUtil.getTestDataPath("officialExamples"), new FormatViolationInspection());
   }
 }

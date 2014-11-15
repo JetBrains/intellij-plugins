@@ -8,7 +8,7 @@ import java.io.File;
 
 public class TestUtil {
   public static String getTestDataPath(String relativePath) {
-    return new File(getTestDataRoot(), relativePath).getPath() + File.separator;
+    return "../../../testData/" + relativePath;
   }
 
   public static File getTestDataRoot() {
