@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:0.8.1527"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'de.undercouch:gradle-download-task:1.0'
     }
 }
@@ -12,7 +12,7 @@ plugins {
     id 'com.github.jk1.tcdeps' version '0.2'
 }
 
-ext.kotlinVersion = "0.8.1527"
+ext.kotlinVersion = kotlinVersion
 ext.ideaVersion = "13"
 ext.ideaPath = file("$buildDir/download/idea")
 ext.ideaArtifactName = "ideaIC-139.SNAPSHOT.win"
