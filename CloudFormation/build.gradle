@@ -82,6 +82,9 @@ task extractIdea(type: Copy) {
     into ideaPath
 }
 
+compileKotlin.dependsOn(extractIdea)
+compileJava.dependsOn(extractIdea)
+
 task zip(type: Zip) {
     baseName 'CloudFormation'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -108,7 +111,7 @@ artifacts {
 //task ss(dependsOn: [configurations.compile, configurations.runtime, configurations.archives]) << {
 //    // configurations.runtime.allArtifacts.files.each { File file -> println "xxx " + file }
 //    configurations.compile.files.each { xxx -> println "compile " + xxx }
-//    println new File(ideaPath, "$ideaArchiveDirName/lib")
+//    println new File(ideaPath, "lib")
 //
 //    println "\nconfigurations.compile.allArtifacts.files = ${configurations.compile.allArtifacts.files}"
 //    println "\nconfigurations.compile.artifacts.files = ${configurations.compile.artifacts.files.asPath}"
