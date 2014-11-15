@@ -33,7 +33,11 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
                  return;
                }
 
-               PsiElement parent = position.getParent();
+               PsiElement parent = position;
+               if (parent.getParent() instanceof JsonStringLiteral) {
+                 parent = parent.getParent();
+               }
+
                boolean quoteResult = false; // parent instanceof JSReferenceExpression;
 
                if (isResourceTypeValuePosition(parent)) {
@@ -66,8 +70,13 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
   }
 
   private void completeResourceTopLevelProperty(CompletionResultSet rs, PsiElement element, boolean quoteResult) {
-    final JsonProperty property = ObjectUtils.tryCast(element, JsonProperty.class);
-    if (property == null) {
+    final JsonStringLiteral propertyName = ObjectUtils.tryCast(element, JsonStringLiteral.class);
+    if (propertyName == null) {
+      return;
+    }
+
+    final JsonProperty property = ObjectUtils.tryCast(propertyName.getParent(), JsonProperty.class);
+    if (property == null || property.getNameElement() != propertyName) {
       return;
     }
 
@@ -98,9 +107,9 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
       return;
     }
 
-    for (String propertyName : CloudFormationConstants.AllTopLevelResourceProperties) {
-      if (resourceExpression.findProperty(propertyName) == null) {
-        rs.addElement(createLookupElement(propertyName, quoteResult));
+    for (String name : CloudFormationConstants.AllTopLevelResourceProperties) {
+      if (resourceExpression.findProperty(name) == null) {
+        rs.addElement(createLookupElement(name, quoteResult));
       }
     }
   }
@@ -164,9 +173,14 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
     }
   }
 
-  private void completeResourceProperty(CompletionResultSet rs, PsiElement parent, boolean quoteResult) {
-    final JsonProperty property = ObjectUtils.tryCast(parent, JsonProperty.class);
-    if (property == null) {
+  private void completeResourceProperty(CompletionResultSet rs, PsiElement propertyNameElement, boolean quoteResult) {
+    final JsonStringLiteral propertyName = ObjectUtils.tryCast(propertyNameElement, JsonStringLiteral.class);
+    if (propertyName == null) {
+      return;
+    }
+
+    final JsonProperty property = ObjectUtils.tryCast(propertyName.getParent(), JsonProperty.class);
+    if (property == null || property.getNameElement() != propertyName) {
       return;
     }
 
@@ -175,7 +189,7 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
       return;
     }
 
-    final JsonProperty resourceElement = getResourceElementFromPropertyName(property);
+    final JsonProperty resourceElement = getResourceElementFromPropertyName(propertyName);
     if (resourceElement == null) {
       return;
     }
@@ -280,8 +294,13 @@ public class CloudFormationCompletionContributor extends CompletionContributor {
 
   @Nullable
   private static JsonProperty getResourceElementFromPropertyName(PsiElement position) {
-    final JsonProperty property = ObjectUtils.tryCast(position, JsonProperty.class);
-    if (property == null) {
+    final JsonStringLiteral propertyName = ObjectUtils.tryCast(position, JsonStringLiteral.class);
+    if (propertyName == null) {
+      return null;
+    }
+
+    final JsonProperty property = ObjectUtils.tryCast(propertyName.getParent(), JsonProperty.class);
+    if (property == null || property.getNameElement() != propertyName) {
       return null;
     }
 
