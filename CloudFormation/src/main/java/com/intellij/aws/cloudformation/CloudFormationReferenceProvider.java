@@ -131,6 +131,10 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
       return false;
     }
 
+    if (refProperty.getNameElement() == element) {
+      return false;
+    }
+
     final JsonObject obj = ObjectUtils.tryCast(refProperty.getParent(), JsonObject.class);
     if (obj == null) {
       return false;
@@ -159,6 +163,10 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
       return false;
     }
 
+    if (conditionProperty.getNameElement() == element) {
+      return false;
+    }
+
     final JsonObject obj = ObjectUtils.tryCast(conditionProperty.getParent(), JsonObject.class);
     return obj != null && obj.getPropertyList().size() == 1;
   }
@@ -169,8 +177,11 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
       return false;
     }
 
-    final JsonObject resourceProperties =
-        ObjectUtils.tryCast(dependsOnProperty.getParent(), JsonObject.class);
+    if (dependsOnProperty.getNameElement() == element) {
+      return false;
+    }
+
+    final JsonObject resourceProperties = ObjectUtils.tryCast(dependsOnProperty.getParent(), JsonObject.class);
     if (resourceProperties == null) {
       return false;
     }
@@ -190,6 +201,10 @@ public class CloudFormationReferenceProvider extends PsiReferenceProvider {
   public static boolean isInConditionOnResource(PsiElement element) {
     final JsonProperty conditionProperty = ObjectUtils.tryCast(element.getParent(), JsonProperty.class);
     if (conditionProperty == null || !CloudFormationConstants.ConditionPropertyName.equals(conditionProperty.getName())) {
+      return false;
+    }
+
+    if (conditionProperty.getNameElement() == element) {
       return false;
     }
 
