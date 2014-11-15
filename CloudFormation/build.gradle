@@ -76,8 +76,6 @@ dependencies {
 
     testCompile fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar')
 }
-    }
-}
 
 task extractIdea(type: Copy) {
     from zipTree(configurations.ivydeps.files.find { it.name.startsWith(ideaArtifactName) })
