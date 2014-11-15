@@ -6,6 +6,6 @@ import com.intellij.testFramework.InspectionTestCase;
 
 public class ExamplesTests extends InspectionFixtureTestCase {
   public void testFormatViolationInspection() throws Exception {
-    doTest(TestUtil.getTestDataPath("examples"), new FormatViolationInspection());
+    doTest(TestUtil.getTestDataPathRelativeToIdeaHome("examples"), new FormatViolationInspection());
   }
 }
