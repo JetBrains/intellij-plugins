@@ -30,6 +30,8 @@ public class DartCommandLineRuntimeConfigurationProducer extends RunConfiguratio
       configuration.getRunnerParameters().setFilePath(dartFile.getPath());
       configuration.getRunnerParameters().setWorkingDirectory(dartFile.getParent().getPath());
       configuration.setGeneratedName();
+
+      sourceElement.set(sourceElement.isNull() ? null : sourceElement.get().getContainingFile());
       return true;
     }
     return false;
