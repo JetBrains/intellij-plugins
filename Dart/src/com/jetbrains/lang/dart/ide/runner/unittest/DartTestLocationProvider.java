@@ -72,7 +72,7 @@ public class DartTestLocationProvider implements TestLocationProvider {
 
           if (element instanceof DartCallExpression) {
             DartCallExpression expression = (DartCallExpression)element;
-            if (DartUnitRunConfigurationProducer.isTest(expression)) {
+            if (DartUnitRunConfigurationProducer.isTest(expression) || DartUnitRunConfigurationProducer.isGroup(expression)) {
               if (nameMatches(expression, nodes[nodes.length - 1])) {
                 boolean matches = true;
                 for (int i = nodes.length - 2; i >= 0 && matches; --i) {
