@@ -106,4 +106,13 @@ public class DartTestLocationProviderTest extends DartCodeInsightFixtureTestCase
                       "}");
   }
 
+
+  public void testGroup() throws Exception {
+    doTest("foo", "main() {\n" +
+                      "  <caret>group('foo', () {\n" +
+                      "    test('bar', () => expect(true, true));\n" +
+                      "  });\n" +
+                      "}");
+  }
+
 }

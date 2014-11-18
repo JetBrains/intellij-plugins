@@ -49,15 +49,18 @@ class JetBrainsUnitConfig extends Configuration {
     });
   }
 
-  String _getTestPath(TestCase test) {
-    var nodes = new Queue();
-    nodes.addFirst(getName(test));
-    var id = group2id[test.currentGroup];
-    while (id != 0) {
-      nodes.addFirst(id2Group[id]);
-      id = id2Parent[id];
-    }
-    return nodes.join('/');
+  String _getTestPath(TestCase test) => _prefixGroupInfo(getName(test), group2id[test.currentGroup]);
+
+  String _getGroupPath(String groupLabel, int id) => _prefixGroupInfo(groupLabel, id2Parent[id]);
+
+  String _prefixGroupInfo(String nodeLabel, int id) {
+      var nodes = new Queue();
+      nodes.addFirst(nodeLabel);
+      while (id != null && id != 0) {
+        nodes.addFirst(id2Group[id]);
+        id = id2Parent[id];
+      }
+      return nodes.join('/');
   }
 
   String getName(TestCase testCase) {
@@ -66,33 +69,39 @@ class JetBrainsUnitConfig extends Configuration {
   }
 
   _createGroups() {
-    String lastGroup = '';
-    Set<String> groupsSet = new Set.from(testCases.map((TestCase testCase) => testCase.currentGroup));
-    List<String> groups = new List.from(groupsSet);
-    groups.sort((String a, String b) => a.length - b.length);
-    groups.removeWhere((String groupName) => groupName == '');
+     String lastGroup = '';
+     Set<String> groupsSet = new Set.from(testCases.map((TestCase testCase) => testCase.currentGroup));
+     List<String> groups = new List.from(groupsSet);
+     groups.sort((String a, String b) => a.length - b.length);
+     groups.removeWhere((String groupName) => groupName == '');
 
-    for(int i = 0; i < groups.length; ++i) {
-      var parentGroup = '';
-      for(int j = i-1; j >= 0; --j) {
-        if(groups[i].startsWith(groups[j])) {
-          parentGroup = groups[j];
-          break;
-        }
-      }
-      var groupName = groups[i];
-      if(group2id.containsKey(groupName)) continue;
-      var nodeId = ++maxId;
-      group2id[groupName] = nodeId;
-      if(parentGroup != '') {
-        groupName = groupName.substring(parentGroup.length + 1);
-      }
-      id2Group[nodeId] = groupName;
-      var parentId = group2id[parentGroup];
-      id2Parent[nodeId] = parentId;
-      printTCMessage('testSuiteStarted', {'name' : groupName, 'parentNodeId' : parentId, 'nodeId' : nodeId, 'nodeType' : 'test'});
-    }
-  }
+     for(int i = 0; i < groups.length; ++i) {
+       var parentGroup = '';
+       for(int j = i-1; j >= 0; --j) {
+         if(groups[i].startsWith(groups[j])) {
+           parentGroup = groups[j];
+           break;
+         }
+       }
+       var groupName = groups[i];
+       if(group2id.containsKey(groupName)) continue;
+       var nodeId = ++maxId;
+       group2id[groupName] = nodeId;
+       if(parentGroup != '') {
+         groupName = groupName.substring(parentGroup.length + 1);
+       }
+       id2Group[nodeId] = groupName;
+       var parentId = group2id[parentGroup];
+       id2Parent[nodeId] = parentId;
+       printTCMessage('testSuiteStarted', {
+           'name' : groupName,
+           'parentNodeId' : parentId,
+           'nodeId' : nodeId,
+           'nodeType' : 'test',
+           'locationHint' : 'dart_location://$testFilePath,${_getGroupPath(groupName, nodeId)}'
+       });
+     }
+   }
 
   void onSummary(int passed, int failed, int errors, List<TestCase> results, String uncaughtError) {
     if (done) return;
