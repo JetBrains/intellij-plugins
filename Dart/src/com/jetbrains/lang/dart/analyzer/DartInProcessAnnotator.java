@@ -199,7 +199,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<DartInProcessAnnot
     int highlightingStart = error.getOffset();
     int highlightingEnd = error.getOffset() + error.getLength();
     if (highlightingEnd > fileTextLength) highlightingEnd = fileTextLength;
-    if (highlightingStart >= highlightingEnd) highlightingStart = highlightingEnd - 1;
+    if (highlightingStart > 0 && highlightingStart >= highlightingEnd) highlightingStart = highlightingEnd - 1;
 
     final TextRange textRange = new TextRange(highlightingStart, highlightingEnd);
     final ErrorCode errorCode = error.getErrorCode();
