@@ -79,8 +79,10 @@ public class FlexCompilationUtils {
       final Ref<IOException> exceptionRef = new Ref<IOException>();
 
       ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+        @Override
         public void run() {
           ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
             public void run() {
               if (cacheFile.exists()) {
                 try {
@@ -222,6 +224,7 @@ public class FlexCompilationUtils {
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (file != null && !file.isWritable()) {
       ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+        @Override
         public void run() {
           ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(file);
         }
@@ -347,8 +350,10 @@ public class FlexCompilationUtils {
 
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
     ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+      @Override
       public void run() {
         exceptionRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<FlexCompilerException>() {
+          @Override
           public FlexCompilerException compute() {
             for (VirtualFile file : templateDir.getChildren()) {
               if (Comparing.equal(file, templateFile)) {
@@ -429,6 +434,7 @@ public class FlexCompilationUtils {
                           : JavaScriptSupportLoader.MXML_URI3;
         for (XmlTag tag : rootTag.findSubTags(FlexPredefinedTagNames.METADATA, ns)) {
           JSResolveUtil.processInjectedFileForTag(tag, new JSResolveUtil.JSInjectedFilesVisitor() {
+            @Override
             protected void process(final JSFile file) {
               for (PsiElement elt : file.getChildren()) {
                 if (elt instanceof JSAttributeList) {
@@ -486,6 +492,7 @@ public class FlexCompilationUtils {
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
     final Runnable runnable = new Runnable() {
+      @Override
       public void run() {
         final Sdk sdk = bc.getSdk();
         assert sdk != null;
@@ -510,6 +517,7 @@ public class FlexCompilationUtils {
         final String[] extensions = getAirExtensionIDs(ModuleRootManager.getInstance(module), bc.getDependencies());
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          @Override
           public void run() {
             try {
               final AirDescriptorOptions descriptorOptions =
@@ -649,8 +657,10 @@ public class FlexCompilationUtils {
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
     ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+      @Override
       public void run() {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          @Override
           public void run() {
             try {
               final String content = fixInitialContent(descriptorTemplateFile, PathUtil.getFileName(outputFilePath));
@@ -685,7 +695,7 @@ public class FlexCompilationUtils {
       }
 
       final Element rootElement = document.getRootElement();
-      if (rootElement == null || !"application".equals(rootElement.getName())) {
+      if (!"application".equals(rootElement.getName())) {
         throw new FlexCompilerException("AIR descriptor file has incorrect root tag", descriptorFile.getUrl(), -1, -1);
       }
 

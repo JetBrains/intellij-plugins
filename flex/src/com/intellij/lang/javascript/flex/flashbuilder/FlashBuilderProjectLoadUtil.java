@@ -12,7 +12,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import gnu.trove.THashMap;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -123,13 +122,13 @@ public class FlashBuilderProjectLoadUtil {
         return name;
       }
     }
-    catch (IOException e) {/*ignore*/}
+    catch (IOException ignored) {/*ignore*/}
     finally {
       if (fis != null) {
         try {
           fis.close();
         }
-        catch (IOException e) {/*ignore*/}
+        catch (IOException ignored) {/*ignore*/}
       }
     }
     return PathUtil.getFileName(PathUtil.getParentPath(dotProjectFilePath));
@@ -163,18 +162,17 @@ public class FlashBuilderProjectLoadUtil {
 
   private static void loadProjectNameAndLinkedResources(final FlashBuilderProject project, final VirtualFile dotProjectFile) {
     try {
-      final Document dotProjectDocument = JDOMUtil.loadDocument(dotProjectFile.getInputStream());
-      final Element projectDescription = dotProjectDocument.getRootElement();
-      if (projectDescription == null || !PROJECT_DESCRIPTION_TAG.equals(projectDescription.getName())) return;
+      final Element projectDescription = JDOMUtil.load(dotProjectFile.getInputStream());
+      if (!PROJECT_DESCRIPTION_TAG.equals(projectDescription.getName())) return;
 
       final String projectName = projectDescription.getChildText(NAME_TAG, projectDescription.getNamespace());
       project.setName(StringUtil.notNullize(projectName, FlexBundle.message("unnamed")));
 
       //noinspection unchecked
-      for (final Element linkedResourcesElement : (Iterable<Element>)projectDescription
+      for (final Element linkedResourcesElement : projectDescription
         .getChildren(LINKED_RESOURCES_TAG, projectDescription.getNamespace())) {
         //noinspection unchecked
-        for (final Element linkElement : (Iterable<Element>)linkedResourcesElement
+        for (final Element linkElement : linkedResourcesElement
           .getChildren(LINK_TAG, linkedResourcesElement.getNamespace())) {
 
           final String linkName = linkElement.getChildText(NAME_TAG, linkElement.getNamespace());
@@ -186,8 +184,8 @@ public class FlashBuilderProjectLoadUtil {
         }
       }
     }
-    catch (JDOMException e) {/*ignore*/}
-    catch (IOException e) {/*ignore*/}
+    catch (JDOMException ignored) {/*ignore*/}
+    catch (IOException ignored) {/*ignore*/}
   }
 
   private static Map<String, String> loadMapFromDotFxpPropertiesFile(final VirtualFile dotProjectFile) {
@@ -198,14 +196,13 @@ public class FlashBuilderProjectLoadUtil {
     final VirtualFile dotFxpPropertiesFile = dir.findChild(FlashBuilderImporter.DOT_FXP_PROPERTIES);
     if (dotFxpPropertiesFile != null) {
       try {
-        final Document document = JDOMUtil.loadDocument(dotFxpPropertiesFile.getInputStream());
-        final Element fxpPropertiesElement = document.getRootElement();
-        if (fxpPropertiesElement == null || !FXP_PROPERTIES_TAG.equals(fxpPropertiesElement.getName())) return Collections.emptyMap();
+        final Element fxpPropertiesElement = JDOMUtil.load(dotFxpPropertiesFile.getInputStream());
+        if (!FXP_PROPERTIES_TAG.equals(fxpPropertiesElement.getName())) return Collections.emptyMap();
 
         final Element swcElement = fxpPropertiesElement.getChild(SWC_TAG);
         if (swcElement != null) {
           //noinspection unchecked
-          for (final Element linkedElement : ((Iterable<Element>)swcElement.getChildren(LINKED_TAG))) {
+          for (final Element linkedElement : swcElement.getChildren(LINKED_TAG)) {
             final String location = linkedElement.getAttributeValue(LOCATION_ATTR);
             final String path = linkedElement.getAttributeValue(PATH_ATTR);
             if (!StringUtil.isEmptyOrSpaces(location) && !StringUtil.isEmptyOrSpaces(path)) {
@@ -214,8 +211,8 @@ public class FlashBuilderProjectLoadUtil {
           }
         }
       }
-      catch (JDOMException e) {/*ignore*/}
-      catch (IOException e) {/*ignore*/}
+      catch (JDOMException ignored) {/*ignore*/}
+      catch (IOException ignored) {/*ignore*/}
     }
 
     return result;
@@ -229,9 +226,8 @@ public class FlashBuilderProjectLoadUtil {
     final VirtualFile dotActionScriptPropertiesFile = dir.findChild(FlashBuilderImporter.DOT_ACTION_SCRIPT_PROPERTIES);
     if (dotActionScriptPropertiesFile != null) {
       try {
-        final Document dotActionScriptPropertiesDocument = JDOMUtil.loadDocument(dotActionScriptPropertiesFile.getInputStream());
-        final Element actionScriptPropertiesElement = dotActionScriptPropertiesDocument.getRootElement();
-        if (actionScriptPropertiesElement == null || !ACTION_SCRIPT_PROPERTIES_TAG.equals(actionScriptPropertiesElement.getName())) return;
+        final Element actionScriptPropertiesElement = JDOMUtil.load(dotActionScriptPropertiesFile.getInputStream());
+        if (!ACTION_SCRIPT_PROPERTIES_TAG.equals(actionScriptPropertiesElement.getName())) return;
         loadMainClassName(project, actionScriptPropertiesElement);
 
         final Element compilerElement = actionScriptPropertiesElement.getChild(COMPILER_TAG);
@@ -258,8 +254,8 @@ public class FlashBuilderProjectLoadUtil {
           }
         }
       }
-      catch (JDOMException e) {/*ignore*/}
-      catch (IOException e) {/*ignore*/}
+      catch (JDOMException ignored) {/*ignore*/}
+      catch (IOException ignored) {/*ignore*/}
     }
   }
 
@@ -267,9 +263,8 @@ public class FlashBuilderProjectLoadUtil {
     final VirtualFile dotFlexLibPropertiesFile = dotProjectFile.getParent().findChild(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES);
     if (dotFlexLibPropertiesFile != null) {
       try {
-        final Document dotFlexLibPropertiesDocument = JDOMUtil.loadDocument(dotFlexLibPropertiesFile.getInputStream());
-        final Element flexLibPropertiesElement = dotFlexLibPropertiesDocument.getRootElement();
-        if (flexLibPropertiesElement == null || !FLEX_LIB_PROPERTIES_TAG.equals(flexLibPropertiesElement.getName())) return;
+        final Element flexLibPropertiesElement = JDOMUtil.load(dotFlexLibPropertiesFile.getInputStream());
+        if (!FLEX_LIB_PROPERTIES_TAG.equals(flexLibPropertiesElement.getName())) return;
 
         if (project.getTargetPlatform() == TargetPlatform.Desktop &&
             "true".equals(flexLibPropertiesElement.getAttributeValue(USE_MULTIPLATFORM_CONFIG_ATTR))) {
@@ -277,10 +272,10 @@ public class FlashBuilderProjectLoadUtil {
         }
 
         //noinspection unchecked
-        for (final Element namespaceManifestsElement : (Iterable<Element>)flexLibPropertiesElement
+        for (final Element namespaceManifestsElement : flexLibPropertiesElement
           .getChildren(NAMESPACE_MANIFESTS_TAG, flexLibPropertiesElement.getNamespace())) {
           //noinspection unchecked
-          for (final Element namespaceManifestEntryElement : (Iterable<Element>)namespaceManifestsElement
+          for (final Element namespaceManifestEntryElement : namespaceManifestsElement
             .getChildren(NAMESPACE_MANIFEST_ENTRY_TAG, namespaceManifestsElement.getNamespace())) {
             final String namespace = namespaceManifestEntryElement.getAttributeValue(NAMESPACE_ATTR);
             final String manifestPath = namespaceManifestEntryElement.getAttributeValue(MANIFEST_ATTR);
@@ -291,10 +286,10 @@ public class FlashBuilderProjectLoadUtil {
         }
 
         //noinspection unchecked
-        for (final Element includeResourcesElement : (Iterable<Element>)flexLibPropertiesElement
+        for (final Element includeResourcesElement : flexLibPropertiesElement
           .getChildren(INCLUDE_RESOURCES_ELEMENT, flexLibPropertiesElement.getNamespace())) {
           //noinspection unchecked
-          for (final Element resourceEntryElement : (Iterable<Element>)includeResourcesElement
+          for (final Element resourceEntryElement : includeResourcesElement
             .getChildren(RESOURCE_ENTRY_ELEMENT, includeResourcesElement.getNamespace())) {
 
             final String sourcePath = resourceEntryElement.getAttributeValue(SOURCE_PATH_ATTR);
@@ -304,8 +299,8 @@ public class FlashBuilderProjectLoadUtil {
           }
         }
       }
-      catch (JDOMException e) {/*ignore*/}
-      catch (IOException e) {/*ignore*/}
+      catch (JDOMException ignored) {/*ignore*/}
+      catch (IOException ignored) {/*ignore*/}
     }
   }
 
@@ -323,11 +318,11 @@ public class FlashBuilderProjectLoadUtil {
     if (flexLibPropertiesFile == null) {
       final Element parentElement = compilerElement.getParentElement();
       //noinspection unchecked
-      for (final Element buildTargetsElement : (Iterable<Element>)(parentElement
-                                                                     .getChildren(BUILD_TARGETS_ELEMENT, parentElement.getNamespace()))) {
+      for (final Element buildTargetsElement : parentElement
+                                                                     .getChildren(BUILD_TARGETS_ELEMENT, parentElement.getNamespace())) {
         //noinspection unchecked
-        for (final Element buildTargetElement : (Iterable<Element>)(buildTargetsElement
-                                                                      .getChildren(BUILD_TARGET_ELEMENT, parentElement.getNamespace()))) {
+        for (final Element buildTargetElement : buildTargetsElement
+                                                                      .getChildren(BUILD_TARGET_ELEMENT, parentElement.getNamespace())) {
           final String buildTarget = buildTargetElement.getAttributeValue(BUILD_TARGET_NAME_ATTR);
           final String platformId1 = buildTargetElement.getAttributeValue(PLATFORM_ID_1);
           final String platformId2 = getMultiPlatformId(buildTargetElement);
@@ -428,8 +423,8 @@ public class FlashBuilderProjectLoadUtil {
     if (airExcludesElement == null) return;
 
     //noinspection unchecked
-    for (Element pathEntryElement : (Iterable<Element>)(airExcludesElement
-                                                          .getChildren(PATH_ENTRY_ELEMENT, airExcludesElement.getNamespace()))) {
+    for (Element pathEntryElement : airExcludesElement
+                                                          .getChildren(PATH_ENTRY_ELEMENT, airExcludesElement.getNamespace())) {
       final String path = pathEntryElement.getAttributeValue(PATH_ATTR);
       if (!StringUtil.isEmptyOrSpaces(path)) {
         if (targetPlatform == TargetPlatform.Mobile) {
@@ -467,10 +462,10 @@ public class FlashBuilderProjectLoadUtil {
       project.addSourcePath(FileUtil.toSystemIndependentName(sourceFolderPath));
     }
     //noinspection unchecked
-    for (final Element compilerSourcePathElement : ((Iterable<Element>)compilerElement.getChildren(COMPILER_SOURCE_PATH_TAG))) {
+    for (final Element compilerSourcePathElement : compilerElement.getChildren(COMPILER_SOURCE_PATH_TAG)) {
       //noinspection unchecked
-      for (final Element compilerSourcePathEntryElement : ((Iterable<Element>)compilerSourcePathElement
-        .getChildren(COMPILER_SOURCE_PATH_ENTRY_TAG))) {
+      for (final Element compilerSourcePathEntryElement : compilerSourcePathElement
+        .getChildren(COMPILER_SOURCE_PATH_ENTRY_TAG)) {
         final String sourcePath = compilerSourcePathEntryElement.getAttributeValue(PATH_ATTR);
         if (!StringUtil.isEmptyOrSpaces(sourcePath)) {
           project.addSourcePath(FileUtil.toSystemIndependentName(sourcePath));
@@ -524,9 +519,9 @@ public class FlashBuilderProjectLoadUtil {
                                                         final Element compilerElement,
                                                         final Map<String, String> pathReplacementMap) {
     //noinspection unchecked
-    for (final Element libraryPathElement : ((Iterable<Element>)compilerElement.getChildren(LIBRARY_PATH_TAG))) {
+    for (final Element libraryPathElement : compilerElement.getChildren(LIBRARY_PATH_TAG)) {
       //noinspection unchecked
-      for (final Element libraryPathEntryElement : ((Iterable<Element>)libraryPathElement.getChildren(LIBRARY_PATH_ENTRY_TAG))) {
+      for (final Element libraryPathEntryElement : libraryPathElement.getChildren(LIBRARY_PATH_ENTRY_TAG)) {
         final String libraryKind = StringUtil.notNullize(libraryPathEntryElement.getAttributeValue(LIBRARY_KIND_ATTR), SWC_FILE_KIND);
         if (libraryKind.equals(USE_SDK_KIND)) {
           project.setSdkUsed(true);
@@ -570,7 +565,8 @@ public class FlashBuilderProjectLoadUtil {
     if (!pluginsDir.isDirectory()) return null;
 
     final File[] flexUnitDirs = pluginsDir.listFiles(new FilenameFilter() {
-      public boolean accept(final File dir, final String name) {
+      @Override
+      public boolean accept(@NotNull final File dir, @NotNull final String name) {
         return name.startsWith("com.adobe.flexbuilder.flexunit_");
       }
     });
@@ -593,9 +589,9 @@ public class FlashBuilderProjectLoadUtil {
 
   private static void loadApplications(final FlashBuilderProject project, final Element actionScriptPropertiesElement) {
     //noinspection unchecked
-    for (final Element applicationsElement : ((Iterable<Element>)actionScriptPropertiesElement.getChildren(APPLICATIONS_ELEMENT))) {
+    for (final Element applicationsElement : actionScriptPropertiesElement.getChildren(APPLICATIONS_ELEMENT)) {
       //noinspection unchecked
-      for (final Element applicationElement : ((Iterable<Element>)applicationsElement.getChildren(APPLICATION_ELEMENT))) {
+      for (final Element applicationElement : applicationsElement.getChildren(APPLICATION_ELEMENT)) {
         final String path = applicationElement.getAttributeValue(PATH_ATTR);
         final String className = path == null ? null : getClassName(path);
         if (className != null && !"FlexUnitApplication".equals(className) && !"FlexUnitCompilerApplication".equals(className)) {
@@ -607,9 +603,9 @@ public class FlashBuilderProjectLoadUtil {
 
   private static void loadModules(final FlashBuilderProject project, final Element actionScriptPropertiesElement) {
     //noinspection unchecked
-    for (final Element modulesElement : ((Iterable<Element>)actionScriptPropertiesElement.getChildren(MODULES_ELEMENT))) {
+    for (final Element modulesElement : actionScriptPropertiesElement.getChildren(MODULES_ELEMENT)) {
       //noinspection unchecked
-      for (final Element moduleElement : ((Iterable<Element>)modulesElement.getChildren(MODULE_ELEMENT))) {
+      for (final Element moduleElement : modulesElement.getChildren(MODULE_ELEMENT)) {
         final String mainClassPath = moduleElement.getAttributeValue(SOURCE_PATH_ATTR);
         final String outputPath = moduleElement.getAttributeValue(DEST_PATH_ATTR);
         final String optimize = moduleElement.getAttributeValue(OPTIMIZE_ATTR);
@@ -623,9 +619,9 @@ public class FlashBuilderProjectLoadUtil {
 
   private static void loadCssFilesToCompile(final FlashBuilderProject project, final Element actionScriptPropertiesElement) {
     //noinspection unchecked
-    for (final Element buildSccFilesElement : ((Iterable<Element>)actionScriptPropertiesElement.getChildren(BUILD_CSS_FILES_ELEMENT))) {
+    for (final Element buildSccFilesElement : actionScriptPropertiesElement.getChildren(BUILD_CSS_FILES_ELEMENT)) {
       //noinspection unchecked
-      for (final Element buildCssFileEntryElement : ((Iterable<Element>)buildSccFilesElement.getChildren(BUILD_CSS_FILE_ENTRY_ELEMENT))) {
+      for (final Element buildCssFileEntryElement : buildSccFilesElement.getChildren(BUILD_CSS_FILE_ENTRY_ELEMENT)) {
         final String sourcePath = buildCssFileEntryElement.getAttributeValue(SOURCE_PATH_ATTR);
         if (!StringUtil.isEmpty(sourcePath)) {
           project.addCssFileToCompile(FileUtil.toSystemIndependentName(sourcePath));

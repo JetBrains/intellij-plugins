@@ -32,18 +32,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.DEFINE;
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.NAME;
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.VALUE;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.*;
 
 public class JSConditionalCompilationDefinitionsProviderImpl implements JSConditionalCompilationDefinitionsProvider {
+  private static final String[] CONDITIONAL_COMPILATION_DEFINITION_OPTION_ALIASES = {"define", "compiler.define"};
 
-  private static String[] CONDITIONAL_COMPILATION_DEFINITION_OPTION_ALIASES = {"define", "compiler.define"};
-
-  private Map<VirtualFile, Long> configFileToTimestamp = new THashMap<VirtualFile, Long>();
-  private Map<VirtualFile, Collection<Pair<String, String>>> configFileToConditionalCompilerDefinitions =
+  private final Map<VirtualFile, Long> configFileToTimestamp = new THashMap<VirtualFile, Long>();
+  private final Map<VirtualFile, Collection<Pair<String, String>>> configFileToConditionalCompilerDefinitions =
     new THashMap<VirtualFile, Collection<Pair<String, String>>>();
 
+  @Override
   public boolean containsConstant(final Module module, final String namespace, final String constantName) {
     if (module != null && ModuleType.get(module) instanceof FlexModuleType
         && !StringUtil.isEmpty(namespace) && !StringUtil.isEmpty(constantName)) {
@@ -52,6 +50,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
       final Ref<Boolean> result = new Ref<Boolean>(false);
 
       processConditionalCompilationDefinitions(module, new Processor<Pair<String, String>>() {
+        @Override
         public boolean process(final Pair<String, String> nameAndValue) {
           if ((searchForPrefix && nameAndValue.first.startsWith(searchedName)) ||
               (!searchForPrefix && nameAndValue.first.equals(searchedName))) {
@@ -67,6 +66,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     return false;
   }
 
+  @Override
   public Collection<String> getConstantNamesForNamespace(final Module module, final String namespace) {
     final Collection<String> result = new ArrayList<String>();
 
@@ -74,6 +74,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
       final String beginning = namespace + "::";
 
       processConditionalCompilationDefinitions(module, new Processor<Pair<String, String>>() {
+        @Override
         public boolean process(final Pair<String, String> nameAndValue) {
           if (nameAndValue.first.startsWith(beginning)) {
             result.add(nameAndValue.first.substring(beginning.length()));
@@ -86,11 +87,13 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     return result;
   }
 
+  @Override
   public Collection<String> getAllConstants(final Module module) {
     final Collection<String> result = new ArrayList<String>();
 
     if (module != null && ModuleType.get(module) instanceof FlexModuleType) {
       processConditionalCompilationDefinitions(module, new Processor<Pair<String, String>>() {
+        @Override
         public boolean process(final Pair<String, String> nameAndValue) {
           result.add(nameAndValue.first);
           return true;
@@ -144,9 +147,9 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
         final Element rootElement = document.getRootElement();
         if (rootElement.getName().equals(FlexCompilerConfigFileUtilBase.FLEX_CONFIG)) {
           // noinspection unchecked
-          for (Element compilerElement : ((Iterable<Element>)rootElement.getChildren(FlexCompilerConfigFileUtilBase.COMPILER, rootElement.getNamespace()))) {
+          for (Element compilerElement : rootElement.getChildren(FlexCompilerConfigFileUtilBase.COMPILER, rootElement.getNamespace())) {
             // noinspection unchecked
-            for (Element defineElement : ((Iterable<Element>)compilerElement.getChildren(DEFINE, rootElement.getNamespace()))) {
+            for (Element defineElement : compilerElement.getChildren(DEFINE, rootElement.getNamespace())) {
               final String name = defineElement.getChildText(NAME, rootElement.getNamespace());
               final String value = defineElement.getChildText(VALUE, rootElement.getNamespace());
               if (!StringUtil.isEmpty(name) && value != null) {
@@ -161,8 +164,8 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
 
         return result;
       }
-      catch (JDOMException e) {/*ignore*/}
-      catch (IOException e) {/*ignore*/}
+      catch (JDOMException ignored) {/*ignore*/}
+      catch (IOException ignored) {/*ignore*/}
 
       return Collections.emptyList();
     }

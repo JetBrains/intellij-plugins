@@ -99,7 +99,7 @@ public class FlexCommonUtils {
   public static final boolean KEEP_TEMP_FILES = Boolean.parseBoolean(System.getProperty("idea.keep.flex.temporary.files"));
   public static final Pattern AIR_VERSION_PATTERN = Pattern.compile("[0-9]+\\.[0-9]+(\\.[0-9]+)*");
 
-  private static Map<Pair<String, Long>, String> ourAdtJarPathAndTimestampToVersion = new THashMap<Pair<String, Long>, String>();
+  private static final Map<Pair<String, Long>, String> ourAdtJarPathAndTimestampToVersion = new THashMap<Pair<String, Long>, String>();
 
   public static boolean isSourceFile(final String fileName) {
     final String ext = FileUtilRt.getExtension(fileName);
@@ -321,8 +321,7 @@ public class FlexCommonUtils {
     if (elementNames.isEmpty()) return null;
 
     try {
-      final Document document = JDOMUtil.loadDocument(is);
-      final Element root = document.getRootElement();
+      final Element root = JDOMUtil.load(is);
 
       if (!root.getName().equals(elementNames.get(0))) {
         return null;
