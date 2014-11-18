@@ -115,6 +115,8 @@ public class PhoneGapCommandLine {
   }
 
   public boolean isOld() {
+    if (isIonic()) return false;
+
     if (StringUtil.isEmpty(version) || !Character.isDigit(version.charAt(0))) return false;
 
     try {

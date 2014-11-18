@@ -61,8 +61,10 @@ public class PhoneGapProjectComponent extends AbstractProjectComponent {
       }
 
       private boolean isProcess(@NotNull VirtualFileEvent event) {
-        return event.getFileName().equals(FOLDER_PLATFORMS) && PhoneGapUtil.isPhoneGapProject(myProject)
-               && PhoneGapSettings.getInstance().isExcludePlatformFolder();
+        return event.getFileName().equals(FOLDER_PLATFORMS) &&
+               event.getFile().isDirectory() &&
+               PhoneGapUtil.isPhoneGapProject(myProject) &&
+               PhoneGapSettings.getInstance().isExcludePlatformFolder();
       }
     }, myProject);
   }
