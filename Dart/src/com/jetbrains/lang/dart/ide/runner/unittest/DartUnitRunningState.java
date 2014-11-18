@@ -54,7 +54,7 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
     return executionResult;
   }
 
-  private static ConsoleView createConsole(@NotNull ExecutionEnvironment env) throws ExecutionException {
+  private static ConsoleView createConsole(@NotNull ExecutionEnvironment env) {
     final Project project = env.getProject();
     final DartUnitRunConfiguration runConfiguration = (DartUnitRunConfiguration)env.getRunProfile();
     final DartUnitRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
@@ -110,7 +110,8 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
     runnerCode = runnerCode.replaceFirst("NAME", StringUtil.notNullize(name));
     runnerCode = runnerCode.replaceFirst("SCOPE", scope.toString());
     final String filePath = myRunnerParameters.getFilePath();
-    runnerCode = runnerCode.replaceFirst("TEST_FILE_PATH", filePath == null ? "" : pathToDartUrl(filePath));
+    runnerCode = runnerCode.replaceFirst("TEST_FILE_URI", filePath == null ? "" : pathToDartUrl(filePath));
+    runnerCode = runnerCode.replaceFirst("TEST_FILE_PATH", filePath == null ? "" : filePath);
 
     FileUtil.writeToFile(file, runnerCode);
 
