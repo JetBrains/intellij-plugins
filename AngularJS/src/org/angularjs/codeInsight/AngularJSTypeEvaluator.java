@@ -31,7 +31,7 @@ public class AngularJSTypeEvaluator extends JSTypeEvaluator {
       if (resolveParent instanceof AngularJSAsExpression) {
         final String name = resolveParent.getFirstChild().getText();
         final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
-        final JSType type = JSNamedType.createType(name, source, JSNamedType.StaticOrInstance.INSTANCE);
+        final JSType type = JSNamedType.createType(name, source, JSContext.INSTANCE);
         addType(type, resolveResult);
         return true;
       } else if (resolveParent instanceof AngularJSRepeatExpression) {
@@ -44,7 +44,7 @@ public class AngularJSTypeEvaluator extends JSTypeEvaluator {
         AngularIndexUtil.hasAngularJS(resolveResult.getProject())) {
       final String name = ((JSParameter)resolveResult).getName();
       final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
-      final JSType type = JSNamedType.createType(name, source, JSNamedType.StaticOrInstance.INSTANCE);
+      final JSType type = JSNamedType.createType(name, source, JSContext.INSTANCE);
       addType(type, resolveResult);
     }
     return super.addTypeFromElementResolveResult(expression, parent, resolveResult, hasSomeType);
