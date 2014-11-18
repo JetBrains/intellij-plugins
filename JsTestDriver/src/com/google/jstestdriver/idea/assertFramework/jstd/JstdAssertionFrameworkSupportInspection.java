@@ -13,11 +13,9 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.util.Consumer;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ui.UIUtil;
@@ -94,15 +92,10 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
             fileRequestor,
             false
           );
-          AsyncResult<Boolean> result = dialog.showAndGetOk();
-          result.doWhenDone(new Consumer<Boolean>() {
-            @Override
-            public void consume(Boolean done) {
-              if (done) {
-                FileContentUtil.reparseFiles(project, Collections.singletonList(fileRequestor), true);
-              }
-            }
-          });
+          boolean done = dialog.showAndGet();
+          if (done) {
+            FileContentUtil.reparseFiles(project, Collections.singletonList(fileRequestor), true);
+          }
         }
       });
     }
