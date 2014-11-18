@@ -1,9 +1,11 @@
+import 'dart:collection';
+
 import 'DART_UNITTEST';
-import 'TEST_FILE_PATH' as testPrefix;
+import 'TEST_FILE_URI' as testPrefix;
 
 typedef F1(args);
 
-main(List<String> args) {
+main() {
   var config = new JetBrainsUnitConfig();
   unittestConfiguration = config;
   if (testPrefix.main is F1) {
@@ -16,8 +18,11 @@ main(List<String> args) {
 class JetBrainsUnitConfig extends Configuration {
   String name = 'NAME';
   String scope = 'SCOPE';
+  String testFilePath = 'TEST_FILE_PATH';
   int maxId = 0;
   Map<String, int> group2id;
+  Map<int, String> id2Group;
+  Map<int, int> id2Parent;
   bool done = false;
 
   JetBrainsUnitConfig() : super.blank() {}
@@ -26,7 +31,10 @@ class JetBrainsUnitConfig extends Configuration {
     _filterTests(testCases);
     testCases.forEach((TestCase testCase) => maxId = maxId < testCase.id ? testCase.id : maxId);
     maxId += 2;
-    group2id = {'': 0};
+    group2id = {'' : 0};
+    id2Group = {0 : ''};
+    id2Parent = {};
+
     print('\n'); // without it test output goes to the same line where "Observatory listening on http://127.0.0.1:52511" is already printed
     printTCMessage('enteredTheMatrix', {});
     _createGroups();
@@ -35,9 +43,21 @@ class JetBrainsUnitConfig extends Configuration {
           'name' : getName(testCase),
           'parentNodeId' : group2id[testCase.currentGroup],
           'nodeId' : (testCase.id + 1),
-          'nodeType' : 'test'
+          'nodeType' : 'test',
+          'locationHint' : 'dart_location://$testFilePath,${_getTestPath(testCase)}'
       });
     });
+  }
+
+  String _getTestPath(TestCase test) {
+    var nodes = new Queue();
+    nodes.addFirst(getName(test));
+    var id = group2id[test.currentGroup];
+    while (id != 0) {
+      nodes.addFirst(id2Group[id]);
+      id = id2Parent[id];
+    }
+    return nodes.join('/');
   }
 
   String getName(TestCase testCase) {
@@ -67,12 +87,15 @@ class JetBrainsUnitConfig extends Configuration {
       if(parentGroup != '') {
         groupName = groupName.substring(parentGroup.length + 1);
       }
-      printTCMessage('testSuiteStarted', {'name' : groupName, 'parentNodeId' : group2id[parentGroup], 'nodeId' : nodeId, 'nodeType' : 'test'});
+      id2Group[nodeId] = groupName;
+      var parentId = group2id[parentGroup];
+      id2Parent[nodeId] = parentId;
+      printTCMessage('testSuiteStarted', {'name' : groupName, 'parentNodeId' : parentId, 'nodeId' : nodeId, 'nodeType' : 'test'});
     }
   }
 
   void onSummary(int passed, int failed, int errors, List<TestCase> results, String uncaughtError) {
-    if(done) return;
+    if (done) return;
     done = true;
     List<int> ids = new List.from(group2id.values);
     ids.sort((int a, int b) => b-a);
@@ -118,22 +141,22 @@ class JetBrainsUnitConfig extends Configuration {
     var out = new StringBuffer();
     out.write("##teamcity[$messageName");
     attrs.forEach((key, value){
-      out.write(" $key='${escapseString(value.toString())}'");
+      out.write(" $key='${escapeString(value.toString())}'");
     });
     out.write("]");
     print(out.toString());
   }
 
-  String escapseString(String str){
+  String escapeString(String str){
     var out = new StringBuffer();
     for(var ch in str.split("")){
-      var current = escapseChar(ch);
+      var current = escapeChar(ch);
       out.write(current == 0 ? ch : '|$current');
     }
     return out.toString();
   }
 
-  escapseChar(ch) {
+  escapeChar(ch) {
     switch (ch) {
       case '\n': return 'n';
       case '\r': return 'r';
