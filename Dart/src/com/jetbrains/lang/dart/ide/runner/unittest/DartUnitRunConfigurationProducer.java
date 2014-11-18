@@ -51,12 +51,14 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
       }
     }
 
-    final PsiElement element = findTestElement(context.getPsiLocation());
-    if (element == null || !setupRunConfiguration(configuration.getRunnerParameters(), element)) {
+    final PsiElement testElement = findTestElement(context.getPsiLocation());
+    if (testElement == null || !setupRunConfiguration(configuration.getRunnerParameters(), testElement)) {
       return false;
     }
 
     configuration.setGeneratedName();
+
+    sourceElement.set(testElement);
     return true;
   }
 
@@ -125,7 +127,7 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
 
   @Nullable
   private static PsiElement findTestElement(@Nullable PsiElement element) {
-    DartCallExpression callExpression = PsiTreeUtil.getParentOfType(element, DartCallExpression.class);
+    DartCallExpression callExpression = PsiTreeUtil.getParentOfType(element, DartCallExpression.class, false);
     while (callExpression != null) {
       if (isGroup(callExpression) || isTest(callExpression)) {
         return callExpression;
@@ -135,16 +137,15 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
     return element != null ? element.getContainingFile() : null;
   }
 
-  private static boolean isTest(DartCallExpression expression) {
-    return checkLibAndName(expression, "test");
+  static boolean isTest(@NotNull final DartCallExpression expression) {
+    return checkCalledFunctionName(expression, "test");
   }
 
-  private static boolean isGroup(DartCallExpression expression) {
-    return checkLibAndName(expression, "group");
+  static boolean isGroup(@NotNull final DartCallExpression expression) {
+    return checkCalledFunctionName(expression, "group");
   }
 
-  private static boolean checkLibAndName(DartCallExpression callExpression, String expectedName) {
-    final String name = callExpression.getExpression().getText();
-    return expectedName.equalsIgnoreCase(name);
+  private static boolean checkCalledFunctionName(@NotNull final DartCallExpression callExpression, @NotNull final String expectedName) {
+    return expectedName.equals(callExpression.getExpression().getText());
   }
 }

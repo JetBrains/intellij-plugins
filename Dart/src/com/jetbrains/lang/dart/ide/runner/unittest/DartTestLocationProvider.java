@@ -5,6 +5,7 @@ import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -15,13 +16,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testIntegration.TestLocationProvider;
 import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartTestLocationProvider implements TestLocationProvider {
 
   private static final List<Location> NONE = new ArrayList<Location>();
@@ -73,7 +72,7 @@ public class DartTestLocationProvider implements TestLocationProvider {
 
           if (element instanceof DartCallExpression) {
             DartCallExpression expression = (DartCallExpression)element;
-            if (isLabeled(expression, "test")) {
+            if (DartUnitRunConfigurationProducer.isTest(expression)) {
               if (nameMatches(expression, nodes[nodes.length - 1])) {
                 boolean matches = true;
                 for (int i = nodes.length - 2; i >= 0 && matches; --i) {
@@ -93,34 +92,23 @@ public class DartTestLocationProvider implements TestLocationProvider {
           return true;
         }
 
+        @Nullable
         private DartCallExpression getGroup(final DartCallExpression expression) {
           return (DartCallExpression)PsiTreeUtil.findFirstParent(expression, true, new Condition<PsiElement>() {
             @Override
             public boolean value(final PsiElement element) {
-              return element instanceof DartCallExpression && isLabeled((DartCallExpression)element, "group");
+              return element instanceof DartCallExpression && DartUnitRunConfigurationProducer.isGroup((DartCallExpression)element);
             }
           });
         }
 
         private boolean nameMatches(final DartCallExpression expression, final String name) {
-          final DartArguments args = expression.getArguments();
-          final DartArgumentList argumentList = args.getArgumentList();
-          if (argumentList != null) {
-            final PsiElement firstArg = argumentList.getFirstChild();
-            if (firstArg instanceof DartStringLiteralExpression) {
-              // skip the quote
-              final PsiElement textElement = firstArg.getFirstChild().getNextSibling();
-              if (textElement != null) {
-                return textElement.getText().equals(name);
-              }
-            }
-          }
-          return false;
-        }
-
-        private boolean isLabeled(final DartCallExpression element, String label) {
-          final PsiElement child = element.getFirstChild();
-          return child != null && child.getText().equals(label);
+          final DartArgumentList argumentList = expression.getArguments().getArgumentList();
+          final List<DartExpression> argExpressions = argumentList == null ? null : argumentList.getExpressionList();
+          return argExpressions != null &&
+                 !argExpressions.isEmpty() &&
+                 argExpressions.get(0) instanceof DartStringLiteralExpression &&
+                 name.equals(StringUtil.unquoteString(argExpressions.get(0).getText()));
         }
       };
 

@@ -5,7 +5,7 @@ import 'TEST_FILE_URI' as testPrefix;
 
 typedef F1(args);
 
-main() {
+main(List<String> args) {
   var config = new JetBrainsUnitConfig();
   unittestConfiguration = config;
   if (testPrefix.main is F1) {
