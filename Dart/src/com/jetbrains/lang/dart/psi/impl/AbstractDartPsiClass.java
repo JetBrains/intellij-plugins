@@ -20,6 +20,22 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     super(node);
   }
 
+  @Override
+  public boolean isEnum() {
+    return this instanceof DartEnumDefinition;
+  }
+
+  @NotNull
+  @Override
+  public List<DartEnumConstantDeclaration> getEnumConstantDeclarationList() {
+    return Collections.emptyList();
+  }
+
+  @Nullable
+  public DartTypeParameters getTypeParameters() {
+    return null;
+  }
+
   @NotNull
   public DartClassResolveResult getSuperClassResolvedOrObjectClass() {
     if (DartResolveUtil.OBJECT.equals(getName())) return DartClassResolveResult.EMPTY;

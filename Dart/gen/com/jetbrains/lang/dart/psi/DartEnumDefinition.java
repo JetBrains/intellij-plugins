@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartEnumDefinition extends DartEnum {
+public interface DartEnumDefinition extends DartClass {
 
   @NotNull
   DartComponentName getComponentName();

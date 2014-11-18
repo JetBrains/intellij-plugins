@@ -11,7 +11,7 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartEnumDefinitionImpl extends AbstractDartComponentImpl implements DartEnumDefinition {
+public class DartEnumDefinitionImpl extends AbstractDartPsiClass implements DartEnumDefinition {
 
   public DartEnumDefinitionImpl(ASTNode node) {
     super(node);

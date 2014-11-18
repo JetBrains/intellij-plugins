@@ -25,7 +25,7 @@ import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 
 public class DartIndexUtil {
   // inc when change parser
-  public static final int BASE_VERSION = 8;
+  public static final int BASE_VERSION = 9;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
@@ -63,15 +63,17 @@ public class DartIndexUtil {
         }
         if (parent instanceof DartClass) {
           result.addClassName(name);
-          processInheritors(result, name, (DartClass)parent, result.getLibraryName());
-          for (DartComponent subComponent : DartResolveUtil.getNamedSubComponents((DartClass)parent)) {
-            result.addSymbol(subComponent.getName());
+
+          if (((DartClass)parent).isEnum()) {
+            for (DartEnumConstantDeclaration enumConstantDeclaration : ((DartClass)parent).getEnumConstantDeclarationList()) {
+              result.addSymbol(enumConstantDeclaration.getName());
+            }
           }
-        }
-        if (parent instanceof  DartEnum) {
-          result.addClassName(name);
-          for (DartEnumConstantDeclaration enumConstantDeclaration : ((DartEnum)parent).getEnumConstantDeclarationList()) {
-            result.addSymbol(enumConstantDeclaration.getName());
+          else {
+            processInheritors(result, name, (DartClass)parent, result.getLibraryName());
+            for (DartComponent subComponent : DartResolveUtil.getNamedSubComponents((DartClass)parent)) {
+              result.addSymbol(subComponent.getName());
+            }
           }
         }
       }

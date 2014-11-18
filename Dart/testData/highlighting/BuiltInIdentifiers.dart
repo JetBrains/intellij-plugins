@@ -9,7 +9,7 @@
 
 <info textAttributesKey="DART_KEYWORD">typedef</info> <error descr="The built-in identifier 'typedef' cannot be used as a type alias name"><info>typedef</info></error>();
 
-<info textAttributesKey="DART_KEYWORD">abstract</info> class <info>Functions</info> <info textAttributesKey="DART_KEYWORD">implements</info> <error descr="Classes can only implement other classes">implements</error> {
+<info textAttributesKey="DART_KEYWORD">abstract</info> class <info textAttributesKey="DART_CLASS">Functions</info> <info textAttributesKey="DART_KEYWORD">implements</info> <error descr="Classes can only implement other classes">implements</error> {
   <info textAttributesKey="DART_KEYWORD">factory</info> <error descr="Instance members cannot be accessed from a factory constructor"><error descr="The name of the immediately enclosing class expected"><info>factory</info></error></error>() {}
   <info textAttributesKey="DART_KEYWORD">operator</info> +(<info>a</info>){}
 
@@ -118,4 +118,4 @@
   new <info>Functions</info>().<info>callFunctions</info>();
 }
 
-<info textAttributesKey="DART_KEYWORD">enum</info> Foo { <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">BAR</info> }
+enum <info textAttributesKey="DART_CLASS">Foo</info> { <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">BAR</info> }
