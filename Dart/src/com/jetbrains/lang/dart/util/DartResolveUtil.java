@@ -217,11 +217,11 @@ public class DartResolveUtil {
   }
 
   @NotNull
-  public static Collection<DartComponent> getClassAndEnumDeclarations(@NotNull final PsiElement root) {
-    final List<DartComponent> result = new SmartList<DartComponent>();
+  public static Collection<DartClass> getClassDeclarations(@NotNull final PsiElement root) {
+    final List<DartClass> result = new SmartList<DartClass>();
     for (PsiElement child = root.getFirstChild(); child != null; child = child.getNextSibling()) {
-      if (child instanceof DartClassDefinition || child instanceof DartEnumDefinition) {
-        result.add((DartComponent)child);
+      if (child instanceof DartClass) {
+        result.add((DartClass)child);
       }
     }
 
@@ -669,6 +669,15 @@ public class DartResolveUtil {
 
   @NotNull
   public static List<DartComponent> getNamedSubComponents(DartClass dartClass) {
+    if (dartClass.isEnum()) {
+      final List<DartEnumConstantDeclaration> enumConstants = dartClass.getEnumConstantDeclarationList();
+      final List<DartComponent> result = new ArrayList<DartComponent>(enumConstants.size());
+      for (DartEnumConstantDeclaration constant : enumConstants) {
+        result.add(constant);
+      }
+      return result;
+    }
+
     PsiElement body = getBody(dartClass);
 
     final List<DartComponent> result = new ArrayList<DartComponent>();
@@ -692,7 +701,7 @@ public class DartResolveUtil {
 
   @Nullable
   public static DartClassMembers getBody(@Nullable final DartClass dartClass) {
-    final DartClassBody body = dartClass == null ? null : ((DartClassDefinition)dartClass).getClassBody();
+    final DartClassBody body = dartClass instanceof DartClassDefinition ? ((DartClassDefinition)dartClass).getClassBody() : null;
     return body == null ? null : body.getClassMembers();
   }
 

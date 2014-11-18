@@ -9,7 +9,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashMap;
@@ -68,7 +68,7 @@ public class DartClassIndex extends ScalarIndexExtension<String> {
     for (VirtualFile vFile : files) {
       final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
       for (PsiElement root : DartResolveUtil.findDartRoots(psiFile)) {
-        for (DartComponent component : DartResolveUtil.getClassAndEnumDeclarations(root)) {
+        for (DartClass component : DartResolveUtil.getClassDeclarations(root)) {
           if (name.equals(component.getName())) {
             result.add(component.getComponentName());
           }

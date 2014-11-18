@@ -19,7 +19,9 @@ public interface DartTokenTypesSets {
   // DartLexer returns multiline comments as a single MULTI_LINE_COMMENT or MULTI_LINE_DOC_COMMENT
   // DartDocLexer splits MULTI_LINE_DOC_COMMENT in tokens
 
-  IElementType MULTI_LINE_COMMENT_START = new DartElementType("MULTI_LINE_COMMENT_START"); // can't appear in PSI because merged into MULTI_LINE_COMMENT
+  // can't appear in PSI because merged into MULTI_LINE_COMMENT
+  IElementType MULTI_LINE_COMMENT_START = new DartElementType("MULTI_LINE_COMMENT_START");
+
   IElementType MULTI_LINE_DOC_COMMENT_START = new DartElementType("MULTI_LINE_DOC_COMMENT_START");
   IElementType MULTI_LINE_COMMENT_BODY = new DartElementType("MULTI_LINE_COMMENT_BODY");
   IElementType DOC_COMMENT_LEADING_ASTERISK = new DartElementType("DOC_COMMENT_LEADING_ASTERISK");
@@ -43,6 +45,7 @@ public interface DartTokenTypesSets {
                                             DEFAULT,
                                             DO,
                                             ELSE,
+                                            ENUM,
                                             EXTENDS,
                                             FALSE,
                                             FINAL,
@@ -91,8 +94,7 @@ public interface DartTokenTypesSets {
                                                   SYNC,
                                                   ASYNC,
                                                   AWAIT,
-                                                  YIELD,
-                                                  ENUM);
+                                                  YIELD);
 
   TokenSet OPERATORS = TokenSet.create(
     MINUS, MINUS_EQ, MINUS_MINUS, PLUS, PLUS_PLUS, PLUS_EQ, DIV, DIV_EQ, MUL, MUL_EQ, INT_DIV, INT_DIV_EQ, REM_EQ, REM, BIN_NOT, NOT,

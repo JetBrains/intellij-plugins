@@ -14,6 +14,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartComponentType;
+import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -57,7 +58,9 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     if (elementType == DartTokenTypesSets.MULTI_LINE_COMMENT) return "/*...*/";      // 4.2. Multiline comments
     if (elementType == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) return "///...";  // 4.3. Consequent single line doc comments
     if (elementType == DartTokenTypesSets.SINGLE_LINE_COMMENT) return "//...";       // 4.4. Consequent single line comments
-    if (psiElement instanceof DartClassBody) return "{...}";                         // 5.   Class body
+    if (psiElement instanceof DartClassBody || psiElement instanceof DartEnumDefinition) {
+      return "{...}";                                                                // 5.   Class body
+    }
     if (psiElement instanceof DartFunctionBody) return "{...}";                      // 6.   Function body
     if (psiElement instanceof DartTypeArguments) return SMILEY;                      // 7.   Type arguments
 
@@ -191,10 +194,19 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   }
 
   private static void foldClassBodies(@NotNull final List<FoldingDescriptor> descriptors, @NotNull final DartFile dartFile) {
-    for (DartClassDefinition dartClass : PsiTreeUtil.getChildrenOfTypeAsList(dartFile, DartClassDefinition.class)) {
-      final DartClassBody body = dartClass.getClassBody();
-      if (body != null && body.getTextLength() > 2) {
-        descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
+    for (DartClass dartClass : PsiTreeUtil.getChildrenOfTypeAsList(dartFile, DartClass.class)) {
+      if (dartClass instanceof DartClassDefinition) {
+        final DartClassBody body = ((DartClassDefinition)dartClass).getClassBody();
+        if (body != null && body.getTextLength() > 2) {
+          descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
+        }
+      }
+      else if (dartClass instanceof DartEnumDefinition) {
+        final ASTNode lBrace = dartClass.getNode().findChildByType(DartTokenTypes.LBRACE);
+        final ASTNode rBrace = dartClass.getNode().findChildByType(DartTokenTypes.RBRACE, lBrace);
+        if (lBrace != null && rBrace != null && (rBrace.getStartOffset() - lBrace.getStartOffset() > 2)) {
+          descriptors.add(new FoldingDescriptor(dartClass, TextRange.create(lBrace.getStartOffset(), rBrace.getStartOffset() + 1)));
+        }
       }
     }
   }

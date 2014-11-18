@@ -214,7 +214,7 @@ public class DartColorAnnotator implements Annotator {
     else if (element instanceof DartMethodDeclaration) {
       final DartMethodDeclaration decl = (DartMethodDeclaration)element;
       final String methodName = decl.getName();
-      final DartClassDefinition classDef = PsiTreeUtil.getParentOfType(decl, DartClassDefinition.class);
+      final DartClass classDef = PsiTreeUtil.getParentOfType(decl, DartClass.class);
       if (classDef != null && methodName != null) {
         final String className = classDef.getName();
         if (className != null) {

@@ -25,8 +25,7 @@ public class DartStructureViewModel extends StructureViewModelBase implements St
     withSuitableClasses(DartVarAccessDeclaration.class, DartFunctionDeclarationWithBodyOrNative.class, DartMethodDeclaration.class,
                         DartFactoryConstructorDeclaration.class, DartNamedConstructorDeclaration.class,
                         DartFunctionTypeAlias.class, DartGetterDeclaration.class, DartSetterDeclaration.class,
-                        DartEnumConstantDeclaration.class, DartEnum.class,
-                        DartClass.class);
+                        DartEnumConstantDeclaration.class, DartClass.class);
   }
 
   @Override
@@ -43,7 +42,7 @@ public class DartStructureViewModel extends StructureViewModelBase implements St
   @Override
   public boolean isAlwaysLeaf(StructureViewTreeElement element) {
     final Object value = element.getValue();
-    return value instanceof DartComponent && !(value instanceof DartClass || value instanceof DartEnum);
+    return value instanceof DartComponent && !(value instanceof DartClass);
   }
 
   @Override

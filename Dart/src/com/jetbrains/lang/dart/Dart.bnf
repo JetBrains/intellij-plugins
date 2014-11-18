@@ -228,7 +228,8 @@ classDefinition ::= metadata* 'abstract'? 'class' componentName typeParameters? 
 {pin=4 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
 enumDefinition ::= metadata* 'enum' componentName '{' enumConstantDeclaration (',' enumConstantDeclaration)* ','? '}'
-{pin=3  mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartEnum"}
+{pin=3  mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
+
 enumConstantDeclaration ::= componentName
 {
   mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl"

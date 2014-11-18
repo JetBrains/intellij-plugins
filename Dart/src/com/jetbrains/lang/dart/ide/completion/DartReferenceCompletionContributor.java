@@ -103,31 +103,25 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
     }
 
     if (dartClass != null) {
-      final boolean needFilterPrivateMembers = !DartResolveUtil.sameLibrary(reference, dartClass);
-      suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getFields(), needFilterPrivateMembers));
-      suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getMethods(), needFilterPrivateMembers));
-      suggestedVariants.addAll(DartResolveUtil.getComponentNames(
-        ContainerUtil.filter(
-          dartClass.getConstructors(),
-          new Condition<DartComponent>() {
-            @Override
-            public boolean value(DartComponent component) {
-              return component instanceof DartNamedConstructorDeclaration || component instanceof DartFactoryConstructorDeclaration;
+      if (dartClass.isEnum()) {
+        suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getEnumConstantDeclarationList()));
+      }
+      else {
+        final boolean needFilterPrivateMembers = !DartResolveUtil.sameLibrary(reference, dartClass);
+        suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getFields(), needFilterPrivateMembers));
+        suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getMethods(), needFilterPrivateMembers));
+        suggestedVariants.addAll(DartResolveUtil.getComponentNames(
+          ContainerUtil.filter(
+            dartClass.getConstructors(),
+            new Condition<DartComponent>() {
+              @Override
+              public boolean value(DartComponent component) {
+                return component instanceof DartNamedConstructorDeclaration || component instanceof DartFactoryConstructorDeclaration;
+              }
             }
-          }
-        ),
-        needFilterPrivateMembers
-      ));
-    } else {
-      // check for enum
-      if (leftReference != null) {
-        final PsiElement resolvedElement = leftReference.resolve();
-        if (resolvedElement != null) {
-          final PsiElement parent = resolvedElement.getParent();
-          if (parent instanceof DartEnumDefinition) {
-            suggestedVariants.addAll(DartResolveUtil.getComponentNames(((DartEnumDefinition)parent).getEnumConstantDeclarationList()));
-          }
-        }
+          ),
+          needFilterPrivateMembers
+        ));
       }
     }
 
