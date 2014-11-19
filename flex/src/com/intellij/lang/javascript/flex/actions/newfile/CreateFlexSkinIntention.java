@@ -56,9 +56,7 @@ public class CreateFlexSkinIntention extends CreateMxmlFileIntentionBase {
       final CreateFlexSkinDialog dialog = new CreateFlexSkinDialog(module, myClassName, myPackageName,
                                                                    defaultHostComponent,
                                                                    myElement.getContainingFile());
-      dialog.show();
-
-      if (!dialog.isOK()) {
+      if (!dialog.showAndGet()) {
         return Pair.empty();
       }
 

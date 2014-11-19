@@ -202,9 +202,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
           new CreateAirDescriptorTemplateDialog(myModule.getProject(), folderPath, mainClass, airVersion, extensions,
                                                 androidEnabled, iosEnabled);
 
-        dialog.show();
-
-        if (dialog.isOK()) {
+        if (dialog.showAndGet()) {
           final String descriptorPath = dialog.getDescriptorPath();
           setUseCustomDescriptor(descriptorPath);
 

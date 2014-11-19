@@ -60,9 +60,7 @@ public class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBui
       final String path = FileUtil.toSystemDependentName(wizardContext.getProjectFileDirectory() + "/" + file.getNameWithoutExtension());
       final AskPathDialog dialog = new AskPathDialog(title, label, path);
 
-      dialog.show();
-
-      if (!dialog.isOK()) {
+      if (!dialog.showAndGet()) {
         return false;
       }
 

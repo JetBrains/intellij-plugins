@@ -90,8 +90,7 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
         super.invokeRefactoring(processor);
       }
     };
-    d.show();
-    return d.isOK();
+    return d.showAndGet();
   }
 
   // TODO generalize

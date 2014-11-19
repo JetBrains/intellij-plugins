@@ -43,8 +43,9 @@ public class CreateFlexMobileViewIntentionAndFix extends CreateMxmlFileIntention
     }
     else {
       final ChoosePackageDialog dialog = new ChoosePackageDialog(module, getText(), myPackageName, myElement.getContainingFile());
-      dialog.show();
-      if (!dialog.isOK()) return Pair.empty();
+      if (!dialog.showAndGet()) {
+        return Pair.empty();
+      }
 
       targetDirectory = dialog.getTargetDirectory();
     }

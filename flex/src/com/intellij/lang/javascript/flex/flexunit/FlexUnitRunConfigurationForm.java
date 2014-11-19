@@ -85,8 +85,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
     myLauncherParametersTextWithBrowse.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         final FlexLauncherDialog dialog = new FlexLauncherDialog(myProject, myLauncherParameters);
-        dialog.show();
-        if (dialog.isOK()) {
+        if (dialog.showAndGet()) {
           myLauncherParameters = dialog.getLauncherParameters();
           updateControls();
         }

@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfiguration
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -136,8 +135,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
 
         final ProjectJdksEditor editor =
           new ProjectJdksEditor(null, FlexSdkComboBoxWithBrowseButton.this, new ProjectJdksConfigurable(project, sdksModel));
-        editor.show();
-        if (editor.isOK()) {
+        if (editor.showAndGet()) {
           final Sdk selectedSdk = editor.getSelectedJdk();
           if (mySdkFilter.value(selectedSdk)) {
             rebuildSdkListAndSelectSdk(selectedSdk);

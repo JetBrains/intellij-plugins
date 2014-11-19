@@ -187,8 +187,9 @@ public class FlexBCConfigurator {
           new AddBuildConfigurationDialog(myConfigEditor.getProject(), FlexBundle.message("change.bc.type.title"),
                                           Collections.<String>emptyList(), oldNature, false);
         dialog.reset(bc.getName(), bc.getAndroidPackagingOptions().isEnabled(), bc.getIosPackagingOptions().isEnabled());
-        dialog.show();
-        if (!dialog.isOK()) return;
+        if (!dialog.showAndGet()) {
+          return;
+        }
 
         final BuildConfigurationNature newNature = dialog.getNature();
         if (newNature.equals(oldNature)) {
@@ -323,8 +324,9 @@ public class FlexBCConfigurator {
     final String title = FlexBundle.message("add.build.configuration.title", module.getName());
     final AddBuildConfigurationDialog dialog =
       new AddBuildConfigurationDialog(module.getProject(), title, getUsedNames(module), BuildConfigurationNature.DEFAULT, true);
-    dialog.show();
-    if (!dialog.isOK()) return;
+    if (!dialog.showAndGet()) {
+      return;
+    }
 
     final ModifiableFlexBuildConfiguration bc = myConfigEditor.createConfiguration(module);
     final String bcName = dialog.getBCName();
@@ -377,8 +379,9 @@ public class FlexBCConfigurator {
     AddBuildConfigurationDialog dialog =
       new AddBuildConfigurationDialog(module.getProject(), title, getUsedNames(module), existingBC.getNature(), true);
     dialog.reset("", existingBC.getAndroidPackagingOptions().isEnabled(), existingBC.getIosPackagingOptions().isEnabled());
-    dialog.show();
-    if (!dialog.isOK()) return;
+    if (!dialog.showAndGet()) {
+      return;
+    }
 
     final String newBCName = dialog.getBCName();
     final String fileName = PathUtil.suggestFileName(newBCName);

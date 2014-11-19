@@ -46,10 +46,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
 
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.Emulator;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.*;
 
 public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfiguration> {
 
@@ -221,8 +218,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myLauncherParametersTextWithBrowse.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         final FlexLauncherDialog dialog = new FlexLauncherDialog(myProject, myLauncherParameters);
-        dialog.show();
-        if (dialog.isOK()) {
+        if (dialog.showAndGet()) {
           myLauncherParameters = dialog.getLauncherParameters();
           updateControls();
         }
