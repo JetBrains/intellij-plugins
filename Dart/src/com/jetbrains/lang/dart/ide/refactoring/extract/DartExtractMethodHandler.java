@@ -117,8 +117,7 @@ public class DartExtractMethodHandler implements RefactoringActionHandler {
 
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       DartExtractDialog extractDialog = new DartExtractDialog(project, functionName, controlFlow);
-      extractDialog.show();
-      if (!extractDialog.isOK()) {
+      if (!extractDialog.showAndGet()) {
         return;
       }
       functionName = extractDialog.getFunctionName();

@@ -299,8 +299,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
     final Project project = operation.getProject();
     if (operation.getName() == null) {
       DartIntroduceDialog dialog = new DartIntroduceDialog(project, myDialogTitle, operation);
-      dialog.show();
-      if (!dialog.isOK()) {
+      if (!dialog.showAndGet()) {
         return;
       }
       operation.setName(dialog.getName());

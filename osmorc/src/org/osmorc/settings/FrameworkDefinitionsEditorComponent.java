@@ -144,8 +144,7 @@ public class FrameworkDefinitionsEditorComponent {
     instance.setFrameworkIntegratorName(integrator.getDisplayName());
     CreateFrameworkInstanceDialog dialog = new CreateFrameworkInstanceDialog(instance, myModel);
     dialog.pack();
-    dialog.show();
-    if (dialog.isOK()) {
+    if (dialog.showAndGet()) {
       instance = dialog.createDefinition();
       //noinspection unchecked
       myModel.addElement(instance);
@@ -170,8 +169,7 @@ public class FrameworkDefinitionsEditorComponent {
       FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)myModel.get(index);
       CreateFrameworkInstanceDialog dialog = new CreateFrameworkInstanceDialog(instance, myModel);
       dialog.pack();
-      dialog.show();
-      if (dialog.isOK()) {
+      if (dialog.showAndGet()) {
         FrameworkInstanceDefinition newInstance = dialog.createDefinition();
         //noinspection unchecked
         myModel.set(index, newInstance);

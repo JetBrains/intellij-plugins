@@ -114,9 +114,7 @@ public class IDEAFacade implements IDEFacade {
 
     FindUsersDialog dialog = new FindUsersDialog(foundNewUsers, groups);
 
-    dialog.show();
-
-    if (dialog.isOK()) {
+    if (dialog.showAndGet()) {
       Set<User> selectedUsers = dialog.getSelectedUsers();
       return new FindUsersCommand.UsersInfo(selectedUsers.toArray(new User[selectedUsers.size()]), dialog.getGroup());
     }

@@ -123,8 +123,7 @@ public class JabberIdeaUI implements JabberUI {
 
   public String getFindByIdData(List<String> availableGroups) {
     FindByJabberIdDialog dialog = new FindByJabberIdDialog(availableGroups);
-    dialog.show();
-    if (dialog.isOK()) {
+    if (dialog.showAndGet()) {
       String group = dialog.getGroup();
       if ("".equals(group.trim())) {
         group = UserModel.DEFAULT_GROUP;
