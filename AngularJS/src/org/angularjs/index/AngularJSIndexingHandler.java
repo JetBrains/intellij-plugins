@@ -126,7 +126,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       }
     }
 
-    if ("$interpolateProvider".equals(qualifier.getText())) {
+    if (qualifier instanceof JSReferenceExpression && "$interpolateProvider".equals(((JSReferenceExpression)qualifier).getReferencedName())) {
       if ("startSymbol".equals(command) || "endSymbol".equals(command)) {
         JSExpression[] arguments = callExpression.getArguments();
         if (arguments.length > 0) {
