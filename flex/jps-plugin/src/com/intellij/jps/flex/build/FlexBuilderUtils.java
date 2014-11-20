@@ -206,8 +206,7 @@ public class FlexBuilderUtils {
     if (mainClassFile.isFile()) {
       try {
         if (FileUtilRt.extensionEquals(mainClassPath, "mxml")) {
-          final Document document = JDOMUtil.loadDocument(mainClassFile);
-          final Element rootElement = document.getRootElement();
+          final Element rootElement = JDOMUtil.load(mainClassFile);
           Element metadataElement = rootElement.getChild("Metadata", Namespace.getNamespace("http://www.adobe.com/2006/mxml"));
           if (metadataElement == null) {
             metadataElement = rootElement.getChild("Metadata", Namespace.getNamespace("http://ns.adobe.com/mxml/2009"));

@@ -67,8 +67,6 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.*;
-import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -630,11 +628,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final File descriptorFile = new File(descriptorPath);
     if (descriptorFile.isFile()) {
       try {
-        final Document document = JDOMUtil.loadDocument(descriptorFile);
-        final Element rootElement = document.getRootElement();
-        if (rootElement != null) {
-          return rootElement.getChildTextNormalize("supportedProfiles", rootElement.getNamespace());
-        }
+        return JDOMUtil.load(descriptorFile).getChildTextNormalize("supportedProfiles", JDOMUtil.load(descriptorFile).getNamespace());
       }
       catch (JDOMException ignore) {/*ignore*/}
       catch (IOException ignore) {/*ignore*/}
