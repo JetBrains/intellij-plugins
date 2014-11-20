@@ -1,21 +1,31 @@
 package com.jetbrains.lang.dart.projectWizard;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.browsers.BrowserSpecificSettings;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.chrome.ChromeSettings;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.projectWizard.SettingsStep;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.platform.WebProjectGenerator;
+import com.intellij.ui.ColorUtil;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.JBList;
+import com.intellij.util.Consumer;
+import com.intellij.util.ui.AsyncProcessIcon;
+import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -25,18 +35,36 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<DartProjectWizardData> {
+  private static final String DART_PROJECT_TEMPLATE = "DART_PROJECT_TEMPLATE";
+
   private JPanel myMainPanel;
   private TextFieldWithBrowseButton mySdkPathTextWithBrowse;
   private JBLabel myVersionLabel;
 
-  private JPanel myDartiumSettingsPanel;
   private TextFieldWithBrowseButton myDartiumPathTextWithBrowse;
   private JButton myDartiumSettingsButton;
   private JBCheckBox myCheckedModeCheckBox;
 
+  private JPanel myLoadingPanel;
+  private AsyncProcessIcon myLoadingIcon;
+
+  private JPanel myTemplatesPanel;
+  private JBCheckBox myCreateSampleProjectCheckBox;
+  private JBList myTemplatesList;
+
+  private JBLabel myErrorLabel; // shown in IntelliJ IDEA only
+
   private ChromeSettings myDartiumSettingsCurrent;
+
+  private boolean myIntellijLiveValidationEnabled = false;
 
   public DartGeneratorPeer() {
     // set initial values before initDartSdkAndDartiumControls() because listeners should not be triggered on initialization
@@ -67,6 +95,84 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
     final boolean checkedMode = dartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
     myCheckedModeCheckBox.setSelected(checkedMode);
+
+    myCreateSampleProjectCheckBox.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(final ActionEvent e) {
+        myTemplatesList.setEnabled(myCreateSampleProjectCheckBox.isSelected());
+      }
+    });
+
+    myErrorLabel.setIcon(AllIcons.Actions.Lightning);
+    myErrorLabel.setVisible(false);
+
+    startLoadingTemplates();
+  }
+
+  private void startLoadingTemplates() {
+    myLoadingPanel.setPreferredSize(myTemplatesPanel.getPreferredSize());
+    myTemplatesPanel.setVisible(false);
+
+    myCreateSampleProjectCheckBox.setSelected(false); // until loaded
+
+    myLoadingIcon.resume();
+
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
+      public void run() {
+        DartProjectTemplate.loadTemplatesAsync(new Consumer<List<DartProjectTemplate>>() {
+          @Override
+          public void consume(final List<DartProjectTemplate> templates) {
+            onTemplatesLoaded(templates);
+          }
+        });
+      }
+    });
+  }
+
+  private void onTemplatesLoaded(final List<DartProjectTemplate> templates) {
+    myLoadingIcon.suspend();
+    Disposer.dispose(myLoadingIcon);
+
+    myLoadingPanel.setVisible(false);
+    myTemplatesPanel.setVisible(true);
+
+    final String selectedTemplateName = PropertiesComponent.getInstance().getValue(DART_PROJECT_TEMPLATE);
+    myCreateSampleProjectCheckBox.setSelected(selectedTemplateName != null);
+    myTemplatesList.setEnabled(myCreateSampleProjectCheckBox.isSelected());
+
+    DartProjectTemplate selectedTemplate = null;
+
+    final DefaultListModel model = new DefaultListModel();
+    for (DartProjectTemplate template : templates) {
+      model.addElement(template);
+
+      if (template.getName().equals(selectedTemplateName)) {
+        selectedTemplate = template;
+      }
+    }
+
+    myTemplatesList.setModel(model);
+
+    if (selectedTemplate != null) {
+      myTemplatesList.setSelectedValue(selectedTemplate, true);
+    }
+    else if (templates.size() > 0) {
+      myTemplatesList.setSelectedIndex(0);
+    }
+
+    myTemplatesList.setCellRenderer(new DefaultListCellRenderer() {
+      @Override
+      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        final JLabel component = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        final DartProjectTemplate template = (DartProjectTemplate)value;
+        final String text = template.getDescription().isEmpty()
+                            ? template.getName()
+                            : template.getName() + " - " + StringUtil.decapitalize(template.getDescription());
+        component.setText(text);
+        return component;
+      }
+    });
   }
 
   @NotNull
@@ -77,10 +183,11 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
   @Override
   public void buildUI(final @NotNull SettingsStep settingsStep) {
-    settingsStep.addSettingsField(DartBundle.message("dart.sdk.path.label"), mySdkPathTextWithBrowse);
-    settingsStep.addSettingsField(DartBundle.message("version.label"), myVersionLabel);
-    settingsStep.addSettingsField(DartBundle.message("dartium.path.label"), myDartiumSettingsPanel);
-    settingsStep.addSettingsField("", myCheckedModeCheckBox);
+    assert false;
+    //settingsStep.addSettingsField(DartBundle.message("dart.sdk.path.label"), mySdkPathTextWithBrowse);
+    //settingsStep.addSettingsField(DartBundle.message("version.label"), myVersionLabel);
+    //settingsStep.addSettingsField(DartBundle.message("dartium.path.label"), myDartiumSettingsPanel);
+    //settingsStep.addSettingsField("", myCheckedModeCheckBox);
   }
 
   @NotNull
@@ -88,7 +195,17 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   public DartProjectWizardData getSettings() {
     final String sdkPath = FileUtil.toSystemIndependentName(mySdkPathTextWithBrowse.getText().trim());
     final String dartiumPath = FileUtil.toSystemIndependentName(myDartiumPathTextWithBrowse.getText().trim());
-    return new DartProjectWizardData(sdkPath, dartiumPath, myDartiumSettingsCurrent);
+
+    final DartProjectTemplate template = myCreateSampleProjectCheckBox.isSelected()
+                                         ? (DartProjectTemplate)myTemplatesList.getSelectedValue() : null;
+    if (template == null) {
+      PropertiesComponent.getInstance().unsetValue(DART_PROJECT_TEMPLATE);
+    }
+    else {
+      PropertiesComponent.getInstance().setValue(DART_PROJECT_TEMPLATE, template.getName());
+    }
+
+    return new DartProjectWizardData(sdkPath, dartiumPath, myDartiumSettingsCurrent, template);
   }
 
   @Nullable
@@ -96,7 +213,61 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   public ValidationInfo validate() {
     // invalid Dartium path is not a blocking error
     final String message = DartSdkUtil.getErrorMessageIfWrongSdkRootPath(mySdkPathTextWithBrowse.getText().trim());
-    return message == null ? null : new ValidationInfo(message, mySdkPathTextWithBrowse);
+    if (message != null) {
+      return new ValidationInfo(message, mySdkPathTextWithBrowse);
+    }
+
+    if (myCreateSampleProjectCheckBox.isSelected()) {
+      if (myTemplatesList.getSelectedValue() == null) {
+        return new ValidationInfo(DartBundle.message("project.template.not.selected"), myCreateSampleProjectCheckBox);
+      }
+    }
+
+    return null;
+  }
+
+  public boolean validateInIntelliJ() {
+    final ValidationInfo info = validate();
+
+    if (info == null) {
+      myErrorLabel.setVisible(false);
+      return true;
+    }
+    else {
+      myErrorLabel.setVisible(true);
+      myErrorLabel
+        .setText(XmlStringUtil.wrapInHtml("<font color='#" + ColorUtil.toHex(JBColor.RED) + "'><left>" + info.message + "</left></font>"));
+
+      if (!myIntellijLiveValidationEnabled) {
+        myIntellijLiveValidationEnabled = true;
+        enableIntellijLiveValidation();
+      }
+
+      return false;
+    }
+  }
+
+  private void enableIntellijLiveValidation() {
+    mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
+      protected void textChanged(final DocumentEvent e) {
+        validateInIntelliJ();
+      }
+    });
+
+    myCreateSampleProjectCheckBox.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(final ActionEvent e) {
+        validateInIntelliJ();
+      }
+    });
+
+    myTemplatesList.addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(final ListSelectionEvent e) {
+        validateInIntelliJ();
+      }
+    });
   }
 
   @Override
@@ -112,5 +283,9 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
         stateListener.stateChanged(validate() == null);
       }
     });
+  }
+
+  private void createUIComponents() {
+    myLoadingIcon = new AsyncProcessIcon("Dart project templates loading");
   }
 }

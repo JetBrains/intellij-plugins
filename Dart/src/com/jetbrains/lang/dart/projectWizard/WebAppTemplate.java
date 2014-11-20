@@ -1,40 +1,26 @@
 package com.jetbrains.lang.dart.projectWizard;
 
-import com.intellij.execution.RunManager;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.ide.browsers.WebBrowser;
-import com.intellij.ide.browsers.impl.WebBrowserServiceImpl;
-import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
-import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.util.Url;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Locale;
 
-public class DartWebAppGenerator extends DartEmptyProjectGenerator {
-
-  @SuppressWarnings("UnusedDeclaration") // invoked by com.intellij.platform.DirectoryProjectGenerator.EP_NAME
-  public DartWebAppGenerator() {
-    this(DartBundle.message("dart.web.app.description.webstorm"));
+class WebAppTemplate extends DartProjectTemplate {
+  public WebAppTemplate() {
+    super(DartBundle.message("dart.web.app.title"), "");
   }
 
-  public DartWebAppGenerator(final @NotNull String description) {
-    super(DartBundle.message("dart.web.app.title"), description);
-  }
-
-  @NotNull
-  protected VirtualFile[] doGenerateProject(@NotNull final Module module, final VirtualFile baseDir) throws IOException {
+  @Override
+  public Collection<VirtualFile> generateProject(@NotNull final Module module, @NotNull final VirtualFile baseDir) throws IOException {
     final String projectTitle = StringUtil.toTitleCase(module.getName());
     final String lowercaseName = module.getName().toLowerCase(Locale.US);
 
@@ -45,7 +31,7 @@ public class DartWebAppGenerator extends DartEmptyProjectGenerator {
                                   "dependencies:\n" +
                                   "  browser: any\n" +
                                   "dev_dependencies:\n" +
-                                  "#  unittest: any\n").getBytes());
+                                  "#  unittest: any\n").getBytes(Charset.forName("UTF-8")));
 
     final VirtualFile webDir = VfsUtil.createDirectoryIfMissing(baseDir, "web");
 
@@ -63,7 +49,7 @@ public class DartWebAppGenerator extends DartEmptyProjectGenerator {
                                "    buffer.write(text[i]);\n" +
                                "  }\n" +
                                "  querySelector('#sample_text_id').text = buffer.toString();\n" +
-                               "}\n").getBytes());
+                               "}\n").getBytes(Charset.forName("UTF-8")));
 
     final VirtualFile htmlFile = webDir.createChildData(this, lowercaseName + ".html");
     htmlFile.setBinaryContent(("<!DOCTYPE html>\n\n" +
@@ -82,7 +68,7 @@ public class DartWebAppGenerator extends DartEmptyProjectGenerator {
                                "    <script type=\"application/dart\" src=\"" + lowercaseName + ".dart\"></script>\n" +
                                "    <script src=\"packages/browser/dart.js\"></script>\n" +
                                "  </body>\n" +
-                               "</html>\n").getBytes());
+                               "</html>\n").getBytes(Charset.forName("UTF-8")));
 
     final VirtualFile cssFile = webDir.createChildData(this, lowercaseName + ".css");
     cssFile.setBinaryContent(("body {\n" +
@@ -109,37 +95,10 @@ public class DartWebAppGenerator extends DartEmptyProjectGenerator {
                               "  margin-top: 140px;\n" +
                               "  -webkit-user-select: none;\n" +
                               "  user-select: none;\n" +
-                              "}\n").getBytes());
+                              "}\n").getBytes(Charset.forName("UTF-8")));
 
-    createRunConfiguration(module, htmlFile);
+    createWebRunConfiguration(module, htmlFile);
 
-    return new VirtualFile[]{pubspecFile, htmlFile, cssFile, dartFile};
-  }
-
-  private static void createRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile htmlFile) {
-    StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(new Runnable() {
-      public void run() {
-        final WebBrowser dartium = DartiumUtil.getDartiumBrowser();
-        if (dartium == null) return;
-
-        final PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(htmlFile);
-        final Url url = psiFile == null ? null : WebBrowserServiceImpl.getUrlForContext(psiFile);
-        if (url == null) return;
-
-        final RunManager runManager = RunManager.getInstance(module.getProject());
-        try {
-          final RunnerAndConfigurationSettings settings =
-            runManager.createRunConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().getFactory());
-
-          ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
-          ((JavaScriptDebugConfiguration)settings.getConfiguration()).setEngineId(dartium.getId().toString());
-          settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
-
-          runManager.addConfiguration(settings, false);
-          runManager.setSelectedConfiguration(settings);
-        }
-        catch (Throwable t) {/* ClassNotFound in IDEA Community or if JS Debugger plugin disabled */}
-      }
-    });
+    return Arrays.asList(pubspecFile, htmlFile, cssFile, dartFile);
   }
 }

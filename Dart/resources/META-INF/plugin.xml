@@ -96,9 +96,10 @@
 
     <definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>
 
-    <projectTemplatesFactory implementation="com.jetbrains.lang.dart.projectWizard.DartTemplatesFactory"/>
-    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.projectWizard.DartCmdLineAppGenerator"/>
-    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.projectWizard.DartWebAppGenerator"/>
+    <!-- moduleBuilder works in IntelliJ IDEA only -->
+    <moduleBuilder builderClass="com.jetbrains.lang.dart.projectWizard.DartModuleBuilder"/>
+    <!-- directoryProjectGenerator works in WebStorm and other small IDEs -->
+    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.projectWizard.DartProjectGenerator"/>
 
     <projectConfigurable groupId="language" instance="com.jetbrains.lang.dart.sdk.DartConfigurable"
                          id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>

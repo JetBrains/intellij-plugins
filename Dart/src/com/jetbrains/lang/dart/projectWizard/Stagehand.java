@@ -1,12 +1,10 @@
 package com.jetbrains.lang.dart.projectWizard;
 
-
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
@@ -19,7 +17,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class Stagehand {
 
@@ -50,7 +47,7 @@ public class Stagehand {
     }
   }
 
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.projectWizard.Stagehand");
+  static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.projectWizard.Stagehand");
   private static final List<StagehandTuple> EMPTY = new ArrayList<StagehandTuple>();
 
   private static final class PubRunner {
@@ -65,8 +62,7 @@ public class Stagehand {
       myWorkingDirectory = workingDirectory.getCanonicalPath();
     }
 
-    ProcessOutput runSync(ProgressIndicator indicator, String... pubParameters) throws StagehandException {
-
+    ProcessOutput runSync(int timeoutInSeconds, String... pubParameters) throws StagehandException {
       final GeneralCommandLine command = new GeneralCommandLine().withWorkDirectory(myWorkingDirectory);
       DartSdk sdk = DartSdk.getGlobalDartSdk();
       if (sdk == null) {
@@ -77,36 +73,24 @@ public class Stagehand {
       command.addParameters(pubParameters);
 
       try {
-        if (indicator != null) {
-          return new CapturingProcessHandler(command).runProcessWithProgressIndicator(indicator);
-        }
-        return new CapturingProcessHandler(command).runProcess();
+        return new CapturingProcessHandler(command).runProcess(timeoutInSeconds * 1000, false);
       }
       catch (ExecutionException e) {
         throw new StagehandException(e);
       }
-
     }
-
-    ProcessOutput runSync(String... pubParameters) throws StagehandException {
-      return runSync(null, pubParameters);
-    }
-
   }
 
-
   public void generateInto(VirtualFile projectDirectory, String templateId) throws StagehandException {
-    final ProcessOutput output = new PubRunner(projectDirectory).runSync("global", "run", "stagehand", templateId);
+    final ProcessOutput output = new PubRunner(projectDirectory).runSync(30, "global", "run", "stagehand", templateId);
     if (output.getExitCode() != 0) {
       throw new StagehandException(output.getStderr());
     }
   }
 
-
   public List<StagehandTuple> getAvailableTemplates() {
-
     try {
-      final ProcessOutput output = new PubRunner().runSync("global", "run", "stagehand", "--machine");
+      final ProcessOutput output = new PubRunner().runSync(10, "global", "run", "stagehand", "--machine");
       int exitCode = output.getExitCode();
 
       if (exitCode != 0) {
@@ -140,14 +124,13 @@ public class Stagehand {
 
 
   public boolean isInstalled() {
-
     try {
-      final ProcessOutput output = new PubRunner().runSync("global", "list");
+      final ProcessOutput output = new PubRunner().runSync(10, "global", "list");
       if (output.getExitCode() != 0) {
         return false;
       }
 
-      String[] lines = output.getStdout().split("\n");
+      final List<String> lines = StringUtil.split(output.getStdout(), "\n");
       for (String line : lines) {
         if (line.startsWith("stagehand ")) {
           return true;
@@ -164,8 +147,7 @@ public class Stagehand {
 
   public void install() {
     try {
-      //TODO: pass in a progress indicator
-      new PubRunner().runSync("global", "activate", "stagehand");
+      new PubRunner().runSync(60, "global", "activate", "stagehand");
     }
     catch (StagehandException e) {
       LOG.info(e);
