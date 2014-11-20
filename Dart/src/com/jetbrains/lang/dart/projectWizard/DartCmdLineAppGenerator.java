@@ -26,7 +26,7 @@ public class DartCmdLineAppGenerator extends DartEmptyProjectGenerator {
   }
 
   @NotNull
-  protected VirtualFile[] doGenerateProject(final Module module, final VirtualFile baseDir) throws IOException {
+  protected VirtualFile[] doGenerateProject(@NotNull final Module module, final VirtualFile baseDir) throws IOException {
     final VirtualFile pubspecFile = baseDir.createChildData(this, PubspecYamlUtil.PUBSPEC_YAML);
     pubspecFile.setBinaryContent(("name: " + module.getName() + "\n" +
                                   "version: 0.0.1\n" +

@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.io.IOException;
 
-public class DartEmptyProjectGenerator extends WebProjectTemplate<DartProjectWizardData> {
+public class DartEmptyProjectGenerator extends WebProjectTemplate<DartProjectWizardData> implements Comparable<DartEmptyProjectGenerator> {
 
   private final @NotNull String myName;
   private final @NotNull String myDescription;
@@ -65,6 +65,7 @@ public class DartEmptyProjectGenerator extends WebProjectTemplate<DartProjectWiz
     return new DartGeneratorPeer();
   }
 
+  @Override
   public final void generateProject(@NotNull final Project project,
                                     @NotNull final VirtualFile baseDir,
                                     @NotNull final DartProjectWizardData data,
@@ -83,11 +84,15 @@ public class DartEmptyProjectGenerator extends WebProjectTemplate<DartProjectWiz
     });
   }
 
-  @NotNull
-  protected VirtualFile[] doGenerateProject(final Module module, final VirtualFile baseDir) throws IOException {
-    return VirtualFile.EMPTY_ARRAY;
+  @Override
+  public int compareTo(@NotNull final DartEmptyProjectGenerator generator) {
+    return getName().compareTo(generator.getName());
   }
 
+  @NotNull
+  protected VirtualFile[] doGenerateProject(@NotNull final Module module, final VirtualFile baseDir) throws IOException {
+    return VirtualFile.EMPTY_ARRAY;
+  }
 
   private static void setupSdkAndDartium(final Module module, final DartProjectWizardData data) {
     // similar to DartConfigurable.apply()
