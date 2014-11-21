@@ -17,12 +17,16 @@ import java.util.List;
 
 class StagehandTemplate extends DartProjectTemplate {
   @NotNull private final Stagehand myStagehand;
-  @NotNull private final Stagehand.StagehandTuple myTemplate;
+  @NotNull private final Stagehand.StagehandDescriptor myTemplate;
 
-  public StagehandTemplate(@NotNull final Stagehand stagehand, @NotNull final Stagehand.StagehandTuple template) {
-    super(prettify(template.myId), template.myDescription);
+  public StagehandTemplate(@NotNull final Stagehand stagehand, @NotNull final Stagehand.StagehandDescriptor template) {
+    super(getLabel(template), template.myDescription);
     myStagehand = stagehand;
     myTemplate = template;
+  }
+
+  private static String getLabel(final Stagehand.StagehandDescriptor descriptor) {
+    return descriptor.myLabel != "" ? descriptor.myLabel : prettify(descriptor.myId);
   }
 
   @Override
