@@ -111,11 +111,7 @@ public class GherkinBlock implements ASTBlock {
           indent = Indent.getSpaceIndent(whiteSpaceText.length() - lineBreakIndex - 1 - parentIndent);
         }
       }
-      if (child.getElementType() == GherkinElementTypes.PYSTRING) {
-        result.add(new ReadOnlyBlock(child));
-      } else {
-        result.add(new GherkinBlock(child, indent));
-      }
+      result.add(new GherkinBlock(child, indent));
     }
     return result;
   }
@@ -143,6 +139,8 @@ public class GherkinBlock implements ASTBlock {
     ASTBlock block2 = (ASTBlock) child2;
     final IElementType elementType1 = block1.getNode().getElementType();
     final IElementType elementType2 = block2.getNode().getElementType();
+
+    if(elementType2 == GherkinElementTypes.PYSTRING) return Spacing.getReadOnlySpacing();
     if (GherkinElementTypes.SCENARIOS.contains(elementType2) && elementType1 != GherkinTokenTypes.COMMENT) {
       return Spacing.createSpacing(0, 0, 2, true, 2);
     }
