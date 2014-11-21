@@ -175,7 +175,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
       PsiElement constantRef = ((JSReferenceExpression)prevExpr).resolve();
 
       if (constantRef instanceof JSVariable) {
-        final String initializerText = ((JSVariable)constantRef).getInitializerText();
+        final String initializerText = ((JSVariable)constantRef).getLiteralOrReferenceInitializerText();
         if (initializerText != null &&
             (StringUtil.startsWith(initializerText, "\'") ||
              StringUtil.startsWith(initializerText, "\"")

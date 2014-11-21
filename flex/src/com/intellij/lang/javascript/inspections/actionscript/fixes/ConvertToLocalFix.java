@@ -79,9 +79,9 @@ public class ConvertToLocalFix implements LocalQuickFix {
       text.append("=").append(rOperand.getText());
     }
     else {
-      String initializerText = myField.getInitializerText();
-      if (initializerText != null) {
-        text.append("=").append(initializerText);
+      final JSExpression initializer = myField.getInitializer();
+      if (initializer != null) {
+        text.append("=").append(initializer.getText());
       }
     }
 
