@@ -18,7 +18,7 @@ import com.intellij.util.Url;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType;
-import com.jetbrains.lang.dart.projectWizard.Stagehand.StagehandTuple;
+import com.jetbrains.lang.dart.projectWizard.Stagehand.StagehandDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public abstract class DartProjectTemplate {
   private static final Logger LOG = Logger.getInstance(DartProjectTemplate.class.getName());
 
   @NotNull private final String myName;
-  @NotNull private String myDescription;
+  @NotNull private final String myDescription;
 
   public DartProjectTemplate(@NotNull final String name, @NotNull final String description) {
     myName = name;
@@ -91,11 +91,11 @@ public abstract class DartProjectTemplate {
 
     STAGEHAND.install(sdkRoot);
 
-    final List<StagehandTuple> templates = STAGEHAND.getAvailableTemplates(sdkRoot);
+    final List<StagehandDescriptor> templates = STAGEHAND.getAvailableTemplates(sdkRoot);
 
     ourTemplateCache = new ArrayList<DartProjectTemplate>();
 
-    for (StagehandTuple template : templates) {
+    for (StagehandDescriptor template : templates) {
       ourTemplateCache.add(new StagehandTemplate(STAGEHAND, template));
     }
 

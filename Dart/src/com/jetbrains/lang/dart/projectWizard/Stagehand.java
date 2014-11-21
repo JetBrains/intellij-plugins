@@ -19,20 +19,22 @@ import java.util.List;
 
 public class Stagehand {
 
-  public static class StagehandTuple {
+  public static class StagehandDescriptor {
     public final String myId;
     public final String myDescription;
     public final String myEntrypoint;
+    public final String myLabel;
 
-    public StagehandTuple(String id, String description, String entrypoint) {
-      this.myId = id;
-      this.myDescription = description;
-      this.myEntrypoint = entrypoint;
+    public StagehandDescriptor(String id, String label, String description, String entrypoint) {
+      myId = id;
+      myLabel = label;
+      myDescription = description;
+      myEntrypoint = entrypoint;
     }
 
     @Override
     public String toString() {
-      return StringUtil.join("[", myId, ",", myDescription, ",", myEntrypoint, "]");
+      return StringUtil.join("[", myId, ",", myLabel, ",", myDescription, ",", myEntrypoint, "]");
     }
   }
 
@@ -46,8 +48,8 @@ public class Stagehand {
     }
   }
 
-  static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.projectWizard.Stagehand");
-  private static final List<StagehandTuple> EMPTY = new ArrayList<StagehandTuple>();
+  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.projectWizard.Stagehand");
+  private static final List<StagehandDescriptor> EMPTY = new ArrayList<StagehandDescriptor>();
 
   private static final class PubRunner {
 
@@ -86,7 +88,7 @@ public class Stagehand {
     }
   }
 
-  public List<StagehandTuple> getAvailableTemplates(@NotNull final String sdkRoot) {
+  public List<StagehandDescriptor> getAvailableTemplates(@NotNull final String sdkRoot) {
     try {
       final ProcessOutput output = new PubRunner().runSync(sdkRoot, 10, "global", "run", "stagehand", "--machine");
       int exitCode = output.getExitCode();
@@ -95,15 +97,16 @@ public class Stagehand {
         return EMPTY;
       }
 
-      // [{"name":"consoleapp","description":"A minimal command-line application."}, {"name": ..., }]
+      // [{"name":"consoleapp", "label":"Console App", "description":"A minimal command-line application."}, {"name": ..., }]
       JSONArray arr = new JSONArray(output.getStdout());
-      List<StagehandTuple> result = new ArrayList<Stagehand.StagehandTuple>();
+      List<StagehandDescriptor> result = new ArrayList<StagehandDescriptor>();
 
       for (int i = 0; i < arr.length(); i++) {
         JSONObject obj = arr.getJSONObject(i);
 
-        result.add(new StagehandTuple(
+        result.add(new StagehandDescriptor(
           obj.getString("name"),
+          obj.getString("label"),
           obj.getString("description"),
           obj.optString("entrypoint")));
       }
