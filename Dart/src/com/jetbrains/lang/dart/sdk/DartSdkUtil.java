@@ -161,6 +161,10 @@ public class DartSdkUtil {
   }
 
   public static String getPubPath(final @NotNull DartSdk sdk) {
-    return sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/pub.bat" : "/bin/pub");
+    return getPubPath(sdk.getHomePath());
+  }
+
+  public static String getPubPath(final @NotNull String sdkRoot) {
+    return sdkRoot + (SystemInfo.isWindows ? "/bin/pub.bat" : "/bin/pub");
   }
 }

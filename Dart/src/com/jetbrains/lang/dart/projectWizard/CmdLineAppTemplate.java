@@ -19,7 +19,9 @@ class CmdLineAppTemplate extends DartProjectTemplate {
   }
 
   @Override
-  public Collection<VirtualFile> generateProject(@NotNull final Module module, @NotNull final VirtualFile baseDir) throws IOException {
+  public Collection<VirtualFile> generateProject(@NotNull final String sdkRoot,
+                                                 @NotNull final Module module,
+                                                 @NotNull final VirtualFile baseDir) throws IOException {
     final VirtualFile pubspecFile = baseDir.createChildData(this, PubspecYamlUtil.PUBSPEC_YAML);
     pubspecFile.setBinaryContent(("name: " + module.getName() + "\n" +
                                   "version: 0.0.1\n" +
