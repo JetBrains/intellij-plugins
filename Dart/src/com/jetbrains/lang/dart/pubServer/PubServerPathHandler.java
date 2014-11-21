@@ -2,7 +2,9 @@ package com.jetbrains.lang.dart.pubServer;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -17,6 +19,9 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
                             @NotNull final Project project,
                             @NotNull final FullHttpRequest request,
                             @NotNull ChannelHandlerContext context) {
+    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), "1.6") < 0) return false;
+
     final Pair<VirtualFile, String> servedDirAndPathForPubServer = getServedDirAndPathForPubServer(project, path);
     if (servedDirAndPathForPubServer == null) return false;
 
