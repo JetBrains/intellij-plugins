@@ -6,16 +6,21 @@ import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.module.*;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.WebModuleBuilder;
+import com.intellij.openapi.module.WebModuleType;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -100,9 +105,10 @@ public class DartModuleBuilder extends ModuleBuilder {
     setupSdkAndDartium(modifiableRootModel, wizardData);
     if (wizardData.myTemplate != null) {
       try {
-        final Collection<VirtualFile> filesToOpen = wizardData.myTemplate.generateProject(modifiableRootModel.getModule(), baseDir);
+        final Collection<VirtualFile> filesToOpen =
+          wizardData.myTemplate.generateProject(wizardData.dartSdkPath, modifiableRootModel.getModule(), baseDir);
         if (!filesToOpen.isEmpty()) {
-          scheduleFilesOpeningAndPubGet(modifiableRootModel.getProject(), filesToOpen);
+          scheduleFilesOpeningAndPubGet(modifiableRootModel.getModule(), filesToOpen);
         }
       }
       catch (IOException ignore) {/*unlucky*/}
@@ -143,21 +149,36 @@ public class DartModuleBuilder extends ModuleBuilder {
     DartiumUtil.applyDartiumSettings(FileUtilRt.toSystemIndependentName(wizardData.dartiumPath), wizardData.dartiumSettings);
   }
 
-  private static void scheduleFilesOpeningAndPubGet(@NotNull final Project project, @NotNull final Collection<VirtualFile> files) {
-    StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
+  private static void scheduleFilesOpeningAndPubGet(@NotNull final Module module, @NotNull final Collection<VirtualFile> files) {
+    StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(new Runnable() {
       @Override
       public void run() {
-        final FileEditorManager manager = FileEditorManager.getInstance(project);
-        for (VirtualFile file : files) {
-          manager.openFile(file, true);
+        Runnable runnable = new Runnable() {
+          public void run() {
+            final FileEditorManager manager = FileEditorManager.getInstance(module.getProject());
+            for (VirtualFile file : files) {
+              manager.openFile(file, true);
 
-          if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName())) {
-            final AnAction pubGetAction = ActionManager.getInstance().getAction("Dart.pub.get");
-            final Module module = ModuleUtilCore.findModuleForFile(file, project);
-            if (pubGetAction instanceof DartPubGetAction && module != null) {
-              ((DartPubGetAction)pubGetAction).performPubAction(module, file, false);
+              if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName())) {
+                final AnAction pubGetAction = ActionManager.getInstance().getAction("Dart.pub.get");
+                if (pubGetAction instanceof DartPubGetAction) {
+                  ((DartPubGetAction)pubGetAction).performPubAction(module, file, false);
+                }
+              }
             }
           }
+        };
+
+        if (ApplicationManager.getApplication().getCurrentModalityState() == ModalityState.NON_MODAL) {
+          runnable.run();
+        }
+        else {
+          ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, new Condition() {
+            @Override
+            public boolean value(final Object o) {
+              return module.isDisposed();
+            }
+          });
         }
       }
     });

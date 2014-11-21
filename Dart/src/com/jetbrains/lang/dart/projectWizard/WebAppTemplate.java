@@ -20,7 +20,9 @@ class WebAppTemplate extends DartProjectTemplate {
   }
 
   @Override
-  public Collection<VirtualFile> generateProject(@NotNull final Module module, @NotNull final VirtualFile baseDir) throws IOException {
+  public Collection<VirtualFile> generateProject(@NotNull final String sdkRoot,
+                                                 @NotNull final Module module,
+                                                 @NotNull final VirtualFile baseDir) throws IOException {
     final String projectTitle = StringUtil.toTitleCase(module.getName());
     final String lowercaseName = module.getName().toLowerCase(Locale.US);
 

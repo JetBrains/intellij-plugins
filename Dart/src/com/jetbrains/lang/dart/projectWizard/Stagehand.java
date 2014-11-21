@@ -7,9 +7,8 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,13 +61,10 @@ public class Stagehand {
       myWorkingDirectory = workingDirectory.getCanonicalPath();
     }
 
-    ProcessOutput runSync(int timeoutInSeconds, String... pubParameters) throws StagehandException {
+    ProcessOutput runSync(final @NotNull String sdkRoot, int timeoutInSeconds, String... pubParameters) throws StagehandException {
       final GeneralCommandLine command = new GeneralCommandLine().withWorkDirectory(myWorkingDirectory);
-      DartSdk sdk = DartSdk.getGlobalDartSdk();
-      if (sdk == null) {
-        throw new StagehandException(DartBundle.message("dart.pub.stagehand.exception.no.sdk"));
-      }
-      final File pubFile = new File(DartSdkUtil.getPubPath(sdk));
+
+      final File pubFile = new File(DartSdkUtil.getPubPath(sdkRoot));
       command.setExePath(pubFile.getPath());
       command.addParameters(pubParameters);
 
@@ -81,16 +77,18 @@ public class Stagehand {
     }
   }
 
-  public void generateInto(VirtualFile projectDirectory, String templateId) throws StagehandException {
-    final ProcessOutput output = new PubRunner(projectDirectory).runSync(30, "global", "run", "stagehand", templateId);
+  public void generateInto(@NotNull final String sdkRoot,
+                           @NotNull final VirtualFile projectDirectory,
+                           @NotNull final String templateId) throws StagehandException {
+    final ProcessOutput output = new PubRunner(projectDirectory).runSync(sdkRoot, 30, "global", "run", "stagehand", templateId);
     if (output.getExitCode() != 0) {
       throw new StagehandException(output.getStderr());
     }
   }
 
-  public List<StagehandTuple> getAvailableTemplates() {
+  public List<StagehandTuple> getAvailableTemplates(@NotNull final String sdkRoot) {
     try {
-      final ProcessOutput output = new PubRunner().runSync(10, "global", "run", "stagehand", "--machine");
+      final ProcessOutput output = new PubRunner().runSync(sdkRoot, 10, "global", "run", "stagehand", "--machine");
       int exitCode = output.getExitCode();
 
       if (exitCode != 0) {
@@ -122,39 +120,12 @@ public class Stagehand {
     return EMPTY;
   }
 
-
-  public boolean isInstalled() {
+  public void install(@NotNull final String sdkRoot) {
     try {
-      final ProcessOutput output = new PubRunner().runSync(10, "global", "list");
-      if (output.getExitCode() != 0) {
-        return false;
-      }
-
-      final List<String> lines = StringUtil.split(output.getStdout(), "\n");
-      for (String line : lines) {
-        if (line.startsWith("stagehand ")) {
-          return true;
-        }
-      }
-    }
-    catch (StagehandException e) {
-      // Log and fall through
-      LOG.info(e);
-    }
-
-    return false;
-  }
-
-  public void install() {
-    try {
-      new PubRunner().runSync(60, "global", "activate", "stagehand");
+      new PubRunner().runSync(sdkRoot, 60, "global", "activate", "stagehand");
     }
     catch (StagehandException e) {
       LOG.info(e);
     }
-  }
-
-  public void upgrade() {
-    install();
   }
 }

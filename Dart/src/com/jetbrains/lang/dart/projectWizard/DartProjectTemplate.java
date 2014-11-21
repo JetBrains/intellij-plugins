@@ -52,20 +52,22 @@ public abstract class DartProjectTemplate {
     return myDescription;
   }
 
-  public abstract Collection<VirtualFile> generateProject(@NotNull final Module module, @NotNull final VirtualFile baseDir)
+  public abstract Collection<VirtualFile> generateProject(@NotNull final String sdkRoot,
+                                                          @NotNull final Module module,
+                                                          @NotNull final VirtualFile baseDir)
     throws IOException;
 
   /**
    * Must be called in pooled thread without read action; <code>templatesConsumer</code> will be invoked in EDT
    */
-  public static void loadTemplatesAsync(@NotNull final Consumer<List<DartProjectTemplate>> templatesConsumer) {
+  public static void loadTemplatesAsync(final String sdkRoot, @NotNull final Consumer<List<DartProjectTemplate>> templatesConsumer) {
     if (ApplicationManager.getApplication().isReadAccessAllowed()) {
       LOG.error("DartProjectTemplate.loadTemplatesAsync() must be called in pooled thread without read action");
     }
 
     final List<DartProjectTemplate> templates = new ArrayList<DartProjectTemplate>();
     try {
-      templates.addAll(getStagehandTemplates());
+      templates.addAll(getStagehandTemplates(sdkRoot));
     }
     finally {
       if (templates.isEmpty()) {
@@ -83,14 +85,14 @@ public abstract class DartProjectTemplate {
   }
 
   @NotNull
-  private static List<DartProjectTemplate> getStagehandTemplates() {
+  private static List<DartProjectTemplate> getStagehandTemplates(@NotNull final String sdkRoot) {
     if (ourTemplateCache != null) {
       return ourTemplateCache;
     }
 
-    STAGEHAND.install();
+    STAGEHAND.install(sdkRoot);
 
-    final List<StagehandTuple> templates = STAGEHAND.getAvailableTemplates();
+    final List<StagehandTuple> templates = STAGEHAND.getAvailableTemplates(sdkRoot);
 
     ourTemplateCache = new ArrayList<DartProjectTemplate>();
 

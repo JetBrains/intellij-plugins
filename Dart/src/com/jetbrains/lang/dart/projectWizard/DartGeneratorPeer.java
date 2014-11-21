@@ -54,7 +54,6 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   private JBCheckBox myCheckedModeCheckBox;
 
   private JPanel myLoadingPanel;
-  private AsyncProcessIcon myLoadingIcon;
 
   private JPanel myTemplatesPanel;
   private JBCheckBox myCreateSampleProjectCheckBox;
@@ -106,23 +105,49 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     myErrorLabel.setIcon(AllIcons.Actions.Lightning);
     myErrorLabel.setVisible(false);
 
-    startLoadingTemplates();
+    final String message = DartSdkUtil.getErrorMessageIfWrongSdkRootPath(mySdkPathTextWithBrowse.getText().trim());
+    if (message == null) {
+      startLoadingTemplates();
+    }
+    else {
+      myLoadingPanel.setVisible(false);
+
+      myCreateSampleProjectCheckBox.setEnabled(false);
+      myTemplatesList.setEnabled(false);
+
+      mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+        @Override
+        protected void textChanged(final DocumentEvent e) {
+          final String message = DartSdkUtil.getErrorMessageIfWrongSdkRootPath(mySdkPathTextWithBrowse.getText().trim());
+          if (message == null) {
+            mySdkPathTextWithBrowse.getTextField().getDocument().removeDocumentListener(this);
+            startLoadingTemplates();
+          }
+        }
+      });
+    }
   }
 
   private void startLoadingTemplates() {
+    myLoadingPanel.setVisible(true);
     myLoadingPanel.setPreferredSize(myTemplatesPanel.getPreferredSize());
+
     myTemplatesPanel.setVisible(false);
 
     myCreateSampleProjectCheckBox.setSelected(false); // until loaded
 
-    myLoadingIcon.resume();
+    final AsyncProcessIcon loadingIcon = new AsyncProcessIcon("Dart project templates loading");
+    myLoadingPanel.add(loadingIcon, BorderLayout.WEST);
+    loadingIcon.resume();
 
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
       public void run() {
-        DartProjectTemplate.loadTemplatesAsync(new Consumer<List<DartProjectTemplate>>() {
+        DartProjectTemplate.loadTemplatesAsync(mySdkPathTextWithBrowse.getText().trim(), new Consumer<List<DartProjectTemplate>>() {
           @Override
           public void consume(final List<DartProjectTemplate> templates) {
+            loadingIcon.suspend();
+            Disposer.dispose(loadingIcon);
             onTemplatesLoaded(templates);
           }
         });
@@ -131,11 +156,10 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   }
 
   private void onTemplatesLoaded(final List<DartProjectTemplate> templates) {
-    myLoadingIcon.suspend();
-    Disposer.dispose(myLoadingIcon);
-
     myLoadingPanel.setVisible(false);
     myTemplatesPanel.setVisible(true);
+    myCreateSampleProjectCheckBox.setEnabled(true);
+    myTemplatesList.setEnabled(true);
 
     final String selectedTemplateName = PropertiesComponent.getInstance().getValue(DART_PROJECT_TEMPLATE);
     myCreateSampleProjectCheckBox.setSelected(selectedTemplateName != null);
@@ -283,9 +307,5 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
         stateListener.stateChanged(validate() == null);
       }
     });
-  }
-
-  private void createUIComponents() {
-    myLoadingIcon = new AsyncProcessIcon("Dart project templates loading");
   }
 }
