@@ -10,7 +10,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -104,7 +103,7 @@ public abstract class DartProjectTemplate {
   }
 
   static void createWebRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile htmlFile) {
-    StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(new Runnable() {
+    DartModuleBuilder.runWhenNonModalIfModuleNotDisposed(new Runnable() {
       public void run() {
         final WebBrowser dartium = DartiumUtil.getDartiumBrowser();
         if (dartium == null) return;
@@ -127,20 +126,25 @@ public abstract class DartProjectTemplate {
         }
         catch (Throwable t) {/* ClassNotFound in IDEA Community or if JS Debugger plugin disabled */}
       }
-    });
+    }, module);
   }
 
   static void createCmdLineRunConfiguration(final @NotNull Module module, final @NotNull VirtualFile mainDartFile) {
-    final RunManager runManager = RunManager.getInstance(module.getProject());
-    final RunnerAndConfigurationSettings settings =
-      runManager.createRunConfiguration("", DartCommandLineRunConfigurationType.getInstance().getConfigurationFactories()[0]);
+    DartModuleBuilder.runWhenNonModalIfModuleNotDisposed(new Runnable() {
+      @Override
+      public void run() {
+        final RunManager runManager = RunManager.getInstance(module.getProject());
+        final RunnerAndConfigurationSettings settings =
+          runManager.createRunConfiguration("", DartCommandLineRunConfigurationType.getInstance().getConfigurationFactories()[0]);
 
-    final DartCommandLineRunConfiguration runConfiguration = (DartCommandLineRunConfiguration)settings.getConfiguration();
-    runConfiguration.getRunnerParameters().setFilePath(mainDartFile.getPath());
-    runConfiguration.getRunnerParameters().setWorkingDirectory(mainDartFile.getParent().getPath());
-    settings.setName(runConfiguration.suggestedName());
+        final DartCommandLineRunConfiguration runConfiguration = (DartCommandLineRunConfiguration)settings.getConfiguration();
+        runConfiguration.getRunnerParameters().setFilePath(mainDartFile.getPath());
+        runConfiguration.getRunnerParameters().setWorkingDirectory(mainDartFile.getParent().getPath());
+        settings.setName(runConfiguration.suggestedName());
 
-    runManager.addConfiguration(settings, false);
-    runManager.setSelectedConfiguration(settings);
+        runManager.addConfiguration(settings, false);
+        runManager.setSelectedConfiguration(settings);
+      }
+    }, module);
   }
 }
