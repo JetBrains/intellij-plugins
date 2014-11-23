@@ -62,30 +62,20 @@ project(':metadata-crawler') {
     }
 }
 
-repositories {
-    ivy {
-        url = "https://teamcity.jetbrains.com/guestAuth/repository/download"
-        layout 'pattern', {
-            artifact '[module]/[revision]/[artifact](.[ext])'
-            ivy '[module]/[revision]/teamcity-ivy.xml'
-        }
-    }
-}
-
-configurations { ivydeps }
+configurations { idea_dep }
 
 dependencies {
     compile project(':metadata-model')
 
     compile fileTree(dir: new File(ideaPath, "lib"), include: '*.jar')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    ivydeps tc("bt410:183846.tcbuildid:${ideaArtifactName}.zip")
+    idea_dep tc("bt410:183846.tcbuildid:${ideaArtifactName}.zip")
 
     testCompile fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar')
 }
 
 task extractIdea(type: Copy) {
-    from zipTree(configurations.ivydeps.files.find { it.name.startsWith(ideaArtifactName) })
+    from zipTree(configurations.idea_dep.files.find { it.name.startsWith(ideaArtifactName) })
     into ideaPath
 }
 
@@ -129,18 +119,3 @@ task zip(type: Zip) {
 artifacts {
     archives zip
 }
-
-//task ss(dependsOn: [configurations.compile, configurations.runtime, configurations.archives]) << {
-//    // configurations.runtime.allArtifacts.files.each { File file -> println "xxx " + file }
-//    configurations.compile.files.each { xxx -> println "compile " + xxx }
-//    println new File(ideaPath, "lib")
-//
-//    println "\nconfigurations.compile.allArtifacts.files = ${configurations.compile.allArtifacts.files}"
-//    println "\nconfigurations.compile.artifacts.files = ${configurations.compile.artifacts.files.asPath}"
-//
-//    println "\nconfigurations.runtime.allArtifacts.files = ${configurations.runtime.allArtifacts.files}"
-//    println "\nconfigurations.runtime.artifacts.files = ${configurations.runtime.artifacts.files.asPath}"
-//
-//    println "\nconfigurations.archives.allArtifacts.files = ${configurations.archives.allArtifacts.files}"
-//    println "\nconfigurations.archives.artifacts.files = ${configurations.archives.artifacts.files.asPath}"
-//}
