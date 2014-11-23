@@ -27,7 +27,7 @@ public class OfficialExamplesSaver {
       }
 
       URL fileUrl = new URL(url, name.replace(" ", "%20"));
-      File localFile = new File("testData/officialExamples", name);
+      File localFile = new File("testData/officialExamples/src", name);
 
       if (localFile.exists() && localFile.length() == size) {
         continue;
