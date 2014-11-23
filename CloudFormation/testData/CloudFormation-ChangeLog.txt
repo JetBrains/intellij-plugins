@@ -1,7 +1,15 @@
 [Amazon Web Services] <http://aws.amazon.com/documentation>
 AWS CloudFormation
 User Guide (API Version 2010-05-15)
-Search: [Go]
+AWS Documentation <http://aws.amazon.com/documentation> » AWS 
+CloudFormation <http://aws.amazon.com/documentation/cloudformation/> » 
+User Guide <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/> 
+» Document History
+Did this page help you?  Yes | No |  Tell us about it...
+<https://portal.aws.amazon.com/gp/aws/html-forms-controller/documentation/aws_doc_feedback_04?service_name=CloudFormation&guide_name=User%20Guide&api_version=2010-05-15&file_name=DocumentHistory>
+« PreviousNext »
+
+[Go]
 
     * What is AWS CloudFormation?
           o AWS CloudFormation Concepts
@@ -14,6 +22,7 @@ Search: [Go]
           o Walkthrough: Custom Resources
           o Using CloudFormer to Create Templates
           o AWS CloudFormation Endpoints
+    * Best Practices
     * Controlling Access with IAM
     * Working with Stacks
           o Using the Console
@@ -58,7 +67,7 @@ Search: [Go]
           o Example Templates
                 + Auto Scaling Group with LoadBalancer, Auto Scaling
                   Policies, and CloudWatch Alarms
-                + Amazon EC2 Running an Amazon Linux 32-bit AMI
+                + Amazon EC2 Running an Amazon Linux AMI
                 + Create a Load-Balanced Apache Website
                 + Auto-Scaled Worker that uses Spot Instances to Monitor
                   Work in an SQS Queue
@@ -69,7 +78,7 @@ Search: [Go]
                 + Amazon EC2 Snippets
                 + AWS Elastic Beanstalk Snippets
                 + Elastic Load Balancing Snippets
-                + Identity and Access Management (IAM) Template Snippets
+                + AWS Identity and Access Management Template Snippets
                 + AWS OpsWorks Snippets
                 + Amazon Redshift Snippets
                 + Amazon RDS Template Snippets
@@ -82,17 +91,16 @@ Search: [Go]
                 + Wait Condition Template Snippets
                 + AWS CloudFormation Template Snippets
           o Creating Templates
-                + Intrinsic Functions
+                + Specifying Intrinsic Functions
                 + Adding Input Parameters
                 + Use Parameters and Mappings to Specify Values in Your
                   Template
                 + Conditionally Creating Resources
                 + Tagging Your Resources
-                + Specifying Return Values with Outputs
+                + Specifying Output Values
                 + Creating Wait Conditions
+                + Deploying Applications
           o Using Regular Expressions
-          o Automating Application Installation Using Cloud-Init
-          o Deploying Applications
     * Template Reference
           o AWS Resource Types
                 + AWS::AutoScaling::AutoScalingGroup
@@ -172,6 +180,8 @@ Search: [Go]
                 + AWS::RDS::DBSubnetGroup
                 + AWS::RDS::DBSecurityGroup
                 + AWS::RDS::DBSecurityGroupIngress
+                + AWS::Route53::HealthCheck
+                + AWS::Route53::HostedZone
                 + AWS::Route53::RecordSet
                 + AWS::Route53::RecordSetGroup
                 + AWS::S3::Bucket
@@ -232,6 +242,7 @@ Search: [Go]
                 + LBCookieStickinessPolicy
                 + ElasticLoadBalancing Listener
                 + ElasticLoadBalancing Policy
+                + IAM Policies
                 + Name Type
                 + AWS OpsWorks ChefConfiguration Type
                 + AWS OpsWorks Recipes Type
@@ -243,6 +254,9 @@ Search: [Go]
                 + AWS CloudFormation Resource Tags
                 + RDS Security Group Rule
                 + Route 53 AliasTarget Property
+                + Amazon Route 53 Record Set GeoLocation Property
+                + Amazon Route 53 HealthCheck Configuration
+                + Amazon Route 53 Hosted Zone Configuration Property
                 + Amazon S3 Cors Configuration
                 + Amazon S3 Cors Configuration Rule
                 + Amazon S3 Lifecycle Configuration
@@ -260,9 +274,10 @@ Search: [Go]
                   Rule Property
                 + Amazon S3 Website Configuration Routing Rules Routing
                   Rule Condition Property
-                + SNS Subscription
+                + Amazon SNS Subscription
                 + Amazon SQS RedrivePolicy
           o Resource Attributes
+                + CreationPolicy
                 + DeletionPolicy
                 + DependsOn
                 + Metadata
@@ -297,6 +312,10 @@ Search: [Go]
                 + Application Frameworks
                 + Services
           o China (Beijing) Region
+          o EU (Frankfurt) Region
+                + Sample Solutions
+                + Application Frameworks
+                + Services
           o EU (Ireland) Region
                 + Sample Solutions
                 + Application Frameworks
@@ -326,21 +345,15 @@ Search: [Go]
                 + Delete
                 + Update
     * Logging API Calls
+    * Troubleshooting
     * Document History
     * AWS Glossary
-AWS Documentation <http://aws.amazon.com/documentation> » AWS 
-CloudFormation <http://aws.amazon.com/documentation/cloudformation/> » 
-User Guide <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/> 
-» Document History
-« PreviousNext »
 [View the PDF for this guide.]
 <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-ug.pdf> 
 [Go to the AWS Discussion Forum for this product.]
 <http://forums.aws.amazon.com/forum.jspa?forumID=92> [Go to the Kindle 
 Store to download this guide in Kindle format.]
-<http://www.amazon.com/dp/B007S28IUW> 	Did this page help you?  Yes | No |  
-Tell us about it...
-<https://portal.aws.amazon.com/gp/aws/html-forms-controller/documentation/aws_doc_feedback_04?service_name=CloudFormation&guide_name=User%20Guide&api_version=2010-05-15&file_name=DocumentHistory>
+<http://www.amazon.com/dp/B007S28IUW>
 
 
 Document History
@@ -349,6 +362,59 @@ The following table describes the important changes to the documentation
 since the last release of AWS CloudFormation.
 
 Change 	API Version 	Description 	Release Date
+
+Amazon Route 53 update
+
+2010-05-15
+
+You can now provision and manage Amazon Route 53 hosted zones, health 
+checks, failover record sets, and geolocation record sets.
+
+November 06, 2014
+
+Auto Scaling rolling update enhancement
+
+2010-05-15
+
+During an update, you can use the WaitOnResourceSignals flag to instruct 
+AWS CloudFormation to wait for instances to signal success. That way, AWS 
+CloudFormation won't update the next batch of instances until the current 
+batch is ready. For more information, see UpdatePolicy.
+
+November 06, 2014
+
+Fn:GetAtt default VPC values
+
+2010-05-15
+
+Given a VPC ID, you can retrieve the default security group and network ACL 
+for that VPC. For more information, see Fn::GetAtt.
+
+November 06, 2014
+
+AWS-specific parameter types
+
+2010-05-15
+
+You can specify AWS-specific parameter types in your AWS CloudFormation 
+templates. In the AWS CloudFormation console, these parameter types provide 
+a drop-down list of valid values. With the API or CLI, AWS CloudFormation 
+can quickly validate values for these parameter types before creating or 
+updating a stack. For more information, see Parameters.
+
+November 06, 2014
+
+CreationPolicy attribute
+
+2010-05-15
+
+With the CreationPolicy attribute, you can instruct AWS CloudFormation to 
+wait until applications are ready on Amazon EC2 instances before proceeding 
+with stack creation. You can use a creation policy instead of a wait 
+condition and wait condition handle. For more information, see 
+CreationPolicy.
+
+November 06, 2014
 
 Amazon CloudFront forwarded values
 
@@ -1194,9 +1260,9 @@ Added three new sections:
     * Walkthrough: Updating a Stack is a tutorial that walks through the
       process of updating a LAMP stack.
 
-    * Deploying Applications with AWS CloudFormation describes how to use
-      AWS CloudFormation helper scripts to deploy applications using
-      metadata stored in your template.
+    * Deploying Applications on Amazon EC2 with AWS CloudFormation 
+      describes how to use AWS CloudFormation helper scripts to deploy
+      applications using metadata stored in your template.
 
     * CloudFormation Helper Scripts Reference provides reference material
       for the AWS CloudFormation helper scripts (cfn-init,
@@ -1244,7 +1310,6 @@ Initial Release
 This is the initial public release of AWS CloudFormation.
 
 February 25, 2011
-Document Conventions 	« PreviousNext »
-Terms of Use <http://aws.amazon.com/terms/> 	Did this page help you?  Yes | 
-No |  Tell us about it...
-<https://portal.aws.amazon.com/gp/aws/html-forms-controller/documentation/aws_doc_feedback_04?service_name=CloudFormation&guide_name=User%20Guide&api_version=2010-05-15&file_name=DocumentHistory>
+Document Conventions 	© 2014, Amazon Web Services, Inc. or its affiliates. 
+All rights reserved.
+Terms of Use <http://aws.amazon.com/terms/> 	

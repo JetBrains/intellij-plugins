@@ -1,69 +1,144 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "AWS CloudFormation Sample Template: Launches OpsWorks stack, layer, instances and associated resources to run a PHP application. The application runs inside an Amazon VPC and uses ELB to load balance ** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Description": "AWS CloudFormation Sample Template OpsWorksVPCELB: Launches OpsWorks stack, layer, instances and associated resources to run a PHP application. The application runs inside an Amazon VPC and uses ELB to load balance ** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+
   "Mappings": {
-    "AWSNATAMI": {
-      "us-east-1": {
-        "AMI": "ami-c6699baf"
-      },
-      "us-west-2": {
-        "AMI": "ami-52ff7262"
-      },
-      "us-west-1": {
-        "AMI": "ami-3bcc9e7e"
-      },
-      "eu-west-1": {
-        "AMI": "ami-0b5b6c7f"
-      },
-      "ap-southeast-1": {
-        "AMI": "ami-02eb9350"
-      },
-      "ap-northeast-1": {
-        "AMI": "ami-14d86d15"
-      },
-      "sa-east-1": {
-        "AMI": "ami-0439e619"
-      }
-    },
     "SubnetConfig": {
-      "VPC": {
-        "CIDR": "10.0.0.0/16"
-      },
-      "Public": {
-        "CIDR": "10.0.0.0/24"
-      },
-      "Private": {
-        "CIDR": "10.0.1.0/24"
-      }
+      "VPC"    : { "CIDR": "10.0.0.0/16" },
+      "Public" : { "CIDR": "10.0.0.0/24" },
+      "Private": { "CIDR": "10.0.1.0/24" }
+    },
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "PV64"   },
+      "t2.micro"    : { "Arch" : "HVM64"  },
+      "t2.small"    : { "Arch" : "HVM64"  },
+      "t2.medium"   : { "Arch" : "HVM64"  },
+      "m1.small"    : { "Arch" : "PV64"   },
+      "m1.medium"   : { "Arch" : "PV64"   },
+      "m1.large"    : { "Arch" : "PV64"   },
+      "m1.xlarge"   : { "Arch" : "PV64"   },
+      "m2.xlarge"   : { "Arch" : "PV64"   },
+      "m2.2xlarge"  : { "Arch" : "PV64"   },
+      "m2.4xlarge"  : { "Arch" : "PV64"   },
+      "m3.medium"   : { "Arch" : "HVM64"  },
+      "m3.large"    : { "Arch" : "HVM64"  },
+      "m3.xlarge"   : { "Arch" : "HVM64"  },
+      "m3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c1.medium"   : { "Arch" : "PV64"   },
+      "c1.xlarge"   : { "Arch" : "PV64"   },
+      "c3.large"    : { "Arch" : "HVM64"  },
+      "c3.xlarge"   : { "Arch" : "HVM64"  },
+      "c3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c3.4xlarge"  : { "Arch" : "HVM64"  },
+      "c3.8xlarge"  : { "Arch" : "HVM64"  },
+      "g2.2xlarge"  : { "Arch" : "HVMG2"  },
+      "r3.large"    : { "Arch" : "HVM64"  },
+      "r3.xlarge"   : { "Arch" : "HVM64"  },
+      "r3.2xlarge"  : { "Arch" : "HVM64"  },
+      "r3.4xlarge"  : { "Arch" : "HVM64"  },
+      "r3.8xlarge"  : { "Arch" : "HVM64"  },
+      "i2.xlarge"   : { "Arch" : "HVM64"  },
+      "i2.2xlarge"  : { "Arch" : "HVM64"  },
+      "i2.4xlarge"  : { "Arch" : "HVM64"  },
+      "i2.8xlarge"  : { "Arch" : "HVM64"  },
+      "hi1.4xlarge" : { "Arch" : "HVM64"  },
+      "hs1.8xlarge" : { "Arch" : "HVM64"  },
+      "cr1.8xlarge" : { "Arch" : "HVM64"  },
+      "cc2.8xlarge" : { "Arch" : "HVM64"  }
+    },
+
+    "AWSRegionArch2AMI" : {
+      "us-east-1"      : { "PV64" : "ami-50842d38", "HVM64" : "ami-08842d60", "HVMG2" : "ami-3a329952"  },
+      "us-west-2"      : { "PV64" : "ami-af86c69f", "HVM64" : "ami-8786c6b7", "HVMG2" : "ami-47296a77"  },
+      "us-west-1"      : { "PV64" : "ami-c7a8a182", "HVM64" : "ami-cfa8a18a", "HVMG2" : "ami-331b1376"  },
+      "eu-west-1"      : { "PV64" : "ami-aa8f28dd", "HVM64" : "ami-748e2903", "HVMG2" : "ami-00913777"  },
+      "ap-southeast-1" : { "PV64" : "ami-20e1c572", "HVM64" : "ami-d6e1c584", "HVMG2" : "ami-fabe9aa8"  },
+      "ap-northeast-1" : { "PV64" : "ami-21072820", "HVM64" : "ami-35072834", "HVMG2" : "ami-5dd1ff5c"  },
+      "ap-southeast-2" : { "PV64" : "ami-8b4724b1", "HVM64" : "ami-fd4724c7", "HVMG2" : "ami-e98ae9d3"  },
+      "sa-east-1"      : { "PV64" : "ami-9d6cc680", "HVM64" : "ami-956cc688", "HVMG2" : "NOT_SUPPORTED" },
+      "cn-north-1"     : { "PV64" : "ami-a857c591", "HVM64" : "ami-ac57c595", "HVMG2" : "NOT_SUPPORTED" },
+      "eu-central-1"   : { "PV64" : "ami-a03503bd", "HVM64" : "ami-b43503a9", "HVMG2" : "ami-b03503ad"  }
     }
+,
+    "AWSNATInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "PV64"   },
+      "t2.micro"    : { "Arch" : "HVM64"  },
+      "t2.small"    : { "Arch" : "HVM64"  },
+      "t2.medium"   : { "Arch" : "HVM64"  },
+      "m1.small"    : { "Arch" : "PV64"   },
+      "m1.medium"   : { "Arch" : "PV64"   },
+      "m1.large"    : { "Arch" : "PV64"   },
+      "m1.xlarge"   : { "Arch" : "PV64"   },
+      "m2.xlarge"   : { "Arch" : "PV64"   },
+      "m2.2xlarge"  : { "Arch" : "PV64"   },
+      "m2.4xlarge"  : { "Arch" : "PV64"   },
+      "m3.medium"   : { "Arch" : "HVM64"  },
+      "m3.large"    : { "Arch" : "HVM64"  },
+      "m3.xlarge"   : { "Arch" : "HVM64"  },
+      "m3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c1.medium"   : { "Arch" : "PV64"   },
+      "c1.xlarge"   : { "Arch" : "PV64"   },
+      "c3.large"    : { "Arch" : "HVM64"  },
+      "c3.xlarge"   : { "Arch" : "HVM64"  },
+      "c3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c3.4xlarge"  : { "Arch" : "HVM64"  },
+      "c3.8xlarge"  : { "Arch" : "HVM64"  },
+      "r3.large"    : { "Arch" : "HVM64"  },
+      "r3.xlarge"   : { "Arch" : "HVM64"  },
+      "r3.2xlarge"  : { "Arch" : "HVM64"  },
+      "r3.4xlarge"  : { "Arch" : "HVM64"  },
+      "r3.8xlarge"  : { "Arch" : "HVM64"  },
+      "i2.xlarge"   : { "Arch" : "HVM64"  },
+      "i2.2xlarge"  : { "Arch" : "HVM64"  },
+      "i2.4xlarge"  : { "Arch" : "HVM64"  },
+      "i2.8xlarge"  : { "Arch" : "HVM64"  },
+      "hi1.4xlarge" : { "Arch" : "PV64"   },
+      "hs1.8xlarge" : { "Arch" : "HVM64"  },
+      "cr1.8xlarge" : { "Arch" : "HVM64"  },
+      "cc2.8xlarge" : { "Arch" : "HVM64"  }
+    },
+
+    "AWSNATRegionArch2AMI" : {
+      "us-east-1"      : { "PV64" : "ami-809f4ae8", "HVM64" : "ami-4c9e4b24",  "HVMG2" : "ami-6e9e4b06"  },
+      "us-west-2"      : { "PV64" : "ami-49691279", "HVM64" : "ami-bb69128b",  "HVMG2" : "ami-8b6912bb"  },
+      "us-west-1"      : { "PV64" : "ami-7d2b2938", "HVM64" : "ami-2b2b296e",  "HVMG2" : "ami-1d2b2958"  },
+      "eu-west-1"      : { "PV64" : "ami-6d60b01a", "HVM64" : "ami-3760b040",  "HVMG2" : "ami-5b60b02c"  },
+      "ap-southeast-1" : { "PV64" : "ami-d282da80", "HVM64" : "ami-b082dae2",  "HVMG2" : "ami-d482da86"  },
+      "ap-northeast-1" : { "PV64" : "ami-31c29e30", "HVM64" : "ami-55c29e54",  "HVMG2" : "ami-49c29e48"  },
+      "ap-southeast-2" : { "PV64" : "ami-b564028f", "HVM64" : "ami-996402a3",  "HVMG2" : "ami-a164029b"  },
+      "sa-east-1"      : { "PV64" : "ami-9972db84", "HVM64" : "ami-b972dba4",  "HVMG2" : "NOT_SUPPORTED" },
+      "cn-north-1"     : { "PV64" : "ami-eab220d3", "HVM64" : "NOT_SUPPORTED", "HVMG2" : "NOT_SUPPORTED" },
+      "eu-central-1"   : { "PV64" : "ami-6c487e71", "HVM64" : "ami-204c7a3d",  "HVMG2" : "ami-5c4c7a41" }
+    }
+,
+    "Region2Principal" : {
+      "us-east-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "us-west-2"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "us-west-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "eu-west-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-southeast-1" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-northeast-1" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-southeast-2" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "sa-east-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "cn-north-1"     : { "EC2Principal" : "ec2.amazonaws.com.cn", "OpsWorksPrincipal" : "opsworks.amazonaws.com.cn" },
+      "eu-central-1"   : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" }
+    }
+
   },
+
   "Resources": {
     "OpsWorksStack": {
       "Type": "AWS::OpsWorks::Stack",
       "Properties": {
-        "Name": {
-          "Ref": "AWS::StackName"
-        },
-        "ServiceRoleArn": {
-          "Fn::GetAtt": [
-            "OpsWorksServiceRole",
-            "Arn"
-          ]
-        },
-        "DefaultInstanceProfileArn": {
-          "Fn::GetAtt": [
-            "OpsWorksInstanceProfile",
-            "Arn"
-          ]
-        },
-        "VpcId": {
-          "Ref": "VPC"
-        },
-        "DefaultSubnetId": {
-          "Ref": "PrivateSubnet"
-        }
+        "Name": { "Ref": "AWS::StackName" },
+        "ServiceRoleArn": { "Fn::GetAtt": [ "OpsWorksServiceRole", "Arn" ] },
+        "DefaultInstanceProfileArn": { "Fn::GetAtt": [ "OpsWorksInstanceProfile", "Arn" ] },
+        "VpcId": { "Ref": "VPC" },
+        "DefaultSubnetId": { "Ref": "PrivateSubnet" }
       }
     },
+
     "OpsWorksLayer": {
       "Type": "AWS::OpsWorks::Layer",
       "Metadata" : {
@@ -71,56 +146,40 @@
       },
       "DependsOn": [ "NATIPAddress", "PublicRoute", "PublicSubnetRouteTableAssociation", "PrivateRoute", "PrivateSubnetRouteTableAssociation", "OpsWorksApp"],
       "Properties": {
-        "StackId": {
-          "Ref": "OpsWorksStack"
-        },
+        "StackId": { "Ref": "OpsWorksStack" },
         "Name": "MyPHPApp",
         "Type": "php-app",
         "Shortname": "php-app",
         "EnableAutoHealing": "true",
         "AutoAssignElasticIps": "false",
         "AutoAssignPublicIps": "true",
-        "CustomSecurityGroupIds": [
-          {
-            "Ref": "OpsWorksSecurityGroup"
-          }
-        ]
+        "CustomSecurityGroupIds": [ { "Ref": "OpsWorksSecurityGroup" } ]
       }
     },
+
     "OpsWorksInstance1": {
       "Type": "AWS::OpsWorks::Instance",
       "Properties": {
-        "StackId": {
-          "Ref": "OpsWorksStack"
-        },
-        "LayerIds": [
-          {
-            "Ref": "OpsWorksLayer"
-          }
-        ],
-        "InstanceType": "m1.small"
+        "StackId": { "Ref": "OpsWorksStack" },
+        "LayerIds": [ { "Ref": "OpsWorksLayer" } ],
+        "InstanceType": "m1.small",
+        "RootDeviceType" : "ebs"
       }
     },
+
     "OpsWorksInstance2": {
       "Type": "AWS::OpsWorks::Instance",
       "Properties": {
-        "StackId": {
-          "Ref": "OpsWorksStack"
-        },
-        "LayerIds": [
-          {
-            "Ref": "OpsWorksLayer"
-          }
-        ],
-        "InstanceType": "m1.small"
+        "StackId": { "Ref": "OpsWorksStack" },
+        "LayerIds": [ { "Ref": "OpsWorksLayer" } ],
+        "InstanceType": "m1.small",
+        "RootDeviceType" : "ebs"
       }
     },
     "OpsWorksApp": {
       "Type": "AWS::OpsWorks::App",
       "Properties": {
-        "StackId": {
-          "Ref": "OpsWorksStack"
-        },
+        "StackId": { "Ref": "OpsWorksStack" },
         "Name": "MyPHPApp",
         "Type": "php",
         "AppSource": {
@@ -137,37 +196,22 @@
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "opsworks.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
-            }
-          ]
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": { "Service": [{ "Fn::FindInMap" : ["Region2Principal", {"Ref" : "AWS::Region"}, "OpsWorksPrincipal"]}] },
+            "Action": [ "sts:AssumeRole" ]
+          }]
         },
         "Path": "/",
         "Policies": [
           {
             "PolicyName": "opsworks-service",
             "PolicyDocument": {
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "ec2:*",
-                    "iam:PassRole",
-                    "cloudwatch:GetMetricStatistics",
-                    "elasticloadbalancing:*"
-                  ],
-                  "Resource": "*"
-                }
-              ]
+              "Statement": [{
+                "Effect": "Allow",
+                "Action": [ "ec2:*", "iam:PassRole", "cloudwatch:GetMetricStatistics", "elasticloadbalancing:*" ],
+                "Resource": "*"
+              }]
             }
           }
         ]
@@ -177,19 +221,11 @@
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "ec2.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
-            }
-          ]
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": { "Service": [{ "Fn::FindInMap" : ["Region2Principal", {"Ref" : "AWS::Region"}, "EC2Principal"]}] },
+            "Action": [ "sts:AssumeRole" ]
+          }]
         },
         "Path": "/"
       }
@@ -198,52 +234,31 @@
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
         "Path": "/",
-        "Roles": [
-          {
-            "Ref": "OpsWorksInstanceRole"
-          }
-        ]
+        "Roles": [ { "Ref": "OpsWorksInstanceRole" } ]
       }
     },
     "OpsWorksSecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
         "GroupDescription" : "Allow inbound requests from the ELB to the OpsWorks instances",
-        "VpcId": {
-          "Ref": "VPC"
-        },
+        "VpcId": { "Ref": "VPC" },
         "SecurityGroupIngress": [
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "80",
-            "ToPort": "80",
-            "SourceSecurityGroupId": {
-              "Ref": "ELBSecurityGroup"
-            }
-          }
+          { "IpProtocol": "tcp", "FromPort": "80", "ToPort": "80", "SourceSecurityGroupId": { "Ref": "ELBSecurityGroup" } }
         ]
       }
     },
+
     "ELB": {
       "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties": {
-        "SecurityGroups": [
-          {
-            "Ref": "ELBSecurityGroup"
-          }
-        ],
-        "Subnets": [
-          {
-            "Ref": "PublicSubnet"
-          }
-        ],
-        "Listeners": [
-          {
-            "LoadBalancerPort": "80",
-            "InstancePort": "80",
-            "Protocol": "HTTP"
-          }
-        ],
+        "CrossZone" : "true",
+        "SecurityGroups": [ { "Ref": "ELBSecurityGroup" } ],
+        "Subnets": [ { "Ref": "PublicSubnet" } ],
+        "Listeners": [ {
+          "LoadBalancerPort": "80",
+          "InstancePort": "80",
+          "Protocol": "HTTP"
+        } ],
         "HealthCheck": {
           "Target": "HTTP:80/",
           "HealthyThreshold": "3",
@@ -253,414 +268,259 @@
         }
       }
     },
+
     "ELBAttachment": {
       "Type": "AWS::OpsWorks::ElasticLoadBalancerAttachment",
       "Properties": {
-        "ElasticLoadBalancerName": {
-          "Ref": "ELB"
-        },
-        "LayerId": {
-          "Ref": "OpsWorksLayer"
-        }
+        "ElasticLoadBalancerName": { "Ref": "ELB" },
+        "LayerId": { "Ref": "OpsWorksLayer" }
       }
     },
+
     "ELBSecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
         "GroupDescription" : "Allow inbound access to the ELB",
-        "VpcId": {
-          "Ref": "VPC"
-        },
-        "SecurityGroupIngress": [
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "80",
-            "ToPort": "80",
-            "CidrIp": "0.0.0.0/0"
-          }
-        ],
-        "SecurityGroupEgress": [
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "80",
-            "ToPort": "80",
-            "CidrIp": "0.0.0.0/0"
-          }
-        ]
+        "VpcId": { "Ref": "VPC" },
+        "SecurityGroupIngress": [ {
+          "IpProtocol": "tcp",
+          "FromPort": "80",
+          "ToPort": "80",
+          "CidrIp": "0.0.0.0/0"
+        } ],
+        "SecurityGroupEgress": [ {
+          "IpProtocol": "tcp",
+          "FromPort": "80",
+          "ToPort": "80",
+          "CidrIp": "0.0.0.0/0"
+        } ]
       }
     },
+
     "VPC": {
       "Type": "AWS::EC2::VPC",
       "DependsOn": "OpsWorksServiceRole",
       "Properties": {
-        "CidrBlock": {
-          "Fn::FindInMap": [
-            "SubnetConfig",
-            "VPC",
-            "CIDR"
-          ]
-        },
-        "Tags": [
-          {
-            "Key": "Application",
-            "Value": {
-              "Ref": "AWS::StackName"
-            }
-          },
-          {
-            "Key": "Network",
-            "Value": "Public"
-          }
+        "CidrBlock": { "Fn::FindInMap": [ "SubnetConfig", "VPC", "CIDR" ] },
+        "Tags": [ 
+          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Network", "Value": "Public" }
         ]
       }
     },
+
     "PublicSubnet": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
-        "VpcId": {
-          "Ref": "VPC"
-        },
-        "CidrBlock": {
-          "Fn::FindInMap": [
-            "SubnetConfig",
-            "Public",
-            "CIDR"
-          ]
-        },
+        "VpcId": { "Ref": "VPC" },
+        "CidrBlock": { "Fn::FindInMap": [ "SubnetConfig", "Public", "CIDR" ] },
         "Tags": [
-          {
-            "Key": "Application",
-            "Value": {
-              "Ref": "AWS::StackName"
-            }
-          },
-          {
-            "Key": "Network",
-            "Value": "Public"
-          }
+          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Network", "Value": "Public" } 
         ]
       }
     },
+
     "InternetGateway": {
       "Type": "AWS::EC2::InternetGateway",
       "Properties": {
         "Tags": [
-          {
-            "Key": "Application",
-            "Value": {
-              "Ref": "AWS::StackName"
-            }
-          },
-          {
-            "Key": "Network",
-            "Value": "Public"
-          }
+          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Network", "Value": "Public" }
         ]
       }
     },
+
     "VPCGatewayAttachment": {
       "Type": "AWS::EC2::VPCGatewayAttachment",
       "Properties": {
-        "VpcId": {
-          "Ref": "VPC"
-        },
-        "InternetGatewayId": {
-          "Ref": "InternetGateway"
-        }
+        "VpcId": { "Ref": "VPC" },
+        "InternetGatewayId": { "Ref": "InternetGateway" }
       }
     },
+
     "PublicRouteTable": {
       "Type": "AWS::EC2::RouteTable",
       "Properties": {
-        "VpcId": {
-          "Ref": "VPC"
-        },
+        "VpcId": { "Ref": "VPC" },
         "Tags": [
-          {
-            "Key": "Application",
-            "Value": {
-              "Ref": "AWS::StackName"
-            }
-          },
-          {
-            "Key": "Network",
-            "Value": "Public"
-          }
+          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Network", "Value": "Public" }
         ]
       }
     },
+
     "PublicRoute": {
       "Type": "AWS::EC2::Route",
       "DependsOn": "VPCGatewayAttachment",
       "Properties": {
-        "RouteTableId": {
-          "Ref": "PublicRouteTable"
-        },
+        "RouteTableId": { "Ref": "PublicRouteTable" },
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": {
-          "Ref": "InternetGateway"
-        }
+        "GatewayId": { "Ref": "InternetGateway" }
       }
     },
+
     "PublicSubnetRouteTableAssociation": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
-        "SubnetId": {
-          "Ref": "PublicSubnet"
-        },
-        "RouteTableId": {
-          "Ref": "PublicRouteTable"
-        }
+        "SubnetId": { "Ref": "PublicSubnet" },
+        "RouteTableId": { "Ref": "PublicRouteTable" }
       }
     },
+
     "PublicNetworkAcl": {
       "Type": "AWS::EC2::NetworkAcl",
       "Properties": {
-        "VpcId": {
-          "Ref": "VPC"
-        },
+        "VpcId": { "Ref": "VPC" },
         "Tags": [
-          {
-            "Key": "Application",
-            "Value": {
-              "Ref": "AWS::StackName"
-            }
-          },
-          {
-            "Key": "Network",
-            "Value": "Public"
-          }
+          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Network", "Value": "Public" }
         ]
       }
     },
     "InboundHTTPPublicNetworkAclEntry": {
       "Type": "AWS::EC2::NetworkAclEntry",
       "Properties": {
-        "NetworkAclId": {
-          "Ref": "PublicNetworkAcl"
-        },
+        "NetworkAclId": { "Ref": "PublicNetworkAcl" },
         "RuleNumber": "100",
         "Protocol": "6",
         "RuleAction": "allow",
         "Egress": "false",
         "CidrBlock": "0.0.0.0/0",
-        "PortRange": {
-          "From": "80",
-          "To": "80"
-        }
+        "PortRange": { "From": "80", "To": "80" }
       }
     },
     "InboundHTTPSPublicNetworkAclEntry": {
       "Type": "AWS::EC2::NetworkAclEntry",
       "Properties": {
-        "NetworkAclId": {
-          "Ref": "PublicNetworkAcl"
-        },
+        "NetworkAclId": { "Ref": "PublicNetworkAcl" },
         "RuleNumber": "101",
         "Protocol": "6",
         "RuleAction": "allow",
         "Egress": "false",
         "CidrBlock": "0.0.0.0/0",
-        "PortRange": {
-          "From": "443",
-          "To": "443"
-        }
+        "PortRange": { "From": "443", "To": "443" }
       }
     },
     "InboundSSHPublicNetworkAclEntry": {
       "Type": "AWS::EC2::NetworkAclEntry",
       "Properties": {
-        "NetworkAclId": {
-          "Ref": "PublicNetworkAcl"
-        },
+        "NetworkAclId": { "Ref": "PublicNetworkAcl" },
         "RuleNumber": "102",
         "Protocol": "6",
         "RuleAction": "allow",
         "Egress": "false",
         "CidrBlock": "0.0.0.0/0",
-        "PortRange": {
-          "From": "22",
-          "To": "22"
-        }
+        "PortRange": { "From": "22", "To": "22" }
       }
     },
-    "InboundEmphemeralPublicNetworkAclEntry": {
+    "InboundEphemeralPublicNetworkAclEntry": {
       "Type": "AWS::EC2::NetworkAclEntry",
       "Properties": {
-        "NetworkAclId": {
-          "Ref": "PublicNetworkAcl"
-        },
+        "NetworkAclId": { "Ref": "PublicNetworkAcl" },
         "RuleNumber": "103",
         "Protocol": "6",
         "RuleAction": "allow",
         "Egress": "false",
         "CidrBlock": "0.0.0.0/0",
-        "PortRange": {
-          "From": "1024",
-          "To": "65535"
+        "PortRange": { "From": "1024", "To": "65535"
         }
       }
     },
     "OutboundPublicNetworkAclEntry": {
       "Type": "AWS::EC2::NetworkAclEntry",
       "Properties": {
-        "NetworkAclId": {
-          "Ref": "PublicNetworkAcl"
-        },
+        "NetworkAclId": { "Ref": "PublicNetworkAcl" },
         "RuleNumber": "100",
         "Protocol": "6",
         "RuleAction": "allow",
         "Egress": "true",
         "CidrBlock": "0.0.0.0/0",
-        "PortRange": {
-          "From": "0",
-          "To": "65535"
-        }
+        "PortRange": { "From": "0", "To": "65535" }
       }
     },
     "PublicSubnetNetworkAclAssociation": {
       "Type": "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties": {
-        "SubnetId": {
-          "Ref": "PublicSubnet"
-        },
-        "NetworkAclId": {
-          "Ref": "PublicNetworkAcl"
-        }
+        "SubnetId": { "Ref": "PublicSubnet" },
+        "NetworkAclId": { "Ref": "PublicNetworkAcl" }
       }
     },
     "PrivateSubnet": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
-        "VpcId": {
-          "Ref": "VPC"
-        },
-        "CidrBlock": {
-          "Fn::FindInMap": [
-            "SubnetConfig",
-            "Private",
-            "CIDR"
-          ]
-        },
+        "VpcId": { "Ref": "VPC" },
+        "CidrBlock": { "Fn::FindInMap": [ "SubnetConfig", "Private", "CIDR" ] },
         "Tags": [
-          {
-            "Key": "Application",
-            "Value": {
-              "Ref": "AWS::StackName"
-            }
-          },
-          {
-            "Key": "Name",
-            "Value": "Private"
-          }
+          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": "Private" }
         ]
       }
     },
     "PrivateRouteTable": {
       "Type": "AWS::EC2::RouteTable",
       "Properties": {
-        "VpcId": {
-          "Ref": "VPC"
-        },
+        "VpcId": { "Ref": "VPC" },
         "Tags": [
-          {
-            "Key": "Application",
-            "Value": {
-              "Ref": "AWS::StackName"
-            }
-          },
-          {
-            "Key": "Network",
-            "Value": "Private"
-          }
+          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Network", "Value": "Private" }
         ]
       }
     },
     "PrivateSubnetRouteTableAssociation": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
-        "SubnetId": {
-          "Ref": "PrivateSubnet"
-        },
-        "RouteTableId": {
-          "Ref": "PrivateRouteTable"
-        }
+        "SubnetId": { "Ref": "PrivateSubnet" },
+        "RouteTableId": { "Ref": "PrivateRouteTable" }
       }
     },
     "PrivateRoute": {
       "Type": "AWS::EC2::Route",
       "Properties": {
-        "RouteTableId": {
-          "Ref": "PrivateRouteTable"
-        },
+        "RouteTableId": { "Ref": "PrivateRouteTable" },
         "DestinationCidrBlock": "0.0.0.0/0",
-        "InstanceId": {
-          "Ref": "NATDevice"
-        }
+        "InstanceId": { "Ref": "NATDevice" }
       }
     },
     "PrivateNetworkAcl": {
       "Type": "AWS::EC2::NetworkAcl",
       "Properties": {
-        "VpcId": {
-          "Ref": "VPC"
-        },
+        "VpcId": { "Ref": "VPC" },
         "Tags": [
-          {
-            "Key": "Application",
-            "Value": {
-              "Ref": "AWS::StackName"
-            }
-          },
-          {
-            "Key": "Network",
-            "Value": "Private"
-          }
+          { "Key": "Application", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Network", "Value": "Private" }
         ]
       }
     },
     "InboundPrivateNetworkAclEntry": {
       "Type": "AWS::EC2::NetworkAclEntry",
       "Properties": {
-        "NetworkAclId": {
-          "Ref": "PrivateNetworkAcl"
-        },
+        "NetworkAclId": { "Ref": "PrivateNetworkAcl" },
         "RuleNumber": "100",
         "Protocol": "6",
         "RuleAction": "allow",
         "Egress": "false",
         "CidrBlock": "0.0.0.0/0",
-        "PortRange": {
-          "From": "0",
-          "To": "65535"
-        }
+        "PortRange": { "From": "0", "To": "65535" }
       }
     },
     "OutBoundPrivateNetworkAclEntry": {
       "Type": "AWS::EC2::NetworkAclEntry",
       "Properties": {
-        "NetworkAclId": {
-          "Ref": "PrivateNetworkAcl"
-        },
+        "NetworkAclId": { "Ref": "PrivateNetworkAcl" },
         "RuleNumber": "100",
         "Protocol": "6",
         "RuleAction": "allow",
         "Egress": "true",
         "CidrBlock": "0.0.0.0/0",
-        "PortRange": {
-          "From": "0",
-          "To": "65535"
-        }
+        "PortRange": { "From": "0", "To": "65535" }
       }
     },
     "PrivateSubnetNetworkAclAssociation": {
       "Type": "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties": {
-        "SubnetId": {
-          "Ref": "PrivateSubnet"
-        },
-        "NetworkAclId": {
-          "Ref": "PrivateNetworkAcl"
+        "SubnetId": { "Ref": "PrivateSubnet" }, 
+        "NetworkAclId": { "Ref": "PrivateNetworkAcl"
         }
       }
     },
@@ -668,122 +528,76 @@
       "Type": "AWS::EC2::EIP",
       "Properties": {
         "Domain": "vpc",
-        "InstanceId": {
-          "Ref": "NATDevice"
-        }
+        "InstanceId": { "Ref": "NATDevice" }
       }
     },
     "NATDevice": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "InstanceType": "m1.small",
-        "SubnetId": {
-          "Ref": "PublicSubnet"
-        },
+        "SubnetId": { "Ref": "PublicSubnet" },
         "SourceDestCheck": "false",
-        "ImageId": {
-          "Fn::FindInMap": [
-            "AWSNATAMI",
-            {
-              "Ref": "AWS::Region"
-            },
-            "AMI"
-          ]
-        },
-        "SecurityGroupIds": [
-          {
-            "Ref": "NATSecurityGroup"
-          }
-        ]
+        "ImageId" : { "Fn::FindInMap" : [ "AWSNATRegionArch2AMI", { "Ref" : "AWS::Region" },
+                          { "Fn::FindInMap" : [ "AWSNATInstanceType2Arch", "m1.small", "Arch" ] } ] },
+        "SecurityGroupIds": [ { "Ref": "NATSecurityGroup" } ]
       }
     },
     "NATSecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
         "GroupDescription" : "Allow OpsWorks instances to access the NAT Device",
-        "VpcId": {
-          "Ref": "VPC"
-        },
-        "SecurityGroupIngress": [
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "80",
-            "ToPort": "80",
-            "SourceSecurityGroupId": {
-              "Ref": "OpsWorksSecurityGroup"
-            }
-          },
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "9418",
-            "ToPort": "9418",
-            "SourceSecurityGroupId": {
-              "Ref": "OpsWorksSecurityGroup"
-            }
-          },
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "443",
-            "ToPort": "443",
-            "SourceSecurityGroupId": {
-              "Ref": "OpsWorksSecurityGroup"
-            }
-          }
-        ],
-        "SecurityGroupEgress": [
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "80",
-            "ToPort": "80",
-            "CidrIp": "0.0.0.0/0"
-          },
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "9418",
-            "ToPort": "9418",
-            "CidrIp": "0.0.0.0/0"
-          },
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "443",
-            "ToPort": "443",
-            "CidrIp": "0.0.0.0/0"
-          }
-        ]
+        "VpcId": { "Ref": "VPC" },
+        "SecurityGroupIngress": [ {
+          "IpProtocol": "tcp",
+          "FromPort": "80",
+          "ToPort": "80",
+          "SourceSecurityGroupId": { "Ref": "OpsWorksSecurityGroup" }
+        }, {
+          "IpProtocol": "tcp",
+          "FromPort": "9418",
+          "ToPort": "9418",
+          "SourceSecurityGroupId": { "Ref": "OpsWorksSecurityGroup" }
+        }, {
+          "IpProtocol": "tcp",
+          "FromPort": "443",
+          "ToPort": "443",
+          "SourceSecurityGroupId": { "Ref": "OpsWorksSecurityGroup" }
+        } ],
+        "SecurityGroupEgress": [ {
+          "IpProtocol": "tcp",
+          "FromPort": "80",
+          "ToPort": "80",
+          "CidrIp": "0.0.0.0/0"
+        }, {
+          "IpProtocol": "tcp",
+          "FromPort": "9418",
+          "ToPort": "9418",
+          "CidrIp": "0.0.0.0/0"
+        }, {
+          "IpProtocol": "tcp",
+          "FromPort": "443",
+          "ToPort": "443",
+          "CidrIp": "0.0.0.0/0"
+        } ]
       }
     }
   },
   "Outputs": {
     "StackId": {
-      "Value": {
-        "Ref": "OpsWorksStack"
-      }
+      "Description": "Stack Id of newly created OpsWorks stack",
+      "Value": { "Ref": "OpsWorksStack" }
     },
     "AppId": {
-      "Value": {
-        "Ref": "OpsWorksApp"
-      }
+      "Description" : "Application Id of newly created OpsWorks application",
+      "Value": { "Ref": "OpsWorksApp" }
     },
     "VPC": {
-      "Description": "VPC",
-      "Value": {
-        "Ref": "VPC"
-      }
+      "Description": "VPC Id of newly created Virtual Private Cloud",
+      "Value": { "Ref": "VPC" }
     },
-    "PublicSubnet": {
-      "Value": {
-        "Ref": "PublicSubnet"
-      }
-    },
-    "PrivateSubnet": {
-      "Value": {
-        "Ref": "PrivateSubnet"
-      }
-    },
-    "ELB": {
-      "Value": {
-        "Ref": "ELB"
-      }
+    "URL": {
+      "Description" : "URL for newly created application",
+      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "ELB", "DNSName" ]}]] }
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
 
-  "Description" : "AWS CloudFormation Sample Template AutoScalingScheduledAction: Create a load balanced, Auto Scaled sample website. This example creates an Auto Scaling group with time-based scheduled actions behind a load balancer with a simple health check. **WARNING** This template creates one or more Amazon EC2 instances and an Elastic Load Balancer. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description": "AWS CloudFormation Sample Template ELB_Access_Logs_And_Connection_Draining: Creates a load balanced, scalable sample website using Elastic Load Balancer attached to an Auto Scaling group. The ELB has connection draining enabled and also puts access logs into an S3 bucket. ** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
 
   "Parameters": {
     "InstanceType": {
@@ -9,7 +9,7 @@
       "Type": "String",
       "Default": "m1.small",
       "AllowedValues": [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
- ,
+,
       "ConstraintDescription": "must be a valid EC2 instance type."
     },
 
@@ -82,17 +82,102 @@
       "cn-north-1"     : { "PV64" : "ami-a857c591", "HVM64" : "ami-ac57c595", "HVMG2" : "NOT_SUPPORTED" },
       "eu-central-1"   : { "PV64" : "ami-a03503bd", "HVM64" : "ami-b43503a9", "HVMG2" : "ami-b03503ad"  }
     }
+,
+    "Region2ELBAccountId": {
+      "us-east-1"      : { "AccountId": "127311923021" },
+      "us-west-1"      : { "AccountId": "027434742980" },
+      "us-west-2"      : { "AccountId": "797873946194" },
+      "eu-west-1"      : { "AccountId": "156460612806" },
+      "ap-northeast-1" : { "AccountId": "582318560864" },
+      "ap-southeast-1" : { "AccountId": "114774131450" },
+      "ap-southeast-2" : { "AccountId": "783225319266" },
+      "sa-east-1"      : { "AccountId": "507241528517" },
+      "cn-north-1"     : { "AccountId": "638102146993" },
+      "eu-central-1"   : { "AccountId": "589561097549" }
+    }
+,
+    "Region2ARNPrefix": {
+      "us-east-1"      : { "ARNPrefix": "arn:aws:" },
+      "us-west-1"      : { "ARNPrefix": "arn:aws:" },
+      "us-west-2"      : { "ARNPrefix": "arn:aws:" },
+      "eu-west-1"      : { "ARNPrefix": "arn:aws:" },
+      "ap-northeast-1" : { "ARNPrefix": "arn:aws:" },
+      "ap-southeast-1" : { "ARNPrefix": "arn:aws:" },
+      "ap-southeast-2" : { "ARNPrefix": "arn:aws:" },
+      "sa-east-1"      : { "ARNPrefix": "arn:aws:" },
+      "cn-north-1"     : { "ARNPrefix": "arn:aws-cn:" },
+      "eu-central-1"   : { "ARNPrefix": "arn:aws:" }
+    }
 
   },
 
   "Resources": {
+    "ElasticLoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties": {
+        "AvailabilityZones": { "Fn::GetAZs": "" },
+        "CrossZone" : "true",
+        "Listeners": [ {
+          "LoadBalancerPort": "80",
+          "InstancePort": "80",
+          "Protocol": "HTTP"
+        } ],
+        "HealthCheck": {
+          "Target": "HTTP:80/",
+          "HealthyThreshold": "3",
+          "UnhealthyThreshold": "5",
+          "Interval": "30",
+          "Timeout": "5"
+        },
+        "ConnectionDrainingPolicy": {
+          "Enabled": "true",
+          "Timeout": "300"
+        },
+        "AccessLoggingPolicy": {
+          "S3BucketName": {
+            "Ref": "LogsBucket"
+          },
+          "S3BucketPrefix": "Logs",
+          "Enabled": "true",
+          "EmitInterval": "60"
+        }
+      },
+      "DependsOn": "LogsBucketPolicy"
+    },
+    "LogsBucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy" : "Retain"
+    },
+    "LogsBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "LogsBucket"
+        },
+        "PolicyDocument": {
+          "Version": "2008-10-17",
+          "Statement": [
+            {
+              "Sid": "ELBAccessLogs20130930",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [ "", [ { "Fn::FindInMap" : ["Region2ARNPrefix", {"Ref" : "AWS::Region"}, "ARNPrefix"] },
+                              "s3:::", { "Ref": "LogsBucket" }, "/", "Logs", "/AWSLogs/", { "Ref": "AWS::AccountId" }, "/*" ] ]
+              },
+              "Principal": { "AWS": { "Fn::FindInMap": [ "Region2ELBAccountId", { "Ref": "AWS::Region" }, "AccountId" ] } },
+              "Action": [ "s3:PutObject" ]
+            }
+          ]
+        }
+      }
+    },
     "WebServerGroup": {
       "Type": "AWS::AutoScaling::AutoScalingGroup",
       "Properties": {
         "AvailabilityZones": { "Fn::GetAZs": "" },
         "LaunchConfigurationName": { "Ref": "LaunchConfig" },
         "MinSize": "2",
-        "MaxSize": "5",
+        "MaxSize": "2",
         "LoadBalancerNames": [ { "Ref": "ElasticLoadBalancer" } ]
       },
       "CreationPolicy" : {
@@ -107,24 +192,6 @@
           "PauseTime" : "PT15M",
           "WaitOnResourceSignals": "true"
         }
-      }
-    },
-    "ScheduledActionUp": {
-      "Type": "AWS::AutoScaling::ScheduledAction",
-      "Properties": {
-        "AutoScalingGroupName": { "Ref": "WebServerGroup" },
-        "MaxSize": "10",
-        "MinSize": "5",
-        "Recurrence": "0 7 * * *"
-      }
-    },
-    "ScheduledActionDown": {
-      "Type": "AWS::AutoScaling::ScheduledAction",
-      "Properties": {
-        "AutoScalingGroupName": { "Ref": "WebServerGroup" },
-        "MaxSize": "1",
-        "MinSize": "1",
-        "Recurrence": "0 19 * * *"
       }
     },
     "LaunchConfig": {
@@ -187,7 +254,8 @@
       },
       "Properties": {
         "KeyName": { "Ref": "KeyName" },
-        "ImageId": { "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" },
+        "ImageId": {
+          "Fn::FindInMap": [ "AWSRegionArch2AMI", { "Ref": "AWS::Region" },
             { "Fn::FindInMap": [ "AWSInstanceType2Arch", { "Ref": "InstanceType" }, "Arch" ] } ] },
         "SecurityGroups": [ { "Ref": "InstanceSecurityGroup" } ],
         "InstanceType": { "Ref": "InstanceType" },
@@ -208,25 +276,6 @@
       }
     },
 
-    "ElasticLoadBalancer": {
-      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
-      "Properties": {
-        "AvailabilityZones": { "Fn::GetAZs": "" },
-        "CrossZone" : "true",
-        "Listeners": [ {
-          "LoadBalancerPort": "80",
-          "InstancePort": "80",
-          "Protocol": "HTTP"
-        } ],
-        "HealthCheck": { 
-          "Target": "HTTP:80/",
-          "HealthyThreshold": "3",
-          "UnhealthyThreshold": "5",
-          "Interval": "30",
-          "Timeout": "5"
-        }
-      }
-    },
     "InstanceSecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
@@ -245,11 +294,15 @@
       }
     }
   },
-
   "Outputs": {
     "URL": {
       "Description": "URL of the website",
       "Value": { "Fn::Join": [ "", [ "http://", { "Fn::GetAtt": [ "ElasticLoadBalancer", "DNSName" ] } ] ] }
+    },
+
+    "ELBAccessLogsBucket": {
+      "Description": "DNS name of the S3 bucket storing ELB Access Logs",
+      "Value": { "Fn::GetAtt": [ "LogsBucket", "DomainName" ] }
     }
   }
 }

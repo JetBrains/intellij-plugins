@@ -7,11 +7,8 @@
 
     "KeyName" : {
       "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
-      "Type" : "String",
-      "MinLength": "1",
-      "MaxLength": "64",
-      "AllowedPattern" : "[-_ a-zA-Z0-9]*",
-      "ConstraintDescription" : "can contain only alphanumeric characters, spaces, dashes and underscores."
+      "Type" : "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
     },
 
     "SSHLocation" : {
@@ -28,7 +25,8 @@
       "Description" : "WebServer Server EC2 instance type",
       "Type" : "String",
       "Default" : "m1.small",
-      "AllowedValues" : ["t1.micro", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "cc1.4xlarge", "cc2.8xlarge", "cg1.4xlarge", "hi1.4xlarge", "hs1.8xlarge"],
+      "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+,
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
 
@@ -40,48 +38,65 @@
   },
 
   "Mappings" : {
-
-    "AWSInstanceType2Arch": {
-      "t1.micro"   : { "Arch": "PV64" },
-      "m1.small"   : { "Arch": "PV64" },
-      "m1.medium"  : { "Arch": "PV64" },
-      "m1.large"   : { "Arch": "PV64" },
-      "m1.xlarge"  : { "Arch": "PV64" },
-      "m3.xlarge"  : { "Arch": "PV64" },
-      "m3.2xlarge" : { "Arch": "PV64" },
-      "m2.xlarge"  : { "Arch": "PV64" },
-      "m2.2xlarge" : { "Arch": "PV64" },
-      "m2.4xlarge" : { "Arch": "PV64" },
-      "c1.medium"  : { "Arch": "PV64" },
-      "c1.xlarge"  : { "Arch": "PV64" },
-      "cc1.4xlarge": { "Arch": "CLU64" },
-      "cc2.8xlarge": { "Arch": "CLU64" },
-      "cg1.4xlarge": { "Arch": "GPU64" },
-      "hi1.4xlarge": { "Arch": "PV64" },
-      "hs1.8xlarge": { "Arch": "PV64" }
-    },
-
-    "AWSRegionArch2AMI": {
-
-      "us-east-1"     : { "PV64": "ami-05355a6c", "CLU64": "ami-a73758ce", "GPU64": "ami-cf3758a6" },
-      "us-west-2"     : { "PV64": "ami-0358ce33", "CLU64": "ami-d75bcde7", "GPU64": "NOT_YET_SUPPORTED" },
-      "us-west-1"     : { "PV64": "ami-3ffed17a", "CLU64": "ami-47fed102", "GPU64": "NOT_YET_SUPPORTED" },
-      "eu-west-1"     : { "PV64": "ami-c7c0d6b3", "CLU64": "ami-d1c0d6a5", "GPU64": "ami-45c0d631" },
-      "ap-southeast-1": { "PV64": "ami-fade91a8", "CLU64": "ami-18de914a", "GPU64": "NOT_YET_SUPPORTED" },
-      "ap-southeast-2": { "PV64": "ami-d16bfbeb", "CLU64": "ami-876bfbbd", "GPU64": "NOT_YET_SUPPORTED" },
-      "ap-northeast-1": { "PV64": "ami-39b23d38", "CLU64": "ami-2db33c2c", "GPU64": "NOT_YET_SUPPORTED" },
-      "sa-east-1"     : { "PV64": "ami-5253894f", "CLU64": "ami-38538925", "GPU64": "NOT_YET_SUPPORTED" },
-      "us-gov-west-1" : { "PV64": "ami-a58feb86", "CLU64": "NOT_YET_SUPPORTED", "64GPU" : "NOT_YET_SUPPORTED" }
-    },
-
     "SubnetConfig" : {
       "VPC"     : { "CIDR" : "10.0.0.0/16" },
       "Public"  : { "CIDR" : "10.0.0.0/24" }
+    },
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "PV64"   },
+      "t2.micro"    : { "Arch" : "HVM64"  },
+      "t2.small"    : { "Arch" : "HVM64"  },
+      "t2.medium"   : { "Arch" : "HVM64"  },
+      "m1.small"    : { "Arch" : "PV64"   },
+      "m1.medium"   : { "Arch" : "PV64"   },
+      "m1.large"    : { "Arch" : "PV64"   },
+      "m1.xlarge"   : { "Arch" : "PV64"   },
+      "m2.xlarge"   : { "Arch" : "PV64"   },
+      "m2.2xlarge"  : { "Arch" : "PV64"   },
+      "m2.4xlarge"  : { "Arch" : "PV64"   },
+      "m3.medium"   : { "Arch" : "HVM64"  },
+      "m3.large"    : { "Arch" : "HVM64"  },
+      "m3.xlarge"   : { "Arch" : "HVM64"  },
+      "m3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c1.medium"   : { "Arch" : "PV64"   },
+      "c1.xlarge"   : { "Arch" : "PV64"   },
+      "c3.large"    : { "Arch" : "HVM64"  },
+      "c3.xlarge"   : { "Arch" : "HVM64"  },
+      "c3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c3.4xlarge"  : { "Arch" : "HVM64"  },
+      "c3.8xlarge"  : { "Arch" : "HVM64"  },
+      "g2.2xlarge"  : { "Arch" : "HVMG2"  },
+      "r3.large"    : { "Arch" : "HVM64"  },
+      "r3.xlarge"   : { "Arch" : "HVM64"  },
+      "r3.2xlarge"  : { "Arch" : "HVM64"  },
+      "r3.4xlarge"  : { "Arch" : "HVM64"  },
+      "r3.8xlarge"  : { "Arch" : "HVM64"  },
+      "i2.xlarge"   : { "Arch" : "HVM64"  },
+      "i2.2xlarge"  : { "Arch" : "HVM64"  },
+      "i2.4xlarge"  : { "Arch" : "HVM64"  },
+      "i2.8xlarge"  : { "Arch" : "HVM64"  },
+      "hi1.4xlarge" : { "Arch" : "HVM64"  },
+      "hs1.8xlarge" : { "Arch" : "HVM64"  },
+      "cr1.8xlarge" : { "Arch" : "HVM64"  },
+      "cc2.8xlarge" : { "Arch" : "HVM64"  }
+    },
+
+    "AWSRegionArch2AMI" : {
+      "us-east-1"      : { "PV64" : "ami-50842d38", "HVM64" : "ami-08842d60", "HVMG2" : "ami-3a329952"  },
+      "us-west-2"      : { "PV64" : "ami-af86c69f", "HVM64" : "ami-8786c6b7", "HVMG2" : "ami-47296a77"  },
+      "us-west-1"      : { "PV64" : "ami-c7a8a182", "HVM64" : "ami-cfa8a18a", "HVMG2" : "ami-331b1376"  },
+      "eu-west-1"      : { "PV64" : "ami-aa8f28dd", "HVM64" : "ami-748e2903", "HVMG2" : "ami-00913777"  },
+      "ap-southeast-1" : { "PV64" : "ami-20e1c572", "HVM64" : "ami-d6e1c584", "HVMG2" : "ami-fabe9aa8"  },
+      "ap-northeast-1" : { "PV64" : "ami-21072820", "HVM64" : "ami-35072834", "HVMG2" : "ami-5dd1ff5c"  },
+      "ap-southeast-2" : { "PV64" : "ami-8b4724b1", "HVM64" : "ami-fd4724c7", "HVMG2" : "ami-e98ae9d3"  },
+      "sa-east-1"      : { "PV64" : "ami-9d6cc680", "HVM64" : "ami-956cc688", "HVMG2" : "NOT_SUPPORTED" },
+      "cn-north-1"     : { "PV64" : "ami-a857c591", "HVM64" : "ami-ac57c595", "HVMG2" : "NOT_SUPPORTED" },
+      "eu-central-1"   : { "PV64" : "ami-a03503bd", "HVM64" : "ami-b43503a9", "HVMG2" : "ami-b03503ad"  }
     }
+
   },
 
   "Resources" : {
-
 
     "VPC" : {
       "Type" : "AWS::EC2::VPC",
@@ -229,6 +244,7 @@
     "PublicElasticLoadBalancer" : {
       "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
       "Properties" : {
+        "CrossZone" : "true",
         "SecurityGroups" : [ { "Ref" : "PublicLoadBalancerSecurityGroup" } ],
         "Subnets" : [ { "Ref" : "PublicSubnet" } ],
         "Listeners" : [ { "LoadBalancerPort" : "80", "InstancePort" : "80", "Protocol" : "HTTP" } ],
@@ -258,16 +274,30 @@
       "Properties" : {
         "AvailabilityZones" : [{ "Fn::GetAtt" : [ "PublicSubnet", "AvailabilityZone" ] }],
         "VPCZoneIdentifier" : [{ "Ref" : "PublicSubnet" }],
-        "LaunchConfigurationName" : { "Ref" : "WebServerServerLaunchConfig"  },
+        "LaunchConfigurationName" : { "Ref" : "WebServerLaunchConfig"  },
         "MinSize" : "1",
         "MaxSize" : "10",
         "DesiredCapacity" : { "Ref" : "WebServerCount" },
         "LoadBalancerNames" : [ { "Ref" : "PublicElasticLoadBalancer" } ],
         "Tags" : [ { "Key" : "Network", "Value" : "Public", "PropagateAtLaunch" : "true" } ]
+      },
+      "CreationPolicy" : {
+        "ResourceSignal" : {
+          "Timeout" : "PT45M",
+          "Count"   : { "Ref" : "WebServerCount" }
+        }
+      },
+      "UpdatePolicy": {
+        "AutoScalingRollingUpdate": {
+          "MinInstancesInService": "1",
+          "MaxBatchSize": "1",
+          "PauseTime" : "PT15M",
+          "WaitOnResourceSignals": "true"
+        }
       }
     },
 
-    "WebServerServerLaunchConfig"  : {
+    "WebServerLaunchConfig"  : {
       "Type" : "AWS::AutoScaling::LaunchConfiguration",
       "Metadata" : {
         "AWS::CloudFormation::Init" : {
@@ -287,16 +317,38 @@
                 "mode"    : "000644",
                 "owner"   : "root",
                 "group"   : "root"
+              },
+              "/etc/cfn/cfn-hup.conf" : {
+                "content" : { "Fn::Join" : ["", [
+                  "[main]\n",
+                  "stack=", { "Ref" : "AWS::StackId" }, "\n",
+                  "region=", { "Ref" : "AWS::Region" }, "\n"
+                ]]},
+                "mode"    : "000400",
+                "owner"   : "root",
+                "group"   : "root"
+              },
+
+              "/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
+                "content": { "Fn::Join" : ["", [
+                  "[cfn-auto-reloader-hook]\n",
+                  "triggers=post.update\n",
+                  "path=Resources.WebServerLaunchConfig.Metadata.AWS::CloudFormation::Init\n",
+                  "action=/opt/aws/bin/cfn-init -v ",
+                  "         --stack ", { "Ref" : "AWS::StackName" },
+                  "         --resource WebServerLaunchConfig ",
+                  "         --region ", { "Ref" : "AWS::Region" }, "\n",
+                  "runas=root\n"
+                ]]}
               }
             },
 
             "services" : {
               "sysvinit" : {
-                "httpd" : {
-                  "enabled"       : "true",
-                  "ensureRunning" : "true",
-                  "files"         : [ "/etc/httpd/conf.d/maptobackend.conf", "/var/www/html/index.html" ]
-                }
+                "httpd" : { "enabled" : "true", "ensureRunning" : "true", 
+                              "files" : [ "/etc/httpd/conf.d/aptobackend.conf", "/var/www/html/index.html" ]},
+                "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
+                              "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
               }
             }
           }
@@ -309,17 +361,20 @@
         "KeyName"        : { "Ref" : "KeyName" },
         "AssociatePublicIpAddress" : "true",
         "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
-          "#!/bin/bash -v\n",
+          "#!/bin/bash -xe\n",
           "yum update -y aws-cfn-bootstrap\n",
 
           "# Install the sample application\n",
-          "/opt/aws/bin/cfn-init ",
+          "/opt/aws/bin/cfn-init -v ",
           "    --stack ", { "Ref" : "AWS::StackId" },
-          "    --resource WebServerServerLaunchConfig ",
+          "    --resource WebServerLaunchConfig ",
           "    --region ", { "Ref" : "AWS::Region" }, "\n",
 
-          "# Signal completion\n",
-          "/opt/aws/bin/cfn-signal -e $? -r \"WebServer setup done\" '", { "Ref" : "WebServerWaitHandle" }, "'\n"
+          "# Signal copletion\n",
+          "/opt/aws/bin/cfn-signal -e $? ",
+          "    --stack ", { "Ref" : "AWS::StackId" },
+          "    --resource WebServerFleet ",
+          "    --region ", { "Ref" : "AWS::Region" }, "\n"
         ]]}}
       }
     },
@@ -332,20 +387,6 @@
         "SecurityGroupIngress" : [
           { "IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "SourceSecurityGroupId" : { "Ref" : "PublicLoadBalancerSecurityGroup" } } ,
           { "IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation" } } ]
-      }
-    },
-
-    "WebServerWaitHandle" : {
-      "Type" : "AWS::CloudFormation::WaitConditionHandle"
-    },
-
-    "WebServerWaitCondition" : {
-      "Type" : "AWS::CloudFormation::WaitCondition",
-      "DependsOn" : "WebServerFleet",
-      "Properties" : {
-        "Handle"  : { "Ref" : "WebServerWaitHandle" },
-        "Timeout" : "3600",
-        "Count"   : { "Ref" : "WebServerCount" }
       }
     }
   },

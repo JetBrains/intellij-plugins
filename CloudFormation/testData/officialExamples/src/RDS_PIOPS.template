@@ -13,6 +13,7 @@
       "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
       "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
     },
+
     "DBPassword": {
       "NoEcho": "true",
       "Description" : "The database admin account password",
@@ -25,13 +26,12 @@
   },
 
   "Resources" : {
-    "MyDB" : {
+    "myDB" : {
       "Type" : "AWS::RDS::DBInstance",
       "Properties" : {
         "AllocatedStorage" : "100",
         "DBInstanceClass" : "db.m1.small",
         "Engine" : "MySQL",
-        "EngineVersion" : "5.5",
         "Iops" : "1000",
         "MasterUsername" : { "Ref" : "DBUser" },
         "MasterUserPassword" : { "Ref" : "DBPassword" }

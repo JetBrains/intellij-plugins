@@ -7,13 +7,25 @@
     "MyDB" : {
       "Type" : "AWS::RDS::DBInstance",
       "Properties" : {
+        "DBName" : "MyDatabase",
         "AllocatedStorage" : "5",
         "DBInstanceClass" : "db.m1.small",
         "Engine" : "MySQL",
-        "MasterUsername" : "MyName",
-        "MasterUserPassword" : "MyPassword"
+        "MasterUsername" : "myName",
+        "MasterUserPassword" : "myPassword"
       },
       "DeletionPolicy" : "Snapshot"
+    }
+  },
+
+  "Outputs" : {
+    "JDBCConnectionString": {
+      "Description" : "JDBC connection string for the database",
+      "Value" : { "Fn::Join": [ "", [ "jdbc:mysql://",
+                                      { "Fn::GetAtt": [ "MyDB", "Endpoint.Address" ] },
+                                      ":",
+                                      { "Fn::GetAtt": [ "MyDB", "Endpoint.Port" ] },
+                                      "/MyDatabase"]]}
     }
   }
 }

@@ -6,8 +6,26 @@
   "Parameters" : {
     "HostedZone" : {
       "Type" : "String",
-      "Description" : "The DNS name of an existing Amazon Route 53 hosted zone"
+      "Description" : "The DNS name of an existing Amazon Route 53 hosted zone",
+      "AllowedPattern" : "(?!-)[a-zA-Z0-9-.]{1,63}(?<!-)",
+      "ConstraintDescription" : "must be a valid DNS zone name."
     }
+  },
+
+  "Mappings" : {
+    "Region2S3WebsiteSuffix": {
+      "us-east-1"      : { "Suffix": ".s3-website-us-east-1.amazonaws.com" },
+      "us-west-1"      : { "Suffix": ".s3-website-us-west-1.amazonaws.com" },
+      "us-west-2"      : { "Suffix": ".s3-website-us-west-2.amazonaws.com" },
+      "eu-west-1"      : { "Suffix": ".s3-website-eu-west-1.amazonaws.com" },
+      "ap-northeast-1" : { "Suffix": ".s3-website-ap-northeast-1.amazonaws.com" },
+      "ap-southeast-1" : { "Suffix": ".s3-website-ap-southeast-1.amazonaws.com" },
+      "ap-southeast-2" : { "Suffix": ".s3-website-ap-southeast-2.amazonaws.com" },
+      "sa-east-1"      : { "Suffix": ".s3-website-sa-east-1.amazonaws.com" },
+      "cn-north-1"     : { "Suffix": ".s3-website.cn-north-1.amazonaws.com.cn" },
+      "eu-central-1"   : { "Suffix": ".s3-website-eu-central-1.amazonaws.com" }
+    }
+
   },
 
   "Resources" : {
@@ -28,7 +46,8 @@
          "DistributionConfig" : {
            "Comment" : "CDN for S3-backed website",
            "CustomOrigin" : {
-             "DNSName": { "Fn::Join" : ["", [{"Ref" : "S3BucketForWebsiteContent"}, ".s3-website-", {"Ref" : "AWS::Region"}, ".amazonaws.com"]]},
+             "DNSName": { "Fn::Join" : ["", [{"Ref" : "S3BucketForWebsiteContent"},
+                                           {"Fn::FindInMap" : [ "Region2S3WebsiteSuffix", {"Ref" : "AWS::Region"}, "Suffix" ]}]]},
              "HTTPPort" : "80",
              "HTTPSPort" : "443",
              "OriginProtocolPolicy" : "http-only"

@@ -6,12 +6,14 @@
   "Parameters" : {
     "HostedZone" : {
       "Type" : "String",
-      "Description" : "The DNS name of an existing Amazon Route 53 hosted zone"
+      "Description" : "The DNS name of an existing Amazon Route 53 hosted zone",
+      "AllowedPattern" : "(?!-)[a-zA-Z0-9-.]{1,63}(?<!-)",
+      "ConstraintDescription" : "must be a valid DNS zone name."
     }
   },
 
   "Resources" : {
-    "myDNSRecord" : {
+    "MyDNSRecord" : {
       "Type" : "AWS::Route53::RecordSet",
       "Properties" : {
         "HostedZoneName" : { "Fn::Join" : [ "", [{"Ref" : "HostedZone"}, "." ]]},
@@ -25,7 +27,8 @@
   },
   "Outputs" : {
     "CNAME" : {
-      "Value" : { "Ref" : "myDNSRecord" }
+      "Description" : "Fully qualified domain name",
+      "Value" : { "Ref" : "MyDNSRecord" }
     }
   }
 }

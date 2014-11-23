@@ -9,7 +9,8 @@
       "Type": "String",
       "Description" : "New account password",
       "MinLength": "1",
-      "MaxLength": "41"
+      "MaxLength": "41",
+      "ConstraintDescription" : "the password must be between 1 and 41 characters"
     }
   },
 
@@ -55,9 +56,9 @@
           "Statement": [{
             "Effect"   : "Allow",
             "Action"   : [
-              "cloudformation:Describe*",
-              "cloudformation:List*",
-              "cloudformation:Get*"
+              "cloudforation:Describe*",
+              "cloudforation:List*",
+              "cloudforation:Get*"
               ],
             "Resource" : "*"
           }]
@@ -73,7 +74,7 @@
         "PolicyDocument" : {
           "Statement": [{
             "Effect"   : "Allow",
-            "Action"   : "cloudformation:*",
+            "Action"   : "cloudforation:*",
             "Resource" : "*"
           }]
         },

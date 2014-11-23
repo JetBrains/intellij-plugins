@@ -1,58 +1,121 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
   
-  "Description" : "AWS CloudFormation Sample Template ElasticBeanstalk Node.jsSample: Configure and launch the AWS Elastic Beanstalk sample application. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "AWS CloudFormation Sample Template ElasticBeanstalk_Nodejs_Sample: Configure and launch the AWS Elastic Beanstalk sample application. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
 
   "Parameters" : {
     "KeyName": {
       "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the AWS Elastic Beanstalk instance",
-      "Type": "String",
-      "MinLength": "1",
-      "MaxLength": "255",
-      "AllowedPattern" : "[\\x20-\\x7E]*",
-      "ConstraintDescription" : "can contain only ASCII characters."
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
     }
   },
 
+  "Mappings" : {
+    "Region2Principal" : {
+      "us-east-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "us-west-2"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "us-west-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "eu-west-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-southeast-1" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-northeast-1" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-southeast-2" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "sa-east-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "cn-north-1"     : { "EC2Principal" : "ec2.amazonaws.com.cn", "OpsWorksPrincipal" : "opsworks.amazonaws.com.cn" },
+      "eu-central-1"   : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" }
+    }
+
+  },
+
   "Resources" : {
-    "sampleApplication" : {
+    "WebServerRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties" : {
+        "AssumeRolePolicyDocument" : {
+          "Statement"  : [{
+            "Effect"   : "Allow",
+            "Principal": { "Service": [{ "Fn::FindInMap" : ["Region2Principal", {"Ref" : "AWS::Region"}, "EC2Principal"]}] },
+            "Action"   : [ "sts:AssumeRole" ]
+          } ]
+        },
+        "Path": "/"
+      }
+    },
+
+    "WebServerRolePolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName" : "WebServerRole",
+        "PolicyDocument" : {
+          "Statement"  : [ {
+            "Effect"    : "Allow",
+            "NotAction" : "iam:*",
+            "Resource"  : "*"
+          } ]
+        },
+        "Roles": [ { "Ref": "WebServerRole" } ]
+      }
+    },
+
+    "WebServerInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [ { "Ref": "WebServerRole" } ]
+      }
+    },
+
+    "SampleApplication" : {
       "Type" : "AWS::ElasticBeanstalk::Application",
       "Properties" : {
-        "Description" : "AWS Elastic Beanstalk Sample Node.js Application",
-        "ApplicationVersions" : [{
-          "VersionLabel" : "Initial Version",
-          "Description" : "Version 1.0",
-          "SourceBundle" : {
-            "S3Bucket" : { "Fn::Join" : ["-", ["elasticbeanstalk-samples", { "Ref" : "AWS::Region" }]]},
-            "S3Key" : "nodejs-sample.zip"
-          }
-        }],
-        "ConfigurationTemplates" : [{
-          "TemplateName" : "DefaultConfiguration",
-          "Description" : "Default Configuration Version 1.0 - with SSH access",
-          "SolutionStackName" : "64bit Amazon Linux running Node.js",
-          "OptionSettings" : [{
-            "Namespace" : "aws:autoscaling:launchconfiguration",
-            "OptionName" : "EC2KeyName",
-            "Value" : { "Ref" : "KeyName" }
-          }]
+        "Description" : "AWS Elastic Beanstalk Sample Node.js Application"
+      }
+    },
+
+    "SampleApplicationVersion" : {
+      "Type" : "AWS::ElasticBeanstalk::ApplicationVersion",
+      "Properties" : {
+        "Description" : "Version 1.0",
+        "ApplicationName" : { "Ref" : "SampleApplication" },
+        "SourceBundle" : {
+          "S3Bucket" : { "Fn::Join" : ["-", ["elasticbeanstalk-samples", { "Ref" : "AWS::Region" }]]},
+          "S3Key" : "nodejs-sample.zip"
+        }
+      }
+    },
+
+    "SampleConfigurationTemplate" : {
+      "Type" : "AWS::ElasticBeanstalk::ConfigurationTemplate",
+      "Properties" : {
+        "ApplicationName" : { "Ref" : "SampleApplication" },
+        "Description" : "SSH access to Node.JS Application",
+        "SolutionStackName" : "64bit Amazon Linux 2014.03 v1.0.9 running Node.js",
+        "OptionSettings" : [{
+          "Namespace" : "aws:autoscaling:launchconfiguration",
+          "OptionName" : "EC2KeyName",
+          "Value" : { "Ref" : "KeyName" }
+        },{
+          "Namespace": "aws:autoscaling:launchconfiguration",
+          "OptionName": "IamInstanceProfile",
+          "Value": { "Ref": "WebServerInstanceProfile" }
         }]
       }
     },
-    "sampleEnvironment" : {
+
+    "SampleEnvironment" : {
       "Type" : "AWS::ElasticBeanstalk::Environment",
       "Properties" : {
-        "ApplicationName" : { "Ref" : "sampleApplication" },
-         "Description" :  "AWS Elastic Beanstalk Environment running Sample Node.js Application",
-         "TemplateName" : "DefaultConfiguration",
-         "VersionLabel" : "Initial Version"
+        "Description" :  "AWS Elastic Beanstalk Environment running Sample Node.js Application",
+        "ApplicationName" : { "Ref" : "SampleApplication" },
+        "TemplateName" : { "Ref" : "SampleConfigurationTemplate" },
+        "VersionLabel" : { "Ref" : "SampleApplicationVersion" }
       }
     }
   },
   "Outputs" : {
     "URL" : {
       "Description" : "URL of the AWS Elastic Beanstalk Environment",
-      "Value" : { "Fn::GetAtt" : ["sampleEnvironment", "EndpointURL"] }
+      "Value" :  { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : ["SampleEnvironment", "EndpointURL"] }]]}
     }
   }
 }

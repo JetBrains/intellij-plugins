@@ -1,17 +1,14 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
   
-  "Description" : "AWS CloudFormation Sample Template Rails_Single_Instance: Create a Ruby on Rails stack using a single EC2 instance with a local MySQL database for storage. This template demonstrates using the AWS CloudFormation bootstrap scripts to install the packages and files necessary to deploy the packages and files at instance launch time. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "AWS CloudFormation Sample Template Rails_Single_Instance: Create a Ruby on Rails stack using a single EC2 instance with a local MySQL database for storage. This template demonstrates using the AWS CloudFormation bootstrap scripts to install the packages and files necessary to deploy a Rails application. This example creates a simple hello world application from the template. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
   
   "Parameters" : {
       
     "KeyName": {
       "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
-      "Type": "String",
-      "MinLength": "1",
-      "MaxLength": "255",
-      "AllowedPattern" : "[\\x20-\\x7E]*",
-      "ConstraintDescription" : "can contain only ASCII characters."
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
     },    
 
     "DBName": {
@@ -24,7 +21,7 @@
       "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
     },
 
-    "DBUsername": {
+    "DBUser": {
       "NoEcho": "true",
       "Description" : "Username for MySQL database access",
       "Type": "String",
@@ -58,9 +55,11 @@
       "Description" : "WebServer EC2 instance type",
       "Type" : "String",
       "Default" : "m1.small",
-      "AllowedValues" : [ "t1.micro","m1.small","m1.medium","m1.large","m1.xlarge","m2.xlarge","m2.2xlarge","m2.4xlarge","m3.xlarge","m3.2xlarge","c1.medium","c1.xlarge","cc1.4xlarge","cc2.8xlarge","cg1.4xlarge"],
+      "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+,
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
+
     "SSHLocation" : {
       "Description" : " The IP address range that can be used to SSH to the EC2 instances",
       "Type": "String",
@@ -74,33 +73,57 @@
   
   "Mappings" : {
     "AWSInstanceType2Arch" : {
-      "t1.micro"    : { "Arch" : "64" },
-      "m1.small"    : { "Arch" : "64" },
-      "m1.medium"   : { "Arch" : "64" },
-      "m1.large"    : { "Arch" : "64" },
-      "m1.xlarge"   : { "Arch" : "64" },
-      "m2.xlarge"   : { "Arch" : "64" },
-      "m2.2xlarge"  : { "Arch" : "64" },
-      "m2.4xlarge"  : { "Arch" : "64" },
-      "m3.xlarge"   : { "Arch" : "64" },
-      "m3.2xlarge"  : { "Arch" : "64" },
-      "c1.medium"   : { "Arch" : "64" },
-      "c1.xlarge"   : { "Arch" : "64" },
-      "cc1.4xlarge" : { "Arch" : "64HVM" },
-      "cc2.8xlarge" : { "Arch" : "64HVM" },
-      "cg1.4xlarge" : { "Arch" : "64HVM" }
+      "t1.micro"    : { "Arch" : "PV64"   },
+      "t2.micro"    : { "Arch" : "HVM64"  },
+      "t2.small"    : { "Arch" : "HVM64"  },
+      "t2.medium"   : { "Arch" : "HVM64"  },
+      "m1.small"    : { "Arch" : "PV64"   },
+      "m1.medium"   : { "Arch" : "PV64"   },
+      "m1.large"    : { "Arch" : "PV64"   },
+      "m1.xlarge"   : { "Arch" : "PV64"   },
+      "m2.xlarge"   : { "Arch" : "PV64"   },
+      "m2.2xlarge"  : { "Arch" : "PV64"   },
+      "m2.4xlarge"  : { "Arch" : "PV64"   },
+      "m3.medium"   : { "Arch" : "HVM64"  },
+      "m3.large"    : { "Arch" : "HVM64"  },
+      "m3.xlarge"   : { "Arch" : "HVM64"  },
+      "m3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c1.medium"   : { "Arch" : "PV64"   },
+      "c1.xlarge"   : { "Arch" : "PV64"   },
+      "c3.large"    : { "Arch" : "HVM64"  },
+      "c3.xlarge"   : { "Arch" : "HVM64"  },
+      "c3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c3.4xlarge"  : { "Arch" : "HVM64"  },
+      "c3.8xlarge"  : { "Arch" : "HVM64"  },
+      "g2.2xlarge"  : { "Arch" : "HVMG2"  },
+      "r3.large"    : { "Arch" : "HVM64"  },
+      "r3.xlarge"   : { "Arch" : "HVM64"  },
+      "r3.2xlarge"  : { "Arch" : "HVM64"  },
+      "r3.4xlarge"  : { "Arch" : "HVM64"  },
+      "r3.8xlarge"  : { "Arch" : "HVM64"  },
+      "i2.xlarge"   : { "Arch" : "HVM64"  },
+      "i2.2xlarge"  : { "Arch" : "HVM64"  },
+      "i2.4xlarge"  : { "Arch" : "HVM64"  },
+      "i2.8xlarge"  : { "Arch" : "HVM64"  },
+      "hi1.4xlarge" : { "Arch" : "HVM64"  },
+      "hs1.8xlarge" : { "Arch" : "HVM64"  },
+      "cr1.8xlarge" : { "Arch" : "HVM64"  },
+      "cc2.8xlarge" : { "Arch" : "HVM64"  }
     },
 
     "AWSRegionArch2AMI" : {
-      "us-east-1"      : { "32" : "ami-31814f58", "64" : "ami-1b814f72", "64HVM" : "ami-0da96764" },
-      "us-west-2"      : { "32" : "ami-38fe7308", "64" : "ami-30fe7300", "64HVM" : "NOT_YET_SUPPORTED" },
-      "us-west-1"      : { "32" : "ami-11d68a54", "64" : "ami-1bd68a5e", "64HVM" : "NOT_YET_SUPPORTED" },
-      "eu-west-1"      : { "32" : "ami-973b06e3", "64" : "ami-953b06e1", "64HVM" : "NOT_YET_SUPPORTED" },
-      "ap-southeast-1" : { "32" : "ami-b4b0cae6", "64" : "ami-beb0caec", "64HVM" : "NOT_YET_SUPPORTED" },
-      "ap-southeast-2" : { "32" : "ami-b3990e89", "64" : "ami-bd990e87", "64HVM" : "NOT_YET_SUPPORTED" },
-      "ap-northeast-1" : { "32" : "ami-0644f007", "64" : "ami-0a44f00b", "64HVM" : "NOT_YET_SUPPORTED" },
-      "sa-east-1"      : { "32" : "ami-3e3be423", "64" : "ami-3c3be421", "64HVM" : "NOT_YET_SUPPORTED" }
+      "us-east-1"      : { "PV64" : "ami-50842d38", "HVM64" : "ami-08842d60", "HVMG2" : "ami-3a329952"  },
+      "us-west-2"      : { "PV64" : "ami-af86c69f", "HVM64" : "ami-8786c6b7", "HVMG2" : "ami-47296a77"  },
+      "us-west-1"      : { "PV64" : "ami-c7a8a182", "HVM64" : "ami-cfa8a18a", "HVMG2" : "ami-331b1376"  },
+      "eu-west-1"      : { "PV64" : "ami-aa8f28dd", "HVM64" : "ami-748e2903", "HVMG2" : "ami-00913777"  },
+      "ap-southeast-1" : { "PV64" : "ami-20e1c572", "HVM64" : "ami-d6e1c584", "HVMG2" : "ami-fabe9aa8"  },
+      "ap-northeast-1" : { "PV64" : "ami-21072820", "HVM64" : "ami-35072834", "HVMG2" : "ami-5dd1ff5c"  },
+      "ap-southeast-2" : { "PV64" : "ami-8b4724b1", "HVM64" : "ami-fd4724c7", "HVMG2" : "ami-e98ae9d3"  },
+      "sa-east-1"      : { "PV64" : "ami-9d6cc680", "HVM64" : "ami-956cc688", "HVMG2" : "NOT_SUPPORTED" },
+      "cn-north-1"     : { "PV64" : "ami-a857c591", "HVM64" : "ami-ac57c595", "HVMG2" : "NOT_SUPPORTED" },
+      "eu-central-1"   : { "PV64" : "ami-a03503bd", "HVM64" : "ami-b43503a9", "HVMG2" : "ami-b03503ad"  }
     }
+
   },
     
   "Resources" : {     
@@ -109,36 +132,61 @@
       "Type": "AWS::EC2::Instance",
       "Metadata" : {
         "AWS::CloudFormation::Init" : {
-          "config" : {
+          "configSets" : {
+            "full_install" : [ "install_cfn", "install_mysql", "configure_mysql", "install_application" ]
+          },
+
+          "install_cfn" : {
+            "files" : {
+              "/etc/cfn/cfn-hup.conf" : {
+                "content" : { "Fn::Join" : ["", [
+                  "[main]\n",
+                  "stack=", { "Ref" : "AWS::StackId" }, "\n",
+                  "region=", { "Ref" : "AWS::Region" }, "\n"
+                ]]},
+                "mode"    : "000400",
+                "owner"   : "root",
+                "group"   : "root"
+              },
+
+              "/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
+                "content": { "Fn::Join" : ["", [
+                  "[cfn-auto-reloader-hook]\n",
+                  "triggers=post.update\n",
+                  "path=Resources.WebServer.Metadata.AWS::CloudFormation::Init\n",
+                  "action=/opt/aws/bin/cfn-init -v ",
+                  "         --stack ", { "Ref" : "AWS::StackName" },
+                  "         --resource WebServer ",
+                  "         --configsets full_install ",
+                  "         --region ", { "Ref" : "AWS::Region" }, "\n",
+                  "runas=root\n"
+                ]]}
+              }
+            },
+
+            "services" : {
+              "sysvinit" : {  
+                "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
+                              "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
+              }
+            }
+          },
+
+          "install_mysql" : {
             "packages" : {
               "yum" : {
-                "gcc-c++"      : [],
-                "make"         : [],
-                "ruby-devel"   : [],
-                "rubygems"     : [],
                 "mysql"        : [],
                 "mysql-server" : [],
                 "mysql-devel"  : [],
                 "mysql-libs"   : []
-              },
-
-              "rubygems" : {
-                "rack"         : ["1.3.6"],
-                "execjs"       : [],
-                "therubyracer" : [],
-                "rails"        : ["3.2.14"] 
               }
-            },
-
-            "sources" : {
-              "/home/ec2-user/sample" : "https://s3.amazonaws.com/cloudformation-examples/CloudFormationRailsSample.zip"
             },
 
             "files" : {
               "/tmp/setup.mysql" : {
                 "content" : { "Fn::Join" : ["", [
-                  "CREATE USER '", { "Ref" : "DBUsername" }, "'@'localhost' IDENTIFIED BY '", { "Ref" : "DBPassword" }, "';\n",
-                  "GRANT ALL ON ", { "Ref" : "DBName" }, ".* TO '", { "Ref" : "DBUsername" }, "'@'localhost';\n",
+                  "CREATE USER '", { "Ref" : "DBUser" }, "'@'localhost' IDENTIFIED BY '", { "Ref" : "DBPassword" }, "';\n",
+                  "GRANT ALL ON ", { "Ref" : "DBName" }, ".* TO '", { "Ref" : "DBUser" }, "'@'localhost';\n",
                   "FLUSH PRIVILEGES;\n"
                   ]]},
                 "mode"  : "000644",
@@ -146,7 +194,7 @@
                 "group" : "root"
               },
 
-              "/home/ec2-user/sample/config/database.yml" : {
+              "/tmp/database.yml" : {
                "content" : { "Fn::Join" : ["", [
                   "development:\n",
                   "  adapter: mysql2\n",
@@ -154,22 +202,92 @@
                   "  reconnect: false\n",
                   "  pool: 5\n",
                   "  database: ", { "Ref" : "DBName" }, "\n",
-                  "  username: ", { "Ref" : "DBUsername" }, "\n",
+                  "  username: ", { "Ref" : "DBUser" }, "\n",
                   "  password: ", { "Ref" : "DBPassword" }, "\n",
                   "  socket: /var/lib/mysql/mysql.sock\n"
                   ]]},
                 "mode"  : "000644",
-                "owner" : "root",
-                "group" : "root"
+                "owner" : "ec2-user",
+                "group" : "ec2-user"
               }
             },
 
             "services" : {
               "sysvinit" : {  
-                "mysqld" : {
-                  "enabled"       : "true",
-                  "ensureRunning" : "true"                
-                }
+                "mysqld" : { "enabled" : "true", "ensureRunning" : "true" }
+              }
+            }
+          },
+
+          "configure_mysql" : {
+            "commands" : {
+              "01_set_mysql_root_password" : {
+                "command" : { "Fn::Join" : ["", ["mysqladmin -u root password '", { "Ref" : "DBRootPassword" }, "'"]]},
+                "test" : { "Fn::Join" : ["", ["$(mysql ", { "Ref" : "DBName" }, " -u root --password='", { "Ref" : "DBRootPassword" }, "' >/dev/null 2>&1 </dev/null); (( $? != 0 ))"]]}
+              },
+              "02_create_database" : {
+                "command" : { "Fn::Join" : ["", ["mysql -u root --password='", { "Ref" : "DBRootPassword" }, "' < /tmp/setup.mysql"]]},
+                "test" : { "Fn::Join" : ["", ["$(mysql ", { "Ref" : "DBName" }, " -u root --password='", { "Ref" : "DBRootPassword" }, "' >/dev/null 2>&1 </dev/null); (( $? != 0 ))"]]}
+              }
+            }
+          },
+
+          "install_application" : {
+            "packages" : {
+              "yum" : {
+                "gcc-c++"            : [],
+                "make"               : [],
+                "ruby-devel"         : [],
+                "rubygems"           : [],
+                "rubygem-io-console" : []
+              },
+
+              "rubygems" : {
+                "rails"        : []
+              }
+            },
+
+            "files" : {
+              "/tmp/install_application" : {
+                "content" : { "Fn::Join" : ["", [
+                  "#!/bin/bash -e\n",
+                  "export PATH=$PATH:/usr/local/bin\n",
+                  "cd /home/ec2-user\n",
+
+                  "# Kill the rails server if it is running to allow update\n",
+                  "if pgrep ruby &> /dev/null ; then pkill -TERM ruby ; fi\n",
+
+                  "# This sample template creates a new application inline\n",
+                  "# Typically you would use files and/or sources to download\n",
+                  "# your application package and perform any configuration here.\n",
+
+                  "# Create a new application\n",
+                  "rails new sample -d mysql --skip-spring --force\n",
+                  "cd /home/ec2-user/sample\n",
+
+                  "# Add the JavaScript runtime to the Gemfile\n",
+                  "echo gem \\'therubyracer\\' >> Gemfile\n",
+                  "bundle install\n",
+
+                  "# Create a sample scoffold\n",
+                  "rails generate scaffold Notes title:string body:text --force\n",
+
+                  "# Configure the database connection\n",
+                  "mv /tmp/database.yml config\n",
+                  "rake db:create db:migrate\n",
+
+                  "# Startup the application\n",
+                  "rails server -d\n"
+                ]]},
+                "mode"  : "000555",
+                "owner" : "ec2-user",
+                "group" : "ec2-user"
+              }
+            },
+
+            "commands" : {
+              "install_application" : {
+                "command" : "su ec2-user -c /tmp/install_application > /var/log/install_application.log 2>&1"
               }
             }
           }
@@ -179,59 +297,32 @@
         "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
                           { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
         "InstanceType"   : { "Ref" : "InstanceType" },
-        "SecurityGroups" : [ {"Ref" : "FrontendGroup"} ],
+        "SecurityGroups" : [ {"Ref" : "WebServerSecurityGroup"} ],
         "KeyName"        : { "Ref" : "KeyName" },
         "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
-          "#!/bin/bash -v\n",
+          "#!/bin/bash -xe\n",
           "yum update -y aws-cfn-bootstrap\n",
 
-          "# Helper function\n",
-          "function error_exit\n",
-          "{\n",
-          "  /opt/aws/bin/cfn-signal -e 1 -r \"$1\" '", { "Ref" : "WaitHandle" }, "'\n",
-          "  exit 1\n",
-          "}\n",
+          "/opt/aws/bin/cfn-init -v ",
+          "         --stack ", { "Ref" : "AWS::StackId" },
+          "         --resource WebServer ",
+          "         --configsets full_install ",
+          "         --region ", { "Ref" : "AWS::Region" }, "\n",
 
-          "# Install Rails packages\n",
-          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r WebServer ",
-          "    --region ", { "Ref" : "AWS::Region" }, " || error_exit 'Failed to run cfn-init'\n",
-
-          "# Setup MySQL root password and create a user\n",
-          "mysqladmin -u root password '", { "Ref" : "DBRootPassword" }, "' || error_exit 'Failed to initialize root password'\n",
-          "mysql -u root --password='", { "Ref" : "DBRootPassword" }, "' < /tmp/setup.mysql || error_exit 'Failed to create database user'\n",
-
-          "# Install any other Gems, create the database and run a migration\n",
-          "cd /home/ec2-user/sample\n",
-          "export PATH=$PATH:/usr/local/bin\n",
-          "bundle install  || error_exit 'Failed to install bundle'\n",
-          "rake db:create  || error_exit 'Failed to create database'\n",
-          "rake db:migrate || error_exit 'Failed to execute database migration'\n",
-
-          "# Startup the rails server\n",
-          "rails server -d\n", 
-          "echo \"cd /home/ec2-user/sample\" >> /etc/rc.local\n",  
-          "echo \"rails server -d\" >> /etc/rc.local\n",  
-
-          "# All is well so signal success\n",
-          "/opt/aws/bin/cfn-signal -e 0 -r \"Rails application setup complete\" '", { "Ref" : "WaitHandle" }, "'\n"
+          "/opt/aws/bin/cfn-signal -e $? ",
+          "         --stack ", { "Ref" : "AWS::StackId" },
+          "         --resource WebServer ",
+          "         --region ", { "Ref" : "AWS::Region" }, "\n"
         ]]}}        
-      }
-    },
-
-    "WaitHandle" : {
-      "Type" : "AWS::CloudFormation::WaitConditionHandle"
-    },
-
-    "WaitCondition" : {
-      "Type" : "AWS::CloudFormation::WaitCondition",
-      "DependsOn" : "WebServer",
-      "Properties" : {
-        "Handle" : {"Ref" : "WaitHandle"},
-        "Timeout" : "1500"
+      },
+      "CreationPolicy" : {
+        "ResourceSignal" : {
+          "Timeout" : "PT30M"
+        }
       }
     },
     
-    "FrontendGroup" : {
+    "WebServerSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "Enable HTTP access via port 3000 plus SSH access",
@@ -245,7 +336,7 @@
   
   "Outputs" : {
     "WebsiteURL" : {
-      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServer", "PublicDnsName" ]}, ":3000" ]] },
+      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServer", "PublicDnsName" ]}, ":3000/notes" ]] },
       "Description" : "URL for newly created Rails application"
     }
   }

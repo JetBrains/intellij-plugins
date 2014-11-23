@@ -7,15 +7,12 @@
 
     "KeyName": {
       "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
-      "Type": "String",
-      "MinLength": "1",
-      "MaxLength": "255",
-      "AllowedPattern" : "[\\x20-\\x7E]*",
-      "ConstraintDescription" : "can contain only ASCII characters."
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
     },
 
     "DBName": {
-      "Default": "MyDatabase",
+      "Default": "myDatabase",
       "Description" : "MySQL database name",
       "Type": "String",
       "MinLength": "1",
@@ -24,7 +21,7 @@
       "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
     },
 
-    "DBUsername": {
+    "DBUser": {
       "NoEcho": "true",
       "Description" : "Username for MySQL database access",
       "Type": "String",
@@ -54,16 +51,17 @@
     },
 
     "DBInstanceClass": {
-      "Default": "db.m1.small",
       "Description" : "The database instance type",
       "Type": "String",
-      "AllowedValues" : [ "db.m1.small", "db.m1.large", "db.m1.xlarge", "db.m2.xlarge", "db.m2.2xlarge", "db.m2.4xlarge" ],
+      "Default": "db.m1.small",
+      "AllowedValues" : [ "db.t1.micro", "db.m1.small", "db.m1.medium", "db.m1.large", "db.m1.xlarge", "db.m2.xlarge", "db.m2.2xlarge", "db.m2.4xlarge", "db.m3.medium", "db.m3.large", "db.m3.xlarge", "db.m3.2xlarge", "db.r3.large", "db.r3.xlarge", "db.r3.2xlarge", "db.r3.4xlarge", "db.r3.8xlarge", "db.m2.xlarge", "db.m2.2xlarge", "db.m2.4xlarge", "db.cr1.8xlarge"]
+,
       "ConstraintDescription" : "must select a valid database instance type."
     },
 
     "MultiAZDatabase": {
       "Default": "true",
-      "Description" : "Create a multi-AZ MySQL Amazon RDS database instance",
+      "Description" : "Create a Multi-AZ MySQL Amazon RDS database instance",
       "Type": "String",
       "AllowedValues" : [ "true", "false" ],
       "ConstraintDescription" : "must be either true or false."
@@ -71,7 +69,7 @@
 
     "WebServerCapacity": {
       "Default": "2",
-      "Description" : "The initial number of WebServer instances",
+      "Description" : "The initial nuber of WebServer instances",
       "Type": "Number",
       "MinValue": "1",
       "MaxValue": "5",
@@ -82,7 +80,8 @@
       "Description" : "WebServer EC2 instance type",
       "Type" : "String",
       "Default" : "m1.small",
-      "AllowedValues" : [ "t1.micro","m1.small","m1.medium","m1.large","m1.xlarge","m2.xlarge","m2.2xlarge","m2.4xlarge","m3.xlarge","m3.2xlarge","c1.medium","c1.xlarge","cc1.4xlarge","cc2.8xlarge","cg1.4xlarge"],
+      "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+,
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
     "SSHLocation" : {
@@ -98,43 +97,71 @@
 
   "Mappings" : {
     "AWSInstanceType2Arch" : {
-      "t1.micro"    : { "Arch" : "64" },
-      "m1.small"    : { "Arch" : "64" },
-      "m1.medium"   : { "Arch" : "64" },
-      "m1.large"    : { "Arch" : "64" },
-      "m1.xlarge"   : { "Arch" : "64" },
-      "m2.xlarge"   : { "Arch" : "64" },
-      "m2.2xlarge"  : { "Arch" : "64" },
-      "m2.4xlarge"  : { "Arch" : "64" },
-      "m3.xlarge"   : { "Arch" : "64" },
-      "m3.2xlarge"  : { "Arch" : "64" },
-      "c1.medium"   : { "Arch" : "64" },
-      "c1.xlarge"   : { "Arch" : "64" },
-      "cc1.4xlarge" : { "Arch" : "64HVM" },
-      "cc2.8xlarge" : { "Arch" : "64HVM" },
-      "cg1.4xlarge" : { "Arch" : "64HVM" }
+      "t1.micro"    : { "Arch" : "PV64"   },
+      "t2.micro"    : { "Arch" : "HVM64"  },
+      "t2.small"    : { "Arch" : "HVM64"  },
+      "t2.medium"   : { "Arch" : "HVM64"  },
+      "m1.small"    : { "Arch" : "PV64"   },
+      "m1.medium"   : { "Arch" : "PV64"   },
+      "m1.large"    : { "Arch" : "PV64"   },
+      "m1.xlarge"   : { "Arch" : "PV64"   },
+      "m2.xlarge"   : { "Arch" : "PV64"   },
+      "m2.2xlarge"  : { "Arch" : "PV64"   },
+      "m2.4xlarge"  : { "Arch" : "PV64"   },
+      "m3.medium"   : { "Arch" : "HVM64"  },
+      "m3.large"    : { "Arch" : "HVM64"  },
+      "m3.xlarge"   : { "Arch" : "HVM64"  },
+      "m3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c1.medium"   : { "Arch" : "PV64"   },
+      "c1.xlarge"   : { "Arch" : "PV64"   },
+      "c3.large"    : { "Arch" : "HVM64"  },
+      "c3.xlarge"   : { "Arch" : "HVM64"  },
+      "c3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c3.4xlarge"  : { "Arch" : "HVM64"  },
+      "c3.8xlarge"  : { "Arch" : "HVM64"  },
+      "g2.2xlarge"  : { "Arch" : "HVMG2"  },
+      "r3.large"    : { "Arch" : "HVM64"  },
+      "r3.xlarge"   : { "Arch" : "HVM64"  },
+      "r3.2xlarge"  : { "Arch" : "HVM64"  },
+      "r3.4xlarge"  : { "Arch" : "HVM64"  },
+      "r3.8xlarge"  : { "Arch" : "HVM64"  },
+      "i2.xlarge"   : { "Arch" : "HVM64"  },
+      "i2.2xlarge"  : { "Arch" : "HVM64"  },
+      "i2.4xlarge"  : { "Arch" : "HVM64"  },
+      "i2.8xlarge"  : { "Arch" : "HVM64"  },
+      "hi1.4xlarge" : { "Arch" : "HVM64"  },
+      "hs1.8xlarge" : { "Arch" : "HVM64"  },
+      "cr1.8xlarge" : { "Arch" : "HVM64"  },
+      "cc2.8xlarge" : { "Arch" : "HVM64"  }
     },
 
     "AWSRegionArch2AMI" : {
-      "us-east-1"      : { "32" : "ami-31814f58", "64" : "ami-1b814f72", "64HVM" : "ami-0da96764" },
-      "us-west-2"      : { "32" : "ami-38fe7308", "64" : "ami-30fe7300", "64HVM" : "NOT_YET_SUPPORTED" },
-      "us-west-1"      : { "32" : "ami-11d68a54", "64" : "ami-1bd68a5e", "64HVM" : "NOT_YET_SUPPORTED" },
-      "eu-west-1"      : { "32" : "ami-973b06e3", "64" : "ami-953b06e1", "64HVM" : "NOT_YET_SUPPORTED" },
-      "ap-southeast-1" : { "32" : "ami-b4b0cae6", "64" : "ami-beb0caec", "64HVM" : "NOT_YET_SUPPORTED" },
-      "ap-southeast-2" : { "32" : "ami-b3990e89", "64" : "ami-bd990e87", "64HVM" : "NOT_YET_SUPPORTED" },
-      "ap-northeast-1" : { "32" : "ami-0644f007", "64" : "ami-0a44f00b", "64HVM" : "NOT_YET_SUPPORTED" },
-      "sa-east-1"      : { "32" : "ami-3e3be423", "64" : "ami-3c3be421", "64HVM" : "NOT_YET_SUPPORTED" }
+      "us-east-1"      : { "PV64" : "ami-50842d38", "HVM64" : "ami-08842d60", "HVMG2" : "ami-3a329952"  },
+      "us-west-2"      : { "PV64" : "ami-af86c69f", "HVM64" : "ami-8786c6b7", "HVMG2" : "ami-47296a77"  },
+      "us-west-1"      : { "PV64" : "ami-c7a8a182", "HVM64" : "ami-cfa8a18a", "HVMG2" : "ami-331b1376"  },
+      "eu-west-1"      : { "PV64" : "ami-aa8f28dd", "HVM64" : "ami-748e2903", "HVMG2" : "ami-00913777"  },
+      "ap-southeast-1" : { "PV64" : "ami-20e1c572", "HVM64" : "ami-d6e1c584", "HVMG2" : "ami-fabe9aa8"  },
+      "ap-northeast-1" : { "PV64" : "ami-21072820", "HVM64" : "ami-35072834", "HVMG2" : "ami-5dd1ff5c"  },
+      "ap-southeast-2" : { "PV64" : "ami-8b4724b1", "HVM64" : "ami-fd4724c7", "HVMG2" : "ami-e98ae9d3"  },
+      "sa-east-1"      : { "PV64" : "ami-9d6cc680", "HVM64" : "ami-956cc688", "HVMG2" : "NOT_SUPPORTED" },
+      "cn-north-1"     : { "PV64" : "ami-a857c591", "HVM64" : "ami-ac57c595", "HVMG2" : "NOT_SUPPORTED" },
+      "eu-central-1"   : { "PV64" : "ami-a03503bd", "HVM64" : "ami-b43503a9", "HVMG2" : "ami-b03503ad"  }
     }
+
+  },
+
+  "Conditions" : {
+    "Is-EC2-VPC"     : { "Fn::Or" : [ {"Fn::Equals" : [{"Ref" : "AWS::Region"}, "eu-central-1" ]},
+                                      {"Fn::Equals" : [{"Ref" : "AWS::Region"}, "cn-north-1" ]}]},
+    "Is-EC2-Classic" : { "Fn::Not" : [{ "Condition" : "Is-EC2-VPC"}]}
   },
 
   "Resources" : {
 
     "ElasticLoadBalancer" : {
       "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
-      "Metadata" : {
-        "Comment" : "Configure the Load Balancer with a simple health check and cookie-based stickiness"
-      },
       "Properties" : {
+        "CrossZone" : "true",
         "AvailabilityZones" : { "Fn::GetAZs" : "" },
         "LBCookieStickinessPolicy" : [ {
           "PolicyName" : "CookieBasedPolicy",
@@ -165,6 +192,20 @@
         "MaxSize" : "5",
         "DesiredCapacity" : { "Ref" : "WebServerCapacity" },
         "LoadBalancerNames" : [ { "Ref" : "ElasticLoadBalancer" } ]
+      },
+      "CreationPolicy" : {
+        "ResourceSignal" : {
+          "Timeout" : "PT5M",
+          "Count"   : { "Ref" : "WebServerCapacity" }
+        }
+      },
+      "UpdatePolicy": {
+        "AutoScalingRollingUpdate": {
+          "MinInstancesInService": "1",
+          "MaxBatchSize": "1",
+          "PauseTime" : "PT15M",
+          "WaitOnResourceSignals": "true"
+        }
       }
     },
 
@@ -178,22 +219,107 @@
           "config" : {
             "packages" : {
               "yum" : {
-                "httpd"        : [],
-                "php"          : [],
-                "php-mysql"    : []
+                "httpd"     : [],
+                "php"       : [],
+                "php-mysql" : []
               }
             },
 
-            "sources" : {
-              "/var/www/html" : "https://s3.amazonaws.com/cloudformation-examples/CloudFormationPHPSample.zip"
+            "files" : {
+              "/var/www/html/index.php" : {
+                "content" : { "Fn::Join" : [ "", [
+                  "<html>\n",
+                  "  <head>\n",
+                  "    <title>AWS CloudFormation PHP Sample</title>\n",
+                  "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\n",
+                  "  </head>\n",
+                  "  <body>\n",
+                  "    <h1>Welcome to the AWS CloudFormation PHP Sample</h1>\n",
+                  "    <p/>\n",
+                  "    <?php\n",
+                  "      // Print out the current data and tie\n",
+                  "      print \"The Current Date and Time is: <br/>\";\n",
+                  "      print date(\"g:i A l, F j Y.\");\n",
+                  "    ?>\n",
+                  "    <p/>\n",
+                  "    <?php\n",
+                  "      // Setup a handle for CURL\n",
+                  "      $curl_handle=curl_init();\n",
+                  "      curl_setopt($curl_handle,CURLOPT_CONNECTTIMEOUT,2);\n",
+                  "      curl_setopt($curl_handle,CURLOPT_RETURNTRANSFER,1);\n",
+                  "      // Get the hostname of the intance from the instance metadata\n",
+                  "      curl_setopt($curl_handle,CURLOPT_URL,'http://169.254.169.254/latest/meta-data/public-hostname');\n",
+                  "      $hostname = curl_exec($curl_handle);\n",
+                  "      if (empty($hostname))\n",
+                  "      {\n",
+                  "        print \"Sorry, for some reason, we got no hostname back <br />\";\n",
+                  "      }\n",
+                  "      else\n",
+                  "      {\n",
+                  "        print \"Server = \" . $hostname . \"<br />\";\n",
+                  "      }\n",
+                  "      // Get the instance-id of the intance from the instance metadata\n",
+                  "      curl_setopt($curl_handle,CURLOPT_URL,'http://169.254.169.254/latest/meta-data/instance-id');\n",
+                  "      $instanceid = curl_exec($curl_handle);\n",
+                  "      if (empty($instanceid))\n",
+                  "      {\n",
+                  "        print \"Sorry, for some reason, we got no instance id back <br />\";\n",
+                  "      }\n",
+                  "      else\n",
+                  "      {\n",
+                  "        print \"EC2 instance-id = \" . $instanceid . \"<br />\";\n",
+                  "      }\n",
+                  "      $Database   = \"", {"Fn::GetAtt" : ["MySQLDatabase", "Endpoint.Address"]}, "\";\n",
+                  "      $DBUser     = \"", {"Ref" : "DBUser"}, "\";\n",
+                  "      $DBPassword = \"", {"Ref" : "DBPassword"}, "\";\n",
+                  "      print \"Database = \" . $Database . \"<br />\";\n",
+                  "      $dbconnection = mysql_connect($Database, $DBUser, $DBPassword)\n",
+                  "                      or die(\"Could not connect: \" . mysql_error());\n",
+                  "      print (\"Connected to $Database successfully\");\n",
+                  "      mysql_close($dbconnection);\n",
+                  "    ?>\n",
+                  "    <h2>PHP Information</h2>\n",
+                  "    <p/>\n",
+                  "    <?php\n",
+                  "      phpinfo();\n",
+                  "    ?>\n",
+                  "  </body>\n",
+                  "</html>\n"
+                ]]},
+                "mode"  : "000600",
+                "owner" : "apache",
+                "group" : "apache"
+              },
+              "/etc/cfn/cfn-hup.conf" : {
+                "content" : { "Fn::Join" : ["", [
+                  "[main]\n",
+                  "stack=", { "Ref" : "AWS::StackId" }, "\n",
+                  "region=", { "Ref" : "AWS::Region" }, "\n"
+                ]]},
+                "mode"    : "000400",
+                "owner"   : "root",
+                "group"   : "root"
+              },
+
+              "/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
+                "content": { "Fn::Join" : ["", [
+                  "[cfn-auto-reloader-hook]\n",
+                  "triggers=post.update\n",
+                  "path=Resources.LaunchConfig.Metadata.AWS::CloudFormation::Init\n",
+                  "action=/opt/aws/bin/cfn-init -v ",
+                  "         --stack ", { "Ref" : "AWS::StackName" },
+                  "         --resource LaunchConfig ",
+                  "         --region ", { "Ref" : "AWS::Region" }, "\n",
+                  "runas=root\n"
+                ]]}
+              }
             },
 
             "services" : {
               "sysvinit" : {
-                "httpd" : {
-                  "enabled"       : "true",
-                  "ensureRunning" : "true"
-                }
+                "httpd" : { "enabled" : "true", "ensureRunning" : "true" },
+                "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
+                              "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
               }
             }
           }
@@ -202,46 +328,25 @@
       "Properties": {
         "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
                           { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
-        "InstanceType"   : { "Ref" : "InstanceType" },
+        "InstanceType" : { "Ref" : "InstanceType" },
         "SecurityGroups" : [ {"Ref" : "WebServerSecurityGroup"} ],
-        "KeyName"        : { "Ref" : "KeyName" },
-        "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
-          "#!/bin/bash -v\n",
-          "yum update -y aws-cfn-bootstrap\n",
+        "KeyName" : { "Ref" : "KeyName" },
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+             "#!/bin/bash -xe\n",
+             "yum update -y aws-cfn-bootstrap\n",
 
-          "# Helper function\n",
-          "function error_exit\n",
-          "{\n",
-          "  /opt/aws/bin/cfn-signal -e 1 -r \"$1\" '", { "Ref" : "WaitHandle" }, "'\n",
-          "  exit 1\n",
-          "}\n",
+             "# Install the files and packages from the metadata\n",
+             "/opt/aws/bin/cfn-init -v ",
+             "         --stack ", { "Ref" : "AWS::StackName" },
+             "         --resource LaunchConfig ",
+             "         --region ", { "Ref" : "AWS::Region" }, "\n",
 
-          "# Install LAMP packages\n",
-          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r LaunchConfig ",
-		  "    --region ", { "Ref" : "AWS::Region" }, " || error_exit 'Failed to run cfn-init'\n",
-
-          "# Configure the PHP application - in this case, fixup the page with the right references to the database\n",
-          "sed -i \"s/REPLACE_WITH_DATABASE/", { "Fn::GetAtt": [ "MySQLDatabase", "Endpoint.Address" ] }, ":", { "Fn::GetAtt": [ "MySQLDatabase", "Endpoint.Port" ] }, "/g\" /var/www/html/index.php\n",
-          "sed -i \"s/REPLACE_WITH_DBUSER/", { "Ref" : "DBUsername" }, "/g\" /var/www/html/index.php\n",
-          "sed -i \"s/REPLACE_WITH_DBPASSWORD/", { "Ref" : "DBPassword" }, "/g\" /var/www/html/index.php\n",
-
-          "# All is well so signal success\n",
-          "/opt/aws/bin/cfn-signal -e 0 -r \"LAMP Stack setup complete\" '", { "Ref" : "WaitHandle" }, "'\n"
+             "# Signal the status from cfn-init\n",
+             "/opt/aws/bin/cfn-signal -e $? ",
+             "         --stack ", { "Ref" : "AWS::StackName" },
+             "         --resource WebServerGroup ",
+             "         --region ", { "Ref" : "AWS::Region" }, "\n"
         ]]}}
-      }
-    },
-
-    "WaitHandle" : {
-      "Type" : "AWS::CloudFormation::WaitConditionHandle"
-    },
-
-    "WaitCondition" : {
-      "Type" : "AWS::CloudFormation::WaitCondition",
-      "DependsOn" : "WebServerGroup",
-      "Properties" : {
-        "Handle"  : {"Ref" : "WaitHandle"},
-        "Timeout" : "300",
-        "Count"   : { "Ref" : "WebServerCapacity" }
       }
     },
 
@@ -256,13 +361,28 @@
       }
     },
 
+    "DBEC2SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Condition" : "Is-EC2-VPC",
+      "Properties" : {
+        "GroupDescription": "Open database for access",
+        "SecurityGroupIngress" : [{
+          "IpProtocol" : "tcp",
+          "FromPort" : "3306", 
+          "ToPort" : "3306",
+          "SourceSecurityGroupName" : { "Ref" : "WebServerSecurityGroup" }
+        }]
+      }
+    },
+
     "DBSecurityGroup": {
       "Type": "AWS::RDS::DBSecurityGroup",
+      "Condition" : "Is-EC2-Classic",
       "Properties": {
-        "GroupDescription": "Grant database access to web server",
         "DBSecurityGroupIngress": {
           "EC2SecurityGroupName": { "Ref": "WebServerSecurityGroup" }
-        }
+        },
+        "GroupDescription": "database access"
       }
     },
 
@@ -272,19 +392,20 @@
         "Engine" : "MySQL",
         "DBName" : { "Ref": "DBName" },
         "MultiAZ" : { "Ref": "MultiAZDatabase" },
-        "MasterUsername": { "Ref": "DBUsername" },
+        "MasterUsername": { "Ref": "DBUser" },
         "MasterUserPassword": { "Ref" : "DBPassword" },
         "DBInstanceClass": { "Ref" : "DBInstanceClass" },
-        "DBSecurityGroups": [ { "Ref": "DBSecurityGroup" } ],
-        "AllocatedStorage": { "Ref" : "DBAllocatedStorage" }
+        "AllocatedStorage": { "Ref" : "DBAllocatedStorage" },
+        "VPCSecurityGroups": { "Fn::If" : [ "Is-EC2-VPC", [ { "Fn::GetAtt": [ "DBEC2SecurityGroup", "GroupId" ] } ], { "Ref" : "AWS::NoValue"}]},
+        "DBSecurityGroups": { "Fn::If" : [ "Is-EC2-Classic", [ { "Ref": "DBSecurityGroup" } ], { "Ref" : "AWS::NoValue"}]}
       }
     }
   },
 
   "Outputs" : {
     "WebsiteURL" : {
-      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "ElasticLoadBalancer", "DNSName" ]}]] },
-      "Description" : "URL for newly created LAMP stack"
+      "Description" : "URL for newly created LAMP stack",
+      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "ElasticLoadBalancer", "DNSName" ]}]] }
     }
   }
 }

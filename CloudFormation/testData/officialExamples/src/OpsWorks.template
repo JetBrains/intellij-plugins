@@ -1,11 +1,27 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
 
-  "Description" : "AWS CloudFormation Sample Template: Launches OpsWorks stack, layer, instances and associated resources to run a PHP application. ** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "AWS CloudFormation Sample Template OpsWorks: Launches OpsWorks stack, layer, instances and associated resources to run a PHP application. ** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Mappings" : {
+    "Region2Principal" : {
+      "us-east-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "us-west-2"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "us-west-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "eu-west-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-southeast-1" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-northeast-1" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-southeast-2" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "sa-east-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "cn-north-1"     : { "EC2Principal" : "ec2.amazonaws.com.cn", "OpsWorksPrincipal" : "opsworks.amazonaws.com.cn" },
+      "eu-central-1"   : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" }
+    }
+
+  },
 
   "Resources": {
 
-    "myStack": {
+    "MyStack": {
       "Type": "AWS::OpsWorks::Stack",
       "Properties": {
         "Name": {
@@ -20,13 +36,11 @@
       }
     },
 
-    "myLayer": {
+    "MyLayer": {
       "Type": "AWS::OpsWorks::Layer",
-      "DependsOn": "myApp",
+      "DependsOn": "MyApp",
       "Properties": {
-        "StackId": {
-          "Ref": "myStack"
-        },
+        "StackId": { "Ref": "MyStack" },
         "Name": "MyPHPApp",
         "Type": "php-app",
         "Shortname": "php-app",
@@ -36,42 +50,20 @@
       }
     },
 
-    "myInstance1": {
+    "MyInstance": {
       "Type": "AWS::OpsWorks::Instance",
       "Properties": {
-        "StackId": {
-          "Ref": "myStack"
-        },
-        "LayerIds": [
-          {
-            "Ref": "myLayer"
-          }
-        ],
-        "InstanceType": "m1.small"
+        "StackId": { "Ref": "MyStack" },
+        "LayerIds": [ { "Ref": "MyLayer" } ],
+        "InstanceType": "m1.small",
+        "RootDeviceType" : "ebs"
       }
     },
 
-    "myInstance2": {
-      "Type": "AWS::OpsWorks::Instance",
-      "Properties": {
-        "StackId": {
-          "Ref": "myStack"
-        },
-        "LayerIds": [
-          {
-            "Ref": "myLayer"
-          }
-        ],
-        "InstanceType": "m1.small"
-      }
-    },
-
-    "myApp": {
+    "MyApp": {
       "Type": "AWS::OpsWorks::App",
       "Properties": {
-        "StackId": {
-          "Ref": "myStack"
-        },
+        "StackId": { "Ref": "MyStack" },
         "Name": "MyPHPApp",
         "Type": "php",
         "AppSource": {
@@ -89,37 +81,22 @@
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "opsworks.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
-            }
-          ]
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": { "Service": [{ "Fn::FindInMap" : ["Region2Principal", {"Ref" : "AWS::Region"}, "OpsWorksPrincipal"]}] },
+            "Action": [ "sts:AssumeRole" ]
+          }]
         },
         "Path": "/",
         "Policies": [
           {
             "PolicyName": "opsworks-service",
             "PolicyDocument": {
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "ec2:*",
-                    "iam:PassRole",
-                    "cloudwatch:GetMetricStatistics",
-                    "elasticloadbalancing:*"
-                  ],
-                  "Resource": "*"
-                }
-              ]
+              "Statement": [{
+                "Effect": "Allow",
+                "Action": [ "ec2:*", "iam:PassRole", "cloudwatch:GetMetricStatistics", "elasticloadbalancing:*" ],
+                "Resource": "*"
+              }]
             }
           }
         ]
@@ -130,19 +107,11 @@
       "Type": "AWS::IAM::Role",
       "Properties": {
         "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "ec2.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
-            }
-          ]
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": { "Service": [{ "Fn::FindInMap" : ["Region2Principal", {"Ref" : "AWS::Region"}, "EC2Principal"]}] },
+            "Action": [ "sts:AssumeRole" ]
+          }]
         },
         "Path": "/"
       }
@@ -152,22 +121,20 @@
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
         "Path": "/",
-        "Roles": [
-          {
-            "Ref": "OpsWorksInstanceRole"
-          }
-        ]
+        "Roles": [ { "Ref": "OpsWorksInstanceRole" } ]
       }
     }
   },
 
   "Outputs" : {
     "StackId" : {
-      "Value" : { "Ref" : "myStack" }
+      "Description" : "Stack Id for the newly created OpsWorks stack",
+      "Value" : { "Ref" : "MyStack" }
     },
 
     "AppId" : {
-      "Value" : { "Ref" : "myApp" }
+      "Description" : "Application Id for the newly created OpsWorks application",
+      "Value" : { "Ref" : "MyApp" }
     }
   }
 }

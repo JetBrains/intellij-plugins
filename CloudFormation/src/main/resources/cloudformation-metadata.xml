@@ -1371,7 +1371,16 @@
           <required>false</required>
         </ResourceProperty>
       </properties>
-      <attributes/>
+      <attributes>
+        <ResourceAttribute>
+          <name>DefaultNetworkAcl</name>
+          <description></description>
+        </ResourceAttribute>
+        <ResourceAttribute>
+          <name>DefaultSecurityGroup</name>
+          <description></description>
+        </ResourceAttribute>
+      </attributes>
     </ResourceType>
     <ResourceType>
       <name>AWS::EC2::VPCDHCPOptionsAssociation</name>
@@ -2103,7 +2112,7 @@
         <ResourceProperty>
           <name>Policies</name>
           <description></description>
-          <type>List of AWS::IAM::Policy types</type>
+          <type>List of IAM Policies</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -2191,7 +2200,7 @@
         <ResourceProperty>
           <name>Policies</name>
           <description></description>
-          <type>A list of IAM policies</type>
+          <type>List of IAM Policies</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -2214,7 +2223,7 @@
         <ResourceProperty>
           <name>Groups</name>
           <description></description>
-          <type>List of Groups</type>
+          <type>A list of strings</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -2226,7 +2235,7 @@
         <ResourceProperty>
           <name>Policies</name>
           <description></description>
-          <type>List of AWS::IAM::Policy types</type>
+          <type>List of IAM Policies</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
@@ -3192,6 +3201,36 @@
       <attributes/>
     </ResourceType>
     <ResourceType>
+      <name>AWS::Route53::HealthCheck</name>
+      <properties>
+        <ResourceProperty>
+          <name>HealthCheckConfig</name>
+          <description></description>
+          <type>Amazon Route 53 HealthCheck Configuration</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
+      <name>AWS::Route53::HostedZone</name>
+      <properties>
+        <ResourceProperty>
+          <name>HostedZoneConfig</name>
+          <description></description>
+          <type>Amazon Route 53 Hosted Zone Configuration Property</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Name</name>
+          <description></description>
+          <type>String</type>
+          <required>true</required>
+        </ResourceProperty>
+      </properties>
+      <attributes/>
+    </ResourceType>
+    <ResourceType>
       <name>AWS::Route53::RecordSet</name>
       <properties>
         <ResourceProperty>
@@ -3202,6 +3241,24 @@
         </ResourceProperty>
         <ResourceProperty>
           <name>Comment</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>Failover</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>GeoLocation</name>
+          <description></description>
+          <type>Amazon Route 53 Record Set GeoLocation Property</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>HealthCheckId</name>
           <description></description>
           <type>String</type>
           <required>false</required>
@@ -3256,7 +3313,7 @@
         <ResourceProperty>
           <name>Weight</name>
           <description></description>
-          <type>Number Weight expects integer values</type>
+          <type>Number. Weight expects integer values</type>
           <required>false</required>
         </ResourceProperty>
       </properties>
