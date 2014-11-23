@@ -57,6 +57,7 @@ project(':metadata-crawler') {
     task collectMetadata(type: JavaExec, dependsOn: classes) {
         main = 'MetadataCrawlerMain'
         workingDir = rootDir
+        systemProperty "file.encoding", "UTF-8"
         classpath sourceSets.main.runtimeClasspath
     }
 }
