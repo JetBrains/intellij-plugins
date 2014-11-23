@@ -4,7 +4,6 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath 'de.undercouch:gradle-download-task:1.0'
     }
 }
 
@@ -13,18 +12,20 @@ plugins {
 }
 
 ext.kotlinVersion = kotlinVersion
-ext.ideaVersion = "13"
 ext.ideaPath = file("$buildDir/download/idea")
+
+// from https://teamcity.jetbrains.com/viewType.html?buildTypeId=bt410
+ext.ideaBuildTypeId = "bt410"
+ext.ideaBuildId = "183846.tcbuildid"
+
 ext.ideaArtifactName = "ideaIC-139.SNAPSHOT.win"
 
 allprojects {
     apply plugin: 'kotlin'
+    apply plugin: 'com.github.jk1.tcdeps'
 
     repositories {
         mavenCentral()
-        teamcityServer {
-            url = 'https://teamcity.jetbrains.com'
-        }
     }
 
     sourceCompatibility = 1.6
@@ -62,6 +63,16 @@ project(':metadata-crawler') {
     }
 }
 
+repositories {
+    ivy {
+        url = "https://teamcity.jetbrains.com/guestAuth/repository/download"
+        layout 'pattern', {
+            artifact '[module]/[revision]/[artifact](.[ext])'
+            ivy '[module]/[revision]/teamcity-ivy.xml'
+        }
+    }
+}
+
 configurations { idea_dep }
 
 dependencies {
@@ -69,7 +80,7 @@ dependencies {
 
     compile fileTree(dir: new File(ideaPath, "lib"), include: '*.jar')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    idea_dep tc("bt410:183846.tcbuildid:${ideaArtifactName}.zip")
+    idea_dep tc("${ideaBuildTypeId}:${ideaBuildId}:${ideaArtifactName}.zip")
 
     testCompile fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar')
 }
