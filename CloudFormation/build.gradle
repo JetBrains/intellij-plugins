@@ -53,6 +53,12 @@ project(':metadata-crawler') {
         compile 'net.htmlparser.jericho:jericho-html:3.3'
         compile 'org.jsoup:jsoup:1.8.1'
     }
+
+    task collectMetadata(type: JavaExec, dependsOn: classes) {
+        main = 'MetadataCrawlerMain'
+        workingDir = rootDir
+        classpath sourceSets.main.runtimeClasspath
+    }
 }
 
 repositories {
