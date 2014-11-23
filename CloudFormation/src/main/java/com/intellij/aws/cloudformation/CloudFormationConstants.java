@@ -16,6 +16,7 @@ public class CloudFormationConstants {
   public static final String ConditionPropertyName = "Condition";
   public static final String TypePropertyName = "Type";
   public static final String PropertiesPropertyName = "Properties";
+  public static final String CreationPolicyPropertyName = "CreationPolicy";
   public static final String DeletionPolicyPropertyName = "DeletionPolicy";
   public static final String DependsOnPropertyName = "DependsOn";
   public static final String MetadataPropertyName = "Metadata";
@@ -26,6 +27,7 @@ public class CloudFormationConstants {
     ConditionPropertyName,
     TypePropertyName,
     PropertiesPropertyName,
+    CreationPolicyPropertyName,
     DeletionPolicyPropertyName,
     DependsOnPropertyName,
     MetadataPropertyName,

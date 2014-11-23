@@ -44,7 +44,7 @@ public class CompletionTests extends LightCodeInsightFixtureTestCase {
   }
 
   public void testResourceTopLevelProperty1() throws Exception {
-    checkBasicCompletion("ResourceTopLevelProperty1.template", "Condition", "DeletionPolicy", "Metadata", "Properties", "UpdatePolicy", "Version");
+    checkBasicCompletion("ResourceTopLevelProperty1.template", "Condition", "CreationPolicy", "DeletionPolicy", "Metadata", "Properties", "UpdatePolicy", "Version");
   }
 
   public void testPrefix1() throws Exception {
