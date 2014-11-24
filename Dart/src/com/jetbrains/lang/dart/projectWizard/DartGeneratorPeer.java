@@ -23,7 +23,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
-import com.intellij.ui.components.JBScrollPane;
+import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.xml.util.XmlStringUtil;
@@ -61,8 +61,6 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   private JBList myTemplatesList;
 
   private JBLabel myErrorLabel; // shown in IntelliJ IDEA only
-  private JBScrollPane myTemplatesListPanel;
-  private AsyncProcessIcon myAsyncProcessIcon;
 
   private ChromeSettings myDartiumSettingsCurrent;
 
@@ -133,13 +131,15 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
   private void startLoadingTemplates() {
     myLoadingPanel.setVisible(true);
-    myLoadingPanel.setPreferredSize(myTemplatesListPanel.getPreferredSize());
+    myLoadingPanel.setPreferredSize(myTemplatesPanel.getPreferredSize());
 
-    myTemplatesListPanel.setVisible(false);
+    myTemplatesPanel.setVisible(false);
 
     myCreateSampleProjectCheckBox.setSelected(false); // until loaded
 
-    myAsyncProcessIcon.resume();
+    final AsyncProcessIcon asyncProcessIcon = new AsyncProcessIcon("Dart project templates loading");
+    myLoadingPanel.add(asyncProcessIcon, new GridConstraints());  // defaults are ok: row = 0, column = 0
+    asyncProcessIcon.resume();
 
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
@@ -147,8 +147,8 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
         DartProjectTemplate.loadTemplatesAsync(mySdkPathTextWithBrowse.getText().trim(), new Consumer<List<DartProjectTemplate>>() {
           @Override
           public void consume(final List<DartProjectTemplate> templates) {
-            myAsyncProcessIcon.suspend();
-            Disposer.dispose(myAsyncProcessIcon);
+            asyncProcessIcon.suspend();
+            Disposer.dispose(asyncProcessIcon);
             onTemplatesLoaded(templates);
           }
         });
@@ -158,7 +158,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
   private void onTemplatesLoaded(final List<DartProjectTemplate> templates) {
     myLoadingPanel.setVisible(false);
-    myTemplatesListPanel.setVisible(true);
+    myTemplatesPanel.setVisible(true);
     myCreateSampleProjectCheckBox.setEnabled(true);
     myTemplatesList.setEnabled(true);
 
@@ -308,9 +308,5 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
         stateListener.stateChanged(validate() == null);
       }
     });
-  }
-
-  private void createUIComponents() {
-    myAsyncProcessIcon= new AsyncProcessIcon("Dart project templates loading");
   }
 }

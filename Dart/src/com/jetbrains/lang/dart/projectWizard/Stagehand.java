@@ -21,9 +21,9 @@ public class Stagehand {
 
   public static class StagehandDescriptor {
     public final String myId;
+    public final String myLabel;
     public final String myDescription;
     public final String myEntrypoint;
-    public final String myLabel;
 
     public StagehandDescriptor(String id, String label, String description, String entrypoint) {
       myId = id;
@@ -106,7 +106,7 @@ public class Stagehand {
 
         result.add(new StagehandDescriptor(
           obj.getString("name"),
-          obj.getString("label"),
+          obj.optString("label"),
           obj.getString("description"),
           obj.optString("entrypoint")));
       }
