@@ -26,7 +26,7 @@ class StagehandTemplate extends DartProjectTemplate {
   }
 
   private static String getLabel(final Stagehand.StagehandDescriptor descriptor) {
-    return descriptor.myLabel != "" ? descriptor.myLabel : prettify(descriptor.myId);
+    return !StringUtil.isEmptyOrSpaces(descriptor.myLabel) ? descriptor.myLabel : prettify(descriptor.myId);
   }
 
   @Override
