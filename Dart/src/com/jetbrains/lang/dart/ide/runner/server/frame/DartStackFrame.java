@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.runner.server.frame;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.XDebuggerUtil;
@@ -34,7 +35,7 @@ public class DartStackFrame extends XStackFrame {
     final VmLocation location = vmCallFrame.getLocation();
     myLocationUrl = location == null ? null : location.getUnescapedUrl();
     if (myLocationUrl != null) {
-      final VirtualFile file = myDebugProcess.getDartUrlResolver().findFileByDartUrl(myLocationUrl);
+      final VirtualFile file = myDebugProcess.findFile(vmCallFrame.getIsolate(), vmCallFrame.getLibraryId(), myLocationUrl);
       final int line = location.getLineNumber(debugProcess.getVmConnection()) - 1;
       mySourcePosition = file == null || line < 0 ? null : XDebuggerUtil.getInstance().createPosition(file, line);
     }
@@ -57,6 +58,10 @@ public class DartStackFrame extends XStackFrame {
   @Override
   public XSourcePosition getSourcePosition() {
     return mySourcePosition;
+  }
+
+  public boolean isInDartSdkPatchFile() {
+    return mySourcePosition != null && (mySourcePosition.getFile() instanceof LightVirtualFile);
   }
 
   @Nullable
@@ -93,14 +98,12 @@ public class DartStackFrame extends XStackFrame {
 
   @Override
   public void customizePresentation(@NotNull ColoredTextContainer component) {
-    final XSourcePosition position = getSourcePosition();
-
     if (myVmCallFrame.getFunctionName() != null) {
       component.append(DebuggerUtils.demangleVmName(myVmCallFrame.getFunctionName()), SimpleTextAttributes.REGULAR_ATTRIBUTES);
     }
 
-    if (position != null) {
-      final String text = " (" + position.getFile().getName() + ":" + (position.getLine() + 1) + ")";
+    if (mySourcePosition != null) {
+      final String text = " (" + mySourcePosition.getFile().getName() + ":" + (mySourcePosition.getLine() + 1) + ")";
       component.append(text, SimpleTextAttributes.GRAY_ATTRIBUTES);
     }
     else if (myLocationUrl != null) {

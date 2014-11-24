@@ -9,7 +9,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.Consumer;
+import com.intellij.util.PathUtil;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.xdebugger.*;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
@@ -21,15 +23,21 @@ import com.jetbrains.lang.dart.ide.runner.server.frame.DartStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmConnection;
 import com.jetbrains.lang.dart.ide.runner.server.google.VmIsolate;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
+import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 public class DartCommandLineDebugProcess extends XDebugProcess {
   public static final Logger LOG = Logger.getInstance(DartCommandLineDebugProcess.class.getName());
+
+  // just a few files, several kBytes each, won't cause OOM
+  private static final Map<String, LightVirtualFile> DART_SDK_PATCH_FILES = new THashMap<String, LightVirtualFile>();
 
   private final @NotNull ExecutionResult myExecutionResult;
   private final @NotNull DartUrlResolver myDartUrlResolver;
@@ -280,5 +288,27 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
         return myVmConnected && !getSession().isStopped();
       }
     }));
+  }
+
+  @Nullable
+  public VirtualFile findFile(@NotNull final VmIsolate isolate, final int libraryId, @NotNull final String url) {
+    final String cacheKey = libraryId + ":" + url;
+    final LightVirtualFile cachedFile = DART_SDK_PATCH_FILES.get(cacheKey);
+    if (cachedFile != null) {
+      return cachedFile;
+    }
+
+    VirtualFile file = myDartUrlResolver.findFileByDartUrl(url);
+
+    if (file == null && libraryId != -1 && url.startsWith(DartUrlResolver.DART_PREFIX)) {
+      final String content = myVmConnection.getScriptSource(isolate, libraryId, url);
+      if (content != null) {
+        file = new LightVirtualFile(PathUtil.getFileName(url), content);
+        ((LightVirtualFile)file).setWritable(false);
+        DART_SDK_PATCH_FILES.put(cacheKey, (LightVirtualFile)file);
+      }
+    }
+
+    return file;
   }
 }
