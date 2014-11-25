@@ -38,23 +38,23 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
 
   private static final String CORDOVA_IOS_LOG_PATH = "/platforms/ios/cordova/console.log";
 
-  private static final Set<String> MAC_SPEC_PLATFORMS = ContainerUtil.newHashSet(PLATFORM_IOS,
-                                                                           PLATFORM_AMAZON_FIREOS,
-                                                                           PLATFORM_ANDROID,
-                                                                           PLATFORM_BLACKBERRY_10,
-                                                                           PLATFORM_FIREFOXOS);
+  private static final Set<String> MAC_SPEC_PLATFORMS = ContainerUtil.immutableSet(PLATFORM_IOS,
+                                                                                   PLATFORM_AMAZON_FIREOS,
+                                                                                   PLATFORM_ANDROID,
+                                                                                   PLATFORM_BLACKBERRY_10,
+                                                                                   PLATFORM_FIREFOXOS);
 
-  private static final Set<String> WIN_SPEC_PLATFORMS = ContainerUtil.newHashSet(PLATFORM_AMAZON_FIREOS,
-                                                                           PLATFORM_ANDROID,
-                                                                           PLATFORM_BLACKBERRY_10,
-                                                                           PLATFORM_FIREFOXOS,
-                                                                           PLATFORM_WP_8,
-                                                                           PLATFORM_WINDOWS_8);
+  private static final Set<String> WIN_SPEC_PLATFORMS = ContainerUtil.immutableSet(PLATFORM_AMAZON_FIREOS,
+                                                                                   PLATFORM_ANDROID,
+                                                                                   PLATFORM_BLACKBERRY_10,
+                                                                                   PLATFORM_FIREFOXOS,
+                                                                                   PLATFORM_WP_8,
+                                                                                   PLATFORM_WINDOWS_8);
 
-  private static final Set<String> LINUX_SPEC_PLATFORMS = ContainerUtil.newHashSet(PLATFORM_AMAZON_FIREOS,
-                                                                             PLATFORM_ANDROID,
-                                                                             PLATFORM_FIREFOXOS,
-                                                                             PLATFORM_UBUNTU);
+  private static final Set<String> LINUX_SPEC_PLATFORMS = ContainerUtil.immutableSet(PLATFORM_AMAZON_FIREOS,
+                                                                                     PLATFORM_ANDROID,
+                                                                                     PLATFORM_FIREFOXOS,
+                                                                                     PLATFORM_UBUNTU);
 
   //public for serializer
   @Nullable
