@@ -14,6 +14,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -24,9 +25,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Set;
 
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.PLATFORM_ANDROID;
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.PLATFORM_IOS;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.*;
 
 /**
  * PhoneGapRunConfiguration.java
@@ -36,6 +37,25 @@ import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGa
 public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
 
   private static final String CORDOVA_IOS_LOG_PATH = "/platforms/ios/cordova/console.log";
+
+  private static final Set<String> MAC_SPEC_PLATFORMS = ContainerUtil.newHashSet(PLATFORM_IOS,
+                                                                           PLATFORM_AMAZON_FIREOS,
+                                                                           PLATFORM_ANDROID,
+                                                                           PLATFORM_BLACKBERRY_10,
+                                                                           PLATFORM_FIREFOXOS);
+
+  private static final Set<String> WIN_SPEC_PLATFORMS = ContainerUtil.newHashSet(PLATFORM_AMAZON_FIREOS,
+                                                                           PLATFORM_ANDROID,
+                                                                           PLATFORM_BLACKBERRY_10,
+                                                                           PLATFORM_FIREFOXOS,
+                                                                           PLATFORM_WP_8,
+                                                                           PLATFORM_WINDOWS_8);
+
+  private static final Set<String> LINUX_SPEC_PLATFORMS = ContainerUtil.newHashSet(PLATFORM_AMAZON_FIREOS,
+                                                                             PLATFORM_ANDROID,
+                                                                             PLATFORM_FIREFOXOS,
+                                                                             PLATFORM_UBUNTU);
+
   //public for serializer
   @Nullable
   public String myExecutable;
@@ -172,12 +192,28 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
       throw new RuntimeConfigurationError("Working directory is missing");
     }
 
+    if (SystemInfo.isMac && !MAC_SPEC_PLATFORMS.contains(myPlatform)) {
+      throwOSWarning();
+    }
+
+    if (SystemInfo.isLinux && !LINUX_SPEC_PLATFORMS.contains(myPlatform)) {
+      throwOSWarning();
+    }
+
+    if (SystemInfo.isWindows && !WIN_SPEC_PLATFORMS.contains(myPlatform)) {
+      throwOSWarning();
+    }
+
     if (myPlatform.equals(PLATFORM_ANDROID)) {
       checkExistsSdkWithWarning(PhoneGapTargets.getAndroidName(), "Cannot detect android SDK in path");
     }
     if (myPlatform.equals(PLATFORM_IOS)) {
       checkExistsSdkWithWarning(PhoneGapTargets.getIosSimName(), "Cannot detect ios-sim in path");
     }
+  }
+
+  public void throwOSWarning() throws RuntimeConfigurationWarning {
+    throw new RuntimeConfigurationWarning("Applications for platform " + myPlatform + " can not be built on this OS");
   }
 
   public PhoneGapCommandLine getCommandLine() {
@@ -235,7 +271,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   @Override
   public final void customizeLogConsole(final LogConsole console) {
     LogFilterModel model = console.getFilterModel();
-    if( model instanceof DefaultLogFilterModel) {
+    if (model instanceof DefaultLogFilterModel) {
       ((DefaultLogFilterModel)model).setCheckStandartFilters(false);
     }
   }
