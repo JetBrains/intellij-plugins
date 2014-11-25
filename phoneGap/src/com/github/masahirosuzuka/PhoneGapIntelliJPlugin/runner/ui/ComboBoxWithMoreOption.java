@@ -60,7 +60,7 @@ public class ComboBoxWithMoreOption extends ComboBox {
     if (!myStartItems.contains(value)) {
       extend();
     }
-    super.setSelectedItem(value);
+    setSelectedItem(value);
   }
 
   private static void addItems(ComboBox box, Collection<String> items) {

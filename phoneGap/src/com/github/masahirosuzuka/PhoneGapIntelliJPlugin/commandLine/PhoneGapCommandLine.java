@@ -33,6 +33,7 @@ public class PhoneGapCommandLine {
   public static final String PLATFORM_CORDOVA = "cordova";
   public static final String PLATFORM_IONIC = "ionic";
   public static final String COMMAND_RUN = "run";
+  public static final String COMMAND_PREPARE = "prepare";
   public static final String COMMAND_EMULATE = "emulate";
   public static final String COMMAND_SERVE = "serve";
   public static final String COMMAND_REMOTE_RUN = "remote run";
@@ -160,7 +161,7 @@ public class PhoneGapCommandLine {
 
   ) throws ExecutionException {
     if (COMMAND_RUN.equals(command)) {
-      return run(platform, target, extraArgs);
+      return executeStandardCommand(platform, target, extraArgs, COMMAND_RUN);
     }
 
     if (COMMAND_EMULATE.equals(command)) {
@@ -177,6 +178,10 @@ public class PhoneGapCommandLine {
 
     if (COMMAND_REMOTE_BUILD.equals(command)) {
       return remoteBuild(platform, extraArgs);
+    }
+
+    if (COMMAND_PREPARE.equals(command)) {
+      return executeStandardCommand(platform, target, extraArgs, COMMAND_PREPARE);
     }
 
     throw new IllegalStateException("Unsupported command");
@@ -206,17 +211,18 @@ public class PhoneGapCommandLine {
     return createProcessHandler(concat(newArrayList(command), parseArgs(extraArg)));
   }
 
-  private OSProcessHandler run(@NotNull String platform,
-                               @Nullable String target,
-                               @Nullable String extraArg) throws ExecutionException {
+  private OSProcessHandler executeStandardCommand(@NotNull String platform,
+                                                  @Nullable String target,
+                                                  @Nullable String extraArg,
+                                                  @NotNull String commandToExecute) throws ExecutionException {
     String[] command;
 
     if (!StringUtil.isEmpty(target)) {
       target = target.trim();
-      command = new String[]{myPath, "run", "--target=" + target, platform};
+      command = new String[]{myPath, commandToExecute, "--target=" + target, platform};
     }
     else {
-      command = new String[]{myPath, "run", platform};
+      command = new String[]{myPath, commandToExecute, platform};
     }
     return createProcessHandler(concat(newArrayList(command), parseArgs(extraArg)));
   }
