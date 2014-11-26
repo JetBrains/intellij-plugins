@@ -189,7 +189,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
       if (varAttributes != null &&
           varAttributes.hasModifier(JSAttributeList.ModifierType.STATIC) &&
           varAttributes.getAccessType() == JSAttributeList.AccessType.PUBLIC &&
-          StringUtil.isQuotedString(text)) {
+          text != null && StringUtil.isQuotedString(text)) {
         return Trinity.create(expressionStatement, ((JSClass)qualifierResolve).getQualifiedName(), initializerToPartialMethodName(text));
       }
     }
