@@ -16,6 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartStructureViewModel extends StructureViewModelBase implements StructureViewModel.ElementInfoProvider {
+
+  private static final Sorter[] SORTERS = new Sorter[]{Sorter.ALPHA_SORTER};
+
   public DartStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
     super(psiFile, editor, new DartStructureViewElement(psiFile));
     // order matters, first elements are compared first when walking up parents in AST:
@@ -38,7 +41,7 @@ public class DartStructureViewModel extends StructureViewModelBase implements St
 
   @NotNull
   public Sorter[] getSorters() {
-    return new Sorter[]{Sorter.ALPHA_SORTER};
+    return SORTERS;
   }
 
   @Override
