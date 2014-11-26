@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PairConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Dumper;
@@ -27,20 +28,22 @@ public class PubspecYamlUtil {
 
   public static final String PUBSPEC_YAML = "pubspec.yaml";
 
-  public static final String NAME = "name";
+  private static final String NAME = "name";
   public static final String DEPENDENCIES = "dependencies";
   public static final String DEV_DEPENDENCIES = "dev_dependencies";
   public static final String PATH = "path";
 
-  public static final String LIB_DIRECTORY_NAME = "lib";
+  public static final String LIB_DIR_NAME = "lib";
 
   private static final Key<Pair<Long, Map<String, Object>>> MOD_STAMP_TO_PUBSPEC_NAME = Key.create("MOD_STAMP_TO_PUBSPEC_NAME");
 
   @Nullable
   public static VirtualFile findPubspecYamlFile(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    VirtualFile parent = contextFile;
-    while ((parent = parent.getParent()) != null && fileIndex.isInContent(parent)) {
+    VirtualFile current = contextFile;
+    VirtualFile parent;
+    while ((parent = current.getParent()) != null && (LIB_DIR_NAME.equals(current.getName()) || fileIndex.isInContent(parent))) {
+      current = parent;
       final VirtualFile file = parent.findChild(PUBSPEC_YAML);
       if (file != null && !file.isDirectory()) return file;
     }
@@ -49,7 +52,48 @@ public class PubspecYamlUtil {
   }
 
   @Nullable
-  static Map<String, Object> getPubspecYamlInfo(final @NotNull VirtualFile pubspecYamlFile) {
+  public static String getDartProjectName(@NotNull final VirtualFile pubspecYamlFile) {
+    final Map<String, Object> yamlInfo = getPubspecYamlInfo(pubspecYamlFile);
+    final Object name = yamlInfo == null ? null : yamlInfo.get(NAME);
+    return name instanceof String ? (String)name : null;
+  }
+
+  public static void processPathPackages(@NotNull final VirtualFile pubspecYamlFile,
+                                         @NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndDirConsumer) {
+    final VirtualFile baseDir = pubspecYamlFile.getParent();
+    final Map<String, Object> yamlInfo = getPubspecYamlInfo(pubspecYamlFile);
+    if (baseDir == null || yamlInfo == null) return;
+
+    processYamlDeps(pathPackageNameAndDirConsumer, baseDir, yamlInfo.get(DEPENDENCIES));
+    processYamlDeps(pathPackageNameAndDirConsumer, baseDir, yamlInfo.get(DEV_DEPENDENCIES));
+  }
+
+  // Path packages: https://www.dartlang.org/tools/pub/dependencies.html#path-packages
+  private static void processYamlDeps(@NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndRelPathConsumer,
+                                      @NotNull final VirtualFile baseDir,
+                                      @Nullable final Object yamlDep) {
+    // see com.google.dart.tools.core.pub.PubspecModel#processDependencies
+    if (!(yamlDep instanceof Map)) return;
+
+    //noinspection unchecked
+    for (Map.Entry<String, Object> packageEntry : ((Map<String, Object>)yamlDep).entrySet()) {
+      final String packageName = packageEntry.getKey();
+
+      final Object packageEntryValue = packageEntry.getValue();
+      if (packageEntryValue instanceof Map) {
+        final Object pathObj = ((Map)packageEntryValue).get(PATH);
+        if (pathObj instanceof String) {
+          final VirtualFile packageFolder = VfsUtilCore.findRelativeFile(pathObj + "/" + LIB_DIR_NAME, baseDir);
+          if (packageFolder != null && packageFolder.isDirectory()) {
+            pathPackageNameAndRelPathConsumer.consume(packageName, packageFolder);
+          }
+        }
+      }
+    }
+  }
+
+  @Nullable
+  private static Map<String, Object> getPubspecYamlInfo(final @NotNull VirtualFile pubspecYamlFile) {
     // do not use Yaml plugin here - IntelliJ IDEA Community Edition doesn't contain it.
     Pair<Long, Map<String, Object>> data = pubspecYamlFile.getUserData(MOD_STAMP_TO_PUBSPEC_NAME);
 
