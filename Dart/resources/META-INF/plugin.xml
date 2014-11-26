@@ -6,6 +6,7 @@
   <idea-version since-build="140.1" until-build="140.*"/>
   <depends>com.intellij.modules.xml</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
+  <depends optional="true" config-file="dart-yaml.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
 
   <!-- Uncomment the following lines when running Dart tests for the 'Dart-plugin' project. Do not commit these lines uncommented! -->

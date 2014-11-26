@@ -27,8 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 
-import static com.jetbrains.lang.dart.util.PubspecYamlUtil.*;
-
 class DartUrlResolverImpl extends DartUrlResolver {
 
   private final @NotNull Project myProject;
@@ -218,7 +216,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
       return null;
     }
 
-    final VirtualFile pubspecYamlFile = findPubspecYamlFile(myProject, contextFile);
+    final VirtualFile pubspecYamlFile = PubspecYamlUtil.findPubspecYamlFile(myProject, contextFile);
     final VirtualFile parentFolder = pubspecYamlFile == null ? null : pubspecYamlFile.getParent();
     final VirtualFile packagesFolder = parentFolder == null ? null : parentFolder.findChild(PACKAGES_FOLDER_NAME);
     if (packagesFolder != null && packagesFolder.isDirectory()) {
@@ -229,53 +227,26 @@ class DartUrlResolverImpl extends DartUrlResolver {
   }
 
   private void initLivePackageNameToDirMap() {
-    if (myPubspecYamlFile == null) return;
+    final VirtualFile baseDir = myPubspecYamlFile == null ? null : myPubspecYamlFile.getParent();
+    if (myPubspecYamlFile == null || baseDir == null) return;
 
-    final VirtualFile baseDir = myPubspecYamlFile.getParent();
-    final Map<String, Object> yamlInfo = getPubspecYamlInfo(myPubspecYamlFile);
-    if (baseDir != null && yamlInfo != null) {
-      fillLivePackageNameToDirMap(myProject, myLivePackageNameToDirMap, baseDir, yamlInfo);
-    }
-  }
+    final String name = PubspecYamlUtil.getDartProjectName(myPubspecYamlFile);
+    final VirtualFile libFolder = baseDir.findChild(PubspecYamlUtil.LIB_DIR_NAME);
 
-  private static void fillLivePackageNameToDirMap(final @NotNull Project project,
-                                                  final @NotNull Map<String, VirtualFile> packageNameToDirMap,
-                                                  final @NotNull VirtualFile baseDir,
-                                                  final @NotNull Map<String, Object> yamlInfo) {
-    final Object name = yamlInfo.get(NAME);
-    final VirtualFile libFolder = baseDir.findChild(LIB_DIRECTORY_NAME);
-    if (name instanceof String && libFolder != null && libFolder.isDirectory()) {
-      packageNameToDirMap.put((String)name, libFolder);
+    if (name != null && libFolder != null && libFolder.isDirectory()) {
+      myLivePackageNameToDirMap.put(name, libFolder);
     }
 
-    addPathPackagesToMap(project, packageNameToDirMap, yamlInfo.get(DEPENDENCIES), baseDir);
-    addPathPackagesToMap(project, packageNameToDirMap, yamlInfo.get(DEV_DEPENDENCIES), baseDir);
-  }
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
 
-  // Path packages: https://www.dartlang.org/tools/pub/dependencies.html#path-packages
-  private static void addPathPackagesToMap(final @NotNull Project project,
-                                           final @NotNull Map<String, VirtualFile> packageNameToDirMap,
-                                           final @Nullable Object yamlDep,
-                                           final @NotNull VirtualFile baseDir) {
-    // see com.google.dart.tools.core.pub.PubspecModel#processDependencies
-    if (!(yamlDep instanceof Map)) return;
-
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    //noinspection unchecked
-    for (Map.Entry<String, Object> packageEntry : ((Map<String, Object>)yamlDep).entrySet()) {
-      final String packageName = packageEntry.getKey();
-
-      final Object packageEntryValue = packageEntry.getValue();
-      if (packageEntryValue instanceof Map) {
-        final Object pathObj = ((Map)packageEntryValue).get(PATH);
-        if (pathObj instanceof String) {
-          final VirtualFile packageFolder = VfsUtilCore.findRelativeFile(pathObj + "/" + LIB_DIRECTORY_NAME, baseDir);
-          if (packageFolder != null && packageFolder.isDirectory() && fileIndex.isInContent(packageFolder)) {
-            packageNameToDirMap.put(packageName, packageFolder);
-          }
+    PubspecYamlUtil.processPathPackages(myPubspecYamlFile, new PairConsumer<String, VirtualFile>() {
+      @Override
+      public void consume(@NotNull final String packageName, @NotNull final VirtualFile packageDir) {
+        if (fileIndex.isInContent(packageDir)) {
+          myLivePackageNameToDirMap.put(packageName, packageDir);
         }
       }
-    }
+    });
   }
 
   private void initPubListPackageDirsMap(final @NotNull VirtualFile contextFile) {

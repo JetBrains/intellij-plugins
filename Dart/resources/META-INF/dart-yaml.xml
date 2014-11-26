@@ -1,0 +1,7 @@
+<idea-plugin version="2">
+  <extensions defaultExtensionNs="com.intellij">
+    <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="path.package.not.in.project.inspection.name"
+                     groupName="Dart" enabledByDefault="true" level="WARNING" language="yaml"
+                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartPathPackageNotInProjectInspection"/>
+  </extensions>
+</idea-plugin>
