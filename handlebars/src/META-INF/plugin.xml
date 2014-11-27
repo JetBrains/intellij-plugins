@@ -41,6 +41,8 @@
     <iconProvider implementation="com.dmarcotte.handlebars.file.HbIconProvider"/>
     <lang.substitutor language="HTML" implementationClass="com.dmarcotte.handlebars.file.HbLanguageSubstitutor"/>
 
+    <liveTemplateContext implementation="com.dmarcotte.handlebars.editor.templates.HbTemplateContextType"/>
+    <defaultLiveTemplatesProvider implementation="com.dmarcotte.handlebars.editor.templates.HbsLiveTemplatesProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
