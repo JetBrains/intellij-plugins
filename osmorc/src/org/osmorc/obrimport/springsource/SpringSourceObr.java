@@ -29,6 +29,7 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.io.StreamUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.util.io.UrlConnectionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.obrimport.MavenRepository;
@@ -72,7 +73,7 @@ public class SpringSourceObr implements Obr {
       // http://www.springsource.com/repository/app/bundle/version/detail?name=com.springsource.org.apache.log4j&version=1.2.15&searchType=bundlesByName&searchQuery=log4j
       String url = "http://www.springsource.com/repository/app/search?query=" + URLEncoder.encode(queryString, "utf-8");
       InputStream is = getInputStream(url, progressIndicator);
-      String contents = StreamUtil.readText(is, "utf-8");
+      String contents = StreamUtil.readText(is, CharsetToolkit.UTF8_CHARSET);
 
       progressIndicator.setText("Search completed. Getting results.");
       progressIndicator.checkCanceled();
@@ -104,7 +105,7 @@ public class SpringSourceObr implements Obr {
         // read the detail page.
         // the detail url always starts with a / so we can just concatenate it
         is = getInputStream("http://www.springsource.com" + detailUrl, progressIndicator);
-        String detail = StreamUtil.readText(is, "utf-8");
+        String detail = StreamUtil.readText(is, CharsetToolkit.UTF8_CHARSET);
         is.close();
         progressIndicator.checkCanceled();
 

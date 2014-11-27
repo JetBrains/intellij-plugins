@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.server;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.util.Consumer;
 import com.intellij.webcore.util.JsonUtil;
 
@@ -93,7 +94,7 @@ public class JstdServerUtils {
 
   private static String readAsString(URLConnection connection) throws IOException {
     InputStream inputStream = connection.getInputStream();
-    Reader reader = new InputStreamReader(inputStream, "UTF-8");
+    Reader reader = new InputStreamReader(inputStream, CharsetToolkit.UTF8_CHARSET);
     try {
       StringBuilder sb = new StringBuilder();
       {

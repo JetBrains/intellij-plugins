@@ -25,6 +25,7 @@
 package org.jetbrains.osgi.jps.model;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
@@ -108,7 +109,7 @@ public class LibraryBundlificationRule {
   public Map<String, String> getAdditionalPropertiesMap() {
     try {
       Properties p = new Properties();
-      p.load(new ByteArrayInputStream(myAdditionalProperties.getBytes("UTF-8")));
+      p.load(new ByteArrayInputStream(myAdditionalProperties.getBytes(CharsetToolkit.UTF8_CHARSET)));
 
       Map<String, String> result = ContainerUtil.newHashMap();
       for (Map.Entry<Object, Object> entry : p.entrySet()) {
@@ -142,7 +143,7 @@ public class LibraryBundlificationRule {
 
     if (!StringUtil.isEmptyOrSpaces(myAdditionalProperties)) {
       try {
-        new Properties().load(new ByteArrayInputStream(myAdditionalProperties.getBytes("UTF-8")));
+        new Properties().load(new ByteArrayInputStream(myAdditionalProperties.getBytes(CharsetToolkit.UTF8_CHARSET)));
       }
       catch (Exception e) {
         throw new IllegalArgumentException("Malformed manifest entries");

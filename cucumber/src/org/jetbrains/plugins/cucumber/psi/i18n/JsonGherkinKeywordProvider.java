@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.MalformedJsonException;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +39,7 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
   public JsonGherkinKeywordProvider(final InputStream inputStream) {
     Map<String, HashMap<Object, Object>> fromJson;
     try {
-      final Reader in = new InputStreamReader(inputStream, "UTF-8");
+      final Reader in = new InputStreamReader(inputStream, CharsetToolkit.UTF8_CHARSET);
       try {
         fromJson = new Gson().fromJson(in, new TypeToken<HashMap<String, HashMap<Object, Object>>>() {}.getType());
 
