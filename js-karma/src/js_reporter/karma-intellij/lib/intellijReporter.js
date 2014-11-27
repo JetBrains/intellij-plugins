@@ -160,6 +160,13 @@ LogManager.prototype.attachToAnything = function (tree) {
   }
 };
 
+function filterSuiteNames(suiteNames) {
+  if (suiteNames.length > 0 && 'Jasmine__TopLevel__Suite' === suiteNames[0]) {
+    suiteNames = suiteNames.slice(1);
+  }
+  return suiteNames;
+}
+
 function IntellijReporter(config, fileList, formatError, globalEmitter, injector) {
   var logManager = new LogManager();
   new FileListUpdater(config, fileList);
@@ -202,7 +209,7 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
     if (result.skipped) {
       return;
     }
-    var suiteNames = result.suite
+    var suiteNames = filterSuiteNames(result.suite)
       , specName = result.description;
     if (specName == null) {
       return;
