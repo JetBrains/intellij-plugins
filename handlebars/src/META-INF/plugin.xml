@@ -11,7 +11,7 @@
   <version>0.8</version>
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true">JavaScript</depends>
-  <vendor logo="/icons/handlebars_icon.png" url="https://github.com/dmarcotte">dmarcotte</vendor>
+  <vendor url="https://github.com/dmarcotte">dmarcotte / JetBrains</vendor>
 
   <idea-version since-build="134.1342"/>
 
