@@ -73,6 +73,7 @@ public class KarmaExecutionSession {
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_IGNORED_TEST, true);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.SCROLL_TO_SOURCE, true);
+    testConsoleProperties.setIfUndefined(TestConsoleProperties.SELECT_FIRST_DEFECT, true);
 
     KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties,
                                                         myEnvironment,
