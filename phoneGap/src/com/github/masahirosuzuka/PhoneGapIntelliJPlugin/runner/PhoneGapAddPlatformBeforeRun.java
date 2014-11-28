@@ -81,7 +81,6 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
     final PhoneGapRunConfiguration phoneGapRunConfiguration = (PhoneGapRunConfiguration)configuration;
     final PhoneGapCommandLine line = phoneGapRunConfiguration.getCommandLine();
 
-    //skip for phonegap (it do platform add in run command)
     if (!line.needAddPlatform()) {
       return true;
     }
