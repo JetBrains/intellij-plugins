@@ -228,7 +228,15 @@ public class PhoneGapCommandLine {
   }
 
   public boolean needAddPlatform() {
-    return !isPhoneGap();
+    if (!isPhoneGap()) return true;
+
+    return isPhonegapAfter363(version);
+  }
+
+  static boolean isPhonegapAfter363(String version) {
+    if (StringUtil.isEmpty(version)) return true;
+
+    return StringUtil.compareVersionNumbers(version, "3.6.3") >= 0;
   }
 
   public void createNewProject(String name) throws Exception {
