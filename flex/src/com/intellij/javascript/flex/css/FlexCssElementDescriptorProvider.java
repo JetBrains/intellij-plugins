@@ -261,13 +261,13 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   @NotNull
   @Override
   public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name) {
-    return ContainerUtil.newArrayList(new CssPseudoSelectorDescriptorStub(name));
+    return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
   }
 
   @NotNull
   @Override
   public Collection<? extends CssValueDescriptor> getNamedValueDescriptors(@NotNull String name, @Nullable CssValueDescriptor parent) {
-    return ContainerUtil.newArrayList(new CssNullValue(parent));
+    return Collections.singletonList(new CssNullValue(parent));
   }
 
   @NotNull
@@ -280,7 +280,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       List<CssSimpleSelector> selectors = findSimpleSelectorsAbove(context);
       List<FlexStyleIndexInfo> infos = filter(lists, selectors, scope, module);
       if (infos.size() > 0) {
-        return ContainerUtil.newHashSet(new FlexCssPropertyDescriptor(infos));
+        return Collections.singletonList(new FlexCssPropertyDescriptor(infos));
       }
     }
     return Collections.emptyList();
