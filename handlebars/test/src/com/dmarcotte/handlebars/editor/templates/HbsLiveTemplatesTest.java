@@ -1,19 +1,16 @@
 package com.dmarcotte.handlebars.editor.templates;
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
-import com.intellij.codeInsight.lookup.Lookup;
-import com.intellij.codeInsight.lookup.LookupManager;
-import com.intellij.codeInsight.lookup.impl.LookupImpl;
-import com.intellij.codeInsight.template.impl.actions.ListTemplatesAction;
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
 
-@SuppressWarnings("ConstantConditions")
 public class HbsLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   @Override
@@ -33,24 +30,18 @@ public class HbsLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCas
     return FileUtil.toSystemDependentName("/liveTemplates/");
   }
 
-  private void doTest() throws Exception {
+  private void doTest() {
     myFixture.configureByFiles(getTestName(false) + ".hbs");
-    expandTemplate(myFixture.getEditor());
+    expandTemplate();
     myFixture.checkResultByFile(getTestName(false) + ".after.hbs");
   }
 
-  public void testItar() throws Throwable {
+  public void testItar() {
     doTest();
   }
 
-
-  private static void expandTemplate(final Editor editor) {
-    WriteCommandAction.runWriteCommandAction(null, new Runnable() {
-      @Override
-      public void run() {
-        new ListTemplatesAction().actionPerformedImpl(editor.getProject(), editor);
-        ((LookupImpl)LookupManager.getActiveLookup(editor)).finishLookup(Lookup.NORMAL_SELECT_CHAR);
-      }
-    });
+  private void expandTemplate() {
+    EditorAction action = (EditorAction)ActionManager.getInstance().getAction(IdeActions.ACTION_EXPAND_LIVE_TEMPLATE_BY_TAB);
+    action.actionPerformed(myFixture.getEditor(), DataManager.getInstance().getDataContext());
   }
 }
