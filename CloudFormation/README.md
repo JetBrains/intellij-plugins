@@ -4,7 +4,7 @@ Latest stable version
 ---------------------
 
 See IntelliJ IDEA plugin repository:
-https://plugins.jetbrains.com/plugin/7371?pr=idea
+https://plugins.jetbrains.com/plugin/7371?pr=idea_ce
 
 Builds from trunk
 -----------------
