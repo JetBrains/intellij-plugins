@@ -274,8 +274,8 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   private void setTargetFieldsEnable() {
     boolean isNotServe = !COMMAND_SERVE.equals(myCommand.getSelectedItem());
 
-    myHasTarget.setEnabled(isNotServe && !isPhoneGap());
-    myTarget.setEnabled(isNotServe && myHasTarget.isSelected() && !isPhoneGap());
+    myHasTarget.setEnabled(isNotServe);
+    myTarget.setEnabled(isNotServe && myHasTarget.isSelected());
   }
 
   private boolean isPhoneGap() {
