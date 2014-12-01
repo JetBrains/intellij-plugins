@@ -191,7 +191,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     int offset = 0;
     for (int i = 1; i < 5; i++) {
       offset <<= 8;
-      offset |= serializedValue[i];
+      offset |= serializedValue[i] & 0xFF;
     }
     final String value = serializedValue.length > 5 ?
                          new String(Arrays.copyOfRange(serializedValue, 5, serializedValue.length), Charset.forName("UTF-8")) :
