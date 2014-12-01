@@ -2,9 +2,14 @@ package com.jetbrains.lang.dart.highlighting;
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.inspections.DartDeprecatedApiUsageInspection;
+import com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection;
 
 public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   protected String getBasePath() {
@@ -13,6 +18,44 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
 
   protected boolean isWriteActionRequired() {
     return false;
+  }
+
+  private void excludeFolder(final String relPath) {
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+        try {
+          final ContentEntry[] contentEntries = model.getContentEntries();
+          contentEntries[0].addExcludeFolder(contentEntries[0].getUrl() + "/" + relPath);
+          model.commit();
+        }
+        finally {
+          if (!model.isDisposed()) {
+            model.dispose();
+          }
+        }
+      }
+    });
+  }
+
+  private void unexcludeFolder(final String relPath) {
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+        try {
+          final ContentEntry[] contentEntries = model.getContentEntries();
+          contentEntries[0].removeExcludeFolder(contentEntries[0].getUrl() + "/" + relPath);
+          model.commit();
+        }
+        finally {
+          if (!model.isDisposed()) {
+            model.dispose();
+          }
+        }
+      }
+    });
   }
 
   public void testScriptSrcPathToPackagesFolder() {
@@ -98,5 +141,19 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   public void testSyncAsyncAwaitYield() {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting(true, true, true);
+  }
+
+  public void testPathPackageReferenceInspection() {
+    myFixture.enableInspections(new DartPathPackageReferenceInspection());
+    myFixture.copyDirectoryToProject(getTestName(false), "");
+    myFixture.openFileInEditor(ModuleRootManager.getInstance(myModule).getContentRoots()[0].findChild("pubspec.yaml"));
+
+    excludeFolder("other_project");
+    try {
+      myFixture.checkHighlighting(true, false, true);
+    }
+    finally {
+      unexcludeFolder("other_project");
+    }
   }
 }

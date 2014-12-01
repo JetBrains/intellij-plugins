@@ -1,7 +1,8 @@
 <idea-plugin version="2">
   <extensions defaultExtensionNs="com.intellij">
-    <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="path.package.not.in.project.inspection.name"
+    <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="path.package.reference.inspection.name"
                      groupName="Dart" enabledByDefault="true" level="WARNING" language="yaml"
-                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartPathPackageNotInProjectInspection"/>
+                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection"/>
+    <psi.referenceContributor implementation="com.jetbrains.lang.dart.psi.PubspecYamlReferenceContributor" order="last"/>
   </extensions>
 </idea-plugin>

@@ -22,6 +22,7 @@
     <orderEntry type="module" module-name="spellchecker" />
     <orderEntry type="module" module-name="JavaScriptDebugger" />
     <orderEntry type="module" module-name="ChromeConnector" />
+    <orderEntry type="module" module-name="yaml-plugin" />
     <orderEntry type="module" module-name="yaml" />
     <orderEntry type="module" module-name="testFramework" scope="TEST" />
     <orderEntry type="module" module-name="IntelliLang-js" scope="TEST" />
