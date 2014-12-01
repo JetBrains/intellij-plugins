@@ -27,7 +27,7 @@ public class TapestryMethodReferenceSearcher extends QueryExecutorBase<PsiRefere
     final PsiMethod method = parameters.getMethod();
     final String propName = TapestryPropertyNamingUtil.getPropertyNameFromAccessor(method);
 
-    SearchScope searchScope = parameters.getScope();
+    SearchScope searchScope = parameters.getEffectiveSearchScope();
     if (searchScope instanceof GlobalSearchScope) {
       searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)searchScope, TmlFileType.INSTANCE);
     }
