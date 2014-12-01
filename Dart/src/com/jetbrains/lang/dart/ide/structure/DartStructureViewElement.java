@@ -13,13 +13,15 @@ import com.jetbrains.lang.dart.resolve.ComponentNameScopeProcessor;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class DartStructureViewElement implements StructureViewTreeElement, SortableTreeElement {
+public class DartStructureViewElement implements ItemPresentation, StructureViewTreeElement, SortableTreeElement {
   private final PsiElement myElement;
 
   public DartStructureViewElement(final PsiElement element) {
@@ -51,7 +53,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
   @NotNull
   @Override
   public ItemPresentation getPresentation() {
-    return myElement instanceof NavigationItem ? ((NavigationItem)myElement).getPresentation() : null;
+    return this;
   }
 
   @NotNull
@@ -99,5 +101,31 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
 
   public PsiElement getRealElement() {
     return myElement;
+  }
+
+  @Nullable
+  @Override
+  public String getPresentableText() {
+    if(myElement instanceof NavigationItem) {
+      final ItemPresentation presentation =  ((NavigationItem)myElement).getPresentation();
+      return presentation != null ? presentation.getPresentableText() : null;
+    }
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public String getLocationString() {
+    return "";
+  }
+
+  @Nullable
+  @Override
+  public Icon getIcon(final boolean unused) {
+    if(myElement instanceof NavigationItem) {
+      final ItemPresentation presentation =  ((NavigationItem)myElement).getPresentation();
+      return presentation != null ? presentation.getIcon(unused) : null;
+    }
+    return null;
   }
 }
