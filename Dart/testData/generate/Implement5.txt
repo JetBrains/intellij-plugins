@@ -4,6 +4,7 @@ abstract class I {
 }
 
 class Foo extends I {
+  @override
   set foo(x) {
     <caret>
   }

@@ -30,6 +30,7 @@ public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartCompone
   protected Template buildFunctionsText(TemplateManager templateManager, DartComponent element) {
     final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);
     template.setToReformat(true);
+    template.addTextSegment("@override\n");
     final DartReturnType returnType = PsiTreeUtil.getChildOfType(element, DartReturnType.class);
     final DartType dartType = PsiTreeUtil.getChildOfType(element, DartType.class);
     if (returnType != null) {

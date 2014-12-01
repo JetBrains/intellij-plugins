@@ -4,10 +4,12 @@ class I {
 }
 
 class Foo implements I {
+  @override
   get foo {
     <spaces>
   }
 
+  @override
   set foo(x) {
     <caret>
   }

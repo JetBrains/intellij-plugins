@@ -5,6 +5,7 @@ abstract class Animal {
 class Dog implements Animal {
   String name;
 
+  @override
   void speak(String say) {
     <caret>
   }
