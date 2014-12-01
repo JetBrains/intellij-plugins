@@ -2,10 +2,7 @@ package com.jetbrains.lang.dart.analyzer;
 
 import com.google.dart.engine.context.AnalysisContext;
 import com.google.dart.engine.context.AnalysisException;
-import com.google.dart.engine.error.AnalysisError;
-import com.google.dart.engine.error.ErrorCode;
-import com.google.dart.engine.error.HintCode;
-import com.google.dart.engine.error.TodoCode;
+import com.google.dart.engine.error.*;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
@@ -29,8 +26,7 @@ import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
 import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import com.jetbrains.lang.dart.validation.fixes.DartResolverErrorCode;
-import com.jetbrains.lang.dart.validation.fixes.DartTypeErrorCode;
+import com.jetbrains.lang.dart.validation.fixes.DartWarningCode;
 import com.jetbrains.lang.dart.validation.fixes.FixAndIntentionAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -152,25 +148,18 @@ public class DartInProcessAnnotator extends ExternalAnnotator<DartInProcessAnnot
   private static void registerFixes(@NotNull final PsiFile psiFile,
                                     @NotNull final Annotation annotation,
                                     @NotNull final AnalysisError error) {
-    List<? extends IntentionAction> fixes = Collections.emptyList();
-
     //noinspection EnumSwitchStatementWhichMissesCases
     final ErrorCode errorCode = error.getErrorCode();
     final String errorMessage = error.getMessage();
-    switch (errorCode.getType()) {
-      case STATIC_WARNING:
-        final DartResolverErrorCode resolverErrorCode = DartResolverErrorCode.findError(errorCode.toString());
-        if (resolverErrorCode != null) {
-          fixes = resolverErrorCode.getFixes(psiFile, error.getOffset(), errorMessage);
-        }
-        break;
-      case STATIC_TYPE_WARNING:
-      case COMPILE_TIME_ERROR:
-        final DartTypeErrorCode typeErrorCode = DartTypeErrorCode.findError(errorCode.toString());
-        if (typeErrorCode != null) {
-          fixes = typeErrorCode.getFixes(psiFile, error.getOffset(), errorMessage);
-        }
-        break;
+    final ErrorSeverity errorSeverity = errorCode.getErrorSeverity();
+
+    if (!errorSeverity.equals(ErrorSeverity.WARNING)) return;
+
+    List<? extends IntentionAction> fixes = Collections.emptyList();
+
+    final DartWarningCode resolverErrorCode = DartWarningCode.findError(errorCode.toString());
+    if (resolverErrorCode != null) {
+      fixes = resolverErrorCode.getFixes(psiFile, error.getOffset(), errorMessage);
     }
 
     if (!fixes.isEmpty()) {
@@ -205,8 +194,6 @@ public class DartInProcessAnnotator extends ExternalAnnotator<DartInProcessAnnot
     final ErrorCode errorCode = error.getErrorCode();
 
     switch (errorCode.getErrorSeverity()) {
-      case NONE:
-        return null;
       case INFO:
         final Annotation annotation = holder.createWeakWarningAnnotation(textRange, error.getMessage());
         if (errorCode == HintCode.UNUSED_IMPORT || errorCode == HintCode.DUPLICATE_IMPORT) {
@@ -217,7 +204,8 @@ public class DartInProcessAnnotator extends ExternalAnnotator<DartInProcessAnnot
         return holder.createWarningAnnotation(textRange, error.getMessage());
       case ERROR:
         return holder.createErrorAnnotation(textRange, error.getMessage());
+      default:
+        return null;
     }
-    return null;
   }
 }
