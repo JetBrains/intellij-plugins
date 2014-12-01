@@ -27,8 +27,6 @@ package org.jetbrains.osgi.jps.build;
 import aQute.bnd.osgi.Builder;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.MessageFormat;
-
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @since Jul 20, 2009
@@ -41,25 +39,25 @@ public class ReportingBuilder extends Builder {
   }
 
   @Override
-  public SetLocation error(String s, Object... objects) {
-    myReporter.error(MessageFormat.format(s, objects), null, null);
-    return super.error(s, objects);
+  public SetLocation error(String format, Object... args) {
+    myReporter.error(formatArrays(format, args), null, null);
+    return super.error(format, args);
   }
 
   @Override
-  public SetLocation error(String s, Throwable throwable, Object... objects) {
-    myReporter.error(MessageFormat.format(s, objects), throwable, null);
-    return super.error(s, throwable, objects);
+  public SetLocation error(String format, Throwable t, Object... args) {
+    myReporter.error(formatArrays(format, args), t, null);
+    return super.error(format, t, args);
   }
 
   @Override
-  public SetLocation warning(String s, Object... objects) {
-    myReporter.warning(MessageFormat.format(s, objects), null, null);
-    return super.warning(s, objects);
+  public SetLocation warning(String format, Object... args) {
+    myReporter.warning(formatArrays(format, args), null, null);
+    return super.warning(format, args);
   }
 
   @Override
-  public void progress(String s, Object... objects) {
-    myReporter.progress(MessageFormat.format(s, objects));
+  public void progress(float progress, String format, Object... args) {
+    myReporter.progress(formatArrays(format, args));
   }
 }
