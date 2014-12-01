@@ -1,68 +1,67 @@
 package org.angularjs.index;
 
-import com.intellij.lang.javascript.index.JSIndexContent;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.*;
-import com.intellij.util.CommonProcessors;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.containers.ConcurrentHashMap;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
   public static final int BASE_VERSION = 16;
-  private static final ConcurrentHashMap<String, Key<ParameterizedCachedValue<List<String>, Pair<Project, ID<String, Void>>>>> ourCacheKeys = new ConcurrentHashMap<String, Key<ParameterizedCachedValue<List<String>, Pair<Project, ID<String, Void>>>>>();
+  private static final ConcurrentHashMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
+    new ConcurrentHashMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>>();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
 
-  public static JSOffsetBasedImplicitElement resolve(final Project project, final ID<String, Void> index, final String lookupKey) {
-    JSOffsetBasedImplicitElement result = null;
+  public static JSOffsetBasedImplicitElement resolve(final Project project, final ID<String, byte[]> index, final String lookupKey) {
     final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-    for (VirtualFile file : FileBasedIndex.getInstance().getContainingFiles(index, lookupKey, scope)) {
-      final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-      final JSIndexContent content = JSIndexContent.get(file, project);
-      if (content != null && psiFile != null) {
-        final byte[] additionalData = content.getAdditionalData(index.toString(), lookupKey);
-        if (additionalData != null) {
-          final Trinity<Boolean, Integer, String> deserialized = AngularJSIndexingHandler.deserializeDataValue(additionalData);
-          final JSImplicitElement.Type type = deserialized.first ? JSImplicitElement.Type.Class : JSImplicitElement.Type.Tag;
-          final JSImplicitElementImpl.Builder builder = new JSImplicitElementImpl.Builder(lookupKey, null)
-            .setType(type)
-            .setTypeString(deserialized.third);
-          result = new JSOffsetBasedImplicitElement(builder, deserialized.second, psiFile);
-          if (result.canNavigate()) break;
+    final Ref<JSOffsetBasedImplicitElement> result = new Ref<JSOffsetBasedImplicitElement>(null);
+    FileBasedIndex.getInstance().processValues(index, lookupKey, null, new FileBasedIndex.ValueProcessor<byte[]>() {
+      @Override
+      public boolean process(VirtualFile file, byte[] value) {
+        final Trinity<Boolean, Integer, String> deserialized = AngularJSIndexingHandler.deserializeDataValue(value);
+        final JSImplicitElement.Type type = deserialized.first ? JSImplicitElement.Type.Class : JSImplicitElement.Type.Tag;
+        final JSImplicitElementImpl.Builder builder = new JSImplicitElementImpl.Builder(lookupKey, null)
+          .setType(type)
+          .setTypeString(deserialized.third);
+        final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+        if (psiFile != null) {
+          final JSOffsetBasedImplicitElement element = new JSOffsetBasedImplicitElement(builder, deserialized.second, psiFile);
+          result.set(element);
+          if (element.canNavigate()) return false;
         }
+        return true;
       }
-    }
-    return result;
+    }, scope);
+
+    return result.get();
   }
 
-  public static Collection<String> getAllKeys(final ID<String, Void> index, final Project project) {
+  public static Collection<String> getAllKeys(final ID<String, ?> index, final Project project) {
     final String indexId = index.toString();
-    final Key<ParameterizedCachedValue<List<String>, Pair<Project, ID<String, Void>>>> key = ConcurrencyUtil.cacheOrGet(ourCacheKeys, indexId, Key.<ParameterizedCachedValue<List<String>, Pair<Project, ID<String, Void>>>>create("angularjs.index." + indexId));
-    return CachedValuesManager.getManager(project).getParameterizedCachedValue(project, key, PROVIDER, false, Pair.create(project, index));
+    final Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>> key =
+      ConcurrencyUtil.cacheOrGet(ourCacheKeys, indexId, Key.<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>create("angularjs.index." + indexId));
+    final Pair<Project, ID<String, ?>> pair = Pair.<Project, ID<String, ?>>create(project, index);
+    return CachedValuesManager.getManager(project).getParameterizedCachedValue(project, key, PROVIDER, false, pair);
   }
 
   public static boolean hasAngularJS(final Project project) {
@@ -94,31 +93,14 @@ public class AngularIndexUtil {
     return restrictions;
   }
 
-  private static class AngularKeysProvider implements ParameterizedCachedValueProvider<List<String>, Pair<Project, ID<String, Void>>> {
+  private static class AngularKeysProvider implements ParameterizedCachedValueProvider<Collection<String>, Pair<Project, ID<String, ?>>> {
     @Nullable
     @Override
-    public CachedValueProvider.Result<List<String>> compute(final Pair<Project, ID<String, Void>> projectAndIndex) {
-      final Set<String> allKeys = new THashSet<String>();
-      final FileBasedIndex index = FileBasedIndex.getInstance();
-      final GlobalSearchScope scope = GlobalSearchScope.allScope(projectAndIndex.first);
-      final CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<String>(allKeys) {
-        @Override
-        protected boolean accept(String key) {
-          return true;
-        }
-      };
-      index.processAllKeys(projectAndIndex.second, processor, scope, null);
-      return CachedValueProvider.Result.create(ContainerUtil.filter(allKeys, new Condition<String>() {
-        @Override
-        public boolean value(String key) {
-          return !index.processValues(projectAndIndex.second, key, null, new FileBasedIndex.ValueProcessor<Void>() {
-            @Override
-            public boolean process(VirtualFile file, Void value) {
-              return false;
-            }
-          }, scope);
-        }
-      }), PsiManager.getInstance(projectAndIndex.first).getModificationTracker());
+    public CachedValueProvider.Result<Collection<String>> compute(final Pair<Project, ID<String, ?>> projectAndIndex) {
+      final Project project = projectAndIndex.first;
+      final ID<String, ?> id = projectAndIndex.second;
+      return CachedValueProvider.Result.create(FileBasedIndex.getInstance().getAllKeys(id, project),
+                                               PsiManager.getInstance(project).getModificationTracker());
     }
   }
 }

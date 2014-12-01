@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
  * @author Dennis.Ushakov
  */
 public class AngularControllerIndex extends AngularIndexBase {
-  public static final ID<String, Void> INDEX_ID = ID.create("angularjs.controller.index");
+  public static final ID<String, byte[]> INDEX_ID = ID.create("angularjs.controller.index");
   @NotNull
   @Override
-  public ID<String, Void> getName() {
+  public ID<String, byte[]> getName() {
     return INDEX_ID;
   }
 }

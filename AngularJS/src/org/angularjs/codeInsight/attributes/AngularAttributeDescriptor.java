@@ -22,9 +22,9 @@ import org.jetbrains.annotations.Nullable;
 public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx {
   protected final Project myProject;
   private final String myAttributeName;
-  private final ID<String, Void> myIndex;
+  private final ID<String, byte[]> myIndex;
 
-  public AngularAttributeDescriptor(final Project project, String attributeName, final ID<String, Void> index) {
+  public AngularAttributeDescriptor(final Project project, String attributeName, final ID<String, byte[]> index) {
     myProject = project;
     myAttributeName = attributeName;
     myIndex = index;

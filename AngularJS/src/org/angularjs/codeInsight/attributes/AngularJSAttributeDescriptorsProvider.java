@@ -54,7 +54,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     }
   }
 
-  private static ThreeState isApplicable(Project project, String directiveName, String tagName, final ID<String, Void> index) {
+  private static ThreeState isApplicable(Project project, String directiveName, String tagName, final ID<String, byte[]> index) {
     final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(project, index, directiveName);
     if (directive == null) {
       return ThreeState.UNSURE;

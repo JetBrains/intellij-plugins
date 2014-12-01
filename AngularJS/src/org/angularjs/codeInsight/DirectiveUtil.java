@@ -81,7 +81,7 @@ public class DirectiveUtil {
     return directive == null ? getTagDirective(project, directiveName, AngularDirectivesIndex.INDEX_ID) : directive;
     }
 
-  private static JSOffsetBasedImplicitElement getTagDirective(Project project, String directiveName, final ID<String, Void> index) {
+  private static JSOffsetBasedImplicitElement getTagDirective(Project project, String directiveName, final ID<String, byte[]> index) {
     final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(project, index, directiveName);
     final String restrictions = directive != null ? directive.getTypeString() : null;
     if (restrictions != null) {

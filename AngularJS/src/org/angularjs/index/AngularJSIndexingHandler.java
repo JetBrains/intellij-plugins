@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * @author Dennis.Ushakov
  */
 public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
-  private static final Map<String, ID<String, Void>> INDEXERS = new HashMap<String, ID<String, Void>>();
+  private static final Map<String, ID<String, byte[]>> INDEXERS = new HashMap<String, ID<String, byte[]>>();
   private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<String, Function<String, String>>();
   private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<String, Function<PsiElement, String>>();
 
@@ -95,7 +95,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (qualifier == null) return;
 
     final String command = callee.getReferencedName();
-    final ID<String, Void> index = INDEXERS.get(command);
+    final ID<String, byte[]> index = INDEXERS.get(command);
     if (index != null) {
       JSExpression[] arguments = callExpression.getArguments();
       if (arguments.length > 0) {
@@ -154,7 +154,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static void storeAdditionalData(final JSIndexContentBuilder builder,
-                                          final ID<String, Void> index,
+                                          final ID<String, byte[]> index,
                                           final PsiElement declaration,
                                           final String command,
                                           final String argumentText,
