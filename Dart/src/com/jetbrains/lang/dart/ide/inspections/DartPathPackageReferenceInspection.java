@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.inspections;
 import com.intellij.CommonBundle;
 import com.intellij.codeInspection.IntentionAndQuickFixAction;
 import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -25,12 +26,12 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartProjectComponent;
+import com.jetbrains.lang.dart.psi.PubspecYamlReferenceContributor;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -38,13 +39,11 @@ import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.yaml.psi.YAMLCompoundValue;
-import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
 import javax.swing.event.HyperlinkEvent;
 
-public class DartPathPackageNotInProjectInspection extends LocalInspectionTool {
+public class DartPathPackageReferenceInspection extends LocalInspectionTool {
 
   private static final String GROUP_DISPLAY_ID = "pubspec.yaml inspection";
 
@@ -58,7 +57,7 @@ public class DartPathPackageNotInProjectInspection extends LocalInspectionTool {
   @Nls
   @NotNull
   public String getDisplayName() {
-    return DartBundle.message("path.package.not.in.project.inspection.name");
+    return DartBundle.message("path.package.reference.inspection.name");
   }
 
   @NotNull
@@ -77,24 +76,30 @@ public class DartPathPackageNotInProjectInspection extends LocalInspectionTool {
       public void visitElement(final PsiElement element) {
         ProgressIndicatorProvider.checkCanceled();
 
-        if (!(element instanceof YAMLKeyValue) || !PubspecYamlUtil.PATH.equals(((YAMLKeyValue)element).getKeyText())) return;
+        if (!(element instanceof YAMLKeyValue) || !PubspecYamlReferenceContributor.isPathPackageDefinition((YAMLKeyValue)element)) {
+          return;
+        }
+
+        final VirtualFile dir = checkReferences(holder, (YAMLKeyValue)element);
+        if (dir == null) {
+          return;
+        }
+
+        if (dir.findChild(PubspecYamlUtil.PUBSPEC_YAML) == null) {
+          final String message = DartBundle.message("pubspec.yaml.not.found.in", FileUtil.toSystemDependentName(dir.getPath()));
+          holder.registerProblem(((YAMLKeyValue)element).getValue(), message);
+          return;
+        }
 
         final VirtualFile file = DartResolveUtil.getRealVirtualFile(element.getContainingFile());
+        if (file != null && dir.equals(file.getParent())) {
+          holder.registerProblem(((YAMLKeyValue)element).getValue(), DartBundle.message("path.package.reference.to.itself"));
+          return;
+        }
+
         final String path = ((YAMLKeyValue)element).getValueText() + "/" + PubspecYamlUtil.LIB_DIR_NAME;
         final VirtualFile packageDir = file == null ? null : VfsUtilCore.findRelativeFile(path, file.getParent());
-        if (packageDir == null || !packageDir.isDirectory()) return;
-
-        final PsiElement parent1 = element.getParent();
-        final PsiElement parent2 = parent1 instanceof YAMLCompoundValue ? parent1.getParent() : null;
-        final String packageName = parent2 instanceof YAMLKeyValue ? ((YAMLKeyValue)parent2).getKeyText() : null;
-        if (packageName == null) return;
-
-        final PsiElement parent3 = parent2.getParent();
-        final PsiElement parent4 = parent3 instanceof YAMLCompoundValue ? parent3.getParent() : null;
-        if (!(parent4 instanceof YAMLKeyValue) ||
-            !(parent4.getParent() instanceof YAMLDocument) ||
-            (!PubspecYamlUtil.DEPENDENCIES.equals(((YAMLKeyValue)parent4).getKeyText()) &&
-             !PubspecYamlUtil.DEV_DEPENDENCIES.equals(((YAMLKeyValue)parent4).getKeyText()))) {
+        if (packageDir == null || !packageDir.isDirectory()) {
           return;
         }
 
@@ -105,6 +110,28 @@ public class DartPathPackageNotInProjectInspection extends LocalInspectionTool {
         }
       }
     };
+  }
+
+  @Nullable
+  private static VirtualFile checkReferences(@NotNull final ProblemsHolder holder, @NotNull final YAMLKeyValue element) {
+    for (PsiReference reference : element.getReferences()) {
+      if (reference instanceof FileReference && !reference.isSoft()) {
+        final PsiFileSystemItem resolve = ((FileReference)reference).resolve();
+        if (resolve == null) {
+          holder.registerProblem(reference.getElement(), ((FileReference)reference).getUnresolvedMessagePattern(),
+                                 ProblemHighlightType.GENERIC_ERROR, reference.getRangeInElement());
+          return null;
+        }
+        else if (((FileReference)reference).isLast()) {
+          final VirtualFile dir = resolve.getVirtualFile();
+          if (dir != null && dir.isDirectory()) {
+            return dir;
+          }
+        }
+      }
+    }
+
+    return null;
   }
 
   private static class AddContentRootFix extends IntentionAndQuickFixAction {

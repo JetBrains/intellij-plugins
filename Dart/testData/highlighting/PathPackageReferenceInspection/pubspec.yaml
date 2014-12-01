@@ -1,0 +1,24 @@
+name: example
+version: 0.0.1
+dependencies:
+  other_project:
+    path: <warning descr="Dart package can't list itself as a dependency">../src</warning>
+    path: <warning>other_project</warning>
+    path: <warning>other_project/</warning>
+    path: <warning>../src/other_project</warning>
+    path: <warning>..\src\other_project\</warning>
+    path: <warning>"../src/other_project"</warning>
+    path: <warning>'..\src\other_project'</warning>
+    path: <error descr="Cannot resolve file 'incorrect'">incorrect</error>
+    path: other_project/<error descr="Cannot resolve file 'incorrect'">incorrect</error>
+    path: other_project/<error descr="Cannot resolve directory 'incorrect'">incorrect</error>/foo/bar
+    path: <warning>other_project/lib</warning>
+    path: other_project_2
+    path: <warning>other_project_2/lib</warning>
+  path: not/a/path
+dev_dependencies:
+  other_project2:
+    path: other_project_2
+    path: other_project_2/<error descr="Cannot resolve file 'incorrect'">incorrect</error>
+    path: "other_project_2/<error descr="Cannot resolve directory 'incorrect'">incorrect</error>/foo"
+    path: <warning>'other_project_2/lib'</warning>
