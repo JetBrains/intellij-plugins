@@ -190,8 +190,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     final Boolean isComment = Boolean.valueOf(serializedValue[0] == 1);
     int offset = 0;
     for (int i = 1; i < 5; i++) {
+      offset <<= 8;
       offset |= serializedValue[i];
-      if (i < 4) offset >>= 8;
     }
     final String value = serializedValue.length > 5 ?
                          new String(Arrays.copyOfRange(serializedValue, 5, serializedValue.length), Charset.forName("UTF-8")) :

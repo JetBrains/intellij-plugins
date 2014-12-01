@@ -10,6 +10,7 @@ import com.intellij.util.indexing.ID;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -106,11 +107,15 @@ public class DirectiveUtil {
   }
 
   @Nullable
-  private static JSOffsetBasedImplicitElement getDirective(PsiElement element, final String name) {
+  private static JSOffsetBasedImplicitElement getDirective(@NotNull PsiElement element, final String name) {
     final String directiveName = getAttributeName(name);
     final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(element.getProject(), AngularDirectivesIndex.INDEX_ID, directiveName);
-    if (directive != null && element.getTextRange().contains(directive.getTextOffset())) {
-      return directive;
+    if (directive != null) {
+      PsiElement elementAtOffset =
+        element instanceof JSOffsetBasedImplicitElement ? ((JSOffsetBasedImplicitElement)element).getElementAtOffset() : element;
+      if (elementAtOffset != null && elementAtOffset.getTextRange().contains(directive.getTextOffset())) {
+        return directive;
+      }
     }
     return null;
   }
