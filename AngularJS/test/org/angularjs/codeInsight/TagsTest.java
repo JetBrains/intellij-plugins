@@ -1,6 +1,6 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
@@ -77,7 +77,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+    assertEquals("'myCustomer'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
   }
 
   public void testCustomTagsViaFunctionResolve() {
@@ -88,7 +88,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'functionCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+    assertEquals("'functionCustomer'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
   }
 
   public void testCustomTagsArrayViaFunctionResolve() {
@@ -99,7 +99,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'arrayCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+    assertEquals("'arrayCustomer'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
   }
 
   public void testCustomTagsArrayResolve() {
@@ -110,7 +110,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'herCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+    assertEquals("'herCustomer'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
   }
 
   public void testOverride() {
@@ -131,7 +131,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+    assertEquals("'myCustomer'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
   }
 
   public void testNoCompletionInXml() {

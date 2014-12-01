@@ -1,12 +1,12 @@
 package org.angularjs.navigation;
 
-import org.angularjs.index.AngularSymbolIndex;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.navigation.ChooseByNameContributor;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ArrayUtil;
 import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.index.AngularSymbolIndex;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,7 +22,7 @@ public class AngularGotoSymbolContributor implements ChooseByNameContributor {
   @NotNull
   @Override
   public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
-    final JSNamedElementProxy item = AngularIndexUtil.resolve(project, AngularSymbolIndex.INDEX_ID, name);
+    final JSOffsetBasedImplicitElement item = AngularIndexUtil.resolve(project, AngularSymbolIndex.INDEX_ID, name);
     return item != null ? new NavigationItem[] {item} : NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY;
   }
 }

@@ -1,6 +1,5 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
@@ -46,12 +45,12 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
 
     if (AngularJSAsExpression.isAsControllerRef(myRef, myRef.getParent())) {
-      final JSNamedElementProxy resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularControllerIndex.INDEX_ID, myReferencedName);
+      final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularControllerIndex.INDEX_ID, myReferencedName);
       if (resolve != null) {
         return new JSResolveResult[]{new JSResolveResult(resolve)};
       }
     } else if (AngularJSFilterExpression.isFilterNameRef(myRef, myParent)) {
-      final JSNamedElementProxy resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.INDEX_ID, myReferencedName);
+      final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.INDEX_ID, myReferencedName);
       if (resolve != null) {
         return new JSResolveResult[] {new JSResolveResult(resolve)};
       }

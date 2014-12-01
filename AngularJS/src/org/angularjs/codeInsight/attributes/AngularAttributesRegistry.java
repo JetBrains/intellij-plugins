@@ -1,6 +1,6 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlAttribute;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -28,9 +28,9 @@ public class AngularAttributesRegistry {
 
   public static boolean isAngularExpressionAttribute(XmlAttribute parent) {
     final String attributeName = DirectiveUtil.normalizeAttributeName(parent.getName());
-    final JSNamedElementProxy directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.INDEX_ID, attributeName);
+    final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.INDEX_ID, attributeName);
     if (directive != null) {
-      final String restrict = directive.getIndexItem().getTypeString();
+      final String restrict = directive.getTypeString();
       final String param = restrict.split(";", -1)[2];
       return param.endsWith("expression") || param.startsWith("string");
     }
@@ -42,9 +42,9 @@ public class AngularAttributesRegistry {
     if (value == null || !value.startsWith("{")) return false;
 
     final String attributeName = DirectiveUtil.normalizeAttributeName(parent.getName());
-    final JSNamedElementProxy directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.INDEX_ID, attributeName);
+    final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(parent.getProject(), AngularDirectivesDocIndex.INDEX_ID, attributeName);
     if (directive != null) {
-      final String restrict = directive.getIndexItem().getTypeString();
+      final String restrict = directive.getTypeString();
       final String type = restrict.split(";", -1)[2];
       return type.contains("object literal") || type.equals("mixed");
     }

@@ -1,13 +1,15 @@
 package org.angularjs.index;
 
 import com.intellij.lang.javascript.index.JSEntryIndex;
-import com.intellij.lang.javascript.index.JSSymbolUtil;
+import com.intellij.lang.javascript.index.JSIndexContent;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import org.angularjs.index.AngularIndexUtil;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -19,7 +21,17 @@ public abstract class AngularIndexBase extends ScalarIndexExtension<String> {
       @Override
       @NotNull
       public Map<String, Void> map(@NotNull FileContent inputData) {
-        return JSSymbolUtil.indexFile(inputData.getPsiFile(), inputData).indexEntry.getStoredNames(getName().toString());
+        return keysToMap(JSIndexContent.indexFile(inputData).myAdditionalData.get(getName().toString()));
+      }
+
+      @NotNull
+      private Map<String, Void> keysToMap(@Nullable Map<String, ?> map) {
+        if (map == null) return Collections.emptyMap();
+        final Map<String, Void> result = new THashMap<String, Void>();
+        for (String key : map.keySet()) {
+          result.put(key, null);
+        }
+        return result;
       }
     };
   private final KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();

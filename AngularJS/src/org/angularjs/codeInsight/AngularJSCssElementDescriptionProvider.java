@@ -2,7 +2,7 @@ package org.angularjs.codeInsight;
 
 import com.intellij.lang.css.CssDialect;
 import com.intellij.lang.css.CssDialectMappings;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -45,9 +45,9 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
   public String[] getSimpleSelectors(@Nullable PsiElement context) {
     if (context == null) return ArrayUtil.EMPTY_STRING_ARRAY;
     final List<String> result = new LinkedList<String>();
-    DirectiveUtil.processTagDirectives(context.getProject(), new Processor<JSNamedElementProxy>() {
+    DirectiveUtil.processTagDirectives(context.getProject(), new Processor<JSOffsetBasedImplicitElement>() {
       @Override
-      public boolean process(JSNamedElementProxy proxy) {
+      public boolean process(JSOffsetBasedImplicitElement proxy) {
         result.add(proxy.getName());
         return true;
       }
@@ -58,7 +58,7 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
   @NotNull
   @Override
   public PsiElement[] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
-    final JSNamedElementProxy directive = DirectiveUtil.getTagDirective(DirectiveUtil.normalizeAttributeName(selector.getElementName()), selector.getProject());
+    final JSOffsetBasedImplicitElement directive = DirectiveUtil.getTagDirective(DirectiveUtil.normalizeAttributeName(selector.getElementName()), selector.getProject());
     return directive != null ? new PsiElement[] {directive} : PsiElement.EMPTY_ARRAY;
   }
 }

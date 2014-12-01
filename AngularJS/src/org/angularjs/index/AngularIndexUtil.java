@@ -1,15 +1,18 @@
 package org.angularjs.index;
 
-import com.intellij.lang.javascript.index.JSIndexEntry;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
-import com.intellij.lang.javascript.index.JavaScriptIndex;
+import com.intellij.lang.javascript.index.JSIndexContent;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.*;
@@ -34,16 +37,23 @@ public class AngularIndexUtil {
   private static final ConcurrentHashMap<String, Key<ParameterizedCachedValue<List<String>, Pair<Project, ID<String, Void>>>>> ourCacheKeys = new ConcurrentHashMap<String, Key<ParameterizedCachedValue<List<String>, Pair<Project, ID<String, Void>>>>>();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
 
-  public static JSNamedElementProxy resolve(final Project project, final ID<String, Void> index, final String lookupKey) {
-    JSNamedElementProxy result = null;
-    final JavaScriptIndex jsIndex = JavaScriptIndex.getInstance(project);
+  public static JSOffsetBasedImplicitElement resolve(final Project project, final ID<String, Void> index, final String lookupKey) {
+    JSOffsetBasedImplicitElement result = null;
     final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     for (VirtualFile file : FileBasedIndex.getInstance().getContainingFiles(index, lookupKey, scope)) {
-      final JSIndexEntry entry = jsIndex.getEntryForFile(file, scope);
-      final JSNamedElementProxy resolve = entry != null ? entry.resolveAdditionalData(jsIndex, index.toString(), lookupKey) : null;
-      if (resolve != null) {
-        result = resolve;
-        if (result.canNavigate()) break;
+      final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+      final JSIndexContent content = JSIndexContent.get(file, project);
+      if (content != null && psiFile != null) {
+        final byte[] additionalData = content.getAdditionalData(index.toString(), lookupKey);
+        if (additionalData != null) {
+          final Trinity<Boolean, Integer, String> deserialized = AngularJSIndexingHandler.deserializeDataValue(additionalData);
+          final JSImplicitElement.Type type = deserialized.first ? JSImplicitElement.Type.Class : JSImplicitElement.Type.Tag;
+          final JSImplicitElementImpl.Builder builder = new JSImplicitElementImpl.Builder(lookupKey, null)
+            .setType(type)
+            .setTypeString(deserialized.third);
+          result = new JSOffsetBasedImplicitElement(builder, deserialized.second, psiFile);
+          if (result.canNavigate()) break;
+        }
       }
     }
     return result;
