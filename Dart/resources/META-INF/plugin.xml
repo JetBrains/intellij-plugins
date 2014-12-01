@@ -139,11 +139,15 @@
 
     <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>
     <externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>
+    <!--<externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator"/>-->
+    <!--<externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator"/>-->
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator"/>
     <!--<annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartUnresolvedReferenceVisitor"/>-->
 
     <projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"
                     serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"/>
+    <!--<projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"-->
+                    <!--serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>-->
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerManager"
