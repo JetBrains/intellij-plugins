@@ -190,7 +190,6 @@ const Map<String, LibraryInfo> LIBRARIES = const {
         final DartConstConstructorExpression constructorExpression = (DartConstConstructorExpression)expressions.get(1);
 
         final String libraryName = StringUtil.unquoteString(keyExpression.getText());
-        if (libraryName.startsWith("_")) return;
 
         final DartType dartType = constructorExpression.getType();
         if (dartType == null || !"LibraryInfo".equals(dartType.getText())) return;
@@ -203,7 +202,7 @@ const Map<String, LibraryInfo> LIBRARIES = const {
                                            ? StringUtil.unquoteString(firstExpression.getText())
                                            : null;
 
-        if (libraryRelativePath != null) {
+        if (libraryRelativePath != null && !libraryRelativePath.startsWith("_")) {
           result.put(libraryName, libraryRelativePath);
         }
       }
