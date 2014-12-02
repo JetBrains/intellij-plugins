@@ -1,10 +1,9 @@
 package com.jetbrains.lang.dart.ide.structure;
 
 import com.intellij.ide.structureView.StructureViewTreeElement;
-import com.intellij.ide.util.treeView.smartTree.SortableTreeElement;
-import com.intellij.ide.util.treeView.smartTree.TreeElement;
+import com.intellij.ide.structureView.impl.common.PsiTreeElementBase;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.NavigationItem;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.jetbrains.lang.dart.psi.*;
@@ -13,91 +12,61 @@ import com.jetbrains.lang.dart.resolve.ComponentNameScopeProcessor;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
-public class DartStructureViewElement implements StructureViewTreeElement, SortableTreeElement {
-  private final PsiElement myElement;
-
-  public DartStructureViewElement(final PsiElement element) {
-    myElement = element;
-  }
-
-  @Override
-  public Object getValue() {
-    return myElement;
-  }
-
-  @Override
-  public void navigate(boolean requestFocus) {
-    if (myElement instanceof NavigationItem) {
-      ((NavigationItem)myElement).navigate(requestFocus);
-    }
-  }
-
-  @Override
-  public boolean canNavigate() {
-    return myElement instanceof NavigationItem && ((NavigationItem)myElement).canNavigate();
-  }
-
-  @Override
-  public boolean canNavigateToSource() {
-    return myElement instanceof NavigationItem && ((NavigationItem)myElement).canNavigateToSource();
+public class DartStructureViewElement extends PsiTreeElementBase<NavigatablePsiElement>
+  implements ItemPresentation, StructureViewTreeElement {
+  public DartStructureViewElement(@NotNull final NavigatablePsiElement element) {
+    super(element);
   }
 
   @NotNull
   @Override
-  public ItemPresentation getPresentation() {
-    return myElement instanceof NavigationItem ? ((NavigationItem)myElement).getPresentation() : null;
-  }
+  public Collection<StructureViewTreeElement> getChildrenBase() {
+    final NavigatablePsiElement element = getElement();
+    final List<StructureViewTreeElement> result = new ArrayList<StructureViewTreeElement>();
 
-  @NotNull
-  @Override
-  public TreeElement[] getChildren() {
-    final List<DartComponent> dartComponents = new ArrayList<DartComponent>();
-    if (myElement instanceof DartFile || myElement instanceof DartEmbeddedContent) {
+    if (element instanceof DartFile || element instanceof DartEmbeddedContent) {
       THashSet<DartComponentName> componentNames = new THashSet<DartComponentName>();
       DartPsiCompositeElementImpl
-        .processDeclarationsImpl(myElement, new ComponentNameScopeProcessor(componentNames), ResolveState.initial(), null);
+        .processDeclarationsImpl(element, new ComponentNameScopeProcessor(componentNames), ResolveState.initial(), null);
       for (DartComponentName componentName : componentNames) {
         PsiElement parent = componentName.getParent();
         if (parent instanceof DartComponent) {
-          dartComponents.add((DartComponent)parent);
+          result.add(new DartStructureViewElement((DartComponent)parent));
         }
       }
     }
-    else if (myElement instanceof DartClass) {
-      for (DartComponent subNamedComponent : DartResolveUtil.getNamedSubComponents((DartClass)myElement)) {
-        dartComponents.add(subNamedComponent);
+    else if (element instanceof DartClass) {
+      for (DartComponent subNamedComponent : DartResolveUtil.getNamedSubComponents((DartClass)element)) {
+        result.add(new DartStructureViewElement(subNamedComponent));
       }
     }
 
-    Collections.sort(dartComponents, new Comparator<DartComponent>() {
+    Collections.sort(result, new Comparator<StructureViewTreeElement>() {
       @Override
-      public int compare(DartComponent o1, DartComponent o2) {
-        return o1.getTextOffset() - o2.getTextOffset();
+      public int compare(StructureViewTreeElement o1, StructureViewTreeElement o2) {
+        PsiElement element1, element2;
+        if (o1 instanceof DartStructureViewElement &&
+            o2 instanceof DartStructureViewElement &&
+            (element1 = ((DartStructureViewElement)o1).getElement()) != null &&
+            (element2 = ((DartStructureViewElement)o2).getElement()) != null) {
+          return element1.getTextOffset() - element2.getTextOffset();
+        }
+        return 0;
       }
     });
-
-    final TreeElement[] result = new TreeElement[dartComponents.size()];
-    for (int i = 0; i < result.length; i++) {
-      result[i] = new DartStructureViewElement(dartComponents.get(i));
-    }
 
     return result;
   }
 
-  @NotNull
+  @Nullable
   @Override
-  public String getAlphaSortKey() {
-    final String result = myElement instanceof NavigationItem ? ((NavigationItem)myElement).getName() : null;
-    return result == null ? "" : result;
-  }
-
-  public PsiElement getRealElement() {
-    return myElement;
+  public String getPresentableText() {
+    final NavigatablePsiElement element = getElement();
+    final ItemPresentation presentation = element == null ? null : element.getPresentation();
+    return presentation == null ? null : presentation.getPresentableText();
   }
 }

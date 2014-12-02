@@ -62,7 +62,7 @@ public class DartStructureViewModel extends StructureViewModelBase implements St
     @Override
     public boolean isVisible(TreeElement treeNode) {
       if (!(treeNode instanceof DartStructureViewElement)) return true;
-      final PsiElement element = ((DartStructureViewElement)treeNode).getRealElement();
+      final PsiElement element = ((DartStructureViewElement)treeNode).getElement();
 
       DartComponentType type = DartComponentType.typeOf(element);
       if (type == DartComponentType.FIELD || type == DartComponentType.VARIABLE) {
