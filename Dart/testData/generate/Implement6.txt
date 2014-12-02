@@ -1,0 +1,10 @@
+class X implements Y {
+
+  void y({Y y}) {
+    <caret>
+  }
+}
+
+class Y {
+  void y({Y y});
+}
