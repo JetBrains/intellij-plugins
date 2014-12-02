@@ -50,30 +50,34 @@ public class DartTypeHierarchyTest extends HierarchyViewTestBase {
   }
 
   public void testPartOfExtends() throws Exception {
-    doDartTypeHierarchyTest("B", true, "PartOfExtends.dart", "SomePart.dart");
+    doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart", "SomePart.dart");
   }
 
   public void testSubtypeExtends() throws Exception {
-    doDartTypeHierarchyTest("B", true, "SubtypeExtends.dart");
+    doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart");
   }
 
   public void testSubtypeImplements() throws Exception {
-    doDartTypeHierarchyTest("B", true, "SubtypeImplements.dart");
+    doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart");
   }
 
   public void testSubtypeMixins() throws Exception {
-    doDartTypeHierarchyTest("B", true, "SubtypeMixins.dart");
+    doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart");
   }
 
   public void testSupertypeExtends() throws Exception {
-    doDartTypeHierarchyTest("D", false, "SupertypeExtends.dart");
+    doDartTypeHierarchyTest("D", false, getTestName(false) + ".dart");
   }
 
   public void testSupertypeImplements() throws Exception {
-    doDartTypeHierarchyTest("E", false, "SupertypeImplements.dart");
+    doDartTypeHierarchyTest("E", false, getTestName(false) + ".dart");
   }
 
   public void testSupertypeMixins() throws Exception {
-    doDartTypeHierarchyTest("B", false, "SupertypeMixins.dart");
+    doDartTypeHierarchyTest("B", false, getTestName(false) + ".dart");
+  }
+
+  public void testRedSuperClass() throws Exception {
+    doDartTypeHierarchyTest("B", true, getTestName(false) + ".dart");
   }
 }
