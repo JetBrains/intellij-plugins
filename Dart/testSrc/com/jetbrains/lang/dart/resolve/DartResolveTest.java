@@ -289,4 +289,10 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                            "}");
     doTest();
   }
+
+  public void testDartInternalLibrary() throws Exception {
+    myFixture.configureByText("file.dart", "import 'dart:_internal';\n" +
+                                           "class A extends <caret expected='[Dart SDK]/lib/internal/list.dart -> UnmodifiableListBase'>UnmodifiableListBase<E>{}");
+    doTest();
+  }
 }
