@@ -22,219 +22,168 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.maven.inspection;
 
-import com.intellij.codeInspection.*;
+import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.codeInspection.XmlSuppressableInspectionTool;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.XmlElementVisitor;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.dom.MavenDomUtil;
 import org.jetbrains.idea.maven.dom.model.MavenDomDependency;
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
 import org.jetbrains.idea.maven.dom.model.MavenDomRepository;
+import org.jetbrains.idea.maven.model.MavenConstants;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.MavenArtifactUtil;
 import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.facet.OsmorcFacet;
+import org.osmorc.i18n.OsmorcBundle;
+import org.osmorc.inspection.AbstractOsgiQuickFix;
 import org.osmorc.obrimport.MavenRepository;
 import org.osmorc.obrimport.ObrSearchDialog;
 import org.osmorc.obrimport.springsource.ObrMavenResult;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Inspection which detects non-OSGi dependencies.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
  */
 public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionTool {
-  @Nls
-  @NotNull
-  public String getGroupDisplayName() {
-    return "OSGi";
-  }
-
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return "Non-OSGi dependency";
-  }
-
-  @NotNull
-  public String getShortName() {
+  @Override
+  public String getAlternativeID() {
     return "osmorcNonOsgiMavenDependency";
   }
 
-  @Override
-  public boolean isEnabledByDefault() {
-    return true;
-  }
-
   @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, boolean b) {
-    return new XmlElementVisitor() {
-      public void visitXmlTag(XmlTag xmltag) {
-        // suppress inspection for projects not having an OSGi context.
-        if (!OsmorcFacet.hasOsmorcFacet(xmltag)) {
-          return;
-        }
-        // get the dependency
-        MavenDomDependency dependency = getDependency(xmltag);
-        if (dependency != null) {
-          String scope = dependency.getScope().getStringValue();
-          if ("test".equals(scope)) {
-            // don't test this for "test" dependencies...
-            return;
-          }
-          // get the projects manager for this dependency
-          MavenProjectsManager manager = MavenProjectsManager.getInstance(xmltag.getProject());
-          // try to resolve the jar file
-          File artifactFile = MavenArtifactUtil
-            .getArtifactFile(manager.getLocalRepository(), dependency.getGroupId().getStringValue(),
-                             dependency.getArtifactId().getStringValue(),
-                             dependency.getVersion().getStringValue(), "jar");
-          if (artifactFile.exists() && !CachingBundleInfoProvider.isBundle(artifactFile.getPath())) {
-            problemsHolder.registerProblem(xmltag, "Dependency is not OSGi-ready", new FindOsgiCapableMavenDependencyQuickFix());
+  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, boolean isOnTheFly) {
+    boolean isMaven = MavenDomUtil.isMavenFile(problemsHolder.getFile());
+    return !isMaven ? PsiElementVisitor.EMPTY_VISITOR : new XmlElementVisitor() {
+      @Override
+      public void visitXmlTag(XmlTag tag) {
+        if (OsmorcFacet.hasOsmorcFacet(tag)) {
+          MavenDomDependency dependency = getDependency(tag);
+          if (dependency != null) {
+            String scope = dependency.getScope().getStringValue();
+            if (!MavenConstants.SCOPE_TEST.equals(scope)) {
+              File repo = MavenProjectsManager.getInstance(tag.getProject()).getLocalRepository();
+              String groupId = dependency.getGroupId().getStringValue();
+              String artifactId = dependency.getArtifactId().getStringValue();
+              String version = dependency.getVersion().getStringValue();
+              File artifactFile = MavenArtifactUtil.getArtifactFile(repo, groupId, artifactId, version, MavenConstants.TYPE_JAR);
+              if (artifactFile.exists() && !CachingBundleInfoProvider.isBundle(artifactFile.getPath())) {
+                problemsHolder.registerProblem(tag, OsmorcBundle.message("NonOsgiMavenDependencyInspection.message"), new FindOsgiCapableMavenDependencyQuickFix());
+              }
+            }
           }
         }
       }
     };
   }
 
-  @Override
-  public ProblemDescriptor[] checkFile(@NotNull PsiFile psiFile, @NotNull InspectionManager inspectionManager, boolean isOnTheFly) {
-    // only run this for POM files in osmorc-controlled projects, its a waste of resources on other XML file types
-    if (!MavenDomUtil.isMavenFile(psiFile) || !OsmorcFacet.hasOsmorcFacet(psiFile)) {
-      return new ProblemDescriptor[0];
+  private static MavenDomDependency getDependency(XmlTag tag) {
+    if ("dependency".equals(tag.getName())) {
+      PsiElement parent = tag.getParent();
+      if (parent != null) {
+        PsiElement grand = parent.getParent();
+        if (!(grand instanceof XmlTag && "plugin".equals(((XmlTag)grand).getName()))) {
+          DomElement dom = DomManager.getDomManager(tag.getProject()).getDomElement(tag);
+          if (dom != null) {
+            return dom.getParentOfType(MavenDomDependency.class, false);
+          }
+        }
+      }
     }
-    else {
-      return super.checkFile(psiFile, inspectionManager, isOnTheFly);
-    }
-  }
 
-  public static MavenDomDependency getDependency(XmlTag xmltag) {
-    // avoid going through the dom for each and every tag.
-    if (!"dependency".equals(xmltag.getName())) {
-      return null;
-    }
-    DomElement dom = DomManager.getDomManager(xmltag.getProject()).getDomElement(xmltag);
-    if (dom != null) {
-      return dom.getParentOfType(MavenDomDependency.class, false);
-    }
     return null;
   }
 
-
   /**
-   * Intention action which tries to find a compatible OSGi-ready version of a maven dependency in the Springsource
-   * repository.
-   *
-   * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
-   * @version $Id:$
+   * Fix which tries to find a compatible OSGi-ready version of a Maven dependency.
    */
-  private static class FindOsgiCapableMavenDependencyQuickFix implements LocalQuickFix {
-
+  private static class FindOsgiCapableMavenDependencyQuickFix extends AbstractOsgiQuickFix {
     @NotNull
-    public String getFamilyName() {
-      return "Osmorc";
-    }
-
-    @NotNull
+    @Override
     public String getName() {
-      return "Find OSGi-ready version";
+      return OsmorcBundle.message("NonOsgiMavenDependencyInspection.fix");
     }
 
+    @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor problemDescriptor) {
       final MavenDomDependency dependency = getDependency((XmlTag)problemDescriptor.getPsiElement());
-      final ObrMavenResult mavenResult =
-        ObrSearchDialog.queryForMavenArtifact(project, dependency.getArtifactId().toString());
-      if (mavenResult != null) {
+      if (dependency == null) return;
+      final ObrMavenResult result = ObrSearchDialog.queryForMavenArtifact(project, dependency.getArtifactId().toString());
+      if (result == null) return;
 
-        final PsiFile psiFile = problemDescriptor.getPsiElement().getContainingFile();
-        new WriteCommandAction(project, psiFile) {
-          protected void run(Result result) throws Throwable
+      final PsiFile psiFile = problemDescriptor.getPsiElement().getContainingFile();
+      new WriteCommandAction(project, psiFile) {
+        @Override
+        protected void run(@NotNull Result _result) throws Throwable {
+          MavenDomProjectModel model = MavenDomUtil.getMavenDomProjectModel(getProject(), psiFile.getVirtualFile());
+          if (model == null) return;
 
-          {
-            MavenDomProjectModel model =
-              MavenDomUtil.getMavenDomProjectModel(getProject(), psiFile.getVirtualFile());
-            // adds a new dependency to the end of the list
-            MavenDomDependency dummy = model.getDependencies().addDependency();
-            dummy.getArtifactId().setStringValue(mavenResult.getArtifactId());
-            dummy.getVersion().setStringValue(mavenResult.getVersion());
-            dummy.getGroupId().setStringValue(mavenResult.getGroupId());
-            // copy over scope from old item
-            if (!"".equals(dependency.getScope().getStringValue())) {
-              dummy.getScope().setStringValue(dependency.getScope().getStringValue());
+          // replace dependency element
+
+          MavenDomDependency dummy = model.getDependencies().addDependency();
+          dummy.getGroupId().setStringValue(result.getGroupId());
+          dummy.getArtifactId().setStringValue(result.getArtifactId());
+          dummy.getVersion().setStringValue(result.getVersion());
+          String scope = dependency.getScope().getStringValue();
+          if (!StringUtil.isEmpty(scope)) {
+            dummy.getScope().setStringValue(scope);
+          }
+
+          PsiElement newDep = dummy.getXmlElement();
+          PsiElement oldDep = dependency.getXmlElement();
+          assert newDep != null : dummy;
+          assert oldDep != null : dependency;
+          oldDep.replace(newDep.copy());
+          newDep.delete();
+
+          // add new repository if needed
+
+          Set<String> projectRepositoryUrls = ContainerUtil.map2Set(model.getRepositories().getRepositories(), new Function<MavenDomRepository, String>() {
+            @Override
+            public String fun(MavenDomRepository repository) {
+              return repository.getUrl().getStringValue();
             }
+          });
 
-            PsiElement newDep = dummy.getXmlElement();
-            PsiElement oldDep = dependency.getXmlElement();
-            // add after the old element a copy of our dummy element (which is at the end of the list so far)
-            oldDep.getParent().addAfter(newDep.copy(), oldDep);
-            // kill old dependency and the dummy
-            oldDep.delete();
-            newDep.delete();
+          List<MavenRepository> newRepositories = ContainerUtil.newSmartList(result.getBundleRepository().getMavenRepositories());
 
-            // finally check the repo urls, if we need to add a new one.
-            MavenRepository[] repos = mavenResult.getBundleRepository().getMavenRepositories();
-            List<MavenDomRepository> repositories = model.getRepositories().getRepositories();
-
-            List<MavenRepository> knownRepositories = new ArrayList<MavenRepository>();
-            for (MavenDomRepository repository : repositories) {
-              String knownRepoUrl = repository.getUrl().getStringValue();
-              for (MavenRepository repo : repos) {
-                if (repo.getRepositoryUrl().equals(knownRepoUrl)) {
-                  knownRepositories.add(repo);
-                  break;
-                }
-              }
-            }
-
-            List<MavenRepository> unknownRepositories =
-              new ArrayList<MavenRepository>(Arrays.asList(repos));
-            unknownRepositories.removeAll(knownRepositories);
-
-            // now we have a list of Repos we still don't know.
-            // add these to the repo list
-            for (MavenRepository unknownRepository : unknownRepositories) {
-              // fix up  	 IDEA-24324, we use the ID provided by MavenRepository instead of using its URL
-              // which breaks maven on windows systems.
-              MavenDomRepository repo = model.getRepositories().addRepository();
-              repo.getId().setStringValue(unknownRepository.getRepositoryId());
-              repo.getUrl().setStringValue(unknownRepository.getRepositoryUrl());
-              repo.getName().setStringValue(unknownRepository.getRepositoryDescription());
+          for (Iterator<MavenRepository> i = newRepositories.iterator(); i.hasNext(); ) {
+            MavenRepository repository = i.next();
+            if (projectRepositoryUrls.contains(repository.getRepositoryUrl())) {
+              i.remove();
             }
           }
-        }.execute();
-        FileDocumentManager docManager = FileDocumentManager.getInstance();
-        com.intellij.openapi.editor.Document doc = docManager.getDocument(psiFile.getVirtualFile());
-        docManager.saveDocument(doc);
-        PsiDocumentManager.getInstance(project).commitDocument(doc);
-        /*
-        MavenId mavenid = new MavenId(result.getGroupId(), result.getArtifactId(), result.getVersion());
-        Module module = getModuleForFile(problemDescriptor.getPsiElement().getContainingFile());
-        MavenModel model = MavenUtil.getMavenModel(project, problemDescriptor.getPsiElement().getContainingFile().getVirtualFile());
-        model.getDependencies().addDependency();
-        org.jetbrains.idea.maven.project.MavenProjectModel mavenProject =
-            MavenProjectsManager.getInstance(project).findProject(module);
-        mavenProject.getRemoteRepositories()
-        MavenProjectsManager.getInstance(project).addDependency(mavenProject, mavenid);
-        */
-//        MavenProjectsManager.getInstance(project).reimport();
-      }
+
+          for (MavenRepository repository : newRepositories) {
+            MavenDomRepository added = model.getRepositories().addRepository();
+            added.getId().setStringValue(repository.getRepositoryId());
+            added.getUrl().setStringValue(repository.getRepositoryUrl());
+            added.getName().setStringValue(repository.getRepositoryDescription());
+          }
+        }
+      }.execute();
     }
   }
 }
