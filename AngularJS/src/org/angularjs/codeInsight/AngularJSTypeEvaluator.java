@@ -1,10 +1,13 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
-import com.intellij.lang.javascript.psi.types.*;
+import com.intellij.lang.javascript.psi.types.JSContext;
+import com.intellij.lang.javascript.psi.types.JSNamedType;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.psi.PsiElement;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
@@ -52,38 +55,23 @@ public class AngularJSTypeEvaluator extends JSTypeEvaluator {
 
   private boolean calculateRepeatParameterType(AngularJSRepeatExpression resolveParent) {
     final PsiElement last = findReferenceExpression(resolveParent);
-    JSType arrayType = null;
+    JSExpression arrayExpression = null;
     if (last instanceof JSReferenceExpression) {
       PsiElement resolve = ((JSReferenceExpression)last).resolve();
-      resolve = resolve instanceof JSNamedElementProxy ? ((JSNamedElementProxy)resolve).getElement() : resolve;
-      resolve = resolve instanceof JSVariable ? ((JSVariable)resolve).getInitializer() : resolve;
-      if (resolve instanceof JSExpression) {
-        arrayType = evalExprType((JSExpression)resolve);
-      }
-    } else if (last instanceof JSExpression) {
-      arrayType = evalExprType((JSExpression)last);
-    }
-    final JSType elementType = findElementType(arrayType);
-    if (elementType != null) {
-      addType(elementType, null);
-      return true;
-    }
-    return false;
-  }
-
-  private static JSType findElementType(JSType type) {
-    if (type instanceof JSArrayTypeImpl) {
-      return ((JSArrayTypeImpl)type).getType();
-    }
-    if (type instanceof JSCompositeTypeImpl) {
-      for (JSType jsType : ((JSCompositeTypeImpl)type).getTypes()) {
-        final JSType elementType = findElementType(jsType);
-        if (elementType != null) {
-          return elementType;
+      if (resolve != null) {
+        resolve = JSPsiImplUtils.getAssignedExpression(resolve);
+        if (resolve != null) {
+          arrayExpression = (JSExpression)resolve;
         }
       }
     }
-    return null;
+    else if (last instanceof JSExpression) {
+      arrayExpression = (JSExpression)last;
+    }
+    if (last != null && arrayExpression != null) {
+      return evalComponentTypeFromArrayExpression(resolveParent, arrayExpression) != null;
+    }
+    return false;
   }
 
   private static PsiElement findReferenceExpression(AngularJSRepeatExpression parent) {
