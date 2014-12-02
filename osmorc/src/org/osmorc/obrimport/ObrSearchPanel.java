@@ -132,22 +132,35 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
     _queryString.setText(queryString);
   }
 
-  private void setResults(List results) {
-    _resultList.setModel(new CollectionListModel(results));
+  private void setResults(final List results) {
+    //noinspection SSBasedInspection
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        _resultList.setModel(new CollectionListModel(results));
+      }
+    });
   }
 
   @Override
   protected void onProgressChange() {
-    _progressBar.setIndeterminate(isIndeterminate());
-    _progressBar.setValue((int)(100 * getFraction()));
-    _statusLabel.setText(getText());
-    _cancelButton.setEnabled(isRunning() && isCancelable());
+    //noinspection SSBasedInspection
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        _progressBar.setIndeterminate(isIndeterminate());
+        _progressBar.setValue((int)(100 * getFraction()));
+        _statusLabel.setText(getText());
+        _cancelButton.setEnabled(isRunning() && isCancelable());
+      }
+    });
   }
 
   @Override
   protected void onRunningChange() {
-    // Fix it to run on the event dispatch thread.
+    //noinspection SSBasedInspection
     SwingUtilities.invokeLater(new Runnable() {
+      @Override
       public void run() {
         _progressBar.setEnabled(isRunning());
         _statusLabel.setEnabled(isRunning());
