@@ -5,7 +5,6 @@ import com.google.dart.engine.error.AnalysisError;
 import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationSession;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Condition;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
@@ -24,12 +23,12 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 
-  void doTest(String message, String... additionalFiles) throws IOException {
+  protected void doTest(String message, String... additionalFiles) throws IOException {
     doTestWithoutCheck(message, additionalFiles);
     myFixture.checkResultByFile(getTestName(true) + ".after" + getExtension());
   }
 
-  void doTestWithoutCheck(String message, String... additionalFiles) throws IOException {
+  protected void doTestWithoutCheck(String message, String... additionalFiles) throws IOException {
     final String fullTestName = getTestName(true);
     final int dollarIndex = fullTestName.lastIndexOf('$');
     final String fixSimpleClassName = dollarIndex > 0 ? fullTestName.substring(dollarIndex + 1) : null;

@@ -201,8 +201,11 @@ public class DartPresentableUtil {
     if (namedArgumentList.isEmpty()) {
       return;
     }
-    needComma = false;
-    result.addTextSegment(", {");
+    if (needComma) {
+      result.addTextSegment(", ");
+      needComma = false;
+    }
+    result.addTextSegment("{");
     for (DartNamedArgument namedArgument : namedArgumentList) {
       if (needComma) {
         result.addTextSegment(", ");
