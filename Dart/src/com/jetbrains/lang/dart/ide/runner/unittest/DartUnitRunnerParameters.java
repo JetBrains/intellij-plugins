@@ -6,7 +6,19 @@ import org.jetbrains.annotations.Nullable;
 
 public class DartUnitRunnerParameters extends DartCommandLineRunnerParameters implements Cloneable {
 
-  public enum Scope {METHOD, GROUP, ALL}
+  public enum Scope {
+    ALL("All in file"), GROUP("Test group"), METHOD("Single test");
+
+    private final String myPresentableName;
+
+    Scope(final String name) {
+      myPresentableName = name;
+    }
+
+    public String getPresentableName() {
+      return myPresentableName;
+    }
+  }
 
   private @NotNull Scope myScope = Scope.ALL;
   private @Nullable String myTestName = null;

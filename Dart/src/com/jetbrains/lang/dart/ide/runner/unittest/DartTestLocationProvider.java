@@ -35,23 +35,22 @@ public class DartTestLocationProvider implements TestLocationProvider {
 
     ///Users/x/projs/foo/test/foo_test.dart,main tests/calculate_fail
 
-    final String[] elements = locationData.split(",");
-    if (elements.length != 2) {
+    final List<String> elements = StringUtil.split(locationData, ",");
+    if (elements.size() != 2) {
       return NONE;
     }
 
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(elements[0]);
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(elements.get(0));
     if (file == null) {
       return NONE;
     }
 
     final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-    final String[] pathNodes = pathToNodes(elements[1]);
-    return getLocation(project, pathNodes, psiFile);
+    return getLocation(project, pathToNodes(elements.get(1)), psiFile);
   }
 
-  private static String[] pathToNodes(final String element) {
-    return element.split("/");
+  private static List<String> pathToNodes(final String element) {
+    return StringUtil.split(element, "/");
   }
 
   @VisibleForTesting
@@ -59,7 +58,7 @@ public class DartTestLocationProvider implements TestLocationProvider {
     return getLocation(psiFile.getProject(), pathToNodes(testPath), psiFile);
   }
 
-  protected List<Location> getLocation(@NotNull final Project project, final String[] nodes, final PsiFile psiFile) {
+  protected List<Location> getLocation(@NotNull final Project project, final List<String> nodes, final PsiFile psiFile) {
 
     final List<Location> locations = new ArrayList<Location>();
 
@@ -69,15 +68,14 @@ public class DartTestLocationProvider implements TestLocationProvider {
 
         @Override
         public boolean execute(@NotNull final PsiElement element) {
-
           if (element instanceof DartCallExpression) {
             DartCallExpression expression = (DartCallExpression)element;
             if (DartUnitRunConfigurationProducer.isTest(expression) || DartUnitRunConfigurationProducer.isGroup(expression)) {
-              if (testLabelMatches(expression, nodes[nodes.length - 1])) {
+              if (nodes.get(nodes.size() - 1).equals(getTestLabel(expression))) {
                 boolean matches = true;
-                for (int i = nodes.length - 2; i >= 0 && matches; --i) {
+                for (int i = nodes.size() - 2; i >= 0 && matches; --i) {
                   expression = getGroup(expression);
-                  if (expression == null || !testLabelMatches(expression, nodes[i])) {
+                  if (expression == null || !nodes.get(i).equals(getTestLabel(expression))) {
                     matches = false;
                   }
                 }
@@ -101,8 +99,6 @@ public class DartTestLocationProvider implements TestLocationProvider {
             }
           });
         }
-
-
       };
 
       PsiTreeUtil.processElements(psiFile, collector);
@@ -111,13 +107,12 @@ public class DartTestLocationProvider implements TestLocationProvider {
     return locations;
   }
 
-
-  public static boolean testLabelMatches(final DartCallExpression testCallExpression, final String name) {
+  @Nullable
+  public static String getTestLabel(@NotNull final DartCallExpression testCallExpression) {
     final DartArgumentList argumentList = testCallExpression.getArguments().getArgumentList();
     final List<DartExpression> argExpressions = argumentList == null ? null : argumentList.getExpressionList();
-    return argExpressions != null &&
-           !argExpressions.isEmpty() &&
-           argExpressions.get(0) instanceof DartStringLiteralExpression &&
-           name.equals(StringUtil.unquoteString(argExpressions.get(0).getText()));
+    return argExpressions != null && !argExpressions.isEmpty() && argExpressions.get(0) instanceof DartStringLiteralExpression
+           ? StringUtil.unquoteString(argExpressions.get(0).getText())
+           : null;
   }
 }
