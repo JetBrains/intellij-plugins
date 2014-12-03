@@ -1,5 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.unittest.ui;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -18,6 +20,7 @@ import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
 import com.jetbrains.lang.dart.ide.runner.unittest.DartTestLocationProvider;
@@ -25,19 +28,80 @@ import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationProducer;
 import com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunnerParameters;
 import com.jetbrains.lang.dart.psi.DartCallExpression;
+import org.apache.commons.lang.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunnerParameters.Scope;
 
-@SuppressWarnings("Since15")
 public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunConfiguration> {
+
+  private class TestModel {
+    private final List<DartCallExpression> myGroupCalls = new ArrayList<DartCallExpression>();
+    private final List<DartCallExpression> myTestCalls = new ArrayList<DartCallExpression>();
+    private final String myFilePath;
+
+    TestModel(String filePath) {
+      myFilePath = filePath;
+      init();
+    }
+
+    private void init() {
+      final String filePath = myFileField.getText();
+      if (filePath != null) {
+        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+        if (file != null) {
+          final PsiFile testFile = PsiManager.getInstance(myProject).findFile(file);
+          if (testFile != null) {
+            PsiElementProcessor<PsiElement> collector = new PsiElementProcessor<PsiElement>() {
+              @Override
+              public boolean execute(@NotNull final PsiElement element) {
+                if (element instanceof DartCallExpression) {
+                  DartCallExpression expression = (DartCallExpression)element;
+                  if (DartUnitRunConfigurationProducer.isTest(expression)) {
+                    myTestCalls.add(expression);
+                  }
+                  else if (DartUnitRunConfigurationProducer.isGroup(expression)) {
+                    myGroupCalls.add(expression);
+                  }
+                }
+                return true;
+              }
+            };
+
+            PsiTreeUtil.processElements(testFile, collector);
+          }
+        }
+      }
+    }
+
+    boolean includes(Scope scope, final String testLabel) {
+
+      final Predicate<DartCallExpression> callExpressionPredicate = new Predicate<DartCallExpression>() {
+        @Override
+        public boolean apply(final DartCallExpression expression) {
+          return DartTestLocationProvider.testLabelMatches(expression, testLabel);
+        }
+      };
+
+      return scope == Scope.METHOD ?
+             !Collections2.filter(myTestCalls, callExpressionPredicate).isEmpty() :
+             !Collections2.filter(myGroupCalls, callExpressionPredicate).isEmpty();
+    }
+
+    boolean appliesTo(final String path) {
+      return ObjectUtils.equals(myFilePath, path);
+    }
+  }
+
+
   private JPanel myMainPanel;
   private JComboBox myScopeCombo;
   private JLabel myTestFileLabel;
@@ -49,10 +113,13 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
   private RawCommandLineEditor myArguments;
   private TextFieldWithBrowseButton myWorkingDirectory;
   private EnvironmentVariablesComponent myEnvironmentVariables;
-  private final Color myStandardForegroundColor;
+  private final Project myProject;
+  private TestModel myCachedModel;
 
-  public DartUnitConfigurationEditorForm(final Project project) {
+
+  public DartUnitConfigurationEditorForm(Project project) {
     DartCommandLineConfigurationEditorForm.initDartFileTextWithBrowse(project, myFileField);
+    myProject = project;
 
     myWorkingDirectory.addBrowseFolderListener(ExecutionBundle.message("select.working.directory.message"), null, project,
                                                FileChooserDescriptorFactory.createSingleFolderDescriptor());
@@ -69,18 +136,16 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
       @Override
       public void actionPerformed(ActionEvent e) {
         onScopeChanged();
-        onTestNameChanged(project); // Scope changes can invalidate test label
+        onTestNameChanged(); // Scope changes can invalidate test label
       }
     });
 
     myTestNameField.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
       protected void textChanged(final DocumentEvent e) {
-        onTestNameChanged(project);
+        onTestNameChanged();
       }
     });
-
-    myStandardForegroundColor = myTestNameField.getForeground();
 
     myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
     myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
@@ -132,45 +197,26 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
                             : DartBundle.message("dart.unit.method.name"));
   }
 
-  private void onTestNameChanged(final Project project) {
+  private void onTestNameChanged() {
+
+    final String filePath = myFileField.getText();
+    if (filePath == null || filePath.isEmpty()) {
+      return;
+    }
+
     final Scope scope = (Scope)myScopeCombo.getSelectedItem();
     final String testLabel = myTestNameField.getText();
-    final String filePath = myFileField.getText();
-    if (filePath != null) {
-      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
-      if (file != null) {
-        final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-        if (psiFile != null) {
 
-          PsiElementProcessor.CollectElements<PsiElement> collector = new PsiElementProcessor.CollectElements<PsiElement>() {
-            @Override
-            public boolean execute(@NotNull final PsiElement element) {
+    if (myCachedModel == null || !myCachedModel.appliesTo(filePath)) {
+      myCachedModel = new TestModel(filePath);
+    }
 
-              if (element instanceof DartCallExpression) {
-                DartCallExpression expression = (DartCallExpression)element;
-                if (scope == Scope.METHOD && DartUnitRunConfigurationProducer.isTest(expression) ||
-                    DartUnitRunConfigurationProducer.isGroup(expression)) {
-                  if (DartTestLocationProvider.testLabelMatches(expression, testLabel)) {
-                    // Collect the match
-                    super.execute(expression);
-                  }
-                }
-              }
-              return getCollection().isEmpty();
-            }
-          };
-
-          PsiTreeUtil.processElements(psiFile, collector);
-
-          if (collector.getCollection().isEmpty()) {
-            myTestNameField.setForeground(JBColor.RED);
-            myTestNameField.setToolTipText(DartBundle.message("config.test.unfound.label.warning", testLabel));
-          } else {
-            myTestNameField.setForeground(myStandardForegroundColor);
-            myTestNameField.setToolTipText(null);
-          }
-        }
-      }
+    if (!myCachedModel.includes(scope, myTestNameField.getText())) {
+      myTestNameField.setForeground(JBColor.RED);
+      myTestNameField.setToolTipText(DartBundle.message("config.test.unfound.label.warning", testLabel));
+    } else {
+      myTestNameField.setForeground(UIUtil.getFieldForegroundColor());
+      myTestNameField.setToolTipText(null);
     }
   }
 
