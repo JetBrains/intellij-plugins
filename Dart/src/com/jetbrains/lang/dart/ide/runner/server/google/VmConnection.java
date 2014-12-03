@@ -1076,7 +1076,7 @@ public class VmConnection {
     }
   }
 
-  private VmResult<VmValue> convertEvaluateObjectResult(VmIsolate isolate, JSONObject object) throws JSONException {
+  private static VmResult<VmValue> convertEvaluateObjectResult(VmIsolate isolate, JSONObject object) throws JSONException {
     VmResult<VmValue> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1086,8 +1086,8 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<VmClass> convertGetClassPropertiesResult(VmIsolate isolate, int classId,
-                                                            JSONObject object) throws JSONException {
+  private static VmResult<VmClass> convertGetClassPropertiesResult(VmIsolate isolate, int classId,
+                                                                   JSONObject object) throws JSONException {
     VmResult<VmClass> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1098,8 +1098,8 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<List<VmVariable>> convertGetGlobalVariablesResult(VmIsolate isolate,
-                                                                     JSONObject object) throws JSONException {
+  private static VmResult<List<VmVariable>> convertGetGlobalVariablesResult(VmIsolate isolate,
+                                                                            JSONObject object) throws JSONException {
     VmResult<List<VmVariable>> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1111,7 +1111,7 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<List<Integer>> convertGetIsolateIdsResult(JSONObject object) throws JSONException {
+  private static VmResult<List<Integer>> convertGetIsolateIdsResult(JSONObject object) throws JSONException {
     VmResult<List<Integer>> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1129,7 +1129,7 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<List<VmLibraryRef>> convertGetLibrariesResult(JSONObject object) throws JSONException {
+  private static VmResult<List<VmLibraryRef>> convertGetLibrariesResult(JSONObject object) throws JSONException {
     VmResult<List<VmLibraryRef>> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1140,8 +1140,8 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<VmLibrary> convertGetLibraryPropertiesResult(VmIsolate isolate, int libraryId,
-                                                                JSONObject object) throws JSONException {
+  private static VmResult<VmLibrary> convertGetLibraryPropertiesResult(VmIsolate isolate, int libraryId,
+                                                                       JSONObject object) throws JSONException {
     VmResult<VmLibrary> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1151,8 +1151,9 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<VmLineNumberTable> convertGetLineNumberTableResult(VmIsolate isolate,
-                                                                      int libraryId, String url, JSONObject object) throws JSONException {
+  private static VmResult<VmLineNumberTable> convertGetLineNumberTableResult(VmIsolate isolate,
+                                                                             int libraryId, String url, JSONObject object)
+    throws JSONException {
     VmResult<VmLineNumberTable> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1166,7 +1167,7 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<VmValue> convertGetListElementsResult(VmIsolate isolate, JSONObject object) throws JSONException {
+  private static VmResult<VmValue> convertGetListElementsResult(VmIsolate isolate, JSONObject object) throws JSONException {
     VmResult<VmValue> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1176,8 +1177,8 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<VmObject> convertGetObjectPropertiesResult(VmIsolate isolate, int objectId,
-                                                              JSONObject object) throws JSONException {
+  private static VmResult<VmObject> convertGetObjectPropertiesResult(VmIsolate isolate, int objectId,
+                                                                     JSONObject object) throws JSONException {
     VmResult<VmObject> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1188,7 +1189,7 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<String> convertGetScriptSourceResult(JSONObject object) throws JSONException {
+  private static VmResult<String> convertGetScriptSourceResult(JSONObject object) throws JSONException {
     VmResult<String> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1198,7 +1199,7 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<List<String>> convertGetScriptURLsResult(JSONObject object) throws JSONException {
+  private static VmResult<List<String>> convertGetScriptURLsResult(JSONObject object) throws JSONException {
     VmResult<List<String>> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1216,8 +1217,8 @@ public class VmConnection {
     return result;
   }
 
-  private VmResult<List<VmCallFrame>> convertGetStackTraceResult(VmIsolate isolate,
-                                                                 JSONObject object) throws JSONException {
+  private static VmResult<List<VmCallFrame>> convertGetStackTraceResult(VmIsolate isolate,
+                                                                        JSONObject object) throws JSONException {
     VmResult<List<VmCallFrame>> result = VmResult.createFrom(object);
 
     if (object.has("result")) {
@@ -1428,7 +1429,7 @@ public class VmConnection {
     }
   }
 
-  private JSONObject readJson(Reader in) throws IOException {
+  private static JSONObject readJson(Reader in) throws IOException {
     StringBuilder builder = new StringBuilder();
 
     boolean inQuote = false;

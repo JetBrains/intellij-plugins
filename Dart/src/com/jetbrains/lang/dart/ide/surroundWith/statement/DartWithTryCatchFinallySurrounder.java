@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.ide.surroundWith.statement;
 
 import com.intellij.psi.PsiElement;
-import com.jetbrains.lang.dart.psi.DartBlock;
 import com.jetbrains.lang.dart.psi.DartTryStatement;
 import org.jetbrains.annotations.Nullable;
 

@@ -125,10 +125,10 @@ public class DartKeywordCompletionContributor extends CompletionContributor {
   @NotNull
   private static Collection<? extends String> suggestBySibling(@Nullable PsiElement sibling) {
     if (DartIfStatement.class.isInstance(sibling)) {
-      return Arrays.asList(DartTokenTypes.ELSE.toString());
+      return Collections.singletonList(DartTokenTypes.ELSE.toString());
     }
     else if (DartTryStatement.class.isInstance(sibling) || DartCatchPart.class.isInstance(sibling)) {
-      return Arrays.asList(DartTokenTypes.CATCH.toString());
+      return Collections.singletonList(DartTokenTypes.CATCH.toString());
     }
 
     return Collections.emptyList();

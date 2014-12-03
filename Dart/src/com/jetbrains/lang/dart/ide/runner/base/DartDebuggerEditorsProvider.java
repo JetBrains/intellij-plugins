@@ -18,7 +18,10 @@ public class DartDebuggerEditorsProvider extends XDebuggerEditorsProviderBase {
   }
 
   @Override
-  protected PsiFile createExpressionCodeFragment(@NotNull Project project, @NotNull String text, @Nullable PsiElement context, boolean isPhysical) {
+  protected PsiFile createExpressionCodeFragment(@NotNull Project project,
+                                                 @NotNull String text,
+                                                 @Nullable PsiElement context,
+                                                 boolean isPhysical) {
     return DartElementGenerator.createExpressionCodeFragment(project, text, context, true);
   }
 }

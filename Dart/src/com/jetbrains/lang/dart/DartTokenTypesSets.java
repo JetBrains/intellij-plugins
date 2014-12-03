@@ -67,7 +67,7 @@ public interface DartTokenTypesSets {
                                             VAR,
                                             WHILE,
                                             WITH,
-  // 'void' is not listed as reserved word in spec but it may only be used as the return type of a function, so may be treated as reserved word
+                                            // 'void' is not listed as reserved word in spec but it may only be used as the return type of a function, so may be treated as reserved word
                                             VOID);
 
   TokenSet BUILT_IN_IDENTIFIERS = TokenSet.create(ABSTRACT,
@@ -85,7 +85,7 @@ public interface DartTokenTypesSets {
                                                   SET,
                                                   STATIC,
                                                   TYPEDEF,
-  // next are not listed in spec, but they seem to have the same sense as BUILT_IN_IDENTIFIERS: somewhere treated as keywords, but can be used as normal identifiers
+                                                  // next are not listed in spec, but they seem to have the same sense as BUILT_IN_IDENTIFIERS: somewhere treated as keywords, but can be used as normal identifiers
                                                   ON,
                                                   OF,
                                                   NATIVE,

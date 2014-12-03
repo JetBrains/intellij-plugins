@@ -77,7 +77,7 @@ public class VmResult<T> {
   @Override
   public String toString() {
     if (error != null) {
-      return error.toString();
+      return error;
     }
     else if (result != null) {
       return result.toString();

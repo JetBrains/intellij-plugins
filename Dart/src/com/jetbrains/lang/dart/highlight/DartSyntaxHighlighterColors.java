@@ -52,7 +52,6 @@ public class DartSyntaxHighlighterColors {
   private static final String DART_SYMBOL_LITERAL = "DART_SYMBOL_LITERAL";
 
 
-
   public static final TextAttributesKey LINE_COMMENT =
     createTextAttributesKey(DART_LINE_COMMENT, DefaultLanguageHighlighterColors.LINE_COMMENT);
   public static final TextAttributesKey BLOCK_COMMENT =

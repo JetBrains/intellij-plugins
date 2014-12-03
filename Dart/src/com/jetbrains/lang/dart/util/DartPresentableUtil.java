@@ -64,7 +64,8 @@ public class DartPresentableUtil {
           result.append(", ");
         }
         DartDefaultFormalNamedParameter formalParameter = list1.get(i);
-        result.append(getPresentableNormalFormalParameter(formalParameter.getNormalFormalParameter(), specialization, functionalStyleSignatures));
+        result.append(
+          getPresentableNormalFormalParameter(formalParameter.getNormalFormalParameter(), specialization, functionalStyleSignatures));
       }
       result.append(isOptional ? '}' : ']');
     }

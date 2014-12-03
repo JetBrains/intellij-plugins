@@ -19,10 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static com.jetbrains.lang.dart.util.DartUrlResolver.DART_PREFIX;
-import static com.jetbrains.lang.dart.util.DartUrlResolver.DART_SCHEME;
-import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
-import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_SCHEME;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.*;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 final class DartFileUrlMapper extends FileUrlMapper {
