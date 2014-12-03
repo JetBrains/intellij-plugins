@@ -23,6 +23,7 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.facet.TapestryFacetType;
 import com.intellij.tapestry.lang.TmlFileType;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -144,7 +145,7 @@ public class TapestryUtils {
     if (element == null) return Collections.emptyList();
     List<String> embeddedIds = new ArrayList<String>();
     for (TemplateElement injectedElement : element.getEmbeddedComponents()) {
-      embeddedIds.add(injectedElement.getElement().getElementId());
+      ContainerUtil.addIfNotNull(embeddedIds, injectedElement.getElement().getElementId());
     }
     return embeddedIds;
   }
