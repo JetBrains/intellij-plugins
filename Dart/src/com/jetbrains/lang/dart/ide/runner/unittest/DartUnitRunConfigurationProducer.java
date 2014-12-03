@@ -137,11 +137,11 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
     return element != null ? element.getContainingFile() : null;
   }
 
-  static boolean isTest(@NotNull final DartCallExpression expression) {
+  public static boolean isTest(@NotNull final DartCallExpression expression) {
     return checkCalledFunctionName(expression, "test");
   }
 
-  static boolean isGroup(@NotNull final DartCallExpression expression) {
+  public static boolean isGroup(@NotNull final DartCallExpression expression) {
     return checkCalledFunctionName(expression, "group");
   }
 

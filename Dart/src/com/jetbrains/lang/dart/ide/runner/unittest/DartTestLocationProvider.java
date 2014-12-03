@@ -73,11 +73,11 @@ public class DartTestLocationProvider implements TestLocationProvider {
           if (element instanceof DartCallExpression) {
             DartCallExpression expression = (DartCallExpression)element;
             if (DartUnitRunConfigurationProducer.isTest(expression) || DartUnitRunConfigurationProducer.isGroup(expression)) {
-              if (nameMatches(expression, nodes[nodes.length - 1])) {
+              if (testLabelMatches(expression, nodes[nodes.length - 1])) {
                 boolean matches = true;
                 for (int i = nodes.length - 2; i >= 0 && matches; --i) {
                   expression = getGroup(expression);
-                  if (expression == null || !nameMatches(expression, nodes[i])) {
+                  if (expression == null || !testLabelMatches(expression, nodes[i])) {
                     matches = false;
                   }
                 }
@@ -102,19 +102,22 @@ public class DartTestLocationProvider implements TestLocationProvider {
           });
         }
 
-        private boolean nameMatches(final DartCallExpression expression, final String name) {
-          final DartArgumentList argumentList = expression.getArguments().getArgumentList();
-          final List<DartExpression> argExpressions = argumentList == null ? null : argumentList.getExpressionList();
-          return argExpressions != null &&
-                 !argExpressions.isEmpty() &&
-                 argExpressions.get(0) instanceof DartStringLiteralExpression &&
-                 name.equals(StringUtil.unquoteString(argExpressions.get(0).getText()));
-        }
+
       };
 
       PsiTreeUtil.processElements(psiFile, collector);
     }
 
     return locations;
+  }
+
+
+  public static boolean testLabelMatches(final DartCallExpression testCallExpression, final String name) {
+    final DartArgumentList argumentList = testCallExpression.getArguments().getArgumentList();
+    final List<DartExpression> argExpressions = argumentList == null ? null : argumentList.getExpressionList();
+    return argExpressions != null &&
+           !argExpressions.isEmpty() &&
+           argExpressions.get(0) instanceof DartStringLiteralExpression &&
+           name.equals(StringUtil.unquoteString(argExpressions.get(0).getText()));
   }
 }
