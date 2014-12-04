@@ -52,7 +52,7 @@ public class VmCallFrame extends VmRef {
   }
 
   private static VmCallFrame createFrom(VmIsolate isolate, JSONObject object, int frameIndex)
-      throws JSONException {
+    throws JSONException {
     VmCallFrame frame = new VmCallFrame(isolate, frameIndex);
 
     frame.functionName = JsonUtils.getString(object, "functionName");

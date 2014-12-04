@@ -64,13 +64,13 @@ public class DartControlFlow {
     }
     final List<DartComponentName> inComponentNames = ContainerUtil.filter(
       dartReferenceVisitor.getComponentNames(), new Condition<DartComponentName>() {
-      @Override
-      public boolean value(DartComponentName componentName) {
-        final int offset = componentName.getTextOffset();
-        final boolean declarationInElements = firstElementStartOffset <= offset && offset < lastElementEndOffset;
-        return !declarationInElements;
-      }
-    });
+        @Override
+        public boolean value(DartComponentName componentName) {
+          final int offset = componentName.getTextOffset();
+          final boolean declarationInElements = firstElementStartOffset <= offset && offset < lastElementEndOffset;
+          return !declarationInElements;
+        }
+      });
 
 
     return new DartControlFlow(inComponentNames, outDeclarations);

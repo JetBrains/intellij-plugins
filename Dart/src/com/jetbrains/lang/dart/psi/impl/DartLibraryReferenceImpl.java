@@ -14,7 +14,6 @@ import com.jetbrains.lang.dart.psi.DartQualifiedComponentName;
 import com.jetbrains.lang.dart.psi.DartReference;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
-import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 

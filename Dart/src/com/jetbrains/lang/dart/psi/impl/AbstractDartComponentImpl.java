@@ -51,7 +51,7 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
   @Override
   public Icon getIcon(int flags) {
     final DartComponentType type = DartComponentType.typeOf(this);
-    Icon icon =  type == null ? super.getIcon(flags) : type.getIcon(this);
+    Icon icon = type == null ? super.getIcon(flags) : type.getIcon(this);
 
     icon = doOverlays(icon);
 

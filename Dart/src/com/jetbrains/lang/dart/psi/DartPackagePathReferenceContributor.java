@@ -13,8 +13,9 @@ public class DartPackagePathReferenceContributor extends PsiReferenceContributor
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
     DartPackagePathReferenceProvider provider = new DartPackagePathReferenceProvider();
-    String[] htmlAttrs = new String[] {"href", "src"};
+    String[] htmlAttrs = new String[]{"href", "src"};
     ElementFilter htmlFilter = DartPackagePathReferenceProvider.getFilter();
-    XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, htmlAttrs, htmlFilter, false, provider, PsiReferenceRegistrar.HIGHER_PRIORITY);
+    XmlUtil
+      .registerXmlAttributeValueReferenceProvider(registrar, htmlAttrs, htmlFilter, false, provider, PsiReferenceRegistrar.HIGHER_PRIORITY);
   }
 }

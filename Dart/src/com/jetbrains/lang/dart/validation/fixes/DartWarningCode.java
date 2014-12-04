@@ -9,7 +9,6 @@ import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public enum DartWarningCode {
       if (functionName == null) {
         return Collections.emptyList();
       }
-      return Arrays.asList(new CreateDartMethodAction(functionName, isStaticContext(file, startOffset)));
+      return Collections.singletonList(new CreateDartMethodAction(functionName, isStaticContext(file, startOffset)));
     }
   },
   UNDEFINED_FUNCTION {
@@ -67,7 +66,7 @@ public enum DartWarningCode {
       String name = DartPresentableUtil.findFirstQuotedWord(message);
       return name == null ?
              Collections.<IntentionAction>emptyList() :
-             Arrays.asList(new CreateDartGetterSetterAction(name, true, isStaticContext(file, startOffset)));
+             Collections.singletonList(new CreateDartGetterSetterAction(name, true, isStaticContext(file, startOffset)));
     }
   },
   UNDEFINED_SETTER {
@@ -78,7 +77,7 @@ public enum DartWarningCode {
       String name = DartPresentableUtil.findFirstQuotedWord(message);
       return name == null ?
              Collections.<IntentionAction>emptyList() :
-             Arrays.asList(new CreateDartGetterSetterAction(name, false, isStaticContext(file, startOffset)));
+             Collections.singletonList(new CreateDartGetterSetterAction(name, false, isStaticContext(file, startOffset)));
     }
   },
   UNDEFINED_OPERATOR {
@@ -87,7 +86,9 @@ public enum DartWarningCode {
     public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // There is no such operator '%s' in '%s'
       String operator = DartPresentableUtil.findFirstQuotedWord(message);
-      return operator == null ? Collections.<IntentionAction>emptyList() : Arrays.asList(new CreateDartOperatorAction(operator));
+      return operator == null
+             ? Collections.<IntentionAction>emptyList()
+             : Collections.singletonList(new CreateDartOperatorAction(operator));
     }
   },
   STATIC_ACCESS_TO_INSTANCE_MEMBER {
@@ -98,7 +99,7 @@ public enum DartWarningCode {
       DartComponent target = DartResolveUtil.findReferenceAndComponentTarget(file.findElementAt(startOffset));
       return target == null || DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(target.getContainingFile())
              ? Collections.<IntentionAction>emptyList()
-             : Arrays.asList(new MakeStaticAction(target));
+             : Collections.singletonList(new MakeStaticAction(target));
     }
   },
   NON_ABSTRACT_CLASS_INHERITS_ABSTRACT_MEMBER_FIVE_PLUS {
@@ -106,7 +107,7 @@ public enum DartWarningCode {
     @Override
     public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // Missing inherited members: '%s', '%s', '%s', '%s' and %d more
-      return Arrays.asList(new ImplementMethodAction(startOffset));
+      return Collections.singletonList(new ImplementMethodAction(startOffset));
     }
   },
   NON_ABSTRACT_CLASS_INHERITS_ABSTRACT_MEMBER_FOUR {
@@ -114,7 +115,7 @@ public enum DartWarningCode {
     @Override
     public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // Missing inherited members: '%s', '%s', '%s' and '%s'
-      return Arrays.asList(new ImplementMethodAction(startOffset));
+      return Collections.singletonList(new ImplementMethodAction(startOffset));
     }
   },
   NON_ABSTRACT_CLASS_INHERITS_ABSTRACT_MEMBER_THREE {
@@ -122,7 +123,7 @@ public enum DartWarningCode {
     @Override
     public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // Missing inherited members: '%s', '%s' and '%s'
-      return Arrays.asList(new ImplementMethodAction(startOffset));
+      return Collections.singletonList(new ImplementMethodAction(startOffset));
     }
   },
   NON_ABSTRACT_CLASS_INHERITS_ABSTRACT_MEMBER_TWO {
@@ -130,7 +131,7 @@ public enum DartWarningCode {
     @Override
     public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // Missing inherited members: '%s' and '%s'
-      return Arrays.asList(new ImplementMethodAction(startOffset));
+      return Collections.singletonList(new ImplementMethodAction(startOffset));
     }
   },
   NON_ABSTRACT_CLASS_INHERITS_ABSTRACT_MEMBER_ONE {
@@ -138,7 +139,7 @@ public enum DartWarningCode {
     @Override
     public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull String message) {
       // Missing inherited member '%s'
-      return Arrays.asList(new ImplementMethodAction(startOffset));
+      return Collections.singletonList(new ImplementMethodAction(startOffset));
     }
   },
   CAST_TO_NON_TYPE {

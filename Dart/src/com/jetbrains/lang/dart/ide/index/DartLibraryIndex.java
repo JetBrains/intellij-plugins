@@ -74,7 +74,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
       String stdLibName = libraryName.substring("dart:".length());
       VirtualFile stdLibFile = getStandardLibraryFromSdk(context.getProject(), stdLibName);
       if (stdLibFile != null) {
-        return Arrays.asList(stdLibFile);
+        return Collections.singletonList(stdLibFile);
       }
     }
     return new ArrayList<VirtualFile>(findSingleLibraryClass(context.getProject(), libraryName));

@@ -409,7 +409,7 @@ public class DartResolveUtil {
       }
 
       if (libraryStatement == null) {
-        return contextVirtualFile == null ? Collections.<VirtualFile>emptyList() : Arrays.asList(contextVirtualFile);
+        return contextVirtualFile == null ? Collections.<VirtualFile>emptyList() : Collections.singletonList(contextVirtualFile);
       }
       return DartLibraryIndex.findLibraryClass(context, libraryStatement.getLibraryName());
     }

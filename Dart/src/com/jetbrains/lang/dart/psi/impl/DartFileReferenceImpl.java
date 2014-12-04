@@ -29,9 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static com.jetbrains.lang.dart.util.DartUrlResolver.DART_PREFIX;
-import static com.jetbrains.lang.dart.util.DartUrlResolver.FILE_PREFIX;
-import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.*;
 
 public class DartFileReferenceImpl extends DartExpressionImpl implements DartReference, PsiPolyVariantReference {
   public DartFileReferenceImpl(ASTNode node) {

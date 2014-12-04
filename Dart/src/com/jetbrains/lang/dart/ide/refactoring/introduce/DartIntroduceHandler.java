@@ -40,7 +40,7 @@ import java.util.*;
 public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   @Nullable
   protected static PsiElement findAnchor(PsiElement occurrence) {
-    return findAnchor(Arrays.asList(occurrence));
+    return findAnchor(Collections.singletonList(occurrence));
   }
 
   @Nullable

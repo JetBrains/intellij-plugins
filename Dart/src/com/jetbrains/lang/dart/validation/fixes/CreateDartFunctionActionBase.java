@@ -87,7 +87,7 @@ abstract public class CreateDartFunctionActionBase extends BaseCreateFix {
     template.addTextSegment("\n}\n");
   }
 
-  private void buildParameters(Template template, DartCallExpression callExpression) {
+  private static void buildParameters(Template template, DartCallExpression callExpression) {
     DartArgumentList argumentList = callExpression.getArguments().getArgumentList();
     if (argumentList != null) {
       DartPresentableUtil.appendArgumentList(template, argumentList);
