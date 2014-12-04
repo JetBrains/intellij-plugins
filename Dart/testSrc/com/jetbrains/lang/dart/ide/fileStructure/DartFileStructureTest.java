@@ -15,7 +15,7 @@ public class DartFileStructureTest extends FileStructureTestBase {
   @Override
   protected String getFileExtension() {
     myFixture.setTestDataPath(BASE_TEST_DATA_PATH + getBasePath());
-    return "dart";
+    return getTestName(false).endsWith("Html") ? "html" : "dart";
   }
 
   @Override
@@ -36,6 +36,10 @@ public class DartFileStructureTest extends FileStructureTestBase {
   }
 
   public void testTopLevel() {
+    checkTree();
+  }
+
+  public void testDartInHtml() {
     checkTree();
   }
 }

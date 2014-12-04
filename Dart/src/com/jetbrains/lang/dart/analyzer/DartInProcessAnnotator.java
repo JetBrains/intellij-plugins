@@ -22,6 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.util.HtmlUtil;
+import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
 import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -82,7 +83,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<DartInProcessAnnot
   private static boolean containsDartEmbeddedContent(@NotNull final XmlFile file) {
     final String text = file.getText();
     int i = -1;
-    while ((i = text.indexOf("application/dart", i + 1)) != -1) {
+    while ((i = text.indexOf(DartLanguage.DART_MIME_TYPE, i + 1)) != -1) {
       final PsiElement element = file.findElementAt(i);
       final XmlTag tag = element == null ? null : PsiTreeUtil.getParentOfType(element, XmlTag.class);
       if (tag != null && HtmlUtil.isScriptTag(tag) && PsiTreeUtil.getChildOfType(tag, DartEmbeddedContent.class) != null) {
