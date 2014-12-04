@@ -62,7 +62,7 @@ public class HbFileType extends LanguageFileType implements TemplateLanguageFile
 
   public Charset extractCharsetFromFileContent(@Nullable final Project project,
                                                @Nullable final VirtualFile file,
-                                               @NotNull final String content) {
+                                               @NotNull final CharSequence content) {
     LanguageFileType associatedFileType = getAssociatedFileType(file, project);
 
     if (associatedFileType == null) {
