@@ -51,7 +51,7 @@
     <localInspection bundle="messages.HbBundle"
                      key="handlebars.inspections.helpers.empty"
                      groupBundle="messages.HbBundle"
-                     groupKey="inspection.group"
+                     groupKey="inspections.group.name"
                      language="Handlebars"
                      enabledByDefault="true"
                      level="WARNING"
