@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <file>test.hbs</file>
+    <line>3</line>
+    <description>Block helper each usually requires a parameter</description>
+  </problem>
+  <problem>
+    <file>test.hbs</file>
+    <line>5</line>
+    <description>Block helper if usually requires a parameter</description>
+  </problem>
+</problems>
+

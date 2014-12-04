@@ -42,7 +42,7 @@ public class DartAnalysisServerAnnotator extends ExternalAnnotator<PsiFile, Anal
   @Override
   @NotNull
   public AnalysisError[] doAnnotate(@NotNull final PsiFile psiFile) {
-    return DartAnalysisServerService.getInstance(psiFile.getProject()).analysis_getErrors(psiFile);
+    return DartAnalysisServerService.getInstance().analysis_getErrors(psiFile);
   }
 
   @Override
@@ -56,12 +56,12 @@ public class DartAnalysisServerAnnotator extends ExternalAnnotator<PsiFile, Anal
     }
   }
 
-  private boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final AnalysisError error) {
+  private static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final AnalysisError error) {
     final String errorType = error.getType();
-    if (AnalysisErrorType.TODO.equals(errorType)) return true; // already done using IDE engine
-    if (AnalysisErrorType.HINT.equals(errorType) && error.getMessage().endsWith("' is deprecated")) {
-      return true; // already done as DartDeprecatedApiUsageInspection
-    }
+    // already done using IDE engine
+    if (AnalysisErrorType.TODO.equals(errorType)) return true;
+    // already done as DartDeprecatedApiUsageInspection
+    if (AnalysisErrorType.HINT.equals(errorType) && error.getMessage().endsWith("' is deprecated")) return true;
     return false;
   }
 
@@ -84,7 +84,7 @@ public class DartAnalysisServerAnnotator extends ExternalAnnotator<PsiFile, Anal
     return null;
   }
 
-  private void registerFixes(@NotNull final PsiFile file, @NotNull final Annotation annotation, @NotNull final AnalysisError error) {
+  private void registerFixes(@NotNull final PsiFile psiFile, @NotNull final Annotation annotation, @NotNull final AnalysisError error) {
     // todo: implement
   }
 }

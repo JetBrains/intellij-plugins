@@ -34,7 +34,7 @@
     <codeFoldingOptionsProvider
         instance="com.dmarcotte.handlebars.config.HbFoldingOptionsProvider"/>
     <lang.psiStructureViewFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.structure.HbStructureViewFactory"/>
-    <annotator language="Handlebars" implementationClass="com.dmarcotte.handlebars.inspections.HbBlockMismatchInspection"/>
+    <annotator language="Handlebars" implementationClass="com.dmarcotte.handlebars.inspections.HbBlockMismatchAnnotator"/>
     <xml.zenCodingGenerator implementation="com.dmarcotte.handlebars.editor.templates.HbEmmetGenerator"/>
     <xml.zenCodingGenerator implementation="com.dmarcotte.handlebars.editor.templates.HbEmmetGenerator"/>
 
@@ -43,6 +43,16 @@
 
     <liveTemplateContext implementation="com.dmarcotte.handlebars.editor.templates.HbTemplateContextType"/>
     <defaultLiveTemplatesProvider implementation="com.dmarcotte.handlebars.editor.templates.HbsLiveTemplatesProvider"/>
+
+
+    <localInspection bundle="messages.HbBundle"
+                     key="handlebars.inspections.helpers.empty"
+                     groupBundle="messages.HbBundle"
+                     groupKey="inspection.group"
+                     language="Handlebars"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.dmarcotte.handlebars.inspections.HbEmptyBlockInspection"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

@@ -1,0 +1,11 @@
+abstract class Injector {}
+
+class TalkToMeApp {}
+
+ngBootstrap({TalkToMeApp module}) {
+  <caret>
+}
+
+startTalkToMeApp() {
+  Injector inj = ngBootstrap(module: new TalkToMeApp());
+}}

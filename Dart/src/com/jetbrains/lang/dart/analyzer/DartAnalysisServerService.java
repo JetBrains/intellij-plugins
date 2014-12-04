@@ -7,13 +7,17 @@ import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -26,6 +30,8 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class DartAnalysisServerService {
+
+  static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
   private final AnalysisServerListener myListener = new AnalysisServerListener() {
     /**
@@ -54,6 +60,7 @@ public class DartAnalysisServerService {
      * @param errors the errors contained in the file
      */
     public void computedErrors(String file, List<AnalysisError> errors) {
+
     }
 
     /**
@@ -175,15 +182,13 @@ public class DartAnalysisServerService {
     }
   };
 
-  static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
-
-  private final Project myProject;
+  private final Application myApplication;
   private RemoteAnalysisServerImpl myServer;
 
-  public DartAnalysisServerService(@NotNull final Project project) {
-    myProject = project;
-    startServer(myProject);
-    Disposer.register(project, new Disposable() {
+  public DartAnalysisServerService() {
+    myApplication = ApplicationManager.getApplication();
+    startServer();
+    Disposer.register(myApplication, new Disposable() {
       public void dispose() {
         stopServer();
       }
@@ -191,8 +196,8 @@ public class DartAnalysisServerService {
   }
 
   @NotNull
-  public static DartAnalysisServerService getInstance(final @NotNull Project project) {
-    return ServiceManager.getService(project, DartAnalysisServerService.class);
+  public static DartAnalysisServerService getInstance() {
+    return ServiceManager.getService(DartAnalysisServerService.class);
   }
 
   public void updateContent(@Nullable final Map<String, Object> files) {
@@ -202,12 +207,12 @@ public class DartAnalysisServerService {
 
   @NotNull
   public AnalysisError[] analysis_getErrors(@NotNull final PsiFile file) {
-    final AnalysisError[][] resultErrors = {AnalysisError.EMPTY_ARRAY};
+    final Ref<AnalysisError[]> resultError = new Ref<AnalysisError[]>();
     final CountDownLatch countDownLatch = new CountDownLatch(1);
     myServer.analysis_getErrors(file.getOriginalFile().getVirtualFile().getPath(), new GetErrorsConsumer() {
       @Override
       public void computedErrors(final AnalysisError[] errors) {
-        resultErrors[0] = errors;
+        resultError.set(errors);
         countDownLatch.countDown();
       }
     });
@@ -216,12 +221,11 @@ public class DartAnalysisServerService {
     }
     catch (InterruptedException e) {
       LOG.debug(e.getMessage(), e);
-      return resultErrors[0];
     }
-    return resultErrors[0];
+    return resultError.get();
   }
 
-  private void startServer(@NotNull final Project project) {
+  private void startServer() {
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
     if (sdk == null) {
       LOG.error("No SDK");
@@ -248,14 +252,24 @@ public class DartAnalysisServerService {
     catch (Exception e) {
       LOG.debug(e.getMessage(), e);
     }
+    setAnalysisRoots(ProjectManager.getInstance().getOpenProjects());
+    myServer.addAnalysisServerListener(myListener);
+  }
+
+  private void setAnalysisRoots(@NotNull final Project[] projects) {
     ArrayList<String> included = new ArrayList<String>();
-    for (final Module module : ModuleManager.getInstance(project).getModules()) {
-      for (VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
-        included.add(contentRoot.getPath());
+    ArrayList<String> excluded = new ArrayList<String>();
+    for (final Project project : projects) {
+      for (final Module module : ModuleManager.getInstance(project).getModules()) {
+        for (final VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
+          included.add(contentRoot.getPath());
+        }
+        for (final VirtualFile excludedRoot : ModuleRootManager.getInstance(module).getExcludeRoots()) {
+          excluded.add(excludedRoot.getPath());
+        }
       }
     }
-    myServer.analysis_setAnalysisRoots(included, null, null);
-    myServer.addAnalysisServerListener(myListener);
+    myServer.analysis_setAnalysisRoots(included, excluded, null);
   }
 
   private void stopServer() {
