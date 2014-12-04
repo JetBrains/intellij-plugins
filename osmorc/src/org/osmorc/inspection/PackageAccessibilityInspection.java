@@ -28,6 +28,8 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel;
+import com.intellij.ide.projectView.impl.ProjectRootsUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -43,6 +45,7 @@ import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.manifest.BundleManifest;
 import org.osmorc.util.OsgiPsiUtil;
 
+import javax.swing.*;
 import java.util.List;
 
 /**
@@ -54,10 +57,18 @@ import java.util.List;
 public class PackageAccessibilityInspection extends LocalInspectionTool {
   private static final String NOT_EXPORTED = "not exported";
 
+  public boolean checkTests = false;
+
+  @Override
+  public JComponent createOptionsPanel() {
+    return new SingleCheckboxOptionsPanel(OsmorcBundle.message("PackageAccessibilityInspection.ui.check.tests"), this, "checkTests");
+  }
+
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-    return new JavaElementVisitor() {
+    boolean check = checkTests || !ProjectRootsUtil.isInTestSource(holder.getFile());
+    return !check ? PsiElementVisitor.EMPTY_VISITOR : new JavaElementVisitor() {
       @Override
       public void visitReferenceElement(PsiJavaCodeReferenceElement reference) {
         checkReference(reference);
