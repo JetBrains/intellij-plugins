@@ -114,11 +114,13 @@ public class PhoneGapUtil {
   private static void setDefaultValue(@NotNull TextFieldWithHistoryWithBrowseButton field, @Nullable String defaultValue) {
     final TextFieldWithHistory textFieldWithHistory = field.getChildComponent();
 
-    setTextFieldWithHistory(textFieldWithHistory, defaultValue);
+    if (StringUtil.isNotEmpty(defaultValue)) {
+      setTextFieldWithHistory(textFieldWithHistory, defaultValue);
+    }
   }
 
   public static void setTextFieldWithHistory(TextFieldWithHistory textFieldWithHistory, String value) {
-    if (StringUtil.isNotEmpty(value)) {
+    if (null != value) {
       textFieldWithHistory.setText(value);
       textFieldWithHistory.addCurrentTextToHistory();
     }
