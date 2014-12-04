@@ -7,7 +7,6 @@ import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -18,16 +17,19 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.concurrency.Semaphore;
+import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 public class DartAnalysisServerService {
 
@@ -182,13 +184,11 @@ public class DartAnalysisServerService {
     }
   };
 
-  private final Application myApplication;
   private RemoteAnalysisServerImpl myServer;
 
   public DartAnalysisServerService() {
-    myApplication = ApplicationManager.getApplication();
     startServer();
-    Disposer.register(myApplication, new Disposable() {
+    Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       public void dispose() {
         stopServer();
       }
@@ -205,23 +205,21 @@ public class DartAnalysisServerService {
     myServer.analysis_updateContent(files);
   }
 
-  @NotNull
+  @Nullable
   public AnalysisError[] analysis_getErrors(@NotNull final PsiFile file) {
     final Ref<AnalysisError[]> resultError = new Ref<AnalysisError[]>();
-    final CountDownLatch countDownLatch = new CountDownLatch(1);
-    myServer.analysis_getErrors(file.getOriginalFile().getVirtualFile().getPath(), new GetErrorsConsumer() {
+    final Semaphore semaphore = new Semaphore();
+    semaphore.down();
+
+    final String path = FileUtil.toSystemDependentName(file.getOriginalFile().getVirtualFile().getPath());
+    myServer.analysis_getErrors(path, new GetErrorsConsumer() {
       @Override
       public void computedErrors(final AnalysisError[] errors) {
         resultError.set(errors);
-        countDownLatch.countDown();
+        semaphore.up();
       }
     });
-    try {
-      countDownLatch.await();
-    }
-    catch (InterruptedException e) {
-      LOG.debug(e.getMessage(), e);
-    }
+    semaphore.waitFor(10000);
     return resultError.get();
   }
 
@@ -242,8 +240,23 @@ public class DartAnalysisServerService {
       }
     };
 
-    final StdioServerSocket serverSocket =
-      new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{"--port=10000"}, false, false, 0, false);
+    final StdioServerSocket serverSocket;
+    if (!ApplicationManager.getApplication().isInternal()) {
+      serverSocket = new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, 0, false);
+    }
+    else {
+      int availablePort = 10000;
+      try {
+        availablePort = NetUtils.findAvailableSocketPort();
+      }
+      catch (IOException e) {
+        LOG.error(e.getMessage(), e);
+      }
+      LOG.debug("Go to http://localhost:" + availablePort + "/status to see status of analysis server");
+      serverSocket =
+        new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{"--port=" + availablePort}, false, false, 0,
+                              false);
+    }
 
     myServer = new RemoteAnalysisServerImpl(serverSocket);
     try {
@@ -253,7 +266,12 @@ public class DartAnalysisServerService {
       LOG.debug(e.getMessage(), e);
     }
     setAnalysisRoots(ProjectManager.getInstance().getOpenProjects());
+    setOptions();
     myServer.addAnalysisServerListener(myListener);
+  }
+
+  private void setOptions() {
+    myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true));
   }
 
   private void setAnalysisRoots(@NotNull final Project[] projects) {
