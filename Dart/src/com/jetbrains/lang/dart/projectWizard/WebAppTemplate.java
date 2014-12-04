@@ -5,6 +5,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,7 +68,7 @@ class WebAppTemplate extends DartProjectTemplate {
                                "    <div id=\"sample_container_id\">\n" +
                                "      <p id=\"sample_text_id\">Click me!</p>\n" +
                                "    </div>\n\n" +
-                               "    <script type=\"application/dart\" src=\"" + lowercaseName + ".dart\"></script>\n" +
+                               "    <script type=\"" + DartLanguage.DART_MIME_TYPE + "\" src=\"" + lowercaseName + ".dart\"></script>\n" +
                                "    <script src=\"packages/browser/dart.js\"></script>\n" +
                                "  </body>\n" +
                                "</html>\n").getBytes(Charset.forName("UTF-8")));

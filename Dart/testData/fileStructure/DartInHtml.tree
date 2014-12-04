@@ -1,0 +1,6 @@
+-HtmlFile:DartInHtml.html
+ [script]
+ -script
+  dartVar
+  -DartClass
+   foo()

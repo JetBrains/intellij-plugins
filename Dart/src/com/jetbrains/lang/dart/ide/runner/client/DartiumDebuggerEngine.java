@@ -18,6 +18,7 @@ import com.intellij.util.Url;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -70,7 +71,7 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
 
     final String text = psiFile.getText();
     int i = -1;
-    while ((i = text.indexOf("application/dart", i + 1)) != -1) {
+    while ((i = text.indexOf(DartLanguage.DART_MIME_TYPE, i + 1)) != -1) {
       final PsiElement element = psiFile.findElementAt(i);
       if (element != null && element.getParent() instanceof XmlAttributeValue) {
         if (HtmlUtil.isScriptTag(PsiTreeUtil.getParentOfType(element, XmlTag.class))) {
