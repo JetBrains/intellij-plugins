@@ -43,7 +43,10 @@
 
     <liveTemplateContext implementation="com.dmarcotte.handlebars.editor.templates.HbTemplateContextType"/>
     <defaultLiveTemplatesProvider implementation="com.dmarcotte.handlebars.editor.templates.HbsLiveTemplatesProvider"/>
-
+    
+    <todoIndexer filetype="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.index.HbTodoIndexer"/>
+    <idIndexer filetype="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.index.HbIdIndexer"/>
+    <lang.syntaxHighlighterFactory key="Handlebars" implementationClass="com.dmarcotte.handlebars.HbHighlighterFactory"/>
 
     <localInspection bundle="messages.HbBundle"
                      key="handlebars.inspections.helpers.empty"
@@ -54,7 +57,7 @@
                      level="WARNING"
                      implementationClass="com.dmarcotte.handlebars.inspections.HbEmptyBlockInspection"/>
   </extensions>
-
+    
   <extensions defaultExtensionNs="JavaScript">
     <lang.templates instance="com.dmarcotte.handlebars.pages.HbConfigurationPage"/>
   </extensions>

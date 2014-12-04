@@ -32,6 +32,9 @@ public class HbTokenTypes {
 
   public static final IElementType WHITE_SPACE = new HbElementType("WHITE_SPACE", "hb.parsing.element.expected.white_space");
   public static final IElementType COMMENT = new HbElementType("COMMENT", "hb.parsing.element.expected.comment");
+  public static final IElementType COMMENT_CONTENT = new HbElementType("COMMENT_CONTENT", "hb.parsing.element.expected.comment.content");
+  public static final IElementType COMMENT_OPEN = new HbElementType("COMMENT_OPEN", "hb.parsing.element.expected.comment.open");
+  public static final IElementType COMMENT_CLOSE = new HbElementType("COMMENT_CLOSE", "hb.parsing.element.expected.comment.close");
   public static final IElementType UNCLOSED_COMMENT = new HbElementType("UNCLOSED_COMMENT", "");
 
   public static final IElementType OPEN = new HbElementType("OPEN", "hb.parsing.element.expected.open");
@@ -59,6 +62,6 @@ public class HbTokenTypes {
   public static final IFileElementType FILE = new IFileElementType("FILE", HbLanguage.INSTANCE);
 
   public static final TokenSet WHITESPACES = TokenSet.create(WHITE_SPACE);
-  public static final TokenSet COMMENTS = TokenSet.create(COMMENT);
+  public static final TokenSet COMMENTS = TokenSet.create(COMMENT, COMMENT_CONTENT);
   public static final TokenSet STRING_LITERALS = TokenSet.create(STRING);
 }

@@ -44,6 +44,12 @@ public class HbLexerFreeFormTest extends HbLexerTest {
     result.shouldMatchTokenContent("{{! this is a comment=true }}", "This here be non-Hb content!");
   }
 
+  public void testEmptyUnclosedComment() {
+    TokenizerResult result = tokenize("{{!");
+    result.shouldMatchTokenTypes(UNCLOSED_COMMENT);
+    result.shouldMatchTokenContent("{{!");
+  }
+
   public void testSquareBracketStuff() {
     TokenizerResult result = tokenize("{{test\t[what] }}");
     result.shouldMatchTokenTypes(OPEN, ID, WHITE_SPACE, ID, WHITE_SPACE, CLOSE);
@@ -127,6 +133,14 @@ public class HbLexerFreeFormTest extends HbLexerTest {
     result.shouldMatchTokenTypes(COMMENT);
     result.shouldBeToken(0, COMMENT, "{{!}}");
   }
+
+  public void testNotCompletedBlock() {
+    TokenizerResult result = tokenize("{{!-}}");
+
+    result.shouldMatchTokenTypes(COMMENT);
+    result.shouldBeToken(0, COMMENT, "{{!-}}");
+  }
+
 
   public void testEscapedMustacheAtEOF() {
     TokenizerResult result = tokenize("\\{{escaped}}");
