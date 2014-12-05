@@ -27,6 +27,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_EMULATE;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_RUN;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.*;
 
 /**
@@ -204,6 +206,11 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
       throwOSWarning();
     }
 
+    if (myPlatform.equals(PLATFORM_FIREFOXOS) &&
+        (myCommand.equals(COMMAND_EMULATE) || myCommand.equals(COMMAND_RUN))) {
+      throwUnsupportedCommandWarning();
+    }
+
     if (myPlatform.equals(PLATFORM_ANDROID)) {
       checkExistsSdkWithWarning(PhoneGapTargets.getAndroidName(), "Cannot detect android SDK in path");
     }
@@ -214,6 +221,10 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
 
   public void throwOSWarning() throws RuntimeConfigurationWarning {
     throw new RuntimeConfigurationWarning("Applications for platform " + myPlatform + " can not be built on this OS");
+  }
+
+  public void throwUnsupportedCommandWarning() throws RuntimeConfigurationWarning {
+    throw new RuntimeConfigurationWarning("Phonegap/Cordova doesn't support " + myCommand + " for " + myPlatform);
   }
 
   public PhoneGapCommandLine getCommandLine() {
