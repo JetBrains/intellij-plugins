@@ -27,8 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_EMULATE;
-import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_RUN;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.*;
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.*;
 
 /**
@@ -57,6 +56,10 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
                                                                                      PLATFORM_ANDROID,
                                                                                      PLATFORM_FIREFOXOS,
                                                                                      PLATFORM_UBUNTU);
+
+  private static final Set<String> REMOTE_BUILD_PLATFORMS = ContainerUtil.immutableSet(PLATFORM_IOS,
+                                                                                       PLATFORM_ANDROID,
+                                                                                       PLATFORM_WP_8);
 
   //public for serializer
   @Nullable
@@ -208,6 +211,11 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
 
     if (myPlatform.equals(PLATFORM_FIREFOXOS) &&
         (myCommand.equals(COMMAND_EMULATE) || myCommand.equals(COMMAND_RUN))) {
+      throwUnsupportedCommandWarning();
+    }
+
+    if (!REMOTE_BUILD_PLATFORMS.contains(myPlatform) &&
+        (myCommand.equals(COMMAND_REMOTE_BUILD) || myCommand.equals(COMMAND_REMOTE_RUN))) {
       throwUnsupportedCommandWarning();
     }
 
