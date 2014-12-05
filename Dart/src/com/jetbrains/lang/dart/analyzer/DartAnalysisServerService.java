@@ -6,6 +6,7 @@ import com.google.dart.server.generated.types.*;
 import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
@@ -23,6 +24,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -206,20 +208,43 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public AnalysisError[] analysis_getErrors(@NotNull final PsiFile file) {
+  public AnalysisError[] analysis_getErrors(@NotNull final PsiFile psiFile) {
+    final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(psiFile);
+    if (vFile == null) return null;
+
     final Ref<AnalysisError[]> resultError = new Ref<AnalysisError[]>();
+
     final Semaphore semaphore = new Semaphore();
     semaphore.down();
 
-    final String path = FileUtil.toSystemDependentName(file.getOriginalFile().getVirtualFile().getPath());
-    myServer.analysis_getErrors(path, new GetErrorsConsumer() {
-      @Override
-      public void computedErrors(final AnalysisError[] errors) {
-        resultError.set(errors);
-        semaphore.up();
-      }
-    });
-    semaphore.waitFor(10000);
+    try {
+      myServer.analysis_getErrors(FileUtil.toSystemDependentName(vFile.getPath()), new GetErrorsConsumer() {
+        @Override
+        public void computedErrors(final AnalysisError[] errors) {
+          if (semaphore.tryUp()) {
+            resultError.set(errors);
+          }
+          else {
+            // semaphore unlocked by timeout, schedule to highlight the file again
+            ApplicationManager.getApplication().runReadAction(new Runnable() {
+              @Override
+              public void run() {
+                final Project project = psiFile.isValid() ? psiFile.getProject() : null;
+                if (project != null && !project.isDisposed()) {
+                  DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
+                }
+              }
+            });
+          }
+        }
+      });
+
+      semaphore.waitFor(5000);
+    }
+    finally {
+      semaphore.up(); // make sure that semaphore is unlock so that computedErrors() can understand when it was unlocked by timeout
+    }
+
     return resultError.get();
   }
 
