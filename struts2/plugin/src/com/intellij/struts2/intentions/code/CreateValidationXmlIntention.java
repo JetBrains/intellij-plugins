@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2014 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -86,14 +86,19 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
       return false;
     }
 
+    final List<Action> actions = getActionsForClazz(project, clazz, module);
+    if (actions.isEmpty()) {
+      return false;
+    }
+
     final List<XmlFile> files = ValidatorManager.getInstance(psiElement.getProject()).findValidationFilesFor(clazz);
     return files.isEmpty() ||
-           files.size() != getActionsForClazz(project, clazz, module).size();
+           files.size() != actions.size();
   }
 
   private static List<Action> getActionsForClazz(final Project project, final PsiClass clazz, final Module module) {
     final StrutsModel model = StrutsManager.getInstance(project).getCombinedModel(module);
-    if (model == null) {
+    if (model == null || !model.isActionClass(clazz)) {
       return Collections.emptyList();
     }
 
@@ -112,39 +117,40 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
   }
 
   @Override
-  public void invoke(@NotNull final Project project, final Editor editor, @NotNull final PsiElement element) throws
-      IncorrectOperationException {
+  public void invoke(@NotNull final Project project,
+                     final Editor editor,
+                     @NotNull final PsiElement element) throws IncorrectOperationException {
     final PsiClass actionClass = findActionClass(element);
     assert actionClass != null : element;
 
     final List<Action> filteredActions = getActionsWithoutValidation(actionClass);
     if (filteredActions.size() > 1) {
       final ListPopupStep<Action> step =
-          new BaseListPopupStep<Action>("Choose action mapping", filteredActions) {
+        new BaseListPopupStep<Action>("Choose action mapping", filteredActions) {
 
-            @Override
-            public Icon getIconFor(final Action value) {
-              return Struts2Icons.Action;
-            }
+          @Override
+          public Icon getIconFor(final Action value) {
+            return Struts2Icons.Action;
+          }
 
-            @NotNull
-            @Override
-            public String getTextFor(final Action value) {
-              return value.getName().getStringValue() + " (" + value.getMethod().getStringValue() + ")";
-            }
+          @NotNull
+          @Override
+          public String getTextFor(final Action value) {
+            return value.getName().getStringValue() + " (" + value.getMethod().getStringValue() + ")";
+          }
 
-            @Override
-            public PopupStep onChosen(final Action selectedValue, final boolean finalChoice) {
-              final String path = selectedValue.getName().getStringValue();
-              new WriteCommandAction<Void>(project) {
-                @Override
-                protected void run(final Result<Void> result) throws Throwable {
-                  createValidationXml(project, actionClass, path);
-                }
-              }.execute();
-              return FINAL_CHOICE;
-            }
-          };
+          @Override
+          public PopupStep onChosen(final Action selectedValue, final boolean finalChoice) {
+            final String path = selectedValue.getName().getStringValue();
+            new WriteCommandAction<Void>(project) {
+              @Override
+              protected void run(final Result<Void> result) throws Throwable {
+                createValidationXml(project, actionClass, path);
+              }
+            }.execute();
+            return FINAL_CHOICE;
+          }
+        };
       JBPopupFactory.getInstance().createListPopup(step).showInBestPositionFor(editor);
       return;
     }
@@ -160,15 +166,15 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     assert actionClassQualifiedName != null;
 
     final PackageWrapper targetPackage =
-        new PackageWrapper(manager, StringUtil.getPackageName(actionClassQualifiedName));
+      new PackageWrapper(manager, StringUtil.getPackageName(actionClassQualifiedName));
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(actionClass);
     assert module != null;
     final List<VirtualFile> sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots(JavaModuleSourceRootTypes.PRODUCTION);
     final VirtualFile sourceRoot = sourceRoots.size() == 1 ? sourceRoots.get(0) :
-        MoveClassesOrPackagesUtil.chooseSourceRoot(targetPackage,
-                                                   sourceRoots,
-                                                   manager.findDirectory(sourceRoots.get(0)));
+                                   MoveClassesOrPackagesUtil.chooseSourceRoot(targetPackage,
+                                                                              sourceRoots,
+                                                                              manager.findDirectory(sourceRoots.get(0)));
     if (sourceRoot == null) {
       return;
     }
@@ -181,7 +187,8 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
 
     final PsiDirectory packageDirectoryInSourceRoot = RefactoringUtil.createPackageDirectoryInSourceRoot(targetPackage, sourceRoot);
     try {
-      final String filename = path == null ? actionClass.getName() + "-validation.xml" : actionClass.getName() + "-" + path + "-validation.xml";
+      final String filename =
+        path == null ? actionClass.getName() + "-validation.xml" : actionClass.getName() + "-" + path + "-validation.xml";
       final PsiElement psiElement = FileTemplateUtil.createFromTemplate(validationTemplate, filename, null, packageDirectoryInSourceRoot);
       NavigationUtil.activateFileWithPsiElement(psiElement, true);
     }
@@ -222,7 +229,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
       return null;
     }
 
-    final PsiClass clazz = (PsiClass) parent;
+    final PsiClass clazz = (PsiClass)parent;
     if (clazz.getNameIdentifier() != psiElement) {
       return null;
     }
