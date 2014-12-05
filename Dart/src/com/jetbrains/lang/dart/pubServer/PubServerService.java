@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.pubServer;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.filters.TextConsoleBuilder;
+import com.intellij.execution.filters.UrlFilter;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
@@ -122,6 +123,7 @@ final class PubServerService extends NetService {
   protected void configureConsole(@NotNull final TextConsoleBuilder consoleBuilder) {
     consoleBuilder.addFilter(new DartConsoleFilter(project, firstServedDir));
     consoleBuilder.addFilter(new DartRelativePathsConsoleFilter(project, firstServedDir.getParent().getPath()));
+    consoleBuilder.addFilter(new UrlFilter());
   }
 
   public boolean isPubServerProcessAlive() {

@@ -5,6 +5,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.execution.filters.UrlFilter;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
@@ -74,6 +75,7 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
                                 ? dartFile.getParent().getPath()
                                 : runnerParameters.getWorkingDirectory();
       smtConsoleView.addMessageFilter(new DartRelativePathsConsoleFilter(project, workingDir));
+      smtConsoleView.addMessageFilter(new UrlFilter());
     }
     catch (RuntimeConfigurationError ignore) {/**/}
 
