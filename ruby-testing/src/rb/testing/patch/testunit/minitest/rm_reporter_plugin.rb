@@ -36,7 +36,7 @@ else
 
       def initialize(options = {})
         @passed = true
-        self.io= options[:io]
+        self.io= options[:io] || $stdout
         self.test_count = 0
         self.assertion_count = 0
         self.failures = 0
