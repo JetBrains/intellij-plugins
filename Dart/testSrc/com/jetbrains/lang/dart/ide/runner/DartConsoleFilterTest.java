@@ -1,9 +1,13 @@
 package com.jetbrains.lang.dart.ide.runner;
 
+import com.intellij.execution.filters.UrlFilter;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Trinity;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.regex.Matcher;
 
 import static com.jetbrains.lang.dart.ide.runner.DartPositionInfo.Type;
 
@@ -40,6 +44,17 @@ public class DartConsoleFilterTest extends TestCase {
     assertEquals(relPath, relPathLineAndColumn.first);
     assertEquals(line, relPathLineAndColumn.second.intValue());
     assertEquals(column, relPathLineAndColumn.third.intValue());
+  }
+
+  private static void doUrlTest(@NotNull final String line, @Nullable final String expectedUrl) {
+    final Matcher matcher = UrlFilter.URL_PATTERN.matcher(line);
+    if (expectedUrl == null) {
+      assertFalse(line, matcher.find());
+      return;
+    }
+
+    assertTrue(line, matcher.find());
+    assertEquals(expectedUrl, matcher.group());
   }
 
   public void testPositionInfo() {
@@ -100,5 +115,16 @@ public class DartConsoleFilterTest extends TestCase {
     doPositiveRelativePathsFilterTest("foo.dart 1:1", "foo.dart", 0, 0);
     doPositiveRelativePathsFilterTest("../foo\\bar.dart 4:15 x", "../foo\\bar.dart", 3, 14);
     doPositiveRelativePathsFilterTest("web\\foo.dart:566:1:", "web\\foo.dart", 565, 0);
+  }
+
+  public void testUrlParsing() throws Exception {
+    doUrlTest("not detecting dartlang.org", null);
+    doUrlTest("View the dumped .info.json file at https://dart-lang.github.io/dump-info-visualizer",
+              "https://dart-lang.github.io/dump-info-visualizer");
+    doUrlTest("http://dartlang.org/ (leading)", "http://dartlang.org/");
+    doUrlTest("Is it good site: http://dartlang.org?", "http://dartlang.org");
+    doUrlTest("And http://dartlang.org?a=@#/%?=~_|!:,.;&b=20 in the middle", "http://dartlang.org?a=@#/%?=~_|!:,.;&b=20");
+    doUrlTest("Sites in parens (http://dartlang.org) should work too", "http://dartlang.org");
+    doUrlTest("Without a protocol identifier (www.dartlang.org) should be OK", "www.dartlang.org");
   }
 }
