@@ -51,7 +51,7 @@ public class DartAnalysisServerAnnotator extends ExternalAnnotator<PsiFile, Anal
 
     if (FileUtil.isAncestor(sdk.getHomePath(), annotatedFile.getPath(), true)) return null;
 
-    if (PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile) == null) return null;
+    if (PsiDocumentManager.getInstance(psiFile.getProject()).getCachedDocument(psiFile) == null) return null;
 
     return psiFile;
   }
@@ -72,8 +72,12 @@ public class DartAnalysisServerAnnotator extends ExternalAnnotator<PsiFile, Anal
   }
 
   @Override
-  public void apply(@NotNull PsiFile psiFile, @NotNull AnalysisError[] errors, @NotNull AnnotationHolder holder) {
-    final Document document = PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile);
+  public void apply(@NotNull final PsiFile psiFile, @Nullable final AnalysisError[] errors, @NotNull final AnnotationHolder holder) {
+    if (errors == null) return;
+
+    final Document document = PsiDocumentManager.getInstance(psiFile.getProject()).getCachedDocument(psiFile);
+    if (document == null) return;
+
     for (AnalysisError error : errors) {
       if (shouldIgnoreMessageFromDartAnalyzer(error)) continue;
       final Annotation annotation = annotate(document, holder, error);
