@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.uml.actions;
 
+import com.intellij.diagram.DiagramBuilder;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -9,9 +10,7 @@ import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.psi.PsiElement;
-import com.intellij.diagram.DiagramBuilder;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -36,9 +35,9 @@ public abstract class JSCreateMethodActionBase extends NewJSMemberActionBase {
     if (!JSRefactoringUtil.checkReadOnlyStatus(clazz, null, getTemplatePresentation().getText())) return null;
     final JSFunction fakeMethod = JSCreateMethodDialog.createFakeMethod(clazz, createFakeMethodText(clazz), false);
     final JSCreateMethodDialog dialog = new JSCreateMethodDialog(clazz, fakeMethod, isForceConstructor());
-    dialog.show();
-
-    if (!dialog.isOK()) return null;
+    if (!dialog.showAndGet()) {
+      return null;
+    }
 
     return new Runnable() {
       @Override

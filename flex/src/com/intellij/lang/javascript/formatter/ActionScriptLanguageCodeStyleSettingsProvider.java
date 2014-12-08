@@ -97,6 +97,9 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
       consumer.renameStandardOption("ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE", JSBundle.message("js.array.new.line.after.left.bracket"));
       consumer.renameStandardOption("ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE", JSBundle.message("js.array.new.line.before.right.bracket"));
     }
+    else if (settingsType == SettingsType.LANGUAGE_SPECIFIC) {
+      consumer.showStandardOptions("LINE_COMMENT_AT_FIRST_COLUMN");
+    }
   }
 
   @Override

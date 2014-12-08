@@ -190,9 +190,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
     @Override
     public void process(CssRuleset ruleset) {
       if (ruleset == null) return;
-      CssSelectorList selectorList = ruleset.getSelectorList();
-      if (selectorList == null) return;
-      for (CssSelector selector : selectorList.getSelectors()) {
+      for (CssSelector selector : ruleset.getSelectors()) {
         for (PsiElement child : selector.getChildren()) {
           if (child instanceof CssSimpleSelector) {
             for (CssSelectorSuffix selectorSuffix : ((CssSimpleSelector)child).getSelectorSuffixes()) {

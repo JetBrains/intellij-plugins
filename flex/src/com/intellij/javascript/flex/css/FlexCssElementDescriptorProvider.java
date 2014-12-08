@@ -43,9 +43,9 @@ import com.intellij.psi.css.descriptor.value.CssValueValidator;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.descriptor.value.CssGroupValue;
 import com.intellij.psi.css.impl.descriptor.value.CssStringValue;
-import com.intellij.psi.css.impl.util.references.HtmlCssClassOrIdReference;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
+import com.intellij.psi.css.resolve.HtmlCssClassOrIdReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
@@ -222,14 +222,12 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
         }
 
         final String selectorName = selector.getElementName();
-        if (selectorName != null) {
-          Collection<JSQualifiedNamedElement> elements = JSResolveUtil.findElementsByName(selectorName, scope.getProject(), scope);
-          for (PsiElement element : elements) {
-            if (element instanceof JSClass) {
-              String classOrFileName = findJsClassOrFile((JSClass)element, new HashSet<JSClass>(), allNames);
-              if (classOrFileName != null) {
-                namesFromSelectors.add(classOrFileName);
-              }
+        Collection<JSQualifiedNamedElement> elements = JSResolveUtil.findElementsByName(selectorName, scope.getProject(), scope);
+        for (PsiElement element : elements) {
+          if (element instanceof JSClass) {
+            String classOrFileName = findJsClassOrFile((JSClass)element, new HashSet<JSClass>(), allNames);
+            if (classOrFileName != null) {
+              namesFromSelectors.add(classOrFileName);
             }
           }
         }
@@ -263,13 +261,13 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   @NotNull
   @Override
   public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name) {
-    return ContainerUtil.newArrayList(new CssPseudoSelectorDescriptorStub(name));
+    return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
   }
 
   @NotNull
   @Override
   public Collection<? extends CssValueDescriptor> getNamedValueDescriptors(@NotNull String name, @Nullable CssValueDescriptor parent) {
-    return ContainerUtil.newArrayList(new CssNullValue(parent));
+    return Collections.singletonList(new CssNullValue(parent));
   }
 
   @NotNull
@@ -282,7 +280,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       List<CssSimpleSelector> selectors = findSimpleSelectorsAbove(context);
       List<FlexStyleIndexInfo> infos = filter(lists, selectors, scope, module);
       if (infos.size() > 0) {
-        return ContainerUtil.newHashSet(new FlexCssPropertyDescriptor(infos));
+        return Collections.singletonList(new FlexCssPropertyDescriptor(infos));
       }
     }
     return Collections.emptyList();
@@ -357,10 +355,6 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       }
 
       final String shortClassName = selector.getElementName();
-      if (shortClassName == null) {
-        continue;
-      }
-
       Collection<JSQualifiedNamedElement> candidates = JSResolveUtil.findElementsByName(shortClassName, project, scope);
       for (JSQualifiedNamedElement candidate : candidates) {
         if (candidate instanceof JSClass) {
@@ -382,7 +376,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   private static boolean containsGlobalSelectors(@NotNull List<CssSimpleSelector> selectors) {
     for (CssSimpleSelector selector : selectors) {
       final String elementName = selector.getElementName();
-      if (elementName != null && elementName.isEmpty() || "global".equals(elementName) || "*".equals(elementName)) {
+      if (elementName.isEmpty() || "global".equals(elementName) || "*".equals(elementName)) {
         return  true;
       }
     }
@@ -558,21 +552,18 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   private static List<CssSimpleSelector> findSimpleSelectorsAbove(@NotNull PsiElement context) {
-    List<CssSimpleSelector> result = new ArrayList<CssSimpleSelector>();
+    List<CssSimpleSelector> result = ContainerUtil.newArrayList();
     CssRuleset ruleset = PsiTreeUtil.getParentOfType(context, CssRuleset.class);
     if (ruleset != null) {
-      CssSelectorList selectorList = ruleset.getSelectorList();
-      if (selectorList != null) {
-        for (CssSelector selector : selectorList.getSelectors()) {
-          CssSimpleSelector simpleSelector = null;
-          for (PsiElement child : selector.getChildren()) {
-            if (child instanceof CssSimpleSelector) {
-              simpleSelector = (CssSimpleSelector)child;
-            }
+      for (CssSelector selector : ruleset.getSelectors()) {
+        CssSimpleSelector simpleSelector = null;
+        for (PsiElement child : selector.getChildren()) {
+          if (child instanceof CssSimpleSelector) {
+            simpleSelector = (CssSimpleSelector)child;
           }
-          if (simpleSelector != null) {
-            result.add(simpleSelector);
-          }
+        }
+        if (simpleSelector != null) {
+          result.add(simpleSelector);
         }
       }
     }

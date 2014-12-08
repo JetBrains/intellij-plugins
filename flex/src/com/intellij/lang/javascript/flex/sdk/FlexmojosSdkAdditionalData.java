@@ -8,7 +8,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +37,7 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
   private String myAdlPath = "";
   private String myAirRuntimePath = "";
 
+  @Override
   public Object clone() throws CloneNotSupportedException {
     final FlexmojosSdkAdditionalData copy = (FlexmojosSdkAdditionalData)super.clone();
     copy.myFlexCompilerClasspath = new ArrayList<String>(myFlexCompilerClasspath);
@@ -105,8 +105,7 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
     myFlexCompilerClasspath.clear();
 
     try {
-      final Document document = JDOMUtil.loadDocument(compilerPomFile.getInputStream());
-      final Element rootElement = document.getRootElement();
+      final Element rootElement = JDOMUtil.load(compilerPomFile.getInputStream());
       if (!rootElement.getName().equals("project")) return;
       for (final Object dependenciesElement : rootElement.getChildren("dependencies", rootElement.getNamespace())) {
         for (final Object dependencyElement : ((Element)dependenciesElement).getChildren("dependency", rootElement.getNamespace())) {
@@ -117,8 +116,8 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
         }
       }
     }
-    catch (IOException e) {/*ignore*/}
-    catch (JDOMException e) {/*ignore*/}
+    catch (IOException ignored) {/*ignore*/}
+    catch (JDOMException ignored) {/*ignore*/}
   }
 
   private void setupAirPaths(final String repositoryRootPath, final String version) {
@@ -191,10 +190,7 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
         StringUtil.isNotEmpty(groupId) &&
         StringUtil.isNotEmpty(artifactId) &&
         StringUtil.isNotEmpty(version)) {
-      final StringBuilder classpathEntry = new StringBuilder();
-      classpathEntry.append(repositoryRootPath).append('/').append(groupId.replace('.', '/')).append('/').append(artifactId).append('/')
-        .append(version).append('/').append(artifactId).append('-').append(version).append(".jar");
-      myFlexCompilerClasspath.add(classpathEntry.toString());
+      myFlexCompilerClasspath.add(repositoryRootPath + '/' + groupId.replace('.', '/') + '/' + artifactId + '/' + version + '/' + artifactId + '-' + version + ".jar");
     }
   }
 

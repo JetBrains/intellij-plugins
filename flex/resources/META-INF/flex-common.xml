@@ -68,12 +68,8 @@
     <psi.referenceContributor implementation="com.intellij.javascript.flex.FlexReferenceContributor"/>
     <psi.fileReferenceHelper implementation="com.intellij.lang.javascript.flex.FlexFileReferenceHelper"/>
     <lookup.charFilter implementation="com.intellij.lang.javascript.flex.ActionScriptCharFilter"/>
-    <codeInsight.overrideMethod language="JavaScript"
-                                implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
     <codeInsight.overrideMethod language="Mxml"
                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
-    <codeInsight.implementMethod language="JavaScript"
-                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
     <codeInsight.implementMethod language="Mxml"
                                  implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
     <codeInsight.delegateMethods language="JavaScript"
@@ -304,13 +300,9 @@
             text="tearDown()">
       <add-to-group anchor="after" relative-to-action="Generate.SetUp.Actionscript" group-id="GenerateGroup"/>
     </action>
-    <action id="Generate.Constructor.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateConstructorAction"
-            text="Constructor">
-      <add-to-group anchor="after" relative-to-action="Generate.TearDown.Actionscript" group-id="GenerateGroup"/>
-    </action>
     <action id="Generate.GetAccessor.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateGetAccessorAction"
             text="Getter">
-      <add-to-group anchor="after" relative-to-action="Generate.Constructor.Actionscript" group-id="GenerateGroup"/>
+      <add-to-group anchor="after" relative-to-action="Generate.Constructor.JavaScript" group-id="GenerateGroup"/>
     </action>
     <action id="Generate.SetAccessor.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateSetAccessorAction"
             text="Setter">

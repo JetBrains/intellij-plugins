@@ -34,9 +34,7 @@ public class JSCreateFieldAction extends NewJSMemberActionBase {
     if (!JSRefactoringUtil.checkReadOnlyStatus(clazz, null, getTemplatePresentation().getText())) return null;
 
     final JSCreateFieldDialog d = new JSCreateFieldDialog(clazz);
-    d.show();
-
-    if (!d.isOK()) {
+    if (!d.showAndGet()) {
       return null;
     }
 

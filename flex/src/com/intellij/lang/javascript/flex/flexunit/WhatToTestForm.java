@@ -217,7 +217,8 @@ public class WhatToTestForm {
         return null;
       }
 
-      final PsiElement clazz = ActionScriptClassResolver.findClassByQNameStatic(myClassField.getText(), GlobalSearchScope.moduleScope(module));
+      final PsiElement clazz =
+        ActionScriptClassResolver.findClassByQNameStatic(myClassField.getText(), GlobalSearchScope.moduleScope(module));
       if (!(clazz instanceof JSClass)) {
         Messages.showErrorDialog(getProject(), FlexBundle.message("class.not.found", myClassField.getText()),
                                  ExecutionBundle.message("choose.test.method.dialog.title"));
@@ -230,8 +231,7 @@ public class WhatToTestForm {
         }
       }, myMainPanel, myMethodField.getText());
 
-      dialog.show();
-      if (dialog.isOK()) {
+      if (dialog.showAndGet()) {
         final JSFunction method = dialog.getSelectedMethod();
         return method != null ? method.getName() : null;
       }

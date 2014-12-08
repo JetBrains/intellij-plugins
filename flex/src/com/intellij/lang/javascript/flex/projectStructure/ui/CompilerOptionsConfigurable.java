@@ -213,8 +213,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         final RepeatableValueDialog dialog =
           new RepeatableValueDialog(module.getProject(), FlexBundle.message("items.to.include.in.swc.dialog.title"), value,
                                     CompilerOptionInfo.INCLUDE_FILE_INFO_FOR_UI);
-        dialog.show();
-        if (dialog.isOK()) {
+        if (dialog.showAndGet()) {
           final List<StringBuilder> newValue = dialog.getCurrentList();
           myFilesToIncludeInSWC = new ArrayList<String>(newValue.size());
           for (StringBuilder path : newValue) {
@@ -902,9 +901,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
             final LocalesDialog dialog =
               new LocalesDialog(myProject, sdk, StringUtil.split(myValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
-            dialog.show();
-
-            if (dialog.isOK()) {
+            if (dialog.showAndGet()) {
               myValue = StringUtil.join(dialog.getLocales(), CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
             }
           }
@@ -912,9 +909,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
             final RepeatableValueDialog dialog =
               new RepeatableValueDialog(myProject, StringUtil.capitalizeWords(myInfo.DISPLAY_NAME, true), buffers, myInfo,
                                         myAddedConditionalCompilerDefinition);
-            dialog.show();
-
-            if (dialog.isOK()) {
+            if (dialog.showAndGet()) {
               myValue = StringUtil.join(dialog.getCurrentList(), new Function<StringBuilder, String>() {
                 public String fun(final StringBuilder stringBuilder) {
                   return stringBuilder.toString();

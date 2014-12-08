@@ -1564,8 +1564,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         return;
       }
 
-      d.show();
-      if (!d.isOK()) {
+      if (!d.showAndGet()) {
         return;
       }
 
@@ -1657,8 +1656,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           return !usedLibraries.contains(library);
         }
       });
-      d.show();
-      if (!d.isOK()) return;
+      if (!d.showAndGet()) {
+        return;
+      }
 
       final List<Library> libraries = d.getSelectedLibraries();
       addSharedLibraries(libraries);

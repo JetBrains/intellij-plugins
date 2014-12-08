@@ -5,10 +5,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -21,10 +20,10 @@ import org.jetbrains.idea.maven.utils.MavenUtil;
 import java.io.IOException;
 import java.util.Collection;
 
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.FILE_SPECS;
 import static com.intellij.flex.build.FlexCompilerConfigFileUtilBase.FLEX_CONFIG;
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.OUTPUT;
 import static com.intellij.flex.build.FlexCompilerConfigFileUtilBase.PATH_ELEMENT;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.FILE_SPECS;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.OUTPUT;
 
 public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
@@ -68,6 +67,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
     myRlmInfos = rlmInfos;
   }
 
+  @Override
   public void perform(final Project project,
                       final MavenEmbeddersManager embeddersManager,
                       final MavenConsole console,
@@ -87,10 +87,11 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
         JDOMUtil.writeDocument(mainConfigRootElement.getDocument(), info.myConfigFilePath,
                                CodeStyleSettingsManager.getSettings(project).getLineSeparator());
       }
-      catch (IOException e) {/**/}
+      catch (IOException ignored) {/**/}
     }
 
     MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
+      @Override
       public void run() {
         // need to refresh externally created file
         for (RLMInfo info : myRlmInfos) {
@@ -108,14 +109,13 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
     final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (configFile != null) {
       try {
-        final Document document = (Document)JDOMUtil.loadDocument(configFile.getInputStream()).clone();
-        final Element rootElement = document.getRootElement();
+        final Element rootElement = JDOMUtil.load(configFile.getInputStream());
         if (rootElement.getName().equals(FLEX_CONFIG)) {
-          return rootElement;
+          return rootElement.clone();
         }
       }
-      catch (JDOMException e) {/*ignore*/}
-      catch (IOException e) {/*ignore*/}
+      catch (JDOMException ignored) {/*ignore*/}
+      catch (IOException ignored) {/*ignore*/}
     }
     return null;
   }
@@ -123,7 +123,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
   @NotNull
   private static String findAbsolutePath(final Module module, final String relativeToSourceRoot) {
     for (final VirtualFile root : ModuleRootManager.getInstance(module).getSourceRoots()) {
-      final VirtualFile file = VfsUtil.findRelativeFile(relativeToSourceRoot, root);
+      final VirtualFile file = VfsUtilCore.findRelativeFile(relativeToSourceRoot, root);
       if (file != null) {
         return file.getPath();
       }

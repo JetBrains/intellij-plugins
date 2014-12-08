@@ -185,11 +185,11 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
     final PsiElement expressionResolve = refExpression.resolve();
     if (expressionResolve instanceof JSVariable) {
       final JSAttributeList varAttributes = ((JSVariable)expressionResolve).getAttributeList();
-      final String text = ((JSVariable)expressionResolve).getInitializerText();
+      final String text = ((JSVariable)expressionResolve).getLiteralOrReferenceInitializerText();
       if (varAttributes != null &&
           varAttributes.hasModifier(JSAttributeList.ModifierType.STATIC) &&
           varAttributes.getAccessType() == JSAttributeList.AccessType.PUBLIC &&
-          StringUtil.isQuotedString(text)) {
+          text != null && StringUtil.isQuotedString(text)) {
         return Trinity.create(expressionStatement, ((JSClass)qualifierResolve).getQualifiedName(), initializerToPartialMethodName(text));
       }
     }
@@ -502,7 +502,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
           final PsiReference reference = referenceExpression.getReference();
           final PsiElement resolved = reference == null ? null : reference.resolve();
           if (resolved instanceof JSVariable && ((JSVariable)resolved).hasInitializer()) {
-            eventName = initializerToPartialMethodName(((JSVariable)resolved).getInitializerText());
+            eventName = initializerToPartialMethodName(((JSVariable)resolved).getInitializer().getText());
           }
         }
         else if (params[0] instanceof JSLiteralExpression) {

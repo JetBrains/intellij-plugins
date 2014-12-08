@@ -256,8 +256,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
         if (sdk == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) {
           final SelectFlexSdkDialog dialog = new SelectFlexSdkDialog(myModule.getProject(), CreateHtmlWrapperTemplateDialog.TITLE,
                                                                      FlexBundle.message("take.wrapper.template.from.sdk"));
-          dialog.show();
-          if (dialog.isOK()) {
+          if (dialog.showAndGet()) {
             final Sdk dialogSdk = dialog.getSdk();
             if (dialogSdk != null) {
               showHtmlWrapperCreationDialog(dialogSdk);
@@ -277,9 +276,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     myRLMTextWithBrowse.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         final RLMsDialog dialog = new RLMsDialog(myModule, myRLMs);
-        dialog.show();
-
-        if (dialog.isOK()) {
+        if (dialog.showAndGet()) {
           myRLMs = dialog.getRLMs();
           updateRLMsText();
         }
@@ -299,8 +296,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
         final RepeatableValueDialog dialog =
           new RepeatableValueDialog(myModule.getProject(), FlexBundle.message("css.files.to.compile.dialog.title"), value,
                                     CompilerOptionInfo.CSS_FILES_INFO_FOR_UI);
-        dialog.show();
-        if (dialog.isOK()) {
+        if (dialog.showAndGet()) {
           final List<StringBuilder> newValue = dialog.getCurrentList();
           myCssFilesToCompile = new ArrayList<String>(newValue.size());
           for (StringBuilder cssPath : newValue) {
@@ -319,8 +315,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     }
     final CreateHtmlWrapperTemplateDialog dialog =
       new CreateHtmlWrapperTemplateDialog(myModule, sdk, myOutputFolderField.getText().trim(), path);
-    dialog.show();
-    if (dialog.isOK()) {
+    if (dialog.showAndGet()) {
       myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(dialog.getWrapperFolderPath()));
     }
   }

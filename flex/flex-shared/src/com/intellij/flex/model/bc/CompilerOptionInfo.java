@@ -5,12 +5,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import gnu.trove.THashMap;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.InputStream;
 import java.util.*;
 
 
@@ -326,13 +324,12 @@ public class CompilerOptionInfo {
     try {
       final List<CompilerOptionInfo> infos = new ArrayList<CompilerOptionInfo>(30);
 
-      final InputStream inputStream = CompilerOptionInfo.class.getResourceAsStream("flex-compiler-options.xml");
-      final Document document = JDOMUtil.loadDocument(inputStream);
-      final Element rootElement = document.getRootElement();
+      final Element rootElement = JDOMUtil.load(CompilerOptionInfo.class.getResourceAsStream("flex-compiler-options.xml"));
+      assert rootElement != null;
       assert "options".equals(rootElement.getName());
 
       //noinspection unchecked
-      for (final Element element : ((Iterable<Element>)rootElement.getChildren())) {
+      for (Element element : rootElement.getChildren()) {
         final CompilerOptionInfo info;
         if ("group".equals(element.getName())) {
           info = loadGroup(element);
@@ -375,7 +372,7 @@ public class CompilerOptionInfo {
     final List<CompilerOptionInfo> infos = new ArrayList<CompilerOptionInfo>();
 
     //noinspection unchecked
-    for (final Element element : ((Iterable<Element>)groupElement.getChildren())) {
+    for (final Element element : groupElement.getChildren()) {
       final CompilerOptionInfo info;
       if ("group".equals(element.getName())) {
         info = loadGroup(element);
@@ -440,7 +437,7 @@ public class CompilerOptionInfo {
     final List<ListElement> result = new LinkedList<ListElement>();
 
     //noinspection unchecked
-    for (final Element childElement : (Iterable<Element>)element.getChildren("listElement")) {
+    for (final Element childElement : element.getChildren("listElement")) {
       final String name = childElement.getAttributeValue("name");
       final String displayName = childElement.getAttributeValue("displayName");
       assert name != null : element.getName();

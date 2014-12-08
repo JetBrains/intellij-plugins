@@ -6,7 +6,7 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -17,7 +17,6 @@ import com.intellij.util.containers.Stack;
 import com.intellij.util.containers.StringInterner;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectLongHashMap;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -86,9 +85,11 @@ public class SwcCatalogXmlUtil {
       return myLocation.peek();
     }
 
+    @Override
     public void doctype(@Nullable final CharSequence publicId, @Nullable final CharSequence systemId, final int start, final int end) {
     }
 
+    @Override
     public ProcessingOrder startTag(final CharSequence localName,
                                     final String namespace,
                                     final int start,
@@ -98,19 +99,24 @@ public class SwcCatalogXmlUtil {
       return ProcessingOrder.TAGS_AND_ATTRIBUTES;
     }
 
+    @Override
     public void endTag(final CharSequence localName, final String namespace, final int start, final int end) {
       myLocation.pop();
     }
 
+    @Override
     public void attribute(final CharSequence name, final CharSequence value, final int start, final int end) {
     }
 
+    @Override
     public void textElement(final CharSequence display, final CharSequence physical, final int start, final int end) {
     }
 
+    @Override
     public void entityRef(final CharSequence ref, final int start, final int end) {
     }
 
+    @Override
     public void error(final String message, final int start, final int end) {
     }
   }
@@ -133,7 +139,7 @@ public class SwcCatalogXmlUtil {
     final PsiFile psiFile = psiElement.getContainingFile();
     if (JavaScriptIndex.ECMASCRIPT_JS2.equals(psiFile.getName())) return Integer.MIN_VALUE;
 
-    final VirtualFile swfFile = psiFile == null ? null : psiFile.getVirtualFile();
+    final VirtualFile swfFile = psiFile.getVirtualFile();
     final VirtualFile dir = swfFile != null && "swf".equalsIgnoreCase(swfFile.getExtension()) ? swfFile.getParent() : null;
     final VirtualFile catalogFile = dir == null ? null : dir.findChild("catalog.xml");
 
@@ -171,11 +177,10 @@ public class SwcCatalogXmlUtil {
     final THashMap<String, TObjectLongHashMap<String>> swfNameToQnameWithTimestampMap = new THashMap<String, TObjectLongHashMap<String>>(1);
 
     try {
-      final Document document = JDOMUtil.loadDocument(catalogFile.getInputStream());
-      final Element rootElement = document.getRootElement();
+      final Element rootElement = JDOMUtil.load(catalogFile.getInputStream());
       if (rootElement != null && "swc".equals(rootElement.getName())) {
-        for (final Element librariesElement : (Iterable<Element>)rootElement.getChildren("libraries", rootElement.getNamespace())) {
-          for (final Element libraryElement : (Iterable<Element>)librariesElement.getChildren("library", librariesElement.getNamespace())) {
+        for (final Element librariesElement : rootElement.getChildren("libraries", rootElement.getNamespace())) {
+          for (final Element libraryElement : librariesElement.getChildren("library", librariesElement.getNamespace())) {
             final String swfName = libraryElement.getAttributeValue("path");
             if (StringUtil.isEmpty(swfName)) {
               continue;
@@ -184,7 +189,7 @@ public class SwcCatalogXmlUtil {
             final TObjectLongHashMap<String> qNameWithTimestampMap = new TObjectLongHashMap<String>();
             swfNameToQnameWithTimestampMap.put(swfName, qNameWithTimestampMap);
 
-            for (final Element scriptElement : (Iterable<Element>)libraryElement.getChildren("script", libraryElement.getNamespace())) {
+            for (final Element scriptElement : libraryElement.getChildren("script", libraryElement.getNamespace())) {
               final String mod = scriptElement.getAttributeValue("mod");
               if (StringUtil.isEmpty(mod)) {
                 continue;
@@ -193,7 +198,7 @@ public class SwcCatalogXmlUtil {
               try {
                 final long timestamp = Long.parseLong(mod);
 
-                for (final Element defElement : (Iterable<Element>)scriptElement.getChildren("def", scriptElement.getNamespace())) {
+                for (final Element defElement : scriptElement.getChildren("def", scriptElement.getNamespace())) {
                   final String id = defElement.getAttributeValue("id");
                   if (!StringUtil.isEmpty(id)) {
                     final String fqn = id.replace(':', '.');
@@ -201,14 +206,14 @@ public class SwcCatalogXmlUtil {
                   }
                 }
               }
-              catch (NumberFormatException e) {/*ignore*/}
+              catch (NumberFormatException ignored) {/*ignore*/}
             }
           }
         }
       }
     }
-    catch (JDOMException e) {/*ignore*/}
-    catch (IOException e) {/*ignore*/}
+    catch (JDOMException ignored) {/*ignore*/}
+    catch (IOException ignored) {/*ignore*/}
 
     return swfNameToQnameWithTimestampMap;
   }
@@ -242,6 +247,7 @@ public class SwcCatalogXmlUtil {
       private String myUriAttr = null;
       private String myIconAttr = null;
 
+      @Override
       public void attribute(CharSequence name, CharSequence value, int start, int end) {
         if (COMPONENT_LOCATION.equals(getLocation())) {
           if (NAME.equals(name)) {
@@ -261,6 +267,7 @@ public class SwcCatalogXmlUtil {
 
       private final StringInterner myStringInterner = new StringInterner();
 
+      @Override
       public void endTag(CharSequence localName, String namespace, int start, int end) {
         if (COMPONENT_LOCATION.equals(getLocation())) {
           if (StringUtil.isNotEmpty(myNameAttr) && StringUtil.isNotEmpty(myClassNameAttr) && StringUtil.isNotEmpty(myUriAttr)) {
@@ -284,9 +291,9 @@ public class SwcCatalogXmlUtil {
     };
 
     try {
-      new XmlBuilderDriver(VfsUtil.loadText(catalogFile)).build(xmlBuilder);
+      new XmlBuilderDriver(VfsUtilCore.loadText(catalogFile)).build(xmlBuilder);
     }
-    catch (IOException e) {/*ignore*/}
+    catch (IOException ignored) {/*ignore*/}
 
 
     return result.toArray(new ComponentFromCatalogXml[result.size()]);
@@ -317,6 +324,7 @@ public class SwcCatalogXmlUtil {
       private String idAttr = null;
       private String classAttr = null;
 
+      @Override
       public void attribute(final CharSequence name, final CharSequence value, final int start, final int end) {
         if (ID.equals(name.toString())) {
           idAttr = value.toString().trim();
@@ -326,6 +334,7 @@ public class SwcCatalogXmlUtil {
         }
       }
 
+      @Override
       public void endTag(final CharSequence localName, final String namespace, final int start, final int end) {
         if (COMPONENT.equals(localName)) {
           if (StringUtil.isNotEmpty(classAttr)) {
@@ -343,9 +352,9 @@ public class SwcCatalogXmlUtil {
     };
 
     try {
-      new XmlBuilderDriver(VfsUtil.loadText(manifestFile)).build(builder);
+      new XmlBuilderDriver(VfsUtilCore.loadText(manifestFile)).build(builder);
     }
-    catch (IOException e) {/*ignore*/}
+    catch (IOException ignored) {/*ignore*/}
 
     return result.toArray(new ComponentFromManifest[result.size()]);
   }

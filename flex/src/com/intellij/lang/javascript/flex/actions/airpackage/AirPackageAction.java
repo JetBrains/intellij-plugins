@@ -77,9 +77,9 @@ public class AirPackageAction extends DumbAwareAction {
     if (project == null) return;
 
     final AirPackageDialog dialog = new AirPackageDialog(project);
-    dialog.show();
-
-    if (!dialog.isOK()) return;
+    if (!dialog.showAndGet()) {
+      return;
+    }
 
     final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs = dialog.getSelectedBCs();
     final Set<Module> modules = new THashSet<Module>();
@@ -243,8 +243,7 @@ public class AirPackageAction extends DumbAwareAction {
 
     if (!signingOptionsWithUnknownPasswords.isEmpty()) {
       final KeystorePasswordDialog dialog = new KeystorePasswordDialog(project, signingOptionsWithUnknownPasswords);
-      dialog.show();
-      return dialog.isOK() ? dialog.getPasswords() : null;
+      return dialog.showAndGet() ? dialog.getPasswords() : null;
     }
 
     return PasswordStore.getInstance(project);

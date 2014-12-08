@@ -194,7 +194,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
             attributeList.hasModifier(JSAttributeList.ModifierType.STATIC) &&
             "String".equals(variable.getTypeString())
           ) {
-          final String s = variable.getInitializerText();
+          final String s = variable.getLiteralOrReferenceInitializerText();
           if (s != null && StringUtil.startsWith(s, "\"") && StringUtil.endsWith(s,"\"") ) {
             String key = StringUtil.stripQuotesAroundValue(s);
             String event = myEventsMap.get(key);

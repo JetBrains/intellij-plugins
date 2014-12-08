@@ -75,7 +75,7 @@ public class CssWriter {
     rulesetVectorWriter.prepareIteration();
 
     CssStylesheet stylesheet = cssFile.getStylesheet();
-    CssRuleset[] rulesets = stylesheet.getRulesets();
+    CssRuleset[] rulesets = stylesheet != null ? stylesheet.getRulesets() : CssRuleset.EMPTY_ARRAY;
 
     final DocumentWindow documentWindow = document instanceof DocumentWindow ? (DocumentWindow)document : null;
     for (CssRuleset ruleset : rulesets) {
@@ -146,16 +146,14 @@ public class CssWriter {
   }
 
   private void writeSelectors(CssRuleset ruleset, PrimitiveAmfOutputStream out, Module module) {
-    CssSelector[] selectors = ruleset.getSelectorList().getSelectors();
+    CssSelector[] selectors = ruleset.getSelectors();
     out.write(selectors.length);
 
     for (CssSelector selector : selectors) {
-      PsiElement[] simpleSelectors = selector.getElements();
+      CssSimpleSelector[] simpleSelectors = selector.getSimpleSelectors();
       out.write(simpleSelectors.length);
 
-      for (PsiElement simpleSelector1 : simpleSelectors) {
-        CssSimpleSelector simpleSelector = (CssSimpleSelector)simpleSelector1;
-
+      for (CssSimpleSelector simpleSelector : simpleSelectors) {
         // subject
         if (simpleSelector.isUniversalSelector()) {
           out.write(0);
@@ -163,7 +161,6 @@ public class CssWriter {
         else {
           XmlElementDescriptor typeSelectorDescriptor = FlexCssElementDescriptorProvider.getTypeSelectorDescriptor(simpleSelector, module);
           final String subject = simpleSelector.getElementName();
-          assert subject != null;
           if (typeSelectorDescriptor == null) {
             if (!subject.equals("global")) {
               LOG.warn("unqualified type selector " + simpleSelector.getText());

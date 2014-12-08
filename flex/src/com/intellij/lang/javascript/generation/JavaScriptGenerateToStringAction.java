@@ -11,13 +11,14 @@ import org.jetbrains.annotations.NotNull;
  *         Date: Jul 19, 2008
  *         Time: 1:01:05 AM
  */
-public class JavaScriptGenerateToStringAction extends BaseJSGenerateAction {
+public class JavaScriptGenerateToStringAction extends ActionScriptBaseJSGenerateAction {
 
   protected BaseJSGenerateHandler getGenerateHandler() {
     return new JavaScriptGenerateToStringHandler();
   }
 
   protected boolean isApplicableForJsClass(final @NotNull JSClass jsClass, final PsiFile psiFile, final @NotNull Editor editor) {
-    return jsClass.findFunctionByNameAndKind("toString", JSFunction.FunctionKind.SIMPLE) == null;
+    return super.isApplicableForJsClass(jsClass, psiFile, editor)
+           && jsClass.findFunctionByNameAndKind("toString", JSFunction.FunctionKind.SIMPLE) == null;
   }
 }
