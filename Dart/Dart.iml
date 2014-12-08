@@ -46,7 +46,9 @@
           <root url="jar://$MODULE_DIR$/lib/dartanalyzer_server.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/dartanalyzer_server_src.zip!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
