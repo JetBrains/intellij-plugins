@@ -1,7 +1,7 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;

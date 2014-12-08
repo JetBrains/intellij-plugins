@@ -22,8 +22,6 @@ import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -31,7 +29,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class AngularIndexUtil {
   public static final int BASE_VERSION = 17;
-  private static final ConcurrentMap<String, Key<ParameterizedCachedValue<List<String>, Pair<Project, ID<String, Void>>>>> ourCacheKeys =
+  private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
 
