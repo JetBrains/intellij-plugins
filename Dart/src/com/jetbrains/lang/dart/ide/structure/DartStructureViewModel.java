@@ -4,29 +4,28 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.StructureViewModelBase;
 import com.intellij.ide.structureView.StructureViewTreeElement;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
-import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
-import com.intellij.ide.util.treeView.smartTree.Filter;
-import com.intellij.ide.util.treeView.smartTree.TreeElement;
+import com.intellij.ide.util.treeView.smartTree.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.DartComponentType;
-import com.jetbrains.lang.dart.psi.DartClass;
-import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartEnum;
+import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartStructureViewModel extends StructureViewModelBase implements StructureViewModel.ElementInfoProvider {
+
+  private static final Sorter[] SORTERS = new Sorter[]{Sorter.ALPHA_SORTER};
+
   public DartStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
     super(psiFile, editor, new DartStructureViewElement(psiFile));
-    withSuitableClasses(DartComponent.class, DartClass.class);
+    // order matters, first elements are compared first when walking up parents in AST:
+    withSuitableClasses(DartVarAccessDeclaration.class, DartFunctionDeclarationWithBodyOrNative.class, DartMethodDeclaration.class,
+                        DartFactoryConstructorDeclaration.class, DartNamedConstructorDeclaration.class,
+                        DartFunctionTypeAlias.class, DartGetterDeclaration.class, DartSetterDeclaration.class,
+                        DartEnumConstantDeclaration.class, DartClass.class);
   }
 
   @Override
@@ -40,10 +39,15 @@ public class DartStructureViewModel extends StructureViewModelBase implements St
     return new Filter[]{ourFieldsFilter};
   }
 
+  @NotNull
+  public Sorter[] getSorters() {
+    return SORTERS;
+  }
+
   @Override
   public boolean isAlwaysLeaf(StructureViewTreeElement element) {
     final Object value = element.getValue();
-    return value instanceof DartComponent && !(value instanceof DartClass || value instanceof DartEnum);
+    return value instanceof DartComponent && !(value instanceof DartClass);
   }
 
   @Override
@@ -58,7 +62,7 @@ public class DartStructureViewModel extends StructureViewModelBase implements St
     @Override
     public boolean isVisible(TreeElement treeNode) {
       if (!(treeNode instanceof DartStructureViewElement)) return true;
-      final PsiElement element = ((DartStructureViewElement)treeNode).getRealElement();
+      final PsiElement element = ((DartStructureViewElement)treeNode).getElement();
 
       DartComponentType type = DartComponentType.typeOf(element);
       if (type == DartComponentType.FIELD || type == DartComponentType.VARIABLE) {

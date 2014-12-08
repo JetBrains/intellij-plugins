@@ -6,6 +6,7 @@ import com.intellij.execution.actions.StopProcessAction;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
+import com.intellij.execution.filters.UrlFilter;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
@@ -29,6 +30,7 @@ import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowId;
@@ -173,7 +175,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
               public void run() {
                 DartProjectComponent.excludeBuildAndPackagesFolders(module, pubspecYamlFile);
                 // refresh later than exclude, otherwise IDE may start indexing excluded folders
-                pubspecYamlFile.getParent().refresh(true, true);
+                VfsUtil.markDirtyAndRefresh(true, true, true, pubspecYamlFile.getParent());
               }
             });
           }
@@ -258,6 +260,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     consoleBuilder.setViewer(true);
     consoleBuilder.addFilter(new DartConsoleFilter(project, pubspecYamlFile));
     consoleBuilder.addFilter(new DartRelativePathsConsoleFilter(project, pubspecYamlFile.getParent().getPath()));
+    consoleBuilder.addFilter(new UrlFilter());
     return consoleBuilder.getConsole();
   }
 

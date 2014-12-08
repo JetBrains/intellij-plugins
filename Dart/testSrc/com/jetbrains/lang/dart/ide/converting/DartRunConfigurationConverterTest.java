@@ -8,7 +8,6 @@ import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.testFramework.PlatformTestCase;
 import com.jetbrains.lang.dart.ide.DartRunConfigurationConverterProvider;
 import com.jetbrains.lang.dart.util.DartTestUtils;
-import org.jdom.Document;
 import org.jdom.Element;
 
 import java.io.File;
@@ -33,8 +32,7 @@ public class DartRunConfigurationConverterTest extends LightPlatformTestCase {
   }
 
   protected Element loadElement(final String filePath) throws Exception {
-    final Document document = JDOMUtil.loadDocument(new File(getBaseDataPath(), filePath));
-    return document.getRootElement();
+    return JDOMUtil.load(new File(getBaseDataPath(), filePath));
   }
 
   private static void assertElementEquals(final Element expected, final Element actual) {

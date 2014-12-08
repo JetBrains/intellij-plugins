@@ -16,6 +16,7 @@
 
 package jetbrains.communicator.util;
 
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.Pico;
 import org.apache.log4j.Logger;
@@ -47,7 +48,7 @@ public class XMLUtil {
     Reader fileReader = null;
     try {
       BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(fullFileName));
-      fileReader = new InputStreamReader(inputStream, "UTF-8");
+      fileReader = new InputStreamReader(inputStream, CharsetToolkit.UTF8_CHARSET);
       return xStream.fromXML(fileReader);
     }
     catch (FileNotFoundException ignored) {
@@ -82,7 +83,7 @@ public class XMLUtil {
     Writer writer = null;
     try {
       BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(fullFileName));
-      writer = new OutputStreamWriter(stream, "UTF-8");
+      writer = new OutputStreamWriter(stream, CharsetToolkit.UTF8_CHARSET);
       xStream.toXML(object, writer);
     } catch (Exception e) {
       processError(e);

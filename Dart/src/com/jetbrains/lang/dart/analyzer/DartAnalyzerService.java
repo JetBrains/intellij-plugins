@@ -199,10 +199,13 @@ public class DartAnalyzerService {
     return analysisContext;
   }
 
-  private static synchronized DirectoryBasedDartSdk getDirectoryBasedDartSdkSdk(@NotNull final String sdkPath) {
+  public synchronized DirectoryBasedDartSdk getDirectoryBasedDartSdkSdk(@NotNull final String sdkPath) {
     final File sdkDir = new File(sdkPath);
     if (ourDirectoryBasedDartSdk == null || !FileUtil.filesEqual(sdkDir, ourDirectoryBasedDartSdk.getDirectory())) {
       AnalysisEngine.getInstance().clearCaches();
+      if (myAnalysisContextRef != null) {
+        myAnalysisContextRef.clear();
+      }
       ourDirectoryBasedDartSdk = new DirectoryBasedDartSdk(sdkDir);
     }
     return ourDirectoryBasedDartSdk;

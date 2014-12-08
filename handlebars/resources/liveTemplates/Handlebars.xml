@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templateSet group="Handlebars">
+  <template name="itar" value="{{#each $HELPER$}}&#10;$END$&#10;{{/each}}" description="Handlebars Each block" toReformat="true">
+    <variable name="HELPER" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="Handlebars" value="true"/>
+    </context>
+  </template>
+</templateSet>

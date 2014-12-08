@@ -8,6 +8,11 @@ import java.util.List;
 
 public interface DartClass extends DartComponent {
 
+  boolean isEnum();
+
+  @NotNull
+  List<DartEnumConstantDeclaration> getEnumConstantDeclarationList();
+
   DartClassResolveResult getSuperClassResolvedOrObjectClass();
 
   @Nullable

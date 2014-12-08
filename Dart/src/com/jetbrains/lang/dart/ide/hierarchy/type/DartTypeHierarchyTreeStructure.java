@@ -41,10 +41,11 @@ public final class DartTypeHierarchyTreeStructure extends DartSubtypesHierarchyT
     while (superType != null && !DartResolveUtil.OBJECT.equals(superType.getReferenceExpression().getText())) {
       final DartClassResolveResult dartClassResolveResult = DartResolveUtil.resolveClassByType(superType);
       final DartClass dartClass1 = dartClassResolveResult.getDartClass();
-      if (dartClass1 != null) {
-        superClasses.add(dartClass1);
-        superType = dartClass1.getSuperClass();
+      if (dartClass1 == null) {
+        break;
       }
+      superClasses.add(dartClass1);
+      superType = dartClass1.getSuperClass();
     }
     return superClasses.toArray(new DartClass[superClasses.size()]);
   }

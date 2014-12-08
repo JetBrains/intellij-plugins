@@ -40,7 +40,7 @@ import java.util.*;
 public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   @Nullable
   protected static PsiElement findAnchor(PsiElement occurrence) {
-    return findAnchor(Arrays.asList(occurrence));
+    return findAnchor(Collections.singletonList(occurrence));
   }
 
   @Nullable
@@ -299,8 +299,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
     final Project project = operation.getProject();
     if (operation.getName() == null) {
       DartIntroduceDialog dialog = new DartIntroduceDialog(project, myDialogTitle, operation);
-      dialog.show();
-      if (!dialog.isOK()) {
+      if (!dialog.showAndGet()) {
         return;
       }
       operation.setName(dialog.getName());

@@ -43,6 +43,8 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 %state emu
 %state par
 %state comment
+%state comment_block
+%state comment_end
 %state data
 
 %%
@@ -114,7 +116,9 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   // NOTE: a standard Handlebars lexer would check for "{{else" here.  We instead want to lex it as two tokens to highlight the "{{" and the "else" differently.  See where we make an HbTokens.ELSE below.
   "{{"\~?"{" { return HbTokenTypes.OPEN_UNESCAPED; }
   "{{"\~?"&" { return HbTokenTypes.OPEN; }
-  "{{!" { yypushback(3); yypopState(); yypushState(comment); }
+  "{{!" { yypopState(); yypushState(comment); return HbTokenTypes.COMMENT_OPEN; }
+  "{{!--" { yypopState(); yypushState(comment_block); return HbTokenTypes.COMMENT_OPEN; }
+
   "{{"\~? { return HbTokenTypes.OPEN; }
   "=" { return HbTokenTypes.EQUALS; }
   "."/[\~\}\t \n\x0B\f\r] { return HbTokenTypes.ID; }
@@ -145,20 +149,33 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 }
 
 <comment> {
-  "{{!--"~"--}}" { yypopState(); return HbTokenTypes.COMMENT; }
-  "{{!}}" { yypopState(); return HbTokenTypes.COMMENT; }
-  "{{!"[^"--"}]~"}}" {
+  "}}" { yypopState(); return HbTokenTypes.COMMENT_CLOSE; }
+  ~"}}" {
       // backtrack over any extra stache characters at the end of this string
       while (yylength() > 2 && yytext().subSequence(yylength() - 3, yylength()).toString().equals("}}}")) {
         yypushback(1);
       }
-      yypopState();
-      return HbTokenTypes.COMMENT;
+
+      yypushback(2);
+      yybegin(comment_end);
+      return HbTokenTypes.COMMENT_CONTENT;
   }
   // lex unclosed comments so that we can give better errors
-  "{{!--"!([^]*"--}}"[^]*) { yypopState(); return HbTokenTypes.UNCLOSED_COMMENT; }
-  "{{!"!([^]*"}}"[^]*) { yypopState(); return HbTokenTypes.UNCLOSED_COMMENT; }
+  !([^]*"}}"[^]*) {  return HbTokenTypes.UNCLOSED_COMMENT; }
 }
+
+<comment_block> {
+  ~"--}}" { yypushback(4); yybegin(comment_end); return HbTokenTypes.COMMENT_CONTENT; }
+
+   // lex unclosed comments so that we can give better errors
+  !([^]*"--}}"[^]*) { yypopState(); return HbTokenTypes.UNCLOSED_COMMENT; }
+}
+
+<comment_end> {
+  "}}" |
+  "--}}" { yypopState(); return HbTokenTypes.COMMENT_CLOSE; }
+}
+
 
 {WhiteSpace}+ { return HbTokenTypes.WHITE_SPACE; }
 . { return HbTokenTypes.INVALID; }

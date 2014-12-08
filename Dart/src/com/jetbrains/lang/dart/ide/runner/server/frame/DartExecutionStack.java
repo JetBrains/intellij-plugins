@@ -48,8 +48,8 @@ public class DartExecutionStack extends XExecutionStack {
         final DartStackFrame frame = new DartStackFrame(debugProcess, vmCallFrame, exception);
         myStackFrames.add(frame);
 
-        if (frame.getSourcePosition() != null) {
-          // exception (if any) is added to the frame where debugger stops (the highest frame with not null source position) and to the upper frames
+        if (!frame.isInDartSdkPatchFile()) {
+          // exception (if any) is added to the frame where debugger stops and to the upper frames
           exception = null;
         }
       }
@@ -109,7 +109,7 @@ public class DartExecutionStack extends XExecutionStack {
     return ContainerUtil.find(myStackFrames, new Condition<DartStackFrame>() {
       @Override
       public boolean value(final DartStackFrame frame) {
-        return frame.getSourcePosition() != null;
+        return !frame.isInDartSdkPatchFile();
       }
     });
   }

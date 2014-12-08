@@ -54,8 +54,7 @@ public class ObrSearchDialog extends DialogWrapper {
   ObrMavenResult queryForMavenArtifact(@NotNull Project project, @Nullable String queryString) {
     ObrSearchDialog dialog = new ObrSearchDialog(project, QueryType.Maven);
     dialog.setQueryString(queryString);
-    dialog.show();
-    if (!dialog.isOK()) {
+    if (!dialog.showAndGet()) {
       return null;
     }
     else {

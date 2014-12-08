@@ -5,18 +5,19 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.impl.AnyPsiChangeListener;
 import com.intellij.psi.impl.PsiManagerImpl;
-import com.intellij.util.containers.ConcurrentWeakHashMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBus;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.ConcurrentMap;
+
 /**
  * @author: Fedor.Korotkov
  */
 public class DartClassResolveCache {
-  private final ConcurrentWeakHashMap<DartClass, DartClassResolveResult> myMap = createWeakMap();
+  private final ConcurrentMap<DartClass, DartClassResolveResult> myMap = createWeakMap();
 
   public static DartClassResolveCache getInstance(Project project) {
     ProgressIndicatorProvider.checkCanceled(); // We hope this method is being called often enough to cancel daemon processes smoothly
@@ -36,8 +37,8 @@ public class DartClassResolveCache {
     });
   }
 
-  private static <K, V> ConcurrentWeakHashMap<K, V> createWeakMap() {
-    return new ConcurrentWeakHashMap<K, V>(7, 0.75f, Runtime.getRuntime().availableProcessors(),
+  private static <K, V> ConcurrentMap<K, V> createWeakMap() {
+    return ContainerUtil.createConcurrentWeakMap(7, 0.75f, Runtime.getRuntime().availableProcessors(),
                                            ContainerUtil.<K>canonicalStrategy());
   }
 

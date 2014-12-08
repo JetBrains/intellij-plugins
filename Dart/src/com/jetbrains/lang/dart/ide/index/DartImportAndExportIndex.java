@@ -104,7 +104,8 @@ public class DartImportAndExportIndex extends FileBasedIndexExtension<String, Li
   }
 
   @NotNull
-  public static List<DartImportOrExportInfo> getImportAndExportInfos(final @NotNull Project project, final @NotNull VirtualFile virtualFile) {
+  public static List<DartImportOrExportInfo> getImportAndExportInfos(final @NotNull Project project,
+                                                                     final @NotNull VirtualFile virtualFile) {
     final List<DartImportOrExportInfo> result = new ArrayList<DartImportOrExportInfo>();
     for (List<DartImportOrExportInfo> list : FileBasedIndex.getInstance()
       .getValues(DART_IMPORT_EXPORT_INDEX, virtualFile.getName(), GlobalSearchScope.fileScope(project, virtualFile))) {

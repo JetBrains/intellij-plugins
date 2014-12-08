@@ -93,9 +93,9 @@ public class PhoneGapUtil {
     VirtualFile baseDir = project.getBaseDir();
     if (baseDir == null) return paths;
 
-    if (baseDir.findChild(FOLDER_PLATFORMS) != null ||
-        baseDir.findChild(FOLDER_WWW) != null ||
-        baseDir.findChild(FOLDER_CORDOVA) != null) {
+    if (folderExist(baseDir, FOLDER_PLATFORMS) ||
+        folderExist(baseDir, FOLDER_WWW) ||
+        folderExist(baseDir, FOLDER_CORDOVA)) {
 
       ContainerUtil.addIfNotNull(paths, project.getBasePath());
     }
@@ -106,14 +106,21 @@ public class PhoneGapUtil {
     return paths;
   }
 
+  private static boolean folderExist(VirtualFile baseDir, String name) {
+    VirtualFile child = baseDir.findChild(name);
+    return child != null && child.isDirectory();
+  }
+
   private static void setDefaultValue(@NotNull TextFieldWithHistoryWithBrowseButton field, @Nullable String defaultValue) {
     final TextFieldWithHistory textFieldWithHistory = field.getChildComponent();
 
-    setTextFieldWithHistory(textFieldWithHistory, defaultValue);
+    if (StringUtil.isNotEmpty(defaultValue)) {
+      setTextFieldWithHistory(textFieldWithHistory, defaultValue);
+    }
   }
 
   public static void setTextFieldWithHistory(TextFieldWithHistory textFieldWithHistory, String value) {
-    if (StringUtil.isNotEmpty(value)) {
+    if (null != value) {
       textFieldWithHistory.setText(value);
       textFieldWithHistory.addCurrentTextToHistory();
     }
@@ -122,7 +129,13 @@ public class PhoneGapUtil {
   private static Collection<VirtualFile> getFolders(@NotNull Project project) {
     for (String folder : POSSIBLE_FOLDERS_IN_PHONEGAP_ROOT) {
       Collection<VirtualFile> files =
-        FilenameIndex.getVirtualFilesByName(project, folder, GlobalSearchScope.projectScope(project));
+        ContainerUtil.filter(FilenameIndex.getVirtualFilesByName(project, folder, GlobalSearchScope.projectScope(project)),
+                             new Condition<VirtualFile>() {
+                               @Override
+                               public boolean value(VirtualFile file) {
+                                 return file.isDirectory();
+                               }
+                             });
       if (!files.isEmpty()) {
         return files;
       }
@@ -149,7 +162,7 @@ public class PhoneGapUtil {
       @Nullable
       @Override
       public Result<Boolean> compute() {
-        PsiFile[] files = FilenameIndex.getFilesByName(project, "config.xml", GlobalSearchScope.allScope(project));
+        PsiFile[] files = FilenameIndex.getFilesByName(project, "config.xml", GlobalSearchScope.projectScope(project));
 
         PsiFile file = ContainerUtil.find(files, new Condition<PsiFile>() {
           @Override

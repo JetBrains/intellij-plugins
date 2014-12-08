@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.util;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.jetbrains.lang.dart.DartLanguage;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class DartHtmlUtil {
   private static String getHtmlText(String text) {
     return "<html>\n" +
            "  <body>\n" +
-           "    <script type=\"application/dart\">\n" +
+           "    <script type=\"" + DartLanguage.DART_MIME_TYPE + "\">\n" +
            text +
            "    </script>\n" +
            "  </body>\n" +

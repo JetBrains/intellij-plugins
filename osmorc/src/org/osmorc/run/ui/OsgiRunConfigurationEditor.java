@@ -212,8 +212,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
   private void onAddClick() {
     FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)myFrameworkInstances.getSelectedItem();
     BundleSelector selector = new BundleSelector(myProject, instance, getBundlesToRun());
-    selector.show();
-    if (selector.isOK()) {
+    if (selector.showAndGet()) {
       RunConfigurationTableModel model = getTableModel();
       for (SelectedBundle aModule : selector.getSelectedBundles()) {
         model.addBundle(aModule);

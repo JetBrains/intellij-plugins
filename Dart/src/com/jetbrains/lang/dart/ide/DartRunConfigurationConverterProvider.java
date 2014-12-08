@@ -61,7 +61,8 @@ public class DartRunConfigurationConverterProvider extends ConverterProvider {
     element.setAttribute("type", JavascriptDebugConfigurationType.getTypeInstance().getId());
     element.setAttribute("singleton", "true");
     element.removeAttribute("factoryName");
-    JavaScriptDebugConfiguration settings = new JavaScriptDebugConfiguration(null, JavascriptDebugConfigurationType.getTypeInstance().getFactory(), "");
+    JavaScriptDebugConfiguration settings =
+      new JavaScriptDebugConfiguration(null, JavascriptDebugConfigurationType.getTypeInstance().getFactory(), "");
     for (Object obj : element.getChildren("option")) {
       if ("fileUrl".equals(((Element)obj).getAttributeValue("name"))) {
         settings.setUri(((Element)obj).getAttributeValue("value"));
@@ -75,7 +76,8 @@ public class DartRunConfigurationConverterProvider extends ConverterProvider {
     element.setAttribute("type", JavascriptDebugConfigurationType.getTypeInstance().getId());
     element.setAttribute("singleton", "true");
     element.removeAttribute("factoryName");
-    JavaScriptDebugConfiguration settings = new JavaScriptDebugConfiguration(null, JavascriptDebugConfigurationType.getTypeInstance().getFactory(), "");
+    JavaScriptDebugConfiguration settings =
+      new JavaScriptDebugConfiguration(null, JavascriptDebugConfigurationType.getTypeInstance().getFactory(), "");
     Element mappings = null;
     for (Object obj : element.getChildren("option")) {
       if ("fileUrl".equals(((Element)obj).getAttributeValue("name"))) {

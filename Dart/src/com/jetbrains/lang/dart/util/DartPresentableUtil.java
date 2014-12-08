@@ -64,7 +64,8 @@ public class DartPresentableUtil {
           result.append(", ");
         }
         DartDefaultFormalNamedParameter formalParameter = list1.get(i);
-        result.append(getPresentableNormalFormalParameter(formalParameter.getNormalFormalParameter(), specialization, functionalStyleSignatures));
+        result.append(
+          getPresentableNormalFormalParameter(formalParameter.getNormalFormalParameter(), specialization, functionalStyleSignatures));
       }
       result.append(isOptional ? '}' : ']');
     }
@@ -201,8 +202,11 @@ public class DartPresentableUtil {
     if (namedArgumentList.isEmpty()) {
       return;
     }
-    needComma = false;
-    result.addTextSegment(", {");
+    if (needComma) {
+      result.addTextSegment(", ");
+      needComma = false;
+    }
+    result.addTextSegment("{");
     for (DartNamedArgument namedArgument : namedArgumentList) {
       if (needComma) {
         result.addTextSegment(", ");

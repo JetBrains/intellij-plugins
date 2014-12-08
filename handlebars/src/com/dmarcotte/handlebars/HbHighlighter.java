@@ -1,6 +1,6 @@
 package com.dmarcotte.handlebars;
 
-import com.dmarcotte.handlebars.parsing.HbLexer;
+import com.dmarcotte.handlebars.parsing.HbRawLexer;
 import com.dmarcotte.handlebars.parsing.HbTokenTypes;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lexer.Lexer;
@@ -21,7 +21,7 @@ public class HbHighlighter extends SyntaxHighlighterBase {
 
   @NotNull
   public Lexer getHighlightingLexer() {
-    return new HbLexer();
+    return new HbRawLexer();
   }
 
   private static final TextAttributesKey MUSTACHES = TextAttributesKey.createTextAttributesKey(
@@ -78,6 +78,9 @@ public class HbHighlighter extends SyntaxHighlighterBase {
     keys1.put(HbTokenTypes.CLOSE, MUSTACHES);
     keys1.put(HbTokenTypes.ID, IDENTIFIERS);
     keys1.put(HbTokenTypes.COMMENT, COMMENTS);
+    keys1.put(HbTokenTypes.COMMENT_OPEN, COMMENTS);
+    keys1.put(HbTokenTypes.COMMENT_CLOSE, COMMENTS);
+    keys1.put(HbTokenTypes.COMMENT_CONTENT, COMMENTS);
     keys1.put(HbTokenTypes.UNCLOSED_COMMENT, COMMENTS);
     keys1.put(HbTokenTypes.EQUALS, OPERATORS);
     keys1.put(HbTokenTypes.SEP, OPERATORS);

@@ -135,19 +135,27 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       }
     }
 
-    if ("$interpolateProvider".equals(qualifier.getText())) {
-      if ("startSymbol".equals(command) || "endSymbol".equals(command)) {
-        JSExpression[] arguments = callExpression.getArguments();
-        if (arguments.length > 0) {
-          JSExpression argument = arguments[0];
-          if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-            String interpolation = StringUtil.unquoteString(argument.getText());
-            // '//' interpolations are usually dragged from examples folder and not supposed to be used by real users
-            if ("//".equals(interpolation)) return;
+    if ("startSymbol".equals(command) || "endSymbol".equals(command)) {
+      while (qualifier != null) {
+        if (qualifier instanceof JSReferenceExpression) {
+          if ("$interpolateProvider".equals(((JSReferenceExpression)qualifier).getReferencedName())) {
+            JSExpression[] arguments = callExpression.getArguments();
+            if (arguments.length > 0) {
+              JSExpression argument = arguments[0];
+              if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
+                String interpolation = StringUtil.unquoteString(argument.getText());
+                // '//' interpolations are usually dragged from examples folder and not supposed to be used by real users
+                if ("//".equals(interpolation)) return;
 
-            builder.storeAdditionalData(AngularInjectionDelimiterIndex.INDEX_ID.toString(), command,
-                                        serializeDataValue(false, argument.getTextOffset(), interpolation));
+                builder.storeAdditionalData(AngularInjectionDelimiterIndex.INDEX_ID.toString(), command,
+                                            serializeDataValue(false, argument.getTextOffset(), interpolation));
+              }
+            }
           }
+          qualifier = ((JSReferenceExpression)qualifier).getQualifier();
+        }
+        else {
+          qualifier = qualifier instanceof JSCallExpression ? ((JSCallExpression)qualifier).getMethodExpression() : null;
         }
       }
     }

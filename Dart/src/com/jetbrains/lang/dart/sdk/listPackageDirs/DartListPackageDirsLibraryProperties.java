@@ -1,14 +1,14 @@
 package com.jetbrains.lang.dart.sdk.listPackageDirs;
 
 import com.intellij.openapi.roots.libraries.LibraryProperties;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.io.File;
+import java.util.*;
 
 public class DartListPackageDirsLibraryProperties extends LibraryProperties<DartListPackageDirsLibraryProperties> {
 
@@ -26,6 +26,20 @@ public class DartListPackageDirsLibraryProperties extends LibraryProperties<Dart
 
   public void setPackageNameToDirsMap(@NotNull final Map<String, Set<String>> packageNameToDirsMap) {
     myPackageNameToDirsMap = packageNameToDirsMap;
+  }
+
+  public void setPackageNameToFileDirsMap(@NotNull final Map<String, List<File>> packageNameToFileDirsMap) {
+    myPackageNameToDirsMap = new TreeMap<String, Set<String>>();
+    for (Map.Entry<String, List<File>> entry : packageNameToFileDirsMap.entrySet()) {
+      Set<String> stringSet = myPackageNameToDirsMap.get(entry.getKey());
+      if (stringSet == null) {
+        stringSet = new TreeSet<String>();
+        myPackageNameToDirsMap.put(entry.getKey(), stringSet);
+      }
+      for (File file : entry.getValue()) {
+        stringSet.add(FileUtil.toSystemIndependentName(file.getPath()));
+      }
+    }
   }
 
   @Nullable

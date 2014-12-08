@@ -9,6 +9,7 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderImpl;
+import com.intellij.execution.filters.UrlFilter;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
@@ -65,6 +66,7 @@ public class DartCommandLineRunningState extends CommandLineState {
                                 ? myRunnerParameters.getDartFile().getParent().getPath()
                                 : myRunnerParameters.getWorkingDirectory();
       builder.addFilter(new DartRelativePathsConsoleFilter(env.getProject(), workingDir));
+      builder.addFilter(new UrlFilter());
     }
     catch (RuntimeConfigurationError e) {
       builder.addFilter(new DartConsoleFilter(env.getProject(), null)); // can't happen because already checked

@@ -36,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
-import static com.jetbrains.lang.dart.util.DartUrlResolver.*;
 
 public class DartResolveUtil {
 
@@ -218,11 +217,11 @@ public class DartResolveUtil {
   }
 
   @NotNull
-  public static Collection<DartComponent> getClassAndEnumDeclarations(@NotNull final PsiElement root) {
-    final List<DartComponent> result = new SmartList<DartComponent>();
+  public static Collection<DartClass> getClassDeclarations(@NotNull final PsiElement root) {
+    final List<DartClass> result = new SmartList<DartClass>();
     for (PsiElement child = root.getFirstChild(); child != null; child = child.getNextSibling()) {
-      if (child instanceof DartClassDefinition || child instanceof DartEnumDefinition) {
-        result.add((DartComponent)child);
+      if (child instanceof DartClass) {
+        result.add((DartClass)child);
       }
     }
 
@@ -302,12 +301,19 @@ public class DartResolveUtil {
       }
     }
 
-    for (String relativePathOrUrl : DartPathIndex.getPaths(context.getProject(), virtualFile)) {
-      if (fileNames != null && !fileNames.contains(PathUtil.getFileName(relativePathOrUrl))) {
+    for (String partUrl : DartPathIndex.getPaths(context.getProject(), virtualFile)) {
+      if (fileNames != null && !fileNames.contains(PathUtil.getFileName(partUrl))) {
         continue;
       }
-      VirtualFile childFile = findRelativeFile(virtualFile, relativePathOrUrl);
-      childFile = childFile != null ? childFile : VirtualFileManager.getInstance().findFileByUrl(relativePathOrUrl);
+
+      final VirtualFile childFile;
+      if (partUrl.startsWith(DartUrlResolver.PACKAGE_PREFIX) || partUrl.startsWith(DartUrlResolver.FILE_PREFIX)) {
+        childFile = DartUrlResolver.getInstance(context.getProject(), virtualFile).findFileByDartUrl(partUrl);
+      }
+      else {
+        childFile = findRelativeFile(virtualFile, partUrl);
+      }
+
       if (childFile == null || processedFiles.contains(childFile)) {
         continue;
       }
@@ -349,7 +355,9 @@ public class DartResolveUtil {
   private static VirtualFile getImportedFile(final @NotNull Project project,
                                              final @NotNull VirtualFile contextFile,
                                              final @NotNull String importText) {
-    if (importText.startsWith(DART_PREFIX) || importText.startsWith(PACKAGE_PREFIX) || importText.startsWith(FILE_PREFIX)) {
+    if (importText.startsWith(DartUrlResolver.DART_PREFIX) ||
+        importText.startsWith(DartUrlResolver.PACKAGE_PREFIX) ||
+        importText.startsWith(DartUrlResolver.FILE_PREFIX)) {
       return DartUrlResolver.getInstance(project, contextFile).findFileByDartUrl(importText);
     }
 
@@ -401,7 +409,7 @@ public class DartResolveUtil {
       }
 
       if (libraryStatement == null) {
-        return contextVirtualFile == null ? Collections.<VirtualFile>emptyList() : Arrays.asList(contextVirtualFile);
+        return contextVirtualFile == null ? Collections.<VirtualFile>emptyList() : Collections.singletonList(contextVirtualFile);
       }
       return DartLibraryIndex.findLibraryClass(context, libraryStatement.getLibraryName());
     }
@@ -660,19 +668,16 @@ public class DartResolveUtil {
   }
 
   @NotNull
-  public static List<DartComponent> getNamedSubComponentsInOrder(DartClass dartClass) {
-    final List<DartComponent> result = getNamedSubComponents(dartClass);
-    Collections.sort(result, new Comparator<DartComponent>() {
-      @Override
-      public int compare(DartComponent o1, DartComponent o2) {
-        return o1.getTextOffset() - o2.getTextOffset();
-      }
-    });
-    return result;
-  }
-
-  @NotNull
   public static List<DartComponent> getNamedSubComponents(DartClass dartClass) {
+    if (dartClass.isEnum()) {
+      final List<DartEnumConstantDeclaration> enumConstants = dartClass.getEnumConstantDeclarationList();
+      final List<DartComponent> result = new ArrayList<DartComponent>(enumConstants.size());
+      for (DartEnumConstantDeclaration constant : enumConstants) {
+        result.add(constant);
+      }
+      return result;
+    }
+
     PsiElement body = getBody(dartClass);
 
     final List<DartComponent> result = new ArrayList<DartComponent>();
@@ -696,7 +701,7 @@ public class DartResolveUtil {
 
   @Nullable
   public static DartClassMembers getBody(@Nullable final DartClass dartClass) {
-    final DartClassBody body = dartClass == null ? null : ((DartClassDefinition)dartClass).getClassBody();
+    final DartClassBody body = dartClass instanceof DartClassDefinition ? ((DartClassDefinition)dartClass).getClassBody() : null;
     return body == null ? null : body.getClassMembers();
   }
 

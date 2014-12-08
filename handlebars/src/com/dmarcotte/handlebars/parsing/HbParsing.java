@@ -311,8 +311,8 @@ public class HbParsing {
 
   /**
    * partial
-   * : OPEN_PARTIAL partialName CLOSE { $$ = new yy.PartialNode($2); }
-   * | OPEN_PARTIAL partialName path CLOSE { $$ = new yy.PartialNode($2, $3); }
+   * : OPEN_PARTIAL partialName param hash? CLOSE
+   * | OPEN_PARTIAL partialName hash? CLOSE
    * ;
    */
   protected void parsePartial(PsiBuilder builder) {
@@ -322,13 +322,22 @@ public class HbParsing {
 
     parsePartialName(builder);
 
-    // parse the optional path
-    PsiBuilder.Marker optionalPathMarker = builder.mark();
-    if (parsePath(builder)) {
-      optionalPathMarker.drop();
+    // parse the optional param
+    PsiBuilder.Marker optionalParamMarker = builder.mark();
+    if (parseParam(builder)) {
+      optionalParamMarker.drop();
     }
     else {
-      optionalPathMarker.rollbackTo();
+      optionalParamMarker.rollbackTo();
+    }
+
+    // parse the optional hash
+    PsiBuilder.Marker optionalHashMarker = builder.mark();
+    if (parseHash(builder)) {
+      optionalHashMarker.drop();
+    }
+    else {
+      optionalHashMarker.rollbackTo();
     }
 
     parseLeafTokenGreedy(builder, CLOSE);

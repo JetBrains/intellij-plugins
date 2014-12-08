@@ -13,14 +13,21 @@ public enum DartComponentType {
   CLASS(AllIcons.Nodes.Class) {
     @Override
     public Icon getIcon(@NotNull DartComponent component) {
-      return component.isAbstract() ? AllIcons.Nodes.AbstractClass : getIcon();
+      return component instanceof DartEnumDefinition ? AllIcons.Nodes.Enum
+                                                     : component.isAbstract() ? AllIcons.Nodes.AbstractClass
+                                                                              : getIcon();
     }
   },
-  ENUM(AllIcons.Nodes.Enum),
   FUNCTION(AllIcons.Nodes.Function),
   METHOD(AllIcons.Nodes.Method) {
     @Override
     public Icon getIcon(@NotNull DartComponent component) {
+      if (component.isGetter()) {
+        return component.isStatic() ? AllIcons.Nodes.PropertyReadStatic : AllIcons.Nodes.PropertyRead;
+      }
+      if (component.isSetter()) {
+        return component.isStatic() ? AllIcons.Nodes.PropertyWriteStatic : AllIcons.Nodes.PropertyWrite;
+      }
       return component.isAbstract() ? AllIcons.Nodes.AbstractMethod : getIcon();
     }
   },
@@ -66,11 +73,8 @@ public enum DartComponentType {
         element instanceof DartNormalFormalParameter) {
       return PARAMETER;
     }
-    if (element instanceof DartClassDefinition) {
+    if (element instanceof DartClass) {
       return CLASS;
-    }
-    if (element instanceof DartEnumDefinition) {
-      return ENUM;
     }
     if (element instanceof DartEnumConstantDeclaration) {
       return FIELD;

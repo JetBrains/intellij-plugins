@@ -1,5 +1,6 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -134,6 +135,11 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testCustomDelimiters() {
     myFixture.configureByFiles("customDelimiters.html", "angular.js", "customDelimiters.js");
     assertEquals(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+  }
+
+  public void testCustomDelimitersInline() {
+    myFixture.configureByFiles("customDelimitersInline.html", "angular.js", "customDelimitersInline.js");
+    assertEquals(HTMLLanguage.INSTANCE, myFixture.getFile().getLanguage());
   }
 
   public void testCustomDelimitersDefaultIgnored() {

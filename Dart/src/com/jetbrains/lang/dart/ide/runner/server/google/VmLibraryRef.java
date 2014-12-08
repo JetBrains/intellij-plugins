@@ -83,7 +83,7 @@ public class VmLibraryRef implements Comparable<VmLibraryRef> {
    */
   public boolean isInternal() {
     return "dart:_internal".equals(url) || "dart:builtin".equals(url)
-        || "dart:nativewrappers".equals(url);
+           || "dart:nativewrappers".equals(url);
   }
 
   @Override

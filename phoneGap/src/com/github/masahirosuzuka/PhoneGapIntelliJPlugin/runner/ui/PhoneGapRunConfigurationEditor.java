@@ -17,7 +17,6 @@ import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBTextField;
-import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.UIUtil;
@@ -29,28 +28,37 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.*;
 
 public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunConfiguration> {
 
-  public static final ArrayList<String> COMMANDS_LIST = ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN, COMMAND_SERVE);
+  public static final ArrayList<String> COMMANDS_LIST =
+    ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN, COMMAND_PREPARE, COMMAND_SERVE);
   public static final ArrayList<String> COMMANDS_PHONEGAP_LIST =
-    ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN, COMMAND_SERVE, COMMAND_REMOTE_BUILD, COMMAND_REMOTE_RUN);
+    ContainerUtil.newArrayList(COMMAND_EMULATE, COMMAND_RUN, COMMAND_PREPARE, COMMAND_SERVE, COMMAND_REMOTE_BUILD, COMMAND_REMOTE_RUN);
 
   public static final String PLATFORM_ANDROID = "android";
   public static final String PLATFORM_IOS = "ios";
+  public static final String PLATFORM_AMAZON_FIREOS = "amazon-fireos";
+  public static final String PLATFORM_BLACKBERRY_10 = "blackberry10";
+  public static final String PLATFORM_UBUNTU = "ubuntu";
+  public static final String PLATFORM_WP_8 = "wp8";
+  public static final String PLATFORM_WINDOWS_8 = "windows8";
+  public static final String PLATFORM_FIREFOXOS = "firefoxos";
+
+
   private final PhoneGapTargets myTargetsProvider;
   private TextFieldWithHistoryWithBrowseButton myExecutablePathField;
   private TextFieldWithHistoryWithBrowseButton myWorkDirField;
-  private ComboBox myPlatformField;
+  private ComboBoxWithMoreOption myPlatformField;
   private ComboBox myCommand;
   private final Project myProject;
   private JBCheckBox myHasTarget;
   private TextFieldWithHistory myTarget;
   private JBTextField myExtraArgsTextField;
+
   public PhoneGapRunConfigurationEditor(Project project) {
     myProject = project;
     myTargetsProvider = new PhoneGapTargets(project);
@@ -64,9 +72,10 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
                                                          !StringUtil.isEmpty(executable)
                                                          ? executable
                                                          : PhoneGapSettings.getInstance().getExecutablePath());
-    String item = getPlatformsMap().get(s.getPlatform());
+    String item = s.getPlatform();
     if (item != null) {
-      myPlatformField.setSelectedItem(item);
+      //call to lower for back compatibility (old settings store 'iOS' and 'Android')
+      myPlatformField.setSelectedWithExtend(StringUtil.toLowerCase(item));
     }
     String command = s.getCommand();
     if (command != null) {
@@ -118,19 +127,19 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   }
 
   private String getPlatformAsCodeFromField() {
-    return ContainerUtil.getFirstItem(getPlatformsMap().getKeysByValue((String)myPlatformField.getSelectedItem()));
+    return (String)myPlatformField.getSelectedItem();
   }
 
   @Override
-  protected void applyEditorTo(PhoneGapRunConfiguration s) throws ConfigurationException {
-    s.setExecutable(myExecutablePathField.getText());
+  protected void applyEditorTo(PhoneGapRunConfiguration persistentSettings) throws ConfigurationException {
+    persistentSettings.setExecutable(myExecutablePathField.getText());
     String item = (String)myPlatformField.getSelectedItem();
-    s.setPlatform(ContainerUtil.getFirstItem(getPlatformsMap().getKeysByValue(item)));
-    s.setCommand((String)myCommand.getSelectedItem());
-    s.setWorkDir(myWorkDirField.getText());
-    s.setTarget(myTarget.getText());
-    s.setHasTarget(myHasTarget.isSelected());
-    s.setExtraArgs(myExtraArgsTextField.getText());
+    persistentSettings.setPlatform(item);
+    persistentSettings.setCommand((String)myCommand.getSelectedItem());
+    persistentSettings.setWorkDir(myWorkDirField.getText());
+    persistentSettings.setTarget(myTarget.getText());
+    persistentSettings.setHasTarget(myHasTarget.isSelected());
+    persistentSettings.setExtraArgs(myExtraArgsTextField.getText());
   }
 
 
@@ -140,14 +149,13 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
 
     myExecutablePathField = PhoneGapUtil.createPhoneGapExecutableTextField(myProject);
     myWorkDirField = PhoneGapUtil.createPhoneGapWorkingDirectoryField(myProject);
-    myPlatformField = new ComboBox();
+    myPlatformField = new ComboBoxWithMoreOption(getDefaultPlatforms(), getNonDefaultPlatforms());
     myCommand = new ComboBox();
     myHasTarget = new JBCheckBox("Specify target");
     myTarget = new TextFieldWithHistory();
     myExtraArgsTextField = new JBTextField(15);
     myCommand.setMinimumAndPreferredWidth(200);
     myPlatformField.setMinimumAndPreferredWidth(200);
-    addPlatformItems(myPlatformField);
     myTarget.setMinimumAndPreferredWidth(myPlatformField.getPreferredSize().width);
 
     setListenerForPlatforms();
@@ -212,13 +220,9 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     });
   }
 
-  private static void addPlatformItems(ComboBox box) {
-    addItems(box, ContainerUtil.newArrayList(getPlatformsMap().values()));
-  }
 
   @SuppressWarnings("unchecked")
   private static void addItems(ComboBox box, List<String> list) {
-    ContainerUtil.sort(list);
     for (String s : list) {
       box.addItem(s);
     }
@@ -248,19 +252,30 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     }
   }
 
-  private static BidirectionalMap<String, String> getPlatformsMap() {
-    BidirectionalMap<String, String> map = new BidirectionalMap<String, String>();
-    map.put(PLATFORM_ANDROID, "Android");
-    map.put(PLATFORM_IOS, "iOS");
 
-    return map;
+  private static Set<String> getDefaultPlatforms() {
+    LinkedHashSet<String> set = ContainerUtil.newLinkedHashSet();
+    set.add(PLATFORM_ANDROID);
+    set.add(PLATFORM_IOS);
+    return set;
+  }
+
+  private static Set<String> getNonDefaultPlatforms() {
+    LinkedHashSet<String> set = ContainerUtil.newLinkedHashSet();
+    set.add(PLATFORM_AMAZON_FIREOS);
+    set.add(PLATFORM_FIREFOXOS);
+    set.add(PLATFORM_BLACKBERRY_10);
+    set.add(PLATFORM_UBUNTU);
+    set.add(PLATFORM_WP_8);
+    set.add(PLATFORM_WINDOWS_8);
+    return set;
   }
 
   private void setTargetFieldsEnable() {
     boolean isNotServe = !COMMAND_SERVE.equals(myCommand.getSelectedItem());
 
-    myHasTarget.setEnabled(isNotServe && !isPhoneGap());
-    myTarget.setEnabled(isNotServe && myHasTarget.isSelected() && !isPhoneGap());
+    myHasTarget.setEnabled(isNotServe);
+    myTarget.setEnabled(isNotServe && myHasTarget.isSelected());
   }
 
   private boolean isPhoneGap() {

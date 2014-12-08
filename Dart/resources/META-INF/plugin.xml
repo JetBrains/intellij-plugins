@@ -6,6 +6,7 @@
   <idea-version since-build="140.1" until-build="140.*"/>
   <depends>com.intellij.modules.xml</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
+  <depends optional="true" config-file="dart-yaml.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
 
   <!-- Uncomment the following lines when running Dart tests for the 'Dart-plugin' project. Do not commit these lines uncommented! -->
@@ -58,6 +59,7 @@
                                         implementationClass="com.jetbrains.lang.dart.ide.DartImplementationTextSelectioner"/>
     <lang.formatter language="Dart" implementationClass="com.jetbrains.lang.dart.ide.formatter.DartFormattingModelBuilder"/>
     <lang.psiStructureViewFactory language="Dart" implementationClass="com.jetbrains.lang.dart.ide.structure.DartStructureViewFactory"/>
+    <lang.structureViewExtension implementation="com.jetbrains.lang.dart.ide.structure.DartStructureViewExtension"/>
     <psi.referenceContributor implementation="com.jetbrains.lang.dart.psi.DartPackagePathReferenceContributor" order="last"/>
     <include.provider implementation="com.jetbrains.lang.dart.psi.DartPackageAwareFileIncludeProvider" order="first"/>
     <typeHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyProvider"/>
@@ -96,9 +98,10 @@
 
     <definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>
 
-    <projectTemplatesFactory implementation="com.jetbrains.lang.dart.projectWizard.DartTemplatesFactory"/>
-    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.projectWizard.DartCmdLineAppGenerator"/>
-    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.projectWizard.DartWebAppGenerator"/>
+    <!-- moduleBuilder works in IntelliJ IDEA only -->
+    <moduleBuilder builderClass="com.jetbrains.lang.dart.projectWizard.DartModuleBuilder"/>
+    <!-- directoryProjectGenerator works in WebStorm and other small IDEs -->
+    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.projectWizard.DartProjectGenerator"/>
 
     <projectConfigurable groupId="language" instance="com.jetbrains.lang.dart.sdk.DartConfigurable"
                          id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
@@ -137,11 +140,15 @@
 
     <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>
     <externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>
+    <!--<externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator"/>-->
+    <!--<externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator"/>-->
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator"/>
     <!--<annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartUnresolvedReferenceVisitor"/>-->
 
     <projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"
                     serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"/>
+    <!--<applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"-->
+                    <!--serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>-->
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerManager"

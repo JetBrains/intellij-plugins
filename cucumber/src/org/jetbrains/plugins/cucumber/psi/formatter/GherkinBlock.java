@@ -4,6 +4,7 @@ import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.TokenType;
+import com.intellij.psi.formatter.xml.ReadOnlyBlock;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -138,6 +139,8 @@ public class GherkinBlock implements ASTBlock {
     ASTBlock block2 = (ASTBlock) child2;
     final IElementType elementType1 = block1.getNode().getElementType();
     final IElementType elementType2 = block2.getNode().getElementType();
+
+    if(elementType2 == GherkinElementTypes.PYSTRING) return Spacing.getReadOnlySpacing();
     if (GherkinElementTypes.SCENARIOS.contains(elementType2) && elementType1 != GherkinTokenTypes.COMMENT) {
       return Spacing.createSpacing(0, 0, 2, true, 2);
     }

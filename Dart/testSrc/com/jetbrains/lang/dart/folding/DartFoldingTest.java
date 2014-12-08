@@ -132,4 +132,16 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
       }
     });
   }
+
+  public void testParts() throws Exception {
+    doTestWithSpecificSettings(null, new Consumer<DartCodeFoldingSettings>() {
+      public void consume(final DartCodeFoldingSettings settings) {
+        settings.setCollapseParts(false);
+      }
+    });
+  }
+
+  public void testPartsByDefault() throws Exception {
+    doTest();
+  }
 }

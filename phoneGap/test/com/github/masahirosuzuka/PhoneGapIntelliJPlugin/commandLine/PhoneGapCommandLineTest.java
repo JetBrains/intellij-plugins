@@ -93,4 +93,16 @@ public class PhoneGapCommandLineTest extends UsefulTestCase {
 
     assertSameElements(strings, "org.apache.cordova.console 0.2.9 \"Console\"", "com.phonegap.plugins.mapkit 0.9.2 \"MapKit\"");
   }
+
+  public void testVersionOfPhonegapParser1() {
+    assertTrue(PhoneGapCommandLine.isPhonegapAfter363("3.6.3"));
+  }
+
+  public void testVersionOfPhonegapParser2() {
+    assertFalse(PhoneGapCommandLine.isPhonegapAfter363("3.5.4"));
+  }
+
+  public void testVersionOfPhonegapParser3() {
+    assertTrue(PhoneGapCommandLine.isPhonegapAfter363("4"));
+  }
 }

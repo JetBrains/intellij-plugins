@@ -41,7 +41,6 @@ import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import gnu.trove.THashSet;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -191,8 +190,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
     final File jsLibraryMappingsFile = new File(project.getBasePath() + "/.idea/jsLibraryMappings.xml");
     if (jsLibraryMappingsFile.isFile()) {
       try {
-        final Document document = JDOMUtil.loadDocument(jsLibraryMappingsFile);
-        final Element rootElement = document.getRootElement();
+        final Element rootElement = JDOMUtil.load(jsLibraryMappingsFile);
         for (final Element componentElement : rootElement.getChildren("component")) {
           if ("JavaScriptLibraryMappings".equals(componentElement.getAttributeValue("name"))) {
             for (final Element fileElement : componentElement.getChildren("file")) {

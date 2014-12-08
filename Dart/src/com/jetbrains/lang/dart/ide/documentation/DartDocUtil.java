@@ -42,9 +42,6 @@ public class DartDocUtil {
     if (namedComponent instanceof DartClass) {
       appendClassSignature(builder, (DartClass)namedComponent);
     }
-    else if (namedComponent instanceof  DartEnum) {
-      appendEnumSignature(builder, (DartEnum)namedComponent);
-    }
     else if (namedComponent instanceof DartFunctionDeclarationWithBodyOrNative) {
       appendFunctionSignature(builder, namedComponent, ((DartFunctionDeclarationWithBodyOrNative)namedComponent).getReturnType());
     }
@@ -107,8 +104,13 @@ public class DartDocUtil {
       if (docText != null) return docText;
     }
 
+    PsiElement anchorElement = dartComponent;
+
     final PsiElement parent = dartComponent.getParent();
-    final PsiElement anchorElement = parent instanceof DartClassMembers && parent.getFirstChild() == dartComponent ? parent : dartComponent;
+    if (parent instanceof DartClassMembers && parent.getFirstChild() == dartComponent ||
+        dartComponent instanceof DartVarAccessDeclaration) {
+      anchorElement = parent;
+    }
 
     // 3. Look for multiline doc comment or line doc comments as previous siblings
     final List<PsiComment> siblingComments = new ArrayList<PsiComment>();
@@ -204,12 +206,11 @@ public class DartDocUtil {
     builder.append("<b>").append(component.getName()).append("</b>");
   }
 
-
-  private static void appendEnumSignature(final StringBuilder builder, final DartEnum dartEnum) {
-    builder.append("enum <b>").append(dartEnum.getName()).append("</b>");
-  }
-
   private static void appendClassSignature(final StringBuilder builder, final DartClass dartClass) {
+    if (dartClass.isEnum()) {
+      builder.append("enum <b>").append(dartClass.getName()).append("</b>");
+      return;
+    }
 
     if (dartClass.isAbstract()) {
       builder.append("abstract ");

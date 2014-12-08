@@ -5,6 +5,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.execution.filters.UrlFilter;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
@@ -54,7 +55,7 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
     return executionResult;
   }
 
-  private static ConsoleView createConsole(@NotNull ExecutionEnvironment env) throws ExecutionException {
+  private static ConsoleView createConsole(@NotNull ExecutionEnvironment env) {
     final Project project = env.getProject();
     final DartUnitRunConfiguration runConfiguration = (DartUnitRunConfiguration)env.getRunProfile();
     final DartUnitRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
@@ -74,6 +75,7 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
                                 ? dartFile.getParent().getPath()
                                 : runnerParameters.getWorkingDirectory();
       smtConsoleView.addMessageFilter(new DartRelativePathsConsoleFilter(project, workingDir));
+      smtConsoleView.addMessageFilter(new UrlFilter());
     }
     catch (RuntimeConfigurationError ignore) {/**/}
 
@@ -110,7 +112,8 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
     runnerCode = runnerCode.replaceFirst("NAME", StringUtil.notNullize(name));
     runnerCode = runnerCode.replaceFirst("SCOPE", scope.toString());
     final String filePath = myRunnerParameters.getFilePath();
-    runnerCode = runnerCode.replaceFirst("TEST_FILE_PATH", filePath == null ? "" : pathToDartUrl(filePath));
+    runnerCode = runnerCode.replaceFirst("TEST_FILE_URI", filePath == null ? "" : pathToDartUrl(filePath));
+    runnerCode = runnerCode.replaceFirst("TEST_FILE_PATH", filePath == null ? "" : filePath);
 
     FileUtil.writeToFile(file, runnerCode);
 

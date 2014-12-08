@@ -67,6 +67,14 @@ public class HbParserSpecTest extends HbParserTest {
     doTest(true);
   }
 
+  public void testParsesPartialWithHash() {
+    doTest(true);
+  }
+
+  public void testParsesPartialWithContextAndHash() {
+    doTest(true);
+  }
+
   public void testPartialWithComplexName() {
     doTest(true);
   }
