@@ -52,7 +52,7 @@ public class DocumentationTest extends LightPlatformCodeInsightFixtureTestCase {
     });
     assertNotNull(lookupElement);
 
-    DocumentationProvider documentationProvider = DocumentationManager.getProviderFromElement(context);
+    DocumentationProvider documentationProvider = DocumentationManager.getProviderFromElement(myFixture.getFile());
     PsiElement docElement = documentationProvider.getDocumentationElementForLookupItem(getPsiManager(), lookupElement.getObject(), context);
     assertNotNull(docElement);
     assertDocumentation(docElement, context);
