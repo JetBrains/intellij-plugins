@@ -9,6 +9,8 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
@@ -31,6 +33,7 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartProjectComponent;
+import com.jetbrains.lang.dart.ide.actions.DartPubGetAction;
 import com.jetbrains.lang.dart.psi.PubspecYamlReferenceContributor;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
@@ -80,30 +83,26 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
           return;
         }
 
-        final VirtualFile dir = checkReferences(holder, (YAMLKeyValue)element);
-        if (dir == null) {
+        final VirtualFile packageDir = checkReferences(holder, (YAMLKeyValue)element);
+        if (packageDir == null) {
           return;
         }
 
-        if (dir.findChild(PubspecYamlUtil.PUBSPEC_YAML) == null) {
-          final String message = DartBundle.message("pubspec.yaml.not.found.in", FileUtil.toSystemDependentName(dir.getPath()));
+        if (packageDir.findChild(PubspecYamlUtil.PUBSPEC_YAML) == null) {
+          final String message = DartBundle.message("pubspec.yaml.not.found.in", FileUtil.toSystemDependentName(packageDir.getPath()));
           holder.registerProblem(((YAMLKeyValue)element).getValue(), message);
           return;
         }
 
         final VirtualFile file = DartResolveUtil.getRealVirtualFile(element.getContainingFile());
-        if (file != null && dir.equals(file.getParent())) {
+        if (file != null && packageDir.equals(file.getParent())) {
           holder.registerProblem(((YAMLKeyValue)element).getValue(), DartBundle.message("path.package.reference.to.itself"));
           return;
         }
 
-        final String path = ((YAMLKeyValue)element).getValueText() + "/" + PubspecYamlUtil.LIB_DIR_NAME;
-        final VirtualFile packageDir = file == null ? null : VfsUtilCore.findRelativeFile(path, file.getParent());
-        if (packageDir == null || !packageDir.isDirectory()) {
-          return;
-        }
-
-        if (!ProjectRootManager.getInstance(element.getProject()).getFileIndex().isInContent(packageDir)) {
+        final VirtualFile libDir = packageDir.findChild(PubspecYamlUtil.LIB_DIR_NAME);
+        if (libDir != null && libDir.isDirectory() &&
+            !ProjectRootManager.getInstance(element.getProject()).getFileIndex().isInContent(libDir)) {
           final String message = DartBundle.message("folder.0.not.in.project.content",
                                                     FileUtil.toSystemDependentName(packageDir.getPath()));
           holder.registerProblem(((YAMLKeyValue)element).getValue(), message, new AddContentRootFix(module, packageDir));
@@ -180,6 +179,17 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
             modifiableModel.commit();
           }
         });
+
+        final VirtualFile otherPubspec = myContentRoot.findChild(PubspecYamlUtil.PUBSPEC_YAML);
+        if (otherPubspec != null) {
+          // exclude before indexing started
+          DartProjectComponent.excludeBuildAndPackagesFolders(myModule, otherPubspec);
+
+          final AnAction pubGetAction = ActionManager.getInstance().getAction("Dart.pub.get");
+          if (pubGetAction instanceof DartPubGetAction) {
+            ((DartPubGetAction)pubGetAction).performPubAction(myModule, otherPubspec, false);
+          }
+        }
 
         showSuccessNotification(myModule, myContentRoot);
       }
