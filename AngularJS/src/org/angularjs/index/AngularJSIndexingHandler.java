@@ -337,10 +337,31 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static JSFunction findDeclaredFunction(JSExpression expression) {
-    // TODO local resolve
-    return null;
-    //final JSElement candidate = visitor.getOperandFromVarContext(expression);
-    //return candidate instanceof JSFunction ? (JSFunction)candidate : null;
+    final Ref<JSFunction> result = Ref.create();
+    if (expression instanceof JSReferenceExpression) {
+      final String name = ((JSReferenceExpression)expression).getReferencedName();
+      expression.getContainingFile().accept(new JSRecursiveWalkingElementVisitor() {
+        @Override
+        public void visitJSFunctionExpression(JSFunctionExpression node) {
+          checkFunction(node);
+          super.visitJSFunctionExpression(node);
+        }
+
+        public void checkFunction(JSFunction node) {
+          if (StringUtil.equals(name, node.getName())) {
+            result.set(node);
+            stopWalking();
+          }
+        }
+
+        @Override
+        public void visitJSFunctionDeclaration(JSFunction node) {
+          checkFunction(node);
+          super.visitJSFunctionDeclaration(node);
+        }
+      });
+    }
+    return result.get();
   }
 
   public static class Factory extends JSFileIndexerFactory {
