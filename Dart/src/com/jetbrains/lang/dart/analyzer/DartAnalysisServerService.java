@@ -132,6 +132,12 @@ public class DartAnalysisServerService {
             });
           }
         }
+
+        @Override
+        public void onError(final RequestError requestError) {
+          semaphore.up();
+          LOG.error(requestError.getMessage(), requestError.getStackTrace());
+        }
       });
 
       semaphore.waitFor(5000);
