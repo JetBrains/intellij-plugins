@@ -44,7 +44,7 @@ public class DartFileStructureTest extends FileStructureTestBase {
     checkTree();
   }
 
-  public void testDartInHtml() {
+  public void testDartInHtml() throws Exception {
     checkTree();
   }
 }

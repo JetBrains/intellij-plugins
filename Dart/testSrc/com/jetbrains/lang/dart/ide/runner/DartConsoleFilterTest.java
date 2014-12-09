@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.runner;
 
-import com.intellij.execution.filters.UrlFilter;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Trinity;
 import junit.framework.TestCase;
@@ -8,10 +7,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.jetbrains.lang.dart.ide.runner.DartPositionInfo.Type;
 
 public class DartConsoleFilterTest extends TestCase {
+
+  private static final Pattern URL_PATTERN = Pattern.compile("\\b(https?://|www\\.)[-A-Za-z0-9+&@#/%?=~_|!:,.;]*[-A-Za-z0-9+&@#/%=~_|]");
 
   private static void doNegativeTest(final String text) {
     assertNull(DartPositionInfo.parsePositionInfo(text));
@@ -47,7 +49,7 @@ public class DartConsoleFilterTest extends TestCase {
   }
 
   private static void doUrlTest(@NotNull final String line, @Nullable final String expectedUrl) {
-    final Matcher matcher = UrlFilter.URL_PATTERN.matcher(line);
+    final Matcher matcher = URL_PATTERN.matcher(line);
     if (expectedUrl == null) {
       assertFalse(line, matcher.find());
       return;
