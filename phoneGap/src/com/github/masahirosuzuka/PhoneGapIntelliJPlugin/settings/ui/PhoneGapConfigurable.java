@@ -10,8 +10,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.JBTextField;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.Nls;
@@ -20,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 /**
@@ -128,7 +132,9 @@ public class PhoneGapConfigurable implements Configurable {
         .addComponent(phoneGapPluginsView.getPanel()).getPanel();
       myWrapper = new JPanel(new BorderLayout());
       myWrapper.add(panel, BorderLayout.NORTH);
-      setUpListeners();
+
+      setupListeners();
+
       phoneGapPluginsView
         .setupService(myExecutablePath.getText(), myWorkingDirectory.getText(), myRepositoryStore, getVersionCallback());
     }
@@ -136,23 +142,26 @@ public class PhoneGapConfigurable implements Configurable {
     return myWrapper;
   }
 
+  private void setupListeners() {
+
+
+    JTextField executableValue = myExecutablePath.getChildComponent().getTextEditor();
+    setUpListener(myExecutablePath.getChildComponent(), Ref.create(StringUtil.notNullize(executableValue.getText())));
+    JTextField workDirValue = myWorkingDirectory.getChildComponent().getTextEditor();
+    setUpListener(myWorkingDirectory.getChildComponent(), Ref.create(StringUtil.notNullize(workDirValue.getText())));
+  }
+
   private void setVersion(String version) {
     myVersion.setText(version);
   }
 
-  private void setUpListeners() {
-    setUpListener(myExecutablePath.getChildComponent().getTextEditor());
-    setUpListener(myWorkingDirectory.getChildComponent().getTextEditor());
-  }
-
-  private void setUpListener(final JTextField textField) {
-    final Ref<String> prevExecutablePathRef = Ref.create(StringUtil.notNullize(textField.getText()));
-    textField.getDocument().addDocumentListener(new DocumentAdapter() {
+  private void setUpListener(final TextFieldWithHistory textField, final Ref<String> prevExecutablePathRef) {
+    textField.addDocumentListener(new DocumentAdapter() {
       @Override
       protected void textChanged(DocumentEvent e) {
         String executablePath = StringUtil.notNullize(textField.getText());
         String prevExecutablePath = prevExecutablePathRef.get();
-        if (!prevExecutablePath.equals(executablePath)) {
+        if (!prevExecutablePath.equals(executablePath) && !StringUtil.isEmpty(executablePath)) {
           phoneGapPluginsView
             .setupService(myExecutablePath.getText(), myWorkingDirectory.getText(), myRepositoryStore, getVersionCallback());
           prevExecutablePathRef.set(executablePath);
