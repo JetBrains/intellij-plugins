@@ -24,12 +24,14 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
@@ -50,7 +52,6 @@ import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import icons.DartIcons;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,8 +90,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     return null;
   }
 
-  @Nls
-  protected abstract String getTitle();
+  @NotNull
+  protected abstract String getTitle(@NotNull final VirtualFile pubspecYamlFile);
 
   @Nullable
   protected abstract String[] calculatePubParameters(final Project project);
@@ -112,7 +113,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     if (sdk == null && allowModalDialogs) {
       final int answer = Messages.showDialog(module.getProject(),
                                              DartBundle.message("dart.sdk.is.not.configured"),
-                                             getTitle(),
+                                             getTitle(pubspecYamlFile),
                                              new String[]{DartBundle.message("setup.dart.sdk"), CommonBundle.getCancelButtonText()},
                                              Messages.OK,
                                              Messages.getErrorIcon());
@@ -129,7 +130,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
       final int answer =
         Messages.showDialog(module.getProject(),
                             DartBundle.message("dart.sdk.bad.dartpub.path", pubFile.getPath()),
-                            getTitle(),
+                            getTitle(pubspecYamlFile),
                             new String[]{DartBundle.message("setup.dart.sdk"), CommonBundle.getCancelButtonText()},
                             Messages.OK,
                             Messages.getErrorIcon());
@@ -152,7 +153,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
       command.setExePath(pubFile.getPath());
       command.addParameters(pubParameters);
 
-      doPerformPubAction(module, pubspecYamlFile, command, getTitle());
+      doPerformPubAction(module, pubspecYamlFile, command, getTitle(pubspecYamlFile));
     }
   }
 
@@ -239,6 +240,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
       }
     });
 
+    console.print(DartBundle.message("working.dir.0", FileUtil.toSystemDependentName(pubspecYamlFile.getParent().getPath())) + "\n",
+                  ConsoleViewContentType.SYSTEM_OUTPUT);
     console.attachToProcess(processHandler);
     processHandler.startNotify();
   }
@@ -330,7 +333,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     }
   }
 
-  private static class RerunPubCommandAction extends AnAction {
+  private static class RerunPubCommandAction extends DumbAwareAction {
     @NotNull private final PubToolWindowContentInfo myInfo;
     private OSProcessHandler myProcessHandler;
 

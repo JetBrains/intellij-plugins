@@ -1,5 +1,7 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapProjectComponent;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
 import com.intellij.ide.util.PropertiesComponent;
@@ -15,6 +17,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import icons.PhoneGapIcons;
@@ -85,12 +88,25 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
         @Override
         public void run() {
           PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+
           propertiesComponent.setValue(PhoneGapSettings.PHONEGAP_WORK_DIRECTORY, project.getBasePath());
           PhoneGapSettings.State state = PhoneGapSettings.getInstance().getState();
           if (!StringUtil.equals(settings.getExecutable(), state.getExecutablePath())) {
             PhoneGapSettings.getInstance().loadState(new PhoneGapSettings.State(settings.executable, state.repositoriesList));
           }
-          baseDir.refresh(false, true);
+          VfsUtil.markDirty(false, true, project.getBaseDir());
+          baseDir.refresh(true, true, new Runnable() {
+            @Override
+            public void run() {
+              if (PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
+                VirtualFile platformsFolder = project.getBaseDir().findChild(PhoneGapUtil.FOLDER_PLATFORMS);
+
+                if (platformsFolder != null) {
+                  PhoneGapProjectComponent.excludePlatformFolder(project, platformsFolder);
+                }
+              }
+            }
+          });
         }
       });
     }
