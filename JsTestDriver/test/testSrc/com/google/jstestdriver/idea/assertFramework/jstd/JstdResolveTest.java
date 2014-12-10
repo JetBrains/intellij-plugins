@@ -3,11 +3,11 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 import com.google.jstestdriver.idea.assertFramework.jstd.jsSrc.JstdDefaultAssertionFrameworkSrcMarker;
 import com.google.jstestdriver.idea.assertFramework.library.JstdLibraryUtil;
 import com.google.jstestdriver.idea.util.VfsUtils;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
@@ -112,11 +112,7 @@ public class JstdResolveTest extends ResolveTestCase {
     if (resolvedElement == null || !resolveResult.isValidResult()) {
       return null;
     }
-    if (resolvedElement instanceof JSNamedElementProxy) {
-      JSNamedElementProxy proxy = (JSNamedElementProxy) resolvedElement;
-      return proxy.getElement();
-    }
-    return resolvedElement;
+    return JSResolveUtil.unwrapProxy(resolvedElement);
   }
 
 }
