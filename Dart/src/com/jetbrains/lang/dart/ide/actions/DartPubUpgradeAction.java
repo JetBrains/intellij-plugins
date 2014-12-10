@@ -1,15 +1,19 @@
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
-import org.jetbrains.annotations.Nls;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartPubUpgradeAction extends DartPubActionBase {
-  @Nls
   @Override
-  protected String getTitle() {
-    return DartBundle.message("dart.pub.upgrade.title");
+  @NotNull
+  protected String getTitle(@NotNull final VirtualFile pubspecYamlFile) {
+    final String projectName = PubspecYamlUtil.getDartProjectName(pubspecYamlFile);
+    final String prefix = projectName == null ? "" : ("[" + projectName + "] ");
+    return prefix + DartBundle.message("dart.pub.upgrade.title");
   }
 
   @Nullable
