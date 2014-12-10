@@ -94,18 +94,22 @@ public class PhoneGapProjectComponent extends AbstractProjectComponent {
                                                                                          GlobalSearchScope.projectScope(myProject));
 
     for (VirtualFile platformFolder : platformsFolders) {
-      Module module = ModuleUtilCore.findModuleForFile(platformFolder, myProject);
-      if (module == null) {
-        continue;
-      }
-      VirtualFile contentRoot = getContentRoot(module, platformFolder);
-      if (contentRoot == null) continue;
-
-      Collection<String> oldExcludedFolders = getOldExcludedFolders(module, platformFolder);
-
-      if (oldExcludedFolders.size() == 1 && oldExcludedFolders.contains(platformFolder.getUrl())) continue;
-      updateExcludedFolders(module, contentRoot, oldExcludedFolders, ContainerUtil.newHashSet(platformFolder.getUrl()));
+      excludePlatformFolder(myProject, platformFolder);
     }
+  }
+
+  public static void excludePlatformFolder(Project project, VirtualFile platformFolder) {
+    Module module = ModuleUtilCore.findModuleForFile(platformFolder, project);
+    if (module == null) {
+      return;
+    }
+    VirtualFile contentRoot = getContentRoot(module, platformFolder);
+    if (contentRoot == null) return;
+
+    Collection<String> oldExcludedFolders = getOldExcludedFolders(module, platformFolder);
+
+    if (oldExcludedFolders.size() == 1 && oldExcludedFolders.contains(platformFolder.getUrl())) return;
+    updateExcludedFolders(module, contentRoot, oldExcludedFolders, ContainerUtil.newHashSet(platformFolder.getUrl()));
   }
 
   private static Collection<String> getOldExcludedFolders(Module module, final VirtualFile root) {
