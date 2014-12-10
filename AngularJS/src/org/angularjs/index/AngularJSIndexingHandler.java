@@ -4,11 +4,17 @@ import com.intellij.lang.javascript.JSDocTokenTypes;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.*;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
+import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
+import com.intellij.lang.javascript.psi.types.JSContext;
+import com.intellij.lang.javascript.psi.types.JSNamedType;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
@@ -20,6 +26,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.indexing.ID;
 import org.angularjs.codeInsight.DirectiveUtil;
+import org.angularjs.lang.psi.AngularJSAsExpression;
+import org.angularjs.lang.psi.AngularJSFilterExpression;
+import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -364,6 +373,35 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return result.get();
   }
 
+  @Override
+  public String resolveContextFromProperty(JSObjectLiteralExpression objectLiteralExpression) {
+    if (!(objectLiteralExpression.getParent() instanceof JSReturnStatement)) return null;
+
+    final JSFunction function = PsiTreeUtil.getParentOfType(objectLiteralExpression, JSFunction.class);
+    final JSCallExpression call = PsiTreeUtil.getParentOfType(function, JSCallExpression.class);
+    if (call != null) {
+      final JSExpression methodExpression = call.getMethodExpression();
+      if (!(methodExpression instanceof JSReferenceExpression)) return null;
+      JSReferenceExpression callee = (JSReferenceExpression)methodExpression;
+      JSExpression qualifier = callee.getQualifier();
+
+      if (qualifier == null) return null;
+
+      final String command = callee.getReferencedName();
+
+      if (INJECTABLE_METHODS.contains(command)) {
+        JSExpression[] arguments = call.getArguments();
+        if (arguments.length > 0) {
+          JSExpression argument = arguments[0];
+          if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
+            return StringUtil.unquoteString(argument.getText());
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   public static class Factory extends JSFileIndexerFactory {
     @Override
     protected int getVersion() {
@@ -377,5 +415,67 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                                           PsiFile file) {
       return null;
     }
+  }
+
+  @Override
+  public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator,
+                                          JSReferenceExpression expression,
+                                          PsiElement parent,
+                                          PsiElement resolveResult,
+                                          boolean hasSomeType) {
+    if (!AngularIndexUtil.hasAngularJS(expression.getProject())) return false;
+
+    if (resolveResult instanceof JSDefinitionExpression) {
+      final PsiElement resolveParent = resolveResult.getParent();
+      if (resolveParent instanceof AngularJSAsExpression) {
+        final String name = resolveParent.getFirstChild().getText();
+        final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
+        final JSType type = JSNamedType.createType(name, source, JSContext.INSTANCE);
+        evaluator.addType(type, resolveResult);
+        return true;
+      }
+      else if (resolveParent instanceof AngularJSRepeatExpression) {
+        if (calculateRepeatParameterType(evaluator, (AngularJSRepeatExpression)resolveParent)) {
+          return true;
+        }
+      }
+    }
+    if (resolveResult instanceof JSParameter && isInjectable(resolveResult)) {
+      final String name = ((JSParameter)resolveResult).getName();
+      final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
+      final JSType type = JSNamedType.createType(name, source, JSContext.INSTANCE);
+      evaluator.addType(type, resolveResult);
+    }
+    return false;
+  }
+
+  private static boolean calculateRepeatParameterType(JSTypeEvaluator evaluator, AngularJSRepeatExpression resolveParent) {
+    final PsiElement last = findReferenceExpression(resolveParent);
+    JSExpression arrayExpression = null;
+    if (last instanceof JSReferenceExpression) {
+      PsiElement resolve = ((JSReferenceExpression)last).resolve();
+      if (resolve != null) {
+        resolve = JSPsiImplUtils.getAssignedExpression(resolve);
+        if (resolve != null) {
+          arrayExpression = (JSExpression)resolve;
+        }
+      }
+    }
+    else if (last instanceof JSExpression) {
+      arrayExpression = (JSExpression)last;
+    }
+    if (last != null && arrayExpression != null) {
+      return evaluator.evalComponentTypeFromArrayExpression(resolveParent, arrayExpression) != null;
+    }
+    return false;
+  }
+
+  private static PsiElement findReferenceExpression(AngularJSRepeatExpression parent) {
+    JSExpression collection = parent.getCollection();
+    while (collection instanceof JSBinaryExpression &&
+           ((JSBinaryExpression)collection).getROperand() instanceof AngularJSFilterExpression) {
+      collection = ((JSBinaryExpression)collection).getLOperand();
+    }
+    return collection;
   }
 }
