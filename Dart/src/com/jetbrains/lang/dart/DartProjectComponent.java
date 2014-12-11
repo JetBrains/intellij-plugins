@@ -71,6 +71,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
         final String dartSdkGlobalLibName = importKnowledgeAboutOldDartSdkAndReturnGlobalLibName(myProject);
 
         initiallyEnableDartiumCheckedModeIfNeeded();
+        DartiumUtil.enableAsyncSupport();
 
         final Collection<VirtualFile> pubspecYamlFiles =
           FilenameIndex.getVirtualFilesByName(myProject, PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));
