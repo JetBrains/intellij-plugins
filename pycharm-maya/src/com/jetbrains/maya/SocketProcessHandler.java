@@ -9,6 +9,7 @@ import com.intellij.util.io.BaseOutputReader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -40,7 +41,7 @@ class SocketProcessHandler extends ProcessHandler {
       @Override
       public void startNotified(final ProcessEvent event) {
         try {
-          myOutputReader = new SocketOutputReader(new InputStreamReader(mySocket.getInputStream()));
+          myOutputReader = new SocketOutputReader(mySocket.getInputStream());
         }
         catch (Exception e) {
           //pass
@@ -91,8 +92,8 @@ class SocketProcessHandler extends ProcessHandler {
   }
 
   private class SocketOutputReader extends BaseOutputReader {
-    public SocketOutputReader(InputStreamReader reader) {
-      super(reader);
+    public SocketOutputReader(InputStream inputStream) {
+      super(inputStream, null);
       start();
     }
 
