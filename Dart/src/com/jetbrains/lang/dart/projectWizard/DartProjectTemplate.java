@@ -11,7 +11,6 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Consumer;
 import com.intellij.util.Url;
@@ -108,8 +107,7 @@ public abstract class DartProjectTemplate {
         final WebBrowser dartium = DartiumUtil.getDartiumBrowser();
         if (dartium == null) return;
 
-        final PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(htmlFile);
-        final Url url = psiFile == null ? null : WebBrowserServiceImpl.getUrlForContext(psiFile);
+        final Url url = WebBrowserServiceImpl.getDebuggableUrl(PsiManager.getInstance(module.getProject()).findFile(htmlFile));
         if (url == null) return;
 
         final RunManager runManager = RunManager.getInstance(module.getProject());
