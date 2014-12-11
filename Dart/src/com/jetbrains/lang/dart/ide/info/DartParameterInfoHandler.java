@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.info;
 
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.parameterInfo.*;
 import com.intellij.psi.PsiElement;
@@ -70,7 +71,7 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
       }
     }
 
-    if (functionDescription != null && functionDescription.getParameters().length > 0) {
+    if (functionDescription != null) {
       context.setItemsToShow(new Object[]{functionDescription});
       context.showHint(element, element.getTextRange().getStartOffset(), this);
     }
@@ -112,6 +113,9 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
       return;
     }
     myParametersListPresentableText = p.getParametersListPresentableText();
+    if (myParametersListPresentableText != null && myParametersListPresentableText.length() == 0) {
+      myParametersListPresentableText = CodeInsightBundle.message("parameter.info.no.parameters");
+    }
     context.setupUIComponentPresentation(
       myParametersListPresentableText,
       p.getParameterRange(context.getCurrentParameterIndex()).getStartOffset(),

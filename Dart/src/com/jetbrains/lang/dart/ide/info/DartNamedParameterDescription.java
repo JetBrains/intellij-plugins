@@ -20,12 +20,13 @@ public class DartNamedParameterDescription {
   private final String myText;
   @Nullable
   private final String myValue;
+  private boolean myIsPositional;
 
-  public DartNamedParameterDescription(@NotNull String text, @Nullable String value) {
+  public DartNamedParameterDescription(@NotNull String text, @Nullable String value, boolean isPositional) {
     myText = text;
     myValue = value;
+    myIsPositional = isPositional;
   }
-
 
   public static DartNamedParameterDescription[] getParameters(DartComponent element, DartGenericSpecialization specialization) {
     final DartFormalParameterList parameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
@@ -36,20 +37,31 @@ public class DartNamedParameterDescription {
     final List<DartDefaultFormalNamedParameter> list = namedFormalParameters.getDefaultFormalNamedParameterList();
     final DartNamedParameterDescription[] result = new DartNamedParameterDescription[list.size()];
     for (int i = 0, size = list.size(); i < size; i++) {
+      final DartDefaultFormalNamedParameter formalNamedParameter = list.get(i);
       final String normalFormalParameter =
-        DartPresentableUtil.getPresentableNormalFormalParameter(list.get(i).getNormalFormalParameter(), specialization);
-      final PsiElement valueElement = list.get(i).getExpression();
-      result[i] = new DartNamedParameterDescription(normalFormalParameter, valueElement == null ? null : valueElement.getText());
+        DartPresentableUtil.getPresentableNormalFormalParameter(formalNamedParameter.getNormalFormalParameter(), specialization);
+      final PsiElement valueElement = formalNamedParameter.getExpression();
+      result[i] =
+        new DartNamedParameterDescription(normalFormalParameter, valueElement == null ? null : valueElement.getText(), isPositional(
+          formalNamedParameter));
     }
     return result;
   }
 
+  private static boolean isPositional(final DartDefaultFormalNamedParameter parameter) {
+    final DartNamedFormalParameters formalParameters = PsiTreeUtil.getParentOfType(parameter, DartNamedFormalParameters.class);
+    if (formalParameters == null) {
+      return false;
+    }
+
+    final PsiElement firstChild = formalParameters.getFirstChild();
+    return firstChild != null && "[".equals(firstChild.getText());
+  }
+
   @Override
   public String toString() {
-    if (myValue != null) {
-      return myText + " = " + myValue;
-    }
-    return myText;
+    if (myValue == null) return myText;
+    return myText + (isPositional() ? " = " : ": ") + myValue;
   }
 
   @Override
@@ -59,13 +71,17 @@ public class DartNamedParameterDescription {
 
     DartNamedParameterDescription that = (DartNamedParameterDescription)o;
 
-    if (myText != null ? !myText.equals(that.myText) : that.myText != null) return false;
+    if (myText.equals(that.myText)) return false;
 
     return true;
   }
 
   @Override
   public int hashCode() {
-    return myText != null ? myText.hashCode() : 0;
+    return myText.hashCode();
+  }
+
+  public boolean isPositional() {
+    return myIsPositional;
   }
 }
