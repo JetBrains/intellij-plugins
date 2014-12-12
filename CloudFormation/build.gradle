@@ -31,11 +31,18 @@ allprojects {
         mavenCentral()
     }
 
+    configurations {
+        idea_dep
+        provided
+
+        compile.extendsFrom provided
+    }
+
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
 
     dependencies {
-        compile 'org.jetbrains:annotations:13.0'
+        provided 'org.jetbrains:annotations:13.0'
     }
 }
 
@@ -66,13 +73,12 @@ project(':metadata-crawler') {
     }
 }
 
-configurations { idea_dep }
-
 dependencies {
-    compile project(':metadata-model')
+    provided fileTree(dir: "${ideaPath}/lib", include: '*.jar')
 
-    compile fileTree(dir: "${ideaPath}/lib", include: '*.jar')
+    compile project(':metadata-model')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
     idea_dep tc("${ideaBuildTypeId}:${ideaBuildId}:${ideaArtifactName}.zip")
 
     testCompile fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar')
@@ -116,16 +122,7 @@ task zip(type: Zip) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     into('CloudFormation/lib') {
-        from { configurations.compile.files.findAll {
-            // Filter out IntelliJ IDEA files
-            File parent = it.getParentFile()
-            while (parent != null) {
-                if (parent.equals(ideaPath))
-                    return false;
-                parent = parent.getParentFile();
-            }
-            return true;
-        } }
+        from { configurations.compile - configurations.provided }
         from configurations.runtime.artifacts.files
     }
 }
