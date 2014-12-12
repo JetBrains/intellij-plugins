@@ -133,7 +133,7 @@ public class CreateFlexComponentFix extends CreateClassOrInterfaceFix {
     Module module = ModuleUtilCore.findModuleForPsiElement(context);
     final String[] allowedBuiltin = getAllowedBuiltInTemplates(module);
     return ContainerUtil
-      .filter(CreateClassOrInterfaceFix.getApplicableTemplates(FLEX_TEMPLATES_EXTENSIONS), new Condition<FileTemplate>() {
+      .filter(CreateClassOrInterfaceFix.getApplicableTemplates(FLEX_TEMPLATES_EXTENSIONS, context.getProject()), new Condition<FileTemplate>() {
         @Override
         public boolean value(final FileTemplate fileTemplate) {
           String name = fileTemplate.getName();

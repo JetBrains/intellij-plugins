@@ -124,7 +124,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
   }
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
+  public void invoke(@NotNull final Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
     final JSClass jsClass = PsiTreeUtil.getParentOfType(element, JSClass.class);
     if (jsClass == null) return;
 
@@ -162,7 +162,8 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
                        jsClass, JSBundle.message("new.actionscript.class.dialog.title"), new Computable<List<FileTemplate>>() {
           @Override
           public List<FileTemplate> compute() {
-            return CreateClassOrInterfaceFix.getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS);
+            return CreateClassOrInterfaceFix.getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS,
+                                                                    project);
           }
         });
 

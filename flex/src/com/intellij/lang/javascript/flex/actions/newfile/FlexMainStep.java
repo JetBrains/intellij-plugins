@@ -80,7 +80,7 @@ public class FlexMainStep extends MainStep {
                             new ThrowableComputable<FileTemplate, IOException>() {
                               @Override
                               public FileTemplate compute() throws IOException {
-                                return FileTemplateManager.getInstance().getInternalTemplate(myModel.getTemplateName());
+                                return FileTemplateManager.getDefaultInstance().getInternalTemplate(myModel.getTemplateName());
                               }
                             });
       String[] attributes = FileTemplateUtil.calculateAttributes(template.getText(), new Properties(), true);
