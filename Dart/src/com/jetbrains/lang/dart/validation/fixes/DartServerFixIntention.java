@@ -165,7 +165,7 @@ public final class DartServerFixIntention implements IntentionAction {
 
         // Templates can only grow source, so we trim first if necessary
         if (edit.getLength() > 0) {
-          document.replaceString(edit.getOffset(), edit.getOffset() + edit.getLength(), "");
+          document.deleteString(edit.getOffset(), edit.getOffset() + edit.getLength());
         }
 
         final TemplateManager templateManager = TemplateManager.getInstance(project);
