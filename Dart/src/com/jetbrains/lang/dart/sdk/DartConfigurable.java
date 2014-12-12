@@ -408,6 +408,7 @@ public class DartConfigurable implements SearchableConfigurable {
 
           final String dartiumPath = FileUtilRt.toSystemIndependentName(myDartiumPathTextWithBrowse.getText().trim());
           DartiumUtil.applyDartiumSettings(dartiumPath, myDartiumSettingsCurrent);
+          DartiumUtil.enableAsyncSupport();
         }
         else {
           if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {

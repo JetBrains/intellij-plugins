@@ -90,4 +90,25 @@ public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
   public void testParamInfo13() throws Throwable {
     doTest("Foo<Foo, Foo> param", 0);
   }
+
+  public void testParamInfo14() throws Throwable {
+    doTest("<no parameters>", 0);
+  }
+
+  public void testParamInfo15() throws Throwable {
+    doTest("[String s]", 0);
+  }
+
+  public void testParamInfo16() throws Throwable {
+    doTest("{String s}", 0);
+  }
+
+  public void testParamInfo17() throws Throwable {
+    doTest("{String s: 'foo'}", 0);
+  }
+
+  public void testParamInfo18() throws Throwable {
+    doTest("[String s = 'foo']", 0);
+  }
+
 }

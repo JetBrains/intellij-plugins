@@ -57,7 +57,7 @@ public class CreateStrutsXmlAction extends CreateFileAction {
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(directory);
     StrutsFileTemplateProvider templateProvider = new StrutsFileTemplateProvider(module);
-    final FileTemplate strutsXmlTemplate = templateProvider.determineFileTemplate();
+    final FileTemplate strutsXmlTemplate = templateProvider.determineFileTemplate(directory.getProject());
     final PsiElement file = FileTemplateUtil.createFromTemplate(strutsXmlTemplate,
                                                                 fileName,
                                                                 null,

@@ -46,18 +46,26 @@ public class DartFunctionDescription {
       }
       result.append(parameterDescription.toString());
     }
+
+
     if (myNamedParameters.length > 0) {
-      result.append(", [");
-    }
-    for (int i = 0, length = myNamedParameters.length; i < length; i++) {
-      DartNamedParameterDescription namedParameterDescription = myNamedParameters[i];
-      if (i > 0) {
+      final String[] braces = myNamedParameters[0].isPositional() ? new String[]{"[", "]"} :
+                              new String[]{"{", "}"};
+
+      if (result.length() > 0) {
         result.append(", ");
       }
-      result.append(namedParameterDescription.toString());
-    }
-    if (myNamedParameters.length > 0) {
-      result.append("]");
+      result.append(braces[0]);
+
+      for (int i = 0, length = myNamedParameters.length; i < length; i++) {
+        DartNamedParameterDescription namedParameterDescription = myNamedParameters[i];
+        if (i > 0) {
+          result.append(", ");
+        }
+        result.append(namedParameterDescription.toString());
+      }
+
+      result.append(braces[1]);
     }
     return result.toString();
   }

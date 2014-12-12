@@ -111,7 +111,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
         }
 
         final StrutsFileTemplateProvider templateProvider = new StrutsFileTemplateProvider(module);
-        final FileTemplate strutsXmlTemplate = templateProvider.determineFileTemplate();
+        final FileTemplate strutsXmlTemplate = templateProvider.determineFileTemplate(directory.getProject());
 
         try {
           final StrutsFacetConfiguration strutsFacetConfiguration = strutsFacet.getConfiguration();

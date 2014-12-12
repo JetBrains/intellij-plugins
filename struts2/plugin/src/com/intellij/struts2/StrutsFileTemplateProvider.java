@@ -17,6 +17,7 @@ package com.intellij.struts2;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.struts2.facet.ui.StrutsVersionDetector;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,7 @@ public class StrutsFileTemplateProvider {
   }
 
   @NotNull
-  public FileTemplate determineFileTemplate() {
+  public FileTemplate determineFileTemplate(Project project) {
     String template;
     if (isNewerThan("2.3")) {
       template = StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_3_XML;
@@ -49,7 +50,7 @@ public class StrutsFileTemplateProvider {
       template = StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_0_XML;
     }
 
-    final FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance();
+    final FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance(project);
     return fileTemplateManager.getJ2eeTemplate(template);
   }
 
