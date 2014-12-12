@@ -25,6 +25,9 @@ allprojects {
     apply plugin: 'com.github.jk1.tcdeps'
 
     repositories {
+        teamcityServer {
+            url = 'https://teamcity.jetbrains.com'
+        }
         mavenCentral()
     }
 
@@ -63,31 +66,31 @@ project(':metadata-crawler') {
     }
 }
 
-repositories {
-    ivy {
-        url = "https://teamcity.jetbrains.com/guestAuth/repository/download"
-        layout 'pattern', {
-            artifact '[module]/[revision]/[artifact](.[ext])'
-            ivy '[module]/[revision]/teamcity-ivy.xml'
-        }
-    }
-}
-
 configurations { idea_dep }
 
 dependencies {
     compile project(':metadata-model')
 
-    compile fileTree(dir: new File(ideaPath, "lib"), include: '*.jar')
+    compile fileTree(dir: "${ideaPath}/lib", include: '*.jar')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     idea_dep tc("${ideaBuildTypeId}:${ideaBuildId}:${ideaArtifactName}.zip")
 
     testCompile fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar')
 }
 
-task extractIdea(type: Copy) {
-    from zipTree(configurations.idea_dep.files.find { it.name.startsWith(ideaArtifactName) })
-    into ideaPath
+task extractIdea {
+    ext.fromFile = { configurations.idea_dep.files.find { it.name.startsWith(ideaArtifactName) } }
+    ext.toDir = ideaPath
+    inputs.file fromFile
+    outputs.dir toDir
+
+    doLast {
+       delete ideaPath
+       copy {
+           from zipTree(fromFile)
+           into ideaPath
+       }
+    }
 }
 
 compileKotlin.dependsOn(extractIdea)
@@ -113,7 +116,7 @@ task zip(type: Zip) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     into('CloudFormation/lib') {
-        from configurations.compile.files.findAll {
+        from { configurations.compile.files.findAll {
             // Filter out IntelliJ IDEA files
             File parent = it.getParentFile()
             while (parent != null) {
@@ -122,7 +125,7 @@ task zip(type: Zip) {
                 parent = parent.getParentFile();
             }
             return true;
-        }
+        } }
         from configurations.runtime.artifacts.files
     }
 }
