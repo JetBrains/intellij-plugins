@@ -423,7 +423,7 @@ public class TapestryUtils {
     }
 
     PsiFile pageTemplate = PsiFileFactory.getInstance(module.getProject())
-      .createFileFromText(fileName, TmlFileType.INSTANCE, FileTemplateManager.getInstance().getInternalTemplate(template).getText());
+      .createFileFromText(fileName, TmlFileType.INSTANCE, FileTemplateManager.getInstance(module.getProject()).getInternalTemplate(template).getText());
     templateDirectory.add(pageTemplate);
   }
 
