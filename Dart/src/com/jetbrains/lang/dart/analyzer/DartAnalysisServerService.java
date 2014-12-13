@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.analyzer;
 
 import com.google.dart.server.AnalysisServerListener;
 import com.google.dart.server.GetErrorsConsumer;
+import com.google.dart.server.GetFixesConsumer;
 import com.google.dart.server.generated.types.*;
 import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
@@ -35,7 +36,7 @@ import java.util.Map;
 
 public class DartAnalysisServerService {
 
-  static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
+  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
   private final AnalysisServerListener myListener = new AnalysisServerListener() {
 
@@ -118,6 +119,53 @@ public class DartAnalysisServerService {
         public void computedErrors(final AnalysisError[] errors) {
           if (semaphore.tryUp()) {
             resultError.set(errors);
+          }
+          else {
+            // semaphore unlocked by timeout, schedule to highlight the file again
+            ApplicationManager.getApplication().runReadAction(new Runnable() {
+              @Override
+              public void run() {
+                final Project project = psiFile.isValid() ? psiFile.getProject() : null;
+                if (project != null && !project.isDisposed()) {
+                  DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
+                }
+              }
+            });
+          }
+        }
+
+        @Override
+        public void onError(final RequestError requestError) {
+          semaphore.up();
+          LOG.error(requestError.getMessage(), requestError.getStackTrace());
+        }
+      });
+
+      semaphore.waitFor(5000);
+    }
+    finally {
+      semaphore.up(); // make sure that semaphore is unlock so that computedErrors() can understand when it was unlocked by timeout
+    }
+
+    return resultError.get();
+  }
+
+  @Nullable
+  public List<AnalysisErrorFixes> analysis_getFixes(@NotNull final PsiFile psiFile, final int offset) {
+    final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(psiFile);
+    if (vFile == null) return null;
+
+    final Ref<List<AnalysisErrorFixes>> resultError = new Ref<List<AnalysisErrorFixes>>();
+
+    final Semaphore semaphore = new Semaphore();
+    semaphore.down();
+
+    try {
+      myServer.edit_getFixes(FileUtil.toSystemDependentName(vFile.getPath()), offset, new GetFixesConsumer() {
+        @Override
+        public void computedFixes(final List<AnalysisErrorFixes> fixes) {
+          if (semaphore.tryUp()) {
+            resultError.set(fixes);
           }
           else {
             // semaphore unlocked by timeout, schedule to highlight the file again

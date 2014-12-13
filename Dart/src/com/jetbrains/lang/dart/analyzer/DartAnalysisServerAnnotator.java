@@ -1,9 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
-import com.google.dart.server.generated.types.AnalysisError;
-import com.google.dart.server.generated.types.AnalysisErrorSeverity;
-import com.google.dart.server.generated.types.AnalysisErrorType;
-import com.google.dart.server.generated.types.Location;
+import com.google.dart.server.generated.types.*;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
@@ -26,8 +23,11 @@ import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
 import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.validation.fixes.DartServerFixIntention;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class DartAnalysisServerAnnotator extends ExternalAnnotator<PsiFile, AnalysisError[]> {
 
@@ -82,7 +82,7 @@ public class DartAnalysisServerAnnotator extends ExternalAnnotator<PsiFile, Anal
       if (shouldIgnoreMessageFromDartAnalyzer(error)) continue;
       final Annotation annotation = annotate(document, holder, error);
       if (annotation != null) {
-        registerFixes(psiFile, annotation, error);
+        registerFixes(psiFile, document, annotation, error);
       }
     }
   }
@@ -102,13 +102,7 @@ public class DartAnalysisServerAnnotator extends ExternalAnnotator<PsiFile, Anal
                                      @NotNull final AnalysisError error) {
     final String severity = error.getSeverity();
     if (severity != null) {
-      final Location location = error.getLocation();
-      final int realStartLineOffset = document.getLineStartOffset(location.getStartLine() - 1);
-      final int realOffset = realStartLineOffset + location.getStartColumn() - 1;
-      // todo if there are CRLF chars within the length after the realOffset, then realLength will be incorrect:
-      final int realLength = realOffset + location.getLength();
-
-      final TextRange textRange = new TextRange(realOffset, realLength);
+      final TextRange textRange = getRealTextRange(document, error.getLocation());
       if (severity.equals(AnalysisErrorSeverity.INFO)) {
         return holder.createWeakWarningAnnotation(textRange, error.getMessage());
       }
@@ -122,8 +116,27 @@ public class DartAnalysisServerAnnotator extends ExternalAnnotator<PsiFile, Anal
     return null;
   }
 
-  private void registerFixes(@NotNull final PsiFile psiFile, @NotNull final Annotation annotation, @NotNull final AnalysisError error) {
-    // todo: implement
+  private static void registerFixes(@NotNull final PsiFile psiFile,
+                                    @NotNull Document document,
+                                    @NotNull final Annotation annotation,
+                                    @NotNull final AnalysisError error) {
+    final TextRange textRange = getRealTextRange(document, error.getLocation());
+    final List<AnalysisErrorFixes> fixes = DartAnalysisServerService.getInstance().analysis_getFixes(psiFile, textRange.getStartOffset());
+    if (fixes == null) return;
+    for (AnalysisErrorFixes fixList : fixes) {
+      for (SourceChange change : fixList.getFixes()) {
+        annotation.registerFix(new DartServerFixIntention(change));
+      }
+    }
+  }
+
+  @NotNull
+  private static TextRange getRealTextRange(Document document, Location location) {
+    final int realStartLineOffset = document.getLineStartOffset(location.getStartLine() - 1);
+    final int realOffset = realStartLineOffset + location.getStartColumn() - 1;
+    // todo if there are CRLF chars within the length after the realOffset, then realLength will be incorrect:
+    final int realLength = realOffset + location.getLength();
+    return new TextRange(realOffset, realLength);
   }
 
   private static boolean containsDartEmbeddedContent(@NotNull final XmlFile file) {
