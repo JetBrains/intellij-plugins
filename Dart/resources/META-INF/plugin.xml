@@ -44,6 +44,8 @@
     <lang.commenter language="Dart" implementationClass="com.jetbrains.lang.dart.ide.DartCommenter"/>
     <lang.parserDefinition language="Dart" implementationClass="com.jetbrains.lang.dart.DartParserDefinition"/>
 
+    <enterHandlerDelegate implementation="com.jetbrains.lang.dart.ide.editor.DartEnterInDocLineCommentHandler"/>
+
     <languageInjector implementation="com.jetbrains.lang.dart.psi.DartLanguageInjector"/>
 
     <colorSettingsPage implementation="com.jetbrains.lang.dart.highlight.DartColorsAndFontsPage"/>
