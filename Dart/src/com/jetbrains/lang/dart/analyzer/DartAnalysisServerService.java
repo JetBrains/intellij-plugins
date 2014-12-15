@@ -33,10 +33,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class DartAnalysisServerService {
 
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
+
+  private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
+  private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
 
   private final AnalysisServerListener myListener = new AnalysisServerListener() {
 
@@ -141,7 +145,7 @@ public class DartAnalysisServerService {
         }
       });
 
-      semaphore.waitFor(5000);
+      semaphore.waitFor(GET_ERRORS_TIMEOUT);
     }
     finally {
       semaphore.up(); // make sure that semaphore is unlock so that computedErrors() can understand when it was unlocked by timeout
@@ -184,11 +188,11 @@ public class DartAnalysisServerService {
         @Override
         public void onError(final RequestError requestError) {
           semaphore.up();
-          LOG.error(requestError.getMessage(), requestError.getStackTrace());
+          LOG.warn(requestError.getMessage());
         }
       });
 
-      semaphore.waitFor(5000);
+      semaphore.waitFor(GET_FIXES_TIMEOUT);
     }
     finally {
       semaphore.up(); // make sure that semaphore is unlock so that computedErrors() can understand when it was unlocked by timeout
