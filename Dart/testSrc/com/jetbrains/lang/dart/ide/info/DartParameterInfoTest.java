@@ -20,7 +20,7 @@ public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
     return DartTestUtils.BASE_TEST_DATA_PATH + FileUtil.toSystemDependentName("/paramInfo/");
   }
 
-  private void doTest(String infoText, int highlightedParameterIndex) throws Exception {
+  private void doTest(String infoText, int highlightedParameterIndex, int highlightStart, int highlightEnd) {
     configureByFile(getTestName(false) + "." + DartFileType.DEFAULT_EXTENSION);
 
     final DartParameterInfoHandler parameterInfoHandler = new DartParameterInfoHandler();
@@ -41,10 +41,20 @@ public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
     assertNotNull(element);
     parameterInfoHandler.updateParameterInfo(element, updateContext);
     assertEquals(highlightedParameterIndex, updateContext.getCurrentParameter());
+
+    // range check
+    if (highlightStart != -1) {
+      assertEquals(highlightStart, context.getHighlightStart());
+      assertEquals(highlightEnd, context.getHighlightEnd());
+    }
+  }
+
+  private void doTest(String infoText, int highlightedParameterIndex) {
+    doTest(infoText, highlightedParameterIndex, -1 /* ignored */, -1 /* ignored */);
   }
 
   public void testParamInfo1() throws Throwable {
-    doTest("int p1, p2, Node p3", 0);
+    doTest("int p1, p2, Node p3", 0, 0, 6);
   }
 
   public void testParamInfo2() throws Throwable {
@@ -72,7 +82,7 @@ public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
   }
 
   public void testParamInfo8() throws Throwable {
-    doTest("String one, [String two, String three]", 0);
+    doTest("String one, [String two, String three]", 0, 0, 10);
   }
 
   public void testParamInfo9() throws Throwable {
@@ -100,15 +110,15 @@ public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
   }
 
   public void testParamInfo16() throws Throwable {
-    doTest("{String s}", 0);
+    doTest("{String s}", 0, 1, 9);
   }
 
   public void testParamInfo17() throws Throwable {
-    doTest("{String s: 'foo'}", 0);
+    doTest("{String s: 'foo'}", 0, 1, 16);
   }
 
   public void testParamInfo18() throws Throwable {
-    doTest("[String s = 'foo']", 0);
+    doTest("[String s = 'foo']", 0, 1, 17);
   }
 
 }

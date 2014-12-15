@@ -85,7 +85,8 @@ public class DartFunctionDescription {
       }
       startOffset += myParameters[i].toString().length();
     }
-    startOffset += ", [".length();
+    startOffset += myParameters.length > 0 ? ", [".length() : "[".length();
+
     for (int i = 0, length = myNamedParameters.length; i < length; i++) {
       if ((i + myParameters.length) == index) {
         int shift = i == 0 ? 0 : ", ".length();
