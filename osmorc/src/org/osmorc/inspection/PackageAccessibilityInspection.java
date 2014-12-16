@@ -24,6 +24,7 @@
  */
 package org.osmorc.inspection;
 
+import com.intellij.codeInsight.daemon.impl.analysis.AnnotationsHighlightUtil;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -46,6 +47,7 @@ import org.osmorc.manifest.BundleManifest;
 import org.osmorc.util.OsgiPsiUtil;
 
 import javax.swing.*;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 /**
@@ -89,7 +91,7 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
         if (facet != null) {
           PsiElement target = ref.resolve();
           if (target instanceof PsiClass) {
-            String toImport = checkAccessibility(target, facet);
+            String toImport = checkAccessibility((PsiClass)target, facet);
             if (toImport == NOT_EXPORTED) {
               holder.registerProblem(ref, OsmorcBundle.message("WrongImportPackageInspection.message"));
             }
@@ -126,7 +128,14 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
   }
 
   // OSGi Core Spec 3.5 "Class Loading Architecture"
-  private static String checkAccessibility(PsiElement targetClass, OsmorcFacet facet) {
+  private static String checkAccessibility(PsiClass targetClass, OsmorcFacet facet) {
+    if (targetClass.isAnnotationType()) {
+      RetentionPolicy retention = AnnotationsHighlightUtil.getRetentionPolicy(targetClass);
+      if (retention == RetentionPolicy.SOURCE || retention == RetentionPolicy.CLASS) {
+        return null;
+      }
+    }
+
     PsiFile targetFile = targetClass.getContainingFile();
     if (!(targetFile instanceof PsiClassOwner)) {
       return null;  // alien file, ignore
