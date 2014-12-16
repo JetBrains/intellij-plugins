@@ -9,8 +9,6 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.index.JSNamedElementIndexItemBase;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSNewExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
@@ -158,13 +156,6 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
         PsiElement element = r.getElement();
         if (element instanceof JSQualifiedNamedElement) {
           invalidResult = (JSQualifiedNamedElement)element;
-          if (invalidResult instanceof JSNamedElementProxy) { // invalid result
-            JSNamedElementProxy.NamedItemType type = ((JSNamedElementProxy)invalidResult).getType();
-            if (type == JSNamedElementIndexItemBase.NamedItemType.MemberFunction ||
-                type == JSNamedElementIndexItemBase.NamedItemType.MemberVariable) {
-              invalidResult = null;
-            }
-          }
         }
       }
       if (invalidResult != null) {

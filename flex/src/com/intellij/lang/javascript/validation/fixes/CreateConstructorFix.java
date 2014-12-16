@@ -154,7 +154,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
 
         @Override
         protected JSChangeSignatureDialog createDialog(PsiElement context, final List<JSParameterInfo> paramInfos) {
-          JSMethodDescriptor descriptor = new JSMethodDescriptor(myRealFunction.compute(), true) {
+          JSMethodDescriptor descriptor = new JSMethodDescriptor(myFunction, true) {
             @Override
             public List<JSParameterInfo> getParameters() {
               return paramInfos;
@@ -165,7 +165,7 @@ public class CreateConstructorFix extends CreateJSFunctionIntentionAction {
 
         @Override
         protected JSChangeSignatureProcessor createProcessor(List<JSParameterInfo> paramInfos, JSAttributeList attributeList) {
-          return new MyProcessor(myRealFunction.compute(),
+          return new MyProcessor(myFunction,
                                  attributeList != null ? attributeList.getAccessType() : JSAttributeList.AccessType.PACKAGE_LOCAL,
                                  myClass.getName(),
                                  "",

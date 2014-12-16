@@ -7,7 +7,6 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -375,7 +374,6 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       return url;
     }
 
-    if (element instanceof JSNamedElementProxy) element = ((JSNamedElementProxy)element).getElement();
     final PsiElement elementToShowDoc = findElementToShowDoc(element);
     final List<String> urls = findUrls(elementToShowDoc);
     return urls != null && !urls.isEmpty() ? urls : null;
