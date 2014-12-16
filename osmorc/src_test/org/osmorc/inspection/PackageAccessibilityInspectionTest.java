@@ -66,7 +66,7 @@ public class PackageAccessibilityInspectionTest extends AbstractOsgiTestCase {
 
   public void testQuickFixExported() {
     doTestFix(
-      "package pkg;" +
+      "package pkg;\n" +
       "import org.osgi.framework.*;\n" +
       "public abstract class C implements <caret>BundleActivator { }",
 
@@ -78,7 +78,7 @@ public class PackageAccessibilityInspectionTest extends AbstractOsgiTestCase {
 
   public void testQuickFixImplicit() {
     doTestFix(
-      "package pkg;" +
+      "package pkg;\n" +
       "import javax.swing.*;\n" +
       "public class C {\n" +
       "  public static void main() {\n" +
@@ -90,6 +90,17 @@ public class PackageAccessibilityInspectionTest extends AbstractOsgiTestCase {
 
       "Import-Package: org.osgi.framework,\n" +
       " javax.swing\n");
+  }
+
+  public void testAnnotation() {
+    doTest(
+      "package pkg;\n" +
+      "import org.jetbrains.annotations.*;\n" +
+      "public class C {\n" +
+      "  @NotNull String s;\n" +
+      "}",
+
+      "");
   }
 
   private void doTest(String classText, String manifestText) {
