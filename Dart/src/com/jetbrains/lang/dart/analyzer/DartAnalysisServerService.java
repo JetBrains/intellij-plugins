@@ -118,7 +118,8 @@ public class DartAnalysisServerService {
     semaphore.down();
 
     try {
-      myServer.analysis_getErrors(FileUtil.toSystemDependentName(vFile.getPath()), new GetErrorsConsumer() {
+      final String path = FileUtil.toSystemDependentName(vFile.getPath());
+      myServer.analysis_getErrors(path, new GetErrorsConsumer() {
         @Override
         public void computedErrors(final AnalysisError[] errors) {
           if (semaphore.tryUp()) {
@@ -126,6 +127,8 @@ public class DartAnalysisServerService {
           }
           else {
             // semaphore unlocked by timeout, schedule to highlight the file again
+            LOG.info("analysis_getErrors() took too long for file " + path + ", restarting daemon");
+
             ApplicationManager.getApplication().runReadAction(new Runnable() {
               @Override
               public void run() {
@@ -139,9 +142,9 @@ public class DartAnalysisServerService {
         }
 
         @Override
-        public void onError(final RequestError requestError) {
+        public void onError(final RequestError error) {
           semaphore.up();
-          LOG.error(requestError.getMessage(), requestError.getStackTrace());
+          LOG.error("Error from analysis_getErrors() for file " + path + ", code=" + error.getCode() + ": " + error.getMessage());
         }
       });
 
@@ -159,46 +162,35 @@ public class DartAnalysisServerService {
     final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(psiFile);
     if (vFile == null) return null;
 
-    final Ref<List<AnalysisErrorFixes>> resultError = new Ref<List<AnalysisErrorFixes>>();
+    final Ref<List<AnalysisErrorFixes>> resultFixes = new Ref<List<AnalysisErrorFixes>>();
 
     final Semaphore semaphore = new Semaphore();
     semaphore.down();
 
-    try {
-      myServer.edit_getFixes(FileUtil.toSystemDependentName(vFile.getPath()), offset, new GetFixesConsumer() {
-        @Override
-        public void computedFixes(final List<AnalysisErrorFixes> fixes) {
-          if (semaphore.tryUp()) {
-            resultError.set(fixes);
-          }
-          else {
-            // semaphore unlocked by timeout, schedule to highlight the file again
-            ApplicationManager.getApplication().runReadAction(new Runnable() {
-              @Override
-              public void run() {
-                final Project project = psiFile.isValid() ? psiFile.getProject() : null;
-                if (project != null && !project.isDisposed()) {
-                  DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
-                }
-              }
-            });
-          }
-        }
+    final String path = FileUtil.toSystemDependentName(vFile.getPath());
+    myServer.edit_getFixes(path, offset, new GetFixesConsumer() {
+      @Override
+      public void computedFixes(final List<AnalysisErrorFixes> fixes) {
+        semaphore.up();
+        resultFixes.set(fixes);
+      }
 
-        @Override
-        public void onError(final RequestError requestError) {
-          semaphore.up();
-          LOG.warn(requestError.getMessage());
-        }
-      });
+      @Override
+      public void onError(final RequestError error) {
+        semaphore.up();
+        LOG.warn("Error from edit_getFixes() for file " + path + ", code=" + error.getCode() + ": " + error.getMessage());
+      }
+    });
 
-      semaphore.waitFor(GET_FIXES_TIMEOUT);
-    }
-    finally {
-      semaphore.up(); // make sure that semaphore is unlock so that computedErrors() can understand when it was unlocked by timeout
+    final long t0 = System.currentTimeMillis();
+    semaphore.waitFor(GET_FIXES_TIMEOUT);
+
+    if (semaphore.tryUp()) {
+      LOG.info("edit_getFixes() took too long for file " + path + ": " + (System.currentTimeMillis() - t0) + "ms");
+      return null;
     }
 
-    return resultError.get();
+    return resultFixes.get();
   }
 
   private void startServer() {
@@ -258,10 +250,10 @@ public class DartAnalysisServerService {
     for (final Project project : projects) {
       for (final Module module : ModuleManager.getInstance(project).getModules()) {
         for (final VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
-          included.add(contentRoot.getPath());
+          included.add(FileUtil.toSystemDependentName(contentRoot.getPath()));
         }
         for (final VirtualFile excludedRoot : ModuleRootManager.getInstance(module).getExcludeRoots()) {
-          excluded.add(excludedRoot.getPath());
+          excluded.add(FileUtil.toSystemDependentName(excludedRoot.getPath()));
         }
       }
     }
