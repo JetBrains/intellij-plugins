@@ -1,10 +1,7 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.javascript.flex.completion.ActionScriptCompletionKeywordsContributor;
-import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
-import com.intellij.javascript.flex.resolve.ActionScriptReferenceExpressionResolver;
-import com.intellij.javascript.flex.resolve.ActionScriptTypeEvaluator;
-import com.intellij.javascript.flex.resolve.ActionScriptTypeHelper;
+import com.intellij.javascript.flex.resolve.*;
 import com.intellij.lang.javascript.completion.JSCompletionKeywordsContributor;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.ActionScriptExpectedTypeEvaluator;
@@ -76,6 +73,12 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
   @Override
   public JSClassResolver getClassResolver() {
     return ActionScriptClassResolver.getInstance();
+  }
+
+  @NotNull
+  @Override
+  public JSImportHandler getImportHandler() {
+    return ActionScriptImportHandler.getInstance();
   }
 
   @NotNull

@@ -41,6 +41,7 @@ public class ActionScriptClassResolver extends JSClassResolver {
   protected ActionScriptClassResolver() {
   }
 
+  @SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")
   public static ActionScriptClassResolver getInstance() {
     if (INSTANCE == null) INSTANCE = new ActionScriptClassResolver();
     return INSTANCE;
