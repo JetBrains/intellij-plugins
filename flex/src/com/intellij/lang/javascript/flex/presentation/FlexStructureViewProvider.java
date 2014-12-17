@@ -18,6 +18,7 @@ import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.xml.util.HtmlUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,7 +78,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
       myFile.acceptChildren(new XmlRecursiveElementVisitor() {
         @Override
         public void visitXmlTag(final XmlTag tag) {
-          if ("style".equalsIgnoreCase(tag.getLocalName())) {
+          if (HtmlUtil.STYLE_TAG_NAME.equalsIgnoreCase(tag.getLocalName())) {
             for(StructureViewExtension ext: StructureViewFactoryEx.getInstanceEx(myFile.getProject()).getAllExtensions(XmlTag.class)) {
               final StructureViewTreeElement[] structureViewTreeElements = ext.getChildren(tag);
 
