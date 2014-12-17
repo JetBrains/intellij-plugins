@@ -25,17 +25,6 @@ function configureCoverage(config) {
       };
     }
     reporters.push(IntellijCoverageReporter.reporterName);
-
-    // 'Run with coverage' should serve *.js files preprocessed by coverage preprocessor.
-    // Unfortunately if 'Run' was executed previously, browser cache is reused for 'Run with coverage' also.
-    // Thus, served *.js files aren't preprocessed by coverage.
-    // Workaround: start 'Run with coverage' on different port.
-    if (typeof config.port == 'undefined') {
-      config.port = 9877;
-    }
-    else if (typeof config.port === 'number') {
-      config.port++;
-    }
   }
   else {
     clearCoveragePreprocessors(config.preprocessors);
