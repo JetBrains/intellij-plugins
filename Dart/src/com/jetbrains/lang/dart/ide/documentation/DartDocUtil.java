@@ -24,6 +24,9 @@ import java.util.List;
 
 public class DartDocUtil {
 
+
+  public static final String SINGLE_LINE_DOC_COMMENT = "///";
+
   public static String generateDoc(final PsiElement element) {
     if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {
       return null;
@@ -174,7 +177,7 @@ public class DartDocUtil {
           buf.append('\n');
         }
 
-        buf.append(StringUtil.trimStart(comment.getText(), "///").trim());
+        buf.append(StringUtil.trimStart(comment.getText(), SINGLE_LINE_DOC_COMMENT).trim());
       }
     }
 
