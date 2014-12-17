@@ -6,17 +6,16 @@ import com.google.gson.JsonParser;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.net.HttpConfigurable;
+import com.intellij.util.io.HttpRequests;
 import com.intellij.util.net.NetUtils;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.RepoPackage;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -87,37 +86,29 @@ public class PhoneGapPluginsList {
   }
 
   private static Map<String, PhoneGapRepoPackage> listNoCache() {
-    HttpURLConnection urlConnection = null;
-    Map<String, PhoneGapRepoPackage> result = ContainerUtil.newHashMap();
+    final Map<String, PhoneGapRepoPackage> result = ContainerUtil.newHashMap();
     try {
-      urlConnection = HttpConfigurable.getInstance().openHttpConnection(PLUGINS_URL);
-      int timeout = (int)TimeUnit.SECONDS.toMillis(30);
-      urlConnection.setConnectTimeout(timeout);
-      urlConnection.setReadTimeout(timeout);
-      urlConnection.connect();
+      HttpRequests.request(PLUGINS_URL).connect(new HttpRequests.RequestProcessor<Object>() {
+        @Override
+        public Object process(@NotNull HttpRequests.Request request) throws IOException {
+          ByteArrayOutputStream out = new ByteArrayOutputStream();
+          NetUtils.copyStreamContent(null, request.getInputStream(), out, request.getConnection().getContentLength());
 
-      InputStream rawStream = urlConnection.getInputStream();
-      int contentLength = urlConnection.getContentLength();
-      final ByteArrayOutputStream out = new ByteArrayOutputStream();
-      NetUtils.copyStreamContent(null, rawStream, out, contentLength);
+          JsonParser jsonParser = new JsonParser();
+          final JsonElement jsonElement = jsonParser.parse(out.toString());
 
-      JsonParser jsonParser = new JsonParser();
-      final JsonElement jsonElement = jsonParser.parse(out.toString());
-
-      JsonObject object = jsonElement.getAsJsonObject();
-      for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
-        if (!isExcludedProperty(entry.getKey())) {
-          result.put(entry.getKey(), new PhoneGapRepoPackage(entry.getKey(), entry.getValue().getAsJsonObject()));
+          JsonObject object = jsonElement.getAsJsonObject();
+          for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
+            if (!isExcludedProperty(entry.getKey())) {
+              result.put(entry.getKey(), new PhoneGapRepoPackage(entry.getKey(), entry.getValue().getAsJsonObject()));
+            }
+          }
+          return null;
         }
-      }
+      });
     }
     catch (Exception e) {
       throw new RuntimeException(e.getMessage(), e);
-    }
-    finally {
-      if (urlConnection != null) {
-        urlConnection.disconnect();
-      }
     }
     return result;
   }
