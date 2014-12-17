@@ -20,12 +20,13 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +40,8 @@ public class DartAnalysisServerService {
 
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
-  private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
+  private static final long GET_ERRORS_TIMEOUT = ApplicationManager.getApplication().isUnitTestMode() ? TimeUnit.SECONDS.toMillis(50)
+                                                                                                      : TimeUnit.SECONDS.toMillis(5);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
 
   private final AnalysisServerListener myListener = new AnalysisServerListener() {
@@ -108,9 +110,9 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public AnalysisError[] analysis_getErrors(@NotNull final PsiFile psiFile) {
-    final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(psiFile);
-    if (vFile == null) return null;
+  public AnalysisError[] analysis_getErrors(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info) {
+    // todo start server if not alive, restart server if SDK changed
+    // todo make sure that the Dart project root for this file is passed via myServer.analysis_setAnalysisRoots
 
     final Ref<AnalysisError[]> resultError = new Ref<AnalysisError[]>();
 
@@ -118,7 +120,7 @@ public class DartAnalysisServerService {
     semaphore.down();
 
     try {
-      final String path = FileUtil.toSystemDependentName(vFile.getPath());
+      final String path = FileUtil.toSystemDependentName(info.myFilePath);
       myServer.analysis_getErrors(path, new GetErrorsConsumer() {
         @Override
         public void computedErrors(final AnalysisError[] errors) {
@@ -132,9 +134,11 @@ public class DartAnalysisServerService {
             ApplicationManager.getApplication().runReadAction(new Runnable() {
               @Override
               public void run() {
-                final Project project = psiFile.isValid() ? psiFile.getProject() : null;
-                if (project != null && !project.isDisposed()) {
-                  DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
+                final VirtualFile vFile = info.myProject.isDisposed() ? null
+                                                                      : LocalFileSystem.getInstance().findFileByPath(info.myFilePath);
+                final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(info.myProject).findFile(vFile);
+                if (psiFile != null) {
+                  DaemonCodeAnalyzer.getInstance(info.myProject).restart(psiFile);
                 }
               }
             });
@@ -158,16 +162,13 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public List<AnalysisErrorFixes> analysis_getFixes(@NotNull final PsiFile psiFile, final int offset) {
-    final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(psiFile);
-    if (vFile == null) return null;
-
+  public List<AnalysisErrorFixes> analysis_getFixes(@NotNull final String filePath, final int offset) {
     final Ref<List<AnalysisErrorFixes>> resultFixes = new Ref<List<AnalysisErrorFixes>>();
 
     final Semaphore semaphore = new Semaphore();
     semaphore.down();
 
-    final String path = FileUtil.toSystemDependentName(vFile.getPath());
+    final String path = FileUtil.toSystemDependentName(filePath);
     myServer.edit_getFixes(path, offset, new GetFixesConsumer() {
       @Override
       public void computedFixes(final List<AnalysisErrorFixes> fixes) {
@@ -200,7 +201,7 @@ public class DartAnalysisServerService {
       return;
     }
 
-    final String sdkPath = sdk.getHomePath();
+    final String sdkPath = ApplicationManager.getApplication().isUnitTestMode() ? System.getProperty("dart.sdk") : sdk.getHomePath();
     final String runtimePath = sdkPath + "/bin/dart";
     final String analysisServerPath = sdkPath + "/bin/snapshots/analysis_server.dart.snapshot";
     final DebugPrintStream debugStream = new DebugPrintStream() {
