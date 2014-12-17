@@ -83,7 +83,7 @@ public class FlexMainStep extends MainStep {
                                 return FileTemplateManager.getDefaultInstance().getInternalTemplate(myModel.getTemplateName());
                               }
                             });
-      String[] attributes = FileTemplateUtil.calculateAttributes(template.getText(), new Properties(), true);
+      String[] attributes = FileTemplateUtil.calculateAttributes(template.getText(), new Properties(), true, myProject);
       if (ArrayUtil.contains(CreateClassOrInterfaceFix.SUPERCLASS, attributes)) {
         myModel.setSuperclassFqn(getSuperclassFqn());
       }
