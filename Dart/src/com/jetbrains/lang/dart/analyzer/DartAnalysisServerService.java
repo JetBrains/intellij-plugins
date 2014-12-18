@@ -7,6 +7,7 @@ import com.google.dart.server.generated.types.*;
 import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
+import com.intellij.ProjectTopics;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -15,7 +16,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
@@ -25,8 +27,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.concurrency.Semaphore;
+import com.intellij.util.containers.hash.HashSet;
+import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.net.NetUtils;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +50,13 @@ public class DartAnalysisServerService {
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
 
   private String mySdkHome = null;
+
+  public static final String MIN_SDK_VERSION = "1.7";
+
+  // todo these lists need to be stored in relation to the project that they came from
+  // so that the lists can be updated as projects may change content roots
+  private ArrayList<String> myIncludedAnalysisRoots = new ArrayList<String>();
+  private ArrayList<String> myExcludedAnalysisRoots = new ArrayList<String>();
 
   private final AnalysisServerListener myListener = new AnalysisServerListener() {
 
@@ -84,6 +96,13 @@ public class DartAnalysisServerService {
     }
 
     public void serverError(boolean isFatal, String message, String stackTrace) {
+      if (isFatal) {
+        stopServer();
+        String dartSdkHome = getSdkHome();
+        if (dartSdkHome != null) {
+          startServer(dartSdkHome);
+        }
+      }
     }
 
     public void serverStatus(AnalysisStatus status) {
@@ -111,11 +130,12 @@ public class DartAnalysisServerService {
 
   @Nullable
   public static String getSdkHome() {
-    if(ApplicationManager.getApplication().isUnitTestMode()) {
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
       return System.getProperty("dart.sdk");
-    } else {
+    }
+    else {
       DartSdk dartSdk = DartSdk.getGlobalDartSdk();
-      if(dartSdk != null) {
+      if (dartSdk != null) {
         return dartSdk.getHomePath();
       }
     }
@@ -129,12 +149,8 @@ public class DartAnalysisServerService {
 
   @Nullable
   public AnalysisError[] analysis_getErrors(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info) {
-    // todo make sure that the Dart project root for this file is passed via myServer.analysis_setAnalysisRoots
-
-    // SDK is different, restart server
-    if (mySdkHome == null || !info.mySdkHome.equals(mySdkHome)) {
-      stopServer();
-      startServer(info.mySdkHome);
+    if (!serverReadyForRequest(info)) {
+      return null;
     }
 
     final Ref<AnalysisError[]> resultError = new Ref<AnalysisError[]>();
@@ -185,11 +201,9 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public List<AnalysisErrorFixes> analysis_getFixes(@NotNull final String filePath, @NotNull final String sdkHome, final int offset) {
-    // SDK is different, restart server
-    if (mySdkHome == null || !sdkHome.equals(mySdkHome)) {
-      stopServer();
-      startServer(sdkHome);
+  public List<AnalysisErrorFixes> analysis_getFixes(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info, final int offset) {
+    if (!serverReadyForRequest(info)) {
+      return null;
     }
 
     final Ref<List<AnalysisErrorFixes>> resultFixes = new Ref<List<AnalysisErrorFixes>>();
@@ -197,7 +211,7 @@ public class DartAnalysisServerService {
     final Semaphore semaphore = new Semaphore();
     semaphore.down();
 
-    final String path = FileUtil.toSystemDependentName(filePath);
+    final String path = FileUtil.toSystemDependentName(info.myFilePath);
     myServer.edit_getFixes(path, offset, new GetFixesConsumer() {
       @Override
       public void computedFixes(final List<AnalysisErrorFixes> fixes) {
@@ -259,25 +273,40 @@ public class DartAnalysisServerService {
     catch (Exception e) {
       LOG.debug(e.getMessage(), e);
     }
-    setAnalysisRoots(ProjectManager.getInstance().getOpenProjects());
     myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true));
     myServer.addAnalysisServerListener(myListener);
   }
 
-  private void setAnalysisRoots(@NotNull final Project[] projects) {
-    ArrayList<String> included = new ArrayList<String>();
-    ArrayList<String> excluded = new ArrayList<String>();
-    for (final Project project : projects) {
-      for (final Module module : ModuleManager.getInstance(project).getModules()) {
-        for (final VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
-          included.add(FileUtil.toSystemDependentName(contentRoot.getPath()));
+  private void updateAnalysisRootsWithProject(@NotNull final Project project) {
+    for (final Module module : ModuleManager.getInstance(project).getModules()) {
+      for (final VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
+        final String root = FileUtil.toSystemDependentName(contentRoot.getPath());
+        if(!myIncludedAnalysisRoots.contains(root)) {
+          myIncludedAnalysisRoots.add(root);
         }
-        for (final VirtualFile excludedRoot : ModuleRootManager.getInstance(module).getExcludeRoots()) {
-          excluded.add(FileUtil.toSystemDependentName(excludedRoot.getPath()));
+      }
+      for (final VirtualFile excludedRoot : ModuleRootManager.getInstance(module).getExcludeRoots()) {
+        final String root = FileUtil.toSystemDependentName(excludedRoot.getPath());
+        if(!myExcludedAnalysisRoots.contains(root)) {
+          myExcludedAnalysisRoots.add(root);
         }
       }
     }
-    myServer.analysis_setAnalysisRoots(included, excluded, null);
+    myServer.analysis_setAnalysisRoots(myIncludedAnalysisRoots, myExcludedAnalysisRoots, null);
+  }
+
+  private boolean serverReadyForRequest(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info) {
+    if (info.mySdkHome == null) {
+      LOG.info("Dart SDK of version " + MIN_SDK_VERSION + " or higher must be set.");
+      return false;
+    }
+
+    if (mySdkHome == null || !info.mySdkHome.equals(mySdkHome)) {
+      stopServer();
+      startServer(info.mySdkHome);
+    }
+    updateAnalysisRootsWithProject(info.myProject);
+    return true;
   }
 
   private void stopServer() {
