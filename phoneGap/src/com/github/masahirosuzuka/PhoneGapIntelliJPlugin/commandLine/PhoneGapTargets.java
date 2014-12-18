@@ -90,7 +90,7 @@ public class PhoneGapTargets {
       ExecUtil.execAndGetOutput(commands, myProject.getBasePath());
 
     if (output.getExitCode() == 0 && StringUtil.isEmpty(output.getStderr())) {
-      String[] split = output.getStdout().split("\n");
+      String[] split = StringUtil.splitByLines(output.getStdout());
       for (String s : split) {
         String device = s.trim();
         if (!StringUtil.isEmpty(device) && !isAndroidExcludedStrings(device)) {
