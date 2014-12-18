@@ -93,6 +93,7 @@
     <referencesSearch implementation="org.angularjs.findUsages.AngularJSReferenceSearcher" />
 
     <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
+    <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
