@@ -1,23 +1,24 @@
 package com.jetbrains.lang.dart.ide.template.macro;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.intellij.codeInsight.template.Expression;
-import com.intellij.codeInsight.template.ExpressionContext;
-import com.intellij.codeInsight.template.Result;
-import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.codeInsight.template.TextResult;
-import com.intellij.codeInsight.template.macro.ClassNameMacro;
-import com.intellij.openapi.util.Condition;
+import com.intellij.codeInsight.template.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.ide.template.DartTemplateContextType;
-import com.jetbrains.lang.dart.psi.DartClassDefinition;
-import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartClassNameMacro extends ClassNameMacro {
+public class DartClassNameMacro extends Macro {
+  @Override
+  public String getName() {
+    return "dartClassName";
+  }
+
+  @Override
+  public String getPresentableName() {
+    return "dartClassName()";
+  }
 
   @Override
   public Result calculateResult(@NotNull Expression[] params, final ExpressionContext context) {
@@ -32,16 +33,9 @@ public class DartClassNameMacro extends ClassNameMacro {
 
   @VisibleForTesting
   @Nullable
-  public String getContainingClassName(final PsiElement element) {
+  public String getContainingClassName(@Nullable final PsiElement element) {
     if (element == null) return null;
-    final DartComponent parent = (DartComponent)PsiTreeUtil.findFirstParent(element, new Condition<PsiElement>() {
-      @Override
-      public boolean value(final PsiElement element) {
-        return element instanceof DartClassDefinition;
-      }
-    });
-    if (parent == null) return null;
-    final DartComponentName componentName = parent.getComponentName();
-    return componentName == null ? null : componentName.getName();
+    final DartClass dartClass = PsiTreeUtil.getParentOfType(element, DartClass.class);
+    return dartClass == null ? null : dartClass.getName();
   }
 }

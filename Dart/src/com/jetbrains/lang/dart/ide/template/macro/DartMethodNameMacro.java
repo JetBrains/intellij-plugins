@@ -1,25 +1,24 @@
 package com.jetbrains.lang.dart.ide.template.macro;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.intellij.codeInsight.template.Expression;
-import com.intellij.codeInsight.template.ExpressionContext;
-import com.intellij.codeInsight.template.Result;
-import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.codeInsight.template.TextResult;
-import com.intellij.codeInsight.template.macro.MethodNameMacro;
-import com.intellij.openapi.util.Condition;
+import com.intellij.codeInsight.template.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.ide.template.DartTemplateContextType;
-import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBody;
-import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBodyOrNative;
-import com.jetbrains.lang.dart.psi.DartMethodDeclaration;
+import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartMethodNameMacro extends MethodNameMacro {
+public class DartMethodNameMacro extends Macro {
+  @Override
+  public String getName() {
+    return "dartMethodName";
+  }
+
+  @Override
+  public String getPresentableName() {
+    return "dartMethodName()";
+  }
 
   @Override
   public Result calculateResult(@NotNull Expression[] params, final ExpressionContext context) {
@@ -31,13 +30,14 @@ public class DartMethodNameMacro extends MethodNameMacro {
   @Nullable
   public String getContainingFunctionName(@Nullable final PsiElement element) {
     if (element == null) return null;
-    final DartComponent parent = (DartComponent)PsiTreeUtil.findFirstParent(element, new Condition<PsiElement>() {
-      @Override
-      public boolean value(final PsiElement element) {
-        return element instanceof DartFunctionDeclarationWithBodyOrNative || element instanceof DartFunctionDeclarationWithBody ||
-               element instanceof DartMethodDeclaration;
-      }
-    });
+    final DartComponent parent = PsiTreeUtil.getParentOfType(element,
+                                                             DartGetterDeclaration.class,
+                                                             DartSetterDeclaration.class,
+                                                             DartFunctionDeclarationWithBodyOrNative.class,
+                                                             DartFactoryConstructorDeclaration.class,
+                                                             DartNamedConstructorDeclaration.class,
+                                                             DartMethodDeclaration.class,
+                                                             DartFunctionDeclarationWithBody.class);
     if (parent == null) return null;
     final DartComponentName componentName = parent.getComponentName();
     return componentName == null ? null : componentName.getName();
