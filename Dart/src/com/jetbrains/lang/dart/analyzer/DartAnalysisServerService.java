@@ -44,6 +44,8 @@ public class DartAnalysisServerService {
                                                                                                       : TimeUnit.SECONDS.toMillis(5);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
 
+  private String mySdkHome = null;
+
   private final AnalysisServerListener myListener = new AnalysisServerListener() {
 
     public void computedCompletion(String completionId, int replacementOffset, int replacementLength,
@@ -91,7 +93,10 @@ public class DartAnalysisServerService {
   private RemoteAnalysisServerImpl myServer;
 
   public DartAnalysisServerService() {
-    startServer();
+    String dartSdkHome = getSdkHome();
+    if (dartSdkHome != null) {
+      startServer(dartSdkHome);
+    }
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       public void dispose() {
         stopServer();
@@ -104,6 +109,19 @@ public class DartAnalysisServerService {
     return ServiceManager.getService(DartAnalysisServerService.class);
   }
 
+  @Nullable
+  public static String getSdkHome() {
+    if(ApplicationManager.getApplication().isUnitTestMode()) {
+      return System.getProperty("dart.sdk");
+    } else {
+      DartSdk dartSdk = DartSdk.getGlobalDartSdk();
+      if(dartSdk != null) {
+        return dartSdk.getHomePath();
+      }
+    }
+    return null;
+  }
+
   public void updateContent(@Nullable final Map<String, Object> files) {
     if (files == null || files.isEmpty()) return;
     myServer.analysis_updateContent(files);
@@ -111,8 +129,13 @@ public class DartAnalysisServerService {
 
   @Nullable
   public AnalysisError[] analysis_getErrors(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info) {
-    // todo start server if not alive, restart server if SDK changed
     // todo make sure that the Dart project root for this file is passed via myServer.analysis_setAnalysisRoots
+
+    // SDK is different, restart server
+    if (mySdkHome == null || !info.mySdkHome.equals(mySdkHome)) {
+      stopServer();
+      startServer(info.mySdkHome);
+    }
 
     final Ref<AnalysisError[]> resultError = new Ref<AnalysisError[]>();
 
@@ -162,7 +185,13 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public List<AnalysisErrorFixes> analysis_getFixes(@NotNull final String filePath, final int offset) {
+  public List<AnalysisErrorFixes> analysis_getFixes(@NotNull final String filePath, @NotNull final String sdkHome, final int offset) {
+    // SDK is different, restart server
+    if (mySdkHome == null || !sdkHome.equals(mySdkHome)) {
+      stopServer();
+      startServer(sdkHome);
+    }
+
     final Ref<List<AnalysisErrorFixes>> resultFixes = new Ref<List<AnalysisErrorFixes>>();
 
     final Semaphore semaphore = new Semaphore();
@@ -194,16 +223,10 @@ public class DartAnalysisServerService {
     return resultFixes.get();
   }
 
-  private void startServer() {
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
-    if (sdk == null) {
-      LOG.error("No SDK");
-      return;
-    }
-
-    final String sdkPath = ApplicationManager.getApplication().isUnitTestMode() ? System.getProperty("dart.sdk") : sdk.getHomePath();
-    final String runtimePath = sdkPath + "/bin/dart";
-    final String analysisServerPath = sdkPath + "/bin/snapshots/analysis_server.dart.snapshot";
+  private void startServer(@NotNull final String sdkHome) {
+    mySdkHome = sdkHome;
+    final String runtimePath = mySdkHome + "/bin/dart";
+    final String analysisServerPath = mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot";
     final DebugPrintStream debugStream = new DebugPrintStream() {
       @Override
       public void println(String str) {
@@ -237,12 +260,8 @@ public class DartAnalysisServerService {
       LOG.debug(e.getMessage(), e);
     }
     setAnalysisRoots(ProjectManager.getInstance().getOpenProjects());
-    setOptions();
-    myServer.addAnalysisServerListener(myListener);
-  }
-
-  private void setOptions() {
     myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true));
+    myServer.addAnalysisServerListener(myListener);
   }
 
   private void setAnalysisRoots(@NotNull final Project[] projects) {
@@ -262,6 +281,9 @@ public class DartAnalysisServerService {
   }
 
   private void stopServer() {
-    myServer.server_shutdown();
+    if (myServer != null) {
+      myServer.server_shutdown();
+      mySdkHome = null;
+    }
   }
 }

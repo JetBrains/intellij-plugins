@@ -83,13 +83,13 @@ public class DartAnalysisServerAnnotator
     if (FileUtil.isAncestor(sdk.getHomePath(), annotatedFile.getPath(), true)) return null;
 
     // todo iterate FileDocumentManager.getInstance().getUnsavedDocuments() and send contents to server for documents where Document.getModificationStamp() changed since previous upload
-    return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath(), sdk.getHomePath());
+    return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath(), DartAnalysisServerService.getSdkHome());
   }
 
   @Override
   @Nullable
   public ServerResult doAnnotate(@NotNull final AnnotatorInfo info) {
-    // todo remove document save when anonotator will be able to work with unsaved contents
+    // todo remove document save when annotator will be able to work with unsaved contents
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       ApplicationManager.getApplication().invokeAndWait(new Runnable() {
         @Override
@@ -115,7 +115,7 @@ public class DartAnalysisServerAnnotator
       if (shouldIgnoreMessageFromDartAnalyzer(error)) continue;
 
       final List<AnalysisErrorFixes> fixes =
-        DartAnalysisServerService.getInstance().analysis_getFixes(info.myFilePath, error.getLocation().getOffset());
+        DartAnalysisServerService.getInstance().analysis_getFixes(info.myFilePath, info.mySdkHome, error.getLocation().getOffset());
       result.add(error, fixes != null ? fixes : Collections.<AnalysisErrorFixes>emptyList());
     }
 
