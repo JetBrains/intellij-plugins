@@ -12,11 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DartMethodParametersMacro extends Macro {
-  @Override
-  public String getName() {
-    return "dartMethodParameters";
-  }
+public class DartMethodParametersMacro extends MethodParametersMacro {
 
   @Override
   public String getPresentableName() {
@@ -65,30 +61,28 @@ public class DartMethodParametersMacro extends Macro {
 
     List<String> results = Lists.newArrayList();
 
-    final List<DartNormalFormalParameter> normalFormalParameters = parameterList.getNormalFormalParameterList();
-    for (DartNormalFormalParameter parameter : normalFormalParameters) {
-      final DartFunctionSignature signature = parameter.getFunctionSignature();
-      if (signature != null) {
-        final String name = signature.getName();
-        if (name != null) {
-          results.add(name);
-        }
-      }
+    for (DartNormalFormalParameter parameter : parameterList.getNormalFormalParameterList()) {
+      findAndAddName(results, parameter);
     }
 
     final DartNamedFormalParameters namedFormalParameters = parameterList.getNamedFormalParameters();
     if (namedFormalParameters != null) {
       for (DartDefaultFormalNamedParameter parameter : namedFormalParameters.getDefaultFormalNamedParameterList()) {
-        final DartComponentName componentName = parameter.getNormalFormalParameter().findComponentName();
-        if (componentName != null) {
-          final String name = componentName.getName();
-          if (name != null) {
-            results.add(name);
-          }
-        }
+        findAndAddName(results, parameter.getNormalFormalParameter());
       }
     }
 
     return results;
   }
+
+  private static void findAndAddName(@NotNull final List<String> results, @NotNull final DartNormalFormalParameter parameter) {
+    final DartComponentName componentName = parameter.findComponentName();
+    if (componentName != null) {
+      final String name = componentName.getName();
+      if (name != null) {
+        results.add(name);
+      }
+    }
+  }
+
 }
