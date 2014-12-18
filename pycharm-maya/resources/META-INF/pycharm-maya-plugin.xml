@@ -1,7 +1,10 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceImplementation="com.jetbrains.maya.MayaSettingsProvider"/>
-    <projectConfigurable groupId="tools" instance="com.jetbrains.maya.MayaSettingsConfigurable"/>
+    <projectConfigurable groupId="tools"
+                         id="com.jetbrains.maya.MayaSettingsConfigurable"
+                         displayName="Maya"
+                         instance="com.jetbrains.maya.MayaSettingsConfigurable"/>
   </extensions>
 
   <extensions defaultExtensionNs="Pythonid">
