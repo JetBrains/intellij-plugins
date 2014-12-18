@@ -12,7 +12,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DartMethodParametersMacro extends MethodParametersMacro {
+public class DartMethodParametersMacro extends Macro {
+
+  @Override
+  public String getName() {
+    return "dartMethodParameters";
+  }
 
   @Override
   public String getPresentableName() {
@@ -84,5 +89,4 @@ public class DartMethodParametersMacro extends MethodParametersMacro {
       }
     }
   }
-
 }
