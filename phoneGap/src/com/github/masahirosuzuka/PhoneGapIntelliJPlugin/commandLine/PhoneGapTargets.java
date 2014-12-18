@@ -90,16 +90,25 @@ public class PhoneGapTargets {
       ExecUtil.execAndGetOutput(commands, myProject.getBasePath());
 
     if (output.getExitCode() == 0 && StringUtil.isEmpty(output.getStderr())) {
-      String[] split = output.getStdout().split("\n");
+      String[] split = StringUtil.splitByLines(output.getStdout());
       for (String s : split) {
         String device = s.trim();
-        if (!StringUtil.isEmpty(device) && !device.startsWith("List of devices attached")) {
+        if (!StringUtil.isEmpty(device) && !isAndroidExcludedStrings(device)) {
           result.add(device);
         }
       }
     }
 
     return result;
+  }
+
+  private static boolean isAndroidExcludedStrings(String device) {
+    //possible output:
+    //* daemon not running. starting it now on port 5037 *
+    //* daemon started successfully *
+    //List of devices attached
+    return device.startsWith("List of devices attached") ||
+           (device.startsWith("* ") && device.endsWith(" *"));
   }
 
   private static List<String> splitNames(List<String> adbDevices) {
