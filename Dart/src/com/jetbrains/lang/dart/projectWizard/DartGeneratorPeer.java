@@ -50,13 +50,14 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   private TextFieldWithBrowseButton mySdkPathTextWithBrowse;
   private JBLabel myVersionLabel;
 
+  private JPanel myDartiumSettingsPanel;
   private TextFieldWithBrowseButton myDartiumPathTextWithBrowse;
   private JButton myDartiumSettingsButton;
   private JBCheckBox myCheckedModeCheckBox;
 
-  private JPanel myLoadingPanel;
-
   private JPanel myTemplatesPanel;
+  private JPanel myLoadingTemplatesPanel;
+  private JPanel myLoadedTemplatesPanel;
   private JBCheckBox myCreateSampleProjectCheckBox;
   private JBList myTemplatesList;
 
@@ -111,7 +112,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
       startLoadingTemplates();
     }
     else {
-      myLoadingPanel.setVisible(false);
+      myLoadingTemplatesPanel.setVisible(false);
 
       myCreateSampleProjectCheckBox.setEnabled(false);
       myTemplatesList.setEnabled(false);
@@ -130,15 +131,15 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   }
 
   private void startLoadingTemplates() {
-    myLoadingPanel.setVisible(true);
-    myLoadingPanel.setPreferredSize(myTemplatesPanel.getPreferredSize());
+    myLoadingTemplatesPanel.setVisible(true);
+    myLoadingTemplatesPanel.setPreferredSize(myLoadedTemplatesPanel.getPreferredSize());
 
-    myTemplatesPanel.setVisible(false);
+    myLoadedTemplatesPanel.setVisible(false);
 
     myCreateSampleProjectCheckBox.setSelected(false); // until loaded
 
     final AsyncProcessIcon asyncProcessIcon = new AsyncProcessIcon("Dart project templates loading");
-    myLoadingPanel.add(asyncProcessIcon, new GridConstraints());  // defaults are ok: row = 0, column = 0
+    myLoadingTemplatesPanel.add(asyncProcessIcon, new GridConstraints());  // defaults are ok: row = 0, column = 0
     asyncProcessIcon.resume();
 
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
@@ -157,8 +158,8 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
   }
 
   private void onTemplatesLoaded(final List<DartProjectTemplate> templates) {
-    myLoadingPanel.setVisible(false);
-    myTemplatesPanel.setVisible(true);
+    myLoadingTemplatesPanel.setVisible(false);
+    myLoadedTemplatesPanel.setVisible(true);
     myCreateSampleProjectCheckBox.setEnabled(true);
     myTemplatesList.setEnabled(true);
 
@@ -208,11 +209,11 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
   @Override
   public void buildUI(final @NotNull SettingsStep settingsStep) {
-    //assert false;
-    //settingsStep.addSettingsField(DartBundle.message("dart.sdk.path.label"), mySdkPathTextWithBrowse);
-    //settingsStep.addSettingsField(DartBundle.message("version.label"), myVersionLabel);
-    //settingsStep.addSettingsField(DartBundle.message("dartium.path.label"), myDartiumSettingsPanel);
-    //settingsStep.addSettingsField("", myCheckedModeCheckBox);
+    settingsStep.addSettingsField(DartBundle.message("dart.sdk.path.label"), mySdkPathTextWithBrowse);
+    settingsStep.addSettingsField(DartBundle.message("version.label"), myVersionLabel);
+    settingsStep.addSettingsField(DartBundle.message("dartium.path.label"), myDartiumSettingsPanel);
+    settingsStep.addSettingsField("", myCheckedModeCheckBox);
+    settingsStep.addSettingsComponent(myTemplatesPanel);
   }
 
   @NotNull
@@ -305,6 +306,20 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     // invalid Dartium path is not a blocking error
     mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
+        stateListener.stateChanged(validate() == null);
+      }
+    });
+
+    myCreateSampleProjectCheckBox.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(final ActionEvent e) {
+        stateListener.stateChanged(validate() == null);
+      }
+    });
+
+    myTemplatesList.addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(final ListSelectionEvent e) {
         stateListener.stateChanged(validate() == null);
       }
     });
