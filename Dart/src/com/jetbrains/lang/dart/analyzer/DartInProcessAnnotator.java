@@ -80,7 +80,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<DartInProcessAnnot
                                  DartFileBasedSource.getSource(project, libraryFile));
   }
 
-  private static boolean containsDartEmbeddedContent(@NotNull final XmlFile file) {
+  static boolean containsDartEmbeddedContent(@NotNull final XmlFile file) {
     final String text = file.getText();
     int i = -1;
     while ((i = text.indexOf(DartLanguage.DART_MIME_TYPE, i + 1)) != -1) {

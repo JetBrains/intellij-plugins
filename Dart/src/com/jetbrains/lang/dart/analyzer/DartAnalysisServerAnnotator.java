@@ -1,59 +1,72 @@
 package com.jetbrains.lang.dart.analyzer;
 
-import com.google.common.collect.Lists;
 import com.google.dart.server.generated.types.*;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.xml.util.HtmlUtil;
-import com.jetbrains.lang.dart.DartLanguage;
-import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
 import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.validation.fixes.DartServerFixIntention;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
-public class DartAnalysisServerAnnotator extends ExternalAnnotator<Pair<PsiFile, Document>, DartAnalysisServerAnnotator.ServerResult> {
+public class DartAnalysisServerAnnotator
+  extends ExternalAnnotator<DartAnalysisServerAnnotator.AnnotatorInfo, DartAnalysisServerAnnotator.ServerResult> {
 
-  static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator");
+  static class AnnotatorInfo {
+    @NotNull public final Project myProject;
+    @NotNull public final String myFilePath;
+    @NotNull public final String mySdkHome;
 
-
-  static class ServerResult {
-
-    private final List<Pair<AnalysisError, List<AnalysisErrorFixes>>> myPairs = Lists.newArrayList();
-
-    void add(@NotNull Pair<AnalysisError, List<AnalysisErrorFixes>> errorListPair) {
-      myPairs.add(errorListPair);
-    }
-
-    public List<Pair<AnalysisError, List<AnalysisErrorFixes>>> getPairs() {
-      return myPairs;
+    public AnnotatorInfo(@NotNull final Project project, @NotNull final String filePath, @NotNull final String sdkHome) {
+      myProject = project;
+      myFilePath = filePath;
+      mySdkHome = sdkHome;
     }
   }
 
+  static class ServerResult {
+    @NotNull private final Map<AnalysisError, List<AnalysisErrorFixes>> myErrorsAndFixes =
+      new THashMap<AnalysisError, List<AnalysisErrorFixes>>();
+
+    void add(@NotNull final AnalysisError error, @NotNull final List<AnalysisErrorFixes> fixes) {
+      myErrorsAndFixes.put(error, fixes);
+    }
+
+    @NotNull
+    public Map<AnalysisError, List<AnalysisErrorFixes>> getErrorsAndFixes() {
+      return myErrorsAndFixes;
+    }
+  }
 
   @Nullable
   @Override
-  public Pair<PsiFile, Document> collectInformation(@NotNull final PsiFile psiFile, @NotNull final Editor editor, final boolean hasErrors) {
+  public AnnotatorInfo collectInformation(@NotNull final PsiFile psiFile, @NotNull final Editor editor, final boolean hasErrors) {
+    if (hasErrors) return null;
+
     if (psiFile instanceof DartExpressionCodeFragment) return null;
 
     final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
@@ -63,34 +76,37 @@ public class DartAnalysisServerAnnotator extends ExternalAnnotator<Pair<PsiFile,
     if (module == null) return null;
 
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
-    if (sdk == null) return null;
+    if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), "1.7") < 0) return null;
 
-    if (psiFile instanceof XmlFile && !containsDartEmbeddedContent((XmlFile)psiFile)) return null;
+    if (psiFile instanceof XmlFile && !DartInProcessAnnotator.containsDartEmbeddedContent((XmlFile)psiFile)) return null;
 
     if (FileUtil.isAncestor(sdk.getHomePath(), annotatedFile.getPath(), true)) return null;
 
-    if (PsiDocumentManager.getInstance(psiFile.getProject()).getCachedDocument(psiFile) == null) return null;
-
-    return Pair.create(psiFile, editor.getDocument());
+    // todo iterate FileDocumentManager.getInstance().getUnsavedDocuments() and send contents to server for documents where Document.getModificationStamp() changed since previous upload
+    return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath(), sdk.getHomePath());
   }
 
   @Override
   @Nullable
-  public ServerResult doAnnotate(@NotNull final Pair<PsiFile, Document> info) {
-    // todo: need to figure out how to send only the diff
-    //final CharSequence charSequence = editor.getDocument().getCharsSequence();
-    //final String fileContent = charSequence.toString();
-    //final THashMap<String, Object> files = new THashMap<String, Object>();
-    //final ArrayList<SourceEdit> sourceEdits = new ArrayList<SourceEdit>(1);
-    //final SourceEdit sourceEdit = new SourceEdit(0, fileContent.length() - 1, fileContent, null);
-    //sourceEdits.add(sourceEdit);
-    //files.put(psiFile.getOriginalFile().getVirtualFile().getPath(), new ChangeContentOverlay(sourceEdits));
-    //DartAnalysisServerService.getInstance(psiFile.getProject()).updateContent(files);
+  public ServerResult doAnnotate(@NotNull final AnnotatorInfo info) {
+    // todo remove document save when anonotator will be able to work with unsaved contents
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+        @Override
+        public void run() {
+          final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(info.myFilePath);
+          if (file != null) {
+            final FileDocumentManager manager = FileDocumentManager.getInstance();
+            final Document document = manager.getCachedDocument(file);
+            if (document != null) {
+              manager.saveDocument(document);
+            }
+          }
+        }
+      }, ModalityState.any());
+    }
 
-    final PsiFile psiFile = info.first;
-    final Document document = info.second;
-
-    final AnalysisError[] errors = DartAnalysisServerService.getInstance().analysis_getErrors(psiFile);
+    final AnalysisError[] errors = DartAnalysisServerService.getInstance().analysis_getErrors(info);
     if (errors == null) return null;
 
     final ServerResult result = new ServerResult();
@@ -98,10 +114,9 @@ public class DartAnalysisServerAnnotator extends ExternalAnnotator<Pair<PsiFile,
     for (AnalysisError error : errors) {
       if (shouldIgnoreMessageFromDartAnalyzer(error)) continue;
 
-      final TextRange textRange = getRealTextRange(document, error.getLocation());
-      final List<AnalysisErrorFixes> fixesList =
-        DartAnalysisServerService.getInstance().analysis_getFixes(psiFile, textRange.getStartOffset());
-      result.add(Pair.create(error, fixesList));
+      final List<AnalysisErrorFixes> fixes =
+        DartAnalysisServerService.getInstance().analysis_getFixes(info.myFilePath, error.getLocation().getOffset());
+      result.add(error, fixes != null ? fixes : Collections.<AnalysisErrorFixes>emptyList());
     }
 
     return result;
@@ -109,15 +124,15 @@ public class DartAnalysisServerAnnotator extends ExternalAnnotator<Pair<PsiFile,
 
   @Override
   public void apply(@NotNull final PsiFile psiFile, @Nullable final ServerResult serverResult, @NotNull final AnnotationHolder holder) {
-    if (serverResult == null || serverResult.getPairs().isEmpty()) return;
+    if (serverResult == null || serverResult.getErrorsAndFixes().isEmpty()) return;
 
     final Document document = PsiDocumentManager.getInstance(psiFile.getProject()).getCachedDocument(psiFile);
     if (document == null) return;
 
-    for (Pair<AnalysisError, List<AnalysisErrorFixes>> result : serverResult.getPairs()) {
-      final AnalysisError error = result.first;
-      if (shouldIgnoreMessageFromDartAnalyzer(error)) continue;
-      final List<AnalysisErrorFixes> fixes = result.second;
+    for (Map.Entry<AnalysisError, List<AnalysisErrorFixes>> entry : serverResult.getErrorsAndFixes().entrySet()) {
+      final AnalysisError error = entry.getKey();
+      final List<AnalysisErrorFixes> fixes = entry.getValue();
+
       final Annotation annotation = annotate(document, holder, error);
       if (annotation != null && fixes != null) {
         for (AnalysisErrorFixes fixList : fixes) {
@@ -142,41 +157,30 @@ public class DartAnalysisServerAnnotator extends ExternalAnnotator<Pair<PsiFile,
   private static Annotation annotate(@NotNull final Document document,
                                      @NotNull final AnnotationHolder holder,
                                      @NotNull final AnalysisError error) {
-    final String severity = error.getSeverity();
-    if (severity != null) {
-      final TextRange textRange = getRealTextRange(document, error.getLocation());
-      if (severity.equals(AnalysisErrorSeverity.INFO)) {
-        return holder.createWeakWarningAnnotation(textRange, error.getMessage());
+    final TextRange textRange = getRealTextRange(document, error.getLocation());
+    if (AnalysisErrorSeverity.INFO.equals(error.getSeverity())) {
+      final Annotation annotation = holder.createWeakWarningAnnotation(textRange, error.getMessage());
+      if ("Unused import".equals(error.getMessage()) || "Duplicate import".equals(error.getMessage())) {
+        annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
       }
-      else if (severity.equals(AnalysisErrorSeverity.WARNING)) {
-        return holder.createWarningAnnotation(textRange, error.getMessage());
-      }
-      else if (severity.equals(AnalysisErrorSeverity.ERROR)) {
-        return holder.createErrorAnnotation(textRange, error.getMessage());
-      }
+      return annotation;
     }
+    else if (AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) {
+      return holder.createWarningAnnotation(textRange, error.getMessage());
+    }
+    else if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity())) {
+      return holder.createErrorAnnotation(textRange, error.getMessage());
+    }
+
     return null;
   }
 
   @NotNull
-  private static TextRange getRealTextRange(Document document, Location location) {
+  private static TextRange getRealTextRange(@NotNull final Document document, @NotNull final Location location) {
     final int realStartLineOffset = document.getLineStartOffset(location.getStartLine() - 1);
     final int realOffset = realStartLineOffset + location.getStartColumn() - 1;
     // todo if there are CRLF chars within the length after the realOffset, then realLength will be incorrect:
     final int realLength = realOffset + location.getLength();
     return new TextRange(realOffset, realLength);
-  }
-
-  private static boolean containsDartEmbeddedContent(@NotNull final XmlFile file) {
-    final String text = file.getText();
-    int i = -1;
-    while ((i = text.indexOf(DartLanguage.DART_MIME_TYPE, i + 1)) != -1) {
-      final PsiElement element = file.findElementAt(i);
-      final XmlTag tag = element == null ? null : PsiTreeUtil.getParentOfType(element, XmlTag.class);
-      if (tag != null && HtmlUtil.isScriptTag(tag) && PsiTreeUtil.getChildOfType(tag, DartEmbeddedContent.class) != null) {
-        return true;
-      }
-    }
-    return false;
   }
 }

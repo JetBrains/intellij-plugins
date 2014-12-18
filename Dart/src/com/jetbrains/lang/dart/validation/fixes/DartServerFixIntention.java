@@ -11,7 +11,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
@@ -20,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -174,17 +173,12 @@ public final class DartServerFixIntention implements IntentionAction {
 
         addContents(template, edit);
 
-        try {
-          final VirtualFile virtualFile = VfsUtil.findFileByURL(new URL("file://" + fileEdit.getFile()));
-          if (virtualFile != null) {
-            final Editor targetEditor = BaseCreateFix.navigate(project, edit.getOffset(), virtualFile);
-            if (targetEditor != null) {
-              templateManager.startTemplate(targetEditor, template);
-            }
+        final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
+        if (virtualFile != null) {
+          final Editor targetEditor = BaseCreateFix.navigate(project, edit.getOffset(), virtualFile);
+          if (targetEditor != null) {
+            templateManager.startTemplate(targetEditor, template);
           }
-        }
-        catch (MalformedURLException e) {
-          LOG.error(e);
         }
       }
     }
@@ -227,5 +221,4 @@ public final class DartServerFixIntention implements IntentionAction {
     }
     return info;
   }
-
 }

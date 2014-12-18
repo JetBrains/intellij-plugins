@@ -208,7 +208,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
   @Override
   public void buildUI(final @NotNull SettingsStep settingsStep) {
-    assert false;
+    //assert false;
     //settingsStep.addSettingsField(DartBundle.message("dart.sdk.path.label"), mySdkPathTextWithBrowse);
     //settingsStep.addSettingsField(DartBundle.message("version.label"), myVersionLabel);
     //settingsStep.addSettingsField(DartBundle.message("dartium.path.label"), myDartiumSettingsPanel);

@@ -32,7 +32,7 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
   public JComponent getComponent() {
     setFields();
     JPanel panel = FormBuilder.createFormBuilder()
-      .addLabeledComponent("PhoneGap/Cordova executable:", myExecutablePathField)
+      .addLabeledComponent("PhoneGap/Cordova:", myExecutablePathField)
       .getPanel();
 
     panel.setPreferredSize(new Dimension(600, 40));
@@ -42,7 +42,7 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
   @Override
   public void buildUI(@NotNull SettingsStep settingsStep) {
     setFields();
-    settingsStep.addSettingsField("PhoneGap/Cordova executable:", myExecutablePathField);
+    settingsStep.addSettingsField("PhoneGap/Cordova:", myExecutablePathField);
   }
 
   @NotNull
