@@ -21,6 +21,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -49,7 +50,8 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   public static final String PLATFORM_FIREFOXOS = "firefoxos";
 
 
-  private final PhoneGapTargets myTargetsProvider;
+  @Nullable
+  private volatile PhoneGapTargets myTargetsProvider;
   private TextFieldWithHistoryWithBrowseButton myExecutablePathField;
   private TextFieldWithHistoryWithBrowseButton myWorkDirField;
   private ComboBoxWithMoreOption myPlatformField;
@@ -61,7 +63,6 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
 
   public PhoneGapRunConfigurationEditor(Project project) {
     myProject = project;
-    myTargetsProvider = new PhoneGapTargets(project);
   }
 
   @Override
@@ -107,7 +108,15 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
         public void run() {
           final String currentText = myTarget.getText();
 
-          final List<String> targets = ContainerUtil.newArrayList(myTargetsProvider.getTargets(platform, command));
+          PhoneGapTargets targetsProvider = myTargetsProvider;
+
+          if (targetsProvider == null || !targetsProvider.platform().equals(platform)) {
+            targetsProvider = PhoneGapTargets.createTargetsList(myProject, platform);
+            myTargetsProvider = targetsProvider;
+          }
+
+
+          final List<String> targets = ContainerUtil.newArrayList(PhoneGapTargets.listTargets(targetsProvider, command));
           if (!StringUtil.isEmpty(currentText) && !targets.contains(currentText)) {
             targets.add(currentText);
           }
