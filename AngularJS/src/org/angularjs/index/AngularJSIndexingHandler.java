@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.indexing.ID;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.lang.psi.AngularJSAsExpression;
@@ -87,8 +88,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static boolean isInjectable(PsiElement context) {
     final JSCallExpression call = PsiTreeUtil.getParentOfType(context, JSCallExpression.class, false, JSBlockStatement.class);
     if (call != null) {
-      JSReferenceExpression callee = (JSReferenceExpression)call.getMethodExpression();
-      JSExpression qualifier = callee.getQualifier();
+      final JSExpression methodExpression = call.getMethodExpression();
+      JSReferenceExpression callee = ObjectUtils.tryCast(methodExpression, JSReferenceExpression.class);
+      JSExpression qualifier = callee != null ? callee.getQualifier() : null;
       return qualifier != null && INJECTABLE_METHODS.contains(callee.getReferencedName());
     }
     return false;
