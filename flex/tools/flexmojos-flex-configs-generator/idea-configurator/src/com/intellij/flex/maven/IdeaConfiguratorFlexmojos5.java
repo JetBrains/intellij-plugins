@@ -113,7 +113,7 @@ public class IdeaConfiguratorFlexmojos5 implements FlexConfigGenerator {
         continue;
       }
 
-      // http://youtrack.jetbrains.com/issue/IDEA-108572
+      // https://youtrack.jetbrains.com/issue/IDEA-108572
       if (!staticLinkRuntimeSharedLibrariesSpecified && methodName.equals("getStaticLinkRuntimeSharedLibraries")) {
         staticLinkRuntimeSharedLibrariesSpecified = true;
       }
