@@ -114,6 +114,10 @@
 
     <internalFileTemplate name="Dart File"/>
 
+    <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartClassNameMacro"/>
+    <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartMethodNameMacro"/>
+    <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartMethodParametersMacro"/>
+    <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartMethodReturnTypeMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartListVariableMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartIterableVariableMacro"/>
     <liveTemplateMacro implementation="com.jetbrains.lang.dart.ide.template.macro.DartSuggestIndexNameMacro"/>
