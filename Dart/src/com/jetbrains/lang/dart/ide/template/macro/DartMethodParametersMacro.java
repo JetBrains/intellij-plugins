@@ -5,23 +5,17 @@ import com.google.common.collect.Lists;
 import com.intellij.codeInsight.template.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.lang.dart.ide.template.DartTemplateContextType;
 import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DartMethodParametersMacro extends Macro {
+public class DartMethodParametersMacro extends DartMacroBase {
 
   @Override
   public String getName() {
     return "dartMethodParameters";
-  }
-
-  @Override
-  public String getPresentableName() {
-    return "dartMethodParameters()";
   }
 
   @Override
@@ -38,11 +32,6 @@ public class DartMethodParametersMacro extends Macro {
     }
 
     return new ListResult(result);
-  }
-
-  @Override
-  public boolean isAcceptableInContext(final TemplateContextType context) {
-    return context instanceof DartTemplateContextType;
   }
 
   @Nullable
