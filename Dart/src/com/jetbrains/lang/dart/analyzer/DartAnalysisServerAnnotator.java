@@ -39,9 +39,9 @@ public class DartAnalysisServerAnnotator
   static class AnnotatorInfo {
     @NotNull public final Project myProject;
     @NotNull public final String myFilePath;
-    @NotNull public final String mySdkHome;
+    @Nullable public final String mySdkHome;
 
-    public AnnotatorInfo(@NotNull final Project project, @NotNull final String filePath, @NotNull final String sdkHome) {
+    public AnnotatorInfo(@NotNull final Project project, @NotNull final String filePath, @Nullable final String sdkHome) {
       myProject = project;
       myFilePath = filePath;
       mySdkHome = sdkHome;
@@ -76,7 +76,7 @@ public class DartAnalysisServerAnnotator
     if (module == null) return null;
 
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
-    if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), "1.7") < 0) return null;
+    if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), DartAnalysisServerService.MIN_SDK_VERSION) < 0) return null;
 
     if (psiFile instanceof XmlFile && !DartInProcessAnnotator.containsDartEmbeddedContent((XmlFile)psiFile)) return null;
 
@@ -107,7 +107,7 @@ public class DartAnalysisServerAnnotator
     }
 
     final AnalysisError[] errors = DartAnalysisServerService.getInstance().analysis_getErrors(info);
-    if (errors == null) return null;
+    if (errors == null || errors.length == 0) return null;
 
     final ServerResult result = new ServerResult();
 
@@ -115,7 +115,7 @@ public class DartAnalysisServerAnnotator
       if (shouldIgnoreMessageFromDartAnalyzer(error)) continue;
 
       final List<AnalysisErrorFixes> fixes =
-        DartAnalysisServerService.getInstance().analysis_getFixes(info.myFilePath, info.mySdkHome, error.getLocation().getOffset());
+        DartAnalysisServerService.getInstance().analysis_getFixes(info, error.getLocation().getOffset());
       result.add(error, fixes != null ? fixes : Collections.<AnalysisErrorFixes>emptyList());
     }
 
