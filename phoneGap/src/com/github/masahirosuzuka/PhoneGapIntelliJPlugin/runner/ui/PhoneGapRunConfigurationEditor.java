@@ -103,6 +103,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     if (myTarget.isEnabled()) {
       final String platform = getPlatformAsCodeFromField();
       final String command = (String)myCommand.getSelectedItem();
+      myTarget.setHistory(ContainerUtil.<String>emptyList());
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
         @Override
         public void run() {
