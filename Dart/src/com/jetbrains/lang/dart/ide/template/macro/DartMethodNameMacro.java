@@ -1,23 +1,20 @@
 package com.jetbrains.lang.dart.ide.template.macro;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.intellij.codeInsight.template.*;
+import com.intellij.codeInsight.template.Expression;
+import com.intellij.codeInsight.template.ExpressionContext;
+import com.intellij.codeInsight.template.Result;
+import com.intellij.codeInsight.template.TextResult;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.lang.dart.ide.template.DartTemplateContextType;
 import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartMethodNameMacro extends Macro {
+public class DartMethodNameMacro extends DartMacroBase {
   @Override
   public String getName() {
     return "dartMethodName";
-  }
-
-  @Override
-  public String getPresentableName() {
-    return "dartMethodName()";
   }
 
   @Override
@@ -41,11 +38,6 @@ public class DartMethodNameMacro extends Macro {
     if (parent == null) return null;
     final DartComponentName componentName = parent.getComponentName();
     return componentName == null ? null : componentName.getName();
-  }
-
-  @Override
-  public boolean isAcceptableInContext(final TemplateContextType context) {
-    return context instanceof DartTemplateContextType;
   }
 }
 

@@ -1,122 +1,135 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor;
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
 
-public class PhoneGapTargets {
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_EMULATE;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.COMMAND_RUN;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.PLATFORM_ANDROID;
+import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor.PLATFORM_IOS;
+
+public abstract class PhoneGapTargets {
   private static Logger LOGGER = Logger.getInstance(PhoneGapTargets.class);
 
-  private final Project myProject;
-  private List<String> androidVirtualDevices = null;
-  private List<String> androidDevices = null;
+  @Nullable
+  public static PhoneGapTargets createTargetsList(@NotNull Project project, @Nullable String platform) {
+    if (PLATFORM_ANDROID.equals(platform)) {
+      return new PhoneGapAndroidTargets(project);
+    }
+    if (PLATFORM_IOS.equals(platform)) {
+      return new PhoneGapIosTargets(project);
+    }
+
+    return null;
+  }
+
+  @NotNull
+  public static List<String> listTargets(@Nullable PhoneGapTargets phoneGapTargets, @Nullable String command) {
+    if (phoneGapTargets == null) return ContainerUtil.emptyList();
+
+    if (COMMAND_EMULATE.equals(command)) {
+      return phoneGapTargets.listVirtualDevices();
+    }
+
+    if (COMMAND_RUN.equals(command)) {
+      return phoneGapTargets.listDevices();
+    }
+
+    return ContainerUtil.emptyList();
+  }
+
+
+  @NotNull
+  protected final Project myProject;
+
+  private final NotNullLazyValue<List<String>> myVirtualDevices = new NotNullLazyValue<List<String>>() {
+    @NotNull
+    @Override
+    protected List<String> compute() {
+      return listVirtualDevicesNonCached();
+    }
+  };
+
+  private final NotNullLazyValue<List<String>> myDevices = new NotNullLazyValue<List<String>>() {
+    @NotNull
+    @Override
+    protected List<String> compute() {
+      return listDevicesNonCached();
+    }
+  };
 
   public PhoneGapTargets(@NotNull Project project) {
     myProject = project;
   }
 
+  @NotNull
+  public List<String> listDevices() {
+    return myDevices.getValue();
+  }
 
-  public List<String> getTargets(String platform, String commands) {
+  @NotNull
+  public List<String> listVirtualDevices() {
+    return myVirtualDevices.getValue();
+  }
+
+  @NotNull
+  protected abstract List<String> listDevicesNonCached();
+
+  @NotNull
+  protected abstract List<String> listVirtualDevicesNonCached();
+
+  protected List<String> list(String executableName,
+                              Function<String, String> parser,
+                              boolean errorOut,
+                              String... params) {
+    List<String> result = ContainerUtil.newArrayList();
+
+    File deployExecutable = PathEnvironmentVariableUtil.findInPath(executableName);
+    if (deployExecutable == null) return result;
+
     try {
-      if (PhoneGapRunConfigurationEditor.PLATFORM_ANDROID.equals(platform)) {
-        if (PhoneGapCommandLine.COMMAND_RUN.equals(commands)) {
-          return getAndroidDevices();
+      GeneralCommandLine line = new GeneralCommandLine(deployExecutable.getAbsolutePath());
+      line.addParameters(params);
+      ProcessOutput output = ExecUtil.execAndGetOutput(line);
+      List<String> lines = null;
+      if (errorOut) {
+        if (!StringUtil.isEmpty(output.getStderr())) {
+          lines = output.getStderrLines();
         }
+      }
 
-        if (PhoneGapCommandLine.COMMAND_EMULATE.equals(commands)) {
-          return getAndroidVirtualDevices();
-        }
+      if (lines == null) {
+        lines = output.getStdoutLines();
+      }
+
+      if (output.getExitCode() != 0) return result;
+
+      for (String value : lines) {
+        ContainerUtil.addIfNotNull(result, parser.fun(value));
       }
     }
     catch (ExecutionException e) {
       LOGGER.debug(e.getMessage(), e);
     }
 
-    return ContainerUtil.emptyList();
-  }
-
-  private synchronized List<String> getAndroidVirtualDevices() throws ExecutionException {
-    if (androidVirtualDevices == null) {
-      androidVirtualDevices = ContainerUtil.newArrayList();
-      File path = PathEnvironmentVariableUtil.findInPath(getAndroidName());
-      if (path != null && path.exists()) {
-        androidVirtualDevices.addAll(getAndroidDevices(ContainerUtil.newArrayList(path.getPath(), "-v", "list", "avd", "-c")));
-      }
-    }
-    return androidVirtualDevices;
-  }
-
-  @NotNull
-  public static String getAndroidName() {
-    return SystemInfo.isWindows ? "android" + ".bat" : "android";
-  }
-
-  public static String getIosSimName() {
-    return "ios-sim";
-  }
-
-  private synchronized List<String> getAndroidDevices() throws ExecutionException {
-    if (androidDevices == null) {
-      androidDevices = ContainerUtil.newArrayList();
-      File pathAdb = PathEnvironmentVariableUtil.findInPath(getAdbName());
-      if (pathAdb != null && pathAdb.exists()) {
-        androidDevices.addAll(splitNames(getAndroidDevices(ContainerUtil.newArrayList(pathAdb.getPath(), "devices"))));
-      }
-    }
-    return androidDevices;
-  }
-
-  private static String getAdbName() {
-    return SystemInfo.isWindows ? "adb" + ".exe" : "adb";
-  }
-
-
-  private List<String> getAndroidDevices(List<String> commands) throws ExecutionException {
-    List<String> result = ContainerUtil.newArrayList();
-    ProcessOutput output =
-      ExecUtil.execAndGetOutput(commands, myProject.getBasePath());
-
-    if (output.getExitCode() == 0 && StringUtil.isEmpty(output.getStderr())) {
-      String[] split = StringUtil.splitByLines(output.getStdout());
-      for (String s : split) {
-        String device = s.trim();
-        if (!StringUtil.isEmpty(device) && !isAndroidExcludedStrings(device)) {
-          result.add(device);
-        }
-      }
-    }
-
     return result;
   }
 
-  private static boolean isAndroidExcludedStrings(String device) {
-    //possible output:
-    //* daemon not running. starting it now on port 5037 *
-    //* daemon started successfully *
-    //List of devices attached
-    return device.startsWith("List of devices attached") ||
-           (device.startsWith("* ") && device.endsWith(" *"));
-  }
-
-  private static List<String> splitNames(List<String> adbDevices) {
-    return ContainerUtil.map(adbDevices, new Function<String, String>() {
-      @Override
-      public String fun(String s) {
-        return s.split("\t")[0];
-      }
-    });
-  }
+  @NotNull
+  public abstract String platform();
 }

@@ -1,6 +1,8 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapAndroidTargets;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapIosTargets;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapTargets;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor;
 import com.intellij.diagnostic.logging.DefaultLogFilterModel;
@@ -220,10 +222,10 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
     }
 
     if (myPlatform.equals(PLATFORM_ANDROID)) {
-      checkExistsSdkWithWarning(PhoneGapTargets.getAndroidName(), "Cannot detect android SDK in path");
+      checkExistsSdkWithWarning(PhoneGapAndroidTargets.getAndroidName(), "Cannot detect android SDK in path");
     }
     if (myPlatform.equals(PLATFORM_IOS)) {
-      checkExistsSdkWithWarning(PhoneGapTargets.getIosSimName(), "Cannot detect ios-sim in path");
+      checkExistsSdkWithWarning(PhoneGapIosTargets.getIosSimName(), "Cannot detect ios-sim in path");
     }
   }
 

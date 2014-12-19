@@ -45,7 +45,7 @@ $npm install -g ios-sim
 
 ####(3) Create PhoneGap Project
 
-see http://confluence.jetbrains.com/display/IntelliJIDEA/PhoneGap%2C+Cordova+and+Ionic
+see https://confluence.jetbrains.com/display/IntelliJIDEA/PhoneGap%2C+Cordova+and+Ionic
 
 ####(4) Run PhoneGap app
 Run -> Edit Configuration -> Create new PhoneGap/Cordova run Configuration -> run

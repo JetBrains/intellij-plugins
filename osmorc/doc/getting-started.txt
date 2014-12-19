@@ -3,7 +3,7 @@
 =======================================================
 
 1. Get the IntellIJ Open API:
-   - download: http://www.jetbrains.com/idea/download/index.html#kit
+   - download: https://www.jetbrains.com/idea/download/index.html#kit
    - unzip to some folder "devel/openapidoc"
 
 2. Get the latest IDEA build (EAP) for JDK 1.5

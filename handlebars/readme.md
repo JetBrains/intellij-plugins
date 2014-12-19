@@ -13,7 +13,7 @@ To install the latest release (and get automatic updates), install this plugin u
 By default, the plugin handles `*.handlebars`, `*.hbs` and `*.mustache` files.  Configure other file patterns in _Settings->File Types_
 
 ## Issues/Feature Requests
-Issues and feature requests are managed at [http://youtrack.jetbrains.com/issues/WEB](http://youtrack.jetbrains.com/issues/WEB)
+Issues and feature requests are managed at [https://youtrack.jetbrains.com/issues/WEB](https://youtrack.jetbrains.com/issues/WEB)
 
 ## Code contributions
 Pull requests welcome!  See the [development environment setup instructions](developer_environment.md) to get up and running, and please follow the [IntelliJ Coding Guidelines](http://www.jetbrains.org/display/IJOS/IntelliJ+Coding+Guidelines).

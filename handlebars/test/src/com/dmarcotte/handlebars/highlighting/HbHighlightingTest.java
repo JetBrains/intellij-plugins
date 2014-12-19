@@ -2,6 +2,7 @@ package com.dmarcotte.handlebars.highlighting;
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +13,17 @@ public class HbHighlightingTest extends LightPlatformCodeInsightFixtureTestCase 
   @Override
   protected String getBasePath() {
     return "/highlighting";
+  }
+
+  @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
+  public HbHighlightingTest() {
+    PlatformTestCase.initPlatformLangPrefix();
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    enableInspections();
   }
 
   @NotNull
@@ -31,7 +43,18 @@ public class HbHighlightingTest extends LightPlatformCodeInsightFixtureTestCase 
   }
 
   public void testScriptTag() {
-    myFixture.enableInspections(HtmlUnknownTagInspection.class);
     doTest("html");
+  }
+
+  public void testUncompletedTag() {
+    doTest("hbs");
+  }
+
+  public void testUncompletedTagInHandlebars() {
+    doTest("hbs");
+  }
+
+  private void enableInspections() {
+    myFixture.enableInspections(HtmlUnknownTagInspection.class);
   }
 }

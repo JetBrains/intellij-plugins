@@ -56,10 +56,14 @@
                      enabledByDefault="true"
                      level="WARNING"
                      implementationClass="com.dmarcotte.handlebars.inspections.HbEmptyBlockInspection"/>
+    <highlightErrorFilter implementation="com.dmarcotte.handlebars.inspections.HbErrorFilter"/>
   </extensions>
     
   <extensions defaultExtensionNs="JavaScript">
-    <lang.templates instance="com.dmarcotte.handlebars.pages.HbConfigurationPage"/>
+    <lang.templates instance="com.dmarcotte.handlebars.pages.HbConfigurationPage"
+                    id="editor.preferences.handlebarsOptions"
+                    key="hb.pages.options.title"
+                    bundle="messages.HbBundle"/>
   </extensions>
 
 </idea-plugin>

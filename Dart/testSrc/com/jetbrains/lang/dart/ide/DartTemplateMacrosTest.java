@@ -6,6 +6,7 @@ import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.template.macro.DartClassNameMacro;
 import com.jetbrains.lang.dart.ide.template.macro.DartMethodNameMacro;
 import com.jetbrains.lang.dart.ide.template.macro.DartMethodParametersMacro;
+import com.jetbrains.lang.dart.ide.template.macro.DartMethodReturnTypeMacro;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -40,6 +41,10 @@ public class DartTemplateMacrosTest extends DartCodeInsightFixtureTestCase {
     }
     assertNotNull(parameterNames);
     assertContainsElements(Arrays.asList(params), parameterNames);
+  }
+
+  private void assertContainingFunctionReturnTypeEquals(final String returnType, final String source) {
+    assertEquals(returnType, new DartMethodReturnTypeMacro().getContainingFunctionReturnType(findElementAtCaret(source)));
   }
 
   public void testClassNameMacro0() {
@@ -132,5 +137,17 @@ public class DartTemplateMacrosTest extends DartCodeInsightFixtureTestCase {
 
   public void testMethodParametersMacro9() {
     assertContainingFunctionParameterNamesEqual(new String[]{"x"}, "class A{ b(var c) { void inner(x){<caret>}}");
+  }
+
+  public void testMethodReturnType0() {
+    assertContainingFunctionReturnTypeEquals(null, "f() { <caret> }");
+  }
+
+  public void testMethodReturnType1() {
+    assertContainingFunctionReturnTypeEquals("void", "void f() { <caret> }");
+  }
+
+  public void testMethodReturnType2() {
+    assertContainingFunctionReturnTypeEquals("int", "class A { int f() { <caret> } }");
   }
 }

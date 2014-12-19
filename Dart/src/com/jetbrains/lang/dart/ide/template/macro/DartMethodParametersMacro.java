@@ -5,22 +5,17 @@ import com.google.common.collect.Lists;
 import com.intellij.codeInsight.template.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.lang.dart.ide.template.DartTemplateContextType;
 import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DartMethodParametersMacro extends Macro {
+public class DartMethodParametersMacro extends DartMacroBase {
+
   @Override
   public String getName() {
     return "dartMethodParameters";
-  }
-
-  @Override
-  public String getPresentableName() {
-    return "dartMethodParameters()";
   }
 
   @Override
@@ -37,11 +32,6 @@ public class DartMethodParametersMacro extends Macro {
     }
 
     return new ListResult(result);
-  }
-
-  @Override
-  public boolean isAcceptableInContext(final TemplateContextType context) {
-    return context instanceof DartTemplateContextType;
   }
 
   @Nullable
@@ -65,30 +55,27 @@ public class DartMethodParametersMacro extends Macro {
 
     List<String> results = Lists.newArrayList();
 
-    final List<DartNormalFormalParameter> normalFormalParameters = parameterList.getNormalFormalParameterList();
-    for (DartNormalFormalParameter parameter : normalFormalParameters) {
-      final DartFunctionSignature signature = parameter.getFunctionSignature();
-      if (signature != null) {
-        final String name = signature.getName();
-        if (name != null) {
-          results.add(name);
-        }
-      }
+    for (DartNormalFormalParameter parameter : parameterList.getNormalFormalParameterList()) {
+      findAndAddName(results, parameter);
     }
 
     final DartNamedFormalParameters namedFormalParameters = parameterList.getNamedFormalParameters();
     if (namedFormalParameters != null) {
       for (DartDefaultFormalNamedParameter parameter : namedFormalParameters.getDefaultFormalNamedParameterList()) {
-        final DartComponentName componentName = parameter.getNormalFormalParameter().findComponentName();
-        if (componentName != null) {
-          final String name = componentName.getName();
-          if (name != null) {
-            results.add(name);
-          }
-        }
+        findAndAddName(results, parameter.getNormalFormalParameter());
       }
     }
 
     return results;
+  }
+
+  private static void findAndAddName(@NotNull final List<String> results, @NotNull final DartNormalFormalParameter parameter) {
+    final DartComponentName componentName = parameter.findComponentName();
+    if (componentName != null) {
+      final String name = componentName.getName();
+      if (name != null) {
+        results.add(name);
+      }
+    }
   }
 }
