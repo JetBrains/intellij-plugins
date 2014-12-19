@@ -156,7 +156,11 @@ public class DartSdkGlobalLibUtil {
     }
   }
 
-  static Collection<Module> getModulesWithDartSdkGlobalLibAttached(final @NotNull Project project,
+  public static Collection<Module> getModulesWithDartSdkGlobalLibAttached(final @NotNull Project project) {
+      return getModulesWithDartSdkGlobalLibAttached(project, DartSdk.DART_SDK_GLOBAL_LIB_NAME);
+  }
+
+  public static Collection<Module> getModulesWithDartSdkGlobalLibAttached(final @NotNull Project project,
                                                                    final @NotNull String dartSdkGlobalLibName) {
     final Collection<Module> result = new ArrayList<Module>();
 
@@ -185,7 +189,7 @@ public class DartSdkGlobalLibUtil {
   private static boolean isOrderEntryPointingToThisGlobalLib(final @NotNull OrderEntry orderEntry, final @NotNull String globalLibName) {
     return orderEntry instanceof LibraryOrderEntry &&
            ((LibraryOrderEntry)orderEntry).getLibraryLevel() == LibraryTablesRegistrar.APPLICATION_LEVEL &&
-           globalLibName.equals(((LibraryOrderEntry)orderEntry).getLibraryName());
+           ((LibraryOrderEntry)orderEntry).getLibraryName().startsWith(globalLibName);
   }
 
   public static void configureDependencyOnGlobalLib(final @NotNull Module module, final @NotNull String globalLibName) {

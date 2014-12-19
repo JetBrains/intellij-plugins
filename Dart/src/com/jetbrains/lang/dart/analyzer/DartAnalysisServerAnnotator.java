@@ -82,8 +82,12 @@ public class DartAnalysisServerAnnotator
 
     if (FileUtil.isAncestor(sdk.getHomePath(), annotatedFile.getPath(), true)) return null;
 
+    AnnotatorInfo info = new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath(), DartAnalysisServerService.getSdkHome());
+
+    DartAnalysisServerService.getInstance().serverReadyForRequest(info);
+
     // todo iterate FileDocumentManager.getInstance().getUnsavedDocuments() and send contents to server for documents where Document.getModificationStamp() changed since previous upload
-    return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath(), DartAnalysisServerService.getSdkHome());
+    return info;
   }
 
   @Override
