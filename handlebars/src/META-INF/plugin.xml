@@ -56,6 +56,7 @@
                      enabledByDefault="true"
                      level="WARNING"
                      implementationClass="com.dmarcotte.handlebars.inspections.HbEmptyBlockInspection"/>
+    <highlightErrorFilter implementation="com.dmarcotte.handlebars.inspections.HbErrorFilter"/>
   </extensions>
     
   <extensions defaultExtensionNs="JavaScript">

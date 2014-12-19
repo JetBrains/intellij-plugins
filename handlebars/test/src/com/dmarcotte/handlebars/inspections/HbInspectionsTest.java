@@ -2,9 +2,7 @@ package com.dmarcotte.handlebars.inspections;
 
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
-import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper;
-import com.intellij.testFramework.InspectionFixtureTestCase;
 import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
