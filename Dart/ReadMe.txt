@@ -4,7 +4,7 @@ Prerequisites:
 - Oracle JDK 1.6 or later
 - git command line client
 
-1. Install the latest IntelliJ IDEA Ultimate Edition. The latest is either official release (http://www.jetbrains.com/idea/download/) or (more likely) Early Access build (http://eap.jetbrains.com/idea). Keep IDE installation up-to-date. Make sure the following bundled plugins are enabled: UI Designer, Git Integration, I18n for Java, IntelliLang, JUnit, Plugin DevKit, Properties Support.
+1. Install the latest IntelliJ IDEA Ultimate Edition. The latest is either official release (https://www.jetbrains.com/idea/download/) or (more likely) Early Access build (http://eap.jetbrains.com/idea). Keep IDE installation up-to-date. Make sure the following bundled plugins are enabled: UI Designer, Git Integration, I18n for Java, IntelliLang, JUnit, Plugin DevKit, Properties Support.
 2. [Optional] If you are going to debug the plugin in WebStorm install the latest WebStorm, start IntelliJ IDEA, open Settings (on Mac: Preferences) | Path Variables and add WEBSTORM_PLUGINS pointing to [WebStorm Installation]/plugins (on Mac: [WebStorm Installation]/Contents/plugins)
 3. Install 'Grammar-Kit' and 'Polymer & Web Components' plugins: launch IntelliJ IDEA, on Welcome screen click Configure | Plugins. Press 'Browse repositories...', find plugins and install them. Restart IDE.
 4. Configure JDK and Plugin SDK.
