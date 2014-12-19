@@ -19,7 +19,7 @@ import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.*;
@@ -135,7 +135,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
             return DocumentationManager.PSI_ELEMENT_PROTOCOL + resolved;
           }
 
-          String originFile = ourAnchorsuffix.matcher(origin).replaceAll("");
+          String originFile = ourAnchorSuffix.matcher(origin).replaceAll("");
           if (StringUtil.startsWithChar(link, '#')) {
             return originFile + link;
           }
@@ -154,13 +154,13 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
           if (root.startsWith("file://") && SystemInfo.isWindows) {
             root = "file:///" + root.substring("file://".length());
           }
-          return doAnnihilate(ourHTMLFilesuffix.matcher(root).replaceAll("/") + href);
+          return doAnnihilate(ourHtmlFileSuffix.matcher(root).replaceAll("/") + href);
         }
       }
       };
 
       @Override
-      protected AbstractExternalFilter.RefConvertor[] getRefConvertors() {
+      protected AbstractExternalFilter.RefConvertor[] getRefConverters() {
         return myReferenceConvertors;
       }
 
@@ -178,10 +178,10 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       }
 
       @Override
-      protected void doBuildFromStream(String surl, Reader reader, StringBuffer result) throws IOException {
+      protected void doBuildFromStream(String url, Reader reader, StringBuilder result) throws IOException {
         String input = StreamUtil.readTextFrom(reader);
 
-        Matcher anchorMatcher = ourAnchorsuffix.matcher(surl);
+        Matcher anchorMatcher = ourAnchorSuffix.matcher(url);
 
         final int startOffset;
         Pair<Pattern, Pattern> mainContentPatterns = Pair.create(ourOpeningDiv, ourClosingDiv);
@@ -469,9 +469,6 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
     }
 
     final PsiFile containingFile = aClass.getContainingFile();
-    if (containingFile == null) {
-      return Collections.emptyList();
-    }
     final VirtualFile virtualFile = containingFile.getVirtualFile();
     if (virtualFile == null) {
       return Collections.emptyList();
@@ -766,17 +763,17 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       return resolveDocumentLink(psiManager, link, delimiterIndex);
     }
     else if (attributeType != null) {
-      PsiElement clazz = ActionScriptClassResolver.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
+      PsiElement clazz = ActionScriptClassResolver.findClassByQName(link, index, context != null ? ModuleUtilCore.findModuleForPsiElement(context) : null);
       if (!(clazz instanceof JSClass)) {
         return null;
       }
       return findNamedAttribute((JSClass)clazz, attributeType, attributeName);
     }
     else {
-      PsiElement clazz = ActionScriptClassResolver.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
+      PsiElement clazz = ActionScriptClassResolver.findClassByQName(link, index, context != null ? ModuleUtilCore.findModuleForPsiElement(context) : null);
       if (clazz == null && link.contains(".")) {
         String qname = link.substring(0, link.lastIndexOf('.'));
-        clazz = ActionScriptClassResolver.findClassByQName(qname, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
+        clazz = ActionScriptClassResolver.findClassByQName(qname, index, context != null ? ModuleUtilCore.findModuleForPsiElement(context) : null);
         if (clazz instanceof JSClass) {
           JSClass jsClass = (JSClass)clazz;
           String member = link.substring(link.lastIndexOf('.') + 1);
@@ -809,7 +806,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
       if (link.endsWith("()")) {
         link = link.substring(0, link.length() - 2);
-        clazz = ActionScriptClassResolver.findClassByQName(link, index, context != null ? ModuleUtil.findModuleForPsiElement(context) : null);
+        clazz = ActionScriptClassResolver.findClassByQName(link, index, context != null ? ModuleUtilCore.findModuleForPsiElement(context) : null);
         if (clazz instanceof JSFunction) {
           return clazz;
         }
