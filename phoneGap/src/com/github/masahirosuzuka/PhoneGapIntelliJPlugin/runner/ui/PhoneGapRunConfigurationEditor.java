@@ -151,16 +151,22 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
       @Override
       public void updateValuesAsynchronously() {
         if (!myTarget.isEnabled()) {
-          myTarget.onUpdateValues(ContainerUtil.<String>newHashOrEmptySet(null));
+          processEmpty();
+          return;
         }
 
         final String platform = getPlatformAsCodeFromField();
         final String command = (String)myCommand.getSelectedItem();
+        final PhoneGapTargets targetsProvider = PhoneGapTargets.createTargetsList(myProject, platform);
+        if (targetsProvider == null) {
+          processEmpty();
+          return;
+        }
+
         ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
           @Override
           public void run() {
             final String currentText = myTarget.getTargetsField().getText();
-            PhoneGapTargets targetsProvider = PhoneGapTargets.createTargetsList(myProject, platform);
             final Set<String> targets = ContainerUtil.newLinkedHashSet(PhoneGapTargets.listTargets(targetsProvider, command));
             if (!StringUtil.isEmpty(currentText) && !targets.contains(currentText)) {
               targets.add(currentText);
@@ -174,6 +180,10 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
             });
           }
         });
+      }
+
+      private void processEmpty() {
+        myTarget.onUpdateValues(ContainerUtil.<String>newHashOrEmptySet(null));
       }
     });
 
