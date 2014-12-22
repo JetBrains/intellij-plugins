@@ -15,9 +15,12 @@
  */
 package jetbrains.communicator.idea;
 
-import com.intellij.openapi.diff.*;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.diff.DiffContentFactory;
+import com.intellij.diff.DiffDialogHints;
+import com.intellij.diff.DiffManagerEx;
+import com.intellij.diff.contents.DiffContent;
+import com.intellij.diff.requests.DiffRequest;
+import com.intellij.diff.requests.SimpleDiffRequest;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import jetbrains.communicator.core.users.User;
@@ -42,15 +45,15 @@ public class DiffWindowOpener {
   }
 
   public void showDiff() {
-    DiffTool diffTool = DiffManager.getInstance().getIdeaDiffTool();
-    SimpleDiffRequest diffRequest = new SimpleDiffRequest(myProject, "Diff for " + myVFile.getDisplayName());
-    diffRequest.addHint(DiffTool.HINT_SHOW_NOT_MODAL_DIALOG);
+    String title = "Diff for " + myVFile.getDisplayName();
 
-    Document localDocument = FileDocumentManager.getInstance().getDocument(myVirtualFile);
+    String title1 = "My Version";
+    String title2 = myRemoteUser.getDisplayName() + "'s Version";
 
-    diffRequest.setContentTitles("My Version", myRemoteUser.getDisplayName() + "'s Version");
-    diffRequest.setContents(new DocumentContent(localDocument), new SimpleContent(myRemoteText));
+    DiffContent content1 = DiffContentFactory.getInstance().create(myProject, myVirtualFile);
+    DiffContent content2 = DiffContentFactory.getInstance().create(myRemoteText, myVirtualFile.getFileType());
 
-    diffTool.show(diffRequest);
+    DiffRequest request = new SimpleDiffRequest(title, content1, content2, title1, title2);
+    DiffManagerEx.getInstance().showDiff(myProject, request, DiffDialogHints.NON_MODAL);
   }
 }
