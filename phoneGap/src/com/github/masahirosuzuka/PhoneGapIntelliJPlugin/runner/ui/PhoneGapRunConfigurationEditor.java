@@ -17,6 +17,7 @@ import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.ReloadableComboBoxPanel;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -139,8 +140,9 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     myCommand.setMinimumAndPreferredWidth(200);
     myPlatformField.setMinimumAndPreferredWidth(200);
     myTarget.getTargetsField().setMinimumAndPreferredWidth(myPlatformField.getPreferredSize().width);
-    myTarget.setDataProvider(new PanelWithAsyncLoad.DataProvider<String>() {
+    myTarget.setDataProvider(new ReloadableComboBoxPanel.DataProvider<String>() {
 
+      @NotNull
       @Override
       public Set<String> getCachedValues() {
         return ContainerUtil.newHashOrEmptySet(null);
