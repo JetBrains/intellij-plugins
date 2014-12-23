@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
+import com.google.dart.server.AnalysisServer;
 import com.google.dart.server.AnalysisServerListener;
 import com.google.dart.server.GetErrorsConsumer;
 import com.google.dart.server.GetFixesConsumer;
@@ -7,56 +8,40 @@ import com.google.dart.server.generated.types.*;
 import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
-import com.intellij.ProjectTopics;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.concurrency.Semaphore;
-import com.intellij.util.containers.hash.HashSet;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.net.NetUtils;
-import com.jetbrains.lang.dart.sdk.DartSdk;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class DartAnalysisServerService {
 
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
-
+  public static final String MIN_SDK_VERSION = "1.7";
   private static final long GET_ERRORS_TIMEOUT = ApplicationManager.getApplication().isUnitTestMode() ? TimeUnit.SECONDS.toMillis(50)
                                                                                                       : TimeUnit.SECONDS.toMillis(5);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
-  private String mySdkHome = null;
-
-  public static final String MIN_SDK_VERSION = "1.7";
-
-  // todo these lists need to be stored in relation to the project that they came from
-  // so that the lists can be updated as projects may change content roots
-  private ArrayList<String> myIncludedAnalysisRoots = new ArrayList<String>();
-  private ArrayList<String> myExcludedAnalysisRoots = new ArrayList<String>();
+  @Nullable private AnalysisServer myServer;
+  @Nullable private String mySdkHome = null;
+  private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
 
   private final AnalysisServerListener myListener = new AnalysisServerListener() {
 
@@ -96,12 +81,10 @@ public class DartAnalysisServerService {
     }
 
     public void serverError(boolean isFatal, String message, String stackTrace) {
+      LOG.warn("Dart analysis server " + (isFatal ? "FATAL " : "") + "error: " + message + "\n" + stackTrace);
+
       if (isFatal) {
         stopServer();
-        String dartSdkHome = getSdkHome();
-        if (dartSdkHome != null) {
-          startServer(dartSdkHome);
-        }
       }
     }
 
@@ -109,13 +92,7 @@ public class DartAnalysisServerService {
     }
   };
 
-  private RemoteAnalysisServerImpl myServer;
-
   public DartAnalysisServerService() {
-    String dartSdkHome = getSdkHome();
-    if (dartSdkHome != null) {
-      startServer(dartSdkHome);
-    }
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       public void dispose() {
         stopServer();
@@ -128,30 +105,28 @@ public class DartAnalysisServerService {
     return ServiceManager.getService(DartAnalysisServerService.class);
   }
 
-  @Nullable
-  public static String getSdkHome() {
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      return System.getProperty("dart.sdk");
-    }
-    else {
-      DartSdk dartSdk = DartSdk.getGlobalDartSdk();
-      if (dartSdk != null) {
-        return dartSdk.getHomePath();
-      }
-    }
-    return null;
-  }
-
   public void updateContent(@Nullable final Map<String, Object> files) {
+    if (myServer == null) return;
+
     if (files == null || files.isEmpty()) return;
     myServer.analysis_updateContent(files);
   }
 
+  public boolean updateRoots(final List<String> includedRoots, final List<String> excludedRoots) {
+    if (myServer == null) return false;
+
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("analysis_setAnalysisRoots, included:\n" + StringUtil.join(includedRoots, ",\n") +
+                "\nexcluded:\n" + StringUtil.join(excludedRoots, ",\n"));
+    }
+
+    myServer.analysis_setAnalysisRoots(includedRoots, excludedRoots, null);
+    return true;
+  }
+
   @Nullable
   public AnalysisError[] analysis_getErrors(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info) {
-    if (!serverReadyForRequest(info)) {
-      return null;
-    }
+    if (myServer == null) return null;
 
     final Ref<AnalysisError[]> resultError = new Ref<AnalysisError[]>();
 
@@ -160,6 +135,8 @@ public class DartAnalysisServerService {
 
     try {
       final String path = FileUtil.toSystemDependentName(info.myFilePath);
+      LOG.debug("analysis_getErrors(" + path + ")");
+
       myServer.analysis_getErrors(path, new GetErrorsConsumer() {
         @Override
         public void computedErrors(final AnalysisError[] errors) {
@@ -194,7 +171,7 @@ public class DartAnalysisServerService {
       semaphore.waitFor(GET_ERRORS_TIMEOUT);
     }
     finally {
-      semaphore.up(); // make sure that semaphore is unlock so that computedErrors() can understand when it was unlocked by timeout
+      semaphore.up(); // make sure to unlock semaphore so that computedErrors() can understand when it was unlocked by timeout
     }
 
     return resultError.get();
@@ -202,9 +179,7 @@ public class DartAnalysisServerService {
 
   @Nullable
   public List<AnalysisErrorFixes> analysis_getFixes(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info, final int offset) {
-    if (!serverReadyForRequest(info)) {
-      return null;
-    }
+    if (myServer == null) return null;
 
     final Ref<List<AnalysisErrorFixes>> resultFixes = new Ref<List<AnalysisErrorFixes>>();
 
@@ -239,8 +214,14 @@ public class DartAnalysisServerService {
 
   private void startServer(@NotNull final String sdkHome) {
     mySdkHome = sdkHome;
-    final String runtimePath = mySdkHome + "/bin/dart";
-    final String analysisServerPath = mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot";
+
+    final String runtimePath = FileUtil
+      .toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? System.getProperty("dart.sdk") : mySdkHome)
+                             + "/bin/dart");
+    final String analysisServerPath = FileUtil
+      .toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? System.getProperty("dart.sdk") : mySdkHome)
+                             + "/bin/snapshots/analysis_server.dart.snapshot");
+
     final DebugPrintStream debugStream = new DebugPrintStream() {
       @Override
       public void println(String str) {
@@ -248,71 +229,47 @@ public class DartAnalysisServerService {
       }
     };
 
-    final StdioServerSocket serverSocket;
-    if (!ApplicationManager.getApplication().isInternal()) {
-      serverSocket = new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, 0, false);
-    }
-    else {
-      int availablePort = 10000;
-      try {
-        availablePort = NetUtils.findAvailableSocketPort();
-      }
-      catch (IOException e) {
-        LOG.error(e.getMessage(), e);
-      }
-      LOG.debug("Go to http://localhost:" + availablePort + "/status to see status of analysis server");
-      serverSocket =
-        new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{"--port=" + availablePort}, false, false, 0,
-                              false);
-    }
+    final int port = NetUtils.tryToFindAvailableSocketPort(10000);
 
+    final StdioServerSocket serverSocket =
+      new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, false);
     myServer = new RemoteAnalysisServerImpl(serverSocket);
+
     try {
       myServer.start();
+      myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true));
+      myServer.addAnalysisServerListener(myListener);
+      LOG.info("Server started, see status at http://localhost:" + port + "/status");
     }
     catch (Exception e) {
-      LOG.debug(e.getMessage(), e);
+      LOG.warn("Failed to start Dart analysis server, port=" + port, e);
+      myServer = null;
+      mySdkHome = null;
+      myRootsHandler.reset();
     }
-    myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true));
-    myServer.addAnalysisServerListener(myListener);
   }
 
-  private void updateAnalysisRootsWithProject(@NotNull final Project project) {
-    for (final Module module : ModuleManager.getInstance(project).getModules()) {
-      for (final VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
-        final String root = FileUtil.toSystemDependentName(contentRoot.getPath());
-        if(!myIncludedAnalysisRoots.contains(root)) {
-          myIncludedAnalysisRoots.add(root);
-        }
-      }
-      for (final VirtualFile excludedRoot : ModuleRootManager.getInstance(module).getExcludeRoots()) {
-        final String root = FileUtil.toSystemDependentName(excludedRoot.getPath());
-        if(!myExcludedAnalysisRoots.contains(root)) {
-          myExcludedAnalysisRoots.add(root);
-        }
-      }
-    }
-    myServer.analysis_setAnalysisRoots(myIncludedAnalysisRoots, myExcludedAnalysisRoots, null);
-  }
-
-  private boolean serverReadyForRequest(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info) {
-    if (info.mySdkHome == null) {
-      LOG.info("Dart SDK of version " + MIN_SDK_VERSION + " or higher must be set.");
-      return false;
-    }
-
-    if (mySdkHome == null || !info.mySdkHome.equals(mySdkHome)) {
+  public boolean serverReadyForRequest(@NotNull final Project project, @NotNull final String sdkHome) {
+    if (myServer == null || !sdkHome.equals(mySdkHome)) {
       stopServer();
-      startServer(info.mySdkHome);
+      startServer(sdkHome);
     }
-    updateAnalysisRootsWithProject(info.myProject);
-    return true;
+
+    if (myServer != null) {
+      myRootsHandler.ensureProjectServed(project);
+      return true;
+    }
+
+    return false;
   }
 
   private void stopServer() {
     if (myServer != null) {
+      LOG.debug("stopping server");
       myServer.server_shutdown();
+      myServer = null;
       mySdkHome = null;
+      myRootsHandler.reset();
     }
   }
 }
