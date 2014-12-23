@@ -3,14 +3,12 @@ package com.google.jstestdriver.idea.server;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.util.Consumer;
 import com.intellij.util.io.HttpRequests;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -52,7 +50,7 @@ public class JstdServerUtils {
           final String badResponse = "Malformed server response received";
           JsonElement jsonElement;
           try {
-            jsonElement = new JsonParser().parse(new InputStreamReader(request.getInputStream(), CharsetToolkit.UTF8_CHARSET));
+            jsonElement = new JsonParser().parse(request.getReader());
           }
           catch (JsonSyntaxException e) {
             return JstdServerFetchResult.fromErrorMessage(badResponse);
