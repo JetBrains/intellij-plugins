@@ -17,6 +17,7 @@ import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.ReloadableComboBoxPanel;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -139,8 +140,9 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     myCommand.setMinimumAndPreferredWidth(200);
     myPlatformField.setMinimumAndPreferredWidth(200);
     myTarget.getTargetsField().setMinimumAndPreferredWidth(myPlatformField.getPreferredSize().width);
-    myTarget.setDataProvider(new PanelWithAsyncLoad.DataProvider<String>() {
+    myTarget.setDataProvider(new ReloadableComboBoxPanel.DataProvider<String>() {
 
+      @NotNull
       @Override
       public Set<String> getCachedValues() {
         return ContainerUtil.newHashOrEmptySet(null);
@@ -149,16 +151,22 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
       @Override
       public void updateValuesAsynchronously() {
         if (!myTarget.isEnabled()) {
-          myTarget.onUpdateValues(ContainerUtil.<String>newHashOrEmptySet(null));
+          processEmpty();
+          return;
         }
 
         final String platform = getPlatformAsCodeFromField();
         final String command = (String)myCommand.getSelectedItem();
+        final PhoneGapTargets targetsProvider = PhoneGapTargets.createTargetsList(myProject, platform);
+        if (targetsProvider == null) {
+          processEmpty();
+          return;
+        }
+
         ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
           @Override
           public void run() {
             final String currentText = myTarget.getTargetsField().getText();
-            PhoneGapTargets targetsProvider = PhoneGapTargets.createTargetsList(myProject, platform);
             final Set<String> targets = ContainerUtil.newLinkedHashSet(PhoneGapTargets.listTargets(targetsProvider, command));
             if (!StringUtil.isEmpty(currentText) && !targets.contains(currentText)) {
               targets.add(currentText);
@@ -172,6 +180,10 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
             });
           }
         });
+      }
+
+      private void processEmpty() {
+        myTarget.onUpdateValues(ContainerUtil.<String>newHashOrEmptySet(null));
       }
     });
 
