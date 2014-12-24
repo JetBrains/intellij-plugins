@@ -13,6 +13,8 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
@@ -24,11 +26,16 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
+import com.intellij.xml.util.HtmlUtil;
+import com.jetbrains.lang.dart.DartFileType;
+import gnu.trove.THashMap;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class DartAnalysisServerService {
@@ -42,6 +49,7 @@ public class DartAnalysisServerService {
   @Nullable private AnalysisServer myServer;
   @Nullable private String mySdkHome = null;
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
+  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
 
   private final AnalysisServerListener myListener = new AnalysisServerListener() {
 
@@ -84,7 +92,7 @@ public class DartAnalysisServerService {
       LOG.warn("Dart analysis server " + (isFatal ? "FATAL " : "") + "error: " + message + "\n" + stackTrace);
 
       if (isFatal) {
-        stopServer();
+        onServerStopped();
       }
     }
 
@@ -105,12 +113,49 @@ public class DartAnalysisServerService {
     return ServiceManager.getService(DartAnalysisServerService.class);
   }
 
-  public void updateContent(@Nullable final Map<String, Object> files) {
+  public void updateFilesContent() {
     if (myServer == null) return;
 
-    if (files == null || files.isEmpty()) return;
-    myServer.analysis_updateContent(files);
+    //TODO: consider using DocumentListener to collect deltas instead of sending the whole Document.getText() each time
+
+    final Set<String> oldTrackedFiles = new THashSet<String>(myFilePathWithOverlaidContentToTimestamp.keySet());
+    final Map<String, Object> filesToUpdate = new THashMap<String, Object>();
+
+    final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+
+    for (Document document : fileDocumentManager.getUnsavedDocuments()) {
+      final VirtualFile file = fileDocumentManager.getFile(document);
+      if (file != null && (file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file))) {
+        oldTrackedFiles.remove(file.getPath());
+
+        final Long oldTimestamp = myFilePathWithOverlaidContentToTimestamp.get(file.getPath());
+        if (oldTimestamp == null || document.getModificationStamp() != oldTimestamp) {
+          filesToUpdate.put(FileUtil.toSystemDependentName(file.getPath()), new AddContentOverlay(document.getText()));
+          myFilePathWithOverlaidContentToTimestamp.put(file.getPath(), document.getModificationStamp());
+        }
+      }
+    }
+
+    // oldTrackedFiles at this point contains only those files that are not in FileDocumentManager.getUnsavedDocuments() any more
+    for (String oldPath : oldTrackedFiles) {
+      final Long removed = myFilePathWithOverlaidContentToTimestamp.remove(oldPath);
+      LOG.assertTrue(removed != null, oldPath);
+      filesToUpdate.put(FileUtil.toSystemDependentName(oldPath), new RemoveContentOverlay());
+    }
+
+    if (LOG.isDebugEnabled()) {
+      if (!filesToUpdate.isEmpty()) {
+        LOG.debug("Sending overlaid content of the following files:\n" + StringUtil.join(filesToUpdate.keySet(), ",\n"));
+      }
+
+      if (!oldTrackedFiles.isEmpty()) {
+        LOG.debug("Removing overlaid content of the following files:\n" + StringUtil.join(oldTrackedFiles, ",\n"));
+      }
+    }
+
+    myServer.analysis_updateContent(filesToUpdate);
   }
+
 
   public boolean updateRoots(final List<String> includedRoots, final List<String> excludedRoots) {
     if (myServer == null) return false;
@@ -243,9 +288,7 @@ public class DartAnalysisServerService {
     }
     catch (Exception e) {
       LOG.warn("Failed to start Dart analysis server, port=" + port, e);
-      myServer = null;
-      mySdkHome = null;
-      myRootsHandler.reset();
+      onServerStopped();
     }
   }
 
@@ -267,9 +310,15 @@ public class DartAnalysisServerService {
     if (myServer != null) {
       LOG.debug("stopping server");
       myServer.server_shutdown();
-      myServer = null;
-      mySdkHome = null;
-      myRootsHandler.reset();
     }
+
+    onServerStopped();
+  }
+
+  private void onServerStopped() {
+    myServer = null;
+    mySdkHome = null;
+    myRootsHandler.reset();
+    myFilePathWithOverlaidContentToTimestamp.clear();
   }
 }
