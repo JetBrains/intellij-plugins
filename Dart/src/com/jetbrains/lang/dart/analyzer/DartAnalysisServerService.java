@@ -46,6 +46,7 @@ public class DartAnalysisServerService {
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
+  private final Object myLock = new Object(); // Access all fields under this lock. Do not wait for server response under lock.
   @Nullable private AnalysisServer myServer;
   @Nullable private String mySdkHome = null;
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
@@ -114,104 +115,108 @@ public class DartAnalysisServerService {
   }
 
   public void updateFilesContent() {
-    if (myServer == null) return;
-
     //TODO: consider using DocumentListener to collect deltas instead of sending the whole Document.getText() each time
-
     final Set<String> oldTrackedFiles = new THashSet<String>(myFilePathWithOverlaidContentToTimestamp.keySet());
     final Map<String, Object> filesToUpdate = new THashMap<String, Object>();
 
-    final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+    synchronized (myLock) {
+      if (myServer == null) return;
 
-    for (Document document : fileDocumentManager.getUnsavedDocuments()) {
-      final VirtualFile file = fileDocumentManager.getFile(document);
-      if (file != null && (file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file))) {
-        oldTrackedFiles.remove(file.getPath());
+      final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+      for (Document document : fileDocumentManager.getUnsavedDocuments()) {
+        final VirtualFile file = fileDocumentManager.getFile(document);
+        if (file != null && (file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file))) {
+          oldTrackedFiles.remove(file.getPath());
 
-        final Long oldTimestamp = myFilePathWithOverlaidContentToTimestamp.get(file.getPath());
-        if (oldTimestamp == null || document.getModificationStamp() != oldTimestamp) {
-          filesToUpdate.put(FileUtil.toSystemDependentName(file.getPath()), new AddContentOverlay(document.getText()));
-          myFilePathWithOverlaidContentToTimestamp.put(file.getPath(), document.getModificationStamp());
+          final Long oldTimestamp = myFilePathWithOverlaidContentToTimestamp.get(file.getPath());
+          if (oldTimestamp == null || document.getModificationStamp() != oldTimestamp) {
+            filesToUpdate.put(FileUtil.toSystemDependentName(file.getPath()), new AddContentOverlay(document.getText()));
+            myFilePathWithOverlaidContentToTimestamp.put(file.getPath(), document.getModificationStamp());
+          }
         }
       }
-    }
 
-    // oldTrackedFiles at this point contains only those files that are not in FileDocumentManager.getUnsavedDocuments() any more
-    for (String oldPath : oldTrackedFiles) {
-      final Long removed = myFilePathWithOverlaidContentToTimestamp.remove(oldPath);
-      LOG.assertTrue(removed != null, oldPath);
-      filesToUpdate.put(FileUtil.toSystemDependentName(oldPath), new RemoveContentOverlay());
-    }
-
-    if (LOG.isDebugEnabled()) {
-      if (!filesToUpdate.isEmpty()) {
-        LOG.debug("Sending overlaid content of the following files:\n" + StringUtil.join(filesToUpdate.keySet(), ",\n"));
+      // oldTrackedFiles at this point contains only those files that are not in FileDocumentManager.getUnsavedDocuments() any more
+      for (String oldPath : oldTrackedFiles) {
+        final Long removed = myFilePathWithOverlaidContentToTimestamp.remove(oldPath);
+        LOG.assertTrue(removed != null, oldPath);
+        filesToUpdate.put(FileUtil.toSystemDependentName(oldPath), new RemoveContentOverlay());
       }
 
-      if (!oldTrackedFiles.isEmpty()) {
-        LOG.debug("Removing overlaid content of the following files:\n" + StringUtil.join(oldTrackedFiles, ",\n"));
-      }
-    }
+      if (LOG.isDebugEnabled()) {
+        if (!filesToUpdate.isEmpty()) {
+          LOG.debug("Sending overlaid content of the following files:\n" + StringUtil.join(filesToUpdate.keySet(), ",\n"));
+        }
 
-    myServer.analysis_updateContent(filesToUpdate);
+        if (!oldTrackedFiles.isEmpty()) {
+          LOG.debug("Removing overlaid content of the following files:\n" + StringUtil.join(oldTrackedFiles, ",\n"));
+        }
+      }
+
+      myServer.analysis_updateContent(filesToUpdate);
+    }
   }
 
 
   public boolean updateRoots(final List<String> includedRoots, final List<String> excludedRoots) {
-    if (myServer == null) return false;
+    synchronized (myLock) {
+      if (myServer == null) return false;
 
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("analysis_setAnalysisRoots, included:\n" + StringUtil.join(includedRoots, ",\n") +
-                "\nexcluded:\n" + StringUtil.join(excludedRoots, ",\n"));
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("analysis_setAnalysisRoots, included:\n" + StringUtil.join(includedRoots, ",\n") +
+                  "\nexcluded:\n" + StringUtil.join(excludedRoots, ",\n"));
+      }
+
+      myServer.analysis_setAnalysisRoots(includedRoots, excludedRoots, null);
+      return true;
     }
-
-    myServer.analysis_setAnalysisRoots(includedRoots, excludedRoots, null);
-    return true;
   }
 
   @Nullable
   public AnalysisError[] analysis_getErrors(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info) {
-    if (myServer == null) return null;
-
-    final Ref<AnalysisError[]> resultError = new Ref<AnalysisError[]>();
-
+    final Ref<AnalysisError[]> resultErrors = new Ref<AnalysisError[]>();
     final Semaphore semaphore = new Semaphore();
-    semaphore.down();
 
     try {
-      final String path = FileUtil.toSystemDependentName(info.myFilePath);
-      LOG.debug("analysis_getErrors(" + path + ")");
+      synchronized (myLock) {
+        if (myServer == null) return null;
 
-      myServer.analysis_getErrors(path, new GetErrorsConsumer() {
-        @Override
-        public void computedErrors(final AnalysisError[] errors) {
-          if (semaphore.tryUp()) {
-            resultError.set(errors);
-          }
-          else {
-            // semaphore unlocked by timeout, schedule to highlight the file again
-            LOG.info("analysis_getErrors() took too long for file " + path + ", restarting daemon");
+        semaphore.down();
 
-            ApplicationManager.getApplication().runReadAction(new Runnable() {
-              @Override
-              public void run() {
-                final VirtualFile vFile = info.myProject.isDisposed() ? null
-                                                                      : LocalFileSystem.getInstance().findFileByPath(info.myFilePath);
-                final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(info.myProject).findFile(vFile);
-                if (psiFile != null) {
-                  DaemonCodeAnalyzer.getInstance(info.myProject).restart(psiFile);
+        final String path = FileUtil.toSystemDependentName(info.myFilePath);
+        LOG.debug("analysis_getErrors(" + path + ")");
+
+        myServer.analysis_getErrors(path, new GetErrorsConsumer() {
+          @Override
+          public void computedErrors(final AnalysisError[] errors) {
+            if (semaphore.tryUp()) {
+              resultErrors.set(errors);
+            }
+            else {
+              // semaphore unlocked by timeout, schedule to highlight the file again
+              LOG.info("analysis_getErrors() took too long for file " + path + ", restarting daemon");
+
+              ApplicationManager.getApplication().runReadAction(new Runnable() {
+                @Override
+                public void run() {
+                  final VirtualFile vFile = info.myProject.isDisposed() ? null
+                                                                        : LocalFileSystem.getInstance().findFileByPath(info.myFilePath);
+                  final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(info.myProject).findFile(vFile);
+                  if (psiFile != null) {
+                    DaemonCodeAnalyzer.getInstance(info.myProject).restart(psiFile);
+                  }
                 }
-              }
-            });
+              });
+            }
           }
-        }
 
-        @Override
-        public void onError(final RequestError error) {
-          semaphore.up();
-          LOG.error("Error from analysis_getErrors() for file " + path + ", code=" + error.getCode() + ": " + error.getMessage());
-        }
-      });
+          @Override
+          public void onError(final RequestError error) {
+            semaphore.up();
+            LOG.error("Error from analysis_getErrors() for file " + path + ", code=" + error.getCode() + ": " + error.getMessage());
+          }
+        });
+      }
 
       semaphore.waitFor(GET_ERRORS_TIMEOUT);
     }
@@ -219,32 +224,34 @@ public class DartAnalysisServerService {
       semaphore.up(); // make sure to unlock semaphore so that computedErrors() can understand when it was unlocked by timeout
     }
 
-    return resultError.get();
+    return resultErrors.get();
   }
 
   @Nullable
   public List<AnalysisErrorFixes> analysis_getFixes(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info, final int offset) {
-    if (myServer == null) return null;
-
     final Ref<List<AnalysisErrorFixes>> resultFixes = new Ref<List<AnalysisErrorFixes>>();
-
     final Semaphore semaphore = new Semaphore();
-    semaphore.down();
-
     final String path = FileUtil.toSystemDependentName(info.myFilePath);
-    myServer.edit_getFixes(path, offset, new GetFixesConsumer() {
-      @Override
-      public void computedFixes(final List<AnalysisErrorFixes> fixes) {
-        semaphore.up();
-        resultFixes.set(fixes);
-      }
 
-      @Override
-      public void onError(final RequestError error) {
-        semaphore.up();
-        LOG.warn("Error from edit_getFixes() for file " + path + ", code=" + error.getCode() + ": " + error.getMessage());
-      }
-    });
+    synchronized (myLock) {
+      if (myServer == null) return null;
+
+      semaphore.down();
+
+      myServer.edit_getFixes(path, offset, new GetFixesConsumer() {
+        @Override
+        public void computedFixes(final List<AnalysisErrorFixes> fixes) {
+          semaphore.up();
+          resultFixes.set(fixes);
+        }
+
+        @Override
+        public void onError(final RequestError error) {
+          semaphore.up();
+          LOG.warn("Error from edit_getFixes() for file " + path + ", code=" + error.getCode() + ": " + error.getMessage());
+        }
+      });
+    }
 
     final long t0 = System.currentTimeMillis();
     semaphore.waitFor(GET_FIXES_TIMEOUT);
@@ -258,67 +265,75 @@ public class DartAnalysisServerService {
   }
 
   private void startServer(@NotNull final String sdkHome) {
-    mySdkHome = sdkHome;
+    synchronized (myLock) {
+      mySdkHome = sdkHome;
 
-    final String runtimePath = FileUtil
-      .toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? System.getProperty("dart.sdk") : mySdkHome)
-                             + "/bin/dart");
-    final String analysisServerPath = FileUtil
-      .toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? System.getProperty("dart.sdk") : mySdkHome)
-                             + "/bin/snapshots/analysis_server.dart.snapshot");
+      final String runtimePath = FileUtil
+        .toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? System.getProperty("dart.sdk") : mySdkHome)
+                               + "/bin/dart");
+      final String analysisServerPath = FileUtil
+        .toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? System.getProperty("dart.sdk") : mySdkHome)
+                               + "/bin/snapshots/analysis_server.dart.snapshot");
 
-    final DebugPrintStream debugStream = new DebugPrintStream() {
-      @Override
-      public void println(String str) {
-        //System.out.println("debugStream: " + str);
+      final DebugPrintStream debugStream = new DebugPrintStream() {
+        @Override
+        public void println(String str) {
+          //System.out.println("debugStream: " + str);
+        }
+      };
+
+      final int port = NetUtils.tryToFindAvailableSocketPort(10000);
+
+      final StdioServerSocket serverSocket =
+        new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, false);
+      myServer = new RemoteAnalysisServerImpl(serverSocket);
+
+      try {
+        myServer.start();
+        myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true));
+        myServer.addAnalysisServerListener(myListener);
+        LOG.info("Server started, see status at http://localhost:" + port + "/status");
       }
-    };
-
-    final int port = NetUtils.tryToFindAvailableSocketPort(10000);
-
-    final StdioServerSocket serverSocket =
-      new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, false);
-    myServer = new RemoteAnalysisServerImpl(serverSocket);
-
-    try {
-      myServer.start();
-      myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true));
-      myServer.addAnalysisServerListener(myListener);
-      LOG.info("Server started, see status at http://localhost:" + port + "/status");
-    }
-    catch (Exception e) {
-      LOG.warn("Failed to start Dart analysis server, port=" + port, e);
-      onServerStopped();
+      catch (Exception e) {
+        LOG.warn("Failed to start Dart analysis server, port=" + port, e);
+        onServerStopped();
+      }
     }
   }
 
   public boolean serverReadyForRequest(@NotNull final Project project, @NotNull final String sdkHome) {
-    if (myServer == null || !sdkHome.equals(mySdkHome)) {
-      stopServer();
-      startServer(sdkHome);
-    }
+    synchronized (myLock) {
+      if (myServer == null || !sdkHome.equals(mySdkHome)) {
+        stopServer();
+        startServer(sdkHome);
+      }
 
-    if (myServer != null) {
-      myRootsHandler.ensureProjectServed(project);
-      return true;
-    }
+      if (myServer != null) {
+        myRootsHandler.ensureProjectServed(project);
+        return true;
+      }
 
-    return false;
+      return false;
+    }
   }
 
   private void stopServer() {
-    if (myServer != null) {
-      LOG.debug("stopping server");
-      myServer.server_shutdown();
-    }
+    synchronized (myLock) {
+      if (myServer != null) {
+        LOG.debug("stopping server");
+        myServer.server_shutdown();
+      }
 
-    onServerStopped();
+      onServerStopped();
+    }
   }
 
   private void onServerStopped() {
-    myServer = null;
-    mySdkHome = null;
-    myRootsHandler.reset();
-    myFilePathWithOverlaidContentToTimestamp.clear();
+    synchronized (myLock) {
+      myServer = null;
+      mySdkHome = null;
+      myRootsHandler.reset();
+      myFilePathWithOverlaidContentToTimestamp.clear();
+    }
   }
 }
