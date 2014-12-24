@@ -5,18 +5,14 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -85,30 +81,14 @@ public class DartAnalysisServerAnnotator
 
     if (!DartAnalysisServerService.getInstance().serverReadyForRequest(module.getProject(), sdk.getHomePath())) return null;
 
-    // todo iterate FileDocumentManager.getInstance().getUnsavedDocuments() and send contents to server for documents where Document.getModificationStamp() changed since previous upload
+    DartAnalysisServerService.getInstance().updateFilesContent();
+
     return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath());
   }
 
   @Override
   @Nullable
   public ServerResult doAnnotate(@NotNull final AnnotatorInfo info) {
-    // todo remove document save when annotator will be able to work with unsaved contents
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      ApplicationManager.getApplication().invokeAndWait(new Runnable() {
-        @Override
-        public void run() {
-          final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(info.myFilePath);
-          if (file != null) {
-            final FileDocumentManager manager = FileDocumentManager.getInstance();
-            final Document document = manager.getCachedDocument(file);
-            if (document != null) {
-              manager.saveDocument(document);
-            }
-          }
-        }
-      }, ModalityState.any());
-    }
-
     final AnalysisError[] errors = DartAnalysisServerService.getInstance().analysis_getErrors(info);
     if (errors == null || errors.length == 0) return null;
 

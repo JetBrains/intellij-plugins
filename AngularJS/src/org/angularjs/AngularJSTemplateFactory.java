@@ -19,7 +19,7 @@ public class AngularJSTemplateFactory extends ProjectTemplatesFactory {
 
   @NotNull
   @Override
-  public ProjectTemplate[] createTemplates(String group, WizardContext context) {
+  public ProjectTemplate[] createTemplates(@NotNull String group, WizardContext context) {
     return new ProjectTemplate[] {
       new AngularJSProjectGenerator()
     };
