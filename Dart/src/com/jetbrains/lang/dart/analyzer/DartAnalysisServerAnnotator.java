@@ -23,6 +23,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.validation.fixes.DartServerFixIntention;
 import gnu.trove.THashMap;
@@ -39,12 +40,10 @@ public class DartAnalysisServerAnnotator
   static class AnnotatorInfo {
     @NotNull public final Project myProject;
     @NotNull public final String myFilePath;
-    @Nullable public final String mySdkHome;
 
-    public AnnotatorInfo(@NotNull final Project project, @NotNull final String filePath, @Nullable final String sdkHome) {
+    public AnnotatorInfo(@NotNull final Project project, @NotNull final String filePath) {
       myProject = project;
       myFilePath = filePath;
-      mySdkHome = sdkHome;
     }
   }
 
@@ -78,12 +77,16 @@ public class DartAnalysisServerAnnotator
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
     if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), DartAnalysisServerService.MIN_SDK_VERSION) < 0) return null;
 
+    if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return null;
+
     if (psiFile instanceof XmlFile && !DartInProcessAnnotator.containsDartEmbeddedContent((XmlFile)psiFile)) return null;
 
     if (FileUtil.isAncestor(sdk.getHomePath(), annotatedFile.getPath(), true)) return null;
 
+    if (!DartAnalysisServerService.getInstance().serverReadyForRequest(module.getProject(), sdk.getHomePath())) return null;
+
     // todo iterate FileDocumentManager.getInstance().getUnsavedDocuments() and send contents to server for documents where Document.getModificationStamp() changed since previous upload
-    return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath(), DartAnalysisServerService.getSdkHome());
+    return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath());
   }
 
   @Override

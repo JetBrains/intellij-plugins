@@ -16,9 +16,9 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformUtils;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class DartSdkGlobalLibUtil {
@@ -156,9 +156,9 @@ public class DartSdkGlobalLibUtil {
     }
   }
 
-  static Collection<Module> getModulesWithDartSdkGlobalLibAttached(final @NotNull Project project,
-                                                                   final @NotNull String dartSdkGlobalLibName) {
-    final Collection<Module> result = new ArrayList<Module>();
+  public static Collection<Module> getModulesWithDartSdkGlobalLibAttached(final @NotNull Project project,
+                                                                          final @NotNull String dartSdkGlobalLibName) {
+    final Collection<Module> result = new SmartList<Module>();
 
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
       for (final OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
