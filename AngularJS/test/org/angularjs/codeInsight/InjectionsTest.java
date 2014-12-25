@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 import org.angularjs.AngularTestUtil;
 import org.angularjs.lang.AngularJSLanguage;
@@ -155,6 +156,12 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testBadExpression() {
     myFixture.enableInspections(BadExpressionStatementJSInspection.class);
     myFixture.configureByFiles("badExpression.html", "angular.js", "custom.js");
+    myFixture.checkHighlighting();
+  }
+
+  public void testCommaExpression() {
+    myFixture.enableInspections(CommaExpressionJSInspection.class);
+    myFixture.configureByFiles("commaExpression.html", "angular.js", "custom.js");
     myFixture.checkHighlighting();
   }
 
