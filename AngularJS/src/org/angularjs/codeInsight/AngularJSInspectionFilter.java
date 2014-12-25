@@ -2,6 +2,7 @@ package org.angularjs.codeInsight;
 
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.lang.javascript.highlighting.IntentionAndInspectionFilter;
+import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 
 /**
@@ -10,6 +11,7 @@ import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 public class AngularJSInspectionFilter extends IntentionAndInspectionFilter {
   @Override
   public boolean isSupportedInspection(String inspectionToolId) {
-    return !inspectionToolId.equals(InspectionProfileEntry.getShortName(BadExpressionStatementJSInspection.class.getSimpleName()));
+    return !inspectionToolId.equals(InspectionProfileEntry.getShortName(BadExpressionStatementJSInspection.class.getSimpleName())) &&
+           !inspectionToolId.equals(InspectionProfileEntry.getShortName(CommaExpressionJSInspection.class.getSimpleName()));
   }
 }

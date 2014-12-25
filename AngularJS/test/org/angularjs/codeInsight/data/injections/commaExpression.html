@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<head>
+  <script src="http://code.angularjs.org/1.2.2/angular.min.js"></script>
+  <script src="script.js"></script>
+</head>
+<body>
+<div ng-init="things = {apple: 1, orange: 2}">
+  <div ng-repeat="(name, thing) in things">
+    {{ name }}: {{ thing }}
+  </div>
+</div>
+</body>
+</html>

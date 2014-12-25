@@ -1,22 +1,39 @@
 package org.angularjs.index;
 
-import com.intellij.lang.javascript.documentation.JSDocumentationProcessor;
+import com.intellij.lang.javascript.JSDocTokenTypes;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.*;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.openapi.util.Pair;
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
+import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
+import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
+import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
+import com.intellij.lang.javascript.psi.types.JSContext;
+import com.intellij.lang.javascript.psi.types.JSNamedType;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.indexing.ID;
 import org.angularjs.codeInsight.DirectiveUtil;
+import org.angularjs.lang.psi.AngularJSAsExpression;
+import org.angularjs.lang.psi.AngularJSFilterExpression;
+import org.angularjs.lang.psi.AngularJSRepeatExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,9 +42,9 @@ import java.util.regex.Pattern;
  * @author Dennis.Ushakov
  */
 public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
-  private static final Map<String, ID<String, Void>> INDEXERS = new HashMap<String, ID<String, Void>>();
+  private static final Map<String, ID<String, byte[]>> INDEXERS = new HashMap<String, ID<String, byte[]>>();
   private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<String, Function<String, String>>();
-  private static final Map<String, Function<Pair<JSSymbolVisitor, PsiElement>, String>> DATA_CALCULATORS = new HashMap<String, Function<Pair<JSSymbolVisitor, PsiElement>, String>>();
+  private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<String, Function<PsiElement, String>>();
 
   public static final Set<String> INTERESTING_METHODS = new HashSet<String>();
   public static final Set<String> INJECTABLE_METHODS = new HashSet<String>();
@@ -50,10 +67,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         return DirectiveUtil.getAttributeName(s);
       }
     });
-    DATA_CALCULATORS.put(DIRECTIVE, new Function<Pair<JSSymbolVisitor, PsiElement>, String>() {
+    DATA_CALCULATORS.put(DIRECTIVE, new Function<PsiElement, String>() {
       @Override
-      public String fun(Pair<JSSymbolVisitor, PsiElement> pair) {
-        return calculateRestrictions(pair.first, pair.second);
+      public String fun(PsiElement element) {
+        return calculateRestrictions(element);
       }
     });
 
@@ -71,35 +88,38 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static boolean isInjectable(PsiElement context) {
     final JSCallExpression call = PsiTreeUtil.getParentOfType(context, JSCallExpression.class, false, JSBlockStatement.class);
     if (call != null) {
-      JSReferenceExpression callee = (JSReferenceExpression)call.getMethodExpression();
-      JSExpression qualifier = callee.getQualifier();
+      final JSExpression methodExpression = call.getMethodExpression();
+      JSReferenceExpression callee = ObjectUtils.tryCast(methodExpression, JSReferenceExpression.class);
+      JSExpression qualifier = callee != null ? callee.getQualifier() : null;
       return qualifier != null && INJECTABLE_METHODS.contains(callee.getReferencedName());
     }
     return false;
   }
 
   @Override
-  public void processCallExpression(JSCallExpression callExpression, JSSymbolVisitor visitor) {
-    JSReferenceExpression callee = (JSReferenceExpression)callExpression.getMethodExpression();
+  public void processCallExpression(JSCallExpression callExpression, @NotNull JSIndexContentBuilder builder) {
+    final JSExpression methodExpression = callExpression.getMethodExpression();
+    if (!(methodExpression instanceof JSReferenceExpression)) return;
+    JSReferenceExpression callee = (JSReferenceExpression)methodExpression;
     JSExpression qualifier = callee.getQualifier();
 
     if (qualifier == null) return;
 
     final String command = callee.getReferencedName();
-    final ID<String, Void> index = INDEXERS.get(command);
+    final ID<String, byte[]> index = INDEXERS.get(command);
     if (index != null) {
       JSExpression[] arguments = callExpression.getArguments();
       if (arguments.length > 0) {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
           final String argumentText = argument.getText();
-          final Function<Pair<JSSymbolVisitor, PsiElement>, String> calculator = DATA_CALCULATORS.get(command);
-          final String data = calculator != null ? calculator.fun(Pair.<JSSymbolVisitor, PsiElement>create(visitor, argument)) : null;
-          storeAdditionalData(visitor, index, argument, command, argumentText, argument.getTextOffset(), data);
+          final Function<PsiElement, String> calculator = DATA_CALCULATORS.get(command);
+          final String data = calculator != null ? calculator.fun(argument) : null;
+          storeAdditionalData(builder, index, argument, command, argumentText, argument.getTextOffset(), data);
         } else if (argument instanceof JSObjectLiteralExpression) {
           for (JSProperty property : ((JSObjectLiteralExpression)argument).getProperties()) {
             final String argumentText = property.getName();
-            storeAdditionalData(visitor, index, property, command, argumentText, property.getTextOffset(), null);
+            storeAdditionalData(builder, index, property, command, argumentText, property.getTextOffset(), null);
           }
         }
       }
@@ -110,8 +130,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       if (arguments.length > 0) {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-          visitor.storeAdditionalData(argument, AngularSymbolIndex.INDEX_ID.toString(), StringUtil.unquoteString(argument.getText()),
-                                      argument.getTextOffset(), null);
+          builder.storeAdditionalData(AngularSymbolIndex.INDEX_ID.toString(), StringUtil.unquoteString(argument.getText()),
+                                      serializeDataValue(false, argument.getTextOffset(), null));
         }
       }
     }
@@ -121,7 +141,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       if (arguments.length > 0) {
         JSExpression argument = arguments[0];
         if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
-          generateNamespace(visitor, argument);
+          generateNamespace(builder, argument);
         }
       }
     }
@@ -138,21 +158,22 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                 // '//' interpolations are usually dragged from examples folder and not supposed to be used by real users
                 if ("//".equals(interpolation)) return;
 
-                visitor.storeAdditionalData(argument, AngularInjectionDelimiterIndex.INDEX_ID.toString(), command,
-                                            argument.getTextOffset(), interpolation);
+                builder.storeAdditionalData(AngularInjectionDelimiterIndex.INDEX_ID.toString(), command,
+                                            serializeDataValue(false, argument.getTextOffset(), interpolation));
               }
             }
           }
           qualifier = ((JSReferenceExpression)qualifier).getQualifier();
-        } else {
+        }
+        else {
           qualifier = qualifier instanceof JSCallExpression ? ((JSCallExpression)qualifier).getMethodExpression() : null;
         }
       }
     }
   }
 
-  private static void storeAdditionalData(final JSSymbolVisitor visitor,
-                                          final ID<String, Void> index,
+  private static void storeAdditionalData(final JSIndexContentBuilder builder,
+                                          final ID<String, byte[]> index,
                                           final PsiElement declaration,
                                           final String command,
                                           final String argumentText,
@@ -161,43 +182,72 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     final Function<String, String> converter = NAME_CONVERTERS.get(command);
     final String defaultName = StringUtil.unquoteString(argumentText);
     final String name = converter != null ? converter.fun(argumentText) : defaultName;
-    visitor.storeAdditionalData(declaration, index.toString(), name, offset, value);
-    visitor.storeAdditionalData(declaration, AngularSymbolIndex.INDEX_ID.toString(), name, offset, null);
+    final boolean isComment = declaration instanceof PsiComment;
+    builder.storeAdditionalData(index.toString(), name, serializeDataValue(isComment, offset, value));
+    builder.storeAdditionalData(AngularSymbolIndex.INDEX_ID.toString(), name, serializeDataValue(isComment, offset, null));
     if (!StringUtil.equals(defaultName, name)) {
-      visitor.storeAdditionalData(declaration, AngularSymbolIndex.INDEX_ID.toString(), defaultName, offset, null);
+      builder.storeAdditionalData(AngularSymbolIndex.INDEX_ID.toString(), defaultName, serializeDataValue(isComment, offset, null));
     }
   }
 
+  @NotNull
+  private static byte[] serializeDataValue(boolean isComment, int offset, @Nullable String value) {
+    final byte[] valueBytes = value != null ? value.getBytes(Charset.forName("UTF-8")) : new byte[0];
+    final byte[] result = new byte[5 + valueBytes.length];
+    result[0] = (byte)(isComment ? 1 : 0);
+    for (int i = 4; i >= 1; i--) {
+      result[i] = (byte)(offset & 0xFF);
+      offset >>= 8;
+    }
+    System.arraycopy(valueBytes, 0, result, 5, result.length - 5);
+    return result;
+  }
+
+  @NotNull
+  public static Trinity<Boolean, Integer, String> deserializeDataValue(@NotNull byte[] serializedValue) {
+    assert serializedValue[0] == 0 || serializedValue[0] == 1;
+    final Boolean isComment = Boolean.valueOf(serializedValue[0] == 1);
+    int offset = 0;
+    for (int i = 1; i < 5; i++) {
+      offset <<= 8;
+      offset |= serializedValue[i] & 0xFF;
+    }
+    final String value = serializedValue.length > 5 ?
+                         new String(Arrays.copyOfRange(serializedValue, 5, serializedValue.length), Charset.forName("UTF-8")) :
+                         null;
+    return Trinity.create(isComment, offset, value);
+  }
+
   @Override
-  public void processCommentMatch(@NotNull final PsiComment comment,
-                                  @NotNull JSDocumentationProcessor.MetaDocType type,
-                                  @Nullable String matchName,
-                                  @Nullable String matchValue,
-                                  @Nullable String remainingLineContent,
-                                  @NotNull String line,
-                                  String patternMatched,
-                                  JSSymbolVisitor visitor) {
-    if (type != JSDocumentationProcessor.MetaDocType.NAME || matchName == null) return;
-    assert remainingLineContent != null;
+  public void processJSDocComment(final JSDocComment comment, @NotNull JSIndexContentBuilder builder) {
+    JSDocTag ngdocTag = null;
+    JSDocTag nameTag = null;
+    for (JSDocTag tag : comment.getTags()) {
+      if ("ngdoc".equals(tag.getName())) ngdocTag = tag;
+      else if ("name".equals(tag.getName())) nameTag = tag;
+    }
+    if (ngdocTag != null && nameTag != null) {
+      final JSDocTagValue nameValue = nameTag.getValue();
+      String name = nameValue != null ? nameValue.getText() : null;
+      if (name != null) name = name.substring(name.indexOf(':') + 1);
 
-    final String commentText = comment.getText();
-    if (!commentText.contains("@ngdoc")) return;
-
-    final String[] commentLines = StringUtil.splitByLines(commentText);
-    final int offset = comment.getTextOffset() + commentText.indexOf(matchName);
-    for (int i = 0; i < Math.min(commentLines.length, 3); i++) {
-      String commentLine = commentLines[i];
-      if (!commentLine.contains("@ngdoc")) continue;
-
-      final String name = remainingLineContent.isEmpty() ? matchName : remainingLineContent.substring(1);
-      if (commentLine.contains(DIRECTIVE)) {
-        final String restrictions = calculateRestrictions(commentLines);
-        storeAdditionalData(visitor, AngularDirectivesDocIndex.INDEX_ID, comment, DIRECTIVE, name, offset, restrictions);
-        return;
+      String ngdocValue = null;
+      PsiElement nextSibling = ngdocTag.getNextSibling();
+      if (nextSibling instanceof PsiWhiteSpace) nextSibling = nextSibling.getNextSibling();
+      if (nextSibling != null && nextSibling.getNode().getElementType() == JSDocTokenTypes.DOC_COMMENT_DATA) {
+        ngdocValue = nextSibling.getText();
       }
-      else if (commentLine.contains(FILTER)) {
-        storeAdditionalData(visitor, AngularFilterIndex.INDEX_ID, comment, FILTER, name, offset, null);
-        return;
+      if (ngdocValue != null && name != null) {
+        final String[] commentLines = StringUtil.splitByLines(comment.getText());
+        final int offset = nameTag.getTextOffset();
+
+        if (ngdocValue.contains(DIRECTIVE)) {
+          final String restrictions = calculateRestrictions(commentLines);
+          storeAdditionalData(builder, AngularDirectivesDocIndex.INDEX_ID, comment, DIRECTIVE, name, offset, restrictions);
+        }
+        else if (ngdocValue.contains(FILTER)) {
+          storeAdditionalData(builder, AngularFilterIndex.INDEX_ID, comment, FILTER, name, offset, null);
+        }
       }
     }
   }
@@ -234,20 +284,26 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
 
-  private static void generateNamespace(JSSymbolVisitor visitor, PsiElement second) {
+  private static void generateNamespace(JSIndexContentBuilder builder, PsiElement second) {
     final String namespace = StringUtil.unquoteString(second.getText());
-    visitor.addClassFromQName((JSExpression)second, namespace);
-    final JSFunction function = findFunction(visitor, second);
-    final JSNamespace ns = visitor.findNsForExpr((JSExpression)second);
-    if (function != null && ns != null) {
-      visitor.visitWithNamespace(ns, function, false);
-    }
+    JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(namespace);
+    if (qName == null) return;
+    JSImplicitElementImpl.Builder elementBuilder =
+      new JSImplicitElementImpl.Builder(qName, second)
+        .setType(JSImplicitElement.Type.Class);
+    builder.addImplicitElement(qName.getName(), new JSImplicitElementsIndex.JSElementProxy(elementBuilder, second.getTextOffset()));
+    // TODO fix
+    //final JSFunction function = findFunction(second);
+    //final JSNamespace ns = visitor.findNsForExpr((JSExpression)second);
+    //if (function != null && ns != null) {
+    //  visitor.visitWithNamespace(ns, function, false);
+    //}
   }
 
-  private static String calculateRestrictions(JSSymbolVisitor visitor, PsiElement element) {
+  private static String calculateRestrictions(PsiElement element) {
     final Ref<String> restrict = Ref.create(DEFAULT_RESTRICTIONS);
     final Ref<String> scope = Ref.create("");
-    final JSFunction function = findFunction(visitor, element);
+    final JSFunction function = findFunction(element);
     if (function != null) {
       function.accept(new JSRecursiveElementVisitor() {
         @Override
@@ -274,26 +330,78 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return restrict.get().trim() + ";;;" + scope.get();
   }
 
-  private static JSFunction findFunction(JSSymbolVisitor visitor, PsiElement element) {
+  private static JSFunction findFunction(PsiElement element) {
     JSFunction function = PsiTreeUtil.getNextSiblingOfType(element, JSFunction.class);
     if (function == null) {
       final JSExpression expression = PsiTreeUtil.getNextSiblingOfType(element, JSExpression.class);
-      function = findDeclaredFunction(visitor, expression);
+      function = findDeclaredFunction(expression);
     }
     if (function == null) {
       JSArrayLiteralExpression array = PsiTreeUtil.getNextSiblingOfType(element, JSArrayLiteralExpression.class);
       function = PsiTreeUtil.findChildOfType(array, JSFunction.class);
       if (function == null) {
         final JSExpression candidate = array != null ?PsiTreeUtil.getPrevSiblingOfType(array.getLastChild(), JSExpression.class) : null;
-        function = findDeclaredFunction(visitor, candidate);
+        function = findDeclaredFunction(candidate);
       }
     }
     return function;
   }
 
-  private static JSFunction findDeclaredFunction(JSSymbolVisitor visitor, JSExpression expression) {
-    final JSElement candidate = visitor.getOperandFromVarContext(expression);
-    return candidate instanceof JSFunction ? (JSFunction)candidate : null;
+  private static JSFunction findDeclaredFunction(JSExpression expression) {
+    final Ref<JSFunction> result = Ref.create();
+    if (expression instanceof JSReferenceExpression) {
+      final String name = ((JSReferenceExpression)expression).getReferencedName();
+      expression.getContainingFile().accept(new JSRecursiveWalkingElementVisitor() {
+        @Override
+        public void visitJSFunctionExpression(JSFunctionExpression node) {
+          checkFunction(node);
+          super.visitJSFunctionExpression(node);
+        }
+
+        public void checkFunction(JSFunction node) {
+          if (StringUtil.equals(name, node.getName())) {
+            result.set(node);
+            stopWalking();
+          }
+        }
+
+        @Override
+        public void visitJSFunctionDeclaration(JSFunction node) {
+          checkFunction(node);
+          super.visitJSFunctionDeclaration(node);
+        }
+      });
+    }
+    return result.get();
+  }
+
+  @Override
+  public String resolveContextFromProperty(JSObjectLiteralExpression objectLiteralExpression) {
+    if (!(objectLiteralExpression.getParent() instanceof JSReturnStatement)) return null;
+
+    final JSFunction function = PsiTreeUtil.getParentOfType(objectLiteralExpression, JSFunction.class);
+    final JSCallExpression call = PsiTreeUtil.getParentOfType(function, JSCallExpression.class);
+    if (call != null) {
+      final JSExpression methodExpression = call.getMethodExpression();
+      if (!(methodExpression instanceof JSReferenceExpression)) return null;
+      JSReferenceExpression callee = (JSReferenceExpression)methodExpression;
+      JSExpression qualifier = callee.getQualifier();
+
+      if (qualifier == null) return null;
+
+      final String command = callee.getReferencedName();
+
+      if (INJECTABLE_METHODS.contains(command)) {
+        JSExpression[] arguments = call.getArguments();
+        if (arguments.length > 0) {
+          JSExpression argument = arguments[0];
+          if (argument instanceof JSLiteralExpression && ((JSLiteralExpression)argument).isQuotedLiteral()) {
+            return StringUtil.unquoteString(argument.getText());
+          }
+        }
+      }
+    }
+    return null;
   }
 
   public static class Factory extends JSFileIndexerFactory {
@@ -309,5 +417,67 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                                           PsiFile file) {
       return null;
     }
+  }
+
+  @Override
+  public boolean addTypeFromResolveResult(JSTypeEvaluator evaluator,
+                                          JSReferenceExpression expression,
+                                          PsiElement parent,
+                                          PsiElement resolveResult,
+                                          boolean hasSomeType) {
+    if (!AngularIndexUtil.hasAngularJS(expression.getProject())) return false;
+
+    if (resolveResult instanceof JSDefinitionExpression) {
+      final PsiElement resolveParent = resolveResult.getParent();
+      if (resolveParent instanceof AngularJSAsExpression) {
+        final String name = resolveParent.getFirstChild().getText();
+        final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
+        final JSType type = JSNamedType.createType(name, source, JSContext.INSTANCE);
+        evaluator.addType(type, resolveResult);
+        return true;
+      }
+      else if (resolveParent instanceof AngularJSRepeatExpression) {
+        if (calculateRepeatParameterType(evaluator, (AngularJSRepeatExpression)resolveParent)) {
+          return true;
+        }
+      }
+    }
+    if (resolveResult instanceof JSParameter && isInjectable(resolveResult)) {
+      final String name = ((JSParameter)resolveResult).getName();
+      final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
+      final JSType type = JSNamedType.createType(name, source, JSContext.INSTANCE);
+      evaluator.addType(type, resolveResult);
+    }
+    return false;
+  }
+
+  private static boolean calculateRepeatParameterType(JSTypeEvaluator evaluator, AngularJSRepeatExpression resolveParent) {
+    final PsiElement last = findReferenceExpression(resolveParent);
+    JSExpression arrayExpression = null;
+    if (last instanceof JSReferenceExpression) {
+      PsiElement resolve = ((JSReferenceExpression)last).resolve();
+      if (resolve != null) {
+        resolve = JSPsiImplUtils.getAssignedExpression(resolve);
+        if (resolve != null) {
+          arrayExpression = (JSExpression)resolve;
+        }
+      }
+    }
+    else if (last instanceof JSExpression) {
+      arrayExpression = (JSExpression)last;
+    }
+    if (last != null && arrayExpression != null) {
+      return evaluator.evalComponentTypeFromArrayExpression(resolveParent, arrayExpression) != null;
+    }
+    return false;
+  }
+
+  private static PsiElement findReferenceExpression(AngularJSRepeatExpression parent) {
+    JSExpression collection = parent.getCollection();
+    while (collection instanceof JSBinaryExpression &&
+           ((JSBinaryExpression)collection).getROperand() instanceof AngularJSFilterExpression) {
+      collection = ((JSBinaryExpression)collection).getLOperand();
+    }
+    return collection;
   }
 }

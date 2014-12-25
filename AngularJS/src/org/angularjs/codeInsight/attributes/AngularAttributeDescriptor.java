@@ -1,6 +1,6 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlElement;
@@ -22,9 +22,9 @@ import org.jetbrains.annotations.Nullable;
 public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx {
   protected final Project myProject;
   private final String myAttributeName;
-  private final ID<String, Void> myIndex;
+  private final ID<String, byte[]> myIndex;
 
-  public AngularAttributeDescriptor(final Project project, String attributeName, final ID<String, Void> index) {
+  public AngularAttributeDescriptor(final Project project, String attributeName, final ID<String, byte[]> index) {
     myProject = project;
     myAttributeName = attributeName;
     myIndex = index;
@@ -33,7 +33,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
   @Override
   public PsiElement getDeclaration() {
     final String name = DirectiveUtil.normalizeAttributeName(getName());
-    final JSNamedElementProxy declaration = AngularIndexUtil.resolve(myProject, AngularDirectivesIndex.INDEX_ID, name);
+    final JSOffsetBasedImplicitElement declaration = AngularIndexUtil.resolve(myProject, AngularDirectivesIndex.INDEX_ID, name);
     return declaration != null ? declaration :
            AngularIndexUtil.resolve(myProject, AngularDirectivesDocIndex.INDEX_ID, getName());
   }

@@ -1,6 +1,6 @@
 package org.angularjs.findUsages;
 
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -20,7 +20,7 @@ public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, 
   @Override
   public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull final Processor<PsiReference> consumer) {
     final PsiElement element = queryParameters.getElementToSearch();
-    final JSNamedElementProxy directive = DirectiveUtil.getDirective(element);
+    final JSOffsetBasedImplicitElement directive = DirectiveUtil.getDirective(element);
     if (directive == null) return;
 
     queryParameters.getOptimizer().searchWord(directive.getName(), queryParameters.getEffectiveSearchScope(), true, directive);

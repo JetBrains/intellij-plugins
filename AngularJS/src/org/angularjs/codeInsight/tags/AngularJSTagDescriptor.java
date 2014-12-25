@@ -1,7 +1,7 @@
 package org.angularjs.codeInsight.tags;
 
 import com.intellij.html.impl.RelaxedHtmlFromSchemaElementDescriptor;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.xml.XmlDocumentImpl;
@@ -24,9 +24,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AngularJSTagDescriptor implements XmlElementDescriptor {
   protected final String myName;
-  private final JSNamedElementProxy myDeclaration;
+  private final JSOffsetBasedImplicitElement myDeclaration;
 
-  public AngularJSTagDescriptor(String name, JSNamedElementProxy declaration) {
+  public AngularJSTagDescriptor(String name, JSOffsetBasedImplicitElement declaration) {
     myName = name;
     myDeclaration = declaration;
   }
@@ -58,7 +58,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
 
   @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    final String string = getDeclaration().getIndexItem().getTypeString();
+    final String string = getDeclaration().getTypeString();
     final String attributes = string.split(";", -1)[3];
     final String[] split = attributes.split(",");
     final XmlAttributeDescriptor[] result;
@@ -115,7 +115,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
   }
 
   @Override
-  public JSNamedElementProxy getDeclaration() {
+  public JSOffsetBasedImplicitElement getDeclaration() {
     return myDeclaration;
   }
 

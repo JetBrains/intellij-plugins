@@ -1,9 +1,9 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection;
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectionBase;
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspectionBase;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
@@ -41,6 +41,16 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("angular.js", resolve.getContainingFile().getName());
   }
 
+  public void testStandardAttributesResolveOldStyle() {
+    myFixture.configureByFiles("standard.after.html", "angular12.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-mo<caret>del", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("angular12.js", resolve.getContainingFile().getName());
+  }
+
   public void testStandardAttributesDataResolve() {
     myFixture.configureByFiles("standard-data.after.html", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-mo<caret>del", myFixture.getFile());
@@ -63,7 +73,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+    assertEquals("'myCustomer'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
   }
 
   public void testCustomAttributesInDirectiveEmptyCompletion() {
@@ -78,7 +88,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+    assertEquals("'myCustomer'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
   }
 
   public void testCustomAttributesCompletion() {
@@ -93,7 +103,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'myCustomer'", ((JSNamedElementProxy)resolve).getElement().getText());
+    assertEquals("'myCustomer'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
   }
 
   public void testControllerCompletion() {
@@ -108,7 +118,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'SupaController'", ((JSNamedElementProxy)resolve).getElement().getText());
+    assertEquals("'SupaController'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
   }
 
   public void testPrefixedControllerResolve() {
@@ -119,7 +129,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'SupaController'", ((JSNamedElementProxy)resolve).getElement().getText());
+    assertEquals("'SupaController'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
   }
 
   public void testAppCompletion() {
@@ -134,12 +144,12 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
-    assertEquals("'docsSimpleDirective'", ((JSNamedElementProxy)resolve).getElement().getText());
+    assertEquals("'docsSimpleDirective'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
   }
 
   public void testNormalization() {
     myFixture.configureByFiles("normalize.html", "angular.js");
-    myFixture.enableInspections(HtmlUnknownAttributeInspectionBase.class);
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
     myFixture.enableInspections(XmlUnboundNsPrefixInspection.class);
     myFixture.checkHighlighting();
   }
@@ -147,7 +157,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testNgSrc() {
     myFixture.configureByFiles("ng-src.html", "angular.js");
     myFixture.enableInspections(RequiredAttributesInspectionBase.class);
-    myFixture.enableInspections(HtmlUnknownAttributeInspectionBase.class);
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
     myFixture.checkHighlighting();
   }
 

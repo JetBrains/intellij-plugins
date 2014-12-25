@@ -1,6 +1,6 @@
 package org.angularjs.codeInsight.attributes;
 
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlTag;
@@ -54,13 +54,13 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     }
   }
 
-  private static ThreeState isApplicable(Project project, String directiveName, String tagName, final ID<String, Void> index) {
-    final JSNamedElementProxy directive = AngularIndexUtil.resolve(project, index, directiveName);
+  private static ThreeState isApplicable(Project project, String directiveName, String tagName, final ID<String, byte[]> index) {
+    final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(project, index, directiveName);
     if (directive == null) {
       return ThreeState.UNSURE;
     }
 
-    final String restrictions = directive.getIndexItem().getTypeString();
+    final String restrictions = directive.getTypeString();
     if (restrictions != null) {
       final String[] split = restrictions.split(";", -1);
       final String restrict = AngularIndexUtil.convertRestrictions(project, split[0]);

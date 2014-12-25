@@ -1,13 +1,19 @@
 package org.angularjs;
 
 import com.intellij.lang.documentation.DocumentationProviderEx;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
+import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
+import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
+import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTokenType;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
@@ -29,27 +35,49 @@ public class AngularJSDocumentationProvider extends DocumentationProviderEx {
                                                   @Nullable PsiElement element) {
     final IElementType elementType = element != null ? element.getNode().getElementType() : null;
     if (elementType == XmlTokenType.XML_NAME || elementType == XmlTokenType.XML_TAG_NAME) {
-      return AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.INDEX_ID,
-                                      DirectiveUtil.normalizeAttributeName(element.getText()));
+      return getElementForDocumentation(element.getProject(), DirectiveUtil.normalizeAttributeName(element.getText()));
     }
     return null;
   }
 
+  private static PsiElement getElementForDocumentation(final Project project, final String directiveName) {
+    final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(project, AngularDirectivesDocIndex.INDEX_ID, directiveName);
+    if (directive != null) {
+      final PsiFile file = directive.getContainingFile();
+      final PsiElement comment = PsiTreeUtil.getParentOfType(file.findElementAt(directive.getTextOffset()), PsiComment.class);
+      if (comment != null) {
+        return comment;
+      }
+    }
+    return directive;
+  }
+
   @Override
   public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
-    if (element instanceof XmlAttribute) {
-      return AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.INDEX_ID, object.toString());
+    if (element instanceof XmlElement) {
+      return getElementForDocumentation(element.getProject(), object.toString());
     }
     return null;
   }
 
   @Override
   public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
-    if (element instanceof JSNamedElementProxy) {
-      final String name = ((JSNamedElementProxy)element).getName();
-      if (AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.INDEX_ID, name) != null) {
-        final String directiveName = DirectiveUtil.attributeToDirective(name);
-        return Collections.singletonList("http://docs.angularjs.org/api/ng/directive/" + directiveName);
+    if (element instanceof JSDocComment) {
+      JSDocTag ngdocTag = null;
+      JSDocTag nameTag = null;
+      for (JSDocTag tag : ((JSDocComment)element).getTags()) {
+        if ("ngdoc".equals(tag.getName())) ngdocTag = tag;
+        else if ("name".equals(tag.getName())) nameTag = tag;
+      }
+      if (ngdocTag != null && nameTag != null) {
+        final JSDocTagValue nameValue = nameTag.getValue();
+        String name = nameValue != null ? nameValue.getText() : null;
+        if (name != null) name = name.substring(name.indexOf(':') + 1);
+
+        if (name != null && AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.INDEX_ID, DirectiveUtil.getAttributeName(name)) != null) {
+          final String directiveName = DirectiveUtil.attributeToDirective(name);
+          return Collections.singletonList("http://docs.angularjs.org/api/ng/directive/" + directiveName);
+        }
       }
     }
     return null;

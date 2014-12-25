@@ -1,7 +1,7 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -10,6 +10,7 @@ import com.intellij.util.indexing.ID;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -52,10 +53,10 @@ public class DirectiveUtil {
   }
 
   public static boolean processTagDirectives(final Project project,
-                                             Processor<JSNamedElementProxy> processor) {
+                                             Processor<JSOffsetBasedImplicitElement> processor) {
     final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.INDEX_ID, project);
     for (String directiveName : docDirectives) {
-      final JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.INDEX_ID);
+      final JSOffsetBasedImplicitElement directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.INDEX_ID);
       if (directive != null) {
         if (!processor.process(directive)) {
           return false;
@@ -65,7 +66,7 @@ public class DirectiveUtil {
     final Collection<String> directives = AngularIndexUtil.getAllKeys(AngularDirectivesIndex.INDEX_ID, project);
     for (String directiveName : directives) {
       if (!docDirectives.contains(directiveName)) {
-        final JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesIndex.INDEX_ID);
+        final JSOffsetBasedImplicitElement directive = getTagDirective(project, directiveName, AngularDirectivesIndex.INDEX_ID);
         if (directive != null) {
           if (!processor.process(directive)) {
             return false;
@@ -76,14 +77,14 @@ public class DirectiveUtil {
     return true;
   }
 
-  public static JSNamedElementProxy getTagDirective(String directiveName, Project project) {
-    final JSNamedElementProxy directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.INDEX_ID);
+  public static JSOffsetBasedImplicitElement getTagDirective(String directiveName, Project project) {
+    final JSOffsetBasedImplicitElement directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.INDEX_ID);
     return directive == null ? getTagDirective(project, directiveName, AngularDirectivesIndex.INDEX_ID) : directive;
     }
 
-  private static JSNamedElementProxy getTagDirective(Project project, String directiveName, final ID<String, Void> index) {
-    final JSNamedElementProxy directive = AngularIndexUtil.resolve(project, index, directiveName);
-    final String restrictions = directive != null ? directive.getIndexItem().getTypeString() : null;
+  private static JSOffsetBasedImplicitElement getTagDirective(Project project, String directiveName, final ID<String, byte[]> index) {
+    final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(project, index, directiveName);
+    final String restrictions = directive != null ? directive.getTypeString() : null;
     if (restrictions != null) {
       final String[] split = restrictions.split(";", -1);
       final String restrict = AngularIndexUtil.convertRestrictions(project, split[0]);
@@ -95,9 +96,9 @@ public class DirectiveUtil {
   }
 
   @Nullable
-  public static JSNamedElementProxy getDirective(@Nullable PsiElement element) {
-    if (element instanceof JSNamedElementProxy) {
-      return getDirective(element, ((JSNamedElementProxy)element).getName());
+  public static JSOffsetBasedImplicitElement getDirective(@Nullable PsiElement element) {
+    if (element instanceof JSOffsetBasedImplicitElement) {
+      return getDirective(element, ((JSOffsetBasedImplicitElement)element).getName());
     }
     if (element instanceof JSLiteralExpression && ((JSLiteralExpression)element).isQuotedLiteral()) {
       return getDirective(element, StringUtil.unquoteString(element.getText()));
@@ -105,11 +106,16 @@ public class DirectiveUtil {
     return null;
   }
 
-  private static JSNamedElementProxy getDirective(PsiElement element, final String name) {
+  @Nullable
+  private static JSOffsetBasedImplicitElement getDirective(@NotNull PsiElement element, final String name) {
     final String directiveName = getAttributeName(name);
-    final JSNamedElementProxy directive = AngularIndexUtil.resolve(element.getProject(), AngularDirectivesIndex.INDEX_ID, directiveName);
-    if (directive != null && element.getTextRange().contains(directive.getTextOffset())) {
-      return directive;
+    final JSOffsetBasedImplicitElement directive = AngularIndexUtil.resolve(element.getProject(), AngularDirectivesIndex.INDEX_ID, directiveName);
+    if (directive != null) {
+      PsiElement elementAtOffset =
+        element instanceof JSOffsetBasedImplicitElement ? ((JSOffsetBasedImplicitElement)element).getElementAtOffset() : element;
+      if (elementAtOffset != null && elementAtOffset.getTextRange().contains(directive.getTextOffset())) {
+        return directive;
+      }
     }
     return null;
   }
