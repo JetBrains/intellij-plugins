@@ -6,6 +6,7 @@ import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.java.IJavaMethod;
 import com.intellij.tapestry.core.util.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -34,11 +35,15 @@ public class TapestryParameter implements Comparable {
     public String getName() {
       if (!_parameterField.isValid()) return "";
 
-      String name;
-      final Map<String, String[]> params =
-          _parameterField.getAnnotations().get(PresentationLibraryElement.PARAMETER_ANNOTATION).getParameters();
+      String name = _parameterField.getName();
+      IJavaAnnotation annotation = getParamAnnotation();
+      if (annotation != null) {
+        final Map<String, String[]> params = annotation.getParameters();
 
-      name = params.containsKey(PARAMETER_NAME) ? params.get(PARAMETER_NAME)[0] : _parameterField.getName();
+        if (params.containsKey(PARAMETER_NAME)) {
+          name = params.get(PARAMETER_NAME)[0];
+        }
+      }
 
       return name.startsWith("$") || name.startsWith("_") ? name.substring(1) : name;
     }
@@ -66,14 +71,20 @@ public class TapestryParameter implements Comparable {
     public boolean isRequired() {
       if (!_parameterField.isValid()) return false;
 
-      String[] parameterValue =
-          _parameterField.getAnnotations().get(PresentationLibraryElement.PARAMETER_ANNOTATION).getParameters().get("required");
+      IJavaAnnotation annotation = getParamAnnotation();
+      if (annotation == null) return false;
+      String[] parameterValue = annotation.getParameters().get("required");
 
       boolean required = parameterValue != null && parameterValue[0].equals(Boolean.TRUE.toString());
       return required && !hasMethod(_elementClass, getName());
     }
 
-    /**
+  @Nullable
+  private IJavaAnnotation getParamAnnotation() {
+    return _parameterField.getAnnotations().get(PresentationLibraryElement.PARAMETER_ANNOTATION);
+  }
+
+  /**
      * Figures out the default prefix of the parameter value.
      *
      * @return the default prefix of the parameter value.
@@ -81,7 +92,7 @@ public class TapestryParameter implements Comparable {
     public String getDefaultPrefix() {
       if (!_parameterField.isValid()) return "";
 
-      IJavaAnnotation annotation = _parameterField.getAnnotations().get(PresentationLibraryElement.PARAMETER_ANNOTATION);
+      IJavaAnnotation annotation = getParamAnnotation();
 
       if (annotation != null) {
         String[] parameterValue = annotation.getParameters().get("defaultPrefix");
@@ -100,7 +111,7 @@ public class TapestryParameter implements Comparable {
         if (!_parameterField.isValid())
             return "";
 
-        IJavaAnnotation annotation = _parameterField.getAnnotations().get(PresentationLibraryElement.PARAMETER_ANNOTATION);
+        IJavaAnnotation annotation = getParamAnnotation();
 
         if (annotation != null) {
             String[] parameterValue = annotation.getParameters().get("value");
