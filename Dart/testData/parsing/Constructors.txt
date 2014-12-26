@@ -1,7 +1,7 @@
 Dart File
   IMPORT_STATEMENT
     PsiElement(import)('import')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''')
         PsiElement(REGULAR_STRING_PART)('Reference7Helper.dart')

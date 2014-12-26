@@ -77,7 +77,7 @@ public class DartCommandLineRuntimeConfigurationProducer extends RunConfiguratio
     if (importStatements == null) return false;
 
     for (DartImportStatement importStatement : importStatements) {
-      if (ArrayUtil.contains(importStatement.getUri(), importTexts)) return true;
+      if (ArrayUtil.contains(importStatement.getUriString(), importTexts)) return true;
     }
 
     return false;

@@ -23,9 +23,9 @@ public class DartShowCombinatorImpl extends DartPsiCompositeElementImpl implemen
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DartLibraryReferenceList getLibraryReferenceList() {
-    return findNotNullChildByClass(DartLibraryReferenceList.class);
+    return findChildByClass(DartLibraryReferenceList.class);
   }
 
 }

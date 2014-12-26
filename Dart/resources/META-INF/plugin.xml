@@ -65,8 +65,8 @@
     <psi.referenceContributor implementation="com.jetbrains.lang.dart.psi.DartPackagePathReferenceContributor" order="last"/>
     <include.provider implementation="com.jetbrains.lang.dart.psi.DartPackageAwareFileIncludeProvider" order="first"/>
     <typeHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyProvider"/>
-    <lang.elementManipulator forClass="com.jetbrains.lang.dart.psi.DartPathOrLibraryReference"
-                             implementationClass="com.jetbrains.lang.dart.psi.impl.DartFileReferenceImpl$DartPathOrLibraryManipulator"/>
+    <lang.elementManipulator forClass="com.jetbrains.lang.dart.psi.DartUriElement"
+                             implementationClass="com.jetbrains.lang.dart.psi.impl.DartUriElementBase$DartUriElementManipulator"/>
     <lang.refactoringSupport language="Dart"
                              implementationClass="com.jetbrains.lang.dart.ide.refactoring.DartRefactoringSupportProvider"/>
 
@@ -135,10 +135,7 @@
     <gotoSymbolContributor implementation="com.jetbrains.lang.dart.ide.DartSymbolContributor"/>
 
     <completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartKeywordCompletionContributor"/>
-    <completion.contributor language="Dart"
-                            implementationClass="com.jetbrains.lang.dart.ide.completion.DartLibraryNameCompletionContributor"/>
-    <completion.contributor language="Dart"
-                            implementationClass="com.jetbrains.lang.dart.ide.completion.DartArgumentNameContributor"/>
+    <completion.contributor language="Dart" implementationClass="com.jetbrains.lang.dart.ide.completion.DartArgumentNameContributor"/>
     <completion.contributor language="Dart"
                             implementationClass="com.jetbrains.lang.dart.ide.completion.DartClassNameCompletionContributor"/>
     <completion.contributor language="Dart"

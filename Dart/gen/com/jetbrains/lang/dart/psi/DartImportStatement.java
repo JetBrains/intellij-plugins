@@ -17,10 +17,12 @@ public interface DartImportStatement extends DartImportOrExportStatement {
   List<DartShowCombinator> getShowCombinatorList();
 
   @NotNull
-  String getUri();
+  DartUriElement getUriElement();
 
   @NotNull
-  DartPathOrLibraryReference getLibraryExpression();
+  String getUriString();
+
+  int getUriStringOffset();
 
   @Nullable
   DartComponentName getImportPrefix();

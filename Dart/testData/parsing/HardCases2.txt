@@ -1,7 +1,7 @@
 Dart File
   PART_STATEMENT
     PsiElement(part)('part')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)('"')
         PsiElement(REGULAR_STRING_PART)('frog/natives.js')

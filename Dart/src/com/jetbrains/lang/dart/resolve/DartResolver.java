@@ -135,7 +135,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   }
 
   @NotNull
-  public static List<? extends PsiElement> resolveSimpleReference(PsiElement scopeElement, String name) {
+  public static List<? extends PsiElement> resolveSimpleReference(@NotNull final PsiElement scopeElement, @NotNull final String name) {
     final List<DartComponentName> result = new ArrayList<DartComponentName>();
     // local
     final DartResolveProcessor dartResolveProcessor = new DartResolveProcessor(result, name, DartResolveUtil.isLValue(scopeElement));

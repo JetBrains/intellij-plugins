@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface DartShowCombinator extends DartPsiCompositeElement {
 
-  @NotNull
+  @Nullable
   DartLibraryReferenceList getLibraryReferenceList();
 
 }

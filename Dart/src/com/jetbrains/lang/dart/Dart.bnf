@@ -165,47 +165,50 @@ partOfStatement ::= metadata* 'part' 'of' libraryId ';' {
 }
 
 libraryId ::= <<nonStrictID>> ('.' <<nonStrictID>>)*
-{mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+{mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryIdBase" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 libraryStatement ::= metadata* 'library' qualifiedComponentName ';' {
   pin=3
   methods = [ getLibraryName ]
 }
 
-importStatement ::= metadata* 'import' pathOrLibraryReference ('deferred'? 'as' componentName )? combinator* ';' {
+importStatement ::= metadata* 'import' uriElement ('deferred'? 'as' componentName )? combinator* ';' {
   pin=3
   implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
   methods = [
-    getUri
-    libraryExpression = "pathOrLibraryReference"
+    getUriString
+    getUriStringOffset
     importPrefix = "componentName"
   ]
 }
 
-exportStatement ::= metadata* 'export' pathOrLibraryReference combinator* ';' {
+exportStatement ::= metadata* 'export' uriElement combinator* ';' {
   pin=3
   implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
   methods = [
-    getUri
-    libraryExpression = "pathOrLibraryReference"
+    getUriString
+    getUriStringOffset
   ]
 }
 
 private combinator ::= showCombinator | hideCombinator
 
-showCombinator ::= 'show' libraryReferenceList
-hideCombinator ::= 'hide' libraryReferenceList
+showCombinator ::= 'show' libraryReferenceList {pin=1}
+hideCombinator ::= 'hide' libraryReferenceList {pin=1}
 libraryReferenceList ::= libraryComponentReferenceExpression (',' libraryComponentReferenceExpression)*
 
-partStatement ::= metadata* 'part' pathOrLibraryReference ';' {
+partStatement ::= metadata* 'part' uriElement ';' {
   pin=3
-  methods = [ getPath ]
+  implements="com.jetbrains.lang.dart.psi.DartUriBasedDirective"
+  methods = [
+    getUriString
+    getUriStringOffset
+  ]
 }
 
 metadata ::= '@' simpleQualifiedReferenceExpression arguments?
 
-pathOrLibraryReference ::= stringLiteralExpression
-{mixin="com.jetbrains.lang.dart.psi.impl.DartFileReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+uriElement ::= stringLiteralExpression {mixin="com.jetbrains.lang.dart.psi.impl.DartUriElementBase"}
 
 varAccessDeclaration ::= metadata* 'static'? (finalOrConst type componentName | finalOrConst componentName | type componentName | 'var' componentName)
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
@@ -569,7 +572,7 @@ left arrayAccessExpression ::= arrayAccess
 private arrayAccess ::= '[' expression? ']' {pin=1}
 
 libraryComponentReferenceExpression ::= << nonStrictID >>
-{mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryComponentReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+{mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryComponentReferenceExpressionBase" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 referenceExpression ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}

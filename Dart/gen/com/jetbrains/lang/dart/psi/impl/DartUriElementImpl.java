@@ -11,14 +11,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartPathOrLibraryReferenceImpl extends DartFileReferenceImpl implements DartPathOrLibraryReference {
+public class DartUriElementImpl extends DartUriElementBase implements DartUriElement {
 
-  public DartPathOrLibraryReferenceImpl(ASTNode node) {
+  public DartUriElementImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitPathOrLibraryReference(this);
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitUriElement(this);
     else super.accept(visitor);
   }
 

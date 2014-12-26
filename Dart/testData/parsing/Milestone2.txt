@@ -52,7 +52,7 @@ Dart File
     PsiElement(;)(';')
   EXPORT_STATEMENT
     PsiElement(export)('export')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''')
         PsiElement(REGULAR_STRING_PART)('a.dart')
@@ -80,7 +80,7 @@ Dart File
     PsiElement(;)(';')
   EXPORT_STATEMENT
     PsiElement(export)('export')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''')
         PsiElement(REGULAR_STRING_PART)('a.dart')
@@ -88,7 +88,7 @@ Dart File
     PsiElement(;)(';')
   IMPORT_STATEMENT
     PsiElement(import)('import')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)('"')
         PsiElement(REGULAR_STRING_PART)('QualifiedReturnTypeA.dart')
@@ -100,7 +100,7 @@ Dart File
     PsiElement(;)(';')
   PART_STATEMENT
     PsiElement(part)('part')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''')
         PsiElement(REGULAR_STRING_PART)('test.dart')

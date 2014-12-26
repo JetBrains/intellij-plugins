@@ -32,7 +32,7 @@ public class DartImportUtil {
       final DartImportStatement[] importStatements = PsiTreeUtil.getChildrenOfType(file, DartImportStatement.class);
       if (importStatements != null) {
         for (DartImportStatement importStatement : importStatements) {
-          if (urlToImport.equals(importStatement.getUri())) {
+          if (urlToImport.equals(importStatement.getUriString())) {
             addShowOrRemoveHide(importStatement, componentName);
             continue libraryRootLoop;
           }
@@ -60,15 +60,18 @@ public class DartImportUtil {
     // todo remove comma if present, do not leave space before semicolon
     // try to remove hide
     for (DartHideCombinator hideCombinator : importStatement.getHideCombinatorList()) {
-      final List<DartLibraryComponentReferenceExpression> libraryComponents =
-        hideCombinator.getLibraryReferenceList().getLibraryComponentReferenceExpressionList();
-      for (DartLibraryComponentReferenceExpression libraryComponentReferenceExpression : libraryComponents) {
-        if (componentName.equals(libraryComponentReferenceExpression.getText())) {
-          final PsiElement toRemove = libraryComponents.size() > 1 ?
-                                      libraryComponentReferenceExpression :
-                                      hideCombinator;
-          toRemove.delete();
-          return;
+      final DartLibraryReferenceList libraryReferenceList = hideCombinator.getLibraryReferenceList();
+      if (libraryReferenceList != null) {
+        final List<DartLibraryComponentReferenceExpression> libraryComponents =
+          libraryReferenceList.getLibraryComponentReferenceExpressionList();
+        for (DartLibraryComponentReferenceExpression libraryComponentReferenceExpression : libraryComponents) {
+          if (componentName.equals(libraryComponentReferenceExpression.getText())) {
+            final PsiElement toRemove = libraryComponents.size() > 1 ?
+                                        libraryComponentReferenceExpression :
+                                        hideCombinator;
+            toRemove.delete();
+            return;
+          }
         }
       }
     }
@@ -79,13 +82,14 @@ public class DartImportUtil {
       // something wrong
       return;
     }
-    final DartShowCombinator combinatoroToAdd = showCombinators.iterator().next();
+    final DartShowCombinator combinatorToAdd = showCombinators.iterator().next();
     final DartLibraryComponentReferenceExpression libraryComponentReference =
       DartElementGenerator.createLibraryComponentReference(importStatement.getProject(), componentName);
-    if (libraryComponentReference != null) {
-      combinatoroToAdd.getLibraryReferenceList().getNode().addLeaf(DartTokenTypes.COMMA, ",", null);
-      combinatoroToAdd.getLibraryReferenceList().getNode().addLeaf(DartTokenTypesSets.WHITE_SPACE, " ", null);
-      combinatoroToAdd.getLibraryReferenceList().add(libraryComponentReference);
+    final DartLibraryReferenceList libraryReferenceList = combinatorToAdd.getLibraryReferenceList();
+    if (libraryComponentReference != null && libraryReferenceList != null) {
+      libraryReferenceList.getNode().addLeaf(DartTokenTypes.COMMA, ",", null);
+      libraryReferenceList.getNode().addLeaf(DartTokenTypesSets.WHITE_SPACE, " ", null);
+      libraryReferenceList.add(libraryComponentReference);
     }
   }
 

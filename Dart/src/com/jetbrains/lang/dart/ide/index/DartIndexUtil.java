@@ -83,7 +83,7 @@ public class DartIndexUtil {
           processImportOrExportStatement(result, (DartImportOrExportStatement)child);
         }
         if (child instanceof DartPartStatement) {
-          final String pathValue = FileUtil.toSystemIndependentName(StringUtil.unquoteString(((DartPartStatement)child).getPath()));
+          final String pathValue = FileUtil.toSystemIndependentName(StringUtil.unquoteString(((DartPartStatement)child).getUriString()));
           result.addPath(pathValue);
         }
       }
@@ -109,19 +109,25 @@ public class DartIndexUtil {
 
   private static void processImportOrExportStatement(final @NotNull DartFileIndexData result,
                                                      final @NotNull DartImportOrExportStatement importOrExportStatement) {
-    final String uri = importOrExportStatement.getUri();
+    final String uri = importOrExportStatement.getUriString();
 
     final Set<String> showComponentNames = new THashSet<String>();
     for (DartShowCombinator showCombinator : importOrExportStatement.getShowCombinatorList()) {
-      for (DartExpression expression : showCombinator.getLibraryReferenceList().getLibraryComponentReferenceExpressionList()) {
-        showComponentNames.add(expression.getText());
+      final DartLibraryReferenceList libraryReferenceList = showCombinator.getLibraryReferenceList();
+      if (libraryReferenceList != null) {
+        for (DartExpression expression : libraryReferenceList.getLibraryComponentReferenceExpressionList()) {
+          showComponentNames.add(expression.getText());
+        }
       }
     }
 
     final Set<String> hideComponentNames = new THashSet<String>();
     for (DartHideCombinator hideCombinator : importOrExportStatement.getHideCombinatorList()) {
-      for (DartExpression expression : hideCombinator.getLibraryReferenceList().getLibraryComponentReferenceExpressionList()) {
-        hideComponentNames.add(expression.getText());
+      final DartLibraryReferenceList libraryReferenceList = hideCombinator.getLibraryReferenceList();
+      if (libraryReferenceList != null) {
+        for (DartExpression expression : libraryReferenceList.getLibraryComponentReferenceExpressionList()) {
+          hideComponentNames.add(expression.getText());
+        }
       }
     }
 

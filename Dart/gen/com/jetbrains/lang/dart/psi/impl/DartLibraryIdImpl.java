@@ -11,7 +11,7 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartLibraryIdImpl extends DartLibraryReferenceImpl implements DartLibraryId {
+public class DartLibraryIdImpl extends DartLibraryIdBase implements DartLibraryId {
 
   public DartLibraryIdImpl(ASTNode node) {
     super(node);

@@ -352,9 +352,9 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  private static VirtualFile getImportedFile(final @NotNull Project project,
-                                             final @NotNull VirtualFile contextFile,
-                                             final @NotNull String importText) {
+  public static VirtualFile getImportedFile(final @NotNull Project project,
+                                            final @NotNull VirtualFile contextFile,
+                                            final @NotNull String importText) {
     if (importText.startsWith(DartUrlResolver.DART_PREFIX) ||
         importText.startsWith(DartUrlResolver.PACKAGE_PREFIX) ||
         importText.startsWith(DartUrlResolver.FILE_PREFIX)) {

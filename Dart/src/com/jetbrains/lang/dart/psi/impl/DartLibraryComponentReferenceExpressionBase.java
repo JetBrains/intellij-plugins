@@ -2,24 +2,21 @@ package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.ResolveResult;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.psi.DartId;
-import com.jetbrains.lang.dart.psi.DartPathOrLibraryReference;
+import com.jetbrains.lang.dart.psi.DartImportOrExportStatement;
 import com.jetbrains.lang.dart.psi.DartReference;
 import com.jetbrains.lang.dart.resolve.DartResolver;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class DartLibraryComponentReferenceImpl extends DartExpressionImpl implements DartReference, PsiPolyVariantReference {
-  public DartLibraryComponentReferenceImpl(ASTNode node) {
+public class DartLibraryComponentReferenceExpressionBase extends DartExpressionImpl implements DartReference, PsiPolyVariantReference {
+  public DartLibraryComponentReferenceExpressionBase(ASTNode node) {
     super(node);
   }
 
@@ -82,25 +79,20 @@ public class DartLibraryComponentReferenceImpl extends DartExpressionImpl implem
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
-    final PsiElement library = resolveLibrary();
-    if (library != null) {
-      return DartResolveUtil.toCandidateInfoArray(DartResolver.resolveSimpleReference(library.getContainingFile(), getText()));
-    }
-    return ResolveResult.EMPTY_ARRAY;
+    final DartImportOrExportStatement statement = PsiTreeUtil.getParentOfType(this, DartImportOrExportStatement.class);
+    final String uri = statement == null ? null : statement.getUriString();
+    final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(getContainingFile());
+    final VirtualFile importedFile = uri == null || vFile == null ? null
+                                                                  : DartResolveUtil.getImportedFile(getProject(), vFile, uri);
+    final PsiFile importedPsiFile = importedFile == null ? null : PsiManager.getInstance(getProject()).findFile(importedFile);
+    return importedPsiFile == null ? ResolveResult.EMPTY_ARRAY
+                                   : DartResolveUtil.toCandidateInfoArray(DartResolver.resolveSimpleReference(importedPsiFile, getText()));
   }
 
   @NotNull
   @Override
   public Object[] getVariants() {
     return ResolveResult.EMPTY_ARRAY;
-  }
-
-  @Nullable
-  public PsiElement resolveLibrary() {
-    final DartPsiCompositeElementImpl statement =
-      PsiTreeUtil.getParentOfType(this, DartImportStatementImpl.class, DartExportStatementImpl.class);
-    final DartPathOrLibraryReference pathOrLibraryReference = PsiTreeUtil.getChildOfType(statement, DartPathOrLibraryReference.class);
-    return pathOrLibraryReference != null ? pathOrLibraryReference.resolve() : null;
   }
 
   @NotNull

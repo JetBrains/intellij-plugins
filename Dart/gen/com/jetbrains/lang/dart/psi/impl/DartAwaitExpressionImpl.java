@@ -24,8 +24,8 @@ public class DartAwaitExpressionImpl extends DartExpressionImpl implements DartA
 
   @Override
   @NotNull
-  public DartPrefixExpression getPrefixExpression() {
-    return findNotNullChildByClass(DartPrefixExpression.class);
+  public DartExpression getExpression() {
+    return findNotNullChildByClass(DartExpression.class);
   }
 
 }

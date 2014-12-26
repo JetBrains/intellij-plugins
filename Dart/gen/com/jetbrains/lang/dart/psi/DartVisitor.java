@@ -369,11 +369,7 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitPartStatement(@NotNull DartPartStatement o) {
-    visitPsiCompositeElement(o);
-  }
-
-  public void visitPathOrLibraryReference(@NotNull DartPathOrLibraryReference o) {
-    visitReference(o);
+    visitUriBasedDirective(o);
   }
 
   public void visitPrefixExpression(@NotNull DartPrefixExpression o) {
@@ -519,6 +515,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitUriElement(@NotNull DartUriElement o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitUserDefinableOperator(@NotNull DartUserDefinableOperator o) {
     visitPsiCompositeElement(o);
   }
@@ -584,6 +584,10 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitReference(@NotNull DartReference o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitUriBasedDirective(@NotNull DartUriBasedDirective o) {
     visitPsiCompositeElement(o);
   }
 

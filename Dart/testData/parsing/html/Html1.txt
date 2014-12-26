@@ -39,7 +39,7 @@ HtmlFile:Html1.html
             PART_STATEMENT
               PsiElement(part)('part')
               PsiWhiteSpace(' ')
-              PATH_OR_LIBRARY_REFERENCE
+              URI_ELEMENT
                 STRING_LITERAL_EXPRESSION
                   PsiElement(OPEN_QUOTE)(''')
                   PsiElement(REGULAR_STRING_PART)('test2.dart')

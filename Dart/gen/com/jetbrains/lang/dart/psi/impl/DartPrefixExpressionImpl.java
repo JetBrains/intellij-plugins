@@ -24,6 +24,12 @@ public class DartPrefixExpressionImpl extends DartOperatorExpressionImpl impleme
 
   @Override
   @Nullable
+  public DartExpression getExpression() {
+    return findChildByClass(DartExpression.class);
+  }
+
+  @Override
+  @Nullable
   public DartPrefixOperator getPrefixOperator() {
     return findChildByClass(DartPrefixOperator.class);
   }

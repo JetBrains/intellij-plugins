@@ -4,15 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface DartImportOrExportStatement extends DartPsiCompositeElement {
+public interface DartImportOrExportStatement extends DartUriBasedDirective {
   @NotNull
   List<DartMetadata> getMetadataList();
-
-  @NotNull
-  DartPathOrLibraryReference getLibraryExpression();
-
-  @NotNull
-  String getUri();
 
   @NotNull
   List<DartShowCombinator> getShowCombinatorList();

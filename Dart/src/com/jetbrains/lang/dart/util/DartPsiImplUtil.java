@@ -17,24 +17,78 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+
 public class DartPsiImplUtil {
 
+  private static final String TRIPLE_APOS = "'''";
+  private static final String TRIPLE_QUOTE = "\"\"\"";
+  private static final String APOS = "'";
+  private static final String QUOTE = "\"";
+  private static final String R_TRIPLE_APOS = "r'''";
+  private static final String R_TRIPLE_QUOTE = "r\"\"\"";
+  private static final String R_APOS = "r'";
+  private static final String R_QUOTE = "r\"";
+
   @NotNull
-  public static String getPath(@NotNull DartPartStatement partStatement) {
-    final DartExpression expression = partStatement.getPathOrLibraryReference();
-    return FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
+  public static String getUriString(@NotNull final DartUriBasedDirective uriBasedDirective) {
+    return unquoteDartString(uriBasedDirective.getUriElement().getText());
+  }
+
+  public static String unquoteDartString(@NotNull final String quotedDartString) {
+    // r'''dart:core'''
+    // """package:angular/angular.dart"""
+    // "../foo/bar.dart"
+    // also can be not closed string when completing for example import '<caret>
+    if (quotedDartString.startsWith(TRIPLE_APOS)) {
+      return StringUtil.trimEnd(quotedDartString.substring(TRIPLE_APOS.length()), TRIPLE_APOS);
+    }
+    if (quotedDartString.startsWith(TRIPLE_QUOTE)) {
+      return StringUtil.trimEnd(quotedDartString.substring(TRIPLE_QUOTE.length()), TRIPLE_QUOTE);
+    }
+    if (quotedDartString.startsWith(APOS)) {
+      return StringUtil.trimEnd(quotedDartString.substring(APOS.length()), APOS);
+    }
+    if (quotedDartString.startsWith(QUOTE)) {
+      return StringUtil.trimEnd(quotedDartString.substring(QUOTE.length()), QUOTE);
+    }
+    if (quotedDartString.startsWith(R_TRIPLE_APOS)) {
+      return StringUtil.trimEnd(quotedDartString.substring(R_TRIPLE_APOS.length()), TRIPLE_APOS);
+    }
+    if (quotedDartString.startsWith(R_TRIPLE_QUOTE)) {
+      return StringUtil.trimEnd(quotedDartString.substring(R_TRIPLE_QUOTE.length()), TRIPLE_QUOTE);
+    }
+    if (quotedDartString.startsWith(R_APOS)) {
+      return StringUtil.trimEnd(quotedDartString.substring(R_APOS.length()), APOS);
+    }
+    if (quotedDartString.startsWith(R_QUOTE)) {
+      return StringUtil.trimEnd(quotedDartString.substring(R_QUOTE.length()), QUOTE);
+    }
+
+    return quotedDartString;
+  }
+
+  public static int getUriStringOffset(@NotNull final DartUriBasedDirective uriBasedDirective) {
+    // similar to #unquoteDartString()
+    final String quotedDartString = uriBasedDirective.getUriElement().getText();
+    if (quotedDartString.startsWith(TRIPLE_APOS) || quotedDartString.startsWith(TRIPLE_QUOTE)) {
+      return TRIPLE_QUOTE.length();
+    }
+    if (quotedDartString.startsWith(APOS) || quotedDartString.startsWith(QUOTE)) {
+      return QUOTE.length();
+    }
+    if (quotedDartString.startsWith(R_TRIPLE_APOS) || quotedDartString.startsWith(R_TRIPLE_QUOTE)) {
+      return R_TRIPLE_QUOTE.length();
+    }
+    if (quotedDartString.startsWith(R_APOS) || quotedDartString.startsWith(R_QUOTE)) {
+      return R_QUOTE.length();
+    }
+    return 0;
   }
 
   @NotNull
   public static String getLibraryName(@NotNull DartLibraryStatement libraryStatement) {
     final DartQualifiedComponentName componentName = libraryStatement.getQualifiedComponentName();
     return StringUtil.notNullize(componentName.getName());
-  }
-
-  @NotNull
-  public static String getUri(@NotNull DartImportOrExportStatement importStatement) {
-    final DartExpression expression = importStatement.getLibraryExpression();
-    return StringUtil.unquoteString(expression.getText());
   }
 
   @NotNull

@@ -30,13 +30,17 @@ public class DartPartStatementImpl extends DartPsiCompositeElementImpl implement
 
   @Override
   @NotNull
-  public DartPathOrLibraryReference getPathOrLibraryReference() {
-    return findNotNullChildByClass(DartPathOrLibraryReference.class);
+  public DartUriElement getUriElement() {
+    return findNotNullChildByClass(DartUriElement.class);
   }
 
   @NotNull
-  public String getPath() {
-    return DartPsiImplUtil.getPath(this);
+  public String getUriString() {
+    return DartPsiImplUtil.getUriString(this);
+  }
+
+  public int getUriStringOffset() {
+    return DartPsiImplUtil.getUriStringOffset(this);
   }
 
 }

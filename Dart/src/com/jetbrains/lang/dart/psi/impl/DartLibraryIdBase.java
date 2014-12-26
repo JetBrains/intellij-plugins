@@ -1,13 +1,18 @@
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.CommonProcessors;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.DartLibraryStatement;
 import com.jetbrains.lang.dart.psi.DartQualifiedComponentName;
@@ -15,13 +20,14 @@ import com.jetbrains.lang.dart.psi.DartReference;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DartLibraryReferenceImpl extends DartExpressionImpl implements DartReference, PsiPolyVariantReference {
-  public DartLibraryReferenceImpl(ASTNode node) {
+public class DartLibraryIdBase extends DartExpressionImpl implements DartReference, PsiPolyVariantReference {
+  public DartLibraryIdBase(ASTNode node) {
     super(node);
   }
 
@@ -113,7 +119,30 @@ public class DartLibraryReferenceImpl extends DartExpressionImpl implements Dart
   @NotNull
   @Override
   public Object[] getVariants() {
-    // handled by DartLibraryNameCompletionContributor
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(getContainingFile());
+    if (vFile == null) return PsiElement.EMPTY_ARRAY;
+
+    final ProjectFileIndex index = ProjectRootManager.getInstance(getProject()).getFileIndex();
+    VirtualFile scopeFolder = vFile.getParent();
+
+    if (scopeFolder != null && scopeFolder.findChild(PubspecYamlUtil.PUBSPEC_YAML) == null) {
+      VirtualFile parentFolder = scopeFolder.getParent();
+      while (parentFolder != null && index.isInContent(parentFolder) && parentFolder.findChild(PubspecYamlUtil.PUBSPEC_YAML) == null) {
+        scopeFolder = parentFolder;
+        parentFolder = scopeFolder.getParent();
+      }
+    }
+
+    if (scopeFolder == null) return PsiElement.EMPTY_ARRAY;
+
+    // scopeFolder is either:
+    // - pubspec.yaml file parent if current dart file is at the same level as pubspec.yaml
+    // - direct subfolder of dart project root like 'bin' or 'web' if curennt dart file is inside at any level
+    // - module content root if there's no pubspec.yaml file
+    final GlobalSearchScope scope = GlobalSearchScopesCore.directoryScope(getProject(), scopeFolder, true);
+    final CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<String>();
+    FileBasedIndex.getInstance().processAllKeys(DartLibraryIndex.DART_LIBRARY_INDEX, processor, scope, null);
+
+    return processor.toArray(new String[processor.getResults().size()]);
   }
 }

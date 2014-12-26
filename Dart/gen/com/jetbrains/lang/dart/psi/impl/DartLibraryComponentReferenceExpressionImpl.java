@@ -11,7 +11,7 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartLibraryComponentReferenceExpressionImpl extends DartLibraryComponentReferenceImpl implements DartLibraryComponentReferenceExpression {
+public class DartLibraryComponentReferenceExpressionImpl extends DartLibraryComponentReferenceExpressionBase implements DartLibraryComponentReferenceExpression {
 
   public DartLibraryComponentReferenceExpressionImpl(ASTNode node) {
     super(node);

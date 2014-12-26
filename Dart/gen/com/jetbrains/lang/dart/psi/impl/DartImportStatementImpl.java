@@ -40,15 +40,19 @@ public class DartImportStatementImpl extends DartPsiCompositeElementImpl impleme
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartShowCombinator.class);
   }
 
-  @NotNull
-  public String getUri() {
-    return DartPsiImplUtil.getUri(this);
-  }
-
   @Override
   @NotNull
-  public DartPathOrLibraryReference getLibraryExpression() {
-    return findNotNullChildByClass(DartPathOrLibraryReference.class);
+  public DartUriElement getUriElement() {
+    return findNotNullChildByClass(DartUriElement.class);
+  }
+
+  @NotNull
+  public String getUriString() {
+    return DartPsiImplUtil.getUriString(this);
+  }
+
+  public int getUriStringOffset() {
+    return DartPsiImplUtil.getUriStringOffset(this);
   }
 
   @Override

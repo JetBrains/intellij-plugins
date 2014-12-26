@@ -7,7 +7,7 @@ Dart File
     PsiElement(;)(';')
   IMPORT_STATEMENT
     PsiElement(import)('import')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)('"')
         PsiElement(REGULAR_STRING_PART)('foo')
@@ -15,7 +15,7 @@ Dart File
     PsiElement(;)(';')
   IMPORT_STATEMENT
     PsiElement(import)('import')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''')
         PsiElement(REGULAR_STRING_PART)('dart:html')
@@ -27,7 +27,7 @@ Dart File
     PsiElement(;)(';')
   IMPORT_STATEMENT
     PsiElement(import)('import')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''''')
         PsiElement(REGULAR_STRING_PART)('package:z')
@@ -63,7 +63,7 @@ Dart File
     PsiElement(;)(';')
   IMPORT_STATEMENT
     PsiElement(import)('import')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)('"""')
         PsiElement(REGULAR_STRING_PART)('bar')
@@ -77,7 +77,7 @@ Dart File
     PsiElement(;)(';')
   IMPORT_STATEMENT
     PsiElement(import)('import')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(RAW_TRIPLE_QUOTED_STRING)('r"""bar"""')
     HIDE_COMBINATOR
@@ -89,7 +89,7 @@ Dart File
     PsiElement(;)(';')
   IMPORT_STATEMENT
     PsiElement(import)('import')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(RAW_TRIPLE_QUOTED_STRING)('r'''bar'''')
     PsiElement(deferred)('deferred')
@@ -112,7 +112,7 @@ Dart File
     PsiElement(;)(';')
   PART_STATEMENT
     PsiElement(part)('part')
-    PATH_OR_LIBRARY_REFERENCE
+    URI_ELEMENT
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''')
         PsiElement(REGULAR_STRING_PART)('Util.dart')

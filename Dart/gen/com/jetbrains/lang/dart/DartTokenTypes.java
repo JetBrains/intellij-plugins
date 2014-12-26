@@ -95,7 +95,6 @@ public interface DartTokenTypes {
   IElementType PARENTHESIZED_EXPRESSION = new DartElementType("PARENTHESIZED_EXPRESSION");
   IElementType PART_OF_STATEMENT = new DartElementType("PART_OF_STATEMENT");
   IElementType PART_STATEMENT = new DartElementType("PART_STATEMENT");
-  IElementType PATH_OR_LIBRARY_REFERENCE = new DartElementType("PATH_OR_LIBRARY_REFERENCE");
   IElementType PREFIX_EXPRESSION = new DartElementType("PREFIX_EXPRESSION");
   IElementType PREFIX_OPERATOR = new DartElementType("PREFIX_OPERATOR");
   IElementType QUALIFIED_COMPONENT_NAME = new DartElementType("QUALIFIED_COMPONENT_NAME");
@@ -130,6 +129,7 @@ public interface DartTokenTypes {
   IElementType TYPE_LIST = new DartElementType("TYPE_LIST");
   IElementType TYPE_PARAMETER = new DartElementType("TYPE_PARAMETER");
   IElementType TYPE_PARAMETERS = new DartElementType("TYPE_PARAMETERS");
+  IElementType URI_ELEMENT = new DartElementType("URI_ELEMENT");
   IElementType USER_DEFINABLE_OPERATOR = new DartElementType("USER_DEFINABLE_OPERATOR");
   IElementType VALUE_EXPRESSION = new DartElementType("VALUE_EXPRESSION");
   IElementType VAR_ACCESS_DECLARATION = new DartElementType("VAR_ACCESS_DECLARATION");
@@ -521,9 +521,6 @@ public interface DartTokenTypes {
       else if (type == PART_STATEMENT) {
         return new DartPartStatementImpl(node);
       }
-      else if (type == PATH_OR_LIBRARY_REFERENCE) {
-        return new DartPathOrLibraryReferenceImpl(node);
-      }
       else if (type == PREFIX_EXPRESSION) {
         return new DartPrefixExpressionImpl(node);
       }
@@ -625,6 +622,9 @@ public interface DartTokenTypes {
       }
       else if (type == TYPE_PARAMETERS) {
         return new DartTypeParametersImpl(node);
+      }
+      else if (type == URI_ELEMENT) {
+        return new DartUriElementImpl(node);
       }
       else if (type == USER_DEFINABLE_OPERATOR) {
         return new DartUserDefinableOperatorImpl(node);

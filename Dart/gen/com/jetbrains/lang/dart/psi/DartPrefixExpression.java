@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface DartPrefixExpression extends DartExpression, DartReference {
 
   @Nullable
+  DartExpression getExpression();
+
+  @Nullable
   DartPrefixOperator getPrefixOperator();
 
 }

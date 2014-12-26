@@ -11,15 +11,11 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.DartLookupElement;
 import com.jetbrains.lang.dart.psi.*;
-import com.jetbrains.lang.dart.psi.impl.DartExportStatementImpl;
-import com.jetbrains.lang.dart.psi.impl.DartImportStatementImpl;
-import com.jetbrains.lang.dart.psi.impl.DartPsiCompositeElementImpl;
 import com.jetbrains.lang.dart.resolve.ComponentNameScopeProcessor;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Set;
@@ -50,6 +46,8 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
              }
            }
     );
+
+    // references after show/hide in import/export directive
     extend(CompletionType.BASIC,
            idInReference.withSuperParent(3, DartLibraryReferenceList.class),
            new CompletionProvider<CompletionParameters>() {
@@ -57,25 +55,20 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
              protected void addCompletions(@NotNull CompletionParameters parameters,
                                            ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
-               final DartReference reference = PsiTreeUtil.getParentOfType(parameters.getPosition(), DartReference.class);
-               final PsiElement library = reference == null ? null : resolveLibrary(reference);
-               if (library != null) {
-                 final Set<DartComponentName> suggestedVariants = new THashSet<DartComponentName>();
-                 DartResolveUtil.processTopLevelDeclarations(reference, new ComponentNameScopeProcessor(suggestedVariants),
-                                                             DartResolveUtil.getRealVirtualFile(library.getContainingFile()), null);
-                 for (DartLookupElement element : DartLookupElement.convert(suggestedVariants, false)) {
-                   result.addElement(element);
+               final DartImportOrExportStatement statement =
+                 PsiTreeUtil.getParentOfType(parameters.getPosition(), DartImportOrExportStatement.class);
+               final VirtualFile vFile = parameters.getOriginalFile().getVirtualFile();
+               if (statement != null && vFile != null) {
+                 final VirtualFile importedFile = DartResolveUtil.getImportedFile(statement.getProject(), vFile, statement.getUriString());
+                 if (importedFile != null) {
+                   final Set<DartComponentName> suggestedVariants = new THashSet<DartComponentName>();
+                   DartResolveUtil
+                     .processTopLevelDeclarations(statement, new ComponentNameScopeProcessor(suggestedVariants), importedFile, null);
+                   for (DartLookupElement element : DartLookupElement.convert(suggestedVariants, false)) {
+                     result.addElement(element);
+                   }
                  }
                }
-             }
-
-             @Nullable
-             public PsiElement resolveLibrary(final @NotNull DartReference reference) {
-               final DartPsiCompositeElementImpl statement =
-                 PsiTreeUtil.getParentOfType(reference, DartImportStatementImpl.class, DartExportStatementImpl.class);
-               final DartPathOrLibraryReference pathOrLibraryReference =
-                 PsiTreeUtil.getChildOfType(statement, DartPathOrLibraryReference.class);
-               return pathOrLibraryReference != null ? pathOrLibraryReference.resolve() : null;
              }
            }
     );

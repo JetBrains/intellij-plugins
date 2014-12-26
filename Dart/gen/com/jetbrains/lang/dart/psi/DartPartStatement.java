@@ -5,15 +5,17 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartPartStatement extends DartPsiCompositeElement {
+public interface DartPartStatement extends DartUriBasedDirective {
 
   @NotNull
   List<DartMetadata> getMetadataList();
 
   @NotNull
-  DartPathOrLibraryReference getPathOrLibraryReference();
+  DartUriElement getUriElement();
 
   @NotNull
-  String getPath();
+  String getUriString();
+
+  int getUriStringOffset();
 
 }

@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface DartAwaitExpression extends DartExpression {
 
   @NotNull
-  DartPrefixExpression getPrefixExpression();
+  DartExpression getExpression();
 
 }

@@ -88,12 +88,6 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
     return FileBasedIndex.getInstance().getContainingFiles(DART_LIBRARY_INDEX, libraryName, scope);
   }
 
-  @NotNull
-  public static Set<String> getAllLibraryNames(Project project) {
-    final Collection<String> allKeys = FileBasedIndex.getInstance().getAllKeys(DART_LIBRARY_INDEX, project);
-    return new THashSet<String>(allKeys);
-  }
-
   private static class MyDataIndexer implements DataIndexer<String, Void, FileContent> {
     @Override
     @NotNull
