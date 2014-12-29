@@ -5,6 +5,7 @@ import com.intellij.openapi.module.WebModuleBuilder;
 import com.intellij.platform.ProjectTemplate;
 import com.intellij.platform.ProjectTemplatesFactory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class
   PhoneGapTemplatesFactory extends ProjectTemplatesFactory {
@@ -16,7 +17,7 @@ public class
 
   @NotNull
   @Override
-  public ProjectTemplate[] createTemplates(@NotNull String group, WizardContext context) {
+  public ProjectTemplate[] createTemplates(@Nullable String group, WizardContext context) {
     return new ProjectTemplate[]{new PhoneGapProjectTemplateGenerator()};
   }
 }
