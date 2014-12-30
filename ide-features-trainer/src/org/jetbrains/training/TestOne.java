@@ -36,7 +36,6 @@ public class TestOne {
 
 
         Scenario scn = new Scenario("SampleScenario.xml");
-        scn.defineRoot();
         scn.printScenario();
 
 
