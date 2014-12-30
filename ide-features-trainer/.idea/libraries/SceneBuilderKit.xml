@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SceneBuilderKit">
+    <CLASSES>
+      <root url="jar:///Applications/JavaFX Scene Builder 2.0.app/Contents/Java/SceneBuilderKit.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
