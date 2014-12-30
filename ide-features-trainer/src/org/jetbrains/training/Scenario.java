@@ -19,19 +19,17 @@ import java.util.Scanner;
  */
 public class Scenario {
 
-    private String data;
     final private String path;
     private Element root;
 
-    public Scenario(String path) {
+    public Scenario(String path) throws JDOMException, IOException {
         this.path = path;
-    }
-
-    public void openScenario(){
 
         InputStream is = this.getClass().getResourceAsStream(path);
-        data = new Scanner(is).useDelimiter("\\Z").next();
 
+        SAXBuilder builder = new SAXBuilder();
+        Document doc = builder.build(is);
+        root = doc.getRootElement();
     }
 
     public void printScenario(){
@@ -54,12 +52,8 @@ public class Scenario {
 
     }
 
-    public void defineRoot() throws IOException, JDOMException {
-        InputStream is = this.getClass().getResourceAsStream(path);
-
-        SAXBuilder builder = new SAXBuilder();
-        Document doc = builder.build(is);
-        root = doc.getRootElement();
+    public Element getRoot(){
+        return root;
     }
 
 }

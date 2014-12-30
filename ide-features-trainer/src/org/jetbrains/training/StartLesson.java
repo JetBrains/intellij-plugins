@@ -21,6 +21,8 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.awt.RelativePoint;
+import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -56,6 +58,8 @@ public class StartLesson extends AnAction {
             final String target = new Scanner(is).useDelimiter("\\Z").next();
             final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, target);
 
+            final Scenario scn = new Scenario("SampleScenario.xml");
+
             isRecording = true;
             Disposer.register(recorder, new Disposable() {
                 @Override
@@ -70,31 +74,44 @@ public class StartLesson extends AnAction {
                     recorder.startRecording();
                     final Editor editor1 = FileEditorManager.getInstance(e.getProject()).openTextEditor(new OpenFileDescriptor(e.getProject(), vf), true);
 
-                    final String newScript = "package org.jetbrains.training;\n" +
-
-
                     final Thread roboThread = new Thread("RoboThread") {
                         @Override
                         public void run() {
-                            try {
-                                boolean isTyping = true;
-                                final int[] i = {0};
+                            String text;
 
-                                while (isTyping) {
-                                    Thread.sleep(30);
-                                    final int finalI = i[0];
-                                    WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            editor1.getDocument().insertString(finalI, newScript.subSequence(i[0], i[0] + 1));
-                                            editor1.getCaretModel().moveToOffset(finalI + 1);
+                            try {
+
+                                if (scn.equals(null)) {
+                                    System.err.println("Scenario is empty or cannot be read!");
+                                    return;
+                                }
+                                if (scn.getRoot().equals(null)) {
+                                    System.err.println("Scenario is empty or cannot be read!");
+                                    return;
+                                }
+
+                                for (Element element : scn.getRoot().getChildren()) {
+                                    if (element.getName().equals("TypeText")) {
+                                        final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
+                                        boolean isTyping = true;
+                                        final int[] i = {0};
+
+
+                                        while (isTyping) {
+                                            Thread.sleep(30);
+                                            final int finalI = i[0];
+                                            WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    editor1.getDocument().insertString(finalI, finalText.subSequence(i[0], i[0] + 1));
+                                                    editor1.getCaretModel().moveToOffset(finalI + 1);
+                                                }
+                                            });
+                                            isTyping = (++i[0] < finalText.length());
                                         }
-                                    });
-                                    i[0]++;
-                                    if (i[0] == newScript.length()) {
-                                        isTyping = false;
-                                    }
-                                    if (i[0] == 20) {
+                                    } else if(element.getName().equals("Action")) {
+                                        final String actionType =(element.getAttribute("action").getValue().toString());
+
                                         ApplicationManager.getApplication().invokeLater(new Runnable() {
                                             @Override
                                             public void run() {
@@ -108,19 +125,32 @@ public class StartLesson extends AnAction {
                                         ApplicationManager.getApplication().invokeLater(new Runnable() {
                                             @Override
                                             public void run() {
-                                                performAction("EditorDuplicate", editor);
+                                                performAction(actionType, editor);
                                             }
                                         });
                                         synchronized (editor) {
                                             editor.wait();
                                         }
-
+                                    } else if(element.getName().equals("CopyText")) {
+                                        final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
+                                        WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                editor1.getDocument().insertString(0, finalText);
+//                                                editor1.getCaretModel().moveToOffset(-1);
+                                            }
+                                        });
+                                    } else {
                                     }
                                 }
+
                             } catch (InterruptedException e1) {
                                 e1.printStackTrace();
                             }
                         }
+
+
+
                     };
                     roboThread.start();
 
@@ -131,6 +161,8 @@ public class StartLesson extends AnAction {
 
 
         } catch (IOException e1) {
+            e1.printStackTrace();
+        } catch (JDOMException e1) {
             e1.printStackTrace();
         }
     }
