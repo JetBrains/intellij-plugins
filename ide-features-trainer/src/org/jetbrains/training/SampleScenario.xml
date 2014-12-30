@@ -1,0 +1,25 @@
+<xml type="Scenario" version="0.1">
+    <CopyText>package org.jetbrains.training;
+public class JavaLessonExample {
+
+    private String privateString;
+
+    public JavaLessonExample() {
+
+        privateString = "defined";
+
+    }
+
+    public String getPrivateString() {
+        return privateString;
+    }
+
+    public void setPrivateString(String privateString) {
+        this.privateString = privateString;
+    }
+}
+    </CopyText>
+    <MoveCaret offset="0" />
+    <TypeText>Text to type here...</TypeText>
+    <Action action="DuplicateString"></Action>
+</xml>
