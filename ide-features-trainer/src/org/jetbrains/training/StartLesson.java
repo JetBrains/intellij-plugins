@@ -71,28 +71,7 @@ public class StartLesson extends AnAction {
                     final Editor editor1 = FileEditorManager.getInstance(e.getProject()).openTextEditor(new OpenFileDescriptor(e.getProject(), vf), true);
 
                     final String newScript = "package org.jetbrains.training;\n" +
-                            "\n" +
-                            "/**\n" +
-                            " * Created by jetbrains on 17/12/14.\n" +
-                            " */\n" +
-                            "public class JavaLessonExample2 {\n" +
-                            "\n" +
-                            "\tprivate String privateString;\n" +
-                            "\n" +
-                            "\tpublic JavaLessonExample2() {\n" +
-                            "\n" +
-                            "\t\tprivateString = \"defined\";\n" +
-                            "\n" +
-                            "\t}\n" +
-                            "\n" +
-                            "\tpublic String getPrivateString() {\n" +
-                            "\t\treturn privateString;\n" +
-                            "\t}\n" +
-                            "\n" +
-                            "\tpublic void setPrivateString(String privateString) {\n" +
-                            "\t\tthis.privateString = privateString;\n" +
-                            "\t}\n" +
-                            "}";
+
 
                     final Thread roboThread = new Thread("RoboThread") {
                         @Override
