@@ -26,96 +26,45 @@ package org.osmorc.facet;
 
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.Result;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.TestDialog;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
-import com.intellij.testFramework.fixtures.*;
+import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.osmorc.SwingRunner;
-
-import java.io.IOException;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-@RunWith(SwingRunner.class)
-public class AddFacetTest {
-    @Before
-    public void setUp() throws Exception {
-        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
-                JavaTestFixtureFactory.createFixtureBuilder();
-        final JavaModuleFixtureBuilder moduleBuilder = fixtureBuilder.addModule(JavaModuleFixtureBuilder.class);
+public class AddFacetTest extends JavaCodeInsightFixtureTestCase {
+  public void testAddFacetAfterCreatingManifest() {
+    new WriteAction() {
+      @Override
+      protected void run(@NotNull Result result) throws Throwable {
+        VirtualFile[] roots = ModuleRootManager.getInstance(myModule).getContentRoots();
+        VirtualFile metaInf = roots[0].createChildDirectory(this, "META-INF");
+        VirtualFile manifest = metaInf.createChildData(this, "MANIFEST.MF");
+        VfsUtil.saveText(manifest, "Manifest-Version: 1.0\n" +
+                                   "Bundle-ManifestVersion: 2\n" +
+                                   "Bundle-Name: Test\n" +
+                                   "Bundle-SymbolicName: test\n" +
+                                   "Bundle-Version: 1.0.0\n");
+        PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+      }
+    }.execute();
 
-        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-        fixture = fixtureBuilder.getFixture();
-
-        myTempDirFixture.setUp();
-        moduleBuilder.addContentRoot(myTempDirFixture.getTempDirPath());
-        fixture.setUp();
-
-        orgTestDialog = Messages.setTestDialog(new TestDialog() {
-            public int show(String message) {
-                shownMessage = message;
-                return dialogResult;
-            }
-        });
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Messages.setTestDialog(orgTestDialog);
-        fixture.tearDown();
-        myTempDirFixture.tearDown();
-    }
-
-    @Test
-    public void testAddFacetAfterCreatingManifest() throws Exception {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            public void run() {
-                try {
-                    VirtualFile[] files = ModuleRootManager.getInstance(fixture.getModule()).getContentRoots();
-                    VirtualFile childDirectory = files[0].createChildDirectory(this, "META-INF");
-                    VirtualFile data = childDirectory.createChildData(this, "MANIFEST.MF");
-                  VfsUtil.saveText(data, "Manifest-Version: 1.0\n" +
-                            "Bundle-ManifestVersion: 2\n" +
-                            "Bundle-Name: Test\n" +
-                            "Bundle-SymbolicName: test\n" +
-                            "Bundle-Version: 1.0.0\n");
-                    PsiDocumentManager.getInstance(fixture.getProject()).commitAllDocuments();
-                }
-                catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            public void run() {
-                ModifiableFacetModel modifiableFacetModel =
-                        FacetManager.getInstance(fixture.getModule()).createModifiableModel();
-                OsmorcFacet facet = new OsmorcFacet(fixture.getModule());
-                facet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Manually);
-                modifiableFacetModel.addFacet(facet);
-                modifiableFacetModel.commit();
-            }
-        });
-
-
-    }
-
-    private IdeaProjectTestFixture fixture;
-    private String shownMessage;
-    private TestDialog orgTestDialog;
-    private int dialogResult;
-    private TempDirTestFixture myTempDirFixture;
+    new WriteAction() {
+      @Override
+      protected void run(@NotNull Result result) throws Throwable {
+        ModifiableFacetModel model = FacetManager.getInstance(myModule).createModifiableModel();
+        OsmorcFacet facet = new OsmorcFacet(myModule);
+        facet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Manually);
+        model.addFacet(facet);
+        model.commit();
+      }
+    }.execute();
+  }
 }

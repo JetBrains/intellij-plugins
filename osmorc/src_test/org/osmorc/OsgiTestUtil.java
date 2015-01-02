@@ -22,28 +22,42 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.frameworkintegration;
+package org.osmorc;
 
-import com.intellij.openapi.components.ServiceManager;
-import org.osmorc.LightOsgiFixtureTestCase;
+import com.intellij.openapi.application.PathManager;
+import com.intellij.util.io.ZipUtil;
 
-import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class FrameworkIntegratorRegistryTest extends LightOsgiFixtureTestCase {
-  public void testRegistry() {
-    FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
+public class OsgiTestUtil {
+  public static File extractProject(String projectName, String projectDirPath) throws IOException {
+    File projectZip = new File(getTestDataDir(), projectName + ".zip");
+    assertTrue(projectZip.getPath(), projectZip.isFile());
+    File projectDir = new File(projectDirPath);
+    ZipUtil.extract(projectZip, projectDir, null);
+    return projectDir;
+  }
 
-    FrameworkIntegrator[] integrators = registry.getFrameworkIntegrators();
-    for (FrameworkIntegrator integrator : integrators) {
-      assertThat(registry.findIntegratorByName(integrator.getDisplayName()), sameInstance(integrator));
+  private static File ourTestDataDir;
+
+  private static File getTestDataDir() {
+    if (ourTestDataDir == null) {
+      ourTestDataDir = new File(OsgiTestUtil.class.getResource("/").getFile(), "../../../testdata");
+      if (!ourTestDataDir.exists()) {
+        ourTestDataDir = new File(OsgiTestUtil.class.getResource("").getFile(), "../../../../../testdata");
+      }
+      if (!ourTestDataDir.exists()) {
+        ourTestDataDir = new File(PathManager.getHomePath(), "contrib/osmorc/testdata");
+      }
+      assertTrue(ourTestDataDir.getPath(), ourTestDataDir.isDirectory());
     }
 
-    FrameworkInstanceDefinition instanceDefinition = new FrameworkInstanceDefinition();
-    instanceDefinition.setFrameworkIntegratorName(integrators[1].getDisplayName());
-    assertThat(registry.findIntegratorByInstanceDefinition(instanceDefinition), sameInstance(integrators[1]));
+    return ourTestDataDir;
   }
 }

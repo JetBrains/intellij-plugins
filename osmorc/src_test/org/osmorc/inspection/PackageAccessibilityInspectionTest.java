@@ -3,11 +3,11 @@ package org.osmorc.inspection;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
-import org.osmorc.AbstractOsgiTestCase;
+import org.osmorc.LightOsgiFixtureTestCase;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.i18n.OsmorcBundle;
 
-public class PackageAccessibilityInspectionTest extends AbstractOsgiTestCase {
+public class PackageAccessibilityInspectionTest extends LightOsgiFixtureTestCase {
   private static final String POSITIVE_TEST =
     "package pkg;\n" +
     "import org.osgi.framework.launch.*;\n" +

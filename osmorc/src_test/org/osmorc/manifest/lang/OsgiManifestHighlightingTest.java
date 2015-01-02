@@ -1,8 +1,8 @@
 package org.osmorc.manifest.lang;
 
-import org.osmorc.AbstractOsgiTestCase;
+import org.osmorc.LightOsgiFixtureTestCase;
 
-public class OsgiManifestHighlightingTest extends AbstractOsgiTestCase {
+public class OsgiManifestHighlightingTest extends LightOsgiFixtureTestCase {
   public void testBundleVersion() {
     doTest(
       "Bundle-Version: 1\n" +
@@ -26,6 +26,14 @@ public class OsgiManifestHighlightingTest extends AbstractOsgiTestCase {
       "Bundle-Activator: com.<error descr=\"Cannot resolve\">acme</error>.Activator\n" +
       "Bundle-Activator: java.lang.<error descr=\"Not a valid activator class\">String</error>\n" +
       "Bundle-Activator: main.Activator\n"
+    );
+  }
+
+  public void testSelfRequiringBundle() {
+    doTest(
+      "Bundle-SymbolicName: t0\n" +
+      "Bundle-Version: 1.0.0\n" +
+      "Require-Bundle: t0\n"
     );
   }
 

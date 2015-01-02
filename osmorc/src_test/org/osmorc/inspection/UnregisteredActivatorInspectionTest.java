@@ -2,10 +2,10 @@ package org.osmorc.inspection;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiFile;
-import org.osmorc.AbstractOsgiTestCase;
+import org.osmorc.LightOsgiFixtureTestCase;
 import org.osmorc.i18n.OsmorcBundle;
 
-public class UnregisteredActivatorInspectionTest extends AbstractOsgiTestCase {
+public class UnregisteredActivatorInspectionTest extends LightOsgiFixtureTestCase {
   public void testPositive() {
     doTest(
       "package pkg;\n" +

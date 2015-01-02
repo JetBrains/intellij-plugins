@@ -1,8 +1,8 @@
 package org.osmorc.inspection;
 
-import org.osmorc.AbstractOsgiTestCase;
+import org.osmorc.LightOsgiFixtureTestCase;
 
-public class ClassInDefaultPackageInspectionTest extends AbstractOsgiTestCase {
+public class ClassInDefaultPackageInspectionTest extends LightOsgiFixtureTestCase {
   public void testNegative() {
     doTest("package pkg;\npublic class C { }");
   }

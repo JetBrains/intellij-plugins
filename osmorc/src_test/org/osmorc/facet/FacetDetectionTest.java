@@ -22,33 +22,25 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.facet;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.TestDialog;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
-import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
-import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
-import com.intellij.testFramework.fixtures.TempDirTestFixture;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.util.indexing.FileContentImpl;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.osmorc.HeavyOsgiFixtureTestCase;
 import org.osmorc.SwingRunner;
-import org.osmorc.TestUtil;
 
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -56,106 +48,66 @@ import static org.junit.Assert.assertThat;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 @RunWith(SwingRunner.class)
-public class FacetDetectionTest {
-    private final TempDirTestFixture myTempDirFixture;
-    private final IdeaProjectTestFixture fixture;
-    private TestDialog orgTestDialog;
+public class FacetDetectionTest extends HeavyOsgiFixtureTestCase {
+  @Test
+  public void testDetectFacet() {
+    Module t0 = ModuleManager.getInstance(myFixture.getProject()).findModuleByName("t0");
+    assertNotNull(t0);
 
-    public FacetDetectionTest() {
-        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-        fixture = TestUtil.createTestFixture();
+    OsmorcFrameworkDetector detector = new OsmorcFrameworkDetector();
+    ElementPattern<FileContent> filter = detector.createSuitableFilePattern();
+    VirtualFile manifestFile = myTempDirFixture.getFile("t0/src/META-INF/MANIFEST.MF");
+    assertThat(filter.accepts(FileContentImpl.createByFile(manifestFile)), equalTo(true));
+
+    OsmorcFacetConfiguration facetConfiguration = detector.createConfiguration(Collections.singletonList(manifestFile));
+    assertNotNull(facetConfiguration);
+    assertThat(facetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
+    assertThat(facetConfiguration.isUseProjectDefaultManifestFileLocation(), equalTo(false));
+
+    OsmorcFacet facet = OsmorcFacetType.getInstance().createFacet(t0, "OSGi", facetConfiguration, null);
+    ModifiableRootModel model = ModuleRootManager.getInstance(t0).getModifiableModel();
+    try {
+      detector.setupFacet(facet, model);
+      assertThat(facetConfiguration.getManifestLocation(), equalTo("src/META-INF/MANIFEST.MF"));
     }
-
-    @Before
-    public void setUp() throws Exception {
-        myTempDirFixture.setUp();
-        fixture.setUp();
-
-        orgTestDialog = Messages.setTestDialog(new TestDialog() {
-
-          public int show(String message) {
-            return DialogWrapper.CANCEL_EXIT_CODE;
-          }
-        });
-        TestUtil.loadModules("FacetDetectionTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
+    finally {
+      model.dispose();
     }
+  }
 
-    @After
-    public void tearDown() throws Exception {
-        Messages.setTestDialog(orgTestDialog);
-        fixture.tearDown();
-        myTempDirFixture.tearDown();
+  @Test
+  public void testDetectBundlorFacet() {
+    ModuleManager moduleManager = ModuleManager.getInstance(myFixture.getProject());
+    Module t2 = moduleManager.findModuleByName("t2");
+    assertNotNull(t2);
+
+    OsmorcFrameworkDetector detector = new OsmorcFrameworkDetector();
+    ElementPattern<FileContent> filter = detector.createSuitableFilePattern();
+    VirtualFile manifestFile = myTempDirFixture.getFile("t2/src/META-INF/template.mf");
+    assertThat(filter.accepts(FileContentImpl.createByFile(manifestFile)), equalTo(true));
+
+    OsmorcFacetConfiguration facetConfiguration = detector.createConfiguration(Collections.singletonList(manifestFile));
+    assertNotNull(facetConfiguration);
+    assertThat(facetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
+    assertThat(facetConfiguration.isUseProjectDefaultManifestFileLocation(), equalTo(false));
+
+    OsmorcFacet facet = OsmorcFacetType.getInstance().createFacet(t2, "OSGi", facetConfiguration, null);
+    ModifiableRootModel model = ModuleRootManager.getInstance(t2).getModifiableModel();
+    try {
+      detector.setupFacet(facet, model);
+      assertThat(facetConfiguration.getManifestLocation(), equalTo(""));
+      assertThat(facetConfiguration.getBundlorFileLocation(), equalTo("src/META-INF/template.mf"));
+      assertThat(facetConfiguration.isUseBundlorFile(), equalTo(true));
     }
-
-    @SuppressWarnings({"unchecked", "ConstantConditions"})
-    @Test
-    public void testDetectFacet() {
-        ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
-        Module t0 = moduleManager.findModuleByName("t0");
-
-        OsmorcFrameworkDetector detector = new OsmorcFrameworkDetector();
-
-        ElementPattern<FileContent> filter = detector.createSuitableFilePattern();
-
-        VirtualFile manifestFile = myTempDirFixture.getFile("t0/src/META-INF/MANIFEST.MF");
-
-        assertThat(filter.accepts(FileContentImpl.createByFile(manifestFile)), equalTo(true));
-
-        OsmorcFacetConfiguration osmorcFacetConfiguration = detector.createConfiguration(Collections.singletonList(manifestFile));
-        assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
-        assertThat(osmorcFacetConfiguration.isUseProjectDefaultManifestFileLocation(), equalTo(false));
-
-        OsmorcFacet osmorcFacet = OsmorcFacetType.getInstance().createFacet(t0, "OSGi", osmorcFacetConfiguration, null);
-
-        ModifiableRootModel model = ModuleRootManager.getInstance(t0).getModifiableModel();
-        try {
-            detector.setupFacet(osmorcFacet, model);
-
-            assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo("src/META-INF/MANIFEST.MF"));
-        }
-        finally {
-            model.dispose();
-        }
+    finally {
+      model.dispose();
     }
+  }
 
-     @SuppressWarnings({"unchecked", "ConstantConditions"})
-    @Test
-    public void testDetectBundlorFacet() {
-        ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
-        Module t2 = moduleManager.findModuleByName("t2");
-        final OsmorcFrameworkDetector detector = new OsmorcFrameworkDetector();
-
-        ElementPattern<FileContent> filter = detector.createSuitableFilePattern();
-
-        VirtualFile manifestFile = myTempDirFixture.getFile("t2/src/META-INF/template.mf");
-
-        assertThat(filter.accepts(FileContentImpl.createByFile(manifestFile)), equalTo(true));
-
-        OsmorcFacetConfiguration osmorcFacetConfiguration = detector.createConfiguration(Collections.singletonList(manifestFile));
-        assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
-        assertThat(osmorcFacetConfiguration.isUseProjectDefaultManifestFileLocation(), equalTo(false));
-
-        OsmorcFacet osmorcFacet = OsmorcFacetType.getInstance().createFacet(t2, "OSGi", osmorcFacetConfiguration, null);
-
-        ModifiableRootModel model = ModuleRootManager.getInstance(t2).getModifiableModel();
-        try {
-            detector.setupFacet(osmorcFacet, model);
-
-            assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(""));
-            assertThat(osmorcFacetConfiguration.getBundlorFileLocation(), equalTo("src/META-INF/template.mf"));
-            assertThat(osmorcFacetConfiguration.isUseBundlorFile(), equalTo(true));
-
-        }
-        finally {
-            model.dispose();
-        }
-    }
-    @SuppressWarnings({"unchecked"})
-    @Test
-    public void testDetectNoFacet() {
-        ElementPattern<FileContent> filter = new OsmorcFrameworkDetector().createSuitableFilePattern();
-        VirtualFile manifestFile = myTempDirFixture.getFile("t1/src/META-INF/MANIFEST.MF");
-
-        assertThat(filter.accepts(FileContentImpl.createByFile(manifestFile)), equalTo(false));
-    }
+  @Test
+  public void testDetectNoFacet() {
+    ElementPattern<FileContent> filter = new OsmorcFrameworkDetector().createSuitableFilePattern();
+    VirtualFile manifestFile = myTempDirFixture.getFile("t1/src/META-INF/MANIFEST.MF");
+    assertThat(filter.accepts(FileContentImpl.createByFile(manifestFile)), equalTo(false));
+  }
 }

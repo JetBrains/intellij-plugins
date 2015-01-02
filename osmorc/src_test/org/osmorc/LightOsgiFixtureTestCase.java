@@ -17,7 +17,7 @@ import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
 
-public abstract class AbstractOsgiTestCase extends LightCodeInsightFixtureTestCase {
+public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTestCase {
   private static final DefaultLightProjectDescriptor OSGi_DESCRIPTOR = new DefaultLightProjectDescriptor() {
     @Override
     public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
@@ -38,9 +38,18 @@ public abstract class AbstractOsgiTestCase extends LightCodeInsightFixtureTestCa
     }
   };
 
+  protected OsmorcFacet myFacet;
+
   @NotNull
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return OSGi_DESCRIPTOR;
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    myFacet = OsmorcFacet.getInstance(myModule);
+    assertNotNull(myFacet);
   }
 }

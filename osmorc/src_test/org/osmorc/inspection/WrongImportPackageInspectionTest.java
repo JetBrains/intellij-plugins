@@ -1,8 +1,8 @@
 package org.osmorc.inspection;
 
-import org.osmorc.AbstractOsgiTestCase;
+import org.osmorc.LightOsgiFixtureTestCase;
 
-public class WrongImportPackageInspectionTest extends AbstractOsgiTestCase {
+public class WrongImportPackageInspectionTest extends LightOsgiFixtureTestCase {
   public void test() {
     doTest(
       "Import-Package: org.osgi.framework,\n" +

@@ -1,8 +1,8 @@
 package org.osmorc.inspection;
 
-import org.osmorc.AbstractOsgiTestCase;
+import org.osmorc.LightOsgiFixtureTestCase;
 
-public class UnknownManifestPackageInspectionTest extends AbstractOsgiTestCase {
+public class UnknownManifestPackageInspectionTest extends LightOsgiFixtureTestCase {
   public void test() {
     doTest("Import-Package: org.osgi.*, <error descr=\"Unknown package\">wtf</error>.<error descr=\"Unknown package\">acme</error>\n");
   }

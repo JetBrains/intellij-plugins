@@ -2,9 +2,9 @@ package org.osmorc.util;
 
 import com.intellij.openapi.command.WriteCommandAction;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
-import org.osmorc.AbstractOsgiTestCase;
+import org.osmorc.LightOsgiFixtureTestCase;
 
-public class OsgiPsiUtilTest extends AbstractOsgiTestCase {
+public class OsgiPsiUtilTest extends LightOsgiFixtureTestCase {
   public void testSetHeaderInEmptyManifest() {
     doTest(
       "",

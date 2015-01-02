@@ -22,50 +22,46 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.osmorc.make;
 
-package org.osmorc.impl;
-
-import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
-import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
-import com.intellij.testFramework.fixtures.TempDirTestFixture;
-import org.junit.After;
-import org.junit.Before;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.util.Comparing;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.osmorc.HeavyOsgiFixtureTestCase;
 import org.osmorc.SwingRunner;
-import org.osmorc.TestUtil;
+
+import java.util.Arrays;
+import java.util.Comparator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
- * In 0.5.0 a bundle requiring itself produced  the exception reported in OSMORC-27 . Osmorc now ignores such
- * dependencies during dependency synchronization and doesn't try to add a dependency from a module to itself.
+ * Tests that the menu group is properly created and that it will list the jar files for all modules.
  *
- * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 @RunWith(SwingRunner.class)
-public class BundleRequiresItselfTest {
-    public BundleRequiresItselfTest() throws Exception {
-        fixture = TestUtil.createTestFixture();
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-        myTempDirFixture.setUp();
-        fixture.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        fixture.tearDown();
-        myTempDirFixture.tearDown();
-    }
-
-    @Test
-    public void testBug() throws Exception {
-        TestUtil.loadModules("BundleRequiresItselfTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
-        TestUtil.createOsmorcFacetForAllModules(fixture.getProject());
-    }
-
-    private final IdeaProjectTestFixture fixture;
-    private TempDirTestFixture myTempDirFixture;
+public class ShowGeneratedManifestTest extends HeavyOsgiFixtureTestCase {
+  @Test
+  public void testMenuGroup() {
+    ViewGeneratedManifestGroup group = (ViewGeneratedManifestGroup)ActionManager.getInstance().getAction("osmorc.viewGeneratedManifests");
+    assertNotNull(group);
+    @SuppressWarnings("deprecation") DataContext context = DataManager.getInstance().getDataContext();
+    AnActionEvent event = new AnActionEvent(null, context, "", group.getTemplatePresentation(), ActionManager.getInstance(), 0);
+    AnAction[] actions = group.getChildren(event);
+    assertEquals(3, actions.length);
+    Arrays.sort(actions, new Comparator<AnAction>() {
+      @Override
+      public int compare(AnAction o1, AnAction o2) {
+        return Comparing.compare(o1.getTemplatePresentation().getText(), o2.getTemplatePresentation().getText());
+      }
+    });
+    assertEquals("[t0] t0.jar", actions[0].getTemplatePresentation().getText());
+  }
 }

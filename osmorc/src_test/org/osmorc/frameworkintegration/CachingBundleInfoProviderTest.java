@@ -29,7 +29,7 @@ import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.osmorc.TestUtil;
+import org.osmorc.OsgiTestUtil;
 
 import java.io.File;
 
@@ -48,7 +48,7 @@ public class CachingBundleInfoProviderTest {
   @Before
   public void setUp() throws Exception {
     myTempDir = FileUtil.createTempDirectory("osgi.", ".test");
-    TestUtil.extractProject("CachingBundleInfoProviderTest", myTempDir.getPath());
+    OsgiTestUtil.extractProject("CachingBundleInfoProviderTest", myTempDir.getPath());
     myDirBundle = new File(myTempDir, "t0/dirbundle").getPath();
     myInvalidDirBundle = new File(myTempDir, "t0/invaliddirbundle").getPath();
     myJarBundle = new File(myTempDir, "t0/jarbundle.jar").getPath();

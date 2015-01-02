@@ -22,39 +22,33 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.make;
 
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Action group, which holds references to the jar files that are created by
  *
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
  */
 public class ViewGeneratedManifestGroup extends ActionGroup {
   private static final AnAction[] EMPTY_ACTIONS_LIST = new AnAction[0];
 
   @Override
   public void update(AnActionEvent e) {
-    // IDEA-79063 only show this when there are actually osmorc facets available.
     boolean enabled = false;
-    Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+    Project project = e.getProject();
     if (project != null) {
       for (Module m : ModuleManager.getInstance(project).getModules()) {
         if (OsmorcFacet.hasOsmorcFacet(m)) {
@@ -70,26 +64,20 @@ public class ViewGeneratedManifestGroup extends ActionGroup {
   @Override
   public AnAction[] getChildren(@Nullable AnActionEvent e) {
     if (e == null) return EMPTY_ACTIONS_LIST;
-    @Nullable Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
-    if (project == null) {
-      return EMPTY_ACTIONS_LIST;
-    }
+    Project project = e.getProject();
+    if (project == null) return EMPTY_ACTIONS_LIST;
 
-    final List<AnAction> actions = new ArrayList<AnAction>();
-    final Module[] modules = ModuleManager.getInstance(project).getModules();
-    for (Module module : modules) {
-      if (OsmorcFacet.hasOsmorcFacet(module)) {
-        OsmorcFacet facet = OsmorcFacet.getInstance(module);
-        if (facet == null) continue;
+    List<AnAction> actions = null;
+    for (Module module : ModuleManager.getInstance(project).getModules()) {
+      OsmorcFacet facet = OsmorcFacet.getInstance(module);
+      if (facet != null) {
         String jarFile = facet.getConfiguration().getJarFileLocation();
-        File theFile = new File(jarFile);
-//                if (theFile.exists()) {
         String fileName = "[" + module.getName() + "] " + jarFile.substring(jarFile.lastIndexOf('/') + 1);
         ViewManifestAction action = new ViewManifestAction(fileName, jarFile);
+        if (actions == null) actions = ContainerUtil.newSmartList();
         actions.add(action);
-//                }
       }
     }
-    return actions.toArray(new AnAction[actions.size()]);
+    return actions == null ? EMPTY_ACTIONS_LIST : actions.toArray(new AnAction[actions.size()]);
   }
 }
