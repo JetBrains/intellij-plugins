@@ -42,6 +42,34 @@ public class DartDocUtil {
       builder.append(StringUtil.escapeXml(metadata.getText())).append("<br/>");
     }
 
+    appendSignature(namedComponent, builder);
+
+    builder.append("</code>");
+
+    final String docText = getDocumentationText(namedComponent);
+    if (docText != null) {
+      builder.append("<br/><br/>");
+      final MarkdownProcessor processor = new MarkdownProcessor();
+      builder.append(processor.markdown(docText));
+    }
+
+    return builder.toString();
+  }
+
+  @Nullable
+  public static String getSignature(@NotNull PsiElement element) {
+    if (!(element instanceof DartComponent)) {
+      element = element.getParent();
+    }
+    if (element instanceof DartComponent) {
+      final StringBuilder sb = new StringBuilder();
+      appendSignature((DartComponent)element, sb);
+      if (sb.length() > 0) return sb.toString();
+    }
+    return null;
+  }
+
+  private static void appendSignature(final DartComponent namedComponent, final StringBuilder builder) {
     if (namedComponent instanceof DartClass) {
       appendClassSignature(builder, (DartClass)namedComponent);
     }
@@ -74,17 +102,10 @@ public class DartDocUtil {
       builder.append("set ");
       appendFunctionSignature(builder, namedComponent, ((DartSetterDeclaration)namedComponent).getReturnType());
     }
-
-    builder.append("</code>");
-
-    final String docText = getDocumentationText(namedComponent);
-    if (docText != null) {
-      builder.append("<br/><br/>");
-      final MarkdownProcessor processor = new MarkdownProcessor();
-      builder.append(processor.markdown(docText));
+    else if (namedComponent instanceof DartEnumConstantDeclaration) {
+      builder.append(((DartEnumDefinition)namedComponent.getParent()).getName()).append(" ");
+      builder.append("<b>").append(namedComponent.getName()).append("</b>");
     }
-
-    return builder.toString();
   }
 
 
@@ -195,7 +216,7 @@ public class DartDocUtil {
     final DartClass dartClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class);
     if (dartClass != null) {
       builder.append(dartClass.getName());
-      builder.append("<br/><br/>");
+      builder.append("<br/>");
     }
   }
 

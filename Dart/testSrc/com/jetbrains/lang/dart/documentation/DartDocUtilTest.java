@@ -10,7 +10,7 @@ import static com.jetbrains.lang.dart.util.DartPresentableUtil.RIGHT_ARROW;
 
 public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
-  private void doTest(String expectedDoc, String fileContents) throws Exception {
+  private void doTest(String expectedDoc, String fileContents) {
     final int caretOffset = fileContents.indexOf("<caret>");
     assertTrue(caretOffset != -1);
     final String realContents = fileContents.substring(0, caretOffset) + fileContents.substring(caretOffset + "<caret>".length());
@@ -139,37 +139,37 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testFieldSig1() throws Exception {
-    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/>int <b>y</b></code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/>int <b>y</b></code>",
            "class Z { <caret>int y = 42; }");
   }
 
   public void testFieldSig2() throws Exception {
-    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/>int <b>y</b></code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/>int <b>y</b></code>",
            "class Z { <caret>int y; }");
   }
 
   public void testMethodSig1() throws Exception {
-    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/><b>y</b>() " + RIGHT_ARROW + " int</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><b>y</b>() " + RIGHT_ARROW + " int</code>",
            "class Z { <caret>int y() => 42; }");
   }
 
   public void testNamedConstructorSig() throws Exception {
-    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/><b>Z.</b><b>z</b>() " + RIGHT_ARROW + " Z</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><b>Z.</b><b>z</b>() " + RIGHT_ARROW + " Z</code>",
            "class Z { <caret>Z.z(); }");
   }
 
   public void testConstructorSig() throws Exception {
-    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/><b>Z</b>() " + RIGHT_ARROW + " Z</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><b>Z</b>() " + RIGHT_ARROW + " Z</code>",
            "class Z { <caret>Z(); }");
   }
 
   public void testGetterSig() throws Exception {
-    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/>get <b>x</b>() " + RIGHT_ARROW + " int</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/>get <b>x</b>() " + RIGHT_ARROW + " int</code>",
            "class Z { <caret>int get x => 0; }");
   }
 
   public void testSetterSig() throws Exception {
-    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/><br/>set <b>x</b>(int x) " + RIGHT_ARROW + " void</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>Z<br/>set <b>x</b>(int x) " + RIGHT_ARROW + " void</code>",
            "class Z { <caret>void set x(int x) { } }");
   }
 
@@ -277,7 +277,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testMethodMultilineDoc() throws Exception {
-    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>A<br/><br/><b>foo</b>() " + RIGHT_ARROW + " void</code>" +
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>A<br/><b>foo</b>() " + RIGHT_ARROW + " void</code>" +
            "<br/><br/><p>     doc1\n" +
            "doc2\n" +
            " doc3</p>\n" +
@@ -304,7 +304,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testMethodSingleLineDocs() throws Exception {
-    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>A<br/><br/><b>foo</b>() " + RIGHT_ARROW + " void</code>" +
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>A<br/><b>foo</b>() " + RIGHT_ARROW + " void</code>" +
            "<br/><br/><p>doc1\n" +
            "doc2</p>\n",
 
