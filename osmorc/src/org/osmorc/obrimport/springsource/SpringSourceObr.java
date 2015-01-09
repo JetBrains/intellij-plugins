@@ -22,23 +22,16 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.obrimport.springsource;
 
-import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.util.io.StreamUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.util.io.UrlConnectionUtil;
+import com.intellij.util.io.HttpRequests;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.obrimport.MavenRepository;
 import org.osmorc.obrimport.Obr;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +39,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Implementation of {@link org.osmorc.obrimport.Obr} for the springsource bundle repository.
+ * Implementation of {@link Obr} for the springsource bundle repository.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
  */
 public class SpringSourceObr implements Obr {
 
@@ -62,30 +54,27 @@ public class SpringSourceObr implements Obr {
   }
 
   @NotNull
-  public ObrMavenResult[] queryForMavenArtifact(@NotNull String queryString,
-                                                @NotNull ProgressIndicator progressIndicator) throws
-                                                                                              IOException {
+  public ObrMavenResult[] queryForMavenArtifact(@NotNull String queryString, @NotNull ProgressIndicator indicator) throws IOException {
     try {
       // TODO: make this more robust against URL changes.
       List<ObrMavenResult> result = new ArrayList<ObrMavenResult>();
-      progressIndicator.setText("Connecting to " + getDisplayName() + "...");
+
+      indicator.setText("Connecting to " + getDisplayName() + "...");
       // http://www.springsource.com/repository/app/search?query=log4j
       // http://www.springsource.com/repository/app/bundle/version/detail?name=com.springsource.org.apache.log4j&version=1.2.15&searchType=bundlesByName&searchQuery=log4j
       String url = "http://www.springsource.com/repository/app/search?query=" + URLEncoder.encode(queryString, "utf-8");
-      InputStream is = getInputStream(url, progressIndicator);
-      String contents = StreamUtil.readText(is, CharsetToolkit.UTF8_CHARSET);
+      String contents = HttpRequests.request(url).readString(indicator);
 
-      progressIndicator.setText("Search completed. Getting results.");
-      progressIndicator.checkCanceled();
+      indicator.setText("Search completed. Getting results.");
+      indicator.checkCanceled();
+
       // now it's happy regexp-parsing
-
       // first, get the results fragment, it's a single div
       // <div id="results_fragment"> ... content ... </div> and no divs inbetween.
       // we can do this with cheap indexof
       int start = contents.indexOf("<div id=\"results-fragment\">");
       int end = contents.indexOf("</div>", start);
       contents = contents.substring(start, end);
-      is.close();
 
       // next up, we extract all links in there which leads us to the search results
       // <li>*whitespace*<a href="url">Package Name</a>Package Version*whitespace*</li>
@@ -99,17 +88,14 @@ public class SpringSourceObr implements Obr {
         // replace &amp; with & 
         detailUrl = detailUrl.replace("&amp;", "&");
 
-
         String packageName = m.group(2);
-        progressIndicator.setText("Loading details for result " + packageName + "...");
+        indicator.setText("Loading details for result " + packageName + "...");
         // read the detail page.
         // the detail url always starts with a / so we can just concatenate it
-        is = getInputStream("http://www.springsource.com" + detailUrl, progressIndicator);
-        String detail = StreamUtil.readText(is, CharsetToolkit.UTF8_CHARSET);
-        is.close();
-        progressIndicator.checkCanceled();
+        String detail = HttpRequests.request("http://www.springsource.com" + detailUrl).readString(indicator);
+        indicator.checkCanceled();
 
-        progressIndicator.setText("Details retrieved. Getting detail information...");
+        indicator.setText("Details retrieved. Getting detail information...");
         // we have the maven dependency in some nice html gibberish in there
         // &lt;groupId&gt;org.apache.log4j&lt;/groupId&gt;
         // &lt;artifactId&gt;com.springsource.org.apache.log4j&lt;/artifactId&gt;
@@ -149,43 +135,16 @@ public class SpringSourceObr implements Obr {
         // finally add the result to the list
         result.add(new ObrMavenResult(groupId, artifactId, version, classifier, this));
       }
-      progressIndicator.setText("Done. " + result.size() + " artifacts found.");
+      indicator.setText("Done. " + result.size() + " artifacts found.");
       return result.toArray(new ObrMavenResult[result.size()]);
     }
     catch (ProcessCanceledException ignored) {
-      progressIndicator.setText("Canceled.");
+      indicator.setText("Canceled.");
       return new ObrMavenResult[0];
     }
     finally {
-      progressIndicator.setIndeterminate(false);
+      indicator.setIndeterminate(false);
     }
-  }
-
-  /**
-   * Helper function which gets an input stream for an url. It handles the process of creating a connection and and
-   * throws the appropriate exceptions should something not work out as expected.
-   *
-   * @param url               the url to be loaded
-   * @param progressIndicator a progress indicator
-   * @return
-   * @throws IOException
-   */
-  private static InputStream getInputStream(@NotNull String url, @NotNull ProgressIndicator progressIndicator)
-    throws IOException {
-    HttpURLConnection urlConnection =
-      (HttpURLConnection)new URL(url).openConnection();
-    InputStream is = UrlConnectionUtil.getConnectionInputStreamWithException(urlConnection, progressIndicator);
-    int j = urlConnection.getResponseCode();
-    switch (j) {
-      default:
-        //noinspection UnresolvedPropertyKey
-        throw new IOException(IdeBundle.message("error.connection.failed.with.http.code.N", j));
-
-      case 200:
-        progressIndicator.setIndeterminate(urlConnection.getContentLength() == -1);
-        break;
-    }
-    return is;
   }
 
   @NotNull
