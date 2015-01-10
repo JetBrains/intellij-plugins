@@ -26,39 +26,31 @@
 <idea-plugin version="2">
   <id>Osmorc</id>
   <name>Osmorc</name>
-  <version>1.4.4</version>
+  <version>1.4.6</version>
   <description>This plugin adds support for the development of OSGi-based applications to IDEA</description>
   <category>Framework integration</category>
   <vendor>JetBrains</vendor>
+  <idea-version since-build="140.0"/>
 
   <change-notes>
     <![CDATA[
+      <b>Version 1.4.6</b>
+      <ul>
+        <li>Compatible with IDEA 14.1</li>
+        <li>Bnd/bndtools project import (work in progress)</li>
+      </ul>
+
+      <b>Version 1.4.5</b>
+      <ul>
+        <li>Compatible with IDEA 14</li>
+        <li>Minor fixes</li>
+      </ul>
+
       <b>Version 1.4.4</b>
       <ul>
         <li>Compatible with IDEA 13</li>
         <li>Framework runners reworked to support modern versions</li>
         <li>PAX Runner dropped</li>
-      </ul>
-
-      <b>Version 1.4.3</b>
-      <ul><li>Compatible with IDEA 12</li></ul>
-
-      <b>Version 1.4.2</b>
-      <ul><li>Compatible with IDEA 11.1</li></ul>
-
-      <b>Version 1.4.1</b>
-      <ul>
-        <li>
-          Greatly improved Maven integration:
-          <ul>
-            <li>Added support for Embed-Dependency</li>
-            <li>Added support for {maven-dependencies} placeholder</li>
-            <li>Added support for Include-Resources</li>
-            <li>Added support for {maven-resources} placeholder</li>
-            <li>OSGi facets can now be excluded from Maven synchronization after the initial import</li>
-          </ul>
-        </li>
-        <li>Fixed an issue preventing bnd-based projects from being packaged correctly.</li>
       </ul>
     ]]>
   </change-notes>
