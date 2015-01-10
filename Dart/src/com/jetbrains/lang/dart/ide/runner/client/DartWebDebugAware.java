@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.runner.client;
 
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -13,16 +12,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 final class DartWebDebugAware extends JavaScriptDebugAware {
-  @Nullable
   @Override
-  public FileType getFileType() {
-    return null;
-  }
-
   public boolean isOnlySourceMappedBreakpoints() {
     return false;
   }
 
+  @Override
   @Nullable
   public XLineBreakpointType<?> getBreakpointTypeClass(@NotNull final Project project) {
     return XBreakpointType.EXTENSION_POINT_NAME.findExtension(DartLineBreakpointType.class);
