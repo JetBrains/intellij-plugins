@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@ package com.intellij.struts2.graph.fileEditor;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -35,7 +36,7 @@ import java.util.Set;
  *
  * @author Yann C&eacute;bron
  */
-public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvider {
+public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvider implements DumbAware {
 
   public boolean accept(@NotNull final Project project, @NotNull final VirtualFile file) {
     if (!file.isValid()) {
