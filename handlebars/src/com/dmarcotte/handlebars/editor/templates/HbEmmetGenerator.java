@@ -3,13 +3,13 @@ package com.dmarcotte.handlebars.editor.templates;
 import com.dmarcotte.handlebars.HbLanguage;
 import com.intellij.codeInsight.template.emmet.generators.XmlZenCodingGeneratorImpl;
 import com.intellij.lang.Language;
-import com.intellij.openapi.options.UnnamedConfigurable;
+import com.intellij.openapi.options.Configurable;
 import org.jetbrains.annotations.Nullable;
 
 public class HbEmmetGenerator extends XmlZenCodingGeneratorImpl {
   @Nullable
   @Override
-  public UnnamedConfigurable createConfigurable() {
+  public Configurable createConfigurable() {
     return null;
   }
 
