@@ -86,6 +86,10 @@ public class DartAnalysisServerService {
     public void flushedResults(List<String> files) {
     }
 
+    @Override
+    public void requestError(final RequestError requestError) {
+    }
+
     public void serverConnected() {
     }
 
@@ -97,7 +101,8 @@ public class DartAnalysisServerService {
       }
     }
 
-    public void serverStatus(AnalysisStatus status) {
+    @Override
+    public void serverStatus(final AnalysisStatus analysisStatus, final PubStatus pubStatus) {
     }
   };
 
@@ -290,7 +295,7 @@ public class DartAnalysisServerService {
 
       try {
         myServer.start();
-        myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true));
+        myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
         myServer.addAnalysisServerListener(myListener);
         LOG.info("Server started, see status at http://localhost:" + port + "/status");
       }
@@ -303,7 +308,7 @@ public class DartAnalysisServerService {
 
   public boolean serverReadyForRequest(@NotNull final Project project, @NotNull final String sdkHome) {
     synchronized (myLock) {
-      if (myServer == null || !sdkHome.equals(mySdkHome)) {
+      if (myServer == null || !sdkHome.equals(mySdkHome) || !myServer.isSocketOpen()) {
         stopServer();
         startServer(sdkHome);
       }
