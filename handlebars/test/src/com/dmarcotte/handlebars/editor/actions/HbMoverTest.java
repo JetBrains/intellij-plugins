@@ -1,6 +1,5 @@
 package com.dmarcotte.handlebars.editor.actions;
 
-import com.dmarcotte.handlebars.config.HbConfig;
 import com.dmarcotte.handlebars.util.HbTestUtils;
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementUpAction;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -15,26 +14,18 @@ import java.io.File;
 
 public class HbMoverTest extends LightPlatformCodeInsightFixtureTestCase {
 
+  @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
+  public HbMoverTest() {
+    PlatformTestCase.initPlatformLangPrefix();
+  }
+
   public void testMoveXmlWhenOpenHtmlAsHandlebars() throws Exception {
-    boolean oldValue = HbConfig.shouldOpenHtmlAsHandlebars(getProject());
-
-    HbConfig.setShouldOpenHtmlAsHandlebars(true, getProject());
-
-    try {
-      doTest("hbs");
-    }
-    finally {
-      HbConfig.setShouldOpenHtmlAsHandlebars(oldValue, getProject());
-    }
+    HbTestUtils.setOpenHtmlAsHandlebars(true, getProject(), getTestRootDisposable());
+    doTest("hbs");
   }
 
   public void testMoveHbsTag() throws Exception {
     doTest("hbs");
-  }
-
-
-  public HbMoverTest() {
-    PlatformTestCase.initPlatformLangPrefix();
   }
 
   private void doTest(String ext) throws Exception {
