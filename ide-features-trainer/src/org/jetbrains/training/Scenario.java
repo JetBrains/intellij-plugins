@@ -45,6 +45,10 @@ public class Scenario {
             } else if(element.getName().equals("Action")) {
                 s = (element.getAttribute("action").getValue().toString());
                 System.out.println("action = \"" + s + "\"");
+            } else if(element.getName().equals("MoveCaret")) {
+                s =  (element.getAttribute("offset").getValue().toString());
+                int offset = Integer.parseInt(s);
+                System.out.println("offset: " + offset);
             } else {
                 System.out.println(element.getContent());
             }
