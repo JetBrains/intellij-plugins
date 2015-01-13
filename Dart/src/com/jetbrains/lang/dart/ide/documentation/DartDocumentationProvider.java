@@ -24,7 +24,7 @@ public class DartDocumentationProvider implements DocumentationProvider {
 
   @Override
   public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
-    return null;
+    return DartDocUtil.getSignature(element);
   }
 
   @Override
