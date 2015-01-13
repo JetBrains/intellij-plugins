@@ -1,6 +1,11 @@
 package org.jetbrains.training;
 
+import com.intellij.diagnostic.DefaultIdeaErrorLogger;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
@@ -43,7 +48,12 @@ public class ActionsRecorder implements Disposable {
 
             @Override
             public void documentChanged(DocumentEvent event) {
+
+//                Notification notification = new Notification("IDEA Global Help", "document changed", "document changed", NotificationType.INFORMATION);
+//                Notifications.Bus.notify(notification);
+
                 if (isTaskSolved(document, target)) {
+                    System.err.println("Task is solved!");
                     Messages.showMessageDialog(project, "Congratulations, this task has been solved!", "Information", Messages.getInformationIcon());
                 }
             }
@@ -56,7 +66,8 @@ public class ActionsRecorder implements Disposable {
         if (disposed) return false;
 
         List<String> expected = computeTrimmedLines(target);
-        List<String> actual = computeTrimmedLines(current.getText().toString());
+        List<String> actual = computeTrimmedLines(current.getText());
+        System.err.println("<<actual:" + actual.toString() + ">>");
 
         return (expected.equals(actual));
     }
@@ -66,7 +77,12 @@ public class ActionsRecorder implements Disposable {
 
         for (String it :StringUtil.splitByLines(s) ) {
             it.trim();
-            ls.add(it);
+
+            if (it.equals("")){
+                //ls.add("NULL");
+            } else {
+                ls.add(it);
+            }
         }
 
         return ls;
