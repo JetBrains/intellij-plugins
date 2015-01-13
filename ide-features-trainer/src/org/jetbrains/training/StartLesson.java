@@ -71,9 +71,6 @@ public class StartLesson extends AnAction {
 
             recorder.startRecording();
 
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                @Override
-                public void run() {
                     //final Editor editor1 = FileEditorManager.getInstance(e.getProject()).openTextEditor(new OpenFileDescriptor(e.getProject(), vf), true);
                     final Editor editor1 = editor;
 
@@ -134,7 +131,7 @@ public class StartLesson extends AnAction {
 //                                        synchronized (editor) {
 //                                            editor.wait();
 //                                        }
-                                    }else if(element.getName().equals("MoveCaret")) {
+                                    } else if(element.getName().equals("MoveCaret")) {
                                         final String offsetString =(element.getAttribute("offset").getValue().toString());
                                         final int offset = Integer.parseInt(offsetString);
                                         System.err.println("offset is:" + offset);
@@ -154,6 +151,7 @@ public class StartLesson extends AnAction {
                                             }
                                         });
                                     } else {
+
                                     }
                                 }
 
@@ -162,16 +160,8 @@ public class StartLesson extends AnAction {
                             }
                         }
 
-
-
                     };
                     roboThread.start();
-
-
-
-                }
-            });
-            System.err.println("RunWriteAction is closed!");
 
 
         } catch (IOException e1) {
