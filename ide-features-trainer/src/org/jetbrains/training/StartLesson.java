@@ -40,7 +40,6 @@ public class StartLesson extends AnAction {
 
     private boolean isRecording = false;
 
-
     public void actionPerformed(final AnActionEvent e) {
 
         try {
@@ -60,6 +59,8 @@ public class StartLesson extends AnAction {
 
             final Scenario scn = new Scenario("SampleScenario.xml");
 
+//            InfoPanel infoPanel = new InfoPanel(e.getProject());
+
             isRecording = true;
             Disposer.register(recorder, new Disposable() {
                 @Override
@@ -68,11 +69,13 @@ public class StartLesson extends AnAction {
                 }
             });
 
+            recorder.startRecording();
+
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                 @Override
                 public void run() {
-                    recorder.startRecording();
-                    final Editor editor1 = FileEditorManager.getInstance(e.getProject()).openTextEditor(new OpenFileDescriptor(e.getProject(), vf), true);
+                    //final Editor editor1 = FileEditorManager.getInstance(e.getProject()).openTextEditor(new OpenFileDescriptor(e.getProject(), vf), true);
+                    final Editor editor1 = editor;
 
                     final Thread roboThread = new Thread("RoboThread") {
                         @Override
@@ -95,7 +98,7 @@ public class StartLesson extends AnAction {
                                         final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
                                         boolean isTyping = true;
                                         final int[] i = {0};
-
+                                        final int initialOffset = editor1.getCaretModel().getOffset();
 
                                         while (isTyping) {
                                             Thread.sleep(30);
@@ -103,8 +106,8 @@ public class StartLesson extends AnAction {
                                             WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    editor1.getDocument().insertString(finalI, finalText.subSequence(i[0], i[0] + 1));
-                                                    editor1.getCaretModel().moveToOffset(finalI + 1);
+                                                    editor1.getDocument().insertString(finalI + initialOffset, finalText.subSequence(i[0], i[0] + 1));
+                                                    editor1.getCaretModel().moveToOffset(finalI + 1 + initialOffset);
                                                 }
                                             });
                                             isTyping = (++i[0] < finalText.length());
@@ -128,16 +131,26 @@ public class StartLesson extends AnAction {
                                                 performAction(actionType, editor);
                                             }
                                         });
-                                        synchronized (editor) {
-                                            editor.wait();
-                                        }
+//                                        synchronized (editor) {
+//                                            editor.wait();
+//                                        }
+                                    }else if(element.getName().equals("MoveCaret")) {
+                                        final String offsetString =(element.getAttribute("offset").getValue().toString());
+                                        final int offset = Integer.parseInt(offsetString);
+                                        System.err.println("offset is:" + offset);
+
+                                        WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                editor1.getCaretModel().moveToOffset(offset);
+                                            }
+                                        });
                                     } else if(element.getName().equals("CopyText")) {
                                         final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
                                         WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
                                             @Override
                                             public void run() {
                                                 editor1.getDocument().insertString(0, finalText);
-//                                                editor1.getCaretModel().moveToOffset(-1);
                                             }
                                         });
                                     } else {
@@ -158,6 +171,7 @@ public class StartLesson extends AnAction {
 
                 }
             });
+            System.err.println("RunWriteAction is closed!");
 
 
         } catch (IOException e1) {
@@ -198,7 +212,7 @@ public class StartLesson extends AnAction {
             @Override
             public void onClosed(LightweightWindowEvent lightweightWindowEvent) {
                 synchronized (lockEditor){
-                    lockEditor.notify();
+                    lockEditor.notifyAll();
                 }
             }
         });
@@ -219,7 +233,7 @@ public class StartLesson extends AnAction {
             @Override
             public void run() {
                 synchronized (lockEditor){
-                    lockEditor.notify();
+                    lockEditor.notifyAll();
                 }
             }
         });
@@ -259,7 +273,7 @@ public class StartLesson extends AnAction {
 
     @Nullable
     private VirtualFile createFile(final Project project) throws IOException {
-        final String fileName = "JavaLessonExampleEmpty.java";
+        final String fileName = "JavaLessonExample.java";
 
 
         Module[] modules = ModuleManager.getInstance(project).getModules();

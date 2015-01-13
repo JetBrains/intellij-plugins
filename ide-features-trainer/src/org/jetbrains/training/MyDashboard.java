@@ -14,6 +14,7 @@ public class MyDashboard extends JFrame{
     private JTextField myTextField;
     private JButton okButton;
     private JPanel myPanel;
+    private JButton clearButton;
 
     public MyDashboard() {
         super("MyDashboard");
@@ -32,6 +33,12 @@ public class MyDashboard extends JFrame{
             }
         });
 
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                myTextField.setText("");
+            }
+        });
          setVisible(true);
     }
 
