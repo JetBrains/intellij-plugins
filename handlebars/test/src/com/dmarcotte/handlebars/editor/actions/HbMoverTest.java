@@ -13,7 +13,7 @@ public class HbMoverTest extends LightPlatformCodeInsightFixtureTestCase {
     PlatformTestCase.initPlatformLangPrefix();
   }
 
-  public void testMoveXmlWhenOpenHtmlAsHandlebars() {
+  public void testMoveHtmlTextWhenOpenHtmlAsHandlebars() {
     HbTestUtils.setOpenHtmlAsHandlebars(true, getProject(), getTestRootDisposable());
     doTest("hbs");
   }
