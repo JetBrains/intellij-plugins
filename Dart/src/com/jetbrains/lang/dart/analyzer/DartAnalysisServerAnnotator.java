@@ -11,12 +11,12 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
+import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
@@ -77,7 +77,7 @@ public class DartAnalysisServerAnnotator
 
     if (psiFile instanceof XmlFile && !DartInProcessAnnotator.containsDartEmbeddedContent((XmlFile)psiFile)) return null;
 
-    if (FileUtil.isAncestor(sdk.getHomePath(), annotatedFile.getPath(), true)) return null;
+    if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return null;
 
     if (!DartAnalysisServerService.getInstance().serverReadyForRequest(module.getProject(), sdk.getHomePath())) return null;
 
