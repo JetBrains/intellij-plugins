@@ -1,6 +1,5 @@
 package com.intellij.javascript.flex;
 
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.findUsages.SuperMethodUtil;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -30,7 +29,7 @@ import java.util.Map;
 public class FlexRenameHandler extends RenamePsiElementProcessor {
   public boolean canProcessElement(@NotNull final PsiElement element) {
     return (element instanceof JSFunction || element instanceof JSFile) &&
-           JSResolveUtil.isNewResolveAndCompletion(element.getContainingFile());
+           JSResolveUtil.isActionScript(element.getContainingFile());
   }
 
   @Override
