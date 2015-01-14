@@ -67,7 +67,6 @@ public class ActionsRecorder implements Disposable {
 
         List<String> expected = computeTrimmedLines(target);
         List<String> actual = computeTrimmedLines(current.getText());
-        System.err.println("<<actual:" + actual.toString() + ">>");
 
         return (expected.equals(actual));
     }

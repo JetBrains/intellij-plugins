@@ -1,5 +1,7 @@
 package org.jetbrains.training;
 
+import org.jetbrains.training.graphics.MyDashboard;
+
 /**
  * Created by karashevich on 30/12/14.
  */
