@@ -1,5 +1,6 @@
 package org.jetbrains.training;
 
+import com.intellij.ide.IdeTooltipManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -20,10 +21,15 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.IdeFrame;
+import com.intellij.openapi.wm.WindowManager;
+import com.intellij.ui.GuiUtils;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.popup.ComponentPopupBuilderImpl;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.graphics.DetailPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,6 +45,8 @@ import java.util.*;
 public class StartLesson extends AnAction {
 
     private boolean isRecording = false;
+
+    DetailPanel infoPanel;
 
     public void actionPerformed(final AnActionEvent e) {
 
@@ -59,7 +67,6 @@ public class StartLesson extends AnAction {
 
             final Scenario scn = new Scenario("SampleScenario.xml");
 
-//            InfoPanel infoPanel = new InfoPanel(e.getProject());
 
             isRecording = true;
             Disposer.register(recorder, new Disposable() {
@@ -70,6 +77,12 @@ public class StartLesson extends AnAction {
             });
 
             recorder.startRecording();
+
+            showInfoPanel(editor);
+
+//            JBPopupFactory.getInstance().createComponentPopupBuilder(infoPanel, infoPanel).createPopup().show(new RelativePoint(new Point(1000, 100)));
+
+
 
                     //final Editor editor1 = FileEditorManager.getInstance(e.getProject()).openTextEditor(new OpenFileDescriptor(e.getProject(), vf), true);
                     final Editor editor1 = editor;
@@ -169,6 +182,32 @@ public class StartLesson extends AnAction {
         } catch (JDOMException e1) {
             e1.printStackTrace();
         }
+    }
+
+    private void showInfoPanel(Editor editor) {
+        final Dimension dimension = new Dimension(850, 75);
+
+        DetailPanel infoPanel = new DetailPanel(dimension);
+
+        ComponentPopupBuilder componentPopupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(infoPanel, infoPanel);
+        componentPopupBuilder.setShowBorder(false);
+        componentPopupBuilder.setCancelOnClickOutside(false);
+        componentPopupBuilder.setCancelOnWindowDeactivation(false);
+        componentPopupBuilder.setShowShadow(false);
+        componentPopupBuilder.setAlpha(0f);
+
+        JBPopup popup = componentPopupBuilder.createPopup();
+
+        IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(editor.getProject());
+        infoPanel.setText("Welcome to IntelliJ IDEA!");
+        popup.show(computeLocation(ideFrame, dimension));
+    }
+
+    private RelativePoint computeLocation(IdeFrame ideFrame, Dimension dimension){
+        int statusBarHeight = ideFrame.getStatusBar().getComponent().getHeight();
+        Rectangle visibleRect = ideFrame.getComponent().getVisibleRect();
+        Point point = new Point(visibleRect.x + (visibleRect.width - dimension.width) / 2, visibleRect.y + visibleRect.height - dimension.height - statusBarHeight - 5);
+        return new RelativePoint(ideFrame.getComponent(), point);
     }
 
     /**

@@ -1,4 +1,4 @@
-package org.jetbrains.training;
+package org.jetbrains.training.graphics;
 
 import apple.awt.CColor;
 
