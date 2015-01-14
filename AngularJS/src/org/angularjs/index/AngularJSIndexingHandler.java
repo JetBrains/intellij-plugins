@@ -2,7 +2,9 @@ package org.angularjs.index;
 
 import com.intellij.lang.javascript.JSDocTokenTypes;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
-import com.intellij.lang.javascript.index.*;
+import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
+import com.intellij.lang.javascript.index.JSImplicitElementsIndex;
+import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
@@ -20,7 +22,6 @@ import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
@@ -402,21 +403,6 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       }
     }
     return null;
-  }
-
-  public static class Factory extends JSFileIndexerFactory {
-    @Override
-    protected int getVersion() {
-      return AngularIndexUtil.BASE_VERSION;
-    }
-
-    @Nullable
-    @Override
-    public JSElementVisitor createVisitor(JSNamespace topLevelNs,
-                                          JSSymbolUtil.JavaScriptSymbolProcessorEx indexer,
-                                          PsiFile file) {
-      return null;
-    }
   }
 
   @Override
