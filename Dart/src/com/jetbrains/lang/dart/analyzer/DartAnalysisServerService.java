@@ -1,9 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
-import com.google.dart.server.AnalysisServer;
-import com.google.dart.server.AnalysisServerListener;
-import com.google.dart.server.GetErrorsConsumer;
-import com.google.dart.server.GetFixesConsumer;
+import com.google.dart.server.*;
 import com.google.dart.server.generated.types.*;
 import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
@@ -40,7 +37,8 @@ import java.util.concurrent.TimeUnit;
 
 public class DartAnalysisServerService {
 
-  public static final String MIN_SDK_VERSION = "1.7";
+  public static final String MIN_SDK_VERSION = "1.8";
+  private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_ERRORS_TIMEOUT = ApplicationManager.getApplication().isUnitTestMode() ? TimeUnit.SECONDS.toMillis(50)
                                                                                                       : TimeUnit.SECONDS.toMillis(5);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -105,6 +103,32 @@ public class DartAnalysisServerService {
     public void serverStatus(final AnalysisStatus analysisStatus, final PubStatus pubStatus) {
     }
   };
+
+  public static class FormatResult {
+
+    private final List<SourceEdit> myEdits;
+    private final int myOffset;
+    private final int myLength;
+
+    public FormatResult(final List<SourceEdit> edits, final int selectionOffset, final int selectionLength) {
+      myEdits = edits;
+      myOffset = selectionOffset;
+      myLength = selectionLength;
+    }
+
+    public int getLength() {
+      return myLength;
+    }
+
+    public int getOffset() {
+      return myOffset;
+    }
+
+    public List<SourceEdit> getEdits() {
+      return myEdits;
+    }
+  }
+
 
   public DartAnalysisServerService() {
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
@@ -268,6 +292,43 @@ public class DartAnalysisServerService {
 
     return resultFixes.get();
   }
+
+  @Nullable
+  public FormatResult edit_format(@NotNull final String path, final int selectionOffset, final int selectionLength) {
+    final Ref<FormatResult> resultRef = new Ref<FormatResult>();
+    final Semaphore semaphore = new Semaphore();
+
+    synchronized (myLock) {
+      if (myServer == null) return null;
+
+      semaphore.down();
+
+      myServer.edit_format(path, selectionOffset, selectionLength, new FormatConsumer() {
+        @Override
+        public void computedFormat(final List<SourceEdit> edits, final int selectionOffset, final int selectionLength) {
+          semaphore.up();
+          resultRef.set(new FormatResult(edits, selectionOffset, selectionLength));
+        }
+
+        @Override
+        public void onError(final RequestError error) {
+          semaphore.up();
+          LOG.warn("Error from edit_format() for file " + path + ", code=" + error.getCode() + ": " + error.getMessage());
+        }
+      });
+    }
+
+    final long t0 = System.currentTimeMillis();
+    semaphore.waitFor(EDIT_FORMAT_TIMEOUT);
+
+    if (semaphore.tryUp()) {
+      LOG.info("edit_format() took too long for file " + path + ": " + (System.currentTimeMillis() - t0) + "ms");
+      return null;
+    }
+
+    return resultRef.get();
+  }
+
 
   private void startServer(@NotNull final String sdkHome) {
     synchronized (myLock) {
