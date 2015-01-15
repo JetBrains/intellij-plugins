@@ -1,10 +1,12 @@
 package com.jetbrains.lang.dart.ide.editor;
 
+import com.intellij.codeInsight.editorActions.TypedHandler;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -26,9 +28,11 @@ public class DartTypeHandler extends TypedHandlerDelegate {
                                 FileType fileType) {
     int offset = editor.getCaretModel().getOffset();
     if (c == '<') {
+      TypedHandler.commitDocumentIfCurrentCaretIsNotTheFirstOne(editor, project);
       myAfterTypeOrComponentName = checkAfterTypeOrComponentName(file, offset);
     }
     else if (c == '{') {
+      TypedHandler.commitDocumentIfCurrentCaretIsNotTheFirstOne(editor, project);
       myAfterDollar = checkAfterDollarInString(file, offset);
     }
     return super.beforeCharTyped(c, project, editor, file, fileType);
@@ -43,7 +47,7 @@ public class DartTypeHandler extends TypedHandlerDelegate {
   private static boolean checkAfterDollarInString(PsiFile file, int offset) {
     PsiElement at = file.findElementAt(offset - 1);
     final String text = at != null ? at.getText() : "";
-    return text.endsWith("$") && isDartContext(at);
+    return StringUtil.endsWithChar(text, '$') && isDartContext(at);
   }
 
   private static boolean isDartContext(PsiElement at) {
