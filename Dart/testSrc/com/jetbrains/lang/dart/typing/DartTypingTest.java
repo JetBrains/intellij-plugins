@@ -42,7 +42,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTest('<');
   }
 
-  public void _testGenericBraceWithMultiCaretInDifferentContexts() throws Throwable {
+  public void testGenericBraceWithMultiCaretInDifferentContexts() throws Throwable {
     doTest('<');
   }
 
@@ -66,7 +66,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTest('{');
   }
 
-  public void _testStringWithMultiCaretInDifferentContexts() throws Throwable {
+  public void testStringWithMultiCaretInDifferentContexts() throws Throwable {
     doTest('{');
   }
 
