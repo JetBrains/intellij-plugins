@@ -288,7 +288,6 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static void generateNamespace(JSIndexContentBuilder builder, PsiElement second) {
     final String namespace = StringUtil.unquoteString(second.getText());
     JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(namespace);
-    if (qName == null) return;
     JSImplicitElementImpl.Builder elementBuilder =
       new JSImplicitElementImpl.Builder(qName, second)
         .setType(JSImplicitElement.Type.Class);
