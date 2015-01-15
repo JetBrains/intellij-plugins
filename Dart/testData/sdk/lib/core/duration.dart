@@ -7,6 +7,10 @@ part of dart.core;
 /**
  * A span of time, such as 27 days, 4 hours, 12 minutes, and 3 seconds.
  *
+ * A `Duration` represents a difference from one point in time to another. The
+ * duration may be "negative" if the difference is from a later time to an
+ * earlier.
+ *
  * To create a new Duration object, use this class's single constructor
  * giving the appropriate arguments:
  *
@@ -88,19 +92,24 @@ class Duration implements Comparable<Duration> {
                   int seconds: 0,
                   int milliseconds: 0,
                   int microseconds: 0})
-      : _duration = days * MICROSECONDS_PER_DAY +
-                    hours * MICROSECONDS_PER_HOUR +
-                    minutes * MICROSECONDS_PER_MINUTE +
-                    seconds * MICROSECONDS_PER_SECOND +
-                    milliseconds * MICROSECONDS_PER_MILLISECOND +
-                    microseconds;
+      : this._microseconds(
+            days * MICROSECONDS_PER_DAY +
+            hours * MICROSECONDS_PER_HOUR +
+            minutes * MICROSECONDS_PER_MINUTE +
+            seconds * MICROSECONDS_PER_SECOND +
+            milliseconds * MICROSECONDS_PER_MILLISECOND +
+            microseconds);
+
+  // Fast path internal direct constructor to avoids the optional arguments and
+  // [_microseconds] recomputation.
+  const Duration._microseconds(this._duration);
 
   /**
    * Adds this Duration and [other] and
    * returns the sum as a new Duration object.
    */
   Duration operator +(Duration other) {
-    return new Duration(microseconds: _duration + other._duration);
+    return new Duration._microseconds(_duration + other._duration);
   }
 
   /**
@@ -108,7 +117,7 @@ class Duration implements Comparable<Duration> {
    * returns the difference as a new Duration object.
    */
   Duration operator -(Duration other) {
-    return new Duration(microseconds: _duration - other._duration);
+    return new Duration._microseconds(_duration - other._duration);
   }
 
   /**
@@ -119,7 +128,7 @@ class Duration implements Comparable<Duration> {
    * 53 bits, precision is lost because of double-precision arithmetic.
    */
   Duration operator *(num factor) {
-    return new Duration(microseconds: (_duration * factor).round());
+    return new Duration._microseconds((_duration * factor).round());
   }
 
   /**
@@ -132,7 +141,7 @@ class Duration implements Comparable<Duration> {
     // By doing the check here instead of relying on "~/" below we get the
     // exception even with dart2js.
     if (quotient == 0) throw new IntegerDivisionByZeroException();
-    return new Duration(microseconds: _duration ~/ quotient);
+    return new Duration._microseconds(_duration ~/ quotient);
   }
 
   /**
@@ -208,15 +217,27 @@ class Duration implements Comparable<Duration> {
   int get hashCode => _duration.hashCode;
 
   /**
-   * Compares this Duration to [other],
-   * returning zero if the values are equal.
+   * Compares this Duration to [other], returning zero if the values are equal.
    *
-   * This function returns a negative integer
-   * if this Duration is smaller than [other],
-   * or a positive integer if it is greater.
+   * Returns a negative integer if this `Duration` is shorter than
+   * [other], or a positive integer if it is longer.
+   *
+   * A negative `Duration` is always considered shorter than a positive one.
+   *
+   * It is always the case that `duration1.compareTo(duration2) < 0` iff
+   * `(someDate + duration1).compareTo(someDate + duration2) < 0`.
    */
   int compareTo(Duration other) => _duration.compareTo(other._duration);
 
+  /**
+   * Returns a string representation of this `Duration`.
+   *
+   * Returns a string with hours, minutes, seconds, and microseconds, in the
+   * following format: `HH:MM:SS.mmmmmm`. For example,
+   *
+   *     var d = new Duration(days:1, hours:1, minutes:33, microseconds: 500);
+   *     d.toString();  // "25:33:00.000500"
+   */
   String toString() {
     String sixDigits(int n) {
       if (n >= 100000) return "$n";
@@ -232,9 +253,7 @@ class Duration implements Comparable<Duration> {
     }
 
     if (inMicroseconds < 0) {
-      Duration duration =
-          new Duration(microseconds: -inMicroseconds);
-      return "-$duration";
+      return "-${-this}";
     }
     String twoDigitMinutes = twoDigits(inMinutes.remainder(MINUTES_PER_HOUR));
     String twoDigitSeconds = twoDigits(inSeconds.remainder(SECONDS_PER_MINUTE));
@@ -242,4 +261,29 @@ class Duration implements Comparable<Duration> {
         sixDigits(inMicroseconds.remainder(MICROSECONDS_PER_SECOND));
     return "$inHours:$twoDigitMinutes:$twoDigitSeconds.$sixDigitUs";
   }
+
+  /**
+   * Returns whether this `Duration` is negative.
+   *
+   * A negative `Duration` represents the difference from a later time to an
+   * earlier time.
+   */
+  bool get isNegative => _duration < 0;
+
+  /**
+   * Returns a new `Duration` representing the absolute value of this
+   * `Duration`.
+   *
+   * The returned `Duration` has the same length as this one, but is always
+   * positive.
+   */
+  Duration abs() => new Duration._microseconds(_duration.abs());
+
+  /**
+   * Returns a new `Duration` representing this `Duration` negated.
+   *
+   * The returned `Duration` has the same length as this one, but will have the
+   * opposite sign of this one.
+   */
+  Duration operator -() => new Duration._microseconds(-_duration);
 }

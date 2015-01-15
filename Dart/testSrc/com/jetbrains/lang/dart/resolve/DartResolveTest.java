@@ -6,36 +6,32 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.file.PsiDirectoryImpl;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.hash.LinkedHashMap;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.util.CaretPositionInfo;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
+import java.util.List;
 
 public class DartResolveTest extends DartCodeInsightFixtureTestCase {
 
   private void doTest() {
-    final LinkedHashMap<Integer, String> caretOffsetToExpectedResult =
-      DartTestUtils.extractPositionMarkers(getProject(), myFixture.getEditor().getDocument());
+    final List<CaretPositionInfo> caretPositions = DartTestUtils.extractPositionMarkers(getProject(), myFixture.getEditor().getDocument());
 
-    for (Map.Entry<Integer, String> entry : caretOffsetToExpectedResult.entrySet()) {
-      final Integer caretOffset = entry.getKey();
-      final String expectedResult = entry.getValue();
-
-      final int line = myFixture.getEditor().getDocument().getLineNumber(caretOffset);
-      final int column = caretOffset - myFixture.getEditor().getDocument().getLineStartOffset(line);
+    for (CaretPositionInfo caretPositionInfo : caretPositions) {
+      final int line = myFixture.getEditor().getDocument().getLineNumber(caretPositionInfo.caretOffset);
+      final int column = caretPositionInfo.caretOffset - myFixture.getEditor().getDocument().getLineStartOffset(line);
       final String fileNameAndPosition = myFixture.getFile().getName() + ":" + (line + 1) + ":" + (column + 1);
 
-      final PsiReference reference = TargetElementUtilBase.findReference(myFixture.getEditor(), caretOffset);
+      final PsiReference reference = TargetElementUtilBase.findReference(myFixture.getEditor(), caretPositionInfo.caretOffset);
       assertNotNull("No reference in " + fileNameAndPosition, reference);
 
       final PsiElement resolve = reference.resolve();
       final String actualElementPosition = getPresentableElementPosition(resolve);
-      assertEquals("Incorrect resolve for element in " + fileNameAndPosition, expectedResult, actualElementPosition);
+      assertEquals("Incorrect resolve for element in " + fileNameAndPosition, caretPositionInfo.expected, actualElementPosition);
     }
   }
 

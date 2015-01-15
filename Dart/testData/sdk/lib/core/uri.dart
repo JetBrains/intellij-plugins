@@ -16,8 +16,14 @@ part of dart.core;
  * [libtour]: http://www.dartlang.org/docs/dart-up-and-running/contents/ch03.html
  */
 class Uri {
+  // The host name of the URI.
+  // Set to `null` if there is no authority in a URI.
   final String _host;
+  // The port. Set to null if there is no port. Normalized to null if
+  // the port is the default port for the scheme.
+  // Set to the value of the default port if an empty port was supplied.
   int _port;
+  // The path. Always non-null.
   String _path;
 
   /**
@@ -25,6 +31,8 @@ class Uri {
    *
    * Returns the empty string if there is no scheme component.
    */
+  // We represent the missing scheme as an empty string.
+  // A valid scheme cannot be empty.
   final String scheme;
 
   /**
@@ -43,12 +51,20 @@ class Uri {
   }
 
   /**
+   * The user-info part of the authority.
+   *
+   * Does not distinguish between an empty user-info and an absent one.
+   * The value is always non-null.
+   */
+  final String _userInfo;
+
+  /**
    * Returns the user info part of the authority component.
    *
    * Returns the empty string if there is no user info in the
    * authority component.
    */
-  final String userInfo;
+  String get userInfo => _userInfo;
 
   /**
    * Returns the host part of the authority component.
@@ -60,7 +76,8 @@ class Uri {
    * removed.
    */
   String get host {
-    if (_host != null && _host.startsWith('[')) {
+    if (_host == null) return "";
+    if (_host.startsWith('[')) {
       return _host.substring(1, _host.length - 1);
     }
     return _host;
@@ -69,14 +86,19 @@ class Uri {
   /**
    * Returns the port part of the authority component.
    *
-   * Returns 0 if there is no port in the authority component.
+   * Returns the defualt port if there is no port number in the authority
+   * component. That's 80 for http, 443 for https, and 0 for everything else.
    */
   int get port {
-    if (_port == 0) {
-      if (scheme == "http") return 80;
-      if (scheme == "https") return 443;
-    }
+    if (_port == null) return _defaultPort(scheme);
     return _port;
+  }
+
+  // The default port for the scheme of this Uri..
+  static int _defaultPort(String scheme) {
+    if (scheme == "http") return 80;
+    if (scheme == "https") return 443;
+    return 0;
   }
 
   /**
@@ -89,13 +111,19 @@ class Uri {
    */
   String get path => _path;
 
+  // The query content, or null if there is no query.
+  final String _query;
+
   /**
    * Returns the query component. The returned query is encoded. To get
    * direct access to the decoded query use [queryParameters].
    *
    * Returns the empty string if there is no query component.
    */
-  final String query;
+  String get query => (_query == null) ? "" : _query;
+
+  // The fragment content, or null if there is no fragment.
+  final String _fragment;
 
   /**
    * Returns the fragment identifier component.
@@ -103,7 +131,7 @@ class Uri {
    * Returns the empty string if there is no fragment identifier
    * component.
    */
-  final String fragment;
+  String get fragment => (_fragment == null) ? "" : _fragment;
 
   /**
    * Cache the computed return value of [pathSegements].
@@ -116,7 +144,11 @@ class Uri {
   Map<String, String> _queryParameters;
 
   /**
-   * Creates a new URI object by parsing a URI string.
+   * Creates a new `Uri` object by parsing a URI string.
+   *
+   * If the string is not valid as a URI or URI reference,
+   * invalid characters will be percent escaped where possible.
+   * The resulting `Uri` will represent a valid URI or URI reference.
    */
   static Uri parse(String uri) {
     // This parsing will not validate percent-encoding, IPv6, etc. When done
@@ -175,200 +207,246 @@ class Uri {
     bool isRegName(int ch) {
       return ch < 128 && ((_regNameTable[ch >> 4] & (1 << (ch & 0x0f))) != 0);
     }
+    const int EOI = -1;
 
-    int ipV6Address(int index) {
-      // IPv6. Skip to ']'.
-      index = uri.indexOf(']', index);
-      if (index == -1) {
-        throw new FormatException("Bad end of IPv6 host");
-      }
-      return index + 1;
-    }
+    String scheme = "";
+    String userinfo = "";
+    String host = null;
+    int port = null;
+    String path = null;
+    String query = null;
+    String fragment = null;
 
-    int length = uri.length;
     int index = 0;
+    int pathStart = 0;
+    // End of input-marker.
+    int char = EOI;
 
-    int schemeEndIndex = 0;
-
-    if (length == 0) {
-      return new Uri();
-    }
-
-    if (uri.codeUnitAt(0) != _SLASH) {
-      // Can be scheme.
-      while (index < length) {
-        // Look for ':'. If found, continue from the post of ':'. If not (end
-        // reached or invalid scheme char found) back up one char, and continue
-        // to path.
-        // Note that scheme-chars is contained in path-chars.
-        int codeUnit = uri.codeUnitAt(index++);
-        if (!_isSchemeCharacter(codeUnit)) {
-          if (codeUnit == _COLON) {
-            schemeEndIndex = index;
-          } else {
-            // Back up one char, since we met an invalid scheme char.
-            index--;
-          }
+    void parseAuth() {
+      if (index == uri.length) {
+        char = EOI;
+        return;
+      }
+      int authStart = index;
+      int lastColon = -1;
+      int lastAt = -1;
+      char = uri.codeUnitAt(index);
+      while (index < uri.length) {
+        char = uri.codeUnitAt(index);
+        if (char == _SLASH || char == _QUESTION || char == _NUMBER_SIGN) {
           break;
         }
-      }
-    }
-
-    int userInfoEndIndex = -1;
-    int portIndex = -1;
-    int authorityEndIndex = schemeEndIndex;
-    // If we see '//', there must be an authority.
-    if (authorityEndIndex == index &&
-        authorityEndIndex + 1 < length &&
-        uri.codeUnitAt(authorityEndIndex) == _SLASH &&
-        uri.codeUnitAt(authorityEndIndex + 1) == _SLASH) {
-      // Skip '//'.
-      authorityEndIndex += 2;
-      // It can both be host and userInfo.
-      while (authorityEndIndex < length) {
-        int codeUnit = uri.codeUnitAt(authorityEndIndex++);
-        if (!isRegName(codeUnit)) {
-          if (codeUnit == _LEFT_BRACKET) {
-            authorityEndIndex = ipV6Address(authorityEndIndex);
-          } else if (portIndex == -1 && codeUnit == _COLON) {
-            // First time ':'.
-            portIndex = authorityEndIndex;
-          } else if (codeUnit == _AT_SIGN || codeUnit == _COLON) {
-            // Second time ':' or first '@'. Must be userInfo.
-            userInfoEndIndex = uri.indexOf('@', authorityEndIndex - 1);
-            // Not found. Must be path then.
-            if (userInfoEndIndex == -1) {
-              authorityEndIndex = index;
-              break;
-            }
-            portIndex = -1;
-            authorityEndIndex = userInfoEndIndex + 1;
-            // Now it can only be host:port.
-            while (authorityEndIndex < length) {
-              int codeUnit = uri.codeUnitAt(authorityEndIndex++);
-              if (!isRegName(codeUnit)) {
-                if (codeUnit == _LEFT_BRACKET) {
-                  authorityEndIndex = ipV6Address(authorityEndIndex);
-                } else if (codeUnit == _COLON) {
-                  if (portIndex != -1) {
-                    throw new FormatException("Double port in host");
-                  }
-                  portIndex = authorityEndIndex;
-                } else {
-                  authorityEndIndex--;
-                  break;
-                }
-              }
-            }
+        if (char == _AT_SIGN) {
+          lastAt = index;
+          lastColon = -1;
+        } else if (char == _COLON) {
+          lastColon = index;
+        } else if (char == _LEFT_BRACKET) {
+          lastColon = -1;
+          int endBracket = uri.indexOf(']', index + 1);
+          if (endBracket == -1) {
+            index = uri.length;
+            char = EOI;
             break;
           } else {
-            authorityEndIndex--;
-            break;
+            index = endBracket;
           }
         }
+        index++;
+        char = EOI;
       }
-    } else {
-      authorityEndIndex = schemeEndIndex;
+      int hostStart = authStart;
+      int hostEnd = index;
+      if (lastAt >= 0) {
+        userinfo = _makeUserInfo(uri, authStart, lastAt);
+        hostStart = lastAt + 1;
+      }
+      if (lastColon >= 0) {
+        int portNumber;
+        if (lastColon + 1 < index) {
+          portNumber = 0;
+          for (int i = lastColon + 1; i < index; i++) {
+            int digit = uri.codeUnitAt(i);
+            if (_ZERO > digit || _NINE < digit) {
+              _fail(uri, i, "Invalid port number");
+            }
+            portNumber = portNumber * 10 + (digit - _ZERO);
+          }
+        }
+        port = _makePort(portNumber, scheme);
+        hostEnd = lastColon;
+      }
+      host = _makeHost(uri, hostStart, hostEnd, true);
+      if (index < uri.length) {
+        char = uri.codeUnitAt(index);
+      }
     }
 
-    // At path now.
-    int pathEndIndex = authorityEndIndex;
-    while (pathEndIndex < length) {
-      int codeUnit = uri.codeUnitAt(pathEndIndex++);
-      if (codeUnit == _QUESTION || codeUnit == _NUMBER_SIGN) {
-        pathEndIndex--;
+    // When reaching path parsing, the current character is known to not
+    // be part of the path.
+    const int NOT_IN_PATH = 0;
+    // When reaching path parsing, the current character is part
+    // of the a non-empty path.
+    const int IN_PATH = 1;
+    // When reaching authority parsing, authority is possible.
+    // This is only true at start or right after scheme.
+    const int ALLOW_AUTH = 2;
+
+    // Current state.
+    // Initialized to the default value that is used when exiting the
+    // scheme loop by reaching the end of input.
+    // All other breaks set their own state.
+    int state = NOT_IN_PATH;
+    int i = index;  // Temporary alias for index to avoid bug 19550 in dart2js.
+    while (i < uri.length) {
+      char = uri.codeUnitAt(i);
+      if (char == _QUESTION || char == _NUMBER_SIGN) {
+        state = NOT_IN_PATH;
         break;
       }
+      if (char == _SLASH) {
+        state = (i == 0) ? ALLOW_AUTH : IN_PATH;
+        break;
+      }
+      if (char == _COLON) {
+        if (i == 0) _fail(uri, 0, "Invalid empty scheme");
+        scheme = _makeScheme(uri, i);
+        i++;
+        pathStart = i;
+        if (i == uri.length) {
+          char = EOI;
+          state = NOT_IN_PATH;
+        } else {
+          char = uri.codeUnitAt(i);
+          if (char == _QUESTION || char == _NUMBER_SIGN) {
+            state = NOT_IN_PATH;
+          } else if (char == _SLASH) {
+            state = ALLOW_AUTH;
+          } else {
+            state = IN_PATH;
+          }
+        }
+        break;
+      }
+      i++;
+      char = EOI;
+    }
+    index = i;  // Remove alias when bug is fixed.
+
+    if (state == ALLOW_AUTH) {
+      assert(char == _SLASH);
+      // Have seen one slash either at start or right after scheme.
+      // If two slashes, it's an authority, otherwise it's just the path.
+      index++;
+      if (index == uri.length) {
+        char = EOI;
+        state = NOT_IN_PATH;
+      } else {
+        char = uri.codeUnitAt(index);
+        if (char == _SLASH) {
+          index++;
+          parseAuth();
+          pathStart = index;
+        }
+        if (char == _QUESTION || char == _NUMBER_SIGN || char == EOI) {
+          state = NOT_IN_PATH;
+        } else {
+          state = IN_PATH;
+        }
+      }
     }
 
-    // Maybe query.
-    int queryEndIndex = pathEndIndex;
-    if (queryEndIndex < length && uri.codeUnitAt(queryEndIndex) == _QUESTION) {
-      while (queryEndIndex < length) {
-        int codeUnit = uri.codeUnitAt(queryEndIndex++);
-        if (codeUnit == _NUMBER_SIGN) {
-          queryEndIndex--;
+    assert(state == IN_PATH || state == NOT_IN_PATH);
+    if (state == IN_PATH) {
+      // Characters from pathStart to index (inclusive) are known
+      // to be part of the path.
+      while (++index < uri.length) {
+        char = uri.codeUnitAt(index);
+        if (char == _QUESTION || char == _NUMBER_SIGN) {
           break;
         }
+        char = EOI;
       }
+      state = NOT_IN_PATH;
     }
 
-    var scheme = null;
-    if (schemeEndIndex > 0) {
-      scheme = uri.substring(0, schemeEndIndex - 1);
-    }
+    assert(state == NOT_IN_PATH);
+    bool isFile = (scheme == "file");
+    bool ensureLeadingSlash = host != null;
+    path = _makePath(uri, pathStart, index, null, ensureLeadingSlash, isFile);
 
-    var host = "";
-    var userInfo = "";
-    var port = 0;
-    if (schemeEndIndex != authorityEndIndex) {
-      int startIndex = schemeEndIndex + 2;
-      if (userInfoEndIndex > 0) {
-        userInfo = uri.substring(startIndex, userInfoEndIndex);
-        startIndex = userInfoEndIndex + 1;
-      }
-      if (portIndex > 0) {
-        var portStr = uri.substring(portIndex, authorityEndIndex);
-        try {
-          port = int.parse(portStr);
-        } catch (_) {
-          throw new FormatException("Invalid port: '$portStr'");
-        }
-        host = uri.substring(startIndex, portIndex - 1);
+    if (char == _QUESTION) {
+      int numberSignIndex = uri.indexOf('#', index + 1);
+      if (numberSignIndex < 0) {
+        query = _makeQuery(uri, index + 1, uri.length, null);
       } else {
-        host = uri.substring(startIndex, authorityEndIndex);
+        query = _makeQuery(uri, index + 1, numberSignIndex, null);
+        fragment = _makeFragment(uri, numberSignIndex + 1, uri.length);
       }
+    } else if (char == _NUMBER_SIGN) {
+      fragment = _makeFragment(uri, index + 1, uri.length);
     }
-
-    var path = uri.substring(authorityEndIndex, pathEndIndex);
-    var query = "";
-    if (pathEndIndex < queryEndIndex) {
-      query = uri.substring(pathEndIndex + 1, queryEndIndex);
-    }
-    var fragment = "";
-    // If queryEndIndex is not at end (length), there is a fragment.
-    if (queryEndIndex < length) {
-      fragment = uri.substring(queryEndIndex + 1, length);
-    }
-
-    return new Uri(scheme: scheme,
-                   userInfo: userInfo,
-                   host: host,
-                   port: port,
-                   path: path,
-                   query: query,
-                   fragment: fragment);
+    return new Uri._internal(scheme,
+                             userinfo,
+                             host,
+                             port,
+                             path,
+                             query,
+                             fragment);
   }
+
+  // Report a parse failure.
+  static void _fail(String uri, int index, String message) {
+    throw new FormatException(message, uri, index);
+  }
+
+  /// Internal non-verifying constructor. Only call with validated arguments.
+  Uri._internal(this.scheme,
+                this._userInfo,
+                this._host,
+                this._port,
+                this._path,
+                this._query,
+                this._fragment);
 
   /**
    * Creates a new URI from its components.
    *
    * Each component is set through a named argument. Any number of
-   * components can be provided. The default value for the components
-   * not provided is the empry string, except for [port] which has a
-   * default value of 0. The [path] and [query] components can be set
-   * using two different named arguments.
+   * components can be provided. The [path] and [query] components can be set
+   * using either of two different named arguments.
    *
    * The scheme component is set through [scheme]. The scheme is
-   * normalized to all lowercase letters.
+   * normalized to all lowercase letters. If the scheme is omitted or empty,
+   * the URI will not have a scheme part.
    *
    * The user info part of the authority component is set through
-   * [userInfo].
+   * [userInfo]. It defaults to the empty string, which will be omitted
+   * from the string representation of the URI.
    *
    * The host part of the authority component is set through
    * [host]. The host can either be a hostname, an IPv4 address or an
    * IPv6 address, contained in '[' and ']'. If the host contains a
    * ':' character, the '[' and ']' are added if not already provided.
+   * The host is normalized to all lowercase letters.
    *
    * The port part of the authority component is set through
-   * [port]. The port is normalized for scheme http and https where
-   * port 80 and port 443 respectively is set.
+   * [port].
+   * If [port] is omitted or `null`, it implies the default port for
+   * the URI's scheme, and is equivalent to passing that port explicitly.
+   * The recognized schemes, and their default ports, are "http" (80) and
+   * "https" (443). All other schemes are considered as having zero as the
+   * default port.
+   *
+   * If any of `userInfo`, `host` or `port` are provided,
+   * the URI will have an autority according to [hasAuthority].
    *
    * The path component is set through either [path] or
-   * [pathSegments]. When [path] is used, the provided string is
-   * expected to be fully percent-encoded, and is used in its literal
-   * form. When [pathSegments] is used, each of the provided segments
-   * is percent-encoded and joined using the forward slash
+   * [pathSegments]. When [path] is used, it should be a valid URI path,
+   * but invalid characters, except the general delimiters ':/@[]?#',
+   * will be escaped if necessary.
+   * When [pathSegments] is used, each of the provided segments
+   * is first percent-encoded and then joined using the forward slash
    * separator. The percent-encoding of the path segments encodes all
    * characters except for the unreserved characters and the following
    * list of characters: `!$&'()*+,;=:@`. If the other components
@@ -376,39 +454,52 @@ class Uri {
    * not already there.
    *
    * The query component is set through either [query] or
-   * [queryParameters]. When [query] is used the provided string is
-   * expected to be fully percent-encoded and is used in its literal
-   * form. When [queryParameters] is used the query is built from the
+   * [queryParameters]. When [query] is used the provided string should
+   * be a valid URI query, but invalid characters other than general delimiters,
+   * will be escaped if necessary.
+   * When [queryParameters] is used the query is built from the
    * provided map. Each key and value in the map is percent-encoded
    * and joined using equal and ampersand characters. The
    * percent-encoding of the keys and values encodes all characters
    * except for the unreserved characters.
+   * If `query` is the empty string, it is equivalent to omitting it.
+   * To have an actual empty query part,
+   * use an empty list for `queryParameters`.
+   * If both `query` and `queryParameters` are omitted or `null`, the
+   * URI will have no query part.
    *
    * The fragment component is set through [fragment].
+   * It should be a valid URI fragment, but invalid characters other than
+   * general delimiters, will be escaped if necessary.
+   * If `fragment` is omitted or `null`, the URI will have no fragment part.
    */
-  Uri({String scheme,
-       this.userInfo: "",
-       String host: "",
-       port: 0,
-       String path,
-       Iterable<String> pathSegments,
-       String query,
-       Map<String, String> queryParameters,
-       fragment: ""}) :
-      scheme = _makeScheme(scheme),
-      _host = _makeHost(host),
-      query = _makeQuery(query, queryParameters),
-      fragment = _makeFragment(fragment) {
-    // Perform scheme specific normalization.
-    if (scheme == "http" && port == 80) {
-      _port = 0;
-    } else if (scheme == "https" && port == 443) {
-      _port = 0;
-    } else {
-      _port = port;
+  factory Uri({String scheme : "",
+               String userInfo : "",
+               String host,
+               int port,
+               String path,
+               Iterable<String> pathSegments,
+               String query,
+               Map<String, String> queryParameters,
+               String fragment}) {
+    scheme = _makeScheme(scheme, _stringOrNullLength(scheme));
+    userInfo = _makeUserInfo(userInfo, 0, _stringOrNullLength(userInfo));
+    host = _makeHost(host, 0, _stringOrNullLength(host), false);
+    // Special case this constructor for backwards compatibility.
+    if (query == "") query = null;
+    query = _makeQuery(query, 0, _stringOrNullLength(query), queryParameters);
+    fragment = _makeFragment(fragment, 0, _stringOrNullLength(fragment));
+    port = _makePort(port, scheme);
+    bool isFile = (scheme == "file");
+    if (host == null &&
+        (userInfo.isNotEmpty || port != null || isFile)) {
+      host = "";
     }
-    // Fill the path.
-    _path = _makePath(path, pathSegments);
+    bool ensureLeadingSlash = host != null;
+    path = _makePath(path, 0, _stringOrNullLength(path), pathSegments,
+                     ensureLeadingSlash, isFile);
+    return new Uri._internal(scheme, userInfo, host, port,
+                             path, query, fragment);
   }
 
   /**
@@ -416,16 +507,26 @@ class Uri {
    *
    * Examples:
    *
-   *     // Create the URI http://example.org/path?q=abc.
-   *     new Uri.http("google.com", "/search", { "q" : "dart" });http://example.org/path?q=abc.
-   *     new Uri.http("user:pass@localhost:8080, "");  // http://user:pass@localhost:8080/
-   *     new Uri.http("example.org, "a b");  // http://example.org/a%20b
-   *     new Uri.http("example.org, "/a%2F");  // http://example.org/a%25%2F
+   * ```
+   * // http://example.org/path?q=dart.
+   * new Uri.http("google.com", "/search", { "q" : "dart" });
+   *
+   * // http://user:pass@localhost:8080
+   * new Uri.http("user:pass@localhost:8080", "");
+   *
+   * // http://example.org/a%20b
+   * new Uri.http("example.org", "a b");
+   *
+   * // http://example.org/a%252F
+   * new Uri.http("example.org", "/a%2F");
+   * ```
    *
    * The `scheme` is always set to `http`.
    *
    * The `userInfo`, `host` and `port` components are set from the
-   * [authority] argument.
+   * [authority] argument. If `authority` is `null` or empty,
+   * the created `Uri` will have no authority, and will not be directly usable
+   * as an HTTP URL, which must have a non-empty host.
    *
    * The `path` component is set from the [unencodedPath]
    * argument. The path passed must not be encoded as this constructor
@@ -457,49 +558,52 @@ class Uri {
                           String unencodedPath,
                           Map<String, String> queryParameters) {
     var userInfo = "";
-    var host = "";
-    var port = 0;
+    var host = null;
+    var port = null;
 
-    var hostStart = 0;
-    // Split off the user info.
-    bool hasUserInfo = false;
-    for (int i = 0; i < authority.length; i++) {
-      if (authority.codeUnitAt(i) == _AT_SIGN) {
-        hasUserInfo = true;
-        userInfo = authority.substring(0, i);
-        hostStart = i + 1;
-        break;
+    if (authority != null && authority.isNotEmpty) {
+      var hostStart = 0;
+      // Split off the user info.
+      bool hasUserInfo = false;
+      for (int i = 0; i < authority.length; i++) {
+        if (authority.codeUnitAt(i) == _AT_SIGN) {
+          hasUserInfo = true;
+          userInfo = authority.substring(0, i);
+          hostStart = i + 1;
+          break;
+        }
       }
-    }
-    var hostEnd = hostStart;
-    if (hostStart < authority.length &&
-        authority.codeUnitAt(hostStart) == _LEFT_BRACKET) {
-      // IPv6 host.
+      var hostEnd = hostStart;
+      if (hostStart < authority.length &&
+          authority.codeUnitAt(hostStart) == _LEFT_BRACKET) {
+        // IPv6 host.
+        for (; hostEnd < authority.length; hostEnd++) {
+          if (authority.codeUnitAt(hostEnd) == _RIGHT_BRACKET) break;
+        }
+        if (hostEnd == authority.length) {
+          throw new FormatException("Invalid IPv6 host entry.",
+                                    authority, hostStart);
+        }
+        parseIPv6Address(authority, hostStart + 1, hostEnd);
+        hostEnd++;  // Skip the closing bracket.
+        if (hostEnd != authority.length &&
+            authority.codeUnitAt(hostEnd) != _COLON) {
+          throw new FormatException("Invalid end of authority",
+                                    authority, hostEnd);
+        }
+      }
+      // Split host and port.
+      bool hasPort = false;
       for (; hostEnd < authority.length; hostEnd++) {
-        if (authority.codeUnitAt(hostEnd) == _RIGHT_BRACKET) break;
+        if (authority.codeUnitAt(hostEnd) == _COLON) {
+          var portString = authority.substring(hostEnd + 1);
+          // We allow the empty port - falling back to initial value.
+          if (portString.isNotEmpty) port = int.parse(portString);
+          break;
+        }
       }
-      if (hostEnd == authority.length) {
-        throw new FormatException("Invalid IPv6 host entry.");
-      }
-      parseIPv6Address(authority.substring(hostStart + 1, hostEnd));
-      hostEnd++;  // Skip the closing bracket.
-      if (hostEnd != authority.length &&
-          authority.codeUnitAt(hostEnd) != _COLON) {
-        throw new FormatException("Invalid end of authority");
-      }
+      host = authority.substring(hostStart, hostEnd);
     }
-    // Split host and port.
-    bool hasPort = false;
-    for (; hostEnd < authority.length; hostEnd++) {
-      if (authority.codeUnitAt(hostEnd) == _COLON) {
-        var portString = authority.substring(hostEnd + 1);
-        // We allow the empty port - falling back to initial value.
-        if (portString.isNotEmpty) port = int.parse(portString);
-        break;
-      }
-    }
-    host = authority.substring(hostStart, hostEnd);
-
     return new Uri(scheme: scheme,
                    userInfo: userInfo,
                    host: host,
@@ -540,26 +644,52 @@ class Uri {
    * a value for [windows]. Passing `true` will use Windows
    * semantics and passing `false` will use non-Windows semantics.
    *
-   * Examples using non-Windows semantics (resulting URI in comment):
+   * Examples using non-Windows semantics:
    *
-   *     new Uri.file("xxx/yyy");  // xxx/yyy
-   *     new Uri.file("xxx/yyy/");  // xxx/yyy/
-   *     new Uri.file("/xxx/yyy");  // file:///xxx/yyy
-   *     new Uri.file("/xxx/yyy/");  // file:///xxx/yyy/
-   *     new Uri.file("C:");  // C:
+   * ```
+   * // xxx/yyy
+   * new Uri.file("xxx/yyy", windows: false);
    *
-   * Examples using Windows semantics (resulting URI in comment):
+   * // xxx/yyy/
+   * new Uri.file("xxx/yyy/", windows: false);
    *
-   *     new Uri.file(r"xxx\yyy");  // xxx/yyy
-   *     new Uri.file(r"xxx\yyy\");  // xxx/yyy/
-   *     new Uri.file(r"\xxx\yyy");  // file:///xxx/yyy
-   *     new Uri.file(r"\xxx\yyy/");  // file:///xxx/yyy/
-   *     new Uri.file(r"C:\xxx\yyy");  // file:///C:/xxx/yyy
-   *     new Uri.file(r"C:xxx\yyy");  // Throws as path with drive letter
-   *                                  // is not absolute.
-   *     new Uri.file(r"\\server\share\file");  // file://server/share/file
-   *     new Uri.file(r"C:");  // Throws as path with drive letter
-   *                           // is not absolute.
+   * // file:///xxx/yyy
+   * new Uri.file("/xxx/yyy", windows: false);
+   *
+   * // file:///xxx/yyy/
+   * new Uri.file("/xxx/yyy/", windows: false);
+   *
+   * // C:
+   * new Uri.file("C:", windows: false);
+   * ```
+   *
+   * Examples using Windows semantics:
+   *
+   * ```
+   * // xxx/yyy
+   * new Uri.file(r"xxx\yyy", windows: true);
+   *
+   * // xxx/yyy/
+   * new Uri.file(r"xxx\yyy\", windows: true);
+   *
+   * file:///xxx/yyy
+   * new Uri.file(r"\xxx\yyy", windows: true);
+   *
+   * file:///xxx/yyy/
+   * new Uri.file(r"\xxx\yyy/", windows: true);
+   *
+   * // file:///C:/xxx/yyy
+   * new Uri.file(r"C:\xxx\yyy", windows: true);
+   *
+   * // This throws an error. A path with a drive letter is not absolute.
+   * new Uri.file(r"C:", windows: true);
+   *
+   * // This throws an error. A path with a drive letter is not absolute.
+   * new Uri.file(r"C:xxx\yyy", windows: true);
+   *
+   * // file://server/share/file
+   * new Uri.file(r"\\server\share\file", windows: true);
+   * ```
    *
    * If the path passed is not a legal file path [ArgumentError] is thrown.
    */
@@ -624,7 +754,7 @@ class Uri {
 
   static _makeFileUri(String path) {
     String sep = "/";
-    if (path.length > 0 && path[0] == sep) {
+  if (path.startsWith(sep)) {
       // Absolute file:// URI.
       return new Uri(scheme: "file", pathSegments: path.split(sep));
     } else {
@@ -689,6 +819,116 @@ class Uri {
   }
 
   /**
+   * Returns a new `Uri` based on this one, but with some parts replaced.
+   *
+   * This method takes the same parameters as the [new Uri] constructor,
+   * and they have the same meaning.
+   *
+   * At most one of [path] and [pathSegments] must be provided.
+   * Likewise, at most one of [query] and [queryParameters] must be provided.
+   *
+   * Each part that is not provided will default to the corresponding
+   * value from this `Uri` instead.
+   *
+   * This method is different from [Uri.resolve] which overrides in a
+   * hierarchial manner,
+   * and can instead replace each part of a `Uri` individually.
+   *
+   * Example:
+   *
+   *     Uri uri1 = Uri.parse("a://b@c:4/d/e?f#g");
+   *     Uri uri2 = uri1.replace(scheme: "A", path: "D/E/E", fragment: "G");
+   *     print(uri2);  // prints "A://b@c:4/D/E/E/?f#G"
+   *
+   * This method acts similarly to using the `new Uri` constructor with
+   * some of the arguments taken from this `Uri` . Example:
+   *
+   *     Uri uri3 = new Uri(
+   *         scheme: "A",
+   *         userInfo: uri1.userInfo,
+   *         host: uri1.host,
+   *         port: uri1.port,
+   *         path: "D/E/E",
+   *         query: uri1.query,
+   *         fragment: "G");
+   *     print(uri3);  // prints "A://b@c:4/D/E/E/?f#G"
+   *     print(uri2 == uri3);  // prints true.
+   *
+   * Using this method can be seen as a shorthand for the `Uri` constructor
+   * call above, but may also be slightly faster because the parts taken
+   * from this `Uri` need not be checked for validity again.
+   */
+  Uri replace({String scheme,
+               String userInfo,
+               String host,
+               int port,
+               String path,
+               Iterable<String> pathSegments,
+               String query,
+               Map<String, String> queryParameters,
+               String fragment}) {
+    // Set to true if the scheme has (potentially) changed.
+    // In that case, the default port may also have changed and we need
+    // to check even the existing port.
+    bool schemeChanged = false;
+    if (scheme != null) {
+      scheme = _makeScheme(scheme, scheme.length);
+      schemeChanged = true;
+    } else {
+      scheme = this.scheme;
+    }
+    bool isFile = (scheme == "file");
+    if (userInfo != null) {
+      userInfo = _makeUserInfo(userInfo, 0, userInfo.length);
+    } else {
+      userInfo = this.userInfo;
+    }
+    if (port != null) {
+      port = _makePort(port, scheme);
+    } else {
+      port = this._port;
+      if (schemeChanged) {
+        // The default port might have changed.
+        port = _makePort(port, scheme);
+      }
+    }
+    if (host != null) {
+      host = _makeHost(host, 0, host.length, false);
+    } else if (this.hasAuthority) {
+      host = this.host;
+    } else if (userInfo.isNotEmpty || port != null || isFile) {
+      host = "";
+    }
+
+    bool ensureLeadingSlash = (host != null);
+    if (path != null || pathSegments != null) {
+      path = _makePath(path, 0, _stringOrNullLength(path), pathSegments,
+                       ensureLeadingSlash, isFile);
+    } else {
+      path = this.path;
+      if ((isFile || (ensureLeadingSlash && !path.isEmpty)) &&
+          !path.startsWith('/')) {
+        path = "/$path";
+      }
+    }
+
+    if (query != null || queryParameters != null) {
+      query = _makeQuery(query, 0, _stringOrNullLength(query), queryParameters);
+    } else if (this.hasQuery) {
+      query = this.query;
+    }
+
+    if (fragment != null) {
+      fragment = _makeFragment(fragment, 0, fragment.length);
+    } else if (this.hasFragment) {
+      fragment = this.fragment;
+    }
+
+    return new Uri._internal(
+        scheme, userInfo, host, port, path, query, fragment);
+  }
+
+  /**
    * Returns the URI path split into its segments. Each of the
    * segments in the returned list have been decoded. If the path is
    * empty the empty list will be returned. A leading slash `/` does
@@ -726,80 +966,196 @@ class Uri {
    */
   Map<String, String> get queryParameters {
     if (_queryParameters == null) {
-      _queryParameters = new _UnmodifiableMap(splitQueryString(query));
+      _queryParameters = new UnmodifiableMapView(splitQueryString(query));
     }
     return _queryParameters;
   }
 
-  static String _makeHost(String host) {
-    if (host == null || host.isEmpty) return host;
-    if (host.codeUnitAt(0) == _LEFT_BRACKET) {
-      if (host.codeUnitAt(host.length - 1) != _RIGHT_BRACKET) {
-        throw new FormatException('Missing end `]` to match `[` in host');
-      }
-      parseIPv6Address(host.substring(1, host.length - 1));
-      return host;
-    }
-    for (int i = 0; i < host.length; i++) {
-      if (host.codeUnitAt(i) == _COLON) {
-        parseIPv6Address(host);
-        return '[$host]';
-      }
-    }
-    return host;
+  static int _makePort(int port, String scheme) {
+    // Perform scheme specific normalization.
+    if (port != null && port == _defaultPort(scheme)) return null;
+    return port;
   }
 
-  static String _makeScheme(String scheme) {
-    bool isSchemeLowerCharacter(int ch) {
-      return ch < 128 &&
-             ((_schemeLowerTable[ch >> 4] & (1 << (ch & 0x0f))) != 0);
-    }
-
-    if (scheme == null) return "";
-    bool allLowercase = true;
-    int length = scheme.length;
-    for (int i = 0; i < length; i++) {
-      int codeUnit = scheme.codeUnitAt(i);
-      if (i == 0 && !_isAlphabeticCharacter(codeUnit)) {
-        // First code unit must be an alphabetic character.
-        throw new ArgumentError('Illegal scheme: $scheme');
+  /**
+   * Check and normalize a most name.
+   *
+   * If the host name starts and ends with '[' and ']', it is considered an
+   * IPv6 address. If [strictIPv6] is false, the address is also considered
+   * an IPv6 address if it contains any ':' character.
+   *
+   * If it is not an IPv6 address, it is case- and escape-normalized.
+   * This escapes all characters not valid in a reg-name,
+   * and converts all non-escape upper-case letters to lower-case.
+   */
+  static String _makeHost(String host, int start, int end, bool strictIPv6) {
+    // TODO(lrn): Should we normalize IPv6 addresses according to RFC 5952?
+    if (host == null) return null;
+    if (start == end) return "";
+    // Host is an IPv6 address if it starts with '[' or contains a colon.
+    if (host.codeUnitAt(start) == _LEFT_BRACKET) {
+      if (host.codeUnitAt(end - 1) != _RIGHT_BRACKET) {
+        _fail(host, start, 'Missing end `]` to match `[` in host');
       }
-      if (!isSchemeLowerCharacter(codeUnit)) {
-        if (_isSchemeCharacter(codeUnit)) {
-          allLowercase = false;
-        } else {
-          throw new ArgumentError('Illegal scheme: $scheme');
+      parseIPv6Address(host, start + 1, end - 1);
+      // RFC 5952 requires hex digits to be lower case.
+      return host.substring(start, end).toLowerCase();
+    }
+    if (!strictIPv6) {
+      // TODO(lrn): skip if too short to be a valid IPv6 address?
+      for (int i = start; i < end; i++) {
+        if (host.codeUnitAt(i) == _COLON) {
+          parseIPv6Address(host, start, end);
+          return '[$host]';
         }
       }
     }
-
-    return allLowercase ? scheme : scheme.toLowerCase();
+    return _normalizeRegName(host, start, end);
   }
 
-  String _makePath(String path, Iterable<String> pathSegments) {
-    if (path == null && pathSegments == null) return "";
+  static bool _isRegNameChar(int char) {
+    return char < 127 && (_regNameTable[char >> 4] & (1 << (char & 0xf))) != 0;
+  }
+
+  /**
+   * Validates and does case- and percent-encoding normalization.
+   *
+   * The [host] must be an RFC3986 "reg-name". It is converted
+   * to lower case, and percent escapes are converted to either
+   * lower case unreserved characters or upper case escapes.
+   */
+  static String _normalizeRegName(String host, int start, int end) {
+    StringBuffer buffer;
+    int sectionStart = start;
+    int index = start;
+    // Whether all characters between sectionStart and index are normalized,
+    bool isNormalized = true;
+
+    while (index < end) {
+      int char = host.codeUnitAt(index);
+      if (char == _PERCENT) {
+        // The _regNameTable contains "%", so we check that first.
+        String replacement = _normalizeEscape(host, index, true);
+        if (replacement == null && isNormalized) {
+          index += 3;
+          continue;
+        }
+        if (buffer == null) buffer = new StringBuffer();
+        String slice = host.substring(sectionStart, index);
+        if (!isNormalized) slice = slice.toLowerCase();
+        buffer.write(slice);
+        int sourceLength = 3;
+        if (replacement == null) {
+          replacement = host.substring(index, index + 3);
+        } else if (replacement == "%") {
+          replacement = "%25";
+          sourceLength = 1;
+        }
+        buffer.write(replacement);
+        index += sourceLength;
+        sectionStart = index;
+        isNormalized = true;
+      } else if (_isRegNameChar(char)) {
+        if (isNormalized && _UPPER_CASE_A <= char && _UPPER_CASE_Z >= char) {
+          // Put initial slice in buffer and continue in non-normalized mode
+          if (buffer == null) buffer = new StringBuffer();
+          if (sectionStart < index) {
+            buffer.write(host.substring(sectionStart, index));
+            sectionStart = index;
+          }
+          isNormalized = false;
+        }
+        index++;
+      } else if (_isGeneralDelimiter(char)) {
+        _fail(host, index, "Invalid character");
+      } else {
+        int sourceLength = 1;
+        if ((char & 0xFC00) == 0xD800 && (index + 1) < end) {
+          int tail = host.codeUnitAt(index + 1);
+          if ((tail & 0xFC00) == 0xDC00) {
+            char = 0x10000 | ((char & 0x3ff) << 10) | (tail & 0x3ff);
+            sourceLength = 2;
+          }
+        }
+        if (buffer == null) buffer = new StringBuffer();
+        String slice = host.substring(sectionStart, index);
+        if (!isNormalized) slice = slice.toLowerCase();
+        buffer.write(slice);
+        buffer.write(_escapeChar(char));
+        index += sourceLength;
+        sectionStart = index;
+      }
+    }
+    if (buffer == null) return host.substring(start, end);
+    if (sectionStart < end) {
+      String slice = host.substring(sectionStart, end);
+      if (!isNormalized) slice = slice.toLowerCase();
+      buffer.write(slice);
+    }
+    return buffer.toString();
+  }
+
+  /**
+   * Validates scheme characters and does case-normalization.
+   *
+   * Schemes are converted to lower case. They cannot contain escapes.
+   */
+  static String _makeScheme(String scheme, int end) {
+    if (end == 0) return "";
+    final int firstCodeUnit = scheme.codeUnitAt(0);
+    if (!_isAlphabeticCharacter(firstCodeUnit)) {
+      _fail(scheme, 0, "Scheme not starting with alphabetic character");
+    }
+    bool allLowercase = firstCodeUnit >= _LOWER_CASE_A;
+    for (int i = 0; i < end; i++) {
+      final int codeUnit = scheme.codeUnitAt(i);
+      if (!_isSchemeCharacter(codeUnit)) {
+        _fail(scheme, i, "Illegal scheme character");
+      }
+      if (codeUnit < _LOWER_CASE_A || codeUnit > _LOWER_CASE_Z) {
+        allLowercase = false;
+      }
+    }
+    scheme = scheme.substring(0, end);
+    if (!allLowercase) scheme = scheme.toLowerCase();
+    return scheme;
+  }
+
+  static String _makeUserInfo(String userInfo, int start, int end) {
+    if (userInfo == null) return "";
+    return _normalize(userInfo, start, end, _userinfoTable);
+  }
+
+  static String _makePath(String path, int start, int end,
+                          Iterable<String> pathSegments,
+                          bool ensureLeadingSlash,
+                          bool isFile) {
+    if (path == null && pathSegments == null) return isFile ? "/" : "";
     if (path != null && pathSegments != null) {
       throw new ArgumentError('Both path and pathSegments specified');
     }
     var result;
     if (path != null) {
-      result = _normalize(path);
+      result = _normalize(path, start, end, _pathCharOrSlashTable);
     } else {
       result = pathSegments.map((s) => _uriEncode(_pathCharTable, s)).join("/");
     }
-    if ((hasAuthority || (scheme == "file")) &&
-        result.isNotEmpty && !result.startsWith("/")) {
+    if (result.isEmpty) {
+      if (isFile) return "/";
+    } else if ((isFile || ensureLeadingSlash) &&
+               result.codeUnitAt(0) != _SLASH) {
       return "/$result";
     }
     return result;
   }
 
-  static String _makeQuery(String query, Map<String, String> queryParameters) {
-    if (query == null && queryParameters == null) return "";
+  static String _makeQuery(String query, int start, int end,
+                           Map<String, String> queryParameters) {
+    if (query == null && queryParameters == null) return null;
     if (query != null && queryParameters != null) {
       throw new ArgumentError('Both query and queryParameters specified');
     }
-    if (query != null) return _normalize(query);
+    if (query != null) return _normalize(query, start, end, _queryCharTable);
 
     var result = new StringBuffer();
     var first = true;
@@ -817,123 +1173,184 @@ class Uri {
     return result.toString();
   }
 
-  static String _makeFragment(String fragment) {
-    if (fragment == null) return "";
-    return _normalize(fragment);
+  static String _makeFragment(String fragment, int start, int end) {
+    if (fragment == null) return null;
+    return _normalize(fragment, start, end, _queryCharTable);
   }
 
-  static String _normalize(String component) {
-    int index = component.indexOf('%');
-    if (index < 0) return component;
+  static int _stringOrNullLength(String s) => (s == null) ? 0 : s.length;
 
-    bool isNormalizedHexDigit(int digit) {
-      return (_ZERO <= digit && digit <= _NINE) ||
-          (_UPPER_CASE_A <= digit && digit <= _UPPER_CASE_F);
+  static bool _isHexDigit(int char) {
+    if (_NINE >= char) return _ZERO <= char;
+    char |= 0x20;
+    return _LOWER_CASE_A <= char && _LOWER_CASE_F >= char;
+  }
+
+  static int _hexValue(int char) {
+    assert(_isHexDigit(char));
+    if (_NINE >= char) return char - _ZERO;
+    char |= 0x20;
+    return char - (_LOWER_CASE_A - 10);
+  }
+
+  /**
+   * Performs RFC 3986 Percent-Encoding Normalization.
+   *
+   * Returns a replacement string that should be replace the original escape.
+   * Returns null if no replacement is necessary because the escape is
+   * not for an unreserved character and is already non-lower-case.
+   *
+   * Returns "%" if the escape is invalid (not two valid hex digits following
+   * the percent sign). The calling code should replace the percent
+   * sign with "%25", but leave the following two characters unmodified.
+   *
+   * If [lowerCase] is true, a single character returned is always lower case,
+   */
+  static String _normalizeEscape(String source, int index, bool lowerCase) {
+    assert(source.codeUnitAt(index) == _PERCENT);
+    if (index + 2 >= source.length) {
+      return "%";  // Marks the escape as invalid.
     }
-
-    bool isLowerCaseHexDigit(int digit) {
-      return _LOWER_CASE_A <= digit && digit <= _LOWER_CASE_F;
+    int firstDigit = source.codeUnitAt(index + 1);
+    int secondDigit = source.codeUnitAt(index + 2);
+    if (!_isHexDigit(firstDigit) || !_isHexDigit(secondDigit)) {
+      return "%";  // Marks the escape as invalid.
     }
-
-    bool isUnreserved(int ch) {
-      return ch < 128 &&
-             ((_unreservedTable[ch >> 4] & (1 << (ch & 0x0f))) != 0);
+    int value = _hexValue(firstDigit) * 16 + _hexValue(secondDigit);
+    if (_isUnreservedChar(value)) {
+      if (lowerCase && _UPPER_CASE_A <= value && _UPPER_CASE_Z >= value) {
+        value |= 0x20;
+      }
+      return new String.fromCharCode(value);
     }
+    if (firstDigit >= _LOWER_CASE_A || secondDigit >= _LOWER_CASE_A) {
+      // Either digit is lower case.
+      return source.substring(index, index + 3).toUpperCase();
+    }
+    // Escape is retained, and is already non-lower case, so return null to
+    // represent "no replacement necessary".
+    return null;
+  }
 
-    int normalizeHexDigit(int index) {
-      var codeUnit = component.codeUnitAt(index);
-      if (isLowerCaseHexDigit(codeUnit)) {
-        return codeUnit - 0x20;
-      } else if (!isNormalizedHexDigit(codeUnit)) {
-        throw new ArgumentError("Invalid URI component: $component");
-      } else {
-        return codeUnit;
+  static bool _isUnreservedChar(int ch) {
+    return ch < 127 &&
+           ((_unreservedTable[ch >> 4] & (1 << (ch & 0x0f))) != 0);
+  }
+
+  static String _escapeChar(char) {
+    assert(char <= 0x10ffff);  // It's a valid unicode code point.
+    const hexDigits = "0123456789ABCDEF";
+    List codeUnits;
+    if (char < 0x80) {
+      // ASCII, a single percent encoded sequence.
+      codeUnits = new List(3);
+      codeUnits[0] = _PERCENT;
+      codeUnits[1] = hexDigits.codeUnitAt(char >> 4);
+      codeUnits[2] = hexDigits.codeUnitAt(char & 0xf);
+    } else {
+      // Do UTF-8 encoding of character, then percent encode bytes.
+      int flag = 0xc0;  // The high-bit markers on the first byte of UTF-8.
+      int encodedBytes = 2;
+      if (char > 0x7ff) {
+        flag = 0xe0;
+        encodedBytes = 3;
+        if (char > 0xffff) {
+          encodedBytes = 4;
+          flag = 0xf0;
+        }
+      }
+      codeUnits = new List(3 * encodedBytes);
+      int index = 0;
+      while (--encodedBytes >= 0) {
+        int byte = ((char >> (6 * encodedBytes)) & 0x3f) | flag;
+        codeUnits[index] = _PERCENT;
+        codeUnits[index + 1] = hexDigits.codeUnitAt(byte >> 4);
+        codeUnits[index + 2] = hexDigits.codeUnitAt(byte & 0xf);
+        index += 3;
+        flag = 0x80;  // Following bytes have only high bit set.
       }
     }
+    return new String.fromCharCodes(codeUnits);
+  }
 
-    int decodeHexDigitPair(int index) {
-      int byte = 0;
-      for (int i = 0; i < 2; i++) {
-        var codeUnit = component.codeUnitAt(index + i);
-        if (_ZERO <= codeUnit && codeUnit <= _NINE) {
-          byte = byte * 16 + codeUnit - _ZERO;
-        } else {
-          // Check ranges A-F (0x41-0x46) and a-f (0x61-0x66).
-          codeUnit |= 0x20;
-          if (_LOWER_CASE_A <= codeUnit &&
-              codeUnit <= _LOWER_CASE_F) {
-            byte = byte * 16 + codeUnit - _LOWER_CASE_A + 10;
-          } else {
-            throw new ArgumentError(
-                "Invalid percent-encoding in URI component: $component");
+  /**
+   * Runs through component checking that each character is valid and
+   * normalize percent escapes.
+   *
+   * Uses [charTable] to check if a non-`%` character is allowed.
+   * Each `%` character must be followed by two hex digits.
+   * If the hex-digits are lower case letters, they are converted to
+   * upper case.
+   */
+  static String _normalize(String component, int start, int end,
+                           List<int> charTable) {
+    StringBuffer buffer;
+    int sectionStart = start;
+    int index = start;
+    // Loop while characters are valid and escapes correct and upper-case.
+    while (index < end) {
+      int char = component.codeUnitAt(index);
+      if (char < 127 && (charTable[char >> 4] & (1 << (char & 0x0f))) != 0) {
+        index++;
+      } else {
+        String replacement;
+        int sourceLength;
+        if (char == _PERCENT) {
+          replacement = _normalizeEscape(component, index, false);
+          // Returns null if we should keep the existing escape.
+          if (replacement == null) {
+            index += 3;
+            continue;
           }
-        }
-      }
-      return byte;
-    }
-
-    // Start building the normalized component string.
-    StringBuffer result;
-    int length = component.length;
-    int prevIndex = 0;
-
-    // Copy a part of the component string to the result.
-    void fillResult() {
-      if (result == null) {
-        assert(prevIndex == 0);
-        result = new StringBuffer(component.substring(prevIndex, index));
-      } else {
-        result.write(component.substring(prevIndex, index));
-      }
-    }
-
-    while (index < length) {
-      // Normalize percent-encoding to uppercase and don't encode
-      // unreserved characters.
-      assert(component.codeUnitAt(index) == _PERCENT);
-      if (length < index + 2) {
-          throw new ArgumentError(
-              "Invalid percent-encoding in URI component: $component");
-      }
-
-      var codeUnit1 = component.codeUnitAt(index + 1);
-      var codeUnit2 = component.codeUnitAt(index + 2);
-      var decodedCodeUnit = decodeHexDigitPair(index + 1);
-      if (isNormalizedHexDigit(codeUnit1) &&
-          isNormalizedHexDigit(codeUnit2) &&
-          !isUnreserved(decodedCodeUnit)) {
-        index += 3;
-      } else {
-        fillResult();
-        if (isUnreserved(decodedCodeUnit)) {
-          result.writeCharCode(decodedCodeUnit);
+          // Returns "%" if we should escape the existing percent.
+          if ("%" == replacement) {
+            replacement = "%25";
+            sourceLength = 1;
+          } else {
+            sourceLength = 3;
+          }
+        } else if (_isGeneralDelimiter(char)) {
+          _fail(component, index, "Invalid character");
         } else {
-          result.write("%");
-          result.writeCharCode(normalizeHexDigit(index + 1));
-          result.writeCharCode(normalizeHexDigit(index + 2));
+          sourceLength = 1;
+          if ((char & 0xFC00) == 0xD800) {
+            // Possible lead surrogate.
+            if (index + 1 < end) {
+              int tail = component.codeUnitAt(index + 1);
+              if ((tail & 0xFC00) == 0xDC00) {
+                // Tail surrogat.
+                sourceLength = 2;
+                char = 0x10000 | ((char & 0x3ff) << 10) | (tail & 0x3ff);
+              }
+            }
+          }
+          replacement = _escapeChar(char);
         }
-        index += 3;
-        prevIndex = index;
-      }
-      int next = component.indexOf('%', index);
-      if (next >= index) {
-        index = next;
-      } else {
-        index = length;
+        if (buffer == null) buffer = new StringBuffer();
+        buffer.write(component.substring(sectionStart, index));
+        buffer.write(replacement);
+        index += sourceLength;
+        sectionStart = index;
       }
     }
-    if (result == null) return component;
-
-    if (result != null && prevIndex != index) fillResult();
-    assert(index == length);
-
-    return result.toString();
+    if (buffer == null) {
+      // Makes no copy if start == 0 and end == component.length.
+      return component.substring(start, end);
+    }
+    if (sectionStart < end) {
+      buffer.write(component.substring(sectionStart, end));
+    }
+    return buffer.toString();
   }
 
   static bool _isSchemeCharacter(int ch) {
     return ch < 128 && ((_schemeTable[ch >> 4] & (1 << (ch & 0x0f))) != 0);
   }
 
+  static bool _isGeneralDelimiter(int ch) {
+    return ch <= _RIGHT_BRACKET &&
+        ((_genDelimitersTable[ch >> 4] & (1 << (ch & 0x0f))) != 0);
+  }
 
   /**
    * Returns whether the URI is absolute.
@@ -941,12 +1358,41 @@ class Uri {
   bool get isAbsolute => scheme != "" && fragment == "";
 
   String _merge(String base, String reference) {
-    if (base == "") return "/$reference";
-    return "${base.substring(0, base.lastIndexOf("/") + 1)}$reference";
+    if (base.isEmpty) return "/$reference";
+    // Optimize for the case: absolute base, reference beginning with "../".
+    int backCount = 0;
+    int refStart = 0;
+    // Count number of "../" at beginning of reference.
+    while (reference.startsWith("../", refStart)) {
+      refStart += 3;
+      backCount++;
+    }
+
+    // Drop last segment - everything after last '/' of base.
+    int baseEnd = base.lastIndexOf('/');
+    // Drop extra segments for each leading "../" of reference.
+    while (baseEnd > 0 && backCount > 0) {
+      int newEnd = base.lastIndexOf('/', baseEnd - 1);
+      if (newEnd < 0) {
+        break;
+      }
+      int delta = baseEnd - newEnd;
+      // If we see a "." or ".." segment in base, stop here and let
+      // _removeDotSegments handle it.
+      if ((delta == 2 || delta == 3) &&
+          base.codeUnitAt(newEnd + 1) == _DOT &&
+          (delta == 2 || base.codeUnitAt(newEnd + 2) == _DOT)) {
+        break;
+      }
+      baseEnd = newEnd;
+      backCount--;
+    }
+    return base.substring(0, baseEnd + 1) +
+           reference.substring(refStart - 3 * backCount);
   }
 
   bool _hasDotSegments(String path) {
-    if (path.length > 0 && path.codeUnitAt(0) == _COLON) return true;
+    if (path.length > 0 && path.codeUnitAt(0) == _DOT) return true;
     int index = path.indexOf("/.");
     return index != -1;
   }
@@ -997,60 +1443,86 @@ class Uri {
   Uri resolveUri(Uri reference) {
     // From RFC 3986.
     String targetScheme;
-    String targetUserInfo;
+    String targetUserInfo = "";
     String targetHost;
     int targetPort;
     String targetPath;
     String targetQuery;
-    if (reference.scheme != "") {
+    if (reference.scheme.isNotEmpty) {
       targetScheme = reference.scheme;
-      targetUserInfo = reference.userInfo;
-      targetHost = reference.host;
-      targetPort = reference.port;
-      targetPath = _removeDotSegments(reference.path);
-      targetQuery = reference.query;
-    } else {
       if (reference.hasAuthority) {
         targetUserInfo = reference.userInfo;
         targetHost = reference.host;
-        targetPort = reference.port;
-        targetPath = _removeDotSegments(reference.path);
+        targetPort = reference.hasPort ? reference.port : null;
+      }
+      targetPath = _removeDotSegments(reference.path);
+      if (reference.hasQuery) {
         targetQuery = reference.query;
+      }
+    } else {
+      targetScheme = this.scheme;
+      if (reference.hasAuthority) {
+        targetUserInfo = reference.userInfo;
+        targetHost = reference.host;
+        targetPort = _makePort(reference.hasPort ? reference.port : null,
+                               targetScheme);
+        targetPath = _removeDotSegments(reference.path);
+        if (reference.hasQuery) targetQuery = reference.query;
       } else {
         if (reference.path == "") {
-          targetPath = this.path;
-          if (reference.query != "") {
+          targetPath = this._path;
+          if (reference.hasQuery) {
             targetQuery = reference.query;
           } else {
-            targetQuery = this.query;
+            targetQuery = this._query;
           }
         } else {
           if (reference.path.startsWith("/")) {
             targetPath = _removeDotSegments(reference.path);
           } else {
-            targetPath = _removeDotSegments(_merge(this.path, reference.path));
+            targetPath = _removeDotSegments(_merge(this._path, reference.path));
           }
-          targetQuery = reference.query;
+          if (reference.hasQuery) targetQuery = reference.query;
         }
-        targetUserInfo = this.userInfo;
-        targetHost = this.host;
-        targetPort = this.port;
+        targetUserInfo = this._userInfo;
+        targetHost = this._host;
+        targetPort = this._port;
       }
-      targetScheme = this.scheme;
     }
-    return new Uri(scheme: targetScheme,
-                   userInfo: targetUserInfo,
-                   host: targetHost,
-                   port: targetPort,
-                   path: targetPath,
-                   query: targetQuery,
-                   fragment: reference.fragment);
+    String fragment = reference.hasFragment ? reference.fragment : null;
+    return new Uri._internal(targetScheme,
+                             targetUserInfo,
+                             targetHost,
+                             targetPort,
+                             targetPath,
+                             targetQuery,
+                             fragment);
   }
 
   /**
    * Returns whether the URI has an [authority] component.
    */
-  bool get hasAuthority => host != "";
+  bool get hasAuthority => _host != null;
+
+  /**
+   * Returns whether the URI has an explicit port.
+   *
+   * If the port number is the default port number
+   * (zero for unrecognized schemes, with http (80) and https (443) being
+   * recognized),
+   * then the port is made implicit and omitted from the URI.
+   */
+  bool get hasPort => _port != null;
+
+  /**
+   * Returns whether the URI has a query part.
+   */
+  bool get hasQuery => _query != null;
+
+  /**
+   * Returns whether the URI has a fragment part.
+   */
+  bool get hasFragment => _fragment != null;
 
   /**
    * Returns the origin of the URI in the form scheme://host:port for the
@@ -1068,7 +1540,7 @@ class Uri {
       throw new StateError(
         "Origin is only applicable schemes http and https: $this");
     }
-    if (_port == 0) return "$scheme://$_host";
+    if (_port == null) return "$scheme://$_host";
     return "$scheme://$_host:$_port";
   }
 
@@ -1195,24 +1667,29 @@ class Uri {
   }
 
   void _writeAuthority(StringSink ss) {
-    _addIfNonEmpty(ss, userInfo, userInfo, "@");
-    ss.write(_host == null ? "null" : _host);
-    if (_port != 0) {
+    if (_userInfo.isNotEmpty) {
+      ss.write(_userInfo);
+      ss.write("@");
+    }
+    if (_host != null) ss.write(_host);
+    if (_port != null) {
       ss.write(":");
-      ss.write(_port.toString());
+      ss.write(_port);
     }
   }
 
   String toString() {
     StringBuffer sb = new StringBuffer();
     _addIfNonEmpty(sb, scheme, scheme, ':');
-    if (hasAuthority || (scheme == "file")) {
+    if (hasAuthority || path.startsWith("//") || (scheme == "file")) {
+      // File URIS always have the authority, even if it is empty.
+      // The empty URI means "localhost".
       sb.write("//");
       _writeAuthority(sb);
     }
     sb.write(path);
-    _addIfNonEmpty(sb, query, "?", query);
-    _addIfNonEmpty(sb, fragment, "#", fragment);
+    if (_query != null) { sb..write("?")..write(_query); }
+    if (_fragment != null) { sb..write("#")..write(_fragment); }
     return sb.toString();
   }
 
@@ -1220,11 +1697,14 @@ class Uri {
     if (other is! Uri) return false;
     Uri uri = other;
     return scheme == uri.scheme &&
+        hasAuthority == uri.hasAuthority &&
         userInfo == uri.userInfo &&
         host == uri.host &&
         port == uri.port &&
         path == uri.path &&
+        hasQuery == uri.hasQuery &&
         query == uri.query &&
+        hasFragment == uri.hasFragment &&
         fragment == uri.fragment;
   }
 
@@ -1431,6 +1911,9 @@ class Uri {
    * Throws a [FormatException] if [host] is not a valid IPv6 address
    * representation.
    *
+   * Acts on the substring from [start] to [end]. If [end] is omitted, it
+   * defaults ot the end of the string.
+   *
    * Some examples of IPv6 addresses:
    *  * ::1
    *  * FEDC:BA98:7654:3210:FEDC:BA98:7654:3210
@@ -1438,45 +1921,46 @@ class Uri {
    *  * ::FFFF:129.144.52.38
    *  * 2010:836B:4179::836B:4179
    */
-  static List<int> parseIPv6Address(String host) {
+  static List<int> parseIPv6Address(String host, [int start = 0, int end]) {
+    if (end == null) end = host.length;
     // An IPv6 address consists of exactly 8 parts of 1-4 hex digits, seperated
     // by `:`'s, with the following exceptions:
     //
     //  - One (and only one) wildcard (`::`) may be present, representing a fill
     //    of 0's. The IPv6 `::` is thus 16 bytes of `0`.
     //  - The last two parts may be replaced by an IPv4 address.
-    void error(String msg) {
-      throw new FormatException('Illegal IPv6 address, $msg');
+    void error(String msg, [position]) {
+      throw new FormatException('Illegal IPv6 address, $msg', host, position);
     }
     int parseHex(int start, int end) {
       if (end - start > 4) {
-        error('an IPv6 part can only contain a maximum of 4 hex digits');
+        error('an IPv6 part can only contain a maximum of 4 hex digits', start);
       }
       int value = int.parse(host.substring(start, end), radix: 16);
       if (value < 0 || value > (1 << 16) - 1) {
-        error('each part must be in the range of `0x0..0xFFFF`');
+        error('each part must be in the range of `0x0..0xFFFF`', start);
       }
       return value;
     }
     if (host.length < 2) error('address is too short');
     List<int> parts = [];
     bool wildcardSeen = false;
-    int partStart = 0;
+    int partStart = start;
     // Parse all parts, except a potential last one.
-    for (int i = 0; i < host.length; i++) {
+    for (int i = start; i < end; i++) {
       if (host.codeUnitAt(i) == _COLON) {
-        if (i == 0) {
+        if (i == start) {
           // If we see a `:` in the beginning, expect wildcard.
           i++;
           if (host.codeUnitAt(i) != _COLON) {
-            error('invalid start colon.');
+            error('invalid start colon.', i);
           }
           partStart = i;
         }
         if (i == partStart) {
           // Wildcard. We only allow one.
           if (wildcardSeen) {
-            error('only one wildcard `::` is allowed');
+            error('only one wildcard `::` is allowed', i);
           }
           wildcardSeen = true;
           parts.add(-1);
@@ -1488,22 +1972,22 @@ class Uri {
       }
     }
     if (parts.length == 0) error('too few parts');
-    bool atEnd = partStart == host.length;
-    bool isLastWildcard = parts.last == -1;
+    bool atEnd = (partStart == end);
+    bool isLastWildcard = (parts.last == -1);
     if (atEnd && !isLastWildcard) {
-      error('expected a part after last `:`');
+      error('expected a part after last `:`', end);
     }
     if (!atEnd) {
       try {
-        parts.add(parseHex(partStart, host.length));
+        parts.add(parseHex(partStart, end));
       } catch (e) {
         // Failed to parse the last chunk as hex. Try IPv4.
         try {
-          List<int> last = parseIPv4Address(host.substring(partStart));
+          List<int> last = parseIPv4Address(host.substring(partStart, end));
           parts.add(last[0] << 8 | last[1]);
           parts.add(last[2] << 8 | last[3]);
         } catch (e) {
-          error('invalid end of IPv6 address.');
+          error('invalid end of IPv6 address.', partStart);
         }
       }
     }
@@ -1515,15 +1999,23 @@ class Uri {
       error('an address without a wildcard must contain exactly 8 parts');
     }
     // TODO(ajohnsen): Consider using Uint8List.
-    return parts
-        .expand((value) {
-          if (value == -1) {
-            return new List.filled((9 - parts.length) * 2, 0);
-          } else {
-            return [(value >> 8) & 0xFF, value & 0xFF];
-          }
-        })
-        .toList();
+    List bytes = new List<int>(16);
+    for (int i = 0, index = 0; i < parts.length; i++) {
+      int value = parts[i];
+      if (value == -1) {
+        int wildCardLength = 9 - parts.length;
+        for (int j = 0; j < wildCardLength; j++) {
+          bytes[index] = 0;
+          bytes[index + 1] = 0;
+          index += 2;
+        }
+      } else {
+        bytes[index] = value >> 8;
+        bytes[index + 1] = value & 0xff;
+        index += 2;
+      }
+    }
+    return bytes;
   }
 
   // Frequently used character codes.
@@ -1533,6 +2025,7 @@ class Uri {
   static const int _PERCENT = 0x25;
   static const int _ASTERISK = 0x2A;
   static const int _PLUS = 0x2B;
+  static const int _DOT = 0x2E;
   static const int _SLASH = 0x2F;
   static const int _ZERO = 0x30;
   static const int _NINE = 0x39;
@@ -1713,7 +2206,7 @@ class Uri {
       0x0000,   // 0x00 - 0x0f  0000000000000000
       0x0000,   // 0x10 - 0x1f  0000000000000000
                 //               ! #$ &'()*+,-./
-      0xf7da,   // 0x20 - 0x2f  0101101111101111
+      0xffda,   // 0x20 - 0x2f  0101101111111111
                 //              0123456789:; = ?
       0xafff,   // 0x30 - 0x3f  1111111111110101
                 //              @ABCDEFGHIJKLMNO
@@ -1786,6 +2279,48 @@ class Uri {
                 //              pqrstuvwxyz   ~
       0x47ff];  // 0x70 - 0x7f  1111111111100010
 
+  // General delimiter characters, RFC 3986 section 2.2.
+  // gen-delims  = ":" / "/" / "?" / "#" / "[" / "]" / "@"
+  //
+  static const _genDelimitersTable = const [
+                //             LSB            MSB
+                //              |              |
+      0x0000,   // 0x00 - 0x0f  0000000000000000
+      0x0000,   // 0x10 - 0x1f  0000000000000000
+                //                 #           /
+      0x8008,   // 0x20 - 0x2f  0001000000000001
+                //                        :    ?
+      0x8400,   // 0x30 - 0x3f  0000000000100001
+                //              @
+      0x0001,   // 0x40 - 0x4f  1000000000000000
+                //                         [ ]
+      0x2800,   // 0x50 - 0x5f  0000000000010100
+                //
+      0x0000,   // 0x60 - 0x6f  0000000000000000
+                //
+      0x0000];  // 0x70 - 0x7f  0000000000000000
+
+  // Characters allowed in the userinfo as of RFC 3986.
+  // RFC 3986 Apendix A
+  // userinfo = *( unreserved / pct-encoded / sub-delims / ':')
+  static const _userinfoTable = const [
+                //             LSB            MSB
+                //              |              |
+      0x0000,   // 0x00 - 0x0f  0000000000000000
+      0x0000,   // 0x10 - 0x1f  0000000000000000
+                //               !  $ &'()*+,-.
+      0x7fd2,   // 0x20 - 0x2f  0100101111111110
+                //              0123456789:; =
+      0x2fff,   // 0x30 - 0x3f  1111111111110100
+                //               ABCDEFGHIJKLMNO
+      0xfffe,   // 0x40 - 0x4f  0111111111111111
+                //              PQRSTUVWXYZ    _
+      0x87ff,   // 0x50 - 0x5f  1111111111100001
+                //               abcdefghijklmno
+      0xfffe,   // 0x60 - 0x6f  0111111111111111
+                //              pqrstuvwxyz   ~
+      0x47ff];  // 0x70 - 0x7f  1111111111100010
+
   // Characters allowed in the reg-name as of RFC 3986.
   // RFC 3986 Apendix A
   // reg-name = *( unreserved / pct-encoded / sub-delims )
@@ -1828,6 +2363,27 @@ class Uri {
                 //              pqrstuvwxyz   ~
       0x47ff];  // 0x70 - 0x7f  1111111111100010
 
+  // Characters allowed in the path as of RFC 3986.
+  // RFC 3986 section 3.3 *and* slash.
+  static const _pathCharOrSlashTable = const [
+                //             LSB            MSB
+                //              |              |
+      0x0000,   // 0x00 - 0x0f  0000000000000000
+      0x0000,   // 0x10 - 0x1f  0000000000000000
+                //               !  $ &'()*+,-./
+      0xffd2,   // 0x20 - 0x2f  0100101111111111
+                //              0123456789:; =
+      0x2fff,   // 0x30 - 0x3f  1111111111110100
+                //              @ABCDEFGHIJKLMNO
+      0xffff,   // 0x40 - 0x4f  1111111111111111
+
+                //              PQRSTUVWXYZ    _
+      0x87ff,   // 0x50 - 0x5f  1111111111100001
+                //               abcdefghijklmno
+      0xfffe,   // 0x60 - 0x6f  0111111111111111
+                //              pqrstuvwxyz   ~
+      0x47ff];  // 0x70 - 0x7f  1111111111100010
+
   // Characters allowed in the query as of RFC 3986.
   // RFC 3986 section 3.4.
   // query = *( pchar / "/" / "?" )
@@ -1848,34 +2404,4 @@ class Uri {
       0xfffe,   // 0x60 - 0x6f  0111111111111111
                 //              pqrstuvwxyz   ~
       0x47ff];  // 0x70 - 0x7f  1111111111100010
-}
-
-class _UnmodifiableMap<K, V> implements Map<K, V> {
-  final Map _map;
-  const _UnmodifiableMap(this._map);
-
-  bool containsValue(Object value) => _map.containsValue(value);
-  bool containsKey(Object key) => _map.containsKey(key);
-  V operator [](Object key) => _map[key];
-  void operator []=(K key, V value) {
-    throw new UnsupportedError("Cannot modify an unmodifiable map");
-  }
-  V putIfAbsent(K key, V ifAbsent()) {
-    throw new UnsupportedError("Cannot modify an unmodifiable map");
-  }
-  addAll(Map other) {
-    throw new UnsupportedError("Cannot modify an unmodifiable map");
-  }
-  V remove(Object key) {
-    throw new UnsupportedError("Cannot modify an unmodifiable map");
-  }
-  void clear() {
-    throw new UnsupportedError("Cannot modify an unmodifiable map");
-  }
-  void forEach(void f(K key, V value)) => _map.forEach(f);
-  Iterable<K> get keys => _map.keys;
-  Iterable<V> get values => _map.values;
-  int get length => _map.length;
-  bool get isEmpty => _map.isEmpty;
-  bool get isNotEmpty => _map.isNotEmpty;
 }

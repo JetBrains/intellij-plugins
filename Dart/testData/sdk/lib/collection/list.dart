@@ -4,11 +4,10 @@
 
 part of dart.collection;
 
-/** A reusable set used to identify cyclic lists during toString() calls. */
-Set _toStringVisiting = new HashSet.identity();
-
 /**
  * Abstract implementation of a list.
+ *
+ * `ListBase` can be used as a base class for implementing the `List` interface.
  *
  * All operations are defined in terms of `length`, `operator[]`,
  * `operator[]=` and `length=`, which need to be implemented.
@@ -22,12 +21,22 @@ Set _toStringVisiting = new HashSet.identity();
  * to the growable list, or, preferably, use `DelegatingList` from
  * "package:collection/wrappers.dart" instead.
  */
-abstract class ListBase<E> = Object with ListMixin<E>;
+abstract class ListBase<E> extends Object with ListMixin<E> {
+  /**
+   * Convert a `List` to a string as `[each, element, as, string]`.
+   *
+   * Handles circular references where converting one of the elements
+   * to a string ends up converting [list] to a string again.
+   */
+  static String listToString(List list) =>
+      IterableBase.iterableToFullString(list, '[', ']');
+}
 
 /**
  * Base implementation of a [List] class.
  *
- * This class can be used as a mixin.
+ * `ListMixin` can be used as a mixin to make a class implement
+ * the `List` interface.
  *
  * This implements all read operations using only the `length` and
  * `operator[]` members. It implements write operations using those and
@@ -43,7 +52,6 @@ abstract class ListBase<E> = Object with ListMixin<E>;
  * "package:collection/wrappers.dart" instead.
  */
 abstract class ListMixin<E> implements List<E> {
-
   // Iterable interface.
   Iterator<E> get iterator => new ListIterator<E>(this);
 
@@ -64,18 +72,18 @@ abstract class ListMixin<E> implements List<E> {
   bool get isNotEmpty => !isEmpty;
 
   E get first {
-    if (length == 0) throw new StateError("No elements");
+    if (length == 0) throw IterableElementError.noElement();
     return this[0];
   }
 
   E get last {
-    if (length == 0) throw new StateError("No elements");
+    if (length == 0) throw IterableElementError.noElement();
     return this[length - 1];
   }
 
   E get single {
-    if (length == 0) throw new StateError("No elements");
-    if (length > 1) throw new StateError("Too many elements");
+    if (length == 0) throw IterableElementError.noElement();
+    if (length > 1) throw IterableElementError.tooMany();
     return this[0];
   }
 
@@ -112,7 +120,7 @@ abstract class ListMixin<E> implements List<E> {
     return false;
   }
 
-  dynamic firstWhere(bool test(E element), { Object orElse() }) {
+  E firstWhere(bool test(E element), { E orElse() }) {
     int length = this.length;
     for (int i = 0; i < length; i++) {
       E element = this[i];
@@ -122,10 +130,10 @@ abstract class ListMixin<E> implements List<E> {
       }
     }
     if (orElse != null) return orElse();
-    throw new StateError("No matching element");
+    throw IterableElementError.noElement();
   }
 
-  dynamic lastWhere(bool test(E element), { Object orElse() }) {
+  E lastWhere(bool test(E element), { E orElse() }) {
     int length = this.length;
     for (int i = length - 1; i >= 0; i--) {
       E element = this[i];
@@ -135,7 +143,7 @@ abstract class ListMixin<E> implements List<E> {
       }
     }
     if (orElse != null) return orElse();
-    throw new StateError("No matching element");
+    throw IterableElementError.noElement();
   }
 
   E singleWhere(bool test(E element)) {
@@ -146,7 +154,7 @@ abstract class ListMixin<E> implements List<E> {
       E element = this[i];
       if (test(element)) {
         if (matchFound) {
-          throw new StateError("More than one matching element");
+          throw IterableElementError.tooMany();
         }
         matchFound = true;
         match = element;
@@ -156,7 +164,7 @@ abstract class ListMixin<E> implements List<E> {
       }
     }
     if (matchFound) return match;
-    throw new StateError("No matching element");
+    throw IterableElementError.noElement();
   }
 
   String join([String separator = ""]) {
@@ -173,10 +181,14 @@ abstract class ListMixin<E> implements List<E> {
       new ExpandIterable<E, dynamic>(this, f);
 
   E reduce(E combine(E previousValue, E element)) {
-    if (length == 0) throw new StateError("No elements");
+    int length = this.length;
+    if (length == 0) throw IterableElementError.noElement();
     E value = this[0];
     for (int i = 1; i < length; i++) {
       value = combine(value, this[i]);
+      if (length != this.length) {
+        throw new ConcurrentModificationError(this);
+      }
     }
     return value;
   }
@@ -193,13 +205,13 @@ abstract class ListMixin<E> implements List<E> {
     return value;
   }
 
-  Iterable<E> skip(int count) => new SubListIterable(this, count, null);
+  Iterable<E> skip(int count) => new SubListIterable<E>(this, count, null);
 
   Iterable<E> skipWhile(bool test(E element)) {
     return new SkipWhileIterable<E>(this, test);
   }
 
-  Iterable<E> take(int count) => new SubListIterable(this, 0, count);
+  Iterable<E> take(int count) => new SubListIterable<E>(this, 0, count);
 
   Iterable<E> takeWhile(bool test(E element)) {
     return new TakeWhileIterable<E>(this, test);
@@ -282,7 +294,7 @@ abstract class ListMixin<E> implements List<E> {
 
   E removeLast() {
     if (length == 0) {
-      throw new StateError("No elements");
+      throw IterableElementError.noElement();
     }
     E result = this[length - 1];
     length--;
@@ -310,21 +322,13 @@ abstract class ListMixin<E> implements List<E> {
   }
 
   Map<int, E> asMap() {
-    return new ListMapView(this);
-  }
-
-  void _rangeCheck(int start, int end) {
-    if (start < 0 || start > this.length) {
-      throw new RangeError.range(start, 0, this.length);
-    }
-    if (end < start || end > this.length) {
-      throw new RangeError.range(end, start, this.length);
-    }
+    return new ListMapView<E>(this);
   }
 
   List<E> sublist(int start, [int end]) {
-    if (end == null) end = this.length;
-    _rangeCheck(start, end);
+    int listLength = this.length;
+    if (end == null) end = listLength;
+    RangeError.checkValidRange(start, end, listLength);
     int length = end - start;
     List<E> result = new List<E>()..length = length;
     for (int i = 0; i < length; i++) {
@@ -334,30 +338,29 @@ abstract class ListMixin<E> implements List<E> {
   }
 
   Iterable<E> getRange(int start, int end) {
-    _rangeCheck(start, end);
-    return new SubListIterable(this, start, end);
+    RangeError.checkValidRange(start, end, this.length);
+    return new SubListIterable<E>(this, start, end);
   }
 
   void removeRange(int start, int end) {
-    _rangeCheck(start, end);
+    RangeError.checkValidRange(start, end, this.length);
     int length = end - start;
     setRange(start, this.length - length, this, end);
     this.length -= length;
   }
 
   void fillRange(int start, int end, [E fill]) {
-    _rangeCheck(start, end);
+    RangeError.checkValidRange(start, end, this.length);
     for (int i = start; i < end; i++) {
       this[i] = fill;
     }
   }
 
   void setRange(int start, int end, Iterable<E> iterable, [int skipCount = 0]) {
-    _rangeCheck(start, end);
+    RangeError.checkValidRange(start, end, this.length);
     int length = end - start;
     if (length == 0) return;
-
-    if (skipCount < 0) throw new ArgumentError(skipCount);
+    RangeError.checkNotNegative(skipCount, "skipCount");
 
     List otherList;
     int otherStart;
@@ -370,7 +373,7 @@ abstract class ListMixin<E> implements List<E> {
       otherStart = 0;
     }
     if (otherStart + length > otherList.length) {
-      throw new StateError("Not enough elements");
+      throw IterableElementError.tooFew();
     }
     if (otherStart < start) {
       // Copy backwards to ensure correct copy if [from] is this.
@@ -385,7 +388,7 @@ abstract class ListMixin<E> implements List<E> {
   }
 
   void replaceRange(int start, int end, Iterable<E> newContents) {
-    _rangeCheck(start, end);
+    RangeError.checkValidRange(start, end, this.length);
     if (newContents is! EfficientLength) {
       newContents = newContents.toList();
     }
@@ -450,9 +453,7 @@ abstract class ListMixin<E> implements List<E> {
   }
 
   void insert(int index, E element) {
-    if (index < 0 || index > length) {
-      throw new RangeError.range(index, 0, length);
-    }
+    RangeError.checkValueInInterval(index, 0, length, "index");
     if (index == this.length) {
       add(element);
       return;
@@ -474,9 +475,7 @@ abstract class ListMixin<E> implements List<E> {
   }
 
   void insertAll(int index, Iterable<E> iterable) {
-    if (index < 0 || index > length) {
-      throw new RangeError.range(index, 0, length);
-    }
+    RangeError.checkValueInInterval(index, 0, length, "index");
     if (iterable is EfficientLength) {
       iterable = iterable.toList();
     }
@@ -499,23 +498,7 @@ abstract class ListMixin<E> implements List<E> {
     }
   }
 
-  Iterable<E> get reversed => new ReversedListIterable(this);
+  Iterable<E> get reversed => new ReversedListIterable<E>(this);
 
-  String toString() {
-    if (_toStringVisiting.contains(this)) {
-      return '[...]';
-    }
-
-    var result = new StringBuffer();
-    try {
-      _toStringVisiting.add(this);
-      result.write('[');
-      result.writeAll(this, ', ');
-      result.write(']');
-     } finally {
-       _toStringVisiting.remove(this);
-     }
-
-    return result.toString();
-  }
+  String toString() => IterableBase.iterableToFullString(this, '[', ']');
 }

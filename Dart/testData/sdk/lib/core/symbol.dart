@@ -5,7 +5,7 @@
 part of dart.core;
 
 /// Opaque name used by mirrors, invocations and [Function.apply].
-class Symbol {
+abstract class Symbol {
   /**
    * Constructs a new Symbol.
    *
@@ -25,7 +25,7 @@ class Symbol {
    *   "`[]`", "`[]=`", or "`unary-`"),
    * * any of the above preceeded by any number of qualifiers,
    *   where a qualifier is a non-private identifier followed by '`.`',
-   * * or the empty string (the default name of a library with not library
+   * * or the empty string (the default name of a library with no library
    *   name declaration).
    *
    * The following text is non-normative:
@@ -35,4 +35,19 @@ class Symbol {
    * be passed to this constructor.
    */
   const factory Symbol(String name) = internal.Symbol;
+
+  /**
+   * Returns a hash code compatible with [operator==].
+   *
+   * Equal symbols have the same hash code.
+   */
+  int get hashCode;
+
+  /**
+   * Symbols are equal to other symbols that correspond to the same member name.
+   *
+   * Qualified member names, like `#foo.bar` are equal only if they have the
+   * same identifiers before the same final member name.
+   */
+  bool operator ==(Object other);
 }

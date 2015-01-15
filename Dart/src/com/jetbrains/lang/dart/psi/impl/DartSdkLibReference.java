@@ -4,14 +4,17 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.util.Function;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.DartImportOrExportStatement;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Reference to 'dart:lib_from_sdk' in import or export directive
@@ -80,13 +83,14 @@ public class DartSdkLibReference implements PsiReference {
   public static Object[] getSdkLibNamesAsCompletionVariants(final PsiElement element) {
     // do not suggest dart:lib_from_sdk for 'part of' directive
     if (element.getParent() instanceof DartImportOrExportStatement) {
-      return ContainerUtil.map2Array(DartLibraryIndex.getAllStandardLibrariesFromSdk(element.getProject()),
-                                     new Function<String, Object>() {
-                                       @Override
-                                       public Object fun(final String sdkLib) {
-                                         return DartUrlResolver.DART_PREFIX + sdkLib;
-                                       }
-                                     });
+      final Collection<String> sdkLibs = DartLibraryIndex.getAllStandardLibrariesFromSdk(element.getProject());
+      final List<String> result = new ArrayList<String>(sdkLibs.size());
+      for (String libName : sdkLibs) {
+        if (!libName.startsWith("_")) {
+          result.add(DartUrlResolver.DART_PREFIX + libName);
+        }
+      }
+      return ArrayUtil.toStringArray(result);
     }
 
     return EMPTY_ARRAY;

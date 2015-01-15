@@ -20,7 +20,7 @@ typedef int _Hasher<K>(K object);
  * The keys of a `HashMap` must have consistent [Object.operator==]
  * and [Object.hashCode] implementations. This means that the `==` operator
  * must define a stable equivalence relation on the keys (reflexive,
- * anti-symmetric, transitive, and consistent over time), and that `hashCode`
+ * symmetric, transitive, and consistent over time), and that `hashCode`
  * must be the same for objects that are considered equal by `==`.
  *
  * The map allows `null` as a key.
@@ -80,10 +80,12 @@ abstract class HashMap<K, V> implements Map<K, V> {
   external factory HashMap.identity();
 
   /**
-   * Creates a [HashMap] that contains all key value pairs of [other].
+   * Creates a [HashMap] that contains all key/value pairs of [other].
    */
-  factory HashMap.from(Map<K, V> other) {
-    return new HashMap<K, V>()..addAll(other);
+  factory HashMap.from(Map other) {
+    HashMap<K, V> result = new HashMap<K, V>();
+    other.forEach((k, v) { result[k] = v; });
+    return result;
   }
 
   /**
