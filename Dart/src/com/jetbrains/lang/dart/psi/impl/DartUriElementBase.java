@@ -30,6 +30,13 @@ import java.util.Collection;
 
 public class DartUriElementBase extends DartPsiCompositeElementImpl {
 
+  private static final Condition<PsiFileSystemItem> DART_FILE_OR_DIR_FILTER = new Condition<PsiFileSystemItem>() {
+    @Override
+    public boolean value(final PsiFileSystemItem item) {
+      return item.isDirectory() || item instanceof DartFile;
+    }
+  };
+
   public DartUriElementBase(@NotNull final ASTNode node) {
     super(node);
   }
@@ -143,7 +150,13 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
     relPathFromContextFileToPackagesFolder += "/";
     final String str = relPathFromContextFileToPackagesFolder + relPathFromPackagesFolderToReferencedFile;
 
-    final FileReferenceSet referenceSet = new FileReferenceSet(str, this, 0, null, false, true, new FileType[]{DartFileType.INSTANCE});
+    final FileReferenceSet referenceSet = new FileReferenceSet(str, this, 0, null, false, true, new FileType[]{DartFileType.INSTANCE}) {
+      @Override
+      protected Condition<PsiFileSystemItem> getReferenceCompletionFilter() {
+        return DART_FILE_OR_DIR_FILTER;
+      }
+    };
+
     final FileReference[] references = referenceSet.getAllReferences();
 
     final int nestedLevel = StringUtil.countChars(relPathFromContextFileToPackagesFolder, '/');
