@@ -437,6 +437,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return false;
   }
 
+  @Override
+  public int getVersion() {
+    return AngularIndexUtil.BASE_VERSION;
+  }
+
   private static boolean calculateRepeatParameterType(JSTypeEvaluator evaluator, AngularJSRepeatExpression resolveParent) {
     final PsiElement last = findReferenceExpression(resolveParent);
     JSExpression arrayExpression = null;
