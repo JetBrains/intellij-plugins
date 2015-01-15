@@ -8,7 +8,7 @@ part of dart.collection;
  * A hash-table based implementation of [Map].
  *
  * The insertion order of keys is remembered,
- * and keys are iterated in the order they were insertion into the map.
+ * and keys are iterated in the order they were inserted into the map.
  * Values are iterated in their corresponding key's order.
  * Changing a key's value, when the key is already in the map,
  * does not change the iteration order,
@@ -18,7 +18,7 @@ part of dart.collection;
  * The keys of a `LinkedHashMap` must have consistent [Object.operator==]
  * and [Object.hashCode] implementations. This means that the `==` operator
  * must define a stable equivalence relation on the keys (reflexive,
- * anti-symmetric, transitive, and consistent over time), and that `hashCode`
+ * symmetric, transitive, and consistent over time), and that `hashCode`
  * must be the same for objects that are considered equal by `==`.
  *
  * The map allows `null` as a key.
@@ -69,8 +69,10 @@ abstract class LinkedHashMap<K, V> implements HashMap<K, V> {
   /**
    * Creates a [LinkedHashMap] that contains all key value pairs of [other].
    */
-  factory LinkedHashMap.from(Map<K, V> other) {
-    return new LinkedHashMap<K, V>()..addAll(other);
+  factory LinkedHashMap.from(Map other) {
+    LinkedHashMap<K, V> result = new LinkedHashMap<K, V>();
+    other.forEach((k, v) { result[k] = v; });
+    return result;
   }
 
   /**

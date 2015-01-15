@@ -25,7 +25,14 @@ const Map<String, LibraryInfo> LIBRARIES = const {
   "async": const LibraryInfo(
       "async/async.dart",
       maturity: Maturity.STABLE,
-      dart2jsPatchPath: "_internal/lib/async_patch.dart"),
+      dart2jsPatchPath: "_internal/compiler/js_lib/async_patch.dart"),
+
+  "_blink": const LibraryInfo(
+      "_blink/dartium/_blink_dartium.dart",
+      category: "Client",
+      implementation: true,
+      documented: false,
+      platforms: VM_PLATFORM),
 
   "_chrome": const LibraryInfo(
       "_chrome/dart2js/chrome_dart2js.dart",
@@ -35,17 +42,17 @@ const Map<String, LibraryInfo> LIBRARIES = const {
   "collection": const LibraryInfo(
       "collection/collection.dart",
       maturity: Maturity.STABLE,
-      dart2jsPatchPath: "_internal/lib/collection_patch.dart"),
+      dart2jsPatchPath: "_internal/compiler/js_lib/collection_patch.dart"),
 
   "convert": const LibraryInfo(
       "convert/convert.dart",
       maturity: Maturity.STABLE,
-      dart2jsPatchPath: "_internal/lib/convert_patch.dart"),
+      dart2jsPatchPath: "_internal/compiler/js_lib/convert_patch.dart"),
 
   "core": const LibraryInfo(
       "core/core.dart",
       maturity: Maturity.STABLE,
-      dart2jsPatchPath: "_internal/lib/core_patch.dart"),
+      dart2jsPatchPath: "_internal/compiler/js_lib/core_patch.dart"),
 
   "html": const LibraryInfo(
       "html/dartium/html_dartium.dart",
@@ -71,12 +78,12 @@ const Map<String, LibraryInfo> LIBRARIES = const {
       "io/io.dart",
       category: "Server",
       maturity: Maturity.STABLE,
-      dart2jsPatchPath: "_internal/lib/io_patch.dart"),
+      dart2jsPatchPath: "_internal/compiler/js_lib/io_patch.dart"),
 
   "isolate": const LibraryInfo(
       "isolate/isolate.dart",
       maturity: Maturity.STABLE,
-      dart2jsPatchPath: "_internal/lib/isolate_patch.dart"),
+      dart2jsPatchPath: "_internal/compiler/js_lib/isolate_patch.dart"),
 
   "js": const LibraryInfo(
       "js/dartium/js_dartium.dart",
@@ -87,12 +94,16 @@ const Map<String, LibraryInfo> LIBRARIES = const {
   "math": const LibraryInfo(
       "math/math.dart",
       maturity: Maturity.STABLE,
-      dart2jsPatchPath: "_internal/lib/math_patch.dart"),
+      dart2jsPatchPath: "_internal/compiler/js_lib/math_patch.dart"),
 
   "mirrors": const LibraryInfo(
       "mirrors/mirrors.dart",
       maturity: Maturity.UNSTABLE,
-      dart2jsPatchPath: "_internal/lib/mirrors_patch.dart"),
+      dart2jsPatchPath: "_internal/compiler/js_lib/mirrors_patch.dart"),
+
+  "profiler": const LibraryInfo(
+      "profiler/profiler.dart",
+      maturity: Maturity.UNSTABLE),
 
   "nativewrappers": const LibraryInfo(
       "html/dartium/nativewrappers.dart",
@@ -104,10 +115,10 @@ const Map<String, LibraryInfo> LIBRARIES = const {
   "typed_data": const LibraryInfo(
       "typed_data/typed_data.dart",
       maturity: Maturity.STABLE,
-      dart2jsPath: "typed_data/dart2js/typed_data_dart2js.dart"),
+      dart2jsPatchPath: "_internal/compiler/js_lib/typed_data_patch.dart"),
 
   "_native_typed_data": const LibraryInfo(
-      "typed_data/dart2js/native_typed_data_dart2js.dart",
+      "_internal/compiler/js_lib/native_typed_data.dart",
       category: "Internal",
       implementation: true,
       documented: false,
@@ -142,46 +153,46 @@ const Map<String, LibraryInfo> LIBRARIES = const {
       category: "Internal",
       documented: false,
       dart2jsPatchPath:
-          "_internal/lib/internal_patch.dart"),
+          "_internal/compiler/js_lib/internal_patch.dart"),
 
   "_js_helper": const LibraryInfo(
-      "_internal/lib/js_helper.dart",
+      "_internal/compiler/js_lib/js_helper.dart",
       category: "Internal",
       documented: false,
       platforms: DART2JS_PLATFORM),
 
   "_interceptors": const LibraryInfo(
-      "_internal/lib/interceptors.dart",
+      "_internal/compiler/js_lib/interceptors.dart",
       category: "Internal",
       documented: false,
       platforms: DART2JS_PLATFORM),
 
   "_foreign_helper": const LibraryInfo(
-      "_internal/lib/foreign_helper.dart",
+      "_internal/compiler/js_lib/foreign_helper.dart",
       category: "Internal",
       documented: false,
       platforms: DART2JS_PLATFORM),
 
   "_isolate_helper": const LibraryInfo(
-      "_internal/lib/isolate_helper.dart",
+      "_internal/compiler/js_lib/isolate_helper.dart",
       category: "Internal",
       documented: false,
       platforms: DART2JS_PLATFORM),
 
   "_js_mirrors": const LibraryInfo(
-      "_internal/lib/js_mirrors.dart",
+      "_internal/compiler/js_lib/js_mirrors.dart",
       category: "Internal",
       documented: false,
       platforms: DART2JS_PLATFORM),
 
   "_js_names": const LibraryInfo(
-      "_internal/lib/js_names.dart",
+      "_internal/compiler/js_lib/js_names.dart",
       category: "Internal",
       documented: false,
       platforms: DART2JS_PLATFORM),
 
   "_js_primitives": const LibraryInfo(
-      "_internal/lib/js_primitives.dart",
+      "_internal/compiler/js_lib/js_primitives.dart",
       category: "Internal",
       documented: false,
       platforms: DART2JS_PLATFORM),
@@ -189,10 +200,22 @@ const Map<String, LibraryInfo> LIBRARIES = const {
   // TODO(ahe): This library is only for dart2dart, perhaps it should use a
   // different platform.
   "_mirror_helper": const LibraryInfo(
-      "_internal/lib/mirror_helper.dart",
+      "_internal/compiler/js_lib/mirror_helper.dart",
       category: "Internal",
       documented: false,
-      platforms: DART2JS_PLATFORM)
+      platforms: DART2JS_PLATFORM),
+
+  "_js_embedded_names": const LibraryInfo(
+      "_internal/compiler/js_lib/shared/embedded_names.dart",
+      category: "Internal",
+      documented: false,
+      platforms: DART2JS_PLATFORM),
+
+  "_metadata": const LibraryInfo(
+      "html/html_common/metadata.dart",
+      category: "Internal",
+      documented: false,
+      platforms: DART2JS_PLATFORM),
 };
 
 /**

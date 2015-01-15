@@ -16,6 +16,7 @@ abstract class num implements Comparable<num> {
    *
    * If both operands are doubles, they are equal if they have the same
    * representation, except that:
+   *
    *   * zero and minus zero (0.0 and -0.0) are considered equal. They
    *     both have the numerical value zero.
    *   * NaN is not equal to anything, including NaN. If either operand is
@@ -23,7 +24,7 @@ abstract class num implements Comparable<num> {
    *
    * If one operand is a double and the other is an int, they are equal if
    * the double has an integer value (finite with no fractional part) and
-   * `identical(doubleValue.toInt(), intValue)`.
+   * `identical(doubleValue.toInt(), intValue)` is true.
    *
    * If both operands are integers, they are equal if they have the same value.
    *
@@ -290,9 +291,11 @@ abstract class num implements Comparable<num> {
   double truncateToDouble();
 
   /**
-   * Clamps [this] to be in the range [lowerLimit]-[upperLimit]. The comparison
-   * is done using [compareTo] and therefore takes `-0.0` into account.
-   * It also implies that [double.NAN] is treated as the maximal double value.
+   * Returns this [num] clamped to be in the range [lowerLimit]-[upperLimit].
+   *
+   * The comparison is done using [compareTo] and therefore takes `-0.0` into
+   * account. This also implies that [double.NAN] is treated as the maximal
+   * double value.
    */
   num clamp(num lowerLimit, num upperLimit);
 
@@ -423,13 +426,15 @@ abstract class num implements Comparable<num> {
    * [int.parse] without a radix).
    * If that fails, it tries to parse the [input] as a double (similar to
    * [double.parse]).
-   * If that fails, too, it invokes [onError] with [input].
+   * If that fails, too, it invokes [onError] with [input], and the result
+   * of that invocation becomes the result of calling `parse`.
    *
    * If no [onError] is supplied, it defaults to a function that throws a
    * [FormatException].
    *
    * For any number `n`, this function satisfies
-   * `identical(n, num.parse(n.toString()))`.
+   * `identical(n, num.parse(n.toString()))` (except when `n` is a NaN `double`
+   * with a payload).
    */
   static num parse(String input, [num onError(String input)]) {
     String source = input.trim();

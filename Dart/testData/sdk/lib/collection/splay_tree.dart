@@ -244,9 +244,13 @@ class _TypeTest<T> {
  * in amortized logarithmic time.
  *
  * Keys of the map are compared using the `compare` function passed in
- * the constructor. If that is omitted, the objects are assumed to be
- * [Comparable], and are compared using their [Comparable.compareTo]
- * method. Non-comparable objects (including `null`) will not work as keys
+ * the constructor, both for ordering and for equality.
+ * If the map contains only the key `a`, then `map.containsKey(b)`
+ * will return `true` if and only if `compare(a, b) == 0`,
+ * and the value of `a == b` is not even checked.
+ * If the compare function is omitted, the objects are assumed to be
+ * [Comparable], and are compared using their [Comparable.compareTo] method.
+ * Non-comparable objects (including `null`) will not work as keys
  * in that case.
  *
  * To allow calling [operator[]], [remove] or [containsKey] with objects
@@ -265,12 +269,15 @@ class SplayTreeMap<K, V> extends _SplayTree<K> implements Map<K, V> {
         _validKey = (isValidKey != null) ? isValidKey : ((v) => v is K);
 
   /**
-   * Creates a [SplayTreeMap] that contains all key value pairs of [other].
+   * Creates a [SplayTreeMap] that contains all key/value pairs of [other].
    */
-  factory SplayTreeMap.from(Map<K, V> other,
-                            [ int compare(K key1, K key2),
-                              bool isValidKey(potentialKey)]) =>
-      new SplayTreeMap(compare, isValidKey)..addAll(other);
+  factory SplayTreeMap.from(Map other,
+                            [int compare(K key1, K key2),
+                             bool isValidKey(potentialKey)]) {
+    SplayTreeMap<K, V> result = new SplayTreeMap<K, V>();
+    other.forEach((k, v) { result[k] = v; });
+    return result;
+  }
 
   /**
    * Creates a [SplayTreeMap] where the keys and values are computed from the
@@ -282,12 +289,14 @@ class SplayTreeMap<K, V> extends _SplayTree<K> implements Map<K, V> {
    * The keys of the key/value pairs do not need to be unique. The last
    * occurrence of a key will simply overwrite any previous value.
    *
-   * If no values are specified for [key] and [value] the default is the
-   * identity function.
+   * If no functions are specified for [key] and [value] the default is to
+   * use the iterable value itself.
    */
-  factory SplayTreeMap.fromIterable(Iterable<K> iterable,
-      {K key(element), V value(element), int compare(K key1, K key2),
-       bool isValidKey(potentialKey) }) {
+  factory SplayTreeMap.fromIterable(Iterable iterable,
+                                    {K key(element),
+                                     V value(element),
+                                     int compare(K key1, K key2),
+                                     bool isValidKey(potentialKey) }) {
     SplayTreeMap<K, V> map = new SplayTreeMap<K, V>(compare, isValidKey);
     Maps._fillMapWithMappedIterable(map, iterable, key, value);
     return map;
@@ -523,6 +532,7 @@ abstract class _SplayTreeIterator<T> implements Iterator<T> {
   _SplayTreeIterator.startAt(_SplayTree tree, var startKey)
       : _tree = tree,
         _modificationCount = tree._modificationCount {
+    if (tree._root == null) return;
     int compare = tree._splay(startKey);
     _splayCount = tree._splayCount;
     if (compare < 0) {
@@ -596,6 +606,15 @@ class _SplayTreeKeyIterable<K> extends IterableBase<K>
   int get length => _tree._count;
   bool get isEmpty => _tree._count == 0;
   Iterator<K> get iterator => new _SplayTreeKeyIterator<K>(_tree);
+
+  Set<K> toSet() {
+    var setOrMap = _tree;  // Both have _comparator and _validKey.
+    SplayTreeSet<K> set =
+        new SplayTreeSet<K>(setOrMap._comparator, setOrMap._validKey);
+    set._count = _tree._count;
+    set._root = set._copyNode(_tree._root);
+    return set;
+  }
 }
 
 class _SplayTreeValueIterable<K, V> extends IterableBase<V>
@@ -633,13 +652,16 @@ class _SplayTreeNodeIterator<K>
  * in amortized logarithmic time.
  *
  * Elements of the set are compared using the `compare` function passed in
- * the constructor. If that is omitted, the objects are assumed to be
- * [Comparable], and are compared using their [Comparable.compareTo]
- * method. Non-comparable objects (including `null`) will not work as an element
+ * the constructor, both for ordering and for equality.
+ * If the set contains only an object `a`, then `set.contains(b)`
+ * will return `true` if and only if `compare(a, b) == 0`,
+ * and the value of `a == b` is not even checked.
+ * If the compare function is omitted, the objects are assumed to be
+ * [Comparable], and are compared using their [Comparable.compareTo] method.
+ * Non-comparable objects (including `null`) will not work as an element
  * in that case.
  */
-class SplayTreeSet<E> extends _SplayTree<E> with IterableMixin<E>
-                      implements Set<E> {
+class SplayTreeSet<E> extends _SplayTree<E> with IterableMixin<E>, SetMixin<E> {
   Comparator _comparator;
   _Predicate _validKey;
 
@@ -671,6 +693,23 @@ class SplayTreeSet<E> extends _SplayTree<E> with IterableMixin<E>
       : _comparator = (compare == null) ? Comparable.compare : compare,
         _validKey = (isValidKey != null) ? isValidKey : ((v) => v is E);
 
+  /**
+   * Creates a [SplayTreeSet] that contains all [elements].
+   *
+   * The set works as if created by `new SplayTreeSet<E>(compare, isValidKey)`.
+   *
+   * All the [elements] should be valid as arguments to the [compare] function.
+   */
+  factory SplayTreeSet.from(Iterable elements,
+                            [int compare(E key1, E key2),
+                             bool isValidKey(potentialKey)]) {
+    SplayTreeSet<E> result = new SplayTreeSet<E>(compare, isValidKey);
+    for (final E element in elements) {
+      result.add(element);
+    }
+    return result;
+  }
+
   int _compare(E e1, E e2) => _comparator(e1, e2);
 
   // From Iterable.
@@ -682,18 +721,18 @@ class SplayTreeSet<E> extends _SplayTree<E> with IterableMixin<E>
   bool get isNotEmpty => _root != null;
 
   E get first {
-    if (_count == 0) throw new StateError("no such element");
+    if (_count == 0) throw IterableElementError.noElement();
     return _first.key;
   }
 
   E get last {
-    if (_count == 0) throw new StateError("no such element");
+    if (_count == 0) throw IterableElementError.noElement();
     return _last.key;
   }
 
   E get single {
-    if (_count == 0) throw new StateError("no such element");
-    if (_count > 1) throw new StateError("too many elements");
+    if (_count == 0) throw IterableElementError.noElement();
+    if (_count > 1) throw IterableElementError.tooMany();
     return _root.key;
   }
 
@@ -729,9 +768,6 @@ class SplayTreeSet<E> extends _SplayTree<E> with IterableMixin<E>
     }
   }
 
-  /**
-   * Removes all elements not in [elements].
-   */
   void retainAll(Iterable<Object> elements) {
     // Build a set with the same sense of equality as this set.
     SplayTreeSet<E> retainSet = new SplayTreeSet<E>(_comparator, _validKey);
@@ -752,30 +788,6 @@ class SplayTreeSet<E> extends _SplayTree<E> with IterableMixin<E>
     }
   }
 
-  void _filterWhere(bool test(E element), bool removeMatching) {
-    _SplayTreeNodeIterator it = new _SplayTreeNodeIterator(this);
-    while (it.moveNext()) {
-      _SplayTreeNode node = it.current;
-      int modificationCount = _modificationCount;
-      bool matches = test(node.key);
-      if (modificationCount != _modificationCount) {
-        throw new ConcurrentModificationError(this);
-      }
-      if (matches == removeMatching) {
-        _remove(node.key);
-        it = new _SplayTreeNodeIterator.startAt(this, node.key);
-      }
-    }
-  }
-
-  void removeWhere(bool test(E element)) {
-    _filterWhere(test, true);
-  }
-
-  void retainWhere(bool test(E element)) {
-    _filterWhere(test, false);
-  }
-
   E lookup(Object object) {
     if (!_validKey(object)) return null;
     int comp = _splay(object);
@@ -784,7 +796,7 @@ class SplayTreeSet<E> extends _SplayTree<E> with IterableMixin<E>
   }
 
   Set<E> intersection(Set<E> other) {
-    Set<E> result = new SplayTreeSet<E>(_compare, _validKey);
+    Set<E> result = new SplayTreeSet<E>(_comparator, _validKey);
     for (E element in this) {
       if (other.contains(element)) result.add(element);
     }
@@ -792,7 +804,7 @@ class SplayTreeSet<E> extends _SplayTree<E> with IterableMixin<E>
   }
 
   Set<E> difference(Set<E> other) {
-    Set<E> result = new SplayTreeSet<E>(_compare, _validKey);
+    Set<E> result = new SplayTreeSet<E>(_comparator, _validKey);
     for (E element in this) {
       if (!other.contains(element)) result.add(element);
     }
@@ -804,24 +816,23 @@ class SplayTreeSet<E> extends _SplayTree<E> with IterableMixin<E>
   }
 
   SplayTreeSet<E> _clone() {
-    var set = new SplayTreeSet<E>(_compare, _validKey);
+    var set = new SplayTreeSet<E>(_comparator, _validKey);
     set._count = _count;
-    set._root = _cloneNode(_root);
+    set._root = _copyNode(_root);
     return set;
   }
 
-  _SplayTreeNode<E> _cloneNode(_SplayTreeNode<E> node) {
+  // Copies the structure of a SplayTree into a new similar structure.
+  // Works on _SplayTreeMapNode as well, but only copies the keys,
+  _SplayTreeNode<E> _copyNode(_SplayTreeNode<E> node) {
     if (node == null) return null;
-    return new _SplayTreeNode<E>(node.key)..left = _cloneNode(node.left)
-                                          ..right = _cloneNode(node.right);
-  }
-
-  bool containsAll(Iterable<Object> other) {
-    for (var element in other) {
-      if (!this.contains(element)) return false;
-    }
-    return true;
+    return new _SplayTreeNode<E>(node.key)..left = _copyNode(node.left)
+                                          ..right = _copyNode(node.right);
   }
 
   void clear() { _clear(); }
+
+  Set<E> toSet() => _clone();
+
+  String toString() => IterableBase.iterableToFullString(this, '{', '}');
 }
