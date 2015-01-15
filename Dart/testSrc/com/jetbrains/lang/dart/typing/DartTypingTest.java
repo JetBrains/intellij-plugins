@@ -1,12 +1,19 @@
-package com.jetbrains.lang.dart.completion.editor;
+package com.jetbrains.lang.dart.typing;
 
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.completion.base.DartCompletionTestBase;
 
-public class DartEditorCompletionTest extends DartCompletionTestBase {
-  public DartEditorCompletionTest() {
-    super("completion", "editor");
+public class DartTypingTest extends DartCodeInsightFixtureTestCase {
+  @Override
+  protected String getBasePath() {
+    return "/typing";
+  }
+
+  protected void doTest(char charToType) throws Throwable {
+    myFixture.configureByFiles(getTestName(false) + ".dart");
+    myFixture.type(charToType);
+    myFixture.checkResultByFile(getTestName(false) + "_after.dart");
   }
 
   private void doTypeAndCheck(char charToType, String expected) {
@@ -35,7 +42,7 @@ public class DartEditorCompletionTest extends DartCompletionTestBase {
     doTest('<');
   }
 
-  public void _testGenericBraceWithMultiCaretInDifferentContexts() throws Throwable {
+  public void testGenericBraceWithMultiCaretInDifferentContexts() throws Throwable {
     doTest('<');
   }
 
@@ -59,7 +66,7 @@ public class DartEditorCompletionTest extends DartCompletionTestBase {
     doTest('{');
   }
 
-  public void _testStringWithMultiCaretInDifferentContexts() throws Throwable {
+  public void testStringWithMultiCaretInDifferentContexts() throws Throwable {
     doTest('{');
   }
 
