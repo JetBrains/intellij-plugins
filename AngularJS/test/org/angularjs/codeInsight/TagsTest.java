@@ -58,6 +58,10 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("customArrayViaFunction.html", "customArrayViaFunction.after.html", "angular.js", "custom.js");
   }
 
+  public void testCustomTagsViaFunctionForwardCompletion() {
+    myFixture.testCompletion("customViaFunctionForward.html", "customViaFunctionForward.after.html", "angular.js", "custom.js");
+  }
+
   public void testCustomTagsArrayCompletion() {
     myFixture.testCompletion("customArray.html", "customArray.after.html", "angular.js", "custom.js");
   }
@@ -91,6 +95,18 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("custom.js", resolve.getContainingFile().getName());
     assertEquals("'functionCustomer'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
   }
+
+  public void testCustomTagsViaFunctionForwardResolve() {
+    myFixture.configureByFiles("customViaFunctionForward.after.html", "angular.js", "custom.js");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("great-cus<caret>tomer", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("custom.js", resolve.getContainingFile().getName());
+    assertEquals("'greatCustomer'", ((JSOffsetBasedImplicitElement)resolve).getElementAtOffset().getText());
+  }
+
 
   public void testCustomTagsArrayViaFunctionResolve() {
     myFixture.configureByFiles("customArrayViaFunction.after.html", "angular.js", "custom.js");

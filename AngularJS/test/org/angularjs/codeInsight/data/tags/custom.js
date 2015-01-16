@@ -37,4 +37,9 @@ angular.module('docsSimpleDirective', [])
                  };
                }])
     .directive('functionCustomer', my_directive_factory)
+    .directive('greatCustomer', another_directive_factory)
     .directive('arrayCustomer', my_directive_factory);
+
+function another_directive_factory() {
+  return {restrict: 'E'}
+}
