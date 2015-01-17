@@ -26,6 +26,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.Processor;
+import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.*;
@@ -535,7 +536,7 @@ class FlexValue extends XValue {
 
     if (myValueType == ValueType.Variable) {
       final PsiElement contextElement =
-        JSDebuggerSupportUtils.getContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project);
+        XDebuggerUtil.getInstance().findContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project, true);
       final JSFunction jsFunction = PsiTreeUtil.getParentOfType(contextElement, JSFunction.class);
 
       if (jsFunction != null) {
@@ -564,7 +565,7 @@ class FlexValue extends XValue {
     }
     else if (myValueType == ValueType.Parameter) {
       final PsiElement contextElement =
-        JSDebuggerSupportUtils.getContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project);
+        XDebuggerUtil.getInstance().findContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project, true);
       final JSFunction jsFunction = PsiTreeUtil.getParentOfType(contextElement, JSFunction.class);
       final JSParameterList parameterList = jsFunction == null ? null : jsFunction.getParameterList();
       final JSParameter[] parameters = parameterList == null ? JSParameter.EMPTY_ARRAY : parameterList.getParameters();

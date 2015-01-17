@@ -23,6 +23,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.Function;
+import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.ExpressionInfo;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
@@ -100,7 +101,7 @@ public class FlexStackFrame extends XStackFrame {
             public Boolean compute() {
               Project project = getDebugProcess().getSession().getProject();
               PsiElement element =
-                JSDebuggerSupportUtils.getContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project);
+                XDebuggerUtil.getInstance().findContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project, true);
               JSFunction function = PsiTreeUtil.getParentOfType(element, JSFunction.class);
               return function instanceof JSFunctionExpression;
             }
@@ -544,7 +545,7 @@ public class FlexStackFrame extends XStackFrame {
         final JSFunction function = ApplicationManager.getApplication().runReadAction(new NullableComputable<JSFunction>() {
           @Override
           public JSFunction compute() {
-            final PsiElement element = JSDebuggerSupportUtils.getContextElement(file, mySourcePosition.getOffset(), project);
+            final PsiElement element = XDebuggerUtil.getInstance().findContextElement(file, mySourcePosition.getOffset(), project, true);
             return PsiTreeUtil.getParentOfType(element, JSFunction.class);
           }
         });

@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.debug;
 
-import com.intellij.javascript.JSDebuggerSupportUtils;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSElementFactory;
 import com.intellij.openapi.fileTypes.FileType;
@@ -8,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProviderBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +27,6 @@ class FlexDebuggerEditorsProvider extends XDebuggerEditorsProviderBase {
 
   @Override
   protected PsiElement getContextElement(@NotNull VirtualFile virtualFile, int offset, @NotNull Project project) {
-    return JSDebuggerSupportUtils.getContextElement(virtualFile, offset, project);
+    return XDebuggerUtil.getInstance().findContextElement(virtualFile, offset, project, true);
   }
 }
