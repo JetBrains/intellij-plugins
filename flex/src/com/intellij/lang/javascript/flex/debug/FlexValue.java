@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.debug;
 
-import com.intellij.javascript.JSDebuggerSupportUtils;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
@@ -33,6 +32,7 @@ import com.intellij.xdebugger.frame.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.debugger.DebuggerSupportUtils;
 
 import javax.swing.*;
 import java.util.*;
@@ -510,7 +510,7 @@ class FlexValue extends XValue {
         final Project project = myDebugProcess.getSession().getProject();
         final JSClass jsClass =
           findJSClass(project, ModuleUtilCore.findModuleForFile(mySourcePosition.getFile(), project), typeFromFlexValueResult);
-        navigatable.setSourcePosition(JSDebuggerSupportUtils.calcSourcePosition(jsClass));
+        navigatable.setSourcePosition(DebuggerSupportUtils.calcSourcePosition(jsClass));
         return;
       }
     }
@@ -559,7 +559,7 @@ class FlexValue extends XValue {
         });
 
         if (!varRef.isNull()) {
-          result = JSDebuggerSupportUtils.calcSourcePosition(varRef.get());
+          result = DebuggerSupportUtils.calcSourcePosition(varRef.get());
         }
       }
     }
@@ -571,7 +571,7 @@ class FlexValue extends XValue {
       final JSParameter[] parameters = parameterList == null ? JSParameter.EMPTY_ARRAY : parameterList.getParameters();
       for (final JSParameter parameter : parameters) {
         if (myName.equals(parameter.getName())) {
-          result = JSDebuggerSupportUtils.calcSourcePosition(parameter);
+          result = DebuggerSupportUtils.calcSourcePosition(parameter);
           break;
         }
       }
@@ -604,7 +604,7 @@ class FlexValue extends XValue {
           }
         }
 
-        result = JSDebuggerSupportUtils.calcSourcePosition(fieldRef.get());
+        result = DebuggerSupportUtils.calcSourcePosition(fieldRef.get());
       }
     }
     navigatable.setSourcePosition(result);
