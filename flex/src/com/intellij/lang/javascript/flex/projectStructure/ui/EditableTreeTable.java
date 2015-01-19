@@ -8,6 +8,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.EditableModel;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.tree.TreeUtil;
 
 import javax.swing.*;
@@ -80,7 +81,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
 
       final Component headerComponent = defaultRenderer == null? null :
         defaultRenderer.getTableCellRendererComponent(this, column.getHeaderValue(), false, false, 0, 0);
-      final Dimension headerSize = headerComponent == null? new Dimension(0, 0) : headerComponent.getPreferredSize();
+      final Dimension headerSize = headerComponent == null ? JBUI.emptySize() : headerComponent.getPreferredSize();
       final String maxStringValue;
       final String preferredValue;
       if (columnInfo.getWidth(this) > 0) {
