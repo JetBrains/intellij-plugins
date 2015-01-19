@@ -19,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static com.jetbrains.lang.dart.util.DartUrlResolver.*;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 final class DartFileUrlMapper extends FileUrlMapper {
@@ -34,12 +33,12 @@ final class DartFileUrlMapper extends FileUrlMapper {
   @Nullable
   @Override
   public VirtualFile getFile(@NotNull final Url url, @NotNull final Project project, @Nullable Url requestor) {
-    if (DART_SCHEME.equals(url.getScheme())) {
-      return DartUrlResolver.findFileInDartSdkLibFolder(project, DartSdk.getGlobalDartSdk(), DART_PREFIX + url.getPath());
+    if (DartUrlResolver.DART_SCHEME.equals(url.getScheme())) {
+      return DartUrlResolver.findFileInDartSdkLibFolder(project, DartSdk.getDartSdk(project), DartUrlResolver.DART_PREFIX + url.getPath());
     }
 
-    if (PACKAGE_SCHEME.equals(url.getScheme())) {
-      final String packageUrl = PACKAGE_PREFIX + url.getPath();
+    if (DartUrlResolver.PACKAGE_SCHEME.equals(url.getScheme())) {
+      final String packageUrl = DartUrlResolver.PACKAGE_PREFIX + url.getPath();
       final VirtualFile contextFile = findContextFile(project, requestor);
 
       if (contextFile != null) {
@@ -92,6 +91,6 @@ final class DartFileUrlMapper extends FileUrlMapper {
   @Nullable
   @Override
   public FileType getFileType(@NotNull Url url) {
-    return SCHEME.equals(url.getScheme()) || PACKAGE_SCHEME.equals(url.getScheme()) ? DartFileType.INSTANCE : null;
+    return SCHEME.equals(url.getScheme()) || DartUrlResolver.PACKAGE_SCHEME.equals(url.getScheme()) ? DartFileType.INSTANCE : null;
   }
 }

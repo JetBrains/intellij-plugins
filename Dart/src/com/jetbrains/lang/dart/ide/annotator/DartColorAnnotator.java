@@ -36,7 +36,7 @@ public class DartColorAnnotator implements Annotator {
   public void annotate(final @NotNull PsiElement element, final @NotNull AnnotationHolder holder) {
     if (holder.isBatchMode()) return;
 
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final DartSdk sdk = DartSdk.getDartSdk(element.getProject());
 
     if (DartTokenTypesSets.BUILT_IN_IDENTIFIERS.contains(element.getNode().getElementType())) {
       if (element.getNode().getTreeParent().getElementType() != DartTokenTypes.ID) {

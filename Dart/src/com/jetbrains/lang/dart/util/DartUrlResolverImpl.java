@@ -38,7 +38,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
 
   DartUrlResolverImpl(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
     myProject = project;
-    myDartSdk = DartSdk.getGlobalDartSdk();
+    myDartSdk = DartSdk.getDartSdk(project);
     myPubspecYamlFile = initPackageRootsAndReturnPubspecYamlFile(contextFile);
     initLivePackageNameToDirMap();
     initPubListPackageDirsMap(contextFile);

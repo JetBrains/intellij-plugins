@@ -1,12 +1,22 @@
 package com.jetbrains.lang.dart.sdk;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DartSdk {
   static final String DART_SDK_GLOBAL_LIB_NAME = "Dart SDK";
@@ -35,6 +45,30 @@ public class DartSdk {
   @NotNull
   public String getGlobalLibName() {
     return myGlobalLibName;
+  }
+
+  /**
+   * Returns the same as {@link #getGlobalDartSdk()} but much faster
+   */
+  @Nullable
+  public static DartSdk getDartSdk(@NotNull final Project project) {
+    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<DartSdk>() {
+      @Nullable
+      @Override
+      public Result<DartSdk> compute() {
+        final DartSdk sdk = getGlobalDartSdk();
+        if (sdk == null) {
+          return null;
+        }
+
+        List<Object> dependencies = new ArrayList<Object>(3);
+        dependencies.add(ProjectRootManager.getInstance(project));
+        ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/version"));
+        ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/core.dart"));
+
+        return new Result<DartSdk>(sdk, ArrayUtil.toObjectArray(dependencies));
+      }
+    });
   }
 
   @Nullable

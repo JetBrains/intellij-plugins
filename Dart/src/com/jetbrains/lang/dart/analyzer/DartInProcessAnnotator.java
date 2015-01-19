@@ -65,7 +65,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<DartInProcessAnnot
     final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
     if (module == null) return null;
 
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) return null;
 
     if (psiFile instanceof XmlFile && !containsDartEmbeddedContent((XmlFile)psiFile)) return null;

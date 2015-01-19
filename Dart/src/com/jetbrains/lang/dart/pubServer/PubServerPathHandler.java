@@ -19,7 +19,7 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
                             @NotNull final Project project,
                             @NotNull final FullHttpRequest request,
                             @NotNull ChannelHandlerContext context) {
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), "1.6") < 0) return false;
 
     final Pair<VirtualFile, String> servedDirAndPathForPubServer = getServedDirAndPathForPubServer(project, path);

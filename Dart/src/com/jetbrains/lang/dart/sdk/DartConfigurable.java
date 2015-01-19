@@ -305,7 +305,7 @@ public class DartConfigurable implements SearchableConfigurable {
     myInReset = true;
 
     // remember initial state
-    mySdkInitial = DartSdk.getGlobalDartSdk();
+    mySdkInitial = DartSdk.getDartSdk(myProject);
     myModulesWithDartSdkLibAttachedInitial.clear();
 
     if (mySdkInitial != null) {

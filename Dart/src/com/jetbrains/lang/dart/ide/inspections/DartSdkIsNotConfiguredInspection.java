@@ -44,7 +44,7 @@ public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
     final Module module = ModuleUtilCore.findModuleForPsiElement(file);
     if (module == null) return ProblemDescriptor.EMPTY_ARRAY;
 
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final DartSdk sdk = DartSdk.getDartSdk(file.getProject());
     if (sdk == null) {
       return createProblemDescriptors(file, manager, DartBundle.message("dart.sdk.is.not.configured"),
                                       new OpenDartSettingsQuickFix(DartBundle.message("setup.dart.sdk")));

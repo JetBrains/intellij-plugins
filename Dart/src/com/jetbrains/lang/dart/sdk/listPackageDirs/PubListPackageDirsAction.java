@@ -75,15 +75,14 @@ public class PubListPackageDirsAction extends AnAction {
   }
 
   public void update(@NotNull final AnActionEvent e) {
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final Project project = e.getProject();
+    final DartSdk sdk = project == null ? null : DartSdk.getDartSdk(project);
     e.getPresentation().setEnabled(sdk != null);
   }
 
   public void actionPerformed(@NotNull final AnActionEvent e) {
     final Project project = e.getProject();
-    if (project == null) return;
-
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final DartSdk sdk = project == null ? null : DartSdk.getDartSdk(project);
     if (sdk == null) return;
 
     FileDocumentManager.getInstance().saveAllDocuments();
@@ -230,8 +229,7 @@ public class PubListPackageDirsAction extends AnAction {
                                                          @NotNull final Map<String, List<File>> packageMap) {
     Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(PUB_LIST_PACKAGE_DIRS_LIB_NAME);
     if (library == null) {
-      final LibraryTableBase.ModifiableModelEx libTableModel =
-        (LibraryTableBase.ModifiableModelEx)ProjectLibraryTable.getInstance(project).getModifiableModel();
+      final LibraryTableBase.ModifiableModel libTableModel = ProjectLibraryTable.getInstance(project).getModifiableModel();
       library = libTableModel.createLibrary(PUB_LIST_PACKAGE_DIRS_LIB_NAME, DartListPackageDirsLibraryType.LIBRARY_KIND);
       libTableModel.commit();
     }

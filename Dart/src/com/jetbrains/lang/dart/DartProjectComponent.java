@@ -125,7 +125,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
     final String oldDartSdkPath = PropertiesComponent.getInstance().getValue("dart_sdk_path");
     PropertiesComponent.getInstance().unsetValue("dart_sdk_path");
 
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final DartSdk sdk = DartSdk.getDartSdk(project);
 
     if (sdk != null) {
       return sdk.getGlobalLibName();

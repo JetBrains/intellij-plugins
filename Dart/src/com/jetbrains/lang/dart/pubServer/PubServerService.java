@@ -159,7 +159,7 @@ final class PubServerService extends NetService {
   @Override
   @Nullable
   protected OSProcessHandler createProcessHandler(@NotNull final Project project, final int port) throws ExecutionException {
-    final DartSdk dartSdk = DartSdk.getGlobalDartSdk();
+    final DartSdk dartSdk = DartSdk.getDartSdk(project);
     if (dartSdk == null) return null;
 
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(firstServedDir.getParent().getPath());

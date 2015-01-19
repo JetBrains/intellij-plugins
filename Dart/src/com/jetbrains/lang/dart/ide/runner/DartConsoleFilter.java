@@ -35,7 +35,7 @@ public class DartConsoleFilter implements Filter {
 
   public DartConsoleFilter(final @NotNull Project project, final @Nullable VirtualFile contextFile) {
     myProject = project;
-    mySdk = DartSdk.getGlobalDartSdk();
+    mySdk = DartSdk.getDartSdk(project);
     myDartUrlResolver = contextFile == null ? null : DartUrlResolver.getInstance(project, contextFile);
   }
 

@@ -25,7 +25,7 @@ public class CreateDartFileAction extends CreateFileFromTemplateAction {
     return super.isAvailable(dataContext) &&
            module != null &&
            (FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, module.getModuleContentScope()) ||
-            DartSdk.getGlobalDartSdk() != null && WebModuleTypeBase.isWebModule(module));
+            DartSdk.getDartSdk(module.getProject()) != null && WebModuleTypeBase.isWebModule(module));
   }
 
   @Override

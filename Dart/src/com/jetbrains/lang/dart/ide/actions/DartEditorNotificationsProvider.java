@@ -38,7 +38,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
   @Nullable
   public EditorNotificationPanel createNotificationPanel(@NotNull final VirtualFile file, @NotNull final FileEditor fileEditor) {
     if (file.isInLocalFileSystem() && PubspecYamlUtil.PUBSPEC_YAML.equalsIgnoreCase(file.getName())) {
-      final DartSdk sdk = DartSdk.getGlobalDartSdk();
+      final DartSdk sdk = DartSdk.getDartSdk(myProject);
       final Module module = ModuleUtilCore.findModuleForFile(file, myProject);
       if (module != null && sdk != null && DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
         return new PubActionsPanel();

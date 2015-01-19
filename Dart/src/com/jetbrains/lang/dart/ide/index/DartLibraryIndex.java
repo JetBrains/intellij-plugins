@@ -20,7 +20,6 @@ import com.intellij.util.io.KeyDescriptor;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,20 +100,20 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
 
   @Nullable
   public static String getStandardLibraryNameByRelativePath(final @NotNull Project project, final @NotNull String relativePath) {
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final DartSdk sdk = DartSdk.getDartSdk(project);
     final List<String> libNames = sdk == null ? null : getLibraryNameToRelativePathMap(project, sdk).getKeysByValue(relativePath);
     return libNames == null || libNames.isEmpty() ? null : libNames.get(0);
   }
 
   @Nullable
   public static VirtualFile getStandardLibraryFromSdk(final @NotNull Project project, final @NotNull String libraryName) {
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final DartSdk sdk = DartSdk.getDartSdk(project);
     final String relativeLibPath = sdk == null ? null : getLibraryNameToRelativePathMap(project, sdk).get(libraryName);
     return relativeLibPath == null ? null : LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/" + relativeLibPath);
   }
 
   public static Collection<String> getAllStandardLibrariesFromSdk(final @NotNull Project project) {
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final DartSdk sdk = DartSdk.getDartSdk(project);
     return sdk == null ? Collections.<String>emptyList() : getLibraryNameToRelativePathMap(project, sdk).keySet();
   }
 

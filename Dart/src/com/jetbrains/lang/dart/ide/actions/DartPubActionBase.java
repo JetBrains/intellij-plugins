@@ -108,7 +108,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
   }
 
   public void performPubAction(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile, final boolean allowModalDialogs) {
-    DartSdk sdk = DartSdk.getGlobalDartSdk();
+    DartSdk sdk = DartSdk.getDartSdk(module.getProject());
 
     if (sdk == null && allowModalDialogs) {
       final int answer = Messages.showDialog(module.getProject(),
@@ -120,7 +120,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
       if (answer != Messages.OK) return;
 
       ShowSettingsUtilImpl.showSettingsDialog(module.getProject(), DartConfigurable.DART_SETTINGS_PAGE_ID, "");
-      sdk = DartSdk.getGlobalDartSdk();
+      sdk = DartSdk.getDartSdk(module.getProject());
     }
 
     if (sdk == null) return;
@@ -138,7 +138,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
       ShowSettingsUtilImpl.showSettingsDialog(module.getProject(), DartConfigurable.DART_SETTINGS_PAGE_ID, "");
 
-      sdk = DartSdk.getGlobalDartSdk();
+      sdk = DartSdk.getDartSdk(module.getProject());
       if (sdk == null) return;
 
       pubFile = new File(DartSdkUtil.getPubPath(sdk));

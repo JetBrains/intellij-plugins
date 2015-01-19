@@ -106,7 +106,7 @@ public class DartCommandLineRunningState extends CommandLineState {
   }
 
   private GeneralCommandLine createCommandLine(final @Nullable String overriddenMainFilePath) throws ExecutionException {
-    final DartSdk sdk = DartSdk.getGlobalDartSdk();
+    final DartSdk sdk = DartSdk.getDartSdk(getEnvironment().getProject());
     if (sdk == null) {
       throw new ExecutionException(DartBundle.message("dart.sdk.is.not.configured"));
     }
