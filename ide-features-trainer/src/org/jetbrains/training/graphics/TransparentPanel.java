@@ -35,7 +35,7 @@ public class TransparentPanel extends JFrame
             setLayout(new FlowLayout());
 
             // Create a JPanel
-            p1=new DetailPanel(new Dimension(850, 75));
+            p1=new DetailPanel(new Dimension(650, 75));
 
             //Label settings
             JLabel myLabel = new JLabel();
@@ -81,9 +81,10 @@ public class TransparentPanel extends JFrame
 
             // Set the size of the JFrame and
             // make it visible
-            setSize(1280,720);
+            setSize(700,400);
             setVisible(true);
-            this.setBackground(new Color(250,250,250,195));
+
+            this.setBackground(new Color(250, 250, 250, 195));
 
         }
 
