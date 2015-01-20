@@ -60,7 +60,8 @@ public class DartGlobalVariantsCompletionHelper {
   private static LookupElement buildElement(String componentName, DartComponentInfo info) {
     LookupElementBuilder builder = LookupElementBuilder.create(info, componentName);
     if (info.getLibraryId() != null) {
-      builder = builder.withTailText(info.getLibraryId(), true);
+      // todo may be show DartImportUtil.getUrlToImport() or file name where component declared instead of info.getLibraryId() ?
+      builder = builder.withTailText(" (" + info.getLibraryId() + ")", true);
     }
     if (info.getType() != null) {
       builder = builder.withIcon(info.getType().getIcon());
