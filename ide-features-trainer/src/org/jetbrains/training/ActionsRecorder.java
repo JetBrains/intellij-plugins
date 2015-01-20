@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.training.graphics.DetailPanel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,7 @@ public class ActionsRecorder implements Disposable {
 
                 if (isTaskSolved(document, target)) {
                     System.err.println("Task is solved!");
+                    //myInfoPanel.setText("Cool, let's try yourself now!");
                     Messages.showMessageDialog(project, "Congratulations, this task has been solved!", "Information", Messages.getInformationIcon());
                 }
             }

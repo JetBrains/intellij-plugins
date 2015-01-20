@@ -1,7 +1,5 @@
 package org.jetbrains.training.graphics;
 
-import apple.awt.CColor;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

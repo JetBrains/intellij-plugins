@@ -1,6 +1,5 @@
 package org.jetbrains.training;
 
-import com.intellij.ide.IdeTooltipManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -15,17 +14,14 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.Painter;
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.WindowManager;
-import com.intellij.ui.GuiUtils;
+import com.intellij.openapi.wm.*;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.popup.ComponentPopupBuilderImpl;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
@@ -33,9 +29,8 @@ import org.jetbrains.training.graphics.DetailPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.util.*;
 
@@ -45,14 +40,13 @@ import java.util.*;
 public class StartLesson extends AnAction {
 
     private boolean isRecording = false;
-
     DetailPanel infoPanel;
 
     public void actionPerformed(final AnActionEvent e) {
 
         try {
 
-            Messages.showMessageDialog(e.getProject(), "Welcome to IntelliJ IDEA training course.", "Information", Messages.getInformationIcon());
+            //Messages.showMessageDialog(e.getProject(), "Welcome to IntelliJ IDEA training course.", "Information", Messages.getInformationIcon());
 
             final VirtualFile vf;
             vf = createFile(e.getProject());
@@ -63,10 +57,15 @@ public class StartLesson extends AnAction {
 
             InputStream is = this.getClass().getResourceAsStream("JavaLessonExample2.java");
             final String target = new Scanner(is).useDelimiter("\\Z").next();
+
+
+//            IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(editor.getProject());
+//            final MyPainter myPainter = new MyPainter(ideFrame.getComponent());
+//            IdeGlassPaneUtil.find(editor.getComponent()).addPainter(ideFrame.getComponent(), myPainter, editor.getProject());
+//            myPainter.setText("Welcome to IntelliJ IDEA training course! Let's start from duplicating strings.");
+
             final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, target);
-
             final Scenario scn = new Scenario("SampleScenario.xml");
-
 
             isRecording = true;
             Disposer.register(recorder, new Disposable() {
@@ -78,103 +77,176 @@ public class StartLesson extends AnAction {
 
             recorder.startRecording();
 
+
             showInfoPanel(editor);
-
-//            JBPopupFactory.getInstance().createComponentPopupBuilder(infoPanel, infoPanel).createPopup().show(new RelativePoint(new Point(1000, 100)));
-
+//          JBPopupFactory.getInstance().createComponentPopupBuilder(infoPanel, infoPanel).createPopup().show(new RelativePoint(new Point(1000, 100)));
 
 
-                    //final Editor editor1 = FileEditorManager.getInstance(e.getProject()).openTextEditor(new OpenFileDescriptor(e.getProject(), vf), true);
-                    final Editor editor1 = editor;
 
-                    final Thread roboThread = new Thread("RoboThread") {
-                        @Override
-                        public void run() {
-                            String text;
+            //final Editor editor1 = FileEditorManager.getInstance(e.getProject()).openTextEditor(new OpenFileDescriptor(e.getProject(), vf), true);
+            final Editor editor1 = editor;
 
-                            try {
+            final Thread roboThread = new Thread("RoboThread") {
+                @Override
+                public void run() {
+                    String text;
 
-                                if (scn.equals(null)) {
-                                    System.err.println("Scenario is empty or cannot be read!");
-                                    return;
+                    try {
+
+                        if (scn.equals(null)) {
+                            System.err.println("Scenario is empty or cannot be read!");
+                            return;
+                        }
+                        if (scn.getRoot().equals(null)) {
+                            System.err.println("Scenario is empty or cannot be read!");
+                            return;
+                        }
+
+                        for (Element element : scn.getRoot().getChildren()) {
+                            if (element.getName().equals("TypeText")) {
+
+                                if (element.getAttribute("description") != null) {
+                                    final String description = (element.getAttribute("description").getValue().toString());
+    //                                            myPainter.setText(description);
+                                    infoPanel.setText(description);
                                 }
-                                if (scn.getRoot().equals(null)) {
-                                    System.err.println("Scenario is empty or cannot be read!");
-                                    return;
+
+                                if (element.getAttribute("btn") != null) {
+                                    final String buttonText =(element.getAttribute("btn").getValue().toString());
+                                    infoPanel.setButtonText(buttonText);
+                                    infoPanel.addWaitToButton(editor);
+                                } else {
+                                    infoPanel.hideButton();
                                 }
 
-                                for (Element element : scn.getRoot().getChildren()) {
-                                    if (element.getName().equals("TypeText")) {
-                                        final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
-                                        boolean isTyping = true;
-                                        final int[] i = {0};
-                                        final int initialOffset = editor1.getCaretModel().getOffset();
+                                final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
+                                boolean isTyping = true;
+                                final int[] i = {0};
+                                final int initialOffset = editor1.getCaretModel().getOffset();
 
-                                        while (isTyping) {
-                                            Thread.sleep(30);
-                                            final int finalI = i[0];
-                                            WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    editor1.getDocument().insertString(finalI + initialOffset, finalText.subSequence(i[0], i[0] + 1));
-                                                    editor1.getCaretModel().moveToOffset(finalI + 1 + initialOffset);
-                                                }
-                                            });
-                                            isTyping = (++i[0] < finalText.length());
+                                while (isTyping) {
+                                    Thread.sleep(20);
+                                    final int finalI = i[0];
+                                    WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            editor1.getDocument().insertString(finalI + initialOffset, finalText.subSequence(i[0], i[0] + 1));
+                                            editor1.getCaretModel().moveToOffset(finalI + 1 + initialOffset);
                                         }
-                                    } else if(element.getName().equals("Action")) {
-                                        final String actionType =(element.getAttribute("action").getValue().toString());
+                                    });
+                                    isTyping = (++i[0] < finalText.length());
+                                }
+                            } else if(element.getName().equals("Action")) {
+                                if (element.getAttribute("description") != null) {
+                                    final String description = (element.getAttribute("description").getValue().toString());
+                                    infoPanel.setText(description);
+                                    //                                            myPainter.setText(description);
+                                }
 
-                                        ApplicationManager.getApplication().invokeLater(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                showBalloon(e, editor1, editor);
-                                            }
+                                if (element.getAttribute("btn") != null) {
+                                    final String buttonText =(element.getAttribute("btn").getValue().toString());
+                                    infoPanel.setButtonText(buttonText);
+                                    infoPanel.addWaitToButton(editor);
+                                } else {
+                                    infoPanel.hideButton();
+                                }
 
-                                        });
-                                        synchronized (editor) {
-                                            editor.wait();
+                                focusOnEditor(editor);
+
+                                final String actionType = (element.getAttribute("action").getValue().toString());
+
+                                ApplicationManager.getApplication().invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            showBalloon(e, editor1, editor);
+                                        } catch (InterruptedException e1) {
+                                            e1.printStackTrace();
                                         }
-                                        ApplicationManager.getApplication().invokeLater(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                performAction(actionType, editor);
-                                            }
-                                        });
-//                                        synchronized (editor) {
-//                                            editor.wait();
-//                                        }
-                                    } else if(element.getName().equals("MoveCaret")) {
-                                        final String offsetString =(element.getAttribute("offset").getValue().toString());
-                                        final int offset = Integer.parseInt(offsetString);
-                                        System.err.println("offset is:" + offset);
-
-                                        WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                editor1.getCaretModel().moveToOffset(offset);
-                                            }
-                                        });
-                                    } else if(element.getName().equals("CopyText")) {
-                                        final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
-                                        WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                editor1.getDocument().insertString(0, finalText);
-                                            }
-                                        });
-                                    } else {
-
                                     }
+
+                                });
+                                synchronized (editor) {
+                                    editor.wait();
+                                }
+                                ApplicationManager.getApplication().invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        performAction(actionType, editor);
+                                    }
+                                });
+                                //                                        synchronized (editor) {
+                                //                                            editor.wait();
+                                //                                        }
+                            } else if(element.getName().equals("Start")) {
+                                    if (element.getAttribute("description") != null) {
+                                        final String description =(element.getAttribute("description").getValue().toString());
+                                        infoPanel.setText(description);
+                                    }
+                                    if (element.getAttribute("btn") != null) {
+                                        final String buttonText =(element.getAttribute("btn").getValue().toString());
+                                        infoPanel.setButtonText(buttonText);
+                                        infoPanel.addWaitToButton(editor);
+                                    }
+                                    synchronized (editor) {
+                                        editor.wait();
+                                    }
+                            } else if(element.getName().equals("Text")) {
+                                    if (element.getAttribute("description") != null) {
+                                        final String description =(element.getAttribute("description").getValue().toString());
+                                        infoPanel.setText(description);
+                                    }
+                                    if (element.getAttribute("btn") != null) {
+                                        final String buttonText =(element.getAttribute("btn").getValue().toString());
+                                        infoPanel.setButtonText(buttonText);
+                                        infoPanel.addWaitToButton(editor);
+                                    }
+                                    synchronized (editor) {
+                                        editor.wait();
+                                    }
+                            } else if(element.getName().equals("MoveCaret")) {
+
+                                focusOnEditor(editor);
+
+                                final String offsetString =(element.getAttribute("offset").getValue().toString());
+                                final int offset = Integer.parseInt(offsetString);
+                                System.err.println("offset is:" + offset);
+
+                                WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        editor1.getCaretModel().moveToOffset(offset);
+                                    }
+                                });
+                            } else if(element.getName().equals("CopyText")) {
+
+                                if (element.getAttribute("btn") != null) {
+                                    final String buttonText =(element.getAttribute("btn").getValue().toString());
+                                    infoPanel.setButtonText(buttonText);
+                                    infoPanel.addWaitToButton(editor);
+                                } else {
+                                    infoPanel.hideButton();
                                 }
 
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
+                                final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
+                                WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        editor1.getDocument().insertString(0, finalText);
+                                    }
+                                });
+                            } else {
+
                             }
                         }
 
-                    };
-                    roboThread.start();
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+            };
+            roboThread.start();
 
 
         } catch (IOException e1) {
@@ -184,23 +256,45 @@ public class StartLesson extends AnAction {
         }
     }
 
+    private void focusOnEditor(final Editor editor){
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                IdeFocusManager.findInstance().requestFocus(editor.getComponent(), true);
+            }
+        });
+
+    }
+
+
     private void showInfoPanel(Editor editor) {
-        final Dimension dimension = new Dimension(850, 75);
+        final Dimension dimension = new Dimension(500, 60);
 
-        DetailPanel infoPanel = new DetailPanel(dimension);
+        final IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(editor.getProject());
+        infoPanel = new DetailPanel(dimension);
 
-        ComponentPopupBuilder componentPopupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(infoPanel, infoPanel);
+        ComponentPopupBuilder componentPopupBuilder  = JBPopupFactory.getInstance().createComponentPopupBuilder(infoPanel, null);
         componentPopupBuilder.setShowBorder(false);
         componentPopupBuilder.setCancelOnClickOutside(false);
         componentPopupBuilder.setCancelOnWindowDeactivation(false);
         componentPopupBuilder.setShowShadow(false);
-        componentPopupBuilder.setAlpha(0f);
+        componentPopupBuilder.setFocusable(false);
 
-        JBPopup popup = componentPopupBuilder.createPopup();
+        final JBPopup popup = componentPopupBuilder.createPopup();
 
-        IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(editor.getProject());
         infoPanel.setText("Welcome to IntelliJ IDEA!");
         popup.show(computeLocation(ideFrame, dimension));
+
+
+        ideFrame.getComponent().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent componentEvent) {
+                popup.setLocation(computeLocation(ideFrame, dimension).getScreenPoint());
+            }
+        });
+
+
+
     }
 
     private RelativePoint computeLocation(IdeFrame ideFrame, Dimension dimension){
@@ -216,7 +310,7 @@ public class StartLesson extends AnAction {
      * @param editor - editor where to show balloon
      * @param lockEditor - using for suspending typing robot until balloon will have been hidden
      */
-    private void showBalloon(AnActionEvent e, Editor editor, final Editor lockEditor) {
+    private void showBalloon(AnActionEvent e, Editor editor, final Editor lockEditor) throws InterruptedException {
         FileEditorManager instance = FileEditorManager.getInstance(e.getProject());
         if (instance == null) return;
         if (editor == null) return;
@@ -228,9 +322,21 @@ public class StartLesson extends AnAction {
                 JBPopupFactory.getInstance().
                         createHtmlTextBalloonBuilder("<html>Type <b>CMD + D</b> to duplicate current string.", null, Color.LIGHT_GRAY, null)
                         .setHideOnClickOutside(false).setCloseButtonEnabled(true).setHideOnKeyOutside(false);
-        Balloon myBalloon = builder.createBalloon();
+        final Balloon myBalloon = builder.createBalloon();
 
         myBalloon.show(new RelativePoint(editor.getContentComponent(), point), Balloon.Position.above);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                    myBalloon.hide();
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        }).start();
 
         myBalloon.addListener(new JBPopupListener() {
             @Override
@@ -244,6 +350,7 @@ public class StartLesson extends AnAction {
                     lockEditor.notifyAll();
                 }
             }
+
         });
 
     }
@@ -334,5 +441,56 @@ public class StartLesson extends AnAction {
 
     }
 
+    private class MyPainter implements Painter {
+        private final Font myFont = new JLabel().getFont();
+        private String myString;
+        private Component myComponent;
 
+        public void setText(String s){
+            myString = s;
+//            myComponent.repaint();
+        }
+
+        public MyPainter(Component component) {
+            myString = "Deafault message";
+            myComponent = component;
+        }
+
+        @Override
+        public void addListener(Listener listener) {
+
+        }
+
+        @Override
+        public boolean needsRepaint() {
+            return true;
+        }
+
+        @Override
+        public void paint(Component component, Graphics2D graphics2D) {
+            int w = 500;
+            int h = 60;
+            int arc = 15;
+
+            int x = component.getWidth()/2 - w/2;
+            int y = component.getHeight() - h - 30;
+
+            graphics2D.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+            graphics2D.setColor(new Color(0, 0, 0, 120));
+            //graphics2D.drawLine(0, 0, component.getWidth(), component.getHeight());
+            graphics2D.fillRoundRect(x, y, w, h, arc, arc);
+
+            graphics2D.setFont(myFont);
+            FontMetrics fontMetrics = graphics2D.getFontMetrics();
+            Rectangle2D rs = fontMetrics.getStringBounds(myString, graphics2D);
+
+            graphics2D.setColor(new Color(255, 255, 255, 255));
+            graphics2D.drawString(myString, x + (w - (int) rs.getWidth())/2, y + (h - (int) rs.getHeight())/2 + fontMetrics.getAscent());
+        }
+
+        @Override
+        public void removeListener(Listener listener) {
+
+        }
+    }
 }
