@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -31,7 +30,7 @@ import java.util.Map;
 public class DartAnalysisServerAnnotator
   extends ExternalAnnotator<DartAnalysisServerAnnotator.AnnotatorInfo, DartAnalysisServerAnnotator.ServerResult> {
 
-  static class AnnotatorInfo {
+  public static class AnnotatorInfo {
     @NotNull public final Project myProject;
     @NotNull public final String myFilePath;
 
@@ -57,9 +56,7 @@ public class DartAnalysisServerAnnotator
 
   @Nullable
   @Override
-  public AnnotatorInfo collectInformation(@NotNull final PsiFile psiFile, @NotNull final Editor editor, final boolean hasErrors) {
-    if (hasErrors) return null;
-
+  public AnnotatorInfo collectInformation(@NotNull final PsiFile psiFile) {
     if (psiFile instanceof DartExpressionCodeFragment) return null;
 
     final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
@@ -84,8 +81,8 @@ public class DartAnalysisServerAnnotator
     return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath());
   }
 
-  @Override
   @Nullable
+  @Override
   public ServerResult doAnnotate(@NotNull final AnnotatorInfo info) {
     final AnalysisError[] errors = DartAnalysisServerService.getInstance().analysis_getErrors(info);
     if (errors == null || errors.length == 0) return null;
@@ -123,7 +120,7 @@ public class DartAnalysisServerAnnotator
     }
   }
 
-  private static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final AnalysisError error) {
+  public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final AnalysisError error) {
     final String errorType = error.getType();
     // already done using IDE engine
     if (AnalysisErrorType.TODO.equals(errorType)) return true;
