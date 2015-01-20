@@ -5,12 +5,15 @@ import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
-import com.intellij.lang.javascript.psi.types.JSTypeBackedByClass;
+import com.intellij.lang.javascript.psi.types.JSContext;
+import com.intellij.lang.javascript.psi.types.JSNamedType;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
@@ -94,7 +97,8 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   private static JSResolveUtil.ImplicitVariableProvider inlineComponentRenderPredefinedVars = new JSResolveUtil.ImplicitVariableProvider() {
     protected void doComputeVars(List<JSVariable> vars, XmlFile xmlFile) {
       JSClass cls = XmlBackedJSClassFactory.getXmlBackedClass(xmlFile);
-      vars.add(new ImplicitJSVariableImpl("outerDocument", new JSTypeBackedByClass(cls), xmlFile));
+      final JSType type = JSNamedType.createType(cls.getQualifiedName(), JSTypeSourceFactory.createTypeSource(cls, true), JSContext.INSTANCE);
+      vars.add(new ImplicitJSVariableImpl("outerDocument", type, xmlFile));
     }
   };
 
