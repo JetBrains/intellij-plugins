@@ -3,7 +3,13 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.ProjectBuilder;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapProjectComponent;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapConfigurationType;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfiguration;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
 import com.intellij.notification.Notification;
@@ -15,6 +21,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -95,6 +102,8 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
             PhoneGapSettings.getInstance().loadState(new PhoneGapSettings.State(settings.executable, state.repositoriesList));
           }
           VfsUtil.markDirty(false, true, project.getBaseDir());
+          createRunConfiguration(project, settings);
+
           baseDir.refresh(true, true, new Runnable() {
             @Override
             public void run() {
@@ -114,6 +123,23 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
       LOG.warn(e);
       showErrorMessage(e.getMessage());
     }
+  }
+
+  private static void createRunConfiguration(@NotNull Project project,
+                                        @NotNull PhoneGapProjectSettings settings) {
+    final RunManager runManager = RunManager.getInstance(project);
+    PhoneGapConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType(PhoneGapConfigurationType.class);
+    RunnerAndConfigurationSettings configuration =
+      runManager.createRunConfiguration("Phonegap/Cordova run", configurationType.getConfigurationFactories()[0]);
+
+    PhoneGapRunConfiguration runConfiguration = (PhoneGapRunConfiguration)configuration.getConfiguration();
+    runConfiguration.setExecutable(settings.executable);
+    runConfiguration.setWorkDir(project.getBasePath());
+    runConfiguration.setPlatform(
+      SystemInfo.isMac ? PhoneGapRunConfigurationEditor.PLATFORM_IOS : PhoneGapRunConfigurationEditor.PLATFORM_ANDROID);
+    runConfiguration.setCommand(PhoneGapCommandLine.COMMAND_EMULATE);
+    runManager.addConfiguration(configuration, false);
+    runManager.setSelectedConfiguration(configuration);
   }
 
   protected File createTemp() throws IOException {
