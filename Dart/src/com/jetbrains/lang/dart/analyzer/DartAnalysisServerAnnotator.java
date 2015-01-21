@@ -109,14 +109,12 @@ public class DartAnalysisServerAnnotator
   public void apply(@NotNull final PsiFile psiFile, @Nullable final ServerResult serverResult, @NotNull final AnnotationHolder holder) {
     if (serverResult == null || serverResult.getErrorsAndFixes().isEmpty()) return;
 
-    final Document document = PsiDocumentManager.getInstance(psiFile.getProject()).getCachedDocument(psiFile);
-    if (document == null) return;
-
-    for (Map.Entry<AnalysisError, List<AnalysisErrorFixes>> entry : serverResult.getErrorsAndFixes().entrySet()) {
+    final Map<AnalysisError, List<AnalysisErrorFixes>> errorsAndFixesMap = serverResult.getErrorsAndFixes();
+    for (Map.Entry<AnalysisError, List<AnalysisErrorFixes>> entry : errorsAndFixesMap.entrySet()) {
       final AnalysisError error = entry.getKey();
       final List<AnalysisErrorFixes> fixes = entry.getValue();
 
-      final Annotation annotation = annotate(document, holder, error);
+      final Annotation annotation = annotate(holder, error);
       if (annotation != null && fixes != null) {
         for (AnalysisErrorFixes fixList : fixes) {
           for (SourceChange change : fixList.getFixes()) {
@@ -137,21 +135,21 @@ public class DartAnalysisServerAnnotator
   }
 
   @Nullable
-  private static Annotation annotate(@NotNull final Document document,
-                                     @NotNull final AnnotationHolder holder,
+  private static Annotation annotate(@NotNull final AnnotationHolder holder,
                                      @NotNull final AnalysisError error) {
-    final TextRange textRange = getRealTextRange(document, error.getLocation());
-    if (AnalysisErrorSeverity.INFO.equals(error.getSeverity())) {
+    final TextRange textRange = convertLocationToTextRange(error.getLocation());
+    final String severity = error.getSeverity();
+    if (AnalysisErrorSeverity.INFO.equals(severity)) {
       final Annotation annotation = holder.createWeakWarningAnnotation(textRange, error.getMessage());
       if ("Unused import".equals(error.getMessage()) || "Duplicate import".equals(error.getMessage())) {
         annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
       }
       return annotation;
     }
-    else if (AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) {
+    else if (AnalysisErrorSeverity.WARNING.equals(severity)) {
       return holder.createWarningAnnotation(textRange, error.getMessage());
     }
-    else if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity())) {
+    else if (AnalysisErrorSeverity.ERROR.equals(severity)) {
       return holder.createErrorAnnotation(textRange, error.getMessage());
     }
 
@@ -159,11 +157,8 @@ public class DartAnalysisServerAnnotator
   }
 
   @NotNull
-  private static TextRange getRealTextRange(@NotNull final Document document, @NotNull final Location location) {
-    final int realStartLineOffset = document.getLineStartOffset(location.getStartLine() - 1);
-    final int realOffset = realStartLineOffset + location.getStartColumn() - 1;
-    // todo if there are CRLF chars within the length after the realOffset, then realLength will be incorrect:
-    final int realLength = realOffset + location.getLength();
-    return new TextRange(realOffset, realLength);
+  private static TextRange convertLocationToTextRange(@NotNull final Location location) {
+    final int offset = location.getOffset();
+    return new TextRange(location.getOffset(), offset + location.getLength());
   }
 }

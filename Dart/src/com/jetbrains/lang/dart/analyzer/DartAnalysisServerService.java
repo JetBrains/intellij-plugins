@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.analyzer;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.types.*;
 import com.google.dart.server.internal.remote.DebugPrintStream;
+import com.google.dart.server.internal.remote.FileReadMode;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -351,7 +352,8 @@ public class DartAnalysisServerService {
       final int port = NetUtils.tryToFindAvailableSocketPort(10000);
 
       final StdioServerSocket serverSocket =
-        new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, false);
+        new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, true,
+                              FileReadMode.NORMALIZE_EOL_ALWAYS);
       myServer = new RemoteAnalysisServerImpl(serverSocket);
 
       try {
