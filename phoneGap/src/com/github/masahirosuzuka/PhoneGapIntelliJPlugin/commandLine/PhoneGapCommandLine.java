@@ -14,10 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.intellij.openapi.util.text.StringUtil.contains;
@@ -42,8 +39,17 @@ public class PhoneGapCommandLine {
   @Nullable
   private final String myWorkDir;
 
+  public boolean isPassParentEnv() {
+    return myPassParentEnv;
+  }
+
+  public Map<String, String> getEnv() {
+    return myEnv;
+  }
+
   @Nullable
   public String getWorkDir() {
+
     return myWorkDir;
   }
 
@@ -59,12 +65,38 @@ public class PhoneGapCommandLine {
   private String version;
   private boolean myIsCorrect = true;
 
+  public void setPassParentEnv(boolean passParentEnv) {
+    myPassParentEnv = passParentEnv;
+  }
+
+  public void setEnv(Map<String, String> env) {
+    myEnv = env;
+  }
+
+  private boolean myPassParentEnv = true;
+  private Map<String, String> myEnv = ContainerUtil.newHashMap();
+
   public static final Function<String, String> REMOVE_QUOTE_AND_TRIM = new Function<String, String>() {
     @Override
     public String fun(String s) {
       return s.replace("'", "").trim();
     }
   };
+
+  public PhoneGapCommandLine(@NotNull String path, @Nullable String dir, boolean isPassEnv, Map<String, String> env) {
+    myWorkDir = dir;
+    myPath = path;
+    myEnv = env;
+    myPassParentEnv = isPassEnv;
+    try {
+      version = getInnerVersion(myPath, "--version").replace("\"", "").trim();
+    }
+    catch (Exception e) {
+      version = null;
+      LOGGER.debug(e.getMessage(), e);
+      myIsCorrect = false;
+    }
+  }
 
   public PhoneGapCommandLine(@NotNull String path, @Nullable String dir) {
     myWorkDir = dir;
@@ -358,7 +390,9 @@ public class PhoneGapCommandLine {
   private ProcessOutput executeAndGetOut(String[] command) throws ExecutionException {
     final GeneralCommandLine commandLine = new GeneralCommandLine(command);
     commandLine.withWorkDirectory(myWorkDir);
-    commandLine.setPassParentEnvironment(true);
+    commandLine.setPassParentEnvironment(myPassParentEnv);
+    commandLine.withEnvironment(myEnv);
+
     Process process = commandLine.createProcess();
     OSProcessHandler processHandler = new ColoredProcessHandler(process, commandLine.getCommandLineString(), Charsets.UTF_8);
     final ProcessOutput output = new ProcessOutput();

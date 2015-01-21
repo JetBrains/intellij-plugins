@@ -3,7 +3,6 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapAndroidTargets;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapIosTargets;
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapTargets;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui.PhoneGapRunConfigurationEditor;
 import com.intellij.diagnostic.logging.DefaultLogFilterModel;
 import com.intellij.diagnostic.logging.LogConsole;
@@ -27,6 +26,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.*;
@@ -72,6 +73,28 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
 
   @Nullable
   public String myCommand;
+
+  public boolean myPassParent = true;
+
+  @NotNull
+  public Map<String, String> myEnvs = new LinkedHashMap<String, String>();
+
+  public boolean isPassParent() {
+    return myPassParent;
+  }
+
+  public void setPassParent(boolean passParent) {
+    myPassParent = passParent;
+  }
+
+  @NotNull
+  public Map<String, String> getEnvs() {
+    return myEnvs;
+  }
+
+  public void setEnvs(@NotNull Map<String, String> envs) {
+    myEnvs = envs;
+  }
 
   @Nullable
   public String getCommand() {
@@ -241,13 +264,20 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
     PhoneGapCommandLine current = myCommandLine;
     String executable = getExecutable();
     String workDir = getWorkDir();
-    if (current != null && StringUtil.equals(current.getPath(), executable) && StringUtil.equals(current.getWorkDir(), workDir)) {
+    boolean passParentEnv = myPassParent;
+    Map<String, String> env = myEnvs;
+    if (current != null && StringUtil.equals(current.getPath(), executable) &&
+        StringUtil.equals(current.getWorkDir(), workDir) && passParentEnv == current.isPassParentEnv() &&
+        env.equals(current.getEnv())) {
       return current;
     }
+
     assert executable != null;
     assert workDir != null;
 
-    current = new PhoneGapCommandLine(executable, workDir);
+    current = new PhoneGapCommandLine(executable, workDir, passParentEnv, env);
+
+
     myCommandLine = current;
 
     return current;

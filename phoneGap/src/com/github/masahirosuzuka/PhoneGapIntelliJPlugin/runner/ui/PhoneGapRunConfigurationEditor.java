@@ -5,6 +5,9 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapTargets;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapRunConfiguration;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
+import com.intellij.execution.ExecutionBundle;
+import com.intellij.execution.configuration.EnvironmentVariablesComponent;
+import com.intellij.execution.configuration.EnvironmentVariablesTextFieldWithBrowseButton;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -57,6 +60,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   private JBCheckBox myHasTarget;
   private PhoneGapTargetsPanel myTarget;
   private JBTextField myExtraArgsTextField;
+  private EnvironmentVariablesTextFieldWithBrowseButton myEnvComponent;
 
   public PhoneGapRunConfigurationEditor(Project project) {
     myProject = project;
@@ -90,6 +94,8 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
 
     myHasTarget.setSelected(hasTarget);
     myExtraArgsTextField.setText(s.getExtraArgs());
+    myEnvComponent.setEnvs(s.getEnvs());
+    myEnvComponent.setPassParentEnvs(s.isPassParent());
     PhoneGapUtil.setTextFieldWithHistory(myTarget.getTargetsField(), s.getTarget());
     fillTargetValuesAndSetVisible(false);
   }
@@ -123,6 +129,8 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     persistentSettings.setTarget(myTarget.getSelectedValue());
     persistentSettings.setHasTarget(myHasTarget.isSelected());
     persistentSettings.setExtraArgs(myExtraArgsTextField.getText());
+    persistentSettings.setEnvs(myEnvComponent.getEnvs());
+    persistentSettings.setPassParent(myEnvComponent.isPassParentEnvs());
   }
 
 
@@ -134,6 +142,10 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     myWorkDirField = PhoneGapUtil.createPhoneGapWorkingDirectoryField(myProject);
     myPlatformField = new ComboBoxWithMoreOption(getDefaultPlatforms(), getNonDefaultPlatforms());
     myCommand = new ComboBox();
+
+    myEnvComponent = new EnvironmentVariablesTextFieldWithBrowseButton();
+    myEnvComponent.setPassParentEnvs(true);
+
     myHasTarget = new JBCheckBox("Specify target");
     myTarget = new PhoneGapTargetsPanel();
     myExtraArgsTextField = new JBTextField(15);
@@ -196,6 +208,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     return FormBuilder.createFormBuilder()
       .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.executable.name"), myExecutablePathField)
       .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.work.dir.name"), myWorkDirField)
+      .addLabeledComponent(ExecutionBundle.message("environment.variables.component.title"), myEnvComponent)
       .addLabeledComponent("Command:", myCommand)
       .addLabeledComponent("Platform:", myPlatformField)
       .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.extra.args.name"), myExtraArgsTextField)
