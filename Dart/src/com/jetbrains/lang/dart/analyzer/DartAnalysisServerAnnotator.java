@@ -5,7 +5,6 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -13,7 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
@@ -137,7 +135,9 @@ public class DartAnalysisServerAnnotator
   @Nullable
   private static Annotation annotate(@NotNull final AnnotationHolder holder,
                                      @NotNull final AnalysisError error) {
-    final TextRange textRange = convertLocationToTextRange(error.getLocation());
+    final Location location = error.getLocation();
+    final TextRange textRange = new TextRange(location.getOffset(), location.getOffset() + location.getLength());
+
     final String severity = error.getSeverity();
     if (AnalysisErrorSeverity.INFO.equals(severity)) {
       final Annotation annotation = holder.createWeakWarningAnnotation(textRange, error.getMessage());
@@ -154,11 +154,5 @@ public class DartAnalysisServerAnnotator
     }
 
     return null;
-  }
-
-  @NotNull
-  private static TextRange convertLocationToTextRange(@NotNull final Location location) {
-    final int offset = location.getOffset();
-    return new TextRange(location.getOffset(), offset + location.getLength());
   }
 }

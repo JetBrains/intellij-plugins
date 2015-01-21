@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DartAnalysisServerService {
 
-  public static final String MIN_SDK_VERSION = "1.8";
+  public static final String MIN_SDK_VERSION = "1.9";
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_ERRORS_TIMEOUT = ApplicationManager.getApplication().isUnitTestMode() ? TimeUnit.SECONDS.toMillis(50)
                                                                                                       : TimeUnit.SECONDS.toMillis(5);
