@@ -2,8 +2,8 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil;
-import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.plugins.PhoneGapPluginsView;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui.plugins.PhoneGapPluginsView;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -13,7 +13,6 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBLabel;
-import com.intellij.ui.components.JBTextField;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.Nls;
@@ -22,8 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 /**
@@ -43,6 +40,7 @@ public class PhoneGapConfigurable implements Configurable {
   private JPanel myWrapper;
   private JBLabel myVersion;
   private RepositoryStore myRepositoryStore;
+  private JCheckBox myExcludePlatformsCheckBox;
 
   public static class RepositoryStore {
     private List<String> myRepoList;
@@ -81,6 +79,7 @@ public class PhoneGapConfigurable implements Configurable {
     public void reset(PhoneGapSettings.State state) {
       PhoneGapUtil.setFieldWithHistoryWithBrowseButtonPath(myExecutablePath, state.getExecutablePath());
       myRepositoryStore.reset(state.repositoriesList);
+      myExcludePlatformsCheckBox.setSelected(state.isExcludePlatformFolder);
     }
 
     public boolean isModified() {
@@ -92,6 +91,7 @@ public class PhoneGapConfigurable implements Configurable {
       PhoneGapSettings.State state = new PhoneGapSettings.State();
       state.executablePath = myExecutablePath.getText();
       state.repositoriesList = myRepositoryStore.getRepositories();
+      state.isExcludePlatformFolder = myExcludePlatformsCheckBox.isSelected();
       return state;
     }
 
@@ -122,6 +122,7 @@ public class PhoneGapConfigurable implements Configurable {
       myWorkingDirectory = PhoneGapUtil.createPhoneGapWorkingDirectoryField(myProject);
       myVersion = new JBLabel();
       myUIController = new UIController();
+      myExcludePlatformsCheckBox = new JCheckBox(PhoneGapBundle.message("phonegap.conf.exclude.platforms"));
       myRepositoryStore = new RepositoryStore();
       myUIController.reset(mySettings.getState());
       phoneGapPluginsView = new PhoneGapPluginsView(myProject);
@@ -129,6 +130,7 @@ public class PhoneGapConfigurable implements Configurable {
         .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.executable.name"), myExecutablePath)
         .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.version.name"), myVersion)
         .addLabeledComponent(PhoneGapBundle.message("phonegap.conf.work.dir.name"), myWorkingDirectory)
+        .addComponent(myExcludePlatformsCheckBox)
         .addComponent(phoneGapPluginsView.getPanel()).getPanel();
       myWrapper = new JPanel(new BorderLayout());
       myWrapper.add(panel, BorderLayout.NORTH);
