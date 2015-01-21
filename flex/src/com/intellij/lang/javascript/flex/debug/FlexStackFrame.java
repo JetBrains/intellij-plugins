@@ -492,7 +492,7 @@ public class FlexStackFrame extends XStackFrame {
     @Nullable
     @Override
     public ExpressionInfo getExpressionInfoAtOffset(@NotNull Project project, @NotNull Document document, final int offset, boolean sideEffectsAllowed) {
-      return JSDebuggerSupportUtils.getExpressionAtOffset(project, document, offset, JSDebuggerSupportUtils.JS_HELPER);
+      return JSDebuggerSupportUtils.getExpressionAtOffset(project, document, offset);
     }
   }
 
