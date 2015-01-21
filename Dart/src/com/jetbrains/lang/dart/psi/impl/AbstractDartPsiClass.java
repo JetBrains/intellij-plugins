@@ -3,19 +3,25 @@ package com.jetbrains.lang.dart.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.*;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl implements DartClass {
+
+  private CachedValue<Map<String, List<DartComponent>>> myMembersCache;
+
   public AbstractDartPsiClass(@NotNull ASTNode node) {
     super(node);
   }
@@ -166,17 +172,41 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
   @NotNull
   @Override
   public List<DartComponent> findMembersByName(@NotNull final String name) {
-    return ContainerUtil.filter(DartResolveUtil.findNamedSubComponents(false, this), new Condition<DartComponent>() {
-      @Override
-      public boolean value(DartComponent component) {
-        final DartClass dartClass = PsiTreeUtil.getParentOfType(component, DartClass.class);
-        final String dartClassName = dartClass != null ? dartClass.getName() : null;
-        if (dartClassName != null && dartClassName.equals(component.getName())) {
-          return false;
-        }
-        return name.equals(component.getName());
-      }
-    });
+    ensureMembersCacheInitialized();
+    final List<DartComponent> components = myMembersCache.getValue().get(name);
+    return components == null ? Collections.<DartComponent>emptyList() : components;
+  }
+
+  private void ensureMembersCacheInitialized() {
+    if (myMembersCache == null) {
+      myMembersCache = CachedValuesManager.getManager(getProject()).createCachedValue(
+        new CachedValueProvider<Map<String, List<DartComponent>>>() {
+          @Nullable
+          @Override
+          public Result<Map<String, List<DartComponent>>> compute() {
+            final Map<String, List<DartComponent>> nameToMembers = new THashMap<String, List<DartComponent>>();
+
+            for (DartComponent component : DartResolveUtil.findNamedSubComponents(false, AbstractDartPsiClass.this)) {
+              final String componentName = component.getName();
+
+              final DartClass dartClass = PsiTreeUtil.getParentOfType(component, DartClass.class);
+              final String dartClassName = dartClass != null ? dartClass.getName() : null;
+              if (dartClassName != null && dartClassName.equals(componentName)) {
+                continue;
+              }
+
+              List<DartComponent> components = nameToMembers.get(componentName);
+              if (components == null) {
+                components = new SmartList<DartComponent>();
+                nameToMembers.put(componentName, components);
+              }
+              components.add(component);
+            }
+
+            return new Result<Map<String, List<DartComponent>>>(nameToMembers, PsiModificationTracker.MODIFICATION_COUNT);
+          }
+        }, false);
+    }
   }
 
   @Override
