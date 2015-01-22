@@ -36,5 +36,7 @@
 
     <liveTemplateContext implementation="com.intellij.aws.cloudformation.CloudFormationCodeContextType"/>
     <defaultLiveTemplatesProvider implementation="com.intellij.aws.cloudformation.CloudFormationDefaultLiveTemplateProvider"/>
+
+    <errorHandler implementation="com.intellij.aws.cloudformation.CloudFormationReportSubmitter"/>
   </extensions>
 </idea-plugin>
