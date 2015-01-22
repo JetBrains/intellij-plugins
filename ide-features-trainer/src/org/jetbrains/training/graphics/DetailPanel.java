@@ -12,18 +12,16 @@ import java.awt.event.*;
  * Created by karashevich on 14/01/15.
  */
 public class DetailPanel extends JPanel {
-    private final int magicConst = 10;
+    private final int magicConst = 15;
     private final Color backGroundColor = new Color(0, 0 ,0, 63);
     private final Color textColor = new Color(245, 245, 245, 255);
     private JLabel myLabel;
     private JButton btn;
-    private Container container;
-
-
 
     public DetailPanel( Dimension dimension){
 
-        setLayout(null);
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+
         setOpaque(false);
         setPreferredSize(dimension);
         setSize(dimension);
@@ -32,7 +30,7 @@ public class DetailPanel extends JPanel {
         myLabel = new JLabel();
         myLabel.setForeground(textColor);
         Font font = myLabel.getFont();
-        Font newFont = new Font(font.getName(), font.getStyle(), 14);
+        Font newFont = new Font(font.getName(), font.getStyle(), 12);
         myLabel.setFont(newFont);
         myLabel.setText("Default text");
         myLabel.setFocusable(false);
@@ -45,14 +43,26 @@ public class DetailPanel extends JPanel {
         //btn.setForeground(Color.white);
         //btn.setBackground(new Color(0,0,0,190));
 
-        myLabel.setBounds(20, this.getHeight()/2 - (int) myLabel.getPreferredSize().getHeight()/2, (int) myLabel.getPreferredSize().getWidth(), (int) myLabel.getPreferredSize().getHeight());
-        btn.setBounds(this.getWidth() - 20 - (int) btn.getPreferredSize().getWidth(), this.getHeight()/2 - (int) btn.getPreferredSize().getHeight()/2, (int) btn.getPreferredSize().getWidth(), (int) btn.getPreferredSize().getHeight());
-        btn.setVisible(false);
+        Box vertBox = Box.createVerticalBox();
+        Box lineBox = Box.createHorizontalBox();
+
+        lineBox.add(Box.createHorizontalStrut(magicConst));
+        lineBox.add(myLabel);
+        lineBox.add(Box.createHorizontalGlue());
+        lineBox.add(btn);
+        lineBox.add(Box.createHorizontalStrut(magicConst));
+
+        vertBox.add(Box.createVerticalGlue());
+        vertBox.add(lineBox);
+        vertBox.add(Box.createVerticalGlue());
 
         setFocusable(false);
 
-        this.add(myLabel);
-        this.add(btn);
+        add(vertBox);
+        setVisible(true);
+
+        //this.add(myLabel);
+        //this.add(btn);
 
     }
 
@@ -65,7 +75,6 @@ public class DetailPanel extends JPanel {
             @Override
             public void run() {
                 myLabel.setText(newString);
-                myLabel.setBounds(20, myPanelHeight/2 - (int) myLabel.getPreferredSize().getHeight()/2, (int) myLabel.getPreferredSize().getWidth(), (int) myLabel.getPreferredSize().getHeight());
             }
         });
     }
@@ -105,7 +114,6 @@ public class DetailPanel extends JPanel {
             @Override
             public void run() {
                 btn.setText(newString);
-                btn.setBounds(myPanelWidth - 20 - (int) btn.getPreferredSize().getWidth(), myPanelHeight/2 - (int) btn.getPreferredSize().getHeight()/2, (int) btn.getPreferredSize().getWidth(), (int) btn.getPreferredSize().getHeight());
             }
         });
 

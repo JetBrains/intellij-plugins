@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.*;
+import com.intellij.ui.BalloonImpl;
 import com.intellij.ui.awt.RelativePoint;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -294,97 +295,24 @@ public class StartLesson extends AnAction {
 
         final IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(editor.getProject());
         infoPanel = new DetailPanel(dimension);
+        RelativePoint location = computeLocation(ideFrame, dimension);
+        Rectangle infoBounds = new Rectangle((int) location.getPoint().getX(), (int) location.getPoint().getY(), (int) dimension.getWidth(),(int) dimension.getHeight());
 
 
-        ComponentPopupBuilder componentPopupBuilder  = JBPopupFactory.getInstance().createComponentPopupBuilder(infoPanel, null);
-        componentPopupBuilder.setShowBorder(false);
-        componentPopupBuilder.setCancelOnClickOutside(false);
-        componentPopupBuilder.setCancelOnWindowDeactivation(false);
-        componentPopupBuilder.setShowShadow(false);
-        componentPopupBuilder.setFocusable(false);
+        BalloonBuilder balloonBuilder = JBPopupFactory.getInstance().createBalloonBuilder(infoPanel);
+        balloonBuilder.setHideOnClickOutside(false).setCloseButtonEnabled(false).setHideOnKeyOutside(false).setBorderColor(new Color(0, 0, 0, 0))
+                .setDialogMode(false);
+        balloonBuilder.setFillColor(new Color(0,0,0,0));
 
-        final JBPopup popup = componentPopupBuilder.createPopup();
+        Balloon balloon = balloonBuilder.createBalloon();
+        balloon.setBounds(infoBounds);
 
-        infoPanel.setText("Welcome to IntelliJ IDEA!");
-        popup.show(computeLocation(ideFrame, dimension));
-        SwingUtilities.windowForComponent(infoPanel).setFocusable(false);
+        balloon.show(location, Balloon.Position.above);
 
-        JFrame jideFrame = (JFrame) ideFrame;
+//        infoPanel.setText("Welcome to IntelliJ IDEA!");
+//        popup.show(computeLocation(ideFrame, dimension));
+//        SwingUtilities.windowForComponent(infoPanel).setFocusable(false);
 
-        ideFrame.getComponent().addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent componentEvent) {
-                popup.setLocation(computeLocation(ideFrame, dimension).getScreenPoint());
-            }
-        });
-
-        jideFrame.addComponentListener(new ComponentListener() {
-            @Override
-            public void componentResized(ComponentEvent componentEvent) {
-            }
-
-            @Override
-            public void componentMoved(ComponentEvent componentEvent) {
-                popup.setLocation(computeLocation(ideFrame, dimension).getScreenPoint());
-            }
-
-            @Override
-            public void componentShown(ComponentEvent componentEvent) {
-
-            }
-
-            @Override
-            public void componentHidden(ComponentEvent componentEvent) {
-            }
-        });
-
-        infoPanel.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent focusEvent) {
-                System.err.println("Info panel focus gained!");
-            }
-
-            @Override
-            public void focusLost(FocusEvent focusEvent) {
-                super.focusLost(focusEvent);
-            }
-        });
-
-        infoPanel.getRootPane().addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent focusEvent) {
-                System.err.println("Info panel Root Pane focus gained!");
-            }
-
-            @Override
-            public void focusLost(FocusEvent focusEvent) {
-                super.focusLost(focusEvent);
-            }
-        });
-
-        popup.getContent().addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent focusEvent) {
-                System.err.println("Popup focus gained!");
-            }
-
-            @Override
-            public void focusLost(FocusEvent focusEvent) {
-                super.focusLost(focusEvent);
-            }
-        });
-
-        popup.getOwner().addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent focusEvent) {
-                System.err.println("Popup focus gained!");
-            }
-
-            @Override
-            public void focusLost(FocusEvent focusEvent) {
-                super.focusLost(focusEvent);
-            }
-        });
 
 
     }
