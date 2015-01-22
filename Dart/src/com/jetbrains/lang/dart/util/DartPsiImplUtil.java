@@ -1,11 +1,12 @@
 package com.jetbrains.lang.dart.util;
 
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.*;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.resolve.DartResolveProcessor;
@@ -28,6 +29,8 @@ public class DartPsiImplUtil {
   private static final String R_TRIPLE_QUOTE = "r\"\"\"";
   private static final String R_APOS = "r'";
   private static final String R_QUOTE = "r\"";
+
+  private static final Key<CachedValue<PsiElement>> DART_TYPE_CACHED_RESOLVE_RESULT_KEY = Key.create("DART_TYPE_CACHED_RESOLVE_RESULT_KEY");
 
   @NotNull
   public static String getUriString(@NotNull final DartUriBasedDirective uriBasedDirective) {
@@ -113,7 +116,24 @@ public class DartPsiImplUtil {
   }
 
   @Nullable
-  public static PsiElement resolveReference(@NotNull DartType dartType) {
+  public static PsiElement resolveReference(@NotNull final DartType dartType) {
+    CachedValue<PsiElement> cachedValue = dartType.getUserData(DART_TYPE_CACHED_RESOLVE_RESULT_KEY);
+
+    if (cachedValue == null) {
+      cachedValue = CachedValuesManager.getManager(dartType.getProject()).createCachedValue(new CachedValueProvider<PsiElement>() {
+        @Override
+        public Result<PsiElement> compute() {
+          return new Result<PsiElement>(doResolveTypeReference(dartType), PsiModificationTracker.MODIFICATION_COUNT);
+        }
+      }, false);
+
+      dartType.putUserData(DART_TYPE_CACHED_RESOLVE_RESULT_KEY, cachedValue);
+    }
+
+    return cachedValue.getValue();
+  }
+
+  private static PsiElement doResolveTypeReference(final DartType dartType) {
     final DartExpression expression = dartType.getReferenceExpression();
     final String typeName = expression.getText();
     if (typeName.indexOf('.') != -1) {
