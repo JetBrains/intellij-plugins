@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -89,15 +88,8 @@ public class DartPsiImplUtil {
   }
 
   @NotNull
-  public static String getLibraryName(@NotNull DartLibraryStatement libraryStatement) {
-    final DartQualifiedComponentName componentName = libraryStatement.getQualifiedComponentName();
-    return StringUtil.notNullize(componentName.getName());
-  }
-
-  @NotNull
-  public static String getLibraryName(@NotNull DartPartOfStatement importStatement) {
-    final DartLibraryId expression = importStatement.getLibraryId();
-    return FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
+  public static String getLibraryName(@NotNull DartPartOfStatement partOfStatement) {
+    return partOfStatement.getLibraryId().getText();
   }
 
   @NotNull

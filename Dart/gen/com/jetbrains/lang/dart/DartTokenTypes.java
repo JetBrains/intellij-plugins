@@ -69,6 +69,7 @@ public interface DartTokenTypes {
   IElementType LABEL = new DartElementType("LABEL");
   IElementType LIBRARY_COMPONENT_REFERENCE_EXPRESSION = new DartElementType("LIBRARY_COMPONENT_REFERENCE_EXPRESSION");
   IElementType LIBRARY_ID = new DartElementType("LIBRARY_ID");
+  IElementType LIBRARY_NAME_ELEMENT = new DartElementType("LIBRARY_NAME_ELEMENT");
   IElementType LIBRARY_REFERENCE_LIST = new DartElementType("LIBRARY_REFERENCE_LIST");
   IElementType LIBRARY_STATEMENT = new DartElementType("LIBRARY_STATEMENT");
   IElementType LIST_LITERAL_EXPRESSION = new DartElementType("LIST_LITERAL_EXPRESSION");
@@ -97,7 +98,6 @@ public interface DartTokenTypes {
   IElementType PART_STATEMENT = new DartElementType("PART_STATEMENT");
   IElementType PREFIX_EXPRESSION = new DartElementType("PREFIX_EXPRESSION");
   IElementType PREFIX_OPERATOR = new DartElementType("PREFIX_OPERATOR");
-  IElementType QUALIFIED_COMPONENT_NAME = new DartElementType("QUALIFIED_COMPONENT_NAME");
   IElementType REDIRECTION = new DartElementType("REDIRECTION");
   IElementType REFERENCE_EXPRESSION = new DartElementType("REFERENCE_EXPRESSION");
   IElementType RELATIONAL_OPERATOR = new DartElementType("RELATIONAL_OPERATOR");
@@ -443,6 +443,9 @@ public interface DartTokenTypes {
       else if (type == LIBRARY_ID) {
         return new DartLibraryIdImpl(node);
       }
+      else if (type == LIBRARY_NAME_ELEMENT) {
+        return new DartLibraryNameElementImpl(node);
+      }
       else if (type == LIBRARY_REFERENCE_LIST) {
         return new DartLibraryReferenceListImpl(node);
       }
@@ -526,9 +529,6 @@ public interface DartTokenTypes {
       }
       else if (type == PREFIX_OPERATOR) {
         return new DartPrefixOperatorImpl(node);
-      }
-      else if (type == QUALIFIED_COMPONENT_NAME) {
-        return new DartQualifiedComponentNameImpl(node);
       }
       else if (type == REDIRECTION) {
         return new DartRedirectionImpl(node);

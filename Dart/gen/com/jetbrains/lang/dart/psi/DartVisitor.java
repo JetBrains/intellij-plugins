@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.psi;
 
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
+import  com.intellij.psi.PsiNameIdentifierOwner;
 
 public class DartVisitor extends PsiElementVisitor {
 
@@ -259,6 +260,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitReference(o);
   }
 
+  public void visitLibraryNameElement(@NotNull DartLibraryNameElement o) {
+    visitPsiNameIdentifierOwner(o);
+  }
+
   public void visitLibraryReferenceList(@NotNull DartLibraryReferenceList o) {
     visitPsiCompositeElement(o);
   }
@@ -379,10 +384,6 @@ public class DartVisitor extends PsiElementVisitor {
 
   public void visitPrefixOperator(@NotNull DartPrefixOperator o) {
     visitPsiCompositeElement(o);
-  }
-
-  public void visitQualifiedComponentName(@NotNull DartQualifiedComponentName o) {
-    visitQNamedElement(o);
   }
 
   public void visitRedirection(@NotNull DartRedirection o) {
@@ -579,16 +580,16 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
-  public void visitQNamedElement(@NotNull DartQNamedElement o) {
-    visitPsiCompositeElement(o);
-  }
-
   public void visitReference(@NotNull DartReference o) {
     visitPsiCompositeElement(o);
   }
 
   public void visitUriBasedDirective(@NotNull DartUriBasedDirective o) {
     visitPsiCompositeElement(o);
+  }
+
+  public void visitPsiNameIdentifierOwner(@NotNull PsiNameIdentifierOwner o) {
+    visitElement(o);
   }
 
   public void visitPsiCompositeElement(@NotNull DartPsiCompositeElement o) {

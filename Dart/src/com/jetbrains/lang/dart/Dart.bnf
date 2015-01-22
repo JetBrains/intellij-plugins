@@ -167,9 +167,12 @@ partOfStatement ::= metadata* 'part' 'of' libraryId ';' {
 libraryId ::= <<nonStrictID>> ('.' <<nonStrictID>>)*
 {mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryIdBase" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-libraryStatement ::= metadata* 'library' qualifiedComponentName ';' {
-  pin=3
-  methods = [ getLibraryName ]
+libraryStatement ::= metadata* 'library' libraryNameElement ';' {pin=3}
+
+libraryNameElement ::= <<nonStrictID>> ('.' <<nonStrictID>>)* {
+  mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryNameElementBase"
+  implements="com.jetbrains.lang.dart.psi.DartPsiCompositeElement, com.intellij.psi.PsiNameIdentifierOwner"
+  methods=[getName]
 }
 
 importStatement ::= metadata* 'import' uriElement ('deferred'? 'as' componentName )? combinator* ';' {
@@ -365,9 +368,6 @@ private finalConstVarOrTypeAndComponentName ::= 'final' type componentName |
                                                 'const'      componentName |
                                                 'var'        componentName |
                                                         type componentName
-
-qualifiedComponentName ::= << nonStrictID >> ('.' << nonStrictID >>)*
-{mixin="com.jetbrains.lang.dart.psi.impl.DartQNamedElementImpl" implements="com.jetbrains.lang.dart.psi.DartQNamedElement"}
 
 componentName ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartNamedElementImpl" implements="com.jetbrains.lang.dart.psi.DartNamedElement"}

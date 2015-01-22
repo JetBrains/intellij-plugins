@@ -190,7 +190,7 @@ public class DartResolveUtil {
     for (PsiElement root : findDartRoots(psiFile)) {
       final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
       if (libraryStatement != null) {
-        return libraryStatement.getLibraryName();
+        return libraryStatement.getLibraryNameElement().getName();
       }
 
       final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
@@ -411,7 +411,7 @@ public class DartResolveUtil {
       if (libraryStatement == null) {
         return contextVirtualFile == null ? Collections.<VirtualFile>emptyList() : Collections.singletonList(contextVirtualFile);
       }
-      return DartLibraryIndex.findLibraryClass(context, libraryStatement.getLibraryName());
+      return DartLibraryIndex.findLibraryClass(context, libraryStatement.getLibraryNameElement().getName());
     }
 
     return ContainerUtil.filter(

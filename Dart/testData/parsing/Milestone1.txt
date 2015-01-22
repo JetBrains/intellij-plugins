@@ -2,7 +2,7 @@ Dart File
   PsiComment(SINGLE_LINE_COMMENT)('#! program comment')
   LIBRARY_STATEMENT
     PsiElement(library)('library')
-    QUALIFIED_COMPONENT_NAME
+    LIBRARY_NAME_ELEMENT
       ID
         PsiElement(IDENTIFIER)('test')
     PsiElement(;)(';')

@@ -14,8 +14,8 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
+import com.jetbrains.lang.dart.psi.DartLibraryNameElement;
 import com.jetbrains.lang.dart.psi.DartLibraryStatement;
-import com.jetbrains.lang.dart.psi.DartQualifiedComponentName;
 import com.jetbrains.lang.dart.psi.DartReference;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
@@ -54,10 +54,10 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
   }
 
   @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-    final DartQualifiedComponentName identifierNew = DartElementGenerator.createQIdentifierFromText(getProject(), newElementName);
-    if (identifierNew != null) {
-      getNode().replaceAllChildrenToChildrenOf(identifierNew.getNode());
+  public PsiElement handleElementRename(String newLibraryName) throws IncorrectOperationException {
+    final DartLibraryNameElement libraryNameElement = DartElementGenerator.createLibraryNameElementFromText(getProject(), newLibraryName);
+    if (libraryNameElement != null) {
+      getNode().replaceAllChildrenToChildrenOf(libraryNameElement.getNode());
     }
     return this;
   }
@@ -105,12 +105,11 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
     for (VirtualFile virtualFile : virtualFiles) {
       final PsiFile psiFile = getManager().findFile(virtualFile);
       for (PsiElement root : DartResolveUtil.findDartRoots(psiFile)) {
-        DartLibraryStatement lib = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
-        if (lib == null) {
-          continue;
+        final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
+        final DartLibraryNameElement libraryNameElement = libraryStatement == null ? null : libraryStatement.getLibraryNameElement();
+        if (libraryNameElement != null) {
+          result.add(new PsiElementResolveResult(libraryNameElement));
         }
-        DartQualifiedComponentName componentName = lib.getQualifiedComponentName();
-        result.add(new PsiElementResolveResult(componentName));
       }
     }
     return result.toArray(new ResolveResult[result.size()]);

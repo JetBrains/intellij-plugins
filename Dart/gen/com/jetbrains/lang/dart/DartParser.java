@@ -205,6 +205,9 @@ public class DartParser implements PsiParser {
     else if (t == LIBRARY_ID) {
       r = libraryId(b, 0);
     }
+    else if (t == LIBRARY_NAME_ELEMENT) {
+      r = libraryNameElement(b, 0);
+    }
     else if (t == LIBRARY_REFERENCE_LIST) {
       r = libraryReferenceList(b, 0);
     }
@@ -288,9 +291,6 @@ public class DartParser implements PsiParser {
     }
     else if (t == PREFIX_OPERATOR) {
       r = prefixOperator(b, 0);
-    }
-    else if (t == QUALIFIED_COMPONENT_NAME) {
-      r = qualifiedComponentName(b, 0);
     }
     else if (t == REDIRECTION) {
       r = redirection(b, 0);
@@ -3364,6 +3364,41 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // <<nonStrictID>> ('.' <<nonStrictID>>)*
+  public static boolean libraryNameElement(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "libraryNameElement")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, "<library name element>");
+    r = nonStrictID(b, l + 1);
+    r = r && libraryNameElement_1(b, l + 1);
+    exit_section_(b, l, m, LIBRARY_NAME_ELEMENT, r, false, null);
+    return r;
+  }
+
+  // ('.' <<nonStrictID>>)*
+  private static boolean libraryNameElement_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "libraryNameElement_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!libraryNameElement_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "libraryNameElement_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // '.' <<nonStrictID>>
+  private static boolean libraryNameElement_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "libraryNameElement_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, DOT);
+    r = r && nonStrictID(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // libraryComponentReferenceExpression (',' libraryComponentReferenceExpression)*
   public static boolean libraryReferenceList(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "libraryReferenceList")) return false;
@@ -3399,7 +3434,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'library' qualifiedComponentName ';'
+  // metadata* 'library' libraryNameElement ';'
   public static boolean libraryStatement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "libraryStatement")) return false;
     if (!nextTokenIs(b, "<library statement>", AT, LIBRARY)) return false;
@@ -3407,7 +3442,7 @@ public class DartParser implements PsiParser {
     Marker m = enter_section_(b, l, _NONE_, "<library statement>");
     r = libraryStatement_0(b, l + 1);
     r = r && consumeToken(b, LIBRARY);
-    r = r && qualifiedComponentName(b, l + 1);
+    r = r && libraryNameElement(b, l + 1);
     p = r; // pin = 3
     r = r && consumeToken(b, SEMICOLON);
     exit_section_(b, l, m, LIBRARY_STATEMENT, r, p, null);
@@ -4595,41 +4630,6 @@ public class DartParser implements PsiParser {
     if (!r) r = newExpression(b, l + 1);
     if (!r) r = constConstructorExpression(b, l + 1);
     if (!r) r = refOrThisOrSuperOrParenExpression(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // << nonStrictID >> ('.' << nonStrictID >>)*
-  public static boolean qualifiedComponentName(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "qualifiedComponentName")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, "<qualified component name>");
-    r = nonStrictID(b, l + 1);
-    r = r && qualifiedComponentName_1(b, l + 1);
-    exit_section_(b, l, m, QUALIFIED_COMPONENT_NAME, r, false, null);
-    return r;
-  }
-
-  // ('.' << nonStrictID >>)*
-  private static boolean qualifiedComponentName_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "qualifiedComponentName_1")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!qualifiedComponentName_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "qualifiedComponentName_1", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // '.' << nonStrictID >>
-  private static boolean qualifiedComponentName_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "qualifiedComponentName_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, DOT);
-    r = r && nonStrictID(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

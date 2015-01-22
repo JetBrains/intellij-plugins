@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -11,8 +12,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartId;
-import com.jetbrains.lang.dart.psi.DartQNamedElement;
-import com.jetbrains.lang.dart.psi.DartQualifiedComponentName;
+import com.jetbrains.lang.dart.psi.DartLibraryNameElement;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -20,29 +20,28 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-/**
- * @author: Fedor.Korotkov
- */
-public abstract class DartQNamedElementImpl extends DartPsiCompositeElementImpl implements DartQNamedElement {
-  public DartQNamedElementImpl(@NotNull ASTNode node) {
+public abstract class DartLibraryNameElementBase extends DartPsiCompositeElementImpl implements PsiNameIdentifierOwner {
+  public DartLibraryNameElementBase(@NotNull ASTNode node) {
     super(node);
   }
 
   @Override
-  public PsiElement setName(@NonNls @NotNull String newElementName) throws IncorrectOperationException {
-    final DartQualifiedComponentName identifierNew = DartElementGenerator.createQIdentifierFromText(getProject(), newElementName);
+  public PsiElement setName(@NonNls @NotNull String newLibraryName) throws IncorrectOperationException {
+    final DartLibraryNameElement libraryNameElementNew =
+      DartElementGenerator.createLibraryNameElementFromText(getProject(), newLibraryName);
 
-    if (identifierNew != null) {
-      getNode().replaceAllChildrenToChildrenOf(identifierNew.getNode());
+    if (libraryNameElementNew != null) {
+      getNode().replaceAllChildrenToChildrenOf(libraryNameElementNew.getNode());
     }
 
     return this;
   }
 
+  @NotNull
   @Override
   public String getName() {
     StringBuilder name = new StringBuilder();
-    for (DartId id : getIds()) {
+    for (DartId id : PsiTreeUtil.getChildrenOfTypeAsList(this, DartId.class)) {
       if (name.length() > 0) {
         name.append('.');
       }
@@ -83,13 +82,5 @@ public abstract class DartQNamedElementImpl extends DartPsiCompositeElementImpl 
       return new LocalSearchScope(component);
     }
     return super.getUseScope();
-  }
-
-  @NotNull
-  @Override
-  public DartId[] getIds() {
-    final DartId[] ids = PsiTreeUtil.getChildrenOfType(this, DartId.class);
-    assert ids != null;
-    return ids;
   }
 }

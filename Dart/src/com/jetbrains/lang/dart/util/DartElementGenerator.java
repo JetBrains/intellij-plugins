@@ -11,13 +11,11 @@ import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.psi.impl.DartExpressionCodeFragmentImpl;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartElementGenerator {
   @Nullable
   public static DartReference createReferenceFromText(Project myProject, String text) {
@@ -73,10 +71,10 @@ public class DartElementGenerator {
   }
 
   @Nullable
-  public static DartQualifiedComponentName createQIdentifierFromText(Project myProject, String name) {
-    final PsiFile dummyFile = createDummyFile(myProject, "library " + name + ";");
+  public static DartLibraryNameElement createLibraryNameElementFromText(@NotNull final Project project, @NotNull final String libraryName) {
+    final PsiFile dummyFile = createDummyFile(project, "library " + libraryName + ";");
     final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(dummyFile, DartLibraryStatement.class);
-    return libraryStatement == null ? null : libraryStatement.getQualifiedComponentName();
+    return libraryStatement == null ? null : libraryStatement.getLibraryNameElement();
   }
 
   @Nullable

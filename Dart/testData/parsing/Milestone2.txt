@@ -1,7 +1,7 @@
 Dart File
   LIBRARY_STATEMENT
     PsiElement(library)('library')
-    QUALIFIED_COMPONENT_NAME
+    LIBRARY_NAME_ELEMENT
       ID
         PsiElement(IDENTIFIER)('lib')
     PsiElement(;)(';')
