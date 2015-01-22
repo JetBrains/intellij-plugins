@@ -31,6 +31,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.util.*;
 
@@ -53,7 +55,7 @@ public class StartLesson extends AnAction {
 
             OpenFileDescriptor descriptor = new OpenFileDescriptor(e.getProject(), vf);
             final Editor editor = FileEditorManager.getInstance(e.getProject()).openTextEditor(descriptor, true);
-            Document document = editor.getDocument();
+            final Document document = editor.getDocument();
 
             InputStream is = this.getClass().getResourceAsStream("JavaLessonExample2.java");
             final String target = new Scanner(is).useDelimiter("\\Z").next();
@@ -64,18 +66,8 @@ public class StartLesson extends AnAction {
 //            IdeGlassPaneUtil.find(editor.getComponent()).addPainter(ideFrame.getComponent(), myPainter, editor.getProject());
 //            myPainter.setText("Welcome to IntelliJ IDEA training course! Let's start from duplicating strings.");
 
-            final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, target);
             final Scenario scn = new Scenario("SampleScenario.xml");
 
-            isRecording = true;
-            Disposer.register(recorder, new Disposable() {
-                @Override
-                public void dispose() {
-                    isRecording = false;
-                }
-            });
-
-            recorder.startRecording();
 
 
             showInfoPanel(editor);
@@ -221,7 +213,7 @@ public class StartLesson extends AnAction {
                             } else if(element.getName().equals("CopyText")) {
 
                                 if (element.getAttribute("btn") != null) {
-                                    final String buttonText =(element.getAttribute("btn").getValue().toString());
+                                    final String buttonText = (element.getAttribute("btn").getValue().toString());
                                     infoPanel.setButtonText(buttonText);
                                     infoPanel.addWaitToButton(editor);
                                 } else {
@@ -235,6 +227,36 @@ public class StartLesson extends AnAction {
                                         editor1.getDocument().insertString(0, finalText);
                                     }
                                 });
+
+                            } else if(element.getName().equals("Try")) {
+
+                                    //TODO: delete this line
+                                ApplicationManager.getApplication().invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Component curcomp = IdeFocusManager.findInstance().getFocusOwner();
+                                        System.err.println("Focus owner:" + IdeFocusManager.findInstance().getFocusOwner());
+                                    }
+                                });
+
+                                    if (element.getAttribute("btn") != null) {
+                                        final String buttonText =(element.getAttribute("btn").getValue().toString());
+                                        infoPanel.setButtonText(buttonText);
+                                        infoPanel.addWaitToButton(editor);
+                                    } else {
+                                        infoPanel.hideButton();
+                                    }
+
+                                final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, target);
+                                isRecording = true;
+                                Disposer.register(recorder, new Disposable() {
+                                    @Override
+                                    public void dispose() {
+                                        isRecording = false;
+                                    }
+                                });
+                                recorder.startRecording();
+
                             } else {
 
                             }
@@ -273,6 +295,7 @@ public class StartLesson extends AnAction {
         final IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(editor.getProject());
         infoPanel = new DetailPanel(dimension);
 
+
         ComponentPopupBuilder componentPopupBuilder  = JBPopupFactory.getInstance().createComponentPopupBuilder(infoPanel, null);
         componentPopupBuilder.setShowBorder(false);
         componentPopupBuilder.setCancelOnClickOutside(false);
@@ -284,7 +307,9 @@ public class StartLesson extends AnAction {
 
         infoPanel.setText("Welcome to IntelliJ IDEA!");
         popup.show(computeLocation(ideFrame, dimension));
+        SwingUtilities.windowForComponent(infoPanel).setFocusable(false);
 
+        JFrame jideFrame = (JFrame) ideFrame;
 
         ideFrame.getComponent().addComponentListener(new ComponentAdapter() {
             @Override
@@ -293,6 +318,73 @@ public class StartLesson extends AnAction {
             }
         });
 
+        jideFrame.addComponentListener(new ComponentListener() {
+            @Override
+            public void componentResized(ComponentEvent componentEvent) {
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent componentEvent) {
+                popup.setLocation(computeLocation(ideFrame, dimension).getScreenPoint());
+            }
+
+            @Override
+            public void componentShown(ComponentEvent componentEvent) {
+
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent componentEvent) {
+            }
+        });
+
+        infoPanel.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent focusEvent) {
+                System.err.println("Info panel focus gained!");
+            }
+
+            @Override
+            public void focusLost(FocusEvent focusEvent) {
+                super.focusLost(focusEvent);
+            }
+        });
+
+        infoPanel.getRootPane().addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent focusEvent) {
+                System.err.println("Info panel Root Pane focus gained!");
+            }
+
+            @Override
+            public void focusLost(FocusEvent focusEvent) {
+                super.focusLost(focusEvent);
+            }
+        });
+
+        popup.getContent().addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent focusEvent) {
+                System.err.println("Popup focus gained!");
+            }
+
+            @Override
+            public void focusLost(FocusEvent focusEvent) {
+                super.focusLost(focusEvent);
+            }
+        });
+
+        popup.getOwner().addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent focusEvent) {
+                System.err.println("Popup focus gained!");
+            }
+
+            @Override
+            public void focusLost(FocusEvent focusEvent) {
+                super.focusLost(focusEvent);
+            }
+        });
 
 
     }
