@@ -43,45 +43,56 @@ public class DartAnalysisServerService {
   private static final long GET_ERRORS_TIMEOUT = ApplicationManager.getApplication().isUnitTestMode() ? TimeUnit.SECONDS.toMillis(50)
                                                                                                       : TimeUnit.SECONDS.toMillis(5);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+  private static final long GET_VERSION_TIMEOUT = 500;
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
   private final Object myLock = new Object(); // Access all fields under this lock. Do not wait for server response under lock.
   @Nullable private AnalysisServer myServer;
+  @NotNull private String myServerVersion = "";
   @Nullable private String mySdkHome = null;
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
 
   private final AnalysisServerListener myListener = new AnalysisServerListener() {
 
+    @Override
     public void computedCompletion(String completionId, int replacementOffset, int replacementLength,
                                    List<CompletionSuggestion> completions, boolean isLast) {
     }
 
+    @Override
     public void computedErrors(String file, List<AnalysisError> errors) {
-
     }
 
+    @Override
     public void computedHighlights(String file, List<HighlightRegion> highlights) {
     }
 
+    @Override
     public void computedLaunchData(String file, String kind, String[] referencedFiles) {
     }
 
+    @Override
     public void computedNavigation(String file, List<NavigationRegion> targets) {
     }
 
+    @Override
     public void computedOccurrences(String file, List<Occurrences> occurrencesArray) {
     }
 
+    @Override
     public void computedOutline(String file, Outline outline) {
     }
 
+    @Override
     public void computedOverrides(String file, List<OverrideMember> overrides) {
     }
 
+    @Override
     public void computedSearchResults(String searchId, List<SearchResult> results, boolean last) {
     }
 
+    @Override
     public void flushedResults(List<String> files) {
     }
 
@@ -89,11 +100,16 @@ public class DartAnalysisServerService {
     public void requestError(final RequestError requestError) {
     }
 
+    @Override
     public void serverConnected() {
     }
 
+    @Override
     public void serverError(boolean isFatal, String message, String stackTrace) {
-      LOG.warn("Dart analysis server " + (isFatal ? "FATAL " : "") + "error: " + message + "\n" + stackTrace);
+      if (message == null) message = "<no error message>";
+      if (stackTrace == null) stackTrace = "<no stack trace>";
+      LOG.warn(
+        "Dart analysis server, version " + myServerVersion + ", " + (isFatal ? "FATAL" : "") + "error: " + message + "\n" + stackTrace);
 
       if (isFatal) {
         onServerStopped();
@@ -204,7 +220,7 @@ public class DartAnalysisServerService {
 
   @Nullable
   public AnalysisError[] analysis_getErrors(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info) {
-    final Ref<AnalysisError[]> resultErrors = new Ref<AnalysisError[]>();
+    final Ref<AnalysisError[]> resultRef = new Ref<AnalysisError[]>();
     final Semaphore semaphore = new Semaphore();
 
     try {
@@ -220,7 +236,7 @@ public class DartAnalysisServerService {
           @Override
           public void computedErrors(final AnalysisError[] errors) {
             if (semaphore.tryUp()) {
-              resultErrors.set(errors);
+              resultRef.set(errors);
             }
             else {
               // semaphore unlocked by timeout, schedule to highlight the file again
@@ -243,7 +259,14 @@ public class DartAnalysisServerService {
           @Override
           public void onError(final RequestError error) {
             semaphore.up();
-            LOG.error("Error from analysis_getErrors() for file " + path + ", code=" + error.getCode() + ": " + error.getMessage());
+            LOG.error("Error from analysis_getErrors() for file " +
+                      path +
+                      ", server version= " +
+                      myServerVersion +
+                      ", code=" +
+                      error.getCode() +
+                      ": " +
+                      error.getMessage());
           }
         });
       }
@@ -254,12 +277,12 @@ public class DartAnalysisServerService {
       semaphore.up(); // make sure to unlock semaphore so that computedErrors() can understand when it was unlocked by timeout
     }
 
-    return resultErrors.get();
+    return resultRef.get();
   }
 
   @Nullable
   public List<AnalysisErrorFixes> analysis_getFixes(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info, final int offset) {
-    final Ref<List<AnalysisErrorFixes>> resultFixes = new Ref<List<AnalysisErrorFixes>>();
+    final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<List<AnalysisErrorFixes>>();
     final Semaphore semaphore = new Semaphore();
     final String path = FileUtil.toSystemDependentName(info.myFilePath);
 
@@ -271,14 +294,21 @@ public class DartAnalysisServerService {
       myServer.edit_getFixes(path, offset, new GetFixesConsumer() {
         @Override
         public void computedFixes(final List<AnalysisErrorFixes> fixes) {
+          resultRef.set(fixes);
           semaphore.up();
-          resultFixes.set(fixes);
         }
 
         @Override
         public void onError(final RequestError error) {
           semaphore.up();
-          LOG.warn("Error from edit_getFixes() for file " + path + ", code=" + error.getCode() + ": " + error.getMessage());
+          LOG.error("Error from edit_getFixes() for file " +
+                    path +
+                    ", server version= " +
+                    myServerVersion +
+                    ", code=" +
+                    error.getCode() +
+                    ": " +
+                    error.getMessage());
         }
       });
     }
@@ -291,7 +321,7 @@ public class DartAnalysisServerService {
       return null;
     }
 
-    return resultFixes.get();
+    return resultRef.get();
   }
 
   @Nullable
@@ -307,14 +337,19 @@ public class DartAnalysisServerService {
       myServer.edit_format(path, selectionOffset, selectionLength, new FormatConsumer() {
         @Override
         public void computedFormat(final List<SourceEdit> edits, final int selectionOffset, final int selectionLength) {
-          semaphore.up();
           resultRef.set(new FormatResult(edits, selectionOffset, selectionLength));
+          semaphore.up();
         }
 
         @Override
         public void onError(final RequestError error) {
           semaphore.up();
-          LOG.warn("Error from edit_format() for file " + path + ", code=" + error.getCode() + ": " + error.getMessage());
+          LOG.error("Error from edit_format() for file " +
+                    path +
+                    ", server version= " +
+                    myServerVersion +
+                    ", code=" +
+                    error.getCode() + ": " + error.getMessage());
         }
       });
     }
@@ -325,6 +360,42 @@ public class DartAnalysisServerService {
     if (semaphore.tryUp()) {
       LOG.info("edit_format() took too long for file " + path + ": " + (System.currentTimeMillis() - t0) + "ms");
       return null;
+    }
+
+    return resultRef.get();
+  }
+
+  @NotNull
+  private String server_getVersion() {
+    final Ref<String> resultRef = new Ref<String>("");
+    final Semaphore semaphore = new Semaphore();
+
+    synchronized (myLock) {
+      if (myServer == null) return null;
+
+      semaphore.down();
+
+      myServer.server_getVersion(new GetVersionConsumer() {
+
+        @Override
+        public void computedVersion(final String version) {
+          resultRef.set(version);
+          semaphore.up();
+        }
+
+        @Override
+        public void onError(final RequestError requestError) {
+          semaphore.up();
+          LOG.warn("Error from server_getVersion(), code=" + requestError.getCode() + ": " + requestError.getMessage());
+        }
+      });
+    }
+
+    final long t0 = System.currentTimeMillis();
+    semaphore.waitFor(GET_VERSION_TIMEOUT);
+
+    if (semaphore.tryUp()) {
+      LOG.info("server_getVersion() took too long: " + (System.currentTimeMillis() - t0) + "ms");
     }
 
     return resultRef.get();
@@ -358,8 +429,9 @@ public class DartAnalysisServerService {
 
       try {
         myServer.start();
-        myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
         myServer.addAnalysisServerListener(myListener);
+        myServerVersion = server_getVersion();
+        myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
         LOG.info("Server started, see status at http://localhost:" + port + "/status");
       }
       catch (Exception e) {
@@ -389,6 +461,7 @@ public class DartAnalysisServerService {
     synchronized (myLock) {
       if (myServer != null) {
         LOG.debug("stopping server");
+        myServer.removeAnalysisServerListener(myListener);
         myServer.server_shutdown();
       }
 
