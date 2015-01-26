@@ -40,8 +40,8 @@ public class DartAnalysisServerService {
 
   public static final String MIN_SDK_VERSION = "1.9";
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
-  private static final long GET_ERRORS_TIMEOUT = ApplicationManager.getApplication().isUnitTestMode() ? TimeUnit.SECONDS.toMillis(50)
-                                                                                                      : TimeUnit.SECONDS.toMillis(5);
+  private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
+  private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_VERSION_TIMEOUT = 500;
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
@@ -271,7 +271,10 @@ public class DartAnalysisServerService {
         });
       }
 
-      semaphore.waitFor(GET_ERRORS_TIMEOUT);
+      final long timeout = info.isLongerAnalysisTimeout() || ApplicationManager.getApplication().isUnitTestMode()
+                           ? GET_ERRORS_LONGER_TIMEOUT
+                           : GET_ERRORS_TIMEOUT;
+      semaphore.waitFor(timeout);
     }
     finally {
       semaphore.up(); // make sure to unlock semaphore so that computedErrors() can understand when it was unlocked by timeout
@@ -371,7 +374,7 @@ public class DartAnalysisServerService {
     final Semaphore semaphore = new Semaphore();
 
     synchronized (myLock) {
-      if (myServer == null) return null;
+      assert myServer != null;
 
       semaphore.down();
 

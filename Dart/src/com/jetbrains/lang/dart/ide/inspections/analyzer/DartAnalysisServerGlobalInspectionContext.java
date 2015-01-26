@@ -36,6 +36,7 @@ public class DartAnalysisServerGlobalInspectionContext
 
   @NotNull private final Map<VirtualFile, AnalysisError[]> myVirtualFile2ErrorsMap = new THashMap<VirtualFile, AnalysisError[]>();
 
+  @NotNull
   public Map<VirtualFile, AnalysisError[]> getVirtualFile2ErrorsMap() {
     return myVirtualFile2ErrorsMap;
   }
@@ -54,15 +55,21 @@ public class DartAnalysisServerGlobalInspectionContext
     if (analysisScope == null) return;
 
     final GlobalSearchScope scope = GlobalSearchScope.EMPTY_SCOPE.union(analysisScope.toSearchScope());
-    setIndicatorText("Looking for Dart files...");
+    updateIndicator("Looking for Dart files...", -1);
     final Collection<VirtualFile> dartFiles = FileTypeIndex.getFiles(DartFileType.INSTANCE, scope);
 
+    double index = 0.0;
+    final int size = dartFiles.size();
+
     for (final VirtualFile dartFile : dartFiles) {
-      analyzeFile(dartFile, context.getProject());
+      index++;
+      analyzeFile(dartFile, context.getProject(), index / size);
     }
   }
 
-  private void analyzeFile(@NotNull final VirtualFile virtualFile, @NotNull final Project project) {
+  private void analyzeFile(@NotNull final VirtualFile virtualFile, @NotNull final Project project, final double progressFraction) {
+    updateIndicator("Analyzing " + virtualFile.getName() + "...", progressFraction);
+
     final DartAnalysisServerAnnotator annotator = new DartAnalysisServerAnnotator();
 
     final DartAnalysisServerAnnotator.AnnotatorInfo annotatorInfo =
@@ -76,7 +83,7 @@ public class DartAnalysisServerGlobalInspectionContext
       });
     if (annotatorInfo == null) return;
 
-    setIndicatorText("Analyzing " + virtualFile.getName() + "...");
+    annotatorInfo.setLongerAnalysisTimeout(true);
 
     final AnalysisError[] errors = DartAnalysisServerService.getInstance().analysis_getErrors(annotatorInfo);
     if (errors == null || errors.length == 0) return;
@@ -84,10 +91,18 @@ public class DartAnalysisServerGlobalInspectionContext
     myVirtualFile2ErrorsMap.put(virtualFile, errors);
   }
 
-  private static void setIndicatorText(@NotNull String text) {
+  private static void updateIndicator(@NotNull final String text, final double progressFraction) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     if (indicator != null) {
-      ProgressWrapper.unwrap(indicator).setText(text);
+      final ProgressIndicator progressIndicator = ProgressWrapper.unwrap(indicator);
+      progressIndicator.setText(text);
+      if (progressFraction == -1) {
+        progressIndicator.setIndeterminate(true);
+      }
+      else {
+        progressIndicator.setIndeterminate(false);
+        progressIndicator.setFraction(progressFraction);
+      }
     }
   }
 

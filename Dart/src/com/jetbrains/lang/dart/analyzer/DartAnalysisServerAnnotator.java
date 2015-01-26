@@ -33,10 +33,19 @@ public class DartAnalysisServerAnnotator
   public static class AnnotatorInfo {
     @NotNull public final Project myProject;
     @NotNull public final String myFilePath;
+    private boolean myLongerAnalysisTimeout;
 
     public AnnotatorInfo(@NotNull final Project project, @NotNull final String filePath) {
       myProject = project;
       myFilePath = filePath;
+    }
+
+    public void setLongerAnalysisTimeout(final boolean longerAnalysisTimeout) {
+      myLongerAnalysisTimeout = longerAnalysisTimeout;
+    }
+
+    public boolean isLongerAnalysisTimeout() {
+      return myLongerAnalysisTimeout;
     }
   }
 

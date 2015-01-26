@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class DartAnalysisServerGlobalInspectionTool extends GlobalInspectionTool {
   @Override
-  public void runInspection(@NotNull AnalysisScope scope,
+  public void runInspection(@NotNull final AnalysisScope scope,
                             @NotNull final InspectionManager manager,
                             @NotNull final GlobalInspectionContext globalContext,
                             @NotNull final ProblemDescriptionsProcessor problemDescriptionsProcessor) {
