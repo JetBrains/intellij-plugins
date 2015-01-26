@@ -82,7 +82,6 @@ public class StartLesson extends AnAction {
             final Thread roboThread = new Thread("RoboThread") {
                 @Override
                 public void run() {
-                    String text;
 
                     try {
 
@@ -301,19 +300,13 @@ public class StartLesson extends AnAction {
 
         BalloonBuilder balloonBuilder = JBPopupFactory.getInstance().createBalloonBuilder(infoPanel);
         balloonBuilder.setHideOnClickOutside(false).setCloseButtonEnabled(false).setHideOnKeyOutside(false).setBorderColor(new Color(0, 0, 0, 0))
-                .setDialogMode(false);
+                .setDialogMode(false).setHideOnFrameResize(false);
         balloonBuilder.setFillColor(new Color(0,0,0,0));
 
         Balloon balloon = balloonBuilder.createBalloon();
         balloon.setBounds(infoBounds);
 
         balloon.show(location, Balloon.Position.above);
-
-//        infoPanel.setText("Welcome to IntelliJ IDEA!");
-//        popup.show(computeLocation(ideFrame, dimension));
-//        SwingUtilities.windowForComponent(infoPanel).setFocusable(false);
-
-
 
     }
 
