@@ -129,6 +129,7 @@ public class KarmaDebugBrowserSelector {
     else {
       message = formatBrowserSelectionHtml(capturedDebuggableActiveBrowsers);
     }
+    //noinspection SSBasedInspection
     ToolWindowManager.getInstance(myEnvironment.getProject()).notifyByBalloon(
       myEnvironment.getExecutor().getToolWindowId(),
       MessageType.WARNING,
