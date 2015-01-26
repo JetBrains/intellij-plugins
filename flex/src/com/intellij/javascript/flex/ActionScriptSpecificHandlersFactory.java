@@ -5,10 +5,6 @@ import com.intellij.javascript.flex.resolve.*;
 import com.intellij.lang.javascript.completion.JSCompletionKeywordsContributor;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.ActionScriptExpectedTypeEvaluator;
-import com.intellij.lang.javascript.flex.ActionScriptSymbolVisitor;
-import com.intellij.lang.javascript.index.JSNamespace;
-import com.intellij.lang.javascript.index.JSSymbolUtil;
-import com.intellij.lang.javascript.index.JSSymbolVisitor;
 import com.intellij.lang.javascript.psi.ExpectedTypeEvaluator;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
@@ -35,14 +31,6 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
   @Override
   public JSCompletionKeywordsContributor newCompletionKeywordsContributor() {
     return new ActionScriptCompletionKeywordsContributor();
-  }
-
-  @NotNull
-  @Override
-  public JSSymbolVisitor newSymbolVisitor(JSNamespace namespace,
-                                          JSSymbolUtil.JavaScriptSymbolProcessorEx symbolVisitor,
-                                          PsiFile file) {
-    return new ActionScriptSymbolVisitor(namespace, symbolVisitor, file);
   }
 
   @NotNull
