@@ -5,12 +5,8 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.search.LocalSearchScope;
-import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.jetbrains.lang.dart.DartComponentType;
-import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartId;
 import com.jetbrains.lang.dart.psi.DartLibraryNameElement;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
@@ -68,19 +64,5 @@ public abstract class DartLibraryNameElementBase extends DartPsiCompositeElement
   @Override
   public PsiElement getNameIdentifier() {
     return this;
-  }
-
-  @NotNull
-  @Override
-  public SearchScope getUseScope() {
-    final DartComponentType type = DartComponentType.typeOf(getParent());
-    final DartComponent component = PsiTreeUtil.getParentOfType(getParent(), DartComponent.class, true);
-    final boolean localType = type == DartComponentType.FUNCTION
-                              || type == DartComponentType.PARAMETER
-                              || type == DartComponentType.VARIABLE;
-    if (localType && component != null) {
-      return new LocalSearchScope(component);
-    }
-    return super.getUseScope();
   }
 }
