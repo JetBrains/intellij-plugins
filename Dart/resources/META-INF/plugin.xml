@@ -165,6 +165,8 @@
     <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
     <codeInspection.InspectionExtension id="dartGlobalInspection"
                                         implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>
+    <!--<codeInspection.InspectionExtension id="dartGlobalInspection"-->
+                                        <!--implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartAnalysisServerInspectionExtensionsFactory"/>-->
 
     <consoleFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.DartConsoleFilterProvider" order="first"/>
 
@@ -187,6 +189,13 @@
                       enabledByDefault="true"
                       level="WARNING"
                       implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartGlobalInspectionTool"/>
+    <!--<globalInspection shortName="DartAnalysisServerGlobalInspectionTool"-->
+                      <!--bundle="com.jetbrains.lang.dart.DartBundle"-->
+                      <!--key="dart.analyzer.inspection.display.name"-->
+                      <!--groupName="Dart"-->
+                      <!--enabledByDefault="true"-->
+                      <!--level="WARNING"-->
+                      <!--implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartAnalysisServerGlobalInspectionTool"/>-->
 
     <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="dart.sdk.is.not.configured"
                      groupName="Dart" enabledByDefault="true" level="WARNING"
