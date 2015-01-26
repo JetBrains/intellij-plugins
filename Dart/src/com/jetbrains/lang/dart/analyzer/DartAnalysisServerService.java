@@ -26,6 +26,7 @@ import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +50,7 @@ public class DartAnalysisServerService {
   private final Object myLock = new Object(); // Access all fields under this lock. Do not wait for server response under lock.
   @Nullable private AnalysisServer myServer;
   @NotNull private String myServerVersion = "";
+  @NotNull private String mySDKVersion = "";
   @Nullable private String mySdkHome = null;
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
@@ -109,7 +111,16 @@ public class DartAnalysisServerService {
       if (message == null) message = "<no error message>";
       if (stackTrace == null) stackTrace = "<no stack trace>";
       LOG.warn(
-        "Dart analysis server, version " + myServerVersion + ", " + (isFatal ? "FATAL" : "") + "error: " + message + "\n" + stackTrace);
+        "Dart analysis server, SDK version " +
+        mySDKVersion +
+        ", server version " +
+        myServerVersion +
+        ", " +
+        (isFatal ? "FATAL" : "") +
+        "error: " +
+        message +
+        "\n" +
+        stackTrace);
 
       if (isFatal) {
         onServerStopped();
@@ -261,6 +272,8 @@ public class DartAnalysisServerService {
             semaphore.up();
             LOG.error("Error from analysis_getErrors() for file " +
                       path +
+                      ", SDK version = " +
+                      mySDKVersion +
                       ", server version= " +
                       myServerVersion +
                       ", code=" +
@@ -306,6 +319,8 @@ public class DartAnalysisServerService {
           semaphore.up();
           LOG.error("Error from edit_getFixes() for file " +
                     path +
+                    ", SDK version = " +
+                    mySDKVersion +
                     ", server version= " +
                     myServerVersion +
                     ", code=" +
@@ -349,6 +364,8 @@ public class DartAnalysisServerService {
           semaphore.up();
           LOG.error("Error from edit_format() for file " +
                     path +
+                    ", SDK version = " +
+                    mySDKVersion +
                     ", server version= " +
                     myServerVersion +
                     ", code=" +
@@ -434,6 +451,8 @@ public class DartAnalysisServerService {
         myServer.start();
         myServer.addAnalysisServerListener(myListener);
         myServerVersion = server_getVersion();
+        final DartSdk sdk = DartSdk.getGlobalDartSdk();
+        mySDKVersion = sdk != null ? sdk.getVersion() : "";
         myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
         LOG.info("Server started, see status at http://localhost:" + port + "/status");
       }
