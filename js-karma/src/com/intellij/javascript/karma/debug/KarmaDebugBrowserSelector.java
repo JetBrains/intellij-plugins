@@ -77,7 +77,7 @@ public class KarmaDebugBrowserSelector {
     List<DebuggableWebBrowser> captured = ContainerUtil.filter(debuggableBrowsers, new Condition<DebuggableWebBrowser>() {
       @Override
       public boolean value(DebuggableWebBrowser debuggableBrowser) {
-        String browserName = debuggableBrowser.getWebBrowser().getFamily().getName();
+        String browserName = debuggableBrowser.getWebBrowser().getName();
         for (CapturedBrowser capturedBrowser : myCapturedBrowsers) {
           if (StringUtil.containsIgnoreCase(capturedBrowser.getName(), browserName)) {
             return true;
