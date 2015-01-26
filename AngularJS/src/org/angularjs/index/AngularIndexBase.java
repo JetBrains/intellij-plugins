@@ -1,7 +1,7 @@
 package org.angularjs.index;
 
-import com.intellij.lang.javascript.index.JSEntryIndex;
 import com.intellij.lang.javascript.index.JSIndexContent;
+import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
@@ -48,7 +48,7 @@ public abstract class AngularIndexBase extends FileBasedIndexExtension<String, b
   @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
-    return JSEntryIndex.ourIndexedFilesFilter;
+    return JavaScriptIndex.ourIndexedFilesFilter;
   }
 
   @Override
@@ -58,7 +58,7 @@ public abstract class AngularIndexBase extends FileBasedIndexExtension<String, b
 
   @Override
   public int getVersion() {
-    return AngularIndexUtil.BASE_VERSION + JSEntryIndex.getVersionStatic();
+    return AngularIndexUtil.BASE_VERSION + JavaScriptIndex.getVersionStatic();
   }
 
   @NotNull
