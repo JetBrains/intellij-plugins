@@ -40,7 +40,7 @@ public class ActionsRecorder implements Disposable {
         disposed = true;
     }
 
-    public void startRecording(){
+    public void startRecording(final Runnable showWinMessage){
         DocumentListener documentListener = new DocumentListener() {
             @Override
             public void beforeDocumentChange(DocumentEvent event) {
@@ -54,9 +54,10 @@ public class ActionsRecorder implements Disposable {
 //                Notifications.Bus.notify(notification);
 
                 if (isTaskSolved(document, target)) {
-                    System.err.println("Task is solved!");
+//                    System.err.println("Task is solved!");
                     //myInfoPanel.setText("Cool, let's try yourself now!");
-                    Messages.showMessageDialog(project, "Congratulations, this task has been solved!", "Information", Messages.getInformationIcon());
+//                    Messages.showMessageDialog(project, "Congratulations, this task has been solved!", "Information", Messages.getInformationIcon());
+                    showWinMessage.run();
                 }
             }
         };

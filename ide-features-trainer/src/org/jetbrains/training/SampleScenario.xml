@@ -1,25 +1,40 @@
 <xml type="Scenario" version="0.1">
-    <CopyText>package org.jetbrains.training;
-public class JavaLessonExample {
+    <Start description="Let's learn how to duplicate lines" btn="Ok"/>
+    <CopyText>public class JavaLessonExample {
 
-    private String privateString;
+        public static void main(String[] args) {
 
-    public JavaLessonExample() {
+        int a = 7;
+        double x = 0.34;
 
-        privateString = "defined";
+        //Let's look an absolute value for a and x.
+        System.out.println("|" + a + "| is " + Math.abs(a));
+        }
+}</CopyText>
+    <MoveCaret offset="200"/>
+    <Action action="EditorDuplicate" delay="2000" balloon="Type CMD + D to duplicate current string." description="Just tap CMD+D to duplicate current line"/>
+    <Text description="Cool, replace a with x"/>
+    <MoveCaret offset="275"/>
+    <Action action="EditorDelete" delay="100"/>
+    <TypeText>x</TypeText>
+    <MoveCaret offset="298"/>
+    <Action action="EditorDelete" delay="100"/>
+    <TypeText>x</TypeText>
+    <Text description="That's it" btn="Try myself"/>
+    <Action action="EditorDelete" delay="100"/>
+    <Action action="$SelectAll" delay="100"/>
+    <Action action="$Delete" delay="100"/>
+    <MoveCaret offset="0"/>
+    <CopyText>public class JavaLessonExample {
 
-    }
+        public static void main(String[] args) {
 
-    public String getPrivateString() {
-        return privateString;
-    }
+        int a = 7;
+        double x = 0.34;
 
-    public void setPrivateString(String privateString) {
-        this.privateString = privateString;
-    }
-}
-    </CopyText>
-    <MoveCaret offset="0" />
-    <TypeText>Text to type here...</TypeText>
-    <Action action="EditorDuplicate"></Action>
+        //Let's look an absolute value for a and x.
+        System.out.println("|" + a + "| is " + Math.abs(a));
+        }
+}</CopyText>
+    <Try description="Duplicate print line and replace a with x"/>
 </xml>
