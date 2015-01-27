@@ -8,7 +8,10 @@ import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.server.JstdServer;
 import com.google.jstestdriver.idea.server.JstdServerRegistry;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowManager;
-import com.intellij.execution.*;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ExecutionResult;
+import com.intellij.execution.RunProfileStarter;
+import com.intellij.execution.RunnerRegistry;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
@@ -19,7 +22,6 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.BrowserFamily;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
-import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -33,8 +35,10 @@ import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
+import com.jetbrains.javascript.debugger.JavaScriptDebugProcess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.debugger.connection.VmConnection;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -159,14 +163,14 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
         @NotNull
         public XDebugProcess start(@NotNull XDebugSession session) {
           JavaScriptDebugEngine debugEngine = myDebugBrowserInfo.getDebugEngine();
-          JSDebugProcess<?> process = debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, false);
+          JavaScriptDebugProcess<? extends VmConnection> process = debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, false);
           process.setElementsInspectorEnabled(false);
           return process;
         }
       });
 
       // must be here, after all breakpoints were queued
-      ((JSDebugProcess)session.getDebugProcess()).getConnection().executeOnStart(new Runnable() {
+      ((JavaScriptDebugProcess)session.getDebugProcess()).getConnection().executeOnStart(new Runnable() {
         @Override
         public void run() {
           Runnable runnable = new Runnable() {

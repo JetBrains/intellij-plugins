@@ -16,7 +16,6 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
-import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
@@ -35,8 +34,10 @@ import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
+import com.jetbrains.javascript.debugger.JavaScriptDebugProcess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.debugger.connection.VmConnection;
 
 import java.io.File;
 
@@ -93,7 +94,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
               public XDebugProcess start(@NotNull final XDebugSession session) {
                 JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
                 WebBrowser browser = debuggableWebBrowser.getWebBrowser();
-                JSDebugProcess<?> debugProcess = debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, true);
+                JavaScriptDebugProcess<? extends VmConnection> debugProcess = debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, true);
                 debugProcess.setElementsInspectorEnabled(false);
                 debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
                 return debugProcess;
