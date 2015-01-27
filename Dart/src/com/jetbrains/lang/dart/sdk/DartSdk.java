@@ -59,12 +59,12 @@ public class DartSdk {
 
     if (cachedValue == null) {
       cachedValue = CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<DartSdk>() {
-        @Nullable
+        @NotNull
         @Override
         public Result<DartSdk> compute() {
           final DartSdk sdk = getGlobalDartSdk();
           if (sdk == null) {
-            return null;
+            return new Result<DartSdk>(null, ProjectRootManager.getInstance(project));
           }
 
           List<Object> dependencies = new ArrayList<Object>(3);

@@ -113,6 +113,7 @@ public class DartPsiImplUtil {
 
     if (cachedValue == null) {
       cachedValue = CachedValuesManager.getManager(dartType.getProject()).createCachedValue(new CachedValueProvider<PsiElement>() {
+        @NotNull
         @Override
         public Result<PsiElement> compute() {
           return new Result<PsiElement>(doResolveTypeReference(dartType), PsiModificationTracker.MODIFICATION_COUNT);

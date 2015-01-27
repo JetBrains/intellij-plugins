@@ -181,7 +181,7 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     if (myMembersCache == null) {
       myMembersCache = CachedValuesManager.getManager(getProject()).createCachedValue(
         new CachedValueProvider<Map<String, List<DartComponent>>>() {
-          @Nullable
+          @NotNull
           @Override
           public Result<Map<String, List<DartComponent>>> compute() {
             final Map<String, List<DartComponent>> nameToMembers = new THashMap<String, List<DartComponent>>();
