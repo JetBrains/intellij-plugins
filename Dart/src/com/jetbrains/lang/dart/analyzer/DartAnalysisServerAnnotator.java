@@ -83,7 +83,7 @@ public class DartAnalysisServerAnnotator
 
     if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return null;
 
-    if (!DartAnalysisServerService.getInstance().serverReadyForRequest(module.getProject(), sdk.getHomePath())) return null;
+    if (!DartAnalysisServerService.getInstance().serverReadyForRequest(module.getProject(), sdk)) return null;
 
     DartAnalysisServerService.getInstance().updateFilesContent();
 
