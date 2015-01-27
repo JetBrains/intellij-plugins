@@ -2,14 +2,17 @@ package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInspection.*;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
@@ -57,6 +60,13 @@ public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
 
       return createProblemDescriptors(file, manager, message,
                                       new EnableDartSupportQuickFix(module, sdk.getGlobalLibName()),
+                                      new OpenDartSettingsQuickFix(DartBundle.message("open.dart.settings")));
+    }
+
+    if (StringUtil.compareVersionNumbers(sdk.getVersion(), DartAnalysisServerService.MIN_SDK_VERSION) < 0) {
+      final String message = DartBundle.message("old.dart.sdk.configured", DartAnalysisServerService.MIN_SDK_VERSION, sdk.getVersion());
+      return createProblemDescriptors(file, manager, message,
+                                      new OpenWebPageFix(DartBundle.message("download.dart.sdk"), "http://www.dartlang.org"),
                                       new OpenDartSettingsQuickFix(DartBundle.message("open.dart.settings")));
     }
 
@@ -134,6 +144,38 @@ public class DartSdkIsNotConfiguredInspection extends LocalInspectionTool {
     public void applyFix(final @NotNull Project project, final @NotNull PsiFile file, @Nullable final Editor editor) {
       DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(myModule, myDartSdkGlobalLibName);
       myAvailable = false;
+    }
+  }
+
+  private static class OpenWebPageFix extends IntentionAndQuickFixAction {
+    @NotNull private final String myMessage;
+    @NotNull private final String myUrl;
+
+    private OpenWebPageFix(@NotNull final String message, @NotNull final String url) {
+      myMessage = message;
+      myUrl = url;
+    }
+
+    @Override
+    @NotNull
+    public String getName() {
+      return myMessage;
+    }
+
+    @Override
+    @NotNull
+    public String getFamilyName() {
+      return getName();
+    }
+
+    @Override
+    public boolean startInWriteAction() {
+      return false;
+    }
+
+    @Override
+    public void applyFix(@NotNull final Project project, @NotNull final PsiFile file, @Nullable final Editor editor) {
+      BrowserUtil.browse(myUrl);
     }
   }
 }
