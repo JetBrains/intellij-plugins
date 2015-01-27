@@ -75,7 +75,7 @@ public class DartAnalysisServerAnnotator
     if (module == null) return null;
 
     final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
-    if (sdk == null || StringUtil.compareVersionNumbers(sdk.getVersion(), DartAnalysisServerService.MIN_SDK_VERSION) < 0) return null;
+    if (sdk == null || !isDartSDKVersionSufficient(sdk)) return null;
 
     if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return null;
 
@@ -88,6 +88,10 @@ public class DartAnalysisServerAnnotator
     DartAnalysisServerService.getInstance().updateFilesContent();
 
     return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath());
+  }
+
+  public static boolean isDartSDKVersionSufficient(@NotNull final DartSdk sdk) {
+    return StringUtil.compareVersionNumbers(sdk.getVersion(), DartAnalysisServerService.MIN_SDK_VERSION) > 0;
   }
 
   @Nullable

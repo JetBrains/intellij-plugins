@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.dart.server.*;
+import com.google.dart.server.generated.AnalysisServer;
 import com.google.dart.server.generated.types.*;
 import com.google.dart.server.internal.remote.DebugPrintStream;
 import com.google.dart.server.internal.remote.FileReadMode;
@@ -44,6 +45,7 @@ public class DartAnalysisServerService {
   private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+  private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.SECONDS.toMillis(120);
   private static final long GET_VERSION_TIMEOUT = 500;
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
@@ -127,6 +129,7 @@ public class DartAnalysisServerService {
 
   public static class FormatResult {
 
+    @Nullable
     private final List<SourceEdit> myEdits;
     private final int myOffset;
     private final int myLength;
@@ -145,8 +148,33 @@ public class DartAnalysisServerService {
       return myOffset;
     }
 
+    @Nullable
     public List<SourceEdit> getEdits() {
       return myEdits;
+    }
+  }
+
+  public static class LibraryDependenciesResult {
+    @Nullable
+    final String[] libraries;
+
+    @Nullable
+    final Map<String, Map<String, List<String>>> packageMap;
+
+    public LibraryDependenciesResult(@Nullable final String[] libraries,
+                                     @Nullable final Map<String, Map<String, List<String>>> packageMap) {
+      this.libraries = libraries;
+      this.packageMap = packageMap;
+    }
+
+    @Nullable
+    public String[] getLibraries() {
+      return libraries;
+    }
+
+    @Nullable
+    public Map<String, Map<String, List<String>>> getPackageMap() {
+      return packageMap;
     }
   }
 
@@ -202,8 +230,12 @@ public class DartAnalysisServerService {
           LOG.debug("Removing overlaid content of the following files:\n" + StringUtil.join(oldTrackedFiles, ",\n"));
         }
       }
-      if(!filesToUpdate.isEmpty()) {
-        myServer.analysis_updateContent(filesToUpdate);
+      if (!filesToUpdate.isEmpty()) {
+        myServer.analysis_updateContent(filesToUpdate, new UpdateContentConsumer() {
+          @Override
+          public void onResponse() {
+          }
+        });
       }
     }
   }
@@ -285,6 +317,47 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
+  public LibraryDependenciesResult analysis_getLibraryDependencies() {
+    final Ref<LibraryDependenciesResult> resultRef = new Ref<LibraryDependenciesResult>();
+    final Semaphore semaphore = new Semaphore();
+
+    try {
+      synchronized (myLock) {
+        if (myServer == null) return null;
+
+        semaphore.down();
+
+        LOG.debug("analysis_getLibraryDependencies()");
+
+        myServer.analysis_getLibraryDependencies(new GetLibraryDependenciesConsumer() {
+          @Override
+          public void computedDependencies(@Nullable final String[] libraries,
+                                           @Nullable final Map<String, Map<String, List<String>>> packageMap) {
+            resultRef.set(new LibraryDependenciesResult(libraries, packageMap));
+            semaphore.up();
+          }
+
+          @Override
+          public void onError(final RequestError requestError) {
+            LOG.error("Error from analysis_getLibraryDependencies() " +
+                      "SDK version = " + mySdkVersion +
+                      ", server version= " + myServerVersion +
+                      ", code=" + requestError.getCode() + ": " + requestError.getMessage());
+            semaphore.up();
+          }
+        });
+      }
+
+      semaphore.waitFor(GET_LIBRARY_DEPENDENCIES_TIMEOUT);
+    }
+    finally {
+      semaphore.up(); // make sure to unlock semaphore so that computedDependencies() can understand when it was unlocked by timeout
+    }
+
+    return resultRef.get();
+  }
+
+  @Nullable
   public List<AnalysisErrorFixes> analysis_getFixes(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info, final int offset) {
     final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<List<AnalysisErrorFixes>>();
     final Semaphore semaphore = new Semaphore();
@@ -304,11 +377,11 @@ public class DartAnalysisServerService {
 
         @Override
         public void onError(final RequestError error) {
-          semaphore.up();
           LOG.error("Error from edit_getFixes() for file " + path +
                     ", SDK version = " + mySdkVersion +
                     ", server version= " + myServerVersion +
                     ", code=" + error.getCode() + ": " + error.getMessage());
+          semaphore.up();
         }
       });
     }
