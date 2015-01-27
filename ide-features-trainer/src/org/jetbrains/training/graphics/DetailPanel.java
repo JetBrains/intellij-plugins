@@ -1,7 +1,6 @@
 package org.jetbrains.training.graphics;
 
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -20,7 +19,7 @@ public class DetailPanel extends JPanel {
 
     public DetailPanel( Dimension dimension){
 
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         setOpaque(false);
         setPreferredSize(dimension);
@@ -45,13 +44,13 @@ public class DetailPanel extends JPanel {
 
         Box vertBox = Box.createVerticalBox();
         Box lineBox = Box.createHorizontalBox();
-
+//
         lineBox.add(Box.createHorizontalStrut(magicConst));
         lineBox.add(myLabel);
         lineBox.add(Box.createHorizontalGlue());
         lineBox.add(btn);
         lineBox.add(Box.createHorizontalStrut(magicConst));
-
+//
         vertBox.add(Box.createVerticalGlue());
         vertBox.add(lineBox);
         vertBox.add(Box.createVerticalGlue());
@@ -68,8 +67,6 @@ public class DetailPanel extends JPanel {
 
     public void setText(String s){
         final String newString = s;
-        final int myPanelWidth = this.getWidth();
-        final int myPanelHeight = this.getHeight();
 
         UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override

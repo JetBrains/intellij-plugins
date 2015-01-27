@@ -4,6 +4,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;
@@ -21,7 +22,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.*;
-import com.intellij.ui.BalloonImpl;
 import com.intellij.ui.awt.RelativePoint;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -44,12 +44,14 @@ public class StartLesson extends AnAction {
 
     private boolean isRecording = false;
     DetailPanel infoPanel;
+    Logger logger;
+
 
     public void actionPerformed(final AnActionEvent e) {
 
-        try {
+        logger = Logger.getInstance("#training-concept.StartLesson");
 
-            //Messages.showMessageDialog(e.getProject(), "Welcome to IntelliJ IDEA training course.", "Information", Messages.getInformationIcon());
+        try {
 
             final VirtualFile vf;
             vf = createFile(e.getProject());
@@ -61,22 +63,11 @@ public class StartLesson extends AnAction {
             InputStream is = this.getClass().getResourceAsStream("JavaLessonExample2.java");
             final String target = new Scanner(is).useDelimiter("\\Z").next();
 
-
-//            IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(editor.getProject());
-//            final MyPainter myPainter = new MyPainter(ideFrame.getComponent());
-//            IdeGlassPaneUtil.find(editor.getComponent()).addPainter(ideFrame.getComponent(), myPainter, editor.getProject());
-//            myPainter.setText("Welcome to IntelliJ IDEA training course! Let's start from duplicating strings.");
-
             final Scenario scn = new Scenario("SampleScenario.xml");
 
 
 
             showInfoPanel(editor);
-//          JBPopupFactory.getInstance().createComponentPopupBuilder(infoPanel, infoPanel).createPopup().show(new RelativePoint(new Point(1000, 100)));
-
-
-
-            //final Editor editor1 = FileEditorManager.getInstance(e.getProject()).openTextEditor(new OpenFileDescriptor(e.getProject(), vf), true);
             final Editor editor1 = editor;
 
             final Thread roboThread = new Thread("RoboThread") {
@@ -94,8 +85,10 @@ public class StartLesson extends AnAction {
                             return;
                         }
 
-                        for (Element element : scn.getRoot().getChildren()) {
+                        for (final Element element : scn.getRoot().getChildren()) {
                             if (element.getName().equals("TypeText")) {
+
+                                logger.info("Typing text.");
 
                                 if (element.getAttribute("description") != null) {
                                     final String description = (element.getAttribute("description").getValue().toString());
@@ -129,6 +122,9 @@ public class StartLesson extends AnAction {
                                     isTyping = (++i[0] < finalText.length());
                                 }
                             } else if(element.getName().equals("Action")) {
+
+                                logger.info("Performing action" + element.getAttribute("action").getValue().toString());
+
                                 if (element.getAttribute("description") != null) {
                                     final String description = (element.getAttribute("description").getValue().toString());
                                     infoPanel.setText(description);
@@ -143,23 +139,31 @@ public class StartLesson extends AnAction {
                                     infoPanel.hideButton();
                                 }
 
-                                focusOnEditor(editor);
-
                                 final String actionType = (element.getAttribute("action").getValue().toString());
 
-                                ApplicationManager.getApplication().invokeLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            showBalloon(e, editor1, editor);
-                                        } catch (InterruptedException e1) {
-                                            e1.printStackTrace();
-                                        }
+                                if (element.getAttribute("balloon") != null) {
+
+                                    final String balloonText =(element.getAttribute("balloon").getValue().toString());
+
+                                    synchronized (editor) {
+                                        ApplicationManager.getApplication().invokeLater(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    int delay = 0;
+                                                    if (element.getAttribute("delay") != null) {
+                                                        delay = Integer.parseInt(element.getAttribute("delay").getValue().toString());
+                                                    }
+                                                    showBalloon(e, editor1, editor, balloonText, delay);
+                                                } catch (InterruptedException e1) {
+                                                    e1.printStackTrace();
+                                                }
+                                            }
+
+                                        });
+                                        editor.wait();
                                     }
 
-                                });
-                                synchronized (editor) {
-                                    editor.wait();
                                 }
                                 ApplicationManager.getApplication().invokeLater(new Runnable() {
                                     @Override
@@ -167,9 +171,9 @@ public class StartLesson extends AnAction {
                                         performAction(actionType, editor);
                                     }
                                 });
-                                //                                        synchronized (editor) {
-                                //                                            editor.wait();
-                                //                                        }
+                                //To see result
+                                Thread.sleep(500);
+
                             } else if(element.getName().equals("Start")) {
                                     if (element.getAttribute("description") != null) {
                                         final String description =(element.getAttribute("description").getValue().toString());
@@ -192,17 +196,20 @@ public class StartLesson extends AnAction {
                                         final String buttonText =(element.getAttribute("btn").getValue().toString());
                                         infoPanel.setButtonText(buttonText);
                                         infoPanel.addWaitToButton(editor);
+
+                                        synchronized (editor) {
+                                            editor.wait();
+                                        }
+                                    } else {
+                                        infoPanel.hideButton();
                                     }
-                                    synchronized (editor) {
-                                        editor.wait();
-                                    }
+
                             } else if(element.getName().equals("MoveCaret")) {
 
-                                focusOnEditor(editor);
 
                                 final String offsetString =(element.getAttribute("offset").getValue().toString());
                                 final int offset = Integer.parseInt(offsetString);
-                                System.err.println("offset is:" + offset);
+
 
                                 WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
                                     @Override
@@ -230,22 +237,18 @@ public class StartLesson extends AnAction {
 
                             } else if(element.getName().equals("Try")) {
 
-                                    //TODO: delete this line
-                                ApplicationManager.getApplication().invokeLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Component curcomp = IdeFocusManager.findInstance().getFocusOwner();
-                                        System.err.println("Focus owner:" + IdeFocusManager.findInstance().getFocusOwner());
-                                    }
-                                });
+                                if (element.getAttribute("description") != null) {
+                                    final String description =(element.getAttribute("description").getValue().toString());
+                                    infoPanel.setText(description);
+                                }
 
-                                    if (element.getAttribute("btn") != null) {
-                                        final String buttonText =(element.getAttribute("btn").getValue().toString());
-                                        infoPanel.setButtonText(buttonText);
-                                        infoPanel.addWaitToButton(editor);
-                                    } else {
-                                        infoPanel.hideButton();
-                                    }
+                                if (element.getAttribute("btn") != null) {
+                                    final String buttonText =(element.getAttribute("btn").getValue().toString());
+                                    infoPanel.setButtonText(buttonText);
+                                    infoPanel.addWaitToButton(editor);
+                                } else {
+                                    infoPanel.hideButton();
+                                }
 
                                 final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, target);
                                 isRecording = true;
@@ -255,7 +258,12 @@ public class StartLesson extends AnAction {
                                         isRecording = false;
                                     }
                                 });
-                                recorder.startRecording();
+                                recorder.startRecording(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        infoPanel.setText("Awesome, now you know how to duplicate lines easily!");
+                                    }
+                                });
 
                             } else {
 
@@ -278,17 +286,6 @@ public class StartLesson extends AnAction {
         }
     }
 
-    private void focusOnEditor(final Editor editor){
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                IdeFocusManager.findInstance().requestFocus(editor.getComponent(), true);
-            }
-        });
-
-    }
-
-
     private void showInfoPanel(Editor editor) {
         final Dimension dimension = new Dimension(500, 60);
 
@@ -297,11 +294,16 @@ public class StartLesson extends AnAction {
         RelativePoint location = computeLocation(ideFrame, dimension);
         Rectangle infoBounds = new Rectangle((int) location.getPoint().getX(), (int) location.getPoint().getY(), (int) dimension.getWidth(),(int) dimension.getHeight());
 
-
         BalloonBuilder balloonBuilder = JBPopupFactory.getInstance().createBalloonBuilder(infoPanel);
-        balloonBuilder.setHideOnClickOutside(false).setCloseButtonEnabled(false).setHideOnKeyOutside(false).setBorderColor(new Color(0, 0, 0, 0))
-                .setDialogMode(false).setHideOnFrameResize(false);
-        balloonBuilder.setFillColor(new Color(0,0,0,0));
+        balloonBuilder.setHideOnClickOutside(false)
+                .setCloseButtonEnabled(false)
+                .setHideOnKeyOutside(false)
+                .setBorderColor(new Color(0, 0, 0, 0))
+                .setDialogMode(false)
+                .setHideOnFrameResize(false)
+                .setFillColor(new Color(0,0,0,0))
+                .setHideOnAction(false);
+
 
         Balloon balloon = balloonBuilder.createBalloon();
         balloon.setBounds(infoBounds);
@@ -323,7 +325,7 @@ public class StartLesson extends AnAction {
      * @param editor - editor where to show balloon
      * @param lockEditor - using for suspending typing robot until balloon will have been hidden
      */
-    private void showBalloon(AnActionEvent e, Editor editor, final Editor lockEditor) throws InterruptedException {
+    private void showBalloon(AnActionEvent e, Editor editor, final Editor lockEditor, String balloonText, final int delay) throws InterruptedException {
         FileEditorManager instance = FileEditorManager.getInstance(e.getProject());
         if (instance == null) return;
         if (editor == null) return;
@@ -333,7 +335,7 @@ public class StartLesson extends AnAction {
         Point point = editor.visualPositionToXY(position);
         BalloonBuilder builder =
                 JBPopupFactory.getInstance().
-                        createHtmlTextBalloonBuilder("<html>Type <b>CMD + D</b> to duplicate current string.", null, Color.LIGHT_GRAY, null)
+                        createHtmlTextBalloonBuilder(balloonText, null, Color.LIGHT_GRAY, null)
                         .setHideOnClickOutside(false).setCloseButtonEnabled(true).setHideOnKeyOutside(false);
         final Balloon myBalloon = builder.createBalloon();
 
@@ -342,7 +344,7 @@ public class StartLesson extends AnAction {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(delay);
                     myBalloon.hide();
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
