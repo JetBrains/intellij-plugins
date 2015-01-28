@@ -214,6 +214,11 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
     if (specName == null) {
       return;
     }
+    if (tree == null) {
+      // workaround for https://github.com/karma-runner/karma/issues/1292
+      process.stdout.write('Test "' + suiteNames.concat(specName).join('.') + '" skipped\n');
+      return;
+    }
     var browserNode = getOrCreateBrowserNode(tree, browser);
     if (typeof browserNode.checkedForTotalTestCount === 'undefined') {
       browserNode.checkedForTotalTestCount = true;
