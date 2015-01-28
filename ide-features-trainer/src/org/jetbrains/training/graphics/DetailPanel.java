@@ -12,7 +12,7 @@ import java.awt.event.*;
  */
 public class DetailPanel extends JPanel {
     private final int magicConst = 15;
-    private final Color backGroundColor = new Color(0, 0 ,0, 63);
+    private Color backGroundColor = new Color(0, 0 ,0, 190);
     private final Color textColor = new Color(245, 245, 245, 255);
     private JLabel myLabel;
     private JButton btn;
@@ -29,7 +29,7 @@ public class DetailPanel extends JPanel {
         myLabel = new JLabel();
         myLabel.setForeground(textColor);
         Font font = myLabel.getFont();
-        Font newFont = new Font(font.getName(), font.getStyle(), 12);
+        Font newFont = new Font(font.getName(), font.getStyle(), 14);
         myLabel.setFont(newFont);
         myLabel.setText("Default text");
         myLabel.setFocusable(false);
@@ -63,6 +63,13 @@ public class DetailPanel extends JPanel {
         //this.add(myLabel);
         //this.add(btn);
 
+    }
+
+    //make backgreound color as green
+    public void greenalize(){
+        backGroundColor = new Color(0, 58, 0, 190);
+        setBackground(backGroundColor);
+//        this.paintComponent(this.getGraphics());
     }
 
     public void setText(String s){
@@ -141,7 +148,7 @@ public class DetailPanel extends JPanel {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2.setColor(new Color(0, 0, 0, 190));
+        g2.setColor(backGroundColor);
         g2.fillRoundRect(x, y, w, h, arc, arc);
 
         g2.setStroke(new BasicStroke(0f));

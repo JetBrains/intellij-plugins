@@ -262,6 +262,7 @@ public class StartLesson extends AnAction {
                                     @Override
                                     public void run() {
                                         infoPanel.setText("Awesome, now you know how to duplicate lines easily!");
+                                        infoPanel.greenalize();
                                     }
                                 });
 
@@ -315,7 +316,7 @@ public class StartLesson extends AnAction {
     private RelativePoint computeLocation(IdeFrame ideFrame, Dimension dimension){
         int statusBarHeight = ideFrame.getStatusBar().getComponent().getHeight();
         Rectangle visibleRect = ideFrame.getComponent().getVisibleRect();
-        Point point = new Point(visibleRect.x + (visibleRect.width - dimension.width) / 2, visibleRect.y + visibleRect.height - dimension.height - statusBarHeight - 5);
+        Point point = new Point(visibleRect.x + (visibleRect.width - dimension.width) / 2, visibleRect.y + visibleRect.height - dimension.height - statusBarHeight - 20);
         return new RelativePoint(ideFrame.getComponent(), point);
     }
 
