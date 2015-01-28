@@ -16,7 +16,6 @@ package com.intellij.struts2.graph.fileEditor;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -36,7 +35,7 @@ import java.util.Set;
  *
  * @author Yann C&eacute;bron
  */
-public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvider implements DumbAware {
+public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvider {
 
   public boolean accept(@NotNull final Project project, @NotNull final VirtualFile file) {
     if (!file.isValid()) {
