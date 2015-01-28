@@ -1,4 +1,4 @@
-package org.jetbrains.training;
+package org.jetbrains.training.sandbox;
 
 import java.io.*;
 import java.util.Scanner;
