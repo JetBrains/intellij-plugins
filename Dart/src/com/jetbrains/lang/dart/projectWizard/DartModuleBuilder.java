@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.projectWizard;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
+import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -102,6 +103,9 @@ public class DartModuleBuilder extends ModuleBuilder {
   static void setupProject(@NotNull final ModifiableRootModel modifiableRootModel,
                            @NotNull final VirtualFile baseDir,
                            @NotNull final DartProjectWizardData wizardData) {
+    final String templateName = wizardData.myTemplate == null ? "Empty project" : wizardData.myTemplate.getName();
+    UsageTrigger.trigger("DartProjectWizard." + templateName);
+
     setupSdkAndDartium(modifiableRootModel, wizardData);
     if (wizardData.myTemplate != null) {
       try {
