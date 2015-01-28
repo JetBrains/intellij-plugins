@@ -1,23 +1,25 @@
 <xml type="Scenario" version="0.1">
-    <Start description="Let's learn how to duplicate lines" btn="Ok"/>
+    <Start description="Going to learn how to duplicate lines?" btn="Yes"/>
     <CopyText>public class JavaLessonExample {
 
-        public static void main(String[] args) {
+    public static void main(String[] args) {
 
         int a = 7;
         double x = 0.34;
 
         //Let's look an absolute value for a and x.
         System.out.println("|" + a + "| is " + Math.abs(a));
-        }
+    }
 }</CopyText>
+    <Text description="Let's print absolute value for x" btn="..."/>
+    <Text description="Move caret to print line and" btn="..."/>
     <MoveCaret offset="200"/>
-    <Action action="EditorDuplicate" delay="2000" balloon="Type CMD + D to duplicate current string." description="Just tap CMD+D to duplicate current line"/>
+    <Action action="EditorDuplicate" delay="2000" balloon="type CMD + D to duplicate current string." description="tap CMD+D to duplicate current line"/>
     <Text description="Cool, replace a with x"/>
-    <MoveCaret offset="275"/>
+    <MoveCaret offset="271"/>
     <Action action="EditorDelete" delay="100"/>
     <TypeText>x</TypeText>
-    <MoveCaret offset="298"/>
+    <MoveCaret offset="294"/>
     <Action action="EditorDelete" delay="100"/>
     <TypeText>x</TypeText>
     <Text description="That's it" btn="Try myself"/>
