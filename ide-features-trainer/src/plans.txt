@@ -1,0 +1,23 @@
+**January 29**
+
+* Fixed button problem
+* Added File From Scratch (dispose not solved yet)
+* Course-Lesson-Scenario chain added
+* State update added
+
+**January 30**
+
+//Plans
+* Disposable
+* Shortcut Logger
+* Add traverse caret action to scenario
+* Implement 2 different courses
+
+//Far plans
+* Language injection to Scenario (ask George Shrago)
+* Navigation between courses
+
+//UI plans
+* area selection
+* arrow draw
+* lighthouse pane
