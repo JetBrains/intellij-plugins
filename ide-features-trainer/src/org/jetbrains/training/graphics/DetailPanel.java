@@ -4,6 +4,10 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -14,6 +18,8 @@ public class DetailPanel extends JPanel {
     private final int magicConst = 15;
     private Color backGroundColor = new Color(0, 0 ,0, 190);
     private final Color textColor = new Color(245, 245, 245, 255);
+    private final int inset = 4;
+
     private JLabel myLabel;
     private JButton btn;
 
@@ -26,6 +32,7 @@ public class DetailPanel extends JPanel {
         setSize(dimension);
         setBackground(new Color(0, 0 ,0, 63));
 
+
         myLabel = new JLabel();
         myLabel.setForeground(textColor);
         Font font = myLabel.getFont();
@@ -34,10 +41,55 @@ public class DetailPanel extends JPanel {
         myLabel.setText("Default text");
         myLabel.setFocusable(false);
 
-        btn = new JButton("Start");
-        btn.setFocusPainted(false);
-        btn.setContentAreaFilled(false);
+
+        final Color passiveColor = new Color(96, 96, 96, 255);
+        final Color activeColor = new Color(128, 128, 128, 255);
+        final Color pressedColor = new Color(176,176,176,255);
+
+
+        final JButton button = new JButton("flat button");
+        button.setForeground(Color.WHITE);
+        Border line = new LineBorder(new Color(0,0,0,0));
+//        Border margin = new EmptyBorder(5, 15, 5, 15);
+//        Border compound = new CompoundBorder(line, margin);
+//        button.setBorder(compound);
+        button.setContentAreaFilled(false);
+        button.setOpaque(true);
+        button.setBackground(passiveColor);
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) {
+                button.setBackground(activeColor);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent mouseEvent) {
+                button.setBackground(passiveColor);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {
+                button.setBackground(pressedColor);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) {
+                button.setBackground(activeColor);
+            }
+        });
+
+        btn = new RoundedCornerButton("Test button");
+        btn.setBorderPainted(false);
+        btn.setForeground(Color.WHITE);
+        btn.setRolloverEnabled(false);
         btn.setFocusable(false);
+
+
+//        btn = new JButton("Start");
+//        btn.setFocusPainted(false);
+//        btn.setContentAreaFilled(false);
+//        btn.setFocusable(false);
+//        btn.setMargin(new Insets(inset,inset,inset,inset ));
 
         //btn.setForeground(Color.white);
         //btn.setBackground(new Color(0,0,0,190));
@@ -156,4 +208,6 @@ public class DetailPanel extends JPanel {
 
         g2.dispose();
     }
+
+
 }
