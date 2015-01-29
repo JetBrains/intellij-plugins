@@ -63,8 +63,7 @@ public class StartLesson extends AnAction {
             InputStream is = this.getClass().getResourceAsStream("JavaLessonExample2.java");
             final String target = new Scanner(is).useDelimiter("\\Z").next();
 
-            final Scenario scn = new Scenario("SampleScenario.xml");
-
+            final Lesson lesson = new Lesson("SampleScenario.xml");
 
 
             showInfoPanel(editor);
@@ -76,16 +75,16 @@ public class StartLesson extends AnAction {
 
                     try {
 
-                        if (scn.equals(null)) {
+                        if (lesson.getScn().equals(null)) {
                             System.err.println("Scenario is empty or cannot be read!");
                             return;
                         }
-                        if (scn.getRoot().equals(null)) {
+                        if (lesson.getScn().getRoot().equals(null)) {
                             System.err.println("Scenario is empty or cannot be read!");
                             return;
                         }
 
-                        for (final Element element : scn.getRoot().getChildren()) {
+                        for (final Element element : lesson.getScn().getRoot().getChildren()) {
                             if (element.getName().equals("TypeText")) {
 
                                 logger.info("Typing text.");
@@ -280,9 +279,9 @@ public class StartLesson extends AnAction {
             roboThread.start();
 
 
-        } catch (IOException e1) {
+        } catch (BadLessonException e1) {
             e1.printStackTrace();
-        } catch (JDOMException e1) {
+        } catch (IOException e1) {
             e1.printStackTrace();
         }
     }
