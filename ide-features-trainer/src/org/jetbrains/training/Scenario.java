@@ -5,13 +5,13 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
-import java.util.Scanner;
 
 
 /**
@@ -21,6 +21,7 @@ public class Scenario {
 
     final private String path;
     private Element root;
+    private Document doc;
 
     public Scenario(String path) throws JDOMException, IOException {
         this.path = path;
@@ -28,8 +29,18 @@ public class Scenario {
         InputStream is = this.getClass().getResourceAsStream(path);
 
         SAXBuilder builder = new SAXBuilder();
-        Document doc = builder.build(is);
+        doc = builder.build(is);
         root = doc.getRootElement();
+    }
+
+    public void saveState() throws IOException {
+        XMLOutputter xmlOutput = new XMLOutputter();
+        String saveFile = this.getClass().getResource(path).getFile();
+        FileWriter writer = new FileWriter(saveFile);
+
+        xmlOutput.output(doc, writer);
+        writer.flush();
+        writer.close();
     }
 
     public void printScenario(){

@@ -267,6 +267,7 @@ public class StartLesson extends AnAction {
                                     public void run() {
                                         infoPanel.setText("Awesome, now you know how to duplicate lines easily!");
                                         infoPanel.greenalize();
+                                        lesson.pass();
                                     }
                                 });
 

@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Duplicate Line" version="0.1">
+<xml type="Scenario" name="Duplicate Line" passed="false" version="0.1">
     <Start description="Going to learn how to duplicate lines?" btn="Yes"/>
     <CopyText>public class JavaLessonExample {
 
