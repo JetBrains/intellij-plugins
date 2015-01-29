@@ -37,7 +37,7 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
   }
 
   @Override
-  public void checkFunction(JSCallExpression node, PsiElement element) {
+  public void checkFunction(@NotNull JSCallExpression node, @NotNull PsiElement element) {
     super.checkFunction(node, element);
     if (element instanceof JSClass) {
       if (node instanceof JSNewExpression || node.getMethodExpression() instanceof JSSuperExpression) {
