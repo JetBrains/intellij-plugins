@@ -1,5 +1,8 @@
 package org.jetbrains.training;
 
+import com.intellij.ide.scratch.ScratchpadFileSystem;
+import com.intellij.ide.scratch.ScratchpadManager;
+import com.intellij.lang.Language;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -8,6 +11,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;
+import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.keymap.KeymapManager;
@@ -44,17 +48,18 @@ public class StartLesson extends AnAction {
 
     private boolean isRecording = false;
     DetailPanel infoPanel;
-    Logger logger;
-
 
     public void actionPerformed(final AnActionEvent e) {
 
-        logger = Logger.getInstance("#training-concept.StartLesson");
 
         try {
 
             final VirtualFile vf;
-            vf = createFile(e.getProject());
+//            vf = createFile(e.getProject());
+
+//            final ScratchpadFileSystem.getInstance().createRoot("SomeScratchFile");
+            vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
+            vf.rename(this, "test1.java");
 
             OpenFileDescriptor descriptor = new OpenFileDescriptor(e.getProject(), vf);
             final Editor editor = FileEditorManager.getInstance(e.getProject()).openTextEditor(descriptor, true);
@@ -72,6 +77,7 @@ public class StartLesson extends AnAction {
             }
 
             showInfoPanel(editor);
+
             final Editor editor1 = editor;
 
             final Thread roboThread = new Thread("RoboThread") {
@@ -92,7 +98,6 @@ public class StartLesson extends AnAction {
                         for (final Element element : lesson.getScn().getRoot().getChildren()) {
                             if (element.getName().equals("TypeText")) {
 
-                                logger.info("Typing text.");
 
                                 if (element.getAttribute("description") != null) {
                                     final String description = (element.getAttribute("description").getValue().toString());
@@ -126,8 +131,6 @@ public class StartLesson extends AnAction {
                                     isTyping = (++i[0] < finalText.length());
                                 }
                             } else if(element.getName().equals("Action")) {
-
-                                logger.info("Performing action" + element.getAttribute("action").getValue().toString());
 
                                 if (element.getAttribute("description") != null) {
                                     final String description = (element.getAttribute("description").getValue().toString());
@@ -287,9 +290,11 @@ public class StartLesson extends AnAction {
 
         } catch (BadLessonException e1) {
             e1.printStackTrace();
-        } catch (IOException e1) {
-            e1.printStackTrace();
+//        } catch (IOException e1) {
+//            e1.printStackTrace();
         } catch (BadCourseException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
             e1.printStackTrace();
         }
     }
