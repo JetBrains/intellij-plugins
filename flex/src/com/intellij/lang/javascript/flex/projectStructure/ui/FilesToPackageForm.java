@@ -21,6 +21,7 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.CellEditorComponentWithBrowseButton;
+import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -93,7 +94,7 @@ public class FilesToPackageForm {
   private void initTable() {
     myFilesToPackageTable = new JBTable();
     myFilesToPackageTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE); // otherwise model is not in sync with view
-    myFilesToPackageTable.setPreferredScrollableViewportSize(new Dimension(400, 150));
+    myFilesToPackageTable.setPreferredScrollableViewportSize(JBUI.size(400, 150));
     myFilesToPackageTable.setRowHeight(new JTextField("Fake").getPreferredSize().height + myFilesToPackageTable.getRowMargin());
 
     myFilesToPackageTable.setModel(new DefaultTableModel() {

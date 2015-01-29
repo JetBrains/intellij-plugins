@@ -7,6 +7,7 @@ import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.table.JBTable;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -47,7 +48,7 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
   protected void initTable() {
     myTable = new JBTable();
     myTable.setRowHeight(new JTextField("Fake").getPreferredSize().height + myTable.getRowMargin());
-    myTable.setPreferredScrollableViewportSize(new Dimension(400, 150));
+    myTable.setPreferredScrollableViewportSize(JBUI.size(400, 150));
 
     myTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE); // otherwise model is not in sync with view
 
