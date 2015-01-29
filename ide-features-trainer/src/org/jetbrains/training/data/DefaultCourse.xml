@@ -1,0 +1,5 @@
+<xml type="Course" name="DefaultCourse" version="0.1">
+    <lessons>
+        <lesson name="Duplicate Line" isPassed="false" path="DuplicateLine.xml"/>
+    </lessons>
+</xml>

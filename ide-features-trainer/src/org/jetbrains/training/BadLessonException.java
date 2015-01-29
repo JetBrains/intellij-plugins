@@ -6,7 +6,7 @@ package org.jetbrains.training;
 public class BadLessonException extends Exception{
 
     public BadLessonException(String s) {
-        super("BadLessonException:" + s);
+        super(s);
     }
 
     public BadLessonException() {

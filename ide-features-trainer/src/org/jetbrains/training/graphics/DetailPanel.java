@@ -4,10 +4,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -42,41 +38,6 @@ public class DetailPanel extends JPanel {
         myLabel.setFocusable(false);
 
 
-        final Color passiveColor = new Color(96, 96, 96, 255);
-        final Color activeColor = new Color(128, 128, 128, 255);
-        final Color pressedColor = new Color(176,176,176,255);
-
-
-        final JButton button = new JButton("flat button");
-        button.setForeground(Color.WHITE);
-        Border line = new LineBorder(new Color(0,0,0,0));
-//        Border margin = new EmptyBorder(5, 15, 5, 15);
-//        Border compound = new CompoundBorder(line, margin);
-//        button.setBorder(compound);
-        button.setContentAreaFilled(false);
-        button.setOpaque(true);
-        button.setBackground(passiveColor);
-        button.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent mouseEvent) {
-                button.setBackground(activeColor);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent mouseEvent) {
-                button.setBackground(passiveColor);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent mouseEvent) {
-                button.setBackground(pressedColor);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent mouseEvent) {
-                button.setBackground(activeColor);
-            }
-        });
 
         btn = new RoundedCornerButton("Test button");
         btn.setBorderPainted(false);
@@ -111,9 +72,6 @@ public class DetailPanel extends JPanel {
 
         add(vertBox);
         setVisible(true);
-
-        //this.add(myLabel);
-        //this.add(btn);
 
     }
 
@@ -163,16 +121,12 @@ public class DetailPanel extends JPanel {
 
     public void setButtonText(String s){
         final String newString = s;
-        final int myPanelWidth = this.getWidth();
-        final int myPanelHeight = this.getHeight();
-
         UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
             public void run() {
                 btn.setText(newString);
             }
         });
-
         showButton();
     }
 
