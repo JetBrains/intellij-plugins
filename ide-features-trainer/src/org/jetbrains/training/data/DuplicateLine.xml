@@ -2,15 +2,15 @@
     <Start description="Going to learn how to duplicate lines?" btn="Yes"/>
     <CopyText>public class JavaLessonExample {
 
-        public static void main(String[] args) {
+    public static void main(String[] args) {
 
         int a = 7;
         double x = 0.34;
 
         //Let's look an absolute value for a and x.
         System.out.println("|" + a + "| is " + Math.abs(a));
-        }
-        }</CopyText>
+    }
+}</CopyText>
     <Text description="Let's print absolute value for x" btn="..."/>
     <Text description="Move caret to print line and" btn="..."/>
     <MoveCaret offset="200"/>
@@ -29,14 +29,14 @@
     <MoveCaret offset="0"/>
     <CopyText>public class JavaLessonExample {
 
-        public static void main(String[] args) {
+    public static void main(String[] args) {
 
         int a = 7;
         double x = 0.34;
 
         //Let's look an absolute value for a and x.
         System.out.println("|" + a + "| is " + Math.abs(a));
-        }
-        }</CopyText>
+    }
+}</CopyText>
     <Try description="Duplicate print line and replace a with x"/>
 </xml>
