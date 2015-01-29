@@ -10,11 +10,14 @@ import java.io.IOException;
 public class Lesson {
 
     private Scenario scn;
+    private String name;
     private boolean isPassed;
 
-    public Lesson(String pathToScenario) throws BadLessonException {
+    public Lesson(String pathToScenario, boolean passed) throws BadLessonException {
         try {
             scn = new Scenario(pathToScenario);
+            name = scn.getName();
+            isPassed = passed;
         } catch (JDOMException e) {
             //Scenario file is corrupted
             throw new BadLessonException("Probably scenario file is corrupted");
@@ -26,6 +29,10 @@ public class Lesson {
 
     public void pass(){
         isPassed = true;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public boolean isPassed(){
