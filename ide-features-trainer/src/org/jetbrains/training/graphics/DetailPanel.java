@@ -1,5 +1,6 @@
 package org.jetbrains.training.graphics;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.util.ui.UIUtil;
 
@@ -10,7 +11,7 @@ import java.awt.event.*;
 /**
  * Created by karashevich on 14/01/15.
  */
-public class DetailPanel extends JPanel {
+public class DetailPanel extends JPanel implements Disposable {
     private final int magicConst = 15;
     private Color backGroundColor = new Color(0, 0 ,0, 190);
     private final Color textColor = new Color(245, 245, 245, 255);
