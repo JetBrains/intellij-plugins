@@ -56,6 +56,10 @@ public class Scenario {
 
     }
 
+    public String getName(){
+        return root.getAttribute("name").getValue();
+    }
+
     public Element getRoot(){
         return root;
     }

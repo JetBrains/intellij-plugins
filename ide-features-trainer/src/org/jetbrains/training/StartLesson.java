@@ -63,8 +63,13 @@ public class StartLesson extends AnAction {
             InputStream is = this.getClass().getResourceAsStream("JavaLessonExample2.java");
             final String target = new Scanner(is).useDelimiter("\\Z").next();
 
-            final Lesson lesson = new Lesson("SampleScenario.xml");
-
+//            final Lesson lesson = new Lesson("SampleScenario.xml");
+            final Course course = new Course();
+            final Lesson lesson = course.giveNotPassedLesson();
+            if (lesson == null) {
+                //TODO: add some handler here
+                return;
+            }
 
             showInfoPanel(editor);
             final Editor editor1 = editor;
@@ -282,6 +287,8 @@ public class StartLesson extends AnAction {
         } catch (BadLessonException e1) {
             e1.printStackTrace();
         } catch (IOException e1) {
+            e1.printStackTrace();
+        } catch (BadCourseException e1) {
             e1.printStackTrace();
         }
     }
