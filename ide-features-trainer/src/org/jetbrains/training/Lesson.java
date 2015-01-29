@@ -29,7 +29,16 @@ public class Lesson {
 
     public void pass(){
         isPassed = true;
+        scn.getRoot().getAttribute("passed").setValue("true");
+        try {
+            scn.saveState();
+            System.err.println("State has been saved");
+        } catch (IOException e) {
+            System.err.println("Cannot save state");
+            e.printStackTrace();
+        }
     }
+
 
     public String getName() {
         return name;
