@@ -11,7 +11,7 @@ import java.awt.event.*;
 /**
  * Created by karashevich on 14/01/15.
  */
-public class DetailPanel extends JPanel implements Disposable {
+public class DetailPanel extends JPanel {
     private final int magicConst = 15;
     private Color backGroundColor = new Color(0, 0 ,0, 190);
     private final Color textColor = new Color(245, 245, 245, 255);

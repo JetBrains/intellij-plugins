@@ -66,10 +66,6 @@ public class Course {
                     throw new BadLessonException("Cannot obtain lessons from " + path + " course file");
                 }
                 Lesson tmpl = new Lesson(pathDir + lessonEl.getAttribute("path").getValue(), lessonIsPassed);
-//                assert (tmpl == null);
-                if (tmpl == null) {
-                    System.err.println("NULL NULL NULL!");
-                }
                 lessons.add(tmpl);
             } else throw new BadCourseException("Cannot obtain lessons from " + path + " course file");
         }
