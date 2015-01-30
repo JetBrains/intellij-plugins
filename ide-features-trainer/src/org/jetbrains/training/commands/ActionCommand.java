@@ -33,7 +33,11 @@ public class ActionCommand extends Command {
     public void execute(final Element element, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
 
         updateDescription(element, infoPanel, editor);
-        updateButton(element, infoPanel, editor);
+        if (updateButton(element, infoPanel, editor)) {
+            synchronized (editor) {
+                editor.wait();
+            }
+        }
 
         final String actionType = (element.getAttribute("action").getValue().toString());
 
