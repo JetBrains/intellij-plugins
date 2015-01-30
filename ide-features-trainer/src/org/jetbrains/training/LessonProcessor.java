@@ -1,4 +1,4 @@
-package org.jetbrains.training.sandbox;
+package org.jetbrains.training;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
@@ -13,8 +13,6 @@ import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.awt.RelativePoint;
 import org.jdom.Element;
-import org.jetbrains.training.ActionsRecorder;
-import org.jetbrains.training.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import javax.swing.*;

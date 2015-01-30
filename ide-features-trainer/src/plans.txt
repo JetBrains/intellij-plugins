@@ -8,6 +8,7 @@
 **January 30**
 
 * Reducing redundant lockerEditor
+* Deep refactoring, introducing LessonProcessor
 
 //Plans
 * Disposable
