@@ -48,6 +48,7 @@ public class AddNewMixinAction extends AddNewElementAction<MixinsNode> {
     builder.setCenterPanel(addNewMixinDialog.getContentPane());
     builder.setTitle("New Tapestry Mixin");
     builder.setButtonsAlignment(SwingConstants.CENTER);
+    builder.setPreferredFocusComponent(addNewMixinDialog.getNameComponent());
 
     builder.setOkOperation(new Runnable() {
       public void run() {

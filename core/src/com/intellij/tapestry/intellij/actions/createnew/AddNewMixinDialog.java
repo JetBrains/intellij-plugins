@@ -54,6 +54,10 @@ public class AddNewMixinDialog extends JDialog {
         return ((RootFolderWrapper) _classSourceDirectoryCombo.getSelectedItem()).getFolder();
     }
 
+    public JComponent getNameComponent() {
+        return _name;
+    }
+
     /**
      * A wrapper class for the root folder.
      */
