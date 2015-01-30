@@ -1,17 +1,16 @@
 package org.jetbrains.training.graphics;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
 
 /**
  * Created by karashevich on 14/01/15.
  */
-public class DetailPanel extends JPanel {
+public class DetailPanel extends JPanel{
     private final int magicConst = 15;
     private Color backGroundColor = new Color(0, 0 ,0, 190);
     private final Color textColor = new Color(245, 245, 245, 255);
@@ -20,7 +19,7 @@ public class DetailPanel extends JPanel {
     private JLabel myLabel;
     private JButton btn;
 
-    public DetailPanel( Dimension dimension){
+    public DetailPanel(Dimension dimension){
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
