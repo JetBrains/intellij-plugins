@@ -55,10 +55,8 @@ public class StartLesson extends AnAction {
         try {
 
             final VirtualFile vf;
-//            vf = createFile(e.getProject());
-
-//            final ScratchpadFileSystem.getInstance().createRoot("SomeScratchFile");
             vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
+            //TODO: Rename as a lesson name
             vf.rename(this, "test1.java");
 
             OpenFileDescriptor descriptor = new OpenFileDescriptor(e.getProject(), vf);
@@ -78,7 +76,6 @@ public class StartLesson extends AnAction {
 
             showInfoPanel(editor);
 
-            final Editor editor1 = editor;
 
             final Thread roboThread = new Thread("RoboThread") {
                 @Override
@@ -116,7 +113,7 @@ public class StartLesson extends AnAction {
                                 final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
                                 boolean isTyping = true;
                                 final int[] i = {0};
-                                final int initialOffset = editor1.getCaretModel().getOffset();
+                                final int initialOffset = editor.getCaretModel().getOffset();
 
                                 while (isTyping) {
                                     Thread.sleep(20);
@@ -124,8 +121,8 @@ public class StartLesson extends AnAction {
                                     WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
                                         @Override
                                         public void run() {
-                                            editor1.getDocument().insertString(finalI + initialOffset, finalText.subSequence(i[0], i[0] + 1));
-                                            editor1.getCaretModel().moveToOffset(finalI + 1 + initialOffset);
+                                            editor.getDocument().insertString(finalI + initialOffset, finalText.subSequence(i[0], i[0] + 1));
+                                            editor.getCaretModel().moveToOffset(finalI + 1 + initialOffset);
                                         }
                                     });
                                     isTyping = (++i[0] < finalText.length());
@@ -161,7 +158,7 @@ public class StartLesson extends AnAction {
                                                     if (element.getAttribute("delay") != null) {
                                                         delay = Integer.parseInt(element.getAttribute("delay").getValue().toString());
                                                     }
-                                                    showBalloon(e, editor1, editor, balloonText, delay);
+                                                    showBalloon(e, editor, balloonText, delay);
                                                 } catch (InterruptedException e1) {
                                                     e1.printStackTrace();
                                                 }
@@ -221,7 +218,7 @@ public class StartLesson extends AnAction {
                                 WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
                                     @Override
                                     public void run() {
-                                        editor1.getCaretModel().moveToOffset(offset);
+                                        editor.getCaretModel().moveToOffset(offset);
                                     }
                                 });
                             } else if(element.getName().equals("CopyText")) {
@@ -238,7 +235,7 @@ public class StartLesson extends AnAction {
                                 WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
                                     @Override
                                     public void run() {
-                                        editor1.getDocument().insertString(0, finalText);
+                                        editor.getDocument().insertString(0, finalText);
                                     }
                                 });
 
@@ -335,10 +332,9 @@ public class StartLesson extends AnAction {
     /**
      *
      * @param e
-     * @param editor - editor where to show balloon
-     * @param lockEditor - using for suspending typing robot until balloon will have been hidden
+     * @param editor - editor where to show balloon, also uses for locking while balloon appearing
      */
-    private void showBalloon(AnActionEvent e, Editor editor, final Editor lockEditor, String balloonText, final int delay) throws InterruptedException {
+    private void showBalloon(AnActionEvent e, final Editor editor, String balloonText, final int delay) throws InterruptedException {
         FileEditorManager instance = FileEditorManager.getInstance(e.getProject());
         if (instance == null) return;
         if (editor == null) return;
@@ -374,8 +370,8 @@ public class StartLesson extends AnAction {
 
             @Override
             public void onClosed(LightweightWindowEvent lightweightWindowEvent) {
-                synchronized (lockEditor){
-                    lockEditor.notifyAll();
+                synchronized (editor){
+                    editor.notifyAll();
                 }
             }
 
