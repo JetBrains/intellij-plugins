@@ -24,7 +24,6 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.graphics.DetailPanel;
-import org.jetbrains.training.sandbox.LessonProcessor;
 
 import java.awt.*;
 import java.io.IOException;

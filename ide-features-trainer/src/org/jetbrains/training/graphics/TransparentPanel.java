@@ -30,7 +30,6 @@ public class TransparentPanel extends JFrame
             setUndecorated(true);
             setResizable(true);
 
-
             // Set some layout, say FlowLayout
             setLayout(new FlowLayout());
 
