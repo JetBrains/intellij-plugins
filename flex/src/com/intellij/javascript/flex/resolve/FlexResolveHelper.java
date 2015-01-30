@@ -229,6 +229,11 @@ public class FlexResolveHelper implements JSResolveHelper {
     return ref;
   }
 
+  @Override
+  public boolean isStrictTypeContext(PsiElement element) {
+    return true;
+  }
+
   public static boolean processAllMxmlAndFxgFiles(final GlobalSearchScope scope,
                                                   Project project,
                                                   final MxmlAndFxgFilesProcessor processor,
