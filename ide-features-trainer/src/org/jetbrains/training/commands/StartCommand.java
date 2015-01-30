@@ -21,11 +21,12 @@ public class StartCommand extends Command {
     public void execute(Element element, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
 
         updateDescription(element, infoPanel, editor);
-        updateButton(element, infoPanel, editor);
-
-        synchronized (editor) {
-            editor.wait();
+        if (updateButton(element, infoPanel, editor)) {
+            synchronized (editor) {
+                editor.wait();
+            }
         }
+
     }
 
 

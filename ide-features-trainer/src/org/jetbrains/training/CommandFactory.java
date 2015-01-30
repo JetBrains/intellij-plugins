@@ -7,7 +7,7 @@ import org.jetbrains.training.commands.*;
  */
 public class CommandFactory {
 
-    public Command buildCommand(Element element){
+    public static Command buildCommand(Element element){
 
         Command.CommandType cmdType = null;
         String tagName = element.getName();
@@ -28,7 +28,7 @@ public class CommandFactory {
                 return new StartCommand();
 
             case TEXT:
-                return new StartCommand();
+                return new TextCommand();
 
             case MOVECARET:
                 return new MoveCaretCommand();
@@ -44,6 +44,9 @@ public class CommandFactory {
 
             case ACTION:
                 return new ActionCommand();
+
+            case TYPETEXT:
+                return new TypeTextCommand();
 
         }
 

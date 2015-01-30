@@ -26,11 +26,20 @@ public abstract class Command {
         }
     }
 
-    protected void updateButton(Element element, DetailPanel infoPanel, Editor editor){
+    /**
+     *
+     * @return true if button is updated
+     */
+    protected boolean updateButton(Element element, DetailPanel infoPanel, Editor editor){
         if (element.getAttribute("btn") != null) {
             final String buttonText =(element.getAttribute("btn").getValue().toString());
+            infoPanel.showButton();
             infoPanel.setButtonText(buttonText);
             infoPanel.addWaitToButton(editor);
+            return true;
+        } else {
+            infoPanel.hideButton();
+            return false;
         }
     }
 

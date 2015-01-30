@@ -24,7 +24,6 @@ public class MoveCaretCommand extends Command {
         final String offsetString =(element.getAttribute("offset").getValue().toString());
         final int offset = Integer.parseInt(offsetString);
 
-
         WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
             @Override
             public void run() {
