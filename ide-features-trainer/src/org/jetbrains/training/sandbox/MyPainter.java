@@ -45,7 +45,6 @@ public class MyPainter implements Painter {
 
         graphics2D.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
         graphics2D.setColor(new Color(0, 0, 0, 120));
-        //graphics2D.drawLine(0, 0, component.getWidth(), component.getHeight());
         graphics2D.fillRoundRect(x, y, w, h, arc, arc);
 
         graphics2D.setFont(myFont);
