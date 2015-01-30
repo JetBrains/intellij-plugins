@@ -1,6 +1,7 @@
 package org.angularjs.editor;
 
 import com.intellij.lang.Language;
+import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -39,12 +40,17 @@ public class AngularJSBracesUtil {
   }
 
   public static boolean hasConflicts(String start, String end, PsiElement element) {
+    final Language elementLanguage = element.getLanguage();
     // JSP contains two roots that contain XmlText, don't inject anything in JSP root to prevent double injections
-    if ("JSP".equals(element.getLanguage().getDisplayName())) {
+    if ("JSP".equals(elementLanguage.getDisplayName())) {
       return true;
     }
+
     PsiFile file = element.getContainingFile();
     if (DEFAULT_START.equals(start) || DEFAULT_END.equals(end)) {
+      // JSX attributes don't contain AngularJS injections, {{}} is JSX injection with object inside
+      if (elementLanguage.isKindOf(JavascriptLanguage.INSTANCE)) return true;
+
       for (Language language : file.getViewProvider().getLanguages()) {
         if (DEFAULT_CONFLICTS.contains(language.getDisplayName())) {
           return true;

@@ -1,6 +1,8 @@
 package org.angularjs.codeInsight;
 
 import com.intellij.lang.html.HTMLLanguage;
+import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -8,6 +10,7 @@ import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.util.ThrowableRunnable;
 import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 import org.angularjs.AngularTestUtil;
@@ -146,6 +149,16 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testCustomDelimitersDefaultIgnored() {
     myFixture.configureByFiles("customDelimitersDefaultIgnored.html", "angular.js", "customDelimitersDefaultIgnored.js");
     assertNotSame(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+  }
+
+  public void testDefaultDelimitersInJSX() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JSX, getProject(), new ThrowableRunnable<Exception>() {
+      @Override
+      public void run() throws Exception {
+        myFixture.configureByFiles("defaultDelimiters.jsx", "angular.js");
+        assertNotSame(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
+      }
+    });
   }
 
   public void testCustomDelimitersSameStartEnd() {

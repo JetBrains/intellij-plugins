@@ -1,0 +1,1 @@
+var a = <div className={{whatever:<caret> whatever}}></div>;
