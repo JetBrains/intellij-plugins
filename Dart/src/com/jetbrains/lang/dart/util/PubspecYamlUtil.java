@@ -41,11 +41,15 @@ public class PubspecYamlUtil {
   public static VirtualFile findPubspecYamlFile(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     VirtualFile current = contextFile;
-    VirtualFile parent;
-    while ((parent = current.getParent()) != null && (LIB_DIR_NAME.equals(current.getName()) || fileIndex.isInContent(parent))) {
+    VirtualFile parent = contextFile.isDirectory() ? contextFile : contextFile.getParent();
+
+    while (parent != null && (LIB_DIR_NAME.equals(current.getName()) || fileIndex.isInContent(parent))) {
       current = parent;
       final VirtualFile file = parent.findChild(PUBSPEC_YAML);
-      if (file != null && !file.isDirectory()) return file;
+      if (file != null && !file.isDirectory()) {
+        return file;
+      }
+      parent = current.getParent();
     }
 
     return null;

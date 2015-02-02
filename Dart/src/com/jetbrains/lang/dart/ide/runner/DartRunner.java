@@ -12,6 +12,8 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
@@ -21,6 +23,7 @@ import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 
 public class DartRunner extends DefaultProgramRunner {
@@ -65,33 +68,52 @@ public class DartRunner extends DefaultProgramRunner {
   private RunContentDescriptor doExecuteDartDebug(final @NotNull RunProfileState state,
                                                   final @NotNull ExecutionEnvironment env) throws RuntimeConfigurationError,
                                                                                                   ExecutionException {
+    final RunProfile runConfiguration = env.getRunProfile();
+    final VirtualFile contextFileOrDir;
+    final ExecutionResult executionResult;
+    final int debuggingPort;
+    final int observatoryPort;
+
+    if (runConfiguration instanceof DartRunConfigurationBase) {
+      contextFileOrDir = ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().getDartFile();
+
+      executionResult = state.execute(env.getExecutor(), this);
+      if (executionResult == null) {
+        return null;
+      }
+
+      debuggingPort = ((DartCommandLineRunningState)state).getDebuggingPort();
+      observatoryPort = ((DartCommandLineRunningState)state).getObservatoryPort();
+    }
+    else if (runConfiguration instanceof DartRemoteDebugConfiguration) {
+      final String path = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getDartProjectPath();
+      contextFileOrDir = LocalFileSystem.getInstance().findFileByPath(path);
+      if (contextFileOrDir == null) {
+        throw new RuntimeConfigurationError("Folder not found: " + FileUtil.toSystemDependentName(path));
+      }
+
+      executionResult = null;
+
+      debuggingPort = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getPort();
+      observatoryPort = -1;
+    }
+    else {
+      LOG.error("Unexpected run configuration: " + runConfiguration.getClass().getName());
+      return null;
+    }
+
     FileDocumentManager.getInstance().saveAllDocuments();
 
-    final RunProfile profile = env.getRunProfile();
-    if (profile instanceof DartRemoteDebugConfiguration) {
-      return null; // todo
-    }
+    final XDebuggerManager debuggerManager = XDebuggerManager.getInstance(env.getProject());
+    final XDebugSession debugSession = debuggerManager.startSession(env, new XDebugProcessStarter() {
+      @Override
+      @NotNull
+      public XDebugProcess start(@NotNull final XDebugSession session) {
+        final DartUrlResolver dartUrlResolver = DartUrlResolver.getInstance(env.getProject(), contextFileOrDir);
+        return new DartCommandLineDebugProcess(session, debuggingPort, observatoryPort, executionResult, dartUrlResolver);
+      }
+    });
 
-    if (profile instanceof DartRunConfigurationBase) {
-      final DartRunConfigurationBase configuration = (DartRunConfigurationBase)profile;
-      final VirtualFile mainDartFile = configuration.getRunnerParameters().getDartFile();
-
-      final ExecutionResult executionResult = state.execute(env.getExecutor(), this);
-      if (executionResult == null) return null;
-
-      final XDebuggerManager debuggerManager = XDebuggerManager.getInstance(env.getProject());
-      final XDebugSession debugSession = debuggerManager.startSession(env, new XDebugProcessStarter() {
-        @Override
-        @NotNull
-        public XDebugProcess start(@NotNull final XDebugSession session) {
-          return new DartCommandLineDebugProcess(session, (DartCommandLineRunningState)state, executionResult, mainDartFile);
-        }
-      });
-
-      return debugSession.getRunContentDescriptor();
-    }
-
-    LOG.error("Unexpected run configuration: " + profile.getClass().getName());
-    return null;
+    return debugSession.getRunContentDescriptor();
   }
 }

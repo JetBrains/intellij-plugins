@@ -39,7 +39,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   // just a few files, several kBytes each, won't cause OOM
   private static final Map<String, LightVirtualFile> DART_SDK_PATCH_FILES = new THashMap<String, LightVirtualFile>();
 
-  private final @NotNull ExecutionResult myExecutionResult;
+  private final @Nullable ExecutionResult myExecutionResult;
   private final @NotNull DartUrlResolver myDartUrlResolver;
   private final @NotNull XBreakpointHandler[] myBreakpointHandlers;
   private final @NotNull VmConnection myVmConnection;
@@ -52,19 +52,20 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   private boolean myVmConnected = false;
 
   public DartCommandLineDebugProcess(@NotNull final XDebugSession session,
-                                     @NotNull final DartCommandLineRunningState commandLineState,
-                                     @NotNull final ExecutionResult executionResult,
-                                     @NotNull final VirtualFile dartFile) {
+                                     final int debuggingPort,
+                                     final int observatoryPort,
+                                     @Nullable final ExecutionResult executionResult,
+                                     @NotNull final DartUrlResolver dartUrlResolver) {
     super(session);
     myExecutionResult = executionResult;
-    myDartUrlResolver = DartUrlResolver.getInstance(session.getProject(), dartFile);
-    myObservatoryPort = commandLineState.getObservatoryPort();
+    myDartUrlResolver = dartUrlResolver;
+    myObservatoryPort = observatoryPort;
 
     final DartCommandLineBreakpointHandler dartBreakpointHandler = new DartCommandLineBreakpointHandler(this);
     myBreakpointHandlers = new XBreakpointHandler[]{dartBreakpointHandler};
 
     // see com.google.dart.tools.debug.core.server.ServerDebugTarget
-    myVmConnection = new VmConnection(null, commandLineState.getDebuggingPort());
+    myVmConnection = new VmConnection(null, debuggingPort);
     myVmConnection.addListener(new DartVmListener(this, dartBreakpointHandler));
 
     session.addSessionListener(new XDebugSessionAdapter() {
@@ -124,13 +125,13 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   @Override
   protected ProcessHandler doGetProcessHandler() {
-    return myExecutionResult.getProcessHandler();
+    return myExecutionResult == null ? super.doGetProcessHandler() : myExecutionResult.getProcessHandler();
   }
 
   @NotNull
   @Override
   public ExecutionConsole createConsole() {
-    return myExecutionResult.getExecutionConsole();
+    return myExecutionResult == null ? super.createConsole() : myExecutionResult.getExecutionConsole();
   }
 
   @NotNull
@@ -282,12 +283,14 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     // For Run tool window this action is added in DartCommandLineRunningState.createActions()
     topToolbar.addSeparator();
 
-    topToolbar.addAction(new OpenDartObservatoryUrlAction(myObservatoryPort, new Computable<Boolean>() {
-      @Override
-      public Boolean compute() {
-        return myVmConnected && !getSession().isStopped();
-      }
-    }));
+    if (myObservatoryPort > 0) {
+      topToolbar.addAction(new OpenDartObservatoryUrlAction(myObservatoryPort, new Computable<Boolean>() {
+        @Override
+        public Boolean compute() {
+          return myVmConnected && !getSession().isStopped();
+        }
+      }));
+    }
   }
 
   @Nullable
