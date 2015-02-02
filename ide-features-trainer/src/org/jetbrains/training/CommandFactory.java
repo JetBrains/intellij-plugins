@@ -48,6 +48,11 @@ public class CommandFactory {
             case TYPETEXT:
                 return new TypeTextCommand();
 
+            case TRAVERSECARET:
+                return new TraverseCaretCommand();
+
+            case WAIT:
+                return new WaitCommand();
         }
 
         return new NoCommand();

@@ -2,6 +2,7 @@ package org.jetbrains.training.commands;
 
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;
@@ -26,7 +27,7 @@ import java.awt.event.MouseEvent;
 public class ActionCommand extends Command {
 
     public ActionCommand(){
-        super(CommandType.START);
+        super(CommandType.ACTION);
     }
 
     @Override
@@ -39,11 +40,11 @@ public class ActionCommand extends Command {
             }
         }
 
-        final String actionType = (element.getAttribute("action").getValue().toString());
+        final String actionType = (element.getAttribute("action").getValue());
 
         if (element.getAttribute("balloon") != null) {
 
-            final String balloonText =(element.getAttribute("balloon").getValue().toString());
+            final String balloonText =(element.getAttribute("balloon").getValue());
 
             synchronized (editor) {
                 ApplicationManager.getApplication().invokeLater(new Runnable() {
@@ -52,7 +53,7 @@ public class ActionCommand extends Command {
                         try {
                             int delay = 0;
                             if (element.getAttribute("delay") != null) {
-                                delay = Integer.parseInt(element.getAttribute("delay").getValue().toString());
+                                delay = Integer.parseInt(element.getAttribute("delay").getValue());
                             }
                             showBalloon(e, editor, balloonText, delay);
                         } catch (InterruptedException e1) {
@@ -65,14 +66,17 @@ public class ActionCommand extends Command {
             }
 
         }
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
+        WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
             @Override
             public void run() {
                 performAction(actionType, editor);
             }
         });
+        synchronized (editor){
+            editor.wait();
+        }
         //To see result
-        Thread.sleep(500);
+//        Thread.sleep(500);
 
     }
 
@@ -118,7 +122,7 @@ public class ActionCommand extends Command {
             @Override
             public void onClosed(LightweightWindowEvent lightweightWindowEvent) {
                 synchronized (editor){
-                    editor.notifyAll();
+                    editor.notify();
                 }
             }
         });
@@ -159,18 +163,18 @@ public class ActionCommand extends Command {
      * @param lockEditor - using for suspending typing robot until this action will be performed
      */
     private static void performAction(String actionName, final Editor lockEditor){
-        final ActionManager am = ActionManager.getInstance();
-        final AnAction targetAction = am.getAction(actionName);
-        final InputEvent inputEvent = getInputEvent(actionName);
+            final ActionManager am = ActionManager.getInstance();
+            final AnAction targetAction = am.getAction(actionName);
+            final InputEvent inputEvent = getInputEvent(actionName);
 
         am.tryToExecute(targetAction, inputEvent, null, null, false).doWhenDone(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (lockEditor){
-                    lockEditor.notifyAll();
+                @Override
+                public void run() {
+                    synchronized (lockEditor){
+                        lockEditor.notify();
+                    }
                 }
-            }
-        });
+            });
 
     }
 
