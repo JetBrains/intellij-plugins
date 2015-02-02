@@ -8,6 +8,8 @@ import org.jetbrains.training.Command;
 import org.jetbrains.training.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
+import java.util.Queue;
+
 /**
  * Created by karashevich on 30/01/15.
  */
@@ -18,14 +20,11 @@ public class StartCommand extends Command {
     }
 
     @Override
-    public void execute(Element element, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
+    public void execute(Queue<Element> elements, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
 
+        Element element = elements.poll();
         updateDescription(element, infoPanel, editor);
-        if (updateButton(element, infoPanel, editor)) {
-            synchronized (editor) {
-                editor.wait();
-            }
-        }
+        updateButton(element, elements, lesson, editor, e, document, target, infoPanel);
 
     }
 
