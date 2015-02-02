@@ -5,8 +5,11 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
@@ -61,6 +64,44 @@ public class StartLesson extends AnAction {
                 //TODO: add some handler here
                 return;
             }
+
+//TEST CODE STARTS HERE-------------------------------------------
+
+//            document.addDocumentListener(new DocumentListener() {
+//                @Override
+//                public void beforeDocumentChange(DocumentEvent documentEvent) {
+//                    System.err.println("Attempt to change doc.");
+//                }
+//
+//                @Override
+//                public void documentChanged(DocumentEvent documentEvent) {
+//                    System.err.println("Doc has been changed.");
+//                }
+//            });
+//
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    boolean cf = true;
+//                    do {
+//                        WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                editor.getDocument().insertString(0, "robot text here ");
+//                            }
+//                        });
+//
+//                        try {
+//                            Thread.sleep(100);
+//                        } catch (InterruptedException e1) {
+//                            e1.printStackTrace();
+//                        }
+//
+//                    } while(cf);
+//                }
+//            }).start();
+
+//TEST CODE ENDS HERE--------------------------------------------
 
             showInfoPanel(editor);
 
@@ -121,7 +162,6 @@ public class StartLesson extends AnAction {
         Point point = new Point(visibleRect.x + (visibleRect.width - dimension.width) / 2, visibleRect.y + visibleRect.height - dimension.height - statusBarHeight - 20);
         return new RelativePoint(ideFrame.getComponent(), point);
     }
-
 
     @Nullable
     private VirtualFile createFile(final Project project) throws IOException {
