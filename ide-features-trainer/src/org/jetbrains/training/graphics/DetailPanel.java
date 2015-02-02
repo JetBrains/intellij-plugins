@@ -135,7 +135,7 @@ public class DetailPanel extends JPanel{
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 synchronized (lockEditor){
-                    lockEditor.notifyAll();
+                    lockEditor.notify();
                 }
             }
         });

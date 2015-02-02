@@ -13,7 +13,7 @@ public abstract class Command {
 
 
     private CommandType commandType;
-    public enum CommandType {START, TEXT, TRY, ACTION, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT}
+    public enum CommandType {START, TEXT, TRY, ACTION, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, TRAVERSECARET, WAIT}
 
     public Command(CommandType commandType) {
         this.commandType = commandType;

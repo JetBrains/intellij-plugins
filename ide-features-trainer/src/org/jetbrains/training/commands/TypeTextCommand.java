@@ -25,7 +25,6 @@ public class TypeTextCommand extends Command {
         updateDescription(element, infoPanel, editor);
         updateButton(element, infoPanel, editor);
 
-
         final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
         boolean isTyping = true;
         final int[] i = {0};
