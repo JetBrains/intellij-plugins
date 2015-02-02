@@ -8,8 +8,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.util.Alarm;
 import org.jdom.Element;
 import org.jetbrains.training.Command;
+import org.jetbrains.training.CommandFactory;
 import org.jetbrains.training.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
+
+import java.util.Queue;
 
 /**
  * Created by karashevich on 30/01/15.
@@ -21,8 +24,10 @@ public class WaitCommand extends Command {
     }
 
     @Override
-    public void execute(Element element, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
+    public void execute(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel) throws InterruptedException {
 
+        Element element = elements.poll();
+        updateDescription(element, infoPanel, editor);
         int delay = 1000;
 
         if (element.getAttribute("delay") != null) {
@@ -30,36 +35,25 @@ public class WaitCommand extends Command {
         }
 
         final int finalDelay = delay;
-        System.err.println("Delay is " + finalDelay);
-        try {
-                System.err.println("----Invokation");
-                ApplicationManager.getApplication().invokeLater(new Runnable() {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                (new Alarm()).addRequest(new Runnable() {
+
                     @Override
                     public void run() {
-                        System.err.println("Alarm recorded!");
-                        (new Alarm()).addRequest(new Runnable() {
-                            int k = 0;
-
-                            @Override
-                            public void run() {
-                                k++;
-                                System.err.println("Alarm trigerred! " + k);
-                                synchronized (editor) {
-                                    editor.notify();
-                                }
+                        synchronized (editor) {
+                            try {
+                                CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
                             }
-                        }, finalDelay);
+                        }
                     }
+                }, finalDelay);
+            }
 
-                });
-                synchronized (editor) {
-                    System.err.println(">>>>Start waiting");
-                    editor.wait();
-                    System.err.println("<<<<Finish waiting");
-                }
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-                }
+        });
     }
 
 }

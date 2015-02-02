@@ -7,8 +7,11 @@ import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
 import org.jetbrains.training.ActionsRecorder;
 import org.jetbrains.training.Command;
+import org.jetbrains.training.CommandFactory;
 import org.jetbrains.training.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
+
+import java.util.Queue;
 
 /**
  * Created by karashevich on 30/01/15.
@@ -20,10 +23,10 @@ public class TypeTextCommand extends Command {
     }
 
     @Override
-    public void execute(Element element, final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
+    public void execute(Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
 
+        Element element = elements.poll();
         updateDescription(element, infoPanel, editor);
-        updateButton(element, infoPanel, editor);
 
         final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
         boolean isTyping = true;
@@ -41,6 +44,13 @@ public class TypeTextCommand extends Command {
                 }
             });
             isTyping = (++i[0] < finalText.length());
+        }
+
+        //execute next
+        try {
+            CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
         }
     }
 

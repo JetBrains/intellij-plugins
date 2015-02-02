@@ -6,8 +6,11 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
 import org.jetbrains.training.Command;
+import org.jetbrains.training.CommandFactory;
 import org.jetbrains.training.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
+
+import java.util.Queue;
 
 /**
  * Created by karashevich on 30/01/15.
@@ -19,20 +22,21 @@ public class CopyTextCommand extends Command {
     }
 
     @Override
-    public void execute(Element element, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
+    public void execute(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel) throws InterruptedException {
 
+        Element element = elements.poll();
         updateDescription(element, infoPanel, editor);
-        if (updateButton(element, infoPanel, editor)) {
-            synchronized (editor) {
-                editor.wait();
-            }
-        }
 
         final String finalText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
         WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
             @Override
             public void run() {
                 editor.getDocument().insertString(0, finalText);
+                try {
+                    CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
 

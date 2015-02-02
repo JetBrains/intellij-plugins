@@ -105,17 +105,17 @@ public class StartLesson extends AnAction {
 
             showInfoPanel(editor);
 
+
             final Thread roboThread = new Thread("RoboThread") {
+
                 @Override
                 public void run() {
-
                     try {
-                        LessonProcessor.processLesson(lesson, editor, e, document, target, infoPanel);
+                        LessonProcessor.process(lesson, editor, e, document, target, infoPanel);
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
                     }
                 }
-
             };
             roboThread.start();
 
