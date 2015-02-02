@@ -10,10 +10,14 @@
 * Reducing redundant lockerEditor
 * Deep refactoring, introducing LessonProcessor
 
+February 1
+
+* Add traverse caret action to scenario
+
 //Plans
+* Modify to html description for infoPanel
 * Disposable
 * Shortcut Logger
-* Add traverse caret action to scenario
 * Implement 2 different courses
 
 //Far plans

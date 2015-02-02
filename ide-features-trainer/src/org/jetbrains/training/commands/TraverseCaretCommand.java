@@ -3,17 +3,16 @@ package org.jetbrains.training.commands;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.*;
-import com.intellij.openapi.editor.event.CaretListener;
-import com.intellij.openapi.editor.impl.CaretModelImpl;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.Command;
+import org.jetbrains.training.CommandFactory;
 import org.jetbrains.training.Lesson;
+import org.jetbrains.training.commands.util.PerformActionUtil;
 import org.jetbrains.training.graphics.DetailPanel;
 
-import java.util.List;
+import java.util.Queue;
+
+import static org.jetbrains.training.commands.util.PerformActionUtil.sleepHere;
 
 /**
  * Created by karashevich on 30/01/15.
@@ -25,7 +24,10 @@ public class TraverseCaretCommand extends Command {
     }
 
     @Override
-    public void execute(Element element, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
+    public void execute(Queue<Element> elements, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
+
+        Element element = elements.poll();
+        updateDescription(element, infoPanel, editor);
 
         boolean isTraversing = true;
         int delay = 20;
@@ -37,21 +39,17 @@ public class TraverseCaretCommand extends Command {
             delay = Integer.parseInt(element.getAttribute("delay").getValue());
         }
 
-        int i = 0;
-
-        Element elementDown = new Element("Action").setAttribute("action", "EditorDown").setAttribute("delay", Integer.toString(delay));
-        Element elementUp = new Element("Action").setAttribute("action", "EditorUp").setAttribute("delay", Integer.toString(delay));
-
         while (isTraversing) {
             isTraversing = !(editor.getCaretModel().getOffset() == stop);
-            Thread.sleep(delay);
+
+            sleepHere(editor, 2000);
             //If caret stay on different line than move down (or up)
             //Move caret down
             if (editor.getCaretModel().getVisualLineEnd() < stop) {
-                (new ActionCommand()).execute(elementDown, lesson, editor, e, document, target, infoPanel);
+                    PerformActionUtil.performAction("EditorDown");
             }  else if (editor.getCaretModel().getVisualLineStart() > stop) {
                 //Move caret up
-                (new ActionCommand()).execute(elementUp, lesson, editor, e, document, target, infoPanel);
+                    PerformActionUtil.performAction("EditorUp");
             } else {
                 final int j = editor.getCaretModel().getOffset();
                 //traverse caret inside
@@ -71,6 +69,13 @@ public class TraverseCaretCommand extends Command {
                     });
                 }
             }
+        }
+
+        //execute next
+        try {
+            CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
         }
     }
 }

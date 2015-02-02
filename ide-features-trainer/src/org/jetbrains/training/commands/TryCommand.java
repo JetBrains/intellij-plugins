@@ -12,6 +12,8 @@ import org.jetbrains.training.Command;
 import org.jetbrains.training.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
+import java.util.Queue;
+
 /**
  * Created by karashevich on 30/01/15.
  */
@@ -22,15 +24,15 @@ public class TryCommand extends Command {
     }
 
     @Override
-    public void execute(Element element, final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
+    public void execute(Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
 
+        Element element = elements.poll();
         updateDescription(element, infoPanel, editor);
-        updateButton(element, infoPanel, editor);
 
         final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, target);
         //TODO: Make recorder disposable
 
-        recorder.startRecording(new Runnable() {
+        recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
                 infoPanel.setText("Awesome, now you know how to duplicate lines easily!");
@@ -38,6 +40,7 @@ public class TryCommand extends Command {
                 lesson.pass();
             }
         });
+
 
 
     }
