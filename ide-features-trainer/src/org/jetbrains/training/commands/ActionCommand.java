@@ -75,9 +75,6 @@ public class ActionCommand extends Command {
         synchronized (editor){
             editor.wait();
         }
-        //To see result
-//        Thread.sleep(500);
-
     }
 
     /**

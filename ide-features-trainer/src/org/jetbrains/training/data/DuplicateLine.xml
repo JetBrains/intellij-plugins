@@ -13,22 +13,24 @@
 }</CopyText>
     <Text description="Let's print absolute value for x" btn="..."/>
     <Text description="Move caret to print line and" btn="..."/>
-    <TraverseCaret stop="180" delay="20"/>
+    <TraverseCaret stop="178" delay="20"/>
     <Action action="EditorDuplicate" delay="2000" balloon="type CMD + D to duplicate current string." description="tap CMD+D to duplicate current line"/>
     <Wait delay="200"/>
     <Text description="Cool, replace a with x"/>
     <TraverseCaret stop="271" delay="50"/>
-    <Action action="EditorDelete" delay="100"/>
-    <Wait delay="2000"/>
-    <TypeText>x</TypeText>
+    <Action action="EditorDelete" delay="100" description="deleting x"/>
+    <Wait delay="400"/>
+    <TypeText description="typing x">x</TypeText>
     <TraverseCaret stop="294" delay="50"/>
-    <Action action="EditorDelete" delay="100"/>
-    <Wait delay="500"/>
-    <TypeText>x</TypeText>
-    <Text description="That's it" btn="Try myself"/>
-    <Action action="EditorDelete" delay="100"/>
+    <Action action="EditorDelete" delay="50" description="deleting x"/>
+    <Wait delay="400"/>
+    <TypeText description="typing x">x</TypeText>
+    <Text description="That's it!" btn="let me try"/>
+    <Action action="EditorDelete" delay="50"/>
     <Action action="$SelectAll" delay="100"/>
+    <Wait delay="400"/>
     <Action action="$Delete" delay="100"/>
+    <Wait delay="400"/>
     <MoveCaret offset="0"/>
     <CopyText>public class JavaLessonExample {
 
