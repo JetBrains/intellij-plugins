@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.io.URLUtil;
 import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
@@ -51,7 +52,7 @@ public class DartConsoleFilter implements Filter {
     final VirtualFile file;
     switch (info.type) {
       case FILE:
-        file = LocalFileSystem.getInstance().findFileByPath(info.path);
+        file = LocalFileSystem.getInstance().findFileByPath(URLUtil.unescapePercentSequences(info.path));
         break;
       case DART:
         file = DartUrlResolver.findFileInDartSdkLibFolder(myProject, mySdk, DART_PREFIX + info.path);
