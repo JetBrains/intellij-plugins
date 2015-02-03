@@ -34,6 +34,7 @@ public class DartIconProvider extends IconProvider {
       }
       if (isFolderNearPubspecYaml(folder, "web")) return AllIcons.Nodes.WebFolder;
       if (isFolderNearPubspecYaml(folder, "test")) return AllIcons.Modules.TestSourceFolder;
+      if (isFolderNearPubspecYaml(folder, "tool")) return AllIcons.Nodes.KeymapTools;
       if (isFolderNearPubspecYaml(folder, "packages")) return DartIcons.Package_root;
       if (isFolderNearPubspecYaml(folder.getParent(), "packages")) {
         final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(element.getProject()).getFileIndex();
