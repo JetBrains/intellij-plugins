@@ -46,10 +46,10 @@ public class TraverseCaretCommand extends Command {
             //If caret stay on different line than move down (or up)
             //Move caret down
             if (editor.getCaretModel().getVisualLineEnd() < stop) {
-                    PerformActionUtil.performAction("EditorDown");
+                PerformActionUtil.performAction("EditorDown", editor);
             }  else if (editor.getCaretModel().getVisualLineStart() > stop) {
                 //Move caret up
-                    PerformActionUtil.performAction("EditorUp");
+                PerformActionUtil.performAction("EditorUp", editor);
             } else {
                 final int j = editor.getCaretModel().getOffset();
                 //traverse caret inside

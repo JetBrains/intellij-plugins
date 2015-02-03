@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.util.Alarm;
@@ -65,13 +66,29 @@ public class PerformActionUtil {
         am.tryToExecute(targetAction, inputEvent, null, null, false).doWhenDone(actionCallBack);
     }
 
-    public static void performAction(String actionName){
+    public static void performAction(String actionName, final Editor editor) throws InterruptedException {
         final ActionManager am = ActionManager.getInstance();
         final AnAction targetAction = am.getAction(actionName);
         final InputEvent inputEvent = getInputEvent(actionName);
 
-        am.tryToExecute(targetAction, inputEvent, null, null, false);
 
+        WriteCommandAction.runWriteCommandAction(editor.getProject(), new Runnable() {
+            @Override
+            public void run() {
+                am.tryToExecute(targetAction, inputEvent, null, null, false).doWhenDone(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.err.println("try to execute");
+                        synchronized (editor) {
+                            editor.notify();
+                        }
+                    }
+                });
+            }
+        });
+        synchronized (editor) {
+            editor.wait();
+        }
     }
 
     public static void sleepHere(final Editor editor, final int delay) throws InterruptedException {
