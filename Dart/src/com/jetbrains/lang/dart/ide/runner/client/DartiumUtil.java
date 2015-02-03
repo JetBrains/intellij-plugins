@@ -21,7 +21,7 @@ public class DartiumUtil {
 
   private static final String DART_FLAGS_ENV_VAR = "DART_FLAGS";
   public static final String CHECKED_MODE_OPTION = "--checked";
-  public static final String ENABLE_ASYNC_OPTION = "--enable-async";
+  private static final String ENABLE_ASYNC_OPTION = "--enable-async";
 
   private static final UUID DARTIUM_ID = UUID.fromString("BFEE1B69-A97D-4338-8BA4-25170ADCBAA6");
   private static final String DARTIUM_NAME = "Dartium";
@@ -92,37 +92,45 @@ public class DartiumUtil {
   }
 
   public static boolean isCheckedMode(@NotNull final Map<String, String> envVars) {
+    return hasDartFlag(envVars, CHECKED_MODE_OPTION);
+  }
+
+  private static boolean hasDartFlag(final Map<String, String> envVars, final String dartFlag) {
     final String dartFlags = envVars.get(DART_FLAGS_ENV_VAR);
-    return dartFlags != null && (dartFlags.trim().equals(CHECKED_MODE_OPTION) ||
-                                 dartFlags.startsWith(CHECKED_MODE_OPTION + " ") ||
-                                 dartFlags.endsWith(" " + CHECKED_MODE_OPTION) ||
-                                 dartFlags.contains(" " + CHECKED_MODE_OPTION + " "));
+    return dartFlags != null && (dartFlags.trim().equals(dartFlag) ||
+                                 dartFlags.startsWith(dartFlag + " ") ||
+                                 dartFlags.endsWith(" " + dartFlag) ||
+                                 dartFlags.contains(" " + dartFlag + " "));
   }
 
   public static void setCheckedMode(@NotNull final Map<String, String> envVars, final boolean checkedMode) {
-    final boolean oldCheckedMode = isCheckedMode(envVars);
-    if (oldCheckedMode == checkedMode) return;
+    setDartFlagState(envVars, CHECKED_MODE_OPTION, checkedMode);
+  }
+
+  private static void setDartFlagState(final Map<String, String> envVars, final String dartFlag, final boolean flagState) {
+    final boolean oldFlagState = hasDartFlag(envVars, dartFlag);
+    if (oldFlagState == flagState) return;
 
     final String dartFlags = envVars.get(DART_FLAGS_ENV_VAR);
-    if (checkedMode) {
+    if (flagState) {
       if (dartFlags == null) {
-        envVars.put(DART_FLAGS_ENV_VAR, CHECKED_MODE_OPTION);
+        envVars.put(DART_FLAGS_ENV_VAR, dartFlag);
       }
       else {
-        envVars.put(DART_FLAGS_ENV_VAR, dartFlags + " " + CHECKED_MODE_OPTION);
+        envVars.put(DART_FLAGS_ENV_VAR, dartFlags + " " + dartFlag);
       }
     }
     else {
       String newFlags = dartFlags;
-      if (newFlags.trim().equals(CHECKED_MODE_OPTION)) {
+      if (newFlags.trim().equals(dartFlag)) {
         newFlags = "";
       }
-      newFlags = StringUtil.trimStart(newFlags, CHECKED_MODE_OPTION + " ");
-      newFlags = StringUtil.trimEnd(newFlags, " " + CHECKED_MODE_OPTION);
-      final int index = newFlags.indexOf(" " + CHECKED_MODE_OPTION + " ");
+      newFlags = StringUtil.trimStart(newFlags, dartFlag + " ");
+      newFlags = StringUtil.trimEnd(newFlags, " " + dartFlag);
+      final int index = newFlags.indexOf(" " + dartFlag + " ");
       if (index != -1) {
         // keep one space between parts
-        newFlags = newFlags.substring(0, index) + newFlags.substring(index + CHECKED_MODE_OPTION.length() + 1);
+        newFlags = newFlags.substring(0, index) + newFlags.substring(index + dartFlag.length() + 1);
       }
 
       if (StringUtil.isEmptyOrSpaces(newFlags)) {
@@ -134,26 +142,12 @@ public class DartiumUtil {
     }
   }
 
-  public static void enableAsyncSupport() {
+  public static void removeUnsupportedAsyncFlag() {
     final WebBrowser dartium = getDartiumBrowser();
     final BrowserSpecificSettings browserSpecificSettings = dartium == null ? null : dartium.getSpecificSettings();
     if (!(browserSpecificSettings instanceof ChromeSettings)) return;
 
     final Map<String, String> envVars = browserSpecificSettings.getEnvironmentVariables();
-    final String dartFlags = envVars.get(DART_FLAGS_ENV_VAR);
-
-    if (dartFlags == null) {
-      envVars.put(DART_FLAGS_ENV_VAR, ENABLE_ASYNC_OPTION);
-      return;
-    }
-
-    if (dartFlags.trim().equals(ENABLE_ASYNC_OPTION) ||
-        dartFlags.startsWith(ENABLE_ASYNC_OPTION + " ") ||
-        dartFlags.endsWith(" " + ENABLE_ASYNC_OPTION) ||
-        dartFlags.contains(" " + ENABLE_ASYNC_OPTION + " ")) {
-      return; // already set
-    }
-
-    envVars.put(DART_FLAGS_ENV_VAR, dartFlags + " " + ENABLE_ASYNC_OPTION);
+    setDartFlagState(envVars, ENABLE_ASYNC_OPTION, false);
   }
 }
