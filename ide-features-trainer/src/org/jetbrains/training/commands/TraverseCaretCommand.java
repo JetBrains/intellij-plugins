@@ -42,7 +42,7 @@ public class TraverseCaretCommand extends Command {
         while (isTraversing) {
             isTraversing = !(editor.getCaretModel().getOffset() == stop);
 
-            sleepHere(editor, 2000);
+            sleepHere(editor, 20);
             //If caret stay on different line than move down (or up)
             //Move caret down
             if (editor.getCaretModel().getVisualLineEnd() < stop) {
@@ -54,19 +54,10 @@ public class TraverseCaretCommand extends Command {
                 final int j = editor.getCaretModel().getOffset();
                 //traverse caret inside
                 if (j > stop) {
-                    WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
-                        @Override
-                        public void run() {
                             editor.getCaretModel().moveToOffset(j - 1);
-                        }
-                    });
+
                 } else if (j < stop) {
-                    WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
-                        @Override
-                        public void run() {
                             editor.getCaretModel().moveToOffset(j + 1);
-                        }
-                    });
                 }
             }
         }

@@ -56,7 +56,7 @@ public class ActionCommand extends Command {
                             @Override
                             public void run() {
                                 try {
-                                    CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
+                                        CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
                                 } catch (InterruptedException e1) {
                                     e1.printStackTrace();
                                 }

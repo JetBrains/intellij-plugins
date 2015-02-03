@@ -35,25 +35,51 @@ public class WaitCommand extends Command {
         }
 
         final int finalDelay = delay;
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
+//                (new Alarm(Alarm.ThreadToUse.POOLED_THREAD)).addRequest(new Runnable() {
+//
+//                    @Override
+//
+//                    public void run() {
+//                        synchronized (editor) {
+//                            try {
+//                                CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
+//                            } catch (InterruptedException e1) {
+//                                e1.printStackTrace();
+//                            }
+//                        }
+//                    }
+//                }, finalDelay);
+//                synchronized (editor) {
+//                    editor.wait();
+//                }
+
+        final int finalDelay1 = delay;
+        Thread sleepThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                (new Alarm()).addRequest(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        synchronized (editor) {
-                            try {
-                                CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            }
-                        }
+                synchronized (editor) {
+                    try {
+                        System.err.println("run");
+                        Thread.sleep(finalDelay1);
+                        editor.notifyAll();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                }, finalDelay);
+                }
             }
-
         });
-    }
 
+        sleepThread.start();
+        synchronized(editor){
+            System.err.println("wait");
+            editor.wait();
+            CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
+            System.err.println("stop wait");
+        }
+        sleepThread.join();
+
+
+
+
+    }
 }

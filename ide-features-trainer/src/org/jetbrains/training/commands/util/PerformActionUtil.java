@@ -4,10 +4,12 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.ide.PooledThreadExecutor;
 
 import javax.swing.*;
 import java.awt.event.InputEvent;
@@ -60,7 +62,7 @@ public class PerformActionUtil {
         final AnAction targetAction = am.getAction(actionName);
         final InputEvent inputEvent = getInputEvent(actionName);
 
-        am.tryToExecute(targetAction, inputEvent, null, null, true).doWhenDone(actionCallBack);
+        am.tryToExecute(targetAction, inputEvent, null, null, false).doWhenDone(actionCallBack);
     }
 
     public static void performAction(String actionName){
@@ -68,29 +70,54 @@ public class PerformActionUtil {
         final AnAction targetAction = am.getAction(actionName);
         final InputEvent inputEvent = getInputEvent(actionName);
 
-        am.tryToExecute(targetAction, inputEvent, null, null, true);
+        am.tryToExecute(targetAction, inputEvent, null, null, false);
+
     }
 
-    public static void sleepHere(final Editor editor, int delay) {
-        Alarm alarm = new Alarm();
-        boolean sleeped = false;
+    public static void sleepHere(final Editor editor, final int delay) throws InterruptedException {
 
-            alarm.addRequest(new Runnable() {
-                @Override
-                public void run() {
-                    synchronized (editor) {
-                        editor.notifyAll();
+        Thread sleepThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (editor) {
+                    try {
+                        System.err.println("run");
+                        Thread.sleep(delay);
+                        editor.notify();
+                        System.err.println("stop");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
-            }, delay);
-
-        synchronized(editor) {
-            while(!sleeped) {
-                try {
-                    editor.wait();
-                } catch (InterruptedException e) {
-                }
             }
+        });
+
+        sleepThread.start();
+        synchronized(editor){
+            System.err.println("wait");
+            editor.wait();
+            System.err.println("stop wait");
         }
+        sleepThread.join();
+
+
+//        alarm.addRequest(new Runnable() {
+//            @Override
+//            public void run() {
+//                synchronized (editor) {
+//                    System.err.println("run");
+//                    editor.notifyAll();
+//                }
+//            }
+//        }, delay);
+//
+//        synchronized(editor) {
+//                try {
+//                    System.err.println("waited");
+//                    editor.wait();
+//                    System.err.println("stop waited");
+//                } catch (InterruptedException e) {
+//            }
+//        }
     }
 }
