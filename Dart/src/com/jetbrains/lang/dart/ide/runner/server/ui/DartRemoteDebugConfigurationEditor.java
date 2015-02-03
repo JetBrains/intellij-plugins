@@ -55,7 +55,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
     myPortField.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(final ChangeEvent e) {
-        myVMArgsArea.setText("--debug:" + myPortField.getNumber());
+        updateVmArgs();
       }
     });
 
@@ -144,12 +144,17 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
     return myMainPanel;
   }
 
+  private void updateVmArgs() {
+    myVMArgsArea.setText("--debug:" + myPortField.getNumber() + " --break-at-isolate-spawn");
+  }
+
   @Override
   protected void resetEditorFrom(@NotNull final DartRemoteDebugConfiguration config) {
     final DartRemoteDebugParameters params = config.getParameters();
     myHostField.setText(params.getHost());
     myPortField.setNumber(params.getPort());
     setSelectedProjectPath(params.getDartProjectPath());
+    updateVmArgs();
   }
 
   private void setSelectedProjectPath(@NotNull final String projectPath) {
