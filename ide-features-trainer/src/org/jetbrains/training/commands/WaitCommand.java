@@ -1,14 +1,10 @@
 package org.jetbrains.training.commands;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.util.Alarm;
 import org.jdom.Element;
 import org.jetbrains.training.Command;
-import org.jetbrains.training.CommandFactory;
 import org.jetbrains.training.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
@@ -73,13 +69,10 @@ public class WaitCommand extends Command {
         synchronized(editor){
             System.err.println("wait");
             editor.wait();
-            CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
+            startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
             System.err.println("stop wait");
         }
         sleepThread.join();
-
-
-
 
     }
 }

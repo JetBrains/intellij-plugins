@@ -1,6 +1,7 @@
 package org.jetbrains.training.graphics;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.util.ui.UIUtil;
@@ -160,16 +161,12 @@ public class DetailPanel extends JPanel{
         g2.dispose();
     }
 
-    public void addButtonAction(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel) throws InterruptedException {
+    public void addButtonAction(final Runnable action) throws InterruptedException {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                try {
                     btn.removeActionListener(this);
-                    CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
+                    action.run();
             }
         });
     }
