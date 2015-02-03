@@ -13,6 +13,6 @@
     <orderEntry type="module" module-name="platform-api" />
     <orderEntry type="library" name="XmlRPC" level="project" />
     <orderEntry type="module" module-name="platform-impl" />
+    <orderEntry type="module" module-name="built-in-server" />
   </component>
 </module>
-
