@@ -3,6 +3,7 @@
 <script type="application/dart">
   class Foo extends Bar<Baz> {
 
+      @override
       Baz find(boolean condition(Baz item)) {
           <caret>
       }

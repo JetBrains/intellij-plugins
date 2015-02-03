@@ -1,5 +1,6 @@
 class Implement1 implements IFoo<Bar> {
 
+  @override
   Bar getFoo() {
     <caret>
   }

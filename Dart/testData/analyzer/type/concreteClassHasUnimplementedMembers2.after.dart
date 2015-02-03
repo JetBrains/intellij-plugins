@@ -5,6 +5,7 @@ abstract class I {
 class A implements I {
   get foo => 0;
 
+  @override
   set foo(x) {
     
   }

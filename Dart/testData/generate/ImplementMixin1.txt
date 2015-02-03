@@ -17,6 +17,7 @@ abstract class Warrior extends Object with Persistence {
 
 class Ninja extends Warrior {
 
+  @override
   Object toJson() {
     <caret>
   }
