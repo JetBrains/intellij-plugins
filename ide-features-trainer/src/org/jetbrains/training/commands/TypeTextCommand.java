@@ -47,11 +47,8 @@ public class TypeTextCommand extends Command {
         }
 
         //execute next
-        try {
-            CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-        }
+        startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
+
     }
 
 }

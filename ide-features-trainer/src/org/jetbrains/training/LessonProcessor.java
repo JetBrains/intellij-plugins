@@ -7,6 +7,7 @@ import org.jdom.Element;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.util.Queue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
@@ -36,7 +37,7 @@ public class LessonProcessor {
 //        }
 //    }
 
-    public static void process(final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
+    public static void process(final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException, ExecutionException {
 
         Queue<Element> elements = new LinkedBlockingQueue<Element>();
         if (lesson.getScn().equals(null)) {

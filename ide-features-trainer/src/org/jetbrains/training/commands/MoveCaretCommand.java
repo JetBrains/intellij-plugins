@@ -30,17 +30,7 @@ public class MoveCaretCommand extends Command {
         final String offsetString =(element.getAttribute("offset").getValue());
         final int offset = Integer.parseInt(offsetString);
 
-        WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
-            @Override
-            public void run() {
-                editor.getCaretModel().moveToOffset(offset);
-                try {
-                    CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        });
+        startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
 
     }
 

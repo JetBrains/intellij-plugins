@@ -1,13 +1,12 @@
 package org.jetbrains.training.commands.util;
 
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.KeyboardShortcut;
-import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.keymap.KeymapManager;
+import com.intellij.openapi.util.ActionCallback;
+import com.intellij.openapi.util.Computable;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.ide.PooledThreadExecutor;
@@ -16,7 +15,7 @@ import javax.swing.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,6 +27,7 @@ public class PerformActionUtil {
 
     /**
      * Some util method for <i>performAction</i> method
+     *
      * @param actionName - please see it in <i>performAction</i> method
      * @return
      */
@@ -36,7 +36,7 @@ public class PerformActionUtil {
         KeyStroke keyStroke = null;
         for (Shortcut each : shortcuts) {
             if (each instanceof KeyboardShortcut) {
-                keyStroke = ((KeyboardShortcut)each).getFirstKeyStroke();
+                keyStroke = ((KeyboardShortcut) each).getFirstKeyStroke();
                 if (keyStroke != null) break;
             }
         }
@@ -56,40 +56,76 @@ public class PerformActionUtil {
 
     /**
      * performing internal platform action
+     *
      * @param actionName - name of IntelliJ Action. For full list please see http://git.jetbrains.org/?p=idea/community.git;a=blob;f=platform/platform-api/src/com/intellij/openapi/actionSystem/IdeActions.java;hb=HEAD
      */
-    public static void performAction(String actionName, Runnable actionCallBack){
+    public static void performAction(String actionName, final Editor editor, final AnActionEvent e, Runnable runnable) throws InterruptedException {
         final ActionManager am = ActionManager.getInstance();
         final AnAction targetAction = am.getAction(actionName);
         final InputEvent inputEvent = getInputEvent(actionName);
+        final ProcessedBefore processedBefore = new ProcessedBefore(false);
 
-        am.tryToExecute(targetAction, inputEvent, null, null, false).doWhenDone(actionCallBack);
-    }
-
-    public static void performAction(String actionName, final Editor editor) throws InterruptedException {
-        final ActionManager am = ActionManager.getInstance();
-        final AnAction targetAction = am.getAction(actionName);
-        final InputEvent inputEvent = getInputEvent(actionName);
-
-
-        WriteCommandAction.runWriteCommandAction(editor.getProject(), new Runnable() {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                am.tryToExecute(targetAction, inputEvent, null, null, false).doWhenDone(new Runnable() {
+                WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
                     @Override
                     public void run() {
-                        System.err.println("try to execute");
-                        synchronized (editor) {
-                            editor.notify();
-                        }
+                        am.tryToExecute(targetAction, inputEvent, null, null, true).doWhenDone(new Runnable() {
+                            @Override
+                            public void run() {
+                                synchronized (editor) {
+                                    processedBefore.setTrue();
+                                    editor.notifyAll();
+                                }
+                            }
+                        });
                     }
                 });
             }
         });
-        synchronized (editor) {
-            editor.wait();
+        if (!processedBefore.isPrBefore()) {
+            synchronized (editor){
+                editor.wait();
+            }
+        }
+        runnable.run();
+    }
+
+    public static void performAction(final String actionName, final Editor editor, final AnActionEvent e) throws InterruptedException, ExecutionException {
+
+        final ActionManager am = ActionManager.getInstance();
+        final AnAction targetAction = am.getAction(actionName);
+        final InputEvent inputEvent = getInputEvent(actionName);
+        final ProcessedBefore processedBefore = new ProcessedBefore(false);
+
+
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
+                    @Override
+                    public void run() {
+                        am.tryToExecute(targetAction, inputEvent, null, null, true).doWhenDone(new Runnable() {
+                            @Override
+                            public void run() {
+                                synchronized (editor) {
+                                    processedBefore.setTrue();
+                                    editor.notifyAll();
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        if (!processedBefore.isPrBefore()) {
+            synchronized (editor){
+                editor.wait();
+            }
         }
     }
+
 
     public static void sleepHere(final Editor editor, final int delay) throws InterruptedException {
 
