@@ -17,6 +17,7 @@ import org.jetbrains.training.graphics.DetailPanel;
 
 import java.awt.*;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 import static org.jetbrains.training.commands.util.PerformActionUtil.performAction;
 
@@ -30,7 +31,7 @@ public class ActionCommand extends Command {
     }
 
     @Override
-    public void execute(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel) throws InterruptedException {
+    public void execute(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel) throws InterruptedException, ExecutionException {
 
         final Element element = elements.poll();
 
@@ -55,11 +56,7 @@ public class ActionCommand extends Command {
                         showBalloon(editor, balloonText, e, delay, actionType, new Runnable(){
                             @Override
                             public void run() {
-                                try {
-                                        CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
-                                } catch (InterruptedException e1) {
-                                    e1.printStackTrace();
-                                }
+                                startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
                             }
                         });
                     } catch (InterruptedException e1) {
@@ -68,44 +65,32 @@ public class ActionCommand extends Command {
                 }
             });
         } else {
-            performAction(actionType, new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            });
+            performAction(actionType, editor, e);
+            startNextCommand(elements, lesson, editor, e, document, target, infoPanel);
         }
 
     }
 
-    private static void performMyAction(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel, final String actionType) {
-        WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
-            @Override
-            public void run() {
-                performAction(actionType, new Runnable() {
-                    @Override
-                    public void run() {
-                        //execute next
-                        try {
-                            CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
-                        } catch (InterruptedException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
-    }
+//    private void performMyAction(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel, final String actionType) {
+//        WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
+//            @Override
+//            public void run() {
+//                performAction(actionType, new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        //execute next
+//                            startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
+//                    }
+//                });
+//            }
+//        });
+//    }
 
     /**
      * @param e
      * @param editor - editor where to show balloon, also uses for locking while balloon appearing
      */
-    private static void showBalloon(Editor editor, String balloonText, final AnActionEvent e, final int delay, final String actionType, final Runnable actionCallBack) throws InterruptedException {
+    private static void showBalloon(final Editor editor, String balloonText, final AnActionEvent e, final int delay, final String actionType, final Runnable runnable) throws InterruptedException {
         FileEditorManager instance = FileEditorManager.getInstance(e.getProject());
         if (instance == null) return;
         if (editor == null) return;
@@ -145,7 +130,11 @@ public class ActionCommand extends Command {
                 WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
                     @Override
                     public void run() {
-                        performAction(actionType, actionCallBack);
+                        try {
+                            performAction(actionType, editor, e, runnable);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
                     }
                 });
             }

@@ -11,6 +11,7 @@ import org.jetbrains.training.commands.util.PerformActionUtil;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.util.Queue;
+import java.util.concurrent.ExecutionException;
 
 import static org.jetbrains.training.commands.util.PerformActionUtil.sleepHere;
 
@@ -24,7 +25,7 @@ public class TraverseCaretCommand extends Command {
     }
 
     @Override
-    public void execute(Queue<Element> elements, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
+    public void execute(Queue<Element> elements, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException, ExecutionException {
 
         Element element = elements.poll();
         updateDescription(element, infoPanel, editor);
@@ -42,14 +43,14 @@ public class TraverseCaretCommand extends Command {
         while (isTraversing) {
             isTraversing = !(editor.getCaretModel().getOffset() == stop);
 
-            sleepHere(editor, 20);
+//            sleepHere(editor, 20);
             //If caret stay on different line than move down (or up)
             //Move caret down
             if (editor.getCaretModel().getVisualLineEnd() < stop) {
-                PerformActionUtil.performAction("EditorDown", editor);
+                PerformActionUtil.performAction("EditorDown", editor, e);
             }  else if (editor.getCaretModel().getVisualLineStart() > stop) {
                 //Move caret up
-                PerformActionUtil.performAction("EditorUp", editor);
+                PerformActionUtil.performAction("EditorUp", editor, e);
             } else {
                 final int j = editor.getCaretModel().getOffset();
                 //traverse caret inside
@@ -63,10 +64,6 @@ public class TraverseCaretCommand extends Command {
         }
 
         //execute next
-        try {
-            CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-        }
+        startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
     }
 }

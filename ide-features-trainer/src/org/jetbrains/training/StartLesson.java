@@ -27,11 +27,13 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.graphics.DetailPanel;
+import org.jetbrains.training.sandbox.TestProcessor;
 
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 17/12/14.
@@ -112,7 +114,11 @@ public class StartLesson extends AnAction {
                 public void run() {
                     try {
                         LessonProcessor.process(lesson, editor, e, document, target, infoPanel);
+//                        TestProcessor.process(lesson, editor, e, document, target, infoPanel);
+
                     } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    } catch (ExecutionException e1) {
                         e1.printStackTrace();
                     }
                 }
