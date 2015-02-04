@@ -10,6 +10,7 @@ import org.jetbrains.training.Command;
 import org.jetbrains.training.CommandFactory;
 import org.jetbrains.training.Lesson;
 import org.jetbrains.training.commands.util.PerformActionUtil;
+import org.jetbrains.training.commands.util.TraverseProcessor;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.util.Queue;
@@ -45,10 +46,11 @@ public class TestProcessor {
             }
         });
 
+        Thread.sleep(200);
 
-        for (int i = 0; i < 100; i++) {
-            PerformActionUtil.performAction("EditorDown", editor, e);
-        }
+        TraverseProcessor traverseProcessor = new TraverseProcessor(editor, 178, e);
+        traverseProcessor.process();
+
 
     }
 
