@@ -19,7 +19,7 @@
     <Text description="Cool, replace a with x" btn="..."/>
     <TraverseCaret stop="271" delay="50"/>
     <Action action="EditorDelete" delay="100" description="deleting x"/>
-    <Wait delay="400"/>
+    <Wait delay="300"/>
     <TypeText description="typing x">x</TypeText>
     <TraverseCaret stop="294" delay="50"/>
     <Action action="EditorDelete" delay="50" description="deleting x"/>
