@@ -1,6 +1,9 @@
 package org.jetbrains.training.commands;
 
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.*;
 import org.jdom.Element;
@@ -10,6 +13,7 @@ import org.jetbrains.training.Lesson;
 import org.jetbrains.training.commands.util.PerformActionUtil;
 import org.jetbrains.training.graphics.DetailPanel;
 
+import java.awt.event.InputEvent;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 
@@ -25,12 +29,11 @@ public class TraverseCaretCommand extends Command {
     }
 
     @Override
-    public void execute(Queue<Element> elements, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException, ExecutionException {
+    public void execute(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel) throws InterruptedException, ExecutionException {
 
         Element element = elements.poll();
         updateDescription(element, infoPanel, editor);
 
-        boolean isTraversing = true;
         int delay = 20;
 
         final String stopString = (element.getAttribute("stop").getValue());
@@ -40,30 +43,82 @@ public class TraverseCaretCommand extends Command {
             delay = Integer.parseInt(element.getAttribute("delay").getValue());
         }
 
-        while (isTraversing) {
-            isTraversing = !(editor.getCaretModel().getOffset() == stop);
+        TraverseProcessor traverseProcessor = new TraverseProcessor(editor, stop, e) {
+            @Override
+            public void runCommand() {
+                startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
+            }
+        };
 
-//            sleepHere(editor, 20);
-            //If caret stay on different line than move down (or up)
-            //Move caret down
-            if (editor.getCaretModel().getVisualLineEnd() < stop) {
-                PerformActionUtil.performAction("EditorDown", editor, e);
-            }  else if (editor.getCaretModel().getVisualLineStart() > stop) {
-                //Move caret up
-                PerformActionUtil.performAction("EditorUp", editor, e);
-            } else {
-                final int j = editor.getCaretModel().getOffset();
-                //traverse caret inside
-                if (j > stop) {
+        traverseProcessor.process();
+
+        //execute next
+    }
+
+
+    private abstract class TraverseProcessor{
+
+        final private Editor editor;
+        final private int destinationOfsset;
+        final private AnActionEvent anActionEvent;
+
+        public TraverseProcessor(Editor editor, int destinationOfsset, AnActionEvent anActionEvent) {
+            this.editor = editor;
+            this.destinationOfsset = destinationOfsset;
+            this.anActionEvent = anActionEvent;
+        }
+
+        public void process() {
+            //Try to replace with invokeLater
+            ApplicationManager.getApplication().invokeLater(new TraverseRunnable());
+        }
+
+
+        private class TraverseRunnable implements Runnable {
+            @Override
+            public void run() {
+                if (editor.getCaretModel().getOffset() != destinationOfsset) {
+                    if (editor.getCaretModel().getVisualLineEnd() < destinationOfsset) {
+                        performAction("EditorDown", anActionEvent, new TraverseRunnable());
+                    } else if (editor.getCaretModel().getVisualLineStart() > destinationOfsset) {
+                        //Move caret up
+                        performAction("EditorUp", anActionEvent, new TraverseRunnable());
+                    } else {
+                        final int j = editor.getCaretModel().getOffset();
+                        //traverse caret inside
+                        if (j > destinationOfsset) {
                             editor.getCaretModel().moveToOffset(j - 1);
-
-                } else if (j < stop) {
+                            (new TraverseRunnable()).run();
+                        } else if (j < destinationOfsset) {
                             editor.getCaretModel().moveToOffset(j + 1);
+                            (new TraverseRunnable()).run();
+                        }
+                    }
+                } else {
+
                 }
             }
         }
 
-        //execute next
-        startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
+        private void performAction(String actionName, final AnActionEvent e, final Runnable runnable) {
+            final ActionManager am = ActionManager.getInstance();
+            final AnAction targetAction = am.getAction(actionName);
+            final InputEvent inputEvent = PerformActionUtil.getInputEvent(actionName);
+
+            ApplicationManager.getApplication().invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
+                        @Override
+                        public void run() {
+                            am.tryToExecute(targetAction, inputEvent, null, null, false).doWhenDone(new TraverseRunnable());
+                        }
+                    });
+                }
+            });
+        }
+
+        public abstract void runCommand();
+
     }
 }

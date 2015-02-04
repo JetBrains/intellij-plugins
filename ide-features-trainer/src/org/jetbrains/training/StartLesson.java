@@ -26,6 +26,7 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.commands.util.TraverseProcessor;
 import org.jetbrains.training.graphics.DetailPanel;
 import org.jetbrains.training.sandbox.TestProcessor;
 
@@ -108,22 +109,30 @@ public class StartLesson extends AnAction {
             showInfoPanel(editor);
 
 
-            final Thread roboThread = new Thread("RoboThread") {
+//            final Thread roboThread = new Thread("RoboThread") {
 
-                @Override
-                public void run() {
-                    try {
+//                @Override
+//                public void run() {
                         LessonProcessor.process(lesson, editor, e, document, target, infoPanel);
 //                        TestProcessor.process(lesson, editor, e, document, target, infoPanel);
 
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    } catch (ExecutionException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            };
-            roboThread.start();
+//                        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                for (int i = 0; i < 1000; i++) {
+//                                    try {
+//                                        Thread.sleep(1000);
+//                                    } catch (InterruptedException e1) {
+//                                        e1.printStackTrace();
+//                                    }
+//                                    System.err.println("Processing: " + i);
+//                                }
+//                            }
+//                        });
+
+//                }
+//            };
+//            roboThread.start();
 
 
         } catch (BadLessonException ble) {
@@ -132,6 +141,10 @@ public class StartLesson extends AnAction {
             bce.printStackTrace();
         } catch (IOException ioe) {
             ioe.printStackTrace();
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        } catch (ExecutionException e1) {
+            e1.printStackTrace();
         }
     }
 
