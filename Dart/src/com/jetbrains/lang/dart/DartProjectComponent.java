@@ -25,6 +25,7 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -55,8 +56,16 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
   private static final String DARTIUM_CHECKED_MODE_INITIALLY_ENABLED_KEY = "DARTIUM_CHECKED_MODE_INITIALLY_ENABLED";
 
-  protected DartProjectComponent(final Project project) {
+  @NotNull private final PsiManager myPsiManager;
+
+  protected DartProjectComponent(@NotNull final Project project, @NotNull PsiManager psiManager) {
     super(project);
+    myPsiManager = psiManager;
+  }
+
+  @Override
+  public void initComponent() {
+    new DartPsiTreeChangePreprocessor(myPsiManager);
   }
 
   public void projectOpened() {
