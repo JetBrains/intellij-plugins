@@ -3,6 +3,7 @@ package org.jetbrains.training.commands;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.util.Alarm;
 import org.jdom.Element;
 import org.jetbrains.training.Command;
 import org.jetbrains.training.Lesson;
@@ -31,48 +32,12 @@ public class WaitCommand extends Command {
         }
 
         final int finalDelay = delay;
-//                (new Alarm(Alarm.ThreadToUse.POOLED_THREAD)).addRequest(new Runnable() {
-//
-//                    @Override
-//
-//                    public void run() {
-//                        synchronized (editor) {
-//                            try {
-//                                CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
-//                            } catch (InterruptedException e1) {
-//                                e1.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                }, finalDelay);
-//                synchronized (editor) {
-//                    editor.wait();
-//                }
-
-        final int finalDelay1 = delay;
-        Thread sleepThread = new Thread(new Runnable() {
+        (new Alarm()).addRequest(new Runnable() {
             @Override
             public void run() {
-                synchronized (editor) {
-                    try {
-                        System.err.println("run");
-                        Thread.sleep(finalDelay1);
-                        editor.notifyAll();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                startNextCommand(elements, lesson, editor, e, document, target, infoPanel);
             }
-        });
-
-        sleepThread.start();
-        synchronized(editor){
-            System.err.println("wait");
-            editor.wait();
-            startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
-            System.err.println("stop wait");
-        }
-        sleepThread.join();
+        }, finalDelay);
 
     }
 }
