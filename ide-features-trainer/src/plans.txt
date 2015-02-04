@@ -14,7 +14,15 @@ February 1
 
 * Add traverse caret action to scenario
 
+February 3
+
+* Migrated to commandQueue
+* Fixed traverseCaret and actionCommand
+
 //Plans
+* Merge 2 branches
+* Fix delays in traverse()
+* Fix delays in actionCommand()
 * Modify to html description for infoPanel
 * Disposable
 * Shortcut Logger
