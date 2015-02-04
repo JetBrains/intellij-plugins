@@ -34,7 +34,7 @@ public class TraverseCaretCommand extends Command {
         Element element = elements.poll();
         updateDescription(element, infoPanel, editor);
 
-        int delay = 20;
+        int delay = 100;
 
         final String stopString = (element.getAttribute("stop").getValue());
         final int stop = Integer.parseInt(stopString);
@@ -43,7 +43,7 @@ public class TraverseCaretCommand extends Command {
             delay = Integer.parseInt(element.getAttribute("delay").getValue());
         }
 
-        TraverseProcessor traverseProcessor = new TraverseProcessor(editor, stop, e) {
+        TraverseProcessor traverseProcessor = new TraverseProcessor(editor, stop, e, delay) {
             @Override
             public void runCommand() {
                 startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
@@ -52,7 +52,6 @@ public class TraverseCaretCommand extends Command {
 
         traverseProcessor.process();
 
-        //execute next
     }
 
 
@@ -61,11 +60,13 @@ public class TraverseCaretCommand extends Command {
         final private Editor editor;
         final private int destinationOfsset;
         final private AnActionEvent anActionEvent;
+        final int delay;
 
-        public TraverseProcessor(Editor editor, int destinationOfsset, AnActionEvent anActionEvent) {
+        public TraverseProcessor(Editor editor, int destinationOfsset, AnActionEvent anActionEvent, int delay) {
             this.editor = editor;
             this.destinationOfsset = destinationOfsset;
             this.anActionEvent = anActionEvent;
+            this.delay = delay;
         }
 
         public void process() {
@@ -77,6 +78,11 @@ public class TraverseCaretCommand extends Command {
         private class TraverseRunnable implements Runnable {
             @Override
             public void run() {
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 if (editor.getCaretModel().getOffset() != destinationOfsset) {
                     if (editor.getCaretModel().getVisualLineEnd() < destinationOfsset) {
                         performAction("EditorDown", anActionEvent, new TraverseRunnable());
@@ -95,7 +101,7 @@ public class TraverseCaretCommand extends Command {
                         }
                     }
                 } else {
-
+                    runCommand();
                 }
             }
         }

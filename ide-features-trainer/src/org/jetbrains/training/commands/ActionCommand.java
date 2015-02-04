@@ -65,26 +65,15 @@ public class ActionCommand extends Command {
                 }
             });
         } else {
-            performAction(actionType, editor, e);
-            startNextCommand(elements, lesson, editor, e, document, target, infoPanel);
+            performAction(actionType, editor, e, new Runnable() {
+                @Override
+                public void run() {
+                    startNextCommand(elements, lesson, editor, e, document, target, infoPanel);
+                }
+            });
         }
 
     }
-
-//    private void performMyAction(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel, final String actionType) {
-//        WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
-//            @Override
-//            public void run() {
-//                performAction(actionType, new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        //execute next
-//                            startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
-//                    }
-//                });
-//            }
-//        });
-//    }
 
     /**
      * @param e
@@ -133,6 +122,8 @@ public class ActionCommand extends Command {
                         try {
                             performAction(actionType, editor, e, runnable);
                         } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        } catch (ExecutionException e1) {
                             e1.printStackTrace();
                         }
                     }
