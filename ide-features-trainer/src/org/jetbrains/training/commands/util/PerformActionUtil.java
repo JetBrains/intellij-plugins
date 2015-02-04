@@ -59,11 +59,11 @@ public class PerformActionUtil {
      *
      * @param actionName - name of IntelliJ Action. For full list please see http://git.jetbrains.org/?p=idea/community.git;a=blob;f=platform/platform-api/src/com/intellij/openapi/actionSystem/IdeActions.java;hb=HEAD
      */
-    public static void performAction(String actionName, final Editor editor, final AnActionEvent e, Runnable runnable) throws InterruptedException {
+    public static void performAction(final String actionName, final Editor editor, final AnActionEvent e, final Runnable runnable) throws InterruptedException, ExecutionException {
+
         final ActionManager am = ActionManager.getInstance();
         final AnAction targetAction = am.getAction(actionName);
         final InputEvent inputEvent = getInputEvent(actionName);
-        final ProcessedBefore processedBefore = new ProcessedBefore(false);
 
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
@@ -71,59 +71,11 @@ public class PerformActionUtil {
                 WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
                     @Override
                     public void run() {
-                        am.tryToExecute(targetAction, inputEvent, null, null, true).doWhenDone(new Runnable() {
-                            @Override
-                            public void run() {
-                                synchronized (editor) {
-                                    processedBefore.setTrue();
-                                    editor.notifyAll();
-                                }
-                            }
-                        });
+                        am.tryToExecute(targetAction, inputEvent, null, null, true).doWhenDone(runnable);
                     }
                 });
             }
         });
-        if (!processedBefore.isPrBefore()) {
-            synchronized (editor){
-                editor.wait();
-            }
-        }
-        runnable.run();
-    }
-
-    public static void performAction(final String actionName, final Editor editor, final AnActionEvent e) throws InterruptedException, ExecutionException {
-
-        final ActionManager am = ActionManager.getInstance();
-        final AnAction targetAction = am.getAction(actionName);
-        final InputEvent inputEvent = getInputEvent(actionName);
-        final ProcessedBefore processedBefore = new ProcessedBefore(false);
-
-
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
-                    @Override
-                    public void run() {
-                        am.tryToExecute(targetAction, inputEvent, null, null, true).doWhenDone(new Runnable() {
-                            @Override
-                            public void run() {
-                                synchronized (editor) {
-                                    processedBefore.setTrue();
-                                    editor.notifyAll();
-                                }
-                            }
-                        });
-                    }
-                });
-            }
-        });
-        if (!processedBefore.isPrBefore()) {
-            synchronized (editor){
-                editor.wait();
-            }
-        }
     }
 
 
