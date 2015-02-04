@@ -94,10 +94,10 @@ public class TraverseCaretCommand extends Command {
                         //traverse caret inside
                         if (j > destinationOfsset) {
                             editor.getCaretModel().moveToOffset(j - 1);
-                            (new TraverseRunnable()).run();
+                            ApplicationManager.getApplication().invokeLater(new TraverseRunnable());
                         } else if (j < destinationOfsset) {
                             editor.getCaretModel().moveToOffset(j + 1);
-                            (new TraverseRunnable()).run();
+                            ApplicationManager.getApplication().invokeLater(new TraverseRunnable());
                         }
                     }
                 } else {
