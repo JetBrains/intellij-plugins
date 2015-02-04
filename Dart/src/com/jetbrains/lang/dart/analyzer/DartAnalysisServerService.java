@@ -202,8 +202,9 @@ public class DartAnalysisServerService {
           LOG.debug("Removing overlaid content of the following files:\n" + StringUtil.join(oldTrackedFiles, ",\n"));
         }
       }
-
-      myServer.analysis_updateContent(filesToUpdate);
+      if(!filesToUpdate.isEmpty()) {
+        myServer.analysis_updateContent(filesToUpdate);
+      }
     }
   }
 
