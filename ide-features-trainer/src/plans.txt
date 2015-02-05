@@ -18,11 +18,14 @@ February 3
 
 * Migrated to commandQueue
 * Fixed traverseCaret and actionCommand
+* Fix delays in traverse()
+* Fix delays in actionCommand()
+
+February 4
+
 
 //Plans
 * Merge 2 branches
-* Fix delays in traverse()
-* Fix delays in actionCommand()
 * Modify to html description for infoPanel
 * Disposable
 * Shortcut Logger
