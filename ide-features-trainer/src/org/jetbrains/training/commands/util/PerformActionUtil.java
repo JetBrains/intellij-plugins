@@ -86,10 +86,8 @@ public class PerformActionUtil {
             public void run() {
                 synchronized (editor) {
                     try {
-                        System.err.println("run");
                         Thread.sleep(delay);
                         editor.notify();
-                        System.err.println("stop");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -99,9 +97,7 @@ public class PerformActionUtil {
 
         sleepThread.start();
         synchronized(editor){
-            System.err.println("wait");
             editor.wait();
-            System.err.println("stop wait");
         }
         sleepThread.join();
 
