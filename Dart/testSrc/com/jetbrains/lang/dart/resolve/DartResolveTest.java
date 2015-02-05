@@ -1,12 +1,21 @@
 package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.codeInsight.TargetElementUtilBase;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.file.PsiDirectoryImpl;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
+import com.jetbrains.lang.dart.DartProjectComponent;
+import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.util.CaretPositionInfo;
@@ -56,6 +65,116 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
     buf.insert(0, path);
 
     return buf.toString();
+  }
+
+  public void testResolveScope() throws Exception {
+    try {
+      final VirtualFile inSdk1 = DartLibraryIndex.getStandardLibraryFromSdk(getProject(), "collection");
+      final VirtualFile inSdk2 = DartLibraryIndex.getStandardLibraryFromSdk(getProject(), "math");
+
+      final VirtualFile inIdeLib1 = myFixture.addFileToProject("library/inLibrary1.dart", "").getVirtualFile();
+      final VirtualFile inIdeLib2 = myFixture.addFileToProject("library/inLibrary2.dart", "").getVirtualFile();
+      configureLibrary(inIdeLib1.getParent());
+
+      final VirtualFile inContent = myFixture.addFileToProject("inContentOutsideDartRoot.dart", "").getVirtualFile();
+
+      myFixture.addFileToProject("DartProject2/pubspec.yaml", "name: ProjectName2\n");
+      final VirtualFile inProject2Web = myFixture.addFileToProject("DartProject2/web/inProject2Web.dart", "").getVirtualFile();
+      final VirtualFile inProject2Lib = myFixture.addFileToProject("DartProject2/lib/inProject2Lib.dart", "").getVirtualFile();
+
+      final VirtualFile pubspec = myFixture.addFileToProject("DartProject1/pubspec.yaml", "name: ProjectName1\n" +
+                                                                                          "dependencies:\n" +
+                                                                                          "  PathPackage:\n" +
+                                                                                          "    path: ../DartProject2\n").getVirtualFile();
+      final VirtualFile inProject1Root = myFixture.addFileToProject("DartProject1/inProject1Root.dart", "").getVirtualFile();
+      final VirtualFile inLib = myFixture.addFileToProject("DartProject1/lib/inLib.dart", "").getVirtualFile();
+      final VirtualFile inPackages = myFixture.addFileToProject("DartProject1/packages/inPackages.dart", "").getVirtualFile();
+      final VirtualFile inWeb = myFixture.addFileToProject("DartProject1/web/inWeb.dart", "").getVirtualFile();
+      final VirtualFile inWebSub = myFixture.addFileToProject("DartProject1/web/sub/inWebSub.dart", "").getVirtualFile();
+      final VirtualFile inExcluded = myFixture.addFileToProject("DartProject1/web/packages/inExcluded.dart", "").getVirtualFile();
+      final VirtualFile inTest = myFixture.addFileToProject("DartProject1/test/inTest.dart", "").getVirtualFile();
+      final VirtualFile inExample = myFixture.addFileToProject("DartProject1/example/inExample.dart", "").getVirtualFile();
+
+      DartProjectComponent.excludeBuildAndPackagesFolders(myModule, pubspec);
+
+      doTestResolveScope(inExcluded, null, null);
+      doTestResolveScope(inSdk1,
+                         new VirtualFile[]{inSdk1, inSdk2},
+                         new VirtualFile[]{inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib,
+                           inProject1Root, inLib, inPackages, inWeb, inWebSub, inExcluded, inTest, inExample});
+      doTestResolveScope(inIdeLib1,
+                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2},
+                         new VirtualFile[]{inContent, inProject2Web, inProject2Lib,
+                           inProject1Root, inLib, inPackages, inWeb, inWebSub, inExcluded, inTest, inExample});
+      doTestResolveScope(inContent,
+                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib,
+                           inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
+                         new VirtualFile[]{inExcluded});
+      doTestResolveScope(inProject1Root,
+                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib,
+                           inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
+                         new VirtualFile[]{inContent, inProject2Web, inExcluded});
+      doTestResolveScope(inTest,
+                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib,
+                           inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
+                         new VirtualFile[]{inContent, inProject2Web, inExcluded});
+      doTestResolveScope(inLib,
+                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages},
+                         new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest, inExample});
+      doTestResolveScope(inPackages,
+                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages},
+                         new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest, inExample});
+      doTestResolveScope(inWeb,
+                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages, inWeb, inWebSub},
+                         new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inTest, inExample});
+      doTestResolveScope(inWebSub,
+                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages, inWeb, inWebSub},
+                         new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inTest, inExample});
+      doTestResolveScope(inExample,
+                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages, inExample},
+                         new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inTest, inWeb, inWebSub});
+    }
+    finally {
+      DartTestUtils.resetModuleRoots(myModule);
+    }
+  }
+
+  private void doTestResolveScope(final VirtualFile contextFile,
+                                  final VirtualFile[] expectedInScope,
+                                  final VirtualFile[] expectedOutsideScope) {
+    final GlobalSearchScope scope = new DartResolveScopeProvider().getResolveScope(contextFile, getProject());
+
+    if (scope == null) {
+      assertTrue("Null scope not expected for " + contextFile.getPath(), expectedInScope == null);
+      return;
+    }
+
+    if (expectedInScope == null) {
+      fail("Null scope expected for " + contextFile.getPath());
+      return;
+    }
+
+    for (VirtualFile file : expectedInScope) {
+      assertTrue("Expected to be in scope: " + file.getPath(), scope.contains(file));
+    }
+
+    for (VirtualFile file : expectedOutsideScope) {
+      assertFalse("Expected to be out of scope: " + file.getPath(), scope.contains(file));
+    }
+  }
+
+  private void configureLibrary(final VirtualFile root) {
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+        final Library library = model.getModuleLibraryTable().createLibrary();
+        final Library.ModifiableModel libModel = library.getModifiableModel();
+        libModel.addRoot(root, OrderRootType.CLASSES);
+        libModel.commit();
+        model.commit();
+      }
+    });
   }
 
   public void testNoRecursiveImports() throws Exception {

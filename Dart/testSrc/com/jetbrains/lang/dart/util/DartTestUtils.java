@@ -6,12 +6,15 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -92,5 +95,50 @@ public class DartTestUtils {
       PsiDocumentManager.getInstance(project).commitDocument(document);
     }
     return result;
+  }
+
+  /**
+   * Use this method in finally{} clause if the test modifies excluded roots or configures module libraries
+   */
+  public static void resetModuleRoots(@NotNull final Module module) {
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
+
+        try {
+          final List<OrderEntry> entriesToRemove = new SmartList<OrderEntry>();
+
+          for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
+            if (orderEntry instanceof LibraryOrderEntry) {
+              entriesToRemove.add(orderEntry);
+            }
+          }
+
+          for (OrderEntry orderEntry : entriesToRemove) {
+            modifiableModel.removeOrderEntry(orderEntry);
+          }
+
+          final ContentEntry[] contentEntries = modifiableModel.getContentEntries();
+          TestCase.assertTrue("Expected one content root, got: " + contentEntries.length, contentEntries.length == 1);
+
+          final ContentEntry oldContentEntry = contentEntries[0];
+          if (oldContentEntry.getSourceFolders().length != 1 || oldContentEntry.getExcludeFolderUrls().size() > 0) {
+            modifiableModel.removeContentEntry(oldContentEntry);
+            final ContentEntry newContentEntry = modifiableModel.addContentEntry(oldContentEntry.getUrl());
+            newContentEntry.addSourceFolder(newContentEntry.getUrl(), false);
+          }
+
+          if (modifiableModel.isChanged()) {
+            modifiableModel.commit();
+          }
+        }
+        finally {
+          if (!modifiableModel.isDisposed()) {
+            modifiableModel.dispose();
+          }
+        }
+      }
+    });
   }
 }

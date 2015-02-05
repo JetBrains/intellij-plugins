@@ -20,6 +20,7 @@ import com.intellij.util.io.KeyDescriptor;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,8 +70,8 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
   }
 
   public static List<VirtualFile> findLibraryClass(@NotNull PsiElement context, String libraryName) {
-    if (libraryName.startsWith("dart:")) {
-      String stdLibName = libraryName.substring("dart:".length());
+    if (libraryName.startsWith(DartUrlResolver.DART_PREFIX)) {
+      String stdLibName = libraryName.substring(DartUrlResolver.DART_PREFIX.length());
       VirtualFile stdLibFile = getStandardLibraryFromSdk(context.getProject(), stdLibName);
       if (stdLibFile != null) {
         return Collections.singletonList(stdLibFile);

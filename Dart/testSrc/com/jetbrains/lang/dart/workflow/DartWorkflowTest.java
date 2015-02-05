@@ -15,107 +15,113 @@ import com.jetbrains.lang.dart.util.DartUrlResolver;
 public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
 
   public void testPackagesFolderExclusion() throws Exception {
-    final String rootUrl = ModuleRootManager.getInstance(myModule).getContentEntries()[0].getUrl();
+    try {
+      final String rootUrl = ModuleRootManager.getInstance(myModule).getContentEntries()[0].getUrl();
 
-    myFixture.addFileToProject("dir1/pubspec.yaml", "name: project1");
-    myFixture.addFileToProject("dir1/someFolder/lib/foo.dart", "");
-    final VirtualFile pubspec2 = myFixture.addFileToProject("dir2/pubspec.yaml", "name: project2").getVirtualFile();
-    myFixture.addFileToProject("dir2/.pub/foo.txt", "");
-    myFixture.addFileToProject("dir2/bin/foo.dart", "");
-    myFixture.addFileToProject("dir2/bin/sub/foo.dart", "");
-    myFixture.addFileToProject("dir2/lib/foo.dart", "");
-    myFixture.addFileToProject("dir2/lib/sub/foo.dart", "");
-    myFixture.addFileToProject("dir2/benchmark/foo.dart", "");
-    myFixture.addFileToProject("dir2/benchmark/sub/foo.dart", "");
-    myFixture.addFileToProject("dir2/test/foo.dart", "");
-    myFixture.addFileToProject("dir2/test/sub/foo.dart", "");
-    myFixture.addFileToProject("dir2/tool/foo.dart", "");
-    myFixture.addFileToProject("dir2/tool/sub/foo.dart", "");
-    myFixture.addFileToProject("dir2/web/foo.dart", "");
-    myFixture.addFileToProject("dir2/web/sub/foo.dart", "");
-    myFixture.addFileToProject("dir2/build/foo.dart", "");
-    myFixture.addFileToProject("dir2/build/sub/foo.dart", "");
-    final VirtualFile pubspec3 = myFixture.addFileToProject("dir2/example/pubspec.yaml", "name: project3\n" +
-                                                                                         "dependencies:\n" +
-                                                                                         "  project2:\n" +
-                                                                                         "    path: ..\n" +
-                                                                                         "  outside_project:\n" +
-                                                                                         "    path: ../../dir1/someFolder").getVirtualFile();
-    myFixture.addFileToProject("dir2/example/lib/foo.dart", "");
-    myFixture.addFileToProject("dir2/example/lib/sub/foo.dart", "");
-    myFixture.addFileToProject("dir2/example/web/foo.dart", "");
-    myFixture.addFileToProject("dir2/example/web/sub/foo.dart", "");
+      myFixture.addFileToProject("dir1/pubspec.yaml", "name: project1");
+      myFixture.addFileToProject("dir1/someFolder/lib/foo.dart", "");
+      final VirtualFile pubspec2 = myFixture.addFileToProject("dir2/pubspec.yaml", "name: project2").getVirtualFile();
+      myFixture.addFileToProject("dir2/.pub/foo.txt", "");
+      myFixture.addFileToProject("dir2/bin/foo.dart", "");
+      myFixture.addFileToProject("dir2/bin/sub/foo.dart", "");
+      myFixture.addFileToProject("dir2/lib/foo.dart", "");
+      myFixture.addFileToProject("dir2/lib/sub/foo.dart", "");
+      myFixture.addFileToProject("dir2/benchmark/foo.dart", "");
+      myFixture.addFileToProject("dir2/benchmark/sub/foo.dart", "");
+      myFixture.addFileToProject("dir2/test/foo.dart", "");
+      myFixture.addFileToProject("dir2/test/sub/foo.dart", "");
+      myFixture.addFileToProject("dir2/tool/foo.dart", "");
+      myFixture.addFileToProject("dir2/tool/sub/foo.dart", "");
+      myFixture.addFileToProject("dir2/web/foo.dart", "");
+      myFixture.addFileToProject("dir2/web/sub/foo.dart", "");
+      myFixture.addFileToProject("dir2/build/foo.dart", "");
+      myFixture.addFileToProject("dir2/build/sub/foo.dart", "");
+      final VirtualFile pubspec3 = myFixture.addFileToProject("dir2/example/pubspec.yaml",
+                                                              "name: project3\n" +
+                                                              "dependencies:\n" +
+                                                              "  project2:\n" +
+                                                              "    path: ..\n" +
+                                                              "  outside_project:\n" +
+                                                              "    path: ../../dir1/someFolder").getVirtualFile();
+      myFixture.addFileToProject("dir2/example/lib/foo.dart", "");
+      myFixture.addFileToProject("dir2/example/lib/sub/foo.dart", "");
+      myFixture.addFileToProject("dir2/example/web/foo.dart", "");
+      myFixture.addFileToProject("dir2/example/web/sub/foo.dart", "");
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
-        final ContentEntry contentEntry = model.getContentEntries()[0];
-        contentEntry.addExcludeFolder(rootUrl + "/dir1/someFolder");
-        contentEntry.addExcludeFolder(rootUrl + "/dir1/packages/project1");
-        contentEntry.addExcludeFolder(rootUrl + "/dir1/web/packages");
-        contentEntry.addExcludeFolder(rootUrl + "/dir2/packages/oldProject2Name");
-        contentEntry.addExcludeFolder(rootUrl + "/dir2/someFolder");
-        contentEntry.addExcludeFolder(rootUrl + "/dir2/lib/someFolder");
-        contentEntry.addExcludeFolder(rootUrl + "/dir2/example/nonexistent/packages");
-        contentEntry.addExcludeFolder(rootUrl + "/dir2/example/packages/oldProject3Name");
-        model.commit();
-      }
-    });
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        public void run() {
+          final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+          final ContentEntry contentEntry = model.getContentEntries()[0];
+          contentEntry.addExcludeFolder(rootUrl + "/dir1/someFolder");
+          contentEntry.addExcludeFolder(rootUrl + "/dir1/packages/project1");
+          contentEntry.addExcludeFolder(rootUrl + "/dir1/web/packages");
+          contentEntry.addExcludeFolder(rootUrl + "/dir2/packages/oldProject2Name");
+          contentEntry.addExcludeFolder(rootUrl + "/dir2/someFolder");
+          contentEntry.addExcludeFolder(rootUrl + "/dir2/lib/someFolder");
+          contentEntry.addExcludeFolder(rootUrl + "/dir2/example/nonexistent/packages");
+          contentEntry.addExcludeFolder(rootUrl + "/dir2/example/packages/oldProject3Name");
+          model.commit();
+        }
+      });
 
-    DartProjectComponent.excludeBuildAndPackagesFolders(myModule, pubspec2);
+      DartProjectComponent.excludeBuildAndPackagesFolders(myModule, pubspec2);
 
-    assertSameElements(ModuleRootManager.getInstance(myModule).getContentEntries()[0].getExcludeFolderUrls(),
-                       rootUrl + "/dir1/someFolder",
-                       rootUrl + "/dir1/packages/project1",
-                       rootUrl + "/dir1/web/packages",
-                       rootUrl + "/dir2/.pub",
-                       rootUrl + "/dir2/build",
-                       rootUrl + "/dir2/packages/project2",
-                       rootUrl + "/dir2/someFolder",
-                       rootUrl + "/dir2/lib/someFolder",
-                       rootUrl + "/dir2/bin/packages",
-                       rootUrl + "/dir2/benchmark/packages",
-                       rootUrl + "/dir2/benchmark/sub/packages",
-                       rootUrl + "/dir2/test/packages",
-                       rootUrl + "/dir2/test/sub/packages",
-                       rootUrl + "/dir2/tool/packages",
-                       rootUrl + "/dir2/tool/sub/packages",
-                       rootUrl + "/dir2/web/packages",
-                       rootUrl + "/dir2/web/sub/packages",
-                       rootUrl + "/dir2/example/lib/packages",
-                       rootUrl + "/dir2/example/lib/sub/packages",
-                       rootUrl + "/dir2/example/web/packages",
-                       rootUrl + "/dir2/example/web/sub/packages",
-                       rootUrl + "/dir2/example/packages/oldProject3Name"
-    );
+      assertSameElements(ModuleRootManager.getInstance(myModule).getContentEntries()[0].getExcludeFolderUrls(),
+                         rootUrl + "/dir1/someFolder",
+                         rootUrl + "/dir1/packages/project1",
+                         rootUrl + "/dir1/web/packages",
+                         rootUrl + "/dir2/.pub",
+                         rootUrl + "/dir2/build",
+                         rootUrl + "/dir2/packages/project2",
+                         rootUrl + "/dir2/someFolder",
+                         rootUrl + "/dir2/lib/someFolder",
+                         rootUrl + "/dir2/bin/packages",
+                         rootUrl + "/dir2/benchmark/packages",
+                         rootUrl + "/dir2/benchmark/sub/packages",
+                         rootUrl + "/dir2/test/packages",
+                         rootUrl + "/dir2/test/sub/packages",
+                         rootUrl + "/dir2/tool/packages",
+                         rootUrl + "/dir2/tool/sub/packages",
+                         rootUrl + "/dir2/web/packages",
+                         rootUrl + "/dir2/web/sub/packages",
+                         rootUrl + "/dir2/example/lib/packages",
+                         rootUrl + "/dir2/example/lib/sub/packages",
+                         rootUrl + "/dir2/example/web/packages",
+                         rootUrl + "/dir2/example/web/sub/packages",
+                         rootUrl + "/dir2/example/packages/oldProject3Name"
+      );
 
-    DartProjectComponent.excludeBuildAndPackagesFolders(myModule, pubspec3);
+      DartProjectComponent.excludeBuildAndPackagesFolders(myModule, pubspec3);
 
-    assertSameElements(ModuleRootManager.getInstance(myModule).getContentEntries()[0].getExcludeFolderUrls(),
-                       rootUrl + "/dir1/someFolder",
-                       rootUrl + "/dir1/packages/project1",
-                       rootUrl + "/dir1/web/packages",
-                       rootUrl + "/dir2/.pub",
-                       rootUrl + "/dir2/build",
-                       rootUrl + "/dir2/packages/project2",
-                       rootUrl + "/dir2/someFolder",
-                       rootUrl + "/dir2/lib/someFolder",
-                       rootUrl + "/dir2/bin/packages",
-                       rootUrl + "/dir2/benchmark/packages",
-                       rootUrl + "/dir2/benchmark/sub/packages",
-                       rootUrl + "/dir2/test/packages",
-                       rootUrl + "/dir2/test/sub/packages",
-                       rootUrl + "/dir2/tool/packages",
-                       rootUrl + "/dir2/tool/sub/packages",
-                       rootUrl + "/dir2/web/packages",
-                       rootUrl + "/dir2/web/sub/packages",
-                       rootUrl + "/dir2/example/lib/packages",
-                       rootUrl + "/dir2/example/lib/sub/packages",
-                       rootUrl + "/dir2/example/web/packages",
-                       rootUrl + "/dir2/example/web/sub/packages",
-                       rootUrl + "/dir2/example/packages/project3",
-                       rootUrl + "/dir2/example/packages/project2"
-    );
+      assertSameElements(ModuleRootManager.getInstance(myModule).getContentEntries()[0].getExcludeFolderUrls(),
+                         rootUrl + "/dir1/someFolder",
+                         rootUrl + "/dir1/packages/project1",
+                         rootUrl + "/dir1/web/packages",
+                         rootUrl + "/dir2/.pub",
+                         rootUrl + "/dir2/build",
+                         rootUrl + "/dir2/packages/project2",
+                         rootUrl + "/dir2/someFolder",
+                         rootUrl + "/dir2/lib/someFolder",
+                         rootUrl + "/dir2/bin/packages",
+                         rootUrl + "/dir2/benchmark/packages",
+                         rootUrl + "/dir2/benchmark/sub/packages",
+                         rootUrl + "/dir2/test/packages",
+                         rootUrl + "/dir2/test/sub/packages",
+                         rootUrl + "/dir2/tool/packages",
+                         rootUrl + "/dir2/tool/sub/packages",
+                         rootUrl + "/dir2/web/packages",
+                         rootUrl + "/dir2/web/sub/packages",
+                         rootUrl + "/dir2/example/lib/packages",
+                         rootUrl + "/dir2/example/lib/sub/packages",
+                         rootUrl + "/dir2/example/web/packages",
+                         rootUrl + "/dir2/example/web/sub/packages",
+                         rootUrl + "/dir2/example/packages/project3",
+                         rootUrl + "/dir2/example/packages/project2"
+      );
+    }
+    finally {
+      DartTestUtils.resetModuleRoots(myModule);
+    }
   }
 
   public void testDartUrlResolver() throws Exception {
