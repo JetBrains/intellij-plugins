@@ -46,6 +46,7 @@ import jetbrains.communicator.util.UIUtil;
 import jetbrains.communicator.util.WaitFor;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.BuiltInServerManager;
 import org.jetbrains.ide.CustomPortServerManager;
 import org.jetbrains.io.CustomPortServerManagerBase;
@@ -130,7 +131,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   @SuppressWarnings("UnusedDeclaration")
   private static final class P2PCustomPortServerManager extends CustomPortServerManagerBase {
-    private final Map<String, Object> handlers = new THashMap<String, Object>();
+    private final Map<String, Object> handlers = Collections.synchronizedMap(new THashMap<String, Object>());
 
     @Override
     public void cannotBind(Exception e, int port) {
@@ -152,6 +153,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
       return true;
     }
 
+    @Nullable
     @Override
     public Map<String, Object> createXmlRpcHandlers() {
       return handlers;
