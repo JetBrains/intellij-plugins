@@ -21,7 +21,6 @@ public abstract class Command {
 
     public Command(CommandType commandType) {
         this.commandType = commandType;
-        System.err.println(">>COMMAND" + commandType);
     }
 
     protected void updateDescription(Queue<Element> elements, DetailPanel infoPanel, Editor editor){
