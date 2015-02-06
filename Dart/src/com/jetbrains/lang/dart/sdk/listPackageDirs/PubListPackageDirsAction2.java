@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -23,6 +22,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -32,7 +32,6 @@ import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
@@ -45,44 +44,28 @@ public class PubListPackageDirsAction2 extends AnAction {
 
   private static final Logger LOG = Logger.getInstance(PubListPackageDirsAction2.class.getName());
 
-  private static final com.google.dart.engine.utilities.logging.Logger.NullLogger PROCESS_CANCELLING_LOGGER =
-    new com.google.dart.engine.utilities.logging.Logger.NullLogger() {
-      @Override
-      public void logError(final String message, final Throwable exception) {
-        if (exception instanceof ProcessCanceledException) {
-          throw (ProcessCanceledException)exception;
-        }
-      }
-    };
-
   public PubListPackageDirsAction2() {
     super("Configure Dart package roots using 'pub list-package-dirs'", null, DartIcons.Dart_16);
   }
 
   private static void computeLibraryRoots(@NotNull final Project project,
-                                          @NotNull DartSdk dartSdk,
+                                          @NotNull final DartSdk dartSdk,
                                           @NotNull final String[] libraries,
                                           @NotNull final Collection<String> rootsToAddToLib) {
 
     @NotNull final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    @NotNull String sdkRoot = FileUtil.toSystemIndependentName(dartSdk.getHomePath());
-    if (!sdkRoot.endsWith("/")) {
-      sdkRoot += "/";
-    }
 
     for (final String path : libraries) {
       if (path == null) continue;
-      @NotNull String libPath = stripOffFileName(FileUtil.toSystemDependentName(path));
-      @Nullable final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(libPath);
-      if (!libPath.startsWith(sdkRoot) && (vFile == null || !fileIndex.isInContent(vFile))) {
-        rootsToAddToLib.add(libPath);
+
+      final String libRoot = PathUtil.getParentPath(FileUtil.toSystemIndependentName(path));
+      final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(libRoot);
+
+      if (!libRoot.startsWith(dartSdk.getHomePath() + "/") && (vFile == null || !fileIndex.isInContent(vFile))) {
+        // todo skip nested roots?
+        rootsToAddToLib.add(libRoot);
       }
     }
-  }
-
-  @NotNull
-  private static String stripOffFileName(@NotNull String path) {
-    return path.substring(0, path.lastIndexOf('/'));
   }
 
   private static void computePackageMap(@NotNull final Map<String, Map<String, List<String>>> packageMapMap,
@@ -100,7 +83,6 @@ public class PubListPackageDirsAction2 extends AnAction {
       }
     }
   }
-
 
   public void update(@NotNull final AnActionEvent e) {
     final Project project = e.getProject();
@@ -149,11 +131,6 @@ public class PubListPackageDirsAction2 extends AnAction {
 
         @NotNull final Module[] modules = ModuleManager.getInstance(project).getModules();
         for (@NotNull final Module module : modules) {
-          if (indicator != null) {
-            indicator.checkCanceled();
-            indicator.setText("pub list-package-dirs");
-          }
-
           if (DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
             for (@NotNull final VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
               // if there is a pubspec, skip this contentRoot
@@ -168,6 +145,7 @@ public class PubListPackageDirsAction2 extends AnAction {
         computePackageMap(packageMapMap, packageNameToDirMap);
       }
     };
+
     if (ProgressManager.getInstance().runProcessWithProgressSynchronously(runnable, "pub list-package-dirs", true, project)) {
       @NotNull final DartListPackageDirsDialog dialog = new DartListPackageDirsDialog(project, rootsToAddToLib, packageNameToDirMap);
       dialog.show();
@@ -181,7 +159,6 @@ public class PubListPackageDirsAction2 extends AnAction {
       }
     }
   }
-
 
   private static void configurePubListPackageDirsLibrary(@NotNull final Project project,
                                                          @NotNull final Set<Module> modules,
@@ -250,8 +227,7 @@ public class PubListPackageDirsAction2 extends AnAction {
                                                          @NotNull final Map<String, List<File>> packageMap) {
     Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(PUB_LIST_PACKAGE_DIRS_LIB_NAME);
     if (library == null) {
-      final LibraryTableBase.ModifiableModelEx libTableModel =
-        (LibraryTableBase.ModifiableModelEx)ProjectLibraryTable.getInstance(project).getModifiableModel();
+      final LibraryTableBase.ModifiableModel libTableModel = ProjectLibraryTable.getInstance(project).getModifiableModel();
       library = libTableModel.createLibrary(PUB_LIST_PACKAGE_DIRS_LIB_NAME, DartListPackageDirsLibraryType.LIBRARY_KIND);
       libTableModel.commit();
     }
