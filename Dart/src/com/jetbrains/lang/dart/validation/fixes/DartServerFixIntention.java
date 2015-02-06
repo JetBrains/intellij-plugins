@@ -7,7 +7,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.lookup.LookupElementRenderer;
 import com.intellij.codeInsight.template.*;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -26,8 +25,6 @@ import java.util.List;
 
 
 public final class DartServerFixIntention implements IntentionAction {
-
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.validation.fixes.DartServerFixIntention");
 
   private static class SuggestionInfo {
     @NotNull
@@ -148,6 +145,12 @@ public final class DartServerFixIntention implements IntentionAction {
 
   @Override
   public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
+    final List<SourceFileEdit> fileEdits = myChange.getEdits();
+    if (fileEdits.size() != 1) return false;
+
+    final List<SourceEdit> sourceEdits = fileEdits.get(0).getEdits();
+    if (sourceEdits.size() != 1) return false;
+
     return true;
   }
 
@@ -159,27 +162,26 @@ public final class DartServerFixIntention implements IntentionAction {
   @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
     final Document document = editor.getDocument();
-    for (SourceFileEdit fileEdit : myChange.getEdits()) {
-      for (SourceEdit edit : fileEdit.getEdits()) {
 
-        // Templates can only grow source, so we trim first if necessary
-        if (edit.getLength() > 0) {
-          document.deleteString(edit.getOffset(), edit.getOffset() + edit.getLength());
-        }
+    final SourceFileEdit fileEdit = myChange.getEdits().get(0);
+    final SourceEdit sourceEdit = fileEdit.getEdits().get(0);
 
-        final TemplateManager templateManager = TemplateManager.getInstance(project);
-        Template template = templateManager.createTemplate("", "");
-        template.setToReformat(true);
+    // Templates can only grow source, so we trim first if necessary
+    if (sourceEdit.getLength() > 0) {
+      document.deleteString(sourceEdit.getOffset(), sourceEdit.getOffset() + sourceEdit.getLength());
+    }
 
-        addContents(template, edit);
+    final TemplateManager templateManager = TemplateManager.getInstance(project);
+    Template template = templateManager.createTemplate("", "");
+    template.setToReformat(true);
 
-        final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
-        if (virtualFile != null) {
-          final Editor targetEditor = BaseCreateFix.navigate(project, edit.getOffset(), virtualFile);
-          if (targetEditor != null) {
-            templateManager.startTemplate(targetEditor, template);
-          }
-        }
+    addContents(template, sourceEdit);
+
+    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
+    if (virtualFile != null) {
+      final Editor targetEditor = BaseCreateFix.navigate(project, sourceEdit.getOffset(), virtualFile);
+      if (targetEditor != null) {
+        templateManager.startTemplate(targetEditor, template);
       }
     }
   }
