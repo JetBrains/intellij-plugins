@@ -27,11 +27,13 @@ February 3
 * Fix delays in actionCommand()
 
 February 4
+* Merge 2 branches
+* Disposable (trying)
 
+February 5
+* Modify to html description for infoPanel
 
 //Plans
-* Merge 2 branches
-* Modify to html description for infoPanel
 * Disposable
 * Shortcut Logger
 * Implement 2 different courses

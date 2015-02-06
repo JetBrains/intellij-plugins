@@ -23,17 +23,18 @@ public abstract class Command {
         this.commandType = commandType;
     }
 
-    protected void updateDescription(Queue<Element> elements, DetailPanel infoPanel, Editor editor){
-        if (elements.peek().getAttribute("description") != null) {
-            final String description =(elements.peek().getAttribute("description").getValue());
-            infoPanel.setText(description);
-        }
-    }
     protected void updateDescription(Element element, DetailPanel infoPanel, Editor editor){
         if (element.getAttribute("description") != null) {
             final String description =(element.getAttribute("description").getValue());
             infoPanel.setText(description);
         }
+    }
+
+    protected void updateHTMLDescription(Element element, DetailPanel infoPanel, Editor editor, final String htmlText){
+
+        final String inputText = "<html>" + htmlText + "</html>";
+        infoPanel.setText(inputText);
+
     }
 
     /**

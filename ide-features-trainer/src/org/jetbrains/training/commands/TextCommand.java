@@ -24,7 +24,17 @@ public class TextCommand extends Command {
 
         Element element = elements.poll();
         updateDescription(element, infoPanel, editor);
-        updateButton(element, elements, lesson, editor, e, document, target, infoPanel); //invokation next method here
+        updateButton(element, elements, lesson, editor, e, document, target, infoPanel);
+
+        final String htmlText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
+        if (htmlText.equals("")) {
+            updateDescription(element, infoPanel, editor);
+        } else {
+            updateHTMLDescription(element, infoPanel, editor, htmlText);
+        }
+
+
+
     }
 
 
