@@ -1,21 +1,13 @@
 package org.jetbrains.training.sandbox;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import org.jdom.Element;
-import org.jetbrains.training.Command;
-import org.jetbrains.training.CommandFactory;
 import org.jetbrains.training.Lesson;
-import org.jetbrains.training.commands.util.PerformActionUtil;
-import org.jetbrains.training.commands.util.TraverseProcessor;
 import org.jetbrains.training.graphics.DetailPanel;
 
-import java.util.Queue;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by karashevich on 03/02/15.
@@ -48,8 +40,8 @@ public class TestProcessor {
 
         Thread.sleep(200);
 
-        TraverseProcessor traverseProcessor = new TraverseProcessor(editor, 178, e);
-        traverseProcessor.process();
+//        TraverseProcessor traverseProcessor = new TraverseProcessor(editor, 178, e);
+//        traverseProcessor.process();
 
 
     }

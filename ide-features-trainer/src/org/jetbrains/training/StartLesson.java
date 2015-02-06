@@ -1,15 +1,18 @@
 package org.jetbrains.training;
 
+import com.intellij.ide.FileEditorProvider;
 import com.intellij.ide.scratch.ScratchpadManager;
 import com.intellij.lang.Language;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.editor.event.DocumentListener;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.actionSystem.EditorActionManager;
+import com.intellij.openapi.editor.event.EditorFactoryEvent;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
@@ -26,9 +29,7 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.training.commands.util.TraverseProcessor;
 import org.jetbrains.training.graphics.DetailPanel;
-import org.jetbrains.training.sandbox.TestProcessor;
 
 import java.awt.*;
 import java.io.IOException;
@@ -42,12 +43,12 @@ import java.util.concurrent.ExecutionException;
 public class StartLesson extends AnAction {
 
     DetailPanel infoPanel;
+    Balloon balloon;
 
     public void actionPerformed(final AnActionEvent e) {
 
 
         try {
-
             final VirtualFile vf;
             vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
             //TODO: Rename as a lesson name
@@ -57,83 +58,27 @@ public class StartLesson extends AnAction {
             final Editor editor = FileEditorManager.getInstance(e.getProject()).openTextEditor(descriptor, true);
             final Document document = editor.getDocument();
 
+//            Editor myEditor = FileEditorManager.getInstance();
+
+
+
             InputStream is = this.getClass().getResourceAsStream("JavaLessonExample2.java");
             final String target = new Scanner(is).useDelimiter("\\Z").next();
 
-//            final Lesson lesson = new Lesson("SampleScenario.xml");
             final Course course = new Course();
             final Lesson lesson = course.giveNotPassedLesson();
             if (lesson == null) {
                 //TODO: add some handler here
                 return;
             }
+//MAIN LESSON CONTROLLER STARTS HERE--------------------------------
 
-//TEST CODE STARTS HERE-------------------------------------------
-
-//            document.addDocumentListener(new DocumentListener() {
-//                @Override
-//                public void beforeDocumentChange(DocumentEvent documentEvent) {
-//                    System.err.println("Attempt to change doc.");
-//                }
-//
-//                @Override
-//                public void documentChanged(DocumentEvent documentEvent) {
-//                    System.err.println("Doc has been changed.");
-//                }
-//            });
-//
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    boolean cf = true;
-//                    do {
-//                        WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                editor.getDocument().insertString(0, "robot text here ");
-//                            }
-//                        });
-//
-//                        try {
-//                            Thread.sleep(100);
-//                        } catch (InterruptedException e1) {
-//                            e1.printStackTrace();
-//                        }
-//
-//                    } while(cf);
-//                }
-//            }).start();
-
-//TEST CODE ENDS HERE--------------------------------------------
 
             showInfoPanel(editor);
+            LessonProcessor.process(lesson, editor, e, document, target, infoPanel);
 
 
-//            final Thread roboThread = new Thread("RoboThread") {
-
-//                @Override
-//                public void run() {
-                        LessonProcessor.process(lesson, editor, e, document, target, infoPanel);
-//                        TestProcessor.process(lesson, editor, e, document, target, infoPanel);
-
-//                        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                for (int i = 0; i < 1000; i++) {
-//                                    try {
-//                                        Thread.sleep(1000);
-//                                    } catch (InterruptedException e1) {
-//                                        e1.printStackTrace();
-//                                    }
-//                                    System.err.println("Processing: " + i);
-//                                }
-//                            }
-//                        });
-
-//                }
-//            };
-//            roboThread.start();
-
+//MAIN LESSON CONTROLLER ENDS HERE----------------------------------
 
         } catch (BadLessonException ble) {
             ble.printStackTrace();
@@ -164,15 +109,13 @@ public class StartLesson extends AnAction {
                 .setBorderColor(new Color(0, 0, 0, 0))
                 .setDialogMode(false)
                 .setHideOnFrameResize(false)
-                .setFillColor(new Color(0,0,0,0))
+                .setFillColor(new Color(0, 0, 0, 0))
                 .setHideOnAction(false);
 
-
-        Balloon balloon = balloonBuilder.createBalloon();
+        balloon = balloonBuilder.createBalloon();
         balloon.setBounds(infoBounds);
 
         balloon.show(location, Balloon.Position.above);
-
     }
 
     private RelativePoint computeLocation(IdeFrame ideFrame, Dimension dimension){

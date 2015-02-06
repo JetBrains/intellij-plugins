@@ -1,5 +1,6 @@
 package org.jetbrains.training.graphics;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -19,7 +20,7 @@ import java.util.*;
 /**
  * Created by karashevich on 14/01/15.
  */
-public class DetailPanel extends JPanel{
+public class DetailPanel extends JPanel implements Disposable{
     private final int magicConst = 15;
     private Color backGroundColor = new Color(0, 0 ,0, 190);
     private final Color textColor = new Color(245, 245, 245, 255);
@@ -41,19 +42,16 @@ public class DetailPanel extends JPanel{
         myLabel = new JLabel();
         myLabel.setForeground(textColor);
         Font font = myLabel.getFont();
-        Font newFont = new Font(font.getName(), font.getStyle(), 14);
+        Font newFont = new Font(font.getName(), Font.PLAIN, 14);
         myLabel.setFont(newFont);
         myLabel.setText("Default text");
         myLabel.setFocusable(false);
-
-
 
         btn = new RoundedCornerButton("Test button");
         btn.setBorderPainted(false);
         btn.setForeground(Color.WHITE);
         btn.setRolloverEnabled(false);
         btn.setFocusable(false);
-
 
 //        btn = new JButton("Start");
 //        btn.setFocusPainted(false);
@@ -93,7 +91,6 @@ public class DetailPanel extends JPanel{
 
     public void setText(String s){
         final String newString = s;
-
         UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
             public void run() {
@@ -170,4 +167,10 @@ public class DetailPanel extends JPanel{
             }
         });
     }
+
+    @Override
+    public void dispose() {
+
+    }
+
 }
