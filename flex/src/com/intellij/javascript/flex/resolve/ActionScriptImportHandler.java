@@ -69,7 +69,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
   public JSTypeResolveResult resolveTypeName(@NotNull String type, @NotNull PsiElement context) {
     final JSImportedElementResolveResult result = _resolveTypeName(type, context);
     String resolvedType = result != null ? result.qualifiedName : type;
-    return new JSTypeResolveResult(resolvedType != null ? resolvedType : type, JSResolveUtil.getResolveScope(context));
+    return new JSTypeResolveResult(resolvedType != null ? resolvedType : type, null);
   }
 
   // TODO _str should be JSReferenceExpression for caching!
