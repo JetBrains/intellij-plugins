@@ -123,6 +123,10 @@ public class DartAnalysisServerService {
     }
 
     @Override
+    public void serverIncompatibleVersion(final String version) {
+    }
+
+    @Override
     public void serverStatus(final AnalysisStatus analysisStatus, final PubStatus pubStatus) {
     }
   };
