@@ -71,7 +71,7 @@ public class PerformActionUtil {
                 WriteCommandAction.runWriteCommandAction(e.getProject(), new Runnable() {
                     @Override
                     public void run() {
-                        am.tryToExecute(targetAction, inputEvent, null, null, true).doWhenDone(runnable);
+                        am.tryToExecute(targetAction, inputEvent, editor.getContentComponent(), null, true).doWhenDone(runnable);
                     }
                 });
             }
