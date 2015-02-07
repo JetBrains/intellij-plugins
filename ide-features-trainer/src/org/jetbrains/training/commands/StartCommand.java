@@ -25,7 +25,6 @@ public class StartCommand extends Command {
         Element element = elements.poll();
         updateDescription(element, infoPanel, editor);
         updateButton(element, elements, lesson, editor, e, document, target, infoPanel);
-
     }
 
 
