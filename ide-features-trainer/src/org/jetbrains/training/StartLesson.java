@@ -10,8 +10,13 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.event.EditorFactoryEvent;
+import com.intellij.openapi.editor.event.EditorMouseAdapter;
+import com.intellij.openapi.editor.event.EditorMouseEvent;
+import com.intellij.openapi.editor.event.EditorMouseListener;
+import com.intellij.openapi.editor.impl.EditorLastActionTrackerImpl;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -28,10 +33,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
+import org.jdesktop.swingx.action.ActionManager;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.awt.*;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -75,7 +84,48 @@ public class StartLesson extends AnAction {
 
 
             showInfoPanel(editor);
+
+            //kill all listeners
+            MouseListener[] mouseListeners = editor.getContentComponent().getMouseListeners();
+            for (MouseListener mouseListener : mouseListeners) {
+                editor.getContentComponent().removeMouseListener(mouseListener);
+            }
+
+            MouseMotionListener[] mouseMotionListeners = editor.getContentComponent().getMouseMotionListeners();
+            for (MouseMotionListener mouseMotionListener : mouseMotionListeners) {
+                editor.getContentComponent().removeMouseMotionListener(mouseMotionListener);
+            }
+
+
+            editor.addEditorMouseListener(new EditorMouseListener() {
+                @Override
+                public void mousePressed(EditorMouseEvent e) {
+                    e.consume();
+                }
+
+                @Override
+                public void mouseClicked(EditorMouseEvent e) {
+                    e.consume();
+                }
+
+                @Override
+                public void mouseReleased(EditorMouseEvent e) {
+                    e.consume();
+                }
+
+                @Override
+                public void mouseEntered(EditorMouseEvent e) {
+                    e.consume();
+                }
+
+                @Override
+                public void mouseExited(EditorMouseEvent e) {
+                    e.consume();
+                }
+            });
+
             LessonProcessor.process(lesson, editor, e, document, target, infoPanel);
+
 
 
 //MAIN LESSON CONTROLLER ENDS HERE----------------------------------
