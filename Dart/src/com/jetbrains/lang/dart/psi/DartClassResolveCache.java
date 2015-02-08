@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * @author: Fedor.Korotkov
+ * @author Fedor.Korotkov
  */
 public class DartClassResolveCache {
   private final ConcurrentMap<DartClass, DartClassResolveResult> myMap = createWeakMap();
@@ -25,14 +25,10 @@ public class DartClassResolveCache {
   }
 
   public DartClassResolveCache(@NotNull MessageBus messageBus) {
-    messageBus.connect().subscribe(PsiManagerImpl.ANY_PSI_CHANGE_TOPIC, new AnyPsiChangeListener() {
+    messageBus.connect().subscribe(PsiManagerImpl.ANY_PSI_CHANGE_TOPIC, new AnyPsiChangeListener.Adapter() {
       @Override
       public void beforePsiChanged(boolean isPhysical) {
         myMap.clear();
-      }
-
-      @Override
-      public void afterPsiChanged(boolean isPhysical) {
       }
     });
   }
