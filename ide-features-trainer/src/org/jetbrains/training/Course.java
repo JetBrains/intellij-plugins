@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.TreeSet;
 
 /**
@@ -15,7 +16,7 @@ import java.util.TreeSet;
  */
 public class Course {
 
-    private TreeSet<Lesson> lessons;
+    private HashSet<Lesson> lessons;
     private String path;
     private String pathDir;
     final private String defaultPath = "data/DefaultCourse.xml";
@@ -25,7 +26,7 @@ public class Course {
     public Course() throws BadCourseException, BadLessonException {
         path = defaultPath;
         pathDir = defaultPathDir;
-        lessons = new TreeSet<Lesson>();
+        lessons = new HashSet<Lesson>();
 
         initLessons();
     }
@@ -34,7 +35,7 @@ public class Course {
         //load xml with lessons
         path = coursePath;
         pathDir = defaultPathDir;
-        lessons = new TreeSet<Lesson>();
+        lessons = new HashSet<Lesson>();
 
         initLessons();
     }
