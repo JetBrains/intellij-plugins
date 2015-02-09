@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Comment Line" passed="false" version="0.1">
+<xml type="Scenario" name="Comment Line" passed="false" version="0.1" target="CommentLineDemo.java">
     <Start description="Let's learn how to comment line quickly!" btn="Ok"/>
     <CopyText>
 public class CommentLineDemo {
