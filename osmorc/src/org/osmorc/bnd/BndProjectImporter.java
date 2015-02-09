@@ -30,6 +30,7 @@ import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -105,17 +106,22 @@ public class BndProjectImporter {
 
   public void resolve() {
     if (!myUnitTestMode) {
-      ProgressManager.getInstance().run(new Task.Backgroundable(myProject, message("bnd.import.resolve.task"), true) {
+      StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
         @Override
-        public void run(@NotNull ProgressIndicator indicator) {
-          if (resolve(indicator)) {
-            ApplicationManager.getApplication().invokeLater(new Runnable() {
-              @Override
-              public void run() {
-                createProjectStructure();
+        public void run() {
+          ProgressManager.getInstance().run(new Task.Backgroundable(myProject, message("bnd.import.resolve.task"), true) {
+            @Override
+            public void run(@NotNull ProgressIndicator indicator) {
+              if (resolve(indicator)) {
+                ApplicationManager.getApplication().invokeLater(new Runnable() {
+                  @Override
+                  public void run() {
+                    createProjectStructure();
+                  }
+                }, ModalityState.NON_MODAL);
               }
-            }, ModalityState.NON_MODAL);
-          }
+            }
+          });
         }
       });
     }
@@ -126,6 +132,7 @@ public class BndProjectImporter {
   }
 
   private boolean resolve(@Nullable ProgressIndicator indicator) {
+    int progress = 0;
     for (Project project : myProjects) {
       LOG.info("resolving: " + project.getBase());
 
@@ -150,6 +157,10 @@ public class BndProjectImporter {
       checkWarnings(project, project.getWarnings());
 
       findSources(project);
+
+      if (indicator != null) {
+        indicator.setFraction((double)(++progress) / myProjects.size());
+      }
     }
 
     return true;
