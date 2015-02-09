@@ -1,23 +1,12 @@
 package org.jetbrains.training;
 
-import com.intellij.ide.FileEditorProvider;
 import com.intellij.ide.scratch.ScratchpadManager;
 import com.intellij.lang.Language;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.actionSystem.EditorAction;
-import com.intellij.openapi.editor.actionSystem.EditorActionManager;
-import com.intellij.openapi.editor.event.EditorFactoryEvent;
-import com.intellij.openapi.editor.event.EditorMouseAdapter;
-import com.intellij.openapi.editor.event.EditorMouseEvent;
-import com.intellij.openapi.editor.event.EditorMouseListener;
-import com.intellij.openapi.editor.impl.EditorLastActionTrackerImpl;
-import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
@@ -33,13 +22,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
-import org.jdesktop.swingx.action.ActionManager;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.awt.*;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,12 +43,10 @@ public class StartLesson extends AnAction {
 
     public void actionPerformed(final AnActionEvent e) {
 
-
         try {
             final VirtualFile vf;
             vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
             //TODO: Rename as a lesson name
-            vf.rename(this, "test1.java");
 
             OpenFileDescriptor descriptor = new OpenFileDescriptor(e.getProject(), vf);
             final Editor editor = FileEditorManager.getInstance(e.getProject()).openTextEditor(descriptor, true);
@@ -70,12 +55,13 @@ public class StartLesson extends AnAction {
 //            Editor myEditor = FileEditorManager.getInstance();
 
 
-
-            InputStream is = this.getClass().getResourceAsStream("JavaLessonExample2.java");
-            final String target = new Scanner(is).useDelimiter("\\Z").next();
-
             final Course course = new Course();
             final Lesson lesson = course.giveNotPassedLesson();
+
+            vf.rename(this, lesson.getName());
+            InputStream is = this.getClass().getResourceAsStream(course.getAnswersPath() + lesson.getTargetPath());
+            final String target = new Scanner(is).useDelimiter("\\Z").next();
+
             if (lesson == null) {
                 //TODO: add some handler here
                 return;
