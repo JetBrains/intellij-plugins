@@ -91,38 +91,13 @@ public class StartLesson extends AnAction {
                 editor.getContentComponent().removeMouseListener(mouseListener);
             }
 
+            //kill all listeners
             MouseMotionListener[] mouseMotionListeners = editor.getContentComponent().getMouseMotionListeners();
             for (MouseMotionListener mouseMotionListener : mouseMotionListeners) {
                 editor.getContentComponent().removeMouseMotionListener(mouseMotionListener);
             }
 
-
-            editor.addEditorMouseListener(new EditorMouseListener() {
-                @Override
-                public void mousePressed(EditorMouseEvent e) {
-                    e.consume();
-                }
-
-                @Override
-                public void mouseClicked(EditorMouseEvent e) {
-                    e.consume();
-                }
-
-                @Override
-                public void mouseReleased(EditorMouseEvent e) {
-                    e.consume();
-                }
-
-                @Override
-                public void mouseEntered(EditorMouseEvent e) {
-                    e.consume();
-                }
-
-                @Override
-                public void mouseExited(EditorMouseEvent e) {
-                    e.consume();
-                }
-            });
+            //muteButtonListeners as in find
 
             LessonProcessor.process(lesson, editor, e, document, target, infoPanel);
 
