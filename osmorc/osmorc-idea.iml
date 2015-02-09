@@ -24,6 +24,6 @@
     <orderEntry type="module" module-name="osmorc-jps-plugin" exported="" />
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
+    <orderEntry type="library" scope="TEST" name="KotlinJavaRuntime" level="project" />
   </component>
 </module>
-

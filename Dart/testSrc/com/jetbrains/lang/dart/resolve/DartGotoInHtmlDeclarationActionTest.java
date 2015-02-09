@@ -126,7 +126,7 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testLibrary5() throws Throwable {
-    doTest(1, "Library5.dart", "Library5Helper.dart");
+    doTest(0, "Library5.dart", "Library5Helper.dart");
   }
 
   public void testLibrary8() throws Throwable {
