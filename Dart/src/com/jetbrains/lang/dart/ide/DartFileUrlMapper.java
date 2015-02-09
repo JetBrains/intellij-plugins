@@ -16,19 +16,10 @@ import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 final class DartFileUrlMapper extends FileUrlMapper {
   private static final String SCHEME = "dart";
-
-  @NotNull
-  @Override
-  public List<Url> getUrls(@NotNull VirtualFile file, @NotNull Project project, @Nullable String currentAuthority) {
-    return Collections.emptyList();
-  }
 
   @Nullable
   @Override

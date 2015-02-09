@@ -19,7 +19,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -42,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 import org.jetbrains.builtInWebServer.NetService;
+import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.io.*;
 
 import javax.swing.*;
@@ -176,7 +176,7 @@ final class PubServerService extends NetService {
   }
 
   @Override
-  protected void connectToProcess(@NotNull final AsyncResult<OSProcessHandler> asyncResult,
+  protected void connectToProcess(@NotNull final AsyncPromise<OSProcessHandler> promise,
                                   final int port,
                                   @NotNull final OSProcessHandler processHandler,
                                   @NotNull final Consumer<String> errorOutputConsumer) {
@@ -184,7 +184,7 @@ final class PubServerService extends NetService {
     InetSocketAddress old = servedDirToSocketAddress.put(firstServedDir, firstPubServerAddress);
     LOG.assertTrue(old == null);
 
-    super.connectToProcess(asyncResult, port, processHandler, errorOutputConsumer);
+    super.connectToProcess(promise, port, processHandler, errorOutputConsumer);
   }
 
   @SuppressWarnings({"MethodMayBeStatic", "UnusedParameters"})
@@ -356,6 +356,7 @@ final class PubServerService extends NetService {
       Collection<Channel> serverChannels = clientContextToServerChannels.remove(context);
       if (!ContainerUtil.isEmpty(serverChannels)) {
         for (Channel serverChannel : serverChannels) {
+          //noinspection Since15
           if (serverToClientContext.remove(serverChannel, context)) {
             freeServerChannels.add(serverChannel);
           }
