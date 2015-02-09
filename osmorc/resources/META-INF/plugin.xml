@@ -78,6 +78,8 @@
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
+    <projectImportProvider implementation="org.osmorc.bnd.BndProjectImportProvider"/>
+
     <applicationService serviceImplementation="org.osmorc.settings.ApplicationSettings"/>
     <applicationService serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
     <applicationService serviceImplementation="org.osmorc.obrimport.ObrProvider"/>
