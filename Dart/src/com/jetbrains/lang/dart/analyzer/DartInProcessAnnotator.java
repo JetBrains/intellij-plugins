@@ -17,7 +17,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -72,7 +71,7 @@ public class DartInProcessAnnotator extends ExternalAnnotator<DartInProcessAnnot
 
     if (FileUtil.isAncestor(sdk.getHomePath(), annotatedFile.getPath(), true)) return null;
 
-    final List<VirtualFile> libraries = DartResolveUtil.findLibrary(psiFile, GlobalSearchScope.projectScope(project));
+    final List<VirtualFile> libraries = DartResolveUtil.findLibrary(psiFile);
     final VirtualFile libraryFile = libraries.isEmpty() || libraries.contains(annotatedFile) ? annotatedFile : libraries.get(0);
 
     return new DartAnnotatorInfo(DartAnalyzerService.getInstance(project).getAnalysisContext(annotatedFile, sdk.getHomePath()),

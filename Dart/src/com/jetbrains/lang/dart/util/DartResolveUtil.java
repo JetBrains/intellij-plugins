@@ -1,16 +1,13 @@
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
@@ -306,20 +303,14 @@ public class DartResolveUtil {
         continue;
       }
 
-      final VirtualFile childFile;
-      if (partUrl.startsWith(DartUrlResolver.PACKAGE_PREFIX) || partUrl.startsWith(DartUrlResolver.FILE_PREFIX)) {
-        childFile = DartUrlResolver.getInstance(context.getProject(), virtualFile).findFileByDartUrl(partUrl);
-      }
-      else {
-        childFile = findRelativeFile(virtualFile, partUrl);
-      }
-
-      if (childFile == null || processedFiles.contains(childFile)) {
+      final VirtualFile partFile = getImportedFile(context.getProject(), virtualFile, partUrl);
+      if (partFile == null || processedFiles.contains(partFile)) {
         continue;
       }
-      final PsiFile childPsiFile = context.getManager().findFile(childFile);
-      if (childPsiFile != null) {
-        if (!processTopLevelDeclarationsImpl(childPsiFile, processor, childFile, fileNames, processedFiles)) {
+
+      final PsiFile partPsiFile = context.getManager().findFile(partFile);
+      if (partPsiFile != null) {
+        if (!processTopLevelDeclarationsImpl(partPsiFile, processor, partFile, fileNames, processedFiles)) {
           return false;
         }
       }
@@ -370,15 +361,6 @@ public class DartResolveUtil {
     return psiFile != null ? psiFile.getOriginalFile().getVirtualFile() : null;
   }
 
-  @Nullable
-  public static VirtualFile findRelativeFile(@NotNull VirtualFile file, String path) {
-    final VirtualFile parent = file.getParent();
-    if (parent == null) {
-      return VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(path));
-    }
-    return VfsUtilCore.findRelativeFile(path, parent);
-  }
-
   public static boolean sameLibrary(@NotNull PsiElement context1, @NotNull PsiElement context2) {
     final List<VirtualFile> librariesForContext1 = findLibrary(context1.getContainingFile());
     if (librariesForContext1.isEmpty()) return false;
@@ -395,49 +377,29 @@ public class DartResolveUtil {
 
   @NotNull
   public static List<VirtualFile> findLibrary(final PsiFile context) {
-    return findLibrary(context, GlobalSearchScope.allScope(context.getProject()));
-  }
-
-  public static List<VirtualFile> findLibrary(final PsiFile context, GlobalSearchScope scope) {
-    // todo wouldn't it be better to resolve 'part of XXX' instead?
     final VirtualFile contextVirtualFile = getRealVirtualFile(context);
-    if (isLibraryRoot(context)) {
-      DartLibraryStatement libraryStatement = null;
-      for (PsiElement root : findDartRoots(context)) {
-        libraryStatement = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
-        if (libraryStatement != null) break;
-      }
+    if (contextVirtualFile == null) return Collections.emptyList();
 
-      if (libraryStatement == null) {
-        return contextVirtualFile == null ? Collections.<VirtualFile>emptyList() : Collections.singletonList(contextVirtualFile);
+    for (PsiElement root : findDartRoots(context)) {
+      final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
+      if (partOfStatement != null) {
+        final String libraryName = partOfStatement.getLibraryName();
+        return ContainerUtil.filter(DartLibraryIndex.findLibraryClass(context, libraryName), new Condition<VirtualFile>() {
+          @Override
+          public boolean value(VirtualFile mainLibFile) {
+            for (String partUrl : DartPathIndex.getPaths(context.getProject(), mainLibFile)) {
+              final VirtualFile partFile = getImportedFile(context.getProject(), mainLibFile, partUrl);
+              if (contextVirtualFile.equals(partFile)) return true;
+            }
+
+            return false;
+          }
+        });
       }
-      return DartLibraryIndex.findLibraryClass(context, libraryStatement.getLibraryNameElement().getName());
     }
 
-    return ContainerUtil.filter(
-      DartSourceIndex.findLibraries(context, context.getName(), scope),
-      new Condition<VirtualFile>() {
-        @Override
-        public boolean value(VirtualFile virtualFile) {
-          // check if path point to context
-          for (String path : findSourcePathByFileName(context.getProject(), virtualFile, context.getName())) {
-            if (virtualFile != null && Comparing.equal(findRelativeFile(virtualFile, path), contextVirtualFile)) {
-              return true;
-            }
-          }
-          return false;
-        }
-      }
-    );
-  }
-
-  private static List<String> findSourcePathByFileName(Project project, VirtualFile virtualFile, final String fileName) {
-    return ContainerUtil.filter(DartPathIndex.getPaths(project, virtualFile), new Condition<String>() {
-      @Override
-      public boolean value(String path) {
-        return path.endsWith(fileName);
-      }
-    });
+    // no 'part of' statement in file -> this file itself is a library
+    return Collections.singletonList(contextVirtualFile);
   }
 
   public static boolean isLibraryRoot(PsiFile psiFile) {

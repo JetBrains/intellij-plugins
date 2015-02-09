@@ -405,6 +405,19 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testFromPartToPartViaPackageUrl() throws Exception {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
+    myFixture.addFileToProject("lib/lib.dart", "library libName;\n" +
+                                               "part 'package:ProjectName/part1.dart';\n" +
+                                               "part 'package:ProjectName/part2.dart';");
+    myFixture.addFileToProject("lib/part1.dart", "part of libName;" +
+                                                 "var foo1;");
+    final PsiFile psiFile = myFixture.addFileToProject("lib/part2.dart", "part of libName;\n" +
+                                                                         "var foo2 = <caret expected='lib/part1.dart -> foo1'>foo1;");
+    myFixture.openFileInEditor(psiFile.getVirtualFile());
+    doTest();
+  }
+
   public void testDartInternalLibrary() throws Exception {
     myFixture.configureByText("file.dart", "import 'dart:_internal';\n" +
                                            "class A extends <caret expected='[Dart SDK]/lib/internal/list.dart -> UnmodifiableListBase'>UnmodifiableListBase<E>{}");

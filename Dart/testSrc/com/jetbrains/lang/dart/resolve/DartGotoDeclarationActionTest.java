@@ -123,7 +123,7 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
 
   public void testLibrary5() throws Throwable {
     final String testName = getTestName(false);
-    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Helper.dart"), 1);
+    doTest(myFixture.configureByFiles(testName + ".dart", testName + "Helper.dart"), 0);
   }
 
   public void testLibrary8() throws Throwable {
