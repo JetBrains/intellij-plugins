@@ -75,4 +75,7 @@ public class Scenario {
         return root;
     }
 
+    public String getTarget() {
+        return root.getAttribute("target").getValue();
+    }
 }

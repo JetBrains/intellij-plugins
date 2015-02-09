@@ -21,6 +21,7 @@ public class Course {
     private String pathDir;
     final private String defaultPath = "data/DefaultCourse.xml";
     final private String defaultPathDir = "data/";
+    private String answersPath;
     private Element root;
 
     public Course() throws BadCourseException, BadLessonException {
@@ -29,6 +30,7 @@ public class Course {
         lessons = new HashSet<Lesson>();
 
         initLessons();
+        answersPath = root.getAttribute("answerspath").getValue();
     }
 
     public Course(String coursePath) throws BadCourseException, BadLessonException {
@@ -38,6 +40,11 @@ public class Course {
         lessons = new HashSet<Lesson>();
 
         initLessons();
+        answersPath = root.getAttribute("answerspath").getValue();
+    }
+
+    public String getAnswersPath() {
+        return answersPath;
     }
 
     private void initLessons() throws BadCourseException, BadLessonException {
