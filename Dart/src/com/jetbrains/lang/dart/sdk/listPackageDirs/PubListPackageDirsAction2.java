@@ -55,6 +55,7 @@ public class PubListPackageDirsAction2 extends AnAction {
 
     @NotNull final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
+    outer:
     for (final String path : libraries) {
       if (path == null) continue;
 
@@ -62,7 +63,12 @@ public class PubListPackageDirsAction2 extends AnAction {
       final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(libRoot);
 
       if (!libRoot.startsWith(dartSdk.getHomePath() + "/") && (vFile == null || !fileIndex.isInContent(vFile))) {
-        // todo skip nested roots?
+        for (String configuredPath : rootsToAddToLib) {
+          if (path.startsWith(configuredPath + "/")) {
+            continue outer; // skip nested roots
+          }
+        }
+
         rootsToAddToLib.add(libRoot);
       }
     }
