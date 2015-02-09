@@ -295,11 +295,11 @@ public class DartAnalysisServerService {
 
           @Override
           public void onError(final RequestError error) {
-            semaphore.up();
             LOG.error("Error from analysis_getErrors() for file " + path +
                       ", SDK version = " + mySdkVersion +
                       ", server version= " + myServerVersion +
                       ", code=" + error.getCode() + ": " + error.getMessage());
+            semaphore.up();
           }
         });
       }
@@ -416,11 +416,11 @@ public class DartAnalysisServerService {
 
         @Override
         public void onError(final RequestError error) {
-          semaphore.up();
           LOG.error("Error from edit_format() for file " + path +
                     ", SDK version = " + mySdkVersion +
                     ", server version= " + myServerVersion +
                     ", code=" + error.getCode() + ": " + error.getMessage());
+          semaphore.up();
         }
       });
     }
@@ -456,8 +456,8 @@ public class DartAnalysisServerService {
 
         @Override
         public void onError(final RequestError requestError) {
-          semaphore.up();
           LOG.warn("Error from server_getVersion(), code=" + requestError.getCode() + ": " + requestError.getMessage());
+          semaphore.up();
         }
       });
     }

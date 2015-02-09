@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.validation.fixes;
 
 import com.google.dart.server.generated.types.*;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -10,12 +11,15 @@ import com.intellij.codeInsight.template.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -151,6 +155,10 @@ public final class DartServerFixIntention implements IntentionAction {
     final List<SourceEdit> sourceEdits = fileEdits.get(0).getEdits();
     if (sourceEdits.size() != 1) return false;
 
+    @NotNull final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    @Nullable final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(file);
+    if (vFile == null || !fileIndex.isInContent(vFile)) return false;
+
     return true;
   }
 
@@ -161,6 +169,8 @@ public final class DartServerFixIntention implements IntentionAction {
 
   @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+    if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
+
     final Document document = editor.getDocument();
 
     final SourceFileEdit fileEdit = myChange.getEdits().get(0);
