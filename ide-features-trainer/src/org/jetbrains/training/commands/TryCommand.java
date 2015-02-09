@@ -28,6 +28,7 @@ public class TryCommand extends Command {
 
         Element element = elements.poll();
         updateDescription(element, infoPanel, editor);
+        updateButton(element, elements, lesson, editor, e, document, target, infoPanel);
 
         final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, target);
         //TODO: Make recorder disposable
