@@ -102,8 +102,8 @@ public class DartAnalysisServerAnnotator
 
     final ServerResult result = new ServerResult();
 
-    for (AnalysisError error : errors) {
-      if (shouldIgnoreMessageFromDartAnalyzer(error)) continue;
+    for (final AnalysisError error : errors) {
+      if (error == null || shouldIgnoreMessageFromDartAnalyzer(error)) continue;
 
       final List<AnalysisErrorFixes> fixes =
         DartAnalysisServerService.getInstance().analysis_getFixes(info, error.getLocation().getOffset());
@@ -123,9 +123,9 @@ public class DartAnalysisServerAnnotator
       final List<AnalysisErrorFixes> fixes = entry.getValue();
 
       final Annotation annotation = annotate(holder, error);
-      if (annotation != null && fixes != null) {
-        for (AnalysisErrorFixes fixList : fixes) {
-          for (SourceChange change : fixList.getFixes()) {
+      if (annotation != null && fixes != null && !fixes.isEmpty()) {
+        for (final AnalysisErrorFixes fixList : fixes) {
+          for (final SourceChange change : fixList.getFixes()) {
             annotation.registerFix(new DartServerFixIntention(change));
           }
         }
