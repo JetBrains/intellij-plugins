@@ -5,9 +5,15 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diff.impl.incrementalMerge.ui.EditorPlace;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.actionSystem.EditorActionManager;
+import com.intellij.openapi.editor.event.EditorFactoryEvent;
+import com.intellij.openapi.editor.event.EditorFactoryListener;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -22,12 +28,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.tabs.TabsListener;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.awt.*;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -40,6 +49,7 @@ public class StartLesson extends AnAction {
 
     DetailPanel infoPanel;
     Balloon balloon;
+    Dimension dimension;
     private OpenFileDescriptor descriptor;
 
     public void actionPerformed(final AnActionEvent e) {
@@ -68,10 +78,49 @@ public class StartLesson extends AnAction {
                 //TODO: add some handler here
                 return;
             }
-//MAIN LESSON CONTROLLER STARTS HERE--------------------------------
+            dimension = new Dimension(500, 60);
+            infoPanel = new DetailPanel(dimension);
 
+//            editor.getContentComponent().addFocusListener(new FocusAdapter() {
+//                @Override
+//                public void focusGained(FocusEvent focusEvent) {
+//                    System.err.println("Focus gained");
+//                }
+//
+//                @Override
+//                public void focusLost(FocusEvent focusEvent) {
+//                    System.err.println("Focus lost");
+//                }
+//            });
 
             showInfoPanel(editor);
+
+            e.getProject().getMessageBus().connect(e.getProject()).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
+                @Override
+                public void fileOpened(FileEditorManager source, VirtualFile file) {
+
+                }
+
+                @Override
+                public void fileClosed(FileEditorManager source, VirtualFile file) {
+
+                }
+
+                @Override
+                public void selectionChanged(FileEditorManagerEvent event) {
+                    if (((FileEditorManager)event.getSource()).getSelectedTextEditor() == editor) {
+                        showInfoPanel(editor);
+                    } else {
+                        if (balloon != null)
+                            balloon.hide();
+                    }
+                }
+            });
+
+
+
+//MAIN LESSON CONTROLLER STARTS HERE--------------------------------
+
 
             //kill all listeners
             MouseListener[] mouseListeners = editor.getContentComponent().getMouseListeners();
@@ -108,10 +157,8 @@ public class StartLesson extends AnAction {
 
 
     private void showInfoPanel(Editor editor) {
-        final Dimension dimension = new Dimension(500, 60);
 
         final IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(editor.getProject());
-        infoPanel = new DetailPanel(dimension);
         RelativePoint location = computeLocation(ideFrame, dimension);
         Rectangle infoBounds = new Rectangle((int) location.getPoint().getX(), (int) location.getPoint().getY(), (int) dimension.getWidth(),(int) dimension.getHeight());
 
@@ -123,7 +170,8 @@ public class StartLesson extends AnAction {
                 .setDialogMode(false)
                 .setHideOnFrameResize(false)
                 .setFillColor(new Color(0, 0, 0, 0))
-                .setHideOnAction(false);
+                .setHideOnAction(false)
+                .setAnimationCycle(0);
 
         balloon = balloonBuilder.createBalloon();
         balloon.setBounds(infoBounds);

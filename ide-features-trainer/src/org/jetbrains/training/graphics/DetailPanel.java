@@ -173,4 +173,9 @@ public class DetailPanel extends JPanel implements Disposable{
 
     }
 
+//    public void setVisible(boolean visibility){
+//        this.set
+//    }
+
+
 }
