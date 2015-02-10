@@ -40,12 +40,14 @@ public class StartLesson extends AnAction {
 
     DetailPanel infoPanel;
     Balloon balloon;
+    private OpenFileDescriptor descriptor;
 
     public void actionPerformed(final AnActionEvent e) {
 
         try {
             final VirtualFile vf;
             vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
+//            vf = ScratchFileService.getInstance().createScratchFile(e.getProject(), Language.findLanguageByID("JAVA"), "");
             //TODO: Rename as a lesson name
 
             OpenFileDescriptor descriptor = new OpenFileDescriptor(e.getProject(), vf);
@@ -139,7 +141,6 @@ public class StartLesson extends AnAction {
     @Nullable
     private VirtualFile createFile(final Project project) throws IOException {
         final String fileName = "JavaLessonExample.java";
-
 
         Module[] modules = ModuleManager.getInstance(project).getModules();
         final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(modules[0]).getSourceRoots();

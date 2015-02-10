@@ -1,5 +1,5 @@
 <xml type="Course" name="DefaultCourse" version="0.1" answerspath="data/answers/">
     <lessons>
-        <lesson name="Comment Line" isPassed="false" path="CommentLine.xml"/>
+        <lesson name="Delete Line" isPassed="false" path="DeleteLine.xml"/>
     </lessons>
 </xml>

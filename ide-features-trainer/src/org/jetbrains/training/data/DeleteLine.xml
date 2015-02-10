@@ -1,0 +1,31 @@
+<xml type="Scenario" name="Delete Line" passed="false" version="0.1" target="DeleteLineDemo.java">
+    <Start description="Know how delete line in one action" btn="Ok"/>
+    <CopyText>
+public class CommentLineDemo {
+
+    public int fib(int n) {
+        int a = 1;
+        int b = 1;
+
+        int tmp;
+
+        if (n &lt; 2) return 1;
+
+        for (int i = 0; i &lt; (n - 1); i++) {
+            tmp = b;
+            b = a;
+            a = a + tmp;
+        }
+
+        return a;
+    }
+}</CopyText>
+    <Text description="" btn="Ok">Let's delete &lt;b&gt;if&lt;/b&gt; statement line</Text>
+    <Text description="Move caret to tmp declaration" btn="..."/>
+    <TraverseCaret stop="120" delay="20"/>
+    <Action action="EditorDeleteLine" delay="2000" balloon="type ⌘ + ⌫ to delete line"/>
+    <Wait delay="200"/>
+    <Text description="That's it!" btn="let me try"/>
+    <TraverseCaret stop="0" delay="20"/>
+    <Try description="Comment line with if statement"/>
+</xml>
