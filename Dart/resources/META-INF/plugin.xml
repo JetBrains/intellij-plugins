@@ -143,17 +143,17 @@
 
     <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
 
-    <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>
-    <externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>
-    <!--<externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator"/>-->
-    <!--<externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator"/>-->
+    <!--<externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>-->
+    <!--<externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartInProcessAnnotator"/>-->
+    <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator"/>
+    <externalAnnotator language="HTML" implementationClass="com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator"/>
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator"/>
     <!--<annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartUnresolvedReferenceVisitor"/>-->
 
-    <projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"
-                    serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"/>
-    <!--<applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"-->
-                    <!--serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>-->
+    <!--<projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"-->
+                    <!--serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"/>-->
+    <applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"
+                    serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerManager"
@@ -165,10 +165,10 @@
     <codeFoldingOptionsProvider instance="com.jetbrains.lang.dart.folding.DartCodeFoldingOptionsProvider"/>
 
     <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
-    <codeInspection.InspectionExtension id="dartGlobalInspection"
-                                        implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>
     <!--<codeInspection.InspectionExtension id="dartGlobalInspection"-->
-                                        <!--implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartAnalysisServerInspectionExtensionsFactory"/>-->
+                                        <!--implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>-->
+    <codeInspection.InspectionExtension id="dartGlobalInspection"
+                                        implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartAnalysisServerInspectionExtensionsFactory"/>
 
     <consoleFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.DartConsoleFilterProvider" order="first"/>
 
@@ -185,20 +185,20 @@
 
     <!--inspections-->
 
-    <globalInspection shortName="DartGlobalInspectionTool"
-                      bundle="com.jetbrains.lang.dart.DartBundle"
-                      key="dart.analyzer.inspection.display.name"
-                      groupName="Dart"
-                      enabledByDefault="true"
-                      level="WARNING"
-                      implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartGlobalInspectionTool"/>
-    <!--<globalInspection shortName="DartAnalysisServerGlobalInspectionTool"-->
+    <!--<globalInspection shortName="DartGlobalInspectionTool"-->
                       <!--bundle="com.jetbrains.lang.dart.DartBundle"-->
                       <!--key="dart.analyzer.inspection.display.name"-->
                       <!--groupName="Dart"-->
                       <!--enabledByDefault="true"-->
                       <!--level="WARNING"-->
-                      <!--implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartAnalysisServerGlobalInspectionTool"/>-->
+                      <!--implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartGlobalInspectionTool"/>-->
+    <globalInspection shortName="DartAnalysisServerGlobalInspectionTool"
+                      bundle="com.jetbrains.lang.dart.DartBundle"
+                      key="dart.analyzer.inspection.display.name"
+                      groupName="Dart"
+                      enabledByDefault="true"
+                      level="WARNING"
+                      implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartAnalysisServerGlobalInspectionTool"/>
 
     <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="dart.sdk.is.not.configured"
                      groupName="Dart" enabledByDefault="true" level="WARNING"
@@ -214,10 +214,10 @@
 
   <actions>
     <!-- Action for Google internal developers only, action can be found only using 'Find Action' -->
-    <action id="Dart.pub.list.package.dirs" class="com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction"
-            text="Configure Dart package roots using 'pub list-package-dirs'"/>
-    <!--<action id="Dart.pub.list.package.dirs" class="com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction2"-->
+    <!--<action id="Dart.pub.list.package.dirs" class="com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction"-->
             <!--text="Configure Dart package roots using 'pub list-package-dirs'"/>-->
+    <action id="Dart.pub.list.package.dirs" class="com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction2"
+            text="Configure Dart package roots using 'pub list-package-dirs'"/>
 
     <action id="Dart.stop.pub.server" class="com.jetbrains.lang.dart.pubServer.StopPubServerAction" text="Stop Pub Serve"/>
 

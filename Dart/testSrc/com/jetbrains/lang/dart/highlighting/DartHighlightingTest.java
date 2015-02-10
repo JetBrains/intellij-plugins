@@ -11,7 +11,7 @@ import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.inspections.DartDeprecatedApiUsageInspection;
 import com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection;
 
-public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
+public abstract class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   protected String getBasePath() {
     return "/highlighting";
   }

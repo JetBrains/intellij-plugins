@@ -2,7 +2,7 @@ package com.jetbrains.lang.dart.analyzer;
 
 import com.google.dart.engine.error.AnalysisError;
 
-public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
+public abstract class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
   @Override
   protected String getBasePath() {
     return "/analyzer/resolver";
