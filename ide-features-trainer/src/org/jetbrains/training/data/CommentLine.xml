@@ -30,5 +30,5 @@ public class CommentLineDemo {
     <Action action="CommentByLineComment" delay="2000" balloon="type ⌘ + / to uncomment line"/>
     <Text description="That's it!" btn="let me try"/>
     <TraverseCaret stop="0" delay="20"/>
-    <Try description="Comment line with if statement"/>
+    <Try description="Comment line with if statement" win-message="Awesome!"/>
 </xml>
