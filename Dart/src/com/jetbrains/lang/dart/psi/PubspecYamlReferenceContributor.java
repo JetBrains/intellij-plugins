@@ -60,7 +60,7 @@ public class PubspecYamlReferenceContributor extends PsiReferenceContributor {
       final boolean quoted = StringUtil.isQuotedString(text);
       final int startInElement = value.getStartOffsetInParent() + (quoted ? 1 : 0);
 
-      final FileReferenceSet fileReferenceSet = new FileReferenceSet(StringUtil.stripQuotesAroundValue(text), element, startInElement,
+      final FileReferenceSet fileReferenceSet = new FileReferenceSet(StringUtil.unquoteString(text), element, startInElement,
                                                                      this, SystemInfo.isFileSystemCaseSensitive, false) {
         @NotNull
         @Override

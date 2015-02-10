@@ -56,7 +56,7 @@ public class DartValue extends XNamedValue {
       presentation = new XRegularValuePresentation("null", null);
     }
     else if (myVmValue.isString()) {
-      presentation = new XStringValuePresentation(StringUtil.stripQuotesAroundValue(value));
+      presentation = new XStringValuePresentation(StringUtil.unquoteString(value));
     }
     else if (myVmValue.isNumber()) {
       presentation = new XNumericValuePresentation(value);
@@ -98,7 +98,7 @@ public class DartValue extends XNamedValue {
             return; // stay with existing presentation returned in computePresentation()
           }
 
-          final String text = StringUtil.stripQuotesAroundValue(result.getResult().getText());
+          final String text = StringUtil.unquoteString(result.getResult().getText());
           if (text.startsWith("IntelliJ marker:")) {
             try {
               final int collectionSize = Integer.parseInt(text.substring("IntelliJ marker:".length()));
@@ -144,7 +144,7 @@ public class DartValue extends XNamedValue {
           if (node.isObsolete()) return;
 
           if (!result.isError() && result.getResult() != null && "string".equals(result.getResult().getKind())) {
-            final String text = StringUtil.stripQuotesAroundValue(result.getResult().getText());
+            final String text = StringUtil.unquoteString(result.getResult().getText());
             if ("Map".equals(text)) {
               computeMapChildren(node);
               return;
