@@ -99,7 +99,7 @@ public class PubListPackageDirsAction2 extends AnAction {
 
     @NotNull final Set<Module> affectedModules = new THashSet<Module>();
     @NotNull final Collection<String> rootsToAddToLib = new THashSet<String>();
-    @NotNull final Map<String, List<File>> packageNameToDirMap = new THashMap<String, List<File>>();
+    final Map<String, List<File>> packageNameToDirMap = new TreeMap<String, List<File>>();
 
     final Runnable runnable = new Runnable() {
       public void run() {
