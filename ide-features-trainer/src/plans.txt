@@ -41,9 +41,11 @@ February 9
 * Implement 2 different courses
 
 February 10
+* Win-message in scenario.xml
 ... Shortcut Logger
 
 //Plans
+* Change winner message
 * Disposable
 * Navigation between courses (Modified Toolwindow)
 

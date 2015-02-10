@@ -30,13 +30,15 @@ public class TryCommand extends Command {
         updateDescription(element, infoPanel, editor);
         updateButton(element, elements, lesson, editor, e, document, target, infoPanel);
 
+        final String winMessage = element.getAttribute("win-message").getValue();
+
         final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, target);
         //TODO: Make recorder disposable
 
         recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
-                infoPanel.setText("Awesome, now you know how to duplicate lines easily!");
+                infoPanel.setText(winMessage);
                 infoPanel.greenalize();
                 lesson.pass();
             }
