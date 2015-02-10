@@ -33,14 +33,22 @@ February 4
 February 5
 * Modify to html description for infoPanel
 
+February 6
+* Block mouse actions
+
+February 9
+* Encapsulate path to target file in scenario.xml
+* Implement 2 different courses
+
+February 10
+... Shortcut Logger
+
 //Plans
 * Disposable
-* Shortcut Logger
-* Implement 2 different courses
+* Navigation between courses (Modified Toolwindow)
 
 //Far plans
 * Language injection to Scenario (ask George Shrago)
-* Navigation between courses
 
 //UI plans
 * area selection
