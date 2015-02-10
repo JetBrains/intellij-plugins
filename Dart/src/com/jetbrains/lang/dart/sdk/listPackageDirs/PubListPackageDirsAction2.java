@@ -53,8 +53,11 @@ public class PubListPackageDirsAction2 extends AnAction {
                                           @NotNull final String[] libraries,
                                           @NotNull final Collection<String> rootsToAddToLib) {
 
-    @NotNull final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
+    Arrays.sort(libraries);
+
+    outer:
     for (final String path : libraries) {
       if (path == null) continue;
 
@@ -62,7 +65,11 @@ public class PubListPackageDirsAction2 extends AnAction {
       final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(libRoot);
 
       if (!libRoot.startsWith(dartSdk.getHomePath() + "/") && (vFile == null || !fileIndex.isInContent(vFile))) {
-        // todo skip nested roots?
+        for (String configuredPath : rootsToAddToLib) {
+          if (path.startsWith(configuredPath + "/")) {
+            continue outer; // skip nested roots
+          }
+        }
         rootsToAddToLib.add(libRoot);
       }
     }
@@ -97,9 +104,9 @@ public class PubListPackageDirsAction2 extends AnAction {
 
     FileDocumentManager.getInstance().saveAllDocuments();
 
-    @NotNull final Set<Module> affectedModules = new THashSet<Module>();
-    @NotNull final Collection<String> rootsToAddToLib = new THashSet<String>();
-    @NotNull final Map<String, List<File>> packageNameToDirMap = new THashMap<String, List<File>>();
+    final Set<Module> affectedModules = new THashSet<Module>();
+    final Collection<String> rootsToAddToLib = new THashSet<String>();
+    final Map<String, List<File>> packageNameToDirMap = new THashMap<String, List<File>>();
 
     final Runnable runnable = new Runnable() {
       public void run() {
@@ -129,10 +136,10 @@ public class PubListPackageDirsAction2 extends AnAction {
           packageMapMap = Collections.emptyMap();
         }
 
-        @NotNull final Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (@NotNull final Module module : modules) {
+        final Module[] modules = ModuleManager.getInstance(project).getModules();
+        for (final Module module : modules) {
           if (DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) {
-            for (@NotNull final VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
+            for (final VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
               // if there is a pubspec, skip this contentRoot
               if (contentRoot.findChild(PubspecYamlUtil.PUBSPEC_YAML) != null) continue;
 
