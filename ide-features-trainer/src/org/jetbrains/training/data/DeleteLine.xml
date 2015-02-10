@@ -1,7 +1,7 @@
 <xml type="Scenario" name="Delete Line" passed="false" version="0.1" target="DeleteLineDemo.java">
     <Start description="Know how delete line in one action" btn="Ok"/>
     <CopyText>
-public class CommentLineDemo {
+public class DeleteLineDemo {
 
     public int fib(int n) {
         int a = 1;
@@ -27,5 +27,5 @@ public class CommentLineDemo {
     <Wait delay="200"/>
     <Text description="That's it!" btn="let me try"/>
     <TraverseCaret stop="0" delay="20"/>
-    <Try description="Comment line with if statement"/>
+    <Try description="Delete 'for statement' to complete lesson" win-message="Cool, now you know how to delete lines fast!"/>
 </xml>
