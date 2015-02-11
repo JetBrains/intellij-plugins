@@ -10,6 +10,7 @@ import com.intellij.codeInsight.lookup.LookupElementRenderer;
 import com.intellij.codeInsight.template.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -19,14 +20,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-
 
 public final class DartServerFixIntention implements IntentionAction {
 
@@ -155,9 +156,11 @@ public final class DartServerFixIntention implements IntentionAction {
     final List<SourceEdit> sourceEdits = fileEdits.get(0).getEdits();
     if (sourceEdits.size() != 1) return false;
 
-    @NotNull final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    @Nullable final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(file);
-    if (vFile == null || !fileIndex.isInContent(vFile)) return false;
+    final SourceFileEdit fileEdit = fileEdits.get(0);
+    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+
+    if (virtualFile == null || !fileIndex.isInContent(virtualFile)) return false;
 
     return true;
   }
@@ -169,12 +172,20 @@ public final class DartServerFixIntention implements IntentionAction {
 
   @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-    if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
-
-    final Document document = editor.getDocument();
 
     final SourceFileEdit fileEdit = myChange.getEdits().get(0);
     final SourceEdit sourceEdit = fileEdit.getEdits().get(0);
+
+    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
+    if (virtualFile == null) return;
+
+    final Collection<VirtualFile> virtualFiles = new THashSet<VirtualFile>();
+    virtualFiles.add(virtualFile);
+
+    final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+    if (document == null) return;
+
+    if (!FileModificationService.getInstance().prepareVirtualFilesForWrite(project, virtualFiles)) return;
 
     // Templates can only grow source, so we trim first if necessary
     if (sourceEdit.getLength() > 0) {
@@ -182,21 +193,18 @@ public final class DartServerFixIntention implements IntentionAction {
     }
 
     final TemplateManager templateManager = TemplateManager.getInstance(project);
-    Template template = templateManager.createTemplate("", "");
+    final Template template = templateManager.createTemplate("", "");
     template.setToReformat(true);
 
     addContents(template, sourceEdit);
 
-    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
-    if (virtualFile != null) {
-      final Editor targetEditor = BaseCreateFix.navigate(project, sourceEdit.getOffset(), virtualFile);
-      if (targetEditor != null) {
-        templateManager.startTemplate(targetEditor, template);
-      }
+    final Editor targetEditor = BaseCreateFix.navigate(project, sourceEdit.getOffset(), virtualFile);
+    if (targetEditor != null) {
+      templateManager.startTemplate(targetEditor, template);
     }
   }
 
-  private void addContents(final Template template, final SourceEdit edit) {
+  private void addContents(@NotNull final Template template, @NotNull final SourceEdit edit) {
 
     final String replacementText = edit.getReplacement();
     final int initialOffset = edit.getOffset();
@@ -206,7 +214,7 @@ public final class DartServerFixIntention implements IntentionAction {
     int currentInsertOffset = 0;
 
     for (SuggestionInfo suggestion : suggestions) {
-      String text = replacementText.substring(currentInsertOffset, suggestion.getOffset() - initialOffset);
+      final String text = replacementText.substring(currentInsertOffset, suggestion.getOffset() - initialOffset);
       template.addTextSegment(text);
       template.addVariable(new DartLookupExpression(suggestion), true);
       currentInsertOffset += text.length() + suggestion.getDefaultValue().length();
@@ -220,7 +228,8 @@ public final class DartServerFixIntention implements IntentionAction {
 
   }
 
-  private static List<SuggestionInfo> extractSuggestions(final List<LinkedEditGroup> editGroups) {
+  @NotNull
+  private static List<SuggestionInfo> extractSuggestions(@NotNull final List<LinkedEditGroup> editGroups) {
     List<SuggestionInfo> info = new ArrayList<SuggestionInfo>();
     for (LinkedEditGroup editGroup : editGroups) {
       final List<LinkedEditSuggestion> suggestions = editGroup.getSuggestions();
