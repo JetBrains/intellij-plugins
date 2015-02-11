@@ -11,7 +11,7 @@ import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.inspections.DartDeprecatedApiUsageInspection;
 import com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection;
 
-public abstract class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
+public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   protected String getBasePath() {
     return "/highlighting";
   }
@@ -95,28 +95,12 @@ public abstract class DartHighlightingTest extends DartCodeInsightFixtureTestCas
     myFixture.checkHighlighting(true, false, true);
   }
 
-  public void testUnusedImports() {
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, false, true);
-  }
-
   public void testColorAnnotator() {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting(true, true, true);
   }
 
-  public void testErrorsAfterEOF() {
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, false, true);
-  }
-
-  public void testErrorAtZeroOffset() {
-    myFixture.addFileToProject("bar.dart", "part of x;");
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, false, true);
-  }
-
-  public void testPathsWithSpaces() {
+  public void _testPathsWithSpaces() { // DartInProcessAnnotator-specific test
     myFixture.addFileToProject("pubspec.yaml", "");
     myFixture.addFileToProject("packages/pack name/pack file.dart", "library pack;");
     myFixture.addFileToProject("other file.dart", "library other;");

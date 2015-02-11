@@ -23,4 +23,17 @@ public abstract class DartAnalysisServerHighlightingTest extends CodeInsightFixt
   public void testErrorsHighlighting() throws Exception {
     doHighlightingTest();
   }
+
+  public void testErrorsAfterEOF() {
+    doHighlightingTest();
+  }
+
+  public void testErrorAtZeroOffset() {
+    myFixture.addFileToProject("bar.dart", "part of x;");
+    doHighlightingTest();
+  }
+
+  public void testUnusedImports() {
+    doHighlightingTest();
+  }
 }

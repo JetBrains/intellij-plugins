@@ -481,11 +481,14 @@ public class DartAnalysisServerService {
     synchronized (myLock) {
       mySdkHome = sdk.getHomePath();
 
+      final String testSdkHome = System.getProperty("dart.sdk");
+      if (ApplicationManager.getApplication().isUnitTestMode() && testSdkHome == null) return;
+
       final String runtimePath = FileUtil
-        .toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? System.getProperty("dart.sdk") : mySdkHome)
+        .toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? testSdkHome : mySdkHome)
                                + "/bin/dart");
       final String analysisServerPath = FileUtil
-        .toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? System.getProperty("dart.sdk") : mySdkHome)
+        .toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? testSdkHome : mySdkHome)
                                + "/bin/snapshots/analysis_server.dart.snapshot");
 
       final DebugPrintStream debugStream = new DebugPrintStream() {

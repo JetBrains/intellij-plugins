@@ -1,39 +1,41 @@
-<error descr="Annotation can be only constant variable or constant constructor invocation"><info textAttributesKey="DART_METADATA">@aaa.bbb</info>("")</error>
-<info textAttributesKey="DART_METADATA">@<info>deprecated</info></info>
-<info>foo</info>(){}
+<info textAttributesKey="DART_METADATA">@aaa.bbb</info>("")
+<info textAttributesKey="DART_METADATA">@<info textAttributesKey="DART_TOP_LEVEL_VARIABLE_ACCESS">deprecated</info></info>
+<info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION"><info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">foo</info></info>(){}
 
 <info textAttributesKey="DART_BUILTIN">int</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">x</info>;
 
-<info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">main</info>() {
-    <info>int</info> <info>z</info> = <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">blah</info>();
+<info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION"><info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">main</info></info>() {
+    <info textAttributesKey="DART_BUILTIN">int</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">z</info> = <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">blah</info>();
 }
 
-<info>int</info> <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">blah</info>() => <info>x</info>;
+<info textAttributesKey="DART_BUILTIN">int</info> <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION"><info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">blah</info></info>() => <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_ACCESS">x</info>;
 
 class <info textAttributesKey="DART_CLASS">A</info> {
-  <info textAttributesKey="DART_KEYWORD">static</info> <info>int</info> <info textAttributesKey="DART_STATIC_MEMBER_VARIABLE">BAR</info> = 4;
-  <info textAttributesKey="DART_KEYWORD">static</info> <info textAttributesKey="DART_STATIC_MEMBER_FUNCTION">a</info>() {}
-  <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">b</info>() {
+  <info textAttributesKey="DART_KEYWORD">static</info> <info textAttributesKey="DART_BUILTIN">int</info> <info textAttributesKey="DART_STATIC_MEMBER_VARIABLE">BAR</info> = 4;
+  <info textAttributesKey="DART_KEYWORD">static</info> <info textAttributesKey="DART_STATIC_MEMBER_FUNCTION"><info textAttributesKey="DART_STATIC_MEMBER_FUNCTION">a</info></info>() {}
+  <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">b</info></info>() {
     var <info textAttributesKey="DART_LOCAL_VARIABLE">loc</info> =
       <info textAttributesKey="DART_STATIC_MEMBER_FUNCTION_CALL">a</info>() +
       <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE_ACCESS">_c</info> +
       <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_ACCESS">x</info>;
-    var <info>xx</info> = new <info textAttributesKey="DART_CONSTRUCTOR_CALL"><info>A</info></info>().<info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION_CALL">b</info>();
+    var <info textAttributesKey="DART_LOCAL_VARIABLE">xx</info> = new <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION_CALL"><info textAttributesKey="DART_CONSTRUCTOR_CALL">A</info></info>().<info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION_CALL">b</info>();
   }
 
   var <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">_c</info> = <info textAttributesKey="DART_STATIC_MEMBER_VARIABLE_ACCESS">BAR</info>;
   <info textAttributesKey="DART_CONSTRUCTOR_DECLARATION">A</info>();
-  <info textAttributesKey="DART_CONSTRUCTOR_DECLARATION"><info>A</info>.aaa</info>();
+  <info textAttributesKey="DART_CONSTRUCTOR_DECLARATION"><info textAttributesKey="DART_CLASS">A</info>.aaa</info>();
 }
 
-<info>abstract</info> class <info>B</info> {
-  <info>templateMethod</info>();
-  <info>f</info>() => <info textAttributesKey="DART_ABSTRACT_MEMBER_FUNCTION_CALL">templateMethod</info>();
+<info textAttributesKey="DART_KEYWORD">abstract</info> class <info textAttributesKey="DART_CLASS">B</info> {
+  <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">templateMethod</info></info>();
+  <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">f</info></info>() => <info textAttributesKey="DART_ABSTRACT_MEMBER_FUNCTION_CALL">templateMethod</info>();
 }
 
-class <info>C</info> extends <info>B</info> {
-  <info>templateMethod</info>() => null;
-  <info>c</info>() => <info textAttributesKey="DART_INHERITED_MEMBER_FUNCTION_CALL">f</info>();
+class <info textAttributesKey="DART_CLASS">C</info> extends <info textAttributesKey="DART_CLASS">B</info> {
+  <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">templateMethod</info></info>() => null;
+  <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">c</info></info>() => <info textAttributesKey="DART_INHERITED_MEMBER_FUNCTION_CALL">f</info>();
 }
 
-const <info>className</info> = <info textAttributesKey="DART_SYMBOL_LITERAL">#MyClass</info>;
+const <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">className</info> = <info textAttributesKey="DART_SYMBOL_LITERAL">#MyClass</info>;
+
+<error>`</error> // this syntax error is here to make sure that DartAnalysisServerAnnotator won't run

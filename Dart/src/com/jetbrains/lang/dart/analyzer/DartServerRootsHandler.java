@@ -1,10 +1,10 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.ProjectTopics;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectManagerAdapter;
+import com.intellij.openapi.project.impl.ProjectLifecycleListener;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
@@ -12,6 +12,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.SmartList;
+import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import gnu.trove.THashSet;
@@ -26,9 +27,11 @@ public class DartServerRootsHandler {
   private final List<String> myExcludedRoots = new SmartList<String>();
 
   public DartServerRootsHandler() {
-    ProjectManager.getInstance().addProjectManagerListener(new ProjectManagerAdapter() {
+    // ProjectManagerListener.projectClosed() is not called in unittest mode, that's why ProjectLifecycleListener is used - it is called always
+    final MessageBusConnection busConnection = ApplicationManager.getApplication().getMessageBus().connect();
+    busConnection.subscribe(ProjectLifecycleListener.TOPIC, new ProjectLifecycleListener.Adapter() {
       @Override
-      public void projectClosed(final Project project) {
+      public void afterProjectClosed(@NotNull final Project project) {
         if (myTrackedProjects.remove(project)) {
           updateRoots();
         }

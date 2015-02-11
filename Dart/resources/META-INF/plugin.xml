@@ -153,7 +153,7 @@
     <!--<projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"-->
                     <!--serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalyzerService"/>-->
     <applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"
-                    serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
+                        serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerManager"

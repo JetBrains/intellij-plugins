@@ -122,7 +122,7 @@ public class DartAnalysisServerAnnotator
       final AnalysisError error = entry.getKey();
       final List<AnalysisErrorFixes> fixes = entry.getValue();
 
-      final Annotation annotation = annotate(holder, error);
+      final Annotation annotation = annotate(holder, error, psiFile.getTextLength());
       if (annotation != null && fixes != null && !fixes.isEmpty()) {
         for (final AnalysisErrorFixes fixList : fixes) {
           for (final SourceChange change : fixList.getFixes()) {
@@ -143,10 +143,15 @@ public class DartAnalysisServerAnnotator
   }
 
   @Nullable
-  private static Annotation annotate(@NotNull final AnnotationHolder holder,
-                                     @NotNull final AnalysisError error) {
+  private static Annotation annotate(@NotNull final AnnotationHolder holder, @NotNull final AnalysisError error, final int fileTextLength) {
     final Location location = error.getLocation();
-    final TextRange textRange = new TextRange(location.getOffset(), location.getOffset() + location.getLength());
+
+    int highlightingStart = location.getOffset();
+    int highlightingEnd = location.getOffset() + location.getLength();
+    if (highlightingEnd > fileTextLength) highlightingEnd = fileTextLength;
+    if (highlightingStart > 0 && highlightingStart >= highlightingEnd) highlightingStart = highlightingEnd - 1;
+
+    final TextRange textRange = new TextRange(highlightingStart, highlightingEnd);
 
     final String severity = error.getSeverity();
     if (AnalysisErrorSeverity.INFO.equals(severity)) {

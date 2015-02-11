@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class DartQuickFixTest extends DartAnalyzerTestBase {
+public abstract class DartQuickFixTest extends DartAnalyzerTestBase {
 
   @NotNull
   @Override
