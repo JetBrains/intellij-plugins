@@ -125,11 +125,12 @@ public class JSUntypedDeclarationInspection extends JSInspection {
       final Template t = templateManager.createTemplate("","");
       t.addTextSegment(":");
 
-      String detectedTypeFromUsage = TypeFromUsageDetector.detectTypeFromUsage(parent, containingFile);
+      JSType detectedTypeFromUsage = TypeFromUsageDetector.detectTypeFromUsage(parent, containingFile);
 
       if (detectedTypeFromUsage != null) {
-        BaseCreateFix.addTypeVar(t, "a", anchor, detectedTypeFromUsage);
-      } else {
+        BaseCreateFix.addTypeVar(t, "a", anchor, detectedTypeFromUsage.getTypeText(JSType.TypeTextFormat.CODE));
+      }
+      else {
         String defaultValue = "uint";
         if (ApplicationManager.getApplication().isUnitTestMode()) {
           t.addTextSegment(defaultValue);

@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.completion.*;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
-import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
@@ -167,7 +166,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     else if (location instanceof JSReferenceExpression && ((JSReferenceExpression)location).getQualifier() == null) {
       if (JSResolveUtil.isExprInStrictTypeContext((JSReferenceExpression)location)) {
         if (parent instanceof JSVariable || parent instanceof JSFunction) {
-          String type = TypeFromUsageDetector.detectTypeFromUsage(parent, parent.getContainingFile());
+          JSType type = TypeFromUsageDetector.detectTypeFromUsage(parent, parent.getContainingFile());
           if (type == null && parent instanceof JSVariable) {
             PsiElement parent2 = parent.getParent();
             PsiElement grandParent = parent2 instanceof JSVarStatement ? parent2.getParent():null;
@@ -177,18 +176,22 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
               ) {
               JSExpression expression = ((JSForInStatement)grandParent).getCollectionExpression();
               if (expression != null) {
-                String expressionType = JSResolveUtil.getQualifiedExpressionType(expression, expression.getContainingFile());
-                if (expressionType != null && JSTypeEvaluateManager.isArrayType(expressionType)) {
-                  type = JSTypeEvaluateManager.getComponentType(expressionType);
+                JSType expressionType = JSResolveUtil.getExpressionJSType(expression);
+                if (expressionType != null && JSTypeUtils.isArrayType(expressionType)) {
+                  type = JSTypeUtils.getComponentType(expressionType);
                 }
               }
             }
           }
-          if (type != null) {
-            type = JSDialectSpecificHandlersFactory.forElement(location).getImportHandler().resolveTypeName(type, location).getQualifiedName();
+
+          final String qualifiedNameMatchingType = type != null ? JSTypeUtils.getQualifiedNameMatchingType(type, false) : null;
+          if (qualifiedNameMatchingType != null) {
+            String qName = JSDialectSpecificHandlersFactory.forElement(location).getImportHandler()
+              .resolveTypeName(qualifiedNameMatchingType, location)
+              .getQualifiedName();
             variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
-              JSDialectSpecificHandlersFactory.forElement(location).getClassResolver().findClassByQName(type, location),
-              ImportUtils.importAndShortenReference(type, parent, false, true).first,
+              JSDialectSpecificHandlersFactory.forElement(location).getClassResolver().findClassByQName(qName, location),
+              ImportUtils.importAndShortenReference(qName, parent, false, true).first,
               VariantsProcessor.LookupPriority.SMART_PROPRITY,
               true,
               true
