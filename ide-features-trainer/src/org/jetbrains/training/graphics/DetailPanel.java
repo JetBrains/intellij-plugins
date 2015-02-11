@@ -1,21 +1,14 @@
 package org.jetbrains.training.graphics;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.util.ui.UIUtil;
-import org.jdom.Element;
-import org.jetbrains.training.Command;
-import org.jetbrains.training.CommandFactory;
-import org.jetbrains.training.Lesson;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * Created by karashevich on 14/01/15.
@@ -24,12 +17,12 @@ public class DetailPanel extends JPanel implements Disposable{
     private final int magicConst = 15;
     private Color backGroundColor = new Color(0, 0 ,0, 190);
     private final Color textColor = new Color(245, 245, 245, 255);
-    private final int inset = 4;
+    private final String customFontPath = "roboto.ttf";
 
     private JLabel myLabel;
     private JButton btn;
 
-    public DetailPanel(Dimension dimension){
+    public DetailPanel(Dimension dimension) throws IOException, FontFormatException {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -41,9 +34,10 @@ public class DetailPanel extends JPanel implements Disposable{
 
         myLabel = new JLabel();
         myLabel.setForeground(textColor);
-        Font font = myLabel.getFont();
-        Font newFont = new Font(font.getName(), Font.PLAIN, 14);
-        myLabel.setFont(newFont);
+        Font customFont = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResourceAsStream(customFontPath));
+        GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(customFont);
+
+        myLabel.setFont(customFont.deriveFont(14.0F));
         myLabel.setText("Default text");
         myLabel.setFocusable(false);
 
@@ -91,6 +85,7 @@ public class DetailPanel extends JPanel implements Disposable{
 
     public void setText(String s){
         final String newString = s;
+
         UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
             public void run() {

@@ -1,15 +1,16 @@
-package org.jetbrains.training;
+package org.jetbrains.training.lesson;
 
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.BadCourseException;
+import org.jetbrains.training.BadLessonException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.TreeSet;
 
 /**
  * Created by karashevich on 29/01/15.

@@ -8,16 +8,13 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.*;
 import org.jdom.Element;
 import org.jetbrains.training.Command;
-import org.jetbrains.training.CommandFactory;
-import org.jetbrains.training.Lesson;
+import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.commands.util.PerformActionUtil;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.awt.event.InputEvent;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
-
-import static org.jetbrains.training.commands.util.PerformActionUtil.sleepHere;
 
 /**
  * Created by karashevich on 30/01/15.

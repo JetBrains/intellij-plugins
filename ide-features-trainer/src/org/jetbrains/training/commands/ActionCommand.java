@@ -11,8 +11,7 @@ import com.intellij.openapi.ui.popup.*;
 import com.intellij.ui.awt.RelativePoint;
 import org.jdom.Element;
 import org.jetbrains.training.Command;
-import org.jetbrains.training.CommandFactory;
-import org.jetbrains.training.Lesson;
+import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.awt.*;

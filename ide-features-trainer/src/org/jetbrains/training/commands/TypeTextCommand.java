@@ -5,10 +5,8 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
-import org.jetbrains.training.ActionsRecorder;
 import org.jetbrains.training.Command;
-import org.jetbrains.training.CommandFactory;
-import org.jetbrains.training.Lesson;
+import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.util.Queue;

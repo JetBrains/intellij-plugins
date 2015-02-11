@@ -23,7 +23,7 @@ public class DeleteLineDemo {
     <Text description="" btn="Ok">Let's delete &lt;b&gt;if&lt;/b&gt; statement line</Text>
     <Text description="Move caret to tmp declaration" btn="..."/>
     <TraverseCaret stop="120" delay="20"/>
-    <Action action="EditorDeleteLine" delay="2000" balloon="type ⌘ + ⌫ to delete line"/>
+    <Action action="EditorDeleteLine" delay="2000" balloon="type &lt;font size=&#34;20&#34;&gt;&lt;b&gt;⌘ + ⌫&lt;/b&gt;&lt;/font&gt; to delete line"/>
     <Wait delay="200"/>
     <Text description="That's it!" btn="let me try"/>
     <TraverseCaret stop="0" delay="20"/>

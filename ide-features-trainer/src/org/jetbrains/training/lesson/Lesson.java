@@ -1,7 +1,7 @@
-package org.jetbrains.training;
+package org.jetbrains.training.lesson;
 
 import org.jdom.JDOMException;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.BadLessonException;
 
 import java.io.IOException;
 
