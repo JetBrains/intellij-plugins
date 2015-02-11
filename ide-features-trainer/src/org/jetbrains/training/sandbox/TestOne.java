@@ -2,11 +2,8 @@ package org.jetbrains.training.sandbox;
 
 import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.JDOMException;
-import org.jetbrains.training.Scenario;
+import org.jetbrains.training.lesson.Scenario;
 
-import javax.media.*;
-import javax.media.format.AudioFormat;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
