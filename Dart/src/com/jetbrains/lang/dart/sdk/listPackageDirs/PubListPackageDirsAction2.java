@@ -28,7 +28,6 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
-import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
@@ -106,7 +105,7 @@ public class PubListPackageDirsAction2 extends AnAction {
 
     final Set<Module> affectedModules = new THashSet<Module>();
     final Collection<String> rootsToAddToLib = new THashSet<String>();
-    final Map<String, List<File>> packageNameToDirMap = new THashMap<String, List<File>>();
+    final Map<String, List<File>> packageNameToDirMap = new TreeMap<String, List<File>>();
 
     final Runnable runnable = new Runnable() {
       public void run() {
