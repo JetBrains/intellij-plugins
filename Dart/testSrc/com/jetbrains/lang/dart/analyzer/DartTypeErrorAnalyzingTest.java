@@ -1,6 +1,6 @@
 package com.jetbrains.lang.dart.analyzer;
 
-public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
+public abstract class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
   @Override
   protected String getBasePath() {
     return "/analyzer/type";
