@@ -13,7 +13,7 @@ import com.jetbrains.browserConnection.BrowserConnectionManager;
 import com.jetbrains.lang.dart.DartBundle;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.io.webSocket.Client;
+import org.jetbrains.io.jsonRpc.Client;
 
 import java.util.List;
 
