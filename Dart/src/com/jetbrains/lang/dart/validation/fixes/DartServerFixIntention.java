@@ -20,13 +20,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public final class DartServerFixIntention implements IntentionAction {
@@ -172,20 +171,16 @@ public final class DartServerFixIntention implements IntentionAction {
 
   @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-
     final SourceFileEdit fileEdit = myChange.getEdits().get(0);
     final SourceEdit sourceEdit = fileEdit.getEdits().get(0);
 
     final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(fileEdit.getFile()));
     if (virtualFile == null) return;
 
-    final Collection<VirtualFile> virtualFiles = new THashSet<VirtualFile>();
-    virtualFiles.add(virtualFile);
+    if (!FileModificationService.getInstance().prepareVirtualFilesForWrite(project, Collections.singletonList(virtualFile))) return;
 
     final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
     if (document == null) return;
-
-    if (!FileModificationService.getInstance().prepareVirtualFilesForWrite(project, virtualFiles)) return;
 
     // Templates can only grow source, so we trim first if necessary
     if (sourceEdit.getLength() > 0) {
