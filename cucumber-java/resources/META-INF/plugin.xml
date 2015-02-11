@@ -34,7 +34,6 @@
     <configurationType implementation="org.jetbrains.plugins.cucumber.java.run.CucumberJavaRunConfigurationType"/>
 
     <implicitUsageProvider implementation="org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaImplicitUsageProvider"/>
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
     <localInspection language="JAVA" shortName="CucumberJavaStepDefClassIsPublic" displayName="Step definition class is not public"
                      groupBundle="org.jetbrains.plugins.cucumber.java.CucumberJavaBundle" groupKey="cucumber.java.inspection.group.name" enabledByDefault="true"
