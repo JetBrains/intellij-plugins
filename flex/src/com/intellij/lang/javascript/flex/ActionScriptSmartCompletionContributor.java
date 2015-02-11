@@ -9,7 +9,10 @@ import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.completion.*;
+import com.intellij.lang.javascript.completion.JSCompletionContributor;
+import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
+import com.intellij.lang.javascript.completion.JSSmartCompletionContributor;
+import com.intellij.lang.javascript.completion.JavaScriptCompletionData;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
@@ -19,12 +22,14 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
+import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
+import com.intellij.lang.javascript.psi.resolve.VariantsProcessor;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
-import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.lang.javascript.types.TypeFromUsageDetector;
 import com.intellij.openapi.application.ApplicationManager;
@@ -37,7 +42,6 @@ import com.intellij.psi.ResolveState;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiUtilBase;
-import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -58,10 +62,10 @@ import static com.intellij.lang.javascript.psi.types.JSNamedType.createType;
 public class ActionScriptSmartCompletionContributor extends JSSmartCompletionContributor {
   @Nullable
   @Override
-  public List<Object> getSmartCompletionVariants(@NotNull PsiElement location) {
+  public List<Object> getSmartCompletionVariants(final @NotNull PsiElement location) {
     final PsiElement parent = location.getParent();
 
-    final List<Object> variants = new ArrayList<Object>();
+    List<Object> variants = new ArrayList<Object>();
     if (parent instanceof JSArgumentList &&
         ((JSArgumentList)parent).getArguments()[0] == location &&
         ((JSReferenceExpression)location).getQualifier() == null
@@ -84,18 +88,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       }
     }
 
-    String referencedParameterName = null;
-    if (parent instanceof JSArgumentList && location instanceof JSReferenceExpression) {
-      final JSParameterItem parameter = JSResolveUtil.findParameterForUsedArgument((JSReferenceExpression)location, (JSArgumentList)parent);
-      if (parameter != null) {
-        referencedParameterName = parameter.getName();
-      }
-    }
-
-    int qualifiedStaticVariantsStart = Integer.MAX_VALUE;
-    final Project project = location.getProject();
-    JSType expectedClassType = JSTypeUtils.getValuableType(JSSmartCompletionVariantsHandler.findClassType(parent));
-
+    JSType expectedClassType = JSTypeUtils.getValuableType(findClassType(parent));
     if (expectedClassType != null) {
       JSClass clazz = expectedClassType.resolveClass();
 
@@ -200,119 +193,25 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         }
       }
       else {
-        final JSType expectedType = JSDialectSpecificHandlersFactory.findExpectedType((JSExpression)location);
-
-        if (expectedType != null) {
-          JSClass clazz = expectedType.resolveClass();
-          final PsiElement parentInOriginalTree = PsiUtilCore.getOriginalElement(parent, parent.getClass());
-          final CompletionResultSink resultSink = new CompletionResultSink(parentInOriginalTree);
-          resultSink.setSmartCompletionInheritanceProcessingContext(
-            JSSmartCompletionVariantsHandler.initProcessingContext(parentInOriginalTree)
-          );
-          final SinkResolveProcessor<?> processor = new SinkResolveProcessor<CompletionResultSink>(resultSink) {
-            {
-              setAllowUnqualifiedStaticsFromInstance(true);
-              setLocalResolve(true);
-            }
-
-            @Override
-            public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
-              return !JSSmartCompletionVariantsHandler.isAcceptableVariant(element, expectedType,
-                                                                           resultSink.getSmartCompletionInheritanceProcessingContext()) ||
-                     super.execute(element, state);
-            }
-          };
-
-          JSClass ourClass = JSResolveUtil.getClassOfContext(parentInOriginalTree);
-          if (JSCompletionContributor.getInstance().isDoingSmartCodeCompleteAction()) {          // to avoid duplicates in plain completion
-            processor.setToProcessHierarchy(true);
-            processor.configureClassScope(ourClass);
-            JSResolveUtil.treeWalkUp(processor, parentInOriginalTree, parentInOriginalTree.getParent(), parentInOriginalTree);
-            processor.setAllowUnqualifiedStaticsFromInstance(false);
-
-            if (expectedType instanceof JSBooleanType) {
-              variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
-                null, "true", VariantsProcessor.LookupPriority.SMART_PROPRITY, true, true
-              ));
-              variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
-                null, "false", VariantsProcessor.LookupPriority.SMART_PROPRITY, true, true
-              ));
-            }
-          }
-
-          final GlobalSearchScope resolveScope = JSResolveUtil.getResolveScope(parentInOriginalTree);
-          JSPackageIndex.processElementsInScopeRecursive("", new JSPackageIndex.PackageQualifiedElementsProcessor() {
-            @Override
-            public boolean process(String qualifiedName, JSPackageIndexInfo.Kind kind, boolean isPublic) {
-              if (kind != JSPackageIndexInfo.Kind.FUNCTION && kind != JSPackageIndexInfo.Kind.VARIABLE) return true;
-              PsiElement element = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
-                .findClassByQName(qualifiedName, resolveScope);
-              return element == null || processor.execute(element, ResolveState.initial());
-            }
-          }, resolveScope, project);
-
-          if (clazz != null && !clazz.isEquivalentTo(ourClass)) {
-            qualifiedStaticVariantsStart = processor.getResultSink().getResultCount();
-            processStaticsOf(clazz, processor, ourClass);
-          }
-
-          if (ourClass != null &&
-              clazz != null &&
-              JSInheritanceUtil.isParentClass(ourClass, clazz, false) &&
-              !JSResolveUtil.calculateStaticFromContext(location) &&
-              JSCompletionContributor.getInstance().isDoingSmartCodeCompleteAction()
-            ) {
-            variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
-              null, "this", VariantsProcessor.LookupPriority.SMART_PROPRITY, true, true
-            ));
-          }
-          if (parent instanceof JSArgumentList) {
-            JSParameterItem param = JSResolveUtil.findParameterForUsedArgument((JSExpression)location, (JSArgumentList)parent);
-            if (param instanceof JSParameter) {
-              PsiElement element = JSResolveUtil.findParent(((JSParameter)param).getParent().getParent());
-
-              if (element instanceof JSClass && !element.isEquivalentTo(ourClass) && !element.isEquivalentTo(clazz)) {
-                processStaticsOf((JSClass)element, processor, ourClass);
-              }
-            }
-          }
-
-          int i = 0;
-          Set<String> used = new THashSet<String>();
-          final List<PsiElement> results = processor.getResults();
-          if (results != null) {
-            for(PsiElement o: results) {
-              JSNamedElement namedElement = (JSNamedElement)o;
-              String name = namedElement.getName();
-              String additionalPrefix = null;
-
-              if ((namedElement instanceof JSVariable || namedElement instanceof JSFunction) && qualifiedStaticVariantsStart <= i) {
-                PsiElement element = JSResolveUtil.findParent(namedElement);
-                if (element instanceof JSClass) {
-                  additionalPrefix = name;
-                  name = ((JSClass)element).getName() + "." + name;
-                }
-              }
-
-              if (name == null || !used.add(name)) {
-                if (i < qualifiedStaticVariantsStart) --qualifiedStaticVariantsStart;
-                continue;
-              }
-              final int priority = VariantsProcessor.LookupPriority.getSmartVariantPriority(name != null && name.equals(referencedParameterName));
-              LookupElement prioritizedLookupItem = JSLookupUtilImpl.createPrioritizedLookupItem(
-                namedElement, name, priority, false, true
-              );
-              if (additionalPrefix != null) {
-                ((LookupItem)prioritizedLookupItem).addLookupStrings(additionalPrefix);
-              }
-              variants.add(prioritizedLookupItem);
-              ++i;
-            }
-          }
-        }
+        variants = addVariantsForUnqualifiedReference((JSReferenceExpression)location);
       }
     }
     return variants.isEmpty() ? null : variants;
+  }
+
+  @Override
+  protected void processClasses(PsiElement parentInOriginalTree, final SinkResolveProcessor<?> processor) {
+    final Project project = parentInOriginalTree.getProject();
+    final GlobalSearchScope resolveScope = JSResolveUtil.getResolveScope(parentInOriginalTree);
+    JSPackageIndex.processElementsInScopeRecursive("", new JSPackageIndex.PackageQualifiedElementsProcessor() {
+      @Override
+      public boolean process(String qualifiedName, JSPackageIndexInfo.Kind kind, boolean isPublic) {
+        if (kind != JSPackageIndexInfo.Kind.FUNCTION && kind != JSPackageIndexInfo.Kind.VARIABLE) return true;
+        PsiElement element = JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
+          .findClassByQName(qualifiedName, resolveScope);
+        return element == null || processor.execute(element, ResolveState.initial());
+      }
+    }, resolveScope, project);
   }
 
   private static void addAllClassesFromQuery(List<Object> variants,
@@ -511,13 +410,5 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         }
       }
     }
-  }
-
-  private static void processStaticsOf(JSClass parameterClass, ResolveProcessor processor, @Nullable JSClass contextClass) {
-    processor.configureClassScope(contextClass);
-
-    processor.setProcessStatics(true);
-    processor.setTypeName(parameterClass.getQualifiedName());
-    parameterClass.processDeclarations(processor, ResolveState.initial(), parameterClass, parameterClass);
   }
 }
