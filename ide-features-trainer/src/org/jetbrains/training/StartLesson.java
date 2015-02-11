@@ -5,12 +5,8 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diff.impl.incrementalMerge.ui.EditorPlace;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.actionSystem.EditorActionManager;
-import com.intellij.openapi.editor.event.EditorFactoryEvent;
-import com.intellij.openapi.editor.event.EditorFactoryListener;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -28,15 +24,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.tabs.TabsListener;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.graphics.DetailPanel;
+import org.jetbrains.training.lesson.Course;
+import org.jetbrains.training.lesson.Lesson;
+import org.jetbrains.training.lesson.LessonProcessor;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -103,7 +98,8 @@ public class StartLesson extends AnAction {
 
                 @Override
                 public void fileClosed(FileEditorManager source, VirtualFile file) {
-
+                    balloon.hide();
+                    infoPanel = null;
                 }
 
                 @Override
@@ -151,6 +147,8 @@ public class StartLesson extends AnAction {
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         } catch (ExecutionException e1) {
+            e1.printStackTrace();
+        } catch (FontFormatException e1) {
             e1.printStackTrace();
         }
     }

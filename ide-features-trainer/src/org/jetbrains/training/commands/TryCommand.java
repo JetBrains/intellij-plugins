@@ -1,15 +1,12 @@
 package org.jetbrains.training.commands;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.Disposer;
 import org.jdom.Element;
 import org.jetbrains.training.ActionsRecorder;
 import org.jetbrains.training.Command;
-import org.jetbrains.training.Lesson;
+import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.util.Queue;

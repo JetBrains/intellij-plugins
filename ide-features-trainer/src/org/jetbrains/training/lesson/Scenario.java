@@ -1,4 +1,4 @@
-package org.jetbrains.training;
+package org.jetbrains.training.lesson;
 
 
 import org.jdom.Document;

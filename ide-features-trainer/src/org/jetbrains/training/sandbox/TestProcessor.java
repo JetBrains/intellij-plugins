@@ -4,7 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import org.jetbrains.training.Lesson;
+import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.util.concurrent.ExecutionException;

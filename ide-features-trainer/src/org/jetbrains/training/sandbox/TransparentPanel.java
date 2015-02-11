@@ -5,6 +5,7 @@ import org.jetbrains.training.graphics.DetailPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 /**
  * Created by karashevich on 04/01/15.
@@ -14,12 +15,12 @@ public class TransparentPanel extends JFrame {
     DetailPanel p1;
     JButton b;
 
-    public TransparentPanel() {
+    public TransparentPanel() throws IOException, FontFormatException {
         createAndShowGUI();
     }
 
 
-    private void createAndShowGUI() {
+    private void createAndShowGUI() throws IOException, FontFormatException {
         // Set title and default close operation
         setTitle("Transparent Panel");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -51,7 +52,13 @@ public class TransparentPanel extends JFrame {
         // Run in the EDT
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new TransparentPanel();
+                try {
+                    new TransparentPanel();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (FontFormatException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
