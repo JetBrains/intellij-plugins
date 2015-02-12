@@ -225,9 +225,30 @@ public class DartDocUtil {
       builder.append("var ");
     }
     else {
-      builder.append(type.getReferenceExpression().getText()).append(" ");
+      builder.append(type.getReferenceExpression().getText());
+      appendTypeArguments(builder, type);
+      builder.append(" ");
     }
     builder.append("<b>").append(component.getName()).append("</b>");
+  }
+
+  private static void appendTypeArguments(final StringBuilder builder, final DartType type) {
+    final DartTypeArguments typeArguments = type.getTypeArguments();
+    if (typeArguments != null) {
+      final DartTypeList typeList = typeArguments.getTypeList();
+      final PsiElement[] children = typeList.getChildren();
+      int numberOfChildren = children.length;
+      if (numberOfChildren > 0) {
+        builder.append("&lt;");
+        for (int i = 0; i < numberOfChildren; ++i) {
+          builder.append(children[i].getText());
+          if (i + 1 < numberOfChildren) {
+            builder.append(", ");
+          }
+        }
+        builder.append("&gt;");
+      }
+    }
   }
 
   private static void appendClassSignature(final StringBuilder builder, final DartClass dartClass) {

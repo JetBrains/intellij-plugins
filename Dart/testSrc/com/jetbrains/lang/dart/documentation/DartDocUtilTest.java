@@ -50,6 +50,11 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "class <caret>Foo<A,B> extends Bar<A,B> { }<br/>class Bar<A,B> { }");
   }
 
+  public void testParamClassSig6() throws Exception {
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>A<br/>List&lt;String&gt; <b>ids</b></code>",
+           "class A { foo() { List<String> <caret>ids; }}");
+  }
+
   public void testMetaClassSig1() throws Exception {
     doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>@deprecated<br/>class <b>A</b></code>",
            " @deprecated class <caret>A {}");
