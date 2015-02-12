@@ -10,6 +10,7 @@ import com.intellij.testFramework.utils.parameterInfo.MockParameterInfoUIContext
 import com.intellij.util.Function;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
+import com.intellij.xml.impl.schema.XmlAttributeDescriptorImpl;
 import com.intellij.xml.util.XmlUtil;
 
 /**
@@ -28,7 +29,8 @@ public class TapestryParamInfoTest extends TapestryBaseTestCase {
     try {
       addComponentToProject("Count");
       doTest(
-        "class dir end id lang mixins onclick ondblclick onkeydown onkeypress onkeyup onmousedown onmousemove onmouseout onmouseover onmouseup start style title value");
+        // two lang attrs: one for xml:lang
+        "class dir end id lang lang mixins onclick ondblclick onkeydown onkeypress onkeyup onmousedown onmousemove onmouseout onmouseover onmouseup start style title value");
     }
     finally {
       manager.setDefaultHtmlDoctype(doctype, myFixture.getProject());
@@ -54,10 +56,13 @@ public class TapestryParamInfoTest extends TapestryBaseTestCase {
 
       @Override
       public String fun(Object o) {
+        if (o instanceof XmlAttributeDescriptorImpl) {
+//          return o.
+        }
         return ((XmlAttributeDescriptor)o).getName();
       }
     }, " ");
-    assertEquals(joined, attrs);
+    assertEquals(attrs, joined);
 
   }
 
