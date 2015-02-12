@@ -24,5 +24,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="ultimate-resources" scope="RUNTIME" />
+    <orderEntry type="module" module-name="database-plugin" scope="RUNTIME" />
+    <orderEntry type="module" module-name="IntelliLang-java" scope="RUNTIME" />
+    <orderEntry type="module" module-name="IntelliLang-xml" scope="RUNTIME" />
   </component>
 </module>
