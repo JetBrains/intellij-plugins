@@ -36,6 +36,16 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
   @Nullable
   @Override
   public GlobalSearchScope getResolveScope(@NotNull final VirtualFile file, @NotNull final Project project) {
+    return getDartScope(project, file, false);
+  }
+
+  /**
+   * @param strict Strict scope respects <a href="https://www.dartlang.org/tools/pub/package-layout.html">Dart Package Layout Conventions</a>,
+   *               not strict includes the whole Dart project and Path Packages it depends on.
+   *               But both strict and not strict scope for file in 'packages' folder includes only 'packages', 'lib' and Path Packages folders.
+   */
+  @Nullable
+  public static GlobalSearchScope getDartScope(@NotNull final Project project, @NotNull final VirtualFile file, boolean strict) {
     if (file.getFileType() != DartFileType.INSTANCE) return null;
 
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
@@ -54,15 +64,16 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
       return null;
     }
 
-    VirtualFile subdir = null;
+    VirtualFile contextSubdir = null;
     VirtualFile dir = file.getParent();
 
     while (dir != null && fileIndex.isInContent(dir)) {
       final VirtualFile pubspecFile = dir.findChild(PubspecYamlUtil.PUBSPEC_YAML);
       if (pubspecFile != null) {
-        return getDartResolveScope(module, pubspecFile, subdir);
+        final boolean inPackages = contextSubdir != null && PACKAGES_FOLDER_NAME.equals(contextSubdir.getName());
+        return getDartResolveScope(module, pubspecFile, strict || inPackages ? contextSubdir : null);
       }
-      subdir = dir;
+      contextSubdir = dir;
       dir = dir.getParent();
     }
 
@@ -108,9 +119,9 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
 
   private static GlobalSearchScope getDartResolveScope(@NotNull final Module module,
                                                        @NotNull final VirtualFile pubspecFile,
-                                                       @Nullable final VirtualFile subdir) {
+                                                       @Nullable final VirtualFile contextSubdir) {
     final Project project = module.getProject();
-    final UserDataHolder dataHolder = subdir != null ? subdir : pubspecFile;
+    final UserDataHolder dataHolder = contextSubdir != null ? contextSubdir : pubspecFile;
 
     return CachedValuesManager.getManager(project).getCachedValue(dataHolder, new CachedValueProvider<GlobalSearchScope>() {
       @Override
@@ -121,18 +132,17 @@ public class DartResolveScopeProvider extends ResolveScopeProvider {
 
         final GlobalSearchScope scope;
 
-        if (subdir == null || "test".equals(subdir.getName())) {
+        if (contextSubdir == null || "test".equals(contextSubdir.getName())) {
           // the biggest scope
           scope = createDirectoriesScope(project, pathPackageRoots, dartRoot);
         }
-        else if ("lib".equals(subdir.getName()) || PACKAGES_FOLDER_NAME.equals(subdir.getName())) {
+        else if ("lib".equals(contextSubdir.getName()) || PACKAGES_FOLDER_NAME.equals(contextSubdir.getName())) {
           // the smallest scope
           scope = createDirectoriesScope(project, pathPackageRoots, dartRoot.findChild("lib"), dartRoot.findChild(PACKAGES_FOLDER_NAME));
         }
         else {
-          // Scope restricted by the project root subfolder. Isn't it too strict to resolve only within subdir? Can there be references, say, from benchmark to tool?
-          scope =
-            createDirectoriesScope(project, pathPackageRoots, subdir, dartRoot.findChild("lib"), dartRoot.findChild(PACKAGES_FOLDER_NAME));
+          scope = createDirectoriesScope(project, pathPackageRoots, contextSubdir, dartRoot.findChild("lib"),
+                                         dartRoot.findChild(PACKAGES_FOLDER_NAME));
         }
 
         final GlobalSearchScope scopeWithLibs =

@@ -97,52 +97,73 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
 
       DartProjectComponent.excludeBuildAndPackagesFolders(myModule, pubspec);
 
-      doTestResolveScope(inExcluded, null, null);
-      doTestResolveScope(inSdk1,
-                         new VirtualFile[]{inSdk1, inSdk2},
-                         new VirtualFile[]{inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib,
-                           inProject1Root, inLib, inPackages, inWeb, inWebSub, inExcluded, inTest, inExample});
-      doTestResolveScope(inIdeLib1,
-                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2},
-                         new VirtualFile[]{inContent, inProject2Web, inProject2Lib,
-                           inProject1Root, inLib, inPackages, inWeb, inWebSub, inExcluded, inTest, inExample});
-      doTestResolveScope(inContent,
-                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib,
-                           inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
-                         new VirtualFile[]{inExcluded});
-      doTestResolveScope(inProject1Root,
-                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib,
-                           inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
-                         new VirtualFile[]{inContent, inProject2Web, inExcluded});
-      doTestResolveScope(inTest,
-                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib,
-                           inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
-                         new VirtualFile[]{inContent, inProject2Web, inExcluded});
-      doTestResolveScope(inLib,
-                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages},
-                         new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest, inExample});
-      doTestResolveScope(inPackages,
-                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages},
-                         new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest, inExample});
-      doTestResolveScope(inWeb,
-                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages, inWeb, inWebSub},
-                         new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inTest, inExample});
-      doTestResolveScope(inWebSub,
-                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages, inWeb, inWebSub},
-                         new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inTest, inExample});
-      doTestResolveScope(inExample,
-                         new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages, inExample},
-                         new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inTest, inWeb, inWebSub});
+      doTestDartScope(inExcluded, null, null, true);
+      doTestDartScope(new VirtualFile[]{inSdk1, inSdk2},
+                      new VirtualFile[]{inSdk1, inSdk2},
+                      new VirtualFile[]{inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib,
+                        inProject1Root, inLib, inPackages, inWeb, inWebSub, inExcluded, inTest, inExample});
+      doTestDartScope(new VirtualFile[]{inIdeLib1, inIdeLib2},
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2},
+                      new VirtualFile[]{inContent, inProject2Web, inProject2Lib,
+                        inProject1Root, inLib, inPackages, inWeb, inWebSub, inExcluded, inTest, inExample});
+      doTestDartScope(new VirtualFile[]{inContent},
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib,
+                        inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
+                      new VirtualFile[]{inExcluded});
+      doTestDartScope(inLib,
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages},
+                      new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest, inExample},
+                      true);
+      doTestDartScope(new VirtualFile[]{inPackages},
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages},
+                      new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inWeb, inWebSub, inTest, inExample});
+      doTestDartScope(new VirtualFile[]{inWeb, inWebSub},
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages, inWeb, inWebSub},
+                      new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inTest, inExample},
+                      true);
+      doTestDartScope(inExample,
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib, inLib, inPackages, inExample},
+                      new VirtualFile[]{inContent, inProject2Web, inExcluded, inProject1Root, inTest, inWeb, inWebSub},
+                      true);
+      doTestDartScope(new VirtualFile[]{inProject1Root, inTest},
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib,
+                        inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
+                      new VirtualFile[]{inContent, inProject2Web, inExcluded},
+                      true);
+      doTestDartScope(new VirtualFile[]{inProject1Root, inLib, inWeb, inWebSub, inTest, inExample},
+                      new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Lib,
+                        inProject1Root, inLib, inPackages, inWeb, inWebSub, inTest, inExample},
+                      new VirtualFile[]{inContent, inProject2Web, inExcluded},
+                      false);
     }
     finally {
       DartTestUtils.resetModuleRoots(myModule);
     }
   }
 
-  private void doTestResolveScope(final VirtualFile contextFile,
-                                  final VirtualFile[] expectedInScope,
-                                  final VirtualFile[] expectedOutsideScope) {
-    final GlobalSearchScope scope = new DartResolveScopeProvider().getResolveScope(contextFile, getProject());
+  private void doTestDartScope(final VirtualFile[] contextFiles,
+                               final VirtualFile[] expectedInScope,
+                               final VirtualFile[] expectedOutsideScope) {
+    for (VirtualFile file : contextFiles) {
+      doTestDartScope(file, expectedInScope, expectedOutsideScope, true);
+      doTestDartScope(file, expectedInScope, expectedOutsideScope, false);
+    }
+  }
+
+  private void doTestDartScope(final VirtualFile[] contextFiles,
+                               final VirtualFile[] expectedInScope,
+                               final VirtualFile[] expectedOutsideScope,
+                               final boolean strictScope) {
+    for (VirtualFile file : contextFiles) {
+      doTestDartScope(file, expectedInScope, expectedOutsideScope, strictScope);
+    }
+  }
+
+  private void doTestDartScope(final VirtualFile contextFile,
+                               final VirtualFile[] expectedInScope,
+                               final VirtualFile[] expectedOutsideScope,
+                               final boolean strictScope) {
+    final GlobalSearchScope scope = DartResolveScopeProvider.getDartScope(getProject(), contextFile, strictScope);
 
     if (scope == null) {
       assertTrue("Null scope not expected for " + contextFile.getPath(), expectedInScope == null);
