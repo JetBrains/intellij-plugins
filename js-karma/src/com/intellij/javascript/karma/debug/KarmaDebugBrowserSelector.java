@@ -1,25 +1,25 @@
 package com.intellij.javascript.karma.debug;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionUtil;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.CapturedBrowser;
-import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.event.HyperlinkEvent;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,10 +28,14 @@ public class KarmaDebugBrowserSelector {
 
   private final ImmutableList<CapturedBrowser> myCapturedBrowsers;
   private final ExecutionEnvironment myEnvironment;
+  private final ConsoleView myConsoleView;
 
-  protected KarmaDebugBrowserSelector(@NotNull Collection<CapturedBrowser> browsers, @NotNull ExecutionEnvironment environment) {
+  protected KarmaDebugBrowserSelector(@NotNull Collection<CapturedBrowser> browsers,
+                                      @NotNull ExecutionEnvironment environment,
+                                      @NotNull ConsoleView consoleView) {
     myCapturedBrowsers = ImmutableList.copyOf(browsers);
     myEnvironment = environment;
+    myConsoleView = consoleView;
   }
 
   @Nullable
@@ -56,7 +60,7 @@ public class KarmaDebugBrowserSelector {
     if (capturedDebuggableActiveBrowsers.isEmpty() && allDebuggableActiveBrowsers.size() == 1) {
       return ObjectUtils.assertNotNull(allDebuggableActiveBrowsers.get(0));
     }
-    showBrowserSelectionUi(allDebuggableActiveBrowsers, capturedDebuggableActiveBrowsers);
+    printSupportedBrowsers(allDebuggableActiveBrowsers, capturedDebuggableActiveBrowsers);
     return null;
   }
 
@@ -111,64 +115,44 @@ public class KarmaDebugBrowserSelector {
     }
   }
 
-  private void showBrowserSelectionUi(@NotNull List<DebuggableWebBrowser> allDebuggableActiveBrowsers,
+  private void printSupportedBrowsers(@NotNull List<DebuggableWebBrowser> allDebuggableActiveBrowsers,
                                       @NotNull List<DebuggableWebBrowser> capturedDebuggableActiveBrowsers) {
-    final String message;
     if (capturedDebuggableActiveBrowsers.isEmpty()) {
       if (allDebuggableActiveBrowsers.isEmpty()) {
-        message = "<html><body>" +
-                  "No supported browsers found." +
-                  "<p/>" +
-                  "JavaScript debugging is currently supported in Chrome or Firefox" +
-                  "</body></html>";
+        myConsoleView.print("No supported browsers found.\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+        myConsoleView.print("JavaScript debugging is currently supported in Chrome or Firefox.\n", ConsoleViewContentType.SYSTEM_OUTPUT);
       }
       else {
-        message = formatBrowserSelectionHtml(allDebuggableActiveBrowsers);
+        printVariants(allDebuggableActiveBrowsers);
       }
     }
     else {
-      message = formatBrowserSelectionHtml(capturedDebuggableActiveBrowsers);
+      printVariants(capturedDebuggableActiveBrowsers);
     }
-    //noinspection SSBasedInspection
-    ToolWindowManager.getInstance(myEnvironment.getProject()).notifyByBalloon(
-      myEnvironment.getExecutor().getToolWindowId(),
-      MessageType.WARNING,
-      message,
-      null,
-      new HyperlinkAdapter() {
-        @Override
-        protected void hyperlinkActivated(HyperlinkEvent e) {
-          WebBrowser browser = WebBrowserManager.getInstance().findBrowserById(e.getDescription());
-          if (browser != null) {
-            setWebBrowserToReuse(browser);
-            ExecutionUtil.restart(myEnvironment);
-          }
-        }
-      }
-    );
   }
 
-  @NotNull
-  private static String formatBrowserSelectionHtml(@NotNull Collection<DebuggableWebBrowser> browsers) {
-    StringBuilder builder = new StringBuilder("<html><body>");
-    builder.append("<div style='padding-top:4px; padding-bottom:4px'>");
-    builder.append("Karma tests can be debugged in Google Chrome or Mozilla Firefox only");
-    builder.append("</div>");
-
-    builder.append("<table align='center' cellspacing='0' cellpadding='0' style='border: none;padding-bottom:2px'>");
-    builder.append("<tr>");
+  private void printVariants(@NotNull Collection<DebuggableWebBrowser> browsers) {
+    myConsoleView.print("Debug karma tests in:\n", ConsoleViewContentType.SYSTEM_OUTPUT);
     for (DebuggableWebBrowser browser : browsers) {
-      builder.append("<td>");
-      builder.append("<div style='padding-right:7px;padding-left:7px'>");
-      builder.append("<a href='").append(browser.getWebBrowser().getId()).append("'>")
-        .append("Debug in ").append(browser.getWebBrowser().getName())
-        .append("</a>");
-      builder.append("</div>");
-      builder.append("</td>");
+      myConsoleView.print(" * ", ConsoleViewContentType.SYSTEM_OUTPUT);
+      myConsoleView.printHyperlink(browser.getWebBrowser().getName(), new DebugHyperlinkInfo(browser.getWebBrowser()));
+      myConsoleView.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
     }
-    builder.append("</tr>");
-    builder.append("</table>");
-    builder.append("</body></html>");
-    return builder.toString();
+  }
+
+  private class DebugHyperlinkInfo implements HyperlinkInfo {
+
+    private final WebBrowser myWebBrowser;
+
+    public DebugHyperlinkInfo(@NotNull WebBrowser webBrowser) {
+      myWebBrowser = webBrowser;
+    }
+
+    @Override
+    public void navigate(Project project) {
+      setWebBrowserToReuse(myWebBrowser);
+      ExecutionUtil.restart(myEnvironment);
+
+    }
   }
 }

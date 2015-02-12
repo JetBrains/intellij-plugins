@@ -21,6 +21,7 @@ import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.SystemInfo;
@@ -62,6 +63,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
   @NotNull
   @Override
   protected AsyncResult<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
+    FileDocumentManager.getInstance().saveAllDocuments();
     final ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) {
       return AsyncResult.done(null);
@@ -74,16 +76,19 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
 
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (karmaServer.areBrowsersReady()) {
-      final DebuggableWebBrowser debuggableWebBrowser =
-        new KarmaDebugBrowserSelector(karmaServer.getCapturedBrowsers(), environment).selectDebugEngine();
+      KarmaDebugBrowserSelector browserSelector = new KarmaDebugBrowserSelector(
+        karmaServer.getCapturedBrowsers(),
+        environment,
+        consoleView
+      );
+      final DebuggableWebBrowser debuggableWebBrowser = browserSelector.selectDebugEngine();
       return prepareDebugger(environment.getProject(), debuggableWebBrowser, new RunProfileStarter() {
         @Nullable
         @Override
         public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
           if (debuggableWebBrowser == null) {
-            return null;
+            return new RunContentBuilder(executionResult, env).showRunContent(env.getContentToReuse());
           }
-
           final Url url = Urls.newFromEncoded(karmaServer.formatUrl("/debug.html"));
           final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
           XDebugSession session = XDebuggerManager.getInstance(env.getProject()).startSession(
@@ -102,7 +107,6 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
             }
           );
           return session.getRunContentDescriptor();
-
         }
       });
     }
