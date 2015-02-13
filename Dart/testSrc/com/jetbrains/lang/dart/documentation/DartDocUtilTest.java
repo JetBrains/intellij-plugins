@@ -96,12 +96,12 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testFunctionSig2() throws Exception {
-    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>foo</b>([int x]) " + RIGHT_ARROW + " void</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>foo</b>([int x = 3]) " + RIGHT_ARROW + " void</code>",
            "<caret>foo([int x = 3]) { print(x); }");
   }
 
   public void testFunctionSig3() throws Exception {
-    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>foo</b>([int x]) " + RIGHT_ARROW + " void</code>",
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>foo</b>([int x = 3]) " + RIGHT_ARROW + " void</code>",
            "<caret>void foo([int x = 3]) { print(x); }");
   }
 
@@ -131,6 +131,16 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   public void testFunctionSig8() throws Exception {
     doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>x</b>() " + RIGHT_ARROW + " void</code>",
            "<caret>x() => null;");
+  }
+
+  public void testFunctionSig9() throws Exception {
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>x</b>({bool b: true}) " + RIGHT_ARROW + " void</code>",
+           "<caret>x({bool b: true}){};");
+  }
+
+  public void testFunctionSig10() throws Exception {
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code><b>x</b>({bool b}) " + RIGHT_ARROW + " void</code>",
+           "<caret>x({bool b}){};");
   }
 
   public void testTypedefSig() throws Exception {
