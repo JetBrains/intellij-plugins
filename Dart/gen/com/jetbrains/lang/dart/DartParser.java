@@ -3234,6 +3234,53 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // '<' + <<nonStrictID>> + '>' <<nonStrictID>>
+  static boolean incorrectNormalFormalParameter(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "incorrectNormalFormalParameter")) return false;
+    if (!nextTokenIs(b, LT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = incorrectNormalFormalParameter_0(b, l + 1);
+    r = r && incorrectNormalFormalParameter_1(b, l + 1);
+    r = r && consumeToken(b, GT);
+    r = r && nonStrictID(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '<' +
+  private static boolean incorrectNormalFormalParameter_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "incorrectNormalFormalParameter_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LT);
+    int c = current_position_(b);
+    while (r) {
+      if (!consumeToken(b, LT)) break;
+      if (!empty_element_parsed_guard_(b, "incorrectNormalFormalParameter_0", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // <<nonStrictID>> +
+  private static boolean incorrectNormalFormalParameter_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "incorrectNormalFormalParameter_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = nonStrictID(b, l + 1);
+    int c = current_position_(b);
+    while (r) {
+      if (!nonStrictID(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "incorrectNormalFormalParameter_1", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // ':' superCallOrFieldInitializer (',' superCallOrFieldInitializer)*
   public static boolean initializers(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "initializers")) return false;
@@ -4304,6 +4351,7 @@ public class DartParser implements PsiParser {
   // functionSignature
   //                         | fieldFormalParameter
   //                         | simpleFormalParameter
+  //                         | incorrectNormalFormalParameter
   public static boolean normalFormalParameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "normalFormalParameter")) return false;
     boolean r;
@@ -4311,6 +4359,7 @@ public class DartParser implements PsiParser {
     r = functionSignature(b, l + 1);
     if (!r) r = fieldFormalParameter(b, l + 1);
     if (!r) r = simpleFormalParameter(b, l + 1);
+    if (!r) r = incorrectNormalFormalParameter(b, l + 1);
     exit_section_(b, l, m, NORMAL_FORMAL_PARAMETER, r, false, null);
     return r;
   }

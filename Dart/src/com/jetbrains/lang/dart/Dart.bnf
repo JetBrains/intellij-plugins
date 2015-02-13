@@ -351,9 +351,11 @@ private default_formal_parameter_recover ::= !(')' | ',' | ']' | '}')
 
 normalFormalParameter ::= functionSignature
                         | fieldFormalParameter
-                        | simpleFormalParameter {
+                        | simpleFormalParameter
+                        | incorrectNormalFormalParameter {
   methods = [findComponentName]
 }
+private incorrectNormalFormalParameter ::= '<' + <<nonStrictID>> + '>' <<nonStrictID>> // because Analysis Server gives syntactically incorrect quick fixes, e.g. "void foo(<bottom> arg0) {\n}"
 
 simpleFormalParameter ::= declaredIdentifier | metadata* componentName
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}

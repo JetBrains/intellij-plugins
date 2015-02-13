@@ -171,7 +171,6 @@ public class DartPsiImplUtil {
     if (fieldFormalParameter != null) return null;
     if (simpleFormalParameter != null) return simpleFormalParameter.getComponentName();
 
-    assert false : normalFormalParameter.getText();
     return null;
   }
 
