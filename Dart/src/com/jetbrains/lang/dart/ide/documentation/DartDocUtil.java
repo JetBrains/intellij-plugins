@@ -232,17 +232,18 @@ public class DartDocUtil {
     builder.append("<b>").append(component.getName()).append("</b>");
   }
 
-  private static void appendTypeArguments(final StringBuilder builder, final DartType type) {
+  private static void appendTypeArguments(final @NotNull StringBuilder builder, final @NotNull DartType type) {
     final DartTypeArguments typeArguments = type.getTypeArguments();
     if (typeArguments != null) {
       final DartTypeList typeList = typeArguments.getTypeList();
-      final PsiElement[] children = typeList.getChildren();
-      int numberOfChildren = children.length;
-      if (numberOfChildren > 0) {
+      final List<DartType> children = typeList.getTypeList();
+      if (!children.isEmpty()) {
         builder.append("&lt;");
-        for (int i = 0; i < numberOfChildren; ++i) {
-          builder.append(children[i].getText());
-          if (i + 1 < numberOfChildren) {
+        for (Iterator<DartType> iter = children.iterator(); iter.hasNext(); ) {
+          DartType child = iter.next();
+          builder.append(child.getFirstChild().getText());
+          appendTypeArguments(builder, child);
+          if (iter.hasNext()) {
             builder.append(", ");
           }
         }

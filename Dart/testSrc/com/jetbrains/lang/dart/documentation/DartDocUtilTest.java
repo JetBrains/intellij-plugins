@@ -55,6 +55,17 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "class A { foo() { List<String> <caret>ids; }}");
   }
 
+  public void testParamClassSig7() throws Exception {
+    doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>A<br/>List&lt;Map&lt;String, int&gt;&gt; <b>ids</b></code>",
+           "class A { foo() { List<Map<String, int>> <caret>ids; }}");
+  }
+
+  public void testParamClassSig8() throws Exception {
+    doTest(
+      "<code><small><b>test.dart</b></small></code><br/><br/><code>A<br/>List&lt;List&lt;Map&lt;String, List&lt;Object&gt;&gt;&gt;&gt; <b>list</b></code>",
+      "class A { foo() { List<List<Map<String, List<Object>>>> <caret>list; }}");
+  }
+
   public void testMetaClassSig1() throws Exception {
     doTest("<code><small><b>test.dart</b></small></code><br/><br/><code>@deprecated<br/>class <b>A</b></code>",
            " @deprecated class <caret>A {}");
