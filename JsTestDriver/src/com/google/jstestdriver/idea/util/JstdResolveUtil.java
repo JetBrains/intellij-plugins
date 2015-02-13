@@ -1,6 +1,5 @@
 package com.google.jstestdriver.idea.util;
 
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -28,11 +27,6 @@ public class JstdResolveUtil {
     PsiElement resolvedElement = resolveResult.getElement();
     if (resolvedElement == null || !resolveResult.isValidResult()) {
       return false;
-    }
-    if (resolvedElement instanceof JSNamedElementProxy) {
-      JSNamedElementProxy proxy = (JSNamedElementProxy) resolvedElement;
-      PsiElement element = proxy.getElement();
-      return element != null && !(element instanceof PsiComment);
     }
     return !(resolvedElement instanceof PsiComment);
   }
