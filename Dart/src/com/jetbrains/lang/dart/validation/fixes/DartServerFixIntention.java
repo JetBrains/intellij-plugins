@@ -18,6 +18,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
@@ -130,9 +131,11 @@ public final class DartServerFixIntention implements IntentionAction {
 
   @NotNull
   private final SourceChange myChange;
+  private final long myPsiModificationCount;
 
-  public DartServerFixIntention(@NotNull final SourceChange change) {
+  public DartServerFixIntention(@NotNull final SourceChange change, long psiModificationCount) {
     myChange = change;
+    myPsiModificationCount = psiModificationCount;
   }
 
   @NotNull
@@ -149,6 +152,10 @@ public final class DartServerFixIntention implements IntentionAction {
 
   @Override
   public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
+    if (myPsiModificationCount != PsiManager.getInstance(project).getModificationTracker().getModificationCount()) {
+      return false;
+    }
+
     final List<SourceFileEdit> fileEdits = myChange.getEdits();
     if (fileEdits.size() != 1) return false;
 
