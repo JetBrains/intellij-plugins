@@ -118,6 +118,8 @@ public class DartAnalysisServerAnnotator
     if (serverResult == null || serverResult.getErrorsAndFixes().isEmpty()) return;
 
     final Map<AnalysisError, List<AnalysisErrorFixes>> errorsAndFixesMap = serverResult.getErrorsAndFixes();
+    final long psiModificationCount = psiFile.getManager().getModificationTracker().getModificationCount();
+
     for (Map.Entry<AnalysisError, List<AnalysisErrorFixes>> entry : errorsAndFixesMap.entrySet()) {
       final AnalysisError error = entry.getKey();
       final List<AnalysisErrorFixes> fixes = entry.getValue();
@@ -126,7 +128,7 @@ public class DartAnalysisServerAnnotator
       if (annotation != null && fixes != null && !fixes.isEmpty()) {
         for (final AnalysisErrorFixes fixList : fixes) {
           for (final SourceChange change : fixList.getFixes()) {
-            annotation.registerFix(new DartServerFixIntention(change));
+            annotation.registerFix(new DartServerFixIntention(change, psiModificationCount));
           }
         }
       }
