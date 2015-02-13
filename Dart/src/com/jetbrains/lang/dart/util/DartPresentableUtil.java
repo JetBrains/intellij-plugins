@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.template.*;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartTokenTypes;
@@ -17,7 +18,7 @@ import java.util.Set;
 
 public class DartPresentableUtil {
 
-  @NonNls public static final String RIGHT_ARROW = "\u2192";
+  @NonNls public static final String RIGHT_ARROW = SystemInfo.isMac ? "\u2192" : "->";
   @NonNls private static final String SPACE = " ";
 
   public static String setterGetterName(String name) {
