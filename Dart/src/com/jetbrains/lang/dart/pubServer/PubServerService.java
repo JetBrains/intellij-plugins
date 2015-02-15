@@ -127,7 +127,7 @@ final class PubServerService extends NetService {
   }
 
   public boolean isPubServerProcessAlive() {
-    return processHandler.has() && !processHandler.get().getResult().isProcessTerminated();
+    return processHandler.has() && !processHandler.getResult().isProcessTerminated();
   }
 
   public void sendToPubServer(@NotNull final ChannelHandlerContext clientContext,
@@ -142,17 +142,19 @@ final class PubServerService extends NetService {
     else {
       firstServedDir = servedDir;
 
-      processHandler.get().doWhenDone(new Runnable() {
-        @Override
-        public void run() {
-          sendToServer(servedDir, clientContext, clientRequest, pathForPubServer);
-        }
-      }).doWhenRejected(new Runnable() {
-        @Override
-        public void run() {
-          sendBadGateway(clientContext.channel());
-        }
-      });
+      processHandler.get()
+        .done(new Consumer<OSProcessHandler>() {
+          @Override
+          public void consume(OSProcessHandler osProcessHandler) {
+            sendToServer(servedDir, clientContext, clientRequest, pathForPubServer);
+          }
+        })
+        .rejected(new Consumer<Throwable>() {
+          @Override
+          public void consume(Throwable throwable) {
+            sendBadGateway(clientContext.channel());
+          }
+        });
     }
   }
 
