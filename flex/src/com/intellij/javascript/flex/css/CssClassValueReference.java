@@ -186,10 +186,9 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
     }
   }
 
-  private abstract static class MyCssElementProcessor implements CssElementProcessor {
+  private abstract static class MyCssElementProcessor extends CssElementProcessor {
     @Override
-    public void process(CssRuleset ruleset) {
-      if (ruleset == null) return;
+    public boolean process(@NotNull CssRuleset ruleset) {
       for (CssSelector selector : ruleset.getSelectors()) {
         for (PsiElement child : selector.getChildren()) {
           if (child instanceof CssSimpleSelector) {
@@ -202,14 +201,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
           }
         }
       }
-    }
-
-    @Override
-    public void process(CssDeclaration declaration) {
-    }
-
-    @Override
-    public void process(CssStylesheet stylesheet) {
+      return true;
     }
 
     protected abstract void handleSelector(@NotNull CssSelectorSuffix selectorSuffix, @NotNull String selectorName);
