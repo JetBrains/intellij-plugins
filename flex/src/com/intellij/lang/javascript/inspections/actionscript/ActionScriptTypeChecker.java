@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.inspections.actionscript;
 
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
@@ -48,10 +47,9 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
   public Annotation registerProblem(PsiElement place,
                                     String message,
                                     @Nullable ProblemHighlightType highlightType,
-                                    @Nullable HighlightDisplayLevel displayLevel,
                                     LocalQuickFix... fixes) {
     return myReporter
-      .registerProblem(place, message, highlightType, displayLevel, JSValidateTypesInspection.SHORT_NAME, fixes);
+      .registerProblem(place, message, highlightType, JSValidateTypesInspection.SHORT_NAME, fixes);
   }
 
   @Override
@@ -130,7 +128,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
           registerProblem(
             expr_,
             JSBundle.message("javascript.callback.signature.mismatch"),
-            ProblemHighlightType.GENERIC_ERROR_OR_WARNING, null,
+            ProblemHighlightType.WEAK_WARNING,
             new ChangeSignatureFix(fun, expectedParameterListForEventListener)
           );
         } else {
@@ -144,7 +142,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
               registerProblem(
                 expr instanceof JSFunctionExpression ? parameters[0] : expr,
                 JSBundle.message("javascript.callback.signature.mismatch"),
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, null,
+                ProblemHighlightType.WEAK_WARNING,
                 new ChangeSignatureFix(fun, expectedParameterListForEventListener)
               );
             }
@@ -154,7 +152,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
               registerProblem(
                 expr instanceof JSFunctionExpression ? parameters[0] : expr,
                 JSBundle.message("javascript.callback.signature.mismatch.event.class", expectedEventClass.getQualifiedName()),
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, null,
+                ProblemHighlightType.WEAK_WARNING,
                 new ChangeSignatureFix(fun, expectedParameterListForEventListener)
               );
             }

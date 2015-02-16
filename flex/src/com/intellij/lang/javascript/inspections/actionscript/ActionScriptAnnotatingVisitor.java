@@ -1357,8 +1357,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       myTypeChecker.registerProblem(
         node.getMethodExpression(),
         JSBundle.message("javascript.invalid.e4x.filter.query.receiver", type),
-        ProblemHighlightType.GENERIC_ERROR,
-        null
+        ProblemHighlightType.GENERIC_ERROR
       );
       return;
     }
