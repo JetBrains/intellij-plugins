@@ -103,13 +103,43 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
 
     final IElementType elementType = myNode.getElementType();
     final IElementType prevType = prev == null ? null : prev.getNode().getElementType();
+    final Block lastNodeOfPrev = prev == null || prev.getSubBlocks().size() == 0
+                                 ? null : prev.getSubBlocks().get(prev.getSubBlocks().size()-1);
+    
     if (prevType == DartTokenTypes.LBRACE) {
       return new ChildAttributes(Indent.getNormalIndent(), null);
     }
     if (isEndsWithRPAREN(elementType, prevType)) {
       return new ChildAttributes(Indent.getNormalIndent(), null);
     }
-    if (index == 0) {
+
+    //extra indent after case X:
+    if (prevType != null && prevType.toString().equals(":")) {
+      return new ChildAttributes(Indent.getContinuationIndent(), null);
+    }
+
+    //indent normal after break;
+    //keep continuation indent otherwise
+    if (lastNodeOfPrev != null && (prevType == DartTokenTypes.SWITCH_CASE || prevType == DartTokenTypes.DEFAULT_CASE)) {
+      ASTBlock last = (ASTBlock)prev.getSubBlocks().get(prev.getSubBlocks().size()-1);
+      if (last.getNode().getText().endsWith("break;")) {
+
+        return new ChildAttributes(Indent.getNormalIndent(), null);
+      }
+      //TODO: we can't know beforehand if the user will type one case
+      //TODO: or multiple cases
+      //TODO: therefore sometimes a case should be reindented afterwards
+      //TODO: I have no clue how this could be done
+
+      //if (prev.getSubBlocks().size() == 3) {
+      //  prev.getNode().myIndent == Indent.getNormalIndent();
+      //}
+      else {
+        return new ChildAttributes(Indent.getContinuationIndent(), null);
+      }
+    }
+
+    if (prev == null) {
       return new ChildAttributes(Indent.getNoneIndent(), null);
     }
     return new ChildAttributes(prev.getIndent(), prev.getAlignment());
