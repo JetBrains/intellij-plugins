@@ -1,19 +1,19 @@
 package com.jetbrains.lang.dart.psi.impl;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.DartImportOrExportStatement;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -48,9 +48,8 @@ public class DartSdkLibReference implements PsiReference {
   @Nullable
   @Override
   public PsiElement resolve() {
-    final String libName = myUri.substring(DartUrlResolver.DART_PREFIX.length());
-    final VirtualFile targetFile = DartLibraryIndex.getStandardLibraryFromSdk(myElement.getProject(), libName);
-    return targetFile == null ? null : myElement.getManager().findFile(targetFile);
+    final VirtualFile sdkLibFile = DartLibraryIndex.getSdkLibByUri(myElement.getProject(), myUri);
+    return sdkLibFile == null ? null : myElement.getManager().findFile(sdkLibFile);
   }
 
   @NotNull
@@ -77,19 +76,18 @@ public class DartSdkLibReference implements PsiReference {
   @NotNull
   @Override
   public Object[] getVariants() {
-    return getSdkLibNamesAsCompletionVariants(myElement);
+    return getSdkLibUrisAsCompletionVariants(myElement);
   }
 
-  public static Object[] getSdkLibNamesAsCompletionVariants(final PsiElement element) {
+  public static Object[] getSdkLibUrisAsCompletionVariants(final PsiElement element) {
     // do not suggest dart:lib_from_sdk for 'part of' directive
     if (element.getParent() instanceof DartImportOrExportStatement) {
-      final Collection<String> sdkLibs = DartLibraryIndex.getAllStandardLibrariesFromSdk(element.getProject());
-      final List<String> result = new ArrayList<String>(sdkLibs.size());
-      for (String libName : sdkLibs) {
-        if (!libName.startsWith("_")) {
-          result.add(DartUrlResolver.DART_PREFIX + libName);
+      final List<String> result = ContainerUtil.filter(DartLibraryIndex.getAllSdkLibUris(element.getProject()), new Condition<String>() {
+        @Override
+        public boolean value(final String libUrl) {
+          return !libUrl.startsWith(DartUrlResolver.DART_PREFIX + "_");
         }
-      }
+      });
       return ArrayUtil.toStringArray(result);
     }
 

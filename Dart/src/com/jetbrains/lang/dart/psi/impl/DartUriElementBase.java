@@ -119,7 +119,7 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
               final Object[] superVariants = super.getVariants();
 
               if (getIndex() == 0) {
-                final Object[] sdkVariants = DartSdkLibReference.getSdkLibNamesAsCompletionVariants(DartUriElementBase.this);
+                final Object[] sdkVariants = DartSdkLibReference.getSdkLibUrisAsCompletionVariants(DartUriElementBase.this);
                 final Object[] result = new Object[1 + superVariants.length + sdkVariants.length];
                 result[0] = DartUrlResolver.PACKAGE_PREFIX;
                 System.arraycopy(sdkVariants, 0, result, 1, sdkVariants.length);

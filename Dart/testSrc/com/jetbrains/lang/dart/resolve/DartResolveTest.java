@@ -69,8 +69,8 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
 
   public void testResolveScope() throws Exception {
     try {
-      final VirtualFile inSdk1 = DartLibraryIndex.getStandardLibraryFromSdk(getProject(), "collection");
-      final VirtualFile inSdk2 = DartLibraryIndex.getStandardLibraryFromSdk(getProject(), "math");
+      final VirtualFile inSdk1 = DartLibraryIndex.getSdkLibByUri(getProject(), "dart:collection");
+      final VirtualFile inSdk2 = DartLibraryIndex.getSdkLibByUri(getProject(), "dart:math");
 
       final VirtualFile inIdeLib1 = myFixture.addFileToProject("library/inLibrary1.dart", "").getVirtualFile();
       final VirtualFile inIdeLib2 = myFixture.addFileToProject("library/inLibrary2.dart", "").getVirtualFile();

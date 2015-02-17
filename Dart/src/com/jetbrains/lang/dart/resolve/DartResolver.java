@@ -13,6 +13,7 @@ import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -156,8 +157,8 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     }
     // dart:core
     if (result.isEmpty() && !"void".equals(name)) {
-      final List<VirtualFile> libraryFiles = DartLibraryIndex.findLibraryClass(scopeElement, "dart:core");
-      DartResolveUtil.processTopLevelDeclarations(scopeElement, dartResolveProcessor, libraryFiles, name);
+      final VirtualFile dartCoreLib = DartLibraryIndex.getSdkLibByUri(scopeElement.getProject(), DartUrlResolver.DART_CORE_URI);
+      DartResolveUtil.processTopLevelDeclarations(scopeElement, dartResolveProcessor, dartCoreLib, name);
     }
 
     return result;

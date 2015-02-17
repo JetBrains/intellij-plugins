@@ -100,9 +100,9 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
 
   private ResolveResult[] tryResolveLibraries() {
     final String libraryName = StringUtil.unquoteString(getText());
-    final List<VirtualFile> virtualFiles = DartLibraryIndex.findLibraryClass(this, libraryName);
     final List<PsiElementResolveResult> result = new ArrayList<PsiElementResolveResult>();
-    for (VirtualFile virtualFile : virtualFiles) {
+
+    for (VirtualFile virtualFile : DartLibraryIndex.getFilesByLibName(this, libraryName)) {
       final PsiFile psiFile = getManager().findFile(virtualFile);
       for (PsiElement root : DartResolveUtil.findDartRoots(psiFile)) {
         final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
@@ -112,6 +112,7 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
         }
       }
     }
+
     return result.toArray(new ResolveResult[result.size()]);
   }
 

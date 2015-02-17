@@ -138,9 +138,9 @@ public class DartResolveUtil {
 
   @NotNull
   public static DartClassResolveResult findCoreClass(PsiElement context, String className) {
-    final List<VirtualFile> libraryFile = DartLibraryIndex.findLibraryClass(context, "dart:core");
+    final VirtualFile dartCoreLib = DartLibraryIndex.getSdkLibByUri(context.getProject(), DartUrlResolver.DART_CORE_URI);
     final List<DartComponentName> result = new ArrayList<DartComponentName>();
-    processTopLevelDeclarations(context, new DartResolveProcessor(result, className), libraryFile, className);
+    processTopLevelDeclarations(context, new DartResolveProcessor(result, className), dartCoreLib, className);
     final PsiElement parent = result.isEmpty() ? null : result.iterator().next().getParent();
     return DartClassResolveResult.create(parent instanceof DartClass ? (DartClass)parent : null);
   }
@@ -384,7 +384,7 @@ public class DartResolveUtil {
       final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
       if (partOfStatement != null) {
         final String libraryName = partOfStatement.getLibraryName();
-        return ContainerUtil.filter(DartLibraryIndex.findLibraryClass(context, libraryName), new Condition<VirtualFile>() {
+        return ContainerUtil.filter(DartLibraryIndex.getFilesByLibName(context, libraryName), new Condition<VirtualFile>() {
           @Override
           public boolean value(VirtualFile mainLibFile) {
             for (String partUrl : DartPathIndex.getPaths(context.getProject(), mainLibFile)) {
@@ -1007,7 +1007,7 @@ public class DartResolveUtil {
 
     final List<VirtualFile> libraryFiles = new ArrayList<VirtualFile>();
     libraryFiles.addAll(findLibrary(context.getContainingFile()));
-    libraryFiles.addAll(DartLibraryIndex.findLibraryClass(context, "dart:core"));
+    ContainerUtil.addIfNotNull(libraryFiles, DartLibraryIndex.getSdkLibByUri(context.getProject(), DartUrlResolver.DART_CORE_URI));
 
     processTopLevelDeclarations(context, processor, libraryFiles, null);
   }

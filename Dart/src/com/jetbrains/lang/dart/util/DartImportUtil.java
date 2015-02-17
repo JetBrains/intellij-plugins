@@ -108,7 +108,7 @@ public class DartImportUtil {
 
     final DartUrlResolver urlResolver = DartUrlResolver.getInstance(context.getProject(), contextFile);
 
-    for (VirtualFile libraryFile : DartLibraryIndex.findLibraryClass(context, libraryName)) {
+    for (VirtualFile libraryFile : DartLibraryIndex.getFilesByLibName(context, libraryName)) {
       String urlToImport = urlResolver.getDartUrlForFile(libraryFile);
 
       if (urlToImport.startsWith(DartUrlResolver.DART_PREFIX) && urlToImport.contains("/")) {

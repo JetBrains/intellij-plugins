@@ -155,8 +155,8 @@ public class DartPsiImplUtil {
     }
     // dart:core
     if (result.isEmpty()) {
-      final List<VirtualFile> libraryFile = DartLibraryIndex.findLibraryClass(dartType, "dart:core");
-      DartResolveUtil.processTopLevelDeclarations(dartType, dartResolveProcessor, libraryFile, typeName);
+      final VirtualFile dartCoreLib = DartLibraryIndex.getSdkLibByUri(dartType.getProject(), DartUrlResolver.DART_CORE_URI);
+      DartResolveUtil.processTopLevelDeclarations(dartType, dartResolveProcessor, dartCoreLib, typeName);
     }
     return result.isEmpty() ? null : result.iterator().next();
   }

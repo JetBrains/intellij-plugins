@@ -22,6 +22,7 @@ public abstract class DartUrlResolver {
   public static final String TEMP_SCHEME = "temp";                 // TempFileSystem in tests only
   public static final String TEMP_PREFIX = "temp:";                // TempFileSystem in tests only
   public static final String PACKAGES_FOLDER_NAME = "packages";
+  public static final String DART_CORE_URI = "dart:core";
 
   /**
    * Returned instance becomes obsolete if/when pubspec.yaml file is added or deleted or if module-specific custom package roots are changed,
@@ -64,14 +65,14 @@ public abstract class DartUrlResolver {
                                                        final @Nullable String dartUrl) {
     if (dartSdk == null || dartUrl == null || !dartUrl.startsWith(DART_PREFIX)) return null;
 
-    final String sdkLibNameOrRelPath = dartUrl.substring(DART_PREFIX.length());
-    final VirtualFile sdkLibByName = DartLibraryIndex.getStandardLibraryFromSdk(project, sdkLibNameOrRelPath);
+    final VirtualFile sdkLibByUri = DartLibraryIndex.getSdkLibByUri(project, dartUrl);
 
-    if (sdkLibByName != null) {
-      return sdkLibByName;
+    if (sdkLibByUri != null) {
+      return sdkLibByUri;
     }
 
-    final String path = dartSdk.getHomePath() + "/lib/" + sdkLibNameOrRelPath;
+    final String sdkLibRelPath = dartUrl.substring(DART_PREFIX.length());
+    final String path = dartSdk.getHomePath() + "/lib/" + sdkLibRelPath;
     return LocalFileSystem.getInstance().findFileByPath(path);
   }
 

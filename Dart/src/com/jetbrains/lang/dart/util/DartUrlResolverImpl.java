@@ -156,11 +156,11 @@ class DartUrlResolverImpl extends DartUrlResolver {
                                                final @NotNull DartSdk sdk) {
     final VirtualFile sdkLibFolder = LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib");
     final String relativeToSdkLibFolder = sdkLibFolder == null ? null : VfsUtilCore.getRelativePath(file, sdkLibFolder, '/');
-    final String sdkLibName = relativeToSdkLibFolder == null
-                              ? null
-                              : DartLibraryIndex.getStandardLibraryNameByRelativePath(project, relativeToSdkLibFolder);
-    return sdkLibName != null
-           ? DART_PREFIX + sdkLibName
+    final String sdkLibUri = relativeToSdkLibFolder == null
+                             ? null
+                             : DartLibraryIndex.getSdkLibUriByRelativePath(project, relativeToSdkLibFolder);
+    return sdkLibUri != null
+           ? sdkLibUri
            : relativeToSdkLibFolder != null
              ? DART_PREFIX + relativeToSdkLibFolder
              : null;
