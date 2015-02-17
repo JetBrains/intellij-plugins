@@ -2,9 +2,9 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.template.*;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
 import gnu.trove.THashSet;
@@ -18,7 +18,7 @@ import java.util.Set;
 
 public class DartPresentableUtil {
 
-  @NonNls public static final String RIGHT_ARROW = SystemInfo.isMac ? "\u2192" : "->";
+  @NonNls public static final String RIGHT_ARROW = UIUtil.rightArrow();
   @NonNls private static final String SPACE = " ";
 
   public static String setterGetterName(String name) {
@@ -117,10 +117,12 @@ public class DartPresentableUtil {
       result.append(fieldFormalParameter.getReferenceExpression().getText());
     }
     else if (simpleFormalParameter != null) {
-      final PsiElement defaultFormalNamedParameter = PsiTreeUtil.getParentOfType(simpleFormalParameter, DartDefaultFormalNamedParameter.class);
+      final PsiElement defaultFormalNamedParameter =
+        PsiTreeUtil.getParentOfType(simpleFormalParameter, DartDefaultFormalNamedParameter.class);
       if (defaultFormalNamedParameter != null) {
         result.append(defaultFormalNamedParameter.getText());
-      } else {
+      }
+      else {
         final DartType type = simpleFormalParameter.getType();
         if (type != null) {
           result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));

@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.documentation;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
@@ -117,7 +118,8 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testFunctionSig6() throws Exception {
     doTest(
-      "<code><small><b>test.dart</b></small></code><br/><br/><code><b>calc</b>(x() " + RIGHT_ARROW + " int) " + RIGHT_ARROW + " int</code>",
+      "<code><small><b>test.dart</b></small></code><br/><br/><code><b>calc</b>(x() " + StringUtil.escapeXml(RIGHT_ARROW) + " int) "
+      + RIGHT_ARROW + " int</code>",
       "<caret>int calc(int x()) => null;");
   }
 
