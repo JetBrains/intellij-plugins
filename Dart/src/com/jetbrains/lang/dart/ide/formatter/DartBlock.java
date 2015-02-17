@@ -109,6 +109,21 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     if (isEndsWithRPAREN(elementType, prevType)) {
       return new ChildAttributes(Indent.getNormalIndent(), null);
     }
+    
+    if (prevType != null && (prevType == DartTokenTypes.SWITCH_CASE || prevType.toString().equals(":")) ) {
+      ASTBlock last = (ASTBlock)prev.getSubBlocks().get(prev.getSubBlocks().size()-1);
+      if (last.getNode().getText().equals("break;")) {
+        return new ChildAttributes(Indent.getNormalIndent(), null);
+      }
+      else {
+        //TODO: something like this is needed, not sure how
+        //if (prev.getSubBlocks().size() == 3) { 
+        //  prev.setIndent == Indent.getNormalIndent();
+        //} 
+        return new ChildAttributes(Indent.getContinuationIndent(), null);
+      }
+    }
+    
     if (index == 0) {
       return new ChildAttributes(Indent.getNoneIndent(), null);
     }
