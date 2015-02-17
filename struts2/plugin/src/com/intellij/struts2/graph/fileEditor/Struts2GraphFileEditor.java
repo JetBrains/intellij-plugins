@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -112,7 +112,7 @@ public class Struts2GraphFileEditor extends PerspectiveFileEditor {
           }
         });
       }
-    }, "Generating graph", false, myXmlFile.getProject());
+    }, "Generating Graph", false, myXmlFile.getProject());
 
 
     return graphComponent[0];
