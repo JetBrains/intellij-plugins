@@ -117,19 +117,12 @@ public class DartPresentableUtil {
       result.append(fieldFormalParameter.getReferenceExpression().getText());
     }
     else if (simpleFormalParameter != null) {
-      final PsiElement defaultFormalNamedParameter =
-        PsiTreeUtil.getParentOfType(simpleFormalParameter, DartDefaultFormalNamedParameter.class);
-      if (defaultFormalNamedParameter != null) {
-        result.append(defaultFormalNamedParameter.getText());
+      final DartType type = simpleFormalParameter.getType();
+      if (type != null) {
+        result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
+        result.append(SPACE);
       }
-      else {
-        final DartType type = simpleFormalParameter.getType();
-        if (type != null) {
-          result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
-          result.append(SPACE);
-        }
-        result.append(simpleFormalParameter.getComponentName().getText());
-      }
+      result.append(simpleFormalParameter.getComponentName().getText());
     }
 
     return result.toString();
