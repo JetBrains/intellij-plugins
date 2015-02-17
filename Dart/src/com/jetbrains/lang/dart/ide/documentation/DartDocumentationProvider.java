@@ -11,7 +11,6 @@ import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartSetterDeclaration;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,44 +38,39 @@ public class DartDocumentationProvider implements DocumentationProvider {
       return null;
     }
 
-    final String libraryName = getLibraryName(element);
-    final String docUrl = libraryName == null ? null : constructDocUrl(namedComponent, componentName, libraryName);
+    final String libRelatedUrlPart = getLibRelatedUrlPart(element);
+    final String docUrl = libRelatedUrlPart == null ? null : constructDocUrl(namedComponent, componentName, libRelatedUrlPart);
     return docUrl == null ? null : Collections.singletonList(docUrl);
   }
 
   @Nullable
-  private static String getLibraryName(@NotNull final PsiElement element) {
-    final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(element.getContainingFile());
-    if (virtualFile == null) {
-      return null;
-    }
+  private static String getLibRelatedUrlPart(@NotNull final PsiElement element) {
+    for (VirtualFile libFile : DartResolveUtil.findLibrary(element.getContainingFile())) {
+      final DartUrlResolver urlResolver = DartUrlResolver.getInstance(element.getProject(), libFile);
 
-    final DartUrlResolver urlResolver =
-      DartUrlResolver.getInstance(element.getProject(), virtualFile);
-
-    final String dartUrl = urlResolver.getDartUrlForFile(virtualFile);
-    final String prefix = StringUtils.substringBefore(dartUrl, "/");
-    // "dart:html" -> "dart_html"
-    if (prefix.startsWith(DartUrlResolver.DART_PREFIX)) {
-      return "dart_" + prefix.substring(DartUrlResolver.DART_PREFIX.length());
-    }
-    // "package:unittest" -> "unittest"
-    if (prefix.startsWith(DartUrlResolver.PACKAGE_PREFIX)) {
-      return prefix.substring(DartUrlResolver.PACKAGE_PREFIX.length());
+      final String dartUrl = urlResolver.getDartUrlForFile(libFile);
+      // "dart:html" -> "dart_html"
+      if (dartUrl.startsWith(DartUrlResolver.DART_PREFIX)) {
+        return "dart_" + dartUrl.substring(DartUrlResolver.DART_PREFIX.length());
+      }
+      // "package:unittest" -> "unittest"
+      if (dartUrl.startsWith(DartUrlResolver.PACKAGE_PREFIX)) {
+        return dartUrl.substring(DartUrlResolver.PACKAGE_PREFIX.length());
+      }
     }
 
     return null;
   }
 
   @Nls
-  private static String constructDocUrl(DartComponent namedComponent, String componentName, @NotNull String libName) {
+  private static String constructDocUrl(DartComponent namedComponent, String componentName, @NotNull String libRelatedUrlPart) {
     // class:     http://api.dartlang.org/docs/releases/latest/dart_core/Object.html
     // method:    http://api.dartlang.org/docs/releases/latest/dart_core/Object.html#id_toString
     // property:  http://api.dartlang.org/docs/releases/latest/dart_core/Object.html#id_hashCode
     // function:  http://api.dartlang.org/docs/releases/latest/dart_math.html#id_cos
 
 
-    final StringBuilder resultUrl = new StringBuilder(BASE_DART_DOC_URL).append(libName);
+    final StringBuilder resultUrl = new StringBuilder(BASE_DART_DOC_URL).append(libRelatedUrlPart);
 
     final DartClass dartClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class, true);
     final DartComponentType componentType = DartComponentType.typeOf(namedComponent);
