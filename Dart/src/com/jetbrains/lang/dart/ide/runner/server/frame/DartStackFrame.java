@@ -1,6 +1,8 @@
 package com.jetbrains.lang.dart.ide.runner.server.frame;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.ColoredTextContainer;
@@ -35,9 +37,14 @@ public class DartStackFrame extends XStackFrame {
     final VmLocation location = vmCallFrame.getLocation();
     myLocationUrl = location == null ? null : location.getUnescapedUrl();
     if (myLocationUrl != null) {
-      final VirtualFile file = myDebugProcess.findFile(vmCallFrame.getIsolate(), vmCallFrame.getLibraryId(), myLocationUrl);
-      final int line = location.getLineNumber(debugProcess.getVmConnection()) - 1;
-      mySourcePosition = file == null || line < 0 ? null : XDebuggerUtil.getInstance().createPosition(file, line);
+      mySourcePosition = ApplicationManager.getApplication().runReadAction(new Computable<XSourcePosition>() {
+        @Override
+        public XSourcePosition compute() {
+          final VirtualFile file = myDebugProcess.findFile(vmCallFrame.getIsolate(), vmCallFrame.getLibraryId(), myLocationUrl);
+          final int line = location.getLineNumber(debugProcess.getVmConnection()) - 1;
+          return file == null || line < 0 ? null : XDebuggerUtil.getInstance().createPosition(file, line);
+        }
+      });
     }
     else {
       mySourcePosition = null;
