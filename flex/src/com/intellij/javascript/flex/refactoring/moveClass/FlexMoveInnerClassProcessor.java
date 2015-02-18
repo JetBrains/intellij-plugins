@@ -25,10 +25,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
@@ -145,10 +142,15 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
       ActionScriptClassResolver.findClassByQNameStatic(StringUtil.getQualifiedName(myPackageName, myClassName), GlobalSearchScope.projectScope(myProject));
     PsiElement toInsert = myElement instanceof JSVariable ? JSRefactoringUtil.getVarStatementCopy((JSVariable)myElement) : myElement.copy();
     final PsiElement inserted = clazz.replace(toInsert);
+    PsiFile insertedContainingFile = inserted.getContainingFile();
     JSQualifiedNamedElement newClass =
       inserted instanceof JSVarStatement ? ((JSVarStatement)inserted).getVariables()[0] : (JSQualifiedNamedElement)inserted;
+
+    SmartPsiElementPointer<JSQualifiedNamedElement> newClassPointer =
+      SmartPointerManager.getInstance(myProject).createSmartPsiElementPointer(newClass);
     JSRefactoringUtil.handleDocCommentAndFormat(inserted, formatters);
     JSRefactoringUtil.deleteWithNoPostponedFormatting(myElement);
+
 
     if (myPackageName.length() > 0) {
       for (UsageInfo usage : usagesToProcess) {
@@ -162,6 +164,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
                                   formatters, true, false);
 
     boolean makePublic = false;
+    newClass = newClassPointer.getElement();
     List<NonCodeUsageInfo> nonCodeUsages = new ArrayList<NonCodeUsageInfo>();
     for (UsageInfo usage : usagesToProcess) {
       if (usage instanceof NonCodeUsageInfo) {
@@ -186,7 +189,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     }
 
     OpenFileDescriptor descriptor =
-      new OpenFileDescriptor(myProject, inserted.getContainingFile().getVirtualFile(), newClass.getTextOffset());
+      new OpenFileDescriptor(myProject, insertedContainingFile.getVirtualFile(), newClass.getTextOffset());
     FileEditorManager.getInstance(myProject).openTextEditor(descriptor, true);
   }
 

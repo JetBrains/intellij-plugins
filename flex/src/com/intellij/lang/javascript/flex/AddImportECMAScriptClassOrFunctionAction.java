@@ -18,9 +18,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
@@ -28,10 +26,7 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.psi.search.PsiElementProcessor;
@@ -210,7 +205,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
                 project,
                 new Runnable() {
                   public void run() {
-                    doImport(editor, element.getQualifiedName());
+                    doImport(element.getQualifiedName());
                   }
                 },
                 getClass().getName(),
@@ -226,26 +221,30 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
       if (myUnambiguousTheFlyMode) {
         CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
           public void run() {
-            doImport(editor, candidates.iterator().next().getQualifiedName());
+            doImport(candidates.iterator().next().getQualifiedName());
           }
         });
       }
       else {
-        doImport(editor, candidates.iterator().next().getQualifiedName());
+        doImport(candidates.iterator().next().getQualifiedName());
       }
     }
   }
 
-  private void doImport(final Editor editor, final String qName) {
-    AccessToken l = WriteAction.start();
-    try {
-      final PsiElement element = myReference.getElement();
-      ImportUtils.doImport(element, qName, true);
-      ImportUtils.insertUseNamespaceIfNeeded(qName, element);
-    }
-    finally {
-      l.finish();
-    }
+  private void doImport(final String qName) {
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        final PsiElement element = myReference.getElement();
+        SmartPsiElementPointer<PsiElement> pointer =
+          SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
+        ImportUtils.doImport(element, qName, true);
+        PsiElement newElement = pointer.getElement();
+        if (newElement != null) {
+          ImportUtils.insertUseNamespaceIfNeeded(qName, newElement);
+        }
+      }
+    });
   }
 
   public boolean startInWriteAction() {
