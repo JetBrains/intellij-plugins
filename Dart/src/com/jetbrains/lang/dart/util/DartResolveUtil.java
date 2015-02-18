@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -38,7 +39,7 @@ public class DartResolveUtil {
 
   public static final String OBJECT = "Object";
 
-  public static List<PsiElement> findDartRoots(PsiFile psiFile) {
+  public static List<PsiElement> findDartRoots(@Nullable final PsiFile psiFile) {
     if (psiFile instanceof XmlFile) {
       return findDartRootsInXml((XmlFile)psiFile);
     }
@@ -384,22 +385,27 @@ public class DartResolveUtil {
       final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
       if (partOfStatement != null) {
         final String libraryName = partOfStatement.getLibraryName();
-        return ContainerUtil.filter(DartLibraryIndex.getFilesByLibName(context, libraryName), new Condition<VirtualFile>() {
-          @Override
-          public boolean value(VirtualFile mainLibFile) {
-            for (String partUrl : DartPathIndex.getPaths(context.getProject(), mainLibFile)) {
-              final VirtualFile partFile = getImportedFile(context.getProject(), mainLibFile, partUrl);
-              if (contextVirtualFile.equals(partFile)) return true;
-            }
-
-            return false;
-          }
-        });
+        return findLibraryByName(context, libraryName);
       }
     }
 
     // no 'part of' statement in file -> this file itself is a library
     return Collections.singletonList(contextVirtualFile);
+  }
+
+  @NotNull
+  public static List<VirtualFile> findLibraryByName(@NotNull final PsiElement context, @NotNull final String libraryName) {
+    return ContainerUtil.filter(DartLibraryIndex.getFilesByLibName(context.getResolveScope(), libraryName), new Condition<VirtualFile>() {
+      @Override
+      public boolean value(VirtualFile mainLibFile) {
+        for (String partUrl : DartPathIndex.getPaths(context.getProject(), mainLibFile)) {
+          final VirtualFile partFile = getImportedFile(context.getProject(), mainLibFile, partUrl);
+          if (Comparing.equal(getRealVirtualFile(context.getContainingFile()), partFile)) return true;
+        }
+
+        return false;
+      }
+    });
   }
 
   public static boolean isLibraryRoot(PsiFile psiFile) {

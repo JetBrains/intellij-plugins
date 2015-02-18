@@ -9,7 +9,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -72,9 +71,8 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
     return true;
   }
 
-  public static Collection<VirtualFile> getFilesByLibName(@NotNull final PsiElement context, @NotNull final String libraryName) {
-    return FileBasedIndex.getInstance()
-      .getContainingFiles(DART_LIBRARY_INDEX, libraryName, GlobalSearchScope.allScope(context.getProject()));
+  public static Collection<VirtualFile> getFilesByLibName(@NotNull final GlobalSearchScope scope, @NotNull final String libraryName) {
+    return FileBasedIndex.getInstance().getContainingFiles(DART_LIBRARY_INDEX, libraryName, scope);
   }
 
   @Nullable

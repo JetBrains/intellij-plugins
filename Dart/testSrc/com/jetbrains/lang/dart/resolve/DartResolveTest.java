@@ -444,4 +444,11 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                                            "class A extends <caret expected='[Dart SDK]/lib/internal/list.dart -> UnmodifiableListBase'>UnmodifiableListBase<E>{}");
     doTest();
   }
+
+  public void testPartOfResolution() throws Exception {
+    myFixture.addFileToProject("main1.dart", "library libName;\npart 'part1.dart';");
+    myFixture.addFileToProject("main2.dart", "library libName;\npart 'part2.dart';");
+    myFixture.configureByText("part1.dart", "part of <caret expected='main1.dart -> libName'>libName;");
+    doTest();
+  }
 }

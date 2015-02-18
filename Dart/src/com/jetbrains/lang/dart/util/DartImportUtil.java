@@ -6,11 +6,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.resolve.DartResolveScopeProvider;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -108,7 +110,10 @@ public class DartImportUtil {
 
     final DartUrlResolver urlResolver = DartUrlResolver.getInstance(context.getProject(), contextFile);
 
-    for (VirtualFile libraryFile : DartLibraryIndex.getFilesByLibName(context, libraryName)) {
+    final GlobalSearchScope scope = DartResolveScopeProvider.getDartScope(context.getProject(), contextFile, true);
+    if (scope == null) return null;
+
+    for (VirtualFile libraryFile : DartLibraryIndex.getFilesByLibName(scope, libraryName)) {
       String urlToImport = urlResolver.getDartUrlForFile(libraryFile);
 
       if (urlToImport.startsWith(DartUrlResolver.DART_PREFIX) && urlToImport.contains("/")) {
