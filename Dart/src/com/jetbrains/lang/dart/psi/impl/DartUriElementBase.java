@@ -174,7 +174,20 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
           reference.getRangeInElement().shiftRight(shift),
           reference.getIndex(),
           reference.getText()
-        );
+        ) {
+          @Override
+          public PsiElement bindToElement(@NotNull final PsiElement element, final boolean absolute) {
+            final VirtualFile contextFile = DartResolveUtil.getRealVirtualFile(getElement().getContainingFile());
+            final VirtualFile targetFile = DartResolveUtil.getRealVirtualFile(element.getContainingFile());
+            if (contextFile != null && targetFile != null) {
+              final String newUri = DartUrlResolver.getInstance(element.getProject(), contextFile).getDartUrlForFile(targetFile);
+              if (newUri.startsWith(DartUrlResolver.PACKAGE_PREFIX)) {
+                return rename(newUri);
+              }
+            }
+            return getElement();
+          }
+        };
       }
     }, FileReference.EMPTY);
   }
@@ -184,7 +197,7 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
     public DartUriElement handleContentChange(@NotNull final DartUriElement oldUriElement,
                                               @NotNull final TextRange range,
                                               @NotNull final String newContent) {
-      final String newUriElementText = StringUtil.replaceSubstring(oldUriElement.getText(), range, newContent);
+      final String newUriElementText = StringUtil.replaceSubstring(oldUriElement.getText(), getRangeInElement(oldUriElement), newContent);
       final PsiFile fileFromText = PsiFileFactory.getInstance(oldUriElement.getProject())
         .createFileFromText(DartLanguage.INSTANCE, "import " + newUriElementText + ";");
 

@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.psi.PsiFile;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.inspections.DartDeprecatedApiUsageInspection;
@@ -139,5 +140,30 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     finally {
       unexcludeFolder("other_project");
     }
+  }
+
+  public void testRenameImportedFile() {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
+    final PsiFile libFile = myFixture.addFileToProject("lib/libFile.dart", "");
+    final PsiFile libFile2 = myFixture.addFileToProject("lib/sub/libFile2.dart", "import '''../libFile.dart''';\n" +
+                                                                                 "import '''package:ProjectName/libFile.dart''';");
+    final PsiFile libFile3 = myFixture.addFileToProject("lib/libFile3.dart", "part '../lib/libFile.dart';\n" +
+                                                                             "part 'package:ProjectName/sub/../libFile.dart';");
+    final PsiFile webFile = myFixture.addFileToProject("web/webFile.dart", "import r'../lib/libFile.dart'\n" +
+                                                                           "import r'package:ProjectName/libFile.dart'");
+
+    myFixture.renameElement(libFile, "renamed.dart");
+
+    myFixture.openFileInEditor(libFile2.getVirtualFile());
+    myFixture.checkResult("import '''../renamed.dart''';\n" +
+                          "import '''package:ProjectName/renamed.dart''';");
+
+    myFixture.openFileInEditor(libFile3.getVirtualFile());
+    myFixture.checkResult("part 'renamed.dart';\n" +
+                          "part 'package:ProjectName/renamed.dart';");
+
+    myFixture.openFileInEditor(webFile.getVirtualFile());
+    myFixture.checkResult("import r'../lib/renamed.dart'\n" +
+                          "import r'package:ProjectName/renamed.dart'");
   }
 }
