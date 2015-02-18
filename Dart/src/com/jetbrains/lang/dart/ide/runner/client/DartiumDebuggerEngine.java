@@ -9,14 +9,18 @@ import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.PairFunction;
 import com.intellij.util.Url;
 import com.intellij.xdebugger.XDebugSession;
+import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xml.util.HtmlUtil;
+import com.jetbrains.javascript.debugger.Location;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
@@ -28,15 +32,22 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
     super("dartium");
   }
 
+  @Override
   public ChromeDebugProcess createDebugProcess(@NotNull final XDebugSession session,
                                                @NotNull final WebBrowser browser,
                                                @NotNull final DebuggableFileFinder fileFinder,
                                                @Nullable final Url initialUrl,
                                                @Nullable final ExecutionResult executionResult,
                                                final boolean usePreliminaryPage) {
-    final ChromeDebugProcess debugProcess =
+    ChromeDebugProcess debugProcess =
       super.createDebugProcess(session, browser, fileFinder, initialUrl, executionResult, usePreliminaryPage);
     debugProcess.setProcessBreakpointConditionsAtIdeSide(true);
+    debugProcess.setBreakpointLanguageHint(new PairFunction<XLineBreakpoint<?>, Location, String>() {
+      @Override
+      public String fun(XLineBreakpoint<?> breakpoint, Location location) {
+        return StringUtil.containsIgnoreCase(breakpoint == null ? location.getUrl().getPath() : breakpoint.getFileUrl(), ".dart") ? "dart" : null;
+      }
+    });
     return debugProcess;
   }
 
