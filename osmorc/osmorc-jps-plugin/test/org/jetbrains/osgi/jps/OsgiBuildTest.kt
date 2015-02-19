@@ -30,6 +30,7 @@ import java.util.jar.JarFile
 
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
+import java.util.zip.ZipFile
 
 class OsgiBuildTest : JpsBuildTestCase() {
   var myExtension: JpsOsmorcModuleExtension by Delegates.notNull()
@@ -60,22 +61,26 @@ class OsgiBuildTest : JpsBuildTestCase() {
   }
 
   private fun assertJar(expected: Set<String>) {
-    /*JarFile(myExtension.getJarFileLocation()).use {
+    JarFile(myExtension.getJarFileLocation()).use {
       val names = it.entries().stream().filter { !it.isDirectory() }.map { it.getName() }.toSet()
       assertEquals(expected, names)
-    }*/
+    }
   }
 
   private fun assertManifest(expected: Map<String, String>) {
-    /*JarFile(myExtension.getJarFileLocation()).use {
+    JarFile(myExtension.getJarFileLocation()).use {
       val attributes = it.getManifest()!!.getMainAttributes()!!
       for ((k, v) in expected) {
         assertEquals(v, attributes.getValue(k))
       }
-    }*/
+    }
   }
 
-  public fun <T> Enumeration<T>.stream(): Stream<T> {
+  private fun <T> Enumeration<T>.stream(): Stream<T> {
     return stream { if (hasMoreElements()) nextElement() else null }
+  }
+
+  private fun JarFile.use(block: (JarFile) -> Unit) {
+    try { block(this) } finally { close() }
   }
 }
