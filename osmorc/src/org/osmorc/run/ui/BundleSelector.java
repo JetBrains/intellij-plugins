@@ -34,6 +34,7 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.TreeUIHelper;
 import com.intellij.ui.treeStructure.SimpleTree;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.JBUI;
 import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +53,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import java.awt.*;
 import java.util.List;
 
 import static org.osmorc.frameworkintegration.FrameworkInstanceManager.FrameworkBundleType;
@@ -72,7 +72,7 @@ public class BundleSelector extends DialogWrapper {
     setTitle(OsmorcBundle.message("bundle.selector.title"));
     setModal(true);
 
-    myContentPane.setPreferredSize(new Dimension(600, 400));
+    myContentPane.setPreferredSize(JBUI.size(600, 400));
     myBundleTree.setModel(createModel(project, instance, toHide));
     myBundleTree.setCellRenderer(new BundleTreeRenderer());
     myBundleTree.addTreeSelectionListener(new TreeSelectionListener() {
