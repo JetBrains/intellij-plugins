@@ -9,11 +9,11 @@ import com.intellij.platform.WebProjectGenerator;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
@@ -35,7 +35,7 @@ public class PhoneGapProjectPeer implements WebProjectGenerator.GeneratorPeer<Ph
       .addLabeledComponent("PhoneGap/Cordova:", myExecutablePathField)
       .getPanel();
 
-    panel.setPreferredSize(new Dimension(600, 40));
+    panel.setPreferredSize(JBUI.size(600, 40));
     return panel;
   }
 

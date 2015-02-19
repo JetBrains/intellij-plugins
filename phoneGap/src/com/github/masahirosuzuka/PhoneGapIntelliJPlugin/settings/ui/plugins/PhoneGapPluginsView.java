@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.FormBuilder;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.webcore.packaging.PackagesNotificationPanel;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public class PhoneGapPluginsView {
     myProject = project;
     packagesNotificationPanel = new PackagesNotificationPanel();
     myPanel = new PhoneGapInstalledPluginsPanel(project, packagesNotificationPanel);
-    myPanel.setPreferredSize(new Dimension(400, 400));
+    myPanel.setPreferredSize(JBUI.size(400, 400));
     JPanel wrapper = new JPanel(new BorderLayout());
     wrapper.setBorder(IdeBorderFactory.createTitledBorder("Plugins", false));
     wrapper.add(FormBuilder.createFormBuilder().addComponent(myPanel).addComponent(packagesNotificationPanel.getComponent()).getPanel());
