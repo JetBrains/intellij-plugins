@@ -8,6 +8,7 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -28,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
+  private static final Logger LOG = Logger.getInstance(DartiumDebuggerEngine.class);
+
   public DartiumDebuggerEngine() {
     super("dartium");
   }
@@ -45,7 +48,13 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
     debugProcess.setBreakpointLanguageHint(new PairFunction<XLineBreakpoint<?>, Location, String>() {
       @Override
       public String fun(XLineBreakpoint<?> breakpoint, Location location) {
-        return StringUtil.containsIgnoreCase(breakpoint == null ? location.getUrl().getPath() : breakpoint.getFileUrl(), ".dart") ? "dart" : null;
+        String result = StringUtil.endsWithIgnoreCase(breakpoint == null ? location.getUrl().getPath() : breakpoint.getFileUrl(), ".dart")
+                        ? "dart"
+                        : null;
+        if (LOG.isDebugEnabled()) {
+          LOG.debug(breakpoint + ", " + location.getUrl() + " " + result);
+        }
+        return result;
       }
     });
     return debugProcess;
