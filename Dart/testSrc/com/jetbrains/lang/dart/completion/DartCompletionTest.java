@@ -78,4 +78,8 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
            "import 'package:<caret completionEquals='polymer,core_elements'>';\n" +
            "import 'package:polymer/<caret completionEquals='src,polymer.dart,transformer.dart'>");
   }
+
+  public void testKeywords() throws Exception {
+    doTest("Object <caret completionEquals=''>");
+  }
 }
