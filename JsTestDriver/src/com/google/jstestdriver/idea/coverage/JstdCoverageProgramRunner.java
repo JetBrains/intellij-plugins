@@ -26,10 +26,10 @@ import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.util.AsyncResult;
-import com.intellij.util.NullableConsumer;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.Promise;
 
 public class JstdCoverageProgramRunner extends AsyncGenericProgramRunner {
 
@@ -53,25 +53,24 @@ public class JstdCoverageProgramRunner extends AsyncGenericProgramRunner {
 
   @NotNull
   @Override
-  protected AsyncResult<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
+  protected Promise<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
     if (jstdState.getRunSettings().isExternalServerType()) {
-      return AsyncResult.<RunProfileStarter>done(new MyStarter(null));
+      return Promise.<RunProfileStarter>resolve(new MyStarter(null));
     }
     JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(environment.getProject());
     jstdToolWindowManager.setAvailable(true);
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     if (server != null && !server.isStopped()) {
-      return AsyncResult.<RunProfileStarter>done(new MyStarter(server));
+      return Promise.<RunProfileStarter>resolve(new MyStarter(server));
     }
-    final AsyncResult<RunProfileStarter> result = new AsyncResult<RunProfileStarter>();
-    jstdToolWindowManager.restartServer(new NullableConsumer<JstdServer>() {
-      @Override
-      public void consume(@Nullable JstdServer server) {
-        result.setDone(server != null ? new MyStarter(server) : null);
-      }
-    });
-    return result;
+    return jstdToolWindowManager.restartServer()
+      .then(new Function<JstdServer, RunProfileStarter>() {
+        @Override
+        public RunProfileStarter fun(JstdServer server) {
+          return server != null ? new MyStarter(server) : null;
+        }
+      });
   }
 
   public static class MyStarter extends RunProfileStarter {

@@ -1,10 +1,11 @@
 package com.google.jstestdriver.idea.server;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.util.CatchingConsumer;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.AsyncPromise;
+import org.jetbrains.concurrency.Promise;
 
 public class JstdServerRegistry {
 
@@ -17,24 +18,29 @@ public class JstdServerRegistry {
     return myServer;
   }
 
-  public void restartServer(@NotNull final JstdServerSettings settings, @NotNull final CatchingConsumer<JstdServer, Exception> consumer) {
+  @NotNull
+  public Promise<JstdServer> restartServer(@NotNull final JstdServerSettings settings) {
     JstdServer server = myServer;
+    final AsyncPromise<JstdServer> promise = new AsyncPromise<JstdServer>();
     if (server != null && server.isProcessRunning()) {
       server.addLifeCycleListener(new JstdServerLifeCycleAdapter() {
         @Override
         public void onServerStopped() {
           myServer = null;
-          doStart(settings, consumer);
+          doStart(settings, promise);
         }
       }, ApplicationManager.getApplication());
       server.shutdownAsync();
+      return promise;
     }
     else {
-      doStart(settings, consumer);
+      doStart(settings, promise);
     }
+    return promise;
   }
 
-  private void doStart(@NotNull final JstdServerSettings settings, @NotNull final CatchingConsumer<JstdServer, Exception> consumer) {
+  @NotNull
+  private Promise<JstdServer> doStart(@NotNull final JstdServerSettings settings, @NotNull final AsyncPromise<JstdServer> promise) {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
       public void run() {
@@ -44,7 +50,7 @@ public class JstdServerRegistry {
             @Override
             public void run() {
               myServer = server;
-              consumer.consume(server);
+              promise.setResult(server);
             }
           });
         }
@@ -52,12 +58,13 @@ public class JstdServerRegistry {
           UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
             public void run() {
-              consumer.consume(e);
+              promise.setError(e);
             }
           });
         }
       }
     });
+    return promise;
   }
 
   @NotNull

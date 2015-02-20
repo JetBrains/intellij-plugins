@@ -9,10 +9,9 @@ import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
-import com.intellij.util.NullableConsumer;
 import icons.JsTestDriverIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.Promise;
 
 /**
  * @author Sergey Simonchik
@@ -68,11 +67,12 @@ public class JstdToolWindowManager {
     }
   }
 
-  public void restartServer(@Nullable NullableConsumer<JstdServer> callback) {
+  @NotNull
+  public Promise<JstdServer> restartServer() {
     JstdToolWindowSession session = myCurrentSession;
     if (session == null) {
       throw new RuntimeException("JsTestDriver Server toolwindow isn't available");
     }
-    session.restart(JstdServerSettingsManager.loadSettings(), callback);
+    return session.restart(JstdServerSettingsManager.loadSettings());
   }
 }

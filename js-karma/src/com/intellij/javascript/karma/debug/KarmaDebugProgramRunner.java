@@ -23,11 +23,11 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
+import com.intellij.util.Function;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
 import com.intellij.xdebugger.XDebugProcess;
@@ -38,6 +38,7 @@ import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
 import com.jetbrains.javascript.debugger.JavaScriptDebugProcess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.Promise;
 import org.jetbrains.debugger.connection.VmConnection;
 
 import java.io.File;
@@ -62,11 +63,11 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
 
   @NotNull
   @Override
-  protected AsyncResult<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
+  protected Promise<RunProfileStarter> prepare(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
     final ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) {
-      return AsyncResult.done(null);
+      return Promise.resolve(null);
     }
 
     final KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult);
@@ -111,7 +112,7 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
       });
     }
     else {
-      return AsyncResult.<RunProfileStarter>done(new RunProfileStarter() {
+      return Promise.<RunProfileStarter>resolve(new RunProfileStarter() {
         @Nullable
         @Override
         public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) {
@@ -161,24 +162,18 @@ public class KarmaDebugProgramRunner extends AsyncGenericProgramRunner {
     return new RemoteDebuggingFileFinder(mappings, false);
   }
 
-  public static AsyncResult<RunProfileStarter> prepareDebugger(@NotNull final Project project,
-                                                               @Nullable final DebuggableWebBrowser debuggableWebBrowser,
-                                                               @NotNull final RunProfileStarter starter) {
+  public static Promise<RunProfileStarter> prepareDebugger(@NotNull Project project, @Nullable DebuggableWebBrowser debuggableWebBrowser, @NotNull final RunProfileStarter starter) {
     if (debuggableWebBrowser == null) {
-      return AsyncResult.done(starter);
+      return Promise.resolve(starter);
     }
     else {
-      final AsyncResult<RunProfileStarter> result = new AsyncResult<RunProfileStarter>();
-      JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
-      WebBrowser browser = debuggableWebBrowser.getWebBrowser();
-      debugEngine.prepareDebugger(project, browser).notifyWhenRejected(result).doWhenDone(new Runnable() {
-        @Override
-        public void run() {
-          result.setDone(starter);
-        }
-      });
-      return result;
+      return debuggableWebBrowser.getDebugEngine().prepareDebugger(project, debuggableWebBrowser.getWebBrowser())
+        .then(new Function<Void, RunProfileStarter>() {
+          @Override
+          public RunProfileStarter fun(Void aVoid) {
+            return starter;
+          }
+        });
     }
   }
-
 }

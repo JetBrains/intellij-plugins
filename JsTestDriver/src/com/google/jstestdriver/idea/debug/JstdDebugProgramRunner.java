@@ -25,9 +25,7 @@ import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.ActionCallback;
-import com.intellij.openapi.util.AsyncResult;
-import com.intellij.util.NullableConsumer;
+import com.intellij.util.Function;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
 import com.intellij.xdebugger.XDebugProcess;
@@ -38,6 +36,8 @@ import com.jetbrains.javascript.debugger.JavaScriptDebugEngine;
 import com.jetbrains.javascript.debugger.JavaScriptDebugProcess;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.AsyncFunction;
+import org.jetbrains.concurrency.Promise;
 import org.jetbrains.debugger.connection.VmConnection;
 
 import java.io.File;
@@ -74,7 +74,7 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
 
   @NotNull
   @Override
-  protected AsyncResult<RunProfileStarter> prepare(@NotNull final ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
+  protected Promise<RunProfileStarter> prepare(@NotNull final ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     JstdRunProfileState jstdState = JstdRunProfileState.cast(state);
     final JstdRunSettings runSettings = jstdState.getRunSettings();
     if (runSettings.isExternalServerType()) {
@@ -83,42 +83,33 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
     JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(environment.getProject());
     jstdToolWindowManager.setAvailable(true);
     JstdServer server = JstdServerRegistry.getInstance().getServer();
-    final AsyncResult<RunProfileStarter> result = new AsyncResult<RunProfileStarter>();
     if (server != null && !server.isStopped()) {
-      prepareWithServer(environment.getProject(), result, server, runSettings);
-      return result;
+      return prepareWithServer(environment.getProject(), server, runSettings);
     }
-    jstdToolWindowManager.restartServer(new NullableConsumer<JstdServer>() {
+
+    return jstdToolWindowManager.restartServer().then(new AsyncFunction<JstdServer, RunProfileStarter>() {
+      @NotNull
       @Override
-      public void consume(@Nullable JstdServer server) {
-        if (server != null) {
-          prepareWithServer(environment.getProject(), result, server, runSettings);
-        }
-        else {
-          result.setDone(null);
-        }
+      public Promise<RunProfileStarter> fun(JstdServer server) {
+        return server == null ? Promise.<RunProfileStarter>resolve(null) : prepareWithServer(environment.getProject(), server, runSettings);
       }
     });
-    return result;
   }
 
-  private static void prepareWithServer(@NotNull final Project project,
-                                        @NotNull final AsyncResult<RunProfileStarter> result,
-                                        @NotNull final JstdServer server,
-                                        @NotNull final JstdRunSettings runSettings) {
+  @NotNull
+  private static Promise<RunProfileStarter> prepareWithServer(@NotNull Project project, @NotNull final JstdServer server, @NotNull JstdRunSettings runSettings) {
     if (server.isReadyForRunningTests()) {
       final JstdDebugBrowserInfo debugBrowserInfo = JstdDebugBrowserInfo.build(server, runSettings);
       if (debugBrowserInfo != null) {
-        ActionCallback prepareDebuggerCallback = debugBrowserInfo.getDebugEngine().prepareDebugger(project, debugBrowserInfo.getBrowser());
-        prepareDebuggerCallback.notifyWhenRejected(result).doWhenDone(new Runnable() {
+        return debugBrowserInfo.getDebugEngine().prepareDebugger(project, debugBrowserInfo.getBrowser()).then(new Function<Void, RunProfileStarter>() {
           @Override
-          public void run() {
-            result.setDone(new MyDebugStarter(server, debugBrowserInfo));
+          public RunProfileStarter fun(Void aVoid) {
+            return new MyDebugStarter(server, debugBrowserInfo);
           }
         });
       }
       else {
-        result.setDone(new RunProfileStarter() {
+        return Promise.<RunProfileStarter>resolve(new RunProfileStarter() {
           @Nullable
           @Override
           public RunContentDescriptor execute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment environment) throws ExecutionException {
@@ -128,7 +119,7 @@ public class JstdDebugProgramRunner extends AsyncGenericProgramRunner {
       }
     }
     else {
-      result.setDone(new JstdRunProgramRunner.JstdRunStarter(server, true));
+      return Promise.<RunProfileStarter>resolve(new JstdRunProgramRunner.JstdRunStarter(server, true));
     }
   }
 

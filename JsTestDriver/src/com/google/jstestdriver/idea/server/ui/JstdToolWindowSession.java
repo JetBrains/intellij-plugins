@@ -12,11 +12,11 @@ import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.IdeBorderFactory;
-import com.intellij.util.CatchingConsumer;
-import com.intellij.util.NullableConsumer;
+import com.intellij.util.Consumer;
+import com.intellij.util.Function;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.Promise;
 
 import javax.swing.*;
 import java.awt.*;
@@ -107,28 +107,26 @@ public class JstdToolWindowSession {
     myTabs.select(consoleTab.getTabInfo(), true);
   }
 
-  private void showServerStartupError(@NotNull Exception ex) {
+  private void showServerStartupError(@NotNull Throwable error) {
     JstdServerConsoleTab consoleView = getOrRegisterConsoleContent();
-    consoleView.showServerStartupError(ex);
+    consoleView.showServerStartupError(error);
   }
 
-  public void restart(@NotNull JstdServerSettings settings, @Nullable final NullableConsumer<JstdServer> callback) {
-    JstdServerRegistry.getInstance().restartServer(settings, new CatchingConsumer<JstdServer, Exception>() {
-      @Override
-      public void consume(JstdServer server) {
-        attachToServer(server);
-        if (callback != null) {
-          callback.consume(server);
+  @NotNull
+  public Promise<JstdServer> restart(@NotNull JstdServerSettings settings) {
+    return JstdServerRegistry.getInstance().restartServer(settings)
+      .rejected(new Consumer<Throwable>() {
+        @Override
+        public void consume(Throwable error) {
+          showServerStartupError(error);
         }
-      }
-
-      @Override
-      public void consume(Exception e) {
-        showServerStartupError(e);
-        if (callback != null) {
-          callback.consume(null);
+      })
+      .then(new Function<JstdServer, JstdServer>() {
+        @Override
+        public JstdServer fun(JstdServer server) {
+          attachToServer(server);
+          return server;
         }
-      }
-    });
+      });
   }
 }
