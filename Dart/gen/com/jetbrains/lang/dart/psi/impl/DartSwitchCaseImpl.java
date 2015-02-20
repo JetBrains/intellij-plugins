@@ -23,21 +23,21 @@ public class DartSwitchCaseImpl extends DartPsiCompositeElementImpl implements D
   }
 
   @Override
+  @Nullable
+  public DartExpression getExpression() {
+    return findChildByClass(DartExpression.class);
+  }
+
+  @Override
   @NotNull
-  public List<DartExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
+  public List<DartLabel> getLabelList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartLabel.class);
   }
 
   @Override
   @Nullable
-  public DartLabel getLabel() {
-    return findChildByClass(DartLabel.class);
-  }
-
-  @Override
-  @NotNull
   public DartStatements getStatements() {
-    return findNotNullChildByClass(DartStatements.class);
+    return findChildByClass(DartStatements.class);
   }
 
 }

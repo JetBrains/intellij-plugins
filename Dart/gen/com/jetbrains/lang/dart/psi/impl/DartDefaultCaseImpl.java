@@ -24,20 +24,14 @@ public class DartDefaultCaseImpl extends DartPsiCompositeElementImpl implements 
 
   @Override
   @NotNull
-  public List<DartExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
+  public List<DartLabel> getLabelList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartLabel.class);
   }
 
   @Override
   @Nullable
-  public DartLabel getLabel() {
-    return findChildByClass(DartLabel.class);
-  }
-
-  @Override
-  @NotNull
   public DartStatements getStatements() {
-    return findNotNullChildByClass(DartStatements.class);
+    return findChildByClass(DartStatements.class);
   }
 
 }

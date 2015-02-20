@@ -14,6 +14,17 @@ class Baz extends Kuk implements A, B, C {
   void baz() {
     if (42) if (42) 42; else throw 42;
     switch (42) { case 42: return 42; default: break; }
+    switch (2+2) {
+      label0:
+      case(a..b()):
+        innerLabel: foo;
+        label1: label2:
+      case 2:
+      case 3:
+      case a:
+        label3: label4:
+      default:
+    }
     try { } catch (e) {
      rethrow
      rethrow;

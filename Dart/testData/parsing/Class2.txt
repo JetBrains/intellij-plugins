@@ -186,6 +186,100 @@ Dart File
                         PsiElement(break)('break')
                         PsiElement(;)(';')
                   PsiElement(})('}')
+                SWITCH_STATEMENT
+                  PsiElement(switch)('switch')
+                  PsiElement(()('(')
+                  ADDITIVE_EXPRESSION
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('2')
+                    ADDITIVE_OPERATOR
+                      PsiElement(+)('+')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('2')
+                  PsiElement())(')')
+                  PsiElement({)('{')
+                  SWITCH_CASE
+                    LABEL
+                      COMPONENT_NAME
+                        ID
+                          PsiElement(IDENTIFIER)('label0')
+                      PsiElement(:)(':')
+                    PsiElement(case)('case')
+                    PARENTHESIZED_EXPRESSION
+                      PsiElement(()('(')
+                      CASCADE_REFERENCE_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('a')
+                        PsiElement(.)('.')
+                        PsiElement(.)('.')
+                        CALL_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('b')
+                          ARGUMENTS
+                            PsiElement(()('(')
+                            PsiElement())(')')
+                      PsiElement())(')')
+                    PsiElement(:)(':')
+                    STATEMENTS
+                      LABEL
+                        COMPONENT_NAME
+                          ID
+                            PsiElement(IDENTIFIER)('innerLabel')
+                        PsiElement(:)(':')
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('foo')
+                      PsiElement(;)(';')
+                  SWITCH_CASE
+                    LABEL
+                      COMPONENT_NAME
+                        ID
+                          PsiElement(IDENTIFIER)('label1')
+                      PsiElement(:)(':')
+                    LABEL
+                      COMPONENT_NAME
+                        ID
+                          PsiElement(IDENTIFIER)('label2')
+                      PsiElement(:)(':')
+                    PsiElement(case)('case')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('2')
+                    PsiElement(:)(':')
+                    STATEMENTS
+                      <empty list>
+                  SWITCH_CASE
+                    PsiElement(case)('case')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('3')
+                    PsiElement(:)(':')
+                    STATEMENTS
+                      <empty list>
+                  SWITCH_CASE
+                    PsiElement(case)('case')
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('a')
+                    PsiElement(:)(':')
+                    STATEMENTS
+                      <empty list>
+                  DEFAULT_CASE
+                    LABEL
+                      COMPONENT_NAME
+                        ID
+                          PsiElement(IDENTIFIER)('label3')
+                      PsiElement(:)(':')
+                    LABEL
+                      COMPONENT_NAME
+                        ID
+                          PsiElement(IDENTIFIER)('label4')
+                      PsiElement(:)(':')
+                    PsiElement(default)('default')
+                    PsiElement(:)(':')
+                    STATEMENTS
+                      <empty list>
+                  PsiElement(})('}')
                 TRY_STATEMENT
                   PsiElement(try)('try')
                   BLOCK

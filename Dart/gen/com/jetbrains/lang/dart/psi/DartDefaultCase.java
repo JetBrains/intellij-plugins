@@ -8,12 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface DartDefaultCase extends DartPsiCompositeElement {
 
   @NotNull
-  List<DartExpression> getExpressionList();
+  List<DartLabel> getLabelList();
 
   @Nullable
-  DartLabel getLabel();
-
-  @NotNull
   DartStatements getStatements();
 
 }

@@ -390,18 +390,7 @@ typeList ::= type (',' type)*
 block ::= '{' statements '}' {pin=1}
 
 statements ::= statement* {implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
-private statement ::= label* nonLabelledStatement {pin=2 recoverWhile="statement_recover"}
-private statement_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | <<varInitWrapper>> | '!' | '!=' | '%' | '%=' | '&&' |
-                                '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
-                                 ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
-                                 '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
-                                 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
-                                 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
-                                 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
-                                 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
-                                 HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE |
-                                 RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START |
-                                 TRUE)
+private statement ::= label* nonLabelledStatement
 
 private nonLabelledStatement ::= block // Guard to break tie with map literal.  todo why ';'?
                                | functionDeclarationWithBody ';'?
@@ -460,9 +449,8 @@ private for_loops_parts_recover ::= !')'
 ifStatement ::= 'if' '(' expressionWithRecoverUntilParen ')' statement ('else' statement)?  {pin=1}
 switchStatement ::= 'switch' '(' expressionWithRecoverUntilParen ')' '{' switchCase* defaultCase? '}' {pin=1}
 
-switchCase ::= label? ('case' expression ':')+ statements {recoverWhile="switch_case_recover"}
-private switch_case_recover ::= !('case' | 'default' | '}' | <<nonStrictID>>)
-defaultCase::= label? ('case' expression ':')* 'default' ':' statements
+switchCase ::= label* 'case' expression ':' statements {pin=2}
+defaultCase::= label* 'default' ':' statements {pin = 2}
 
 tryStatement ::= 'try' block (onPart+ finallyPart? | finallyPart) {pin=1}
 onPart ::= catchPart block | 'on' type catchPart? block {pin=1}

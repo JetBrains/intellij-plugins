@@ -7,13 +7,13 @@ import com.intellij.psi.PsiElement;
 
 public interface DartSwitchCase extends DartPsiCompositeElement {
 
+  @Nullable
+  DartExpression getExpression();
+
   @NotNull
-  List<DartExpression> getExpressionList();
+  List<DartLabel> getLabelList();
 
   @Nullable
-  DartLabel getLabel();
-
-  @NotNull
   DartStatements getStatements();
 
 }

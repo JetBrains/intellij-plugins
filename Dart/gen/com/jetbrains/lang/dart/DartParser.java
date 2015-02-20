@@ -1437,49 +1437,30 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // label? ('case' expression ':')* 'default' ':' statements
+  // label* 'default' ':' statements
   public static boolean defaultCase(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultCase")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, "<default case>");
     r = defaultCase_0(b, l + 1);
-    r = r && defaultCase_1(b, l + 1);
     r = r && consumeToken(b, DEFAULT);
-    r = r && consumeToken(b, COLON);
-    r = r && statements(b, l + 1);
-    exit_section_(b, l, m, DEFAULT_CASE, r, false, null);
-    return r;
+    p = r; // pin = 2
+    r = r && report_error_(b, consumeToken(b, COLON));
+    r = p && statements(b, l + 1) && r;
+    exit_section_(b, l, m, DEFAULT_CASE, r, p, null);
+    return r || p;
   }
 
-  // label?
+  // label*
   private static boolean defaultCase_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultCase_0")) return false;
-    label(b, l + 1);
-    return true;
-  }
-
-  // ('case' expression ':')*
-  private static boolean defaultCase_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "defaultCase_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!defaultCase_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "defaultCase_1", c)) break;
+      if (!label(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "defaultCase_0", c)) break;
       c = current_position_(b);
     }
     return true;
-  }
-
-  // 'case' expression ':'
-  private static boolean defaultCase_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "defaultCase_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, CASE);
-    r = r && expression(b, l + 1);
-    r = r && consumeToken(b, COLON);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   /* ********************************************************** */
@@ -5213,10 +5194,10 @@ public class DartParser implements PsiParser {
   static boolean statement(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "statement")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, null);
+    Marker m = enter_section_(b);
     r = statement_0(b, l + 1);
     r = r && nonLabelledStatement(b, l + 1);
-    exit_section_(b, l, m, null, r, false, statement_recover_parser_);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -5252,156 +5233,6 @@ public class DartParser implements PsiParser {
     Marker m = enter_section_(b);
     r = varDeclarationList(b, l + 1);
     if (!r) r = expression(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | <<varInitWrapper>> | '!' | '!=' | '%' | '%=' | '&&' |
-  //                                 '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
-  //                                  ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
-  //                                  '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
-  //                                  'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
-  //                                  'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
-  //                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
-  //                                  'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
-  //                                  HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE |
-  //                                  RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START |
-  //                                  TRUE)
-  static boolean statement_recover(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "statement_recover")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NOT_, null);
-    r = !statement_recover_0(b, l + 1);
-    exit_section_(b, l, m, null, r, false, null);
-    return r;
-  }
-
-  // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | <<varInitWrapper>> | '!' | '!=' | '%' | '%=' | '&&' |
-  //                                 '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '/' | '/=' | ':' |
-  //                                  ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | '>=' | '>>=' | '?' | '@' | '[' | ']' | '^' |
-  //                                  '^=' | 'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' | 'continue' |
-  //                                  'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' | 'get' |
-  //                                  'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' | 'rethrow' |
-  //                                  'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' | 'typedef' | 'var' |
-  //                                  'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE | FALSE | HASH |
-  //                                  HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER | OPEN_QUOTE |
-  //                                  RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART | SHORT_TEMPLATE_ENTRY_START |
-  //                                  TRUE
-  private static boolean statement_recover_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "statement_recover_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = nonStrictID(b, l + 1);
-    if (!r) r = parenthesizedExpressionWrapper(b, l + 1);
-    if (!r) r = varInitWrapper(b, l + 1);
-    if (!r) r = consumeToken(b, NOT);
-    if (!r) r = consumeToken(b, NEQ);
-    if (!r) r = consumeToken(b, REM);
-    if (!r) r = consumeToken(b, REM_EQ);
-    if (!r) r = consumeToken(b, AND_AND);
-    if (!r) r = consumeToken(b, AND);
-    if (!r) r = consumeToken(b, AND_EQ);
-    if (!r) r = consumeToken(b, LPAREN);
-    if (!r) r = consumeToken(b, RPAREN);
-    if (!r) r = consumeToken(b, MUL);
-    if (!r) r = consumeToken(b, MUL_EQ);
-    if (!r) r = consumeToken(b, PLUS);
-    if (!r) r = consumeToken(b, PLUS_PLUS);
-    if (!r) r = consumeToken(b, PLUS_EQ);
-    if (!r) r = consumeToken(b, COMMA);
-    if (!r) r = consumeToken(b, MINUS);
-    if (!r) r = consumeToken(b, MINUS_MINUS);
-    if (!r) r = consumeToken(b, MINUS_EQ);
-    if (!r) r = consumeToken(b, DOT);
-    if (!r) r = consumeToken(b, DIV);
-    if (!r) r = consumeToken(b, DIV_EQ);
-    if (!r) r = consumeToken(b, COLON);
-    if (!r) r = consumeToken(b, SEMICOLON);
-    if (!r) r = consumeToken(b, LT);
-    if (!r) r = consumeToken(b, LT_LT);
-    if (!r) r = consumeToken(b, LT_LT_EQ);
-    if (!r) r = consumeToken(b, LT_EQ);
-    if (!r) r = consumeToken(b, EQ);
-    if (!r) r = consumeToken(b, EQ_EQ);
-    if (!r) r = consumeToken(b, EXPRESSION_BODY_DEF);
-    if (!r) r = consumeToken(b, GT);
-    if (!r) r = consumeToken(b, GT_EQ);
-    if (!r) r = consumeToken(b, GT_GT_EQ);
-    if (!r) r = consumeToken(b, QUEST);
-    if (!r) r = consumeToken(b, AT);
-    if (!r) r = consumeToken(b, LBRACKET);
-    if (!r) r = consumeToken(b, RBRACKET);
-    if (!r) r = consumeToken(b, XOR);
-    if (!r) r = consumeToken(b, XOR_EQ);
-    if (!r) r = consumeToken(b, ABSTRACT);
-    if (!r) r = consumeToken(b, AS);
-    if (!r) r = consumeToken(b, ASSERT);
-    if (!r) r = consumeToken(b, ASYNC);
-    if (!r) r = consumeToken(b, BREAK);
-    if (!r) r = consumeToken(b, CASE);
-    if (!r) r = consumeToken(b, CATCH);
-    if (!r) r = consumeToken(b, CLASS);
-    if (!r) r = consumeToken(b, CONST);
-    if (!r) r = consumeToken(b, CONTINUE);
-    if (!r) r = consumeToken(b, DEFAULT);
-    if (!r) r = consumeToken(b, DEFERRED);
-    if (!r) r = consumeToken(b, DO);
-    if (!r) r = consumeToken(b, ELSE);
-    if (!r) r = consumeToken(b, EXPORT);
-    if (!r) r = consumeToken(b, EXTERNAL);
-    if (!r) r = consumeToken(b, FACTORY);
-    if (!r) r = consumeToken(b, FINAL);
-    if (!r) r = consumeToken(b, FINALLY);
-    if (!r) r = consumeToken(b, FOR);
-    if (!r) r = consumeToken(b, GET);
-    if (!r) r = consumeToken(b, HIDE);
-    if (!r) r = consumeToken(b, IF);
-    if (!r) r = consumeToken(b, IMPORT);
-    if (!r) r = consumeToken(b, IS);
-    if (!r) r = consumeToken(b, LIBRARY);
-    if (!r) r = consumeToken(b, NATIVE);
-    if (!r) r = consumeToken(b, NEW);
-    if (!r) r = consumeToken(b, ON);
-    if (!r) r = consumeToken(b, OPERATOR);
-    if (!r) r = consumeToken(b, PART);
-    if (!r) r = consumeToken(b, RETHROW);
-    if (!r) r = consumeToken(b, RETURN);
-    if (!r) r = consumeToken(b, SET);
-    if (!r) r = consumeToken(b, SHOW);
-    if (!r) r = consumeToken(b, STATIC);
-    if (!r) r = consumeToken(b, SUPER);
-    if (!r) r = consumeToken(b, SWITCH);
-    if (!r) r = consumeToken(b, SYNC);
-    if (!r) r = consumeToken(b, THIS);
-    if (!r) r = consumeToken(b, THROW);
-    if (!r) r = consumeToken(b, TRY);
-    if (!r) r = consumeToken(b, TYPEDEF);
-    if (!r) r = consumeToken(b, VAR);
-    if (!r) r = consumeToken(b, VOID);
-    if (!r) r = consumeToken(b, WHILE);
-    if (!r) r = consumeToken(b, LBRACE);
-    if (!r) r = consumeToken(b, OR);
-    if (!r) r = consumeToken(b, OR_EQ);
-    if (!r) r = consumeToken(b, OR_OR);
-    if (!r) r = consumeToken(b, RBRACE);
-    if (!r) r = consumeToken(b, BIN_NOT);
-    if (!r) r = consumeToken(b, INT_DIV);
-    if (!r) r = consumeToken(b, INT_DIV_EQ);
-    if (!r) r = consumeToken(b, CLOSING_QUOTE);
-    if (!r) r = consumeToken(b, FALSE);
-    if (!r) r = consumeToken(b, HASH);
-    if (!r) r = consumeToken(b, HEX_NUMBER);
-    if (!r) r = consumeToken(b, LONG_TEMPLATE_ENTRY_END);
-    if (!r) r = consumeToken(b, LONG_TEMPLATE_ENTRY_START);
-    if (!r) r = consumeToken(b, NULL);
-    if (!r) r = consumeToken(b, NUMBER);
-    if (!r) r = consumeToken(b, OPEN_QUOTE);
-    if (!r) r = consumeToken(b, RAW_SINGLE_QUOTED_STRING);
-    if (!r) r = consumeToken(b, RAW_TRIPLE_QUOTED_STRING);
-    if (!r) r = consumeToken(b, REGULAR_STRING_PART);
-    if (!r) r = consumeToken(b, SHORT_TEMPLATE_ENTRY_START);
-    if (!r) r = consumeToken(b, TRUE);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -5662,51 +5493,31 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // label? ('case' expression ':')+ statements
+  // label* 'case' expression ':' statements
   public static boolean switchCase(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "switchCase")) return false;
-    boolean r;
+    boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, "<switch case>");
     r = switchCase_0(b, l + 1);
-    r = r && switchCase_1(b, l + 1);
-    r = r && statements(b, l + 1);
-    exit_section_(b, l, m, SWITCH_CASE, r, false, switch_case_recover_parser_);
-    return r;
+    r = r && consumeToken(b, CASE);
+    p = r; // pin = 2
+    r = r && report_error_(b, expression(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, COLON)) && r;
+    r = p && statements(b, l + 1) && r;
+    exit_section_(b, l, m, SWITCH_CASE, r, p, null);
+    return r || p;
   }
 
-  // label?
+  // label*
   private static boolean switchCase_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "switchCase_0")) return false;
-    label(b, l + 1);
-    return true;
-  }
-
-  // ('case' expression ':')+
-  private static boolean switchCase_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "switchCase_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = switchCase_1_0(b, l + 1);
     int c = current_position_(b);
-    while (r) {
-      if (!switchCase_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "switchCase_1", c)) break;
+    while (true) {
+      if (!label(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "switchCase_0", c)) break;
       c = current_position_(b);
     }
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // 'case' expression ':'
-  private static boolean switchCase_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "switchCase_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, CASE);
-    r = r && expression(b, l + 1);
-    r = r && consumeToken(b, COLON);
-    exit_section_(b, m, null, r);
-    return r;
+    return true;
   }
 
   /* ********************************************************** */
@@ -5746,30 +5557,6 @@ public class DartParser implements PsiParser {
     if (!recursion_guard_(b, l, "switchStatement_6")) return false;
     defaultCase(b, l + 1);
     return true;
-  }
-
-  /* ********************************************************** */
-  // !('case' | 'default' | '}' | <<nonStrictID>>)
-  static boolean switch_case_recover(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "switch_case_recover")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NOT_, null);
-    r = !switch_case_recover_0(b, l + 1);
-    exit_section_(b, l, m, null, r, false, null);
-    return r;
-  }
-
-  // 'case' | 'default' | '}' | <<nonStrictID>>
-  private static boolean switch_case_recover_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "switch_case_recover_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, CASE);
-    if (!r) r = consumeToken(b, DEFAULT);
-    if (!r) r = consumeToken(b, RBRACE);
-    if (!r) r = nonStrictID(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   /* ********************************************************** */
@@ -6614,19 +6401,9 @@ public class DartParser implements PsiParser {
       return simple_scope_recover(b, l + 1);
     }
   };
-  final static Parser statement_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return statement_recover(b, l + 1);
-    }
-  };
   final static Parser super_call_or_field_initializer_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return super_call_or_field_initializer_recover(b, l + 1);
-    }
-  };
-  final static Parser switch_case_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return switch_case_recover(b, l + 1);
     }
   };
   final static Parser top_level_recover_parser_ = new Parser() {
