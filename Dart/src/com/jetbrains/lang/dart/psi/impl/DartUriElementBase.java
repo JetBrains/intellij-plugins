@@ -70,9 +70,10 @@ public class DartUriElementBase extends DartPsiCompositeElementImpl {
       final int slashIndex = uri.indexOf('/');
       if (slashIndex > 0) {
         final String packageName = uri.substring(DartUrlResolver.PACKAGE_PREFIX.length(), slashIndex);
-        final VirtualFile packageDir = dartUrlResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(packageName);
+        final String pathAfterPackageName = uri.substring(slashIndex + 1);
+        final VirtualFile packageDir = dartUrlResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(packageName, pathAfterPackageName);
         if (packageDir != null) {
-          return getPackageReferences(file, packageDir, uri.substring(slashIndex + 1), uriOffset + slashIndex + 1);
+          return getPackageReferences(file, packageDir, pathAfterPackageName, uriOffset + slashIndex + 1);
         }
       }
 

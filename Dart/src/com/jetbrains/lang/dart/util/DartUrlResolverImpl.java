@@ -66,15 +66,29 @@ class DartUrlResolverImpl extends DartUrlResolver {
 
   @Nullable
   public VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(final @NotNull String packageName) {
+    return getPackageDirIfLivePackageOrFromPubListPackageDirs(packageName, null);
+  }
+
+  @Nullable
+  public VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(final @NotNull String packageName,
+                                                                        @Nullable String pathAfterPackageName) {
     final VirtualFile dir = myLivePackageNameToDirMap.get(packageName);
     if (dir != null) return dir;
 
     final Set<String> dirPaths = myPubListPackageDirsMap.get(packageName);
     if (dirPaths != null) {
+      if (pathAfterPackageName == null) {
+        pathAfterPackageName = "";
+      }
+      else {
+        pathAfterPackageName = '/' + pathAfterPackageName;
+      }
       for (String dirPath : dirPaths) {
-        final VirtualFile packageDir = LocalFileSystem.getInstance().findFileByPath(dirPath);
+
+        final VirtualFile packageDir =
+          LocalFileSystem.getInstance().findFileByPath(dirPath + pathAfterPackageName);
         if (packageDir != null) {
-          return packageDir;
+          return LocalFileSystem.getInstance().findFileByPath(dirPath);
         }
       }
     }
