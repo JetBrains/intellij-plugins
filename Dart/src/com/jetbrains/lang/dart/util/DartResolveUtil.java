@@ -299,6 +299,12 @@ public class DartResolveUtil {
       }
     }
 
+    //if looking for private variables, don't search for variables in imported libraries
+    //only look for variables that are part of the library
+    if (context.getText().startsWith("_")){
+      return true;
+    }
+
     for (String partUrl : DartPathIndex.getPaths(context.getProject(), virtualFile)) {
       if (fileNames != null && !fileNames.contains(PathUtil.getFileName(partUrl))) {
         continue;

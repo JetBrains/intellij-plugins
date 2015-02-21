@@ -36,8 +36,12 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
                final DartReference reference = PsiTreeUtil.getParentOfType(parameters.getPosition(), DartReference.class);
                if (reference != null) {
                  final THashSet<DartComponentName> variants = new THashSet<DartComponentName>();
+                 final boolean lookingForPrivate =  parameters.getPosition().getText().startsWith("_");
                  for (LookupElement element : DartReferenceCompletionContributor.addCompletionVariants(reference, variants)) {
-                   result.addElement(element);
+                   //only add private variables to the list if looking for it
+                   if (!element.toString().startsWith("_") || lookingForPrivate) {
+                     result.addElement(element);
+                   }
                  }
                  if (parameters.getInvocationCount() > 1 && DartResolveUtil.aloneOrFirstInChain(reference)) {
                    DartGlobalVariantsCompletionHelper.addAdditionalGlobalVariants(result, reference, variants, null);
