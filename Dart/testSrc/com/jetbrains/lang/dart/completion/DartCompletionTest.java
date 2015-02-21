@@ -80,6 +80,8 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testKeywords() throws Exception {
-    doTest("Object <caret completionEquals=''>");
+    doTest("Object <caret completionEquals=''>" +
+           "var <caret completionEquals=''>" +
+           "void function (Object <caret completionEquals=''>)");
   }
 }

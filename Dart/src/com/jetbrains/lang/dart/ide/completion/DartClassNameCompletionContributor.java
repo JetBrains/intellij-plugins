@@ -9,6 +9,7 @@ import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartComponentType;
+import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.ide.index.DartComponentInfo;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.resolve.ClassNameScopeProcessor;
@@ -26,15 +27,21 @@ public class DartClassNameCompletionContributor extends CompletionContributor {
   public DartClassNameCompletionContributor() {
     final PsiElementPattern.Capture<PsiElement> idInComponentName =
       psiElement().withSuperParent(1, DartId.class).withSuperParent(2, DartComponentName.class);
+
+    final PatternCondition<PsiElement> notAfterDartType = new PatternCondition<PsiElement>("not after DartType") {
+      public boolean accepts(@NotNull final PsiElement element, final ProcessingContext context) {
+        // no class name completion must be here: const type name<caret>;
+        // and no class name completion must be here: void function(Object name<caret>)
+        final PsiElement parent = UsefulPsiTreeUtil
+          .getPrevSiblingSkipWhiteSpacesAndComments(element.getParent().getParent(), true);
+        if (parent == null) return true;
+        return !(parent instanceof DartType
+                 || parent.getNode().getElementType() == DartTokenTypes.VAR);
+      }
+    };
     final ElementPattern<PsiElement> pattern =
-      or(idInComponentName.withSuperParent(4, DartNormalFormalParameter.class),
-         idInComponentName.withSuperParent(3, DartVarAccessDeclaration.class).with(new PatternCondition<PsiElement>("not after DartType") {
-           public boolean accepts(@NotNull final PsiElement element, final ProcessingContext context) {
-             // no class name completion must be here: const type name<caret>;
-             return !(UsefulPsiTreeUtil
-                        .getPrevSiblingSkipWhiteSpacesAndComments(element.getParent().getParent(), true) instanceof DartType);
-           }
-         })
+      or(idInComponentName.withSuperParent(4, DartNormalFormalParameter.class).with(notAfterDartType),
+         idInComponentName.withSuperParent(3, DartVarAccessDeclaration.class).with(notAfterDartType)
       );
 
     extend(CompletionType.BASIC, pattern,
