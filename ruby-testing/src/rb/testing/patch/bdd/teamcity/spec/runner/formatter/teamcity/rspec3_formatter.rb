@@ -160,23 +160,18 @@ module Spec
           running_example_full_name = example_data.full_name
 
           failure = example.exception
+          expectation_not_met = failure.kind_of?(RSpec::Expectations::ExpectationNotMetError)
+          pending_fixed = failure.kind_of?(RSpec::Core::Pending::PendingExampleFixedError)
+
           # Failure message:
-          def failure.expectation_not_met?
-            self.exception.kind_of?(RSpec::Expectations::ExpectationNotMetError)
-          end
-
-          def failure.pending_fixed?
-            self.exception.kind_of?(RSpec::Core::Pending::PendingExampleFixedError)
-          end
-
-          message = if failure.exception.nil?
+          message = if failure.nil?
                       # for unknown failure
                       '[Without Exception]'
-                    elsif failure.expectation_not_met? || failure.pending_fixed?
-                      failure.exception.message
+                    elsif expectation_not_met || pending_fixed
+                      failure.message
                     else
                       # for other exception
-                      "#{failure.exception.class.name}: #{failure.exception.message}"
+                      "#{failure.class.name}: #{failure.message}"
                     end
 
           # Backtrace
@@ -185,7 +180,7 @@ module Spec
           debug_log("Example failing... full name = [#{running_example_full_name}], Message:\n#{message} \n\nBackrace:\n#{backtrace}\n\n, additional flowid suffix=[#{additional_flowid_suffix}]")
 
           # Expectation failures will be shown as failures and other exceptions as Errors
-          if failure.expectation_not_met?
+          if expectation_not_met
             log(@message_factory.create_test_failed(running_example_full_name, message, backtrace))
           else
             log(@message_factory.create_test_error(running_example_full_name, message, backtrace))
