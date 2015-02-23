@@ -4,6 +4,7 @@ import com.intellij.json.JsonLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSTargetedInjector;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -25,6 +26,8 @@ import java.util.List;
  * @author Dennis.Ushakov
  */
 public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector {
+  private static final Logger LOG = Logger.getInstance(AngularJSInjector.class);
+
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
     // check that we have angular directives indexed before injecting
@@ -68,6 +71,12 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
         final PsiElement injectionCandidate = startIndex >= 0 ? context.findElementAt(startIndex) : null;
         if (injectionCandidate != null && injectionCandidate.getNode().getElementType() != XmlTokenType.XML_COMMENT_CHARACTERS &&
            !(injectionCandidate instanceof OuterLanguageElement)) {
+          if (afterStart > endIndex) {
+            LOG.error("Braces: " + start + "," + end + "\n" +
+                      "Text: \"" + text + "\"" + "\n" +
+                      "Interval: (" + afterStart + "," + endIndex + ")" + "\n" +
+                      "File: " + context.getContainingFile().getName() + ", language:" + context.getContainingFile().getLanguage());
+          }
           registrar.startInjecting(AngularJSLanguage.INSTANCE).
                     addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(afterStart, endIndex)).
                     doneInjecting();
