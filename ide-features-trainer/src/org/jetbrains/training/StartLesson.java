@@ -25,6 +25,7 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.DetailPanel;
 import org.jetbrains.training.lesson.Course;
 import org.jetbrains.training.lesson.Lesson;
@@ -53,19 +54,15 @@ public class StartLesson extends AnAction {
             final VirtualFile vf;
             vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
 //            vf = ScratchFileService.getInstance().createScratchFile(e.getProject(), Language.findLanguageByID("JAVA"), "");
-            //TODO: Rename as a lesson name
 
             OpenFileDescriptor descriptor = new OpenFileDescriptor(e.getProject(), vf);
             final Editor editor = FileEditorManager.getInstance(e.getProject()).openTextEditor(descriptor, true);
             final Document document = editor.getDocument();
 
-//            Editor myEditor = FileEditorManager.getInstance();
-
-
             final Course course = new Course();
             final Lesson lesson = course.giveNotPassedLesson();
 
-            vf.rename(this, lesson.getName());
+            vf.rename(this, lesson.getName()); //Rename scratch file as a lesson name
             InputStream is = this.getClass().getResourceAsStream(course.getAnswersPath() + lesson.getTargetPath());
             final String target = new Scanner(is).useDelimiter("\\Z").next();
 
@@ -76,20 +73,9 @@ public class StartLesson extends AnAction {
             dimension = new Dimension(500, 60);
             infoPanel = new DetailPanel(dimension);
 
-//            editor.getContentComponent().addFocusListener(new FocusAdapter() {
-//                @Override
-//                public void focusGained(FocusEvent focusEvent) {
-//                    System.err.println("Focus gained");
-//                }
-//
-//                @Override
-//                public void focusLost(FocusEvent focusEvent) {
-//                    System.err.println("Focus lost");
-//                }
-//            });
-
             showInfoPanel(editor);
 
+            //Dispose balloon while scratch file is closing. InfoPanel still exists.
             e.getProject().getMessageBus().connect(e.getProject()).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
                 @Override
                 public void fileOpened(FileEditorManager source, VirtualFile file) {
@@ -116,21 +102,6 @@ public class StartLesson extends AnAction {
 
 
 //MAIN LESSON CONTROLLER STARTS HERE--------------------------------
-
-
-            //kill all listeners
-            MouseListener[] mouseListeners = editor.getContentComponent().getMouseListeners();
-            for (MouseListener mouseListener : mouseListeners) {
-                editor.getContentComponent().removeMouseListener(mouseListener);
-            }
-
-            //kill all listeners
-            MouseMotionListener[] mouseMotionListeners = editor.getContentComponent().getMouseMotionListeners();
-            for (MouseMotionListener mouseMotionListener : mouseMotionListeners) {
-                editor.getContentComponent().removeMouseMotionListener(mouseMotionListener);
-            }
-
-            //muteButtonListeners as in find
 
             LessonProcessor.process(lesson, editor, e, document, target, infoPanel);
 
@@ -214,6 +185,7 @@ public class StartLesson extends AnAction {
                 return null;
             }
         });
-
     }
+
+
 }

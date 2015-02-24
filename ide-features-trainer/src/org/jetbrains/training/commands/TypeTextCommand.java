@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
 import org.jetbrains.training.Command;
+import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
@@ -21,7 +22,7 @@ public class TypeTextCommand extends Command {
     }
 
     @Override
-    public void execute(Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException {
+    public void execute(Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel, MouseListenerHolder mouseListenerHolder) throws InterruptedException {
 
         Element element = elements.poll();
         updateDescription(element, infoPanel, editor);
@@ -45,7 +46,7 @@ public class TypeTextCommand extends Command {
         }
 
         //execute next
-        startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
+        startNextCommand(elements, lesson, editor, e, document, target ,infoPanel, mouseListenerHolder);
 
     }
 

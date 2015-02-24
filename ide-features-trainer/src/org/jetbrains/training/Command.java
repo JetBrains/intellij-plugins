@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
+import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.DetailPanel;
 import org.jetbrains.training.lesson.Lesson;
 
@@ -18,7 +19,7 @@ public abstract class Command {
 
 
     private CommandType commandType;
-    public enum CommandType {START, TEXT, TRY, ACTION, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, TRAVERSECARET, WAIT}
+    public enum CommandType {START, TEXT, TRY, ACTION, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, TRAVERSECARET, MOUSEBLOCK, MOUSEUNBLOCK, WAIT}
 
     public Command(CommandType commandType) {
         this.commandType = commandType;
@@ -43,7 +44,7 @@ public abstract class Command {
      * @return true if button is updated
      */
     //updateButton(element, elements, lesson, editor, e, document, target, infoPanel);
-    protected boolean updateButton(Element element, final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel) throws InterruptedException {
+    protected boolean updateButton(Element element, final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel, final MouseListenerHolder mouseListenerHolder) throws InterruptedException {
         if (element.getAttribute("btn") != null) {
             final String buttonText =(element.getAttribute("btn").getValue());
             infoPanel.showButton();
@@ -51,7 +52,7 @@ public abstract class Command {
             infoPanel.addButtonAction(new Runnable() {
                 @Override
                 public void run() {
-                    startNextCommand(elements, lesson, editor, e, document, target, infoPanel);
+                    startNextCommand(elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
                 }
             });
             return true;
@@ -61,14 +62,14 @@ public abstract class Command {
         }
     }
 
-    public abstract void execute(Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException, ExecutionException;
+    public abstract void execute(Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel, MouseListenerHolder mouseListenerHolder) throws InterruptedException, ExecutionException;
 
-    protected void startNextCommand(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel){
+    protected void startNextCommand(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel, final MouseListenerHolder mouseListenerHolder){
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
                 try {
-                    CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel);
+                    CommandFactory.buildCommand(elements.peek()).execute(elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 } catch (ExecutionException e1) {

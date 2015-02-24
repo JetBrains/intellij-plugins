@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.popup.*;
 import com.intellij.ui.awt.RelativePoint;
 import org.jdom.Element;
 import org.jetbrains.training.Command;
+import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
@@ -30,12 +31,12 @@ public class ActionCommand extends Command {
     }
 
     @Override
-    public void execute(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel) throws InterruptedException, ExecutionException {
+    public void execute(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel, final MouseListenerHolder mouseListenerHolder) throws InterruptedException, ExecutionException {
 
         final Element element = elements.poll();
 
         updateDescription(element, infoPanel, editor);
-        updateButton(element, elements, lesson, editor, e, document, target, infoPanel);
+        updateButton(element, elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
 
 
         final String actionType = (element.getAttribute("action").getValue());
@@ -55,7 +56,7 @@ public class ActionCommand extends Command {
                         showBalloon(editor, balloonText, e, delay, actionType, new Runnable(){
                             @Override
                             public void run() {
-                                startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
+                                startNextCommand(elements, lesson, editor, e, document, target ,infoPanel, mouseListenerHolder);
                             }
                         });
                     } catch (InterruptedException e1) {
@@ -67,7 +68,7 @@ public class ActionCommand extends Command {
             performAction(actionType, editor, e, new Runnable() {
                 @Override
                 public void run() {
-                    startNextCommand(elements, lesson, editor, e, document, target, infoPanel);
+                    startNextCommand(elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
                 }
             });
         }
