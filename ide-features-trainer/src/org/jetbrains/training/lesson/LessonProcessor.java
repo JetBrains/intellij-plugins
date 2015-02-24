@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
 import org.jetbrains.training.Command;
 import org.jetbrains.training.CommandFactory;
+import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.util.Queue;
@@ -53,14 +54,32 @@ public class LessonProcessor {
 
         //Create queue
         for (final Element el : lesson.getScn().getRoot().getChildren()) {
-            elements.add(el);
+            //if element is MouseBlock (blocks all mouse events) than add all children inside it.
+            if(isMouseBlock(el)) {
+                if (el.getChildren() != null) {
+                    elements.add(el); //add block element
+                    for(Element el1 : el.getChildren()){
+                        elements.add(el1); //add inner elements
+                    }
+                    elements.add(new Element(Command.CommandType.MOUSEUNBLOCK.toString())); //add unblock element
+                }
+            } else {
+                elements.add(el);
+            }
         }
 
-        //Perform first action
+
+        //Perform first action, all next perform like a chain reaction
+        MouseListenerHolder mouseListenerHolder = new MouseListenerHolder();
+
 
         Command cmd = CommandFactory.buildCommand(elements.peek());
-        cmd.execute(elements, lesson, editor, e, document, target, infoPanel);
+        cmd.execute(elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
 
+    }
+
+    private static boolean isMouseBlock(Element el){
+        return el.getName().toUpperCase().equals(Command.CommandType.MOUSEBLOCK.toString());
     }
 
 

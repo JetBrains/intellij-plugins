@@ -44,8 +44,14 @@ February 10
 * Win-message in scenario.xml
 ... Shortcut Logger
 
-//Plans
+February 13
 * Change winner message
+
+February 24
+Navigation between courses by button NEXT
+Shortcut Logger
+
+//Plans
 * Disposable
 * Navigation between courses (Modified Toolwindow)
 
