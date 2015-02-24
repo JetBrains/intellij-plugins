@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.sdk.listPackageDirs;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -166,10 +167,11 @@ public class PubListPackageDirsAction2 extends AnAction {
     }
   }
 
-  private static void configurePubListPackageDirsLibrary(@NotNull final Project project,
-                                                         @NotNull final Set<Module> modules,
-                                                         @NotNull final Collection<String> rootsToAddToLib,
-                                                         @NotNull final Map<String, List<File>> packageMap) {
+  @VisibleForTesting
+  public static void configurePubListPackageDirsLibrary(@NotNull final Project project,
+                                                        @NotNull final Set<Module> modules,
+                                                        @NotNull final Collection<String> rootsToAddToLib,
+                                                        @NotNull final Map<String, List<File>> packageMap) {
     if (modules.isEmpty() || packageMap.isEmpty()) {
       removePubListPackageDirsLibrary(project);
       return;

@@ -65,32 +65,30 @@ class DartUrlResolverImpl extends DartUrlResolver {
   }
 
   @Nullable
-  public VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(final @NotNull String packageName) {
-    return getPackageDirIfLivePackageOrFromPubListPackageDirs(packageName, null);
-  }
-
-  @Nullable
-  public VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(final @NotNull String packageName,
-                                                                        @Nullable String pathAfterPackageName) {
+  public VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(@NotNull final String packageName,
+                                                                        @Nullable final String pathRelToPackageDir) {
     final VirtualFile dir = myLivePackageNameToDirMap.get(packageName);
     if (dir != null) return dir;
 
     final Set<String> dirPaths = myPubListPackageDirsMap.get(packageName);
     if (dirPaths != null) {
-      if (pathAfterPackageName == null) {
-        pathAfterPackageName = "";
-      }
-      else {
-        pathAfterPackageName = '/' + pathAfterPackageName;
-      }
-      for (String dirPath : dirPaths) {
+      VirtualFile notNullPackageDir = null;
 
-        final VirtualFile packageDir =
-          LocalFileSystem.getInstance().findFileByPath(dirPath + pathAfterPackageName);
-        if (packageDir != null) {
-          return LocalFileSystem.getInstance().findFileByPath(dirPath);
+      for (String dirPath : dirPaths) {
+        final VirtualFile packageDir = ApplicationManager.getApplication().isUnitTestMode()
+                                       ? TempFileSystem.getInstance().findFileByPath(dirPath)
+                                       : LocalFileSystem.getInstance().findFileByPath(dirPath);
+        if (notNullPackageDir == null && packageDir != null) {
+          notNullPackageDir = packageDir;
+        }
+
+        if (packageDir != null && (StringUtil.isEmpty(pathRelToPackageDir) ||
+                                   packageDir.findFileByRelativePath(pathRelToPackageDir) != null)) {
+          return packageDir;
         }
       }
+
+      return notNullPackageDir; // file by pathRelToPackageDir was not found, but not-null packageDir still may be useful
     }
 
     return null;
@@ -107,11 +105,11 @@ class DartUrlResolverImpl extends DartUrlResolver {
 
       final int slashIndex = packageRelPath.indexOf('/');
       final String packageName = slashIndex > 0 ? packageRelPath.substring(0, slashIndex) : packageRelPath;
-      final String relPathToPackageDir = slashIndex > 0 ? packageRelPath.substring(slashIndex + 1) : "";
+      final String pathRelToPackageDir = slashIndex > 0 ? packageRelPath.substring(slashIndex + 1) : "";
 
       final VirtualFile packageDir = StringUtil.isEmpty(packageName) ? null : myLivePackageNameToDirMap.get(packageName);
       if (packageDir != null) {
-        return packageDir.findFileByRelativePath(relPathToPackageDir);
+        return packageDir.findFileByRelativePath(pathRelToPackageDir);
       }
 
       for (final VirtualFile packageRoot : myPackageRoots) {
@@ -124,7 +122,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
       final Set<String> packageDirs = myPubListPackageDirsMap.get(packageName);
       if (packageDirs != null) {
         for (String packageDirPath : packageDirs) {
-          final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(packageDirPath + "/" + relPathToPackageDir);
+          final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(packageDirPath + "/" + pathRelToPackageDir);
           if (file != null) {
             return file;
           }

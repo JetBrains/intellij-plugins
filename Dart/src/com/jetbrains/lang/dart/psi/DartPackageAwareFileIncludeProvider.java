@@ -97,7 +97,7 @@ public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
       final String packageName = info.path.substring(0, slashIndex);
       final String relPath = info.path.substring(slashIndex + 1);
       final DartUrlResolver urlResolver = DartUrlResolver.getInstance(context.getProject(), contextFile);
-      final VirtualFile packageDir = urlResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(packageName);
+      final VirtualFile packageDir = urlResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(packageName, relPath);
       if (packageDir != null) {
         targetFile = packageDir.findFileByRelativePath(relPath);
       }

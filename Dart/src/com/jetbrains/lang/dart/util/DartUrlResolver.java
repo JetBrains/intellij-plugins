@@ -51,9 +51,6 @@ public abstract class DartUrlResolver {
   public abstract Collection<String> getLivePackageNames();
 
   @Nullable
-  public abstract VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(final @NotNull String packageName);
-
-  @Nullable
   public abstract VirtualFile getPackageDirIfLivePackageOrFromPubListPackageDirs(final @NotNull String packageName, final @Nullable String pathAfterPackageName);
 
   /**

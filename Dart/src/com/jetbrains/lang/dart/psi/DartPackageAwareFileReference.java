@@ -42,8 +42,15 @@ class DartPackageAwareFileReference extends FileReference {
     }
 
     final int index = getIndex();
-    if (index > 0 && PACKAGES_FOLDER_NAME.equals(getFileReferenceSet().getReference(index - 1).getText())) {
-      final VirtualFile packageDir = myDartResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(getText());
+    final FileReference[] allReferences = getFileReferenceSet().getAllReferences();
+    if (index > 0 && PACKAGES_FOLDER_NAME.equals(allReferences[index - 1].getText())) {
+      final StringBuilder b = new StringBuilder();
+      for (int i = index + 1; i < allReferences.length; i++) {
+        if (b.length() > 0) b.append('/');
+        b.append(allReferences[i].getText());
+      }
+
+      final VirtualFile packageDir = myDartResolver.getPackageDirIfLivePackageOrFromPubListPackageDirs(getText(), b.toString());
       final PsiDirectory psiDirectory = packageDir == null ? null : containingFile.getManager().findDirectory(packageDir);
       if (psiDirectory != null) {
         return new ResolveResult[]{new PsiElementResolveResult(psiDirectory)};
