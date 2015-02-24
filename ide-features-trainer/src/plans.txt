@@ -56,3 +56,21 @@ February 10
 * area selection
 * arrow draw
 * lighthouse pane
+
+HTML folding
+Style
+Symbols with code less than 127 don't escape (find spec. for escaping)
+
+XmlFoldingBuilder
+XmlCodeFoldingBuilder
+
+XmlEntityRef
+
+html5chars.ent
+html5charref.rb
+xhtml-lat1.ent
+
+StringUtil (unescape and escape)
+XmlCompletionData -> entityRefGetter + hardcode some
+
+StringUtil.unquoteString(psi.getReferences()[0].resolve().getValueElement().getText())
