@@ -26,8 +26,7 @@ public class DartTypeHandler extends TypedHandlerDelegate {
   private boolean myAfterTypeOrComponentName = false;
   private boolean myAfterDollar = false;
   static final TokenSet INVALID_INSIDE_REFERENCE = TokenSet.create(DartTokenTypes.SEMICOLON, DartTokenTypes.LBRACE, DartTokenTypes.RBRACE);
-  static final TokenSet INVALID_INSIDE_REFERENCE2 = TokenSet.create(DartTokenTypes.SEMICOLON);
-
+  
   @Override
   public Result beforeCharTyped(char c,
                                 Project project,
@@ -48,7 +47,7 @@ public class DartTypeHandler extends TypedHandlerDelegate {
       TypedHandler.commitDocumentIfCurrentCaretIsNotTheFirstOne(editor, project);
       myAfterDollar = checkAfterDollarInString(file, offset);
     }
-    else if (c == '}') {
+      else if (c == '}') {
       if (editor.getDocument().getText().charAt(editor.getCaretModel().getOffset()) == '}') {
         EditorModificationUtil.moveCaretRelatively(editor, 1);
         return Result.STOP;
