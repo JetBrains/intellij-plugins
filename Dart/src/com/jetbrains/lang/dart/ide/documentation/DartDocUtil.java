@@ -10,10 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
-import com.jetbrains.lang.dart.util.DartGenericSpecialization;
-import com.jetbrains.lang.dart.util.DartPresentableUtil;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
-import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
+import com.jetbrains.lang.dart.util.*;
 import com.petebevin.markdown.MarkdownProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -324,7 +321,8 @@ public class DartDocUtil {
   private static void appendFunctionSignature(final StringBuilder builder, final DartComponent function, final String returnType) {
     builder.append("<b>").append(function.getName()).append("</b>");
     builder.append('(');
-    builder.append(StringUtil.escapeXml(DartPresentableUtil.getPresentableParameterList(function, new DartGenericSpecialization(), true)));
+    builder
+      .append(StringUtil.escapeXml(DartPresentableUtil.getPresentableParameterList(function, new DartGenericSpecialization(), true, true)));
     builder.append(')');
     builder.append(' ');
     builder.append(DartPresentableUtil.RIGHT_ARROW);

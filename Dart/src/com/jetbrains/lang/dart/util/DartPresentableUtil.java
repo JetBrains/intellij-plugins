@@ -32,12 +32,12 @@ public class DartPresentableUtil {
 
   @NotNull
   public static String getPresentableParameterList(DartComponent element, DartGenericSpecialization specialization) {
-    return getPresentableParameterList(element, specialization, false);
+    return getPresentableParameterList(element, specialization, false, false);
   }
 
   @NotNull
   public static String getPresentableParameterList(DartComponent element, DartGenericSpecialization specialization,
-                                                   boolean functionalStyleSignatures) {
+                                                   boolean functionalStyleSignatures, boolean displayDefaultValues) {
     final StringBuilder result = new StringBuilder();
     final DartFormalParameterList parameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
     if (parameterList == null) {
@@ -45,7 +45,7 @@ public class DartPresentableUtil {
     }
     final List<DartNormalFormalParameter> list = parameterList.getNormalFormalParameterList();
     for (int i = 0, size = list.size(); i < size; i++) {
-      result.append(getPresentableNormalFormalParameter(list.get(i), specialization, functionalStyleSignatures));
+      result.append(getPresentableNormalFormalParameter(list.get(i), specialization, functionalStyleSignatures, displayDefaultValues));
       if (i < size - 1) {
         result.append(", ");
       }
@@ -66,7 +66,7 @@ public class DartPresentableUtil {
         }
         DartDefaultFormalNamedParameter formalParameter = list1.get(i);
         result.append(
-          getPresentableNormalFormalParameter(formalParameter.getNormalFormalParameter(), specialization, functionalStyleSignatures));
+          getPresentableNormalFormalParameter(formalParameter.getNormalFormalParameter(), specialization, functionalStyleSignatures, displayDefaultValues));
       }
       result.append(isOptional ? '}' : ']');
     }
@@ -80,11 +80,11 @@ public class DartPresentableUtil {
   }
 
   public static String getPresentableNormalFormalParameter(DartNormalFormalParameter parameter, DartGenericSpecialization specialization) {
-    return getPresentableNormalFormalParameter(parameter, specialization, false);
+    return getPresentableNormalFormalParameter(parameter, specialization, false, false);
   }
 
   public static String getPresentableNormalFormalParameter(DartNormalFormalParameter parameter, DartGenericSpecialization specialization,
-                                                           boolean functionalStyleSignature) {
+                                                           boolean functionalStyleSignature, boolean displayDefaultValues) {
     final StringBuilder result = new StringBuilder();
 
     final DartFunctionSignature functionSignature = parameter.getFunctionSignature();
@@ -99,7 +99,7 @@ public class DartPresentableUtil {
       }
       result.append(functionSignature.getName());
       result.append("(");
-      result.append(getPresentableParameterList(functionSignature, specialization, functionalStyleSignature));
+      result.append(getPresentableParameterList(functionSignature, specialization, functionalStyleSignature, displayDefaultValues));
       result.append(")");
       if (functionalStyleSignature && returnType != null) {
         result.append(SPACE);
@@ -117,12 +117,26 @@ public class DartPresentableUtil {
       result.append(fieldFormalParameter.getReferenceExpression().getText());
     }
     else if (simpleFormalParameter != null) {
-      final DartType type = simpleFormalParameter.getType();
-      if (type != null) {
-        result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
-        result.append(SPACE);
+      if (displayDefaultValues) {
+          final PsiElement defaultFormalNamedParameter = PsiTreeUtil.getParentOfType(simpleFormalParameter, DartDefaultFormalNamedParameter.class);
+          if (defaultFormalNamedParameter != null) {
+            result.append(defaultFormalNamedParameter.getText());
+          } else {
+            final DartType type = simpleFormalParameter.getType();
+            if (type != null) {
+              result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
+              result.append(SPACE);
+            }
+            result.append(simpleFormalParameter.getComponentName().getText());
+          }
+      } else {
+        final DartType type = simpleFormalParameter.getType();
+        if (type != null) {
+          result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
+          result.append(SPACE);
+        }
+        result.append(simpleFormalParameter.getComponentName().getText());
       }
-      result.append(simpleFormalParameter.getComponentName().getText());
     }
 
     return result.toString();
