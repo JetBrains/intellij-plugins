@@ -9,7 +9,9 @@ import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -503,6 +505,8 @@ public class DartAnalysisServerService {
       final StdioServerSocket serverSocket =
         new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, true,
                               FileReadMode.NORMALIZE_EOL_ALWAYS);
+      serverSocket.setClientId(ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_'));
+      serverSocket.setClientVersion(ApplicationInfo.getInstance().getApiVersion());
       myServer = new RemoteAnalysisServerImpl(serverSocket);
 
       try {
