@@ -8,6 +8,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.*;
 import org.jdom.Element;
 import org.jetbrains.training.Command;
+import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.commands.util.PerformActionUtil;
 import org.jetbrains.training.graphics.DetailPanel;
@@ -26,7 +27,7 @@ public class TraverseCaretCommand extends Command {
     }
 
     @Override
-    public void execute(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel) throws InterruptedException, ExecutionException {
+    public void execute(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel, final MouseListenerHolder mouseListenerHolder) throws InterruptedException, ExecutionException {
 
         Element element = elements.poll();
         updateDescription(element, infoPanel, editor);
@@ -43,7 +44,7 @@ public class TraverseCaretCommand extends Command {
         TraverseProcessor traverseProcessor = new TraverseProcessor(editor, stop, e, delay) {
             @Override
             public void runCommand() {
-                startNextCommand(elements, lesson, editor, e, document, target ,infoPanel);
+                startNextCommand(elements, lesson, editor, e, document, target ,infoPanel, mouseListenerHolder);
             }
         };
 

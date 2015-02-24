@@ -53,6 +53,12 @@ public class CommandFactory {
 
             case WAIT:
                 return new WaitCommand();
+
+            case MOUSEBLOCK:
+                return new MouseBlockCommand();
+
+            case MOUSEUNBLOCK:
+                return new MouseUnblockCommand();
         }
 
         return new NoCommand();
