@@ -8,12 +8,18 @@ import com.google.dart.server.internal.remote.FileReadMode;
 import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.compiler.CompilerMessageImpl;
+import com.intellij.compiler.impl.FileSetCompileScope;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.compiler.CompilerMessage;
+import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
@@ -23,19 +29,23 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
+import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
+import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class DartAnalysisServerService {
@@ -48,6 +58,7 @@ public class DartAnalysisServerService {
   private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.SECONDS.toMillis(120);
   private static final long GET_VERSION_TIMEOUT = 500;
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
+  private final UUID mySessionId = UUID.randomUUID();
 
   private final Object myLock = new Object(); // Access all fields under this lock. Do not wait for server response under lock.
   @Nullable private AnalysisServer myServer;
@@ -57,7 +68,27 @@ public class DartAnalysisServerService {
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
 
-  private final AnalysisServerListener myListener = new AnalysisServerListener() {
+  private AnalysisServerListener myListener;
+
+  @NotNull
+  private static CompilerMessageCategory getCompilerMessageCategory(AnalysisError analysisError) {
+    final String severity = analysisError.getSeverity();
+    if (AnalysisErrorSeverity.ERROR.equals(severity)) {
+      return CompilerMessageCategory.ERROR;
+    }
+    else if (AnalysisErrorSeverity.WARNING.equals(severity)) {
+      return CompilerMessageCategory.WARNING;
+    }
+    return CompilerMessageCategory.INFORMATION;
+  }
+
+  private class ServerServiceAnalysisServerListener implements AnalysisServerListener {
+
+    private final Project myProject;
+
+    public ServerServiceAnalysisServerListener(@NotNull Project project) {
+      myProject = project;
+    }
 
     @Override
     public void computedCompletion(String completionId, int replacementOffset, int replacementLength,
@@ -65,7 +96,51 @@ public class DartAnalysisServerService {
     }
 
     @Override
-    public void computedErrors(String file, List<AnalysisError> errors) {
+    public void computedErrors(final String file, final List<AnalysisError> errors) {
+      ApplicationManager.getApplication().runReadAction(new Runnable() {
+        @Override
+        public void run() {
+          if (file == null) return;
+
+          final VirtualFile vFile = myProject.isDisposed() ? null
+                                                           : LocalFileSystem.getInstance()
+                                      .findFileByPath(FileUtil.toSystemDependentName(file));
+
+          final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(myProject).findFile(vFile);
+
+          if (psiFile instanceof DartExpressionCodeFragment) return;
+
+          final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
+          if (annotatedFile == null) return;
+
+          final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
+          if (module == null) return;
+
+          final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
+          if (sdk != null && !DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return;
+
+          if (psiFile instanceof XmlFile && !DartInProcessAnnotator.containsDartEmbeddedContent((XmlFile)psiFile)) return;
+
+          if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return;
+
+          final DartProblemsViewImpl problemsView = DartProblemsViewImpl.SERVICE.getInstance(myProject);
+          final FileSetCompileScope fileSetCompileScope =
+            new FileSetCompileScope(Collections.singleton(vFile), new Module[]{module});
+          problemsView.clearProgress();
+          problemsView.clearOldMessages(fileSetCompileScope, mySessionId);
+
+          if (errors == null || errors.isEmpty()) return;
+
+          for (final AnalysisError analysisError : errors) {
+            if (DartAnalysisServerAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) continue;
+            final Location location = analysisError.getLocation();
+            final CompilerMessage msg = new CompilerMessageImpl(myProject, getCompilerMessageCategory(analysisError),
+                                                                analysisError.getMessage(), vFile, location.getStartLine(),
+                                                                location.getStartColumn(), null);
+            problemsView.addMessage(msg, mySessionId);
+          }
+        }
+      });
     }
 
     @Override
@@ -129,7 +204,9 @@ public class DartAnalysisServerService {
     @Override
     public void serverStatus(final AnalysisStatus analysisStatus, final PubStatus pubStatus) {
     }
-  };
+  }
+
+  ;
 
   public static class FormatResult {
 
@@ -477,7 +554,7 @@ public class DartAnalysisServerService {
   }
 
 
-  private void startServer(@NotNull final DartSdk sdk) {
+  private void startServer(@NotNull Project project, @NotNull final DartSdk sdk) {
     synchronized (myLock) {
       mySdkHome = sdk.getHomePath();
 
@@ -501,12 +578,13 @@ public class DartAnalysisServerService {
       final int port = NetUtils.tryToFindAvailableSocketPort(10000);
 
       final StdioServerSocket serverSocket =
-        new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, true,
+        new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, false,
                               FileReadMode.NORMALIZE_EOL_ALWAYS);
       myServer = new RemoteAnalysisServerImpl(serverSocket);
 
       try {
         myServer.start();
+        myListener = new ServerServiceAnalysisServerListener(project);
         myServer.addAnalysisServerListener(myListener);
         myServerVersion = server_getVersion();
         mySdkVersion = sdk.getVersion();
@@ -524,7 +602,7 @@ public class DartAnalysisServerService {
     synchronized (myLock) {
       if (myServer == null || !sdk.getHomePath().equals(mySdkHome) || !sdk.getVersion().equals(mySdkVersion) || !myServer.isSocketOpen()) {
         stopServer();
-        startServer(sdk);
+        startServer(project, sdk);
       }
 
       if (myServer != null) {

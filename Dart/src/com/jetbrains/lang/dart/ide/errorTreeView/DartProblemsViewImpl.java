@@ -1,0 +1,170 @@
+package com.jetbrains.lang.dart.ide.errorTreeView;
+
+import com.intellij.compiler.ProblemsView;
+import com.intellij.icons.AllIcons;
+import com.intellij.ide.errorTreeView.ErrorTreeElement;
+import com.intellij.ide.errorTreeView.ErrorTreeElementKind;
+import com.intellij.ide.errorTreeView.ErrorViewStructure;
+import com.intellij.ide.errorTreeView.GroupingElement;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.compiler.CompileScope;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowAnchor;
+import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.pom.Navigatable;
+import com.intellij.ui.content.Content;
+import com.intellij.ui.content.ContentFactory;
+import com.intellij.util.concurrency.SequentialTaskExecutor;
+import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.ide.PooledThreadExecutor;
+
+import javax.swing.*;
+import java.util.EnumSet;
+import java.util.UUID;
+
+public class DartProblemsViewImpl extends ProblemsView {
+
+  public static class SERVICE {
+    private SERVICE() {
+    }
+
+    public static DartProblemsViewImpl getInstance(Project project) {
+      return ServiceManager.getService(project, DartProblemsViewImpl.class);
+    }
+  }
+
+  private static final String PROBLEMS_TOOLWINDOW_ID = "Problems";
+  private static final EnumSet<ErrorTreeElementKind> ALL_MESSAGE_KINDS = EnumSet.allOf(ErrorTreeElementKind.class);
+
+  private final DartProblemsViewPanel myPanel;
+  private final SequentialTaskExecutor myViewUpdater = new SequentialTaskExecutor(PooledThreadExecutor.INSTANCE);
+  private final Icon myActiveIcon = AllIcons.Toolwindows.Problems;
+  private final Icon myPassiveIcon = IconLoader.getDisabledIcon(myActiveIcon);
+
+  public DartProblemsViewImpl(final Project project, final ToolWindowManager wm) {
+    super(project);
+    myPanel = new DartProblemsViewPanel(project);
+    Disposer.register(project, new Disposable() {
+      @Override
+      public void dispose() {
+        Disposer.dispose(myPanel);
+      }
+    });
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        if (project.isDisposed()) {
+          return;
+        }
+        final ToolWindow tw = wm.registerToolWindow(PROBLEMS_TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
+        final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
+        // todo: setup content?
+        tw.getContentManager().addContent(content);
+        Disposer.register(project, new Disposable() {
+          @Override
+          public void dispose() {
+            tw.getContentManager().removeAllContents(true);
+          }
+        });
+        updateIcon();
+      }
+    });
+  }
+
+  @Override
+  public void clearOldMessages(@Nullable final CompileScope scope, @NotNull final UUID currentSessionId) {
+    myViewUpdater.execute(new Runnable() {
+      @Override
+      public void run() {
+        cleanupChildrenRecursively(myPanel.getErrorViewStructure().getRootElement(), scope, currentSessionId);
+        updateIcon();
+        myPanel.reload();
+      }
+    });
+  }
+
+  private void cleanupChildrenRecursively(@NotNull final Object fromElement,
+                                          final @Nullable CompileScope scope,
+                                          @NotNull UUID currentSessionId) {
+    final ErrorViewStructure structure = myPanel.getErrorViewStructure();
+    for (ErrorTreeElement element : structure.getChildElements(fromElement)) {
+      if (element instanceof GroupingElement) {
+        if (scope != null) {
+          final VirtualFile file = ((GroupingElement)element).getFile();
+          if (file != null && !scope.belongs(file.getUrl())) {
+            continue;
+          }
+        }
+        structure.removeElement(element);
+      }
+      else {
+        structure.removeElement(element);
+      }
+    }
+  }
+
+  @Override
+  public void addMessage(final int type,
+                         @NotNull final String[] text,
+                         @Nullable final String groupName,
+                         @Nullable final Navigatable navigatable,
+                         @Nullable final String exportTextPrefix,
+                         @Nullable final String rendererTextPrefix,
+                         @Nullable final UUID sessionId) {
+
+    myViewUpdater.execute(new Runnable() {
+      @Override
+      public void run() {
+        final ErrorViewStructure structure = myPanel.getErrorViewStructure();
+        final GroupingElement group = structure.lookupGroupingElement(groupName);
+        if (group != null && sessionId != null && !sessionId.equals(group.getData())) {
+          structure.removeElement(group);
+        }
+        if (navigatable != null) {
+          myPanel.addMessage(type, text, groupName, navigatable, exportTextPrefix, rendererTextPrefix, sessionId);
+        }
+        else {
+          myPanel.addMessage(type, text, null, -1, -1, sessionId);
+        }
+        updateIcon();
+      }
+    });
+  }
+
+  private void updateIcon() {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        if (!myProject.isDisposed()) {
+          final ToolWindow tw = ToolWindowManager.getInstance(myProject).getToolWindow(PROBLEMS_TOOLWINDOW_ID);
+          if (tw != null) {
+            final boolean active = myPanel.getErrorViewStructure().hasMessages(ALL_MESSAGE_KINDS);
+            tw.setIcon(active ? myActiveIcon : myPassiveIcon);
+          }
+        }
+      }
+    });
+  }
+
+  @Override
+  public void setProgress(String text, float fraction) {
+    myPanel.setProgress(text, fraction);
+  }
+
+  @Override
+  public void setProgress(String text) {
+    myPanel.setProgressText(text);
+  }
+
+  @Override
+  public void clearProgress() {
+    myPanel.clearProgressData();
+  }
+}
