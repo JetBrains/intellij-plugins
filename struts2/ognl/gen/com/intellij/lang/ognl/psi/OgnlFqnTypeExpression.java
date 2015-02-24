@@ -17,6 +17,10 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.psi;
 
+import java.util.List;
+import org.jetbrains.annotations.*;
+import com.intellij.psi.PsiElement;
+
 public interface OgnlFqnTypeExpression extends OgnlExpression {
 
 }
