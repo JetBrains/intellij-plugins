@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,6 +28,7 @@ public interface OgnlTypes {
   IElementType BINARY_EXPRESSION = new OgnlTokenType("BINARY_EXPRESSION");
   IElementType CONDITIONAL_EXPRESSION = new OgnlTokenType("CONDITIONAL_EXPRESSION");
   IElementType EXPRESSION = new OgnlTokenType("EXPRESSION");
+  IElementType FQN_TYPE_EXPRESSION = new OgnlTokenType("FQN_TYPE_EXPRESSION");
   IElementType INDEXED_EXPRESSION = new OgnlTokenType("INDEXED_EXPRESSION");
   IElementType LAMBDA_EXPRESSION = new OgnlTokenType("LAMBDA_EXPRESSION");
   IElementType LITERAL_EXPRESSION = new OgnlTokenType("LITERAL_EXPRESSION");
@@ -124,6 +125,9 @@ public interface OgnlTypes {
       }
       else if (type == EXPRESSION) {
         return new OgnlExpressionImpl(node);
+      }
+      else if (type == FQN_TYPE_EXPRESSION) {
+        return new OgnlFqnTypeExpressionImpl(node);
       }
       else if (type == INDEXED_EXPRESSION) {
         return new OgnlIndexedExpressionImpl(node);

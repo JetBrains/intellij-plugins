@@ -3,7 +3,7 @@ OgnlFile:MissingSequenceClosingRightBrace.ognl
   NEW_ARRAY_EXPRESSION
     PsiElement(new)('new')
     PsiWhiteSpace(' ')
-    EXPRESSION
+    FQN_TYPE_EXPRESSION
       PsiElement(IDENTIFIER)('int')
     PsiElement([)('[')
     PsiElement(])(']')

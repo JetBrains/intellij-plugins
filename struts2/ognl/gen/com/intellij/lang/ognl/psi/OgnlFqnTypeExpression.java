@@ -15,3 +15,8 @@
 
 
 // Generated from ognl.bnf, do not modify
+package com.intellij.lang.ognl.psi;
+
+public interface OgnlFqnTypeExpression extends OgnlExpression {
+
+}

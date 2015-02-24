@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,11 +30,11 @@ import com.intellij.lang.PsiParser;
 public class OgnlParser implements PsiParser {
 
   public ASTNode parse(IElementType t, PsiBuilder b) {
-    parse_only_(t, b);
+    parseLight(t, b);
     return b.getTreeBuilt();
   }
 
-  public void parse_only_(IElementType t, PsiBuilder b) {
+  public void parseLight(IElementType t, PsiBuilder b) {
     boolean r;
     b = adapt_builder_(t, b, this, EXTENDS_SETS_);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
@@ -46,6 +46,9 @@ public class OgnlParser implements PsiParser {
     }
     else if (t == EXPRESSION) {
       r = expression(b, 0, -1);
+    }
+    else if (t == FQN_TYPE_EXPRESSION) {
+      r = fqnTypeExpression(b, 0);
     }
     else if (t == INDEXED_EXPRESSION) {
       r = indexedExpression(b, 0);
@@ -109,11 +112,11 @@ public class OgnlParser implements PsiParser {
   }
 
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
-    create_token_set_(BINARY_EXPRESSION, CONDITIONAL_EXPRESSION, EXPRESSION, INDEXED_EXPRESSION,
-      LAMBDA_EXPRESSION, LITERAL_EXPRESSION, MAP_EXPRESSION, METHOD_CALL_EXPRESSION,
-      NEW_ARRAY_EXPRESSION, NEW_EXPRESSION, PARENTHESIZED_EXPRESSION, PROJECTION_EXPRESSION,
-      REFERENCE_EXPRESSION, SELECTION_EXPRESSION, SEQUENCE_EXPRESSION, UNARY_EXPRESSION,
-      VARIABLE_ASSIGNMENT_EXPRESSION, VARIABLE_EXPRESSION),
+    create_token_set_(BINARY_EXPRESSION, CONDITIONAL_EXPRESSION, EXPRESSION, FQN_TYPE_EXPRESSION,
+      INDEXED_EXPRESSION, LAMBDA_EXPRESSION, LITERAL_EXPRESSION, MAP_EXPRESSION,
+      METHOD_CALL_EXPRESSION, NEW_ARRAY_EXPRESSION, NEW_EXPRESSION, PARENTHESIZED_EXPRESSION,
+      PROJECTION_EXPRESSION, REFERENCE_EXPRESSION, SELECTION_EXPRESSION, SEQUENCE_EXPRESSION,
+      UNARY_EXPRESSION, VARIABLE_ASSIGNMENT_EXPRESSION, VARIABLE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -340,7 +343,7 @@ public class OgnlParser implements PsiParser {
     r = consumeToken(b, IDENTIFIER);
     p = r; // pin = 1
     r = r && fqnTypeExpression_1(b, l + 1);
-    exit_section_(b, l, m, EXPRESSION, r, p, null);
+    exit_section_(b, l, m, FQN_TYPE_EXPRESSION, r, p, null);
     return r || p;
   }
 
@@ -421,6 +424,20 @@ public class OgnlParser implements PsiParser {
     r = r && mapEntryElement(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  /* ********************************************************** */
+  // '#@' fqnTypeExpression '@{'
+  static boolean mapTypeExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapTypeExpression")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, null);
+    r = consumeToken(b, "#@");
+    p = r; // pin = 1
+    r = r && report_error_(b, fqnTypeExpression(b, l + 1));
+    r = p && consumeToken(b, "@{") && r;
+    exit_section_(b, l, m, null, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -729,7 +746,7 @@ public class OgnlParser implements PsiParser {
     return r || p;
   }
 
-  // ('#{' | '#@' fqnTypeExpression '@{') mapExpressionSequence '}'
+  // ('#{' | mapTypeExpression) mapExpressionSequence '}'
   public static boolean mapExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapExpression")) return false;
     boolean r, p;
@@ -742,25 +759,13 @@ public class OgnlParser implements PsiParser {
     return r || p;
   }
 
-  // '#{' | '#@' fqnTypeExpression '@{'
+  // '#{' | mapTypeExpression
   private static boolean mapExpression_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapExpression_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeTokenSmart(b, "#{");
-    if (!r) r = mapExpression_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // '#@' fqnTypeExpression '@{'
-  private static boolean mapExpression_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapExpression_0_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokenSmart(b, "#@");
-    r = r && fqnTypeExpression(b, l + 1);
-    r = r && consumeToken(b, "@{");
+    if (!r) r = mapTypeExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

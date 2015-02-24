@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,9 +17,7 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.psi;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 
 public interface OgnlNewExpression extends OgnlExpression {
 
@@ -27,6 +25,6 @@ public interface OgnlNewExpression extends OgnlExpression {
   OgnlParameterList getParameterList();
 
   @Nullable
-  OgnlExpression getObjectType();
+  OgnlFqnTypeExpression getObjectType();
 
 }

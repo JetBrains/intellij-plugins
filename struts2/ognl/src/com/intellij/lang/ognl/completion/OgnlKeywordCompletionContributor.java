@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +38,9 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  */
 public class OgnlKeywordCompletionContributor extends CompletionContributor implements DumbAware {
 
+  private static final PsiElementPattern.Capture<PsiElement> FQN_TYPE_EXPRESSION =
+    psiElement().inside(OgnlFqnTypeExpression.class);
+
   private static final PsiElementPattern.Capture<PsiElement> VARIABLE_EXPRESSION =
     psiElement().inside(OgnlVariableExpression.class);
 
@@ -63,7 +66,8 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
       .andNot(AFTER_COLON)
       .andNot(AFTER_NEW)
       .andNot(VARIABLE_EXPRESSION)
-      .andNot(VARIABLE_ASSIGNMENT_EXPRESSION);
+      .andNot(VARIABLE_ASSIGNMENT_EXPRESSION)
+      .andNot(FQN_TYPE_EXPRESSION);
 
   private static final PsiElementPattern.Capture<PsiElement> AFTER_IDENTIFIER =
     psiElement().afterLeaf(psiElement().inside(OgnlReferenceExpression.class));

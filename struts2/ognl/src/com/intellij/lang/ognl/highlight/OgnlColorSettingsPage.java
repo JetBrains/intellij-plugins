@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,7 @@ import com.intellij.openapi.options.colors.ColorSettingsPage;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -43,7 +44,8 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
     new AttributesDescriptor("Comma", OgnlHighlighter.COMMA),
     new AttributesDescriptor("Parentheses", OgnlHighlighter.PARENTHESES),
     new AttributesDescriptor("Brackets", OgnlHighlighter.BRACKETS),
-    new AttributesDescriptor("Braces", OgnlHighlighter.BRACES)
+    new AttributesDescriptor("Braces", OgnlHighlighter.BRACES),
+    new AttributesDescriptor("Class reference", OgnlHighlighter.FQN_TYPE)
   };
 
   @NotNull
@@ -80,7 +82,7 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
   public String getDemoText() {
     return "%{booleanArray[3] == true ? this : 'nothing'}" +
            "\n" +
-           "%{\"valid escapes: My App\\nVersion 1.0 \\u00a9 2014 My Company\"}" +
+           "%{\"valid escapes: My App\\nVersion 1.0 \\u00a9 2015 My Company\"}" +
            "\n" +
            "%{\"invalid escape: \\uXXX \"}" +
            "\n" +
@@ -92,11 +94,13 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
            "\n" +
            "%{id not in {1, 2}}" +
            "\n" +
-           "%{listeners.{? #this instanceof ActionListener}}";
+           "%{listeners.{? #this instanceof <fqnType>ActionListener</fqnType>}}";
   }
 
   @Override
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
-    return null;
+    Map<String, TextAttributesKey> additionalMap = new HashMap<String, TextAttributesKey>();
+    additionalMap.put("fqnType", OgnlHighlighter.FQN_TYPE);
+    return additionalMap;
   }
 }

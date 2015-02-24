@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -88,6 +88,9 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
 
   public static final TextAttributesKey BRACES = TextAttributesKey.createTextAttributesKey(
     "OGNL.BRACES", DefaultLanguageHighlighterColors.BRACES);
+
+  public static final TextAttributesKey FQN_TYPE = TextAttributesKey.createTextAttributesKey(
+    "OGNL.FQN_TYPE", DefaultLanguageHighlighterColors.CLASS_REFERENCE);
 
   static {
     keys1 = new HashMap<IElementType, TextAttributesKey>();

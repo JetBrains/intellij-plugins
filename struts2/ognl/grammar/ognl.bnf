@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -211,9 +211,12 @@ mapEntryElement ::= expression ':' expression {
   pin=2
 }
 private mapExpressionSequence ::= mapEntryElement (',' mapEntryElement)*
-mapExpression ::= ('#{' | '#@' fqnTypeExpression '@{') mapExpressionSequence '}' {
+private mapTypeExpression ::= '#@' fqnTypeExpression '@{' {
+  pin=1
+}
+mapExpression ::= ('#{' | mapTypeExpression) mapExpressionSequence '}' {
   methods=[
-    mapType="expression"
+    mapType="fqnTypeExpression"
   ]
   pin=1
 }
@@ -290,7 +293,7 @@ conditionalExpression ::= expression '?' expression conditionalExpressionTail {
 private constructorExpression ::= '(' parameterList ')' {pin=1}
 newExpression ::= "new" fqnTypeExpression constructorExpression {
   methods=[
-    objectType="expression"
+    objectType="fqnTypeExpression"
   ]
   pin=1
 }
@@ -308,6 +311,5 @@ newArrayExpression ::= "new" fqnTypeExpression arrayConstructorExpression {
 // common
 fqnTypeExpression ::= IDENTIFIER ('.' IDENTIFIER)* {
   pin(".*")=1
-  name="FQN type"
-  elementType="expression" // todo own PSI/resolve etc.
+  mixin="com.intellij.lang.ognl.psi.impl.OgnlFqnTypeExpressionBase"
 }

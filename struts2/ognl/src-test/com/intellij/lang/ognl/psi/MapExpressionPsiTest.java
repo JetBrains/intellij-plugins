@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.OgnlTypes;
+import com.intellij.psi.PsiClassType;
 import com.intellij.util.containers.ContainerUtil;
 import org.intellij.lang.annotations.Language;
 
@@ -71,9 +72,10 @@ public class MapExpressionPsiTest extends PsiTestCase {
   public void testTypedMapExpression() {
     final OgnlMapExpression expression = parse("#@java.util.LinkedHashMap@{'key':aaa}");
     assertSize(1, expression.getMapEntryElementList());
-    final OgnlExpression mapTypeExpression = expression.getMapType();
+    final OgnlFqnTypeExpression mapTypeExpression = expression.getMapType();
     assertNotNull(mapTypeExpression);
-    assertEquals("java.util.LinkedHashMap", mapTypeExpression.getText());
+    final PsiClassType mapType = assertInstanceOf(mapTypeExpression.getType(), PsiClassType.class);
+    assertEquals("java.util.LinkedHashMap", mapType.getCanonicalText());
   }
 
   private OgnlMapExpression parse(@Language(value = OgnlLanguage.ID,

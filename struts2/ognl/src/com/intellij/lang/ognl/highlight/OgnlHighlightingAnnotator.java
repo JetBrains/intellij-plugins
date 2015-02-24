@@ -13,21 +13,21 @@
  * limitations under the License.
  */
 
+package com.intellij.lang.ognl.highlight;
 
-// Generated from ognl.bnf, do not modify
-package com.intellij.lang.ognl.psi;
-
+import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.ognl.psi.OgnlFqnTypeExpression;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+public class OgnlHighlightingAnnotator implements Annotator {
 
-public interface OgnlMapExpression extends OgnlExpression {
-
-  @NotNull
-  List<OgnlMapEntryElement> getMapEntryElementList();
-
-  @Nullable
-  OgnlFqnTypeExpression getMapType();
-
+  @Override
+  public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
+    if (element instanceof OgnlFqnTypeExpression) {
+      holder.createInfoAnnotation(element, null).
+        setTextAttributes(OgnlHighlighter.FQN_TYPE);
+    }
+  }
 }
