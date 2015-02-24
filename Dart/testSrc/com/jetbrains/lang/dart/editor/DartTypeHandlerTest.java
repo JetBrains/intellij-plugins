@@ -18,10 +18,17 @@ public class DartTypeHandlerTest extends DartCodeInsightFixtureTestCase {
     final String text = myFixture.getEditor().getDocument().getText();
     assertEquals("List<>", text);
   }
-  public void testDollarFollowedWithBrace() {
+  public void testDollarFollowedWithLBrace() {
     myFixture.configureByText("test.dart", "String string = '$'");
     myFixture.getEditor().getCaretModel().moveToOffset("String string = '$".length());
     myFixture.type("{");
+    final String text = myFixture.getEditor().getDocument().getText();
+    assertEquals("String string = '${}'", text);
+  }
+  public void testDollarFollowedWithRBrace() {
+    myFixture.configureByText("test.dart", "String string = '${}'");
+    myFixture.getEditor().getCaretModel().moveToOffset("String string = '${".length());
+    myFixture.type("}");
     final String text = myFixture.getEditor().getDocument().getText();
     assertEquals("String string = '${}'", text);
   }

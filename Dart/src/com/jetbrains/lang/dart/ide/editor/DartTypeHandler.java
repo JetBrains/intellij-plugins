@@ -26,6 +26,7 @@ public class DartTypeHandler extends TypedHandlerDelegate {
   private boolean myAfterTypeOrComponentName = false;
   private boolean myAfterDollar = false;
   static final TokenSet INVALID_INSIDE_REFERENCE = TokenSet.create(DartTokenTypes.SEMICOLON, DartTokenTypes.LBRACE, DartTokenTypes.RBRACE);
+  static final TokenSet INVALID_INSIDE_REFERENCE2 = TokenSet.create(DartTokenTypes.SEMICOLON);
 
   @Override
   public Result beforeCharTyped(char c,
@@ -37,15 +38,23 @@ public class DartTypeHandler extends TypedHandlerDelegate {
     if (c == '<') {
       TypedHandler.commitDocumentIfCurrentCaretIsNotTheFirstOne(editor, project);
       myAfterTypeOrComponentName = checkAfterTypeOrComponentName(file, offset);
-    } else if (c == '>') {
+    }
+    else if (c == '>') {
       if (handleDartGT(editor, DartTokenTypes.LT, DartTokenTypes.GT, INVALID_INSIDE_REFERENCE)) {
         return Result.STOP;
       }
     }
-    else if (c == '{' ) {
+    else if (c == '{') {
       TypedHandler.commitDocumentIfCurrentCaretIsNotTheFirstOne(editor, project);
       myAfterDollar = checkAfterDollarInString(file, offset);
     }
+    else if (c == '}') {
+      if (editor.getDocument().getText().charAt(editor.getCaretModel().getOffset()) == '}') {
+        EditorModificationUtil.moveCaretRelatively(editor, 1);
+        return Result.STOP;
+      }
+    }
+
     return super.beforeCharTyped(c, project, editor, file, fileType);
   }
 
@@ -94,7 +103,7 @@ public class DartTypeHandler extends TypedHandlerDelegate {
 
     if (offset == editor.getDocument().getTextLength()) return false;
 
-    HighlighterIterator iterator = ((EditorEx) editor).getHighlighter().createIterator(offset);
+    HighlighterIterator iterator = ((EditorEx)editor).getHighlighter().createIterator(offset);
     if (iterator.getTokenType() != gt) return false;
     while (!iterator.atEnd() && !invalidInsideReference.contains(iterator.getTokenType())) {
       iterator.advance();
@@ -125,5 +134,4 @@ public class DartTypeHandler extends TypedHandlerDelegate {
 
     return false;
   }
-
 }
