@@ -103,11 +103,11 @@ public class DartAnalysisServerService {
     }
 
     @Override
-    public void requestError(final RequestError requestError) {
+    public void requestError(RequestError requestError) {
     }
 
     @Override
-    public void serverConnected() {
+    public void serverConnected(String version) {
     }
 
     @Override
