@@ -49,12 +49,6 @@ public abstract class BaseTestCase extends LightTestCase {
   @NonNls
   protected static Logger LOG;
 
-  protected static final DataContext NULL_DATA_CONTEXT = new DataContext() {
-    @Override
-    public Object getData(String dataId) {
-      return null;
-    }
-  };
   private IDEtalkListener myListener;
   protected final List<IDEtalkEvent> myEvents = new ArrayList<IDEtalkEvent>();
   protected IDEtalkOptions myOptions;
@@ -203,7 +197,7 @@ public abstract class BaseTestCase extends LightTestCase {
   }
 
   protected static AnActionEvent createActionEvent(Presentation presentation) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-    return createActionEvent(presentation, NULL_DATA_CONTEXT);
+    return createActionEvent(presentation, DataContext.EMPTY_CONTEXT);
   }
 
   protected static AnActionEvent createActionEvent(Presentation presentation, DataContext dataContext) throws IllegalAccessException, InvocationTargetException, InstantiationException {
