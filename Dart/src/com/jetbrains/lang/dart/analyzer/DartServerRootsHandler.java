@@ -59,6 +59,10 @@ public class DartServerRootsHandler {
     });
   }
 
+  public Set<Project> getTrackedProjects() {
+    return myTrackedProjects;
+  }
+
   private void updateRoots() {
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
     final List<String> newIncludedRoots = new SmartList<String>();
