@@ -24,6 +24,8 @@
  */
 package org.jetbrains.osgi.jps.build;
 
+import aQute.bnd.build.Project;
+import aQute.bnd.build.Workspace;
 import aQute.bnd.osgi.Analyzer;
 import aQute.bnd.osgi.Builder;
 import aQute.bnd.osgi.Jar;
@@ -180,12 +182,22 @@ public class BndWrapper {
   /**
    * Builds the .jar file for the given module.
    */
-  public void build(@NotNull File bndFile, @NotNull File moduleOutput, @NotNull File outputFile) throws OsgiBuildException {
+  public void build(@NotNull File bndFile, @NotNull File classPath, @NotNull File[] srcPath, @NotNull File outputFile) throws OsgiBuildException {
     try {
-      Builder builder = new ReportingBuilder(myReporter);
-      builder.setPedantic(false);
-      builder.setProperties(bndFile);
-      builder.setClasspath(new File[]{moduleOutput});
+      Builder builder;
+
+      Workspace workspace = Workspace.findWorkspace(bndFile);
+      if (workspace != null) {
+        Project project = new Project(workspace, null, bndFile);
+        builder = new ReportingProjectBuilder(myReporter, project);
+      }
+      else {
+        builder = new ReportingBuilder(myReporter);
+        builder.setProperties(bndFile);
+        builder.setPedantic(false);
+        builder.setClasspath(new File[]{classPath});
+        builder.setSourcepath(srcPath);
+      }
 
       // check if the manifest version is missing (IDEADEV-41174)
       String manifest = builder.getProperty(aQute.bnd.osgi.Constants.MANIFEST);

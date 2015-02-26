@@ -30,7 +30,8 @@ import java.util.jar.JarFile
 
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
-import java.util.zip.ZipFile
+import kotlin.test.assertNotNull
+import org.jetbrains.jps.model.java.JpsJavaExtensionService
 
 class OsgiBuildTest : JpsBuildTestCase() {
   var myExtension: JpsOsmorcModuleExtension by Delegates.notNull()
@@ -40,6 +41,10 @@ class OsgiBuildTest : JpsBuildTestCase() {
     super.setUp()
 
     myModule = addModule("main")
+    val contentRoot = JpsPathUtil.pathToUrl(getAbsolutePath("main"))
+    myModule.getContentRootsList().addUrl(contentRoot)
+    myModule.addSourceRoot<JavaSourceRootProperties>(contentRoot + "/src", JavaSourceRootType.SOURCE)
+    JpsJavaExtensionService.getInstance().getOrCreateModuleExtension(myModule).setOutputUrl(contentRoot + "/out")
 
     val properties = OsmorcModuleExtensionProperties()
     properties.myManifestGenerationMode = ManifestGenerationMode.Bnd
@@ -50,13 +55,21 @@ class OsgiBuildTest : JpsBuildTestCase() {
   }
 
   fun testBasics() {
-    myModule.getContentRootsList().addUrl(JpsPathUtil.pathToUrl(getAbsolutePath("")))
-    myModule.addSourceRoot<JavaSourceRootProperties>(JpsPathUtil.pathToUrl(getAbsolutePath("src")), JavaSourceRootType.SOURCE)
-    createFile("bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
-    createFile("src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
+    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     makeAll().assertSuccessful()
 
     assertJar(setOf("META-INF/MANIFEST.MF", "main/Main.class"))
+    assertManifest(mapOf("Bundle-SymbolicName" to "main", "Bundle-Version" to "1.0.0", "Export-Package" to "main;version=\"1.0.0\""))
+  }
+
+  fun testBndProject() {
+    createFile("cnf/build.bnd", "src=src\nbin=out")
+    createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
+    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    makeAll().assertSuccessful()
+
+    assertJar(setOf("META-INF/MANIFEST.MF", "main/Main.class", "OSGI-OPT/src/main/Main.java"))
     assertManifest(mapOf("Bundle-SymbolicName" to "main", "Bundle-Version" to "1.0.0", "Export-Package" to "main;version=\"1.0.0\""))
   }
 
@@ -70,14 +83,15 @@ class OsgiBuildTest : JpsBuildTestCase() {
   private fun assertManifest(expected: Map<String, String>) {
     JarFile(myExtension.getJarFileLocation()).use {
       val attributes = it.getManifest()!!.getMainAttributes()!!
+      assertNotNull(attributes.getValue("Manifest-Version"))
       for ((k, v) in expected) {
         assertEquals(v, attributes.getValue(k))
       }
     }
   }
 
-  private fun <T> Enumeration<T>.stream(): Stream<T> {
-    return stream { if (hasMoreElements()) nextElement() else null }
+  private fun <T> Enumeration<T>.stream(): Stream<T> = object : Stream<T> {
+    override fun iterator(): Iterator<T> = this@stream.iterator()
   }
 
   private fun JarFile.use(block: (JarFile) -> Unit) {

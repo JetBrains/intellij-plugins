@@ -1,9 +1,25 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jetbrains.osgi.jps.build;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +31,7 @@ import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsDependencyElement;
 import org.jetbrains.jps.model.module.JpsLibraryDependency;
 import org.jetbrains.jps.model.module.JpsModule;
+import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
@@ -55,6 +72,7 @@ public class OsgiBuildSession implements Reporter {
   private File myOutputJarFile;
   private File myModuleOutputDir;
   private File myOutputDir;
+  private File[] mySources;
   private BndWrapper myBndWrapper;
   private String mySourceToReport = null;
 
@@ -92,10 +110,16 @@ public class OsgiBuildSession implements Reporter {
     if (moduleOutputUrl == null) {
       throw new OsgiBuildException("Unable to determine the compiler output path for the module.");
     }
+
+    mySources = ContainerUtil.map2Array(myModule.getSourceRoots(), File.class, new Function<JpsModuleSourceRoot, File>() {
+      @Override
+      public File fun(JpsModuleSourceRoot root) {
+        return root.getFile();
+      }
+    });
+
     myModuleOutputDir = JpsPathUtil.urlToFile(moduleOutputUrl);
-
     myOutputDir = BndWrapper.getOutputDir(myModuleOutputDir);
-
     myBndWrapper = new BndWrapper(this);
   }
 
@@ -106,13 +130,13 @@ public class OsgiBuildSession implements Reporter {
 
     if (!myExtension.isUseBundlorFile()) {
       mySourceToReport = getSourceFileToReport(bndFile);
-      myBndWrapper.build(bndFile, myModuleOutputDir, myOutputJarFile);
+      myBndWrapper.build(bndFile, myModuleOutputDir, mySources, myOutputJarFile);
       mySourceToReport = null;
     }
     else {
       File tempFile = new File(myOutputJarFile.getAbsolutePath() + ".tmp.jar");
       mySourceToReport = getSourceFileToReport(bndFile);
-      myBndWrapper.build(bndFile, myModuleOutputDir, tempFile);
+      myBndWrapper.build(bndFile, myModuleOutputDir, mySources, tempFile);
       mySourceToReport = null;
 
       progress("Running Bundlor to calculate the manifest");
