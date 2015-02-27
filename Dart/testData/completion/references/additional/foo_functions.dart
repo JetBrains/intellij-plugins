@@ -1,3 +1,3 @@
-_privateFunctionInFoo(){
+void _privateFunctionInFoo(){}
 
-}
+var _privateVariable;
