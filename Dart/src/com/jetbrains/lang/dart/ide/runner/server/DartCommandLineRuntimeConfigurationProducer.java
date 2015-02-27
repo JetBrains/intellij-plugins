@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.RunConfigurationProducer;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,7 +29,14 @@ public class DartCommandLineRuntimeConfigurationProducer extends RunConfiguratio
     final VirtualFile dartFile = getRunnableDartFileFromContext(context);
     if (dartFile != null) {
       configuration.getRunnerParameters().setFilePath(dartFile.getPath());
-      configuration.getRunnerParameters().setWorkingDirectory(dartFile.getParent().getPath());
+
+      final Project project = configuration.getProject();
+      String workingDirectory = project.getBasePath();
+      if (workingDirectory == null) {
+        workingDirectory = dartFile.getParent().getPath();
+      }
+
+      configuration.getRunnerParameters().setWorkingDirectory(workingDirectory);
       configuration.setGeneratedName();
 
       sourceElement.set(sourceElement.isNull() ? null : sourceElement.get().getContainingFile());
