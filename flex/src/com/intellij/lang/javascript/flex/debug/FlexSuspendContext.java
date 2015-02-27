@@ -1,5 +1,7 @@
 package com.intellij.lang.javascript.flex.debug;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -124,7 +126,7 @@ public class FlexSuspendContext extends XSuspendContext {
     final Trinity<String, String, Integer> fileNameAndIndexAndLine = getFileNameAndIdAndLine(frameText);
     final String fileName = fileNameAndIndexAndLine.first;
     final String fileId = fileNameAndIndexAndLine.second;
-    int line = fileNameAndIndexAndLine.third;
+    final int line = fileNameAndIndexAndLine.third;
 
     if (!StringUtil.isEmpty(fileName)) {
       file = flexDebugProcess.findFileByNameOrId(fileName, getPackageFromFrameText(frameText), fileId);
@@ -134,8 +136,15 @@ public class FlexSuspendContext extends XSuspendContext {
       }
     }
 
-    final XSourcePosition sourcePosition = file == null ? null
-                                                        : XDebuggerUtil.getInstance().createPosition(file, line > 0 ? line - 1 : line);
+    final VirtualFile finalFile = file;
+    final XSourcePosition sourcePosition = file == null
+                                           ? null
+                                           : ApplicationManager.getApplication().runReadAction(new Computable<XSourcePosition>() {
+                                             @Override
+                                             public XSourcePosition compute() {
+                                               return XDebuggerUtil.getInstance().createPosition(finalFile, line > 0 ? line - 1 : line);
+                                             }
+                                           });
     return sourcePosition != null ? new FlexStackFrame(flexDebugProcess, sourcePosition)
                                   : new FlexStackFrame(flexDebugProcess, fileName, line);
   }
