@@ -1013,9 +1013,17 @@ public class DartResolveUtil {
 
     final List<VirtualFile> libraryFiles = new ArrayList<VirtualFile>();
     libraryFiles.addAll(findLibrary(context.getContainingFile()));
-    ContainerUtil.addIfNotNull(libraryFiles, DartLibraryIndex.getSdkLibByUri(context.getProject(), DartUrlResolver.DART_CORE_URI));
 
-    processTopLevelDeclarations(context, processor, libraryFiles, null);
+    if (!context.getText().startsWith("_")) {
+      ContainerUtil.addIfNotNull(libraryFiles, DartLibraryIndex.getSdkLibByUri(context.getProject(), DartUrlResolver.DART_CORE_URI));
+      processTopLevelDeclarations(context, processor, libraryFiles, null);
+    } else {
+      for (VirtualFile virtualFile : libraryFiles) {
+        if (!processTopLevelDeclarationsImpl(context, processor, virtualFile, null, new THashSet<VirtualFile>(), true)) {
+          break;
+        }
+      }
+    }
   }
 
   public static List<DartType> getImplementsAndMixinsList(DartClass dartClass) {

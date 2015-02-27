@@ -36,7 +36,10 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
                final DartReference reference = PsiTreeUtil.getParentOfType(parameters.getPosition(), DartReference.class);
                if (reference != null) {
                  final THashSet<DartComponentName> variants = new THashSet<DartComponentName>();
+                 final boolean lookingForPrivate =  parameters.getPosition().getText().startsWith("_");
                  for (LookupElement element : DartReferenceCompletionContributor.addCompletionVariants(reference, variants)) {
+                   // this breaks testReference9, but necessary to fix https://youtrack.jetbrains.com/issue/WEB-15350
+                   //if (element.toString().startsWith("_") && !lookingForPrivate) continue;
                    result.addElement(element);
                  }
                  if (parameters.getInvocationCount() > 1 && DartResolveUtil.aloneOrFirstInChain(reference)) {
