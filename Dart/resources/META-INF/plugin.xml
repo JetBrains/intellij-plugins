@@ -206,6 +206,10 @@
             text="Dart File" description="Create new Dart file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
+    <action id="Dart.DartFormat" class="com.jetbrains.lang.dart.ide.actions.DartFormatAction"
+            text="Dart Style..." description="Format your Dart code according to the conventions in the Dart Style Guide.">
+      <keyboard-shortcut first-keystroke="alt F" keymap="$default"/>
+    </action>
     <action id="Generate.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateConstructorAction"
             text="Constructor">
       <add-to-group anchor="first" group-id="GenerateGroup"/>
