@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
+import com.jetbrains.lang.dart.projectWizard.DartProjectTemplate;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.psi.DartImportStatement;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -29,6 +30,8 @@ public class DartCommandLineRuntimeConfigurationProducer extends RunConfiguratio
     if (dartFile != null) {
       configuration.getRunnerParameters().setFilePath(dartFile.getPath());
       configuration.getRunnerParameters().setWorkingDirectory(dartFile.getParent().getPath());
+      final String workingDirectory = DartProjectTemplate.getProjectDirectory(context.getProject(), dartFile);
+      configuration.getRunnerParameters().setWorkingDirectory(workingDirectory);
       configuration.setGeneratedName();
 
       sourceElement.set(sourceElement.isNull() ? null : sourceElement.get().getContainingFile());
