@@ -8,7 +8,7 @@ public class DartProblemsViewPanel extends NewErrorTreeViewPanel {
 
   public DartProblemsViewPanel(Project project) {
     super(project, null, false, true, null);
-    myTree.getEmptyText().setText("No compilation problems found");
+    myTree.getEmptyText().setText("No problems found in Dart code");
   }
 
   @Override
@@ -18,11 +18,6 @@ public class DartProblemsViewPanel extends NewErrorTreeViewPanel {
 
   @Override
   protected void addExtraPopupMenuActions(DefaultActionGroup group) {
-  }
-
-  @Override
-  protected boolean shouldShowFirstErrorInEditor() {
-    return false;
   }
 
   @Override

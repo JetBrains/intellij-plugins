@@ -32,19 +32,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.PooledThreadExecutor;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class DartProblemsViewImpl {
-
-  public static class SERVICE {
-    private SERVICE() {
-    }
-
-    public static DartProblemsViewImpl getInstance(Project project) {
-      return ServiceManager.getService(project, DartProblemsViewImpl.class);
-    }
-  }
-
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl");
   private static final String PROBLEMS_TOOLWINDOW_ID = "Dart Problems";
   private static final EnumSet<ErrorTreeElementKind> ALL_MESSAGE_KINDS = EnumSet.allOf(ErrorTreeElementKind.class);
@@ -54,6 +47,10 @@ public class DartProblemsViewImpl {
   private final SequentialTaskExecutor myViewUpdater = new SequentialTaskExecutor(PooledThreadExecutor.INSTANCE);
   private final Icon myActiveIcon = AllIcons.Toolwindows.Problems;
   private final Icon myPassiveIcon = IconLoader.getDisabledIcon(myActiveIcon);
+
+  public static DartProblemsViewImpl getInstance(@NotNull final Project project) {
+    return ServiceManager.getService(project, DartProblemsViewImpl.class);
+  }
 
   private static String[] convertMessage(final String text) {
     if (!text.contains("\n")) {
@@ -97,34 +94,30 @@ public class DartProblemsViewImpl {
     });
   }
 
-  public void updateErrorsForFile(@NotNull final VirtualFile vFile,
-                                  @Nullable final List<AnalysisError> errors,
-                                  @NotNull final UUID sessionId) {
+  public void updateErrorsForFile(@NotNull final VirtualFile vFile, @Nullable final List<AnalysisError> errors) {
     if (errors == null) return;
 
     clearProgress();
-    clearOldMessages(vFile, sessionId);
+    clearOldMessages(vFile);
 
     for (final AnalysisError analysisError : errors) {
       if (analysisError == null || DartAnalysisServerAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) continue;
-      addMessage(vFile, analysisError, sessionId);
+      addMessage(vFile, analysisError);
     }
   }
 
-  private void clearOldMessages(@NotNull final VirtualFile vFile, @NotNull final UUID currentSessionId) {
+  private void clearOldMessages(@NotNull final VirtualFile vFile) {
     myViewUpdater.execute(new Runnable() {
       @Override
       public void run() {
-        cleanupChildrenRecursively(myPanel.getErrorViewStructure().getRootElement(), vFile, currentSessionId);
+        cleanupChildrenRecursively(myPanel.getErrorViewStructure().getRootElement(), vFile);
         updateIcon();
         myPanel.reload();
       }
     });
   }
 
-  private void cleanupChildrenRecursively(@NotNull final Object fromElement,
-                                          @NotNull final VirtualFile vFile,
-                                          @NotNull final UUID currentSessionId) {
+  private void cleanupChildrenRecursively(@NotNull final Object fromElement, @NotNull final VirtualFile vFile) {
     final ErrorViewStructure structure = myPanel.getErrorViewStructure();
     for (ErrorTreeElement element : structure.getChildElements(fromElement)) {
       if (element instanceof GroupingElement) {
@@ -140,9 +133,7 @@ public class DartProblemsViewImpl {
     }
   }
 
-  private void addMessage(@NotNull final VirtualFile virtualFile,
-                          @NotNull final AnalysisError analysisError,
-                          @NotNull final UUID sessionId) {
+  private void addMessage(@NotNull final VirtualFile virtualFile, @NotNull final AnalysisError analysisError) {
     final Location location = analysisError.getLocation();
     Navigatable navigatable = null;
     final int line = location.getStartLine() - 1; // editor lines are zero-based
@@ -157,7 +148,7 @@ public class DartProblemsViewImpl {
     final String groupName = virtualFile.getPresentableUrl();
     final String exportText = "line (" + location.getStartLine() + ") ";
     final String rendererTextPrefix = "(" + location.getStartLine() + ", " + location.getStartColumn() + ")";
-    addMessage(type, text, groupName, navigatable, exportText, rendererTextPrefix, sessionId);
+    addMessage(type, text, groupName, navigatable, exportText, rendererTextPrefix);
   }
 
   private static int translateAnalysisServerSeverity(String severity) {
@@ -179,22 +170,21 @@ public class DartProblemsViewImpl {
                          @Nullable final String groupName,
                          @Nullable final Navigatable navigatable,
                          @Nullable final String exportTextPrefix,
-                         @Nullable final String rendererTextPrefix,
-                         @Nullable final UUID sessionId) {
+                         @Nullable final String rendererTextPrefix) {
 
     myViewUpdater.execute(new Runnable() {
       @Override
       public void run() {
         final ErrorViewStructure structure = myPanel.getErrorViewStructure();
         final GroupingElement group = structure.lookupGroupingElement(groupName);
-        if (group != null && sessionId != null && !sessionId.equals(group.getData())) {
+        if (group != null) {
           structure.removeElement(group);
         }
         if (navigatable != null) {
-          myPanel.addMessage(type, text, groupName, navigatable, exportTextPrefix, rendererTextPrefix, sessionId);
+          myPanel.addMessage(type, text, groupName, navigatable, exportTextPrefix, rendererTextPrefix, null);
         }
         else {
-          myPanel.addMessage(type, text, null, -1, -1, sessionId);
+          myPanel.addMessage(type, text, null, -1, -1, null);
         }
         updateIcon();
       }

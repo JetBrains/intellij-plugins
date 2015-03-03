@@ -16,8 +16,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -29,17 +27,12 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
-import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class DartAnalysisServerService {
@@ -61,7 +53,6 @@ public class DartAnalysisServerService {
   private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.SECONDS.toMillis(120);
   private static final long GET_VERSION_TIMEOUT = 500;
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
-  private final UUID mySessionId = UUID.randomUUID();
 
   private final Object myLock = new Object(); // Access all fields under this lock. Do not wait for server response under lock.
   @Nullable private AnalysisServer myServer;
@@ -96,28 +87,9 @@ public class DartAnalysisServerService {
 
           for (final Project project : myRootsHandler.getTrackedProjects()) {
             final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-            if (project.isDisposed()) continue;
-            if (!fileIndex.isInContent(vFile)) continue;
-
-            final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
-
-            if (psiFile instanceof DartExpressionCodeFragment) return;
-
-            final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
-            if (annotatedFile == null) return;
-
-            final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
-            if (module == null) return;
-
-            final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
-            if (sdk != null && !DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return;
-
-            if (psiFile instanceof XmlFile && !DartInProcessAnnotator.containsDartEmbeddedContent((XmlFile)psiFile)) return;
-
-            if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return;
-
-            final DartProblemsViewImpl problemsView = DartProblemsViewImpl.SERVICE.getInstance(project);
-            problemsView.updateErrorsForFile(vFile, errors, mySessionId);
+            if (!project.isDisposed() && fileIndex.isInContent(vFile)) {
+              DartProblemsViewImpl.getInstance(project).updateErrorsForFile(vFile, errors);
+            }
           }
         }
       });
