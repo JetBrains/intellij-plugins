@@ -11,9 +11,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.xml.util.HtmlUtil;
+import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
+import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
 import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
@@ -79,7 +85,7 @@ public class DartAnalysisServerAnnotator
 
     if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return null;
 
-    if (psiFile instanceof XmlFile && !DartInProcessAnnotator.containsDartEmbeddedContent((XmlFile)psiFile)) return null;
+    if (psiFile instanceof XmlFile && !containsDartEmbeddedContent((XmlFile)psiFile)) return null;
 
     if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return null;
 
@@ -141,6 +147,19 @@ public class DartAnalysisServerAnnotator
     if (AnalysisErrorType.TODO.equals(errorType)) return true;
     // already done as DartDeprecatedApiUsageInspection
     if (AnalysisErrorType.HINT.equals(errorType) && error.getMessage().endsWith("' is deprecated")) return true;
+    return false;
+  }
+
+  static boolean containsDartEmbeddedContent(@NotNull final XmlFile file) {
+    final String text = file.getText();
+    int i = -1;
+    while ((i = text.indexOf(DartLanguage.DART_MIME_TYPE, i + 1)) != -1) {
+      final PsiElement element = file.findElementAt(i);
+      final XmlTag tag = element == null ? null : PsiTreeUtil.getParentOfType(element, XmlTag.class);
+      if (tag != null && HtmlUtil.isScriptTag(tag) && PsiTreeUtil.getChildOfType(tag, DartEmbeddedContent.class) != null) {
+        return true;
+      }
+    }
     return false;
   }
 
