@@ -63,17 +63,15 @@ public abstract class DartProjectTemplate {
    * Get the Dart project directory for the given file by looking for the first parent that contains a pubspec.
    * In case none can be found, the file's parent is used instead.
    */
-  public static String getProjectDirectory(@Nullable final Project project, @NotNull final VirtualFile contextFile) {
-    if (project != null) {
-      final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, contextFile);
-      if (pubspec != null) {
-        final VirtualFile parent = pubspec.getParent();
-        if (parent != null) {
-          return parent.getPath();
-        }
+  public static String getWorkingDirForDartScript(@NotNull final Project project, @NotNull final VirtualFile dartFile) {
+    final VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, dartFile);
+    if (pubspec != null) {
+      final VirtualFile parent = pubspec.getParent();
+      if (parent != null) {
+        return parent.getPath();
       }
     }
-    return contextFile.getParent().getPath();
+    return dartFile.getParent().getPath();
   }
 
   /**
@@ -158,8 +156,7 @@ public abstract class DartProjectTemplate {
 
         final DartCommandLineRunConfiguration runConfiguration = (DartCommandLineRunConfiguration)settings.getConfiguration();
         runConfiguration.getRunnerParameters().setFilePath(mainDartFile.getPath());
-        final String workingDir = getProjectDirectory(module.getProject(), mainDartFile);
-        runConfiguration.getRunnerParameters().setWorkingDirectory(workingDir);
+        runConfiguration.getRunnerParameters().setWorkingDirectory(getWorkingDirForDartScript(module.getProject(), mainDartFile));
         settings.setName(runConfiguration.suggestedName());
 
         runManager.addConfiguration(settings, false);

@@ -92,7 +92,7 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
       final VirtualFile dartFile = virtualFiles.iterator().next();
       final String dartFilePath = dartFile.getPath();
       runnerParams.setFilePath(dartFilePath);
-      runnerParams.setWorkingDirectory(DartProjectTemplate.getProjectDirectory(psiElement.getProject(), dartFile));
+      runnerParams.setWorkingDirectory(DartProjectTemplate.getWorkingDirForDartScript(psiElement.getProject(), dartFile));
       return true;
     }
     else {
@@ -107,7 +107,7 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
         runnerParams.setScope(Scope.ALL);
         final String dartFilePath = FileUtil.toSystemIndependentName(virtualFile.getPath());
         runnerParams.setFilePath(dartFilePath);
-        runnerParams.setWorkingDirectory(DartProjectTemplate.getProjectDirectory(psiElement.getProject(), virtualFile));
+        runnerParams.setWorkingDirectory(DartProjectTemplate.getWorkingDirForDartScript(psiElement.getProject(), virtualFile));
         return true;
       }
     }
