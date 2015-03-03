@@ -100,10 +100,7 @@ public class DartProblemsViewImpl {
     clearProgress();
     clearOldMessages(vFile);
 
-    for (final AnalysisError analysisError : errors) {
-      if (analysisError == null || DartAnalysisServerAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) continue;
-      addMessage(vFile, analysisError);
-    }
+    addAnalysisErrors(vFile, errors);
   }
 
   private void clearOldMessages(@NotNull final VirtualFile vFile) {
@@ -133,19 +130,27 @@ public class DartProblemsViewImpl {
     }
   }
 
-  private void addMessage(@NotNull final VirtualFile virtualFile, @NotNull final AnalysisError analysisError) {
-    final Location location = analysisError.getLocation();
-    final int line = location.getStartLine() - 1; // editor lines are zero-based
-    final Navigatable navigatable = line >= 0
-                                    ? new OpenFileDescriptor(myProject, virtualFile, line, Math.max(0, location.getStartColumn() - 1))
-                                    : new OpenFileDescriptor(myProject, virtualFile, -1, -1);
-    final int type = translateAnalysisServerSeverity(analysisError.getSeverity());
-    final String[] text = convertMessage(analysisError.getMessage());
-    final String groupName = virtualFile.getPresentableUrl();
-    final String exportText = "line (" + location.getStartLine() + ") ";
-    final String rendererTextPrefix = "(" + location.getStartLine() + ", " + location.getStartColumn() + ")";
+  private void addAnalysisErrors(@NotNull final VirtualFile virtualFile, @NotNull final List<AnalysisError> errors) {
+    myViewUpdater.execute(new Runnable() {
+      @Override
+      public void run() {
+        for (final AnalysisError analysisError : errors) {
+          if (analysisError == null || DartAnalysisServerAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) continue;
+          final Location location = analysisError.getLocation();
+          final int line = location.getStartLine() - 1; // editor lines are zero-based
+          final Navigatable navigatable = line >= 0
+                                          ? new OpenFileDescriptor(myProject, virtualFile, line, Math.max(0, location.getStartColumn() - 1))
+                                          : new OpenFileDescriptor(myProject, virtualFile, -1, -1);
+          final int type = translateAnalysisServerSeverity(analysisError.getSeverity());
+          final String[] text = convertMessage(analysisError.getMessage());
+          final String groupName = virtualFile.getPresentableUrl();
+          final String exportTextPrefix = "line (" + location.getStartLine() + ") ";
+          final String rendererTextPrefix = "(" + location.getStartLine() + ", " + location.getStartColumn() + ")";
 
-    addMessage(type, text, groupName, navigatable, exportText, rendererTextPrefix);
+          myPanel.addMessage(type, text, groupName, navigatable, exportTextPrefix, rendererTextPrefix, null);
+          updateIcon();
+        }
+      }});
   }
 
   private static int translateAnalysisServerSeverity(String severity) {

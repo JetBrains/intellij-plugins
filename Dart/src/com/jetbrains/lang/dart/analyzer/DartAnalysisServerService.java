@@ -25,9 +25,14 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.concurrency.Semaphore;
+import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartFileType;
@@ -38,6 +43,7 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,6 +67,7 @@ public class DartAnalysisServerService {
   @Nullable private String mySdkHome = null;
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
+  private final MessageBusConnection myConnection = ApplicationManager.getApplication().getMessageBus().connect();
 
   private AnalysisServerListener myListener;
 
@@ -156,6 +163,38 @@ public class DartAnalysisServerService {
     public void serverStatus(final AnalysisStatus analysisStatus, final PubStatus pubStatus) {
     }
   }
+
+  private BulkFileListener myBulkFileListener = new BulkFileListener() {
+    @Override
+    public void before(@NotNull final List<? extends VFileEvent> events) {
+      final List<VirtualFile> deletedVirtualFiles = new ArrayList<VirtualFile>(1);
+      for (VFileEvent event : events) {
+        if (event instanceof VFileDeleteEvent) {
+          VFileDeleteEvent fileDeleteEvent = (VFileDeleteEvent)event;
+          deletedVirtualFiles.add(fileDeleteEvent.getFile());
+        }
+      }
+      if (deletedVirtualFiles.isEmpty()) return;
+
+      ApplicationManager.getApplication().runReadAction(new Runnable() {
+        @Override
+        public void run() {
+          for (VirtualFile vFile : deletedVirtualFiles) {
+            for (final Project project : myRootsHandler.getTrackedProjects()) {
+              final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+              if (!project.isDisposed() && fileIndex.isInContent(vFile)) {
+                DartProblemsViewImpl.getInstance(project).updateErrorsForFile(vFile, AnalysisError.EMPTY_LIST);
+              }
+            }
+          }
+        }
+      });
+    }
+
+    @Override
+    public void after(@NotNull final List<? extends VFileEvent> events) {
+    }
+  };
 
   public static class FormatResult {
 
@@ -535,6 +574,7 @@ public class DartAnalysisServerService {
         myServerVersion = server_getVersion();
         mySdkVersion = sdk.getVersion();
         myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
+        myConnection.subscribe(VirtualFileManager.VFS_CHANGES, myBulkFileListener);
         LOG.info("Server started, see status at http://localhost:" + port + "/status");
       }
       catch (Exception e) {
@@ -564,6 +604,7 @@ public class DartAnalysisServerService {
     synchronized (myLock) {
       if (myServer != null) {
         LOG.debug("stopping server");
+        myConnection.disconnect();
         myServer.removeAnalysisServerListener(myListener);
         myServer.server_shutdown();
       }
