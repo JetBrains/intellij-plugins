@@ -135,19 +135,16 @@ public class DartProblemsViewImpl {
 
   private void addMessage(@NotNull final VirtualFile virtualFile, @NotNull final AnalysisError analysisError) {
     final Location location = analysisError.getLocation();
-    Navigatable navigatable = null;
     final int line = location.getStartLine() - 1; // editor lines are zero-based
-    if (line >= 0) {
-      navigatable = new OpenFileDescriptor(myProject, virtualFile, line, Math.max(0, location.getStartColumn() - 1));
-    }
-    if (navigatable == null) {
-      navigatable = new OpenFileDescriptor(myProject, virtualFile, -1, -1);
-    }
+    final Navigatable navigatable = line >= 0
+                                    ? new OpenFileDescriptor(myProject, virtualFile, line, Math.max(0, location.getStartColumn() - 1))
+                                    : new OpenFileDescriptor(myProject, virtualFile, -1, -1);
     final int type = translateAnalysisServerSeverity(analysisError.getSeverity());
     final String[] text = convertMessage(analysisError.getMessage());
     final String groupName = virtualFile.getPresentableUrl();
     final String exportText = "line (" + location.getStartLine() + ") ";
     final String rendererTextPrefix = "(" + location.getStartLine() + ", " + location.getStartColumn() + ")";
+
     addMessage(type, text, groupName, navigatable, exportText, rendererTextPrefix);
   }
 
@@ -175,11 +172,6 @@ public class DartProblemsViewImpl {
     myViewUpdater.execute(new Runnable() {
       @Override
       public void run() {
-        final ErrorViewStructure structure = myPanel.getErrorViewStructure();
-        final GroupingElement group = structure.lookupGroupingElement(groupName);
-        if (group != null) {
-          structure.removeElement(group);
-        }
         if (navigatable != null) {
           myPanel.addMessage(type, text, groupName, navigatable, exportTextPrefix, rendererTextPrefix, null);
         }
