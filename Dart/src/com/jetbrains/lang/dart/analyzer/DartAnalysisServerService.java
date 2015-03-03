@@ -56,7 +56,6 @@ public class DartAnalysisServerService {
   private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.SECONDS.toMillis(120);
-  private static final long GET_VERSION_TIMEOUT = 500;
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
   private final Object myLock = new Object(); // Access all fields under this lock. Do not wait for server response under lock.
@@ -134,6 +133,7 @@ public class DartAnalysisServerService {
 
     @Override
     public void serverConnected(String version) {
+      myServerVersion = version != null ? version : "";
     }
 
     @Override
@@ -528,43 +528,6 @@ public class DartAnalysisServerService {
     }
   }
 
-  @NotNull
-  private String server_getVersion() {
-    final Ref<String> resultRef = new Ref<String>("");
-    final Semaphore semaphore = new Semaphore();
-
-    synchronized (myLock) {
-      assert myServer != null;
-
-      semaphore.down();
-
-      myServer.server_getVersion(new GetVersionConsumer() {
-
-        @Override
-        public void computedVersion(final String version) {
-          resultRef.set(version);
-          semaphore.up();
-        }
-
-        @Override
-        public void onError(final RequestError requestError) {
-          LOG.warn("Error from server_getVersion(), code=" + requestError.getCode() + ": " + requestError.getMessage());
-          semaphore.up();
-        }
-      });
-    }
-
-    final long t0 = System.currentTimeMillis();
-    semaphore.waitFor(GET_VERSION_TIMEOUT);
-
-    if (semaphore.tryUp()) {
-      LOG.info("server_getVersion() took too long: " + (System.currentTimeMillis() - t0) + "ms");
-    }
-
-    return resultRef.get();
-  }
-
-
   private void startServer(@NotNull final DartSdk sdk) {
     synchronized (myLock) {
       mySdkHome = sdk.getHomePath();
@@ -596,7 +559,6 @@ public class DartAnalysisServerService {
       try {
         myServer.start();
         myServer.addAnalysisServerListener(myAnalysisServerListener);
-        myServerVersion = server_getVersion();
         mySdkVersion = sdk.getVersion();
         myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
         analysis_setPriorityFiles();
