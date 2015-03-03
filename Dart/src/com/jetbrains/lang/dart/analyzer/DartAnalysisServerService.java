@@ -16,7 +16,11 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -25,11 +29,17 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
+import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
+import com.jetbrains.lang.dart.psi.DartExpressionCodeFragment;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +48,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class DartAnalysisServerService {
@@ -50,6 +61,7 @@ public class DartAnalysisServerService {
   private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.SECONDS.toMillis(120);
   private static final long GET_VERSION_TIMEOUT = 500;
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
+  private final UUID mySessionId = UUID.randomUUID();
 
   private final Object myLock = new Object(); // Access all fields under this lock. Do not wait for server response under lock.
   @Nullable private AnalysisServer myServer;
@@ -59,15 +71,56 @@ public class DartAnalysisServerService {
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
 
-  private final AnalysisServerListener myListener = new AnalysisServerListener() {
+  private AnalysisServerListener myListener;
 
-    @Override
-    public void computedCompletion(String completionId, int replacementOffset, int replacementLength,
-                                   List<CompletionSuggestion> completions, boolean isLast) {
+  private class ServerServiceAnalysisServerListener implements AnalysisServerListener {
+
+    public ServerServiceAnalysisServerListener() {
     }
 
     @Override
-    public void computedErrors(String file, List<AnalysisError> errors) {
+    public void computedCompletion(String completionId,
+                                   int replacementOffset,
+                                   int replacementLength,
+                                   List<CompletionSuggestion> completions,
+                                   boolean isLast) {
+    }
+
+    @Override
+    public void computedErrors(final String file, final List<AnalysisError> errors) {
+      ApplicationManager.getApplication().runReadAction(new Runnable() {
+        @Override
+        public void run() {
+          final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemDependentName(file));
+          if (vFile == null) return;
+
+          for (final Project project : myRootsHandler.getTrackedProjects()) {
+            final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+            if (project.isDisposed()) continue;
+            if (!fileIndex.isInContent(vFile)) continue;
+
+            final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
+
+            if (psiFile instanceof DartExpressionCodeFragment) return;
+
+            final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
+            if (annotatedFile == null) return;
+
+            final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
+            if (module == null) return;
+
+            final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
+            if (sdk != null && !DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return;
+
+            if (psiFile instanceof XmlFile && !DartInProcessAnnotator.containsDartEmbeddedContent((XmlFile)psiFile)) return;
+
+            if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return;
+
+            final DartProblemsViewImpl problemsView = DartProblemsViewImpl.SERVICE.getInstance(project);
+            problemsView.updateErrorsForFile(vFile, errors, mySessionId);
+          }
+        }
+      });
     }
 
     @Override
@@ -114,10 +167,9 @@ public class DartAnalysisServerService {
     public void serverError(boolean isFatal, String message, String stackTrace) {
       if (message == null) message = "<no error message>";
       if (stackTrace == null) stackTrace = "<no stack trace>";
-      LOG.warn(
-        "Dart analysis server, SDK version " + mySdkVersion +
-        ", server version " + myServerVersion +
-        ", " + (isFatal ? "FATAL " : "") + "error: " + message + "\n" + stackTrace);
+      LOG.warn("Dart analysis server, SDK version " + mySdkVersion +
+               ", server version " + myServerVersion +
+               ", " + (isFatal ? "FATAL " : "") + "error: " + message + "\n" + stackTrace);
 
       if (isFatal) {
         onServerStopped();
@@ -131,12 +183,11 @@ public class DartAnalysisServerService {
     @Override
     public void serverStatus(final AnalysisStatus analysisStatus, final PubStatus pubStatus) {
     }
-  };
+  }
 
   public static class FormatResult {
 
-    @Nullable
-    private final List<SourceEdit> myEdits;
+    @Nullable private final List<SourceEdit> myEdits;
     private final int myOffset;
     private final int myLength;
 
@@ -161,11 +212,9 @@ public class DartAnalysisServerService {
   }
 
   public static class LibraryDependenciesResult {
-    @Nullable
-    final String[] libraries;
+    @Nullable final String[] libraries;
 
-    @Nullable
-    final Map<String, Map<String, List<String>>> packageMap;
+    @Nullable final Map<String, Map<String, List<String>>> packageMap;
 
     public LibraryDependenciesResult(@Nullable final String[] libraries,
                                      @Nullable final Map<String, Map<String, List<String>>> packageMap) {
@@ -288,8 +337,8 @@ public class DartAnalysisServerService {
               ApplicationManager.getApplication().runReadAction(new Runnable() {
                 @Override
                 public void run() {
-                  final VirtualFile vFile = info.myProject.isDisposed() ? null
-                                                                        : LocalFileSystem.getInstance().findFileByPath(info.myFilePath);
+                  final VirtualFile vFile =
+                    info.myProject.isDisposed() ? null : LocalFileSystem.getInstance().findFileByPath(info.myFilePath);
                   final PsiFile psiFile = vFile == null ? null : PsiManager.getInstance(info.myProject).findFile(vFile);
                   if (psiFile != null) {
                     DaemonCodeAnalyzer.getInstance(info.myProject).restart(psiFile);
@@ -486,12 +535,10 @@ public class DartAnalysisServerService {
       final String testSdkHome = System.getProperty("dart.sdk");
       if (ApplicationManager.getApplication().isUnitTestMode() && testSdkHome == null) return;
 
-      final String runtimePath = FileUtil
-        .toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? testSdkHome : mySdkHome)
-                               + "/bin/dart");
-      final String analysisServerPath = FileUtil
-        .toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? testSdkHome : mySdkHome)
-                               + "/bin/snapshots/analysis_server.dart.snapshot");
+      final String runtimePath =
+        FileUtil.toSystemDependentName((ApplicationManager.getApplication().isUnitTestMode() ? testSdkHome : mySdkHome) + "/bin/dart");
+      final String analysisServerPath = FileUtil.toSystemDependentName(
+        (ApplicationManager.getApplication().isUnitTestMode() ? testSdkHome : mySdkHome) + "/bin/snapshots/analysis_server.dart.snapshot");
 
       final DebugPrintStream debugStream = new DebugPrintStream() {
         @Override
@@ -503,7 +550,7 @@ public class DartAnalysisServerService {
       final int port = NetUtils.tryToFindAvailableSocketPort(10000);
 
       final StdioServerSocket serverSocket =
-        new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, true,
+        new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, false,
                               FileReadMode.NORMALIZE_EOL_ALWAYS);
       serverSocket.setClientId(ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_'));
       serverSocket.setClientVersion(ApplicationInfo.getInstance().getApiVersion());
@@ -511,6 +558,7 @@ public class DartAnalysisServerService {
 
       try {
         myServer.start();
+        myListener = new ServerServiceAnalysisServerListener();
         myServer.addAnalysisServerListener(myListener);
         myServerVersion = server_getVersion();
         mySdkVersion = sdk.getVersion();
