@@ -19,7 +19,7 @@ import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.listPackageDirs.DartListPackageDirsLibraryProperties;
-import com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction;
+import com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction2;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -270,7 +270,7 @@ class DartUrlResolverImpl extends DartUrlResolver {
     for (OrderEntry orderEntry : orderEntries) {
       if (orderEntry instanceof LibraryOrderEntry &&
           LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
-          PubListPackageDirsAction.PUB_LIST_PACKAGE_DIRS_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName())) {
+          PubListPackageDirsAction2.PUB_LIST_PACKAGE_DIRS_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName())) {
         final LibraryEx library = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();
         final LibraryProperties properties = library == null ? null : library.getProperties();
 
