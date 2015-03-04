@@ -191,4 +191,94 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                          "  <caret>\n" +
                          "}");
   }
+
+  public void testCaseAlignAfterColon1() throws Throwable {
+    myFixture.configureByText(
+      DartFileType.INSTANCE,
+      "class X {\n" +
+      "  void doit(x) {\n" +
+      "    switch (x) {\n" +
+      "      case 1<caret>\n" +
+      "    }\n" +
+      "  }\n" +
+      "}");
+    doTypeAndCheck(
+      ':',
+      "class X {\n" +
+      "  void doit(x) {\n" +
+      "    switch (x) {\n" +
+      "      case 1:<caret>\n" +
+      "    }\n" +
+      "  }\n" +
+      "}");
+  }
+
+  public void testCaseAlignAfterColon2() throws Throwable {
+    myFixture.configureByText(
+      DartFileType.INSTANCE,
+      "class X {\n" +
+      "  void doit(x) {\n" +
+      "    switch (x) {\n" +
+      "      case 1:\n" +
+      "    case 2<caret>\n" +
+      "    }\n" +
+      "  }\n" +
+      "}");
+    doTypeAndCheck(
+      ':',
+      "class X {\n" +
+      "  void doit(x) {\n" +
+      "    switch (x) {\n" +
+      "      case 1:\n" +
+      "      case 2:<caret>\n" +
+      "    }\n" +
+      "  }\n" +
+      "}");
+  }
+
+  public void testDefaultAlignAfterColon() throws Throwable {
+    myFixture.configureByText(
+      DartFileType.INSTANCE,
+      "class X {\n" +
+      "  void doit(x) {\n" +
+      "    switch (x) {\n" +
+      "      case 1:\n" +
+      "    default<caret>\n" +
+      "    }\n" +
+      "  }\n" +
+      "}");
+    doTypeAndCheck(
+      ':',
+      "class X {\n" +
+      "  void doit(x) {\n" +
+      "    switch (x) {\n" +
+      "      case 1:\n" +
+      "      default:<caret>\n" +
+      "    }\n" +
+      "  }\n" +
+      "}");
+  }
+
+  public void testCaseStringAlignAfterColon() throws Throwable {
+    myFixture.configureByText(
+      DartFileType.INSTANCE,
+      "class X {\n" +
+      "  void doit(x) {\n" +
+      "    switch (x) {\n" +
+      "      case 1:\n" +
+      "    case '<caret>'\n" +
+      "    }\n" +
+      "  }\n" +
+      "}");
+    doTypeAndCheck(
+      ':',
+      "class X {\n" +
+      "  void doit(x) {\n" +
+      "    switch (x) {\n" +
+      "      case 1:\n" +
+      "    case ':<caret>'\n" +
+      "    }\n" +
+      "  }\n" +
+      "}");
+  }
 }
