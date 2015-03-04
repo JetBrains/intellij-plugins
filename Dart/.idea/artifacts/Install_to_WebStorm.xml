@@ -4,7 +4,7 @@
     <root id="root">
       <element id="artifact" artifact-name="Build Dart.jar" />
       <element id="file-copy" path="$PROJECT_DIR$/lib/commons-lang3-3.2.1.jar" />
-      <element id="file-copy" path="$PROJECT_DIR$/lib/dartanalyzer.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/lib/dartanalyzer_server.jar" />
       <element id="file-copy" path="$PROJECT_DIR$/lib/json.jar" />
       <element id="file-copy" path="$PROJECT_DIR$/lib/snakeyaml-1.13.jar" />
     </root>
