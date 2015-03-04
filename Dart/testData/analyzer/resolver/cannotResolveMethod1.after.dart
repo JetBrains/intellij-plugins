@@ -1,7 +1,0 @@
-foo() {
-  <caret>
-}
-
-main() {
-  foo();
-}
