@@ -94,15 +94,24 @@ public class DartProblemsViewImpl {
     });
   }
 
+  public void clearAll() {
+    myViewUpdater.execute(new Runnable() {
+      @Override
+      public void run() {
+        myPanel.getErrorViewStructure().clear();
+        updateIcon();
+      }
+    });
+  }
+
   public void updateErrorsForFile(@NotNull final VirtualFile vFile, @Nullable final List<AnalysisError> errors) {
     if (errors == null) return;
 
     clearProgress();
     clearOldMessages(vFile);
 
-    for (final AnalysisError analysisError : errors) {
-      if (analysisError == null || DartAnalysisServerAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) continue;
-      addMessage(vFile, analysisError);
+    if (!errors.isEmpty()) {
+      addAnalysisErrors(vFile, errors);
     }
   }
 
@@ -133,22 +142,28 @@ public class DartProblemsViewImpl {
     }
   }
 
-  private void addMessage(@NotNull final VirtualFile virtualFile, @NotNull final AnalysisError analysisError) {
-    final Location location = analysisError.getLocation();
-    Navigatable navigatable = null;
-    final int line = location.getStartLine() - 1; // editor lines are zero-based
-    if (line >= 0) {
-      navigatable = new OpenFileDescriptor(myProject, virtualFile, line, Math.max(0, location.getStartColumn() - 1));
-    }
-    if (navigatable == null) {
-      navigatable = new OpenFileDescriptor(myProject, virtualFile, -1, -1);
-    }
-    final int type = translateAnalysisServerSeverity(analysisError.getSeverity());
-    final String[] text = convertMessage(analysisError.getMessage());
-    final String groupName = virtualFile.getPresentableUrl();
-    final String exportText = "line (" + location.getStartLine() + ") ";
-    final String rendererTextPrefix = "(" + location.getStartLine() + ", " + location.getStartColumn() + ")";
-    addMessage(type, text, groupName, navigatable, exportText, rendererTextPrefix);
+  private void addAnalysisErrors(@NotNull final VirtualFile virtualFile, @NotNull final List<AnalysisError> errors) {
+    myViewUpdater.execute(new Runnable() {
+      @Override
+      public void run() {
+        for (final AnalysisError analysisError : errors) {
+          if (analysisError == null || DartAnalysisServerAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) continue;
+          final Location location = analysisError.getLocation();
+          final int line = location.getStartLine() - 1; // editor lines are zero-based
+          final Navigatable navigatable = line >= 0
+                                          ? new OpenFileDescriptor(myProject, virtualFile, line, Math.max(0, location.getStartColumn() - 1))
+                                          : new OpenFileDescriptor(myProject, virtualFile, -1, -1);
+          final int type = translateAnalysisServerSeverity(analysisError.getSeverity());
+          final String[] text = convertMessage(analysisError.getMessage());
+          final String groupName = virtualFile.getPresentableUrl();
+          final String exportTextPrefix = "line (" + location.getStartLine() + ") ";
+          final String rendererTextPrefix = "(" + location.getStartLine() + ", " + location.getStartColumn() + ")";
+
+          myPanel.addMessage(type, text, groupName, navigatable, exportTextPrefix, rendererTextPrefix, null);
+          updateIcon();
+        }
+      }
+    });
   }
 
   private static int translateAnalysisServerSeverity(String severity) {
@@ -163,32 +178,6 @@ public class DartProblemsViewImpl {
     }
     LOG.error("Unknown message category: " + severity);
     return 0;
-  }
-
-  public void addMessage(final int type,
-                         @NotNull final String[] text,
-                         @Nullable final String groupName,
-                         @Nullable final Navigatable navigatable,
-                         @Nullable final String exportTextPrefix,
-                         @Nullable final String rendererTextPrefix) {
-
-    myViewUpdater.execute(new Runnable() {
-      @Override
-      public void run() {
-        final ErrorViewStructure structure = myPanel.getErrorViewStructure();
-        final GroupingElement group = structure.lookupGroupingElement(groupName);
-        if (group != null) {
-          structure.removeElement(group);
-        }
-        if (navigatable != null) {
-          myPanel.addMessage(type, text, groupName, navigatable, exportTextPrefix, rendererTextPrefix, null);
-        }
-        else {
-          myPanel.addMessage(type, text, null, -1, -1, null);
-        }
-        updateIcon();
-      }
-    });
   }
 
   private void updateIcon() {
