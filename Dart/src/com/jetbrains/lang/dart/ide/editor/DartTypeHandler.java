@@ -7,12 +7,12 @@ import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.psi.DartPsiCompositeElement;
-import com.jetbrains.lang.dart.psi.DartType;
+import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,7 +68,25 @@ public class DartTypeHandler extends TypedHandlerDelegate {
     if (textToInsert != null) {
       EditorModificationUtil.insertStringAtCaret(editor, textToInsert, false, 0);
       return Result.STOP;
+    } else if (c == ':') {
+      if (autoIndentCase(editor, project, file)) {
+        return Result.STOP;
+      }
     }
     return super.charTyped(c, project, editor, file);
+  }
+
+  private static boolean autoIndentCase(Editor editor, Project project, PsiFile file) {
+    int offset = editor.getCaretModel().getOffset();
+    PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+    PsiElement currElement = file.findElementAt(offset - 1);
+    if (currElement != null) {
+      PsiElement parent = currElement.getParent();
+      if (parent != null && parent instanceof DartSwitchCase || parent instanceof DartDefaultCase) {
+        CodeStyleManager.getInstance(project).adjustLineIndent(file, parent.getTextOffset());
+        return true;
+      }
+    }
+    return false;
   }
 }
