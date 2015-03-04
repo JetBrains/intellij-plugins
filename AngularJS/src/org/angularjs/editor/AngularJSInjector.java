@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.JSTargetedInjector;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl;
@@ -67,7 +68,7 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
         startIndex = text.indexOf(start, endIndex);
         int afterStart = startIndex + start.length();
         endIndex = startIndex >= 0 ? text.indexOf(end, afterStart) : -1;
-        endIndex = endIndex > 0 ? endIndex : getPossibleEnd(context, text);
+        endIndex = endIndex > 0 ? endIndex : ElementManipulators.getValueTextRange(context).getEndOffset();
         final PsiElement injectionCandidate = startIndex >= 0 ? context.findElementAt(startIndex) : null;
         if (injectionCandidate != null && injectionCandidate.getNode().getElementType() != XmlTokenType.XML_COMMENT_CHARACTERS &&
            !(injectionCandidate instanceof OuterLanguageElement)) {
@@ -83,13 +84,6 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
         }
       } while (startIndex >= 0);
     }
-  }
-
-  private static int getPossibleEnd(PsiElement context, String text) {
-    if (context instanceof XmlAttributeValueImpl) {
-      return text.endsWith("'") || text.endsWith("\"") ? text.length() - 1 : text.length();
-    }
-    return text.length();
   }
 
   @NotNull
