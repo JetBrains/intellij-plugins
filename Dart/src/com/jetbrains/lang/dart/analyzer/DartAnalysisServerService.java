@@ -21,7 +21,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
@@ -71,7 +70,6 @@ public class DartAnalysisServerService {
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
   private final List<String> myPriorityFiles = new ArrayList<String>();
-  private final MessageBusConnection myConnection = ApplicationManager.getApplication().getMessageBus().connect();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListener() {
 
@@ -88,12 +86,11 @@ public class DartAnalysisServerService {
       ApplicationManager.getApplication().runReadAction(new Runnable() {
         @Override
         public void run() {
-          final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemDependentName(file));
+          final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(file));
           if (vFile == null) return;
 
           for (final Project project : myRootsHandler.getTrackedProjects()) {
-            final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-            if (!project.isDisposed() && fileIndex.isInContent(vFile)) {
+            if (!project.isDisposed() && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
               DartProblemsViewImpl.getInstance(project).updateErrorsForFile(vFile, errors);
             }
           }
@@ -164,40 +161,7 @@ public class DartAnalysisServerService {
     }
   };
 
-  private BulkFileListener myBulkFileListener = new BulkFileListener() {
-    @Override
-    public void before(@NotNull final List<? extends VFileEvent> events) {
-      final List<VirtualFile> deletedVirtualFiles = new ArrayList<VirtualFile>(1);
-      for (VFileEvent event : events) {
-        if (event instanceof VFileDeleteEvent) {
-          VFileDeleteEvent fileDeleteEvent = (VFileDeleteEvent)event;
-          deletedVirtualFiles.add(fileDeleteEvent.getFile());
-        }
-      }
-      if (deletedVirtualFiles.isEmpty()) return;
-
-      ApplicationManager.getApplication().runReadAction(new Runnable() {
-        @Override
-        public void run() {
-          for (VirtualFile vFile : deletedVirtualFiles) {
-            for (final Project project : myRootsHandler.getTrackedProjects()) {
-              final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-              if (!project.isDisposed() && fileIndex.isInContent(vFile)) {
-                DartProblemsViewImpl.getInstance(project).updateErrorsForFile(vFile, AnalysisError.EMPTY_LIST);
-              }
-            }
-          }
-        }
-      });
-    }
-
-    @Override
-    public void after(@NotNull final List<? extends VFileEvent> events) {
-    }
-  };
-
   public static class FormatResult {
-
     @Nullable private final List<SourceEdit> myEdits;
     private final int myOffset;
     private final int myLength;
@@ -247,7 +211,7 @@ public class DartAnalysisServerService {
 
   public DartAnalysisServerService() {
     initPriorityFiles();
-    initFileEditorListener();
+    initListeners();
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       public void dispose() {
         stopServer();
@@ -274,35 +238,67 @@ public class DartAnalysisServerService {
     }
   }
 
-  private void initFileEditorListener() {
-    ApplicationManager.getApplication().getMessageBus().connect()
-      .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
-                 new FileEditorManagerAdapter() {
-                   @Override
-                   public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-                     if (isDartOrHtmlFile(file)) {
-                       synchronized (myLock) {
-                         final String path = FileUtil.toSystemDependentName(file.getPath());
-                         if (!myPriorityFiles.contains(path)) {
-                           myPriorityFiles.add(path);
-                           analysis_setPriorityFiles();
-                         }
-                       }
-                     }
-                   }
+  private void initListeners() {
+    final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
 
-                   @Override
-                   public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-                     if (isDartOrHtmlFile(file)) {
-                       synchronized (myLock) {
-                         final String path = FileUtil.toSystemDependentName(file.getPath());
-                         if (myPriorityFiles.remove(path)) {
-                           analysis_setPriorityFiles();
-                         }
-                       }
-                     }
-                   }
-                 });
+    connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
+                         new FileEditorManagerAdapter() {
+                           @Override
+                           public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+                             if (isDartOrHtmlFile(file)) {
+                               synchronized (myLock) {
+                                 final String path = FileUtil.toSystemDependentName(file.getPath());
+                                 if (!myPriorityFiles.contains(path)) {
+                                   myPriorityFiles.add(path);
+                                   analysis_setPriorityFiles();
+                                 }
+                               }
+                             }
+                           }
+
+                           @Override
+                           public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+                             if (isDartOrHtmlFile(file)) {
+                               synchronized (myLock) {
+                                 final String path = FileUtil.toSystemDependentName(file.getPath());
+                                 if (myPriorityFiles.remove(path)) {
+                                   analysis_setPriorityFiles();
+                                 }
+                               }
+                             }
+                           }
+                         });
+
+    connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener.Adapter() {
+      @Override
+      public void before(@NotNull final List<? extends VFileEvent> events) {
+        synchronized (myLock) {
+          if (myServer == null) return;
+        }
+
+        final List<VirtualFile> deletedFiles = new ArrayList<VirtualFile>(events.size());
+        for (VFileEvent event : events) {
+          if (event instanceof VFileDeleteEvent && isDartOrHtmlFile(((VFileDeleteEvent)event).getFile())) {
+            deletedFiles.add(((VFileDeleteEvent)event).getFile());
+          }
+        }
+
+        if (deletedFiles.isEmpty()) return;
+
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+          @Override
+          public void run() {
+            for (VirtualFile vFile : deletedFiles) {
+              for (final Project project : myRootsHandler.getTrackedProjects()) {
+                if (!project.isDisposed() && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
+                  DartProblemsViewImpl.getInstance(project).updateErrorsForFile(vFile, AnalysisError.EMPTY_LIST);
+                }
+              }
+            }
+          }
+        });
+      }
+    });
   }
 
   private static boolean isDartOrHtmlFile(@NotNull final VirtualFile file) {
@@ -600,12 +596,11 @@ public class DartAnalysisServerService {
         mySdkVersion = sdk.getVersion();
         myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
         analysis_setPriorityFiles();
-        myConnection.subscribe(VirtualFileManager.VFS_CHANGES, myBulkFileListener);
         LOG.info("Server started, see status at http://localhost:" + port + "/status");
       }
       catch (Exception e) {
         LOG.warn("Failed to start Dart analysis server, port=" + port, e);
-        onServerStopped();
+        stopServer();
       }
     }
   }
@@ -631,7 +626,6 @@ public class DartAnalysisServerService {
       if (myServer != null) {
         LOG.debug("stopping server");
         myServer.removeAnalysisServerListener(myAnalysisServerListener);
-        myConnection.disconnect();
         myServer.server_shutdown();
       }
 
@@ -643,8 +637,20 @@ public class DartAnalysisServerService {
     synchronized (myLock) {
       myServer = null;
       mySdkHome = null;
-      myRootsHandler.reset();
       myFilePathWithOverlaidContentToTimestamp.clear();
+
+      ApplicationManager.getApplication().runReadAction(new Runnable() {
+        @Override
+        public void run() {
+          for (final Project project : myRootsHandler.getTrackedProjects()) {
+            if (!project.isDisposed()) {
+              DartProblemsViewImpl.getInstance(project).clearAll();
+            }
+          }
+        }
+      });
+
+      myRootsHandler.reset();
     }
   }
 }

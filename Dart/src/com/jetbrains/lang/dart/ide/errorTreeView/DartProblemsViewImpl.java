@@ -94,13 +94,25 @@ public class DartProblemsViewImpl {
     });
   }
 
+  public void clearAll() {
+    myViewUpdater.execute(new Runnable() {
+      @Override
+      public void run() {
+        myPanel.getErrorViewStructure().clear();
+        updateIcon();
+      }
+    });
+  }
+
   public void updateErrorsForFile(@NotNull final VirtualFile vFile, @Nullable final List<AnalysisError> errors) {
     if (errors == null) return;
 
     clearProgress();
     clearOldMessages(vFile);
 
-    addAnalysisErrors(vFile, errors);
+    if (!errors.isEmpty()) {
+      addAnalysisErrors(vFile, errors);
+    }
   }
 
   private void clearOldMessages(@NotNull final VirtualFile vFile) {
@@ -150,7 +162,8 @@ public class DartProblemsViewImpl {
           myPanel.addMessage(type, text, groupName, navigatable, exportTextPrefix, rendererTextPrefix, null);
           updateIcon();
         }
-      }});
+      }
+    });
   }
 
   private static int translateAnalysisServerSeverity(String severity) {
@@ -165,27 +178,6 @@ public class DartProblemsViewImpl {
     }
     LOG.error("Unknown message category: " + severity);
     return 0;
-  }
-
-  public void addMessage(final int type,
-                         @NotNull final String[] text,
-                         @Nullable final String groupName,
-                         @Nullable final Navigatable navigatable,
-                         @Nullable final String exportTextPrefix,
-                         @Nullable final String rendererTextPrefix) {
-
-    myViewUpdater.execute(new Runnable() {
-      @Override
-      public void run() {
-        if (navigatable != null) {
-          myPanel.addMessage(type, text, groupName, navigatable, exportTextPrefix, rendererTextPrefix, null);
-        }
-        else {
-          myPanel.addMessage(type, text, null, -1, -1, null);
-        }
-        updateIcon();
-      }
-    });
   }
 
   private void updateIcon() {
