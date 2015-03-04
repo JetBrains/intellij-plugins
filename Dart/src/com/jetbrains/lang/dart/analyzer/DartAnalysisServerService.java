@@ -17,9 +17,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
+import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Disposer;
@@ -31,7 +32,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.concurrency.Semaphore;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartFileType;
@@ -67,7 +67,6 @@ public class DartAnalysisServerService {
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
   private final List<String> myPriorityFiles = new ArrayList<String>();
-  private final MessageBusConnection myConnection = ApplicationManager.getApplication().getMessageBus().connect();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListener() {
 
@@ -159,22 +158,6 @@ public class DartAnalysisServerService {
     }
   };
 
-  private final FileEditorManagerListener myFileEditorManagerListener = new FileEditorManagerListener() {
-    @Override
-    public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-      addPriorityFile(FileUtil.toSystemDependentName(file.getPath()));
-    }
-
-    @Override
-    public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-      removePriorityFile(FileUtil.toSystemDependentName(file.getPath()));
-    }
-
-    @Override
-    public void selectionChanged(@NotNull final FileEditorManagerEvent event) {
-    }
-  };
-
   public static class FormatResult {
 
     @Nullable private final List<SourceEdit> myEdits;
@@ -225,6 +208,8 @@ public class DartAnalysisServerService {
 
 
   public DartAnalysisServerService() {
+    initPriorityFiles();
+    initFileEditorListener();
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       public void dispose() {
         stopServer();
@@ -235,6 +220,55 @@ public class DartAnalysisServerService {
   @NotNull
   public static DartAnalysisServerService getInstance() {
     return ServiceManager.getService(DartAnalysisServerService.class);
+  }
+
+  private void initPriorityFiles() {
+    for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+      for (VirtualFile file : FileEditorManager.getInstance(project).getOpenFiles()) {
+        if (isDartOrHtmlFile(file)) {
+          final String path = FileUtil.toSystemDependentName(file.getPath());
+          // lock not needed because it is called from constructor and can't interfere with other usages
+          if (!myPriorityFiles.contains(path)) {
+            myPriorityFiles.add(path);
+          }
+        }
+      }
+    }
+  }
+
+  private void initFileEditorListener() {
+    ApplicationManager.getApplication().getMessageBus().connect()
+      .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
+                 new FileEditorManagerAdapter() {
+                   @Override
+                   public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+                     if (isDartOrHtmlFile(file)) {
+                       synchronized (myLock) {
+                         final String path = FileUtil.toSystemDependentName(file.getPath());
+                         if (!myPriorityFiles.contains(path)) {
+                           myPriorityFiles.add(path);
+                           analysis_setPriorityFiles();
+                         }
+                       }
+                     }
+                   }
+
+                   @Override
+                   public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+                     if (isDartOrHtmlFile(file)) {
+                       synchronized (myLock) {
+                         final String path = FileUtil.toSystemDependentName(file.getPath());
+                         if (myPriorityFiles.remove(path)) {
+                           analysis_setPriorityFiles();
+                         }
+                       }
+                     }
+                   }
+                 });
+  }
+
+  private static boolean isDartOrHtmlFile(@NotNull final VirtualFile file) {
+    return file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file);
   }
 
   public void updateFilesContent() {
@@ -248,7 +282,7 @@ public class DartAnalysisServerService {
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
       for (Document document : fileDocumentManager.getUnsavedDocuments()) {
         final VirtualFile file = fileDocumentManager.getFile(document);
-        if (file != null && (file.getFileType() == DartFileType.INSTANCE || HtmlUtil.isHtmlFile(file))) {
+        if (file != null && isDartOrHtmlFile(file)) {
           oldTrackedFiles.remove(file.getPath());
 
           final Long oldTimestamp = myFilePathWithOverlaidContentToTimestamp.get(file.getPath());
@@ -285,7 +319,6 @@ public class DartAnalysisServerService {
     }
   }
 
-
   public boolean updateRoots(final List<String> includedRoots, final List<String> excludedRoots) {
     synchronized (myLock) {
       if (myServer == null) return false;
@@ -312,7 +345,6 @@ public class DartAnalysisServerService {
         semaphore.down();
 
         final String path = FileUtil.toSystemDependentName(info.myFilePath);
-        addPriorityFile(path);
 
         LOG.debug("analysis_getErrors(" + path + ")");
 
@@ -496,24 +528,6 @@ public class DartAnalysisServerService {
     }
   }
 
-  private void addPriorityFile(@NotNull final String path) {
-    synchronized (myLock) {
-      if (!myPriorityFiles.contains(path)) {
-        myPriorityFiles.add(path);
-        analysis_setPriorityFiles();
-      }
-    }
-  }
-
-  private void removePriorityFile(@NotNull final String path) {
-    synchronized (myLock) {
-      if (myPriorityFiles.contains(path)) {
-        myPriorityFiles.remove(path);
-        analysis_setPriorityFiles();
-      }
-    }
-  }
-
   @NotNull
   private String server_getVersion() {
     final Ref<String> resultRef = new Ref<String>("");
@@ -585,8 +599,8 @@ public class DartAnalysisServerService {
         myServerVersion = server_getVersion();
         mySdkVersion = sdk.getVersion();
         myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
+        analysis_setPriorityFiles();
         LOG.info("Server started, see status at http://localhost:" + port + "/status");
-        myConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, myFileEditorManagerListener);
       }
       catch (Exception e) {
         LOG.warn("Failed to start Dart analysis server, port=" + port, e);
@@ -616,7 +630,6 @@ public class DartAnalysisServerService {
       if (myServer != null) {
         LOG.debug("stopping server");
         myServer.removeAnalysisServerListener(myAnalysisServerListener);
-        myConnection.disconnect();
         myServer.server_shutdown();
       }
 
@@ -630,7 +643,6 @@ public class DartAnalysisServerService {
       mySdkHome = null;
       myRootsHandler.reset();
       myFilePathWithOverlaidContentToTimestamp.clear();
-      myPriorityFiles.clear();
     }
   }
 }
