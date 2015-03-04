@@ -67,7 +67,7 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
         startIndex = text.indexOf(start, endIndex);
         int afterStart = startIndex + start.length();
         endIndex = startIndex >= 0 ? text.indexOf(end, afterStart) : -1;
-        endIndex = endIndex > 0 ? endIndex : text.length() - 1;
+        endIndex = endIndex > 0 ? endIndex : getPossibleEnd(context, text);
         final PsiElement injectionCandidate = startIndex >= 0 ? context.findElementAt(startIndex) : null;
         if (injectionCandidate != null && injectionCandidate.getNode().getElementType() != XmlTokenType.XML_COMMENT_CHARACTERS &&
            !(injectionCandidate instanceof OuterLanguageElement)) {
@@ -83,6 +83,13 @@ public class AngularJSInjector implements MultiHostInjector, JSTargetedInjector 
         }
       } while (startIndex >= 0);
     }
+  }
+
+  private static int getPossibleEnd(PsiElement context, String text) {
+    if (context instanceof XmlAttributeValueImpl) {
+      return text.endsWith("'") || text.endsWith("\"") ? text.length() - 1 : text.length();
+    }
+    return text.length();
   }
 
   @NotNull

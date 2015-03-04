@@ -166,6 +166,10 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals(AngularJSLanguage.INSTANCE, myFixture.getFile().getLanguage());
   }
 
+  public void testNoQuotes() {
+    myFixture.configureByFiles("noQuotes.html", "angular.js");
+  }
+
   public void testBadExpression() {
     myFixture.enableInspections(BadExpressionStatementJSInspection.class);
     myFixture.configureByFiles("badExpression.html", "angular.js", "custom.js");
