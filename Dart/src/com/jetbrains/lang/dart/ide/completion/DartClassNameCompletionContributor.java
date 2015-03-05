@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.Condition;
 import com.intellij.patterns.ElementPattern;
@@ -9,6 +10,7 @@ import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartComponentType;
+import com.jetbrains.lang.dart.ide.DartLookupElement;
 import com.jetbrains.lang.dart.ide.index.DartComponentInfo;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.resolve.ClassNameScopeProcessor;
@@ -46,8 +48,10 @@ public class DartClassNameCompletionContributor extends CompletionContributor {
                final Set<DartComponentName> suggestedVariants = new THashSet<DartComponentName>();
                DartResolveUtil.treeWalkUpAndTopLevelDeclarations(parameters.getPosition(), new ClassNameScopeProcessor(suggestedVariants));
 
-               for (DartComponentName variant : suggestedVariants) {
-                 result.addElement(LookupElementBuilder.create(variant));
+               final boolean lookingForPrivate =  parameters.getPosition().getText().startsWith("_");
+               for (LookupElement element : DartLookupElement.convert(suggestedVariants, false)) {
+                 if (element.toString().startsWith("_") && !lookingForPrivate) continue;
+                 result.addElement(element);
                }
                if (parameters.getInvocationCount() > 1) {
                  DartGlobalVariantsCompletionHelper.addAdditionalGlobalVariants(
