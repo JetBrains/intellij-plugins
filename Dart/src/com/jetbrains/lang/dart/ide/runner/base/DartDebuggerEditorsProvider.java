@@ -22,6 +22,6 @@ public class DartDebuggerEditorsProvider extends XDebuggerEditorsProviderBase {
                                                  @NotNull String text,
                                                  @Nullable PsiElement context,
                                                  boolean isPhysical) {
-    return DartElementGenerator.createExpressionCodeFragment(project, text, context, true);
+    return DartElementGenerator.createExpressionCodeFragment(project, text, context);
   }
 }
