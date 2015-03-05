@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.ProjectScope;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Url;
 import com.jetbrains.javascript.debugger.FileUrlMapper;
 import com.jetbrains.lang.dart.DartFileType;
@@ -71,7 +71,7 @@ final class DartFileUrlMapper extends FileUrlMapper {
 
   @Nullable
   private static VirtualFile findFileInAnyPackagesFolder(final @NotNull Project project, final @NotNull String packageUrl) {
-    for (final VirtualFile yamlFile : FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, ProjectScope.getContentScope(project))) {
+    for (final VirtualFile yamlFile : FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project))) {
       final VirtualFile file = DartUrlResolver.getInstance(project, yamlFile).findFileByDartUrl(packageUrl);
       if (file != null) return file;
     }
