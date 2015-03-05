@@ -34,7 +34,7 @@ public class DartElementGenerator {
     return null;
   }
 
-  public static PsiFile createExpressionCodeFragment(Project myProject, String text, PsiElement context, boolean resolveScope) {
+  public static PsiFile createExpressionCodeFragment(Project myProject, String text, PsiElement context) {
     final String name = "dummy." + DartFileType.DEFAULT_EXTENSION;
     final DartExpressionCodeFragmentImpl codeFragment = new DartExpressionCodeFragmentImpl(myProject, name, text, true);
     codeFragment.setContext(context);
