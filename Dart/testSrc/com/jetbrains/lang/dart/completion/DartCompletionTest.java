@@ -22,14 +22,18 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
     myFixture.openFileInEditor(file.getVirtualFile());
 
     final List<CaretPositionInfo> caretPositions = DartTestUtils.extractPositionMarkers(getProject(), myFixture.getEditor().getDocument());
+    final String fileText = file.getText();
 
     for (CaretPositionInfo caretPositionInfo : caretPositions) {
       myFixture.getEditor().getCaretModel().moveToOffset(caretPositionInfo.caretOffset);
       final LookupElement[] lookupElements = myFixture.completeBasic();
+      final String fileTextWithCaret =
+        fileText.substring(0, caretPositionInfo.caretOffset) + "<caret>" + fileText.substring(caretPositionInfo.caretOffset);
       checkLookupElements(lookupElements,
                           caretPositionInfo.completionEqualsList,
                           caretPositionInfo.completionIncludesList,
-                          caretPositionInfo.completionExcludesList);
+                          caretPositionInfo.completionExcludesList,
+                          fileTextWithCaret);
       LookupManager.getInstance(getProject()).hideActiveLookup();
     }
   }
@@ -37,25 +41,26 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
   private static void checkLookupElements(final LookupElement[] lookupElements,
                                           final List<String> equalsList,
                                           final List<String> includesList,
-                                          final List<String> excludesList) {
+                                          final List<String> excludesList,
+                                          final String fileTextWithCaret) {
     final List<String> lookupStrings = new ArrayList<String>();
     for (LookupElement element : lookupElements) {
       lookupStrings.add(element.getLookupString());
     }
 
     if (equalsList != null) {
-      assertSameElements(lookupStrings, equalsList);
+      assertSameElements(fileTextWithCaret, lookupStrings, equalsList);
     }
 
     if (includesList != null) {
       for (String s : includesList) {
-        assertTrue(s, lookupStrings.contains(s));
+        assertTrue("Missing in completion list: " + s + "\n" + fileTextWithCaret, lookupStrings.contains(s));
       }
     }
 
     if (excludesList != null) {
       for (String s : excludesList) {
-        assertFalse(s, lookupStrings.contains(s));
+        assertFalse("Unexpected in completion list: " + s + "\n" + fileTextWithCaret, lookupStrings.contains(s));
       }
     }
   }
@@ -80,8 +85,8 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testKeywords() throws Exception {
-    doTest("Object <caret completionEquals=''>" +
-           "var <caret completionEquals=''>" +
-           "void function (Object <caret completionEquals=''>)");
+    doTest("Object <caret completionEquals=''>a;\n" +
+           "var <caret completionEquals=''>a;\n" +
+           "void function (Object O<caret completionEquals=''>){}\n");
   }
 }
