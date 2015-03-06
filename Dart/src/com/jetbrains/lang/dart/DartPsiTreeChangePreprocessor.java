@@ -1,9 +1,8 @@
 package com.jetbrains.lang.dart;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.PsiTreeChangeEventImpl;
 import com.intellij.psi.impl.PsiTreeChangePreprocessorBase;
 import com.intellij.psi.xml.XmlFile;
@@ -13,8 +12,8 @@ import com.jetbrains.lang.dart.psi.DartFile;
 import org.jetbrains.annotations.NotNull;
 
 public class DartPsiTreeChangePreprocessor extends PsiTreeChangePreprocessorBase {
-  public DartPsiTreeChangePreprocessor(@NotNull final PsiManager psiManager) {
-    super((PsiManagerImpl)psiManager);
+  public DartPsiTreeChangePreprocessor(@NotNull final Project project) {
+    super(project);
   }
 
   @Override
