@@ -151,7 +151,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
     }
 
     final JSClass jsClass = BaseJSGenerateHandler.findClass(psiFile, editor);
-    if (jsClass == null || !JavaScriptGenerateAccessorHandler.isEventDispatcher(jsClass)) {
+    if (jsClass == null || !ActionScriptEventDispatchUtils.isEventDispatcher(jsClass)) {
       return null;
     }
 

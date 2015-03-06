@@ -300,18 +300,6 @@
             text="tearDown()">
       <add-to-group anchor="after" relative-to-action="Generate.SetUp.Actionscript" group-id="GenerateGroup"/>
     </action>
-    <action id="Generate.GetAccessor.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateGetAccessorAction"
-            text="Getter">
-      <add-to-group anchor="after" relative-to-action="Generate.Constructor.JavaScript" group-id="GenerateGroup"/>
-    </action>
-    <action id="Generate.SetAccessor.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateSetAccessorAction"
-            text="Setter">
-      <add-to-group anchor="after" relative-to-action="Generate.GetAccessor.Actionscript" group-id="GenerateGroup"/>
-    </action>
-    <action id="Generate.GetSetAccessor.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateGetSetAccessorAction"
-            text="Getter and Setter">
-      <add-to-group anchor="after" relative-to-action="Generate.SetAccessor.Actionscript" group-id="GenerateGroup"/>
-    </action>
     <action id="Generate.EventHandler.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateEventHandlerAction"
             text="Event Handler">
       <add-to-group anchor="after" relative-to-action="Generate.GetSetAccessor.Actionscript" group-id="GenerateGroup"/>
