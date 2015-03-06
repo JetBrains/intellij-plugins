@@ -1,4 +1,4 @@
-import 'additional/Foo.dart' ;
+import 'additional/Foo.dart';
 
 main() {
   Foo<caret>

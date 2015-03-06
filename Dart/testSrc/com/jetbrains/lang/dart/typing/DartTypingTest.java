@@ -361,4 +361,33 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     myFixture.configureByText(DartFileType.INSTANCE, StringUtil.replace(textBefore, "break;", "foo;"));
     doTypeAndCheck('\n', StringUtil.replace(textAfter, "break;\n    <caret>", "foo;\n      <caret>"));
   }
+
+  public void testEnterInMapLiteral() throws Throwable {
+    myFixture.configureByText(DartFileType.INSTANCE,"var data = {<caret>};");
+    doTypeAndCheck('\n', "var data = {\n" +
+                         "  <caret>\n" +
+                         "};");
+    myFixture.configureByText(DartFileType.INSTANCE,"var data = {\n" +
+                                                    "  1:1,<caret>\n" +
+                                                    "};");
+    doTypeAndCheck('\n', "var data = {\n" +
+                         "  1:1,\n" +
+                         "  <caret>\n" +
+                         "};");
+  }
+
+  public void testEnterInListLiteral() throws Throwable {
+    myFixture.configureByText(DartFileType.INSTANCE,"var data = [<caret>\n" +
+                                                    "];");
+    doTypeAndCheck('\n', "var data = [\n" +
+                         "  <caret>\n" +
+                         "];");
+    myFixture.configureByText(DartFileType.INSTANCE,"var data = [\n" +
+                                                    "  1,<caret>\n" +
+                                                    "];");
+    doTypeAndCheck('\n', "var data = [\n" +
+                         "  1,\n" +
+                         "  <caret>\n" +
+                         "];");
+  }
 }

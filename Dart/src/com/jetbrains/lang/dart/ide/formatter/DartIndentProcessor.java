@@ -50,6 +50,14 @@ public class DartIndentProcessor {
     if (COMMENTS.contains(elementType) && prevSiblingType == LBRACE && parentType == CLASS_BODY) {
       return Indent.getNormalIndent();
     }
+
+    if (parentType == MAP_LITERAL_EXPRESSION || parentType == LIST_LITERAL_EXPRESSION) {
+      if (elementType == LBRACE || elementType == RBRACE || elementType == LBRACKET || elementType == RBRACKET) {
+        return Indent.getNoneIndent();
+      }
+      return Indent.getNormalIndent();
+    }
+
     if (elementType == LBRACE || elementType == RBRACE) {
       switch (braceStyle) {
         case CommonCodeStyleSettings.END_OF_LINE:
@@ -63,24 +71,14 @@ public class DartIndentProcessor {
           return Indent.getNoneIndent();
       }
     }
+
     if (parentType == PARENTHESIZED_EXPRESSION) {
       if (elementType == LPAREN || elementType == RPAREN) {
         return Indent.getNoneIndent();
       }
       return Indent.getContinuationIndent();
     }
-    if (parentType == MAP_LITERAL_EXPRESSION) {
-      if (elementType == LBRACE || elementType == RBRACE) {
-        return Indent.getNoneIndent();
-      }
-      return Indent.getContinuationIndent();
-    }
-    if (parentType == LIST_LITERAL_EXPRESSION) {
-      if (elementType == LBRACKET || elementType == RBRACKET) {
-        return Indent.getNoneIndent();
-      }
-      return Indent.getContinuationIndent();
-    }
+
     if (elementType == CLASS_MEMBERS) {
       return Indent.getNormalIndent();
     }
