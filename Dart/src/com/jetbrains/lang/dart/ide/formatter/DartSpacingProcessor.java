@@ -61,6 +61,7 @@ public class DartSpacingProcessor {
     final ASTNode node2 = ((AbstractBlock)child2).getNode();
     final IElementType type2 = node2.getElementType();
 
+    if (SEMICOLON == type2) return Spacing.createSpacing(0, 0, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
     if (AT == type1) return Spacing.createSpacing(0, 0, 0, false, 0);
     if (METADATA == type1) return Spacing.createSpacing(1, 1, 0, true, 0);
 
@@ -71,7 +72,7 @@ public class DartSpacingProcessor {
     if (DOC_COMMENT_CONTENTS.contains(type2)) {
       return Spacing.createSpacing(0, Integer.MAX_VALUE, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (type2 != SEMICOLON && BLOCKS.contains(elementType)) {
+    if (BLOCKS.contains(elementType)) {
       boolean topLevel = elementType == DART_FILE || elementType == EMBEDDED_CONTENT;
       int lineFeeds = 1;
       if (!COMMENTS.contains(type1) && (elementType == CLASS_MEMBERS || topLevel && DECLARATIONS.contains(type2))) {
@@ -87,10 +88,10 @@ public class DartSpacingProcessor {
       }
       return Spacing.createSpacing(0, 0, lineFeeds, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (type2 != SEMICOLON && elementType == STATEMENTS && (parentType == SWITCH_CASE || parentType == DEFAULT_CASE)) {
+    if (elementType == STATEMENTS && (parentType == SWITCH_CASE || parentType == DEFAULT_CASE)) {
       return Spacing.createSpacing(0, 0, 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (type1 == SEMICOLON && !COMMENTS.contains(type2) && parentType == BLOCK) {
+    if (!COMMENTS.contains(type2) && parentType == BLOCK) {
       return addLineBreak();
     }
     if (type1 == STATEMENTS || type2 == STATEMENTS) {
@@ -350,7 +351,7 @@ public class DartSpacingProcessor {
     }
 
     boolean isBraces = type1 == LBRACE || type2 == RBRACE;
-    if ((isBraces && elementType != NAMED_FORMAL_PARAMETERS) ||
+    if ((isBraces && elementType != NAMED_FORMAL_PARAMETERS && elementType != MAP_LITERAL_EXPRESSION) ||
         BLOCKS.contains(type1) ||
         FUNCTION_DEFINITION.contains(type1) ||
         COMMENTS.contains(type1)) {

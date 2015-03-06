@@ -100,7 +100,7 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     final DartBlock previousBlock = newIndex == 0 ? null : (DartBlock)getSubBlocks().get(newIndex - 1);
     final IElementType previousType = previousBlock == null ? null : previousBlock.getNode().getElementType();
 
-    if (previousType == LBRACE) {
+    if (previousType == LBRACE || previousType == LBRACKET) {
       return new ChildAttributes(Indent.getNormalIndent(), null);
     }
 

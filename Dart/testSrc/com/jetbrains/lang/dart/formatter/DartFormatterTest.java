@@ -206,5 +206,9 @@ public class DartFormatterTest extends FormatterTestCase {
   public void testMetadata() throws Exception {
     doTest();
   }
+
+  public void testMapAndListLiterals() throws Exception {
+    doTest();
+  }
 }
 
