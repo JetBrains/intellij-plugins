@@ -7,7 +7,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
-import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
@@ -85,7 +84,7 @@ public class DartIndentProcessor {
     if (elementType == CLASS_MEMBERS) {
       return Indent.getNormalIndent();
     }
-    if (needIndent(parentType)) {
+    if (parentType == BLOCK) {
       final PsiElement psi = node.getPsi();
       if (psi.getParent() instanceof PsiFile) {
         return Indent.getNoneIndent();
@@ -101,13 +100,10 @@ public class DartIndentProcessor {
     if (parentType == FOR_STATEMENT && prevSiblingType == FOR_LOOP_PARTS_IN_BRACES && elementType != BLOCK) {
       return Indent.getNormalIndent();
     }
-    if (parentType == SWITCH_STATEMENT && prevSiblingType == RPAREN) {
+    if (parentType == SWITCH_STATEMENT && (elementType == SWITCH_CASE || elementType == DEFAULT_CASE)) {
       return Indent.getNormalIndent();
     }
-    if (superParentType == SWITCH_CASE && parentType == STATEMENTS) {
-      return Indent.getNormalIndent();
-    }
-    if (superParentType == DEFAULT_CASE && parentType == STATEMENTS) {
+    if ((parentType == SWITCH_CASE || parentType == DEFAULT_CASE) && elementType == STATEMENTS) {
       return Indent.getNormalIndent();
     }
     if (parentType == WHILE_STATEMENT && prevSiblingType == RPAREN && elementType != BLOCK) {
@@ -128,15 +124,5 @@ public class DartIndentProcessor {
       return Indent.getNormalIndent();
     }
     return Indent.getNoneIndent();
-  }
-
-  private static boolean needIndent(@Nullable IElementType type) {
-    if (type == null) {
-      return false;
-    }
-    boolean result = type == BLOCK;
-    result = result || type == SWITCH_CASE;
-    result = result || type == DEFAULT_CASE;
-    return result;
   }
 }

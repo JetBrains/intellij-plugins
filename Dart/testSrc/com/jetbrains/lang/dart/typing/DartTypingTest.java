@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.typing;
 
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartFileType;
 
@@ -280,5 +281,84 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
       "    }\n" +
       "  }\n" +
       "}");
+  }
+
+  public void testEnterInSwitch() throws Throwable {
+    myFixture.configureByText(DartFileType.INSTANCE,
+                              "void bar() {\n" +
+                              "  switch (1) {<caret>\n" +
+                              "}");
+    doTypeAndCheck('\n', "void bar() {\n" +
+                         "  switch (1) {\n" +
+                         "    <caret>\n" +
+                         "  }\n" +
+                         "}");
+  }
+
+  public void testEnterAfterCase() throws Throwable {
+    myFixture.configureByText(DartFileType.INSTANCE,
+                              "void bar() {\n" +
+                              "  switch (1) {\n" +
+                              "    case 1+1: <caret>\n" +
+                              "      a;\n" +
+                              "    case 2:\n" +
+                              "  }\n" +
+                              "}");
+    doTypeAndCheck('\n', "void bar() {\n" +
+                         "  switch (1) {\n" +
+                         "    case 1+1: \n" +
+                         "      <caret>\n" +
+                         "      a;\n" +
+                         "    case 2:\n" +
+                         "  }\n" +
+                         "}");
+  }
+
+  public void testEnterAfterDefault() throws Throwable {
+    myFixture.configureByText(DartFileType.INSTANCE,
+                              "void bar() {\n" +
+                              "  switch (1) {\n" +
+                              "    case 1:\n" +
+                              "    default:<caret>\n" +
+                              "  }\n" +
+                              "}");
+    doTypeAndCheck('\n', "void bar() {\n" +
+                         "  switch (1) {\n" +
+                         "    case 1:\n" +
+                         "    default:\n" +
+                         "      <caret>\n" +
+                         "  }\n" +
+                         "}");
+  }
+
+  public void testEnterAfterBreakInCase() throws Throwable {
+    final String textBefore = "void bar() {\n" +
+                              "  switch (1) {\n" +
+                              "    case 1:\n" +
+                              "      break;<caret>\n" +
+                              "  }\n" +
+                              "}";
+    final String textAfter = "void bar() {\n" +
+                             "  switch (1) {\n" +
+                             "    case 1:\n" +
+                             "      break;\n" +
+                             "    <caret>\n" +
+                             "  }\n" +
+                             "}";
+
+    myFixture.configureByText(DartFileType.INSTANCE, textBefore);
+    doTypeAndCheck('\n', textAfter);
+
+    myFixture.configureByText(DartFileType.INSTANCE, StringUtil.replace(textBefore, "break;", "continue;"));
+    doTypeAndCheck('\n', StringUtil.replace(textAfter, "break;", "continue;"));
+
+    myFixture.configureByText(DartFileType.INSTANCE, StringUtil.replace(textBefore, "break;", "return 1+1;"));
+    doTypeAndCheck('\n', StringUtil.replace(textAfter, "break;", "return 1+1;"));
+
+    myFixture.configureByText(DartFileType.INSTANCE, StringUtil.replace(textBefore, "break;", "throw '';"));
+    doTypeAndCheck('\n', StringUtil.replace(textAfter, "break;", "throw '';"));
+
+    myFixture.configureByText(DartFileType.INSTANCE, StringUtil.replace(textBefore, "break;", "foo;"));
+    doTypeAndCheck('\n', StringUtil.replace(textAfter, "break;\n    <caret>", "foo;\n      <caret>"));
   }
 }
