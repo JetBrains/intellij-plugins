@@ -83,19 +83,7 @@ public class DartAnalysisServerService {
 
     @Override
     public void computedErrors(final String file, final List<AnalysisError> errors) {
-      ApplicationManager.getApplication().runReadAction(new Runnable() {
-        @Override
-        public void run() {
-          final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(file));
-          if (vFile == null) return;
-
-          for (final Project project : myRootsHandler.getTrackedProjects()) {
-            if (!project.isDisposed() && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
-              DartProblemsViewImpl.getInstance(project).updateErrorsForFile(vFile, errors);
-            }
-          }
-        }
-      });
+      updateProblemsView(file, errors);
     }
 
     @Override
@@ -128,6 +116,9 @@ public class DartAnalysisServerService {
 
     @Override
     public void flushedResults(List<String> files) {
+      for(String file : files) {
+        updateProblemsView(file, AnalysisError.EMPTY_LIST);
+      }
     }
 
     @Override
@@ -268,37 +259,6 @@ public class DartAnalysisServerService {
                              }
                            }
                          });
-
-    connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener.Adapter() {
-      @Override
-      public void before(@NotNull final List<? extends VFileEvent> events) {
-        synchronized (myLock) {
-          if (myServer == null) return;
-        }
-
-        final List<VirtualFile> deletedFiles = new ArrayList<VirtualFile>(events.size());
-        for (VFileEvent event : events) {
-          if (event instanceof VFileDeleteEvent && isDartOrHtmlFile(((VFileDeleteEvent)event).getFile())) {
-            deletedFiles.add(((VFileDeleteEvent)event).getFile());
-          }
-        }
-
-        if (deletedFiles.isEmpty()) return;
-
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
-          @Override
-          public void run() {
-            for (VirtualFile vFile : deletedFiles) {
-              for (final Project project : myRootsHandler.getTrackedProjects()) {
-                if (!project.isDisposed() && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
-                  DartProblemsViewImpl.getInstance(project).updateErrorsForFile(vFile, AnalysisError.EMPTY_LIST);
-                }
-              }
-            }
-          }
-        });
-      }
-    });
   }
 
   private static boolean isDartOrHtmlFile(@NotNull final VirtualFile file) {
@@ -365,6 +325,29 @@ public class DartAnalysisServerService {
       myServer.analysis_setAnalysisRoots(includedRoots, excludedRoots, null);
       return true;
     }
+  }
+
+  public void updateProblemsView(final String file, final List<AnalysisError> errors) {
+    ApplicationManager.getApplication().runReadAction(new Runnable() {
+      @Override
+      public void run() {
+        final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(file));
+        if (vFile != null) {
+          for (final Project project : myRootsHandler.getTrackedProjects()) {
+            if (!project.isDisposed() && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
+              DartProblemsViewImpl.getInstance(project).updateErrorsForFile(vFile, errors);
+            }
+          }
+        } else {
+          // clear the group, file doesn't exist
+          for (final Project project : myRootsHandler.getTrackedProjects()) {
+            if (!project.isDisposed()) {
+              DartProblemsViewImpl.getInstance(project).removeGroup(FileUtil.toSystemIndependentName(file));
+            }
+          }
+        }
+      }
+    });
   }
 
   @Nullable
