@@ -126,6 +126,18 @@ public class DartProblemsViewImpl {
     });
   }
 
+  public void removeGroup(@NotNull final String groupName) {
+    myViewUpdater.execute(new Runnable() {
+      @Override
+      public void run() {
+        myPanel.removeGroup(groupName);
+        myPanel.updateTree();
+        updateIcon();
+      }
+    });
+
+  }
+
   private void cleanupChildrenRecursively(@NotNull final Object fromElement, @NotNull final VirtualFile vFile) {
     final ErrorViewStructure structure = myPanel.getErrorViewStructure();
     for (ErrorTreeElement element : structure.getChildElements(fromElement)) {
