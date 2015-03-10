@@ -157,11 +157,11 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         conf.setManifestGenerationMode(ManifestGenerationMode.OsmorcControlled);
         conf.setUseProjectDefaultManifestFileLocation(true);
       }
+    }
 
-      // check if bundle name exists, if not compute it (IDEA-63244)
-      if (!props.containsKey(Constants.BUNDLE_NAME)) {
-        props.put(Constants.BUNDLE_NAME, computeBundleName(mavenProject));
-      }
+    // check if bundle name exists, if not compute it (IDEA-63244)
+    if (!props.containsKey(Constants.BUNDLE_NAME)) {
+      props.put(Constants.BUNDLE_NAME, computeBundleName(mavenProject));
     }
 
     // now post-process the settings, to make Embed-Dependency work
@@ -197,9 +197,17 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
       return bundleName;
     }
 
-    // when no name is set, use the symbolic name
-    String mavenProjectName = mavenProject.getName();
-    return mavenProjectName != null ? mavenProjectName : computeSymbolicName(mavenProject);
+    String projectName = mavenProject.getName();
+    if (!StringUtil.isEmpty(projectName)) {
+      return projectName;
+    }
+
+    String artifactId = mavenProject.getMavenId().getArtifactId();
+    if (!StringUtil.isEmpty(artifactId)) {
+      return artifactId;
+    }
+
+    return computeSymbolicName(mavenProject);
   }
 
   /**
