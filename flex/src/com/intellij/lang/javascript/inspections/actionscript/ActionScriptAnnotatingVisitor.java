@@ -1257,26 +1257,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  protected boolean suggestCreateVarFromUsage(JSReferenceExpression node) {
-    JSExpression qualifier = node.getQualifier();
-    JSClass targetClass = null;
-    if (qualifier == null) {
-      targetClass = JSResolveUtil.getClassOfContext(node);
-    }
-    else if (qualifier instanceof JSReferenceExpression) {
-      final JSClass clazz = JSResolveUtil.findClassOfQualifier(qualifier, node.getContainingFile());
-      if (clazz != null) {
-        targetClass = clazz;
-      }
-    }
-
-    if (targetClass != null) {
-      return !targetClass.isInterface();
-    }
-    return true;
-  }
-
-  @Override
   public void visitJSBinaryExpression(JSBinaryExpression node) {
     super.visitJSBinaryExpression(node);
 
