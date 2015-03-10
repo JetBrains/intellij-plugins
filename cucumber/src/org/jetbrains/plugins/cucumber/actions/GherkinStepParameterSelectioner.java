@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.actions;
 import com.intellij.codeInsight.editorActions.wordSelection.AbstractWordSelectioner;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -52,18 +53,22 @@ public class GherkinStepParameterSelectioner extends AbstractWordSelectioner {
     final PsiElement parent = e.getParent();
     if (parent instanceof GherkinStep) {
       final GherkinStep step = (GherkinStep)parent;
-      final PsiReference[] references = step.getReferences();
-      for (PsiReference reference : references) {
+      for (final PsiReference reference : step.getReferences()) {
         if (reference instanceof CucumberStepReference) {
-          final AbstractStepDefinition definition = ((CucumberStepReference)reference).resolveToDefinition();
-          if (definition != null) {
-            final List<TextRange> ranges =
-              GherkinPsiUtil.buildParameterRanges(step, definition, step.getTextOffset() + reference.getRangeInElement().getStartOffset());
-            if (ranges != null) {
-              result.addAll(ranges);
-              result.addAll(buildAdditionalRanges(ranges, editorText));
+          DumbService.getInstance(e.getProject()).withAlternativeResolveEnabled(new Runnable() {
+            @Override
+            public void run() {
+              final AbstractStepDefinition definition = ((CucumberStepReference)reference).resolveToDefinition();
+              if (definition != null) {
+                final List<TextRange> ranges =
+                  GherkinPsiUtil.buildParameterRanges(step, definition, step.getTextOffset() + reference.getRangeInElement().getStartOffset());
+                if (ranges != null) {
+                  result.addAll(ranges);
+                  result.addAll(buildAdditionalRanges(ranges, editorText));
+                }
+              }
             }
-          }
+          });
         }
       }
       buildAdditionalRanges(result, editorText);
