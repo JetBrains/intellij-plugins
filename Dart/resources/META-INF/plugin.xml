@@ -193,6 +193,9 @@
     <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="dart.sdk.is.not.configured"
                      groupName="Dart" enabledByDefault="true" level="WARNING"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartSdkIsNotConfiguredInspection"/>
+    <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="dart.sdk.is.out.of.date"
+                     groupName="Dart" enabledByDefault="true" level="INFO"
+                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartSdkIsOutOfDateInspection"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">
