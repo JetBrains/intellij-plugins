@@ -15,11 +15,14 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.io.HttpRequests;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -34,40 +37,123 @@ public class DartSdkUtil {
   private static final Map<Pair<File, Long>, String> ourVersions = new HashMap<Pair<File, Long>, String>();
 
   @Nullable
-  static String getSdkVersion(final @NotNull String sdkHomePath) {
+  public static String getSdkVersion(final @NotNull String sdkHomePath) {
     final File versionFile = new File(sdkHomePath + "/version");
-    final File revisionFile = new File(sdkHomePath + "/revision");
-
     if (versionFile.isFile()) {
       final String cachedVersion = ourVersions.get(Pair.create(versionFile, versionFile.lastModified()));
       if (cachedVersion != null) return cachedVersion;
     }
 
-    if (versionFile.isFile() && versionFile.length() < 100) {
-      final String version;
-      try {
-        version = FileUtil.loadFile(versionFile).trim();
-      }
-      catch (IOException e) {
-        return null;
-      }
-
-      String revision = null;
-      if (revisionFile.isFile() && revisionFile.length() < 100) {
-        try {
-          revision = FileUtil.loadFile(revisionFile).trim();
-        }
-        catch (IOException ignore) {/* unlucky */}
-      }
-
+    final String version = readVersionFile(sdkHomePath);
+    if (version != null) {
+      final String revision = getSdkRevision(sdkHomePath);
       final String versionWithRevision = revision == null || version.endsWith(revision) ? version : version + "_r" + revision;
       ourVersions.put(Pair.create(versionFile, versionFile.lastModified()), versionWithRevision);
-
       return versionWithRevision;
     }
 
     return null;
   }
+
+  @Nullable
+  public static SdkUpdateInfo checkForFreshSdk(final @NotNull String sdkHome) {
+    return SdkReleaseChannel.forSdk(sdkHome).checkForUpdate(sdkHome);
+  }
+
+  enum SdkReleaseChannel {
+    DEV("https://www.dartlang.org/tools/download-archive/",
+        "https://storage.googleapis.com/dart-archive/channels/dev/release/latest/VERSION"),
+    STABLE("https://www.dartlang.org/tools/sdk/",
+           "https://storage.googleapis.com/dart-archive/channels/stable/release/latest/VERSION");
+
+    SdkReleaseChannel(String downloadUrl, String updateCheckUrl) {
+      myDownloadUrl = downloadUrl;
+      myUpdateCheckUrl = updateCheckUrl;
+    }
+
+    private final String myDownloadUrl;
+    private final String myUpdateCheckUrl;
+
+    @NotNull
+    static SdkReleaseChannel forSdk(final @NotNull String sdkHome) {
+      final String currentVersion = getSdkVersion(sdkHome);
+      if (currentVersion != null && currentVersion.contains("-dev")) {
+        return DEV;
+      }
+      return STABLE;
+    }
+
+    @Nullable
+    SdkUpdateInfo checkForUpdate(final @NotNull String sdkHome) {
+      final String currentRevision = getSdkRevision(sdkHome);
+      if (currentRevision != null) {
+        try {
+
+          final String versionFileContents = HttpRequests.request(myUpdateCheckUrl).readString(null);
+          final String availableRevision = parseRevisionNumberFromJSON(versionFileContents);
+
+          if (availableRevision != null) {
+            int current = Integer.parseInt(currentRevision);
+            int available = Integer.parseInt(availableRevision);
+            if (available > current) {
+              String presentableRevision = parsePresentableRevisionStringFromJSON(versionFileContents);
+              return new SdkUpdateInfo(presentableRevision, myDownloadUrl);
+            }
+          }
+        }
+        catch (IOException e) {
+        /* ignore */
+        }
+      }
+
+      return null;
+    }
+
+  }
+
+  public static class SdkUpdateInfo {
+    private final String myRevision;
+    private final String myDownloadUrl;
+
+    SdkUpdateInfo(String revision, final String downloadUrl) {
+      myRevision = revision;
+      myDownloadUrl = downloadUrl;
+    }
+
+    public String getDownloadUrl() {
+      return myDownloadUrl;
+    }
+
+    public String getRevision() {
+      return myRevision;
+    }
+  }
+
+  private static String readVersionFile(final String sdkHomePath) {
+    final File versionFile = new File(sdkHomePath + "/version");
+    if (versionFile.isFile() && versionFile.length() < 100) {
+      try {
+        return FileUtil.loadFile(versionFile).trim();
+      }
+      catch (IOException e) {
+        /* ignore */
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  private static String getSdkRevision(final @NotNull String sdkHomePath) {
+    final File revisionFile = new File(sdkHomePath + "/revision");
+    if (revisionFile.isFile() && revisionFile.length() < 100) {
+      try {
+        return FileUtil.loadFile(revisionFile).trim();
+      }
+      catch (IOException ignore) {/* unlucky */}
+    }
+    return null;
+  }
+
 
   @Contract("null->false")
   public static boolean isDartSdkHome(final String path) {
@@ -166,5 +252,53 @@ public class DartSdkUtil {
 
   public static String getPubPath(final @NotNull String sdkRoot) {
     return sdkRoot + (SystemInfo.isWindows ? "/bin/pub.bat" : "/bin/pub");
+  }
+
+  /**
+   * Parse the revision number from a JSON string.
+   * <p>
+   * Sample payload:
+   * </p>
+   * <p/>
+   * <pre>
+   * {
+   *   "revision" : "9826",
+   *   "version"  : "0.0.1_v2012070961811",
+   *   "date"     : "2012-07-09"
+   * }
+   * </pre>
+   *
+   * @param versionJSON the json
+   * @return a revision number or <code>null</code> if none can be found
+   * @throws IOException
+   */
+  @Nullable
+  private static String parseRevisionNumberFromJSON(final @NotNull String versionJSON) throws IOException {
+    try {
+      final JSONObject obj = new JSONObject(versionJSON);
+      return obj.optString("revision", null);
+    }
+    catch (JSONException e) {
+      throw new IOException(e);
+    }
+  }
+
+  @Nullable
+  private static String parsePresentableRevisionStringFromJSON(final @NotNull String versionJSON) throws IOException {
+    try {
+      final JSONObject obj = new JSONObject(versionJSON);
+      final String version = obj.optString("version", null);
+      if (version == null) {
+        return null;
+      }
+      final String revision = obj.optString("revision", null);
+      if (revision == null) {
+        return version; // Shouldn't happen
+      }
+      return version + "_r" + revision;
+    }
+    catch (JSONException e) {
+      throw new IOException(e);
+    }
   }
 }
