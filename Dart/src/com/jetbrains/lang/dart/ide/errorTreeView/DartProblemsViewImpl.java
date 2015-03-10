@@ -4,10 +4,7 @@ import com.google.dart.server.generated.types.AnalysisError;
 import com.google.dart.server.generated.types.AnalysisErrorSeverity;
 import com.google.dart.server.generated.types.Location;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.errorTreeView.ErrorTreeElement;
 import com.intellij.ide.errorTreeView.ErrorTreeElementKind;
-import com.intellij.ide.errorTreeView.ErrorViewStructure;
-import com.intellij.ide.errorTreeView.GroupingElement;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -15,6 +12,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -28,7 +26,6 @@ import com.intellij.util.ui.MessageCategory;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.PooledThreadExecutor;
 
 import javax.swing.*;
@@ -99,81 +96,47 @@ public class DartProblemsViewImpl {
       @Override
       public void run() {
         myPanel.getErrorViewStructure().clear();
-        updateIcon();
-      }
-    });
-  }
-
-  public void updateErrorsForFile(@NotNull final VirtualFile vFile, @Nullable final List<AnalysisError> errors) {
-    if (errors == null) return;
-
-    clearProgress();
-    clearOldMessages(vFile);
-
-    if (!errors.isEmpty()) {
-      addAnalysisErrors(vFile, errors);
-    }
-  }
-
-  private void clearOldMessages(@NotNull final VirtualFile vFile) {
-    myViewUpdater.execute(new Runnable() {
-      @Override
-      public void run() {
-        cleanupChildrenRecursively(myPanel.getErrorViewStructure().getRootElement(), vFile);
-        updateIcon();
-        myPanel.reload();
-      }
-    });
-  }
-
-  public void removeGroup(@NotNull final String groupName) {
-    myViewUpdater.execute(new Runnable() {
-      @Override
-      public void run() {
-        myPanel.removeGroup(groupName);
         myPanel.updateTree();
         updateIcon();
       }
     });
-
   }
 
-  private void cleanupChildrenRecursively(@NotNull final Object fromElement, @NotNull final VirtualFile vFile) {
-    final ErrorViewStructure structure = myPanel.getErrorViewStructure();
-    for (ErrorTreeElement element : structure.getChildElements(fromElement)) {
-      if (element instanceof GroupingElement) {
-        final VirtualFile file = ((GroupingElement)element).getFile();
-        if (file != null && !vFile.getUrl().equals(file.getUrl())) {
-          continue;
-        }
-        structure.removeElement(element);
-      }
-      else {
-        structure.removeElement(element);
-      }
-    }
-  }
-
-  private void addAnalysisErrors(@NotNull final VirtualFile virtualFile, @NotNull final List<AnalysisError> errors) {
+  public void updateErrorsForFile(@NotNull final VirtualFile vFile, @NotNull final List<AnalysisError> errors) {
     myViewUpdater.execute(new Runnable() {
       @Override
       public void run() {
+        final String groupName = FileUtil.toSystemDependentName(vFile.getPath());
+        myPanel.removeGroup(groupName);
+
         for (final AnalysisError analysisError : errors) {
           if (analysisError == null || DartAnalysisServerAnnotator.shouldIgnoreMessageFromDartAnalyzer(analysisError)) continue;
           final Location location = analysisError.getLocation();
           final int line = location.getStartLine() - 1; // editor lines are zero-based
           final Navigatable navigatable = line >= 0
-                                          ? new OpenFileDescriptor(myProject, virtualFile, line, Math.max(0, location.getStartColumn() - 1))
-                                          : new OpenFileDescriptor(myProject, virtualFile, -1, -1);
+                                          ? new OpenFileDescriptor(myProject, vFile, line, Math.max(0, location.getStartColumn() - 1))
+                                          : new OpenFileDescriptor(myProject, vFile, -1, -1);
           final int type = translateAnalysisServerSeverity(analysisError.getSeverity());
           final String[] text = convertMessage(analysisError.getMessage());
-          final String groupName = virtualFile.getPresentableUrl();
           final String exportTextPrefix = "line (" + location.getStartLine() + ") ";
           final String rendererTextPrefix = "(" + location.getStartLine() + ", " + location.getStartColumn() + ")";
 
           myPanel.addMessage(type, text, groupName, navigatable, exportTextPrefix, rendererTextPrefix, null);
-          updateIcon();
         }
+
+        myPanel.updateTree();
+        updateIcon();
+      }
+    });
+  }
+
+  public void removeErrorsForFile(@NotNull final String filePath) {
+    myViewUpdater.execute(new Runnable() {
+      @Override
+      public void run() {
+        myPanel.removeGroup(FileUtil.toSystemDependentName(filePath));
+        myPanel.updateTree();
+        updateIcon();
       }
     });
   }

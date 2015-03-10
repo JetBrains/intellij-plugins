@@ -28,10 +28,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
-import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.concurrency.Semaphore;
@@ -82,8 +78,8 @@ public class DartAnalysisServerService {
     }
 
     @Override
-    public void computedErrors(final String file, final List<AnalysisError> errors) {
-      updateProblemsView(file, errors);
+    public void computedErrors(@NotNull final String file, @NotNull final List<AnalysisError> errors) {
+      updateProblemsView(FileUtil.toSystemIndependentName(file), errors);
     }
 
     @Override
@@ -116,8 +112,8 @@ public class DartAnalysisServerService {
 
     @Override
     public void flushedResults(List<String> files) {
-      for(String file : files) {
-        updateProblemsView(file, AnalysisError.EMPTY_LIST);
+      for (String file : files) {
+        updateProblemsView(FileUtil.toSystemIndependentName(file), AnalysisError.EMPTY_LIST);
       }
     }
 
@@ -327,23 +323,20 @@ public class DartAnalysisServerService {
     }
   }
 
-  public void updateProblemsView(final String file, final List<AnalysisError> errors) {
+  private void updateProblemsView(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
     ApplicationManager.getApplication().runReadAction(new Runnable() {
       @Override
       public void run() {
-        final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(file));
-        if (vFile != null) {
-          for (final Project project : myRootsHandler.getTrackedProjects()) {
-            if (!project.isDisposed() && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
-              DartProblemsViewImpl.getInstance(project).updateErrorsForFile(vFile, errors);
-            }
+        final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+
+        for (final Project project : myRootsHandler.getTrackedProjects()) {
+          if (project.isDisposed()) continue;
+
+          if (vFile != null && ProjectRootManager.getInstance(project).getFileIndex().isInContent(vFile)) {
+            DartProblemsViewImpl.getInstance(project).updateErrorsForFile(vFile, errors);
           }
-        } else {
-          // clear the group, file doesn't exist
-          for (final Project project : myRootsHandler.getTrackedProjects()) {
-            if (!project.isDisposed()) {
-              DartProblemsViewImpl.getInstance(project).removeGroup(FileUtil.toSystemIndependentName(file));
-            }
+          else {
+            DartProblemsViewImpl.getInstance(project).removeErrorsForFile(filePath);
           }
         }
       }
