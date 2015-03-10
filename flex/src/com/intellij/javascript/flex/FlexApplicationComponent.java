@@ -72,7 +72,7 @@ public class FlexApplicationComponent extends FileTypeFactory implements Applica
 
   public static final String[] AIR_VERSIONS =
     {"1.0", "1.1", "1.5", "1.5.1", "1.5.2", "1.5.3", "2.0", "2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7",
-      "3.8", "3.9", "4.0", "13.0", "14.0", "15.0"};
+      "3.8", "3.9", "4.0", "13.0", "14.0", "15.0", "16.0", "17.0", "18.0", "19.0"};
 
   @NotNull
   public String getComponentName() {
