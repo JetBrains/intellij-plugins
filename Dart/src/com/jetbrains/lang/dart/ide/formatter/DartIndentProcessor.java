@@ -115,7 +115,8 @@ public class DartIndentProcessor {
         elementType != BLOCK) {
       return Indent.getNormalIndent();
     }
-    if (parentType == IF_STATEMENT && (prevSiblingType == RPAREN || prevSiblingType == ELSE) && elementType != BLOCK) {
+    if (parentType == IF_STATEMENT && elementType != BLOCK &&
+        (prevSiblingType == RPAREN || (prevSiblingType == ELSE && elementType != IF_STATEMENT) )) {
       return Indent.getNormalIndent();
     }
     if (prevSiblingType != DOT && elementType == DOT && parentType == CASCADE_REFERENCE_EXPRESSION) {

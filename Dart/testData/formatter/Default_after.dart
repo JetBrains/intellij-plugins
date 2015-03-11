@@ -30,8 +30,10 @@ class Foo {
                     z += 2;
                 } else if (x > 20) {
                     z = x << 1;
-                } else {
+                } else if (false) {
                     z = x | 2;
+                } else {
+                    1 + 1;
                 }
                 switch (k) {
                     case 0:
@@ -65,4 +67,17 @@ void main() {
         ..text = "Click me!"
         ..onClick.listen(reverseText)
         ..onMouseOver.listen(colorText);
+
+    if (true)
+        print("1");
+    else if (true)
+        print("2");
+    else if (true)
+        print("3");
+    else if (true)
+        print("4");
+    else if (true)
+        print("5");
+    else
+        print("4");
 }
