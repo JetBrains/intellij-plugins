@@ -10,6 +10,7 @@ import org.jetbrains.training.BadLessonException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -17,18 +18,20 @@ import java.util.HashSet;
  */
 public class Course {
 
-    private HashSet<Lesson> lessons;
+    private ArrayList<Lesson> lessons;
     private String path;
     private String pathDir;
     final private String defaultPath = "data/DefaultCourse.xml";
     final private String defaultPathDir = "data/";
     private String answersPath;
     private Element root;
+    private String id;
 
     public Course() throws BadCourseException, BadLessonException {
         path = defaultPath;
         pathDir = defaultPathDir;
-        lessons = new HashSet<Lesson>();
+        lessons = new ArrayList<Lesson>();
+        id = "default";
 
         initLessons();
         answersPath = root.getAttribute("answerspath").getValue();
@@ -38,10 +41,11 @@ public class Course {
         //load xml with lessons
         path = coursePath;
         pathDir = defaultPathDir;
-        lessons = new HashSet<Lesson>();
 
+        lessons = new ArrayList<Lesson>();
         initLessons();
         answersPath = root.getAttribute("answerspath").getValue();
+        id = root.getAttribute("id").getValue();
     }
 
     public String getAnswersPath() {
@@ -74,7 +78,7 @@ public class Course {
                 } else {
                     throw new BadLessonException("Cannot obtain lessons from " + path + " course file");
                 }
-                Lesson tmpl = new Lesson(pathDir + lessonEl.getAttribute("path").getValue(), lessonIsPassed);
+                Lesson tmpl = new Lesson(pathDir + lessonEl.getAttribute("path").getValue(), lessonIsPassed, this);
                 lessons.add(tmpl);
             } else throw new BadCourseException("Cannot obtain lessons from " + path + " course file");
         }
@@ -87,5 +91,17 @@ public class Course {
         }
         return null;
     }
+
+    public boolean hasNotPassedLesson() {
+        for (Lesson lesson : lessons) {
+            if (!lesson.isPassed()) return true;
+        }
+        return false;
+    }
+
+    public String getId(){
+        return id;
+    }
+
 
 }

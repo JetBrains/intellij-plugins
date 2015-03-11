@@ -1,7 +1,12 @@
 package org.jetbrains.training.graphics;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.BalloonBuilder;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +23,9 @@ public class DetailPanel extends JPanel implements Disposable{
     private Color backGroundColor = new Color(0, 0 ,0, 190);
     private final Color textColor = new Color(245, 245, 245, 255);
     private final String customFontPath = "roboto.ttf";
+    @Nullable
+    private Balloon balloon;
+    private boolean balloonShown;
 
     private JLabel myLabel;
     private JButton btn;
@@ -25,6 +33,7 @@ public class DetailPanel extends JPanel implements Disposable{
     public DetailPanel(Dimension dimension) throws IOException, FontFormatException {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        balloonShown = false;
 
         setOpaque(false);
         setPreferredSize(dimension);
@@ -42,6 +51,7 @@ public class DetailPanel extends JPanel implements Disposable{
         myLabel.setFocusable(false);
 
         btn = new RoundedCornerButton("Test button");
+        btn.setFont(customFont.deriveFont(13.0F));
         btn.setBorderPainted(false);
         btn.setForeground(Color.WHITE);
         btn.setRolloverEnabled(false);
@@ -165,7 +175,8 @@ public class DetailPanel extends JPanel implements Disposable{
 
     @Override
     public void dispose() {
-
+//        System.err.println("disposed");
+        setVisible(false);
     }
 
 //    public void setVisible(boolean visibility){
@@ -173,4 +184,38 @@ public class DetailPanel extends JPanel implements Disposable{
 //    }
 
 
+    public void showBalloon(Dimension dimension, RelativePoint location){
+
+        if (!balloonShown) {
+            balloonShown = true;
+
+            Rectangle infoBounds = new Rectangle((int) location.getPoint().getX(), (int) location.getPoint().getY(), (int) dimension.getWidth(), (int) dimension.getHeight());
+
+            BalloonBuilder balloonBuilder = JBPopupFactory.getInstance().createBalloonBuilder(this);
+            balloonBuilder
+                    .setHideOnClickOutside(false)
+                    .setHideOnKeyOutside(false)
+                    .setHideOnLinkClick(false)
+                    .setHideOnFrameResize(false)
+                    .setHideOnAction(false)
+                    .setDisposable(this)
+                    .setCloseButtonEnabled(false)
+                    .setBorderColor(new Color(0, 0, 0, 0))
+                    .setDialogMode(false)
+                    .setFillColor(new Color(0, 0, 0, 0))
+                    .setAnimationCycle(0);
+
+            balloon = balloonBuilder.createBalloon();
+            balloon.setBounds(infoBounds);
+            balloon.show(location, Balloon.Position.above);
+        }
+    }
+
+    public void hideBalloon(){
+
+        if(balloon != null){
+            balloonShown = false;
+            balloon.hide();
+        }
+    }
 }

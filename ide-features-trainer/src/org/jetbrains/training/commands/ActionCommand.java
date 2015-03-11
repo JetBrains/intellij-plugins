@@ -35,7 +35,7 @@ public class ActionCommand extends Command {
 
         final Element element = elements.poll();
 
-        updateDescription(element, infoPanel, editor);
+        updateHTMLDescription(element, infoPanel, editor);
         updateButton(element, elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
 
 

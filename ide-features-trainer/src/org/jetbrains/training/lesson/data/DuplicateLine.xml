@@ -1,6 +1,6 @@
-<xml type="Scenario" name="Duplicate Line" passed="false" version="0.1">
+<xml type="Scenario" name="Duplicate Line" passed="false" version="0.1" target="DuplicateLineDemo.java">
     <Start description="Going to learn how to duplicate lines?" btn="Yes"/>
-    <CopyText>public class JavaLessonExample {
+    <CopyText>public class DuplicateLineDemo {
 
     public static void main(String[] args) {
 
@@ -14,17 +14,17 @@
     <Text description="Let's print absolute value for x" btn="...">Let's print absolute value for &lt;span color="gray"&gt;x&lt;/span&gt;</Text>
     <Text description="Move caret to print line and" btn="..."/>
     <TraverseCaret stop="178" delay="20"/>
-    <Action action="EditorDuplicate" delay="2000" balloon="type CMD + D to duplicate current string." description="tap CMD+D to duplicate current line"/>
+    <Action action="EditorDuplicate" delay="2000" balloon="tap &lt;span color=&quot;gray&quot;&gt;⌘ + D&lt;/span&gt; to duplicate current string." description="tap &lt;span color=&quot;gray&quot;&gt;⌘ + D&lt;/span&gt; to duplicate current line"/>
     <Wait delay="200"/>
-    <Text description="Cool, replace a with x" btn="..."/>
+    <Text description="Cool, replace &lt;span color=&quot;gray&quot;&gt;a&lt;/span&gt; with &lt;span color=&quot;gray&quot;&gt;x&lt;/span&gt;" btn="..."/>
     <TraverseCaret stop="271" delay="50"/>
-    <Action action="EditorDelete" delay="100" description="deleting x"/>
+    <Action action="EditorDelete" delay="100" description="deleting &lt;span color=&quot;gray&quot;&gt;a&lt;/span&gt;"/>
     <Wait delay="300"/>
-    <TypeText description="typing x">x</TypeText>
+    <TypeText description="typing &lt;span color=&quot;gray&quot;&gt;x&lt;/span&gt;">x</TypeText>
     <TraverseCaret stop="294" delay="50"/>
-    <Action action="EditorDelete" delay="50" description="deleting x"/>
+    <Action action="EditorDelete" delay="50" description="&lt;span color=&quot;gray&quot;&gt;a&lt;/span&gt;"/>
     <Wait delay="400"/>
-    <TypeText description="typing x">x</TypeText>
+    <TypeText description="typing &lt;span color=&quot;gray&quot;&gt;x&lt;/span&gt;">x</TypeText>
     <Text description="That's it!" btn="let me try"/>
     <Action action="EditorDelete" delay="50"/>
     <Action action="$SelectAll" delay="100"/>
@@ -32,7 +32,7 @@
     <Action action="$Delete" delay="100"/>
     <Wait delay="400"/>
     <MoveCaret offset="0"/>
-    <CopyText>public class JavaLessonExample {
+    <CopyText>public class DuplicateLineDemo {
 
     public static void main(String[] args) {
 

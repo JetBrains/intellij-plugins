@@ -32,6 +32,13 @@ public abstract class Command {
         }
     }
 
+    protected void updateHTMLDescription(Element element, DetailPanel infoPanel, Editor editor){
+        if (element.getAttribute("description") != null) {
+            final String description =(element.getAttribute("description").getValue());
+            updateHTMLDescription(element, infoPanel, editor, description);
+        }
+    }
+
     protected void updateHTMLDescription(Element element, DetailPanel infoPanel, Editor editor, final String htmlText){
 
         final String inputText = "<html>" + htmlText + "</html>";
