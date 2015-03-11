@@ -51,6 +51,12 @@ February 24
 Navigation between courses by button NEXT
 Shortcut Logger
 
+February 26
+!! Found bug inside BallonImpl.java -> 139 () if (UIUtil.isCloseClick((MouseEvent)e)) { should be  (UIUtil.isCloseClick((MouseEvent)e) && insideBalloon)
+
+10 March
+* Introduce LessonQueue for Project
+
 //Plans
 * Disposable
 * Navigation between courses (Modified Toolwindow)

@@ -24,10 +24,18 @@ public class TextCommand extends Command {
     public void execute(Queue<Element> elements, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel, MouseListenerHolder mouseListenerHolder) throws InterruptedException {
 
         Element element = elements.poll();
-        updateDescription(element, infoPanel, editor);
+        //updateDescription(element, infoPanel, editor);
         updateButton(element, elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
 
-        final String htmlText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
+//        final String htmlText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
+//        if (htmlText.equals("")) {
+//            updateDescription(element, infoPanel, editor);
+//        } else {
+//            updateHTMLDescription(element, infoPanel, editor, htmlText);
+//        }
+        String htmlText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
+        if (htmlText.isEmpty()) htmlText = element.getAttribute("description").getValue();
+
         if (htmlText.equals("")) {
             updateDescription(element, infoPanel, editor);
         } else {
