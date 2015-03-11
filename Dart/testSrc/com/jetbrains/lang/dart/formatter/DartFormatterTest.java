@@ -23,31 +23,9 @@ public class DartFormatterTest extends FormatterTestCase {
   }
 
   @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    setTestStyleSettings();
-  }
-
-  @Override
   protected void doTest(String resultNumber) throws Exception {
     String testName = getTestName(false);
     doTest(testName + "." + getFileExtension(), testName + "_after." + getFileExtension(), resultNumber);
-  }
-
-
-  private static void setTestStyleSettings() {
-    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
-    CodeStyleSettings.IndentOptions indentOptions = settings.getIndentOptions();
-    assertNotNull(indentOptions);
-    indentOptions.INDENT_SIZE = 4;
-    indentOptions.CONTINUATION_INDENT_SIZE = 4;
-    indentOptions.TAB_SIZE = 4;
-
-    settings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
-    settings.BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
-    settings.ALIGN_MULTILINE_PARAMETERS = false;
-    settings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = false;
-    settings.KEEP_FIRST_COLUMN_COMMENT = false;
   }
 
   public void testAlignment() throws Exception {

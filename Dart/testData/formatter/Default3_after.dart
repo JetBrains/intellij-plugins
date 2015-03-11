@@ -1,29 +1,29 @@
 class Test1 {
-    String a;
+  String a;
 
-    foo() {
-    }
+  foo() {
+  }
 
-    int b;
+  int b;
 }
 
 class Test2 {
-    foo() {
-    }
+  foo() {
+  }
 
-    int b;
+  int b;
 }
 
 abstract class Test3 {
-    foo() {
-        if (true) {
-        }
-        int c = 239;
-        while (true) {
-        }
+  foo() {
+    if (true) {
     }
+    int c = 239;
+    while (true) {
+    }
+  }
 
-    int b;
+  int b;
 }
 
 @Foo
