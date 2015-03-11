@@ -363,13 +363,13 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testEnterInMapLiteral() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE,"var data = {<caret>};");
+    myFixture.configureByText(DartFileType.INSTANCE, "var data = {<caret>};");
     doTypeAndCheck('\n', "var data = {\n" +
                          "  <caret>\n" +
                          "};");
-    myFixture.configureByText(DartFileType.INSTANCE,"var data = {\n" +
-                                                    "  1:1,<caret>\n" +
-                                                    "};");
+    myFixture.configureByText(DartFileType.INSTANCE, "var data = {\n" +
+                                                     "  1:1,<caret>\n" +
+                                                     "};");
     doTypeAndCheck('\n', "var data = {\n" +
                          "  1:1,\n" +
                          "  <caret>\n" +
@@ -377,17 +377,83 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testEnterInListLiteral() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE,"var data = [<caret>\n" +
-                                                    "];");
+    myFixture.configureByText(DartFileType.INSTANCE, "var data = [<caret>\n" +
+                                                     "];");
     doTypeAndCheck('\n', "var data = [\n" +
                          "  <caret>\n" +
                          "];");
-    myFixture.configureByText(DartFileType.INSTANCE,"var data = [\n" +
-                                                    "  1,<caret>\n" +
-                                                    "];");
+    myFixture.configureByText(DartFileType.INSTANCE, "var data = [\n" +
+                                                     "  1,<caret>\n" +
+                                                     "];");
     doTypeAndCheck('\n', "var data = [\n" +
                          "  1,\n" +
                          "  <caret>\n" +
                          "];");
+  }
+
+  public void testLt() {
+    myFixture.configureByText(DartFileType.INSTANCE, "Map<List<caret>>");
+    doTypeAndCheck('<', "Map<List<<caret>>>");
+    myFixture.configureByText(DartFileType.INSTANCE, "class A<caret>");
+    doTypeAndCheck('<', "class A<<caret>>");
+  }
+
+  public void testGt() {
+    myFixture.configureByText(DartFileType.INSTANCE, "foo () {Map<List<<caret>>}");
+    doTypeAndCheck('>', "foo () {Map<List<><caret>>}");
+    myFixture.configureByText(DartFileType.INSTANCE, "Map<List<<caret>>>");
+    doTypeAndCheck('>', "Map<List<><caret>>");
+    myFixture.configureByText(DartFileType.INSTANCE, "Map<List<><caret>>");
+    doTypeAndCheck('>', "Map<List<>><caret>");
+    myFixture.configureByText(DartFileType.INSTANCE, "Map<List<><caret>");
+    doTypeAndCheck('>', "Map<List<>><caret>");
+    myFixture.configureByText(DartFileType.INSTANCE, "Map<List<>><caret>");
+    doTypeAndCheck('>', "Map<List<>>><caret>");
+    myFixture.configureByText(DartFileType.INSTANCE, "Map<List<A>, B <caret>");
+    doTypeAndCheck('>', "Map<List<A>, B ><caret>");
+    myFixture.configureByText(DartFileType.INSTANCE, "class A<T, E <caret>");
+    doTypeAndCheck('>', "class A<T, E ><caret>");
+    myFixture.configureByText(DartFileType.INSTANCE, "class A<T, E <caret>>");
+    doTypeAndCheck('>', "class A<T, E ><caret>");
+  }
+
+  public void testLBraceInString() {
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = 'xx$<caret>xx'");
+    doTypeAndCheck('{', "var a = 'xx${<caret>}xx'");
+    myFixture.configureByText(DartFileType.INSTANCE, "foo () {var a = 'xx$<caret>xx';\n}");
+    doTypeAndCheck('{', "foo () {var a = 'xx${<caret>}xx';\n}");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = \"$<caret>\";");
+    doTypeAndCheck('{', "var a = \"${<caret>}\";");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = r'$<caret>'");
+    doTypeAndCheck('{', "var a = r'${<caret>'");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = '''$<caret>'''");
+    doTypeAndCheck('{', "var a = '''${<caret>}'''");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = '${}<caret>'");
+    doTypeAndCheck('{', "var a = '${}{<caret>'");
+    myFixture.configureByText(DartFileType.INSTANCE, "<caret>");
+    doTypeAndCheck('{', "{<caret>}");
+  }
+
+  public void testRBraceInString() {
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = 'xx${<caret>}xx'");
+    doTypeAndCheck('}', "var a = 'xx${}<caret>xx'");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = 'xx${<caret>xx'");
+    doTypeAndCheck('}', "var a = 'xx${}<caret>xx'");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = \"${1 + 2 <caret>}\"");
+    doTypeAndCheck('}', "var a = \"${1 + 2 }<caret>\"");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = r'${<caret>}'");
+    doTypeAndCheck('}', "var a = r'${}<caret>}'");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = '''${<caret>}'''");
+    doTypeAndCheck('}', "var a = '''${}<caret>'''");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = '${{<caret>}}'");
+    doTypeAndCheck('}', "var a = '${{}<caret>}'");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = '${{a<caret>}'");
+    doTypeAndCheck('}', "var a = '${{a}<caret>'");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = '${{1+1;}<caret>}'");
+    doTypeAndCheck('}', "var a = '${{1+1;}}<caret>'");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = '${{}<caret>'");
+    doTypeAndCheck('}', "var a = '${{}}<caret>'");
+    myFixture.configureByText(DartFileType.INSTANCE, "var a = '${{}}<caret>}'");
+    doTypeAndCheck('}', "var a = '${{}}}<caret>}'");
   }
 }
