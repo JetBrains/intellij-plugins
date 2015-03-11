@@ -40,21 +40,22 @@ public class LessonProcessor {
 //        }
 //    }
 
-    public static void process(final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel) throws InterruptedException, ExecutionException {
+    public static void process(final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target) throws InterruptedException, ExecutionException {
 
         Queue<Element> elements = new LinkedBlockingQueue<Element>();
         if (lesson.getScn().equals(null)) {
             System.err.println("Scenario is empty or cannot be read!");
             return;
         }
+
         if (lesson.getScn().getRoot().equals(null)) {
             System.err.println("Scenario is empty or cannot be read!");
             return;
         }
 
-        //Create queue
+        //Create queue of Actions
         for (final Element el : lesson.getScn().getRoot().getChildren()) {
-            //if element is MouseBlock (blocks all mouse events) than add all children inside it.
+            //if element is MouseBlocked (blocks all mouse events) than add all children inside it.
             if(isMouseBlock(el)) {
                 if (el.getChildren() != null) {
                     elements.add(el); //add block element
@@ -68,20 +69,18 @@ public class LessonProcessor {
             }
         }
 
-
         //Perform first action, all next perform like a chain reaction
         MouseListenerHolder mouseListenerHolder = new MouseListenerHolder();
 
 
         Command cmd = CommandFactory.buildCommand(elements.peek());
-        cmd.execute(elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
+        cmd.execute(elements, lesson, editor, e, document, target, lesson.getInfoPanel(), mouseListenerHolder);
 
     }
 
     private static boolean isMouseBlock(Element el){
         return el.getName().toUpperCase().equals(Command.CommandType.MOUSEBLOCK.toString());
     }
-
 
 
 }

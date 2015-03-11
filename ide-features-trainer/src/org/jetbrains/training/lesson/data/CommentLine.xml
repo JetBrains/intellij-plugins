@@ -2,35 +2,35 @@
     <MouseBlock>
         <Start description="Let's learn how to comment line quickly!" btn="Ok"/>
         <CopyText>
-    public class CommentLineDemo {
+public class CommentLineDemo {
 
-        public int fib(int n) {
-            int a = 1;
-            int b = 1;
+    public int fib(int n) {
+        int a = 1;
+        int b = 1;
 
-            int tmp;
+        int tmp;
 
-            if (n &lt; 2) return 1;
+        if (n &lt; 2) return 1;
 
-            for (int i = 0; i &lt; (n - 1); i++) {
-                tmp = b;
-                b = a;
-                a = a + tmp;
-            }
-
-            return a;
+        for (int i = 0; i &lt; (n - 1); i++) {
+            tmp = b;
+            b = a;
+            a = a + tmp;
         }
-    }</CopyText>
+
+        return a;
+    }
+}</CopyText>
         <Text description="" btn="Ok">You can comment line by pressing shortcut &lt;span color="gray"&gt;⌘ + /&lt;/span&gt;</Text>
         <Text description="Move caret to tmp declaration" btn="..."/>
-        <TraverseCaret stop="100" delay="20"/>
+        <TraverseCaret stop="120" delay="20"/>
         <Action action="CommentByLineComment" delay="2000" balloon="type ⌘ + / to comment line"/>
         <Wait delay="200"/>
         <Text description="To disable comment press same shortcut on this line" btn="ok"/>
-        <TraverseCaret stop="100" delay="20"/>
+        <TraverseCaret stop="118" delay="20"/>
         <Action action="CommentByLineComment" delay="2000" balloon="type ⌘ + / to uncomment line"/>
     </MouseBlock>
     <Text description="That's it!" btn="let me try"/>
     <TraverseCaret stop="0" delay="20"/>
-    <Try description="Comment line with if statement" win-message="Awesome!"/>
+    <Try description="Comment line with &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement" win-message="Awesome!"/>
 </xml>

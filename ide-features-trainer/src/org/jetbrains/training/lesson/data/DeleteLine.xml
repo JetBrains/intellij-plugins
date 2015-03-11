@@ -1,6 +1,6 @@
 <xml type="Scenario" name="Delete Line" passed="false" version="0.1" target="DeleteLineDemo.java">
+        <Start description="Let's learn how to delete line in one action" btn="Ok"/>
     <MouseBlock>
-        <Start description="Know how delete line in one action" btn="Ok"/>
         <CopyText>
     public class DeleteLineDemo {
 
@@ -20,14 +20,15 @@
 
             return a;
         }
+
     }</CopyText>
-        <Text description="" btn="Ok">Let's delete &lt;b&gt;if&lt;/b&gt; statement line</Text>
-        <Text description="Move caret to if statement" btn="..."/>
-        <TraverseCaret stop="140" delay="20"/>
+        <Text description="" btn="Ok">Let's delete line with &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement</Text>
+        <Text description="Move caret to &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement" btn="..."/>
+        <TraverseCaret stop="138" delay="20"/>
         <Action action="EditorDeleteLine" delay="2000" balloon="type &lt;font size=&#34;20&#34;&gt;&lt;b&gt;⌘ + ⌫&lt;/b&gt;&lt;/font&gt; to delete line"/>
         <Wait delay="200"/>
     </MouseBlock>
     <Text description="That's it!" btn="let me try"/>
     <TraverseCaret stop="0" delay="20"/>
-    <Try description="Delete 'for statement' to complete lesson" win-message="Cool, now you know how to delete lines fast!"/>
+    <Try description="Delete &lt;span color=&quot;gray&quot;&gt;for&lt;/span&gt; statement to complete lesson" win-message="Cool, now you know how to delete lines fast!"/>
 </xml>
