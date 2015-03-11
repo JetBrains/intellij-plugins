@@ -81,6 +81,18 @@ public class DartKeywordCompletionContributor extends CompletionContributor {
                result.addElement(LookupElementBuilder.create(DartTokenTypes.IMPLEMENTS.toString()));
              }
            });
+    extend(CompletionType.BASIC,
+           psiElement()
+             .inside(DartSwitchStatement.class),
+           new CompletionProvider<CompletionParameters>() {
+             @Override
+             protected void addCompletions(@NotNull CompletionParameters parameters,
+                                           ProcessingContext context,
+                                           @NotNull CompletionResultSet result) {
+               result.addElement(LookupElementBuilder.create(DartTokenTypes.CASE.toString()));
+               result.addElement(LookupElementBuilder.create(DartTokenTypes.DEFAULT.toString()));
+             }
+           });
   }
 
   private static Collection<String> suggestKeywords(PsiElement position) {
@@ -129,8 +141,12 @@ public class DartKeywordCompletionContributor extends CompletionContributor {
     if (DartIfStatement.class.isInstance(sibling)) {
       return Collections.singletonList(DartTokenTypes.ELSE.toString());
     }
-    else if (DartTryStatement.class.isInstance(sibling) || DartCatchPart.class.isInstance(sibling)) {
-      return Collections.singletonList(DartTokenTypes.CATCH.toString());
+    else if (DartTryStatement.class.isInstance(sibling)  || DartCatchPart.class.isInstance(sibling)) {
+      final List<String> result = new ArrayList<String>();
+      result.add(DartTokenTypes.CATCH.toString());
+      result.add(DartTokenTypes.ON.toString());
+      result.add(DartTokenTypes.FINALLY.toString());
+      return result;
     }
 
     return Collections.emptyList();

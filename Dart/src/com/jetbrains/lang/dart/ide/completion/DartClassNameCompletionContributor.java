@@ -30,11 +30,15 @@ public class DartClassNameCompletionContributor extends CompletionContributor {
 
     final PatternCondition<PsiElement> notAfterDartType = new PatternCondition<PsiElement>("not after DartType") {
       public boolean accepts(@NotNull final PsiElement element, final ProcessingContext context) {
-        // no class name completion must be here: const type name<caret>;
-        // and no class name completion must be here: void function(Object name<caret>)
         final PsiElement parent = UsefulPsiTreeUtil
           .getPrevSiblingSkipWhiteSpacesAndComments(element.getParent().getParent(), true);
         if (parent == null) return true;
+        // there should be class name completion after on
+        if (parent.getText().equals(DartTokenTypes.ON.toString())) {
+          return true;
+        }
+        // no class name completion must be here: const type name<caret>;
+        // and no class name completion must be here: void function(Object name<caret>)
         return !(parent instanceof DartType
                  || parent.getNode().getElementType() == DartTokenTypes.VAR);
       }
