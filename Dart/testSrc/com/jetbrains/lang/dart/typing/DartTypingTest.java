@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartFileType;
+import org.jetbrains.annotations.NotNull;
 
 public class DartTypingTest extends DartCodeInsightFixtureTestCase {
   @Override
@@ -17,14 +18,16 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     myFixture.checkResultByFile(getTestName(false) + "_after.dart");
   }
 
-  private void doTypeAndCheck(char charToType, String expected) {
+  private void doTypingTest(final char charToType, final @NotNull String textBefore, final @NotNull String textAfter) {
+    myFixture.configureByText(DartFileType.INSTANCE, textBefore);
     myFixture.type(charToType);
-    myFixture.checkResult(expected);
+    myFixture.checkResult(textAfter);
   }
 
-  private void doBackspaceTest(String expected) {
+  private void doBackspaceTest(final @NotNull String textBefore, final @NotNull String textAfter) {
+    myFixture.configureByText(DartFileType.INSTANCE, textBefore);
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_BACKSPACE);
-    myFixture.checkResult(expected);
+    myFixture.checkResult(textAfter);
   }
 
   public void testDocComment() throws Throwable {
@@ -83,252 +86,167 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTest('{');
   }
 
-  public void testQuote1() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = <caret>");
-    doTypeAndCheck('\'', "var foo = '<caret>'");
+  public void testQuote() throws Throwable {
+    doTypingTest('\'', "var foo = <caret>", "var foo = '<caret>'");
+    doTypingTest('"', "var foo = <caret>", "var foo = \"<caret>\"");
+    doTypingTest('"', "var foo = '<caret>'", "var foo = '\"<caret>'");
+    doTypingTest('\'', "var foo = \"<caret>\"", "var foo = \"'<caret>\"");
+    doTypingTest('\'', "var foo = \"bar<caret>\"", "var foo = \"bar'<caret>\"");
+    doTypingTest('\'', "import <caret>", "import '<caret>'");
+    doTypingTest('"', "import <caret>", "import \"<caret>\"");
+    doTypingTest('\'', "var foo = '<caret>'", "var foo = ''<caret>");
+    doTypingTest('\"', "var foo = \"<caret>\"", "var foo = \"\"<caret>");
+    doTypingTest('\'', "var foo = 'bar<caret>'", "var foo = 'bar'<caret>");
+    doTypingTest('\"', "var foo = \"bar<caret>\"", "var foo = \"bar\"<caret>");
+    doTypingTest('\'', "var foo = 'bar' <caret>", "var foo = 'bar' '<caret>'");
+    doTypingTest('\"', "var foo = \"\" <caret>", "var foo = \"\" \"<caret>\"");
   }
 
-  public void testQuote2() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = <caret>");
-    doTypeAndCheck('"', "var foo = \"<caret>\"");
-  }
-
-  public void testQuote3() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = '<caret>'");
-    doTypeAndCheck('"', "var foo = '\"<caret>'");
-  }
-
-  public void testQuote4() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = \"<caret>\"");
-    doTypeAndCheck('\'', "var foo = \"'<caret>\"");
-  }
-
-  public void testQuote5() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = \"bar<caret>\"");
-    doTypeAndCheck('\'', "var foo = \"bar'<caret>\"");
-  }
-
-  public void testQuote6() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "import <caret>");
-    doTypeAndCheck('\'', "import '<caret>'");
-  }
-
-  public void testQuote7() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "import <caret>");
-    doTypeAndCheck('"', "import \"<caret>\"");
-  }
-
-  public void testQuote8() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = '<caret>'");
-    doTypeAndCheck('\'', "var foo = ''<caret>");
-  }
-
-  public void testQuote9() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = \"<caret>\"");
-    doTypeAndCheck('\"', "var foo = \"\"<caret>");
-  }
-
-  public void testQuote10() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = 'bar<caret>'");
-    doTypeAndCheck('\'', "var foo = 'bar'<caret>");
-  }
-
-  public void testQuote11() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = \"bar<caret>\"");
-    doTypeAndCheck('\"', "var foo = \"bar\"<caret>");
-  }
-
-  public void testQuote13() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = 'bar' <caret>");
-    doTypeAndCheck('\'', "var foo = 'bar' '<caret>'");
-  }
-
-  public void testQuote14() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = \"\" <caret>");
-    doTypeAndCheck('\"', "var foo = \"\" \"<caret>\"");
-  }
-
-  public void testBackspace1() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = \"<caret> \"");
-    doBackspaceTest("var foo = <caret> \"");
-  }
-
-  public void testBackspace2() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = \"<caret>\"");
-    doBackspaceTest("var foo = <caret>");
-  }
-
-  public void testBackspace3() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = '<caret>a'");
-    doBackspaceTest("var foo = <caret>a'");
-  }
-
-  public void testBackspace4() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "import '<caret>'");
-    doBackspaceTest("import <caret>");
-  }
-
-  public void testBackspace5() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = \"\"<caret>");
-    doBackspaceTest("var foo = \"<caret>");
-  }
-
-  public void testBackspace6() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = \" '<caret>' \"");
-    doBackspaceTest("var foo = \" <caret>' \"");
-  }
-
-  public void testBackspace7() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var foo = '\"<caret>\"'");
-    doBackspaceTest("var foo = '<caret>\"'");
+  public void testBackspace() throws Throwable {
+    doBackspaceTest("var foo = \"<caret> \"", "var foo = <caret> \"");
+    doBackspaceTest("var foo = \"<caret>\"", "var foo = <caret>");
+    doBackspaceTest("var foo = '<caret>a'", "var foo = <caret>a'");
+    doBackspaceTest("import '<caret>'", "import <caret>");
+    doBackspaceTest("var foo = \"\"<caret>", "var foo = \"<caret>");
+    doBackspaceTest("var foo = \" '<caret>' \"", "var foo = \" <caret>' \"");
+    doBackspaceTest("var foo = '\"<caret>\"'", "var foo = '<caret>\"'");
   }
 
   public void testWEB_8315() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "class X {\n" +
-                                                     "  num x;<caret>\n" +
-                                                     "}");
-    doTypeAndCheck('\n', "class X {\n" +
-                         "  num x;\n" +
-                         "  <caret>\n" +
-                         "}");
+    doTypingTest('\n',
+                 "class X {\n" +
+                 "  num x;<caret>\n" +
+                 "}",
+                 "class X {\n" +
+                 "  num x;\n" +
+                 "  <caret>\n" +
+                 "}");
   }
 
   public void testCaseAlignAfterColon1() throws Throwable {
-    myFixture.configureByText(
-      DartFileType.INSTANCE,
-      "class X {\n" +
-      "  void doit(x) {\n" +
-      "    switch (x) {\n" +
-      "      case 1<caret>\n" +
-      "    }\n" +
-      "  }\n" +
-      "}");
-    doTypeAndCheck(
-      ':',
-      "class X {\n" +
-      "  void doit(x) {\n" +
-      "    switch (x) {\n" +
-      "      case 1:<caret>\n" +
-      "    }\n" +
-      "  }\n" +
-      "}");
+    doTypingTest(':',
+                 "class X {\n" +
+                 "  void doit(x) {\n" +
+                 "    switch (x) {\n" +
+                 "      case 1<caret>\n" +
+                 "    }\n" +
+                 "  }\n" +
+                 "}",
+                 "class X {\n" +
+                 "  void doit(x) {\n" +
+                 "    switch (x) {\n" +
+                 "      case 1:<caret>\n" +
+                 "    }\n" +
+                 "  }\n" +
+                 "}");
   }
 
   public void testCaseAlignAfterColon2() throws Throwable {
-    myFixture.configureByText(
-      DartFileType.INSTANCE,
-      "class X {\n" +
-      "  void doit(x) {\n" +
-      "    switch (x) {\n" +
-      "      case 1:\n" +
-      "    case 2<caret>\n" +
-      "    }\n" +
-      "  }\n" +
-      "}");
-    doTypeAndCheck(
-      ':',
-      "class X {\n" +
-      "  void doit(x) {\n" +
-      "    switch (x) {\n" +
-      "      case 1:\n" +
-      "      case 2:<caret>\n" +
-      "    }\n" +
-      "  }\n" +
-      "}");
+    doTypingTest(':',
+                 "class X {\n" +
+                 "  void doit(x) {\n" +
+                 "    switch (x) {\n" +
+                 "      case 1:\n" +
+                 "    case 2<caret>\n" +
+                 "    }\n" +
+                 "  }\n" +
+                 "}",
+                 "class X {\n" +
+                 "  void doit(x) {\n" +
+                 "    switch (x) {\n" +
+                 "      case 1:\n" +
+                 "      case 2:<caret>\n" +
+                 "    }\n" +
+                 "  }\n" +
+                 "}");
   }
 
   public void testDefaultAlignAfterColon() throws Throwable {
-    myFixture.configureByText(
-      DartFileType.INSTANCE,
-      "class X {\n" +
-      "  void doit(x) {\n" +
-      "    switch (x) {\n" +
-      "      case 1:\n" +
-      "    default<caret>\n" +
-      "    }\n" +
-      "  }\n" +
-      "}");
-    doTypeAndCheck(
-      ':',
-      "class X {\n" +
-      "  void doit(x) {\n" +
-      "    switch (x) {\n" +
-      "      case 1:\n" +
-      "      default:<caret>\n" +
-      "    }\n" +
-      "  }\n" +
-      "}");
+    doTypingTest(':',
+                 "class X {\n" +
+                 "  void doit(x) {\n" +
+                 "    switch (x) {\n" +
+                 "      case 1:\n" +
+                 "    default<caret>\n" +
+                 "    }\n" +
+                 "  }\n" +
+                 "}",
+                 "class X {\n" +
+                 "  void doit(x) {\n" +
+                 "    switch (x) {\n" +
+                 "      case 1:\n" +
+                 "      default:<caret>\n" +
+                 "    }\n" +
+                 "  }\n" +
+                 "}");
   }
 
   public void testCaseStringAlignAfterColon() throws Throwable {
-    myFixture.configureByText(
-      DartFileType.INSTANCE,
-      "class X {\n" +
-      "  void doit(x) {\n" +
-      "    switch (x) {\n" +
-      "      case 1:\n" +
-      "    case '<caret>'\n" +
-      "    }\n" +
-      "  }\n" +
-      "}");
-    doTypeAndCheck(
-      ':',
-      "class X {\n" +
-      "  void doit(x) {\n" +
-      "    switch (x) {\n" +
-      "      case 1:\n" +
-      "    case ':<caret>'\n" +
-      "    }\n" +
-      "  }\n" +
-      "}");
+    doTypingTest(':',
+                 "class X {\n" +
+                 "  void doit(x) {\n" +
+                 "    switch (x) {\n" +
+                 "      case 1:\n" +
+                 "    case '<caret>'\n" +
+                 "    }\n" +
+                 "  }\n" +
+                 "}",
+                 "class X {\n" +
+                 "  void doit(x) {\n" +
+                 "    switch (x) {\n" +
+                 "      case 1:\n" +
+                 "    case ':<caret>'\n" +
+                 "    }\n" +
+                 "  }\n" +
+                 "}");
   }
 
   public void testEnterInSwitch() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE,
-                              "void bar() {\n" +
-                              "  switch (1) {<caret>\n" +
-                              "}");
-    doTypeAndCheck('\n', "void bar() {\n" +
-                         "  switch (1) {\n" +
-                         "    <caret>\n" +
-                         "  }\n" +
-                         "}");
+    doTypingTest('\n',
+                 "void bar() {\n" +
+                 "  switch (1) {<caret>\n" +
+                 "}",
+                 "void bar() {\n" +
+                 "  switch (1) {\n" +
+                 "    <caret>\n" +
+                 "  }\n" +
+                 "}");
   }
 
   public void testEnterAfterCase() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE,
-                              "void bar() {\n" +
-                              "  switch (1) {\n" +
-                              "    case 1+1: <caret>\n" +
-                              "      a;\n" +
-                              "    case 2:\n" +
-                              "  }\n" +
-                              "}");
-    doTypeAndCheck('\n', "void bar() {\n" +
-                         "  switch (1) {\n" +
-                         "    case 1+1: \n" +
-                         "      <caret>\n" +
-                         "      a;\n" +
-                         "    case 2:\n" +
-                         "  }\n" +
-                         "}");
+    doTypingTest('\n',
+                 "void bar() {\n" +
+                 "  switch (1) {\n" +
+                 "    case 1+1: <caret>\n" +
+                 "      a;\n" +
+                 "    case 2:\n" +
+                 "  }\n" +
+                 "}",
+                 "void bar() {\n" +
+                 "  switch (1) {\n" +
+                 "    case 1+1: \n" +
+                 "      <caret>\n" +
+                 "      a;\n" +
+                 "    case 2:\n" +
+                 "  }\n" +
+                 "}");
   }
 
   public void testEnterAfterDefault() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE,
-                              "void bar() {\n" +
-                              "  switch (1) {\n" +
-                              "    case 1:\n" +
-                              "    default:<caret>\n" +
-                              "  }\n" +
-                              "}");
-    doTypeAndCheck('\n', "void bar() {\n" +
-                         "  switch (1) {\n" +
-                         "    case 1:\n" +
-                         "    default:\n" +
-                         "      <caret>\n" +
-                         "  }\n" +
-                         "}");
+    doTypingTest('\n',
+                 "void bar() {\n" +
+                 "  switch (1) {\n" +
+                 "    case 1:\n" +
+                 "    default:<caret>\n" +
+                 "  }\n" +
+                 "}",
+                 "void bar() {\n" +
+                 "  switch (1) {\n" +
+                 "    case 1:\n" +
+                 "    default:\n" +
+                 "      <caret>\n" +
+                 "  }\n" +
+                 "}");
   }
 
   public void testEnterAfterBreakInCase() throws Throwable {
@@ -346,114 +264,81 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                              "  }\n" +
                              "}";
 
-    myFixture.configureByText(DartFileType.INSTANCE, textBefore);
-    doTypeAndCheck('\n', textAfter);
-
-    myFixture.configureByText(DartFileType.INSTANCE, StringUtil.replace(textBefore, "break;", "continue;"));
-    doTypeAndCheck('\n', StringUtil.replace(textAfter, "break;", "continue;"));
-
-    myFixture.configureByText(DartFileType.INSTANCE, StringUtil.replace(textBefore, "break;", "return 1+1;"));
-    doTypeAndCheck('\n', StringUtil.replace(textAfter, "break;", "return 1+1;"));
-
-    myFixture.configureByText(DartFileType.INSTANCE, StringUtil.replace(textBefore, "break;", "throw '';"));
-    doTypeAndCheck('\n', StringUtil.replace(textAfter, "break;", "throw '';"));
-
-    myFixture.configureByText(DartFileType.INSTANCE, StringUtil.replace(textBefore, "break;", "foo;"));
-    doTypeAndCheck('\n', StringUtil.replace(textAfter, "break;\n    <caret>", "foo;\n      <caret>"));
+    doTypingTest('\n', textBefore, textAfter);
+    doTypingTest('\n', StringUtil.replace(textBefore, "break;", "continue;"), StringUtil.replace(textAfter, "break;", "continue;"));
+    doTypingTest('\n', StringUtil.replace(textBefore, "break;", "return 1+1;"), StringUtil.replace(textAfter, "break;", "return 1+1;"));
+    doTypingTest('\n', StringUtil.replace(textBefore, "break;", "throw '';"), StringUtil.replace(textAfter, "break;", "throw '';"));
+    doTypingTest('\n', StringUtil.replace(textBefore, "break;", "foo;"),
+                 StringUtil.replace(textAfter, "break;\n    <caret>", "foo;\n      <caret>"));
   }
 
   public void testEnterInMapLiteral() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var data = {<caret>};");
-    doTypeAndCheck('\n', "var data = {\n" +
-                         "  <caret>\n" +
-                         "};");
-    myFixture.configureByText(DartFileType.INSTANCE, "var data = {\n" +
-                                                     "  1:1,<caret>\n" +
-                                                     "};");
-    doTypeAndCheck('\n', "var data = {\n" +
-                         "  1:1,\n" +
-                         "  <caret>\n" +
-                         "};");
+    doTypingTest('\n', "var data = {<caret>};", "var data = {\n" +
+                                                "  <caret>\n" +
+                                                "};");
+    doTypingTest('\n',
+                 "var data = {\n" +
+                 "  1:1,<caret>\n" +
+                 "};",
+                 "var data = {\n" +
+                 "  1:1,\n" +
+                 "  <caret>\n" +
+                 "};");
   }
 
   public void testEnterInListLiteral() throws Throwable {
-    myFixture.configureByText(DartFileType.INSTANCE, "var data = [<caret>\n" +
-                                                     "];");
-    doTypeAndCheck('\n', "var data = [\n" +
-                         "  <caret>\n" +
-                         "];");
-    myFixture.configureByText(DartFileType.INSTANCE, "var data = [\n" +
-                                                     "  1,<caret>\n" +
-                                                     "];");
-    doTypeAndCheck('\n', "var data = [\n" +
-                         "  1,\n" +
-                         "  <caret>\n" +
-                         "];");
+    doTypingTest('\n',
+                 "var data = [<caret>\n" +
+                 "];",
+                 "var data = [\n" +
+                 "  <caret>\n" +
+                 "];");
+    doTypingTest('\n',
+                 "var data = [\n" +
+                 "  1,<caret>\n" +
+                 "];",
+                 "var data = [\n" +
+                 "  1,\n" +
+                 "  <caret>\n" +
+                 "];");
   }
 
   public void testLt() {
-    myFixture.configureByText(DartFileType.INSTANCE, "Map<List<caret>>");
-    doTypeAndCheck('<', "Map<List<<caret>>>");
-    myFixture.configureByText(DartFileType.INSTANCE, "class A<caret>");
-    doTypeAndCheck('<', "class A<<caret>>");
+    doTypingTest('<', "Map<List<caret>>", "Map<List<<caret>>>");
+    doTypingTest('<', "class A<caret>", "class A<<caret>>");
   }
 
   public void testGt() {
-    myFixture.configureByText(DartFileType.INSTANCE, "foo () {Map<List<<caret>>}");
-    doTypeAndCheck('>', "foo () {Map<List<><caret>>}");
-    myFixture.configureByText(DartFileType.INSTANCE, "Map<List<<caret>>>");
-    doTypeAndCheck('>', "Map<List<><caret>>");
-    myFixture.configureByText(DartFileType.INSTANCE, "Map<List<><caret>>");
-    doTypeAndCheck('>', "Map<List<>><caret>");
-    myFixture.configureByText(DartFileType.INSTANCE, "Map<List<><caret>");
-    doTypeAndCheck('>', "Map<List<>><caret>");
-    myFixture.configureByText(DartFileType.INSTANCE, "Map<List<>><caret>");
-    doTypeAndCheck('>', "Map<List<>>><caret>");
-    myFixture.configureByText(DartFileType.INSTANCE, "Map<List<A>, B <caret>");
-    doTypeAndCheck('>', "Map<List<A>, B ><caret>");
-    myFixture.configureByText(DartFileType.INSTANCE, "class A<T, E <caret>");
-    doTypeAndCheck('>', "class A<T, E ><caret>");
-    myFixture.configureByText(DartFileType.INSTANCE, "class A<T, E <caret>>");
-    doTypeAndCheck('>', "class A<T, E ><caret>");
+    doTypingTest('>', "foo () {Map<List<<caret>>}", "foo () {Map<List<><caret>>}");
+    doTypingTest('>', "Map<List<<caret>>>", "Map<List<><caret>>");
+    doTypingTest('>', "Map<List<><caret>>", "Map<List<>><caret>");
+    doTypingTest('>', "Map<List<><caret>", "Map<List<>><caret>");
+    doTypingTest('>', "Map<List<>><caret>", "Map<List<>>><caret>");
+    doTypingTest('>', "Map<List<A>, B <caret>", "Map<List<A>, B ><caret>");
+    doTypingTest('>', "class A<T, E <caret>", "class A<T, E ><caret>");
+    doTypingTest('>', "class A<T, E <caret>>", "class A<T, E ><caret>");
   }
 
   public void testLBraceInString() {
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = 'xx$<caret>xx'");
-    doTypeAndCheck('{', "var a = 'xx${<caret>}xx'");
-    myFixture.configureByText(DartFileType.INSTANCE, "foo () {var a = 'xx$<caret>xx';\n}");
-    doTypeAndCheck('{', "foo () {var a = 'xx${<caret>}xx';\n}");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = \"$<caret>\";");
-    doTypeAndCheck('{', "var a = \"${<caret>}\";");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = r'$<caret>'");
-    doTypeAndCheck('{', "var a = r'${<caret>'");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = '''$<caret>'''");
-    doTypeAndCheck('{', "var a = '''${<caret>}'''");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = '${}<caret>'");
-    doTypeAndCheck('{', "var a = '${}{<caret>'");
-    myFixture.configureByText(DartFileType.INSTANCE, "<caret>");
-    doTypeAndCheck('{', "{<caret>}");
+    doTypingTest('{', "var a = 'xx$<caret>xx'", "var a = 'xx${<caret>}xx'");
+    doTypingTest('{', "foo () {var a = 'xx$<caret>xx';\n}", "foo () {var a = 'xx${<caret>}xx';\n}");
+    doTypingTest('{', "var a = \"$<caret>\";", "var a = \"${<caret>}\";");
+    doTypingTest('{', "var a = r'$<caret>'", "var a = r'${<caret>'");
+    doTypingTest('{', "var a = '''$<caret>'''", "var a = '''${<caret>}'''");
+    doTypingTest('{', "var a = '${}<caret>'", "var a = '${}{<caret>'");
+    doTypingTest('{', "<caret>", "{<caret>}");
   }
 
   public void testRBraceInString() {
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = 'xx${<caret>}xx'");
-    doTypeAndCheck('}', "var a = 'xx${}<caret>xx'");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = 'xx${<caret>xx'");
-    doTypeAndCheck('}', "var a = 'xx${}<caret>xx'");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = \"${1 + 2 <caret>}\"");
-    doTypeAndCheck('}', "var a = \"${1 + 2 }<caret>\"");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = r'${<caret>}'");
-    doTypeAndCheck('}', "var a = r'${}<caret>}'");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = '''${<caret>}'''");
-    doTypeAndCheck('}', "var a = '''${}<caret>'''");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = '${{<caret>}}'");
-    doTypeAndCheck('}', "var a = '${{}<caret>}'");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = '${{a<caret>}'");
-    doTypeAndCheck('}', "var a = '${{a}<caret>'");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = '${{1+1;}<caret>}'");
-    doTypeAndCheck('}', "var a = '${{1+1;}}<caret>'");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = '${{}<caret>'");
-    doTypeAndCheck('}', "var a = '${{}}<caret>'");
-    myFixture.configureByText(DartFileType.INSTANCE, "var a = '${{}}<caret>}'");
-    doTypeAndCheck('}', "var a = '${{}}}<caret>}'");
+    doTypingTest('}', "var a = 'xx${<caret>}xx'", "var a = 'xx${}<caret>xx'");
+    doTypingTest('}', "var a = 'xx${<caret>xx'", "var a = 'xx${}<caret>xx'");
+    doTypingTest('}', "var a = \"${1 + 2 <caret>}\"", "var a = \"${1 + 2 }<caret>\"");
+    doTypingTest('}', "var a = r'${<caret>}'", "var a = r'${}<caret>}'");
+    doTypingTest('}', "var a = '''${<caret>}'''", "var a = '''${}<caret>'''");
+    doTypingTest('}', "var a = '${{<caret>}}'", "var a = '${{}<caret>}'");
+    doTypingTest('}', "var a = '${{a<caret>}'", "var a = '${{a}<caret>'");
+    doTypingTest('}', "var a = '${{1+1;}<caret>}'", "var a = '${{1+1;}}<caret>'");
+    doTypingTest('}', "var a = '${{}<caret>'", "var a = '${{}}<caret>'");
+    doTypingTest('}', "var a = '${{}}<caret>}'", "var a = '${{}}}<caret>}'");
   }
 }
