@@ -9,16 +9,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartBraceMatcher implements PairedBraceMatcher {
-  private static BracePair[] ourBracePairs =
-    {
-      new BracePair(DartTokenTypes.LBRACE, DartTokenTypes.RBRACE, true),
-      new BracePair(DartTokenTypes.LBRACKET, DartTokenTypes.RBRACKET, false),
-      new BracePair(DartTokenTypes.LPAREN, DartTokenTypes.RPAREN, false)
-    };
+  private static final BracePair[] BRACE_PAIRS = {
+    new BracePair(DartTokenTypes.LBRACE, DartTokenTypes.RBRACE, true),
+    new BracePair(DartTokenTypes.LBRACKET, DartTokenTypes.RBRACKET, false),
+    new BracePair(DartTokenTypes.LPAREN, DartTokenTypes.RPAREN, false),
+    new BracePair(DartTokenTypes.LONG_TEMPLATE_ENTRY_START, DartTokenTypes.LONG_TEMPLATE_ENTRY_END, false)
+  };
 
   @Override
   public BracePair[] getPairs() {
-    return ourBracePairs;
+    return BRACE_PAIRS;
   }
 
   @Override
