@@ -24,8 +24,8 @@ public class DeleteLineDemo {
 }</CopyText>
         <Text description="" btn="Ok">Let's delete line with &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement</Text>
         <Text description="Move caret to &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement" btn="..."/>
-        <TraverseCaret stop="138" delay="20"/>
-        <Action action="EditorDeleteLine" delay="2000" balloon="type &lt;font size=&#34;20&#34;&gt;&lt;b&gt;⌘ + ⌫&lt;/b&gt;&lt;/font&gt; to delete line"/>
+        <TraverseCaret stop="118" delay="20"/>
+        <Action action="EditorDeleteLine" delay="2000" balloon="&lt;font size=&#34;20&#34;&gt;&lt;b&gt;⌘ + ⌫&lt;/b&gt;&lt;/font&gt; (Delete line)"/>
         <Wait delay="200"/>
     </MouseBlock>
     <Text description="That's it!" btn="let me try"/>
