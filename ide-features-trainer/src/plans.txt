@@ -59,10 +59,15 @@ February 26
 
 11 March
 * Lesson synchroniztion fix
+
+12 March
 * Trigger action implementation
+* Darcula support
+
+13 March
+* Fix lesson conflict (action recorder disposable, flushing lesson processor list)
 
 //Plans
-* Darcula support
 * Disposable Action Recorder
 * Navigation between courses (Modified Toolwindow)
 * Replay again
