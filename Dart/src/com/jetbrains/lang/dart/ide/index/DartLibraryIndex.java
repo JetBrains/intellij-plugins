@@ -31,7 +31,6 @@ import java.util.Map;
 
 public class DartLibraryIndex extends ScalarIndexExtension<String> {
   public static final ID<String, Void> DART_LIBRARY_INDEX = ID.create("DartLibraryIndex");
-  private static final int INDEX_VERSION = 2;
 
   private static final Key<Pair<Long, BidirectionalMap<String, String>>> LIBRARIES_TIME_AND_MAP_KEY = Key.create("dart.internal.libraries");
 
@@ -45,7 +44,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
 
   @Override
   public int getVersion() {
-    return DartIndexUtil.BASE_VERSION + INDEX_VERSION;
+    return DartIndexUtil.INDEX_VERSION;
   }
 
   @NotNull

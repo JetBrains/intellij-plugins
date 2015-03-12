@@ -1,9 +1,7 @@
 package com.jetbrains.lang.dart.ide.index;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.PairProcessor;
 import com.intellij.util.Processor;
@@ -14,14 +12,11 @@ import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartComponentIndex extends FileBasedIndexExtension<String, DartComponentInfo> {
   public static final ID<String, DartComponentInfo> DART_COMPONENT_INDEX = ID.create("DartComponentIndex");
-  private static final int INDEX_VERSION = 3;
   private final DataIndexer<String, DartComponentInfo, FileContent> myIndexer = new MyDataIndexer();
   private final DataExternalizer<DartComponentInfo> myExternalizer = new DartComponentInfoExternalizer();
 
@@ -62,46 +57,45 @@ public class DartComponentIndex extends FileBasedIndexExtension<String, DartComp
 
   @Override
   public int getVersion() {
-    return DartIndexUtil.BASE_VERSION + INDEX_VERSION;
+    return DartIndexUtil.INDEX_VERSION;
   }
 
-  public static List<VirtualFile> getAllFiles(@NotNull Project project, @Nullable String componentName) {
-    if (componentName == null) {
-      return Collections.emptyList();
-    }
-    return new ArrayList<VirtualFile>(
-      FileBasedIndex.getInstance().getContainingFiles(DART_COMPONENT_INDEX, componentName, GlobalSearchScope.allScope(project)));
+  public static Collection<VirtualFile> getAllFiles(@NotNull final String componentName, @NotNull final GlobalSearchScope scope) {
+    return FileBasedIndex.getInstance().getContainingFiles(DART_COMPONENT_INDEX, componentName, scope);
   }
 
-  public static void processAllComponents(@NotNull PsiElement context,
-                                          final PairProcessor<String, DartComponentInfo> processor,
-                                          Condition<String> nameFilter) {
-    final Collection<String> allKeys = FileBasedIndex.getInstance().getAllKeys(DART_COMPONENT_INDEX, context.getProject());
-    for (final String componentName : allKeys) {
-      if (nameFilter.value(componentName)) {
-        continue;
+  public static void processAllComponents(@NotNull final GlobalSearchScope scope,
+                                          @Nullable final Condition<String> nameFilter,
+                                          @NotNull final PairProcessor<String, DartComponentInfo> processor) {
+    final Processor<String> keysProcessor = new Processor<String>() {
+      @Override
+      public boolean process(final String componentName) {
+        if (nameFilter != null && !nameFilter.value(componentName)) return true;
+
+        return processComponentsByName(componentName, scope, new Processor<DartComponentInfo>() {
+          @Override
+          public boolean process(DartComponentInfo info) {
+            return processor.process(componentName, info);
+          }
+        });
       }
-      if (processComponentsByName(context, new Processor<DartComponentInfo>() {
-        @Override
-        public boolean process(DartComponentInfo info) {
-          return processor.process(componentName, info);
-        }
-      }, componentName)) {
-        return;
-      }
-    }
+    };
+
+    FileBasedIndex.getInstance().processAllKeys(DART_COMPONENT_INDEX, keysProcessor, scope, null);
   }
 
-  public static boolean processComponentsByName(PsiElement context,
-                                                Processor<DartComponentInfo> processor,
-                                                String componentName) {
-    final List<DartComponentInfo> allComponents = FileBasedIndex.getInstance().getValues(
-      DART_COMPONENT_INDEX, componentName, context.getResolveScope()
-    );
-    for (DartComponentInfo componentInfo : allComponents) {
-      if (!processor.process(componentInfo)) return true;
-    }
-    return false;
+  public static boolean processComponentsByName(@NotNull final String componentName,
+                                                @NotNull final GlobalSearchScope scope,
+                                                @NotNull final Processor<DartComponentInfo> processor) {
+    final FileBasedIndex.ValueProcessor<DartComponentInfo> valueProcessor = new FileBasedIndex.ValueProcessor<DartComponentInfo>() {
+      @Override
+      public boolean process(VirtualFile file, DartComponentInfo value) {
+        if (!processor.process(value)) return false;
+        return true;
+      }
+    };
+
+    return FileBasedIndex.getInstance().processValues(DART_COMPONENT_INDEX, componentName, null, valueProcessor, scope);
   }
 
   private static class MyDataIndexer implements DataIndexer<String, DartComponentInfo, FileContent> {

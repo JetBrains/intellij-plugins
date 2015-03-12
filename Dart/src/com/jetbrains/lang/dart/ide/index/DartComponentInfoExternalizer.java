@@ -8,29 +8,25 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartComponentInfoExternalizer implements DataExternalizer<DartComponentInfo> {
+
   @Override
-  public void save(@NotNull DataOutput out, DartComponentInfo componentInfo) throws IOException {
-    out.writeUTF(componentInfo.getValue());
-    final DartComponentType dartComponentType = componentInfo.getType();
+  public void save(@NotNull final DataOutput out, @NotNull final DartComponentInfo componentInfo) throws IOException {
+    final DartComponentType dartComponentType = componentInfo.getComponentType();
     final int key = dartComponentType == null ? -1 : dartComponentType.getKey();
     out.writeInt(key);
-    final String libraryId = componentInfo.getLibraryId();
-    out.writeBoolean(libraryId != null);
-    if (libraryId != null) {
-      out.writeUTF(libraryId);
+    final String libraryName = componentInfo.getLibraryName();
+    out.writeBoolean(libraryName != null);
+    if (libraryName != null) {
+      out.writeUTF(libraryName);
     }
   }
 
   @Override
   public DartComponentInfo read(@NotNull DataInput in) throws IOException {
-    final String value = in.readUTF();
-    final int key = in.readInt();
-    final boolean haveLibraryId = in.readBoolean();
-    final String libraryId = haveLibraryId ? in.readUTF() : null;
-    return new DartComponentInfo(value, DartComponentType.valueOf(key), libraryId);
+    final int componentTypeKey = in.readInt();
+    final boolean hasLibraryName = in.readBoolean();
+    final String libraryName = hasLibraryName ? in.readUTF() : null;
+    return new DartComponentInfo(DartComponentType.valueOf(componentTypeKey), libraryName);
   }
 }

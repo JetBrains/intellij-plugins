@@ -258,12 +258,18 @@ public class DartResolveUtil {
                                                     final @NotNull DartPsiScopeProcessor processor,
                                                     final @Nullable VirtualFile rootVirtualFile,
                                                     final @Nullable String componentNameHint) {
-    final Set<String> fileNames = new THashSet<String>();
-    for (VirtualFile virtualFile : DartComponentIndex.getAllFiles(context.getProject(), componentNameHint)) {
-      fileNames.add(virtualFile.getName());
-    }
-    return processTopLevelDeclarationsImpl(context, processor, rootVirtualFile, componentNameHint == null ? null : fileNames,
-                                           new THashSet<VirtualFile>(), componentNameHint != null && componentNameHint.startsWith("_"));
+    final Set<String> fileNames = componentNameHint == null
+                                  ? null
+                                  : ContainerUtil.map2Set(
+                                    DartComponentIndex.getAllFiles(componentNameHint, context.getResolveScope()),
+                                    new Function<VirtualFile, String>() {
+                                      @Override
+                                      public String fun(VirtualFile file) {
+                                        return file.getName();
+                                      }
+                                    });
+    final boolean lookingForPrivate = componentNameHint != null && componentNameHint.startsWith("_");
+    return processTopLevelDeclarationsImpl(context, processor, rootVirtualFile, fileNames, new THashSet<VirtualFile>(), lookingForPrivate);
   }
 
   private static boolean processTopLevelDeclarationsImpl(final @NotNull PsiElement context,

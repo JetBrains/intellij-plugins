@@ -18,7 +18,6 @@ import java.util.*;
 
 public class DartImportAndExportIndex extends FileBasedIndexExtension<String, List<DartImportOrExportInfo>> {
   public static final ID<String, List<DartImportOrExportInfo>> DART_IMPORT_EXPORT_INDEX = ID.create("DartImportIndex");
-  private static final int INDEX_VERSION = 2;
   private DataIndexer<String, List<DartImportOrExportInfo>, FileContent> myDataIndexer = new MyDataIndexer();
 
   @NotNull
@@ -29,7 +28,7 @@ public class DartImportAndExportIndex extends FileBasedIndexExtension<String, Li
 
   @Override
   public int getVersion() {
-    return DartIndexUtil.BASE_VERSION + INDEX_VERSION;
+    return DartIndexUtil.INDEX_VERSION;
   }
 
   @NotNull

@@ -1,8 +1,10 @@
 package com.jetbrains.lang.dart.validation.fixes;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -12,6 +14,7 @@ import com.jetbrains.lang.dart.psi.DartCallExpression;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartReference;
+import com.jetbrains.lang.dart.resolve.DartResolveScopeProvider;
 import com.jetbrains.lang.dart.util.DartImportUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
@@ -83,17 +86,21 @@ public class DartFixesUtil {
   public static void suggestImports(@NotNull final List<BaseCreateFix> quickFixes,
                                     @NotNull final PsiElement context,
                                     @NotNull final String componentName) {
+    final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(context.getContainingFile());
+    final GlobalSearchScope scope = vFile == null ? null : DartResolveScopeProvider.getDartScope(context.getProject(), vFile, true);
+    if (scope == null) return;
+
     final THashSet<String> processedUrlsToImport = new THashSet<String>();
 
-    DartComponentIndex.processComponentsByName(context, new Processor<DartComponentInfo>() {
+    DartComponentIndex.processComponentsByName(componentName, scope, new Processor<DartComponentInfo>() {
       @Override
       public boolean process(DartComponentInfo info) {
-        final DartComponentType componentType = info.getType();
+        final DartComponentType componentType = info.getComponentType();
         if (componentType == DartComponentType.CLASS ||
             componentType == DartComponentType.FUNCTION ||
             componentType == DartComponentType.TYPEDEF ||
             componentType == DartComponentType.VARIABLE) {
-          final String libraryName = info.getLibraryId();
+          final String libraryName = info.getLibraryName();
           if (libraryName != null) {
             final String urlToImport = DartImportUtil.getUrlToImport(context, libraryName);
             if (urlToImport != null && processedUrlsToImport.add(urlToImport)) {
@@ -103,6 +110,6 @@ public class DartFixesUtil {
         }
         return true;
       }
-    }, componentName);
+    });
   }
 }

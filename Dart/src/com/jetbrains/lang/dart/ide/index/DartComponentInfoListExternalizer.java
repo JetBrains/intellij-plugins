@@ -12,18 +12,18 @@ import java.util.Collections;
 import java.util.List;
 
 public class DartComponentInfoListExternalizer implements DataExternalizer<List<DartComponentInfo>> {
+
   @Override
-  public void save(@NotNull DataOutput out, List<DartComponentInfo> infos) throws IOException {
+  public void save(@NotNull final DataOutput out, @NotNull final List<DartComponentInfo> infos) throws IOException {
     out.writeInt(infos.size());
     for (DartComponentInfo componentInfo : infos) {
-      out.writeUTF(componentInfo.getValue());
-      final DartComponentType dartComponentType = componentInfo.getType();
+      final DartComponentType dartComponentType = componentInfo.getComponentType();
       final int key = dartComponentType == null ? -1 : dartComponentType.getKey();
       out.writeInt(key);
-      final String libraryId = componentInfo.getLibraryId();
-      out.writeBoolean(libraryId != null);
-      if (libraryId != null) {
-        out.writeUTF(libraryId);
+      final String libraryName = componentInfo.getLibraryName();
+      out.writeBoolean(libraryName != null);
+      if (libraryName != null) {
+        out.writeUTF(libraryName);
       }
     }
   }
@@ -36,12 +36,12 @@ public class DartComponentInfoListExternalizer implements DataExternalizer<List<
     List<DartComponentInfo> result = new ArrayList<DartComponentInfo>(size);
 
     for (int i = 0; i < size; i++) {
-      final String value = in.readUTF();
-      final int key = in.readInt();
-      final boolean haveLibraryId = in.readBoolean();
-      final String libraryId = haveLibraryId ? in.readUTF() : null;
-      result.add(new DartComponentInfo(value, DartComponentType.valueOf(key), libraryId));
+      final int componentTypeKey = in.readInt();
+      final boolean hasLibraryName = in.readBoolean();
+      final String libraryName = hasLibraryName ? in.readUTF() : null;
+      result.add(new DartComponentInfo(DartComponentType.valueOf(componentTypeKey), libraryName));
     }
+
     return result;
   }
 }

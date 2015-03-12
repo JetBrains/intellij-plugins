@@ -25,7 +25,7 @@ import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 
 public class DartIndexUtil {
   // inc when change parser
-  public static final int BASE_VERSION = 9;
+  public static final int INDEX_VERSION = 13;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
@@ -59,7 +59,7 @@ public class DartIndexUtil {
         PsiElement parent = componentName.getParent();
         final DartComponentType type = DartComponentType.typeOf(parent);
         if (type != null) {
-          result.addComponentInfo(name, new DartComponentInfo(psiFile.getName(), type, result.getLibraryName()));
+          result.addComponentInfo(name, new DartComponentInfo(type, result.getLibraryName()));
         }
         if (parent instanceof DartClass) {
           result.addClassName(name);
@@ -70,7 +70,7 @@ public class DartIndexUtil {
             }
           }
           else {
-            processInheritors(result, name, (DartClass)parent, result.getLibraryName());
+            processInheritors(result, (DartClass)parent, result.getLibraryName());
             for (DartComponent subComponent : DartResolveUtil.getNamedSubComponents((DartClass)parent)) {
               result.addSymbol(subComponent.getName());
             }
@@ -91,8 +91,8 @@ public class DartIndexUtil {
     return result;
   }
 
-  private static void processInheritors(DartFileIndexData result, @NotNull String dartClassName, DartClass dartClass, String libraryId) {
-    final DartComponentInfo value = new DartComponentInfo(dartClassName, DartComponentType.typeOf(dartClass), libraryId);
+  private static void processInheritors(DartFileIndexData result, DartClass dartClass, String libraryName) {
+    final DartComponentInfo value = new DartComponentInfo(DartComponentType.typeOf(dartClass), libraryName);
     final DartType superClass = dartClass.getSuperClass();
     if (superClass != null) {
       result.addInheritor(superClass.getReferenceExpression().getText(), value);
@@ -138,8 +138,7 @@ public class DartIndexUtil {
 
     final Kind kind = importOrExportStatement instanceof DartImportStatement ? Kind.Import : Kind.Export;
     result.addImportInfo(new DartImportOrExportInfo(kind, uri, importPrefix, showComponentNames, hideComponentNames));
-    result.addComponentInfo(importPrefix,
-                            new DartComponentInfo(importOrExportStatement.getContainingFile().getName(), DartComponentType.LABEL, null));
+    result.addComponentInfo(importPrefix, new DartComponentInfo(DartComponentType.LABEL, null));
   }
 
   private static List<PsiElement> findDartRoots(PsiFile psiFile) {

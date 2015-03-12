@@ -21,12 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartSymbolIndex extends ScalarIndexExtension<String> {
   public static final ID<String, Void> DART_SYMBOL_INDEX = ID.create("DartSymbolIndex");
-  private static final int INDEX_VERSION = 1;
   private DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
 
   @NotNull
@@ -37,7 +33,7 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
 
   @Override
   public int getVersion() {
-    return DartIndexUtil.BASE_VERSION + INDEX_VERSION;
+    return DartIndexUtil.INDEX_VERSION;
   }
 
   @NotNull

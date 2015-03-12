@@ -53,14 +53,14 @@ public class DartClassNameCompletionContributor extends CompletionContributor {
                final Set<String> addedNames = DartLookupElement.appendVariantsToCompletionSet(result, suggestedVariants, false);
 
                if (parameters.getInvocationCount() > 1) {
-                 DartGlobalVariantsCompletionHelper.addAdditionalGlobalVariants(result, parameters.getPosition(), addedNames,
-                                                                                new Condition<DartComponentInfo>() {
-                                                                                  @Override
-                                                                                  public boolean value(DartComponentInfo info) {
-                                                                                    return info.getType() == DartComponentType.CLASS;
-                                                                                  }
-                                                                                }
-                 );
+                 DartGlobalVariantsCompletionHelper
+                   .addAdditionalGlobalVariants(result, parameters.getPosition(), addedNames, new Condition<DartComponentInfo>() {
+                                                  @Override
+                                                  public boolean value(DartComponentInfo info) {
+                                                    return info.getComponentType() == DartComponentType.CLASS;
+                                                  }
+                                                }
+                   );
                }
              }
            }

@@ -13,12 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartSourceIndex extends ScalarIndexExtension<String> {
   public static final ID<String, Void> DART_SOURCE_INDEX = ID.create("DartSourceIndex");
-  private static final int INDEX_VERSION = 2;
   private DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
 
   @NotNull
@@ -29,7 +25,7 @@ public class DartSourceIndex extends ScalarIndexExtension<String> {
 
   @Override
   public int getVersion() {
-    return DartIndexUtil.BASE_VERSION + INDEX_VERSION;
+    return DartIndexUtil.INDEX_VERSION;
   }
 
   @NotNull

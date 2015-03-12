@@ -1,35 +1,24 @@
 package com.jetbrains.lang.dart.ide.index;
 
 import com.jetbrains.lang.dart.DartComponentType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartComponentInfo {
-  @NotNull private final String value;
-  @Nullable private final DartComponentType type;
-  @Nullable private final String libraryId;
+  @Nullable private final DartComponentType myComponentType;
+  @Nullable private final String myLibraryName;
 
-  public DartComponentInfo(@NotNull String value, @Nullable DartComponentType type, @Nullable String libraryId) {
-    this.value = value;
-    this.type = type;
-    this.libraryId = libraryId;
-  }
-
-  @NotNull
-  public String getValue() {
-    return value;
+  public DartComponentInfo(@Nullable final DartComponentType componentType, @Nullable final String libraryName) {
+    myComponentType = componentType;
+    myLibraryName = libraryName;
   }
 
   @Nullable
-  public DartComponentType getType() {
-    return type;
+  public DartComponentType getComponentType() {
+    return myComponentType;
   }
 
   @Nullable
-  public String getLibraryId() {
-    return libraryId;
+  public String getLibraryName() {
+    return myLibraryName;
   }
 }
