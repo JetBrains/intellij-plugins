@@ -24,11 +24,11 @@
  */
 package org.jetbrains.osgi.jps.build;
 
+import aQute.bnd.osgi.Constants;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osgi.framework.Constants;
 
 import java.io.File;
 import java.io.FileInputStream;
