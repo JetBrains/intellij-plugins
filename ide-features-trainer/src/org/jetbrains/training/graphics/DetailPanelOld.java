@@ -9,20 +9,18 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.plaf.ButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
  * Created by karashevich on 14/01/15.
  */
-public class DetailPanel extends JPanel implements Disposable{
+public class DetailPanelOld extends JPanel implements Disposable{
     private final int magicConst = 15;
-    private Color backGroundColor = new Color(0, 0 ,0, 190);
-    private Color textColor = new Color(245, 245, 245, 255);
+    private Color backGroundColor = new Color(255, 255 ,255, 190);
+    private final Color textColor = new Color(245, 245, 245, 255);
     private final String customFontPath = "roboto.ttf";
     @Nullable
     private Balloon balloon;
@@ -31,28 +29,17 @@ public class DetailPanel extends JPanel implements Disposable{
     private JLabel myLabel;
     private JButton btn;
 
-    public DetailPanel(Dimension dimension) throws IOException, FontFormatException {
+    public DetailPanelOld(Dimension dimension) throws IOException, FontFormatException {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         balloonShown = false;
 
-        if( UIUtil.isUnderDarcula()) {
-            backGroundColor = new Color(120, 120, 120, 63);
-            textColor = new Color(15, 15, 15, 255);
-        }
-
         setOpaque(false);
         setPreferredSize(dimension);
         setSize(dimension);
-        if( UIUtil.isUnderDarcula()) {
-            setBackground(new Color(120, 120 ,120, 63));
-        } else {
-            setBackground(new Color(0, 0 ,0, 63));
-        }
+        setBackground(new Color(0, 0 ,0, 63));
 
-        if( UIUtil.isUnderDarcula()) {
-            textColor = new Color(235, 235, 235);
-        }
+
         myLabel = new JLabel();
         myLabel.setForeground(textColor);
         Font customFont = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResourceAsStream(customFontPath));
@@ -63,24 +50,11 @@ public class DetailPanel extends JPanel implements Disposable{
         myLabel.setFocusable(false);
 
         btn = new RoundedCornerButton("Test button");
-        btn.setUI(new RoundedCornerButtonUI());
         btn.setFont(customFont.deriveFont(13.0F));
         btn.setBorderPainted(false);
-        if( UIUtil.isUnderDarcula()) {
-            btn.setForeground(Color.WHITE);
-        } else {
-            btn.setForeground(Color.WHITE);
-        }
+        btn.setForeground(Color.WHITE);
         btn.setRolloverEnabled(false);
         btn.setFocusable(false);
-        btn.setBackground((new Color(0,0,0,0)));
-
-        btn.setContentAreaFilled(false);
-
-
-        System.err.println("BUTTON UI:" + btn.getUI());
-        System.err.println("BUTTON MODEL:" + btn.getModel());
-
 
 //        btn = new JButton("Start");
 //        btn.setFocusPainted(false);

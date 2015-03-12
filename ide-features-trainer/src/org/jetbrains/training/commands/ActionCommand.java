@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.util.ui.UIUtil;
 import org.jdom.Element;
 import org.jetbrains.training.Command;
 import org.jetbrains.training.editor.MouseListenerHolder;
@@ -87,10 +88,13 @@ public class ActionCommand extends Command {
         int offset = editor.getCaretModel().getCurrentCaret().getOffset();
         VisualPosition position = editor.offsetToVisualPosition(offset);
         Point point = editor.visualPositionToXY(position);
+
         BalloonBuilder builder =
                 JBPopupFactory.getInstance().
-                        createHtmlTextBalloonBuilder(balloonText, null, Color.LIGHT_GRAY, null)
-                        .setHideOnClickOutside(false).setCloseButtonEnabled(true).setHideOnKeyOutside(false);
+                        createHtmlTextBalloonBuilder(balloonText, null, UIUtil.getLabelBackground(), null)
+                        .setHideOnClickOutside(false)
+                        .setCloseButtonEnabled(true)
+                        .setHideOnKeyOutside(false);
         final Balloon myBalloon = builder.createBalloon();
 
         myBalloon.show(new RelativePoint(editor.getContentComponent(), point), Balloon.Position.above);
