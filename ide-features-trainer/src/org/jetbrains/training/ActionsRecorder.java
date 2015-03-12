@@ -68,7 +68,7 @@ public class ActionsRecorder implements Disposable {
     }
 
     public void startRecording(final Runnable showWinMessage, final @Nullable String actionId) {
-        if(actionId != null || !actionId.equals("") || ActionManager.getInstance().getAction(actionId) != null) {
+        if(actionId != null && !actionId.equals("") && ActionManager.getInstance().getAction(actionId) != null) {
             checkAction(actionId);
             startRecording(showWinMessage);
         } else {
@@ -118,7 +118,7 @@ public class ActionsRecorder implements Disposable {
             public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
                 final String actionId = ActionManager.getInstance().getId(action);
                 if (actionId.toUpperCase().equals(actionTriggerId.toUpperCase())) {
-                    System.err.println("Action trigger has been activated.");
+//                    System.err.println("Action trigger has been activated.");
                     triggerActivated = true;
                     actionManager.removeAnActionListener(this);
                 }
