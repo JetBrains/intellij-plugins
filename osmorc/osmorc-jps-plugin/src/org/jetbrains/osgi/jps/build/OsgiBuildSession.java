@@ -15,6 +15,7 @@
  */
 package org.jetbrains.osgi.jps.build;
 
+import aQute.bnd.osgi.Constants;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
@@ -32,13 +33,12 @@ import org.jetbrains.jps.model.module.JpsDependencyElement;
 import org.jetbrains.jps.model.module.JpsLibraryDependency;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
+import org.jetbrains.jps.util.JpsPathUtil;
 import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
 import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry;
 import org.jetbrains.osgi.jps.util.OsgiBuildUtil;
-import org.jetbrains.jps.util.JpsPathUtil;
-import org.osgi.framework.Constants;
 
 import java.io.File;
 import java.util.*;
@@ -51,7 +51,7 @@ public class OsgiBuildSession implements Reporter {
   /**
    * Condition which matches order entries that are not representing a framework library.
    */
-  public static final Condition<JpsDependencyElement> NOT_FRAMEWORK_LIBRARY_CONDITION = new Condition<JpsDependencyElement>() {
+  private static final Condition<JpsDependencyElement> NOT_FRAMEWORK_LIBRARY_CONDITION = new Condition<JpsDependencyElement>() {
     @Override
     public boolean value(JpsDependencyElement entry) {
       if (entry instanceof JpsLibraryDependency) {
@@ -126,27 +126,40 @@ public class OsgiBuildSession implements Reporter {
   private void doBuild() throws OsgiBuildException {
     progress("Running Bnd to build the bundle");
 
-    File bndFile = getBndFile();
+    if (myExtension.isUseBndFile()) {
+      String bndPath = myExtension.getBndFileLocation();
+      File bndFile = OsgiBuildUtil.findFileInModuleContentRoots(myModule, bndPath);
+      if (bndFile == null || !bndFile.canRead()) {
+        throw new OsgiBuildException("Bnd file missing '" + bndPath + "' - please check OSGi facet settings.");
+      }
 
-    if (!myExtension.isUseBundlorFile()) {
-      mySourceToReport = getSourceFileToReport(bndFile);
-      myBndWrapper.build(bndFile, myModuleOutputDir, mySources, myOutputJarFile);
+      mySourceToReport = bndFile.getAbsolutePath();
+      try {
+        myBndWrapper.build(bndFile, myModuleOutputDir, mySources, myOutputJarFile);
+      }
+      catch (Exception e) {
+        throw new OsgiBuildException("Unexpected build error", e, null);
+      }
       mySourceToReport = null;
     }
-    else {
-      File tempFile = new File(myOutputJarFile.getAbsolutePath() + ".tmp.jar");
-      mySourceToReport = getSourceFileToReport(bndFile);
-      myBndWrapper.build(bndFile, myModuleOutputDir, mySources, tempFile);
-      mySourceToReport = null;
-
-      progress("Running Bundlor to calculate the manifest");
-
+    else if (myExtension.isUseBundlorFile()) {
       String bundlorPath = myExtension.getBundlorFileLocation();
       File bundlorFile = OsgiBuildUtil.findFileInModuleContentRoots(myModule, bundlorPath);
       if (bundlorFile == null) {
         throw new OsgiBuildException("Bundlor file missing '" + bundlorPath + "' - please check OSGi facet settings.");
       }
 
+      File tempFile = new File(myOutputJarFile.getAbsolutePath() + ".tmp.jar");
+
+      try {
+        Map<String, String> properties = Collections.singletonMap(Constants.CREATED_BY, "IntelliJ IDEA / OSGi Plugin");
+        myBndWrapper.build(properties, myModuleOutputDir, mySources, tempFile);
+      }
+      catch (Exception e) {
+        throw new OsgiBuildException("Unexpected build error", e, null);
+      }
+
+      progress("Running Bundlor to calculate the manifest");
       try {
         Properties properties = OsgiBuildUtil.getMavenProjectProperties(myContext, myModule);
         List<String> warnings = new BundlorWrapper().wrapModule(properties, tempFile, myOutputJarFile, bundlorFile);
@@ -160,68 +173,77 @@ public class OsgiBuildSession implements Reporter {
         }
       }
     }
+    else {
+      Map<String, String> buildProperties = getBuildProperties();
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("build properties: " + buildProperties);
+      }
 
-    if (!myExtension.isUseBndFile() && !myExtension.isUseBundlorFile()) {
+      mySourceToReport = getSourceFileToReport();
+      try {
+        myBndWrapper.build(buildProperties, myModuleOutputDir, mySources, myOutputJarFile);
+      }
+      catch (Exception e) {
+        throw new OsgiBuildException("Unexpected build error", e, null);
+      }
+      mySourceToReport = null;
+
       progress("Bundling non-OSGi libraries");
       bundlifyLibraries();
     }
   }
 
   @NotNull
-  private File getBndFile() throws OsgiBuildException {
-    if (myExtension.isUseBndFile()) {
-      String bndPath = myExtension.getBndFileLocation();
-      File bndFile = OsgiBuildUtil.findFileInModuleContentRoots(myModule, bndPath);
-      if (bndFile != null && bndFile.canRead()) {
-        return bndFile;
-      }
-      throw new OsgiBuildException("Bnd file missing '" + bndPath + "' - please check OSGi facet settings.");
-    }
-
-    // use a linked hash map to keep the order of properties.
-    Map<String, String> buildProperties = new LinkedHashMap<String, String>();
+  private Map<String, String> getBuildProperties() throws OsgiBuildException {
     if (myExtension.isManifestManuallyEdited() || myExtension.isOsmorcControlsManifest()) {
+      Map<String, String> properties = ContainerUtil.newHashMap();
+
+      // defaults (similar to Maven)
+
+      properties.put(Constants.IMPORT_PACKAGE, "*");
+      properties.put(Constants.REMOVEHEADERS, Constants.INCLUDE_RESOURCE + ',' + Constants.PRIVATE_PACKAGE);
+      properties.put(Constants.CREATED_BY, "IntelliJ IDEA / OSGi Plugin");
+
+      // user settings
+
       if (myExtension.isOsmorcControlsManifest()) {
-        // fully osmorc controlled, no bnd file, read in all  properties
-        buildProperties.putAll(myExtension.getAdditionalProperties());
-        buildProperties.put(Constants.BUNDLE_SYMBOLICNAME, myExtension.getBundleSymbolicName());
-        buildProperties.put(Constants.BUNDLE_VERSION, myExtension.getBundleVersion());
+        properties.putAll(myExtension.getAdditionalProperties());
+
+        properties.put(Constants.BUNDLE_SYMBOLICNAME, myExtension.getBundleSymbolicName());
+        properties.put(Constants.BUNDLE_VERSION, myExtension.getBundleVersion());
+
         String activator = myExtension.getBundleActivator();
-        if (!StringUtil.isEmptyOrSpaces(activator)) buildProperties.put(Constants.BUNDLE_ACTIVATOR, activator);
+        if (!StringUtil.isEmptyOrSpaces(activator)) {
+          properties.put(Constants.BUNDLE_ACTIVATOR, activator);
+        }
       }
-      else { // manually edited manifest
+      else {
         File manifestFile = myExtension.getManifestFile();
         if (manifestFile == null) {
           throw new OsgiBuildException("Manifest file '" + myExtension.getManifestLocation() + "' missing - please check OSGi facet settings.");
         }
-        buildProperties.put("-manifest", manifestFile.getAbsolutePath());
+        properties.put(Constants.MANIFEST, manifestFile.getAbsolutePath());
       }
 
-      StringBuilder pathBuilder = new StringBuilder();
+      // resources
 
-      // add all the class paths to include resources, so stuff from the project gets copied over.
-      // XXX: one could argue if this should be done for a non-osmorc build
-      pathBuilder.append(myModuleOutputDir.getPath());
-
-      // now include the paths from the configuration
+      StringBuilder pathBuilder = new StringBuilder(myModuleOutputDir.getPath());
       for (OsmorcJarContentEntry contentEntry : myExtension.getAdditionalJarContents()) {
-        if (pathBuilder.length() > 0) pathBuilder.append(",");
-        pathBuilder.append(contentEntry.myDestination).append(" = ").append(contentEntry.mySource);
+        pathBuilder.append(',').append(contentEntry.myDestination).append('=').append(contentEntry.mySource);
       }
 
-      // and tell bnd what resources to include
-      StringBuilder includedResources = new StringBuilder();
-      if (!myExtension.isManifestManuallyEdited()) {
-        String resources = myExtension.getAdditionalProperties().get("Include-Resource");
+      StringBuilder includedResources;
+      if (myExtension.isOsmorcControlsManifest()) {
+        includedResources = new StringBuilder();
+        String resources = properties.get(Constants.INCLUDE_RESOURCE);
         if (resources != null) includedResources.append(resources).append(',');
         includedResources.append(pathBuilder);
       }
       else {
-        includedResources.append(pathBuilder);
+        includedResources = pathBuilder;
       }
-      buildProperties.put("Include-Resource", includedResources.toString());
+      properties.put(Constants.INCLUDE_RESOURCE, includedResources.toString());
 
-      // add the ignore pattern for the resources
       String pattern = myExtension.getIgnoreFilePattern();
       if (!StringUtil.isEmptyOrSpaces(pattern)) {
         try {
@@ -231,26 +253,24 @@ public class OsgiBuildSession implements Reporter {
         catch (PatternSyntaxException e) {
           throw new OsgiBuildException("The file ignore pattern is invalid - please check OSGi facet settings.");
         }
-        buildProperties.put("-donotcopy", pattern);
+        properties.put(Constants.DONOTCOPY, pattern);
       }
 
       if (myExtension.isOsmorcControlsManifest()) {
         // support the {local-packages} instruction
         progress("Calculating local packages");
-        LocalPackageCollector.addLocalPackages(myModuleOutputDir, buildProperties);
+        LocalPackageCollector.addLocalPackages(myModuleOutputDir, properties);
       }
+
+      return properties;
     }
-    else if (!myExtension.isUseBundlorFile()) {
+    else {
       throw new OsgiBuildException("Bundle creation method not specified - please check OSGi facet settings.");
     }
-
-    String comment = "Generated by IDEA for module '" + myModule.getName() + "' in project '" + myModule.getProject().getName() + "'";
-    return myBndWrapper.makeBndFile(buildProperties, comment, myOutputDir);
   }
 
-  private String getSourceFileToReport(File bndFile) {
+  private String getSourceFileToReport() {
     if (myExtension.isManifestManuallyEdited()) {
-      // link warnings/errors to the user-provided manifest file
       File manifestFile = myExtension.getManifestFile();
       if (manifestFile != null) {
         return manifestFile.getPath();
@@ -259,11 +279,10 @@ public class OsgiBuildSession implements Reporter {
     else {
       File mavenProjectFile = OsgiBuildUtil.getMavenProjectPath(myContext, myModule);
       if (mavenProjectFile != null) {
-        // ok it's imported from Maven, link warnings/errors back to pom.xml
         return mavenProjectFile.getPath();
       }
     }
-    return bndFile.getPath();
+    return null;
   }
 
   /**

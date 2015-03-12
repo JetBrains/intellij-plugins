@@ -16,7 +16,6 @@
 package org.jetbrains.osgi.jps
 
 import org.jetbrains.jps.builders.JpsBuildTestCase
-import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
@@ -32,9 +31,11 @@ import kotlin.properties.Delegates
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
+import org.jetbrains.jps.model.java.JavaResourceRootType
+import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry
 
 class OsgiBuildTest : JpsBuildTestCase() {
-  var myExtension: JpsOsmorcModuleExtension by Delegates.notNull()
+  var myExtension: JpsOsmorcModuleExtensionImpl by Delegates.notNull()
   var myModule: JpsModule by Delegates.notNull()
 
   override fun setUp() {
@@ -43,35 +44,80 @@ class OsgiBuildTest : JpsBuildTestCase() {
     myModule = addModule("main")
     val contentRoot = JpsPathUtil.pathToUrl(getAbsolutePath("main"))
     myModule.getContentRootsList().addUrl(contentRoot)
-    myModule.addSourceRoot<JavaSourceRootProperties>(contentRoot + "/src", JavaSourceRootType.SOURCE)
+    myModule.addSourceRoot(contentRoot + "/src", JavaSourceRootType.SOURCE)
+    myModule.addSourceRoot(contentRoot + "/res", JavaResourceRootType.RESOURCE)
     JpsJavaExtensionService.getInstance().getOrCreateModuleExtension(myModule).setOutputUrl(contentRoot + "/out")
 
-    val properties = OsmorcModuleExtensionProperties()
-    properties.myManifestGenerationMode = ManifestGenerationMode.Bnd
-    properties.myBndFileLocation = "bnd.bnd"
-    properties.myJarFileLocation = "main.jar"
-    myExtension = JpsOsmorcModuleExtensionImpl(properties)
+    myExtension = JpsOsmorcModuleExtensionImpl(OsmorcModuleExtensionProperties())
+    myExtension.getProperties().myJarFileLocation = "main.jar"
     myModule.getContainer().setChild<JpsOsmorcModuleExtension>(JpsOsmorcModuleExtension.ROLE, myExtension)
   }
 
-  fun testBasics() {
+  private fun bndBuild() {
+    myExtension.getProperties().myManifestGenerationMode = ManifestGenerationMode.Bnd
+    myExtension.getProperties().myBndFileLocation = "bnd.bnd"
+  }
+
+  private fun ideaBuild() {
+    myExtension.getProperties().myManifestGenerationMode = ManifestGenerationMode.OsmorcControlled
+    myExtension.getProperties().myBundleSymbolicName = "main"
+    myExtension.getProperties().myBundleVersion = "1.0.0"
+    myExtension.getProperties().myAdditionalProperties = mapOf("Export-Package" to "main")
+  }
+
+
+  fun testPlainBndProject() {
+    bndBuild()
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     makeAll().assertSuccessful()
 
     assertJar(setOf("META-INF/MANIFEST.MF", "main/Main.class"))
-    assertManifest(mapOf("Bundle-SymbolicName" to "main", "Bundle-Version" to "1.0.0", "Export-Package" to "main;version=\"1.0.0\""))
+    assertManifest(setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 
-  fun testBndProject() {
+  fun testBndtoolsProject() {
+    bndBuild()
     createFile("cnf/build.bnd", "src=src\nbin=out")
     createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
     createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
     makeAll().assertSuccessful()
 
     assertJar(setOf("META-INF/MANIFEST.MF", "main/Main.class", "OSGI-OPT/src/main/Main.java"))
-    assertManifest(mapOf("Bundle-SymbolicName" to "main", "Bundle-Version" to "1.0.0", "Export-Package" to "main;version=\"1.0.0\""))
+    assertManifest(setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
+
+  fun testPlainIdeaProject() {
+    ideaBuild()
+    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    createFile("main/res/readme.txt", "Hiya there.")
+    makeAll().assertSuccessful()
+
+    assertJar(setOf("META-INF/MANIFEST.MF", "main/Main.class", "readme.txt"))
+    assertManifest(setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
+  }
+
+  fun testIdeaProjectWithImpl() {
+    ideaBuild()
+    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    createFile("main/src/impl/MainImpl.java", "package impl;\n\npublic class MainImpl implements main.Main { public String greeting() {return \"\";} }")
+    makeAll().assertSuccessful()
+
+    assertJar(setOf("META-INF/MANIFEST.MF", "main/Main.class", "impl/MainImpl.class"))
+    assertManifest(setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\"", "Import-Package=main"))
+  }
+
+  fun testAdditionalContent() {
+    ideaBuild()
+    myExtension.getProperties().myAdditionalJARContents.add(OsmorcJarContentEntry(getAbsolutePath("content/readme.txt"), "readme.txt"))
+    createFile("content/readme.txt", "Hiya there.")
+    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    makeAll().assertSuccessful()
+
+    assertJar(setOf("META-INF/MANIFEST.MF", "main/Main.class", "readme.txt"))
+    assertManifest(setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
+  }
+
 
   private fun assertJar(expected: Set<String>) {
     JarFile(myExtension.getJarFileLocation()).use {
@@ -80,13 +126,17 @@ class OsgiBuildTest : JpsBuildTestCase() {
     }
   }
 
-  private fun assertManifest(expected: Map<String, String>) {
+  private fun assertManifest(expected: Set<String>) {
+    val instrumental = setOf("Bnd-LastModified", "Tool", "Created-By")
+    val standard = setOf("Manifest-Version", "Bundle-ManifestVersion", "Require-Capability")
+
     JarFile(myExtension.getJarFileLocation()).use {
-      val attributes = it.getManifest()!!.getMainAttributes()!!
-      assertNotNull(attributes.getValue("Manifest-Version"))
-      for ((k, v) in expected) {
-        assertEquals(v, attributes.getValue(k))
-      }
+      val actual = it.getManifest()!!.getMainAttributes()!!.filter {
+        if (it.key.toString() in instrumental) false
+        else if (it.key.toString() in standard) { assertNotNull(it.getValue()); false }
+        else true
+      }.map { "${it.key}=${it.value}" }.toSet()
+      assertEquals(expected, actual)
     }
   }
 
