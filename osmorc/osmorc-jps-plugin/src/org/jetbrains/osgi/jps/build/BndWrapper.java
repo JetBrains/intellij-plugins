@@ -26,10 +26,7 @@ package org.jetbrains.osgi.jps.build;
 
 import aQute.bnd.build.Project;
 import aQute.bnd.build.Workspace;
-import aQute.bnd.osgi.Analyzer;
-import aQute.bnd.osgi.Builder;
-import aQute.bnd.osgi.Jar;
-import aQute.bnd.osgi.Verifier;
+import aQute.bnd.osgi.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -37,9 +34,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
 import org.jetbrains.osgi.jps.util.OrderedProperties;
-import org.osgi.framework.Constants;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -159,80 +156,71 @@ public class BndWrapper {
   }
 
   /**
-   * Generates temporary Bnd file from the given content.
+   * Builds the .jar file for the given module.
    */
-  @NotNull
-  public File makeBndFile(@NotNull Map<String, String> contents, @NotNull String comment, @NotNull File outputDir) throws OsgiBuildException {
-    try {
-      File file = FileUtil.createTempFile(outputDir, "osgi.", ".bnd", true, true);
-      OutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
-      try {
-        OrderedProperties.fromMap(contents).store(stream, comment);
-      }
-      finally {
-        stream.close();
-      }
-      return file;
-    }
-    catch (IOException e) {
-      throw new OsgiBuildException("Problem when generating .bnd file", e, null);
-    }
+  public void build(@NotNull Map<String, String> properties, @NotNull File classPath, @NotNull File[] srcPath, @NotNull File outputFile) throws Exception {
+    Builder builder = new ReportingBuilder(myReporter);
+    builder.setProperties(OrderedProperties.fromMap(properties));
+    builder.setPedantic(false);
+    builder.setClasspath(new File[]{classPath});
+    builder.setSourcepath(srcPath);
+
+    doBuild(builder, outputFile);
   }
 
   /**
    * Builds the .jar file for the given module.
    */
-  public void build(@NotNull File bndFile, @NotNull File classPath, @NotNull File[] srcPath, @NotNull File outputFile) throws OsgiBuildException {
-    try {
-      Builder builder;
+  public void build(@NotNull File bndFile, @NotNull File classPath, @NotNull File[] srcPath, @NotNull File outputFile) throws Exception {
+    Builder builder;
 
-      Workspace workspace = Workspace.findWorkspace(bndFile);
-      if (workspace != null) {
-        Project project = new Project(workspace, null, bndFile);
-        builder = new ReportingProjectBuilder(myReporter, project);
-      }
-      else {
-        builder = new ReportingBuilder(myReporter);
-        builder.setProperties(bndFile);
-        builder.setPedantic(false);
-        builder.setClasspath(new File[]{classPath});
-        builder.setSourcepath(srcPath);
-      }
+    Workspace workspace = Workspace.findWorkspace(bndFile);
+    if (workspace != null) {
+      Project project = new Project(workspace, null, bndFile);
+      builder = new ReportingProjectBuilder(myReporter, project);
+    }
+    else {
+      builder = new ReportingBuilder(myReporter);
+      builder.setProperties(bndFile);
+      builder.setPedantic(false);
+      builder.setClasspath(new File[]{classPath});
+      builder.setSourcepath(srcPath);
+    }
 
-      // check if the manifest version is missing (IDEADEV-41174)
-      String manifest = builder.getProperty(aQute.bnd.osgi.Constants.MANIFEST);
-      if (manifest != null) {
-        File manifestFile = builder.getFile(manifest);
-        if (manifestFile != null) {
+    doBuild(builder, outputFile);
+  }
+
+  private void doBuild(@NotNull Builder builder, @NotNull File outputFile) throws Exception {
+    // check if the manifest version is missing (IDEADEV-41174)
+    String manifest = builder.getProperty(Constants.MANIFEST);
+    if (manifest != null) {
+      File manifestFile = builder.getFile(manifest);
+      if (manifestFile != null) {
+        try {
+          FileInputStream stream = new FileInputStream(manifestFile);
           try {
-            FileInputStream stream = new FileInputStream(manifestFile);
-            try {
-              Properties p = new Properties();
-              p.load(stream);
-              String value = p.getProperty(Attributes.Name.MANIFEST_VERSION.toString());
-              if (StringUtil.isEmptyOrSpaces(value)) {
-                String message = "Manifest misses a Manifest-Version entry. This may produce an empty manifest in the resulting bundle.";
-                myReporter.warning(message, null, manifest);
-              }
-            }
-            finally {
-              stream.close();
+            Properties p = new Properties();
+            p.load(stream);
+            String value = p.getProperty(Attributes.Name.MANIFEST_VERSION.toString());
+            if (StringUtil.isEmptyOrSpaces(value)) {
+              String message = "Manifest misses a Manifest-Version entry. This may produce an empty manifest in the resulting bundle.";
+              myReporter.warning(message, null, manifest);
             }
           }
-          catch (Exception e) {
-            myReporter.warning("Can't read manifest: " + e.getMessage(), e, manifest);
+          finally {
+            stream.close();
           }
         }
+        catch (Exception e) {
+          myReporter.warning("Can't read manifest: " + e.getMessage(), e, manifest);
+        }
       }
+    }
 
-      Jar jar = builder.build();
-      jar.setName(outputFile.getName());
-      jar.write(outputFile);
-      builder.close();
-    }
-    catch (Exception e) {
-      throw new OsgiBuildException("Unexpected build error", e, null);
-    }
+    Jar jar = builder.build();
+    jar.setName(outputFile.getName());
+    jar.write(outputFile);
+    builder.close();
   }
 
   /**
