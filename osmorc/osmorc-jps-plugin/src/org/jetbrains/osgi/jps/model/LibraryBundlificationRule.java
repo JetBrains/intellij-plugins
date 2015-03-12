@@ -24,12 +24,12 @@
  */
 package org.jetbrains.osgi.jps.model;
 
+import aQute.bnd.osgi.Constants;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
-import org.osgi.framework.Constants;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
