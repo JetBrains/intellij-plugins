@@ -17,12 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartPathIndex extends FileBasedIndexExtension<String, List<String>> {
   public static final ID<String, List<String>> DART_PATH_INDEX = ID.create("DartPathIndex");
-  private static final int INDEX_VERSION = 2;
   private DataIndexer<String, List<String>, FileContent> myDataIndexer = new MyDataIndexer();
 
   @NotNull
@@ -33,7 +29,7 @@ public class DartPathIndex extends FileBasedIndexExtension<String, List<String>>
 
   @Override
   public int getVersion() {
-    return DartIndexUtil.BASE_VERSION + INDEX_VERSION;
+    return DartIndexUtil.INDEX_VERSION;
   }
 
   @NotNull

@@ -20,7 +20,6 @@ import java.util.*;
 
 public class DartClassIndex extends ScalarIndexExtension<String> {
   public static final ID<String, Void> DART_CLASS_INDEX = ID.create("DartClassIndex");
-  private static final int INDEX_VERSION = 2;
   private DataIndexer<String, Void, FileContent> myDataIndexer = new MyDataIndexer();
 
   @NotNull
@@ -31,7 +30,7 @@ public class DartClassIndex extends ScalarIndexExtension<String> {
 
   @Override
   public int getVersion() {
-    return DartIndexUtil.BASE_VERSION + INDEX_VERSION;
+    return DartIndexUtil.INDEX_VERSION;
   }
 
   @NotNull

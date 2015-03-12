@@ -6,14 +6,18 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PairProcessor;
 import com.jetbrains.lang.dart.ide.index.DartComponentIndex;
 import com.jetbrains.lang.dart.ide.index.DartComponentInfo;
 import com.jetbrains.lang.dart.psi.DartReference;
+import com.jetbrains.lang.dart.resolve.DartResolveScopeProvider;
 import com.jetbrains.lang.dart.util.DartImportUtil;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,34 +31,40 @@ public class DartGlobalVariantsCompletionHelper {
                                                  @NotNull final PsiElement context,
                                                  @NotNull final Set<String> namesToSkip,
                                                  @Nullable final Condition<DartComponentInfo> infoFilter) {
-    DartComponentIndex.processAllComponents(
-      context,
-      new PairProcessor<String, DartComponentInfo>() {
-        @Override
-        public boolean process(String componentName, DartComponentInfo info) {
-          if (infoFilter == null || !infoFilter.value(info)) {
-            result.addElement(buildElement(componentName, info));
-          }
-          return true;
-        }
-      }, new Condition<String>() {
-        @Override
-        public boolean value(String componentName) {
-          return namesToSkip.contains(componentName);
-        }
+    final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(context.getContainingFile());
+    final GlobalSearchScope scope = vFile == null ? null : DartResolveScopeProvider.getDartScope(context.getProject(), vFile, true);
+    if (scope == null) return;
+
+    final Condition<String> nameFilter = new Condition<String>() {
+      @Override
+      public boolean value(String componentName) {
+        return !namesToSkip.contains(componentName);
       }
-    );
+    };
+
+    DartComponentIndex.processAllComponents(scope, nameFilter,
+                                            new PairProcessor<String, DartComponentInfo>() {
+                                              @Override
+                                              public boolean process(String componentName, DartComponentInfo info) {
+                                                final String libraryName = info.getLibraryName();
+                                                if ((libraryName == null || !libraryName.startsWith("dart._")) &&
+                                                    (infoFilter == null || infoFilter.value(info))) {
+                                                  result.addElement(buildElement(componentName, info));
+                                                }
+                                                return true;
+                                              }
+                                            });
   }
 
   @NotNull
   private static LookupElement buildElement(String componentName, DartComponentInfo info) {
     LookupElementBuilder builder = LookupElementBuilder.create(info, componentName);
-    if (info.getLibraryId() != null) {
-      // todo may be show DartImportUtil.getUrlToImport() or file name where component declared instead of info.getLibraryId() ?
-      builder = builder.withTailText(" (" + info.getLibraryId() + ")", true);
+    if (info.getLibraryName() != null) {
+      // todo may be show DartImportUtil.getUrlToImport() or file name where component declared instead of info.getLibraryName() ?
+      builder = builder.withTailText(" (" + info.getLibraryName() + ")", true);
     }
-    if (info.getType() != null) {
-      builder = builder.withIcon(info.getType().getIcon());
+    if (info.getComponentType() != null) {
+      builder = builder.withIcon(info.getComponentType().getIcon());
     }
     return builder.withInsertHandler(MY_INSERT_HANDLER);
   }
@@ -63,7 +73,7 @@ public class DartGlobalVariantsCompletionHelper {
     @Override
     public void handleInsert(InsertionContext context, LookupElement item) {
       DartComponentInfo info = (DartComponentInfo)item.getObject();
-      final String libraryName = info.getLibraryId();
+      final String libraryName = info.getLibraryName();
       if (libraryName == null) {
         return;
       }

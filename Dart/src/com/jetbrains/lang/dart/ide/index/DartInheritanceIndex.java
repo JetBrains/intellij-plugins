@@ -24,12 +24,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartInheritanceIndex extends FileBasedIndexExtension<String, List<DartComponentInfo>> {
   public static final ID<String, List<DartComponentInfo>> DART_INHERITANCE_INDEX = ID.create("DartInheritanceIndex");
-  private static final int INDEX_VERSION = 2;
   private final DataIndexer<String, List<DartComponentInfo>, FileContent> myIndexer = new MyDataIndexer();
   private final DataExternalizer<List<DartComponentInfo>> myExternalizer = new DartComponentInfoListExternalizer();
 
@@ -41,7 +37,7 @@ public class DartInheritanceIndex extends FileBasedIndexExtension<String, List<D
 
   @Override
   public int getVersion() {
-    return DartIndexUtil.BASE_VERSION + INDEX_VERSION;
+    return DartIndexUtil.INDEX_VERSION;
   }
 
   @Override
