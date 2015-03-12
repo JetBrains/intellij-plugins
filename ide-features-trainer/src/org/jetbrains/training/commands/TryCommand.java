@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.ActionsRecorder;
 import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
@@ -46,6 +47,17 @@ public class TryCommand extends Command {
         final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, target);
         //TODO: Make recorder disposable
 
+        if (element.getAttribute("trigger") != null) {
+            String actionId = element.getAttribute("trigger").getValue();
+            startRecord(lesson, infoPanel, winMessage, recorder, actionId);
+        } else {
+
+            startRecord(lesson, infoPanel, winMessage, recorder, null);
+        }
+
+    }
+
+    private void startRecord(final Lesson lesson, final DetailPanel infoPanel, final String winMessage, ActionsRecorder recorder, @Nullable String actionId) {
         recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
@@ -85,8 +97,7 @@ public class TryCommand extends Command {
                 }
 
             }
-        });
-
+        }, actionId);
     }
 
 
