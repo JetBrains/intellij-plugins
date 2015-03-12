@@ -17,10 +17,13 @@ package org.jetbrains.osgi.jps
 
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.java.JpsJavaExtensionService
+import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
+import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry
 import org.jetbrains.osgi.jps.model.impl.JpsOsmorcModuleExtensionImpl
 import org.jetbrains.osgi.jps.model.impl.OsmorcModuleExtensionProperties
 
@@ -30,9 +33,6 @@ import java.util.jar.JarFile
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import org.jetbrains.jps.model.java.JpsJavaExtensionService
-import org.jetbrains.jps.model.java.JavaResourceRootType
-import org.jetbrains.osgi.jps.model.OsmorcJarContentEntry
 
 class OsgiBuildTest : JpsBuildTestCase() {
   var myExtension: JpsOsmorcModuleExtensionImpl by Delegates.notNull()
