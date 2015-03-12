@@ -120,23 +120,22 @@ class OsgiMavenImporterTest : FacetImporterTestCase<OsmorcFacet>() {
   }
 
 
-  private fun pomContents(artifactId: String, pluginConfig: String, buildConfig: String): String {
-    return "<groupId>org.osmorc</groupId>\n" +
-        "<artifactId>${artifactId}</artifactId>\n" +
-        "<version>1.0.1</version>\n" +
-        "<packaging>bundle</packaging>\n" +
-        "<build>\n" +
-        (if (buildConfig.isEmpty()) "" else "  ${buildConfig}\n") +
-        "  <plugins>\n" +
-        "    <plugin>\n" +
-        "      <groupId>org.apache.felix</groupId>\n" +
-        "      <artifactId>maven-bundle-plugin</artifactId>\n" +
-        "      <version>2.5.3</version>\n" +
-        (if (pluginConfig.isEmpty()) "" else "      ${pluginConfig}\n") +
-        "    </plugin>\n" +
-        "  </plugins>\n" +
-        "</build>"
-  }
+  private fun pomContents(artifactId: String, pluginConfig: String, buildConfig: String): String = """
+    <groupId>org.osmorc</groupId>
+    <artifactId>${artifactId}</artifactId>
+    <version>1.0.1</version>
+    <packaging>bundle</packaging>
+    <build>
+      ${buildConfig}
+      <plugins>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>2.5.3</version>
+          ${pluginConfig}
+        </plugin>
+      </plugins>
+    </build>"""
 
   private fun assertConfiguration(name: String): OsmorcFacetConfiguration {
     return assertConfiguration(name, name)
