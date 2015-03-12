@@ -64,7 +64,7 @@ public class LessonStarter {
         }
     }
 
-    private void openLesson(AnActionEvent e, final Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException {
+    private synchronized void openLesson(AnActionEvent e, final Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException {
         final VirtualFile vf;
         vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
 
