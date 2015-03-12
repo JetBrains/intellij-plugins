@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide;
 
+import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -11,27 +12,27 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
-import gnu.trove.THashMap;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.Set;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class DartLookupElement extends LookupElement {
   private final DartComponentName myComponentName;
   private final boolean myConstructorCompletion;
 
-  public static Collection<DartLookupElement> convert(@NotNull Collection<DartComponentName> componentNames,
-                                                      boolean constructorCompletion) {
-    final Map<String, DartLookupElement> result = new THashMap<String, DartLookupElement>();
-    for (DartComponentName componentName : componentNames) {
-      DartLookupElement lookupElement = new DartLookupElement(componentName, constructorCompletion);
-      result.put(lookupElement.getLookupString(), lookupElement);
+  public static Set<String> appendVariantsToCompletionSet(@NotNull final CompletionResultSet resultSet,
+                                                          @NotNull final Collection<DartComponentName> variants,
+                                                          boolean constructorCompletion) {
+    final Set<String> addedNames = new THashSet<String>();
+    for (DartComponentName componentName : variants) {
+      final DartLookupElement lookupElement = new DartLookupElement(componentName, constructorCompletion);
+      if (addedNames.add(lookupElement.getLookupString())) {
+        resultSet.consume(lookupElement);
+      }
     }
-    return result.values();
+    return addedNames;
   }
 
   public DartLookupElement(DartComponentName name, boolean constructorCompletion) {

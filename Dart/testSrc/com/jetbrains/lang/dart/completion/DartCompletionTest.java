@@ -89,4 +89,9 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
            "var <caret completionEquals=''>a;\n" +
            "void function (Object O<caret completionEquals=''>){}\n");
   }
+
+  public void testNoDuplication() throws Exception {
+    myFixture.addFileToProject("web/part.dart", "part of lib; class FooBaz{}");
+    doTest("library lib; part 'part.dart'; class FooBar{ const Foob<caret completionEquals='FooBar,FooBaz'> }");
+  }
 }
