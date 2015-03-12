@@ -24,11 +24,11 @@ public class CommentLineDemo {
         <Text description="" btn="Ok">You can comment line by pressing shortcut &lt;span color="gray"&gt;⌘ + /&lt;/span&gt;</Text>
         <Text description="Move caret to tmp declaration" btn="..."/>
         <TraverseCaret stop="120" delay="20"/>
-        <Action action="CommentByLineComment" delay="2000" balloon="type ⌘ + / to comment line"/>
+        <Action action="CommentByLineComment" delay="2000" balloon="⌘ + / (Comment line)"/>
         <Wait delay="200"/>
         <Text description="To disable comment press same shortcut on this line" btn="ok"/>
         <TraverseCaret stop="118" delay="20"/>
-        <Action action="CommentByLineComment" delay="2000" balloon="type ⌘ + / to uncomment line"/>
+        <Action action="CommentByLineComment" delay="2000" balloon="⌘ + / (Uncomment line)"/>
     </MouseBlock>
     <Text description="That's it!" btn="let me try"/>
     <TraverseCaret stop="0" delay="20"/>

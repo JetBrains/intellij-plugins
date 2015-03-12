@@ -57,9 +57,16 @@ February 26
 10 March
 * Introduce LessonQueue for Project
 
+11 March
+* Lesson synchroniztion fix
+* Trigger action implementation
+
 //Plans
-* Disposable
+* Darcula support
+* Disposable Action Recorder
 * Navigation between courses (Modified Toolwindow)
+* Replay again
+* Show from productivity guide
 
 //Far plans
 * Language injection to Scenario (ask George Shrago)
