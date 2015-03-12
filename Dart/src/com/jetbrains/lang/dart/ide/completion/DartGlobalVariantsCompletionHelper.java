@@ -9,34 +9,24 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Function;
 import com.intellij.util.PairProcessor;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.index.DartComponentIndex;
 import com.jetbrains.lang.dart.ide.index.DartComponentInfo;
-import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.psi.DartReference;
 import com.jetbrains.lang.dart.util.DartImportUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Set;
 
 public class DartGlobalVariantsCompletionHelper {
   private DartGlobalVariantsCompletionHelper() {
   }
 
-  public static void addAdditionalGlobalVariants(final CompletionResultSet result,
-                                                 @NotNull PsiElement context,
-                                                 Set<DartComponentName> variants,
+  public static void addAdditionalGlobalVariants(@NotNull final CompletionResultSet result,
+                                                 @NotNull final PsiElement context,
+                                                 @NotNull final Set<String> namesToSkip,
                                                  @Nullable final Condition<DartComponentInfo> infoFilter) {
-    final List<String> addedNames = ContainerUtil.skipNulls(ContainerUtil.mapNotNull(variants, new Function<DartComponentName, String>() {
-      @Override
-      public String fun(DartComponentName name) {
-        return name.getName();
-      }
-    }));
     DartComponentIndex.processAllComponents(
       context,
       new PairProcessor<String, DartComponentInfo>() {
@@ -50,7 +40,7 @@ public class DartGlobalVariantsCompletionHelper {
       }, new Condition<String>() {
         @Override
         public boolean value(String componentName) {
-          return addedNames.contains(componentName);
+          return namesToSkip.contains(componentName);
         }
       }
     );

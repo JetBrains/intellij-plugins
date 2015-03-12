@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PsiElementPattern;
@@ -17,7 +16,6 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Set;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -26,21 +24,20 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
   public DartReferenceCompletionContributor() {
     final PsiElementPattern.Capture<PsiElement> idInReference =
       psiElement().withSuperParent(1, DartId.class).withSuperParent(2, DartReference.class);
+
     extend(CompletionType.BASIC,
            idInReference.andNot(psiElement().withSuperParent(3, DartLibraryReferenceList.class)),
            new CompletionProvider<CompletionParameters>() {
              @Override
-             protected void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
-                                           @NotNull CompletionResultSet result) {
+             protected void addCompletions(@NotNull final CompletionParameters parameters,
+                                           final ProcessingContext context,
+                                           @NotNull final CompletionResultSet resultSet) {
                final DartReference reference = PsiTreeUtil.getParentOfType(parameters.getPosition(), DartReference.class);
                if (reference != null) {
-                 final THashSet<DartComponentName> variants = new THashSet<DartComponentName>();
-                 for (LookupElement element : DartReferenceCompletionContributor.addCompletionVariants(reference, variants)) {
-                   result.addElement(element);
-                 }
+                 final Set<String> addedNames = DartReferenceCompletionContributor.addCompletionVariants(resultSet, reference);
+
                  if (parameters.getInvocationCount() > 1 && DartResolveUtil.aloneOrFirstInChain(reference)) {
-                   DartGlobalVariantsCompletionHelper.addAdditionalGlobalVariants(result, reference, variants, null);
+                   DartGlobalVariantsCompletionHelper.addAdditionalGlobalVariants(resultSet, reference, addedNames, null);
                  }
                }
              }
@@ -64,9 +61,8 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
                    final Set<DartComponentName> suggestedVariants = new THashSet<DartComponentName>();
                    DartResolveUtil
                      .processTopLevelDeclarations(statement, new ComponentNameScopeProcessor(suggestedVariants), importedFile, null);
-                   for (DartLookupElement element : DartLookupElement.convert(suggestedVariants, false)) {
-                     result.addElement(element);
-                   }
+
+                   DartLookupElement.appendVariantsToCompletionSet(result, suggestedVariants, false);
                  }
                }
              }
@@ -74,12 +70,15 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
     );
   }
 
-  private static Collection<DartLookupElement> addCompletionVariants(@NotNull DartReference reference,
-                                                                     Set<DartComponentName> suggestedVariants) {
+  // returns added names
+  private static Set<String> addCompletionVariants(@NotNull final CompletionResultSet resultSet,
+                                                   @NotNull final DartReference reference) {
+    final Set<DartComponentName> variants = new THashSet<DartComponentName>();
+
     DartClass dartClass = null;
     // if do not contain references
     if (DartResolveUtil.aloneOrFirstInChain(reference)) {
-      DartResolveUtil.treeWalkUpAndTopLevelDeclarations(reference, new ComponentNameScopeProcessor(suggestedVariants));
+      DartResolveUtil.treeWalkUpAndTopLevelDeclarations(reference, new ComponentNameScopeProcessor(variants));
       dartClass = PsiTreeUtil.getParentOfType(reference, DartClass.class);
     }
 
@@ -91,19 +90,19 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
       if (PsiTreeUtil.getParentOfType(leftReference.resolve(), DartImportStatement.class, DartExportStatement.class) != null) {
         final VirtualFile virtualFile =
           DartResolveUtil.getImportedFileByImportPrefix(reference.getContainingFile(), leftReference.getText());
-        DartResolveUtil.processTopLevelDeclarations(reference, new ComponentNameScopeProcessor(suggestedVariants), virtualFile, null);
+        DartResolveUtil.processTopLevelDeclarations(reference, new ComponentNameScopeProcessor(variants), virtualFile, null);
       }
     }
 
     if (dartClass != null) {
       if (dartClass.isEnum()) {
-        suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getEnumConstantDeclarationList()));
+        variants.addAll(DartResolveUtil.getComponentNames(dartClass.getEnumConstantDeclarationList()));
       }
       else {
         final boolean needFilterPrivateMembers = !DartResolveUtil.sameLibrary(reference, dartClass);
-        suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getFields(), needFilterPrivateMembers));
-        suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getMethods(), needFilterPrivateMembers));
-        suggestedVariants.addAll(DartResolveUtil.getComponentNames(
+        variants.addAll(DartResolveUtil.getComponentNames(dartClass.getFields(), needFilterPrivateMembers));
+        variants.addAll(DartResolveUtil.getComponentNames(dartClass.getMethods(), needFilterPrivateMembers));
+        variants.addAll(DartResolveUtil.getComponentNames(
           ContainerUtil.filter(
             dartClass.getConstructors(),
             new Condition<DartComponent>() {
@@ -122,7 +121,7 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
 
     if (typeInNew) {
       final Set<DartComponentName> constructors = new THashSet<DartComponentName>();
-      for (DartComponentName componentName : suggestedVariants) {
+      for (DartComponentName componentName : variants) {
         final PsiElement parent = componentName.getParent();
         if (!(parent instanceof DartClass)) continue;
         constructors.addAll(DartResolveUtil.getComponentNames(ContainerUtil.filter(
@@ -139,8 +138,8 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
                                                               )
         ));
       }
-      suggestedVariants.addAll(constructors);
+      variants.addAll(constructors);
     }
-    return DartLookupElement.convert(suggestedVariants, typeInNew);
+    return DartLookupElement.appendVariantsToCompletionSet(resultSet, variants, typeInNew);
   }
 }
