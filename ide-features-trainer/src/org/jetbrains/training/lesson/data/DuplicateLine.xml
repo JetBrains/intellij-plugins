@@ -14,14 +14,14 @@
     <Text description="Let's print absolute value for x" btn="...">Let's print absolute value for &lt;span color="gray"&gt;x&lt;/span&gt;</Text>
     <Text description="Move caret to print line and" btn="..."/>
     <TraverseCaret stop="178" delay="20"/>
-    <Action action="EditorDuplicate" delay="2000" balloon="tap &lt;span color=&quot;gray&quot;&gt;⌘ + D&lt;/span&gt; to duplicate current string." description="tap &lt;span color=&quot;gray&quot;&gt;⌘ + D&lt;/span&gt; to duplicate current line"/>
+    <Action action="EditorDuplicate" delay="2000" balloon="⌘ + D (Duplicate line)" description="tap &lt;span color=&quot;gray&quot;&gt;⌘ + D&lt;/span&gt; to duplicate current line"/>
     <Wait delay="200"/>
     <Text description="Cool, replace &lt;span color=&quot;gray&quot;&gt;a&lt;/span&gt; with &lt;span color=&quot;gray&quot;&gt;x&lt;/span&gt;" btn="..."/>
-    <TraverseCaret stop="271" delay="50"/>
+    <TraverseCaret stop="271" delay="10"/>
     <Action action="EditorDelete" delay="100" description="deleting &lt;span color=&quot;gray&quot;&gt;a&lt;/span&gt;"/>
     <Wait delay="300"/>
     <TypeText description="typing &lt;span color=&quot;gray&quot;&gt;x&lt;/span&gt;">x</TypeText>
-    <TraverseCaret stop="294" delay="50"/>
+    <TraverseCaret stop="294" delay="10"/>
     <Action action="EditorDelete" delay="50" description="&lt;span color=&quot;gray&quot;&gt;a&lt;/span&gt;"/>
     <Wait delay="400"/>
     <TypeText description="typing &lt;span color=&quot;gray&quot;&gt;x&lt;/span&gt;">x</TypeText>
