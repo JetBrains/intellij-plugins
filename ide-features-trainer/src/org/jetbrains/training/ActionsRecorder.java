@@ -11,6 +11,7 @@ import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -28,12 +29,15 @@ public class ActionsRecorder implements Disposable {
     private boolean triggerActivated;
 
     private boolean disposed = false;
+    private Runnable showWinMessage;
 
     public ActionsRecorder(Project project, Document document, String target) {
         this.project = project;
         this.document = document;
         this.target = target;
         this.triggerActivated = false;
+
+        this.showWinMessage = null;
     }
 
     @Override
@@ -42,6 +46,8 @@ public class ActionsRecorder implements Disposable {
     }
 
     public void startRecording(final Runnable showWinMessage){
+
+        this.showWinMessage = showWinMessage;
 
         DocumentListener documentListener = new DocumentListener() {
             @Override
@@ -63,6 +69,7 @@ public class ActionsRecorder implements Disposable {
                 }
             }
         };
+
 
         document.addDocumentListener(documentListener, this);
     }
@@ -91,17 +98,15 @@ public class ActionsRecorder implements Disposable {
         ArrayList<String> ls = new ArrayList<String>();
 
         for (String it :StringUtil.splitByLines(s) ) {
-            it.trim();
-
-            if (it.equals("")){
-                //ls.add("NULL");
-            } else {
-                ls.add(it);
+            String[] splitted = it.split("[ ]+");
+            if (splitted != null) {
+                for(String element: splitted)
+                if (!element.equals("")) {
+                    ls.add(element);
+                }
             }
         }
-
         return ls;
-
     }
 
     private void checkAction(final String actionTriggerId){
@@ -118,11 +123,15 @@ public class ActionsRecorder implements Disposable {
             public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
                 final String actionId = ActionManager.getInstance().getId(action);
                 if (actionId.toUpperCase().equals(actionTriggerId.toUpperCase())) {
-//                    System.err.println("Action trigger has been activated.");
+//                    System.out.println("Action trigger has been activated.");
                     triggerActivated = true;
                     actionManager.removeAnActionListener(this);
+                    if(isTaskSolved(document, target)) {
+                        if(showWinMessage != null)
+                            showWinMessage.run();
+                    }
                 }
-//                System.err.println("ACTION PERFORMED: " + actionId);
+//                System.out.println("ACTION PERFORMED: " + actionId);
             }
 
             @Override
