@@ -78,10 +78,6 @@ public class DetailPanel extends JPanel implements Disposable{
         btn.setContentAreaFilled(false);
 
 
-        System.err.println("BUTTON UI:" + btn.getUI());
-        System.err.println("BUTTON MODEL:" + btn.getModel());
-
-
 //        btn = new JButton("Start");
 //        btn.setFocusPainted(false);
 //        btn.setContentAreaFilled(false);
@@ -113,7 +109,11 @@ public class DetailPanel extends JPanel implements Disposable{
 
     //make backgreound color as green
     public void greenalize(){
-        backGroundColor = new Color(0, 58, 0, 190);
+        if(UIUtil.isUnderDarcula()) {
+            backGroundColor = new Color(111, 176, 111, 190);
+        } else {
+            backGroundColor = new Color(58, 126, 58, 210);
+        }
         setBackground(backGroundColor);
 //        this.paintComponent(this.getGraphics());
     }
