@@ -76,6 +76,11 @@ public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvide
     return new Struts2GraphFileEditor(project, file);
   }
 
+  @Override
+  public boolean isDumbAware() {
+    return false;
+  }
+
   public double getWeight() {
     return 0;
   }
