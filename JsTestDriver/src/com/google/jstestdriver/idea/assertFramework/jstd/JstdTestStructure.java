@@ -2,6 +2,7 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
+import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSFunctionExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.openapi.util.TextRange;
@@ -76,10 +77,10 @@ public class JstdTestStructure {
     if (testMethodNameDeclaration == null) {
       return null;
     }
-    JSFunctionExpression testMethodBody = ObjectUtils.tryCast(jsProperty.getValue(), JSFunctionExpression.class);
+    JSFunction testMethodBody = jsProperty.tryGetFunctionInitializer();
     String testName = StringUtil.stripQuotesAroundValue(testMethodNameDeclaration.getText());
     if (checkTestName(testName)) {
-      return new JstdTestStructure(testName, testMethodNameDeclaration, null, testMethodBody, jsProperty);
+      return new JstdTestStructure(testName, testMethodNameDeclaration, null, (JSFunctionExpression)testMethodBody, jsProperty);
     }
     return null;
   }
