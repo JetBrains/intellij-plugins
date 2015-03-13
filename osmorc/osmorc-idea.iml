@@ -22,6 +22,17 @@
     <orderEntry type="module" module-name="debugger-impl" />
     <orderEntry type="module" module-name="manifest" />
     <orderEntry type="module" module-name="osmorc-jps-plugin" exported="" />
+    <orderEntry type="module-library">
+      <library name="org.apache.felix.framework">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/org.apache.felix.framework-4.2.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/org.apache.felix.framework-4.2.1.jar!/OSGI-OPT/src/java" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
     <orderEntry type="library" scope="TEST" name="KotlinJavaRuntime" level="project" />
