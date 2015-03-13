@@ -22,7 +22,7 @@
     <orderEntry type="module" module-name="debugger-impl" />
     <orderEntry type="module" module-name="manifest" />
     <orderEntry type="module" module-name="osmorc-jps-plugin" exported="" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library name="org.apache.felix.framework">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/org.apache.felix.framework-4.2.1.jar!/" />
