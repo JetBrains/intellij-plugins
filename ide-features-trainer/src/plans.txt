@@ -65,7 +65,9 @@ February 26
 * Darcula support
 
 13 March
+* Delete Buttons notification
 * Fix lesson conflict (action recorder disposable, flushing lesson processor list)
+
 
 //Plans
 * Disposable Action Recorder
