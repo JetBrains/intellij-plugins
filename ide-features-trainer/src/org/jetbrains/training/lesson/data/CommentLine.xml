@@ -26,7 +26,7 @@ public class CommentLineDemo {
         <TraverseCaret stop="108" delay="20"/>
         <Action action="CommentByLineComment" delay="2000" balloon="⌘ + / (Comment line)"/>
         <Wait delay="200"/>
-        <Text description="To uncomment press the same shortcut on this line" btn="ok"/>
+        <Text description="To uncomment press the same shortcut on this line" btn="OK"/>
         <TraverseCaret stop="108" delay="20"/>
         <Action action="CommentByLineComment" delay="2000" balloon="⌘ + / (Uncomment line)"/>
     </MouseBlock>
