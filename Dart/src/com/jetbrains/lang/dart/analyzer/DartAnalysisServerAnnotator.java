@@ -91,6 +91,8 @@ public class DartAnalysisServerAnnotator
 
     if (!DartAnalysisServerService.getInstance().serverReadyForRequest(module.getProject(), sdk)) return null;
 
+    DartAnalysisServerService.getInstance().virtualFileOpened(annotatedFile);
+
     DartAnalysisServerService.getInstance().updateFilesContent();
 
     return new AnnotatorInfo(psiFile.getProject(), annotatedFile.getPath());
