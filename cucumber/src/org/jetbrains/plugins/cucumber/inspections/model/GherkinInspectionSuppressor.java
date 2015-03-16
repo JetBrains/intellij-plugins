@@ -15,7 +15,7 @@ public class GherkinInspectionSuppressor implements InspectionSuppressor {
 
   @NotNull
   @Override
-  public SuppressQuickFix[] getSuppressActions(@Nullable PsiElement element, @NotNull String toolShortName) {
-    return GherkinSuppressionUtil.getDefaultSuppressActions(toolShortName);
+  public SuppressQuickFix[] getSuppressActions(@Nullable PsiElement element, @NotNull String toolId) {
+    return GherkinSuppressionUtil.getDefaultSuppressActions(toolId);
   }
 }

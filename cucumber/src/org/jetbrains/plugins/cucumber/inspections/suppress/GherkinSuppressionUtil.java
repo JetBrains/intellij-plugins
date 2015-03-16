@@ -17,22 +17,19 @@ import java.util.regex.Pattern;
 
 import static com.intellij.codeInspection.SuppressionUtil.COMMON_SUPPRESS_REGEXP;
 
-/**
- * @author Roman.Chernyatchik
- */
 public class GherkinSuppressionUtil {
   // the same regexp as for ruby
-  private static final Pattern SUPPRESS_IN_LINE_COMMENT_PATTERN = Pattern.compile("#" + COMMON_SUPPRESS_REGEXP);;
+  private static final Pattern SUPPRESS_IN_LINE_COMMENT_PATTERN = Pattern.compile("#" + COMMON_SUPPRESS_REGEXP);
 
   private GherkinSuppressionUtil() {
   }
 
   @NotNull
-  public static SuppressQuickFix[] getDefaultSuppressActions(@NotNull final String actionShortName) {
+  public static SuppressQuickFix[] getDefaultSuppressActions(@NotNull final String toolId) {
     return new SuppressQuickFix[]{
-      new GherkinSuppressForStepCommentFix(actionShortName),
-      new GherkinSuppressForScenarioCommentFix(actionShortName),
-      new GherkinSuppressForFeatureCommentFix(actionShortName),
+      new GherkinSuppressForStepCommentFix(toolId),
+      new GherkinSuppressForScenarioCommentFix(toolId),
+      new GherkinSuppressForFeatureCommentFix(toolId),
     };
   }
 
