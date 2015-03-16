@@ -14,21 +14,47 @@ public class KeymapDescription {
 
 
         WIN{
-            public String displayName = "Win/Linux";
-            public String defaultKeymapName = "\\$default";
+            @Override
+            public void setDisplayName(String displayName) {
+                this.displayName = "Win/Linux";
+            }
+
+            @Override
+            public void setDefaultKeymapName(String defaultKeymapName) {
+                this.defaultKeymapName = "\\$default";
+            }
         }
         , MAC {
-            public String displayName = "Mac";
-            public String defaultKeymapName = "Mac OS X 10.5+";
+            @Override
+            public void setDisplayName(String displayName) {
+                this.displayName = "Mac";
+            }
+
+            @Override
+            public void setDefaultKeymapName(String defaultKeymapName) {
+                this.defaultKeymapName = "Mac OS X 10.5+";
+            }
+
         };
 
+        public String displayName;
+        public String defaultKeymapName;
 
-//        public String getDefaultKeymapName() {
-//        }
-//
-//        public String getDisplayName() {
-//
-//        }
+        public void setDefaultKeymapName(String defaultKeymapName) {
+            this.defaultKeymapName = defaultKeymapName;
+        }
+
+        public void setDisplayName(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public String getDefaultKeymapName() {
+            return this.defaultKeymapName;
+        }
+
+        public String getDisplayName() {
+            return this.displayName;
+        }
 
         public KeymapKindType getAlternativeKind() {
             if (this == WIN) return MAC;
@@ -39,7 +65,7 @@ public class KeymapDescription {
         }
     }
 
-//    public KeymapDescription() {
+//    public KeymapDescription(String name) {
 //        KeymapManager.getInstance().getKeymap(KeymapKindType.WIN)
 //    }
 }
