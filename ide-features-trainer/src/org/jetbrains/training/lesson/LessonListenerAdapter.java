@@ -2,6 +2,7 @@ package org.jetbrains.training.lesson;
 
 import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
+import org.jetbrains.training.LessonIsOpenedException;
 
 import java.awt.*;
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class LessonListenerAdapter implements LessonListener {
     }
 
     @Override
-    public void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException {
+    public void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException, LessonIsOpenedException {
 
     }
 

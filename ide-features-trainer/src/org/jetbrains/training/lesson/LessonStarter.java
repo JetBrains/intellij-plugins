@@ -1,7 +1,11 @@
 package org.jetbrains.training.lesson;
 
+import com.intellij.CommonBundle;
 import com.intellij.ide.scratch.ScratchpadManager;
 import com.intellij.lang.Language;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -18,6 +22,7 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
+import org.jetbrains.training.LessonIsOpenedException;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.awt.*;
@@ -43,14 +48,14 @@ public class LessonStarter {
             final Course course = CourseManager.getInstance().getCourseById("default");
             if (course == null) throw new BadCourseException("Cannot find \"default\" course.");
 
-            final Lesson lesson = course.giveNotPassedLesson();
+            final Lesson lesson = course.giveNotPassedAndNotOpenedLesson();
             if (lesson == null) throw new BadLessonException("Cannot load not passed lessons for \"" + course.getId() + "\" course");
 
             openLesson(anActionEvent, lesson);
 
 
         } catch (BadLessonException ble) {
-            ble.printStackTrace();
+            Notifications.Bus.notify(new Notification("Unable to open new lesson: all lessons are opened or passed", CommonBundle.getErrorTitle(), ble.getMessage(), NotificationType.ERROR));
         } catch (BadCourseException bce) {
             bce.printStackTrace();
         } catch (IOException ioe) {
@@ -61,10 +66,15 @@ public class LessonStarter {
             e1.printStackTrace();
         } catch (FontFormatException e1) {
             e1.printStackTrace();
+        } catch (LessonIsOpenedException e) {
+            Notifications.Bus.notify(new Notification("Unable to open new lesson: all lessons are opened or passed", CommonBundle.getErrorTitle(), e.getMessage(), NotificationType.ERROR));
         }
     }
 
-    private synchronized void openLesson(AnActionEvent e, final Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException {
+    private synchronized void openLesson(AnActionEvent e, final Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
+
+        if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getId() + " is opened");
+
         final VirtualFile vf;
         vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
 
@@ -75,15 +85,14 @@ public class LessonStarter {
 
         if(lesson.getParentCourse() == null) return;
 
-
         //open next lesson if current is passed
         lesson.addLessonListener(new LessonListenerAdapter(){
             @Override
-            public void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException {
+            public void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException, LessonIsOpenedException {
                 if (lesson.getParentCourse() == null) return;
 
                 if(lesson.getParentCourse().hasNotPassedLesson()) {
-                    Lesson nextLesson = lesson.getParentCourse().giveNotPassedLesson();
+                    Lesson nextLesson = lesson.getParentCourse().giveNotPassedAndNotOpenedLesson();
                     openLesson(anActionEvent, nextLesson);
                 }
             }
@@ -107,13 +116,12 @@ public class LessonStarter {
 
             @Override
             public void fileClosed(FileEditorManager source, VirtualFile file) {
-                if (source.getSelectedEditor(file) == editor) {
+                if (file == vf) {
                     if (lesson.getInfoPanel() != null) {
                         lesson.getInfoPanel().hideBalloon();
                         lesson.close();
                     }
                 }
-
             }
 
             @Override
