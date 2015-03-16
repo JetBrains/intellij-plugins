@@ -70,7 +70,7 @@ public class DartAnalysisServerGlobalInspectionContext
   private void analyzeFile(@NotNull final VirtualFile virtualFile, @NotNull final Project project, final double progressFraction) {
     updateIndicator("Analyzing " + virtualFile.getName() + "...", progressFraction);
 
-    final DartAnalysisServerAnnotator annotator = new DartAnalysisServerAnnotator();
+    final DartAnalysisServerAnnotator annotator = new DartAnalysisServerAnnotator(true);
 
     final DartAnalysisServerAnnotator.AnnotatorInfo annotatorInfo =
       ApplicationManager.getApplication().runReadAction(new NullableComputable<DartAnalysisServerAnnotator.AnnotatorInfo>() {

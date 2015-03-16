@@ -69,6 +69,17 @@ public class DartAnalysisServerAnnotator
     }
   }
 
+  private final boolean myGlobalInspectionMode;
+
+  @SuppressWarnings("unused")   // invoked by the platform
+  public DartAnalysisServerAnnotator() {
+    this(false);
+  }
+
+  public DartAnalysisServerAnnotator(final boolean globalInspectionMode) {
+    myGlobalInspectionMode = globalInspectionMode;
+  }
+
   @Nullable
   @Override
   public AnnotatorInfo collectInformation(@NotNull final PsiFile psiFile) {
@@ -91,7 +102,9 @@ public class DartAnalysisServerAnnotator
 
     if (!DartAnalysisServerService.getInstance().serverReadyForRequest(module.getProject(), sdk)) return null;
 
-    DartAnalysisServerService.getInstance().virtualFileOpened(annotatedFile);
+    if (!myGlobalInspectionMode) {
+      DartAnalysisServerService.getInstance().addPriorityFile(annotatedFile);
+    }
 
     DartAnalysisServerService.getInstance().updateFilesContent();
 

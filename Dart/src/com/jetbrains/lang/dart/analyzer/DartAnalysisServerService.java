@@ -20,7 +20,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerAdapter;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
@@ -31,7 +30,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.concurrency.Semaphore;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.net.NetUtils;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartFileType;
@@ -195,14 +193,23 @@ public class DartAnalysisServerService {
     }
   }
 
-
   public DartAnalysisServerService() {
-    initListeners();
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       public void dispose() {
         stopServer();
       }
     });
+
+    ApplicationManager.getApplication().getMessageBus().connect()
+      .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
+                 new FileEditorManagerAdapter() {
+                   @Override
+                   public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+                     if (isDartOrHtmlFile(file)) {
+                       removePriorityFile(file);
+                     }
+                   }
+                 });
   }
 
   @NotNull
@@ -210,37 +217,21 @@ public class DartAnalysisServerService {
     return ServiceManager.getService(DartAnalysisServerService.class);
   }
 
-  private void initListeners() {
-    final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
-
-    connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
-                         new FileEditorManagerAdapter() {
-                           @Override
-                           public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-                             virtualFileClosed(file);
-                           }
-                         });
-  }
-
-  private void virtualFileClosed(@NotNull final VirtualFile file) {
-    if (isDartOrHtmlFile(file)) {
-      synchronized (myLock) {
-        final String path = FileUtil.toSystemDependentName(file.getPath());
-        if (myPriorityFiles.remove(path)) {
-          analysis_setPriorityFiles();
-        }
+  void addPriorityFile(@NotNull final VirtualFile file) {
+    synchronized (myLock) {
+      final String path = FileUtil.toSystemDependentName(file.getPath());
+      if (!myPriorityFiles.contains(path)) {
+        myPriorityFiles.add(path);
+        analysis_setPriorityFiles();
       }
     }
   }
 
-  void virtualFileOpened(@NotNull final VirtualFile file) {
-    if (isDartOrHtmlFile(file)) {
-      synchronized (myLock) {
-        final String path = FileUtil.toSystemDependentName(file.getPath());
-        if (!myPriorityFiles.contains(path)) {
-          myPriorityFiles.add(path);
-          analysis_setPriorityFiles();
-        }
+  private void removePriorityFile(@NotNull final VirtualFile file) {
+    synchronized (myLock) {
+      final String path = FileUtil.toSystemDependentName(file.getPath());
+      if (myPriorityFiles.remove(path)) {
+        analysis_setPriorityFiles();
       }
     }
   }
