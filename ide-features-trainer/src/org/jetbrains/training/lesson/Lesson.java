@@ -102,6 +102,8 @@ public class Lesson {
 
     //Listeners
     public void addLessonListener(LessonListener lessonListener){
+        if (lessonListeners == null) lessonListeners = new ArrayList<LessonListener>();
+
         lessonListeners.add(lessonListener);
     }
 
@@ -112,6 +114,8 @@ public class Lesson {
     }
 
     public void onStart(){
+        if (lessonListeners == null) lessonListeners = new ArrayList<LessonListener>();
+
         for (LessonListener lessonListener : lessonListeners) {
             lessonListener.lessonStarted(this);
         }
@@ -121,6 +125,9 @@ public class Lesson {
         for (LessonListener lessonListener : lessonListeners) {
             lessonListener.lessonClosed(this);
         }
+
+        lessonListeners = null;
+
     }
 
     //call onPass handlers in lessonListeners
