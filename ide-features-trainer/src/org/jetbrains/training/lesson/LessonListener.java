@@ -7,6 +7,7 @@ import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
+import org.jetbrains.training.LessonIsOpenedException;
 
 import java.awt.*;
 import java.io.IOException;
@@ -24,6 +25,6 @@ public interface LessonListener extends EventListener {
 
     void lessonClosed(Lesson lesson);
 
-    void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException;
+    void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException, LessonIsOpenedException;
 
 }

@@ -92,6 +92,14 @@ public class Course {
         return null;
     }
 
+    @Nullable
+    public Lesson giveNotPassedAndNotOpenedLesson() {
+        for (Lesson lesson : lessons) {
+            if (!lesson.isPassed() && !lesson.isOpen()) return lesson;
+        }
+        return null;
+    }
+
     public boolean hasNotPassedLesson() {
         for (Lesson lesson : lessons) {
             if (!lesson.isPassed()) return true;
