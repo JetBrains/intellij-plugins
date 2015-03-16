@@ -5,10 +5,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.training.ActionsRecorder;
-import org.jetbrains.training.BadCourseException;
-import org.jetbrains.training.BadLessonException;
-import org.jetbrains.training.Command;
+import org.jetbrains.training.*;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
@@ -87,6 +84,8 @@ public class TryCommand extends Command {
                                     e1.printStackTrace();
                                 } catch (BadCourseException e1) {
                                     e1.printStackTrace();
+                                } catch (LessonIsOpenedException e) {
+                                    e.printStackTrace();
                                 }
                             }
                         });

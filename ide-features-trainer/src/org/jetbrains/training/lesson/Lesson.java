@@ -5,6 +5,7 @@ import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
+import org.jetbrains.training.LessonIsOpenedException;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.awt.*;
@@ -48,9 +49,9 @@ public class Lesson {
         }
     }
 
-    public void open(Dimension infoPanelDimension) throws IOException, FontFormatException {
+    public void open(Dimension infoPanelDimension) throws IOException, FontFormatException, LessonIsOpenedException {
         //init infoPanel, check that Lesson has not opened yet
-        if (isOpen) return;
+        if (isOpen) throw new LessonIsOpenedException(this.getId() + "is opened");
         onStart();
 
         infoPanel = new DetailPanel(infoPanelDimension);
@@ -81,6 +82,8 @@ public class Lesson {
     public boolean isPassed(){
         return isPassed;
     }
+
+    public boolean isOpen() {return isOpen;}
 
     public void setPassed(boolean passed){
         isPassed = passed;
@@ -135,7 +138,7 @@ public class Lesson {
         isPassed = true;
     }
 
-    public void onNextLesson() throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException {
+    public void onNextLesson() throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException, LessonIsOpenedException {
         for (LessonListener lessonListener : lessonListeners) {
             lessonListener.lessonNext(this);
         }
