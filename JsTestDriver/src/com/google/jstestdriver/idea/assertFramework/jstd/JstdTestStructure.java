@@ -9,7 +9,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,13 +17,13 @@ public class JstdTestStructure {
   private final String myTestName;
   private final PsiElement myTestMethodNameDeclaration;
   private final JSDefinitionExpression myWholeLeftDefExpr;
-  private final JSFunctionExpression myTestMethodBody;
+  private final JSFunction myTestMethodBody;
   private final JSProperty myJsProperty;
 
   private JstdTestStructure(@NotNull String testName,
                             @NotNull PsiElement testMethodNameDeclaration,
                             @Nullable JSDefinitionExpression wholeLeftDefExpr,
-                            @Nullable JSFunctionExpression testMethodBody,
+                            @Nullable JSFunction testMethodBody,
                             @Nullable JSProperty jsProperty) {
     myTestName = testName;
     myTestMethodNameDeclaration = testMethodNameDeclaration;
@@ -54,7 +53,7 @@ public class JstdTestStructure {
   }
 
   @Nullable
-  public JSFunctionExpression getTestMethodBody() {
+  public JSFunction getTestMethodBody() {
     return myTestMethodBody;
   }
 
@@ -80,7 +79,7 @@ public class JstdTestStructure {
     JSFunction testMethodBody = jsProperty.tryGetFunctionInitializer();
     String testName = StringUtil.stripQuotesAroundValue(testMethodNameDeclaration.getText());
     if (checkTestName(testName)) {
-      return new JstdTestStructure(testName, testMethodNameDeclaration, null, (JSFunctionExpression)testMethodBody, jsProperty);
+      return new JstdTestStructure(testName, testMethodNameDeclaration, null, testMethodBody, jsProperty);
     }
     return null;
   }
