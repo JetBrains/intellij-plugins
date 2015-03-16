@@ -341,4 +341,18 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('}', "var a = '${{}<caret>'", "var a = '${{}}<caret>'");
     doTypingTest('}', "var a = '${{}}<caret>}'", "var a = '${{}}}<caret>}'");
   }
+
+  public void testEnterInSingleLineDocComment() {
+    doTypingTest('\n', "///<caret>", "///\n/// <caret>");
+    doTypingTest('\n', "///     q<caret>", "///     q\n///     <caret>");
+    doTypingTest('\n', "///     <caret>q", "///     \n///     <caret>q");
+    doTypingTest('\n', "/// Hello<caret>Dart", "/// Hello\n/// <caret>Dart");
+    doTypingTest('\n', "///   q  <caret>", "///   q  \n///   <caret>");
+    doTypingTest('\n', "///   q  <caret>z", "///   q  \n///   <caret>z");
+    doTypingTest('\n', "///   q  <caret>  z", "///   q  \n///   <caret>z");
+    doTypingTest('\n', "///   q<caret>   z", "///   q\n///   <caret>z");
+    doTypingTest('\n', "  ///   q  <caret>    z", "  ///   q  \n  ///   <caret> z");
+    doTypingTest('\n', "///q<caret>z", "///q\n///<caret>z");
+    doTypingTest('\n', " ///q<caret> \t ///z", " ///q \t \n ///<caret>z");
+  }
 }
