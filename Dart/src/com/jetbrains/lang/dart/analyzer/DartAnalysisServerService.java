@@ -197,7 +197,6 @@ public class DartAnalysisServerService {
 
 
   public DartAnalysisServerService() {
-    initPriorityFiles();
     initListeners();
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       public void dispose() {
@@ -211,50 +210,39 @@ public class DartAnalysisServerService {
     return ServiceManager.getService(DartAnalysisServerService.class);
   }
 
-  private void initPriorityFiles() {
-    for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-      for (VirtualFile file : FileEditorManager.getInstance(project).getOpenFiles()) {
-        if (isDartOrHtmlFile(file)) {
-          final String path = FileUtil.toSystemDependentName(file.getPath());
-          // lock not needed because it is called from constructor and can't interfere with other usages
-          if (!myPriorityFiles.contains(path)) {
-            myPriorityFiles.add(path);
-          }
-        }
-      }
-    }
-  }
-
   private void initListeners() {
     final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
 
     connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
                          new FileEditorManagerAdapter() {
                            @Override
-                           public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-                             if (isDartOrHtmlFile(file)) {
-                               synchronized (myLock) {
-                                 final String path = FileUtil.toSystemDependentName(file.getPath());
-                                 if (!myPriorityFiles.contains(path)) {
-                                   myPriorityFiles.add(path);
-                                   analysis_setPriorityFiles();
-                                 }
-                               }
-                             }
-                           }
-
-                           @Override
                            public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-                             if (isDartOrHtmlFile(file)) {
-                               synchronized (myLock) {
-                                 final String path = FileUtil.toSystemDependentName(file.getPath());
-                                 if (myPriorityFiles.remove(path)) {
-                                   analysis_setPriorityFiles();
-                                 }
-                               }
-                             }
+                             virtualFileClosed(file);
                            }
                          });
+  }
+
+  private void virtualFileClosed(@NotNull final VirtualFile file) {
+    if (isDartOrHtmlFile(file)) {
+      synchronized (myLock) {
+        final String path = FileUtil.toSystemDependentName(file.getPath());
+        if (myPriorityFiles.remove(path)) {
+          analysis_setPriorityFiles();
+        }
+      }
+    }
+  }
+
+  void virtualFileOpened(@NotNull final VirtualFile file) {
+    if (isDartOrHtmlFile(file)) {
+      synchronized (myLock) {
+        final String path = FileUtil.toSystemDependentName(file.getPath());
+        if (!myPriorityFiles.contains(path)) {
+          myPriorityFiles.add(path);
+          analysis_setPriorityFiles();
+        }
+      }
+    }
   }
 
   private static boolean isDartOrHtmlFile(@NotNull final VirtualFile file) {
@@ -571,7 +559,6 @@ public class DartAnalysisServerService {
         myServer.addAnalysisServerListener(myAnalysisServerListener);
         mySdkVersion = sdk.getVersion();
         myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
-        analysis_setPriorityFiles();
         LOG.info("Server started, see status at http://localhost:" + port + "/status");
       }
       catch (Exception e) {
