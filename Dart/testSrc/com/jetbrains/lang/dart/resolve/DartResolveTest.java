@@ -451,4 +451,16 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
     myFixture.configureByText("part1.dart", "part of <caret expected='main1.dart -> libName'>libName;");
     doTest();
   }
+
+  public void testDuplicatedImportPrefix() throws Exception {
+    myFixture.addFileToProject("file1.dart", "var inFile1;");
+    myFixture.addFileToProject("file2.dart", "var inFile2;");
+    myFixture.configureByText("main.dart", "import 'dart:core' as prefix;\n" +
+                                           "import 'file1.dart' as prefix;\n" +
+                                           "import 'file2.dart' as prefix;\n" +
+                                           "var a = prefix.int<caret expected='[Dart SDK]/lib/core/int.dart -> int'>;\n" +
+                                           "var b = prefix.inFile1<caret expected='file1.dart -> inFile1'>;\n" +
+                                           "var c = prefix.inFile2<caret expected='file2.dart -> inFile2'>;");
+    doTest();
+  }
 }

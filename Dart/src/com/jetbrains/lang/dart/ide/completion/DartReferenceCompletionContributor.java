@@ -86,11 +86,12 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
     if (leftReference != null) {
       final DartClassResolveResult classResolveResult = leftReference.resolveDartClass();
       dartClass = classResolveResult.getDartClass();
-      // prefix
-      if (PsiTreeUtil.getParentOfType(leftReference.resolve(), DartImportStatement.class, DartExportStatement.class) != null) {
-        final VirtualFile virtualFile =
-          DartResolveUtil.getImportedFileByImportPrefix(reference.getContainingFile(), leftReference.getText());
-        DartResolveUtil.processTopLevelDeclarations(reference, new ComponentNameScopeProcessor(variants), virtualFile, null);
+
+      // import prefix
+      if (PsiTreeUtil.getParentOfType(leftReference.resolve(), DartImportStatement.class) != null) {
+        for (VirtualFile file : DartResolveUtil.getImportedFilesByImportPrefix(reference, leftReference.getText())) {
+          DartResolveUtil.processTopLevelDeclarations(reference, new ComponentNameScopeProcessor(variants), file, null);
+        }
       }
     }
 
