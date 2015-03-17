@@ -29,7 +29,6 @@ public class LessonListenerAdapter implements LessonListener {
 
     @Override
     public void lessonNext(Lesson lesson) throws BadLessonException, ExecutionException, IOException, FontFormatException, InterruptedException, BadCourseException, LessonIsOpenedException {
-
     }
 
 }
