@@ -1,3 +1,18 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.osmorc.bnd;
 
 import aQute.bnd.build.Container;
@@ -19,7 +34,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
@@ -30,8 +44,8 @@ import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -39,6 +53,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.pom.java.LanguageLevel;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,10 +73,16 @@ import java.util.zip.ZipFile;
 import static org.osmorc.i18n.OsmorcBundle.message;
 
 public class BndProjectImporter {
+  public static final String CNF_DIR = Workspace.CNFDIR;
+  public static final String BUILD_FILE = Workspace.BUILDFILE;
+  public static final String BND_FILE = Project.BNDFILE;
   public static final String BND_LIB_PREFIX = "bnd:";
 
+  public static final NotificationGroup NOTIFICATIONS = new NotificationGroup("osgi.bnd", NotificationDisplayType.STICKY_BALLOON, true);
+
   private static final Logger LOG = Logger.getInstance(BndProjectImporter.class);
-  private static final NotificationGroup NOTIFICATIONS = new NotificationGroup("osgi.bnd", NotificationDisplayType.BALLOON, true);
+
+  private static final Key<Workspace> BND_WORKSPACE_KEY = Key.create("bnd.workspace.key");
 
   private static final String JAVAC_SOURCE = "javac.source";
   private static final String JAVAC_TARGET = "javac.target";
@@ -106,24 +127,19 @@ public class BndProjectImporter {
 
   public void resolve() {
     if (!myUnitTestMode) {
-      StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
+      new Task.Backgroundable(myProject, message("bnd.import.resolve.task"), true) {
         @Override
-        public void run() {
-          ProgressManager.getInstance().run(new Task.Backgroundable(myProject, message("bnd.import.resolve.task"), true) {
-            @Override
-            public void run(@NotNull ProgressIndicator indicator) {
-              if (resolve(indicator)) {
-                ApplicationManager.getApplication().invokeLater(new Runnable() {
-                  @Override
-                  public void run() {
-                    createProjectStructure();
-                  }
-                }, ModalityState.NON_MODAL);
+        public void run(@NotNull ProgressIndicator indicator) {
+          if (resolve(indicator)) {
+            ApplicationManager.getApplication().invokeLater(new Runnable() {
+              @Override
+              public void run() {
+                createProjectStructure();
               }
-            }
-          });
+            }, ModalityState.NON_MODAL);
+          }
         }
-      });
+      }.queue();
     }
     else {
       resolve(null);
@@ -505,5 +521,69 @@ public class BndProjectImporter {
   @NotNull
   public static Collection<Project> getWorkspaceProjects(@NotNull Workspace workspace) throws Exception {
     return ContainerUtil.filter(workspace.getAllProjects(), Condition.NOT_NULL);
+  }
+
+  /**
+   * Caches a workspace for methods below.
+   */
+  @Nullable
+  public static Workspace findWorkspace(@NotNull com.intellij.openapi.project.Project project) {
+    String basePath = project.getBasePath();
+    if (basePath != null && new File(basePath, CNF_DIR).exists()) {
+      try {
+        Workspace ws = Workspace.getWorkspace(new File(basePath), CNF_DIR);
+        BND_WORKSPACE_KEY.set(project, ws);
+        return ws;
+      }
+      catch (Exception e) {
+        LOG.error(e);
+      }
+    }
+
+    return null;
+  }
+
+  @Nullable
+  public static Workspace getWorkspace(@Nullable com.intellij.openapi.project.Project project) {
+    return project == null || project.isDefault() ? null : BND_WORKSPACE_KEY.get(project);
+  }
+
+  public static void reimportWorkspace(@NotNull com.intellij.openapi.project.Project project) {
+    Workspace workspace = getWorkspace(project);
+    assert workspace != null : project;
+
+    try {
+      workspace.forceRefresh();
+      Collection<Project> projects = getWorkspaceProjects(workspace);
+      for (Project p : projects) p.forceRefresh();
+
+      BndProjectImporter importer = new BndProjectImporter(project, workspace, projects);
+      importer.setupProject();
+      importer.resolve();
+    }
+    catch (Exception e) {
+      LOG.error("ws=" + workspace.getBase(), e);
+    }
+  }
+
+  public static void reimportProjects(@NotNull com.intellij.openapi.project.Project project, @NotNull Collection<String> projectDirs) {
+    Workspace workspace = getWorkspace(project);
+    assert workspace != null : project;
+
+    try {
+      Collection<Project> projects = ContainerUtil.newArrayListWithCapacity(projectDirs.size());
+      for (String dir : projectDirs) {
+        Project p = workspace.getProject(PathUtil.getFileName(dir));
+        if (p != null) {
+          p.forceRefresh();
+          projects.add(p);
+        }
+      }
+
+      new BndProjectImporter(project, workspace, projects).resolve();
+    }
+    catch (Exception e) {
+      LOG.error("ws=" + workspace.getBase() + " pr=" + projectDirs, e);
+    }
   }
 }

@@ -24,11 +24,11 @@
  */
 package org.osmorc;
 
+import aQute.bnd.build.Workspace;
 import com.intellij.ProjectTopics;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.*;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
@@ -40,19 +40,29 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.util.Pair;
-import com.intellij.util.Alarm;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.ui.update.MergingUpdateQueue;
+import com.intellij.util.ui.update.Update;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.bnd.BndProjectImporter;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.OsgiConfigurationType;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 import org.osmorc.settings.FrameworkDefinitionListener;
 import org.osmorc.settings.ProjectSettings;
 
+import javax.swing.event.HyperlinkEvent;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A project level component which enables some listeners to keep data in sync when the project opens or it's settings change.
@@ -68,7 +78,8 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   private final Project myProject;
   private final ProjectSettings myProjectSettings;
   private final BundleManager myBundleManager;
-  private final Alarm myAlarm;
+  private final MergingUpdateQueue myQueue;
+  private final AtomicBoolean myReimportNotification = new AtomicBoolean(false);
 
   public OsmorcProjectComponent(@NotNull Application application,
                                 @NotNull OsgiConfigurationType configurationType,
@@ -81,7 +92,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
     myBundleManager = bundleManager;
     myProjectSettings = projectSettings;
 
-    myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, myProject);
+    myQueue = new MergingUpdateQueue(getComponentName(), 500, true, MergingUpdateQueue.ANY_COMPONENT, myProject);
   }
 
   @NotNull
@@ -100,6 +111,11 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
     MessageBusConnection projectBus = myProject.getMessageBus().connect(myProject);
     projectBus.subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
     projectBus.subscribe(ProjectTopics.MODULES, new MyModuleRenameHandler());
+
+    Workspace workspace = BndProjectImporter.findWorkspace(myProject);
+    if (workspace != null) {
+      appBus.subscribe(VirtualFileManager.VFS_CHANGES, new MyVfsListener());
+    }
   }
 
   @Override
@@ -121,35 +137,50 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   }
 
   private void scheduleIndexRebuild() {
-    if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      myAlarm.cancelAllRequests();
-      myAlarm.addRequest(new Runnable() {
-        @Override
-        public void run() {
-          rebuildOSGiIndices();
-        }
-      }, 500);
-    }
-    else {
-      rebuildOSGiIndices();
-    }
-  }
-
-  private void rebuildOSGiIndices() {
-    myApplication.invokeLater(new Runnable() {
+    myQueue.queue(new Update("reindex") {
       @Override
       public void run() {
-        new Task.Backgroundable(myProject, "Updating OSGi indices", false) {
+        new Task.Backgroundable(myProject, OsmorcBundle.message("index.updating.task"), false) {
           @Override
           public void run(@NotNull ProgressIndicator indicator) {
-            if (!OsmorcProjectComponent.this.myProject.isOpen()) return;
-            indicator.setIndeterminate(true);
-            indicator.setText("Updating OSGi indices");
-            myBundleManager.reindexAll();
+            if (OsmorcProjectComponent.this.myProject.isOpen()) {
+              indicator.setIndeterminate(true);
+              indicator.setText(OsmorcBundle.message("index.updating.task"));
+              myBundleManager.reindexAll();
+            }
           }
         }.queue();
       }
-    }, myProject.getDisposed());
+    });
+  }
+
+  private void scheduleNotification() {
+    if (myReimportNotification.getAndSet(true)) {
+      return;
+    }
+
+    myQueue.queue(new Update("reimport") {
+      @Override
+      public void run() {
+        String title = OsmorcBundle.message("bnd.reimport.title");
+        String text = OsmorcBundle.message("bnd.reimport.text");
+        BndProjectImporter.NOTIFICATIONS
+          .createNotification(title, text, NotificationType.INFORMATION, new NotificationListener.Adapter() {
+            @Override
+            protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
+              notification.expire();
+              BndProjectImporter.reimportWorkspace(myProject);
+            }
+          })
+          .whenExpired(new Runnable() {
+            @Override
+            public void run() {
+              myReimportNotification.set(false);
+            }
+          })
+          .notify(myProject);
+      }
+    });
   }
 
 
@@ -205,6 +236,24 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
             }
           }
         });
+      }
+    }
+  }
+
+  private class MyVfsListener extends BulkFileListener.Adapter {
+    @Override
+    public void after(@NotNull List<? extends VFileEvent> events) {
+      for (VFileEvent event : events) {
+        if (event instanceof VFileContentChangeEvent) {
+          VirtualFile file = event.getFile();
+          if (file != null) {
+            String name = file.getName();
+            if (BndProjectImporter.BND_FILE.equals(name) || BndProjectImporter.BUILD_FILE.equals(name)) {
+              scheduleNotification();
+              break;
+            }
+          }
+        }
       }
     }
   }

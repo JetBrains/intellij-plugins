@@ -37,7 +37,7 @@
       <b>Version 1.4.6</b>
       <ul>
         <li>Compatible with IDEA 14.1</li>
-        <li>Bnd/bndtools project import (work in progress)</li>
+        <li>Bnd/Bndtools project import (work in progress)</li>
       </ul>
 
       <b>Version 1.4.5</b>
@@ -153,8 +153,20 @@
   </extensions>
 
   <actions>
-    <group id="osmorc.viewGeneratedManifests" class="org.osmorc.make.ViewGeneratedManifestGroup" popup="true"
-           text="View Generated Manifest" description="View the manifest of a recently generated OSGi bundle">
+    <action id="osgi.bnd.reimport" icon="OsmorcIdeaIcons.Bnd" text="Reimport Projects"
+            description="Reimport selected Bnd/Bndtools projects"
+            class="org.osmorc.bnd.ReimportProjectsAction">
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+    <action id="osgi.bnd.reimport.all" icon="OsmorcIdeaIcons.Bnd" text="Reimport Workspace"
+            description="Reimport entire Bnd/Bndtools workspace"
+            class="org.osmorc.bnd.ReimportWorkspaceAction">
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+
+    <group id="osmorc.viewGeneratedManifests" text="View Generated Manifest" popup="true"
+           description="View the manifest of a recently generated OSGi bundle"
+           class="org.osmorc.make.ViewGeneratedManifestGroup">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
   </actions>
