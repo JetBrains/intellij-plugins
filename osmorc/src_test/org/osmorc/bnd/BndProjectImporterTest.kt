@@ -1,3 +1,18 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.osmorc.bnd
 
 import aQute.bnd.build.Workspace
@@ -13,7 +28,6 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.testFramework.IdeaTestCase
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
-import org.junit.Assume.assumeTrue
 import org.osmorc.facet.OsmorcFacet
 
 import java.io.File
@@ -25,6 +39,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class BndProjectImporterTest : IdeaTestCase() {
+  var myWorkspace: Workspace by Delegates.notNull()
   var myImporter: BndProjectImporter by Delegates.notNull()
 
   override fun setUp() {
@@ -40,11 +55,12 @@ class BndProjectImporterTest : IdeaTestCase() {
     File(path, "hello.tests/src").mkdirs()
     FileUtil.writeToFile(File(path, "hello.tests/bnd.bnd"), "-nobundles: true\n-testpath: hello.provider,hello.consumer")
 
-    val workspace = Workspace.getWorkspace(File(path), Workspace.CNFDIR)
-    myImporter = BndProjectImporter(myProject, workspace, BndProjectImporter.getWorkspaceProjects(workspace))
+    myWorkspace = Workspace.getWorkspace(File(path), BndProjectImporter.CNF_DIR)
+    myImporter = BndProjectImporter(myProject, myWorkspace, BndProjectImporter.getWorkspaceProjects(myWorkspace))
   }
 
   override fun setUpModule() { }
+
 
   fun testRootModule() {
     val rootModule: Module
@@ -110,6 +126,25 @@ class BndProjectImporterTest : IdeaTestCase() {
       }
     }
   }
+
+  fun testReimport() {
+    assertNotNull(BndProjectImporter.findWorkspace(myProject))
+    BndProjectImporter.reimportWorkspace(myProject)
+
+    assertEquals(LanguageLevel.JDK_1_8, LanguageLevelProjectExtension.getInstance(myProject).getLanguageLevel())
+    val module = ModuleManager.getInstance(myProject).findModuleByName("hello.tests")!!
+    assertEquals(listOf("<jdk>", "<src>", "hello.provider", "hello.consumer"), getDependencies(module))
+    assertNull(OsmorcFacet.getInstance(module))
+
+    FileUtil.writeToFile(File(myProject.getBasePath()!!, "cnf/build.bnd"), "javac.source: 1.7\njavac.target: 1.8")
+    FileUtil.writeToFile(File(myProject.getBasePath()!!, "hello.tests/bnd.bnd"), "-testpath: hello.provider")
+    BndProjectImporter.reimportWorkspace(myProject)
+
+    assertEquals(LanguageLevel.JDK_1_7, LanguageLevelProjectExtension.getInstance(myProject).getLanguageLevel())
+    assertEquals(listOf("<jdk>", "<src>", "hello.provider"), getDependencies(module))
+    assertNotNull(OsmorcFacet.getInstance(module))
+  }
+
 
   private fun getDependencies(it: Module): List<String> {
     val dependencies: MutableList<String> = arrayListOf()
