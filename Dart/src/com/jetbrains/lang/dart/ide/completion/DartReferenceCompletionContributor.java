@@ -89,9 +89,8 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
 
       // import prefix
       if (PsiTreeUtil.getParentOfType(leftReference.resolve(), DartImportStatement.class) != null) {
-        for (VirtualFile file : DartResolveUtil.getImportedFilesByImportPrefix(reference, leftReference.getText())) {
-          DartResolveUtil.processTopLevelDeclarations(reference, new ComponentNameScopeProcessor(variants), file, null);
-        }
+        DartResolveUtil.processDeclarationsInImportedFileByImportPrefix(reference, leftReference.getText(),
+                                                                        new ComponentNameScopeProcessor(variants), null);
       }
     }
 

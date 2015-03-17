@@ -9,11 +9,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
-import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,13 +43,16 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     // reference [node, node]
     final DartReference[] references = PsiTreeUtil.getChildrenOfType(reference, DartReference.class);
     if (references != null && references.length == 2) {
-      // prefix
-      final List<DartComponentName> names = DartResolveUtil
-        .findComponentsInLibraryByPrefix(reference, references[0].getCanonicalText(),
-                                         references[1].getCanonicalText());
-      if (!names.isEmpty()) {
-        return toResult(names);
+      // import prefix
+      final List<DartComponentName> result = new SmartList<DartComponentName>();
+      final String importPrefix = references[0].getCanonicalText();
+      final String componentName = references[1].getCanonicalText();
+      DartResolveUtil.processDeclarationsInImportedFileByImportPrefix(reference, importPrefix,
+                                                                      new DartResolveProcessor(result, componentName), componentName);
+      if (!result.isEmpty()) {
+        return result;
       }
+
       return toResult(references[1].resolve());
     }
     else if (leftReference != null) {
@@ -64,24 +65,19 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
                                            : filterAccess(reference, dartClass.findMembersByName(name));
         return toResult(subComponent == null ? null : subComponent.getComponentName());
       }
-      // prefix
-      final List<DartComponentName> names = DartResolveUtil
-        .findComponentsInLibraryByPrefix(reference, leftReference.getCanonicalText(), reference.getCanonicalText());
-      if (!names.isEmpty()) {
-        return toResult(names);
+
+      // import prefix
+      final List<DartComponentName> result = new SmartList<DartComponentName>();
+      final String importPrefix = leftReference.getCanonicalText();
+      final String componentName = reference.getCanonicalText();
+      DartResolveUtil.processDeclarationsInImportedFileByImportPrefix(reference, importPrefix,
+                                                                      new DartResolveProcessor(result, componentName), componentName);
+      if (!result.isEmpty()) {
+        return result;
       }
     }
 
     return null;
-  }
-
-  private static List<PsiElement> toResult(List<? extends PsiElement> elements) {
-    return ContainerUtil.filter(elements, new Condition<PsiElement>() {
-      @Override
-      public boolean value(PsiElement element) {
-        return element != null;
-      }
-    });
   }
 
   @NotNull
@@ -141,6 +137,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     // local
     final DartResolveProcessor dartResolveProcessor = new DartResolveProcessor(result, name, DartResolveUtil.isLValue(scopeElement));
     PsiTreeUtil.treeWalkUp(dartResolveProcessor, scopeElement, null, ResolveState.initial());
+
     // supers
     final DartClass dartClass = PsiTreeUtil.getParentOfType(scopeElement, DartClass.class);
     final boolean inClass = PsiTreeUtil.getParentOfType(scopeElement, DartClassBody.class, false) != null;
@@ -150,15 +147,11 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
         return toResult(field.getComponentName());
       }
     }
+
     // global
     if (result.isEmpty()) {
       final List<VirtualFile> libraryFiles = DartResolveUtil.findLibrary(scopeElement.getContainingFile());
       DartResolveUtil.processTopLevelDeclarations(scopeElement, dartResolveProcessor, libraryFiles, name);
-    }
-    // dart:core
-    if (result.isEmpty() && !"void".equals(name)) {
-      final VirtualFile dartCoreLib = DartLibraryIndex.getSdkLibByUri(scopeElement.getProject(), DartUrlResolver.DART_CORE_URI);
-      DartResolveUtil.processTopLevelDeclarations(scopeElement, dartResolveProcessor, dartCoreLib, name);
     }
 
     return result;
