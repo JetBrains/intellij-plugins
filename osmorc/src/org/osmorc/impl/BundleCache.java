@@ -1,5 +1,21 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.osmorc.impl;
 
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -112,20 +128,15 @@ class BundleCache {
         return Collections.emptySet();
       }
 
-      Set<ManifestHolder> result = new HashSet<ManifestHolder>();
+      Set<ManifestHolder> result = ContainerUtil.newHashSet();
       for (ManifestHolder manifestHolder : myManifestHolders) {
         try {
           BundleManifest potentialFragmentManifest = manifestHolder.getBundleManifest();
-          if (potentialFragmentManifest == null) {
-            continue;
-          }
-          if (bundleManifest.isFragmentHostFor(potentialFragmentManifest)) {
+          if (potentialFragmentManifest != null && bundleManifest.isFragmentHostFor(potentialFragmentManifest)) {
             result.add(manifestHolder);
           }
         }
-        catch (ManifestHolderDisposedException ignore) {
-          // ignore.
-        }
+        catch (ManifestHolderDisposedException ignore) { }
       }
       return result;
     }
@@ -149,20 +160,15 @@ class BundleCache {
         return Collections.emptySet();
       }
 
-      Set<ManifestHolder> result = new HashSet<ManifestHolder>();
+      Set<ManifestHolder> result = ContainerUtil.newHashSet();
       for (ManifestHolder manifestHolder : myManifestHolders) {
         try {
           BundleManifest potentialHostManifest = manifestHolder.getBundleManifest();
-          if (potentialHostManifest == null) {
-            continue;
-          }
-          if (potentialHostManifest.isFragmentHostFor(fragmentManifest)) {
+          if (potentialHostManifest != null && potentialHostManifest.isFragmentHostFor(fragmentManifest)) {
             result.add(manifestHolder);
           }
         }
-        catch (ManifestHolderDisposedException ignore) {
-          // ignore.
-        }
+        catch (ManifestHolderDisposedException ignore) { }
       }
       return result;
     }
