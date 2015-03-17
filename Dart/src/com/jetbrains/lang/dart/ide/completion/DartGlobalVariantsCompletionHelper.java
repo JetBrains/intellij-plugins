@@ -6,6 +6,7 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -47,7 +48,8 @@ public class DartGlobalVariantsCompletionHelper {
                                               @Override
                                               public boolean process(String componentName, DartComponentInfo info) {
                                                 final String libraryName = info.getLibraryName();
-                                                if ((libraryName == null || !libraryName.startsWith("dart._")) &&
+                                                if (!StringUtil.startsWithChar(componentName, '_') &&
+                                                    (libraryName == null || !libraryName.startsWith("dart._")) &&
                                                     (infoFilter == null || infoFilter.value(info))) {
                                                   result.addElement(buildElement(componentName, info));
                                                 }

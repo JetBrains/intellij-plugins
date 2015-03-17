@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
+import static com.jetbrains.lang.dart.util.DartUrlResolver.DART_CORE_URI;
 
 public class DartResolveUtil {
 
@@ -138,7 +139,7 @@ public class DartResolveUtil {
 
   @NotNull
   public static DartClassResolveResult findCoreClass(PsiElement context, String className) {
-    final VirtualFile dartCoreLib = DartLibraryIndex.getSdkLibByUri(context.getProject(), DartUrlResolver.DART_CORE_URI);
+    final VirtualFile dartCoreLib = DartLibraryIndex.getSdkLibByUri(context.getProject(), DART_CORE_URI);
     final List<DartComponentName> result = new ArrayList<DartComponentName>();
     processTopLevelDeclarations(context, new DartResolveProcessor(result, className), dartCoreLib, className);
     final PsiElement parent = result.isEmpty() ? null : result.iterator().next().getParent();
@@ -325,7 +326,7 @@ public class DartResolveUtil {
       if (processingLibraryWhereContextElementLocated && importOrExportInfo.getKind() == Kind.Export) continue;
       if (!processingLibraryWhereContextElementLocated && importOrExportInfo.getKind() == Kind.Import) continue;
 
-      if (importOrExportInfo.getKind() == Kind.Import && DartUrlResolver.DART_CORE_URI.equals(importOrExportInfo.getUri())) {
+      if (importOrExportInfo.getKind() == Kind.Import && DART_CORE_URI.equals(importOrExportInfo.getUri())) {
         coreImportedExplicitly = true;
       }
 
@@ -345,8 +346,19 @@ public class DartResolveUtil {
     }
 
     if (!coreImportedExplicitly && processingLibraryWhereContextElementLocated) {
-      final VirtualFile dartCoreLib = DartLibraryIndex.getSdkLibByUri(context.getProject(), DartUrlResolver.DART_CORE_URI);
-      processTopLevelDeclarationsImpl(context, processor, dartCoreLib, fileNames, processedFiles, false);
+      final VirtualFile dartCoreLib = DartLibraryIndex.getSdkLibByUri(context.getProject(), DART_CORE_URI);
+      if (dartCoreLib != null) {
+        final DartImportOrExportInfo implicitImportInfo =
+          new DartImportOrExportInfo(Kind.Import, DART_CORE_URI, null, Collections.<String>emptySet(), Collections.<String>emptySet());
+        processor.importedFileProcessingStarted(dartCoreLib, implicitImportInfo);
+        final boolean continueProcessing =
+          processTopLevelDeclarationsImpl(context, processor, dartCoreLib, fileNames, processedFiles, false);
+        processor.importedFileProcessingFinished(dartCoreLib);
+
+        if (!continueProcessing) {
+          return false;
+        }
+      }
     }
 
     return true;

@@ -109,49 +109,55 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
   public void testClassNameCompletion() throws Exception {
     myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
     myFixture.addFileToProject("lib/in_lib.dart", "library lib; export 'exported.dart'; part 'lib_part.dart'; class InLib{}");
-    myFixture.addFileToProject("lib/lib_part.dart", "part of lib; class InLibPart{}; class InLibPartHidden{}");
-    myFixture.addFileToProject("lib/exported.dart", "class InExported{}");
-    myFixture.addFileToProject("lib/in_lib2.dart", "class InLib2{}");
-    myFixture.addFileToProject("tool/in_tool.dart", "class InTool{}");
-    myFixture.addFileToProject("packages/SomePackage/in_package1.dart", "class InPackage1{} class InPackage1NotShown{}");
-    myFixture.addFileToProject("packages/SomePackage/in_package2.dart", "class InPackage2{}");
+    myFixture.addFileToProject("lib/lib_part.dart", "part of lib; class InLibPart{} class InLibPartHidden{} class _InLibPartPrivate{}");
+    myFixture.addFileToProject("lib/exported.dart", "class InExported{} class _InExported{}");
+    myFixture.addFileToProject("lib/in_lib2.dart", "class InLib2{} class _InLib2{}");
+    myFixture.addFileToProject("tool/in_tool.dart", "class InTool{} class _InTool{}");
+    myFixture.addFileToProject("packages/SomePackage/in_package1.dart",
+                               "class InPackage1{} class InPackage1NotShown{} class _InPackage1{}");
+    myFixture.addFileToProject("packages/SomePackage/in_package2.dart", "class InPackage2{} class _InPackage2{}");
     myFixture.addFileToProject("web/web.dart", "library web;\n" +
                                                "import 'package:ProjectName/in_lib.dart' hide InLibPartHidden;\n" +
                                                "import 'package:SomePackage/in_package1.dart' show InPackage1;\n" +
                                                "part 'web_part.dart';\n" +
                                                "part '" + getTestName(true) + ".dart';\n" +
-                                               "class InWeb{}");
-    myFixture.addFileToProject("web/web_part.dart", "part of web; class InWebPart{}");
+                                               "class InWeb{}\n" +
+                                               "class _InWeb{}");
+    myFixture.addFileToProject("web/web_part.dart", "part of web; class InWebPart{} class _InWebPart{}");
     doTest("part of web;\n" +
            "class InWebPart2{}\n" +
+           "class _InWebPart2{}\n" +
            "const <caret" +
-           " completionIncludes='Object,String,int,bool,Iterable,Set,StateError,InLib,InLibPart,InExported,InPackage1,InWeb,InWebPart,InWebPart2'" +
-           " completionExcludes='InLibPartHidden,InPackage1NotShown,InLib2,InTool,InPackage2,SetMixin,FixedLengthListMixin,Point,JsObject'>");
+           " completionIncludes='Object,String,int,bool,Iterable,Set,StateError,InLib,InLibPart,InExported,InPackage1,InWeb,_InWeb,InWebPart,_InWebPart,InWebPart2,_InWebPart2'" +
+           " completionExcludes='InLibPartHidden,_InLibPartPrivate,_InExported,_InLib2,_InTool,_InPackage1,_InPackage2,InPackage1NotShown,InLib2,InTool,InPackage2,SetMixin,FixedLengthListMixin,Point,JsObject,_Proxy,_SplayTree'>");
 
     final LookupElement[] lookupElements = myFixture.complete(CompletionType.BASIC, 2);
     final List<String> includes =
       Arrays.asList("Object", "String", "int", "bool", "Iterable", "Set", "StateError", "InLib", "InLibPart", "InExported", "InPackage1",
-                    "InWeb", "InWebPart", "InWebPart2", "InLibPartHidden", "InPackage1NotShown", "InLib2", "InPackage2", "SetMixin",
-                    "Point", "JsObject");
-    final List<String> excludes = Arrays.asList("PI", "InTool", "FixedLengthListMixin"); // not a class; out of scope; in internal library
+                    "InWeb", "_InWeb", "InWebPart", "_InWebPart", "InWebPart2", "_InWebPart2", "InLibPartHidden", "InPackage1NotShown",
+                    "InLib2", "InPackage2", "SetMixin", "Point", "JsObject");
+    // not a class; out of scope; in internal library; private
+    final List<String> excludes = Arrays.asList("PI", "InTool", "FixedLengthListMixin", "_Proxy", "_SplayTree", "_InLibPartPrivate",
+                                                "_InExported", "_InLib2", "_InTool", "_InPackage1", "_InPackage1");
     checkLookupElements(lookupElements, null, includes, excludes, "### 2nd basic completion ###");
   }
 
   public void testWithImportPrefixes() throws Exception {
-    myFixture.addFileToProject("web/other.dart", "import 'dart:core'; export 'other2.dart' show inOther2; var inOtherHidden, inOther;");
-    myFixture.addFileToProject("web/other2.dart", "var inOther2Hidden, inOther2;");
-    myFixture.addFileToProject("web/web_part.dart", "part of web; class InWebPart{}");
+    myFixture.addFileToProject("web/other.dart",
+                               "import 'dart:core'; export 'other2.dart' show inOther2; var inOtherHidden, inOther, _inOther;");
+    myFixture.addFileToProject("web/other2.dart", "var _inOther2, inOther2Hidden, inOther2;");
     doTest("import 'dart:core' as core;\n" +
            "import 'other.dart' hide inOtherHidden;\n" +
            "foo() {\n" +
-           "  core.<caret completionIncludes='int,Object,String' completionExcludes='core,foo,inOtherHidden,inOther2Hidden,inOther,inOther2,JsObject'>x;\n" +
-           "  <caret completionIncludes='core,foo,inOther,inOther2' completionExcludes='inOtherHidden,inOther2Hidden,int,Object,String,JsObject'>\n" +
+           "  core.<caret completionIncludes='int,Object,String' completionExcludes='core,foo,inOtherHidden,inOther2Hidden,inOther,inOther2,_inOther,_inOther2,JsObject'>x;\n" +
+           "  <caret completionIncludes='core,foo,inOther,inOther2' completionExcludes='inOtherHidden,inOther2Hidden,_inOther,_inOther2,int,Object,String,JsObject'>\n" +
            "}");
 
     final LookupElement[] lookupElements = myFixture.complete(CompletionType.BASIC, 2);
     final List<String> includes =
       Arrays.asList("Object", "String", "int", "bool", "Iterable", "Set", "StateError", "SetMixin", "Point", "JsObject",
                     "core", "foo", "inOther", "inOtherHidden", "inOther2", "inOther2Hidden");
-    checkLookupElements(lookupElements, null, includes, null, "### 2nd basic completion ###");
+    final List<String> excludes = Arrays.asList("_inOther", "_inOther2");
+    checkLookupElements(lookupElements, null, includes, excludes, "### 2nd basic completion ###");
   }
 }

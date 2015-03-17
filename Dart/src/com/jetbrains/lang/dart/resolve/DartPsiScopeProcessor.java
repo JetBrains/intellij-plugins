@@ -3,10 +3,12 @@ package com.jetbrains.lang.dart.resolve;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.util.containers.Stack;
 import com.jetbrains.lang.dart.ide.index.DartShowHideInfo;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import gnu.trove.THashMap;
@@ -15,22 +17,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 public abstract class DartPsiScopeProcessor implements PsiScopeProcessor {
   private static final Logger LOG = Logger.getInstance(DartResolveProcessor.class.getName());
 
-  private final List<Pair<VirtualFile, DartShowHideInfo>> myShowHideFilters = new ArrayList<Pair<VirtualFile, DartShowHideInfo>>();
+  private final Stack<Pair<VirtualFile, DartShowHideInfo>> myShowHideFilters = new Stack<Pair<VirtualFile, DartShowHideInfo>>();
   private final Map<VirtualFile, Collection<PsiElement>> myFilteredOutElements = new THashMap<VirtualFile, Collection<PsiElement>>();
 
   public void importedFileProcessingStarted(final @NotNull VirtualFile importedFile, final @NotNull DartShowHideInfo showHideInfo) {
-    myShowHideFilters.add(Pair.create(importedFile, showHideInfo));
+    myShowHideFilters.push(Pair.create(importedFile, showHideInfo));
   }
 
   public void importedFileProcessingFinished(final @NotNull VirtualFile importedFile) {
-    LOG.assertTrue(myShowHideFilters.size() > 0, importedFile.getPath());
-    final Pair<VirtualFile, DartShowHideInfo> removed = myShowHideFilters.remove(myShowHideFilters.size() - 1);
+    LOG.assertTrue(!myShowHideFilters.isEmpty(), importedFile.getPath());
+    final Pair<VirtualFile, DartShowHideInfo> removed = myShowHideFilters.pop();
     LOG.assertTrue(importedFile.equals(removed.first), "expected: " + removed.first.getPath() + ", actual: " + importedFile.getPath());
   }
 
@@ -48,8 +49,13 @@ public abstract class DartPsiScopeProcessor implements PsiScopeProcessor {
   public final boolean execute(final @NotNull PsiElement element, final @NotNull ResolveState state) {
     if (!(element instanceof DartComponentName)) return true;
 
-    if (isFilteredOut(((DartComponentName)element).getName())) {
-      final VirtualFile importedFile = myShowHideFilters.get(myShowHideFilters.size() - 1).first;
+    final String name = ((DartComponentName)element).getName();
+    if (!myShowHideFilters.isEmpty() && StringUtil.startsWithChar(name, '_')) {
+      return true;
+    }
+
+    if (isFilteredOut(name)) {
+      final VirtualFile importedFile = myShowHideFilters.peek().first;
       Collection<PsiElement> elements = myFilteredOutElements.get(importedFile);
       if (elements == null) {
         elements = new ArrayList<PsiElement>();
