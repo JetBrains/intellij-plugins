@@ -459,4 +459,32 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
            "var b = prefix.inFile1<caret expected='file1.dart -> inFile1'>;\n" +
            "var c = prefix.inFile2<caret expected='file2.dart -> inFile2'>;");
   }
+
+  public void testCoreLibImported() throws Exception {
+    doTest("var a = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
+    doTest("import 'dart:core'; var a = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
+    doTest("import 'dart:core' as prefix; var a = String<caret expected=''>;");
+    doTest("import 'dart:core' show int;\n" +
+           "var a = String<caret expected=''>, b = int<caret expected='[Dart SDK]/lib/core/int.dart -> int'>;");
+    doTest("import 'dart:core' hide int;\n" +
+           "var a = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>, b = int<caret expected=''>;");
+    doTest("import 'dart:core' as prefix; var a = prefix.String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
+    doTest("import 'dart:core' as prefix show int;\n" +
+           "var a = prefix.String<caret expected=''>, b = prefix.int<caret expected='[Dart SDK]/lib/core/int.dart -> int'>;");
+    doTest("import 'dart:core' deferred as prefix hide int;\n" +
+           "var a = prefix.String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>, b = prefix.int<caret expected=''>;");
+
+    myFixture.addFileToProject("file1.dart", "var inFile1;");
+    doTest("import 'file1.dart' as prefix;\n" +
+           "var a = prefix.String<caret expected=''>;\n" +
+           "var b = prefix.inFile1<caret expected='file1.dart -> inFile1'>;\n" +
+           "var c = String<caret expected='[Dart SDK]/lib/core/string.dart -> String'>;");
+
+    myFixture.addFileToProject("file2.dart", "export 'dart:core' show Object; var inFile2;");
+    doTest("import 'file2.dart' as prefix;\n" +
+           "var a = prefix.String<caret expected=''>;\n" +
+           "var b = prefix.Object<caret expected='[Dart SDK]/lib/core/object.dart -> Object'>;\n" +
+           "var c = prefix.inFile2<caret expected='file2.dart -> inFile2'>;\n" +
+           "var d = Object<caret expected='[Dart SDK]/lib/core/object.dart -> Object'>;");
+  }
 }

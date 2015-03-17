@@ -6,7 +6,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.util.*;
-import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.resolve.DartResolveProcessor;
 import org.jetbrains.annotations.NotNull;
@@ -139,6 +138,7 @@ public class DartPsiImplUtil {
     if (virtualFile != null) {
       DartResolveUtil.processTopLevelDeclarations(dartType, dartResolveProcessor, virtualFile, typeName);
     }
+
     // find type parameter
     if (result.isEmpty()) {
       PsiTreeUtil.treeWalkUp(dartResolveProcessor, dartType, null, ResolveState.initial());
@@ -148,16 +148,13 @@ public class DartPsiImplUtil {
         }
       }
     }
+
     // global
     if (result.isEmpty()) {
-      final List<VirtualFile> libraryFile = DartResolveUtil.findLibrary(dartType.getContainingFile());
-      DartResolveUtil.processTopLevelDeclarations(dartType, dartResolveProcessor, libraryFile, typeName);
+      final List<VirtualFile> libraryFiles = DartResolveUtil.findLibrary(dartType.getContainingFile());
+      DartResolveUtil.processTopLevelDeclarations(dartType, dartResolveProcessor, libraryFiles, typeName);
     }
-    // dart:core
-    if (result.isEmpty()) {
-      final VirtualFile dartCoreLib = DartLibraryIndex.getSdkLibByUri(dartType.getProject(), DartUrlResolver.DART_CORE_URI);
-      DartResolveUtil.processTopLevelDeclarations(dartType, dartResolveProcessor, dartCoreLib, typeName);
-    }
+
     return result.isEmpty() ? null : result.iterator().next();
   }
 

@@ -136,4 +136,22 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
     final List<String> excludes = Arrays.asList("PI", "InTool", "FixedLengthListMixin"); // not a class; out of scope; in internal library
     checkLookupElements(lookupElements, null, includes, excludes, "### 2nd basic completion ###");
   }
+
+  public void testWithImportPrefixes() throws Exception {
+    myFixture.addFileToProject("web/other.dart", "import 'dart:core'; export 'other2.dart' show inOther2; var inOtherHidden, inOther;");
+    myFixture.addFileToProject("web/other2.dart", "var inOther2Hidden, inOther2;");
+    myFixture.addFileToProject("web/web_part.dart", "part of web; class InWebPart{}");
+    doTest("import 'dart:core' as core;\n" +
+           "import 'other.dart' hide inOtherHidden;\n" +
+           "foo() {\n" +
+           "  core.<caret completionIncludes='int,Object,String' completionExcludes='core,foo,inOtherHidden,inOther2Hidden,inOther,inOther2,JsObject'>x;\n" +
+           "  <caret completionIncludes='core,foo,inOther,inOther2' completionExcludes='inOtherHidden,inOther2Hidden,int,Object,String,JsObject'>\n" +
+           "}");
+
+    final LookupElement[] lookupElements = myFixture.complete(CompletionType.BASIC, 2);
+    final List<String> includes =
+      Arrays.asList("Object", "String", "int", "bool", "Iterable", "Set", "StateError", "SetMixin", "Point", "JsObject",
+                    "core", "foo", "inOther", "inOtherHidden", "inOther2", "inOther2Hidden");
+    checkLookupElements(lookupElements, null, includes, null, "### 2nd basic completion ###");
+  }
 }
