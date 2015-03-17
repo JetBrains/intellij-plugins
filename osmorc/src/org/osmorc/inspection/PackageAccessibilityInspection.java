@@ -165,7 +165,8 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
       Module module = ((ModuleOrderEntry)entry).getModule();
       if (module != null) {
         BundleManifest manifest = bundleManager.getManifestByObject(module);
-        exportedPackage = manifest != null ? manifest.getExportedPackage(packageName) : null;
+        if (manifest == null) return null;
+        exportedPackage = manifest.getExportedPackage(packageName);
       }
     }
     else if (entry instanceof LibraryOrderEntry) {
