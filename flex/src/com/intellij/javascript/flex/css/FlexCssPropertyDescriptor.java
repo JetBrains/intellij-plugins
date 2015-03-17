@@ -43,7 +43,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
-import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,8 +72,8 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     myShorthand = containsShorthand(infos);
     myValue = createPropertyValue(infos, myShorthand);
     myValueDescriptor = createPropertyValueDescriptor(infos, myShorthand);
-    myClassNames = new HashSet<String>();
-    myFileNames = new HashSet<String>();
+    myClassNames = ContainerUtil.newLinkedHashSet();
+    myFileNames = ContainerUtil.newLinkedHashSet();
     for (FlexStyleIndexInfo info : infos) {
       if (info.isInClass()) {
         myClassNames.add(info.getClassOrFileName());
@@ -97,7 +96,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   }
   
   private static void addValuesFromEnumerations2(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Collection<CssValueDescriptor> children) {
-    Set<String> constantSet = new HashSet<String>();
+    Set<String> constantSet = ContainerUtil.newLinkedHashSet();
     for (FlexStyleIndexInfo info : infos) {
       String enumeration = info.getEnumeration();
       if (enumeration != null) {
@@ -114,7 +113,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
 
 
   private static void addValuesFromEnumerations(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Collection<CssPropertyValue> children) {
-    Set<String> constantSet = new HashSet<String>();
+    Set<String> constantSet = ContainerUtil.newLinkedHashSet();
     for (FlexStyleIndexInfo info : infos) {
       String enumeration = info.getEnumeration();
       if (enumeration != null) {
@@ -138,7 +137,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
 
   @NotNull
   private static Set<String> addValuesFromFormats(@NotNull List<CssValueDescriptor> children, @NotNull Collection<FlexStyleIndexInfo> infos) {
-    Set<String> formats = ContainerUtil.newHashSet();
+    Set<String> formats = ContainerUtil.newLinkedHashSet();
     for (FlexStyleIndexInfo info : infos) {
       ContainerUtil.addIfNotNull(info.getFormat(), formats);
     }
@@ -154,7 +153,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
 
   @NotNull
   private static Set<String> addValuesFromFormats(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull List<CssPropertyValue> children) {
-    Set<String> formats = new HashSet<String>();
+    Set<String> formats = ContainerUtil.newLinkedHashSet();
     for (FlexStyleIndexInfo info : infos) {
       String format = info.getFormat();
       if (format != null) {
@@ -185,7 +184,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   }
 
   private static void addValuesFromTypes(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssPropertyValue> children) {
-    Set<String> types = new HashSet<String>();
+    Set<String> types = ContainerUtil.newLinkedHashSet();
     for (FlexStyleIndexInfo info : infos) {
       String type = info.getType();
       if (type != null) {
@@ -321,7 +320,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   }
 
   private boolean checkIncludes(JSClass c) {
-    Set<String> includes = new HashSet<String>();
+    Set<String> includes = ContainerUtil.newLinkedHashSet();
     FlexCssUtil.collectAllIncludes(c, includes);
     for (String name : myFileNames) {
       if (includes.contains(name)) {
@@ -399,7 +398,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     final Project project = context.getProject();
 
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
-    Set<JSClass> visited = new HashSet<JSClass>();
+    Set<JSClass> visited = ContainerUtil.newLinkedHashSet();
     for (String className : myClassNames) {
       Collection<JSQualifiedNamedElement> candidates = StubIndex.getElements(JSQualifiedElementIndex.KEY, className.hashCode(), project,
                                                                              scope, JSQualifiedNamedElement.class);
@@ -411,7 +410,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       }
     }
 
-    Set<JSFile> visitedFiles = new HashSet<JSFile>();
+    Set<JSFile> visitedFiles = ContainerUtil.newLinkedHashSet();
     for (String fileName : myFileNames) {
       Collection<VirtualFile> files = FilenameIndex.getVirtualFilesByName(project, fileName, scope);
       for (final VirtualFile file : files) {

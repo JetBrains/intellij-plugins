@@ -22,6 +22,7 @@ import com.intellij.psi.stubs.StubTree;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
@@ -44,7 +45,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
   public static final ID<String, Set<FlexStyleIndexInfo>> INDEX_ID = ID.create("js.style.index");
 
-  private static final int VERSION = 16;
+  private static final int VERSION = 17;
 
   private final KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();
 
@@ -68,7 +69,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
     @Override
     public Set<FlexStyleIndexInfo> read(@NotNull DataInput in) throws IOException {
       int size = in.readInt();
-      Set<FlexStyleIndexInfo> result = new HashSet<FlexStyleIndexInfo>();
+      Set<FlexStyleIndexInfo> result = ContainerUtil.newLinkedHashSet();
       for (int i = 0; i < size; i++) {
         String className = readUTF(in);
         assert className != null;
@@ -106,7 +107,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
   private static <TKey, TValue> void addElement(Map<TKey, Set<TValue>> map, TKey key, TValue value) {
     Set<TValue> list = map.get(key);
     if (list == null) {
-      list = new HashSet<TValue>();
+      list = ContainerUtil.newLinkedHashSet();
       map.put(key, list);
     }
     list.add(value);
