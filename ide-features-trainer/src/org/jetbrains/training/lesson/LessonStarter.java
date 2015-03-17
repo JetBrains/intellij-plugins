@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
 import org.jetbrains.training.LessonIsOpenedException;
@@ -71,8 +72,9 @@ public class LessonStarter {
         }
     }
 
-    private synchronized void openLesson(AnActionEvent e, final Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
+    private synchronized void openLesson(AnActionEvent e, final @Nullable Lesson lesson) throws BadCourseException, BadLessonException, IOException, FontFormatException, InterruptedException, ExecutionException, LessonIsOpenedException {
 
+        if (lesson == null) throw new BadLessonException("Cannot open \"null\" lesson");
         if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getId() + " is opened");
 
         final VirtualFile vf;
@@ -93,6 +95,7 @@ public class LessonStarter {
 
                 if(lesson.getParentCourse().hasNotPassedLesson()) {
                     Lesson nextLesson = lesson.getParentCourse().giveNotPassedAndNotOpenedLesson();
+                    if (nextLesson == null) throw new BadLessonException("Unable to obtain not passed and not opened lessons");
                     openLesson(anActionEvent, nextLesson);
                 }
             }
