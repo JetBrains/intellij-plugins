@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -201,17 +200,14 @@ public class DartResolveUtil {
   }
 
   @NotNull
-  public static List<DartComponentName> findComponentsInLibraryByPrefix(PsiElement contextToSearch,
-                                                                        String libraryPrefix,
-                                                                        String componentName) {
-    final VirtualFile virtualFile = getImportedFileByImportPrefix(contextToSearch.getContainingFile(), libraryPrefix);
-    if (virtualFile != null) {
-      final List<DartComponentName> result = new ArrayList<DartComponentName>();
-      processTopLevelDeclarations(contextToSearch, new DartResolveProcessor(result, componentName),
-                                  virtualFile, componentName);
-      return result;
+  public static List<DartComponentName> findComponentsInLibraryByPrefix(@NotNull final PsiElement context,
+                                                                        @NotNull final String libraryPrefix,
+                                                                        @NotNull final String componentName) {
+    final List<DartComponentName> result = new SmartList<DartComponentName>();
+    for (VirtualFile file : getImportedFilesByImportPrefix(context, libraryPrefix)) {
+      processTopLevelDeclarations(context, new DartResolveProcessor(result, componentName), file, componentName);
     }
-    return Collections.emptyList();
+    return result;
   }
 
   @NotNull
@@ -226,21 +222,21 @@ public class DartResolveUtil {
     return result;
   }
 
-  @Nullable
-  public static VirtualFile getImportedFileByImportPrefix(final @NotNull PsiElement context, final @NotNull String prefix) {
+  @NotNull
+  public static List<VirtualFile> getImportedFilesByImportPrefix(@NotNull final PsiElement context, @NotNull final String prefix) {
     final Project project = context.getProject();
-    final List<VirtualFile> virtualFiles = findLibrary(context.getContainingFile());
-    for (VirtualFile virtualFile : virtualFiles) {
+    final List<VirtualFile> result = new SmartList<VirtualFile>();
+
+    for (VirtualFile virtualFile : findLibrary(context.getContainingFile())) {
       for (DartImportOrExportInfo importOrExportInfo : DartImportAndExportIndex.getImportAndExportInfos(project, virtualFile)) {
-        if (importOrExportInfo.getKind() != Kind.Import) continue;
-
         final String importPrefix = importOrExportInfo.getImportPrefix();
-        if (importPrefix == null || !prefix.equals(StringUtil.unquoteString(importPrefix))) continue;
-
-        return getImportedFile(project, virtualFile, importOrExportInfo.getUri());
+        if (importOrExportInfo.getKind() == Kind.Import && prefix.equals(importPrefix)) {
+          ContainerUtil.addIfNotNull(result, getImportedFile(project, virtualFile, importOrExportInfo.getUri()));
+        }
       }
     }
-    return null;
+
+    return result;
   }
 
   public static void processTopLevelDeclarations(final @NotNull PsiElement context,

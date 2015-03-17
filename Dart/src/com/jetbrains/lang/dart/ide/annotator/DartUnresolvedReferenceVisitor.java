@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.DartReferenceExpression;
 import com.jetbrains.lang.dart.psi.DartVisitor;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class DartUnresolvedReferenceVisitor extends DartVisitor implements Annotator {
@@ -28,9 +27,9 @@ public class DartUnresolvedReferenceVisitor extends DartVisitor implements Annot
   public void visitReferenceExpression(@NotNull DartReferenceExpression reference) {
     final String referenceText = reference.getText();
     final boolean isSimpleReference = referenceText != null && !"void".equals(referenceText) && !referenceText.contains(".");
-    final boolean isPrefix = referenceText != null &&
-                             DartResolveUtil.getImportedFileByImportPrefix(reference.getContainingFile(), referenceText) != null;
-    if (isSimpleReference && !isPrefix && reference.resolve() == null) {
+    //final boolean isPrefix = referenceText != null &&
+    //                         !DartResolveUtil.getImportedFilesByImportPrefix(reference.getContainingFile(), referenceText).isEmpty();
+    if (isSimpleReference && /*!isPrefix && */reference.resolve() == null) {
       myHolder.createErrorAnnotation(reference, DartBundle.message("cannot.resolve.reference"));
     }
     super.visitReferenceExpression(reference);
