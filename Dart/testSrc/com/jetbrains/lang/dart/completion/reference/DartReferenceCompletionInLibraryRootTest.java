@@ -310,40 +310,4 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
   public void testExceptionParameter4() throws Throwable {
     doTest();
   }
-
-  public void testPackageFolderCompletionInHtml() throws Throwable {
-    myFixture.addFileToProject("pubspec.yaml", "");
-    myFixture.addFileToProject("packages/browser/dart.js", "");
-    myFixture.addFileToProject("web/other.dart", "");
-    final PsiFile psiFile = myFixture.addFileToProject("web/file.html", "<link href=''>");
-    myFixture.openFileInEditor(psiFile.getVirtualFile());
-    myFixture.getEditor().getCaretModel().moveToOffset(12);
-
-    doTestVariantsInner(getTestName(false) + ".txt");
-  }
-
-  public void testLivePackageNameCompletionInHtml() throws Throwable {
-    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n" +
-                                               "dependencies:\n" +
-                                               "  PathPackage:\n" +
-                                               "    path: local_package\n");
-    myFixture.addFileToProject("lib/projectFile.dart", "");
-    myFixture.addFileToProject("local_package/lib/localPackageFile.html", "");
-    myFixture.addFileToProject("packages/browser/dart.js", "");
-    final PsiFile psiFile = myFixture.addFileToProject("web/file.html", "<link href='packages/'>");
-    myFixture.openFileInEditor(psiFile.getVirtualFile());
-    myFixture.getEditor().getCaretModel().moveToOffset(21);
-
-    doTestVariantsInner(getTestName(false) + ".txt");
-  }
-
-  public void testLivePackageContentCompletionInHtml() throws Throwable {
-    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
-    myFixture.addFileToProject("lib/projectFile.dart", "");
-    final PsiFile psiFile = myFixture.addFileToProject("web/file.html", "<link href='packages/ProjectName/xxx'>");
-    myFixture.openFileInEditor(psiFile.getVirtualFile());
-    myFixture.getEditor().getCaretModel().moveToOffset(33);
-
-    doTestVariantsInner(getTestName(false) + ".txt");
-  }
 }
