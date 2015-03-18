@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.completion;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PsiElementPattern;
@@ -28,10 +29,13 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 public class DartReferenceCompletionContributor extends CompletionContributor {
 
   private static final RowIcon PUBLIC_STATIC_CONST_ICON = new RowIcon(2);
+  private static final RowIcon PUBLIC_FINAL_FIELD_ICON = new RowIcon(2);
 
   static {
     PUBLIC_STATIC_CONST_ICON.setIcon(new LayeredIcon(AllIcons.Nodes.Field, AllIcons.Nodes.StaticMark, AllIcons.Nodes.FinalMark), 0);
     PUBLIC_STATIC_CONST_ICON.setIcon(PlatformIcons.PUBLIC_ICON, 1);
+    PUBLIC_FINAL_FIELD_ICON.setIcon(new LayeredIcon(AllIcons.Nodes.Field, AllIcons.Nodes.FinalMark), 0);
+    PUBLIC_FINAL_FIELD_ICON.setIcon(PlatformIcons.PUBLIC_ICON, 1);
   }
 
   public DartReferenceCompletionContributor() {
@@ -109,10 +113,16 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
 
     if (dartClass != null) {
       if (dartClass.isEnum()) {
-        resultSet.consume(LookupElementBuilder.create("values")
-                            .withTypeText("List<" + dartClass.getName() + ">")
-                            .withIcon(PUBLIC_STATIC_CONST_ICON));
-        variants.addAll(DartResolveUtil.getComponentNames(dartClass.getEnumConstantDeclarationList()));
+        if (leftReference != null && Comparing.equal(dartClass.getComponentName(), leftReference.resolve())) {
+          resultSet.consume(LookupElementBuilder.create("values")
+                              .withTypeText("List<" + dartClass.getName() + ">")
+                              .withIcon(PUBLIC_STATIC_CONST_ICON));
+          variants.addAll(DartResolveUtil.getComponentNames(dartClass.getEnumConstantDeclarationList()));
+        }
+        else {
+          resultSet.consume(LookupElementBuilder.create("index").withTypeText("int").withIcon(PUBLIC_FINAL_FIELD_ICON));
+          variants.addAll(DartResolveUtil.getComponentNames(dartClass.getMethods())); // inherited from Object are here
+        }
       }
       else {
         final boolean needFilterPrivateMembers = !DartResolveUtil.sameLibrary(reference, dartClass);

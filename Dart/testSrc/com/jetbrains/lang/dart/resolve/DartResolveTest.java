@@ -410,7 +410,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
   public void testEnum() throws Exception {
     doTest("enum Foo {FooA, FooB, }\n" +
            "main() {\n" +
-           "  print(<caret expected='file.dart -> Foo'>Foo.<caret expected='file.dart -> Foo -> FooB'>FooB);\n" +
+           "  print(<caret expected='file.dart -> Foo'>Foo.<caret expected='file.dart -> Foo -> FooB'>FooB.<caret expected='[Dart SDK]/lib/core/object.dart -> Object -> toString'>toString());\n" +
            "}");
   }
 
