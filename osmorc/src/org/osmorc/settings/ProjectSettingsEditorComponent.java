@@ -38,6 +38,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
+import com.intellij.ui.components.JBCheckBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.OutputPathType;
 import org.osmorc.facet.OsmorcFacet;
@@ -60,6 +61,7 @@ public class ProjectSettingsEditorComponent {
   private ComboBox myDefaultManifestFileLocation;
   private TextFieldWithBrowseButton myBundleOutputPath;
   private JButton myApplyToAllButton;
+  private JBCheckBox myBndAutoImport;
 
   private Project myProject;
   private ProjectSettings mySettings;
@@ -148,6 +150,8 @@ public class ProjectSettingsEditorComponent {
     String outputPath = myBundleOutputPath.getText();
     settings.setBundlesOutputPath(!StringUtil.isEmptyOrSpaces(outputPath) ? outputPath : null);
 
+    settings.setBndAutoImport(myBndAutoImport.isSelected());
+
     myModified = false;
   }
 
@@ -165,6 +169,8 @@ public class ProjectSettingsEditorComponent {
     else {
       myBundleOutputPath.setText(ProjectSettings.getDefaultBundlesOutputPath(myProject));
     }
+
+    myBndAutoImport.setSelected(settings.isBndAutoImport());
 
     myModified = false;
   }
