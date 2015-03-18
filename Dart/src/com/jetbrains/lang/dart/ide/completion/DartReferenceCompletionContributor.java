@@ -1,11 +1,16 @@
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.ui.LayeredIcon;
+import com.intellij.ui.RowIcon;
+import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.DartLookupElement;
@@ -21,6 +26,14 @@ import java.util.Set;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 public class DartReferenceCompletionContributor extends CompletionContributor {
+
+  private static final RowIcon PUBLIC_STATIC_CONST_ICON = new RowIcon(2);
+
+  static {
+    PUBLIC_STATIC_CONST_ICON.setIcon(new LayeredIcon(AllIcons.Nodes.Field, AllIcons.Nodes.StaticMark, AllIcons.Nodes.FinalMark), 0);
+    PUBLIC_STATIC_CONST_ICON.setIcon(PlatformIcons.PUBLIC_ICON, 1);
+  }
+
   public DartReferenceCompletionContributor() {
     final PsiElementPattern.Capture<PsiElement> idInReference =
       psiElement().withSuperParent(1, DartId.class).withSuperParent(2, DartReference.class);
@@ -76,7 +89,7 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
     final Set<DartComponentName> variants = new THashSet<DartComponentName>();
 
     DartClass dartClass = null;
-    // if do not contain references
+
     if (DartResolveUtil.aloneOrFirstInChain(reference)) {
       DartResolveUtil.treeWalkUpAndTopLevelDeclarations(reference, new ComponentNameScopeProcessor(variants));
       dartClass = PsiTreeUtil.getParentOfType(reference, DartClass.class);
@@ -96,6 +109,9 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
 
     if (dartClass != null) {
       if (dartClass.isEnum()) {
+        resultSet.consume(LookupElementBuilder.create("values")
+                            .withTypeText("List<" + dartClass.getName() + ">")
+                            .withIcon(PUBLIC_STATIC_CONST_ICON));
         variants.addAll(DartResolveUtil.getComponentNames(dartClass.getEnumConstantDeclarationList()));
       }
       else {

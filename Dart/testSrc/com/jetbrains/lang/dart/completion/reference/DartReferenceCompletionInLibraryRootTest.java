@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.completion.reference;
 
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.completion.base.DartCompletionTestBase;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 
@@ -346,13 +345,5 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
     myFixture.getEditor().getCaretModel().moveToOffset(33);
 
     doTestVariantsInner(getTestName(false) + ".txt");
-  }
-
-  public void testEnum() throws Throwable {
-    doTest();
-  }
-
-  public void testEnumConstant() throws Throwable {
-    doTest();
   }
 }
