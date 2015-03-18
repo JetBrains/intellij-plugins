@@ -50,9 +50,10 @@ import java.util.EventListener;
 public class ProjectSettings implements PersistentStateComponent<ProjectSettings> {
   private EventDispatcher<ProjectSettingsListener> myDispatcher = EventDispatcher.create(ProjectSettingsListener.class);
 
-  private @Nullable String myFrameworkInstanceName;
-  private @NotNull String myDefaultManifestFileLocation = "META-INF/MANIFEST.MF";
-  private @Nullable String myBundlesOutputPath;
+  private String myFrameworkInstanceName;
+  private String myDefaultManifestFileLocation = "META-INF/MANIFEST.MF";
+  private String myBundlesOutputPath;
+  private boolean myBndAutoImport = false;
 
   /**
    * Returns the default output path for bundles. This is the compiler output path plus "/bundles" (e.g. $PROJECT_ROOT/out/bundles).
@@ -117,6 +118,14 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
     // we specify full names, so to work with older projects, we have to convert this
     myDefaultManifestFileLocation = location.equals("META-INF") ? "META-INF/MANIFEST.MF" : location;
     myDispatcher.getMulticaster().projectSettingsChanged();
+  }
+
+  public boolean isBndAutoImport() {
+    return myBndAutoImport;
+  }
+
+  public void setBndAutoImport(boolean bndAutoImport) {
+    myBndAutoImport = bndAutoImport;
   }
 
   @NotNull
