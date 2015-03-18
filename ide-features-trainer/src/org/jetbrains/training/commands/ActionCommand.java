@@ -36,6 +36,8 @@ public class ActionCommand extends Command {
         super(CommandType.ACTION);
     }
 
+    public final static String SHORTCUT = "<shortcut>";
+
     @Override
     public void execute(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel, final MouseListenerHolder mouseListenerHolder) throws InterruptedException, ExecutionException {
 
@@ -43,7 +45,6 @@ public class ActionCommand extends Command {
 
         updateHTMLDescription(element, infoPanel, editor);
         updateButton(element, elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
-
 
         final String actionType = (element.getAttribute("action").getValue());
 
@@ -85,7 +86,7 @@ public class ActionCommand extends Command {
      * @param e
      * @param editor - editor where to show balloon, also uses for locking while balloon appearing
      */
-    private static void showBalloon(final Editor editor, String actionId, final AnActionEvent e, final int delay, final String actionType, final Runnable runnable) throws InterruptedException {
+    private static void showBalloon(final Editor editor, String text, final AnActionEvent e, final int delay, final String actionType, final Runnable runnable) throws InterruptedException {
         FileEditorManager instance = FileEditorManager.getInstance(e.getProject());
         if (instance == null) return;
         if (editor == null) return;
@@ -94,11 +95,17 @@ public class ActionCommand extends Command {
         VisualPosition position = editor.offsetToVisualPosition(offset);
         Point point = editor.visualPositionToXY(position);
 
-        final KeyStroke shortcutByActionId = KeymapUtil.getShortcutByActionId(actionId);
+        String balloonText = text;
+
+        if (actionType != null) {
+            final KeyStroke shortcutByActionId = KeymapUtil.getShortcutByActionId(actionType);
+            final String shortcutText = SubKeymapUtil.getKeyStrokeTextSub(shortcutByActionId);
+            balloonText = substitution(balloonText, shortcutText);
+        }
 
         BalloonBuilder builder =
                 JBPopupFactory.getInstance().
-                        createHtmlTextBalloonBuilder(SubKeymapUtil.getKeyStrokeTextSub(shortcutByActionId), null, UIUtil.getLabelBackground(), null)
+                        createHtmlTextBalloonBuilder(balloonText, null, UIUtil.getLabelBackground(), null)
                         .setHideOnClickOutside(false)
                         .setCloseButtonEnabled(true)
                         .setHideOnKeyOutside(false);
@@ -141,6 +148,14 @@ public class ActionCommand extends Command {
                 });
             }
         });
+    }
+
+    public static String substitution(String text, String shortcutString){
+        if (text.contains(SHORTCUT)) {
+            return text.replace(SHORTCUT, shortcutString);
+        } else {
+            return text;
+        }
     }
 }
 

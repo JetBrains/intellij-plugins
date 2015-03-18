@@ -1,10 +1,12 @@
 package org.jetbrains.training;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import org.jdom.Element;
+import org.jetbrains.training.commands.util.XmlUtil;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.DetailPanel;
 import org.jetbrains.training.lesson.Lesson;
@@ -27,21 +29,26 @@ public abstract class Command {
 
     protected void updateDescription(Element element, DetailPanel infoPanel, Editor editor){
         if (element.getAttribute("description") != null) {
-            final String description =(element.getAttribute("description").getValue());
+            String description =(element.getAttribute("description").getValue());
+            description = XmlUtil.replaceWithActionShortcut(description);
             infoPanel.setText(description);
         }
     }
 
     protected void updateHTMLDescription(Element element, DetailPanel infoPanel, Editor editor){
         if (element.getAttribute("description") != null) {
-            final String description =(element.getAttribute("description").getValue());
+            String description =(element.getAttribute("description").getValue());
+            description = XmlUtil.replaceWithActionShortcut(description);
+
             updateHTMLDescription(element, infoPanel, editor, description);
         }
     }
 
     protected void updateHTMLDescription(Element element, DetailPanel infoPanel, Editor editor, final String htmlText){
 
-        final String inputText = "<html>" + htmlText + "</html>";
+        String inputText = "<html>" + htmlText + "</html>";
+        inputText = XmlUtil.replaceWithActionShortcut(inputText);
+
         infoPanel.setText(inputText);
 
     }
