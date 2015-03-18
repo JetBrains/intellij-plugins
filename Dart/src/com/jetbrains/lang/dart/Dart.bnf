@@ -534,7 +534,7 @@ private suffixExpressionWrapper ::= valueExpression suffixExpression*
 left suffixExpression ::= ('--' | '++')
 {mixin="com.jetbrains.lang.dart.psi.impl.DartOperatorExpressionImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-valueExpression ::= primary callOrArrayAccessOrQualifiedRefExpression cascadeReferenceExpression* (isExpression | asExpression)?
+valueExpression ::= primary callOrArrayAccessOrQualifiedRefExpression (isExpression | asExpression)? cascadeReferenceExpression*
 left isExpression ::= 'is' '!'? type
 left asExpression ::= 'as' type
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
