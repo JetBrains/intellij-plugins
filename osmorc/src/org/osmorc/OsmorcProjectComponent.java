@@ -155,13 +155,18 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   }
 
   private void scheduleNotification() {
-    if (myReimportNotification.getAndSet(true)) {
-      return;
-    }
-
     myQueue.queue(new Update("reimport") {
       @Override
       public void run() {
+        if (myProjectSettings.isBndAutoImport()) {
+          BndProjectImporter.reimportWorkspace(myProject);
+          return;
+        }
+
+        if (myReimportNotification.getAndSet(true)) {
+          return;
+        }
+
         String title = OsmorcBundle.message("bnd.reimport.title");
         String text = OsmorcBundle.message("bnd.reimport.text");
         BndProjectImporter.NOTIFICATIONS
@@ -169,6 +174,9 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
             @Override
             protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
               notification.expire();
+              if (e.getDescription().equals("auto")) {
+                myProjectSettings.setBndAutoImport(true);
+              }
               BndProjectImporter.reimportWorkspace(myProject);
             }
           })
