@@ -6,7 +6,11 @@ import com.intellij.lang.Language;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -25,7 +29,10 @@ import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
 import org.jetbrains.training.LessonIsOpenedException;
 import org.jetbrains.training.graphics.DetailPanel;
+import org.jetbrains.training.keymap.KeymapUtil;
+import org.jetbrains.training.keymap.SubKeymapUtil;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +49,26 @@ public class LessonStarter {
 
     public LessonStarter(AnActionEvent ideActionEvent) {
         anActionEvent = ideActionEvent;
+
+        //TODO: delete that
+        ActionManager.getInstance().addAnActionListener(new AnActionListener() {
+            @Override
+            public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
+                final String actionId = ActionManager.getInstance().getId(action);
+                final KeyStroke shortcutByActionId = KeymapUtil.getShortcutByActionId(actionId);
+                System.err.println("ACTION-INFO-SYSTEM >>> [shortcut]: " + SubKeymapUtil.getKeyStrokeTextSub(shortcutByActionId));
+            }
+
+            @Override
+            public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
+
+            }
+
+            @Override
+            public void beforeEditorTyping(char c, DataContext dataContext) {
+
+            }
+        });
 
         try {
 
@@ -103,6 +130,7 @@ public class LessonStarter {
 
         vf.rename(this, lesson.getId()); //Rename scratch file as a lesson name
         InputStream is = this.getClass().getResourceAsStream(lesson.getParentCourse().getAnswersPath() + lesson.getTargetPath());
+        if(is == null) throw new IOException("Unable to get answer for \"" + lesson.getId() + "\" lesson");
         final String target = new Scanner(is).useDelimiter("\\Z").next();
 
         dimension = new Dimension(500, 60);

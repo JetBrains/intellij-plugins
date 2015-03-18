@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
+import org.jdesktop.swingx.action.ActionManager;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.DetailPanel;
