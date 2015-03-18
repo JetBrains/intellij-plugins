@@ -6047,7 +6047,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // primary callOrArrayAccessOrQualifiedRefExpression cascadeReferenceExpression* (isExpression | asExpression)?
+  // primary callOrArrayAccessOrQualifiedRefExpression (isExpression | asExpression)? cascadeReferenceExpression*
   public static boolean valueExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "valueExpression")) return false;
     boolean r;
@@ -6060,34 +6060,34 @@ public class DartParser implements PsiParser {
     return r;
   }
 
-  // cascadeReferenceExpression*
+  // (isExpression | asExpression)?
   private static boolean valueExpression_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "valueExpression_2")) return false;
-    int c = current_position_(b);
-    while (true) {
-      if (!cascadeReferenceExpression(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "valueExpression_2", c)) break;
-      c = current_position_(b);
-    }
-    return true;
-  }
-
-  // (isExpression | asExpression)?
-  private static boolean valueExpression_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "valueExpression_3")) return false;
-    valueExpression_3_0(b, l + 1);
+    valueExpression_2_0(b, l + 1);
     return true;
   }
 
   // isExpression | asExpression
-  private static boolean valueExpression_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "valueExpression_3_0")) return false;
+  private static boolean valueExpression_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "valueExpression_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = isExpression(b, l + 1);
     if (!r) r = asExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // cascadeReferenceExpression*
+  private static boolean valueExpression_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "valueExpression_3")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!cascadeReferenceExpression(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "valueExpression_3", c)) break;
+      c = current_position_(b);
+    }
+    return true;
   }
 
   /* ********************************************************** */

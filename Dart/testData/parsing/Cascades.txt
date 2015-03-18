@@ -124,6 +124,35 @@ Dart File
                   LITERAL_EXPRESSION
                     PsiElement(NUMBER)('2')
           PsiElement(;)(';')
+          CASCADE_REFERENCE_EXPRESSION
+            AS_EXPRESSION
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('aaa')
+                  PsiElement(.)('.')
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('bcc')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  PsiElement())(')')
+              PsiElement(as)('as')
+              TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('CCC')
+            PsiElement(.)('.')
+            PsiElement(.)('.')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('ddd')
+              ARGUMENTS
+                PsiElement(()('(')
+                PsiElement())(')')
+          PsiElement(;)(';')
         PsiElement(})('}')
   CLASS_DEFINITION
     PsiElement(class)('class')
