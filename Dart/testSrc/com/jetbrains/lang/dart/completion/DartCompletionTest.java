@@ -160,4 +160,10 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
     final List<String> excludes = Arrays.asList("_inOther", "_inOther2");
     checkLookupElements(lookupElements, null, includes, excludes, "### 2nd basic completion ###");
   }
+
+  public void testEnums() throws Exception {
+    doTest("enum Foo{Foo1, Foo2}\n" +
+           "var a = Fo<caret completionEquals='Foo,FormatException'>o;\n" +
+           "var b = Foo.<caret completionEquals='Foo1,Foo2,values'>");
+  }
 }
