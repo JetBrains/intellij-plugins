@@ -761,7 +761,13 @@ public class DartResolveUtil {
     if (element == null) {
       return DartClassResolveResult.create(null);
     }
+
     final PsiElement parentElement = element.getParent();
+
+    if (parentElement instanceof DartEnumConstantDeclaration) {
+      return getDartClassResolveResult(parentElement.getParent());
+    }
+
     if (element instanceof DartComponentName) {
       return getDartClassResolveResult(parentElement, specialization);
     }

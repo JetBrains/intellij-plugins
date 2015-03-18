@@ -164,6 +164,7 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
   public void testEnums() throws Exception {
     doTest("enum Foo{Foo1, Foo2}\n" +
            "var a = Fo<caret completionEquals='Foo,FormatException'>o;\n" +
-           "var b = Foo.<caret completionEquals='Foo1,Foo2,values'>");
+           "var b = Foo.<caret completionEquals='Foo1,Foo2,values'>i;\n" +
+           "var c = Foo.Foo1.<caret completionEquals='index,toString,hashCode,runtimeType,noSuchMethod'>");
   }
 }
