@@ -1,4 +1,0 @@
-BASIC 1 EQUALS
-ProjectName
-PathPackage
-browser

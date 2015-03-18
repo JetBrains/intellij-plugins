@@ -22,8 +22,12 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
     return "/completion";
   }
 
-  private void doTest(final String text) {
-    final PsiFile file = myFixture.addFileToProject("web/" + getTestName(true) + ".dart", text);
+  private void doTest(@NotNull final String text) {
+    doTest("web/" + getTestName(true) + ".dart", text);
+  }
+
+  private void doTest(@NotNull final String fileRelPath, final String text) {
+    final PsiFile file = myFixture.addFileToProject(fileRelPath, text);
     myFixture.openFileInEditor(file.getVirtualFile());
 
     final List<CaretPositionInfo> caretPositions = DartTestUtils.extractPositionMarkers(getProject(), myFixture.getEditor().getDocument());
@@ -93,6 +97,30 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
            "import 'foo/<caret completionEquals='other2.dart'>z';\n" +
            "import 'package:<caret completionEquals='polymer,core_elements'>';\n" +
            "import 'package:polymer/<caret completionEquals='src,polymer.dart,transformer.dart'>");
+  }
+
+  public void testPackageFolderCompletionInHtml() throws Throwable {
+    myFixture.addFileToProject("pubspec.yaml", "");
+    myFixture.addFileToProject("packages/browser/dart.js", "");
+    myFixture.addFileToProject("web/other.dart", "");
+    doTest("web/file.html", "<link href='file.html,other.dart,packages'>");
+  }
+
+  public void testLivePackageNameCompletionInHtml() throws Throwable {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n" +
+                                               "dependencies:\n" +
+                                               "  PathPackage:\n" +
+                                               "    path: local_package\n");
+    myFixture.addFileToProject("lib/projectFile.dart", "");
+    myFixture.addFileToProject("local_package/lib/localPackageFile.html", "");
+    myFixture.addFileToProject("packages/browser/dart.js", "");
+    doTest("web/file.html", "<link href='packages/<caret completionEquals='ProjectName,PathPackage,browser'>");
+  }
+
+  public void testLivePackageContentCompletionInHtml() throws Throwable {
+    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
+    myFixture.addFileToProject("lib/projectFile.dart", "");
+    doTest("web/file.html", "<link href='packages/ProjectName/<caret expectedEquals='projectFile.dart>x'>");
   }
 
   public void testKeywords() throws Exception {
