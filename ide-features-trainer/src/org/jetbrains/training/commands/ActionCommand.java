@@ -46,11 +46,6 @@ public class ActionCommand extends Command {
 
 
         final String actionType = (element.getAttribute("action").getValue());
-        final KeyStroke shortcutByActionId = KeymapUtil.getShortcutByActionId(actionType);
-
-        if (shortcutByActionId != null) {
-            System.err.println("Trying to get shortcut by action id: " + SubKeymapUtil.getKeyStrokeTextSub(shortcutByActionId));
-        }
 
         if (element.getAttribute("balloon") != null) {
 
@@ -90,7 +85,7 @@ public class ActionCommand extends Command {
      * @param e
      * @param editor - editor where to show balloon, also uses for locking while balloon appearing
      */
-    private static void showBalloon(final Editor editor, String balloonText, final AnActionEvent e, final int delay, final String actionType, final Runnable runnable) throws InterruptedException {
+    private static void showBalloon(final Editor editor, String actionId, final AnActionEvent e, final int delay, final String actionType, final Runnable runnable) throws InterruptedException {
         FileEditorManager instance = FileEditorManager.getInstance(e.getProject());
         if (instance == null) return;
         if (editor == null) return;
@@ -99,9 +94,11 @@ public class ActionCommand extends Command {
         VisualPosition position = editor.offsetToVisualPosition(offset);
         Point point = editor.visualPositionToXY(position);
 
+        final KeyStroke shortcutByActionId = KeymapUtil.getShortcutByActionId(actionId);
+
         BalloonBuilder builder =
                 JBPopupFactory.getInstance().
-                        createHtmlTextBalloonBuilder(balloonText, null, UIUtil.getLabelBackground(), null)
+                        createHtmlTextBalloonBuilder(SubKeymapUtil.getKeyStrokeTextSub(shortcutByActionId), null, UIUtil.getLabelBackground(), null)
                         .setHideOnClickOutside(false)
                         .setCloseButtonEnabled(true)
                         .setHideOnKeyOutside(false);

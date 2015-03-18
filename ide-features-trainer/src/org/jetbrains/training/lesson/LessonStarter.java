@@ -51,24 +51,24 @@ public class LessonStarter {
         anActionEvent = ideActionEvent;
 
         //TODO: delete that
-        ActionManager.getInstance().addAnActionListener(new AnActionListener() {
-            @Override
-            public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
-                final String actionId = ActionManager.getInstance().getId(action);
-                final KeyStroke shortcutByActionId = KeymapUtil.getShortcutByActionId(actionId);
-                System.err.println("ACTION-INFO-SYSTEM >>> [shortcut]: " + SubKeymapUtil.getKeyStrokeTextSub(shortcutByActionId));
-            }
-
-            @Override
-            public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
-
-            }
-
-            @Override
-            public void beforeEditorTyping(char c, DataContext dataContext) {
-
-            }
-        });
+//        ActionManager.getInstance().addAnActionListener(new AnActionListener() {
+//            @Override
+//            public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
+//                final String actionId = ActionManager.getInstance().getId(action);
+//                final KeyStroke shortcutByActionId = KeymapUtil.getShortcutByActionId(actionId);
+//                System.err.println("ACTION-INFO-SYSTEM >>> [shortcut]: " + SubKeymapUtil.getKeyStrokeTextSub(shortcutByActionId));
+//            }
+//
+//            @Override
+//            public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
+//
+//            }
+//
+//            @Override
+//            public void beforeEditorTyping(char c, DataContext dataContext) {
+//
+//            }
+//        });
 
         try {
 
