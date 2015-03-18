@@ -7,15 +7,20 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.keymap.MacKeymapUtil;
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
 import org.jdom.Element;
 import org.jetbrains.training.Command;
 import org.jetbrains.training.editor.MouseListenerHolder;
+import org.jetbrains.training.keymap.KeymapUtil;
+import org.jetbrains.training.keymap.SubKeymapUtil;
+import org.jetbrains.training.keymap.SubMacKeymapUtil;
 import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -41,6 +46,11 @@ public class ActionCommand extends Command {
 
 
         final String actionType = (element.getAttribute("action").getValue());
+        final KeyStroke shortcutByActionId = KeymapUtil.getShortcutByActionId(actionType);
+
+        if (shortcutByActionId != null) {
+            System.err.println("Trying to get shortcut by action id: " + SubKeymapUtil.getKeyStrokeTextSub(shortcutByActionId));
+        }
 
         if (element.getAttribute("balloon") != null) {
 
