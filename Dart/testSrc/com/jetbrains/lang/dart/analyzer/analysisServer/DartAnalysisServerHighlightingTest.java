@@ -7,7 +7,7 @@ public abstract class DartAnalysisServerHighlightingTest extends CodeInsightFixt
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    DartTestUtils.configureDartSdk(myModule);
+    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable());
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 
