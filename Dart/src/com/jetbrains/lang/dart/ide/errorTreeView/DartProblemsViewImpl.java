@@ -1,8 +1,6 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
-import com.google.dart.server.generated.types.AnalysisError;
-import com.google.dart.server.generated.types.AnalysisErrorSeverity;
-import com.google.dart.server.generated.types.Location;
+import com.google.dart.server.generated.types.*;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.errorTreeView.ErrorTreeElementKind;
 import com.intellij.openapi.Disposable;
@@ -26,6 +24,7 @@ import com.intellij.util.ui.MessageCategory;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.PooledThreadExecutor;
 
 import javax.swing.*;
@@ -141,7 +140,7 @@ public class DartProblemsViewImpl {
     });
   }
 
-  private static int translateAnalysisServerSeverity(String severity) {
+  private static int translateAnalysisServerSeverity(@NotNull String severity) {
     if (AnalysisErrorSeverity.ERROR.equals(severity)) {
       return MessageCategory.ERROR;
     }
@@ -168,6 +167,18 @@ public class DartProblemsViewImpl {
         }
       }
     });
+  }
+
+  public void setProgress(@Nullable final AnalysisStatus analysisStatus, @Nullable final PubStatus pubStatus) {
+    if (pubStatus != null && pubStatus.isListingPackageDirs()) {
+      setProgress("Running pub...");
+    }
+    else if (analysisStatus != null && analysisStatus.isAnalyzing()) {
+      setProgress("Analyzing...");
+    }
+    else {
+      setProgress("");
+    }
   }
 
   public void setProgress(String text, float fraction) {

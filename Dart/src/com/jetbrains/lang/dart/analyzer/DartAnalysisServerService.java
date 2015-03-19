@@ -40,10 +40,7 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class DartAnalysisServerService {
@@ -54,6 +51,7 @@ public class DartAnalysisServerService {
   private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.SECONDS.toMillis(120);
+  private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
   private final Object myLock = new Object(); // Access all fields under this lock. Do not wait for server response under lock.
@@ -110,7 +108,7 @@ public class DartAnalysisServerService {
 
     @Override
     public void flushedResults(List<String> files) {
-      for (String file : files) {
+      for (final String file : files) {
         updateProblemsView(FileUtil.toSystemIndependentName(file), AnalysisError.EMPTY_LIST);
       }
     }
@@ -120,12 +118,12 @@ public class DartAnalysisServerService {
     }
 
     @Override
-    public void serverConnected(String version) {
+    public void serverConnected(@Nullable String version) {
       myServerVersion = version != null ? version : "";
     }
 
     @Override
-    public void serverError(boolean isFatal, String message, String stackTrace) {
+    public void serverError(boolean isFatal, @Nullable String message, @Nullable String stackTrace) {
       if (message == null) message = "<no error message>";
       if (stackTrace == null) stackTrace = "<no stack trace>";
       LOG.warn("Dart analysis server, SDK version " + mySdkVersion +
@@ -138,11 +136,20 @@ public class DartAnalysisServerService {
     }
 
     @Override
-    public void serverIncompatibleVersion(final String version) {
+    public void serverIncompatibleVersion(@Nullable final String version) {
     }
 
     @Override
-    public void serverStatus(final AnalysisStatus analysisStatus, final PubStatus pubStatus) {
+    public void serverStatus(@Nullable final AnalysisStatus analysisStatus, @Nullable final PubStatus pubStatus) {
+      ApplicationManager.getApplication().runReadAction(new Runnable() {
+        @Override
+        public void run() {
+          for (final Project project : myRootsHandler.getTrackedProjects()) {
+            if (project.isDisposed()) continue;
+            DartProblemsViewImpl.getInstance(project).setProgress(analysisStatus, pubStatus);
+          }
+        }
+      });
     }
   };
 
@@ -547,6 +554,7 @@ public class DartAnalysisServerService {
 
       try {
         myServer.start();
+        myServer.server_setSubscriptions(SERVER_SUBSCRIPTIONS);
         myServer.addAnalysisServerListener(myAnalysisServerListener);
         mySdkVersion = sdk.getVersion();
         myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
