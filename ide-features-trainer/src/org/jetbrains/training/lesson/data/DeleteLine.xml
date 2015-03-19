@@ -25,7 +25,7 @@
         <Text description="" btn="OK">Let's delete the line with &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement</Text>
         <Text description="Move the caret to the &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement line" btn="..."/>
         <TraverseCaret stop="138" delay="20"/>
-        <Action action="EditorDeleteLine" delay="2000" balloon="&lt;font size=&#34;20&#34;&gt;&lt;b&gt;⌘ + ⌫&lt;/b&gt;&lt;/font&gt; (Delete line)"/>
+        <Action action="EditorDeleteLine" delay="2000" balloon="&lt;shortcut&gt; (Delete line)"/>
         <Wait delay="200"/>
     </MouseBlock>
     <Text description="That's it!" btn="Let me try"/>

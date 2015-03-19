@@ -21,14 +21,14 @@ public class CommentLineDemo {
         return a;
     }
 }</CopyText>
-        <Text description="" btn="OK">You can comment out a line by pressing &lt;span color="gray"&gt;⌘ + /&lt;/span&gt;</Text>
+        <Text description="" btn="OK">You can comment out a line by pressing &lt;span color="gray"&gt;&lt;action=&quot;CommentByLineComment&quot;&gt;&lt;/span&gt;</Text>
         <Text description="Move the caret to &lt;span color=&quot;gray&quot;&gt;tmp&lt;/span&gt; declaration" btn="..."/>
         <TraverseCaret stop="108" delay="20"/>
-        <Action action="CommentByLineComment" delay="2000" balloon="⌘ + / (Comment line)"/>
+        <Action action="CommentByLineComment" delay="2000" balloon="&lt;shortcut&gt; (Comment line)"/>
         <Wait delay="200"/>
         <Text description="To uncomment press the same shortcut on this line" btn="OK"/>
         <TraverseCaret stop="108" delay="20"/>
-        <Action action="CommentByLineComment" delay="2000" balloon="⌘ + / (Uncomment line)"/>
+        <Action action="CommentByLineComment" delay="2000" balloon="&lt;shortcut&gt; (Uncomment line)"/>
     </MouseBlock>
     <Text description="That's it!" btn="Let me try"/>
     <TraverseCaret stop="0" delay="20"/>
