@@ -67,10 +67,10 @@ public class DartTestUtils {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
           @Override
           public void run() {
+            DartSdkGlobalLibUtil.detachDartSdkGlobalLib(Collections.singletonList(module), dartSdkGlobalLibName);
             LibraryTable.ModifiableModel model = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
             Library library = model.getLibraryByName(dartSdkGlobalLibName);
             if (library != null) {
-              DartSdkGlobalLibUtil.detachDartSdkGlobalLib(Collections.singletonList(module), dartSdkGlobalLibName);
               model.removeLibrary(library);
               model.commit();
             }
