@@ -8,7 +8,7 @@ public class DartProblemsViewPanel extends NewErrorTreeViewPanel {
 
   public DartProblemsViewPanel(Project project) {
     super(project, null, false, true, null);
-    myTree.getEmptyText().setText("No problems found in Dart code");
+    myTree.getEmptyText().setText("No problems found in Dart code. Happy day!");
   }
 
   @Override
