@@ -168,6 +168,7 @@ public class BndProjectImporter {
       List<String> errors = project.getErrors();
       if (errors != null && !errors.isEmpty()) {
         checkErrors(project, errors);
+        return false;
       }
 
       checkWarnings(project, project.getWarnings());
@@ -390,6 +391,11 @@ public class BndProjectImporter {
     String bsn = dependency.getBundleSymbolicName();
     String version = dependency.getVersion();
 
+    String path = file.getPath();
+    if (path.contains(": ")) {
+      throw new IllegalArgumentException("Cannot resolve " + bsn + ":" + version + ": " + path);
+    }
+
     if (JDK_DEPENDENCY.equals(bsn)) {
       String name = BND_LIB_PREFIX + bsn + ":" + version;
       if (FileUtil.isAncestor(myWorkspace.getBase(), file, true)) {
@@ -433,7 +439,7 @@ public class BndProjectImporter {
           library = libraryModel.createLibrary(name);
           Library.ModifiableModel model = library.getModifiableModel();
           model.addRoot(url(file), OrderRootType.CLASSES);
-          String srcRoot = mySourcesMap.get(file.getPath());
+          String srcRoot = mySourcesMap.get(path);
           if (srcRoot != null) {
             model.addRoot(url(file) + srcRoot, OrderRootType.SOURCES);
           }
@@ -446,7 +452,7 @@ public class BndProjectImporter {
         Library library = rootModel.getModuleLibraryTable().createLibrary(file.getName());
         Library.ModifiableModel model = library.getModifiableModel();
         model.addRoot(url(file), OrderRootType.CLASSES);
-        String srcRoot = mySourcesMap.get(file.getPath());
+        String srcRoot = mySourcesMap.get(path);
         if (srcRoot != null) {
           model.addRoot(url(file) + srcRoot, OrderRootType.SOURCES);
         }
