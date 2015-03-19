@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,21 +70,7 @@ public class DartTestUtils {
             LibraryTable.ModifiableModel model = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
             Library library = model.getLibraryByName(dartSdkGlobalLibName);
             if (library != null) {
-              if (DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, dartSdkGlobalLibName)) {
-                final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
-                try {
-                  LibraryOrderEntry orderEntry = modifiableModel.findLibraryOrderEntry(library);
-                  if (orderEntry != null) {
-                    modifiableModel.removeOrderEntry(orderEntry);
-                  }
-                  modifiableModel.commit();
-                }
-                finally {
-                  if (!modifiableModel.isDisposed()) {
-                    modifiableModel.dispose();
-                  }
-                }
-              }
+              DartSdkGlobalLibUtil.detachDartSdkGlobalLib(Collections.singletonList(module), dartSdkGlobalLibName);
               model.removeLibrary(library);
               model.commit();
             }

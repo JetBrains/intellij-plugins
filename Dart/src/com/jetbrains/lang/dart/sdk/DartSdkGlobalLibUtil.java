@@ -137,8 +137,7 @@ public class DartSdkGlobalLibUtil {
     }
   }
 
-  static void detachDartSdkGlobalLib(final @NotNull Collection<Module> modules,
-                                     final @NotNull String dartSdkGlobalLibName) {
+  public static void detachDartSdkGlobalLib(final @NotNull Collection<Module> modules, final @NotNull String dartSdkGlobalLibName) {
     for (final Module module : modules) {
       final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
       try {
