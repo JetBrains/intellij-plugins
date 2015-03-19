@@ -15,7 +15,7 @@
     <Text description="Let's print the absolute value of x" btn="...">Let's print the absolute value of &lt;span color="gray"&gt;x&lt;/span&gt;</Text>
     <Text description="Move the caret to print line and" btn="..."/>
     <TraverseCaret stop="178" delay="20"/>
-    <Action action="EditorDuplicate" delay="2000" balloon="⌘ + D (Duplicate line)"/>
+    <Action action="EditorDuplicate" delay="2000" balloon="&lt;shortcut&gt; (Duplicate line)"/>
     <Wait delay="200"/>
     <Text description="Cool, now we replace &lt;span color=&quot;gray&quot;&gt;a&lt;/span&gt; with &lt;span color=&quot;gray&quot;&gt;x&lt;/span&gt;" btn="..."/>
     <TraverseCaret stop="271" delay="50"/>
