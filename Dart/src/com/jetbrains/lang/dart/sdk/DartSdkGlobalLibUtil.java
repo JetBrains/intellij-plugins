@@ -151,6 +151,8 @@ public class DartSdkGlobalLibUtil {
       }
       catch (Exception e) {
         LOG.warn(e);
+      }
+      finally {
         if (!modifiableModel.isDisposed()) modifiableModel.dispose();
       }
     }
