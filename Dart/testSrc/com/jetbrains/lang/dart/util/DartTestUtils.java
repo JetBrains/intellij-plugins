@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.util;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -7,7 +8,11 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
@@ -35,7 +40,7 @@ public class DartTestUtils {
     return FileUtil.toSystemIndependentName(PathManager.getHomePath() + "/contrib/Dart/testData");
   }
 
-  public static void configureDartSdk(final @NotNull Module module) {
+  public static void configureDartSdk(final @NotNull Module module, @NotNull Disposable disposable) {
     final String dartSdkGlobalLibName;
     final DartSdk sdk = DartSdk.getGlobalDartSdk();
     if (sdk != null) {
@@ -52,6 +57,38 @@ public class DartTestUtils {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
         DartSdkGlobalLibUtil.configureDependencyOnGlobalLib(module, dartSdkGlobalLibName);
+      }
+    });
+    
+    Disposer.register(disposable, new Disposable() {
+      @Override
+      public void dispose() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          @Override
+          public void run() {
+            LibraryTable.ModifiableModel model = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+            Library library = model.getLibraryByName(dartSdkGlobalLibName);
+            if (library != null) {
+              if (DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, dartSdkGlobalLibName)) {
+                final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
+                try {
+                  LibraryOrderEntry orderEntry = modifiableModel.findLibraryOrderEntry(library);
+                  if (orderEntry != null) {
+                    modifiableModel.removeOrderEntry(orderEntry);
+                  }
+                  modifiableModel.commit();
+                }
+                finally {
+                  if (!modifiableModel.isDisposed()) {
+                    modifiableModel.dispose();
+                  }
+                }
+              }
+              model.removeLibrary(library);
+              model.commit();
+            }
+          }
+        });
       }
     });
   }
