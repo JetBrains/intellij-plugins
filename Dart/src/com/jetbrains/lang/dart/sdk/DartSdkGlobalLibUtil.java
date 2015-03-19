@@ -11,6 +11,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -95,7 +96,7 @@ public class DartSdkGlobalLibUtil {
       }
       catch (Exception e) {
         LOG.warn(e);
-        libModifiableModel.dispose();
+        Disposer.dispose(libModifiableModel);
       }
     }
   }
