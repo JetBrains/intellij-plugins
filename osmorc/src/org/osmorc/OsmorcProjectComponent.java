@@ -154,7 +154,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
     });
   }
 
-  private void scheduleNotification() {
+  private void scheduleImportNotification() {
     myQueue.queue(new Update("reimport") {
       @Override
       public void run() {
@@ -257,7 +257,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
           if (file != null) {
             String name = file.getName();
             if (BndProjectImporter.BND_FILE.equals(name) || BndProjectImporter.BUILD_FILE.equals(name)) {
-              scheduleNotification();
+              scheduleImportNotification();
               break;
             }
           }
