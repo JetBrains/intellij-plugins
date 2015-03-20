@@ -23,24 +23,19 @@ public class GrCucumberStepDefinitionSearcher implements QueryExecutor<PsiRefere
   @Override
   public boolean execute(@NotNull final ReferencesSearch.SearchParameters queryParameters,
                          @NotNull final Processor<PsiReference> consumer) {
-    final PsiElement element = ApplicationManager.getApplication().runReadAction(new NullableComputable<PsiElement>() {
-      @Override
-      public PsiElement compute() {
-        return getStepDefinition(queryParameters.getElementToSearch());
-      }
-    });
-    if (element == null) return true;
-
-    @Nullable
-    final String regexp = ApplicationManager.getApplication().runReadAction(new NullableComputable<String>() {
+    return ApplicationManager.getApplication().runReadAction(new NullableComputable<Boolean>() {
       @Nullable
       @Override
-      public String compute() {
-        return GrCucumberUtil.getStepDefinitionPatternText((GrMethodCall)element);
+      public Boolean compute() {
+        PsiElement element = getStepDefinition(queryParameters.getElementToSearch());
+        if (element == null) return true;
+
+        String regexp = GrCucumberUtil.getStepDefinitionPatternText((GrMethodCall)element);
+        if (regexp == null) return true;
+
+        return CucumberUtil.findGherkinReferencesToElement(element, regexp, consumer, queryParameters.getEffectiveSearchScope());
       }
     });
-
-    return CucumberUtil.findGherkinReferencesToElement(element, regexp, consumer, queryParameters.getEffectiveSearchScope());
   }
 
   public static PsiElement getStepDefinition(final PsiElement element) {
