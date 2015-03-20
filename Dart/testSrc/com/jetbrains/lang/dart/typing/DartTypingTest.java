@@ -361,7 +361,7 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
                  "}",
                  "main(a) {\n" +
                  "  a.b\n" +
-                 "      <caret>..c;\n" +
+                 "    <caret>..c;\n" +
                  "}");
   }
 
@@ -369,14 +369,14 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\n',
                  "main(a) {\n" +
                  "  a.b\n" +
-                 "      ..c\n" +
-                 "      ..d<caret>\n" +
+                 "    ..c\n" +
+                 "    ..d<caret>\n" +
                  "}",
                  "main(a) {\n" +
                  "  a.b\n" +
-                 "      ..c\n" +
-                 "      ..d\n" +
-                 "      <caret>\n" +
+                 "    ..c\n" +
+                 "    ..d\n" +
+                 "    <caret>\n" +
                  "}");
   }
 
@@ -384,14 +384,14 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\n',
                  "main(a) {\n" +
                  "  a.b\n" +
-                 "      <caret>..c\n" +
-                 "      ..d\n" +
+                 "    <caret>..c\n" +
+                 "    ..d\n" +
                  "}",
                  "main(a) {\n" +
                  "  a.b\n" +
-                 "      \n" +
-                 "      <caret>..c\n" +
-                 "      ..d\n" +
+                 "    \n" +
+                 "    <caret>..c\n" +
+                 "    ..d\n" +
                  "}");
   }
 
@@ -399,48 +399,48 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
     doTypingTest('\n',
                  "main(a) {\n" +
                  "  a.b\n" +
-                 "      ..c\n" +
-                 "      <caret>..d\n" +
+                 "    ..c\n" +
+                 "    <caret>..d\n" +
                  "}",
                  "main(a) {\n" +
                  "  a.b\n" +
-                 "      ..c\n" +
-                 "      \n" +
-                 "      <caret>..d\n" +
+                 "    ..c\n" +
+                 "    \n" +
+                 "    <caret>..d\n" +
                  "}");
   }
 
   public void testCascadeAlignAfterReturn5() throws Throwable {
     // TODO This test should fail as written but the code isn't quite
-    // right yet. It should insert 4 spaces before the caret.
+    // right yet. It should insert two spaces before the caret.
     doTypingTest('\n',
                  "main(a) {\n" +
                  "  a.b\n" +
-                 "      ..c<caret>\n" +
-                 "      ..d\n" +
+                 "    ..c<caret>\n" +
+                 "    ..d\n" +
                  "}",
                  "main(a) {\n" +
                  "  a.b\n" +
-                 "      ..c\n" +
+                 "    ..c\n" +
                  "  <caret>\n" +
-                 "      ..d\n" +
+                 "    ..d\n" +
                  "}");
   }
 
   public void testCascadeAlignAfterReturn6() throws Throwable {
     // TODO This test should fail as written but the code isn't quite
-    // right yet. It should insert 4 spaces before the caret.
+    // right yet. It should insert two spaces before the caret.
     doTypingTest('\n',
                  "main(a) {\n" +
                  "  a.b<caret>\n" +
-                 "      ..c\n" +
-                 "      ..d\n" +
+                 "    ..c\n" +
+                 "    ..d\n" +
                  "}",
                  "main(a) {\n" +
                  "  a.b\n" +
                  "  <caret>\n" +
-                 "      ..c\n" +
-                 "      ..d\n" +
+                 "    ..c\n" +
+                 "    ..d\n" +
                  "}");
   }
 }
