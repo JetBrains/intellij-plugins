@@ -178,6 +178,7 @@ public class BndWrapper {
     if (workspace != null) {
       Project project = new Project(workspace, null, bndFile);
       builder = new ReportingProjectBuilder(myReporter, project);
+      builder.setBase(bndFile.getParentFile());
     }
     else {
       builder = new ReportingBuilder(myReporter);
