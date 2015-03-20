@@ -1,7 +1,10 @@
 package org.jetbrains.plugins.cucumber.groovy.resolve.noncode;
 
 import com.intellij.psi.*;
+import com.intellij.psi.impl.cache.CacheManager;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -10,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberCommonClassNames;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
+import org.jetbrains.plugins.groovy.GroovyFileType;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrArgumentList;
@@ -22,8 +25,6 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.typedef.members.GrMe
 import org.jetbrains.plugins.groovy.lang.psi.util.GroovyCommonClassNames;
 import org.jetbrains.plugins.groovy.lang.resolve.NonCodeMembersContributor;
 import org.jetbrains.plugins.groovy.lang.resolve.ResolveUtil;
-
-import java.util.List;
 
 public class CustomWorldContributor extends NonCodeMembersContributor {
   @Override
@@ -59,14 +60,15 @@ public class CustomWorldContributor extends NonCodeMembersContributor {
         ResolveUtil.processAllDeclarations(worldType, processor, state, place);
       }
       else {
-        final PsiDirectory directory = stepFile.getContainingDirectory();
-        if (directory != null) {
-          final List<PsiFile> otherStepFiles = CucumberStepsIndex.getInstance(place.getProject()).gatherStepDefinitionsFilesFromDirectory(directory, false);
-          for (PsiFile otherFile : otherStepFiles) {
-            if (otherFile instanceof GroovyFile) {
-              final PsiType type = getWorldType((GroovyFile)otherFile);
-              if (type != null) {
-                ResolveUtil.processAllDeclarations(type, processor, state, place);
+        GlobalSearchScope scope = GlobalSearchScope.getScopeRestrictedByFileTypes(stepFile.getResolveScope(),
+                                                                                  GroovyFileType.getGroovyEnabledFileTypes());
+        PsiFile[] files = CacheManager.SERVICE.getInstance(place.getProject()).getFilesWithWord("World", UsageSearchContext.IN_CODE, scope, true);
+        for (PsiFile file : files) {
+          if (file instanceof GroovyFile) {
+            final PsiType type = getWorldType((GroovyFile)file);
+            if (type != null) {
+              if (!ResolveUtil.processAllDeclarations(type, processor, state, place)) {
+                return;
               }
             }
           }
@@ -77,7 +79,7 @@ public class CustomWorldContributor extends NonCodeMembersContributor {
 
   @Nullable
   private static PsiType getWorldType(@NotNull final GroovyFile stepFile) {
-    return CachedValuesManager.getManager(stepFile.getProject()).getCachedValue(stepFile, new CachedValueProvider<PsiType>() {
+    return CachedValuesManager.getCachedValue(stepFile, new CachedValueProvider<PsiType>() {
       @Nullable
       @Override
       public Result<PsiType> compute() {
