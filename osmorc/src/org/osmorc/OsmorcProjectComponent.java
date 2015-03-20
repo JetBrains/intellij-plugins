@@ -51,7 +51,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.bnd.BndProjectImporter;
+import org.jetbrains.osgi.bnd.imp.BndProjectImporter;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.OsgiConfigurationType;
