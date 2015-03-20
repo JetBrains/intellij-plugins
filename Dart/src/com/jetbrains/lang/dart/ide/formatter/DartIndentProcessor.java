@@ -120,7 +120,13 @@ public class DartIndentProcessor {
       return Indent.getNormalIndent();
     }
     if (prevSiblingType != DOT && elementType == DOT && parentType == CASCADE_REFERENCE_EXPRESSION) {
-      return Indent.getNormalIndent();
+      if (node.getTreeNext() != null && node.getTreeNext().getElementType() == DOT) {
+        return Indent.getContinuationIndent();
+      }
+    }
+    if (prevSiblingType == DOT && elementType == REFERENCE_EXPRESSION && parentType == CASCADE_REFERENCE_EXPRESSION) {
+      // This makes DartTypingTest.testCascadeAlignAfterReturn2() succeed.
+      return Indent.getContinuationIndent();
     }
     return Indent.getNoneIndent();
   }
