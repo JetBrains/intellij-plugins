@@ -114,13 +114,13 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
 
   public void testWEB_8315() throws Throwable {
     doTypingTest('\n',
-                  "class X {\n" +
-                  "  num x;<caret>\n" +
-                  "}",
-                  "class X {\n" +
-                  "  num x;\n" +
-                  "  <caret>\n" +
-                  "}");
+                 "class X {\n" +
+                 "  num x;<caret>\n" +
+                 "}",
+                 "class X {\n" +
+                 "  num x;\n" +
+                 "  <caret>\n" +
+                 "}");
   }
 
   public void testCaseAlignAfterColon1() throws Throwable {
