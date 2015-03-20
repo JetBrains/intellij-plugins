@@ -54,6 +54,11 @@ public class DartProblemsViewImpl {
     return ArrayUtil.toStringArray(lines);
   }
 
+  @NotNull
+  public static String createGroupName(@NotNull final String path) {
+    return FileUtil.toSystemDependentName(path);
+  }
+
   public DartProblemsViewImpl(final Project project, final ToolWindowManager wm) {
     myProject = project;
     myPanel = new DartProblemsViewPanel(project);
@@ -97,7 +102,7 @@ public class DartProblemsViewImpl {
     myViewUpdater.execute(new Runnable() {
       @Override
       public void run() {
-        final String groupName = FileUtil.toSystemDependentName(vFile.getPath());
+        final String groupName = createGroupName(vFile.getPath());
         myPanel.removeGroup(groupName);
 
         for (final AnalysisError analysisError : errors) {
@@ -124,7 +129,7 @@ public class DartProblemsViewImpl {
     myViewUpdater.execute(new Runnable() {
       @Override
       public void run() {
-        myPanel.removeGroup(FileUtil.toSystemDependentName(filePath));
+        myPanel.removeGroup(createGroupName(filePath));
         myPanel.updateTree();
       }
     });
