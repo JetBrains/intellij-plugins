@@ -27,11 +27,8 @@ package org.osmorc.frameworkintegration.impl;
 import com.intellij.execution.CantRunException;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.JavaParameters;
+import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.JdkUtil;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -76,25 +73,6 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
     myAdditionalProperties = myRunConfiguration.getAdditionalProperties();
     myBundles = bundles;
 
-    // validation
-
-    Sdk jdkForRun;
-    if (myRunConfiguration.isUseAlternativeJre()) {
-      String path = myRunConfiguration.getAlternativeJrePath();
-      if (StringUtil.isEmpty(path) || !JdkUtil.checkForJre(path)) {
-        jdkForRun = null;
-      }
-      else {
-        jdkForRun = JavaSdk.getInstance().createJdk("", myRunConfiguration.getAlternativeJrePath());
-      }
-    }
-    else {
-      jdkForRun = ProjectRootManager.getInstance(myRunConfiguration.getProject()).getProjectSdk();
-    }
-    if (jdkForRun == null) {
-      throw CantRunException.noJdkConfigured();
-    }
-
     JavaParameters params = new JavaParameters();
 
     // working directory and JVM
@@ -111,7 +89,8 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
     params.setWorkingDirectory(myWorkingDir);
 
     // only add JDK classes to the classpath, the rest is to be provided by bundles
-    params.configureByProject(myRunConfiguration.getProject(), JavaParameters.JDK_ONLY, jdkForRun);
+    String jreHome = myRunConfiguration.isUseAlternativeJre() ? myRunConfiguration.getAlternativeJrePath() : null;
+    JavaParametersUtil.configureProject(myRunConfiguration.getProject(), params, JavaParameters.JDK_ONLY, jreHome);
 
     // class path
 
