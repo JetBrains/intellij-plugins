@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -69,20 +70,9 @@ public class DartAnalysisServerAnnotator
     }
   }
 
-  private final boolean myGlobalInspectionMode;
-
-  @SuppressWarnings("unused")   // invoked by the platform
-  public DartAnalysisServerAnnotator() {
-    this(false);
-  }
-
-  public DartAnalysisServerAnnotator(final boolean globalInspectionMode) {
-    myGlobalInspectionMode = globalInspectionMode;
-  }
-
   @Nullable
   @Override
-  public AnnotatorInfo collectInformation(@NotNull final PsiFile psiFile) {
+  public AnnotatorInfo collectInformation(@NotNull final PsiFile psiFile, @Nullable final Editor editor, boolean hasErrors) {
     if (psiFile instanceof DartExpressionCodeFragment) return null;
 
     final VirtualFile annotatedFile = DartResolveUtil.getRealVirtualFile(psiFile);
@@ -102,7 +92,8 @@ public class DartAnalysisServerAnnotator
 
     if (!DartAnalysisServerService.getInstance().serverReadyForRequest(module.getProject(), sdk)) return null;
 
-    if (!myGlobalInspectionMode) {
+    if (editor != null) {
+      // editor is null if DartAnalysisServerGlobalInspectionContext.analyzeFile() is running
       DartAnalysisServerService.getInstance().addPriorityFile(annotatedFile);
     }
 
