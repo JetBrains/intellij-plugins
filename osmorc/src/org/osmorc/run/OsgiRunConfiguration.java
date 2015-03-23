@@ -24,24 +24,22 @@
  */
 package org.osmorc.run;
 
-import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import org.jdom.Attribute;
 import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
@@ -63,24 +61,24 @@ import java.util.*;
 public class OsgiRunConfiguration extends RunConfigurationBase implements ModuleRunConfiguration {
   private static final Logger LOG = Logger.getInstance("#org.osmorc.run.OsgiRunConfiguration");
 
-  @NonNls private static final String BUNDLE_ELEMENT = "bundle";
-  @NonNls private static final String NAME_ATTRIBUTE = "name";
-  @NonNls private static final String VM_PARAMETERS_ATTRIBUTE = "vmParameters";
-  @NonNls private static final String PROGRAM_PARAMETERS_ATTRIBUTE = "programParameters";
-  @NonNls private static final String WORKING_DIR_ATTRIBUTE = "workingDir";
-  @NonNls private static final String FRAMEWORK_ELEMENT = "framework";
-  @NonNls private static final String INSTANCE_ATTRIBUTE = "instance";
-  @NonNls private static final String URL_ATTRIBUTE = "url";
-  @NonNls private static final String ADDITIONAL_PROPERTIES_ELEMENT = "additinalProperties";
-  @NonNls private static final String TYPE_ATTRIBUTE = "type";
-  @NonNls private static final String START_AFTER_INSTALLATION_ATTRIBUTE = "startAfterInstallation";
-  @NonNls private static final String START_LEVEL_ATTRIBUTE = "startLevel";
-  @NonNls private static final String INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE = "includeAllBundlesInClassPath";
-  @NonNls private static final String USE_ALTERNATIVE_JRE_ATTRIBUTE = "useAlternativeJre";
-  @NonNls private static final String ALTERNATIVE_JRE_PATH = "alternativeJrePath";
-  @NonNls private static final String FRAMEWORK_START_LEVEL = "frameworkStartLevel";
-  @NonNls private static final String DEFAULT_START_LEVEL = "defaultStartLevel";
-  @NonNls private static final String GENERATE_WORKING_DIR_ATTRIBUTE = "generateWorkingDir";
+  private static final String BUNDLE_ELEMENT = "bundle";
+  private static final String NAME_ATTRIBUTE = "name";
+  private static final String VM_PARAMETERS_ATTRIBUTE = "vmParameters";
+  private static final String PROGRAM_PARAMETERS_ATTRIBUTE = "programParameters";
+  private static final String WORKING_DIR_ATTRIBUTE = "workingDir";
+  private static final String FRAMEWORK_ELEMENT = "framework";
+  private static final String INSTANCE_ATTRIBUTE = "instance";
+  private static final String URL_ATTRIBUTE = "url";
+  private static final String ADDITIONAL_PROPERTIES_ELEMENT = "additinalProperties";
+  private static final String TYPE_ATTRIBUTE = "type";
+  private static final String START_AFTER_INSTALLATION_ATTRIBUTE = "startAfterInstallation";
+  private static final String START_LEVEL_ATTRIBUTE = "startLevel";
+  private static final String INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE = "includeAllBundlesInClassPath";
+  private static final String USE_ALTERNATIVE_JRE_ATTRIBUTE = "useAlternativeJre";
+  private static final String ALTERNATIVE_JRE_PATH = "alternativeJrePath";
+  private static final String FRAMEWORK_START_LEVEL = "frameworkStartLevel";
+  private static final String DEFAULT_START_LEVEL = "defaultStartLevel";
+  private static final String GENERATE_WORKING_DIR_ATTRIBUTE = "generateWorkingDir";
 
   private OsgiRunConfigurationChecker checker;
   private List<SelectedBundle> bundlesToDeploy;
@@ -253,10 +251,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       throw new RuntimeConfigurationError(OsmorcBundle.message("run.configuration.no.instance"));
     }
     if (isUseAlternativeJre()) {
-      String jrePath = this.getAlternativeJrePath();
-      if (jrePath == null || jrePath.length() == 0 || !JavaSdk.checkForJre(jrePath)) {
-        throw new RuntimeConfigurationError(ExecutionBundle.message("jre.not.valid.error.message", jrePath));
-      }
+      JavaParametersUtil.checkAlternativeJRE(getAlternativeJrePath());
     }
     if (checker != null) {
       checker.checkConfiguration(this);
