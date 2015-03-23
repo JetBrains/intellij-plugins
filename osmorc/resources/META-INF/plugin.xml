@@ -100,7 +100,10 @@
     <colorSettingsPage implementation="org.osmorc.manifest.lang.OsgiManifestColorsAndFontsPage"/>
     <annotator language="Manifest" implementationClass="org.osmorc.manifest.lang.OsgiManifestHighlightingAnnotator"/>
     <completion.contributor language="Manifest" implementationClass="org.osmorc.manifest.completion.OsgiManifestCompletionContributor"/>
+
     <configurationType implementation="org.osmorc.run.OsgiConfigurationType"/>
+    <configurationType implementation="org.jetbrains.osgi.bnd.run.BndRunConfigurationType"/>
+    <runConfigurationProducer implementation="org.jetbrains.osgi.bnd.run.BndRunConfigurationProducer"/>
 
     <localInspection bundle="messages.OsmorcBundle" key="UnregisteredActivatorInspection.name"
                      groupBundle="messages.OsmorcBundle" groupKey="inspection.group"
