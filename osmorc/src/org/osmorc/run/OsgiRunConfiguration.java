@@ -69,7 +69,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   private static final String FRAMEWORK_ELEMENT = "framework";
   private static final String INSTANCE_ATTRIBUTE = "instance";
   private static final String URL_ATTRIBUTE = "url";
-  private static final String ADDITIONAL_PROPERTIES_ELEMENT = "additinalProperties";
+  private static final String ADDITIONAL_PROPERTIES_ELEMENT = "additionalProperties";
   private static final String TYPE_ATTRIBUTE = "type";
   private static final String START_AFTER_INSTALLATION_ATTRIBUTE = "startAfterInstallation";
   private static final String START_LEVEL_ATTRIBUTE = "startLevel";
@@ -182,6 +182,10 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     }
 
     Element additionalProperties = element.getChild(ADDITIONAL_PROPERTIES_ELEMENT);
+    if (additionalProperties == null) {
+      //noinspection SpellCheckingInspection
+      additionalProperties = element.getChild("additinalProperties");
+    }
     if (additionalProperties != null) {
       //noinspection unchecked
       List<Attribute> attributes = additionalProperties.getAttributes();
