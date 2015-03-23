@@ -3,15 +3,12 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 import com.google.dart.server.generated.types.AnalysisError;
 import com.google.dart.server.generated.types.AnalysisErrorSeverity;
 import com.google.dart.server.generated.types.Location;
-import com.intellij.icons.AllIcons;
-import com.intellij.ide.errorTreeView.ErrorTreeElementKind;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
@@ -24,26 +21,23 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.ui.MessageCategory;
 import com.intellij.util.ui.UIUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
+import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.ide.PooledThreadExecutor;
 
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.StringTokenizer;
 
 public class DartProblemsViewImpl {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl");
-  private static final String PROBLEMS_TOOLWINDOW_ID = "Dart Problems";
-  private static final EnumSet<ErrorTreeElementKind> ALL_MESSAGE_KINDS = EnumSet.allOf(ErrorTreeElementKind.class);
+  private static final String TOOLWINDOW_ID = DartBundle.message("dart.analysis.tool.window");
 
   private final DartProblemsViewPanel myPanel;
   private final Project myProject;
   private final SequentialTaskExecutor myViewUpdater = new SequentialTaskExecutor(PooledThreadExecutor.INSTANCE);
-  private final Icon myActiveIcon = AllIcons.Toolwindows.Problems;
-  private final Icon myPassiveIcon = IconLoader.getDisabledIcon(myActiveIcon);
 
   public static DartProblemsViewImpl getInstance(@NotNull final Project project) {
     return ServiceManager.getService(project, DartProblemsViewImpl.class);
@@ -76,9 +70,9 @@ public class DartProblemsViewImpl {
         if (project.isDisposed()) {
           return;
         }
-        final ToolWindow tw = wm.registerToolWindow(PROBLEMS_TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
+        final ToolWindow tw = wm.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
+        tw.setIcon(DartIcons.Dart_13);
         final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
-        // todo: setup content?
         tw.getContentManager().addContent(content);
         Disposer.register(project, new Disposable() {
           @Override
@@ -86,7 +80,6 @@ public class DartProblemsViewImpl {
             tw.getContentManager().removeAllContents(true);
           }
         });
-        updateIcon();
       }
     });
   }
@@ -97,7 +90,6 @@ public class DartProblemsViewImpl {
       public void run() {
         myPanel.getErrorViewStructure().clear();
         myPanel.updateTree();
-        updateIcon();
       }
     });
   }
@@ -125,7 +117,6 @@ public class DartProblemsViewImpl {
         }
 
         myPanel.updateTree();
-        updateIcon();
       }
     });
   }
@@ -136,7 +127,6 @@ public class DartProblemsViewImpl {
       public void run() {
         myPanel.removeGroup(FileUtil.toSystemDependentName(filePath));
         myPanel.updateTree();
-        updateIcon();
       }
     });
   }
@@ -153,21 +143,6 @@ public class DartProblemsViewImpl {
     }
     LOG.error("Unknown message category: " + severity);
     return 0;
-  }
-
-  private void updateIcon() {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        if (!myProject.isDisposed()) {
-          final ToolWindow tw = ToolWindowManager.getInstance(myProject).getToolWindow(PROBLEMS_TOOLWINDOW_ID);
-          if (tw != null) {
-            final boolean active = myPanel.getErrorViewStructure().hasMessages(ALL_MESSAGE_KINDS);
-            tw.setIcon(active ? myActiveIcon : myPassiveIcon);
-          }
-        }
-      }
-    });
   }
 
   public void setProgress(String text, float fraction) {
