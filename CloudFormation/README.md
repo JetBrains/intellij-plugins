@@ -1,5 +1,7 @@
 AWS CloudFormation plugin for IntelliJ IDEA 14+
 
+[![Travis Build Status](https://travis-ci.org/shalupov/idea-cloudformation.svg?branch=master)](https://travis-ci.org/shalupov/idea-cloudformation)
+
 Latest stable version
 ---------------------
 
