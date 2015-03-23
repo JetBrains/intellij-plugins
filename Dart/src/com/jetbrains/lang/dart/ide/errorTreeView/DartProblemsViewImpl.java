@@ -1,8 +1,6 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
-import com.google.dart.server.generated.types.AnalysisError;
-import com.google.dart.server.generated.types.AnalysisErrorSeverity;
-import com.google.dart.server.generated.types.Location;
+import com.google.dart.server.generated.types.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -25,6 +23,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.PooledThreadExecutor;
 
 import java.util.ArrayList;
@@ -131,7 +130,7 @@ public class DartProblemsViewImpl {
     });
   }
 
-  private static int translateAnalysisServerSeverity(String severity) {
+  private static int translateAnalysisServerSeverity(@NotNull String severity) {
     if (AnalysisErrorSeverity.ERROR.equals(severity)) {
       return MessageCategory.ERROR;
     }
@@ -143,6 +142,18 @@ public class DartProblemsViewImpl {
     }
     LOG.error("Unknown message category: " + severity);
     return 0;
+  }
+
+  public void setProgress(@Nullable final AnalysisStatus analysisStatus, @Nullable final PubStatus pubStatus) {
+    if (pubStatus != null && pubStatus.isListingPackageDirs()) {
+      setProgress("Running pub...");
+    }
+    else if (analysisStatus != null && analysisStatus.isAnalyzing()) {
+      setProgress("Analyzing...");
+    }
+    else {
+      setProgress("");
+    }
   }
 
   public void setProgress(String text, float fraction) {
