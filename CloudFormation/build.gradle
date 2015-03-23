@@ -16,7 +16,7 @@ ext.ideaPath = file("$buildDir/download/idea")
 
 // from https://teamcity.jetbrains.com/viewType.html?buildTypeId=bt410
 ext.ideaBuildTypeId = "bt410"
-ext.ideaBuildId = "183846.tcbuildid"
+ext.ideaBuildId = "415045.tcbuildid" // 139.1117.1
 
 ext.ideaArtifactName = "ideaIC-139.SNAPSHOT.win"
 

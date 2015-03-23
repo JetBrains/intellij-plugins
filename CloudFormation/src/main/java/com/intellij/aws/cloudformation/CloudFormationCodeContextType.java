@@ -1,7 +1,7 @@
 package com.intellij.aws.cloudformation;
 
 import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.json.JsonContextType;
+import com.intellij.json.liveTemplates.JsonContextType;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
