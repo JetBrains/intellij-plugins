@@ -4,15 +4,19 @@
   "Description" : "This template creates a single server installation of Microsoft SharePoint Foundation 2010. **WARNING** This template creates Amazon EC2 Windows instance and related resources. You will be billed for the AWS resources used if you create a stack from this template. Also, you are solely responsible for complying with the license terms for the software downloaded and installed by this template. By creating a stack from this template, you are agreeing to such terms.",
 
   "Parameters" : {
-    "KeyPairName" : {
-      "Description" : "Name of an existing Amazon EC2 key pair for RDP access",
-      "Type" : "String"
+    "KeyName" : {
+      "Description" : "Name of an existing EC2 KeyPair",
+      "Type" : "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
     },
+
     "InstanceType" : {
       "Description" : "Amazon EC2 instance type",
       "Type" : "String",
       "Default" : "m1.large",
-      "AllowedValues" : [ "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "c1.medium", "c1.xlarge"]
+      "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+,
+      "ConstraintDescription" : "must be a valid EC2 instance type."
     },
     "SourceCidrForRDP" : {
       "Description" : "IP Cidr from which you are likely to RDP into the instances. You can add rules later by modifying the created security groups e.g. 54.32.98.160/32",
@@ -24,27 +28,19 @@
   },
 
   "Mappings" : {
-    "AWSInstanceType2Arch" : {
-      "m1.small"   : { "Arch" : "64" },
-      "m1.medium"  : { "Arch" : "64" },
-      "m1.large"   : { "Arch" : "64" },
-      "m1.xlarge"  : { "Arch" : "64" },
-      "m2.xlarge"  : { "Arch" : "64" },
-      "m2.2xlarge" : { "Arch" : "64" },
-      "m2.4xlarge" : { "Arch" : "64" },
-      "c1.medium"  : { "Arch" : "64" },
-      "c1.xlarge"  : { "Arch" : "64" }
-    },
-    "AWSRegionArch2AMI" : {
-      "us-east-1"      : {"64" : "ami-e55a7e8c"},
-      "us-west-2"      : {"64" : "ami-1e53c82e"},
-      "us-west-1"      : {"64" : "ami-b687b1f3"},
-      "eu-west-1"      : {"64" : "ami-ab38d5dc"},
-      "ap-southeast-1" : {"64" : "ami-34cd9866"},
-      "ap-southeast-2" : {"64" : "ami-e93ea2d3"},
-      "ap-northeast-1" : {"64" : "ami-534a2d52"},
-      "sa-east-1"      : {"64" : "ami-4f3d9b52"}
+    "AWSRegion2AMI" : {
+      "us-east-1"        : {"Windows2008r2" : "ami-188ac270", "Windows2012r2" : "ami-b27830da"},
+      "us-west-2"        : {"Windows2008r2" : "ami-05c6e335", "Windows2012r2" : "ami-59f2d769"},
+      "us-west-1"        : {"Windows2008r2" : "ami-86baa1c3", "Windows2012r2" : "ami-52869d17"},
+      "eu-west-1"        : {"Windows2008r2" : "ami-01b83376", "Windows2012r2" : "ami-69ae251e"},
+      "eu-central-1"     : {"Windows2008r2" : "ami-d47341c9", "Windows2012r2" : "ami-ea8bb8f7"},
+      "ap-northeast-1"   : {"Windows2008r2" : "ami-939d7a93", "Windows2012r2" : "ami-a79572a7"},
+      "ap-southeast-1"   : {"Windows2008r2" : "ami-ceebde9c", "Windows2012r2" : "ami-d0eedb82"},
+      "ap-southeast-2"   : {"Windows2008r2" : "ami-1daed927", "Windows2012r2" : "ami-89a2d5b3"},
+      "sa-east-1"        : {"Windows2008r2" : "ami-2b338c36", "Windows2012r2" : "ami-2b378836"},
+      "cn-north-1"       : {"Windows2008r2" : "ami-46099b7f", "Windows2012r2" : "ami-74099b4d"}
     }
+
   },
 
   "Resources" : {
@@ -119,10 +115,9 @@
       },
       "Properties": {
         "InstanceType" : { "Ref" : "InstanceType" },
-        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
-                      { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegion2AMI", { "Ref" : "AWS::Region" }, "Windows2008r2" ]},
         "SecurityGroups" : [ {"Ref" : "SharePointFoundationSecurityGroup"} ],
-        "KeyName" : { "Ref" : "KeyPairName" },
+        "KeyName" : { "Ref" : "KeyName" },
         "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
           "<script>\n",
 

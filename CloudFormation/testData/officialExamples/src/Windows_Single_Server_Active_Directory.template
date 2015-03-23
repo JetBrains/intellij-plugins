@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "AWS CloudFormation Sample Template Windows_Single_Server_Active_Directory: This template creates a single server installation of Active Directory. Domain Administrator password will be the one retrieved from the instance. For adding members to the domain, ensure that they are launched in domain member security group created by this template and then configure them to use this instance's private IP as the DNS server. **WARNING** This template creates Amazon EC2 Windows instance and related resources. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "This template creates a single server installation of Active Directory. Domain Administrator password will be the one retrieved from the instance. For adding members to the domain, ensure that they are launched in domain member security group created by this template and then configure them to use this instance's private IP as the DNS server. **WARNING** This template creates Amazon EC2 Windows instance and related resources. You will be billed for the AWS resources used if you create a stack from this template.",
 
   "Parameters" : {
     "KeyName" : {
@@ -14,60 +14,53 @@
       "Description" : "Amazon EC2 instance type",
       "Type" : "String",
       "Default" : "m1.large",
-      "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+      "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
 ,
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
-
     "DomainDNSName" : {
       "Description" : "Fully qualified domain name (FQDN) of the forest root domain e.g. corp.example.com",
       "Type" : "String",
       "MinLength" : "3",
-      "MaxLength" : "25"
+      "MaxLength" : "25",
+      "AllowedPattern" : "[a-zA-Z0-9]+\\..+"
     },
-
     "DomainNetBIOSName" : {
       "Description" : "NetBIOS name of the domain (upto 15 characters) for users of earlier versions of Windows e.g. CORP",
       "Type" : "String",
       "MinLength" : "1",
       "MaxLength" : "15",
-      "AllowedPattern" : "[a-zA-Z0-9]+",
-      "ConstraintDescription" : "must be a valid NetBIOS name."
+      "AllowedPattern" : "[a-zA-Z0-9]+"
     },   
-
     "RestoreModePassword" : {
-      "Description" : "Password for a separate Adinistrator account when the domain controller is in Restore Mode. Must be at least 8 characters containing letters, numbers and symbols",
+      "Description" : "Password for a separate Administrator account when the domain controller is in Restore Mode. Must be at least 8 characters containing letters, numbers and symbols",
       "Type" : "String",
       "MinLength" : "8",
       "MaxLength" : "32",
       "AllowedPattern" : "(?=^.{6,255}$)((?=.*\\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*",
-      "NoEcho" : "True",
-      "ConstraintDescription" : "must be a valid password."
+      "NoEcho" : "True"
     },
-
     "SourceCidrForRDP" : {
       "Description" : "IP Cidr from which you are likely to RDP into the instances. You can add rules later by modifying the created security groups e.g. 54.32.98.160/32",
       "Type" : "String",
       "MinLength" : "9",
       "MaxLength" : "18",
-      "Default" : "0.0.0.0/0",
-      "AllowedPattern" : "^([0-9]+\\.){3}[0-9]+\\/[0-9]+$",
-      "ConstraintDescription" : "must be a valid CIDR."
+      "AllowedPattern" : "^([0-9]+\\.){3}[0-9]+\\/[0-9]+$"
     }
   },
 
   "Mappings" : {
     "AWSRegion2AMI" : {
-      "us-east-1"      : { "Windows2012r2" : "ami-ba13abd2", "Windows2008r2" : "ami-7614ac1e" },
-      "us-west-2"      : { "Windows2012r2" : "ami-21f0bc11", "Windows2008r2" : "ami-e5f7bbd5" },
-      "us-west-1"      : { "Windows2012r2" : "ami-df43569a", "Windows2008r2" : "ami-2f43566a" },
-      "eu-west-1"      : { "Windows2012r2" : "ami-d4228ea3", "Windows2008r2" : "ami-32228e45" },
-      "ap-southeast-1" : { "Windows2012r2" : "ami-ea6342b8", "Windows2008r2" : "ami-c6634294" },
-      "ap-northeast-1" : { "Windows2012r2" : "ami-a7d0e6a6", "Windows2008r2" : "ami-73d0e672" },
-      "ap-southeast-2" : { "Windows2012r2" : "ami-e95c31d3", "Windows2008r2" : "ami-995c31a3" },
-      "sa-east-1"      : { "Windows2012r2" : "ami-93a1158e", "Windows2008r2" : "ami-77a1156a" },
-      "cn-north-1"     : { "Windows2012r2" : "ami-4851c371", "Windows2008r2" : "ami-b851c381" },
-      "eu-central-1"   : { "Windows2012r2" : "ami-e03006fd", "Windows2008r2" : "ami-3c310721" }
+      "us-east-1"        : {"Windows2008r2" : "ami-188ac270", "Windows2012r2" : "ami-b27830da"},
+      "us-west-2"        : {"Windows2008r2" : "ami-05c6e335", "Windows2012r2" : "ami-59f2d769"},
+      "us-west-1"        : {"Windows2008r2" : "ami-86baa1c3", "Windows2012r2" : "ami-52869d17"},
+      "eu-west-1"        : {"Windows2008r2" : "ami-01b83376", "Windows2012r2" : "ami-69ae251e"},
+      "eu-central-1"     : {"Windows2008r2" : "ami-d47341c9", "Windows2012r2" : "ami-ea8bb8f7"},
+      "ap-northeast-1"   : {"Windows2008r2" : "ami-939d7a93", "Windows2012r2" : "ami-a79572a7"},
+      "ap-southeast-1"   : {"Windows2008r2" : "ami-ceebde9c", "Windows2012r2" : "ami-d0eedb82"},
+      "ap-southeast-2"   : {"Windows2008r2" : "ami-1daed927", "Windows2012r2" : "ami-89a2d5b3"},
+      "sa-east-1"        : {"Windows2008r2" : "ami-2b338c36", "Windows2012r2" : "ami-2b378836"},
+      "cn-north-1"       : {"Windows2008r2" : "ami-46099b7f", "Windows2012r2" : "ami-74099b4d"}
     }
 
   },
@@ -92,10 +85,9 @@
                   "[cfn-auto-reloader-hook]\n",
                   "triggers=post.update\n",
                   "path=Resources.DomainController.Metadata.AWS::CloudFormation::Init\n",
-                  "action=cfn-init.exe",
-                  "       --stack ", { "Ref" : "AWS::StackId" },
-                  "       --resource DomainController",
-                  "       --region ", { "Ref" : "AWS::Region" }, "\n"
+                  "action=cfn-init.exe -v -s ", { "Ref" : "AWS::StackId" },
+                        " -r DomainController",
+                        " --region ", { "Ref" : "AWS::Region" }, "\n"
                 ]]}
               },
               
@@ -138,17 +130,16 @@
       },
       
       "Properties": {
-        "ImageId" : { "Fn::FindInMap" : [ "AWSRegion2AMI", { "Ref" : "AWS::Region" }, "Windows2012r2" ]},
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegion2AMI", { "Ref" : "AWS::Region" }, "Windows2008r2" ]},
         "InstanceType" : { "Ref" : "InstanceType" },
         "SecurityGroups" : [ {"Ref" : "DomainControllerSecurityGroup"} ],
         "KeyName" : { "Ref" : "KeyName" },
         "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
             "<script>\n",
           
-            "cfn-init.exe ", 
-            "       --stack ", { "Ref" : "AWS::StackId" }, 
-            "       --resource DomainController ",
-            "       --region ", { "Ref" : "AWS::Region" }, "\n",
+            "cfn-init.exe -v -s ", { "Ref" : "AWS::StackId" }, 
+            " -r DomainController ",
+            " --region ", { "Ref" : "AWS::Region" }, "\n",
 
             "</script>"          
         ]]}}        
@@ -224,7 +215,7 @@
       "Description" : "Default domain administrator account"
     },
     "DomainAdminPassword" : {
-      "Value" : "Please retrieve Adinistrator password of the instance"
+      "Value" : "Please retrieve Administrator password of the instance"
     }
   }  
 }

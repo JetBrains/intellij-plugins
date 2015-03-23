@@ -106,7 +106,7 @@
         "Description" : "Version 1.0",
         "ApplicationName" : { "Ref" : "SampleApplication" },
         "SourceBundle" : {
-          "S3Bucket": { "Fn::Join" : ["-", ["cloudformation-samples", {"Ref" : "AWS::Region" }]]},
+          "S3Bucket": { "Fn::Join" : ["-", ["cloudformation-examples", {"Ref" : "AWS::Region" }]]},
           "S3Key": "CloudFormationBeanstalkRDSExample.war"
         }
       }
