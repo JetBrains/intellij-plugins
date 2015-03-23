@@ -1,10 +1,10 @@
-[Amazon Web Services] <http://aws.amazon.com/documentation>
+[Amazon Web Services] <http://aws.amazon.com/documentation/>
 AWS CloudFormation
 User Guide (API Version 2010-05-15)
-AWS Documentation <http://aws.amazon.com/documentation> » AWS 
+AWS Documentation <http://aws.amazon.com/documentation/> » AWS 
 CloudFormation <http://aws.amazon.com/documentation/cloudformation/> » 
 User Guide <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/> 
-» Document History
+» Release History
 Did this page help you?  Yes | No |  Tell us about it...
 <https://portal.aws.amazon.com/gp/aws/html-forms-controller/documentation/aws_doc_feedback_04?service_name=CloudFormation&guide_name=User%20Guide&api_version=2010-05-15&file_name=DocumentHistory>
 « PreviousNext »
@@ -238,6 +238,7 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + Elastic Load Balancing AccessLoggingPolicy
                 + AppCookieStickinessPolicy
                 + Elastic Load Balancing ConnectionDrainingPolicy
+                + Elastic Load Balancing ConnectionSettings
                 + ElasticLoadBalancing HealthCheck
                 + LBCookieStickinessPolicy
                 + ElasticLoadBalancing Listener
@@ -346,7 +347,7 @@ Did this page help you?  Yes | No |  Tell us about it...
                 + Update
     * Logging API Calls
     * Troubleshooting
-    * Document History
+    * Release History
     * AWS Glossary
 [View the PDF for this guide.]
 <http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-ug.pdf> 
@@ -356,12 +357,33 @@ Store to download this guide in Kindle format.]
 <http://www.amazon.com/dp/B007S28IUW>
 
 
-Document History
+Release History
 
 The following table describes the important changes to the documentation 
 since the last release of AWS CloudFormation.
 
 Change 	API Version 	Description 	Release Date
+
+Amazon RDS update
+
+2010-05-15
+
+AWS CloudFormation added two new properties for Amazon RDS database 
+instances. You can associate an option group with a database instance and 
+specify the database instance storage type. For more information, see 
+AWS::RDS::DBInstance.
+
+December 24, 2014
+
+Elastic Load Balancing update
+
+2010-05-15
+
+You can use the ConnectionSettings property to specify how long connections 
+can remain idle. For more information, see 
+AWS::ElasticLoadBalancing::LoadBalancer.
+
+December 24, 2014
 
 Amazon Route 53 update
 
@@ -1310,6 +1332,6 @@ Initial Release
 This is the initial public release of AWS CloudFormation.
 
 February 25, 2011
-Document Conventions 	© 2014, Amazon Web Services, Inc. or its affiliates. 
+Document Conventions 	© 2015, Amazon Web Services, Inc. or its affiliates. 
 All rights reserved.
-Terms of Use <http://aws.amazon.com/terms/> 	
+Terms of Use <http://aws.amazon.com/terms> 	

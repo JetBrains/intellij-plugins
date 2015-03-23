@@ -794,7 +794,7 @@
         <ResourceProperty>
           <name>NetworkInterfaces</name>
           <description></description>
-          <type>A list of NetworkInterface objects</type>
+          <type>A list of EC2 NetworkInterface Embedded Property Type</type>
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
@@ -1982,6 +1982,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>ConnectionSettings</name>
+          <description></description>
+          <type>Elastic Load Balancing ConnectionSettings</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>CrossZone</name>
           <description></description>
           <type>Boolean</type>
@@ -2784,6 +2790,12 @@
           <required>false</required>
         </ResourceProperty>
         <ResourceProperty>
+          <name>OptionGroupName</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
           <name>Port</name>
           <description></description>
           <type>String</type>
@@ -2809,6 +2821,12 @@
         </ResourceProperty>
         <ResourceProperty>
           <name>SourceDBInstanceIdentifier</name>
+          <description></description>
+          <type>String</type>
+          <required>false</required>
+        </ResourceProperty>
+        <ResourceProperty>
+          <name>StorageType</name>
           <description></description>
           <type>String</type>
           <required>false</required>
