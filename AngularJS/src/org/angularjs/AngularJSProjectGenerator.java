@@ -20,13 +20,13 @@ public class AngularJSProjectGenerator extends AbstractGithubTagDownloadedProjec
 
   @NotNull
   @Override
-  protected String getGithubUserName() {
+  public String getGithubUserName() {
     return "angular";
   }
 
   @NotNull
   @Override
-  protected String getGithubRepositoryName() {
+  public String getGithubRepositoryName() {
     return "angular-seed";
   }
 

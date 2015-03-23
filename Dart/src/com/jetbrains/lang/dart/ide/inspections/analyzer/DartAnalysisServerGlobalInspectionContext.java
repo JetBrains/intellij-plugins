@@ -70,7 +70,7 @@ public class DartAnalysisServerGlobalInspectionContext
   private void analyzeFile(@NotNull final VirtualFile virtualFile, @NotNull final Project project, final double progressFraction) {
     updateIndicator("Analyzing " + virtualFile.getName() + "...", progressFraction);
 
-    final DartAnalysisServerAnnotator annotator = new DartAnalysisServerAnnotator(true);
+    final DartAnalysisServerAnnotator annotator = new DartAnalysisServerAnnotator();
 
     final DartAnalysisServerAnnotator.AnnotatorInfo annotatorInfo =
       ApplicationManager.getApplication().runReadAction(new NullableComputable<DartAnalysisServerAnnotator.AnnotatorInfo>() {
@@ -78,7 +78,7 @@ public class DartAnalysisServerGlobalInspectionContext
         public DartAnalysisServerAnnotator.AnnotatorInfo compute() {
           final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
           if (psiFile == null) return null;
-          return annotator.collectInformation(psiFile);
+          return annotator.collectInformation(psiFile, null, false);
         }
       });
     if (annotatorInfo == null) return;
