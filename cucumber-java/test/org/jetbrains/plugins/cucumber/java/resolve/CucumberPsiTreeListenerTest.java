@@ -71,7 +71,7 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
 
   private void doTestCreation(@NotNull final String folder, @NotNull final String step, @NotNull final String stepDefinitionContent)
     throws Exception {
-    init(folder);
+    //init(folder);
 
     checkReference(step, null);
     final String stepDefinitionName = createStepDefinition(stepDefinitionContent);
@@ -81,7 +81,7 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
 
   private void doTestDeletion(@NotNull final String folder, @NotNull final String step, @NotNull final String stepDefinitionName)
     throws IOException {
-    init(folder);
+    //init(folder);
 
     checkReference(step, stepDefinitionName);
     deleteStepDefinition(stepDefinitionName);
