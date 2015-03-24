@@ -38,15 +38,22 @@ public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
   }
 
   public void doTest(@NotNull final String folder, @NotNull final String step, @Nullable final String stepDefinitionName) throws Exception {
-    init(folder);
+    init(folder, "test.feature");
 
     checkReference(step, stepDefinitionName);
   }
 
-  protected void init(String folder) {
+  public void doTest(@NotNull final String folder, @NotNull final String fileName, @NotNull final String step,
+                     @Nullable final String stepDefinitionName) throws Exception {
+    init(folder, fileName);
+
+    checkReference(step, stepDefinitionName);
+  }
+
+  protected void init(String folder, String fileName) {
     CucumberStepsIndex.getInstance(myFixture.getProject()).reset();
     myFixture.copyDirectoryToProject(folder, "");
-    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("test.feature"));
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir(fileName));
   }
 
   @Override
