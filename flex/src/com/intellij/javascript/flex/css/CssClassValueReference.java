@@ -3,6 +3,7 @@ package com.intellij.javascript.flex.css;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.css.*;
@@ -14,7 +15,6 @@ import com.intellij.psi.impl.source.resolve.reference.impl.PsiPolyVariantCaching
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -197,6 +197,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
               String text = selectorSuffix.getText();
               if (text != null && !text.isEmpty() && text.charAt(0) == '.') {
                 handleSelector(selectorSuffix, text.substring(1));
+                ProgressIndicatorProvider.checkCanceled();
               }
             }
           }
