@@ -189,20 +189,28 @@ public class DartAnalysisServerAnnotator
                                       ? holder.createErrorAnnotation(textRange, message)
                                       : null;
 
-    if (annotation != null) {
-      setupHighlightType(annotation, message);
+    final ProblemHighlightType specialHighlightType = annotation == null ? null : getSpecialHighlightType(message);
+    if (specialHighlightType != null) {
+      annotation.setHighlightType(specialHighlightType);
     }
 
     return annotation;
   }
 
-  private static void setupHighlightType(@NotNull final Annotation annotation, @NotNull final String message) {
-    if ("Unused import".equals(message) || "Duplicate import".equals(message)) {
-      annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+  @Nullable
+  private static ProblemHighlightType getSpecialHighlightType(@NotNull final String errorMessage) {
+    // see [Dart repo]/pkg/analyzer/lib/src/generated/error.dart
+
+    if (errorMessage.equals("Unused import") ||
+        errorMessage.equals("Duplicate import") ||
+        errorMessage.endsWith(" is not used")) {
+      return ProblemHighlightType.LIKE_UNUSED_SYMBOL;
     }
 
-    if (message.endsWith("is deprecated")) {
-      annotation.setHighlightType(ProblemHighlightType.LIKE_DEPRECATED);
+    if (errorMessage.endsWith(" is deprecated")) {
+      return ProblemHighlightType.LIKE_DEPRECATED;
     }
+
+    return null;
   }
 }
