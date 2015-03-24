@@ -17,6 +17,7 @@ package org.jetbrains.osgi.bnd.imp
 
 import aQute.bnd.build.Workspace
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration
+import com.intellij.ide.actions.ImportModuleAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.JdkOrderEntry
@@ -34,6 +35,7 @@ import java.io.File
 
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -63,6 +65,16 @@ class BndProjectImporterTest : IdeaTestCase() {
 
   override fun setUpModule() { }
 
+
+  fun testProviders() {
+    val projectImporters = ImportModuleAction.getProviders(null).map { it.javaClass.getSimpleName() }.toSet()
+    assertTrue("BndProjectImportProvider" in projectImporters)
+    assertFalse("BndModuleImportProvider" in projectImporters)
+
+    val moduleImporters = ImportModuleAction.getProviders(getProject()).map { it.javaClass.getSimpleName() }.toSet()
+    assertFalse("BndProjectImportProvider" in moduleImporters)
+    assertTrue("BndModuleImportProvider" in moduleImporters)
+  }
 
   fun testRootModule() {
     val rootModule: Module

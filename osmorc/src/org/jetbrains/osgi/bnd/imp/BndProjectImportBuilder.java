@@ -111,22 +111,29 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
       }
     }
 
-    List<Project> toImport = ContainerUtil.filter(myProjects, new Condition<Project>() {
-      @Override
-      public boolean value(Project project) {
-        return isMarked(project);
-      }
-    });
-    final BndProjectImporter importer = new BndProjectImporter(project, myWorkspace, toImport);
-    Module rootModule = importer.createRootModule(model);
-    importer.setupProject();
-    StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
-      @Override
-      public void run() {
-        importer.resolve();
-      }
-    });
-    return Collections.singletonList(rootModule);
+    if (myWorkspace != null) {
+      List<Project> toImport = ContainerUtil.filter(myProjects, new Condition<Project>() {
+        @Override
+        public boolean value(Project project) {
+          return isMarked(project);
+        }
+      });
+      final BndProjectImporter importer = new BndProjectImporter(project, myWorkspace, toImport);
+      Module rootModule = importer.createRootModule(model);
+      importer.setupProject();
+      StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
+        @Override
+        public void run() {
+          importer.resolve();
+        }
+      });
+      return Collections.singletonList(rootModule);
+    }
+    else {
+      String path = getFileToImport();
+      BndProjectImporter.reimportProjects(project, Collections.singleton(path));
+      return Collections.emptyList();
+    }
   }
 
   private static void commitModel(final ModifiableModuleModel moduleModel) {
