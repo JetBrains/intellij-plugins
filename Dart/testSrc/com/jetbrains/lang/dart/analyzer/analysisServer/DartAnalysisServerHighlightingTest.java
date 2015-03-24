@@ -32,8 +32,4 @@ public abstract class DartAnalysisServerHighlightingTest extends CodeInsightFixt
     myFixture.addFileToProject("bar.dart", "part of x;");
     doHighlightingTest();
   }
-
-  public void testUnusedImports() {
-    doHighlightingTest();
-  }
 }

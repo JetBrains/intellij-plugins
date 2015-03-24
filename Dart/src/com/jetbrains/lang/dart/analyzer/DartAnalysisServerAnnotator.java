@@ -148,11 +148,9 @@ public class DartAnalysisServerAnnotator
   }
 
   public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final AnalysisError error) {
-    final String errorType = error.getType();
     // already done using IDE engine
-    if (AnalysisErrorType.TODO.equals(errorType)) return true;
-    // already done as DartDeprecatedApiUsageInspection
-    if (AnalysisErrorType.HINT.equals(errorType) && error.getMessage().endsWith("' is deprecated")) return true;
+    if (AnalysisErrorType.TODO.equals(error.getType())) return true;
+
     return false;
   }
 
@@ -181,20 +179,30 @@ public class DartAnalysisServerAnnotator
     final TextRange textRange = new TextRange(highlightingStart, highlightingEnd);
 
     final String severity = error.getSeverity();
-    if (AnalysisErrorSeverity.INFO.equals(severity)) {
-      final Annotation annotation = holder.createWeakWarningAnnotation(textRange, error.getMessage());
-      if ("Unused import".equals(error.getMessage()) || "Duplicate import".equals(error.getMessage())) {
-        annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
-      }
-      return annotation;
-    }
-    else if (AnalysisErrorSeverity.WARNING.equals(severity)) {
-      return holder.createWarningAnnotation(textRange, error.getMessage());
-    }
-    else if (AnalysisErrorSeverity.ERROR.equals(severity)) {
-      return holder.createErrorAnnotation(textRange, error.getMessage());
+    final String message = StringUtil.notNullize(error.getMessage());
+
+    final Annotation annotation = AnalysisErrorSeverity.INFO.equals(severity)
+                                  ? holder.createWeakWarningAnnotation(textRange, message)
+                                  : AnalysisErrorSeverity.WARNING.equals(severity)
+                                    ? holder.createWarningAnnotation(textRange, message)
+                                    : AnalysisErrorSeverity.ERROR.equals(severity)
+                                      ? holder.createErrorAnnotation(textRange, message)
+                                      : null;
+
+    if (annotation != null) {
+      setupHighlightType(annotation, message);
     }
 
-    return null;
+    return annotation;
+  }
+
+  private static void setupHighlightType(@NotNull final Annotation annotation, @NotNull final String message) {
+    if ("Unused import".equals(message) || "Duplicate import".equals(message)) {
+      annotation.setHighlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+    }
+
+    if (message.endsWith("is deprecated")) {
+      annotation.setHighlightType(ProblemHighlightType.LIKE_DEPRECATED);
+    }
   }
 }
