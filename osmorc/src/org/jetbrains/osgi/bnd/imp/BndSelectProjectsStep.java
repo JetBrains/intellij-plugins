@@ -33,6 +33,11 @@ class BndSelectProjectsStep extends SelectImportedProjectsStep<Project> {
   }
 
   @Override
+  public String getHelpId() {
+    return "Import from Bnd_Bndtools Page 1";
+  }
+
+  @Override
   public void updateStep() {
     initWorkspace();
     super.updateStep();
