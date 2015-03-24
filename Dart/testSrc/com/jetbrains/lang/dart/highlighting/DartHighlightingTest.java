@@ -9,7 +9,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
-import com.jetbrains.lang.dart.ide.inspections.DartDeprecatedApiUsageInspection;
 import com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection;
 
 public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
@@ -90,23 +89,9 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.checkHighlighting(false, true, true);
   }
 
-  public void testDeprecatedApiUsageInspection() {
-    myFixture.enableInspections(DartDeprecatedApiUsageInspection.class);
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, false, true);
-  }
-
   public void testColorAnnotator() {
     myFixture.configureByFile(getTestName(false) + ".dart");
     myFixture.checkHighlighting(true, true, true);
-  }
-
-  public void _testPathsWithSpaces() { // DartInProcessAnnotator-specific test
-    myFixture.addFileToProject("pubspec.yaml", "");
-    myFixture.addFileToProject("packages/pack name/pack file.dart", "library pack;");
-    myFixture.addFileToProject("other file.dart", "library other;");
-    myFixture.configureByFile(getTestName(false) + ".dart");
-    myFixture.checkHighlighting(true, false, true);
   }
 
   public void testSimplePolymer() {
