@@ -38,9 +38,9 @@ public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
   }
 
   public void doTest(@NotNull final String folder, @NotNull final String step, @Nullable final String stepDefinitionName) throws Exception {
-    //init(folder);
-    //
-    //checkReference(step, stepDefinitionName);
+    init(folder);
+
+    checkReference(step, stepDefinitionName);
   }
 
   public void doTest(@NotNull final String folder, @NotNull final String fileName, @NotNull final String step,
@@ -48,6 +48,10 @@ public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
     init(folder, fileName);
 
     checkReference(step, stepDefinitionName);
+  }
+
+  protected void init(String folder) {
+    init(folder, "test.feature");
   }
 
   protected void init(String folder, String fileName) {
