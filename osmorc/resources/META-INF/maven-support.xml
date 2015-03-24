@@ -30,6 +30,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <localInspection bundle="messages.OsmorcBundle" key="NonOsgiMavenDependencyInspection.name"
+                     alternativeId="osmorcNonOsgiMavenDependency"
                      groupBundle="messages.OsmorcBundle" groupKey="inspection.group"
                      language="XML" enabledByDefault="true" level="WARNING"
                      implementationClass="org.osmorc.maven.inspection.NonOsgiMavenDependencyInspection"/>

@@ -67,11 +67,6 @@ import java.util.Set;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionTool {
-  @Override
-  public String getAlternativeID() {
-    return "osmorcNonOsgiMavenDependency";
-  }
-
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, boolean isOnTheFly) {
