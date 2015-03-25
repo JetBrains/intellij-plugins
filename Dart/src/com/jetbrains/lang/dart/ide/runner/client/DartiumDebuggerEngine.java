@@ -61,10 +61,9 @@ public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
   }
 
   @Override
-  @NotNull
+  @Nullable
   public WebBrowser getBrowser() {
-    final WebBrowser dartium = DartiumUtil.getDartiumBrowser();
-    return dartium != null ? dartium : super.getBrowser(); // may be return some fake browser if Dartium not found?
+    return DartiumUtil.getDartiumBrowser();
   }
 
   @Override
