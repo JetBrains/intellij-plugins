@@ -13,10 +13,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
-import com.intellij.lang.javascript.flex.AddImportECMAScriptClassOrFunctionAction;
-import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.ImportUtils;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
 import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
@@ -57,6 +54,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.psi.xml.XmlTagChild;
 import com.intellij.psi.xml.XmlText;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
@@ -1440,5 +1438,21 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   @Override
   public void visitJSSuperExpression(final JSSuperExpression node) {
     checkClassReferenceInStaticContext(node, "javascript.validation.message.super.referenced.from.static.context");
+  }
+
+  @Override
+  public void visitJSReturnStatement(JSReturnStatement node) {
+    super.visitJSReturnStatement(node);
+
+    final PsiElement element =
+      PsiTreeUtil.getParentOfType(node, JSFunction.class, XmlTagChild.class, XmlAttributeValue.class, JSFile.class);
+
+    if (element instanceof JSFunction) {
+      JSExpression returnedExpr = node.getExpression();
+       if (returnedExpr != null && ((JSFunction)element).isConstructor() && JSResolveUtil.findParent(element) instanceof JSClass) {
+         final String message = FlexBundle.message("javascript.validation.message.no.return.value.required.for.constructor");
+         myHolder.createErrorAnnotation(returnedExpr, message);
+       }
+    }
   }
 }
