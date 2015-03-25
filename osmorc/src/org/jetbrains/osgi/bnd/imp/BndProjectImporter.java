@@ -20,6 +20,7 @@ import aQute.bnd.build.Project;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.header.Attrs;
 import com.intellij.compiler.CompilerConfiguration;
+import com.intellij.compiler.CompilerConfigurationImpl;
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration;
 import com.intellij.facet.impl.FacetUtil;
 import com.intellij.ide.highlighter.ModuleFileType;
@@ -115,8 +116,12 @@ public class BndProjectImporter {
 
   public void setupProject() {
     LanguageLevel sourceLevel = LanguageLevel.parse(myWorkspace.getProperty(JAVAC_SOURCE));
-    if (sourceLevel == null) sourceLevel = LanguageLevel.JDK_1_6;
-    LanguageLevelProjectExtension.getInstance(myProject).setLanguageLevel(sourceLevel);
+    if (sourceLevel != null) {
+      LanguageLevelProjectExtension.getInstance(myProject).setLanguageLevel(sourceLevel);
+    }
+
+    String targetLevel = myWorkspace.getProperty(JAVAC_TARGET);
+    ((CompilerConfigurationImpl)CompilerConfiguration.getInstance(myProject)).setProjectBytecodeTarget(targetLevel);
 
     // compilation options (see Project#getCommonJavac())
     JpsJavaCompilerOptions javacOptions = JavacConfiguration.getOptions(myProject, JavacConfiguration.class);
