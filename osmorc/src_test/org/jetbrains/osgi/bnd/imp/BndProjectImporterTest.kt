@@ -37,6 +37,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import com.intellij.compiler.CompilerConfiguration
+import com.intellij.openapi.roots.LanguageLevelModuleExtension
 
 class BndProjectImporterTest : IdeaTestCase() {
   var myWorkspace: Workspace by Delegates.notNull()
@@ -49,7 +51,7 @@ class BndProjectImporterTest : IdeaTestCase() {
     File(path, "cnf/ext").mkdirs()
     FileUtil.writeToFile(File(path, "cnf/build.bnd"), "javac.source: 1.8\njavac.target: 1.8")
     File(path, "hello.provider/src").mkdirs()
-    FileUtil.writeToFile(File(path, "hello.provider/bnd.bnd"), "")
+    FileUtil.writeToFile(File(path, "hello.provider/bnd.bnd"), "javac.source: 1.7\njavac.target: 1.7")
     File(path, "hello.consumer/src").mkdirs()
     FileUtil.writeToFile(File(path, "hello.consumer/bnd.bnd"), "-buildpath: hello.provider")
     File(path, "hello.tests/src").mkdirs()
@@ -84,8 +86,11 @@ class BndProjectImporterTest : IdeaTestCase() {
   fun testProjectSetup() {
     myImporter.setupProject()
 
-    val projectLevel = LanguageLevelProjectExtension.getInstance(myProject).getLanguageLevel()
-    assertEquals(LanguageLevel.JDK_1_8, projectLevel)
+    val sourceLevel = LanguageLevelProjectExtension.getInstance(myProject).getLanguageLevel()
+    assertEquals(LanguageLevel.JDK_1_8, sourceLevel)
+
+    val targetLevel = CompilerConfiguration.getInstance(myProject).getProjectBytecodeTarget()
+    assertEquals("1.8", targetLevel)
 
     val javacOptions = JavacConfiguration.getOptions(myProject, javaClass<JavacConfiguration>())
     assertTrue(javacOptions.DEBUGGING_INFO)
@@ -111,6 +116,14 @@ class BndProjectImporterTest : IdeaTestCase() {
         "hello.consumer" -> assertEquals(listOf("<jdk>", "<src>", "hello.provider"), dependencies)
         "hello.tests" -> assertEquals(listOf("<jdk>", "<src>", "hello.provider", "hello.consumer"), dependencies)
       }
+
+      val sourceLevel = ModuleRootManager.getInstance(it).getModuleExtension(javaClass<LanguageLevelModuleExtension>()).getLanguageLevel()
+      val expectedSource = if (it.getName() == "hello.provider") LanguageLevel.JDK_1_7 else LanguageLevel.JDK_1_8
+      assertEquals(expectedSource, sourceLevel)
+
+      val targetLevel = CompilerConfiguration.getInstance(myProject).getBytecodeTargetLevel(it)
+      val expectedTarget = if (it.getName() == "hello.provider") "1.7" else "1.8"
+      assertEquals(expectedTarget, targetLevel)
 
       val facet = OsmorcFacet.getInstance(it)
       if (it.getName() != "hello.tests") {
