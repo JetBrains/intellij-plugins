@@ -27,6 +27,7 @@ public class TryCommand extends Command {
     @Override
     public void execute(Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel, MouseListenerHolder mouseListenerHolder) throws InterruptedException {
 
+
         Element element = elements.poll();
 //        updateDescription(element, infoPanel, editor);
         String htmlText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
@@ -37,6 +38,9 @@ public class TryCommand extends Command {
         } else {
             updateHTMLDescription(element, infoPanel, editor, htmlText);
         }
+
+        //Show button "again"
+
         updateButton(element, elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
 
         final String winMessage = element.getAttribute("win-message").getValue();

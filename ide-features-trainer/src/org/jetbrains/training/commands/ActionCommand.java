@@ -7,7 +7,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.keymap.MacKeymapUtil;
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
@@ -16,7 +15,6 @@ import org.jetbrains.training.Command;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.keymap.KeymapUtil;
 import org.jetbrains.training.keymap.SubKeymapUtil;
-import org.jetbrains.training.keymap.SubMacKeymapUtil;
 import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 

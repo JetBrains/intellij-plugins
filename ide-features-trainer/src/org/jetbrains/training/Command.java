@@ -1,6 +1,5 @@
 package org.jetbrains.training;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -21,7 +20,9 @@ public abstract class Command {
 
 
     private CommandType commandType;
-    public enum CommandType {START, TEXT, TRY, ACTION, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, TRAVERSECARET, MOUSEBLOCK, MOUSEUNBLOCK, WAIT}
+
+    protected final String AGAIN = "again";
+    public enum CommandType {START, TEXT, TRY, ACTION, AGAIN, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, TRAVERSECARET, MOUSEBLOCK, MOUSEUNBLOCK, WAIT}
 
     public Command(CommandType commandType) {
         this.commandType = commandType;
@@ -73,6 +74,17 @@ public abstract class Command {
         } else {
             infoPanel.hideButton();
             return false;
+        }
+    }
+
+    protected void initAgainButton(Element element, DetailPanel infoPanel){
+        if(element.getAttribute(AGAIN) != null) {
+            if (element.getAttribute(AGAIN).getValue().toUpperCase().equals("true".toUpperCase()))
+                infoPanel.showAgainButton();
+            else if (element.getAttribute(AGAIN).getValue().toUpperCase().equals("false".toUpperCase()))
+                infoPanel.hideAgainButton();
+        } else {
+            infoPanel.hideAgainButton();
         }
     }
 
