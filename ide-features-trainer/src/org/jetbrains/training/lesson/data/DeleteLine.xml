@@ -23,7 +23,6 @@
 
     }</CopyText>
         <Text description="" btn="OK">Let's delete the line with &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement</Text>
-        <Text description="Move the caret to the &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement line" btn="..."/>
         <TraverseCaret stop="138" delay="20"/>
         <Action action="EditorDeleteLine" delay="2000" balloon="&lt;shortcut&gt; (Delete line)"/>
         <Wait delay="200"/>
