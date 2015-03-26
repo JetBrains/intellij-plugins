@@ -16,7 +16,7 @@
     <TraverseCaret stop="178" delay="20"/>
     <Action action="EditorDuplicate" delay="2000" balloon="&lt;shortcut&gt; (Duplicate line)"/>
     <Wait delay="200"/>
-    <TraverseCaret stop="271" delay="50"/>
+    <TraverseCaret stop="271" delay="10"/>
     <Action action="EditorDelete" delay="100"/>
     <Wait delay="300"/>
     <TypeText>x</TypeText>
@@ -25,7 +25,38 @@
     <Wait delay="400"/>
     <TypeText>x</TypeText>
 </MouseBlock>
-    <Text description="That's it!" btn="Let me try"/>
+    <Again description="That's it!" btn="Let me try">
+        <Action action="EditorDelete" delay="50"/>
+        <Action action="$SelectAll" delay="100"/>
+        <Wait delay="400"/>
+        <Action action="$Delete" delay="100"/>
+        <Wait delay="400"/>
+        <MoveCaret offset="0"/>
+        <MouseBlock>
+        <CopyText>public class DuplicateLineDemo {
+
+    public static void main(String[] args) {
+
+        int a = 7;
+        double x = 0.34;
+
+        //Let's find the absolute value of a and x.
+        System.out.println("|" + a + "| is " + Math.abs(a));
+    }
+}</CopyText>
+    <TraverseCaret stop="178" delay="20"/>
+    <Action action="EditorDuplicate" delay="2000" balloon="&lt;shortcut&gt; (Duplicate line)"/>
+    <Wait delay="200"/>
+    <TraverseCaret stop="271" delay="10"/>
+    <Action action="EditorDelete" delay="100"/>
+    <Wait delay="300"/>
+    <TypeText>x</TypeText>
+    <TraverseCaret stop="294" delay="10"/>
+    <Action action="EditorDelete" delay="50" />
+    <Wait delay="400"/>
+    <TypeText>x</TypeText>
+</MouseBlock>
+    </Again>
     <Action action="EditorDelete" delay="50"/>
     <Action action="$SelectAll" delay="100"/>
     <Wait delay="400"/>
