@@ -21,7 +21,7 @@ public class TextCommand extends Command {
     }
 
     @Override
-    public void execute(Queue<Element> elements, Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel, MouseListenerHolder mouseListenerHolder) throws InterruptedException {
+    public void execute(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, final Document document, final String target, final DetailPanel infoPanel, final MouseListenerHolder mouseListenerHolder) throws InterruptedException {
 
         Element element = elements.poll();
         //updateDescription(element, infoPanel, editor);
@@ -33,6 +33,7 @@ public class TextCommand extends Command {
 //        } else {
 //            updateHTMLDescription(element, infoPanel, editor, htmlText);
 //        }
+
         String htmlText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
         if (htmlText.isEmpty()) htmlText = element.getAttribute("description").getValue();
 
@@ -42,4 +43,5 @@ public class TextCommand extends Command {
             updateHTMLDescription(element, infoPanel, editor, htmlText);
         }
     }
+
 }

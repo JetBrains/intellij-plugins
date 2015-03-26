@@ -21,6 +21,8 @@ import java.io.IOException;
  */
 public class DetailPanel extends JPanel implements Disposable{
     private final int magicConst = 15;
+    private final int buttonGap = 7;
+
     private Color backGroundColor = new Color(0, 0 ,0, 190);
     private Color textColor = new Color(245, 245, 245, 255);
     private final String customFontPath = "roboto.ttf";
@@ -30,6 +32,7 @@ public class DetailPanel extends JPanel implements Disposable{
 
     private JLabel myLabel;
     private JButton btn;
+    private JButton againButton;
 
     public DetailPanel(Dimension dimension) throws IOException, FontFormatException {
 
@@ -77,15 +80,21 @@ public class DetailPanel extends JPanel implements Disposable{
 
         btn.setContentAreaFilled(false);
 
+        againButton = new RoundedCornerButton("↩");
+        againButton.setUI(new RoundedCornerButtonUI());
+        againButton.setFont(customFont.deriveFont(13.0F));
+        againButton.setBorderPainted(false);
+        if( UIUtil.isUnderDarcula()) {
+            againButton.setForeground(Color.WHITE);
+        } else {
+            againButton.setForeground(Color.WHITE);
+        }
+        againButton.setRolloverEnabled(false);
+        againButton.setFocusable(false);
+        againButton.setBackground((new Color(0,0,0,0)));
+        againButton.setContentAreaFilled(false);
+        againButton.setVisible(false);
 
-//        btn = new JButton("Start");
-//        btn.setFocusPainted(false);
-//        btn.setContentAreaFilled(false);
-//        btn.setFocusable(false);
-//        btn.setMargin(new Insets(inset,inset,inset,inset ));
-
-        //btn.setForeground(Color.white);
-        //btn.setBackground(new Color(0,0,0,190));
 
         Box vertBox = Box.createVerticalBox();
         Box lineBox = Box.createHorizontalBox();
@@ -93,6 +102,8 @@ public class DetailPanel extends JPanel implements Disposable{
         lineBox.add(Box.createHorizontalStrut(magicConst));
         lineBox.add(myLabel);
         lineBox.add(Box.createHorizontalGlue());
+        lineBox.add(againButton);
+        lineBox.add(Box.createHorizontalStrut(buttonGap));
         lineBox.add(btn);
         lineBox.add(Box.createHorizontalStrut(magicConst));
 //
@@ -166,6 +177,71 @@ public class DetailPanel extends JPanel implements Disposable{
         showButton();
     }
 
+
+    public void addButtonAction(final Runnable action) throws InterruptedException {
+        btn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                btn.removeActionListener(this);
+                action.run();
+            }
+        });
+    }
+
+    public void removeButtonActions(){
+        final ActionListener[] actionListeners = btn.getActionListeners();
+        for (int i = 0; i < actionListeners.length; i++) {
+            btn.removeActionListener(actionListeners[i]);
+        }
+    }
+
+    public void showAgainButton(){
+        if (againButton.isVisible()) {
+            //do nothing
+        } else {
+            UIUtil.invokeLaterIfNeeded(new Runnable() {
+                @Override
+                public void run() {
+                    againButton.setVisible(true);
+                }
+            });
+        }
+    }
+
+    public void hideAgainButton(){
+        if (againButton.isVisible()) {
+            UIUtil.invokeLaterIfNeeded(new Runnable() {
+                @Override
+                public void run() {
+                    againButton.setVisible(false);
+                }
+            });
+        } else {
+            //do nothing
+        }
+    }
+
+    public void setAgainButton(String s){
+        final String newString = s;
+        UIUtil.invokeLaterIfNeeded(new Runnable() {
+            @Override
+            public void run() {
+                againButton.setText(newString);
+            }
+        });
+        showButton();
+    }
+
+    public void addAgainButtonAction(final Runnable action) throws InterruptedException {
+        againButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                againButton.removeActionListener(this);
+                action.run();
+            }
+        });
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
 
@@ -186,16 +262,6 @@ public class DetailPanel extends JPanel implements Disposable{
         g2.drawRoundRect(x, y, w, h, arc, arc);
 
         g2.dispose();
-    }
-
-    public void addButtonAction(final Runnable action) throws InterruptedException {
-        btn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                    btn.removeActionListener(this);
-                    action.run();
-            }
-        });
     }
 
     @Override

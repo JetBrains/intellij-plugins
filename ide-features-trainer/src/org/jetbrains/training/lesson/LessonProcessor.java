@@ -7,7 +7,6 @@ import org.jdom.Element;
 import org.jetbrains.training.Command;
 import org.jetbrains.training.CommandFactory;
 import org.jetbrains.training.editor.MouseListenerHolder;
-import org.jetbrains.training.graphics.DetailPanel;
 
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
