@@ -63,4 +63,12 @@ public abstract class DartServerQuickFixTest extends CodeInsightFixtureTestCase 
     final VirtualFile partFile = myFixture.copyFileToProject(getTestName(false) + "_part.dart");
     doQuickFixTest("Create method 'doSomething'", partFile);
   }
+
+  public void testCreateClass() throws Throwable {
+    doQuickFixTest("Create class 'A'");
+  }
+
+  //public void testUseEqEqNull() throws Throwable {
+  //  doQuickFixTest("Use == null instead of 'is Null'");
+  //}
 }
