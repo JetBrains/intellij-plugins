@@ -75,7 +75,7 @@ public class DartAnalysisServerService {
 
     @Override
     public void computedErrors(@NotNull final String file, @NotNull final List<AnalysisError> errors) {
-      updateProblemsView(FileUtil.toSystemIndependentName(file), errors);
+      updateProblemsView(DartProblemsViewImpl.createGroupName(file), errors);
     }
 
     @Override
@@ -108,8 +108,8 @@ public class DartAnalysisServerService {
 
     @Override
     public void flushedResults(List<String> files) {
-      for (final String file : files) {
-        updateProblemsView(FileUtil.toSystemIndependentName(file), AnalysisError.EMPTY_LIST);
+      for (String file : files) {
+        updateProblemsView(DartProblemsViewImpl.createGroupName(file), AnalysisError.EMPTY_LIST);
       }
     }
 
