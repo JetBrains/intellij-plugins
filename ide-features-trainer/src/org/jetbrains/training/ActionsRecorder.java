@@ -122,6 +122,8 @@ public class ActionsRecorder implements Disposable {
             @Override
             public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
                 final String actionId = ActionManager.getInstance().getId(action);
+
+                if(actionId == null) return;
                 if (actionId.toUpperCase().equals(actionTriggerId.toUpperCase())) {
 //                    System.out.println("Action trigger has been activated.");
                     triggerActivated = true;

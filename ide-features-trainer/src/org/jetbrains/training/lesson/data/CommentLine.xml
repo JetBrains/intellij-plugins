@@ -21,8 +21,7 @@ public class CommentLineDemo {
         return a;
     }
 }</CopyText>
-        <Text description="" btn="OK">You can comment out a line by pressing &lt;span color="gray"&gt;&lt;action=&quot;CommentByLineComment&quot;&gt;&lt;/span&gt;</Text>
-        <Text description="Move the caret to &lt;span color=&quot;gray&quot;&gt;tmp&lt;/span&gt; declaration" btn="..."/>
+        <Text description="" btn="LET'S SEE">You can comment out a line by pressing &lt;span color="gray"&gt;&lt;action=&quot;CommentByLineComment&quot;&gt;&lt;/span&gt;</Text>
         <TraverseCaret stop="108" delay="20"/>
         <Action action="CommentByLineComment" delay="2000" balloon="&lt;shortcut&gt; (Comment line)"/>
         <Wait delay="200"/>
