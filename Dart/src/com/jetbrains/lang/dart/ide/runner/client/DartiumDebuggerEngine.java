@@ -31,10 +31,6 @@ import org.jetbrains.annotations.Nullable;
 public class DartiumDebuggerEngine extends ChromeDebuggerEngine {
   private static final Logger LOG = Logger.getInstance(DartiumDebuggerEngine.class);
 
-  public DartiumDebuggerEngine() {
-    super("dartium");
-  }
-
   @Override
   public ChromeDebugProcess createDebugProcess(@NotNull final XDebugSession session,
                                                @NotNull final WebBrowser browser,
