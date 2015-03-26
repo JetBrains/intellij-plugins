@@ -121,10 +121,8 @@ class ViewFilesPanel extends JPanel implements DataProvider {
         return myUser;
       }
     };
-    
-    diffAction.registerCustomShortcutSet(
-        new CustomShortcutSet(KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_MASK)),
-        myTree);
+
+    diffAction.registerCustomShortcutSet(CommonShortcuts.getDiff(), myTree);
 
     actionGroup.add(myOpenFileAction);
     actionGroup.add(diffAction);
