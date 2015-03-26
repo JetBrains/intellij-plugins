@@ -64,15 +64,7 @@ public class DartAnalysisServerService {
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
   private final List<String> myPriorityFiles = new ArrayList<String>();
 
-  private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListener() {
-
-    @Override
-    public void computedCompletion(String completionId,
-                                   int replacementOffset,
-                                   int replacementLength,
-                                   List<CompletionSuggestion> completions,
-                                   boolean isLast) {
-    }
+  private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
     @Override
     public void computedErrors(@NotNull final String file, @NotNull final List<AnalysisError> errors) {
@@ -80,42 +72,10 @@ public class DartAnalysisServerService {
     }
 
     @Override
-    public void computedHighlights(String file, List<HighlightRegion> highlights) {
-    }
-
-    @Override
-    public void computedLaunchData(String file, String kind, String[] referencedFiles) {
-    }
-
-    @Override
-    public void computedNavigation(String file, List<NavigationRegion> targets) {
-    }
-
-    @Override
-    public void computedOccurrences(String file, List<Occurrences> occurrencesArray) {
-    }
-
-    @Override
-    public void computedOutline(String file, Outline outline) {
-    }
-
-    @Override
-    public void computedOverrides(String file, List<OverrideMember> overrides) {
-    }
-
-    @Override
-    public void computedSearchResults(String searchId, List<SearchResult> results, boolean last) {
-    }
-
-    @Override
     public void flushedResults(List<String> files) {
       for (final String file : files) {
         updateProblemsView(FileUtil.toSystemIndependentName(file), AnalysisError.EMPTY_LIST);
       }
-    }
-
-    @Override
-    public void requestError(RequestError requestError) {
     }
 
     @Override
@@ -134,10 +94,6 @@ public class DartAnalysisServerService {
       if (isFatal) {
         onServerStopped();
       }
-    }
-
-    @Override
-    public void serverIncompatibleVersion(@Nullable final String version) {
     }
 
     @Override
@@ -428,7 +384,7 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public List<AnalysisErrorFixes> analysis_getFixes(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info, final int offset) {
+  public List<AnalysisErrorFixes> edit_getFixes(@NotNull final DartAnalysisServerAnnotator.AnnotatorInfo info, final int offset) {
     final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<List<AnalysisErrorFixes>>();
     final Semaphore semaphore = new Semaphore();
     final String filePath = FileUtil.toSystemDependentName(info.myFilePath);

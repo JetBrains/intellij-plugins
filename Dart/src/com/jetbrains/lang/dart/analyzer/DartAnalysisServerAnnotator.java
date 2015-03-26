@@ -118,7 +118,7 @@ public class DartAnalysisServerAnnotator
       if (error == null || shouldIgnoreMessageFromDartAnalyzer(error)) continue;
 
       final List<AnalysisErrorFixes> fixes =
-        DartAnalysisServerService.getInstance().analysis_getFixes(info, error.getLocation().getOffset());
+        DartAnalysisServerService.getInstance().edit_getFixes(info, error.getLocation().getOffset());
       result.add(error, fixes != null ? fixes : Collections.<AnalysisErrorFixes>emptyList());
     }
 
