@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 
 /**
  * @author yole
@@ -18,8 +17,18 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
   }
 
   @Override
-  protected void findRestParameterExpectedType(JSParameter param) {
-    JSFunction fun = PsiTreeUtil.getParentOfType(param, JSFunction.class);
+  protected void findRestParameterExpectedType(JSParameterItem parameterItem) {
+    if (!(parameterItem instanceof JSParameter)) {
+      super.findRestParameterExpectedType(parameterItem);
+      return;
+    }
+
+    final JSParameter param = (JSParameter)parameterItem;
+    final JSFunction fun = param.getDeclaringFunction();
+    if (fun == null) {
+      super.findRestParameterExpectedType(parameterItem);
+      return;
+    }
     PsiElement element = JSResolveUtil.findParent(fun);
 
     JSType classType = element instanceof JSClass ?
