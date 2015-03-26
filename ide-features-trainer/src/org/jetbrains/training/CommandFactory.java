@@ -45,6 +45,9 @@ public class CommandFactory {
             case ACTION:
                 return new ActionCommand();
 
+            case AGAIN:
+                return new AgainCommand();
+
             case TYPETEXT:
                 return new TypeTextCommand();
 
