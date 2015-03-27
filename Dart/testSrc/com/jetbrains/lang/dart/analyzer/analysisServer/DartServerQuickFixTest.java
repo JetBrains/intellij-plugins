@@ -68,7 +68,7 @@ public abstract class DartServerQuickFixTest extends CodeInsightFixtureTestCase 
     doQuickFixTest("Create class 'A'");
   }
 
-  //public void testUseEqEqNull() throws Throwable {
-  //  doQuickFixTest("Use == null instead of 'is Null'");
-  //}
+  public void testUseEqEqNull() throws Throwable {
+    doQuickFixTest("Use == null instead of 'is Null'");
+  }
 }
