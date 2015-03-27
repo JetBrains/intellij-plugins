@@ -8,6 +8,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.lookup.LookupElementRenderer;
 import com.intellij.codeInsight.template.*;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -191,7 +192,18 @@ public final class DartServerFixIntention implements IntentionAction {
 
     // Templates can only grow source, so we trim first if necessary
     if (sourceEdit.getLength() > 0) {
-      document.deleteString(sourceEdit.getOffset(), sourceEdit.getOffset() + sourceEdit.getLength());
+      final Runnable runnable = new Runnable() {
+        public void run() {
+          document.deleteString(sourceEdit.getOffset(), sourceEdit.getOffset() + sourceEdit.getLength());
+        }
+      };
+
+      if (CommandProcessor.getInstance().getCurrentCommand() == null) {
+        CommandProcessor.getInstance().runUndoTransparentAction(runnable);
+      }
+      else {
+        runnable.run();
+      }
     }
 
     final TemplateManager templateManager = TemplateManager.getInstance(project);

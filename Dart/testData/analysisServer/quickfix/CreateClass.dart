@@ -1,1 +1,1 @@
-A a;
+<caret>A a;

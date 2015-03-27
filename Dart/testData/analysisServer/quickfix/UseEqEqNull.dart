@@ -1,3 +1,3 @@
 m(p) {
-  p is Null;
+  p <caret>is Null;
 }
