@@ -2,9 +2,6 @@ package com.jetbrains.lang.dart.completion.handler;
 
 import com.intellij.codeInsight.completion.CompletionType;
 
-/**
- * @author: Fedor.Korotkov
- */
 public class CompletionHandlerTest extends CompletionHandlerTestBase {
   @Override
   protected String getBasePath() {
@@ -58,6 +55,18 @@ public class CompletionHandlerTest extends CompletionHandlerTestBase {
     myFixture.copyFileToProject("import5.dart");
     doTest(CompletionType.BASIC, 2, "Foo");
     myFixture.checkResultByFile("import5.dart", "import5.after.dart", false);
+  }
+
+  public void testImport6() throws Throwable {
+    myFixture.copyFileToProject("additional/Foo.dart");
+    myFixture.copyFileToProject("additional/FooPart.dart");
+    doTest(CompletionType.BASIC, 2, "Foo");
+  }
+
+  public void testImport7() throws Throwable {
+    myFixture.copyFileToProject("additional/Foo.dart");
+    myFixture.copyFileToProject("additional/FooPart.dart");
+    doTest(CompletionType.BASIC, 2, "Foo");
   }
 
   public void testParentheses1() throws Throwable {
