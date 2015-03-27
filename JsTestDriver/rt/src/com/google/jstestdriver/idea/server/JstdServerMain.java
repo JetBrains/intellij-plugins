@@ -11,16 +11,16 @@ import com.google.jstestdriver.embedded.JsTestDriverBuilder;
 import com.google.jstestdriver.guice.TestResultPrintingModule;
 import com.google.jstestdriver.model.BasePaths;
 import com.google.jstestdriver.util.RetryException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class JstdServerMain {
 
-  private static final Logger logger = LoggerFactory.getLogger(JsTestDriver.class);
+  private static final Logger logger = Logger.getLogger(JstdServerMain.class.getName());
 
   public static void main(String[] args) {
     shutdownIfOrphan();
@@ -38,7 +38,7 @@ public class JstdServerMain {
 
       // load all the command line plugins.
       final List<Module> pluginModules = pluginLoader.load(cmdLinePlugins);
-      logger.debug("loaded plugins %s", pluginModules);
+      logger.log(Level.INFO, "loaded plugins {0}", pluginModules);
 
       JsTestDriverBuilder builder = new JsTestDriverBuilder();
       BasePaths basePath = cmdLineFlags.getBasePath();
@@ -61,11 +61,11 @@ public class JstdServerMain {
       System.exit(1);
     } catch (UnreadableFilesException e) {
       System.out.println("Configuration Error: \n" + e.getMessage());
-      logger.debug("Details: {}", e);
+      e.printStackTrace();
       System.exit(1);
     } catch (ConfigurationException e) {
       System.out.println("Configuration Error: \n" + e.getMessage());
-      logger.debug("Details: {}", e);
+      e.printStackTrace();
       System.exit(1);
     } catch (RetryException e) {
       System.out.println("Tests failed due to unexpected environment issue: "
@@ -78,7 +78,6 @@ public class JstdServerMain {
       System.out.println("Test run failed due to unresponsive browser: " + e);
       System.exit(1);
     } catch (Exception e) {
-      logger.debug("Error {}", e);
       e.printStackTrace();
       System.out.println("Unexpected Runner Condition: " + e.getMessage()
                          + "\n Use --runnerMode DEBUG for more information.");
