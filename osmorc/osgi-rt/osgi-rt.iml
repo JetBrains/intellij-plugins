@@ -8,7 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
-      <library>
+      <library name="bndlib">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/bndlib-2.4.0.jar!/" />
         </CLASSES>
