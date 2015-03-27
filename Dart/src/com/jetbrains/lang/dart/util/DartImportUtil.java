@@ -23,7 +23,7 @@ public class DartImportUtil {
   private DartImportUtil() {
   }
 
-  public static void insertImport(@NotNull PsiFile context, @Nls String componentName, @NotNull String urlToImport) {
+  public static void insertImport(@NotNull final PsiFile context, @NotNull final String componentName, @NotNull final String urlToImport) {
     final PsiManager psiManager = context.getManager();
     libraryRootLoop:
     for (VirtualFile libraryRoot : DartResolveUtil.findLibrary(context)) {
@@ -58,8 +58,7 @@ public class DartImportUtil {
     }
   }
 
-  private static void addShowOrRemoveHide(@NotNull DartImportStatement importStatement, String componentName) {
-    // todo remove comma if present, do not leave space before semicolon
+  private static void addShowOrRemoveHide(@NotNull final DartImportStatement importStatement, @NotNull final String componentName) {
     // try to remove hide
     for (DartHideCombinator hideCombinator : importStatement.getHideCombinatorList()) {
       final DartLibraryReferenceList libraryReferenceList = hideCombinator.getLibraryReferenceList();
@@ -68,10 +67,25 @@ public class DartImportUtil {
           libraryReferenceList.getLibraryComponentReferenceExpressionList();
         for (DartLibraryComponentReferenceExpression libraryComponentReferenceExpression : libraryComponents) {
           if (componentName.equals(libraryComponentReferenceExpression.getText())) {
-            final PsiElement toRemove = libraryComponents.size() > 1 ?
-                                        libraryComponentReferenceExpression :
-                                        hideCombinator;
-            toRemove.delete();
+            if (libraryComponents.size() == 1) {
+              hideCombinator.delete();
+            }
+            else {
+              final PsiElement nextSibling =
+                UsefulPsiTreeUtil.getNextSiblingSkippingWhiteSpacesAndComments(libraryComponentReferenceExpression);
+              if (nextSibling != null && nextSibling.getNode().getElementType() == DartTokenTypes.COMMA) {
+                nextSibling.delete();
+              }
+              else {
+                final PsiElement prevSibling =
+                  UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(libraryComponentReferenceExpression, true);
+                if (prevSibling != null && prevSibling.getNode().getElementType() == DartTokenTypes.COMMA) {
+                  prevSibling.delete();
+                }
+              }
+
+              libraryComponentReferenceExpression.delete();
+            }
             return;
           }
         }
