@@ -110,7 +110,7 @@ public abstract class AbstractStepDefinition {
    * @param step Step to check
    * @return true if supports.
    */
-  public boolean supportsStep(@NotNull final GherkinStep step) {
+  public boolean supportsStep(@NotNull final PsiElement step) {
     return true;
   }
 
