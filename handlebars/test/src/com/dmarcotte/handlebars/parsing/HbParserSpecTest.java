@@ -1,10 +1,10 @@
 package com.dmarcotte.handlebars.parsing;
 
 /**
- * Java representations of the validations in Handlebars parser_spec.rb
- * (Precise revision: https://github.com/wycats/handlebars.js/blob/932e2970ad29b16d6d6874ad0bfb44b07b4cd765/spec/parser_spec.rb)
+ * Java representations of the validations in Handlebars spec/parser.js
+ * (Precise revision: https://github.com/wycats/handlebars.js/blob/cb22ee5681b1eb1f89ee675651c018b77dd1524d/spec/parser.js)
  * <p/>
- * The tests here should map pretty clearly by name to the `it "does something"` validations in parser_spec.rb.
+ * The tests here should map pretty clearly by name to the `it "does something"` validations in parser.js.
  * <p/>
  * See the docs on {@see HbParserTest} for info on how these tests work
  */
@@ -14,11 +14,18 @@ public class HbParserSpecTest extends HbParserTest {
     doTest(true);
   }
 
+  public void testSimpleMustachesWithData() {
+    doTest(true);
+  }
+
+  public void testSimpleMustachesWithDataPaths() {
+    doTest(true);
+  }
+
   public void testMustachesWithPaths() {
     doTest(true);
   }
 
-  // TODO testMustachesWithThisFoo is actually a bit odd... parser_spec.rb expects just an id of foo, but our parser gives id,sep,id for this,/,foo
   public void testMustachesWithThisFoo() {
     doTest(true);
   }
@@ -31,15 +38,11 @@ public class HbParserSpecTest extends HbParserTest {
     doTest(true);
   }
 
-  public void testMustachesWithHashArguments() {
-    doTest(true);
-  }
-
   public void testMustachesWithStringParameters() {
     doTest(true);
   }
 
-  public void testMustachesWithIntegerParameters() {
+  public void testMustachesWithNumberParameters() {
     doTest(true);
   }
 
@@ -47,11 +50,11 @@ public class HbParserSpecTest extends HbParserTest {
     doTest(true);
   }
 
-  public void testSimpleMustachesWithData() {
+  public void testMustachesWithDataParameters() {
     doTest(true);
   }
 
-  public void testMustachesWithDataParameters() {
+  public void testMustachesWithHashArguments() {
     doTest(true);
   }
 
@@ -91,7 +94,44 @@ public class HbParserSpecTest extends HbParserTest {
     doTest(true);
   }
 
+  public void testInverseElseStyleSection() {
+    doTest(true);
+  }
+
+  public void testEmptyBlocks() {
+    doTest(true);
+  }
+
+  public void testEmptyBlocksWithEmptyInverseSection() {
+    doTest(true);
+  }
+
+  public void testEmptyBlocksWithEmptyInverseElseStyleSection() {
+    doTest(true);
+  }
+
+  public void testNonEmptyBlocksWithEmptyInverseSection() {
+    doTest(true);
+  }
+
+  public void testNonEmptyBlocksWithEmptyInverseElseStyleSection() {
+    doTest(true);
+  }
+
+  public void testEmptyBlocksWithNonEmptyInverseSection() {
+    doTest(true);
+  }
+
+  public void testEmptyBlocksWithNonEmptyInverseElseStyleSection() {
+    doTest(true);
+  }
+
   public void testStandaloneInverseSection() {
     doTest(true);
   }
+
+  /**
+   * Note on the spec/parser.js porting: some tests at the end are omitted
+   * because they make no sense in the context of the plugin
+   */
 }

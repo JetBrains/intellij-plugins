@@ -1,4 +1,4 @@
-HbFile:EmptyBlocks.hbs
+HbFile:InverseElseStyleSection.hbs
   HbStatementsImpl(STATEMENTS)
     HbBlockWrapperImpl(BLOCK_WRAPPER)
       HbOpenBlockMustacheImpl(OPEN_BLOCK_STACHE)
@@ -11,7 +11,16 @@ HbFile:EmptyBlocks.hbs
         HbPsiElementImpl([Hb] CLOSE)
           PsiElement([Hb] CLOSE)('}}')
       HbStatementsImpl(STATEMENTS)
-        <empty list>
+        PsiElement([Hb] CONTENT)(' bar ')
+      HbSimpleInverseImpl(SIMPLE_INVERSE)
+        HbPsiElementImpl([Hb] OPEN)
+          PsiElement([Hb] OPEN)('{{')
+        HbPsiElementImpl([Hb] ELSE)
+          PsiElement([Hb] ELSE)('else')
+        HbPsiElementImpl([Hb] CLOSE)
+          PsiElement([Hb] CLOSE)('}}')
+      HbStatementsImpl(STATEMENTS)
+        PsiElement([Hb] CONTENT)(' baz ')
       HbCloseBlockMustacheImpl(CLOSE_BLOCK_STACHE)
         HbPsiElementImpl([Hb] OPEN_ENDBLOCK)
           PsiElement([Hb] OPEN_ENDBLOCK)('{{/')

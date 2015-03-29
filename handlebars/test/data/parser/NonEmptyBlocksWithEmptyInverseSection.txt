@@ -1,4 +1,4 @@
-HbFile:EmptyBlocks.hbs
+HbFile:NonEmptyBlocksWithEmptyInverseSection.hbs
   HbStatementsImpl(STATEMENTS)
     HbBlockWrapperImpl(BLOCK_WRAPPER)
       HbOpenBlockMustacheImpl(OPEN_BLOCK_STACHE)
@@ -8,6 +8,13 @@ HbFile:EmptyBlocks.hbs
           HbPathImpl(PATH)
             HbPsiElementImpl([Hb] ID)
               PsiElement([Hb] ID)('foo')
+        HbPsiElementImpl([Hb] CLOSE)
+          PsiElement([Hb] CLOSE)('}}')
+      HbStatementsImpl(STATEMENTS)
+        PsiElement([Hb] CONTENT)(' bar ')
+      HbSimpleInverseImpl(SIMPLE_INVERSE)
+        HbPsiElementImpl([Hb] OPEN_INVERSE)
+          PsiElement([Hb] OPEN_INVERSE)('{{^')
         HbPsiElementImpl([Hb] CLOSE)
           PsiElement([Hb] CLOSE)('}}')
       HbStatementsImpl(STATEMENTS)

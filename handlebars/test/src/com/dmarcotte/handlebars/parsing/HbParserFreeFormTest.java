@@ -60,8 +60,11 @@ public class HbParserFreeFormTest extends HbParserTest {
 
   /**
    * Empty blocks should not be errors.  (For a while, the parser was flagging {{#foo}}{{/foo}}-type blocks)
+   *
+   * Some of these are now also tested in ParserSpec.  This is the original regression test
+   * from before those were added to handlebars.js
    */
-  public void testEmptyBlocks() {
+  public void testEmptyBlockRegression() {
     doTest(true);
   }
 
