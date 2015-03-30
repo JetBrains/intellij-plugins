@@ -15,6 +15,7 @@
  */
 package com.intellij.coldFusion;
 
+import com.intellij.coldFusion.UI.config.CfmlProjectConfiguration;
 import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.coldFusion.model.files.CfmlFileType;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -141,6 +142,25 @@ public class CfmlFormatterTest extends CfmlCodeInsightFixtureTestCase {
     myTestStyleSettings.ALIGN_MULTILINE_TERNARY_OPERATION = true;
     myTestStyleSettings.ALIGN_MULTILINE_BINARY_OPERATION = true;
     doTest();
+  }
+
+  public void testAlignment2() throws Exception {
+    doTest();
+  }
+
+  public void testAlignment3() throws Exception {
+    CfmlProjectConfiguration projectConfiguration = CfmlProjectConfiguration.getInstance(getProject());
+    CfmlProjectConfiguration.State state = projectConfiguration.getState();
+    String level = state.getLanguageLevel();
+
+    state.setLanguageLevel(CfmlLanguage.RAILO);
+    projectConfiguration.loadState(state);
+    try {
+      doTest();
+    } finally {
+      state.setLanguageLevel(level);
+      projectConfiguration.loadState(state);
+    }
   }
 
   public void testBracePlacement1() throws Exception {
