@@ -1,7 +1,7 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.documentation.AbstractExternalFilter;
-import com.intellij.codeInsight.documentation.DocumentationManager;
+import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.codeInsight.documentation.PlatformDocumentationUtil;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
@@ -132,7 +132,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
           String resolved = getSeeAlsoLinkResolved(elementToShowDoc, link);
           if (resolved != null) {
-            return DocumentationManager.PSI_ELEMENT_PROTOCOL + resolved;
+            return DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL + resolved;
           }
 
           String originFile = ourAnchorSuffix.matcher(origin).replaceAll("");
@@ -148,7 +148,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
         protected String convertReference(String root, String href) {
           if (StringUtil.startsWithChar(href, '#')) {
-            return DocumentationManager.DOC_ELEMENT_PROTOCOL + root + href;
+            return DocumentationManagerProtocol.DOC_ELEMENT_PROTOCOL + root + href;
           }
 
           if (root.startsWith("file://") && SystemInfo.isWindows) {
