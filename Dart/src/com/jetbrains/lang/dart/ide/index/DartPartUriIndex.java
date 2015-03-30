@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DartPathIndex extends FileBasedIndexExtension<String, List<String>> {
+public class DartPartUriIndex extends FileBasedIndexExtension<String, List<String>> {
   public static final ID<String, List<String>> DART_PATH_INDEX = ID.create("DartPathIndex");
   private DataIndexer<String, List<String>, FileContent> myDataIndexer = new MyDataIndexer();
 
@@ -79,10 +79,10 @@ public class DartPathIndex extends FileBasedIndexExtension<String, List<String>>
     return true;
   }
 
-  public static List<String> getPaths(Project project, VirtualFile virtualFile) {
+  public static List<String> getPartUris(@NotNull final Project project, @NotNull final VirtualFile virtualFile) {
     final List<String> result = new ArrayList<String>();
-    for (List<String> list : FileBasedIndex.getInstance()
-      .getValues(DART_PATH_INDEX, virtualFile.getName(), GlobalSearchScope.fileScope(project, virtualFile))) {
+    for (List<String> list : FileBasedIndex.getInstance().getValues(DART_PATH_INDEX, virtualFile.getName(),
+                                                                    GlobalSearchScope.fileScope(project, virtualFile))) {
       result.addAll(list);
     }
     return result;
@@ -92,7 +92,7 @@ public class DartPathIndex extends FileBasedIndexExtension<String, List<String>>
     @Override
     @NotNull
     public Map<String, List<String>> map(@NotNull final FileContent inputData) {
-      return Collections.singletonMap(inputData.getFileName(), DartIndexUtil.indexFile(inputData).getPaths());
+      return Collections.singletonMap(inputData.getFileName(), DartIndexUtil.indexFile(inputData).getPartUris());
     }
   }
 }
