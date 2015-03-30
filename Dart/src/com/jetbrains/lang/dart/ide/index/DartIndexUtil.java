@@ -1,8 +1,6 @@
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.XmlRecursiveElementVisitor;
@@ -25,7 +23,7 @@ import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 
 public class DartIndexUtil {
   // inc when change parser
-  public static final int INDEX_VERSION = 13;
+  public static final int INDEX_VERSION = 14;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
@@ -83,8 +81,7 @@ public class DartIndexUtil {
           processImportOrExportStatement(result, (DartImportOrExportStatement)child);
         }
         if (child instanceof DartPartStatement) {
-          final String pathValue = FileUtil.toSystemIndependentName(StringUtil.unquoteString(((DartPartStatement)child).getUriString()));
-          result.addPath(pathValue);
+          result.addPartUri(((DartPartStatement)child).getUriString());
         }
       }
     }

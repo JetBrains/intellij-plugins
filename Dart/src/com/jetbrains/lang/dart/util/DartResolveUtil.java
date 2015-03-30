@@ -295,7 +295,7 @@ public class DartResolveUtil {
       }
     }
 
-    for (String partUrl : DartPathIndex.getPaths(context.getProject(), virtualFile)) {
+    for (String partUrl : DartPartUriIndex.getPartUris(context.getProject(), virtualFile)) {
       if (fileNames != null && !fileNames.contains(PathUtil.getFileName(partUrl))) {
         continue;
       }
@@ -422,7 +422,7 @@ public class DartResolveUtil {
     return ContainerUtil.filter(DartLibraryIndex.getFilesByLibName(context.getResolveScope(), libraryName), new Condition<VirtualFile>() {
       @Override
       public boolean value(VirtualFile mainLibFile) {
-        for (String partUrl : DartPathIndex.getPaths(context.getProject(), mainLibFile)) {
+        for (String partUrl : DartPartUriIndex.getPartUris(context.getProject(), mainLibFile)) {
           final VirtualFile partFile = getImportedFile(context.getProject(), mainLibFile, partUrl);
           if (Comparing.equal(getRealVirtualFile(context.getContainingFile()), partFile)) return true;
         }

@@ -14,7 +14,7 @@ public class DartFileIndexData {
   private Map<String, DartComponentInfo> myComponentInfoMap = new THashMap<String, DartComponentInfo>();
   final Map<String, List<DartComponentInfo>> myInheritorsMap = new THashMap<String, List<DartComponentInfo>>();
   @NotNull private String myLibraryName;
-  private List<String> myPaths = new ArrayList<String>();
+  private List<String> myPartUris = new ArrayList<String>();
   private List<String> mySymbols = new ArrayList<String>();
   private boolean myIsPart;
 
@@ -68,12 +68,12 @@ public class DartFileIndexData {
     myLibraryName = libraryName;
   }
 
-  public List<String> getPaths() {
-    return myPaths;
+  public List<String> getPartUris() {
+    return myPartUris;
   }
 
-  public void addPath(String path) {
-    myPaths.add(path);
+  public void addPartUri(@NotNull final String partUri) {
+    myPartUris.add(partUri);
   }
 
   public List<String> getSymbols() {
