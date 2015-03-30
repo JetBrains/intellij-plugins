@@ -118,6 +118,26 @@ class OsgiBuildTest : JpsBuildTestCase() {
     assertManifest(setOf("Bundle-Name=main", "Bundle-SymbolicName=main", "Bundle-Version=1.0.0", "Export-Package=main;version=\"1.0.0\""))
   }
 
+  fun testRebuild() {
+    bndBuild()
+    createFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.0\nExport-Package: main")
+    createFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }")
+    makeAll().assertSuccessful()
+    assertJar(setOf("META-INF/MANIFEST.MF", "main/Main.class"))
+    makeAll().assertUpToDate()
+
+    changeFile("main/src/main/Main.java", "package main;\n\npublic interface Main { String greeting(); }\n")
+    makeAll().assertSuccessful()
+    makeAll().assertUpToDate()
+
+    changeFile("main/bnd.bnd", "Bundle-SymbolicName: main\nBundle-Version: 1.0.1\nExport-Package: main")
+    makeAll().assertSuccessful()
+    makeAll().assertUpToDate()
+
+    rebuildAll()
+    makeAll().assertUpToDate()
+  }
+
 
   private fun assertJar(expected: Set<String>) {
     JarFile(myExtension.getJarFileLocation()).use {
