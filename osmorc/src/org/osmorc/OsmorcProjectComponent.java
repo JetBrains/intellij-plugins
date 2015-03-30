@@ -220,7 +220,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
 
   private class MyModuleRenameHandler extends ModuleAdapter {
     @Override
-    public void modulesRenamed(Project project, List<Module> modules, Function<Module, String> oldNameProvider) {
+    public void modulesRenamed(@NotNull Project project, @NotNull List<Module> modules, @NotNull Function<Module, String> oldNameProvider) {
       final List<Pair<SelectedBundle, String>> pairs = ContainerUtil.newSmartList();
 
       for (Module module : modules) {
