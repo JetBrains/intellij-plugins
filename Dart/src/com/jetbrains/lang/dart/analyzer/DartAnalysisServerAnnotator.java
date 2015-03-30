@@ -114,12 +114,19 @@ public class DartAnalysisServerAnnotator
 
     final ServerResult result = new ServerResult();
 
+    int failuresFromGetFixes = 0;
     for (final AnalysisError error : errors) {
       if (error == null || shouldIgnoreMessageFromDartAnalyzer(error)) continue;
 
       final List<AnalysisErrorFixes> fixes =
         DartAnalysisServerService.getInstance().edit_getFixes(info, error.getLocation().getOffset());
       result.add(error, fixes != null ? fixes : Collections.<AnalysisErrorFixes>emptyList());
+
+      if(fixes == null) {
+        if(++failuresFromGetFixes > 3) {
+          return result;
+        }
+      }
     }
 
     return result;
