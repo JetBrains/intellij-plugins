@@ -18,6 +18,7 @@ package com.intellij.coldFusion.model.formatter;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
+import com.intellij.coldFusion.model.psi.CfmlTag;
 import com.intellij.coldFusion.model.psi.stubs.CfmlStubElementTypes;
 import com.intellij.formatting.Indent;
 import com.intellij.lang.ASTNode;
@@ -60,6 +61,11 @@ public class CfmlIndentProcessor extends CfmlFormatterUtil {
               myType == CfmlElementTypes.ARGUMENT_TAG ||
               myType == CfmlElementTypes.FORTAGEXPRESSION
               || myType == CfmlElementTypes.TEMPLATE_TEXT)) {
+      if (parentType == CfmlElementTypes.TAG && myType == CfmlElementTypes.TAG) {
+        if ("cfif".equals(((CfmlTag)parent.getPsi()).getTagName()) && "cfelse".equals(((CfmlTag)child.getPsi()).getTagName())) {
+          return Indent.getNoneIndent();
+        }
+      }
       return Indent.getNormalIndent();
     }
     else if (myType == CfmlTokenTypes.START_EXPRESSION) {

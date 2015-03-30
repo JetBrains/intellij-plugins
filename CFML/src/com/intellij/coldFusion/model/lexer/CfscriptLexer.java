@@ -35,8 +35,6 @@ public class CfscriptLexer extends MergingLexerAdapter {
 
   private static FlexLexer getFlexLexer(Project project) {
     final String projectLangLevel = project == null ? CfmlLanguage.CF10 : CfmlLangInfo.getInstance(project).getLanguageLevel();
-    return projectLangLevel.equals(CfmlLanguage.CF9) || projectLangLevel.equals(CfmlLanguage.CF10)
-           ? new _CfscriptLexer(project)
-           : new _CfscriptLexer8(project);
+    return CfmlLanguage.CF8.equals(projectLangLevel) ? new _CfscriptLexer8(project) : new _CfscriptLexer(project);
   }
 }
