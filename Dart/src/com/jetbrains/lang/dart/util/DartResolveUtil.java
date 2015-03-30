@@ -9,6 +9,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.search.PsiElementProcessor;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.BooleanValueHolder;
@@ -398,23 +401,29 @@ public class DartResolveUtil {
   }
 
   @NotNull
-  public static List<VirtualFile> findLibrary(final PsiFile context) {
+  public static List<VirtualFile> findLibrary(@NotNull final PsiFile context) {
     final VirtualFile contextVirtualFile = getRealVirtualFile(context);
     if (contextVirtualFile == null) return Collections.emptyList();
 
-    for (PsiElement root : findDartRoots(context)) {
-      final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
-      if (partOfStatement != null) {
-        final String libraryName = partOfStatement.getLibraryName();
-        final List<VirtualFile> files = findLibraryByName(context, libraryName);
-        if (!files.isEmpty()) {
-          return files;
+    return CachedValuesManager.getCachedValue(context, new CachedValueProvider<List<VirtualFile>>() {
+      @Nullable
+      @Override
+      public Result<List<VirtualFile>> compute() {
+        for (PsiElement root : findDartRoots(context)) {
+          final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
+          if (partOfStatement != null) {
+            final String libraryName = partOfStatement.getLibraryName();
+            final List<VirtualFile> files = findLibraryByName(context, libraryName);
+            if (!files.isEmpty()) {
+              return new Result<List<VirtualFile>>(files, PsiModificationTracker.MODIFICATION_COUNT);
+            }
+          }
         }
-      }
-    }
 
-    // no 'part of' statement in file -> this file itself is a library
-    return Collections.singletonList(contextVirtualFile);
+        // no 'part of' statement in file -> this file itself is a library
+        return new Result<List<VirtualFile>>(Collections.singletonList(contextVirtualFile), PsiModificationTracker.MODIFICATION_COUNT);
+      }
+    });
   }
 
   @NotNull
