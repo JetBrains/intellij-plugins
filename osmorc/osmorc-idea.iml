@@ -33,7 +33,6 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="osgi-rt" />
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
     <orderEntry type="library" scope="TEST" name="KotlinJavaRuntime" level="project" />
