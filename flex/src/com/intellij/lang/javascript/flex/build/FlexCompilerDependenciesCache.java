@@ -46,7 +46,7 @@ public class FlexCompilerDependenciesCache {
     myProject = project;
 
     project.getMessageBus().connect(project).subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
-      public void moduleRemoved(final Project project, final Module module) {
+      public void moduleRemoved(@NotNull final Project project, @NotNull final Module module) {
         myCache.remove(module);
       }
     });

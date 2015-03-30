@@ -52,12 +52,12 @@ public class ActiveBuildConfigurationWidget {
 
     myProject.getMessageBus().connect(myProject).subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
       @Override
-      public void moduleAdded(final Project project, final Module module) {
+      public void moduleAdded(@NotNull final Project project, @NotNull final Module module) {
         showOrHideWidget(false);
       }
 
       @Override
-      public void moduleRemoved(final Project project, final Module module) {
+      public void moduleRemoved(@NotNull final Project project, @NotNull final Module module) {
         showOrHideWidget(false);
       }
     });

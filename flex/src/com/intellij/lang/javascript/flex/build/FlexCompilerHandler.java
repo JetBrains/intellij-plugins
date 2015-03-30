@@ -104,7 +104,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
     connection.subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
       @Override
-      public void modulesRenamed(Project project, List<Module> modules, Function<Module, String> oldNameProvider) {
+      public void modulesRenamed(@NotNull Project project, @NotNull List<Module> modules, @NotNull Function<Module, String> oldNameProvider) {
         for (RunnerAndConfigurationSettings settings : RunManagerEx.getInstanceEx(project).getSortedConfigurations()) {
           RunConfiguration runConfiguration = settings.getConfiguration();
           if (runConfiguration instanceof FlashRunConfiguration) {

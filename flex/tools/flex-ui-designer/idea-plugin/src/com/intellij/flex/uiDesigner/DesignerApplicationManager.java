@@ -457,7 +457,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     // one by one)
     connection.subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
       @Override
-      public void moduleRemoved(Project project, Module module) {
+      public void moduleRemoved(@NotNull Project project, @NotNull Module module) {
         Client client = Client.getInstance();
         if (!client.isModuleRegistered(module)) {
           return;
