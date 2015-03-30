@@ -91,11 +91,11 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
     myIdeView = new TapestryIdeView(this);
 
     myModuleListener = new ModuleAdapter() {
-      public void moduleRemoved(Project project, Module module) {
+      public void moduleRemoved(@NotNull Project project, @NotNull Module module) {
         reload();
       }
 
-      public void moduleAdded(Project project, Module module) {
+      public void moduleAdded(@NotNull Project project, @NotNull Module module) {
         reload();
       }
     };

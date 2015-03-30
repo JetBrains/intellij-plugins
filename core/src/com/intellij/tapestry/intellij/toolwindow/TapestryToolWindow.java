@@ -6,11 +6,12 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.tapestry.core.events.FileSystemListenerAdapter;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
+import com.intellij.util.messages.MessageBusConnection;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -39,11 +40,11 @@ public class TapestryToolWindow extends FileSystemListenerAdapter {
        _tabbedPane.addTab("Dependencies", _dependenciesTab.getMainPanel());
 
         ModuleListener moduleListener = new ModuleAdapter() {
-            public void moduleRemoved(Project project, Module module) {
+            public void moduleRemoved(@NotNull Project project, @NotNull Module module) {
                 reload();
             }
 
-            public void moduleAdded(Project project, Module module) {
+            public void moduleAdded(@NotNull Project project, @NotNull Module module) {
                 reload();
             }
         };
