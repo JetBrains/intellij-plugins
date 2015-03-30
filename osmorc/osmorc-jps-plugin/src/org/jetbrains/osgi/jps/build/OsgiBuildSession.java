@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
+import org.jetbrains.jps.incremental.messages.DoneSomethingNotification;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsDependencyElement;
@@ -86,6 +87,7 @@ public class OsgiBuildSession implements Reporter {
     try {
       prepare();
       doBuild();
+      context.processMessage(DoneSomethingNotification.INSTANCE);
     }
     catch (OsgiBuildException e) {
       error(e.getMessage(), e.getCause(), e.getSourcePath());
