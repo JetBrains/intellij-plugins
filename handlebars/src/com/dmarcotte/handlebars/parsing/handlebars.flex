@@ -1,7 +1,7 @@
 // We base our lexer directly on the official handlebars.l lexer definition,
 // making some modifications to account for Jison/JFlex syntax and functionality differences
 //
-// Revision ported: https://github.com/wycats/handlebars.js/commit/58a0b4f17d5338793c92cf4d104e9c44cc485c5b#src/handlebars.l
+// Revision ported: https://github.com/wycats/handlebars.js/blob/14b7ef9066d107dc83deedc8e6791947811cc764/src/handlebars.l
 
 package com.dmarcotte.handlebars.parsing;
 
@@ -46,6 +46,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 %state comment_block
 %state comment_end
 %state data
+%state raw
 
 %%
 
@@ -105,9 +106,35 @@ WhiteSpace = {LineTerminator} | [ \t\f]
     }
 }
 
+<raw> {
+   ~"{{{{/" {
+             // backtrack over the END_RAW_BLOCK we picked up at the end of this string
+             yypushback(5);
+
+             yypopState();
+
+             // we stray from the handlebars.js lexer here since we need our WHITE_SPACE more clearly delineated
+             //    and we need to avoid creating extra tokens for empty strings (makes the parser and formatter happier)
+             if (!yytext().toString().equals("")) {
+                 if (yytext().toString().trim().length() == 0) {
+                     return HbTokenTypes.WHITE_SPACE;
+                 } else {
+                     return HbTokenTypes.CONTENT;
+                 }
+             }
+           }
+
+   // Check for anything that is not a string containing "{{{{/"; that's CONTENT
+   !([^]*"{{{{/"[^]*)                         { return HbTokenTypes.CONTENT; }
+}
+
 <mu> {
   "(" { return HbTokenTypes.OPEN_SEXPR; }
   ")" { return HbTokenTypes.CLOSE_SEXPR; }
+
+  "{{{{" { return HbTokenTypes.OPEN_RAW_BLOCK; }
+  "{{{{/" { return HbTokenTypes.END_RAW_BLOCK; }
+  "}}}}" { yypopState(); yypushState(raw); return HbTokenTypes.CLOSE_RAW_BLOCK; }
 
   "{{"\~?">" { return HbTokenTypes.OPEN_PARTIAL; }
   "{{"\~?"#" { return HbTokenTypes.OPEN_BLOCK; }

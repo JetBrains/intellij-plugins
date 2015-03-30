@@ -113,7 +113,8 @@ public class HbParsing {
 
   /**
    * statement
-   * : openInverse program closeBlock
+   * : openRawBlock CONTENT endRawBlock
+   * | openInverse program closeBlock
    * | openBlock program closeBlock
    * | mustache
    * | partial
@@ -125,6 +126,18 @@ public class HbParsing {
    */
   private boolean parseStatement(PsiBuilder builder) {
     IElementType tokenType = builder.getTokenType();
+
+    if (tokenType == OPEN_RAW_BLOCK) {
+      PsiBuilder.Marker blockMarker = builder.mark();
+      if (parseOpenRawBlock(builder)) {
+        parseRestOfBlock(builder, blockMarker, true);
+      }
+      else {
+        return false;
+      }
+
+      return true;
+    }
 
     if (atOpenInverseExpression(builder)) {
       PsiBuilder.Marker inverseBlockStartMarker = builder.mark();
@@ -144,7 +157,7 @@ public class HbParsing {
 
       PsiBuilder.Marker blockMarker = builder.mark();
       if (parseOpenInverse(builder)) {
-        parseRestOfBlock(builder, blockMarker);
+        parseRestOfBlock(builder, blockMarker, false);
       }
       else {
         return false;
@@ -156,7 +169,7 @@ public class HbParsing {
     if (tokenType == OPEN_BLOCK) {
       PsiBuilder.Marker blockMarker = builder.mark();
       if (parseOpenBlock(builder)) {
-        parseRestOfBlock(builder, blockMarker);
+        parseRestOfBlock(builder, blockMarker, false);
       }
       else {
         return false;
@@ -206,10 +219,33 @@ public class HbParsing {
    * <p/>
    * NOTE: will resolve the given blockMarker
    */
-  private void parseRestOfBlock(PsiBuilder builder, PsiBuilder.Marker blockMarker) {
+  private void parseRestOfBlock(PsiBuilder builder, PsiBuilder.Marker blockMarker, boolean raw) {
     parseProgram(builder);
-    parseCloseBlock(builder);
+    if (raw) {
+      parseCloseRawBlock(builder);
+    } else {
+      parseCloseBlock(builder);
+    }
     blockMarker.done(HbTokenTypes.BLOCK_WRAPPER);
+  }
+
+  /**
+   * openRawBlock
+   * : OPEN_RAW_BLOCK sexpr CLOSE_RAW_BLOCK
+   */
+  private boolean parseOpenRawBlock(PsiBuilder builder) {
+    PsiBuilder.Marker openRawBlockStacheMarker = builder.mark();
+    if (!parseLeafToken(builder, OPEN_RAW_BLOCK)) {
+      openRawBlockStacheMarker.drop();
+      return false;
+    }
+
+    if (parseSexpr(builder)) {
+      parseLeafTokenGreedy(builder, CLOSE_RAW_BLOCK);
+    }
+
+    openRawBlockStacheMarker.done(OPEN_BLOCK_STACHE);
+    return true;
   }
 
   /**
@@ -260,6 +296,27 @@ public class HbParsing {
     }
 
     openInverseBlockStacheMarker.done(OPEN_INVERSE_BLOCK_STACHE);
+    return true;
+  }
+
+  /**
+   * closeRawBlock
+   * : END_RAW_BLOCK path CLOSE_RAW_BLOCK
+   * ;
+   */
+  private boolean parseCloseRawBlock(PsiBuilder builder) {
+    PsiBuilder.Marker closeRawBlockMarker = builder.mark();
+
+    if (!parseLeafToken(builder, END_RAW_BLOCK)) {
+      closeRawBlockMarker.drop();
+      return false;
+    }
+
+    PsiBuilder.Marker mustacheNameMark = builder.mark();
+    parsePath(builder);
+    mustacheNameMark.done(HbTokenTypes.MUSTACHE_NAME);
+    parseLeafTokenGreedy(builder, CLOSE_RAW_BLOCK);
+    closeRawBlockMarker.done(CLOSE_BLOCK_STACHE);
     return true;
   }
 

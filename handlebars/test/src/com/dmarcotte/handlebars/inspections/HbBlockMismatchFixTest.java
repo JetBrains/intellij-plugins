@@ -33,6 +33,10 @@ public class HbBlockMismatchFixTest extends LightPlatformCodeInsightFixtureTestC
     doTest("Change block start");
   }
 
+  public void testWrongOpenRawBlock() {
+    doTest("Change block start");
+  }
+
   private void doTest(String intentionHint) {
     myFixture.configureByFile("inspections/before" + getTestName(false) + ".hbs");
     final IntentionAction intention = myFixture.findSingleIntention(intentionHint);

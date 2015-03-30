@@ -83,4 +83,12 @@ public class HbParserFreeFormTest extends HbParserTest {
   public void testSubexpressions() {
     doTest(true);
   }
+
+  public void testRawBlock() {
+    doTest(true);
+  }
+
+  public void testRawBlockParameters() {
+    doTest(true);
+  }
 }

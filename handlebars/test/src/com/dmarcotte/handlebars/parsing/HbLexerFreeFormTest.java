@@ -98,9 +98,9 @@ public class HbLexerFreeFormTest extends HbLexerTest {
   }
 
   public void testTooManyMustaches() {
-    TokenizerResult result = tokenize("{{{{");
-    result.shouldMatchTokenTypes(OPEN_UNESCAPED, INVALID);
-    result.shouldMatchTokenContent("{{{", "{");
+    TokenizerResult result = tokenize("{{{{{");
+    result.shouldMatchTokenTypes(OPEN_RAW_BLOCK, INVALID);
+    result.shouldMatchTokenContent("{{{{", "{");
   }
 
   public void testTooManyCommentCloseStaches() {
@@ -275,5 +275,11 @@ public class HbLexerFreeFormTest extends HbLexerTest {
     TokenizerResult result = tokenize("{{>foo @bar.baz}}");
     result.shouldMatchTokenTypes(OPEN_PARTIAL, ID, WHITE_SPACE, DATA_PREFIX, ID, SEP, ID, CLOSE);
     result.shouldMatchTokenContent("{{>", "foo", " ", "@", "bar", ".", "baz", "}}");
+  }
+
+  public void testRawBlock() {
+    TokenizerResult result = tokenize("{{{{raw}}}} {{test}} {{{{/raw}}}}");
+    result.shouldMatchTokenTypes(OPEN_RAW_BLOCK, ID, CLOSE_RAW_BLOCK, CONTENT, END_RAW_BLOCK, ID, CLOSE_RAW_BLOCK);
+    result.shouldMatchTokenContent("{{{{", "raw", "}}}}", " {{test}} ", "{{{{/", "raw", "}}}}");
   }
 }
