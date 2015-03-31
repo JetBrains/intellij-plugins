@@ -30,8 +30,10 @@ import icons.JsTestDriverIcons;
 public class JstdConfigurationType extends ConfigurationTypeBase {
 
   private static final String NAME = "JsTestDriver";
+  public static final String ID = "JsTestDriver-test-runner";
+
   public JstdConfigurationType() {
-    super("JSTestDriver:ConfigurationType", NAME, NAME, JsTestDriverIcons.JsTestDriver);
+    super(ID, NAME, NAME, JsTestDriverIcons.JsTestDriver);
     addFactory(new ConfigurationFactory(this) {
       @Override
       public RunConfiguration createTemplateConfiguration(Project project) {
