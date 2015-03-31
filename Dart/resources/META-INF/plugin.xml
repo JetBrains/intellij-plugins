@@ -189,13 +189,6 @@
                       enabledByDefault="true"
                       level="WARNING"
                       implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartAnalysisServerGlobalInspectionTool"/>
-
-    <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="dart.sdk.is.not.configured"
-                     groupName="Dart" enabledByDefault="true" level="WARNING"
-                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartSdkIsNotConfiguredInspection"/>
-    <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="dart.sdk.is.out.of.date"
-                     groupName="Dart" enabledByDefault="true" level="INFO"
-                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartSdkIsOutOfDateInspection"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">
@@ -206,6 +199,9 @@
     <!-- Action for Google internal developers only, action can be found only using 'Find Action' -->
     <action id="Dart.pub.list.package.dirs" class="com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction2"
             text="Configure Dart package roots using 'pub list-package-dirs'"/>
+
+    <action id="Dart.open.settings" class="com.jetbrains.lang.dart.ide.actions.OpenDartSettings"
+            text="Open Dart Settings"/>
 
     <action id="Dart.stop.pub.server" class="com.jetbrains.lang.dart.pubServer.StopPubServerAction" text="Stop Pub Serve"/>
 
