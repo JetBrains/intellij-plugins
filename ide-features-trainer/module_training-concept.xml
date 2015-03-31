@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_training-concept" default="compile.module.training-concept">
+  <dirname property="module.training-concept.basedir" file="${ant.file.module_training-concept}"/>
+  
+  <property name="module.jdk.home.training-concept" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.training-concept" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.training-concept" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.training-concept" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
+  
+  <property name="training-concept.output.dir" value="${module.training-concept.basedir}/out/production/training-concept"/>
+  <property name="training-concept.testoutput.dir" value="${module.training-concept.basedir}/out/test/training-concept"/>
+  
+  <path id="training-concept.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="training-concept.module.production.classpath">
+    <path refid="${module.jdk.classpath.training-concept}"/>
+  </path>
+
+  <path id="training-concept.runtime.production.module.classpath">
+    <pathelement location="${training-concept.output.dir}"/>
+  </path>
+  
+  <path id="training-concept.module.classpath">
+    <path refid="${module.jdk.classpath.training-concept}"/>
+    <pathelement location="${training-concept.output.dir}"/>
+  </path>
+  
+  <path id="training-concept.runtime.module.classpath">
+    <pathelement location="${training-concept.testoutput.dir}"/>
+    <pathelement location="${training-concept.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.training-concept">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.training-concept">
+    <patternset refid="excluded.from.module.training-concept"/>
+  </patternset>
+  
+  <path id="training-concept.module.sourcepath">
+    <dirset dir="${module.training-concept.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.training-concept" depends="compile.module.training-concept.production,compile.module.training-concept.tests" description="Compile module training-concept"/>
+  
+  <target name="compile.module.training-concept.production" depends="register.custom.compilers" description="Compile module training-concept; production classes">
+    <mkdir dir="${training-concept.output.dir}"/>
+    <javac2 destdir="${training-concept.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.training-concept}/javac">
+      <compilerarg line="${compiler.args.training-concept}"/>
+      <bootclasspath refid="training-concept.module.bootclasspath"/>
+      <classpath refid="training-concept.module.production.classpath"/>
+      <src refid="training-concept.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.training-concept"/>
+    </javac2>
+    
+    <copy todir="${training-concept.output.dir}">
+      <fileset dir="${module.training-concept.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.training-concept.tests" depends="register.custom.compilers,compile.module.training-concept.production" description="compile module training-concept; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.training-concept" description="cleanup module">
+    <delete dir="${training-concept.output.dir}"/>
+    <delete dir="${training-concept.testoutput.dir}"/>
+  </target>
+  
+  <property name="training-concept.plugin.path.jar" value="${module.training-concept.basedir}/training-concept.zip"/>
+  
+  <!-- Build archive for plugin 'training-concept' -->
+  <target name="plugin.build.jar.training-concept" depends="compile.module.training-concept" description="Build plugin archive for module &#39;training-concept&#39;">
+    <property name="tmp.dir.training-concept" value="${module.training-concept.basedir}/../temp"/>
+    <mkdir dir="${tmp.dir.training-concept}"/>
+    <mkdir dir="${tmp.dir.training-concept}/lib"/>
+    <jar destfile="${tmp.dir.training-concept}/lib/training-concept.jar" duplicate="preserve">
+      <zipfileset dir="${module.training-concept.basedir}/out/production/training-concept"/>
+      <zipfileset file="${module.training-concept.basedir}/META-INF/plugin.xml" prefix="META-INF"/>
+      <manifest>
+        <attribute name="Created-By" value="IntelliJ IDEA"/>
+        <attribute name="Manifest-Version" value="1.0"/>
+      </manifest>
+    </jar>
+    <zip destfile="${training-concept.plugin.path.jar}">
+      <fileset dir="${module.training-concept.basedir}/../temp"/>
+    </zip>
+    <delete dir="${tmp.dir.training-concept}"/>
+  </target>
+</project>

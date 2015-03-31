@@ -6,6 +6,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import org.jetbrains.training.MyClassLoader;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class Scenario {
     public Scenario(String path) throws JDOMException, IOException {
         this.path = path;
 
-        InputStream is = this.getClass().getResourceAsStream(path);
+        InputStream is = MyClassLoader.getInstance().getResourceAsStream(path);
 
         SAXBuilder builder = new SAXBuilder();
         doc = builder.build(is);
