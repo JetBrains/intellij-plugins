@@ -56,14 +56,19 @@ public class DartSdkUtil {
   }
 
   @Nullable
-  public static SdkUpdateInfo checkForFreshSdk(final @NotNull String sdkHome) {
-    return SdkReleaseChannel.forSdk(sdkHome).checkForUpdate(sdkHome);
+  public static SdkUpdateInfo checkForNewerStableSDK(final @NotNull String sdkHome) {
+    return SdkReleaseChannel.STABLE.checkForUpdate(sdkHome);
   }
 
-  enum SdkReleaseChannel {
-    DEV("https://www.dartlang.org/tools/download-archive/",
+  @Nullable
+  public static SdkUpdateInfo checkForNewerDevSDK(final @NotNull String sdkHome) {
+    return SdkReleaseChannel.DEV.checkForUpdate(sdkHome);
+  }
+
+  public enum SdkReleaseChannel {
+    DEV("https://www.dartlang.org/redirects/sdk-download-dev",
         "https://storage.googleapis.com/dart-archive/channels/dev/release/latest/VERSION"),
-    STABLE("https://www.dartlang.org/tools/sdk/",
+    STABLE("https://www.dartlang.org/redirects/sdk-download-stable",
            "https://storage.googleapis.com/dart-archive/channels/stable/release/latest/VERSION");
 
     SdkReleaseChannel(String downloadUrl, String updateCheckUrl) {
@@ -75,12 +80,17 @@ public class DartSdkUtil {
     private final String myUpdateCheckUrl;
 
     @NotNull
-    static SdkReleaseChannel forSdk(final @NotNull String sdkHome) {
+    public String getDownloadUrl() {
+      return myDownloadUrl;
+    }
+
+    @NotNull
+    static boolean isDev(final @NotNull String sdkHome) {
       final String currentVersion = getSdkVersion(sdkHome);
       if (currentVersion != null && currentVersion.contains("-dev")) {
-        return DEV;
+        return true;
       }
-      return STABLE;
+      return false;
     }
 
     @Nullable
