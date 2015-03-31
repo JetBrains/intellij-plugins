@@ -1,22 +1,26 @@
 package org.jetbrains.training.lesson;
 
 import com.intellij.CommonBundle;
-import com.intellij.ide.scratch.ScratchFileService;
-import com.intellij.ide.scratch.ScratchFileType;
-import com.intellij.ide.scratch.ScratchRootType;
+//import com.intellij.ide.scratch.ScratchpadManager;
 import com.intellij.lang.Language;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.BalloonBuilder;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
@@ -25,7 +29,10 @@ import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
 import org.jetbrains.training.LessonIsOpenedException;
 import org.jetbrains.training.graphics.DetailPanel;
+import org.jetbrains.training.keymap.KeymapUtil;
+import org.jetbrains.training.keymap.SubKeymapUtil;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,12 +42,12 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by karashevich on 10/03/15.
  */
-public class LessonStarter {
+public class LessonStarterEx {
 
     AnActionEvent anActionEvent;
     Dimension dimension;
 
-    public LessonStarter(AnActionEvent ideActionEvent) {
+    public LessonStarterEx(AnActionEvent ideActionEvent) {
         anActionEvent = ideActionEvent;
 
         //TODO: delete that
@@ -97,10 +104,9 @@ public class LessonStarter {
         if (lesson == null) throw new BadLessonException("Cannot open \"null\" lesson");
         if (lesson.isOpen()) throw new LessonIsOpenedException(lesson.getId() + " is opened");
 
-        final VirtualFile vf;
-//        vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
-        //TODO: remove const "scratch" here
-        vf = ScratchRootType.getInstance().createScratchFile(e.getProject(), "scratch", Language.findLanguageByID("JAVA"), "");
+        final VirtualFile vf = null;
+        //vf = ScratchpadManager.getInstance(e.getProject()).createScratchFile(Language.findLanguageByID("JAVA"));
+
 
         OpenFileDescriptor descriptor = new OpenFileDescriptor(e.getProject(), vf);
         final Editor editor = FileEditorManager.getInstance(e.getProject()).openTextEditor(descriptor, true);
@@ -123,24 +129,7 @@ public class LessonStarter {
             }
         });
 
-        boolean vacantName = false;
-        String lessonName = lesson.getId();
-        int version = 1;
-
-        while(!vacantName) {
-            try {
-                if (version == 1) {
-                    vf.rename(this, lessonName); //Rename scratch file as a lesson name
-                    vacantName = true;
-                } else {
-                    vf.rename(this, lessonName + " " + version);
-                    vacantName = true;
-                }
-            } catch (IOException e1) {
-                version++;
-            }
-        }
-
+        vf.rename(this, lesson.getId()); //Rename scratch file as a lesson name
         InputStream is = this.getClass().getResourceAsStream(lesson.getParentCourse().getAnswersPath() + lesson.getTargetPath());
         if(is == null) throw new IOException("Unable to get answer for \"" + lesson.getId() + "\" lesson");
         final String target = new Scanner(is).useDelimiter("\\Z").next();
