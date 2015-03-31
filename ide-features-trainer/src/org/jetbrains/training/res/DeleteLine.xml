@@ -30,7 +30,7 @@
         <Action action="EditorDeleteLine" delay="2000" balloon="&lt;shortcut&gt; (Delete line)"/>
         <Wait delay="200"/>
     </MouseBlock>
-    <Again description="That's it!" btn="Let me try">
+    <Replay description="That's it!" btn="Let me try">
         <Action action="$SelectAll" delay="20"/>
         <Action action="$Delete" delay="20"/>
         <MoveCaret offset="0"/>
@@ -60,7 +60,7 @@
         <Action action="EditorDeleteLine" delay="2000" balloon="&lt;shortcut&gt; (Delete line)"/>
         <Wait delay="200"/>
     </MouseBlock>
-    </Again>
+    </Replay>
     <TraverseCaret stop="0" delay="20"/>
     <Try description="Delete the &lt;span color=&quot;gray&quot;&gt;for&lt;/span&gt; statement to complete this lesson" win-message="Cool, now you can delete code fast :)" trigger="EditorDeleteLine"/>
 </xml>

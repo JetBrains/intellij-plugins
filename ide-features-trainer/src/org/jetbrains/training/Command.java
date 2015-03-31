@@ -21,8 +21,7 @@ public abstract class Command {
 
     private CommandType commandType;
 
-    protected final String AGAIN = "again";
-    public enum CommandType {START, TEXT, TRY, ACTION, AGAIN, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, TRAVERSECARET, MOUSEBLOCK, MOUSEUNBLOCK, WAIT}
+        public enum CommandType {START, TEXT, TRY, ACTION, REPLAY, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, TRAVERSECARET, MOUSEBLOCK, MOUSEUNBLOCK, WAIT}
 
     public Command(CommandType commandType) {
         this.commandType = commandType;
@@ -78,13 +77,13 @@ public abstract class Command {
     }
 
     protected void initAgainButton(Element element, DetailPanel infoPanel){
-        if(element.getAttribute(AGAIN) != null) {
-            if (element.getAttribute(AGAIN).getValue().toUpperCase().equals("true".toUpperCase()))
-                infoPanel.showAgainButton();
-            else if (element.getAttribute(AGAIN).getValue().toUpperCase().equals("false".toUpperCase()))
-                infoPanel.hideAgainButton();
+        if(element.getAttribute(CommandType.REPLAY.toString().toUpperCase()) != null) {
+            if (element.getAttribute(CommandType.REPLAY.toString().toUpperCase()).getValue().toUpperCase().equals("true".toUpperCase()))
+            infoPanel.showReplayButton();
+            else if (element.getAttribute(CommandType.REPLAY.toString().toUpperCase()).getValue().toUpperCase().equals("false".toUpperCase()))
+            infoPanel.hideReplayButton();
         } else {
-            infoPanel.hideAgainButton();
+            infoPanel.hideReplayButton();
         }
     }
 

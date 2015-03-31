@@ -7,6 +7,7 @@ import org.jdom.input.SAXBuilder;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
+import org.jetbrains.training.MyClassLoader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,16 +21,13 @@ public class Course {
 
     private ArrayList<Lesson> lessons;
     private String path;
-    private String pathDir;
-    final private String defaultPath = "data/DefaultCourse.xml";
-    final private String defaultPathDir = "data/";
+    final private String defaultPath = "DefaultCourse.xml";
     private String answersPath;
     private Element root;
     private String id;
 
     public Course() throws BadCourseException, BadLessonException {
         path = defaultPath;
-        pathDir = defaultPathDir;
         lessons = new ArrayList<Lesson>();
         id = "default";
 
@@ -40,7 +38,6 @@ public class Course {
     public Course(String coursePath) throws BadCourseException, BadLessonException {
         //load xml with lessons
         path = coursePath;
-        pathDir = defaultPathDir;
 
         lessons = new ArrayList<Lesson>();
         initLessons();
@@ -54,7 +51,7 @@ public class Course {
 
     private void initLessons() throws BadCourseException, BadLessonException {
 
-        InputStream is = this.getClass().getResourceAsStream(path);
+        InputStream is = MyClassLoader.getInstance().getResourceAsStream(path);
 
         SAXBuilder builder = new SAXBuilder();
         Document doc = null;
@@ -78,7 +75,7 @@ public class Course {
                 } else {
                     throw new BadLessonException("Cannot obtain lessons from " + path + " course file");
                 }
-                Lesson tmpl = new Lesson(pathDir + lessonEl.getAttribute("path").getValue(), lessonIsPassed, this);
+                Lesson tmpl = new Lesson(lessonEl.getAttribute("path").getValue(), lessonIsPassed, this);
                 lessons.add(tmpl);
             } else throw new BadCourseException("Cannot obtain lessons from " + path + " course file");
         }
