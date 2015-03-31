@@ -25,7 +25,7 @@
     <Wait delay="400"/>
     <TypeText>x</TypeText>
 </MouseBlock>
-    <Again description="That's it!" btn="Let me try">
+    <Replay description="That's it!" btn="Let me try">
         <Action action="EditorDelete" delay="50"/>
         <Action action="$SelectAll" delay="100"/>
         <Wait delay="400"/>
@@ -56,7 +56,7 @@
     <Wait delay="400"/>
     <TypeText>x</TypeText>
 </MouseBlock>
-    </Again>
+    </Replay>
     <Action action="EditorDelete" delay="50"/>
     <Action action="$SelectAll" delay="100"/>
     <Wait delay="400"/>

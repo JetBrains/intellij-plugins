@@ -9,6 +9,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
 import org.jetbrains.training.LessonIsOpenedException;
+import org.jetbrains.training.MyClassLoader;
 import org.jetbrains.training.graphics.DetailPanel;
 
 import java.awt.*;
@@ -123,25 +125,32 @@ public class LessonStarter {
             }
         });
 
-        boolean vacantName = false;
-        String lessonName = lesson.getId();
-        int version = 1;
 
-        while(!vacantName) {
-            try {
-                if (version == 1) {
-                    vf.rename(this, lessonName); //Rename scratch file as a lesson name
-                    vacantName = true;
-                } else {
-                    vf.rename(this, lessonName + " " + version);
-                    vacantName = true;
+        //Rename Scratch file
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                boolean vacantName = false;
+                String lessonName = lesson.getId();
+                int version = 1;
+
+                while(!vacantName) {
+                    try {
+                        if (version == 1) {
+                            vf.rename(this, lessonName);
+                            vacantName = true;
+                        } else {
+                            vf.rename(this, lessonName + "_" + version);
+                            vacantName = true;
+                        }
+                    } catch (IOException e1) {
+                        version++;
+                    }
                 }
-            } catch (IOException e1) {
-                version++;
             }
-        }
+        });
 
-        InputStream is = this.getClass().getResourceAsStream(lesson.getParentCourse().getAnswersPath() + lesson.getTargetPath());
+        InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getParentCourse().getAnswersPath() + lesson.getTargetPath());
         if(is == null) throw new IOException("Unable to get answer for \"" + lesson.getId() + "\" lesson");
         final String target = new Scanner(is).useDelimiter("\\Z").next();
 

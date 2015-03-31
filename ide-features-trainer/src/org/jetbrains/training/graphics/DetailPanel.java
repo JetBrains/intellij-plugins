@@ -9,11 +9,9 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.plaf.ButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -32,7 +30,7 @@ public class DetailPanel extends JPanel implements Disposable{
 
     private JLabel myLabel;
     private JButton btn;
-    private JButton againButton;
+    private JButton replayButton;
 
     public DetailPanel(Dimension dimension) throws IOException, FontFormatException {
 
@@ -80,20 +78,20 @@ public class DetailPanel extends JPanel implements Disposable{
 
         btn.setContentAreaFilled(false);
 
-        againButton = new RoundedCornerButton("↩");
-        againButton.setUI(new RoundedCornerButtonUI());
-        againButton.setFont(customFont.deriveFont(13.0F));
-        againButton.setBorderPainted(false);
+        replayButton = new RoundedCornerButton("Show again");
+        replayButton.setUI(new RoundedCornerButtonUI());
+        replayButton.setFont(customFont.deriveFont(13.0F));
+        replayButton.setBorderPainted(false);
         if( UIUtil.isUnderDarcula()) {
-            againButton.setForeground(Color.WHITE);
+            replayButton.setForeground(Color.WHITE);
         } else {
-            againButton.setForeground(Color.WHITE);
+            replayButton.setForeground(Color.WHITE);
         }
-        againButton.setRolloverEnabled(false);
-        againButton.setFocusable(false);
-        againButton.setBackground((new Color(0,0,0,0)));
-        againButton.setContentAreaFilled(false);
-        againButton.setVisible(false);
+        replayButton.setRolloverEnabled(false);
+        replayButton.setFocusable(false);
+        replayButton.setBackground((new Color(0, 0, 0, 0)));
+        replayButton.setContentAreaFilled(false);
+        replayButton.setVisible(false);
 
 
         Box vertBox = Box.createVerticalBox();
@@ -102,7 +100,7 @@ public class DetailPanel extends JPanel implements Disposable{
         lineBox.add(Box.createHorizontalStrut(magicConst));
         lineBox.add(myLabel);
         lineBox.add(Box.createHorizontalGlue());
-        lineBox.add(againButton);
+        lineBox.add(replayButton);
         lineBox.add(Box.createHorizontalStrut(buttonGap));
         lineBox.add(btn);
         lineBox.add(Box.createHorizontalStrut(magicConst));
@@ -195,25 +193,25 @@ public class DetailPanel extends JPanel implements Disposable{
         }
     }
 
-    public void showAgainButton(){
-        if (againButton.isVisible()) {
+    public void showReplayButton(){
+        if (replayButton.isVisible()) {
             //do nothing
         } else {
             UIUtil.invokeLaterIfNeeded(new Runnable() {
                 @Override
                 public void run() {
-                    againButton.setVisible(true);
+                    replayButton.setVisible(true);
                 }
             });
         }
     }
 
-    public void hideAgainButton(){
-        if (againButton.isVisible()) {
+    public void hideReplayButton(){
+        if (replayButton.isVisible()) {
             UIUtil.invokeLaterIfNeeded(new Runnable() {
                 @Override
                 public void run() {
-                    againButton.setVisible(false);
+                    replayButton.setVisible(false);
                 }
             });
         } else {
@@ -221,22 +219,22 @@ public class DetailPanel extends JPanel implements Disposable{
         }
     }
 
-    public void setAgainButton(String s){
+    public void setReplayButton(String s){
         final String newString = s;
         UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
             public void run() {
-                againButton.setText(newString);
+                replayButton.setText(newString);
             }
         });
         showButton();
     }
 
-    public void addAgainButtonAction(final Runnable action) throws InterruptedException {
-        againButton.addActionListener(new ActionListener() {
+    public void addReplayButtonAction(final Runnable action) throws InterruptedException {
+        replayButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                againButton.removeActionListener(this);
+                replayButton.removeActionListener(this);
                 action.run();
             }
         });

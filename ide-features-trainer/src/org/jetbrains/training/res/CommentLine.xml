@@ -29,7 +29,7 @@ public class CommentLineDemo {
         <TraverseCaret stop="108" delay="20"/>
         <Action action="CommentByLineComment" delay="2000" balloon="&lt;shortcut&gt; (Uncomment line)"/>
     </MouseBlock>
-    <Again description="That's it!" btn="Let me try">
+    <Replay description="That's it!" btn="Let me try">
         <Action action="$SelectAll" delay="20"/>
         <Action action="$Delete" delay="20"/>
         <MoveCaret offset="0"/>
@@ -60,6 +60,6 @@ public class CommentLineDemo {
         <TraverseCaret stop="108" delay="20"/>
         <Action action="CommentByLineComment" delay="2000" balloon="&lt;shortcut&gt; (Uncomment line)"/>
     </MouseBlock>
-    </Again>
+    </Replay>
     <Try description="Now comment out the &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement" win-message="Awesome!" trigger="CommentByLineComment"/>
 </xml>

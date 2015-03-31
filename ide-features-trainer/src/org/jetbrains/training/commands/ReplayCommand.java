@@ -19,10 +19,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  * From this command to TextCommand with an attribute again="true" all actions will be cached to Queue<Element> againChain
  *
  */
-public class AgainCommand extends Command {
+public class ReplayCommand extends Command {
 
-    public AgainCommand() {
-        super(CommandType.AGAIN);
+    public ReplayCommand() {
+        super(CommandType.REPLAY);
     }
     private Queue<Element> myElements;
 
@@ -31,23 +31,24 @@ public class AgainCommand extends Command {
 
 //        againChain = new LinkedList<Element>(elements);
 
-        final Element againElement = elements.peek();
-        updateHTMLDescription(againElement, infoPanel, editor);
+        final Element replayElement = elements.peek();
+        updateHTMLDescription(replayElement, infoPanel, editor);
 
         //Show and program againButton
-        infoPanel.showAgainButton();
-        infoPanel.addAgainButtonAction(new Runnable() {
+        infoPanel.showReplayButton();
+        infoPanel.addReplayButtonAction(new Runnable() {
             @Override
             public void run() {
-                infoPanel.hideAgainButton();
-                addAgainToElements(againElement, elements);
+                infoPanel.hideReplayButton();
+                infoPanel.setText("...");
+                addReplayToElements(replayElement, elements);
                 startNextCommand(myElements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
             }
         });
 
         infoPanel.showButton();
-        if (againElement.getAttribute("btn") != null) {
-            final String buttonText = (againElement.getAttribute("btn").getValue());
+        if (replayElement.getAttribute("btn") != null) {
+            final String buttonText = (replayElement.getAttribute("btn").getValue());
             infoPanel.setButtonText(buttonText);
         }
         infoPanel.removeButtonActions();
@@ -55,7 +56,7 @@ public class AgainCommand extends Command {
             @Override
             public void run() {
                 elements.poll();
-                infoPanel.hideAgainButton();
+                infoPanel.hideReplayButton();
                 startNextCommand(elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
             }
         });
@@ -72,7 +73,7 @@ public class AgainCommand extends Command {
 
     }
 
-    private void addAgainToElements(Element element, Queue<Element> elements){
+    private void addReplayToElements(Element element, Queue<Element> elements){
         myElements = new LinkedBlockingQueue<Element>();
 
         //add AgainBlock
