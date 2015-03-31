@@ -13,7 +13,7 @@
     <orderEntry type="module" module-name="jps-builders" />
     <orderEntry type="module" module-name="maven-jps-plugin" />
     <orderEntry type="module-library" exported="">
-      <library>
+      <library name="bndlib">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/bndlib-2.4.0.jar!/" />
         </CLASSES>
@@ -24,7 +24,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library>
+      <library name="plexus-utils">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/plexus-utils-3.0.10.jar!/" />
         </CLASSES>
@@ -32,72 +32,20 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="bundlor-1.0.0">
+    <orderEntry type="module-library">
+      <library name="bundlor">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/com.springsource.bundlor.ant-1.0.0.RELEASE.jar!/" />
           <root url="jar://$MODULE_DIR$/../lib/com.springsource.bundlor.blint-1.0.0.RELEASE.jar!/" />
           <root url="jar://$MODULE_DIR$/../lib/com.springsource.bundlor-1.0.0.RELEASE.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/../lib/com.springsource.bundlor.ant-sources-1.0.0.RELEASE.jar!/" />
-          <root url="jar://$MODULE_DIR$/../lib/com.springsource.bundlor.blint-sources-1.0.0.RELEASE.jar!/" />
-          <root url="jar://$MODULE_DIR$/../lib/com.springsource.bundlor-sources-1.0.0.RELEASE.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/com.springsource.util.parser.manifest-2.0.0.RELEASE.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="com.springsource.org.objectweb.asm-3.1.0">
-        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/com.springsource.util.osgi-2.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/com.springsource.util.math-2.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/com.springsource.util.common-2.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/com.springsource.org.apache.commons.cli-1.2.0.jar!/" />
           <root url="jar://$MODULE_DIR$/../lib/com.springsource.org.objectweb.asm-3.1.0.jar!/" />
           <root url="jar://$MODULE_DIR$/../lib/com.springsource.org.objectweb.asm.commons-3.1.0.jar!/" />
           <root url="jar://$MODULE_DIR$/../lib/com.springsource.org.objectweb.asm.tree-3.1.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/com.springsource.org.apache.commons.cli-1.2.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/com.springsource.util.common-2.0.0.RELEASE.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/com.springsource.util.math-2.0.0.RELEASE.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/com.springsource.util.osgi-2.0.0.RELEASE.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
