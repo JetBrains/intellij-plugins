@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
@@ -48,6 +49,11 @@ public class DartIndentProcessor {
     }
 
     if (COMMENTS.contains(elementType) && prevSiblingType == LBRACE && parentType == CLASS_BODY) {
+      return Indent.getNormalIndent();
+    }
+
+    if (parentType == ENUM_DEFINITION && isBetweenBraces(node)) {
+      // instead of isBetweenBraces(node) we can parse enum block as a separate ASTNode, or build formatter blocks not tied to AST.
       return Indent.getNormalIndent();
     }
 
@@ -116,12 +122,23 @@ public class DartIndentProcessor {
       return Indent.getNormalIndent();
     }
     if (parentType == IF_STATEMENT && elementType != BLOCK &&
-        (prevSiblingType == RPAREN || (prevSiblingType == ELSE && elementType != IF_STATEMENT) )) {
+        (prevSiblingType == RPAREN || (prevSiblingType == ELSE && elementType != IF_STATEMENT))) {
       return Indent.getNormalIndent();
     }
     if (prevSiblingType != DOT && elementType == DOT && parentType == CASCADE_REFERENCE_EXPRESSION) {
       return Indent.getNormalIndent();
     }
     return Indent.getNoneIndent();
+  }
+
+  private static boolean isBetweenBraces(@NotNull final ASTNode node) {
+    final IElementType elementType = node.getElementType();
+    if (elementType == LBRACE || elementType == RBRACE) return false;
+
+    for (ASTNode sibling = node.getTreePrev(); sibling != null; sibling = sibling.getTreePrev()) {
+      if (sibling.getElementType() == LBRACE) return true;
+    }
+
+    return false;
   }
 }
