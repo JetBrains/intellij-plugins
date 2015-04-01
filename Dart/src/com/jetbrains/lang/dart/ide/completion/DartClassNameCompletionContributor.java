@@ -57,7 +57,8 @@ public class DartClassNameCompletionContributor extends CompletionContributor {
                    .addAdditionalGlobalVariants(result, parameters.getPosition(), addedNames, new Condition<DartComponentInfo>() {
                                                   @Override
                                                   public boolean value(DartComponentInfo info) {
-                                                    return info.getComponentType() == DartComponentType.CLASS;
+                                                    final DartComponentType type = info.getComponentType();
+                                                    return type == DartComponentType.CLASS || type == DartComponentType.TYPEDEF;
                                                   }
                                                 }
                    );

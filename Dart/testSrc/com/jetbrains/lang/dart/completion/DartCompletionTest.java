@@ -139,7 +139,10 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
     myFixture.addFileToProject("lib/in_lib.dart", "library lib; export 'exported.dart'; part 'lib_part.dart'; class InLib{}");
     myFixture.addFileToProject("lib/lib_part.dart", "part of lib; class InLibPart{} class InLibPartHidden{} class _InLibPartPrivate{}");
     myFixture.addFileToProject("lib/exported.dart", "class InExported{} class _InExported{}");
-    myFixture.addFileToProject("lib/in_lib2.dart", "class InLib2{} class _InLib2{}");
+    myFixture.addFileToProject("lib/in_lib2.dart", "class InLib2{}\n" +
+                                                   "class _InLib2{}\n" +
+                                                   "enum Enum {enumConstant}\n" +
+                                                   "typedef void Typedef(param);");
     myFixture.addFileToProject("tool/in_tool.dart", "class InTool{} class _InTool{}");
     myFixture.addFileToProject("packages/SomePackage/in_package1.dart",
                                "class InPackage1{} class InPackage1NotShown{} class _InPackage1{}");
@@ -157,13 +160,13 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
            "class _InWebPart2{}\n" +
            "const <caret" +
            " completionIncludes='Object,String,int,bool,Iterable,Set,StateError,InLib,InLibPart,InExported,InPackage1,InWeb,_InWeb,InWebPart,_InWebPart,InWebPart2,_InWebPart2'" +
-           " completionExcludes='InLibPartHidden,_InLibPartPrivate,_InExported,_InLib2,_InTool,_InPackage1,_InPackage2,InPackage1NotShown,InLib2,InTool,InPackage2,SetMixin,FixedLengthListMixin,Point,JsObject,_Proxy,_SplayTree'>");
+           " completionExcludes='InLibPartHidden,_InLibPartPrivate,_InExported,_InLib2,_InTool,_InPackage1,_InPackage2,InPackage1NotShown,InLib2,Enum,Typedef,InTool,InPackage2,SetMixin,FixedLengthListMixin,Point,JsObject,_Proxy,_SplayTree'>");
 
     final LookupElement[] lookupElements = myFixture.complete(CompletionType.BASIC, 2);
     final List<String> includes =
       Arrays.asList("Object", "String", "int", "bool", "Iterable", "Set", "StateError", "InLib", "InLibPart", "InExported", "InPackage1",
                     "InWeb", "_InWeb", "InWebPart", "_InWebPart", "InWebPart2", "_InWebPart2", "InLibPartHidden", "InPackage1NotShown",
-                    "InLib2", "InPackage2", "SetMixin", "Point", "JsObject");
+                    "InLib2", "Enum", "Typedef", "InPackage2", "SetMixin", "Point", "JsObject");
     // not a class; out of scope; in internal library; private
     final List<String> excludes = Arrays.asList("PI", "InTool", "FixedLengthListMixin", "_Proxy", "_SplayTree", "_InLibPartPrivate",
                                                 "_InExported", "_InLib2", "_InTool", "_InPackage1", "_InPackage1");
@@ -174,17 +177,19 @@ public class DartCompletionTest extends DartCodeInsightFixtureTestCase {
     myFixture.addFileToProject("web/other.dart",
                                "import 'dart:core'; export 'other2.dart' show inOther2; var inOtherHidden, inOther, _inOther;");
     myFixture.addFileToProject("web/other2.dart", "var _inOther2, inOther2Hidden, inOther2;");
+    myFixture.addFileToProject("lib/other3.dart", "enum Enum {enumConstant}\n" +
+                                                  "typedef void Typedef(param);");
     doTest("import 'dart:core' as core;\n" +
            "import 'other.dart' hide inOtherHidden;\n" +
            "foo() {\n" +
-           "  core.<caret completionIncludes='int,Object,String' completionExcludes='core,foo,inOtherHidden,inOther2Hidden,inOther,inOther2,_inOther,_inOther2,JsObject'>x;\n" +
-           "  <caret completionIncludes='core,foo,inOther,inOther2' completionExcludes='inOtherHidden,inOther2Hidden,_inOther,_inOther2,int,Object,String,JsObject'>\n" +
+           "  core.<caret completionIncludes='int,Object,String' completionExcludes='core,foo,inOtherHidden,inOther2Hidden,inOther,inOther2,_inOther,_inOther2,Enum,Typedef,JsObject'>x;\n" +
+           "  <caret completionIncludes='core,foo,inOther,inOther2' completionExcludes='inOtherHidden,inOther2Hidden,_inOther,_inOther2,Enum,Typedef,int,Object,String,JsObject'>\n" +
            "}");
 
     final LookupElement[] lookupElements = myFixture.complete(CompletionType.BASIC, 2);
     final List<String> includes =
       Arrays.asList("Object", "String", "int", "bool", "Iterable", "Set", "StateError", "SetMixin", "Point", "JsObject",
-                    "core", "foo", "inOther", "inOtherHidden", "inOther2", "inOther2Hidden");
+                    "core", "foo", "inOther", "inOtherHidden", "inOther2", "inOther2Hidden", "Enum", "Typedef");
     final List<String> excludes = Arrays.asList("_inOther", "_inOther2");
     checkLookupElements(lookupElements, null, includes, excludes, "### 2nd basic completion ###");
   }
