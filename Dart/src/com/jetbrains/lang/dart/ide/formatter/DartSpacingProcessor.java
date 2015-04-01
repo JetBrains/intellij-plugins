@@ -175,6 +175,10 @@ public class DartSpacingProcessor {
       return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
     }
 
+    if (elementType == ENUM_DEFINITION && type2 == LBRACE) {
+      return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
+    }
+
     if (type1 == LPAREN || type2 == RPAREN) {
       if (elementType == IF_STATEMENT) {
         return addSingleSpaceIf(mySettings.SPACE_WITHIN_IF_PARENTHESES);
@@ -316,6 +320,14 @@ public class DartSpacingProcessor {
       return Spacing.createSpacing(1, 1, mySettings.SPECIAL_ELSE_IF_TREATMENT ? 0 : 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
+    boolean isBraces = type1 == LBRACE || type2 == RBRACE;
+    if ((isBraces && elementType != NAMED_FORMAL_PARAMETERS && elementType != MAP_LITERAL_EXPRESSION) ||
+        BLOCKS.contains(type1) ||
+        FUNCTION_DEFINITION.contains(type1) ||
+        COMMENTS.contains(type1)) {
+      return addLineBreak();
+    }
+
     if (type1 == COMMA &&
         (elementType == FORMAL_PARAMETER_LIST || elementType == ARGUMENT_LIST || elementType == NORMAL_FORMAL_PARAMETER)) {
       return addSingleSpaceIf(mySettings.SPACE_AFTER_COMMA_IN_TYPE_ARGUMENTS);
@@ -347,14 +359,6 @@ public class DartSpacingProcessor {
         type1 == SWITCH_CASE ||
         type1 == DEFAULT_CASE ||
         type1 == WHILE_STATEMENT) {
-      return addLineBreak();
-    }
-
-    boolean isBraces = type1 == LBRACE || type2 == RBRACE;
-    if ((isBraces && elementType != NAMED_FORMAL_PARAMETERS && elementType != MAP_LITERAL_EXPRESSION) ||
-        BLOCKS.contains(type1) ||
-        FUNCTION_DEFINITION.contains(type1) ||
-        COMMENTS.contains(type1)) {
       return addLineBreak();
     }
 

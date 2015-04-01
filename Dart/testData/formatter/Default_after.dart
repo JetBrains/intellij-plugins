@@ -81,3 +81,15 @@ void main() {
   else
     print("4");
 }
+
+@deprecated
+enum
+/**/
+Enum {
+  /**/
+  a, b, /**/
+  c, d
+  ,
+  e
+  , f,
+}
