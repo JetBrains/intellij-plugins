@@ -25,10 +25,12 @@
 package org.osmorc.impl;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 
@@ -46,6 +48,10 @@ import java.util.Set;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class AdditionalJARContentsWatcherManager {
+  public static AdditionalJARContentsWatcherManager getInstance(@NotNull Module module) {
+    return ModuleServiceManager.getService(module, AdditionalJARContentsWatcherManager.class);
+  }
+
   private final LocalFileSystem myFileSystem;
   private final Module myModule;
   private final List<VirtualFile> myAdditionalBundleJARContents;

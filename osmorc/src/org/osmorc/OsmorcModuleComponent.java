@@ -27,13 +27,15 @@ package org.osmorc;
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetManagerAdapter;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetType;
+import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.impl.AdditionalJARContentsWatcherManager;
 
 /**
@@ -41,13 +43,9 @@ import org.osmorc.impl.AdditionalJARContentsWatcherManager;
  */
 public class OsmorcModuleComponent implements ModuleComponent {
   private final Module myModule;
-  private final BundleManager myBundleManager;
-  private final AdditionalJARContentsWatcherManager myWatcherManager;
 
-  public OsmorcModuleComponent(Module module, BundleManager bundleManager, AdditionalJARContentsWatcherManager watcherManager) {
+  public OsmorcModuleComponent(@NotNull Module module) {
     myModule = module;
-    myBundleManager = bundleManager;
-    myWatcherManager = watcherManager;
   }
 
   @NonNls
@@ -82,7 +80,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
 
   @Override
   public void projectClosed() {
-    myWatcherManager.cleanup();
+    AdditionalJARContentsWatcherManager.getInstance(myModule).cleanup();
   }
 
   @Override
@@ -90,27 +88,24 @@ public class OsmorcModuleComponent implements ModuleComponent {
 
   private void handleFacetChange(Facet facet) {
     if (facet.getTypeId() == OsmorcFacetType.ID) {
-      if (facet.getModule().getProject().isInitialized()) {
-        // reindex the module itself
-        buildManifestIndex();
-      }
-      myWatcherManager.updateWatcherSetup();
+      buildManifestIndex();
+      AdditionalJARContentsWatcherManager.getInstance(myModule).updateWatcherSetup();
     }
   }
 
-  /**
-   * Runs over the module and refreshes it's information in the bundle manager.
-   */
   private void buildManifestIndex() {
     OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
     if (facet != null) {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
+      new Task.Backgroundable(myModule.getProject(), OsmorcBundle.message("index.updating.task"), false) {
         @Override
-        public void run() {
-          if (myModule.isDisposed()) return;
-          myBundleManager.reindex(myModule);
+        public void run(@NotNull ProgressIndicator indicator) {
+          if (myModule.getProject().isOpen()) {
+            indicator.setIndeterminate(true);
+            indicator.setText(OsmorcBundle.message("index.updating.task"));
+            BundleManager.getInstance(myModule.getProject()).reindex(myModule);
+          }
         }
-      }, myModule.getDisposed());
+      }.queue();
     }
   }
 }
