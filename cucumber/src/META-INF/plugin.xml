@@ -89,10 +89,4 @@
     <extensionPoint qualifiedName="org.jetbrains.plugins.cucumber.steps.cucumberJvmExtensionPoint"
                     interface="org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint"/>
   </extensionPoints>
-
-  <project-components>
-    <component>
-      <implementation-class>org.jetbrains.plugins.cucumber.psi.GherkinPsiManager</implementation-class>
-    </component>
-  </project-components>
 </idea-plugin>
