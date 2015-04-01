@@ -1,5 +1,7 @@
 package com.jetbrains.lang.dart.pubServer;
 
+import com.google.common.net.UrlEscapers;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -14,6 +16,8 @@ import org.jetbrains.builtInWebServer.WebServerPathHandlerAdapter;
 import org.jetbrains.builtInWebServer.WebServerPathToFileManager;
 
 public class PubServerPathHandler extends WebServerPathHandlerAdapter {
+  private static final Logger LOG = Logger.getInstance(PubServerPathHandler.class.getName());
+
   @Override
   protected boolean process(@NotNull final String path,
                             @NotNull final Project project,
@@ -57,6 +61,17 @@ public class PubServerPathHandler extends WebServerPathHandlerAdapter {
       }
     }
 
-    return servedDir != null ? Pair.create(servedDir, pubServePath) : null;
+    return servedDir != null ? Pair.create(servedDir, escapeUrl(pubServePath)) : null;
+  }
+
+  private static String escapeUrl(@NotNull final String path) {
+    try {
+      // need to restore slash separators after UrlEscapers.urlPathSegmentEscaper work
+      return StringUtil.replace(UrlEscapers.urlPathSegmentEscaper().escape(path), "%2F", "/");
+    }
+    catch (Exception e) {
+      LOG.warn(path, e);
+      return path;
+    }
   }
 }
