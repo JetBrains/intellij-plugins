@@ -1,7 +1,7 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -23,8 +23,7 @@ public class CucumberJavaScenarioRunConfigurationProducer extends CucumberJavaFe
 
     final GherkinStepsHolder scenario = PsiTreeUtil.getParentOfType(sourceElement, GherkinScenario.class, GherkinScenarioOutline.class);
     if (scenario != null) {
-      final String scenarioName = scenario.getScenarioName().replaceAll("\\\"", "\\\\\"").replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)");
-      return scenarioName;
+      return StringUtil.escapeToRegexp(scenario.getScenarioName());
     }
 
     return super.getNameFilter(context);
