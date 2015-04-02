@@ -2,9 +2,9 @@
 <project name="module_training-concept" default="compile.module.training-concept">
   <dirname property="module.training-concept.basedir" file="${ant.file.module_training-concept}"/>
   
-  <property name="module.jdk.home.training-concept" value="${project.jdk.home}"/>
-  <property name="module.jdk.bin.training-concept" value="${project.jdk.bin}"/>
-  <property name="module.jdk.classpath.training-concept" value="${project.jdk.classpath}"/>
+  <property name="module.jdk.home.training-concept" value="${jdk.home.idea_ic-141.177.4}"/>
+  <property name="module.jdk.bin.training-concept" value="${jdk.bin.idea_ic-141.177.4}"/>
+  <property name="module.jdk.classpath.training-concept" value="jdk.classpath.idea_ic-141.177.4"/>
   
   <property name="compiler.args.training-concept" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
   
@@ -17,20 +17,32 @@
   
   <path id="training-concept.module.production.classpath">
     <path refid="${module.jdk.classpath.training-concept}"/>
+    <path refid="library.home.classpath"/>
+    <path refid="library.javafx-mx.classpath"/>
+    <path refid="library.javafx-src.classpath"/>
   </path>
-
+  
   <path id="training-concept.runtime.production.module.classpath">
     <pathelement location="${training-concept.output.dir}"/>
+    <path refid="library.home.classpath"/>
+    <path refid="library.javafx-mx.classpath"/>
+    <path refid="library.javafx-src.classpath"/>
   </path>
   
   <path id="training-concept.module.classpath">
     <path refid="${module.jdk.classpath.training-concept}"/>
     <pathelement location="${training-concept.output.dir}"/>
+    <path refid="library.home.classpath"/>
+    <path refid="library.javafx-mx.classpath"/>
+    <path refid="library.javafx-src.classpath"/>
   </path>
   
   <path id="training-concept.runtime.module.classpath">
     <pathelement location="${training-concept.testoutput.dir}"/>
     <pathelement location="${training-concept.output.dir}"/>
+    <path refid="library.home.classpath"/>
+    <path refid="library.javafx-mx.classpath"/>
+    <path refid="library.javafx-src.classpath"/>
   </path>
   
   
@@ -45,6 +57,7 @@
   <path id="training-concept.module.sourcepath">
     <dirset dir="${module.training-concept.basedir}">
       <include name="src"/>
+      <include name="res"/>
     </dirset>
   </path>
   
@@ -63,6 +76,10 @@
     
     <copy todir="${training-concept.output.dir}">
       <fileset dir="${module.training-concept.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.training-concept.basedir}/res">
         <patternset refid="compiler.resources"/>
         <type type="file"/>
       </fileset>
@@ -91,6 +108,7 @@
         <attribute name="Manifest-Version" value="1.0"/>
       </manifest>
     </jar>
+    <copy file="${module.training-concept.basedir}/../../../Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/lib/javafx-mx.jar" tofile="${tmp.dir.training-concept}/lib/javafx-mx.jar"/>
     <zip destfile="${training-concept.plugin.path.jar}">
       <fileset dir="${module.training-concept.basedir}/../temp"/>
     </zip>

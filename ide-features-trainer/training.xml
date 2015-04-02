@@ -15,25 +15,24 @@
   <property name="compiler.args" value=""/>
   <property name="compiler.max.memory" value="700m"/>
   <patternset id="ignored.files">
-    <exclude name="**/CVS/**"/>
-    <exclude name="**/SCCS/**"/>
-    <exclude name="**/RCS/**"/>
-    <exclude name="**/rcs/**"/>
-    <exclude name="**/.DS_Store/**"/>
-    <exclude name="**/.svn/**"/>
-    <exclude name="**/.pyc/**"/>
-    <exclude name="**/.pyo/**"/>
+    <exclude name="**/*.hprof/**"/>
     <exclude name="**/*.pyc/**"/>
     <exclude name="**/*.pyo/**"/>
-    <exclude name="**/.git/**"/>
-    <exclude name="**/*.hprof/**"/>
-    <exclude name="**/_svn/**"/>
-    <exclude name="**/.hg/**"/>
-    <exclude name="**/*.lib/**"/>
-    <exclude name="**/*~/**"/>
-    <exclude name="**/__pycache__/**"/>
-    <exclude name="**/.bundle/**"/>
     <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.bundle/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
   </patternset>
   <patternset id="library.patterns">
     <include name="*.zip"/>
@@ -58,26 +57,26 @@
   
   <!-- JDK definitions -->
   
-  <property name="jdk.bin.idea_ic-139.225.3" value="${jdk.home.idea_ic-139.225.3}/../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/bin"/>
-  <path id="jdk.classpath.idea_ic-139.225.3">
-    <fileset dir="${jdk.home.idea_ic-139.225.3}">
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/deploy.jar"/>
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/dt.jar"/>
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/javaws.jar"/>
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/jce.jar"/>
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/jconsole.jar"/>
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/management-agent.jar"/>
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/plugin.jar"/>
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/sa-jdi.jar"/>
+  <property name="jdk.bin.idea_ic-141.177.4" value="${jdk.home.idea_ic-141.177.4}/../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/bin"/>
+  <path id="jdk.classpath.idea_ic-141.177.4">
+    <fileset dir="${jdk.home.idea_ic-141.177.4}">
+      <include name="../../../Library/Java/Home/lib/deploy.jar"/>
+      <include name="../../../Library/Java/Home/lib/dt.jar"/>
+      <include name="../../../Library/Java/Home/lib/javaws.jar"/>
+      <include name="../../../Library/Java/Home/lib/jce.jar"/>
+      <include name="../../../Library/Java/Home/lib/jconsole.jar"/>
+      <include name="../../../Library/Java/Home/lib/management-agent.jar"/>
+      <include name="../../../Library/Java/Home/lib/plugin.jar"/>
+      <include name="../../../Library/Java/Home/lib/sa-jdi.jar"/>
       <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/charsets.jar"/>
       <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/classes.jar"/>
       <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/jsse.jar"/>
       <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/ui.jar"/>
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/ext/apple_provider.jar"/>
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/ext/dnsns.jar"/>
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/ext/localedata.jar"/>
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/ext/sunjce_provider.jar"/>
-      <include name="../../../System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/lib/ext/sunpkcs11.jar"/>
+      <include name="../../../Library/Java/Home/lib/ext/apple_provider.jar"/>
+      <include name="../../../Library/Java/Home/lib/ext/dnsns.jar"/>
+      <include name="../../../Library/Java/Home/lib/ext/localedata.jar"/>
+      <include name="../../../Library/Java/Home/lib/ext/sunjce_provider.jar"/>
+      <include name="../../../Library/Java/Home/lib/ext/sunpkcs11.jar"/>
       <include name="lib/annotations.jar"/>
       <include name="lib/asm-all.jar"/>
       <include name="lib/asm-commons.jar"/>
@@ -91,20 +90,20 @@
       <include name="lib/commons-codec-1.8.jar"/>
       <include name="lib/commons-httpclient-3.1-patched.jar"/>
       <include name="lib/commons-logging-1.1.3.jar"/>
-      <include name="lib/commons-net-3.1.jar"/>
+      <include name="lib/commons-net-3.3.jar"/>
       <include name="lib/ecj-4.4.jar"/>
       <include name="lib/extensions.jar"/>
-      <include name="lib/fluent-hc-4.3.2.jar"/>
+      <include name="lib/fluent-hc-4.3.6.jar"/>
       <include name="lib/forms_rt.jar"/>
       <include name="lib/freemarker.jar"/>
-      <include name="lib/groovy-all-2.2.1.jar"/>
-      <include name="lib/gson-2.2.4.jar"/>
+      <include name="lib/groovy-all-2.3.9.jar"/>
+      <include name="lib/gson-2.3.jar"/>
       <include name="lib/guava-17.0.jar"/>
       <include name="lib/hamcrest-core-1.3.jar"/>
       <include name="lib/hamcrest-library-1.3.jar"/>
-      <include name="lib/httpclient-4.3.2.jar"/>
-      <include name="lib/httpcore-4.3.1.jar"/>
-      <include name="lib/httpmime-4.3.2.jar"/>
+      <include name="lib/httpclient-4.3.6.jar"/>
+      <include name="lib/httpcore-4.3.3.jar"/>
+      <include name="lib/httpmime-4.3.6.jar"/>
       <include name="lib/icons.jar"/>
       <include name="lib/idea.jar"/>
       <include name="lib/idea_rt.jar"/>
@@ -137,19 +136,20 @@
       <include name="lib/junit-4.11.jar"/>
       <include name="lib/jzlib-1.1.1.jar"/>
       <include name="lib/log4j.jar"/>
+      <include name="lib/markdown4j-2.2.jar"/>
       <include name="lib/markdownj-core-0.4.2-SNAPSHOT.jar"/>
       <include name="lib/microba.jar"/>
       <include name="lib/miglayout-swing.jar"/>
       <include name="lib/nanoxml-2.2.3.jar"/>
       <include name="lib/nekohtml-1.9.14.jar"/>
-      <include name="lib/netty-all-4.1.0.Beta3.jar"/>
+      <include name="lib/netty-all-4.1.0.Beta4.jar"/>
       <include name="lib/openapi.jar"/>
       <include name="lib/optimizedFileManager.jar"/>
       <include name="lib/oromatcher.jar"/>
       <include name="lib/picocontainer.jar"/>
       <include name="lib/protobuf-2.5.0.jar"/>
-      <include name="lib/proxy-vole_20120920.jar"/>
-      <include name="lib/pty4j-0.3.jar"/>
+      <include name="lib/proxy-vole_20131209.jar"/>
+      <include name="lib/pty4j-0.4.12.jar"/>
       <include name="lib/purejavacomm.jar"/>
       <include name="lib/resolver.jar"/>
       <include name="lib/resources.jar"/>
@@ -158,7 +158,7 @@
       <include name="lib/rngom-20051226-patched.jar"/>
       <include name="lib/sanselan-0.98-snapshot.jar"/>
       <include name="lib/serviceMessages.jar"/>
-      <include name="lib/snappy-in-java-0.3.jar"/>
+      <include name="lib/snappy-in-java-0.3.1.jar"/>
       <include name="lib/swingx-core-1.6.2.jar"/>
       <include name="lib/trang-core.jar"/>
       <include name="lib/trove4j.jar"/>
@@ -181,6 +181,17 @@
   
   <!-- Project Libraries -->
   
+  <path id="library.home.classpath">
+    <fileset dir="${basedir}/../../../Library/Java/Home">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="library.javafx-mx.classpath">
+    <pathelement location="${basedir}/../../../Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/lib/javafx-mx.jar"/>
+  </path>
+  
+  <path id="library.javafx-src.classpath"/>
   <!-- Register Custom Compiler Taskdefs -->
   <property name="javac2.home" value="${idea.home}/lib"/>
   <path id="javac2.classpath">

@@ -7,7 +7,7 @@ import java.io.InputStream;
  */
 public class MyClassLoader {
 
-    final public static String RESPATH = "res/";
+    final public static String RESPATH = "/data/";
 
     public static final MyClassLoader INSTANCE = new MyClassLoader();
 
