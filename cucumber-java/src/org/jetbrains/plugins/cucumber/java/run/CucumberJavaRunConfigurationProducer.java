@@ -1,5 +1,8 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
+import java.util.Collection;
+import java.util.Set;
+
 import com.intellij.execution.JavaExecutionUtil;
 import com.intellij.execution.JavaRunConfigurationExtensionManager;
 import com.intellij.execution.Location;
@@ -14,16 +17,25 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.searches.AnnotatedElementsSearch;
+import com.intellij.util.Query;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Andrey.Vokin
+ * @author Sebastian Gr&ouml;bler
  * @since 8/6/12
  */
 public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfigurationProducerBase<CucumberJavaRunConfiguration> implements Cloneable {
+
+  public static final Set<String> HOOK_ANNOTATION_NAMES = ContainerUtil.newHashSet("cucumber.annotation.Before",
+                                                                                   "cucumber.annotation.After",
+                                                                                   "cucumber.api.java.Before",
+                                                                                   "cucumber.api.java.After");
   public static final String FORMATTER_OPTIONS = " --format org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
   public static final String CUCUMBER_1_0_MAIN_CLASS = "cucumber.cli.Main";
   public static final String CUCUMBER_1_1_MAIN_CLASS = "cucumber.api.cli.Main";
@@ -127,5 +139,34 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     }
 
     return true;
+  }
+
+  protected Set<String> getHookGlue(final PsiElement element) {
+
+    final JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(element.getProject());
+    final Set<String> packages = ContainerUtil.newLinkedHashSet();
+    for (final String fullyQualifiedAnnotationName : HOOK_ANNOTATION_NAMES) {
+      final PsiClass psiClass = javaPsiFacade.findClass(fullyQualifiedAnnotationName, GlobalSearchScope.allScope(element.getProject()));
+
+      if (psiClass != null) {
+        final Query<PsiMethod> psiMethods = AnnotatedElementsSearch.searchPsiMethods(psiClass, GlobalSearchScope.allScope(element.getProject()));
+        final Collection<PsiMethod> methods = psiMethods.findAll();
+        addPackagesOfMethods(methods, packages);
+      }
+    }
+
+    return packages;
+  }
+
+  private Set<String> addPackagesOfMethods(final Collection<PsiMethod> psiMethods, final Set<String> packages) {
+
+    for (final PsiMethod psiMethod : psiMethods) {
+      final PsiClassOwner file = (PsiClassOwner) psiMethod.getContainingFile();
+      final String packageName = file.getPackageName();
+      if (StringUtil.isNotEmpty(packageName)) {
+        packages.add(packageName);
+      }
+    }
+    return packages;
   }
 }

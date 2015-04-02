@@ -19,13 +19,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * User: avokin
- * Date: 10/12/12
+ * @author Andrey.Vokin
+ * @author Sebastian Gr&ouml;bler
+ * @since 10/12/12
  */
 public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
   protected NullableComputable<String> getGlue(@NotNull final PsiElement element) {
-    final Set<String> glues = new HashSet<String>();
+    final Set<String> hookGlue = getHookGlue(element);
+    final Set<String> glues = new HashSet<String>(hookGlue);
     if (element instanceof PsiDirectory) {
       final PsiDirectory dir = (PsiDirectory)element;
       final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);

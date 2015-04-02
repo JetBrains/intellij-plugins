@@ -21,6 +21,7 @@ import java.util.Set;
 
 /**
  * @author Andrey.Vokin
+ * @author Sebastian Gr&ouml;bler
  * @since 8/6/12
  */
 public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
@@ -34,9 +35,10 @@ public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRun
         public String compute() {
           final Set<String> glues = new LinkedHashSet<String>();
 
+          final Set<String> hookGlue = getHookGlue(element);
           final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
           for (CucumberJvmExtensionPoint extension : extensions) {
-            glues.addAll(extension.getGlues((GherkinFile)file, null));
+            glues.addAll(extension.getGlues((GherkinFile) file, hookGlue));
           }
 
           return StringUtil.join(glues, " ");
