@@ -15,7 +15,6 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -24,8 +23,8 @@ import java.util.Set;
  */
 public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
-  protected NullableComputable<String> getGlue(@NotNull final PsiElement element) {
-    final Set<String> glues = new HashSet<String>();
+  protected NullableComputable<String> getStepsGlue(@NotNull final PsiElement element) {
+    final Set<String> glues = getHookGlue(element);
     if (element instanceof PsiDirectory) {
       final PsiDirectory dir = (PsiDirectory)element;
       final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);

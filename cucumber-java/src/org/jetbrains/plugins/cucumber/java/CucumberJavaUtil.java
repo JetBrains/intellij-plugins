@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
@@ -11,6 +12,7 @@ import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotatio
 import org.jetbrains.plugins.cucumber.psi.*;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.intellij.psi.util.PsiTreeUtil.getChildOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
@@ -210,5 +212,27 @@ public class CucumberJavaUtil {
       }
     }
     return null;
+  }
+
+  public static void addGlue(String glue, Set<String> glues) {
+    boolean covered = false;
+    final Set<String> toRemove = ContainerUtil.newHashSet();
+    for (String existedGlue : glues) {
+      if (glue.startsWith(existedGlue + ".")) {
+        covered = true;
+        break;
+      }
+      else if (existedGlue.startsWith(glue + ".")) {
+        toRemove.add(existedGlue);
+      }
+    }
+
+    for (String removing : toRemove) {
+      glues.remove(removing);
+    }
+
+    if (!covered) {
+      glues.add(glue);
+    }
   }
 }

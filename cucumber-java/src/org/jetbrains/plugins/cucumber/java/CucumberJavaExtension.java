@@ -74,27 +74,9 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
     file.accept(new GherkinRecursiveElementVisitor() {
       @Override
       public void visitStep(GherkinStep step) {
-        boolean covered = false;
         final String glue = CucumberJavaUtil.getPackageOfStep(step);
         if (glue != null) {
-          final Set<String> toRemove = ContainerUtil.newHashSet();
-          for (String existedGlue : glues) {
-            if (glue.startsWith(existedGlue + ".")) {
-              covered = true;
-              break;
-            }
-            else if (existedGlue.startsWith(glue + ".")) {
-              toRemove.add(existedGlue);
-            }
-          }
-
-          for (String removing : toRemove) {
-            glues.remove(removing);
-          }
-
-          if (!covered) {
-            glues.add(glue);
-          }
+          CucumberJavaUtil.addGlue(glue, glues);
         }
       }
     });

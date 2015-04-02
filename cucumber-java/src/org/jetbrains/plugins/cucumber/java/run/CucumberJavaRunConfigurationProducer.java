@@ -14,10 +14,17 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.searches.AnnotatedElementsSearch;
+import com.intellij.util.Query;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
+
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * @author Andrey.Vokin
@@ -30,12 +37,18 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   public static final String CUCUMBER_1_1_MAIN_CLASS = "cucumber.api.cli.Main";
   public static final String CUCUMBER_1_2_PLUGIN_CLASS = "cucumber.api.Plugin";
 
+
+  public static final Set<String> HOOK_ANNOTATION_NAMES = ContainerUtil.newHashSet("cucumber.annotation.Before",
+                                                                                   "cucumber.annotation.After",
+                                                                                   "cucumber.api.java.Before",
+                                                                                   "cucumber.api.java.After");
+
   protected CucumberJavaRunConfigurationProducer() {
     super(CucumberJavaRunConfigurationType.getInstance());
   }
 
   @Nullable
-  protected abstract NullableComputable<String> getGlue(@NotNull final PsiElement element);
+  protected abstract NullableComputable<String> getStepsGlue(@NotNull final PsiElement element);
 
   protected abstract String getConfigurationName(@NotNull ConfigurationContext context);
 
@@ -90,7 +103,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
       return false;
     }
     if (StringUtil.isEmpty(configuration.getGlue())) {
-      final NullableComputable<String> glue = getGlue(element);
+      final NullableComputable<String> glue = getStepsGlue(element);
       configuration.setGlue(glue);
     }
     configuration.setNameFilter(getNameFilter(context));
@@ -136,5 +149,33 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     }
 
     return true;
+  }
+
+  protected Set<String> getHookGlue(final PsiElement element) {
+    final JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(element.getProject());
+    final Set<String> packages = ContainerUtil.newLinkedHashSet();
+    for (final String fullyQualifiedAnnotationName : HOOK_ANNOTATION_NAMES) {
+      final PsiClass psiClass = javaPsiFacade.findClass(fullyQualifiedAnnotationName, GlobalSearchScope.allScope(element.getProject()));
+
+      if (psiClass != null) {
+        final Query<PsiMethod> psiMethods = AnnotatedElementsSearch
+          .searchPsiMethods(psiClass, GlobalSearchScope.allScope(element.getProject()));
+        final Collection<PsiMethod> methods = psiMethods.findAll();
+        addPackagesOfMethods(methods, packages);
+      }
+    }
+
+    return packages;
+  }
+
+  private static Set<String> addPackagesOfMethods(final Collection<PsiMethod> psiMethods, final Set<String> packages) {
+    for (final PsiMethod psiMethod : psiMethods) {
+      final PsiClassOwner file = (PsiClassOwner)psiMethod.getContainingFile();
+      final String packageName = file.getPackageName();
+      if (StringUtil.isNotEmpty(packageName)) {
+        CucumberJavaUtil.addGlue(packageName, packages);
+      }
+    }
+    return packages;
   }
 }
