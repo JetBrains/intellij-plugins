@@ -25,8 +25,10 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfigurationProducerBase<CucumberJavaRunConfiguration> implements Cloneable {
   public static final String FORMATTER_OPTIONS = " --format org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
+  public static final String FORMATTER_OPTIONS_1_2 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
   public static final String CUCUMBER_1_0_MAIN_CLASS = "cucumber.cli.Main";
   public static final String CUCUMBER_1_1_MAIN_CLASS = "cucumber.api.cli.Main";
+  public static final String CUCUMBER_1_2_PLUGIN_CLASS = "cucumber.api.Plugin";
 
   protected CucumberJavaRunConfigurationProducer() {
     super(CucumberJavaRunConfigurationType.getInstance());
@@ -64,12 +66,19 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     if (module == null) return false;
 
     String mainClassName = null;
+    String formatterOptions = null;
     final Location location = context.getLocation();
     if (location != null) {
       if (LocationUtil.isJarAttached(location, CUCUMBER_1_0_MAIN_CLASS, new PsiDirectory[0])) {
         mainClassName = CUCUMBER_1_0_MAIN_CLASS;
       } else if (LocationUtil.isJarAttached(location, CUCUMBER_1_1_MAIN_CLASS, new PsiDirectory[0])) {
         mainClassName = CUCUMBER_1_1_MAIN_CLASS;
+      }
+
+      if (LocationUtil.isJarAttached(location, CUCUMBER_1_2_PLUGIN_CLASS, new PsiDirectory[0]))  {
+        formatterOptions = FORMATTER_OPTIONS_1_2;
+      } else {
+        formatterOptions = FORMATTER_OPTIONS;
       }
     }
     if (mainClassName == null) {
@@ -86,7 +95,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     }
     configuration.setNameFilter(getNameFilter(context));
     configuration.setFilePath(file.getPath());
-    configuration.setProgramParameters(FORMATTER_OPTIONS);
+    configuration.setProgramParameters(formatterOptions);
     if (StringUtil.isEmpty(configuration.MAIN_CLASS_NAME)) {
       configuration.MAIN_CLASS_NAME = mainClassName;
     }
