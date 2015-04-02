@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.java;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
@@ -24,10 +25,6 @@ import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.*;
 
-/**
- * User: Andrey.Vokin
- * Date: 7/16/12
- */
 public class CucumberJavaExtension extends AbstractCucumberExtension {
   public static final String CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION = "cucumber.runtime.java.StepDefAnnotation";
 
@@ -44,9 +41,10 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
     if (child instanceof PsiClassOwner) {
       final PsiFile file = child.getContainingFile();
       if (file != null) {
-        final VirtualFile virtualFile = file.getVirtualFile();
-        if (virtualFile != null) {
-          return virtualFile.isWritable();
+        final VirtualFile vFile = file.getVirtualFile();
+        if (vFile != null) {
+          final VirtualFile rootForFile = ProjectRootManager.getInstance(child.getProject()).getFileIndex().getSourceRootForFile(vFile);
+          return rootForFile != null;
         }
       }
     }
