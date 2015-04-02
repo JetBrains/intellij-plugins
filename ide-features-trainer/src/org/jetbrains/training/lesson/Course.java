@@ -12,7 +12,6 @@ import org.jetbrains.training.MyClassLoader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * Created by karashevich on 29/01/15.
