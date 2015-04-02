@@ -16,7 +16,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinScenario;
 import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -25,18 +24,17 @@ import java.util.Set;
  */
 public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
-  protected NullableComputable<String> getGlue(@NotNull final PsiElement element) {
+  protected NullableComputable<String> getStepsGlue(@NotNull final PsiElement element) {
     final PsiFile file = element.getContainingFile();
     if (file instanceof GherkinFile) {
       return new NullableComputable<String>() {
         @Nullable
         @Override
         public String compute() {
-          final Set<String> glues = new LinkedHashSet<String>();
-
+          final Set<String> glues = getHookGlue(element);
           final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
           for (CucumberJvmExtensionPoint extension : extensions) {
-            glues.addAll(extension.getGlues((GherkinFile)file, null));
+            glues.addAll(extension.getGlues((GherkinFile)file, glues));
           }
 
           return StringUtil.join(glues, " ");
