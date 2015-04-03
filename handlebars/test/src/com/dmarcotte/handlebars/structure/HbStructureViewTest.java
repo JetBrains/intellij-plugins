@@ -104,7 +104,6 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
       " mustache\n" +
       " partial\n" +
       " @data\n" +
-      " \n" +
       " unescaped"
     );
   }

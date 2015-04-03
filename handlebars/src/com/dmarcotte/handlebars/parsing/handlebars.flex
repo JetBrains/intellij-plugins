@@ -139,8 +139,10 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   "{{"\~?">" { return HbTokenTypes.OPEN_PARTIAL; }
   "{{"\~?"#" { return HbTokenTypes.OPEN_BLOCK; }
   "{{"\~?"/" { return HbTokenTypes.OPEN_ENDBLOCK; }
+  // NOTE: the standard Handlebars lexer would checks for "{{^}}" and "{{else}}" here and lexes the simple inverse directly.
+  // We lex it in pieces and identify simple inverses in the parser
+  // (this also allows us to  highlight "{{" and the "else" independently.  See where we make an HbTokens.ELSE below)
   "{{"\~?"^" { return HbTokenTypes.OPEN_INVERSE; }
-  // NOTE: a standard Handlebars lexer would check for "{{else" here.  We instead want to lex it as two tokens to highlight the "{{" and the "else" differently.  See where we make an HbTokens.ELSE below.
   "{{"\~?"{" { return HbTokenTypes.OPEN_UNESCAPED; }
   "{{"\~?"&" { return HbTokenTypes.OPEN; }
   "{{!" { yypopState(); yypushState(comment); return HbTokenTypes.COMMENT_OPEN; }
