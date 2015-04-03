@@ -37,6 +37,14 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
     doTest("stepResolve_02", "tes<caret>t \"test\"", "test");
   }
 
+  public void testWordSymbolWithUnicode() throws Exception {
+    doTest("stepResolve_w", "пласт<caret>ик", null);
+  }
+
+  public void testWordSymbolWithAZ() throws Exception {
+    doTest("stepResolve_w", "plast<caret>ic", "payment_mode");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return DESCRIPTOR;
