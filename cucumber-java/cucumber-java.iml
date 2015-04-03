@@ -27,5 +27,6 @@
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" scope="TEST" name="EasyMock" level="project" />
     <orderEntry type="module" module-name="java-psi-api" />
+    <orderEntry type="library" name="OroMatcher" level="project" />
   </component>
 </module>
