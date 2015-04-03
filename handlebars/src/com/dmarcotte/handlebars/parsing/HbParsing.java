@@ -220,10 +220,13 @@ public class HbParsing {
    * NOTE: will resolve the given blockMarker
    */
   private void parseRestOfBlock(PsiBuilder builder, PsiBuilder.Marker blockMarker, boolean raw) {
-    parseProgram(builder);
     if (raw) {
+      if (builder.getTokenType() == CONTENT) {
+        builder.advanceLexer(); // eat non-HB content
+      }
       parseCloseRawBlock(builder);
     } else {
+      parseProgram(builder);
       parseCloseBlock(builder);
     }
     blockMarker.done(HbTokenTypes.BLOCK_WRAPPER);
