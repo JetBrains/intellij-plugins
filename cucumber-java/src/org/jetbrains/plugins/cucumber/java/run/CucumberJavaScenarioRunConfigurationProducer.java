@@ -23,7 +23,7 @@ public class CucumberJavaScenarioRunConfigurationProducer extends CucumberJavaFe
 
     final GherkinStepsHolder scenario = PsiTreeUtil.getParentOfType(sourceElement, GherkinScenario.class, GherkinScenarioOutline.class);
     if (scenario != null) {
-      return StringUtil.escapeToRegexp(scenario.getScenarioName());
+      return "^" + StringUtil.escapeToRegexp(scenario.getScenarioName()) + "$";
     }
 
     return super.getNameFilter(context);
