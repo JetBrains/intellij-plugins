@@ -57,6 +57,10 @@ public class GherkinParser implements PsiParser {
           descMarker = null;
         }
         parseFeatureElements(builder);
+
+        if (builder.getTokenType() == GherkinTokenTypes.FEATURE_KEYWORD) {
+          break;
+        }
       }
       builder.advanceLexer();
       if (builder.eof()) break;
@@ -82,7 +86,7 @@ public class GherkinParser implements PsiParser {
   }
 
   private static void parseFeatureElements(PsiBuilder builder) {
-    while (!builder.eof()) {
+    while (builder.getTokenType() != GherkinTokenTypes.FEATURE_KEYWORD && !builder.eof()) {
       final PsiBuilder.Marker marker = builder.mark();
       // tags
       parseTags(builder);
@@ -130,7 +134,8 @@ public class GherkinParser implements PsiParser {
     return tokenType == null ||
            tokenType == GherkinTokenTypes.BACKGROUND_KEYWORD ||
            tokenType == GherkinTokenTypes.SCENARIO_KEYWORD ||
-           tokenType == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD;
+           tokenType == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD ||
+           tokenType == GherkinTokenTypes.FEATURE_KEYWORD;
   }
 
   private static void parseStep(PsiBuilder builder) {
