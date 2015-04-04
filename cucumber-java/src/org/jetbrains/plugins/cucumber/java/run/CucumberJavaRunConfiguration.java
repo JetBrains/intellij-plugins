@@ -85,6 +85,12 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
           }
         }
 
+        File f = new File(myFilePath);
+        if (!f.isDirectory()) {
+          f = f.getParentFile();
+        }
+        params.getVMParametersList().addParametersString("-Dcurrent_dir=\"" + f.getAbsolutePath() + "\"");
+
         params.getProgramParametersList().addParametersString("\"" + myFilePath + "\"");
         return params;
       }
