@@ -40,6 +40,10 @@
     <!-- Add your actions here -->
     <action id="startLesson" class="org.jetbrains.training.StartLesson" text="Start Lesson"
             description="Start Training Lesson">
+      <add-to-group group-id="CodeMenu"/>
+    </action>
+    <action id="courseManager" class="org.jetbrains.training.lesson.CourseManager" text="Courses"
+            description="Start learn lessons">
       <add-to-group group-id="CodeMenu" anchor="first"/>
     </action>
   </actions>

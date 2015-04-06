@@ -1,15 +1,21 @@
 package org.jetbrains.training.lesson;
 
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jdom.JDOMException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * Created by karashevich on 11/03/15.
  */
-public class CourseManager {
+public class CourseManager extends ActionGroup{
 
     public static final CourseManager INSTANCE = new CourseManager();
 
@@ -22,6 +28,7 @@ public class CourseManager {
 
     public CourseManager() {
         //init courses; init default course by default
+        super("Courses", true);
         courses = new ArrayList<Course>();
 
         try {
@@ -31,7 +38,19 @@ public class CourseManager {
             e.printStackTrace();
         } catch (BadLessonException e) {
             e.printStackTrace();
+        } catch (JDOMException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    @NotNull
+    @Override
+    public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
+        AnAction[] actions = new AnAction[courses.size()];
+        actions = courses.toArray(actions);
+        return actions;
     }
 
     @Nullable
