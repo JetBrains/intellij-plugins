@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.builders.BuildOutputConsumer;
 import org.jetbrains.jps.builders.BuildRootDescriptor;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
+import org.jetbrains.jps.builders.java.JavaBuilderUtil;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ProjectBuildException;
 import org.jetbrains.jps.incremental.TargetBuilder;
@@ -47,7 +48,7 @@ public class OsmorcBuilder extends TargetBuilder<BuildRootDescriptor, OsmorcBuil
                     @NotNull DirtyFilesHolder<BuildRootDescriptor, OsmorcBuildTarget> holder,
                     @NotNull BuildOutputConsumer outputConsumer,
                     @NotNull CompileContext context) throws ProjectBuildException, IOException {
-    if (holder.hasDirtyFiles() || holder.hasRemovedFiles()) {
+    if (holder.hasDirtyFiles() || holder.hasRemovedFiles() || JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)) {
       new OsgiBuildSession().build(target, context);
     }
   }
