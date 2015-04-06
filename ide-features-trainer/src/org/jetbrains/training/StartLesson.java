@@ -24,7 +24,7 @@ public class StartLesson extends AnAction {
 
     public void actionPerformed(final AnActionEvent anActionEvent) {
 
-        new LessonStarter(anActionEvent);
+//        new LessonStarter(anActionEvent);
 
     }
 
