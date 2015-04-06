@@ -45,7 +45,7 @@ public class Lesson {
             throw new BadLessonException("Probably scenario file is corrupted: " + pathToScenario);
         } catch (IOException e) {
             //Scenario file cannot be read
-            throw new BadLessonException("Probably scenario file cannot be read" + pathToScenario);
+            throw new BadLessonException("Probably scenario file cannot be read: " + pathToScenario);
         }
     }
 
