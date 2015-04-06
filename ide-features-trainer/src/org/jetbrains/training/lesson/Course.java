@@ -1,9 +1,13 @@
 package org.jetbrains.training.lesson;
 
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
@@ -16,7 +20,7 @@ import java.util.ArrayList;
 /**
  * Created by karashevich on 29/01/15.
  */
-public class Course {
+public class Course extends ActionGroup{
 
     private ArrayList<Lesson> lessons;
     private String path;
@@ -25,7 +29,8 @@ public class Course {
     private Element root;
     private String id;
 
-    public Course() throws BadCourseException, BadLessonException {
+    public Course() throws BadCourseException, BadLessonException, JDOMException, IOException {
+        super("Default", true);
         path = defaultPath;
         lessons = new ArrayList<Lesson>();
         id = "default";
@@ -34,7 +39,15 @@ public class Course {
         answersPath = root.getAttribute("answerspath").getValue();
     }
 
-    public Course(String coursePath) throws BadCourseException, BadLessonException {
+    @NotNull
+    @Override
+    public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
+        AnAction[] actions = new AnAction[lessons.size()];
+        actions = lessons.toArray(actions);
+        return actions;
+    }
+
+    public Course(String coursePath) throws BadCourseException, BadLessonException, JDOMException, IOException {
         //load xml with lessons
         path = coursePath;
 
@@ -48,7 +61,7 @@ public class Course {
         return answersPath;
     }
 
-    private void initLessons() throws BadCourseException, BadLessonException {
+    private void initLessons() throws BadCourseException, BadLessonException, JDOMException, IOException {
 
         InputStream is = MyClassLoader.getInstance().getResourceAsStream(path);
 
@@ -74,8 +87,19 @@ public class Course {
                 } else {
                     throw new BadLessonException("Cannot obtain lessons from " + path + " course file");
                 }
-                Lesson tmpl = new Lesson(lessonEl.getAttribute("path").getValue(), lessonIsPassed, this);
-                lessons.add(tmpl);
+
+                String pathToScenario = lessonEl.getAttribute("path").getValue();
+                try{
+                    Scenario scn = new Scenario(pathToScenario);
+                    Lesson tmpl = new Lesson(scn, lessonIsPassed, this);
+                    lessons.add(tmpl);
+                } catch (JDOMException e) {
+                    //Scenario file is corrupted
+                    throw new BadLessonException("Probably scenario file is corrupted: " + pathToScenario);
+                } catch (IOException e) {
+                    //Scenario file cannot be read
+                    throw new BadLessonException("Probably scenario file cannot be read: " + pathToScenario);
+                }
             } else throw new BadCourseException("Cannot obtain lessons from " + path + " course file");
         }
     }
