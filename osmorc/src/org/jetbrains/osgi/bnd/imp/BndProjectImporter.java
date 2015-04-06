@@ -170,13 +170,8 @@ public class BndProjectImporter {
         return false;
       }
 
-      List<String> errors = project.getErrors();
-      if (errors != null && !errors.isEmpty()) {
-        checkErrors(project, errors);
-        return false;
-      }
-
-      checkWarnings(project, project.getWarnings());
+      checkWarnings(project, project.getErrors(), true);
+      checkWarnings(project, project.getWarnings(), false);
 
       findSources(project);
 
@@ -359,7 +354,7 @@ public class BndProjectImporter {
     setDependencies(moduleModel, libraryModel, rootModel, project, project.getBuildpath(), false, bootSet, warnings);
     setDependencies(moduleModel, libraryModel, rootModel, project, project.getTestpath(), true, bootSet, warnings);
 
-    checkWarnings(project, warnings);
+    checkWarnings(project, warnings, false);
   }
 
   private void setDependencies(ModifiableModuleModel moduleModel,
@@ -476,7 +471,7 @@ public class BndProjectImporter {
   private void checkErrors(Project project, Exception e) {
     if (!myUnitTestMode) {
       String text;
-      LOG.error(e);
+      LOG.warn(e);
       text = message("bnd.import.resolve.error", project.getName(), e.getMessage());
       NOTIFICATIONS.createNotification(message("bnd.import.error.title"), text, NotificationType.ERROR, null).notify(myProject);
     }
@@ -485,25 +480,13 @@ public class BndProjectImporter {
     }
   }
 
-  private void checkErrors(Project project, List<String> errors) {
-    if (errors != null && !errors.isEmpty()) {
-      if (!myUnitTestMode) {
-        LOG.error(errors.toString());
-        String text = message("bnd.import.resolve.error", project.getName(), "<br>" + StringUtil.join(errors, "<br>"));
-        NOTIFICATIONS.createNotification(message("bnd.import.error.title"), text, NotificationType.ERROR, null).notify(myProject);
-      }
-      else {
-        throw new AssertionError(errors.toString());
-      }
-    }
-  }
-
-  private void checkWarnings(Project project, List<String> warnings) {
+  private void checkWarnings(Project project, List<String> warnings, boolean error) {
     if (warnings != null && !warnings.isEmpty()) {
       if (!myUnitTestMode) {
         LOG.warn(warnings.toString());
         String text = message("bnd.import.warn.text", project.getName(), "<br>" + StringUtil.join(warnings, "<br>"));
-        NOTIFICATIONS.createNotification(message("bnd.import.warn.title"), text, NotificationType.WARNING, null).notify(myProject);
+        NotificationType type = error ? NotificationType.ERROR : NotificationType.WARNING;
+        NOTIFICATIONS.createNotification(message("bnd.import.warn.title"), text, type, null).notify(myProject);
       }
       else {
         throw new AssertionError(warnings.toString());
@@ -564,9 +547,14 @@ public class BndProjectImporter {
     assert workspace != null : project;
 
     try {
+      workspace.clear();
       workspace.forceRefresh();
+
       Collection<Project> projects = getWorkspaceProjects(workspace);
-      for (Project p : projects) p.forceRefresh();
+      for (Project p : projects) {
+        p.clear();
+        p.forceRefresh();
+      }
 
       BndProjectImporter importer = new BndProjectImporter(project, workspace, projects);
       importer.setupProject();
@@ -586,6 +574,7 @@ public class BndProjectImporter {
       for (String dir : projectDirs) {
         Project p = workspace.getProject(PathUtil.getFileName(dir));
         if (p != null) {
+          p.clear();
           p.forceRefresh();
           projects.add(p);
         }
