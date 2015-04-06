@@ -1,6 +1,8 @@
 package org.jetbrains.training.lesson;
 
 import com.intellij.ide.ui.laf.darcula.ui.DarculaEditorTextFieldBorder;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.BadCourseException;
@@ -16,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by karashevich on 29/01/15.
  */
-public class Lesson {
+public class Lesson extends AnAction {
 
     private Scenario scn;
     private String name;
@@ -29,10 +31,12 @@ public class Lesson {
     private boolean isPassed;
     private boolean isOpen;
 
-    public Lesson(String pathToScenario, boolean passed, @Nullable Course course) throws BadLessonException {
-        try {
-            scn = new Scenario(pathToScenario);
+    public Lesson(Scenario scenario, boolean passed, @Nullable Course course) throws BadLessonException {
+
+        super(scenario.getName());
+            scn = scenario;
             name = scn.getName();
+
             isPassed = passed;
             targetPath = scn.getTarget();
             lessonListeners = new ArrayList<LessonListener>();
@@ -40,13 +44,7 @@ public class Lesson {
 
             isOpen = false;
 
-        } catch (JDOMException e) {
-            //Scenario file is corrupted
-            throw new BadLessonException("Probably scenario file is corrupted: " + pathToScenario);
-        } catch (IOException e) {
-            //Scenario file cannot be read
-            throw new BadLessonException("Probably scenario file cannot be read: " + pathToScenario);
-        }
+
     }
 
     public void open(Dimension infoPanelDimension) throws IOException, FontFormatException, LessonIsOpenedException {
@@ -151,5 +149,13 @@ public class Lesson {
         }
     }
 
+    @Override
+    public void actionPerformed(AnActionEvent anActionEvent) {
+        new LessonStarter(anActionEvent);
+    }
 
+    @Override
+    public void update(AnActionEvent e) {
+        e.getPresentation().setEnabled(!isPassed());
+    }
 }
