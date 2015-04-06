@@ -11,7 +11,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.training.lesson.*;
+import org.jetbrains.training.sandbox.LessonStarter;
 
 import java.io.IOException;
 import java.io.InputStream;

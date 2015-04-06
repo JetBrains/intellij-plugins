@@ -151,7 +151,23 @@ public class Lesson extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-        new LessonStarter(anActionEvent);
+        try {
+            CourseManager.getInstance().openLesson(anActionEvent, this);
+        } catch (BadCourseException e) {
+            e.printStackTrace();
+        } catch (BadLessonException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (LessonIsOpenedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
