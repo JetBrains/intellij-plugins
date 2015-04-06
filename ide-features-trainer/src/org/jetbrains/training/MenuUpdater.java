@@ -3,9 +3,8 @@ package org.jetbrains.training;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.training.lesson.LessonAction;
+import org.jetbrains.training.sandbox.LessonAction;
 
 /**
  * Created by karashevich on 06/04/15.
