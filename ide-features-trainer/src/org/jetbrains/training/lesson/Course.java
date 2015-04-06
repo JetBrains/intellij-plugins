@@ -24,14 +24,15 @@ public class Course extends ActionGroup{
 
     private ArrayList<Lesson> lessons;
     private String path;
-    final private String defaultPath = "DefaultCourse.xml";
+    private final static String DEFAULT_PATH = "DefaultCourse.xml";
+    private final static String DEFAULT_NAME = "Default course";
     private String answersPath;
     private Element root;
     private String id;
 
     public Course() throws BadCourseException, BadLessonException, JDOMException, IOException {
-        super("Default", true);
-        path = defaultPath;
+        super(DEFAULT_NAME, true);
+        path = DEFAULT_PATH;
         lessons = new ArrayList<Lesson>();
         id = "default";
 
