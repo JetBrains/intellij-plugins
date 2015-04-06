@@ -32,6 +32,7 @@ import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -130,8 +131,11 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
       return Collections.singletonList(rootModule);
     }
     else {
-      String path = getFileToImport();
-      BndProjectImporter.reimportProjects(project, Collections.singleton(path));
+      File file = new File(getFileToImport());
+      if (BndProjectImporter.BND_FILE.equals(file.getName())) {
+        file = file.getParentFile();
+      }
+      BndProjectImporter.reimportProjects(project, Collections.singleton(file.getPath()));
       return Collections.emptyList();
     }
   }
