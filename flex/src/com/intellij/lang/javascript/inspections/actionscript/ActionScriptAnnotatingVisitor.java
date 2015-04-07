@@ -1455,4 +1455,10 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
        }
     }
   }
+
+  @Override
+  public void visitJSForInStatement(JSForInStatement node) {
+    super.visitJSForInStatement(node);
+    ValidateTypesUtil.checkTypesInForIn(node, myProblemReporter);
+  }
 }
