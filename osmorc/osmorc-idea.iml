@@ -21,6 +21,7 @@
     <orderEntry type="module" module-name="execution-impl" />
     <orderEntry type="module" module-name="debugger-impl" />
     <orderEntry type="module" module-name="manifest" />
+    <orderEntry type="module" module-name="smRunner" />
     <orderEntry type="module" module-name="osmorc-jps-plugin" exported="" />
     <orderEntry type="module-library" exported="">
       <library name="org.apache.felix.framework">
