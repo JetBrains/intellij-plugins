@@ -22,19 +22,29 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.bnd.BndFileType;
 import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 
-public class BndRunConfigurationEditor extends SettingsEditor<BndRunConfiguration> {
+public class BndRunConfigurationEditor extends SettingsEditor<BndRunConfigurationBase> {
   private JPanel myPanel;
   private TextFieldWithBrowseButton myChooser;
   private AlternativeJREPanel myAlternativeJrePanel;
 
   public BndRunConfigurationEditor(Project project) {
-    FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileDescriptor(BndFileType.BND_RUN_EXT);
+    FileChooserDescriptor descriptor = FileChooserDescriptorFactory
+      .createSingleFileNoJarsDescriptor()
+      .withFileFilter(new Condition<VirtualFile>() {
+        @Override
+        public boolean value(VirtualFile file) {
+          String ext = file.getExtension();
+          return BndFileType.BND_RUN_EXT.equals(ext) || BndFileType.BND_EXT.equals(ext);
+        }
+      });
     myChooser.addBrowseFolderListener(OsmorcBundle.message("bnd.run.file.chooser.title"), null, project, descriptor);
   }
 
@@ -45,13 +55,13 @@ public class BndRunConfigurationEditor extends SettingsEditor<BndRunConfiguratio
   }
 
   @Override
-  protected void resetEditorFrom(@NotNull BndRunConfiguration configuration) {
+  protected void resetEditorFrom(@NotNull BndRunConfigurationBase configuration) {
     myChooser.setText(configuration.bndRunFile);
     myAlternativeJrePanel.init(configuration.alternativeJrePath, configuration.useAlternativeJre);
   }
 
   @Override
-  protected void applyEditorTo(@NotNull BndRunConfiguration configuration) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull BndRunConfigurationBase configuration) throws ConfigurationException {
     configuration.bndRunFile = myChooser.getText();
     configuration.useAlternativeJre = myAlternativeJrePanel.isPathEnabled();
     configuration.alternativeJrePath = myAlternativeJrePanel.getPath();

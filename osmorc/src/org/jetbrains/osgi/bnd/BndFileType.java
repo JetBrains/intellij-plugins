@@ -17,5 +17,6 @@ package org.jetbrains.osgi.bnd;
 
 // [r.sh] will be extended later to a full-blown file type
 public class BndFileType {
+  public static final String BND_EXT = "bnd";
   public static final String BND_RUN_EXT = "bndrun";
 }
