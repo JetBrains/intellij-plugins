@@ -36,6 +36,8 @@ import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewImpl;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -167,6 +169,13 @@ public class DartAnalysisServerService {
     ApplicationManager.getApplication().getMessageBus().connect()
       .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
                  new FileEditorManagerAdapter() {
+                   @Override
+                   public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+                     if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE) {
+                       DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
+                     }
+                   }
+
                    @Override
                    public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
                      if (isDartOrHtmlFile(file)) {
@@ -533,7 +542,10 @@ public class DartAnalysisServerService {
       if (myServer != null) {
         LOG.debug("stopping server");
         myServer.removeAnalysisServerListener(myAnalysisServerListener);
-        myServer.server_shutdown();
+        try {
+          myServer.server_shutdown();
+        }
+        catch (Exception e) {/* unlucky */}
       }
 
       onServerStopped();

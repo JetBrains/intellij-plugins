@@ -40,6 +40,9 @@ public class DartSdk {
     return myHomePath;
   }
 
+  /**
+   * @return presentable version with revision, like "1.9.1_r44672" or "1.9.0-dev.10.9_r44532" or "1.10.0-edge.44829"
+   */
   @NotNull
   public String getVersion() {
     return myVersion;

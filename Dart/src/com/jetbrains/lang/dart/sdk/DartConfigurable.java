@@ -4,7 +4,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.browsers.BrowserSpecificSettings;
 import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.chrome.ChromeSettings;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
@@ -18,6 +17,7 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -44,7 +44,6 @@ import com.intellij.util.ui.LocalPathCellEditor;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -77,26 +76,19 @@ public class DartConfigurable implements SearchableConfigurable {
   private static final String CUSTOM_PACKAGE_ROOTS_LIB_NAME = "Dart custom package roots";
   private static final String SEMICOLON = ";";
 
-  public static final String DART_DO_CHECK_FOR_LATEST_SDK_KEY = "DART_DO_CHECK_FOR_LATEST_SDK_KEY";
-  public static final String DART_CHECK_FOR_LATEST_STABLE_SDK_KEY = "DART_CHECK_FOR_LATEST_STABLE_SDK_KEY";
-  public static final String DART_CHECK_FOR_LATEST_DEV_SDK_KEY = "DART_CHECK_FOR_LATEST_DEV_SDK_KEY";
-
-  public static final boolean DART_DO_CHECK_FOR_LATEST_SDK_DEFAULT_VALUE = true;
-  public static final boolean DART_CHECK_FOR_LATEST_STABLE_SDK_DEFAULT_VALUE = true;
-  public static final boolean DART_CHECK_FOR_LATEST_DEV_SDK_DEFAULT_VALUE = false;
-
   private JPanel myMainPanel;
   private JBCheckBox myEnableDartSupportCheckBox;
 
   private JPanel mySettingsPanel;
   private TextFieldWithBrowseButton mySdkPathTextWithBrowse;
   private JBLabel myVersionLabel;
+  private JBCheckBox myCheckSdkUpdateCheckBox;
+  private ComboBox mySdkUpdateChannelCombo;
 
   private TextFieldWithBrowseButton myDartiumPathTextWithBrowse;
   private JButton myDartiumSettingsButton;
   private JBCheckBox myCheckedModeCheckBox;
 
-  private JPanel myCustomPackageRootsPanel;
   private JBCheckBox myCustomPackageRootsCheckBox;
   private TextFieldWithBrowseButton myCustomPackageRootsTextWithBrowse;
 
@@ -104,9 +96,6 @@ public class DartConfigurable implements SearchableConfigurable {
 
   private CheckboxTreeTable myModulesCheckboxTreeTable;
   private JBLabel myErrorLabel;
-  private JCheckBox myCheckForNewSDKCheckBox;
-  private JCheckBox myStableCheckBox;
-  private JCheckBox myDevCheckBox;
 
   private final @NotNull Project myProject;
 
@@ -124,15 +113,12 @@ public class DartConfigurable implements SearchableConfigurable {
     myProject = project;
     initEnableDartSupportCheckBox();
     initDartSdkAndDartiumControls();
-    initCheckForSDKControls();
     initCustomPackageRootsPanel();
     initModulesPanel();
     myErrorLabel.setIcon(AllIcons.Actions.Lightning);
   }
 
   private void initEnableDartSupportCheckBox() {
-    final Insets margin = myEnableDartSupportCheckBox.getMargin();
-    myEnableDartSupportCheckBox.setMargin(new Insets(margin.top, 0, margin.bottom, margin.right));
     myEnableDartSupportCheckBox.setText(DartBundle.message("enable.dart.support.for.project.0", myProject.getName()));
     myEnableDartSupportCheckBox.addActionListener(new ActionListener() {
       @Override
@@ -168,82 +154,42 @@ public class DartConfigurable implements SearchableConfigurable {
 
     mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(documentListener);
     myDartiumPathTextWithBrowse.getTextField().getDocument().addDocumentListener(documentListener);
-  }
 
-  private void initCheckForSDKControls() {
-    final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(myProject);
-    boolean checkForLatestSDK =
-      propertiesComponent.getBoolean(DART_DO_CHECK_FOR_LATEST_SDK_KEY, DART_DO_CHECK_FOR_LATEST_SDK_DEFAULT_VALUE);
-    boolean checkForStable =
-      propertiesComponent.getBoolean(DART_CHECK_FOR_LATEST_STABLE_SDK_KEY, DART_CHECK_FOR_LATEST_STABLE_SDK_DEFAULT_VALUE);
-    boolean checkForDev = propertiesComponent.getBoolean(DART_CHECK_FOR_LATEST_DEV_SDK_KEY, DART_CHECK_FOR_LATEST_DEV_SDK_DEFAULT_VALUE);
-
-    myCheckForNewSDKCheckBox.setSelected(checkForLatestSDK);
-    myStableCheckBox.setSelected(checkForStable);
-    myDevCheckBox.setSelected(checkForDev);
-    myStableCheckBox.setEnabled(checkForLatestSDK);
-    myDevCheckBox.setEnabled(checkForLatestSDK);
-
-    myCheckForNewSDKCheckBox.addActionListener(new ActionListener() {
+    myCheckSdkUpdateCheckBox.addActionListener(new ActionListener() {
       @Override
-      public void actionPerformed(final ActionEvent e) {
-        final boolean selected = myCheckForNewSDKCheckBox.isSelected();
-        propertiesComponent.setValue(DART_DO_CHECK_FOR_LATEST_SDK_KEY, Boolean.valueOf(selected).toString());
-        myStableCheckBox.setEnabled(selected);
-        myDevCheckBox.setEnabled(selected);
-        propertiesComponent.setValue(DartEditorNotificationsProvider.DART_LAST_SDK_CHECK_KEY,
-                                     Long.valueOf(DartEditorNotificationsProvider.DART_LAST_SDK_CHECK_DEFAULT_VALUE).toString());
-      }
-    });
+      public void actionPerformed(ActionEvent e) {
+        final boolean enabled = myCheckSdkUpdateCheckBox.isSelected() && myCheckSdkUpdateCheckBox.isEnabled();
+        mySdkUpdateChannelCombo.setEnabled(enabled);
 
-    myStableCheckBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        final boolean selected = myStableCheckBox.isSelected();
-        propertiesComponent.setValue(DART_CHECK_FOR_LATEST_STABLE_SDK_KEY, Boolean.valueOf(selected).toString());
-        if (!selected && !myDevCheckBox.isSelected()) {
-          myCheckForNewSDKCheckBox.setSelected(false);
-          propertiesComponent.setValue(DART_DO_CHECK_FOR_LATEST_SDK_KEY, Boolean.valueOf(false).toString());
-          myStableCheckBox.setEnabled(false);
-          myDevCheckBox.setEnabled(false);
-          propertiesComponent.setValue(DartEditorNotificationsProvider.DART_LAST_SDK_CHECK_KEY,
-                                       Long.valueOf(DartEditorNotificationsProvider.DART_LAST_SDK_CHECK_DEFAULT_VALUE).toString());
+        if (enabled) {
+          IdeFocusManager.getInstance(myProject).requestFocus(mySdkUpdateChannelCombo, true);
         }
       }
     });
 
-    myDevCheckBox.addActionListener(new ActionListener() {
+    mySdkUpdateChannelCombo.setModel(new DefaultComboBoxModel(DartSdkUpdateOption.OPTIONS_TO_SHOW_IN_COMBO));
+    mySdkUpdateChannelCombo.setRenderer(new ListCellRendererWrapper<DartSdkUpdateOption>() {
       @Override
-      public void actionPerformed(final ActionEvent e) {
-        final boolean selected = myDevCheckBox.isSelected();
-        propertiesComponent.setValue(DART_CHECK_FOR_LATEST_DEV_SDK_KEY, Boolean.valueOf(selected).toString());
-        if (!selected && !myStableCheckBox.isSelected()) {
-          myCheckForNewSDKCheckBox.setSelected(false);
-          propertiesComponent.setValue(DART_DO_CHECK_FOR_LATEST_SDK_KEY, Boolean.valueOf(false).toString());
-          myStableCheckBox.setEnabled(false);
-          myDevCheckBox.setEnabled(false);
-          propertiesComponent.setValue(DartEditorNotificationsProvider.DART_LAST_SDK_CHECK_KEY,
-                                       Long.valueOf(DartEditorNotificationsProvider.DART_LAST_SDK_CHECK_DEFAULT_VALUE).toString());
-        }
+      public void customize(JList list, DartSdkUpdateOption value, int index, boolean selected, boolean hasFocus) {
+        setText(value.getPresentableName());
       }
     });
   }
 
   private void initCustomPackageRootsPanel() {
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
-      myCustomPackageRootsPanel.setVisible(false);
+      myCustomPackageRootsCheckBox.setVisible(false);
+      myCustomPackageRootsTextWithBrowse.setVisible(false);
       return;
     }
 
-    final Insets margin = myCustomPackageRootsCheckBox.getMargin();
-    myCustomPackageRootsCheckBox.setMargin(new Insets(margin.top, -2, margin.bottom, margin.right));
-
     myCustomPackageRootsCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        myCustomPackageRootsTextWithBrowse.setEnabled(myCustomPackageRootsCheckBox.isSelected());
+        final boolean enabled = myCustomPackageRootsCheckBox.isSelected() && myCustomPackageRootsCheckBox.isEnabled();
+        myCustomPackageRootsTextWithBrowse.setEnabled(enabled);
         updateErrorLabel();
 
-        if (myCustomPackageRootsCheckBox.isSelected() && myCustomPackageRootsCheckBox.isEnabled()) {
+        if (enabled) {
           IdeFocusManager.getInstance(myProject).requestFocus(myCustomPackageRootsTextWithBrowse.getTextField(), true);
         }
       }
@@ -344,6 +290,11 @@ public class DartConfigurable implements SearchableConfigurable {
     final String initialSdkHomePath = mySdkInitial == null ? "" : mySdkInitial.getHomePath();
     if (sdkSelected && !sdkHomePath.equals(initialSdkHomePath)) return true;
 
+    final DartSdkUpdateOption sdkUpdateOption = myCheckSdkUpdateCheckBox.isSelected()
+                                                ? (DartSdkUpdateOption)mySdkUpdateChannelCombo.getSelectedItem()
+                                                : DartSdkUpdateOption.DoNotCheck;
+    if (sdkUpdateOption != DartSdkUpdateOption.getDartSdkUpdateOption()) return true;
+
     final String dartiumPath = FileUtilRt.toSystemIndependentName(myDartiumPathTextWithBrowse.getText().trim());
     final String dartiumPathInitial = myDartiumInitial == null ? null : myDartiumInitial.getPath();
     if (!dartiumPath.isEmpty() && new File(dartiumPath).exists() && !dartiumPath.equals(dartiumPathInitial)) return true;
@@ -405,26 +356,17 @@ public class DartConfigurable implements SearchableConfigurable {
     // reset UI
     myEnableDartSupportCheckBox.setSelected(myDartSupportEnabledInitial);
     mySdkPathTextWithBrowse.setText(mySdkInitial == null ? "" : FileUtilRt.toSystemDependentName(mySdkInitial.getHomePath()));
+
+    final DartSdkUpdateOption sdkUpdateOption = DartSdkUpdateOption.getDartSdkUpdateOption();
+    myCheckSdkUpdateCheckBox.setSelected(sdkUpdateOption != DartSdkUpdateOption.DoNotCheck);
+    mySdkUpdateChannelCombo.setSelectedItem(sdkUpdateOption);
+
     myDartiumPathTextWithBrowse.setText(myDartiumInitial == null
                                         ? ""
                                         : FileUtilRt.toSystemDependentName(StringUtil.notNullize(myDartiumInitial.getPath())));
 
     final boolean checkedMode = myDartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
     myCheckedModeCheckBox.setSelected(checkedMode);
-
-    final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(myProject);
-    propertiesComponent.setValue(DART_DO_CHECK_FOR_LATEST_SDK_KEY,
-                                 Boolean.valueOf(DART_DO_CHECK_FOR_LATEST_SDK_DEFAULT_VALUE).toString());
-    propertiesComponent
-      .setValue(DART_CHECK_FOR_LATEST_STABLE_SDK_KEY, Boolean.valueOf(DART_CHECK_FOR_LATEST_STABLE_SDK_DEFAULT_VALUE).toString());
-    propertiesComponent
-      .setValue(DART_CHECK_FOR_LATEST_DEV_SDK_KEY, Boolean.valueOf(DART_CHECK_FOR_LATEST_DEV_SDK_DEFAULT_VALUE).toString());
-
-    myCheckForNewSDKCheckBox.setSelected(DART_DO_CHECK_FOR_LATEST_SDK_DEFAULT_VALUE);
-    myStableCheckBox.setSelected(DART_CHECK_FOR_LATEST_STABLE_SDK_DEFAULT_VALUE);
-    myDevCheckBox.setSelected(DART_CHECK_FOR_LATEST_STABLE_SDK_DEFAULT_VALUE);
-    myStableCheckBox.setEnabled(DART_DO_CHECK_FOR_LATEST_SDK_DEFAULT_VALUE);
-    myDevCheckBox.setEnabled(DART_DO_CHECK_FOR_LATEST_SDK_DEFAULT_VALUE);
 
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
       final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTreeTable.getTree().getModel().getRoot();
@@ -493,6 +435,11 @@ public class DartConfigurable implements SearchableConfigurable {
             }
           }
 
+          final DartSdkUpdateOption sdkUpdateOption = myCheckSdkUpdateCheckBox.isSelected()
+                                                      ? (DartSdkUpdateOption)mySdkUpdateChannelCombo.getSelectedItem()
+                                                      : DartSdkUpdateOption.DoNotCheck;
+          DartSdkUpdateOption.setDartSdkUpdateOption(sdkUpdateOption);
+
           final String dartiumPath = FileUtilRt.toSystemIndependentName(myDartiumPathTextWithBrowse.getText().trim());
           DartiumUtil.applyDartiumSettings(dartiumPath, myDartiumSettingsCurrent);
         }
@@ -522,6 +469,8 @@ public class DartConfigurable implements SearchableConfigurable {
 
   private void updateControlsEnabledState() {
     UIUtil.setEnabled(mySettingsPanel, myEnableDartSupportCheckBox.isSelected(), true);
+
+    mySdkUpdateChannelCombo.setEnabled(myCheckSdkUpdateCheckBox.isSelected() && myCheckedModeCheckBox.isEnabled());
 
     if (!DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
       final List<String> paths = myModuleToCustomPackageRootsCurrent.entrySet().iterator().next().getValue();
