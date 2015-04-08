@@ -18,26 +18,35 @@ package org.jetbrains.osgi.bnd.run;
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.RunConfigurationProducer;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.bnd.BndFileType;
 
-public class BndRunConfigurationProducer extends RunConfigurationProducer<BndRunConfiguration> {
-  public BndRunConfigurationProducer() {
-    super(BndRunConfigurationType.getInstance());
+public abstract class BndRunConfigurationProducer extends RunConfigurationProducer<BndRunConfigurationBase> {
+  protected BndRunConfigurationProducer(@NotNull ConfigurationFactory factory) {
+    super(factory);
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(BndRunConfiguration configuration, ConfigurationContext context, Ref<PsiElement> source) {
+  protected boolean setupConfigurationFromContext(BndRunConfigurationBase configuration, ConfigurationContext context, Ref<PsiElement> source) {
     Location location = context.getLocation();
     if (location != null) {
       VirtualFile file = location.getVirtualFile();
-      if (file != null && BndFileType.BND_RUN_EXT.equals(file.getExtension())) {
-        configuration.setName(context.getModule().getName());
-        configuration.bndRunFile = file.getPath();
-        return true;
+      if (file != null && !file.isDirectory()) {
+        String extension = file.getExtension();
+        if (BndFileType.BND_RUN_EXT.equals(extension) || BndFileType.BND_EXT.equals(extension)) {
+          Boolean hasTestCases = BndLaunchUtil.hasTestCases(file.getPath());
+          if (hasTestCases == Boolean.FALSE && configuration instanceof BndRunConfigurationBase.Launch ||
+              hasTestCases == Boolean.TRUE && configuration instanceof BndRunConfigurationBase.Test) {
+            configuration.setName(context.getModule().getName());
+            configuration.bndRunFile = file.getPath();
+            return true;
+          }
+        }
       }
     }
 
@@ -45,15 +54,25 @@ public class BndRunConfigurationProducer extends RunConfigurationProducer<BndRun
   }
 
   @Override
-  public boolean isConfigurationFromContext(BndRunConfiguration configuration, ConfigurationContext context) {
+  public boolean isConfigurationFromContext(BndRunConfigurationBase configuration, ConfigurationContext context) {
     Location location = context.getLocation();
     if (location != null) {
       VirtualFile file = location.getVirtualFile();
-      if (file != null && BndFileType.BND_RUN_EXT.equals(file.getExtension())) {
-        return FileUtil.pathsEqual(file.getPath(), configuration.bndRunFile);
-      }
+      return file != null && !file.isDirectory() && FileUtil.pathsEqual(file.getPath(), configuration.bndRunFile);
     }
 
     return false;
+  }
+
+  public static class Launch extends BndRunConfigurationProducer {
+    public Launch() {
+      super(BndRunConfigurationType.getInstance().getConfigurationFactories()[0]);
+    }
+  }
+
+  public static class Test extends BndRunConfigurationProducer {
+    public Test() {
+      super(BndRunConfigurationType.getInstance().getConfigurationFactories()[1]);
+    }
   }
 }

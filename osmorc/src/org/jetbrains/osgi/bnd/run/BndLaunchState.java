@@ -27,7 +27,6 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -46,23 +45,21 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.i18n.OsmorcBundle;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import static com.intellij.openapi.util.Pair.pair;
 
-public class BndRunState extends JavaCommandLineState implements CompilationStatusListener, HotSwapVetoableListener {
-  private static final Logger LOG = Logger.getInstance(BndRunState.class);
+public class BndLaunchState extends JavaCommandLineState implements CompilationStatusListener, HotSwapVetoableListener {
+  private static final Logger LOG = Logger.getInstance(BndLaunchState.class);
   private static final Pair<Long, Long> MISSING_BUNDLE = pair(0l, 0l);
 
-  private final BndRunConfiguration myConfiguration;
+  private final BndRunConfigurationBase.Launch myConfiguration;
   private final Project myProject;
   private final NotificationGroup myNotifications;
   private final ProjectLauncher myLauncher;
   private final Map<String, Pair<Long, Long>> myBundleStamps;
 
-  public BndRunState(@NotNull ExecutionEnvironment environment, @NotNull BndRunConfiguration configuration) throws ExecutionException {
+  public BndLaunchState(@NotNull ExecutionEnvironment environment, @NotNull BndRunConfigurationBase.Launch configuration) throws ExecutionException {
     super(environment);
 
     myConfiguration = configuration;
@@ -88,30 +85,9 @@ public class BndRunState extends JavaCommandLineState implements CompilationStat
     bundlesChanged();
   }
 
-  private static Pair<Long, Long> getBundleStamp(String bundle) {
-    FileAttributes attributes = FileSystemUtil.getAttributes(bundle);
-    return attributes != null ? pair(attributes.lastModified, attributes.length) : MISSING_BUNDLE;
-  }
-
   @Override
   protected JavaParameters createJavaParameters() throws ExecutionException {
-    JavaParameters parameters = new JavaParameters();
-    parameters.setWorkingDirectory(myProject.getBasePath());
-
-    String jreHome = myConfiguration.useAlternativeJre ? myConfiguration.alternativeJrePath : null;
-    JavaParametersUtil.configureProject(myProject, parameters, JavaParameters.JDK_ONLY, jreHome);
-
-    parameters.getEnv().putAll(myLauncher.getRunEnv());
-    parameters.getVMParametersList().addAll(asList(myLauncher.getRunVM()));
-    parameters.getClassPath().addAll(asList(myLauncher.getClasspath()));
-    parameters.setMainClass(myLauncher.getMainTypeName());
-    parameters.getProgramParametersList().addAll(asList(myLauncher.getRunProgramArgs()));
-
-    return parameters;
-  }
-
-  private static List<String> asList(Collection<String> c) {
-    return c instanceof List ? (List<String>)c : ContainerUtil.newArrayList(c);
+    return BndLaunchUtil.createJavaParameters(myConfiguration, myLauncher);
   }
 
   @NotNull
@@ -129,7 +105,7 @@ public class BndRunState extends JavaCommandLineState implements CompilationStat
       @Override
       public void processTerminated(ProcessEvent event) {
         connection.disconnect();
-        hotSwapManager.removeListener(BndRunState.this);
+        hotSwapManager.removeListener(BndLaunchState.this);
         myLauncher.cleanup();
       }
     });
@@ -159,7 +135,8 @@ public class BndRunState extends JavaCommandLineState implements CompilationStat
     boolean changed = false;
 
     for (String bundle : myLauncher.getRunBundles()) {
-      Pair<Long, Long> current = getBundleStamp(bundle);
+      FileAttributes attributes = FileSystemUtil.getAttributes(bundle);
+      Pair<Long, Long> current = attributes != null ? pair(attributes.lastModified, attributes.length) : MISSING_BUNDLE;
       if (!current.equals(myBundleStamps.get(bundle))) {
         myBundleStamps.put(bundle, current);
         changed = true;

@@ -15,15 +15,15 @@
  */
 package org.jetbrains.osgi.bnd.run;
 
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationTypeBase;
-import com.intellij.execution.configurations.ConfigurationTypeUtil;
-import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.*;
 import com.intellij.openapi.project.Project;
 import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.bnd.imp.BndProjectImporter;
-import org.osmorc.i18n.OsmorcBundle;
+
+import javax.swing.*;
+
+import static org.osmorc.i18n.OsmorcBundle.message;
 
 public class BndRunConfigurationType extends ConfigurationTypeBase {
   private static final String ID = "osgi.bnd.run";
@@ -34,18 +34,54 @@ public class BndRunConfigurationType extends ConfigurationTypeBase {
   }
 
   public BndRunConfigurationType() {
-    super(ID, OsmorcBundle.message("bnd.run.configuration.name"), OsmorcBundle.message("bnd.run.configuration.description"), OsmorcIdeaIcons.Bnd);
+    super(ID, message("bnd.configuration.name"), message("bnd.configuration.description"), OsmorcIdeaIcons.Bnd);
+    addFactory(new LaunchFactory(this));
+    addFactory(new TestFactory(this));
+  }
 
-    addFactory(new ConfigurationFactory(this) {
-      @Override
-      public RunConfiguration createTemplateConfiguration(Project project) {
-        return new BndRunConfiguration(project, this, "");
-      }
+  private static abstract class FactoryBase extends ConfigurationFactory {
+    private final String myName;
 
-      @Override
-      public boolean isApplicable(@NotNull Project project) {
-        return BndProjectImporter.getWorkspace(project) != null;
-      }
-    });
+    public FactoryBase(@NotNull ConfigurationType type, @NotNull String name) {
+      super(type);
+      myName = name;
+    }
+
+    @Override
+    public String getName() {
+      return myName;
+    }
+
+    @Override
+    public boolean isApplicable(@NotNull Project project) {
+      return BndProjectImporter.getWorkspace(project) != null;
+    }
+  }
+
+  private static class LaunchFactory extends FactoryBase {
+    public LaunchFactory(@NotNull ConfigurationType type) {
+      super(type, message("bnd.run.configuration.name"));
+    }
+
+    @Override
+    public RunConfiguration createTemplateConfiguration(Project project) {
+      return new BndRunConfigurationBase.Launch(project, this, "");
+    }
+  }
+
+  private static class TestFactory extends FactoryBase {
+    public TestFactory(@NotNull ConfigurationType type) {
+      super(type, message("bnd.test.configuration.name"));
+    }
+
+    @Override
+    public Icon getIcon() {
+      return OsmorcIdeaIcons.BndTest;
+    }
+
+    @Override
+    public RunConfiguration createTemplateConfiguration(Project project) {
+      return new BndRunConfigurationBase.Test(project, this, "");
+    }
   }
 }
