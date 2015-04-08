@@ -7,27 +7,14 @@ buildscript {
     }
 }
 
-plugins {
-    id 'com.github.jk1.tcdeps' version '0.2'
-}
-
 ext.kotlinVersion = kotlinVersion
 ext.ideaPath = file("$buildDir/download/idea")
 
-// from https://teamcity.jetbrains.com/viewType.html?buildTypeId=bt410
-ext.ideaBuildTypeId = "bt410"
-ext.ideaBuildId = "415045.tcbuildid" // 139.1117.1
-
-ext.ideaArtifactName = "ideaIC-139.SNAPSHOT.win"
-
 allprojects {
     apply plugin: 'kotlin'
-    apply plugin: 'com.github.jk1.tcdeps'
 
     repositories {
-        teamcityServer {
-            url = 'https://teamcity.jetbrains.com'
-        }
+        maven { url "https://www.jetbrains.com/intellij-repository/releases" }
         mavenCentral()
     }
 
@@ -79,13 +66,13 @@ dependencies {
     compile project(':metadata-model')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
-    idea_dep tc("${ideaBuildTypeId}:${ideaBuildId}:${ideaArtifactName}.zip")
+    idea_dep group: 'com.jetbrains.intellij.idea', name: 'ideaIC', version: '14.0.3', ext: 'zip'
 
     testCompile fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar')
 }
 
 task extractIdea {
-    ext.fromFile = { configurations.idea_dep.files.find { it.name.startsWith(ideaArtifactName) } }
+    ext.fromFile = { configurations.idea_dep.files.first() }
     ext.toDir = ideaPath
     inputs.file fromFile
     outputs.dir toDir
