@@ -18,17 +18,16 @@ import java.io.IOException;
 public class ShowHint extends AnAction{
 
     private HintPanel hintPanel;
-    private final Dimension DIMENSION = new Dimension(350, 150);
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
 
         final Editor editor = FileEditorManager.getInstance(anActionEvent.getProject()).getSelectedTextEditor();
-        showHintPanel(hintPanel, editor, DIMENSION);
+        showHintPanel(hintPanel, editor);
 
     }
 
-    private void showHintPanel(HintPanel hp, Editor editor, Dimension dimension) {
+    private void showHintPanel(HintPanel hp, Editor editor) {
 
         try {
 //            hp = new HintPanel(dimension);
@@ -36,7 +35,7 @@ public class ShowHint extends AnAction{
 //            hp.show(DIMENSION, computeLocation(editor, DIMENSION));
             String[] strings = {"<html>Use <b>cmd + /</b> to comment out line </html>", "<html>Use <b>cmd + del</b> to delete line </html>"};
             hp = new HintPanel(strings);
-            hp.show(DIMENSION, computeLocation(editor, DIMENSION));
+            hp.show(computeLocation(editor, hp.getPreferredSize()));
 
         } catch (IOException e) {
             e.printStackTrace();
