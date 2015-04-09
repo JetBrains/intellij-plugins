@@ -68,6 +68,13 @@ public class CfmlRunConfiguration extends RunConfigurationBase {
   }
 
   @Override
+  public RunConfiguration clone() {
+    CfmlRunConfiguration clone = (CfmlRunConfiguration)super.clone();
+    clone.myRunnerParameters = myRunnerParameters.clone();
+    return clone;
+  }
+
+  @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
     return EmptyRunProfileState.INSTANCE;
   }
