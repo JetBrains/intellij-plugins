@@ -1,8 +1,10 @@
 package com.jetbrains.lang.dart.ide.runner.server.frame;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -19,8 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DartDebuggerEvaluator extends XDebuggerEvaluator {
+
+  private static final Pattern ERROR_PATTERN = Pattern.compile("Error:.* line \\d+ pos \\d+: (.+)");
+
   @NotNull private final DartCommandLineDebugProcess myDebugProcess;
   @NotNull private final VmCallFrame myVmCallFrame;
 
@@ -42,7 +50,11 @@ public class DartDebuggerEvaluator extends XDebuggerEvaluator {
                              new VmCallback<VmValue>() {
                                public void handleResult(final VmResult<VmValue> result) {
                                  if (result.isError()) {
-                                   callback.errorOccurred(result.getError());
+                                   // expressionPosition is not null only when this evaluation is caused by mouse hover in editor while standing on a breakpoint
+                                   // we do not want to show red popup with the error in this case (WEB-16040)
+                                   if (expressionPosition == null && result.getError() != null) {
+                                     callback.errorOccurred(getPresentableError(result.getError()));
+                                   }
                                  }
                                  else {
                                    final VmValue vmValue = result.getResult();
@@ -55,6 +67,37 @@ public class DartDebuggerEvaluator extends XDebuggerEvaluator {
     catch (IOException e) {
       callback.errorOccurred(e.toString());
     }
+  }
+
+  @VisibleForTesting
+  @NotNull
+  public static String getPresentableError(@NotNull final String rawError) {
+    //Error: Unhandled exception:
+    //No top-level getter 'foo' declared.
+    //
+    //NoSuchMethodError: method not found: 'foo'
+    //Receiver: top-level
+    //Arguments: [...]
+    //#0      NoSuchMethodError._throwNew (dart:core-patch/errors_patch.dart:176)
+    //#1      _startIsolate.<anonymous closure> (dart:isolate-patch/isolate_patch.dart:260)
+    //#2      _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:142)
+
+    //Error: '': error: line 1 pos 9: receiver 'this' is not in scope
+    //() => 1+this.foo();
+    //        ^
+    final List<String> lines = StringUtil.split(StringUtil.convertLineSeparators(rawError), "\n");
+
+    if (!lines.isEmpty() && lines.get(0).startsWith("Error:")) {
+      if (lines.get(0).equals("Error: Unhandled exception:") && lines.size() > 1) {
+        return lines.get(1);
+      }
+      final Matcher matcher = ERROR_PATTERN.matcher(lines.get(0));
+      if (matcher.find()) {
+        return matcher.group(1);
+      }
+    }
+
+    return "Cannot evaluate";
   }
 
   @Nullable
