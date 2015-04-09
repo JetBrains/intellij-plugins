@@ -10,7 +10,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartProjectComponent;
-import com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction2;
+import com.jetbrains.lang.dart.sdk.listPackageDirs.PubListPackageDirsAction;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 
@@ -215,10 +215,10 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     final VirtualFile packageDir2 = myFixture.addFileToProject("PackageDir2/foo/bar2.dart", "").getVirtualFile().getParent().getParent();
     final List<File> packageDirList = Arrays.asList(new File(packageDir1.getPath()), new File(packageDir2.getPath()), new File("nofile"));
     try {
-      PubListPackageDirsAction2.configurePubListPackageDirsLibrary(getProject(),
-                                                                   Collections.singleton(myModule),
-                                                                   Arrays.asList(packageDir1.getPath(), packageDir2.getPath()),
-                                                                   Collections.singletonMap("PackageName", packageDirList));
+      PubListPackageDirsAction.configurePubListPackageDirsLibrary(getProject(),
+                                                                  Collections.singleton(myModule),
+                                                                  Arrays.asList(packageDir1.getPath(), packageDir2.getPath()),
+                                                                  Collections.singletonMap("PackageName", packageDirList));
       final DartUrlResolver resolver = DartUrlResolver.getInstance(getProject(),
                                                                    ModuleRootManager.getInstance(myModule).getContentRoots()[0]);
       assertEquals(packageDir1, resolver.getPackageDirIfLivePackageOrFromPubListPackageDirs("PackageName", "foo/bar1.dart"));
@@ -228,10 +228,10 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
       assertEquals(packageDir1, resolver.getPackageDirIfLivePackageOrFromPubListPackageDirs("PackageName", null));
     }
     finally {
-      PubListPackageDirsAction2.configurePubListPackageDirsLibrary(getProject(),
-                                                                   Collections.<Module>emptySet(),
-                                                                   Collections.<String>emptyList(),
-                                                                   Collections.<String, List<File>>emptyMap());
+      PubListPackageDirsAction.configurePubListPackageDirsLibrary(getProject(),
+                                                                  Collections.<Module>emptySet(),
+                                                                  Collections.<String>emptyList(),
+                                                                  Collections.<String, List<File>>emptyMap());
     }
   }
 }
