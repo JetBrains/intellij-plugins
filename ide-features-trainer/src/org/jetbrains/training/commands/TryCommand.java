@@ -7,6 +7,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.*;
 import org.jetbrains.training.editor.MouseListenerHolder;
+import org.jetbrains.training.graphics.HintPanel;
+import org.jetbrains.training.graphics.ShowHint;
 import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
@@ -30,6 +32,12 @@ public class TryCommand extends Command {
 
         Element element = elements.poll();
 //        updateDescription(element, infoPanel, editor);
+
+        if (element.getAttribute("hint") != null) {
+            String hintText = element.getAttribute("hint").getValue();
+            ShowHint.showHintPanel(lesson, editor, hintText);
+        }
+
         String htmlText = (element.getContent().isEmpty() ? "" : element.getContent().get(0).getValue());
         if (htmlText.isEmpty()) htmlText = element.getAttribute("description").getValue();
 
@@ -75,6 +83,7 @@ public class TryCommand extends Command {
                                 try {
                                     infoPanel.hideButton();
                                     infoPanel.dispose();
+                                    lesson.hintPanel.dispose();
                                     lesson.onNextLesson();
                                 } catch (BadLessonException e1) {
                                     e1.printStackTrace();

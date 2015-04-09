@@ -22,7 +22,6 @@ public class HintPanel extends JPanel implements Disposable {
     private Color backGroundColor = new Color(0, 0 ,0, 190);
     private Color textColor = new Color(150, 150, 150, 190);
     private int fontSize = 14;
-    private JLabel myLabel;
     private ArrayList<CheckLabel> checkLabels;
 
     @Nullable
@@ -32,83 +31,24 @@ public class HintPanel extends JPanel implements Disposable {
     final private int GAP_HEIGHT = 10;
     final private int BOUNDS = 12;
 
-    public HintPanel(Dimension dimension) throws IOException, FontFormatException {
-
-        balloonShown = false;
-
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-        setOpaque(false);
-        setPreferredSize(dimension);
-        setSize(dimension);
-        myLabel = new JLabel("");
-        myLabel.setHorizontalTextPosition(JLabel.LEFT);
-        myLabel.setVerticalAlignment(JLabel.NORTH);
-        myLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-
-        JLabel checkLabel1 = new JLabel("✓");
-        checkLabel1.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        checkLabel1.setVerticalAlignment(JLabel.NORTH);
-
-        JLabel checkLabel2 = new JLabel("✓");
-        checkLabel2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        checkLabel2.setVerticalAlignment(JLabel.NORTH);
-
-        JLabel myLabel2;
-        myLabel2 = new JLabel("Custom text here");
-        myLabel2.setHorizontalTextPosition(JLabel.LEFT);
-        myLabel2.setVerticalAlignment(JLabel.NORTH);
-        myLabel2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-        JLabel myLabel3;
-        myLabel3 = new JLabel("Custom text here again");
-        myLabel3.setHorizontalTextPosition(JLabel.LEFT);
-        myLabel3.setVerticalAlignment(JLabel.NORTH);
-        myLabel3.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-//        custom settings
-//        myLabel.setForeground(textColor);
-
-        final BorderLayout borderLayout1 = new BorderLayout();
-        final BorderLayout borderLayout2 = new BorderLayout();
-        borderLayout1.setHgap(10);
-        borderLayout2.setHgap(10);
-
-        JPanel line1 = new JPanel();
-        line1.setLayout(borderLayout1);
-        line1.add(checkLabel1, BorderLayout.WEST);
-        line1.add(myLabel, BorderLayout.CENTER);
-
-        JPanel line2 = new JPanel();
-        line2.setLayout(borderLayout2);
-        line2.add(checkLabel2, BorderLayout.WEST);
-        line2.add(myLabel2, BorderLayout.CENTER);
-
-        this.setBorder(BorderFactory.createEmptyBorder(BOUNDS, BOUNDS, BOUNDS, BOUNDS));
-
-        this.add(line1);
-        this.add(Box.createRigidArea(new Dimension(0, GAP_HEIGHT)));
-        this.add(line2);
-
-        setFocusable(false);
-        setVisible(true);
-    }
 
     public HintPanel(String[] strings) throws IOException, FontFormatException {
 
         balloonShown = false;
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBorder(BorderFactory.createEmptyBorder());
 
         setOpaque(false);
-        this.setBorder(BorderFactory.createEmptyBorder(BOUNDS, BOUNDS, BOUNDS, BOUNDS));
+//        this.setBorder(BorderFactory.createEmptyBorder(BOUNDS, BOUNDS, BOUNDS, BOUNDS));
 
+        checkLabels = new ArrayList<CheckLabel>(strings.length);
+        this.add(Box.createRigidArea(new Dimension(0, BOUNDS)));
         for (String string : strings) {
-            CheckLabel checkLabel = new CheckLabel(false, string);
-            this.add(checkLabel.getContainer());
-            this.add(Box.createRigidArea(new Dimension(0, GAP_HEIGHT)));
+            checkLabels.add(new CheckLabel(false, string));
+            this.add(checkLabels.get(checkLabels.size() - 1).getContainer());
         }
+//        this.add(Box.createRigidArea(new Dimension(0, BOUNDS)));
 
         Dimension dimension = calcDimension();
         if (dimension != null) {
@@ -138,13 +78,15 @@ public class HintPanel extends JPanel implements Disposable {
                     .setHideOnLinkClick(false)
                     .setHideOnFrameResize(false)
                     .setHideOnAction(false)
+
                     .setDisposable(this)
                     .setCloseButtonEnabled(true)
                     .setFillColor(new Color(230, 227, 193, 190))
 //                    .setBorderColor(new Color(160, 160, 160, 255))
                     .setBorderColor(new Color(0, 0, 0, 0))
                     .setDialogMode(false)
-                    .setAnimationCycle(0);
+                    .setAnimationCycle(0)
+                    .setBorderInsets(new Insets(0,0,0,0));
 
             balloon = balloonBuilder.createBalloon();
             balloon.setBounds(infoBounds);
@@ -161,6 +103,7 @@ public class HintPanel extends JPanel implements Disposable {
         final private int GAP_CONST = 10;
         final private int LABEL_WIDTH = 300;
         final private int CHECK_LABEL_WIDTH = 20;
+        private Dimension preferredSize;
 
 
         public CheckLabel(boolean check, String text) {
@@ -168,7 +111,9 @@ public class HintPanel extends JPanel implements Disposable {
             this.check = check;
             this.text = text;
             this.label = new JLabel(text);
-            label.setPreferredSize(getPreferredSize(label.getText(), true, LABEL_WIDTH));
+            preferredSize = getPreferredSize(label.getText(), true, LABEL_WIDTH);
+            label.setPreferredSize(preferredSize);
+            label.setMaximumSize(preferredSize);
 
             this.checkLabel = new JLabel("-");
             setAppearance();
@@ -197,7 +142,7 @@ public class HintPanel extends JPanel implements Disposable {
             if (label != null) {
 //                label.setHorizontalTextPosition(JLabel.LEFT);
 //                label.setVerticalAlignment(JLabel.NORTH);
-                label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+//                label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             }
         }
 
@@ -207,7 +152,7 @@ public class HintPanel extends JPanel implements Disposable {
                     UIUtil.invokeLaterIfNeeded(new Runnable() {
                         @Override
                         public void run() {
-                            checkLabel.setText("✓");
+                            checkLabel.setText("<html><font color=\"green\"><b>✓</b></font></html>");
                         }
                     });
                 else
@@ -255,13 +200,15 @@ public class HintPanel extends JPanel implements Disposable {
             container.add(checkLabel, BorderLayout.WEST);
             container.add(label, BorderLayout.CENTER);
 
+            container.setMaximumSize(container.getPreferredSize());
             return container;
         }
 
         @Nullable
-        public Dimension getDimension(){
-            if (label == null) return null;
-            return new Dimension(CHECK_LABEL_WIDTH + GAP_CONST + LABEL_WIDTH, label.getHeight());
+        public Dimension getPreferredSize(){
+            int myWidth = (int) preferredSize.getWidth() + GAP_CONST + CHECK_LABEL_WIDTH;
+            int myHeight = (int)preferredSize.getHeight();
+            return new Dimension(myWidth, myHeight);
         }
     }
 
@@ -273,8 +220,8 @@ public class HintPanel extends JPanel implements Disposable {
         int myBounds = BOUNDS;
         if (checkLabels.size() > 0) {
             for (CheckLabel checkLabel : checkLabels) {
-                myWidth = Math.max((int) checkLabel.getDimension().getWidth(), myWidth);
-                myHeight += (int) checkLabel.getDimension().getWidth() + GAP_HEIGHT;
+                myWidth = Math.max((int) checkLabel.getPreferredSize().getWidth(), myWidth);
+                myHeight += (int) checkLabel.getPreferredSize().getHeight() + GAP_HEIGHT;
             }
             myHeight -= GAP_HEIGHT;
         }
@@ -285,18 +232,17 @@ public class HintPanel extends JPanel implements Disposable {
         return new Dimension(myWidth, myHeight);
     }
 
-    public void setText(final String text){
-        UIUtil.invokeLaterIfNeeded(new Runnable() {
-            @Override
-            public void run() {
-                myLabel.setText(text);
-            }
-        });
-    }
 
+    public void setAllAsDone(){
+        if (checkLabels != null && checkLabels.size() > 0) {
+            for (CheckLabel checkLabel : checkLabels) {
+                checkLabel.setCheck(true);
+            }
+        }
+    }
 
     @Override
     public void dispose() {
-        setVisible(false);
+        balloon.hide();
     }
 }

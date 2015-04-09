@@ -9,6 +9,7 @@ import org.jetbrains.training.BadCourseException;
 import org.jetbrains.training.BadLessonException;
 import org.jetbrains.training.LessonIsOpenedException;
 import org.jetbrains.training.graphics.DetailPanel;
+import org.jetbrains.training.graphics.HintPanel;
 
 import java.awt.*;
 import java.io.IOException;
@@ -28,6 +29,7 @@ public class Lesson extends AnAction {
 
     @Nullable
     private DetailPanel infoPanel;
+    public HintPanel hintPanel;
     private boolean isPassed;
     private boolean isOpen;
 
@@ -84,6 +86,7 @@ public class Lesson extends AnAction {
     public boolean isOpen() {return isOpen;}
 
     public void setPassed(boolean passed){
+        hintPanel.setAllAsDone();
         isPassed = passed;
     }
 
