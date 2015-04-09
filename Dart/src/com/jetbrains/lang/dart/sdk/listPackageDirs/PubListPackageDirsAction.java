@@ -38,13 +38,13 @@ import java.util.*;
 
 // todo instead of unioning all of the package name maps and configuring all Dart modules to the unioned value, the module roots could be
 // todo used as a key to only set the specific package map information for the specific module.
-public class PubListPackageDirsAction2 extends AnAction {
+public class PubListPackageDirsAction extends AnAction {
 
   public static final String PUB_LIST_PACKAGE_DIRS_LIB_NAME = "Dart pub list-package-dirs";
 
-  private static final Logger LOG = Logger.getInstance(PubListPackageDirsAction2.class.getName());
+  private static final Logger LOG = Logger.getInstance(PubListPackageDirsAction.class.getName());
 
-  public PubListPackageDirsAction2() {
+  public PubListPackageDirsAction() {
     super("Configure Dart package roots using 'pub list-package-dirs'", null, DartIcons.Dart_16);
   }
 
