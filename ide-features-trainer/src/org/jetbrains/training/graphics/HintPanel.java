@@ -9,6 +9,7 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.text.View;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,6 +28,9 @@ public class HintPanel extends JPanel implements Disposable {
     @Nullable
     private Balloon balloon;
     private boolean balloonShown;
+
+    final private int GAP_HEIGHT = 10;
+    final private int BOUNDS = 12;
 
     public HintPanel(Dimension dimension) throws IOException, FontFormatException {
 
@@ -66,7 +70,6 @@ public class HintPanel extends JPanel implements Disposable {
 //        custom settings
 //        myLabel.setForeground(textColor);
 
-        int heightGap = 14;
         final BorderLayout borderLayout1 = new BorderLayout();
         final BorderLayout borderLayout2 = new BorderLayout();
         borderLayout1.setHgap(10);
@@ -82,10 +85,10 @@ public class HintPanel extends JPanel implements Disposable {
         line2.add(checkLabel2, BorderLayout.WEST);
         line2.add(myLabel2, BorderLayout.CENTER);
 
-        this.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+        this.setBorder(BorderFactory.createEmptyBorder(BOUNDS, BOUNDS, BOUNDS, BOUNDS));
 
         this.add(line1);
-        this.add(Box.createRigidArea(new Dimension(0, 10)));
+        this.add(Box.createRigidArea(new Dimension(0, GAP_HEIGHT)));
         this.add(line2);
 
         setFocusable(false);
@@ -99,27 +102,34 @@ public class HintPanel extends JPanel implements Disposable {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         setOpaque(false);
-        Dimension dimension = new Dimension(300, 150);
-        this.setBorder(BorderFactory.createEmptyBorder(12, 12, 0, 12));
-        setPreferredSize(dimension);
-        setSize(dimension);
+        this.setBorder(BorderFactory.createEmptyBorder(BOUNDS, BOUNDS, BOUNDS, BOUNDS));
 
         for (String string : strings) {
             CheckLabel checkLabel = new CheckLabel(false, string);
             this.add(checkLabel.getContainer());
-            this.add(Box.createRigidArea(new Dimension(0, 10)));
+            this.add(Box.createRigidArea(new Dimension(0, GAP_HEIGHT)));
+        }
+
+        Dimension dimension = calcDimension();
+        if (dimension != null) {
+            setPreferredSize(dimension);
+            setSize(dimension);
         }
 
         setFocusable(false);
         setVisible(true);
     }
 
-    public void show(Dimension dimension, RelativePoint location){
+    public Dimension getDimension(){
+        return this.getPreferredSize();
+    }
+
+    public void show(RelativePoint location){
 
         if (!balloonShown) {
             balloonShown = true;
 
-            Rectangle infoBounds = new Rectangle((int) location.getPoint().getX(), (int) location.getPoint().getY(), (int) dimension.getWidth(), (int) dimension.getHeight());
+            Rectangle infoBounds = new Rectangle((int) location.getPoint().getX(), (int) location.getPoint().getY(), (int) this.getPreferredSize().getWidth(), (int) this.getPreferredSize().getHeight());
 
             BalloonBuilder balloonBuilder = JBPopupFactory.getInstance().createBalloonBuilder(this);
             balloonBuilder
@@ -149,6 +159,8 @@ public class HintPanel extends JPanel implements Disposable {
         private JLabel checkLabel;
         private JLabel label;
         final private int GAP_CONST = 10;
+        final private int LABEL_WIDTH = 300;
+        final private int CHECK_LABEL_WIDTH = 20;
 
 
         public CheckLabel(boolean check, String text) {
@@ -156,14 +168,35 @@ public class HintPanel extends JPanel implements Disposable {
             this.check = check;
             this.text = text;
             this.label = new JLabel(text);
-            this.checkLabel = new JLabel("-");
+            label.setPreferredSize(getPreferredSize(label.getText(), true, LABEL_WIDTH));
 
+            this.checkLabel = new JLabel("-");
+            setAppearance();
+
+        }
+
+        private Dimension getPreferredSize(String html, boolean width, int prefSize) {
+            JLabel resizer = new JLabel();
+
+            resizer.setText(html);
+
+
+            View view = (View) resizer.getClientProperty(
+                    javax.swing.plaf.basic.BasicHTML.propertyKey);
+
+            view.setSize(width?prefSize:0,width?0:prefSize);
+
+            float w = view.getPreferredSpan(View.X_AXIS);
+            float h = view.getPreferredSpan(View.Y_AXIS);
+
+            return new java.awt.Dimension((int) Math.ceil(w),
+                    (int) Math.ceil(h));
         }
 
         private void setAppearance(){
             if (label != null) {
-                label.setHorizontalTextPosition(JLabel.LEFT);
-                label.setVerticalAlignment(JLabel.NORTH);
+//                label.setHorizontalTextPosition(JLabel.LEFT);
+//                label.setVerticalAlignment(JLabel.NORTH);
                 label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             }
         }
@@ -190,6 +223,10 @@ public class HintPanel extends JPanel implements Disposable {
 
         public boolean isCheck() {
             return check;
+        }
+
+        public int getGAP_CONST() {
+            return GAP_CONST;
         }
 
         public JLabel getLabel() {
@@ -220,6 +257,32 @@ public class HintPanel extends JPanel implements Disposable {
 
             return container;
         }
+
+        @Nullable
+        public Dimension getDimension(){
+            if (label == null) return null;
+            return new Dimension(CHECK_LABEL_WIDTH + GAP_CONST + LABEL_WIDTH, label.getHeight());
+        }
+    }
+
+    @Nullable
+    public Dimension calcDimension(){
+        if (checkLabels == null) return null;
+        int myWidth = 0;
+        int myHeight = 0;
+        int myBounds = BOUNDS;
+        if (checkLabels.size() > 0) {
+            for (CheckLabel checkLabel : checkLabels) {
+                myWidth = Math.max((int) checkLabel.getDimension().getWidth(), myWidth);
+                myHeight += (int) checkLabel.getDimension().getWidth() + GAP_HEIGHT;
+            }
+            myHeight -= GAP_HEIGHT;
+        }
+
+        myWidth += myBounds * 2;
+        myHeight += myBounds * 2;
+
+        return new Dimension(myWidth, myHeight);
     }
 
     public void setText(final String text){
