@@ -61,7 +61,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       }
     }
 
-    if (vFile.getFileType() == DartFileType.INSTANCE) {
+    if (PubspecYamlUtil.PUBSPEC_YAML.equalsIgnoreCase(vFile.getName()) || vFile.getFileType() == DartFileType.INSTANCE) {
       final DartSdk sdk = DartSdk.getDartSdk(myProject);
 
       // no SDK
