@@ -225,7 +225,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
       final List<String> filesForRefresh = new ArrayList<String>(projects.size());
       final THashMap<MavenProject, List<String>> sourceRoots = new THashMap<MavenProject, List<String>>(projects.size());
       try {
-        char[] buf = new char[128];
+        char[] buf = new char[8196];
         int read;
         final Matcher matcher = RESULT_PATTERN.matcher(stringBuilder);
         int startForResultParse = 0;
@@ -236,7 +236,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
             process.destroy();
           }
 
-          if (matcher.find(startForResultParse)) {
+          while (matcher.find(startForResultParse)) {
             MavenProject mavenProject = projects.get(Integer.parseInt(matcher.group(1)));
             indicator.setText2(mavenProject.getDisplayName());
             filesForRefresh.add(matcher.group(2));
@@ -248,7 +248,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
             }
 
             sourceRoots.put(mavenProject, moduleSourcesRoots);
-            startForResultParse = stringBuilder.length();
+            startForResultParse = matcher.end();
           }
         }
 
