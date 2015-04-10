@@ -9,9 +9,12 @@ import org.jetbrains.training.*;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.HintPanel;
 import org.jetbrains.training.graphics.ShowHint;
+import org.jetbrains.training.keymap.KeymapUtil;
+import org.jetbrains.training.keymap.SubKeymapUtil;
 import org.jetbrains.training.lesson.Lesson;
 import org.jetbrains.training.graphics.DetailPanel;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,6 +84,10 @@ public class TryCommand extends Command {
                 if(lesson.hintPanel != null) {
                     if (element.getAttribute("hint") != null) {
                         String hintText = element.getAttribute("hint").getValue();
+                        if (element.getAttribute("action") != null) {
+                            hintText = resolveShortcut(element.getAttribute("hint").getValue(),element.getAttribute("action").getValue());
+                        }
+
                         lesson.hintPanel.setCheck(true, hintText);
                     }
                 }
@@ -94,6 +101,20 @@ public class TryCommand extends Command {
         InputStream is = MyClassLoader.getInstance().getResourceAsStream(lesson.getParentCourse().getAnswersPath() + targetPath);
         if(is == null) throw new IOException("Unable to get checkfile for \"" + lesson.getId() + "\" lesson");
         return new Scanner(is).useDelimiter("\\Z").next();
+    }
+
+    private String resolveShortcut(String text, String actionId){
+        final KeyStroke shortcutByActionId = KeymapUtil.getShortcutByActionId(actionId);
+        final String shortcutText = SubKeymapUtil.getKeyStrokeTextSub(shortcutByActionId);
+        return substitution(text, shortcutText);
+    }
+
+    public static String substitution(String text, String shortcutString){
+        if (text.contains(ActionCommand.SHORTCUT)) {
+            return text.replace(ActionCommand.SHORTCUT, shortcutString);
+        } else {
+            return text;
+        }
     }
 
 }

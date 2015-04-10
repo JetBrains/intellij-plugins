@@ -54,8 +54,8 @@ public class CommentLineDemo {
     </MouseBlock>
     </Replay>
     <TryBlock>
-        <Try description="Now comment out the &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement" trigger="CommentByLineComment" hint="&lt;html&gt;Use &lt;b&gt;cmd + /&lt;/b&gt; to comment out line &lt;/html&gt;" target="CommentLineDemo.java"/>
-        <Try description="Now uncomment out the &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement" trigger="CommentByLineComment" hint="&lt;html&gt;Use &lt;b&gt;cmd + /&lt;/b&gt; to uncomment out line &lt;/html&gt;" target="CommentLineDemo2.java"/>
+        <Try description="Now comment out the &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement" action="CommentByLineComment" trigger="CommentByLineComment" hint="&lt;html&gt;Use &lt;b&gt;&lt;shortcut&gt;&lt;/b&gt; to comment out line &lt;/html&gt;" target="CommentLineDemo.java"/>
+        <Try description="Now uncomment out the &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement" action="CommentByLineComment" trigger="CommentByLineComment" hint="&lt;html&gt;Use &lt;b&gt;&lt;shortcut&gt;&lt;/b&gt; to uncomment out line &lt;/html&gt;" target="CommentLineDemo2.java"/>
     </TryBlock>
     <Win description="Awesome!"/>
 </xml>
