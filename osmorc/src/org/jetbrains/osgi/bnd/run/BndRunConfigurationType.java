@@ -41,15 +41,22 @@ public class BndRunConfigurationType extends ConfigurationTypeBase {
 
   private static abstract class FactoryBase extends ConfigurationFactory {
     private final String myName;
+    private final Icon myIcon;
 
-    public FactoryBase(@NotNull ConfigurationType type, @NotNull String name) {
+    public FactoryBase(@NotNull ConfigurationType type, @NotNull String name, @NotNull Icon icon) {
       super(type);
       myName = name;
+      myIcon = icon;
     }
 
     @Override
     public String getName() {
       return myName;
+    }
+
+    @Override
+    public Icon getIcon() {
+      return myIcon;
     }
 
     @Override
@@ -60,7 +67,7 @@ public class BndRunConfigurationType extends ConfigurationTypeBase {
 
   private static class LaunchFactory extends FactoryBase {
     public LaunchFactory(@NotNull ConfigurationType type) {
-      super(type, message("bnd.run.configuration.name"));
+      super(type, message("bnd.run.configuration.name"), OsmorcIdeaIcons.BndLaunch);
     }
 
     @Override
@@ -71,12 +78,7 @@ public class BndRunConfigurationType extends ConfigurationTypeBase {
 
   private static class TestFactory extends FactoryBase {
     public TestFactory(@NotNull ConfigurationType type) {
-      super(type, message("bnd.test.configuration.name"));
-    }
-
-    @Override
-    public Icon getIcon() {
-      return OsmorcIdeaIcons.BndTest;
+      super(type, message("bnd.test.configuration.name"), OsmorcIdeaIcons.BndTest);
     }
 
     @Override
