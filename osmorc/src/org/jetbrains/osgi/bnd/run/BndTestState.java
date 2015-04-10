@@ -19,7 +19,9 @@ import aQute.bnd.build.ProjectLauncher;
 import aQute.bnd.build.ProjectTester;
 import aQute.bnd.build.Workspace;
 import aQute.bnd.service.EclipseJUnitTester;
-import com.intellij.execution.*;
+import com.intellij.execution.CantRunException;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.process.OSProcessHandler;
@@ -27,6 +29,7 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.testframework.JavaTestLocationProvider;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMCustomMessagesParsing;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
@@ -36,18 +39,11 @@ import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties
 import com.intellij.execution.testframework.sm.runner.events.*;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.testIntegration.TestLocationProvider;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.io.URLUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.i18n.OsmorcBundle;
@@ -58,12 +54,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.util.io.URLUtil.SCHEME_SEPARATOR;
 
 public class BndTestState extends JavaCommandLineState {
   private static final String TEST_FRAMEWORK_NAME = "Bnd-OSGi-JUnit";
@@ -122,7 +118,7 @@ public class BndTestState extends JavaCommandLineState {
   @Override
   protected ConsoleView createConsole(@NotNull Executor executor) throws ExecutionException {
     TestConsoleProperties consoleProperties = new MyTestConsoleProperties(this, executor);
-    MyLocationProvider locator = new MyLocationProvider(consoleProperties.getScope());
+    JavaTestLocationProvider locator = new JavaTestLocationProvider(consoleProperties.getScope());
     return SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(TEST_FRAMEWORK_NAME, consoleProperties, getEnvironment(), locator);
   }
 
@@ -335,7 +331,7 @@ public class BndTestState extends JavaCommandLineState {
             myProcessor.onSuiteFinished(new TestSuiteFinishedEvent(myCurrentSuite));
           }
 
-          myProcessor.onSuiteStarted(new TestSuiteStartedEvent(suite, MyLocationProvider.SUITE_PROTOCOL + URLUtil.SCHEME_SEPARATOR + suite));
+          myProcessor.onSuiteStarted(new TestSuiteStartedEvent(suite, JavaTestLocationProvider.SUITE_PROTOCOL + SCHEME_SEPARATOR + suite));
           myCurrentSuite = suite;
         }
       }
@@ -343,7 +339,7 @@ public class BndTestState extends JavaCommandLineState {
       GeneralTestEventsProcessor processor = myProcessor;
       synchronized (myTestLock) {
         myCurrentTest = testName;
-        processor.onTestStarted(new TestStartedEvent(testName, MyLocationProvider.TEST_PROTOCOL + URLUtil.SCHEME_SEPARATOR + testName));
+        processor.onTestStarted(new TestStartedEvent(testName, JavaTestLocationProvider.TEST_PROTOCOL + SCHEME_SEPARATOR + testName));
       }
     }
 
@@ -449,52 +445,6 @@ public class BndTestState extends JavaCommandLineState {
       }
 
       return null;
-    }
-  }
-
-  private static class MyLocationProvider implements TestLocationProvider {
-    public static final String SUITE_PROTOCOL = "java:suite";
-    public static final String TEST_PROTOCOL = "java:test";
-
-    private final GlobalSearchScope myScope;
-
-    public MyLocationProvider(@NotNull GlobalSearchScope scope) {
-      myScope = scope;
-    }
-
-    @NotNull
-    @Override
-    public List<Location> getLocation(@NotNull String protocolId, @NotNull String locationData, Project project) {
-      List<Location> results = Collections.emptyList();
-
-      if (SUITE_PROTOCOL.equals(protocolId)) {
-        PsiClass[] classes = JavaPsiFacade.getInstance(project).findClasses(locationData, myScope);
-        if (classes.length > 0) {
-          results = ContainerUtil.newSmartList();
-          for (PsiClass aClass : classes) {
-            results.add(new PsiLocation<PsiClass>(project, aClass));
-          }
-        }
-      }
-      else if (TEST_PROTOCOL.equals(protocolId)) {
-        int p = locationData.lastIndexOf('.');
-        if (p > 0 && p < locationData.length() - 1) {
-          String className = locationData.substring(0, p);
-          PsiClass[] classes = JavaPsiFacade.getInstance(project).findClasses(className, myScope);
-          if (classes.length > 0) {
-            results = ContainerUtil.newSmartList();
-            String methodName = locationData.substring(p + 1);
-            for (PsiClass aClass : classes) {
-              PsiMethod[] methods = aClass.findMethodsByName(methodName, true);
-              for (PsiMethod method : methods) {
-                results.add(new PsiLocation<PsiMethod>(project, method));
-              }
-            }
-          }
-        }
-      }
-
-      return results;
     }
   }
 }
