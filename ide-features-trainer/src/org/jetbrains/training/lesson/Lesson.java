@@ -86,7 +86,7 @@ public class Lesson extends AnAction {
     public boolean isOpen() {return isOpen;}
 
     public void setPassed(boolean passed){
-        hintPanel.setAllAsDone();
+        if (hintPanel != null) hintPanel.setAllAsDone();
         isPassed = passed;
     }
 
