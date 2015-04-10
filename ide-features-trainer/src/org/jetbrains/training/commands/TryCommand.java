@@ -50,7 +50,19 @@ public class TryCommand extends Command {
         if(lesson.hintPanel == null) {
             if (element.getAttribute("hint") != null) {
                 String hintText = element.getAttribute("hint").getValue();
-                ShowHint.showHintPanel(lesson, editor, hintText);
+                if (element.getAttribute("action") != null) {
+                    hintText = resolveShortcut(element.getAttribute("hint").getValue(),element.getAttribute("action").getValue());
+                }
+
+                try {
+                    lesson.hintPanel = new HintPanel(new String[]{hintText});
+                    lesson.hintPanel.showIt(editor);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                } catch (FontFormatException e1) {
+                    e1.printStackTrace();
+                }
+
             }
         }
 
