@@ -29,6 +29,7 @@ public class OsmorcIdeaIcons {
   }
 
   public static final Icon Bnd = load("/icons/bnd.png"); // 16x16
+  public static final Icon BndLaunch = load("/icons/bndLaunch.png"); // 16x16
   public static final Icon BndTest = load("/icons/bndTest.png"); // 16x16
   public static final Icon Osgi = load("/icons/osgi.png"); // 16x16
 }
