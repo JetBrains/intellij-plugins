@@ -26,6 +26,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.osgi.bnd.imp.BndProjectImporter;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +65,18 @@ public class BndLaunchUtil {
       try {
         Processor processor = new Processor();
         processor.setProperties(file);
+
         if (processor.get(Constants.RUNFW) != null) {
+          // "Test-Cases" header may be inherited from a project
+          if (!BndProjectImporter.BND_FILE.equals(file.getName())) {
+            File projectFile = new File(file.getParent(), BndProjectImporter.BND_FILE);
+            if (projectFile.isFile()) {
+              Processor project = new Processor();
+              project.setProperties(projectFile);
+              processor.setParent(project);
+            }
+          }
+
           boolean hasTestCases = processor.get(Constants.TESTCASES) != null;
           return hasTestCases ? Boolean.TRUE : Boolean.FALSE;
         }
