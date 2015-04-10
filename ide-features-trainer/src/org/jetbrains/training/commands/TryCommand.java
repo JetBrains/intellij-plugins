@@ -51,66 +51,24 @@ public class TryCommand extends Command {
 
         updateButton(element, elements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
 
-        final String winMessage = element.getAttribute("win-message").getValue();
-
         final ActionsRecorder recorder = new ActionsRecorder(e.getProject(), document, target);
         //TODO: Make recorder disposable
 
         if (element.getAttribute("trigger") != null) {
             String actionId = element.getAttribute("trigger").getValue();
-            startRecord(lesson, infoPanel, winMessage, recorder, actionId);
+            startRecord(elements, lesson, editor, e, document, target, mouseListenerHolder, recorder, actionId);
         } else {
-
-            startRecord(lesson, infoPanel, winMessage, recorder, null);
+            startRecord(elements, lesson, editor, e, document, target, mouseListenerHolder, recorder, null);
         }
-
     }
 
-    private void startRecord(final Lesson lesson, final DetailPanel infoPanel, final String winMessage, ActionsRecorder recorder, @Nullable String actionId) {
+    private void startRecord(final Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent anActionEvent, final Document document, final String target, final MouseListenerHolder mouseListenerHolder, ActionsRecorder recorder, @Nullable String actionId) {
         recorder.startRecording(new Runnable() {        //do when done
             @Override
             public void run() {
-                infoPanel.setText(winMessage);
-                infoPanel.greenalize();
-                lesson.setPassed(true);
-
-                if (lesson.getParentCourse().hasNotPassedLesson()) {
-                    infoPanel.setButtonText("Next lesson");
-                    try {
-                        infoPanel.addButtonAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    infoPanel.hideButton();
-                                    infoPanel.dispose();
-                                    lesson.hintPanel.dispose();
-                                    lesson.onNextLesson();
-                                } catch (BadLessonException e1) {
-                                    e1.printStackTrace();
-                                } catch (ExecutionException e1) {
-                                    e1.printStackTrace();
-                                } catch (IOException e1) {
-                                    e1.printStackTrace();
-                                } catch (FontFormatException e1) {
-                                    e1.printStackTrace();
-                                } catch (InterruptedException e1) {
-                                    e1.printStackTrace();
-                                } catch (BadCourseException e1) {
-                                    e1.printStackTrace();
-                                } catch (LessonIsOpenedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
-                    infoPanel.showButton();
-                }
-
+                startNextCommand(elements, lesson, editor, anActionEvent, document, target, lesson.getInfoPanel(), mouseListenerHolder);
             }
         }, actionId);
     }
-
 
 }
