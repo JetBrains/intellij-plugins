@@ -13,10 +13,12 @@ import org.jetbrains.training.graphics.HintPanel;
 import org.jetbrains.training.graphics.ShowHint;
 import org.jetbrains.training.lesson.Lesson;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by karashevich on 30/01/15.
@@ -27,6 +29,8 @@ public class TryBlockCommand extends Command {
         super(CommandType.TRYBLOCK);
     }
 
+    private Queue<Element> myElements = null;
+
     @Override
     public void execute(Queue<Element> elements, final Lesson lesson, final Editor editor, final AnActionEvent e, Document document, String target, final DetailPanel infoPanel, MouseListenerHolder mouseListenerHolder) {
 
@@ -34,6 +38,10 @@ public class TryBlockCommand extends Command {
 //        updateDescription(element, infoPanel, editor);
         try {
             buildHintPanel(element, lesson, editor);
+            addTryCommands(elements, element);
+
+            startNextCommand(myElements, lesson, editor, e, document, target, infoPanel, mouseListenerHolder);
+
         } catch (IOException e1) {
             e1.printStackTrace();
         } catch (FontFormatException e1) {
@@ -42,19 +50,33 @@ public class TryBlockCommand extends Command {
 
     }
 
-
-
     private void buildHintPanel(Element element, Lesson lesson, Editor editor) throws IOException, FontFormatException {
         ArrayList<String> stringArrayList = new ArrayList<String>();
         for (Element subElement: element.getChildren()) {
             if(subElement.getAttribute("hint") != null) {
-                stringArrayList.add(element.getAttribute("hint").getValue());
+                stringArrayList.add(subElement.getAttribute("hint").getValue());
             }
         }
         String[] strings = new String[stringArrayList.size()];
         strings = stringArrayList.toArray(strings);
 
         lesson.hintPanel = new HintPanel(strings);
-        ShowHint.showHintPanel(lesson.hintPanel, editor);
+        lesson.hintPanel.showIt(editor);
+    }
+
+    private void addTryCommands(Queue<Element> elements, Element element){
+
+        myElements = new LinkedBlockingQueue<Element>();
+
+        for (Element subElement: element.getChildren()) {
+            if(subElement.getName().toUpperCase().equals(CommandType.TRY.toString())) {
+                myElements.add(subElement);
+            }
+
+        }
+
+        for (Element el: elements) {
+            myElements.add(el);
+        }
     }
 }
