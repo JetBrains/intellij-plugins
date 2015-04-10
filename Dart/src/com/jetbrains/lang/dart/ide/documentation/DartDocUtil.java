@@ -43,9 +43,11 @@ public class DartDocUtil {
 
     builder.append("</code>");
 
-    final String docText = getDocumentationText(namedComponent);
+    String docText = getDocumentationText(namedComponent);
     if (docText != null) {
       builder.append("<br/><br/>");
+      docText = docText.replace("[:", "<code>").replace(":]", "</code>");
+      docText = docText.replace("[", "<code>").replace("]", "</code>");
       final MarkdownProcessor processor = new MarkdownProcessor();
       builder.append(processor.markdown(docText));
     }
