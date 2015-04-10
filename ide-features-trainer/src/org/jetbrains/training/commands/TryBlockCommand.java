@@ -11,8 +11,11 @@ import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.DetailPanel;
 import org.jetbrains.training.graphics.HintPanel;
 import org.jetbrains.training.graphics.ShowHint;
+import org.jetbrains.training.keymap.KeymapUtil;
+import org.jetbrains.training.keymap.SubKeymapUtil;
 import org.jetbrains.training.lesson.Lesson;
 
+import javax.swing.*;
 import javax.xml.bind.SchemaOutputResolver;
 import java.awt.*;
 import java.io.IOException;
@@ -54,7 +57,11 @@ public class TryBlockCommand extends Command {
         ArrayList<String> stringArrayList = new ArrayList<String>();
         for (Element subElement: element.getChildren()) {
             if(subElement.getAttribute("hint") != null) {
-                stringArrayList.add(subElement.getAttribute("hint").getValue());
+                String hintText = subElement.getAttribute("hint").getValue();
+                if (subElement.getAttribute("action") != null) {
+                    hintText = resolveShortcut(subElement.getAttribute("hint").getValue(),subElement.getAttribute("action").getValue());
+                }
+                stringArrayList.add(hintText);
             }
         }
         String[] strings = new String[stringArrayList.size()];
@@ -77,6 +84,20 @@ public class TryBlockCommand extends Command {
 
         for (Element el: elements) {
             myElements.add(el);
+        }
+    }
+
+    private String resolveShortcut(String text, String actionId){
+        final KeyStroke shortcutByActionId = KeymapUtil.getShortcutByActionId(actionId);
+        final String shortcutText = SubKeymapUtil.getKeyStrokeTextSub(shortcutByActionId);
+        return substitution(text, shortcutText);
+    }
+
+    public static String substitution(String text, String shortcutString){
+        if (text.contains(ActionCommand.SHORTCUT)) {
+            return text.replace(ActionCommand.SHORTCUT, shortcutString);
+        } else {
+            return text;
         }
     }
 }
