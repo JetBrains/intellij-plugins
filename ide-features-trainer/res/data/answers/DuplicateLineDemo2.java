@@ -7,6 +7,6 @@ public class DuplicateLineDemo {
 
         //Let's find the absolute value of a and x.
         System.out.println("|" + a + "| is " + Math.abs(a));
-        System.out.println("|" + a + "| is " + Math.abs(a));
+        System.out.println("|" + x + "| is " + Math.abs(x));
     }
 }
