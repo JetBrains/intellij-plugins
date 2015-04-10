@@ -39,6 +39,9 @@ public class CommandFactory {
             case TRY:
                 return new TryCommand();
 
+            case TRYBLOCK:
+                return new TryBlockCommand();
+
             case COPYTEXT:
                 return new CopyTextCommand();
 
