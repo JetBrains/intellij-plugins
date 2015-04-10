@@ -55,10 +55,12 @@ public abstract class BndRunConfigurationProducer extends RunConfigurationProduc
 
   @Override
   public boolean isConfigurationFromContext(BndRunConfigurationBase configuration, ConfigurationContext context) {
-    Location location = context.getLocation();
-    if (location != null) {
-      VirtualFile file = location.getVirtualFile();
-      return file != null && !file.isDirectory() && FileUtil.pathsEqual(file.getPath(), configuration.bndRunFile);
+    if (getConfigurationFactory() == configuration.getFactory()) {
+      Location location = context.getLocation();
+      if (location != null) {
+        VirtualFile file = location.getVirtualFile();
+        return file != null && !file.isDirectory() && FileUtil.pathsEqual(file.getPath(), configuration.bndRunFile);
+      }
     }
 
     return false;
