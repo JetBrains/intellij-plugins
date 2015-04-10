@@ -25,7 +25,7 @@ public class Course extends ActionGroup{
     private ArrayList<Lesson> lessons;
     private String path;
     private final static String DEFAULT_PATH = "DefaultCourse.xml";
-    private final static String DEFAULT_NAME = "Default course";
+    private final static String DEFAULT_NAME = "Default Course";
     private String answersPath;
     private Element root;
     private String id;
