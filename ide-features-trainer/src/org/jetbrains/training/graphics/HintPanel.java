@@ -1,6 +1,7 @@
 package org.jetbrains.training.graphics;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -47,6 +48,7 @@ public class HintPanel extends JPanel implements Disposable {
         for (String string : strings) {
             checkLabels.add(new CheckLabel(false, string));
             this.add(checkLabels.get(checkLabels.size() - 1).getContainer());
+            this.add(Box.createRigidArea(new Dimension(0, GAP_HEIGHT)));
         }
 //        this.add(Box.createRigidArea(new Dimension(0, BOUNDS)));
 
@@ -94,6 +96,10 @@ public class HintPanel extends JPanel implements Disposable {
         }
     }
 
+    public void showIt(Editor editor) {
+        show(computeLocation(editor, this.getDimension()));
+    }
+
     private class CheckLabel{
 
         private boolean check;
@@ -129,7 +135,7 @@ public class HintPanel extends JPanel implements Disposable {
             View view = (View) resizer.getClientProperty(
                     javax.swing.plaf.basic.BasicHTML.propertyKey);
 
-            view.setSize(width?prefSize:0,width?0:prefSize);
+            view.setSize(width ? prefSize : 0, width ? 0 : prefSize);
 
             float w = view.getPreferredSpan(View.X_AXIS);
             float h = view.getPreferredSpan(View.Y_AXIS);
@@ -232,6 +238,43 @@ public class HintPanel extends JPanel implements Disposable {
         return new Dimension(myWidth, myHeight);
     }
 
+    public void setCheck(boolean isDone, String string){
+
+        CheckLabel targetCheckLabel = null;
+
+        for (CheckLabel checkLabel : checkLabels) {
+            if(checkLabel.getText().equals(string)) {
+                targetCheckLabel = checkLabel;
+                break;
+            }
+        }
+
+        if (targetCheckLabel == null) return;
+
+        if (targetCheckLabel.check != isDone) {
+            if(isDone) {
+                final CheckLabel finalTargetCheckLabel = targetCheckLabel;
+                UIUtil.invokeLaterIfNeeded(new Runnable() {
+                    @Override
+                    public void run() {
+//                        finalTargetCheckLabel.checkLabel.setText("<html><font color=\"green\"><b>✓</b></font></html>");
+                        finalTargetCheckLabel.setCheck(true);
+                    }
+                });
+            }
+            else {
+                final CheckLabel finalTargetCheckLabel = targetCheckLabel;
+                UIUtil.invokeLaterIfNeeded(new Runnable() {
+                    @Override
+                    public void run() {
+                        finalTargetCheckLabel.setText("-");
+                    }
+                });
+            }
+
+            targetCheckLabel.check = isDone;
+        }
+    }
 
     public void setAllAsDone(){
         if (checkLabels != null && checkLabels.size() > 0) {
@@ -239,6 +282,15 @@ public class HintPanel extends JPanel implements Disposable {
                 checkLabel.setCheck(true);
             }
         }
+    }
+
+    private static RelativePoint computeLocation(Editor editor, Dimension dimension){
+
+        final Rectangle visibleRect = editor.getComponent().getVisibleRect();
+        final int magicConst = 10;
+        Point point = new Point(visibleRect.x + visibleRect.width - dimension.width - magicConst,
+                visibleRect.y + magicConst);
+        return new RelativePoint(editor.getComponent(), point);
     }
 
     @Override
