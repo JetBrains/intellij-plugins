@@ -61,6 +61,6 @@ public class CommentLineDemo {
         <Action action="CommentByLineComment" delay="2000" balloon="&lt;shortcut&gt; (Uncomment line)"/>
     </MouseBlock>
     </Replay>
-    <Try description="Now comment out the &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement" trigger="CommentByLineComment" hint="&lt;html&gt;Use &lt;b&gt;cmd + /&lt;/b&gt; to comment out line and the same shortcut to uncomment &lt;/html&gt;"/>
+    <Try description="Now comment out the &lt;span color=&quot;gray&quot;&gt;if&lt;/span&gt; statement" action="CommentByLineComment" trigger="CommentByLineComment" hint="&lt;html&gt;Use &lt;b&gt;&lt;shortcut&gt;&lt;/b&gt; to comment out line and the same shortcut to uncomment &lt;/html&gt;"/>
     <Win description="Awesome!"/>
 </xml>

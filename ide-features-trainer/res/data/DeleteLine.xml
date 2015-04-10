@@ -62,6 +62,6 @@
     </MouseBlock>
     </Replay>
     <TraverseCaret stop="0" delay="20"/>
-    <Try description="Delete the &lt;span color=&quot;gray&quot;&gt;for&lt;/span&gt; statement to complete this lesson" trigger="EditorDeleteLine" target="DeleteLineDemo.java"/>
+    <Try description="Delete the &lt;span color=&quot;gray&quot;&gt;for&lt;/span&gt; statement to complete this lesson" action="EditorDeleteLine" trigger="EditorDeleteLine" hint="&lt;html&gt;Press &lt;shortcut&gt; to delete line &lt;/html&gt;" target="DeleteLineDemo.java"/>
     <Win description="Cool, now you can delete code fast :)"/>
 </xml>
