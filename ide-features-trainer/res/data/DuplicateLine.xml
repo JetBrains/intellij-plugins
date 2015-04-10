@@ -74,5 +74,6 @@
         System.out.println("|" + a + "| is " + Math.abs(a));
     }
 }</CopyText>
-    <Try description="Duplicate print line and replace &lt;span color=&quot;gray&quot;&gt;a&lt;/span&gt; with &lt;span color=&quot;gray&quot;&gt;x&lt;/span&gt;" win-message="Perfect, now you know how to duplicate lines easily!" trigger="EditorDuplicate"/>
+    <Try description="Duplicate print line and replace &lt;span color=&quot;gray&quot;&gt;a&lt;/span&gt; with &lt;span color=&quot;gray&quot;&gt;x&lt;/span&gt;" trigger="EditorDuplicate"/>
+    <Win description="Perfect, now you know how to duplicate lines easily!"/>
 </xml>

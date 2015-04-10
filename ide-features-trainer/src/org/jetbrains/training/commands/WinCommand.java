@@ -48,7 +48,7 @@ public class WinCommand extends Command {
                         try {
                             infoPanel.hideButton();
                             infoPanel.dispose();
-                            lesson.hintPanel.dispose();
+                            if (lesson.hintPanel != null) lesson.hintPanel.dispose();
                             lesson.onNextLesson();
                         } catch (BadLessonException e1) {
                             e1.printStackTrace();
