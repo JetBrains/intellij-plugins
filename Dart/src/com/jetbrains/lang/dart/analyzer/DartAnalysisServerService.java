@@ -511,7 +511,7 @@ public class DartAnalysisServerService {
         myServer.server_setSubscriptions(SERVER_SUBSCRIPTIONS);
         myServer.addAnalysisServerListener(myAnalysisServerListener);
         mySdkVersion = sdk.getVersion();
-        myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
+        myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, false, true, false));
         LOG.info("Server started, see status at http://localhost:" + port + "/status");
       }
       catch (Exception e) {
