@@ -1,30 +1,30 @@
 package com.intellij.javascript.karma.server;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.util.GsonUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
-* @author Sergey Simonchik
-*/
 public class KarmaServerState {
 
   private static final Logger LOG = Logger.getInstance(KarmaServerState.class);
@@ -32,6 +32,7 @@ public class KarmaServerState {
   private static final String BROWSER_DISCONNECTED_EVENT_TYPE = "browserDisconnected";
 
   private final KarmaServer myServer;
+  private final List<String> myOverridenBrowsers;
   private final ConcurrentMap<String, CapturedBrowser> myCapturedBrowsers = Maps.newConcurrentMap();
   private volatile int myServerPort = -1;
   private volatile KarmaConfig myConfig;
@@ -41,10 +42,20 @@ public class KarmaServerState {
                           @NotNull ProcessHandler serverProcessHandler,
                           @NotNull File configurationFile) {
     myServer = server;
+    myOverridenBrowsers = parseBrowsers(server.getServerSettings().getRunSettings().getBrowsers());
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_CONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_DISCONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new ConfigHandler(configurationFile));
     new ServerProcessListener(this, serverProcessHandler);
+  }
+
+  @Nullable
+  private static List<String> parseBrowsers(@NotNull String browsersStr) {
+    if (StringUtil.isEmptyOrSpaces(browsersStr)) {
+      return null;
+    }
+    Splitter splitter = Splitter.on(',').trimResults().omitEmptyStrings();
+    return splitter.splitToList(browsersStr);
   }
 
   private void handleBrowsersChange(@NotNull String eventType,
@@ -55,7 +66,7 @@ public class KarmaServerState {
       boolean captured = ObjectUtils.notNull(autoCaptured, true);
       CapturedBrowser browser = new CapturedBrowser(browserName, browserId, captured);
       myCapturedBrowsers.put(browserId, browser);
-      if (canSetBrowsersReady(autoCaptured)) {
+      if (autoCaptured == Boolean.FALSE || canSetBrowsersReady()) {
         setBrowsersReady();
       }
     }
@@ -64,16 +75,17 @@ public class KarmaServerState {
     }
   }
 
-  private boolean canSetBrowsersReady(@Nullable Boolean autoCaptured) {
-    if (autoCaptured == Boolean.FALSE) {
-      return true;
-    }
-    KarmaConfig config = myConfig;
-    if (config == null) {
-      return true;
+  private boolean canSetBrowsersReady() {
+    List<String> expectedBrowsers = myOverridenBrowsers;
+    if (expectedBrowsers == null) {
+      KarmaConfig config = myConfig;
+      if (config == null) {
+        return true;
+      }
+      expectedBrowsers = config.getBrowsers();
     }
     int autoCapturedBrowsers = getAutoCapturedBrowserCount();
-    return autoCapturedBrowsers == config.getBrowsers().size();
+    return autoCapturedBrowsers == expectedBrowsers.size();
   }
 
   private int getAutoCapturedBrowserCount() {
@@ -166,7 +178,7 @@ public class KarmaServerState {
     }
   }
 
-  private static class ServerProcessListener implements ProcessListener {
+  private static class ServerProcessListener extends ProcessAdapter {
     private static final Pattern SERVER_PORT_LINE_PATTERN = Pattern.compile("Karma.+server started at http://[^:]+:(\\d+)/.*$");
 
     private final StringBuilder myBuffer = new StringBuilder();
@@ -177,18 +189,6 @@ public class KarmaServerState {
       myState = state;
       myHandler = handler;
       handler.addProcessListener(this);
-    }
-
-    @Override
-    public void startNotified(ProcessEvent event) {
-    }
-
-    @Override
-    public void processTerminated(ProcessEvent event) {
-    }
-
-    @Override
-    public void processWillTerminate(ProcessEvent event, boolean willBeDestroyed) {
     }
 
     @Override
@@ -231,7 +231,6 @@ public class KarmaServerState {
       }
       return -1;
     }
-
   }
 
 }
