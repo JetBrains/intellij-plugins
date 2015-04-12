@@ -19,6 +19,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
@@ -32,9 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaServer {
 
   private static final Logger LOG = Logger.getInstance(KarmaServer.class);
@@ -110,6 +108,11 @@ public class KarmaServer {
   }
 
   @NotNull
+  public KarmaServerSettings getServerSettings() {
+    return myServerSettings;
+  }
+
+  @NotNull
   public String getNodeInterpreterPath() {
     return myServerSettings.getNodeInterpreterPath();
   }
@@ -148,7 +151,7 @@ public class KarmaServer {
     KarmaRunSettings runSettings = serverSettings.getRunSettings();
     commandLine.setPassParentEnvironment(runSettings.isPassParentEnvVars());
     commandLine.getEnvironment().putAll(runSettings.getEnvVars());
-    commandLine.setWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
+    commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
     commandLine.setExePath(serverSettings.getNodeInterpreterPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
     //commandLine.addParameter("--debug-brk=34598");
@@ -156,7 +159,7 @@ public class KarmaServer {
     commandLine.addParameter("--karmaPackageDir=" + myKarmaJsSourcesLocator.getKarmaPackageDir().getAbsolutePath());
     commandLine.addParameter("--configFile=" + serverSettings.getConfigurationFilePath());
     String browsers = serverSettings.getRunSettings().getBrowsers();
-    if (!browsers.isEmpty()) {
+    if (!StringUtil.isEmptyOrSpaces(browsers)) {
       commandLine.addParameter("--browsers=" + browsers);
     }
     if (myCoveragePeer != null) {
@@ -170,7 +173,8 @@ public class KarmaServer {
     catch (ExecutionException e) {
       throw new IOException("Can not start Karma server: " + commandLine.getCommandLineString(), e);
     }
-    LOG.info("Karma server " + System.identityHashCode(process) + " started successfully: "
+    final int processHashCode = System.identityHashCode(process);
+    LOG.info("Karma server " + processHashCode + " started successfully: "
              + commandLine.getCommandLineString());
     KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(
       process,
@@ -181,7 +185,7 @@ public class KarmaServer {
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(final ProcessEvent event) {
-        LOG.info("Karma server " + myProcessHashCode + " terminated with exit code " + event.getExitCode());
+        LOG.info("Karma server " + processHashCode + " terminated with exit code " + event.getExitCode());
         Disposer.dispose(myDisposable);
         fireOnTerminated(event.getExitCode());
       }
