@@ -49,16 +49,20 @@ import java.util.concurrent.TimeUnit;
 public class DartAnalysisServerService {
 
   public static final String MIN_SDK_VERSION = "1.9";
+
+  private static final long SEND_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
-  private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.SECONDS.toMillis(120);
+  private static final long GET_LIBRARY_DEPENDENCIES_TIMEOUT = TimeUnit.MINUTES.toMillis(5);
   private static final List<String> SERVER_SUBSCRIPTIONS = Collections.singletonList(ServerService.STATUS);
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
 
   private final Object myLock = new Object(); // Access all fields under this lock. Do not wait for server response under lock.
   @Nullable private AnalysisServer myServer;
+  @Nullable private StdioServerSocket myServerSocket;
+
   @NotNull private String myServerVersion = "";
   @NotNull private String mySdkVersion = "";
   @Nullable private String mySdkHome = null;
@@ -251,12 +255,27 @@ public class DartAnalysisServerService {
           LOG.debug("Removing overlaid content of the following files:\n" + StringUtil.join(oldTrackedFiles, ",\n"));
         }
       }
+
       if (!filesToUpdate.isEmpty()) {
-        myServer.analysis_updateContent(filesToUpdate, new UpdateContentConsumer() {
+        final UpdateContentConsumer consumer = new UpdateContentConsumer() {
           @Override
           public void onResponse() {
           }
-        });
+        };
+
+        final AnalysisServer server = myServer;
+        final boolean ok = runInPooledThreadAndWait(new Runnable() {
+          @Override
+          public void run() {
+            server.analysis_updateContent(filesToUpdate, consumer);
+          }
+        }, "analysis_updateContent(" + StringUtil.join(filesToUpdate.keySet(), ", ") + ")", SEND_REQUEST_TIMEOUT);
+
+        if (!ok) {
+          stopServer();
+          //noinspection UnnecessaryReturnStatement
+          return;
+        }
       }
     }
   }
@@ -270,7 +289,21 @@ public class DartAnalysisServerService {
                   "\nexcluded:\n" + StringUtil.join(excludedRoots, ",\n"));
       }
 
-      myServer.analysis_setAnalysisRoots(includedRoots, excludedRoots, null);
+      final AnalysisServer server = myServer;
+      final String runnableInfo = "analysis_setAnalysisRoots(" + StringUtil.join(includedRoots, ", ") + "; " +
+                                  StringUtil.join(excludedRoots, ", ") + ")";
+      final boolean ok = runInPooledThreadAndWait(new Runnable() {
+        @Override
+        public void run() {
+          server.analysis_setAnalysisRoots(includedRoots, excludedRoots, null);
+        }
+      }, runnableInfo, SEND_REQUEST_TIMEOUT);
+
+      if (!ok) {
+        stopServer();
+        return false;
+      }
+
       return true;
     }
   }
@@ -310,7 +343,7 @@ public class DartAnalysisServerService {
 
         LOG.debug("analysis_getErrors(" + filePath + ")");
 
-        myServer.analysis_getErrors(filePath, new GetErrorsConsumer() {
+        final GetErrorsConsumer consumer = new GetErrorsConsumer() {
           @Override
           public void computedErrors(final AnalysisError[] errors) {
             if (semaphore.tryUp()) {
@@ -339,7 +372,20 @@ public class DartAnalysisServerService {
             logError("analysis_getErrors()", filePath, error);
             semaphore.up();
           }
-        });
+        };
+
+        final AnalysisServer server = myServer;
+        final boolean ok = runInPooledThreadAndWait(new Runnable() {
+          @Override
+          public void run() {
+            server.analysis_getErrors(filePath, consumer);
+          }
+        }, "analysis_getErrors(" + filePath + ")", SEND_REQUEST_TIMEOUT);
+
+        if (!ok) {
+          stopServer();
+          return null;
+        }
       }
 
       final long timeout = info.isLongerAnalysisTimeout() || ApplicationManager.getApplication().isUnitTestMode()
@@ -367,7 +413,7 @@ public class DartAnalysisServerService {
 
         LOG.debug("analysis_getLibraryDependencies()");
 
-        myServer.analysis_getLibraryDependencies(new GetLibraryDependenciesConsumer() {
+        final GetLibraryDependenciesConsumer consumer = new GetLibraryDependenciesConsumer() {
           @Override
           public void computedDependencies(@Nullable final String[] libraries,
                                            @Nullable final Map<String, Map<String, List<String>>> packageMap) {
@@ -380,7 +426,20 @@ public class DartAnalysisServerService {
             logError("analysis_getLibraryDependencies()", null, error);
             semaphore.up();
           }
-        });
+        };
+
+        final AnalysisServer server = myServer;
+        final boolean ok = runInPooledThreadAndWait(new Runnable() {
+          @Override
+          public void run() {
+            server.analysis_getLibraryDependencies(consumer);
+          }
+        }, "analysis_getLibraryDependencies()", SEND_REQUEST_TIMEOUT);
+
+        if (!ok) {
+          stopServer();
+          return null;
+        }
       }
 
       semaphore.waitFor(GET_LIBRARY_DEPENDENCIES_TIMEOUT);
@@ -403,7 +462,7 @@ public class DartAnalysisServerService {
 
       semaphore.down();
 
-      myServer.edit_getFixes(filePath, offset, new GetFixesConsumer() {
+      final GetFixesConsumer consumer = new GetFixesConsumer() {
         @Override
         public void computedFixes(final List<AnalysisErrorFixes> fixes) {
           resultRef.set(fixes);
@@ -415,7 +474,20 @@ public class DartAnalysisServerService {
           logError("edit_getFixes()", filePath, error);
           semaphore.up();
         }
-      });
+      };
+
+      final AnalysisServer server = myServer;
+      final boolean ok = runInPooledThreadAndWait(new Runnable() {
+        @Override
+        public void run() {
+          server.edit_getFixes(filePath, offset, consumer);
+        }
+      }, "edit_getFixes(" + filePath + ", " + offset + ")", SEND_REQUEST_TIMEOUT);
+
+      if (!ok) {
+        stopServer();
+        return null;
+      }
     }
 
     final long t0 = System.currentTimeMillis();
@@ -439,7 +511,7 @@ public class DartAnalysisServerService {
 
       semaphore.down();
 
-      myServer.edit_format(filePath, selectionOffset, selectionLength, new FormatConsumer() {
+      final FormatConsumer consumer = new FormatConsumer() {
         @Override
         public void computedFormat(final List<SourceEdit> edits, final int selectionOffset, final int selectionLength) {
           resultRef.set(new FormatResult(edits, selectionOffset, selectionLength));
@@ -451,7 +523,20 @@ public class DartAnalysisServerService {
           logError("edit_format()", filePath, error);
           semaphore.up();
         }
-      });
+      };
+
+      final AnalysisServer server = myServer;
+      final boolean ok = runInPooledThreadAndWait(new Runnable() {
+        @Override
+        public void run() {
+          server.edit_format(filePath, selectionOffset, selectionLength, consumer);
+        }
+      }, "edit_format(" + filePath + ", " + selectionOffset + ", " + selectionLength + ")", SEND_REQUEST_TIMEOUT);
+
+      if (!ok) {
+        stopServer();
+        return null;
+      }
     }
 
     final long t0 = System.currentTimeMillis();
@@ -473,7 +558,19 @@ public class DartAnalysisServerService {
         LOG.debug("analysis_setPriorityFiles, files:\n" + StringUtil.join(myPriorityFiles, ",\n"));
       }
 
-      myServer.analysis_setPriorityFiles(myPriorityFiles);
+      final AnalysisServer server = myServer;
+      final boolean ok = runInPooledThreadAndWait(new Runnable() {
+        @Override
+        public void run() {
+          server.analysis_setPriorityFiles(myPriorityFiles);
+        }
+      }, "analysis_setPriorityFiles(" + StringUtil.join(myPriorityFiles, ", ") + ")", SEND_REQUEST_TIMEOUT);
+
+      if (!ok) {
+        stopServer();
+        return false;
+      }
+
       return true;
     }
   }
@@ -499,19 +596,31 @@ public class DartAnalysisServerService {
 
       final int port = NetUtils.tryToFindAvailableSocketPort(10000);
 
-      final StdioServerSocket serverSocket =
-        new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, false,
-                              FileReadMode.NORMALIZE_EOL_ALWAYS);
-      serverSocket.setClientId(ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_'));
-      serverSocket.setClientVersion(ApplicationInfo.getInstance().getApiVersion());
-      myServer = new RemoteAnalysisServerImpl(serverSocket);
+      myServerSocket = new StdioServerSocket(runtimePath, analysisServerPath, null, debugStream, new String[]{}, false, false, port, false,
+                                             FileReadMode.NORMALIZE_EOL_ALWAYS);
+      myServerSocket.setClientId(ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_'));
+      myServerSocket.setClientVersion(ApplicationInfo.getInstance().getApiVersion());
+      myServer = new RemoteAnalysisServerImpl(myServerSocket);
 
       try {
         myServer.start();
         myServer.server_setSubscriptions(SERVER_SUBSCRIPTIONS);
         myServer.addAnalysisServerListener(myAnalysisServerListener);
         mySdkVersion = sdk.getVersion();
-        myServer.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
+
+        final AnalysisServer server = myServer;
+        final boolean ok = runInPooledThreadAndWait(new Runnable() {
+          @Override
+          public void run() {
+            server.analysis_updateOptions(new AnalysisOptions(true, true, true, false, true, false));
+          }
+        }, "analysis_updateOptions(true, true, true, false, true, false)", SEND_REQUEST_TIMEOUT);
+
+        if (!ok) {
+          stopServer();
+          return;
+        }
+
         LOG.info("Server started, see status at http://localhost:" + port + "/status");
       }
       catch (Exception e) {
@@ -542,10 +651,20 @@ public class DartAnalysisServerService {
       if (myServer != null) {
         LOG.debug("stopping server");
         myServer.removeAnalysisServerListener(myAnalysisServerListener);
-        try {
-          myServer.server_shutdown();
+
+        final AnalysisServer server = myServer;
+        final boolean ok = runInPooledThreadAndWait(new Runnable() {
+          @Override
+          public void run() {
+            server.server_shutdown();
+          }
+        }, "server_shutdown()", SEND_REQUEST_TIMEOUT);
+
+        if (!ok) {
+          if (myServerSocket != null) {
+            myServerSocket.stop();
+          }
         }
-        catch (Exception e) {/* unlucky */}
       }
 
       onServerStopped();
@@ -554,6 +673,7 @@ public class DartAnalysisServerService {
 
   private void onServerStopped() {
     synchronized (myLock) {
+      myServerSocket = null;
       myServer = null;
       mySdkHome = null;
       myFilePathWithOverlaidContentToTimestamp.clear();
@@ -580,5 +700,43 @@ public class DartAnalysisServerService {
               ", server version = " + myServerVersion +
               ", error code=" + error.getCode() + ": " + error.getMessage(),
               new Attachment("stack_trace.txt", error.getStackTrace()));
+  }
+
+  private static boolean runInPooledThreadAndWait(@NotNull final Runnable runnable,
+                                                  @NotNull final String runnableInfo,
+                                                  final long timeout) {
+    final Ref<RuntimeException> exceptionRef = new Ref<RuntimeException>();
+
+    final Semaphore semaphore = new Semaphore();
+    semaphore.down();
+
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          runnable.run();
+        }
+        catch (RuntimeException e) {
+          exceptionRef.set(e);
+        }
+
+        semaphore.up();
+      }
+    });
+
+    semaphore.waitFor(timeout);
+
+    if (!exceptionRef.isNull()) {
+      LOG.error(runnableInfo, exceptionRef.get());
+      return false;
+    }
+
+    if (semaphore.tryUp()) {
+      // runnable is still not complete
+      LOG.error("Operation didn't finish in " + timeout + " ms: " + runnableInfo);
+      return false;
+    }
+
+    return true;
   }
 }
