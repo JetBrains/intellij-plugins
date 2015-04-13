@@ -21,7 +21,15 @@ import java.util.ArrayList;
 public class HintPanel extends JPanel implements Disposable {
 
     private Color backGroundColor = new Color(0, 0 ,0, 190);
-    private Color textColor = new Color(150, 150, 150, 190);
+
+    private Color textColor_Default = new Color(150, 150, 150, 190);
+    private Color textColor_Darcula = new Color(20, 20, 20, 220);
+
+    private Color fillColor_Default = new Color(230, 227, 193, 190);
+    private Color fillColor_Darcula = new Color(230, 227, 193, 220);
+
+
+
     private int fontSize = 14;
     private ArrayList<CheckLabel> checkLabels;
 
@@ -68,6 +76,9 @@ public class HintPanel extends JPanel implements Disposable {
 
     public void show(RelativePoint location){
 
+        Color fillColor = fillColor_Default;
+        if (UIUtil.isUnderDarcula()) fillColor = fillColor_Darcula;
+
         if (!balloonShown) {
             balloonShown = true;
 
@@ -83,7 +94,7 @@ public class HintPanel extends JPanel implements Disposable {
 
                     .setDisposable(this)
                     .setCloseButtonEnabled(true)
-                    .setFillColor(new Color(230, 227, 193, 190))
+                    .setFillColor(fillColor)
 //                    .setBorderColor(new Color(160, 160, 160, 255))
                     .setBorderColor(new Color(0, 0, 0, 0))
                     .setDialogMode(false)
@@ -146,9 +157,14 @@ public class HintPanel extends JPanel implements Disposable {
 
         private void setAppearance(){
             if (label != null) {
+                if(UIUtil.isUnderDarcula())
+                    label.setForeground(textColor_Darcula);
 //                label.setHorizontalTextPosition(JLabel.LEFT);
 //                label.setVerticalAlignment(JLabel.NORTH);
 //                label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            }
+            if (checkLabel != null) {
+                    checkLabel.setForeground(textColor_Darcula);
             }
         }
 
