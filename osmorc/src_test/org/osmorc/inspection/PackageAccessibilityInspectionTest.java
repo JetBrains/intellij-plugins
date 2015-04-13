@@ -1,3 +1,18 @@
+/*
+ * Copyright 2000-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.osmorc.inspection;
 
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -10,12 +25,13 @@ import org.osmorc.i18n.OsmorcBundle;
 public class PackageAccessibilityInspectionTest extends LightOsgiFixtureTestCase {
   private static final String POSITIVE_TEST =
     "package pkg;\n" +
+    "import org.apache.felix.framework.FrameworkFactory;\n" +
     "import org.osgi.framework.launch.*;\n" +
     "public class C {\n" +
     "  public static void main() {\n" +
     "    <error descr=\"The package is not imported in the manifest\">javax.swing.Icon</error> icon = null;\n" +
-    "    <error descr=\"The package is not imported in the manifest\">FrameworkFactory</error> factory =\n" +
-    "      new <error descr=\"The package is not exported by the bundle dependencies\">org.apache.felix.framework.FrameworkFactory</error>();\n" +
+    "    <error descr=\"The package is not exported by the bundle dependencies\">FrameworkFactory</error> factory =\n" +
+    "      new <error descr=\"The package is not exported by the bundle dependencies\">FrameworkFactory</error>();\n" +
     "  }\n" +
     "}";
 
@@ -50,12 +66,13 @@ public class PackageAccessibilityInspectionTest extends LightOsgiFixtureTestCase
       facet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Bnd);
       doTest(
         "package pkg;\n" +
+        "import org.apache.felix.framework.FrameworkFactory;\n" +
         "import org.osgi.framework.launch.*;\n" +
         "public class C {\n" +
         "  public static void main() {\n" +
         "    javax.swing.Icon icon = null;\n" +
-        "    FrameworkFactory factory =\n" +
-        "      new <error descr=\"The package is not exported by the bundle dependencies\">org.apache.felix.framework.FrameworkFactory</error>();\n" +
+        "    <error descr=\"The package is not exported by the bundle dependencies\">FrameworkFactory</error> factory =\n" +
+        "      new <error descr=\"The package is not exported by the bundle dependencies\">FrameworkFactory</error>();\n" +
         "  }\n" +
         "}", "");
     }
