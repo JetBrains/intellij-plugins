@@ -25,19 +25,21 @@
 package org.osmorc.inspection;
 
 import com.intellij.codeInsight.daemon.impl.analysis.AnnotationsHighlightUtil;
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel;
 import com.intellij.ide.projectView.impl.ProjectRootsUtil;
+import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.packageDependencies.DependenciesBuilder;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.osgi.framework.Constants;
 import org.osmorc.BundleManager;
@@ -56,7 +58,7 @@ import java.util.List;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class PackageAccessibilityInspection extends LocalInspectionTool {
+public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspectionTool {
   private static final String NOT_EXPORTED = "not exported";
 
   public boolean checkTests = false;
@@ -66,43 +68,38 @@ public class PackageAccessibilityInspection extends LocalInspectionTool {
     return new SingleCheckboxOptionsPanel(OsmorcBundle.message("PackageAccessibilityInspection.ui.check.tests"), this, "checkTests");
   }
 
-  @NotNull
+  @Nullable
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-    boolean check = checkTests || !ProjectRootsUtil.isInTestSource(holder.getFile());
-    return !check ? PsiElementVisitor.EMPTY_VISITOR : new JavaElementVisitor() {
-      @Override
-      public void visitReferenceElement(PsiJavaCodeReferenceElement reference) {
-        checkReference(reference);
-      }
+  public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
+    if (file.getViewProvider().getPsi(JavaLanguage.INSTANCE) == null ||
+        !checkTests && ProjectRootsUtil.isInTestSource(file)) {
+      return null;
+    }
 
-      @Override
-      public void visitImportStaticReferenceElement(PsiImportStaticReferenceElement reference) {
-        checkReference(reference);
-      }
+    final OsmorcFacet facet = OsmorcFacet.getInstance(file);
+    if (facet == null) {
+      return null;
+    }
 
+    final List<ProblemDescriptor> problems = ContainerUtil.newSmartList();
+    DependenciesBuilder.analyzeFileDependencies(file, new DependenciesBuilder.DependencyProcessor() {
       @Override
-      public void visitReferenceExpression(PsiReferenceExpression expression) {
-        checkReference(expression);
-      }
-
-      private void checkReference(PsiJavaCodeReferenceElement ref) {
-        OsmorcFacet facet = OsmorcFacet.getInstance(ref);
-        if (facet != null) {
-          PsiElement target = ref.resolve();
-          if (target instanceof PsiClass) {
-            String toImport = checkAccessibility((PsiClass)target, facet);
-            if (toImport == NOT_EXPORTED) {
-              holder.registerProblem(ref, OsmorcBundle.message("WrongImportPackageInspection.message"));
-            }
-            else if (toImport != null) {
-              LocalQuickFix fix = new ImportPackageFix(toImport);
-              holder.registerProblem(ref, OsmorcBundle.message("PackageAccessibilityInspection.message"), fix);
-            }
+      public void process(PsiElement place, PsiElement dependency) {
+        if (dependency instanceof PsiClass && PsiTreeUtil.getParentOfType(place, PsiImportList.class) == null) {
+          String toImport = checkAccessibility((PsiClass)dependency, facet);
+          if (toImport == NOT_EXPORTED) {
+            String message = OsmorcBundle.message("WrongImportPackageInspection.message");
+            problems.add(manager.createProblemDescriptor(place, message, isOnTheFly, null, ProblemHighlightType.GENERIC_ERROR_OR_WARNING));
+          }
+          else if (toImport != null) {
+            String message = OsmorcBundle.message("PackageAccessibilityInspection.message");
+            LocalQuickFix[] fixes = {new ImportPackageFix(toImport)};
+            problems.add(manager.createProblemDescriptor(place, message, isOnTheFly, fixes, ProblemHighlightType.GENERIC_ERROR_OR_WARNING));
           }
         }
       }
-    };
+    });
+    return problems.isEmpty() ? null : problems.toArray(new ProblemDescriptor[problems.size()]);
   }
 
   private static class ImportPackageFix extends AbstractOsgiQuickFix {
