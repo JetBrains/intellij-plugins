@@ -28,16 +28,16 @@ public class DartListPackageDirsLibraryProperties extends LibraryProperties<Dart
     myPackageNameToDirsMap = packageNameToDirsMap;
   }
 
-  public void setPackageNameToFileDirsMap(@NotNull final Map<String, List<File>> packageNameToFileDirsMap) {
+  public void setPackageNameToFileDirsMap(@NotNull final Map<String, List<String>> packageNameToFileDirsMap) {
     myPackageNameToDirsMap = new TreeMap<String, List<String>>();
-    for (Map.Entry<String, List<File>> entry : packageNameToFileDirsMap.entrySet()) {
+    for (Map.Entry<String, List<String>> entry : packageNameToFileDirsMap.entrySet()) {
       List<String> stringList = myPackageNameToDirsMap.get(entry.getKey());
       if (stringList == null) {
         stringList = new ArrayList<String>();
         myPackageNameToDirsMap.put(entry.getKey(), stringList);
       }
-      for (File file : entry.getValue()) {
-        stringList.add(FileUtil.toSystemIndependentName(file.getPath()));
+      for (String s : entry.getValue()) {
+        stringList.add(s);
       }
     }
   }

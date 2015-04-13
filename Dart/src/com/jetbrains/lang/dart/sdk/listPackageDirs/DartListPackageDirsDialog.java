@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.sdk.listPackageDirs;
 
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.SystemInfo;
@@ -26,12 +27,12 @@ public class DartListPackageDirsDialog extends DialogWrapper {
   private JBList myRootsList;
   private JBTable myPackagesTable;
 
-  @NotNull private final Collection<String> myLibRoots;
-  private @NotNull final Map<String, List<File>> myPackageMap;
+  private final Collection<String> myLibRoots;
+  private final Map<String, Map<String, List<String>>> myPackageMap;
 
   protected DartListPackageDirsDialog(@NotNull final Project project,
                                       @NotNull final Collection<String> libRoots,
-                                      @NotNull final Map<String, List<File>> packageMap) {
+                                      @NotNull final Map<String, Map<String, List<String>>> packageMap) {
     super(project);
     myLibRoots = libRoots;
     myPackageMap = packageMap;
@@ -52,13 +53,19 @@ public class DartListPackageDirsDialog extends DialogWrapper {
   }
 
   private void initTable() {
-    final String[][] data = new String[myPackageMap.size()][2];
+    int size = 0;
+    for (Map.Entry<String, Map<String, List<String>>> entry : myPackageMap.entrySet()) {
+      size += entry.getValue().size();
+    }
+    final String[][] data = new String[size][2];
 
     int i = 0;
-    for (Map.Entry<String, List<File>> entry : myPackageMap.entrySet()) {
-      data[i][0] = entry.getKey();
-      data[i][1] = FileUtil.toSystemDependentName(StringUtil.join(entry.getValue(), "; "));
-      i++;
+    for (Map.Entry<String, Map<String, List<String>>> entry : myPackageMap.entrySet()) {
+      for(Map.Entry<String, List<String>> entry2 : entry.getValue().entrySet()) {
+        data[i][0] = entry2.getKey();
+        data[i][1] = StringUtil.join(entry2.getValue(), "; ");
+        i++;
+      }
     }
 
     myPackagesTable.setModel(new DefaultTableModel(data, new String[]{"Package name", "Location"}) {
