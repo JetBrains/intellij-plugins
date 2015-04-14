@@ -29,9 +29,9 @@ public class PackageAccessibilityInspectionTest extends LightOsgiFixtureTestCase
     "import org.osgi.framework.launch.*;\n" +
     "public class C {\n" +
     "  public static void main() {\n" +
-    "    <error descr=\"The package is not imported in the manifest\">javax.swing.Icon</error> icon = null;\n" +
-    "    <error descr=\"The package is not exported by the bundle dependencies\">FrameworkFactory</error> factory =\n" +
-    "      new <error descr=\"The package is not exported by the bundle dependencies\">FrameworkFactory</error>();\n" +
+    "    <error descr=\"The package 'javax.swing' is not imported in the manifest\">javax.swing.Icon</error> icon = null;\n" +
+    "    <error descr=\"The package 'org.apache.felix.framework' is not exported by the bundle dependencies\">FrameworkFactory</error> factory =\n" +
+    "      new <error descr=\"The package 'org.apache.felix.framework' is not exported by the bundle dependencies\">FrameworkFactory</error>();\n" +
     "  }\n" +
     "}";
 
@@ -71,8 +71,8 @@ public class PackageAccessibilityInspectionTest extends LightOsgiFixtureTestCase
         "public class C {\n" +
         "  public static void main() {\n" +
         "    javax.swing.Icon icon = null;\n" +
-        "    <error descr=\"The package is not exported by the bundle dependencies\">FrameworkFactory</error> factory =\n" +
-        "      new <error descr=\"The package is not exported by the bundle dependencies\">FrameworkFactory</error>();\n" +
+        "    <error descr=\"The package 'org.apache.felix.framework' is not exported by the bundle dependencies\">FrameworkFactory</error> factory =\n" +
+        "      new <error descr=\"The package 'org.apache.felix.framework' is not exported by the bundle dependencies\">FrameworkFactory</error>();\n" +
         "  }\n" +
         "}", "");
     }
@@ -120,17 +120,28 @@ public class PackageAccessibilityInspectionTest extends LightOsgiFixtureTestCase
       "");
   }
 
+  public void testNonBundledDependency() {
+    doTest(
+      "package pkg;\n" +
+      "import org.codehaus.plexus.util.IOUtil;\n" +
+      "public class C {\n" +
+      "  <weak_warning descr=\"The package 'org.codehaus.plexus.util' is inside a non-bundle dependency\">IOUtil</weak_warning> ref;\n" +
+      "}",
+
+      "");
+  }
+
   private void doTest(String classText, String manifestText) {
     myFixture.enableInspections(new PackageAccessibilityInspection());
     myFixture.addFileToProject("META-INF/MANIFEST.MF", manifestText);
     myFixture.configureByText("C.java", classText);
-    myFixture.checkHighlighting(true, false, false);
+    myFixture.checkHighlighting(true, false, true);
   }
 
-  private void doTestFix(String classSource, String manifestSource, String expected) {
+  private void doTestFix(String classText, String manifestText, String expected) {
     myFixture.enableInspections(new PackageAccessibilityInspection());
-    PsiFile manifest = myFixture.addFileToProject("META-INF/MANIFEST.MF", manifestSource);
-    myFixture.configureByText("C.java", classSource);
+    PsiFile manifest = myFixture.addFileToProject("META-INF/MANIFEST.MF", manifestText);
+    myFixture.configureByText("C.java", classText);
     IntentionAction intention = myFixture.findSingleIntention(OsmorcBundle.message("PackageAccessibilityInspection.fix"));
     myFixture.launchAction(intention);
     assertEquals(expected, manifest.getText());

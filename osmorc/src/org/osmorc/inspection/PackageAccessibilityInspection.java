@@ -44,13 +44,14 @@ import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.osgi.framework.Constants;
 import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.manifest.BundleManifest;
 import org.osmorc.util.OsgiPsiUtil;
 
 import javax.swing.*;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
+
+import static org.osmorc.i18n.OsmorcBundle.message;
 
 /**
  * Inspection which checks if a package of a class is accessible inside the OSGi context.
@@ -59,13 +60,11 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspectionTool {
-  private static final String NOT_EXPORTED = "not exported";
-
   public boolean checkTests = false;
 
   @Override
   public JComponent createOptionsPanel() {
-    return new SingleCheckboxOptionsPanel(OsmorcBundle.message("PackageAccessibilityInspection.ui.check.tests"), this, "checkTests");
+    return new SingleCheckboxOptionsPanel(message("PackageAccessibilityInspection.ui.check.tests"), this, "checkTests");
   }
 
   @Nullable
@@ -86,15 +85,9 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
       @Override
       public void process(PsiElement place, PsiElement dependency) {
         if (dependency instanceof PsiClass && PsiTreeUtil.getParentOfType(place, PsiImportList.class) == null) {
-          String toImport = checkAccessibility((PsiClass)dependency, facet);
-          if (toImport == NOT_EXPORTED) {
-            String message = OsmorcBundle.message("WrongImportPackageInspection.message");
-            problems.add(manager.createProblemDescriptor(place, message, isOnTheFly, null, ProblemHighlightType.GENERIC_ERROR_OR_WARNING));
-          }
-          else if (toImport != null) {
-            String message = OsmorcBundle.message("PackageAccessibilityInspection.message");
-            LocalQuickFix[] fixes = {new ImportPackageFix(toImport)};
-            problems.add(manager.createProblemDescriptor(place, message, isOnTheFly, fixes, ProblemHighlightType.GENERIC_ERROR_OR_WARNING));
+          Problem problem = checkAccessibility((PsiClass)dependency, facet);
+          if (problem != null) {
+            problems.add(manager.createProblemDescriptor(place, problem.message, isOnTheFly, problem.fixes, problem.type));
           }
         }
       }
@@ -102,30 +95,28 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
     return problems.isEmpty() ? null : problems.toArray(new ProblemDescriptor[problems.size()]);
   }
 
-  private static class ImportPackageFix extends AbstractOsgiQuickFix {
-    private final String myPackageToImport;
+  private static class Problem {
+    public final ProblemHighlightType type;
+    public final String message;
+    public final LocalQuickFix[] fixes;
 
-    public ImportPackageFix(String packageToImport) {
-      myPackageToImport = packageToImport;
+    private Problem(ProblemHighlightType type, String message, LocalQuickFix... fixes) {
+      this.type = type;
+      this.message = message;
+      this.fixes = fixes.length > 0 ? fixes : null;
     }
 
-    @NotNull
-    @Override
-    public String getName() {
-      return OsmorcBundle.message("PackageAccessibilityInspection.fix");
+    public static Problem weak(String message, LocalQuickFix... fixes) {
+      return new Problem(ProblemHighlightType.WEAK_WARNING, message, fixes);
     }
 
-    @Override
-    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      ManifestFile manifestFile = getVerifiedManifestFile(descriptor.getPsiElement());
-      if (manifestFile != null) {
-        OsgiPsiUtil.appendToHeader(manifestFile, Constants.IMPORT_PACKAGE, myPackageToImport);
-      }
+    public static Problem error(String message, LocalQuickFix... fixes) {
+      return new Problem(ProblemHighlightType.GENERIC_ERROR_OR_WARNING, message, fixes);
     }
   }
 
   // OSGi Core Spec 3.5 "Class Loading Architecture"
-  private static String checkAccessibility(PsiClass targetClass, OsmorcFacet facet) {
+  private static Problem checkAccessibility(PsiClass targetClass, OsmorcFacet facet) {
     if (targetClass.isAnnotationType()) {
       RetentionPolicy retention = AnnotationsHighlightUtil.getRetentionPolicy(targetClass);
       if (retention == RetentionPolicy.SOURCE || retention == RetentionPolicy.CLASS) {
@@ -170,14 +161,17 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
       Library library = ((LibraryOrderEntry)entry).getLibrary();
       if (library != null) {
         BundleManifest manifest = bundleManager.getManifestByObject(library);
-        exportedPackage = manifest != null ? manifest.getExportedPackage(packageName) : null;
+        if (manifest == null || manifest.getBundleSymbolicName() == null) {
+          return Problem.weak(message("PackageAccessibilityInspection.non.osgi", packageName));
+        }
+        exportedPackage = manifest.getExportedPackage(packageName);
       }
     }
     else if (entry instanceof JdkOrderEntry) {
       exportedPackage = packageName;
     }
     if (exportedPackage == null) {
-      return NOT_EXPORTED;
+      return Problem.error(message("PackageAccessibilityInspection.not.exported", packageName));
     }
 
     if (!facet.getConfiguration().isManifestManuallyEdited()) {
@@ -202,6 +196,28 @@ public class PackageAccessibilityInspection extends BaseJavaBatchLocalInspection
       // Attached fragments [AFAIK these should not be linked statically - r.sh]
     }
 
-    return exportedPackage;
+    return Problem.error(message("PackageAccessibilityInspection.not.imported", packageName), new ImportPackageFix(exportedPackage));
+  }
+
+  private static class ImportPackageFix extends AbstractOsgiQuickFix {
+    private final String myPackageToImport;
+
+    public ImportPackageFix(String packageToImport) {
+      myPackageToImport = packageToImport;
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+      return message("PackageAccessibilityInspection.fix");
+    }
+
+    @Override
+    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+      ManifestFile manifestFile = getVerifiedManifestFile(descriptor.getPsiElement());
+      if (manifestFile != null) {
+        OsgiPsiUtil.appendToHeader(manifestFile, Constants.IMPORT_PACKAGE, myPackageToImport);
+      }
+    }
   }
 }

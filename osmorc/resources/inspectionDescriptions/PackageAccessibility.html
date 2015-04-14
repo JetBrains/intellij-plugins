@@ -2,7 +2,8 @@
 <body>
 <p>
   This inspections reports usage of classes from packages not accessible inside the OSGi context -
-  i.e. not imported neither implicitly nor via manifest file.
+  i.e. those located in .jar files not packaged as bundles, or not exported by bundles,
+  or not imported in manifest file (if applicable).
   Asking for such a classes may cause "class not found" exceptions at runtime.
 </p>
 <p>
