@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.inspection;
 
+import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.util.InspectionValidatorUtil;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -30,6 +31,7 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Set;
@@ -43,8 +45,7 @@ public class Struts2ModelValidator extends ValidatorBase {
 
   public Struts2ModelValidator() {
     super(StrutsBundle.message("inspections.struts2.model.validator"),
-          StrutsBundle.message("inspections.struts2.model.validator.progress"),
-          Struts2ModelInspection.class);
+          StrutsBundle.message("inspections.struts2.model.validator.progress"));
   }
 
   public Collection<VirtualFile> getFilesToProcess(final Project project, final CompileContext context) {
@@ -66,7 +67,7 @@ public class Struts2ModelValidator extends ValidatorBase {
           enabledForModule.get(module)) {
         final PsiFile psiFile = psiManager.findFile(file);
         if (psiFile instanceof XmlFile) {
-          final StrutsModel model = strutsManager.getModelByFile((XmlFile) psiFile);
+          final StrutsModel model = strutsManager.getModelByFile((XmlFile)psiFile);
           if (model != null) {
             for (final XmlFile configFile : model.getConfigFiles()) {
               ContainerUtil.addIfNotNull(configFile.getVirtualFile(), files);
@@ -80,4 +81,10 @@ public class Struts2ModelValidator extends ValidatorBase {
     return files;
   }
 
+  @SuppressWarnings("unchecked")
+  @NotNull
+  @Override
+  public Class<? extends LocalInspectionTool>[] getInspectionToolClasses(CompileContext context) {
+    return new Class[]{Struts2ModelInspection.class};
+  }
 }
