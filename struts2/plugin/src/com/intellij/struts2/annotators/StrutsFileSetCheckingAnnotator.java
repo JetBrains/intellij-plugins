@@ -110,6 +110,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
     }
     else {
       annotation.registerFix(new IntentionAction() {
+        @SuppressWarnings("DialogTitleCapitalization")
         @NotNull
         public String getText() {
           return StrutsBundle.message("annotators.fileset.edit.facet.settings");
