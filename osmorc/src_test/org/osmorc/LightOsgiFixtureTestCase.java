@@ -40,6 +40,7 @@ public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTe
 
       String libPath = PluginPathManager.getPluginHomePath("osmorc") + "/lib";
       PsiTestUtil.addLibrary(module, model, "osgi.core", libPath, "org.apache.felix.framework-4.2.1.jar");
+      PsiTestUtil.addLibrary(module, model, "plexus", libPath, "plexus-utils-3.0.10.jar");
 
       String annotationsPath = PathManager.getJarPathForClass(NotNull.class);
       assertNotNull(annotationsPath);
