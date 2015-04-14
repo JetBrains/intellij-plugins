@@ -13,7 +13,6 @@ import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -694,12 +693,14 @@ public class DartAnalysisServerService {
   }
 
   private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
+    final String trace = error.getStackTrace();
+    final String partialTrace = trace == null || trace.isEmpty() ? "" : trace.substring(0, Math.min(trace.length(), 1000));
     LOG.error("Error from " + methodName +
               (filePath == null ? "" : (", file = " + filePath)) +
               ", SDK version = " + mySdkVersion +
               ", server version = " + myServerVersion +
-              ", error code=" + error.getCode() + ": " + error.getMessage(),
-              new Attachment("stack_trace.txt", error.getStackTrace()));
+              ", error code = " + error.getCode() + ": " + error.getMessage() +
+              "\n" + partialTrace + "...");
   }
 
   private static boolean runInPooledThreadAndWait(@NotNull final Runnable runnable,
