@@ -34,7 +34,7 @@ public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCas
   }
 
   public void testFunctionRef() throws Exception {
-    doTestQuickNavigateInfo("<b>f</b>() " + RIGHT_ARROW + " void", "f(); g() => <caret>f();");
+    doTestQuickNavigateInfo("<b>f</b>() " + RIGHT_ARROW + " dynamic", "f(); g() => <caret>f();");
   }
 
   public void testEnumRef() throws Exception {

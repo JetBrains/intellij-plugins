@@ -5,7 +5,6 @@ import com.intellij.codeInsight.template.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
@@ -66,7 +65,8 @@ public class DartPresentableUtil {
         }
         DartDefaultFormalNamedParameter formalParameter = list1.get(i);
         result.append(
-          getPresentableNormalFormalParameter(formalParameter.getNormalFormalParameter(), specialization, functionalStyleSignatures, displayDefaultValues));
+          getPresentableNormalFormalParameter(formalParameter.getNormalFormalParameter(), specialization, functionalStyleSignatures,
+                                              displayDefaultValues));
       }
       result.append(isOptional ? '}' : ']');
     }
@@ -97,10 +97,12 @@ public class DartPresentableUtil {
         result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), returnType, specialization));
         result.append(SPACE);
       }
+
       result.append(functionSignature.getName());
       result.append("(");
       result.append(getPresentableParameterList(functionSignature, specialization, functionalStyleSignature, displayDefaultValues));
       result.append(")");
+
       if (functionalStyleSignature && returnType != null) {
         result.append(SPACE);
         result.append(RIGHT_ARROW);
@@ -118,18 +120,21 @@ public class DartPresentableUtil {
     }
     else if (simpleFormalParameter != null) {
       if (displayDefaultValues) {
-          final PsiElement defaultFormalNamedParameter = PsiTreeUtil.getParentOfType(simpleFormalParameter, DartDefaultFormalNamedParameter.class);
-          if (defaultFormalNamedParameter != null) {
-            result.append(defaultFormalNamedParameter.getText());
-          } else {
-            final DartType type = simpleFormalParameter.getType();
-            if (type != null) {
-              result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
-              result.append(SPACE);
-            }
-            result.append(simpleFormalParameter.getComponentName().getText());
+        final PsiElement defaultFormalNamedParameter =
+          PsiTreeUtil.getParentOfType(simpleFormalParameter, DartDefaultFormalNamedParameter.class);
+        if (defaultFormalNamedParameter != null) {
+          result.append(defaultFormalNamedParameter.getText());
+        }
+        else {
+          final DartType type = simpleFormalParameter.getType();
+          if (type != null) {
+            result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
+            result.append(SPACE);
           }
-      } else {
+          result.append(simpleFormalParameter.getComponentName().getText());
+        }
+      }
+      else {
         final DartType type = simpleFormalParameter.getType();
         if (type != null) {
           result.append(buildTypeText(PsiTreeUtil.getParentOfType(parameter, DartComponent.class), type, specialization));
@@ -142,14 +147,10 @@ public class DartPresentableUtil {
     return result.toString();
   }
 
-
   public static String buildTypeText(final @Nullable DartComponent element,
-                                     final @Nullable DartReturnType returnType,
+                                     final @NotNull DartReturnType returnType,
                                      final @Nullable DartGenericSpecialization specializations) {
-    if (returnType == null) return "";
-    return returnType.getNode().findChildByType(DartTokenTypes.VOID) == null
-           ? buildTypeText(element, returnType.getType(), specializations)
-           : "void";
+    return returnType.getType() == null ? "void" : buildTypeText(element, returnType.getType(), specializations);
   }
 
   public static String buildTypeText(final @Nullable DartComponent element,
@@ -161,8 +162,8 @@ public class DartPresentableUtil {
     final StringBuilder result = new StringBuilder();
     final String typeText = type.getReferenceExpression().getText();
     if (specializations != null && specializations.containsKey(element, typeText)) {
-      final DartClass haxeClass = specializations.get(element, typeText).getDartClass();
-      result.append(haxeClass == null ? typeText : haxeClass.getName());
+      final DartClass dartClass = specializations.get(element, typeText).getDartClass();
+      result.append(dartClass == null ? typeText : dartClass.getName());
     }
     else {
       result.append(typeText);
