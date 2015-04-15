@@ -16,14 +16,12 @@
 package org.jetbrains.osgi.bnd.imp
 
 import aQute.bnd.build.Workspace
+import com.intellij.compiler.CompilerConfiguration
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration
 import com.intellij.ide.actions.ImportModuleAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.roots.JdkOrderEntry
-import com.intellij.openapi.roots.LanguageLevelProjectExtension
-import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.ModuleSourceOrderEntry
+import com.intellij.openapi.roots.*
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.pom.java.LanguageLevel
@@ -34,13 +32,7 @@ import org.osmorc.facet.OsmorcFacet
 import java.io.File
 
 import kotlin.properties.Delegates
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
-import com.intellij.compiler.CompilerConfiguration
-import com.intellij.openapi.roots.LanguageLevelModuleExtension
+import kotlin.test.*
 
 class BndProjectImporterTest : IdeaTestCase() {
   var myWorkspace: Workspace by Delegates.notNull()
