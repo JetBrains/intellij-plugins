@@ -29,13 +29,14 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.testframework.JavaTestLocationProvider;
+import com.intellij.execution.testframework.JavaTestLocator;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMCustomMessagesParsing;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
 import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
+import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.testframework.sm.runner.events.*;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
@@ -118,8 +119,7 @@ public class BndTestState extends JavaCommandLineState {
   @Override
   protected ConsoleView createConsole(@NotNull Executor executor) throws ExecutionException {
     TestConsoleProperties consoleProperties = new MyTestConsoleProperties(this, executor);
-    JavaTestLocationProvider locator = new JavaTestLocationProvider(consoleProperties.getScope());
-    return SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(TEST_FRAMEWORK_NAME, consoleProperties, getEnvironment(), locator);
+    return SMTestRunnerConnectionUtil.createConsole(TEST_FRAMEWORK_NAME, consoleProperties, getEnvironment());
   }
 
   @NotNull
@@ -158,6 +158,11 @@ public class BndTestState extends JavaCommandLineState {
     public OutputToGeneralTestEventsConverter createTestEventsConverter(@NotNull String testFrameworkName,
                                                                         @NotNull TestConsoleProperties consoleProperties) {
       return new MyProcessOutputConsumer(testFrameworkName, consoleProperties, mySocket);
+    }
+
+    @Override
+    public SMTestLocator getTestLocator() {
+      return JavaTestLocator.INSTANCE;
     }
   }
 
@@ -331,7 +336,7 @@ public class BndTestState extends JavaCommandLineState {
             myProcessor.onSuiteFinished(new TestSuiteFinishedEvent(myCurrentSuite));
           }
 
-          myProcessor.onSuiteStarted(new TestSuiteStartedEvent(suite, JavaTestLocationProvider.SUITE_PROTOCOL + SCHEME_SEPARATOR + suite));
+          myProcessor.onSuiteStarted(new TestSuiteStartedEvent(suite, JavaTestLocator.SUITE_PROTOCOL + SCHEME_SEPARATOR + suite));
           myCurrentSuite = suite;
         }
       }
@@ -339,7 +344,7 @@ public class BndTestState extends JavaCommandLineState {
       GeneralTestEventsProcessor processor = myProcessor;
       synchronized (myTestLock) {
         myCurrentTest = testName;
-        processor.onTestStarted(new TestStartedEvent(testName, JavaTestLocationProvider.TEST_PROTOCOL + SCHEME_SEPARATOR + testName));
+        processor.onTestStarted(new TestStartedEvent(testName, JavaTestLocator.TEST_PROTOCOL + SCHEME_SEPARATOR + testName));
       }
     }
 
