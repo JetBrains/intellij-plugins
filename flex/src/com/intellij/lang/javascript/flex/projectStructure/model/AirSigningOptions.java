@@ -6,6 +6,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class AirSigningOptions {
 
+  public static final String ARCH_ARMV7 = "armv7";
+  public static final String ARCH_X86 = "x86";
+  public static final String ARCH_DEFAULT = ARCH_ARMV7;
+
+  @NotNull private String myArch = ARCH_DEFAULT;
   private boolean myUseTempCertificate = true;
   @NotNull private String myProvisioningProfilePath = "";
   @NotNull private String myKeystorePath = "";
@@ -17,6 +22,16 @@ public class AirSigningOptions {
   @NotNull private String myTsa = "";
 
   public AirSigningOptions() {
+  }
+
+  @NotNull
+  @Attribute("arch")
+  public String getArch() {
+    return myArch;
+  }
+
+  public void setArch(@NotNull String arch) {
+    myArch = arch;
   }
 
   @Attribute("use-temp-certificate")
@@ -111,6 +126,7 @@ public class AirSigningOptions {
   public AirSigningOptions getCopy() {
     final AirSigningOptions copy = new AirSigningOptions();
 
+    copy.myArch = myArch;
     copy.myUseTempCertificate = myUseTempCertificate;
     copy.myProvisioningProfilePath = myProvisioningProfilePath;
     copy.myKeystorePath = myKeystorePath;
@@ -130,6 +146,7 @@ public class AirSigningOptions {
 
     final AirSigningOptions options = (AirSigningOptions)o;
 
+    if (!myArch.equals(options.myArch)) return false;
     if (myUseTempCertificate != options.myUseTempCertificate) return false;
     if (!myProvisioningProfilePath.equals(options.myProvisioningProfilePath)) return false;
     if (!myKeystorePath.equals(options.myKeystorePath)) return false;

@@ -11,8 +11,10 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.ui.components.JBRadioButton;
 import com.intellij.util.ui.PlatformColors;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -28,17 +30,21 @@ public class SigningOptionsForm {
 
   private JPanel myMainPanel;
 
+  private JLabel myTargetArchitectureLabel;
+  private JBRadioButton myArchArmv7RadioButton;
+  private JBRadioButton myArchX86RadioButton;
+
   private JCheckBox myUseTempCertificateCheckBox;
-  private JPanel myOptionsPanel;
 
   private JLabel myProvisioningProfileLabel;
   private TextFieldWithBrowseButton myProvisioningProfileTextWithBrowse;
+  private JLabel myKeystoreFileLabel;
   private TextFieldWithBrowseButton myKeystoreFileTextWithBrowse;
   private JLabel myIosSdkLabel;
   private TextFieldWithBrowseButton myIosSdkTextWithBrowse;
-  private JLabel myAdtOptionsLabel;
-  private RawCommandLineEditor myAdtOptionsComponent;
+
   private HoverHyperlinkLabel myMoreOptionsHyperlinkLabel;
+
   private JLabel myKeystoreTypeLabel;
   private JTextField myKeystoreTypeTextField;
   private JLabel myKeyAliasLabel;
@@ -47,6 +53,9 @@ public class SigningOptionsForm {
   private JTextField myProviderClassNameTextField;
   private JLabel myTsaUrlLabel;
   private JTextField myTsaUrlTextField;
+
+  private JLabel myAdtOptionsLabel;
+  private RawCommandLineEditor myAdtOptionsComponent;
 
   enum Mode {Desktop, Android, iOS}
 
@@ -83,6 +92,10 @@ public class SigningOptionsForm {
 
     switch (mode) {
       case Desktop:
+        myTargetArchitectureLabel.setVisible(false);
+        myArchArmv7RadioButton.setVisible(false);
+        myArchX86RadioButton.setVisible(false);
+        // no break here
       case Android:
         myProvisioningProfileLabel.setVisible(false);
         myProvisioningProfileTextWithBrowse.setVisible(false);
@@ -92,6 +105,9 @@ public class SigningOptionsForm {
         myAdtOptionsComponent.setVisible(false);
         break;
       case iOS:
+        myTargetArchitectureLabel.setVisible(false);
+        myArchArmv7RadioButton.setVisible(false);
+        myArchX86RadioButton.setVisible(false);
         myUseTempCertificateCheckBox.setVisible(false);
         showMoreOptions(false);
         myMoreOptionsHyperlinkLabel.setVisible(false);
@@ -126,10 +142,28 @@ public class SigningOptionsForm {
   }
 
   private void updateControls() {
-    UIUtil.setEnabled(myOptionsPanel, !myUseTempCertificateCheckBox.isVisible() || !myUseTempCertificateCheckBox.isSelected(), true);
+    final boolean enabled = !myUseTempCertificateCheckBox.isVisible() || !myUseTempCertificateCheckBox.isSelected();
+
+    myProvisioningProfileLabel.setEnabled(enabled);
+    myProviderClassNameTextField.setEnabled(enabled);
+    myKeystoreFileLabel.setEnabled(enabled);
+    myKeystoreFileTextWithBrowse.setEnabled(enabled);
+    myIosSdkLabel.setEnabled(enabled);
+    myIosSdkTextWithBrowse.setEnabled(enabled);
+
+    myMoreOptionsHyperlinkLabel.setEnabled(enabled);
     if (myMoreOptionsHyperlinkLabel.isEnabled()) {
       myMoreOptionsHyperlinkLabel.setForeground(PlatformColors.BLUE); // workaround of JLabel-related workaround at UIUtil.setEnabled(..)
     }
+
+    myKeystoreTypeLabel.setEnabled(enabled);
+    myKeystoreTypeTextField.setEnabled(enabled);
+    myKeyAliasLabel.setEnabled(enabled);
+    myKeyAliasTextField.setEnabled(enabled);
+    myProviderClassNameLabel.setEnabled(enabled);
+    myProviderClassNameTextField.setEnabled(enabled);
+    myTsaUrlLabel.setEnabled(enabled);
+    myTsaUrlTextField.setEnabled(enabled);
   }
 
   public void setEnabled(final boolean enabled) {
@@ -139,17 +173,18 @@ public class SigningOptionsForm {
     }
   }
 
-  public void setTempCertificateApplicable(final boolean applicable) {
-    myUseTempCertificateCheckBox.setVisible(applicable);
-    updateControls();
-  }
-
-  public void setProvisioningProfileApplicable(final boolean applicable) {
-    myProvisioningProfileLabel.setVisible(applicable);
-    myProvisioningProfileTextWithBrowse.setVisible(applicable);
+  @NotNull
+  private String getArch() {
+    return myArchX86RadioButton.isSelected() ? AirSigningOptions.ARCH_X86 : AirSigningOptions.ARCH_ARMV7;
   }
 
   public void resetFrom(final AirSigningOptions signingOptions) {
+    if (signingOptions.getArch().equals(AirSigningOptions.ARCH_X86)) {
+      myArchX86RadioButton.setSelected(true);
+    }
+    else {
+      myArchArmv7RadioButton.setSelected(true);
+    }
     myUseTempCertificateCheckBox.setSelected(signingOptions.isUseTempCertificate());
     myProvisioningProfileTextWithBrowse.setText(FileUtil.toSystemDependentName(signingOptions.getProvisioningProfilePath()));
     myKeystoreFileTextWithBrowse.setText(FileUtil.toSystemDependentName(signingOptions.getKeystorePath()));
@@ -159,10 +194,11 @@ public class SigningOptionsForm {
     myKeyAliasTextField.setText(signingOptions.getKeyAlias());
     myProviderClassNameTextField.setText(signingOptions.getProvider());
     myTsaUrlTextField.setText(signingOptions.getTsa());
-    updateControls();
   }
 
   public boolean isModified(final AirSigningOptions signingOptions) {
+    if (myTargetArchitectureLabel.isVisible() && !getArch().equals(signingOptions.getArch())) return true;
+
     if (myUseTempCertificateCheckBox.isVisible() && myUseTempCertificateCheckBox.isSelected() != signingOptions.isUseTempCertificate()) {
       return true;
     }
@@ -186,6 +222,7 @@ public class SigningOptionsForm {
   }
 
   public void applyTo(final AirSigningOptions signingOptions) {
+    signingOptions.setArch(getArch());
     signingOptions.setUseTempCertificate(myUseTempCertificateCheckBox.isSelected());
     signingOptions.setProvisioningProfilePath(FileUtil.toSystemIndependentName(myProvisioningProfileTextWithBrowse.getText().trim()));
     signingOptions.setKeystorePath(FileUtil.toSystemIndependentName(myKeystoreFileTextWithBrowse.getText().trim()));

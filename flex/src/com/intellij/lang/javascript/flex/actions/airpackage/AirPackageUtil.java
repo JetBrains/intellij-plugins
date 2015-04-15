@@ -30,9 +30,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.AndroidPackageType;
-import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.DesktopPackageType;
-import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.IOSPackageType;
+import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.*;
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
 
 public class AirPackageUtil {
@@ -431,6 +429,11 @@ public class AirPackageUtil {
           command.add(parameters.AIR_DOWNLOAD_URL);
         }
         */
+
+        if (!AirSigningOptions.ARCH_DEFAULT.equals(packagingOptions.getSigningOptions().getArch())) {
+          command.add("-arch");
+          command.add(packagingOptions.getSigningOptions().getArch());
+        }
 
         appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
         appendPaths(command, module, bc, packagingOptions, null, ".apk");

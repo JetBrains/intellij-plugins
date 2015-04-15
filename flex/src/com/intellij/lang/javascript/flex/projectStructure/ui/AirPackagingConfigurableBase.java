@@ -225,8 +225,6 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
                                                : isAndroid ? SigningOptionsForm.Mode.Android
                                                            : SigningOptionsForm.Mode.Desktop;
     mySigningOptionsForm = new SigningOptionsForm(myModule.getProject(), mode);
-    mySigningOptionsForm.setTempCertificateApplicable(!isIOS);
-    mySigningOptionsForm.setProvisioningProfileApplicable(isIOS);
   }
 
   public void setUseCustomDescriptor(final String descriptorPath) {
