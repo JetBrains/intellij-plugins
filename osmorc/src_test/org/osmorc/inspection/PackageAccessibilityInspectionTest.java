@@ -25,13 +25,12 @@ import org.osmorc.i18n.OsmorcBundle;
 public class PackageAccessibilityInspectionTest extends LightOsgiFixtureTestCase {
   private static final String POSITIVE_TEST =
     "package pkg;\n" +
-    "import org.apache.felix.framework.FrameworkFactory;\n" +
-    "import org.osgi.framework.launch.*;\n" +
+    "import org.osgi.framework.launch.FrameworkFactory;\n" +
     "public class C {\n" +
     "  public static void main() {\n" +
     "    <error descr=\"The package 'javax.swing' is not imported in the manifest\">javax.swing.Icon</error> icon = null;\n" +
-    "    <error descr=\"The package 'org.apache.felix.framework' is not exported by the bundle dependencies\">FrameworkFactory</error> factory =\n" +
-    "      new <error descr=\"The package 'org.apache.felix.framework' is not exported by the bundle dependencies\">FrameworkFactory</error>();\n" +
+    "    <error descr=\"The package 'org.osgi.framework.launch' is not imported in the manifest\">FrameworkFactory</error> factory =\n" +
+    "      new <error descr=\"The package 'org.apache.felix.framework' is not exported by the bundle dependencies\">org.apache.felix.framework.FrameworkFactory</error>();\n" +
     "  }\n" +
     "}";
 
