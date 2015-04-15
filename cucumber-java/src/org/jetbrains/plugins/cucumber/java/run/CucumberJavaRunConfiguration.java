@@ -89,7 +89,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         if (!f.isDirectory()) {
           f = f.getParentFile();
         }
-        params.getVMParametersList().addParametersString("-Dcurrent_dir=\"" + f.getAbsolutePath() + "\"");
+        params.getVMParametersList().addParametersString("-Dorg.jetbrains.run.directory=\"" + f.getAbsolutePath() + "\"");
 
         params.getProgramParametersList().addParametersString("\"" + myFilePath + "\"");
         return params;
