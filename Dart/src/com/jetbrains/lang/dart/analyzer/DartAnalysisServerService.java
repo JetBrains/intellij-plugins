@@ -580,7 +580,7 @@ public class DartAnalysisServerService {
         public void run() {
           server.edit_sortMembers(filePath, consumer);
         }
-      }, "edit_format(" + filePath + ")", SEND_REQUEST_TIMEOUT);
+      }, "edit_sortMembers(" + filePath + ")", SEND_REQUEST_TIMEOUT);
 
       if (!ok) {
         stopServer();
