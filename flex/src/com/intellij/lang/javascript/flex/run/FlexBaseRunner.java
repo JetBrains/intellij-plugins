@@ -14,6 +14,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
+import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -31,6 +32,7 @@ import com.intellij.lang.javascript.flex.actions.airpackage.DeviceInfo;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.debug.FlexDebugRunner;
+import com.intellij.lang.javascript.flex.flexunit.FlexQualifiedNameLocationProvider;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
@@ -271,14 +273,12 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   public static ExecutionConsole createFlexUnitRunnerConsole(Project project,
                                                              ExecutionEnvironment env,
                                                              ProcessHandler processHandler) throws ExecutionException {
-    final RunProfile runConfiguration = env.getRunProfile();
-    final FlexStackTraceFilter stackTraceFilter = new FlexStackTraceFilter(project);
-    final SMTRunnerConsoleProperties consoleProps =
-      new SMTRunnerConsoleProperties(((FlexUnitRunConfiguration)runConfiguration), "FlexUnit", env.getExecutor());
+    FlexStackTraceFilter stackTraceFilter = new FlexStackTraceFilter(project);
+
+    SMTRunnerConsoleProperties consoleProps = new FlexUnitConsoleProperties((FlexUnitRunConfiguration)env.getRunProfile(), env);
     consoleProps.addStackTraceFilter(stackTraceFilter);
 
-    final BaseTestsOutputConsoleView consoleView = SMTestRunnerConnectionUtil
-      .createAndAttachConsole("FlexUnit", processHandler, consoleProps, env);
+    BaseTestsOutputConsoleView consoleView = SMTestRunnerConnectionUtil.createAndAttachConsole("FlexUnit", processHandler, consoleProps, env);
     consoleView.addMessageFilter(stackTraceFilter);
     Disposer.register(project, consoleView);
     return consoleView;
@@ -756,6 +756,18 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       };
       final String message = FlexBundle.message("flex.sdk.3.mac.debug.problem", sdkForDebugger.getVersionString());
       ToolWindowManager.getInstance(project).notifyByBalloon(ToolWindowId.DEBUG, MessageType.WARNING, message, null, listener);
+    }
+  }
+
+  private static class FlexUnitConsoleProperties extends SMTRunnerConsoleProperties {
+    public FlexUnitConsoleProperties(RunConfiguration runConfiguration, ExecutionEnvironment env) {
+      super(runConfiguration, "FlexUnit", env.getExecutor());
+    }
+
+    @Nullable
+    @Override
+    public SMTestLocator getTestLocator() {
+      return FlexQualifiedNameLocationProvider.INSTANCE;
     }
   }
 }
