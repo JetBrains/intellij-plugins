@@ -51,6 +51,7 @@ public class DartAnalysisServerService {
 
   private static final long SEND_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
+  private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_ERRORS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private static final long GET_ERRORS_LONGER_TIMEOUT = TimeUnit.SECONDS.toMillis(60);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
@@ -543,6 +544,55 @@ public class DartAnalysisServerService {
 
     if (semaphore.tryUp()) {
       LOG.info("edit_format() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
+      return null;
+    }
+
+    return resultRef.get();
+  }
+
+  @Nullable
+  public SourceFileEdit edit_sortMembers(@NotNull final String filePath) {
+    final Ref<SourceFileEdit> resultRef = new Ref<SourceFileEdit>();
+    final Semaphore semaphore = new Semaphore();
+
+    synchronized (myLock) {
+      if (myServer == null) return null;
+
+      semaphore.down();
+
+      final SortMembersConsumer consumer = new SortMembersConsumer() {
+        @Override
+        public void computedEdit(final SourceFileEdit edit) {
+          resultRef.set(edit);
+          semaphore.up();
+        }
+
+        @Override
+        public void onError(final RequestError error) {
+          logError("edit_sortMembers()", filePath, error);
+          semaphore.up();
+        }
+      };
+
+      final AnalysisServer server = myServer;
+      final boolean ok = runInPooledThreadAndWait(new Runnable() {
+        @Override
+        public void run() {
+          server.edit_sortMembers(filePath, consumer);
+        }
+      }, "edit_format(" + filePath + ")", SEND_REQUEST_TIMEOUT);
+
+      if (!ok) {
+        stopServer();
+        return null;
+      }
+    }
+
+    final long t0 = System.currentTimeMillis();
+    semaphore.waitFor(EDIT_SORT_MEMBERS_TIMEOUT);
+
+    if (semaphore.tryUp()) {
+      LOG.info("edit_sortMembers() took too long for file " + filePath + ": " + (System.currentTimeMillis() - t0) + "ms");
       return null;
     }
 
