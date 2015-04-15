@@ -97,14 +97,8 @@
       <projectService serviceInterface="com.intellij.coldFusion.UI.config.CfmlProjectConfiguration"
                  serviceImplementation="com.intellij.coldFusion.UI.config.CfmlProjectConfiguration"/>
       <projectService serviceImplementation="com.intellij.coldFusion.model.info.CfmlLangInfo"/>
-      <!--<fileBasedIndex implementation="com.intellij.coldFusion.model.psi.stubs.CfmlMethodNameIndex"/>-->
-      <!--
-        <definitionsSearch implementation="com.intellij.coldFusion.UI.editorActions.CfmlDefinitionsSearchExecutor"/>
-        <referencesSearch implementation="com.intellij.coldFusion.UI.editorActions.CfmlReferencesSearchExecutor"/>-->
 
-        <!-- mxunit -->
-        <configurationType implementation="com.intellij.coldFusion.mxunit.CfmlUnitRunConfigurationType"/>
-        <testSrcLocator implementation="com.intellij.coldFusion.mxunit.CfmlUnitQualifiedNameLocationProvider"/>
+      <configurationType implementation="com.intellij.coldFusion.mxunit.CfmlUnitRunConfigurationType"/>
 
       <liveTemplateContext implementation="com.intellij.coldFusion.CfmlTemplateContextType"/>
       <defaultLiveTemplatesProvider implementation="com.intellij.coldFusion.CfmlDefaultLiveTemplateProvider"/>

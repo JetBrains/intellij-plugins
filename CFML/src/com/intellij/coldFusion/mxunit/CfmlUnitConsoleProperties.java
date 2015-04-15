@@ -17,9 +17,11 @@ package com.intellij.coldFusion.mxunit;
 
 import com.intellij.execution.Executor;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
+import com.intellij.execution.testframework.sm.runner.SMTestLocator;
+import org.jetbrains.annotations.NotNull;
 
 public class CfmlUnitConsoleProperties extends SMTRunnerConsoleProperties {
-  public CfmlUnitConsoleProperties(final CfmlUnitRunConfiguration config, Executor executor) {
+  public CfmlUnitConsoleProperties(@NotNull CfmlUnitRunConfiguration config, @NotNull Executor executor) {
     super(config, "CfmlUnit", executor);
   }
 
@@ -31,5 +33,10 @@ public class CfmlUnitConsoleProperties extends SMTRunnerConsoleProperties {
   @Override
   public boolean isPaused() {
     return false;
+  }
+
+  @Override
+  public SMTestLocator getTestLocator() {
+    return CfmlUnitQualifiedNameLocationProvider.INSTANCE;
   }
 }

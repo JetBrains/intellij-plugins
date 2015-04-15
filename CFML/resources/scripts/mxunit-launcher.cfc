@@ -86,7 +86,7 @@
                         <cfset metaData = getMetaData(obj)>
                         <cfset testsResult.init(metaData.path)>
                         <cfset testsResult.formatOutput(testsResult.traceCommand("testSuiteStarted", "name", metaData.name,
-                          "locationHint", "php_qn://" &  metaData.path))>
+                          "locationHint", "cfml_qn://" &  metaData.path))>
                             <cfset suite = createObject("component", "mxunit.framework.TestSuite")>
                             <cfset suite.addAll(metaData.name, obj)>
                             <cfset suite.run(testsResult)>
@@ -109,7 +109,7 @@
             <cfset testsResult.init(metaData.path)>
 
             <cfset testsResult.formatOutput(testsResult.traceCommand("testSuiteStarted", "name", componentName,
-              "locationHint", "php_qn://" &  metaData.path))>
+              "locationHint", "cfml_qn://" &  metaData.path))>
     		<cfif len(arguments.methodName)>
 	    		<cfset suite.add(componentName, arguments.methodName, obj)>
 		    	<cfset suite.run(testsResult, arguments.methodName)>

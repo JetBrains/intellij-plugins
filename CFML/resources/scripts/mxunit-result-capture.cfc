@@ -90,7 +90,7 @@
         myTestComponentName = arguments.componentName;
         myTestCaseName = arguments.testCase;
         formatOutput(traceCommand("testStarted", "name", myTestCaseName,
-        "locationHint", "php_qn://" & myComponentFilePath & "::" & myTestCaseName));
+        "locationHint", "cfml_qn://" & myComponentFilePath & "::" & myTestCaseName));
         super.startTest(arguments.testCase, arguments.componentName);
    </cfscript>
  </cffunction>

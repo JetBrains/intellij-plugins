@@ -21,27 +21,32 @@ import com.intellij.coldFusion.model.psi.impl.CfmlFunctionImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagFunctionImpl;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
+import com.intellij.execution.testframework.sm.runner.SMTestLocator;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testIntegration.TestLocationProvider;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
-public class CfmlUnitQualifiedNameLocationProvider implements TestLocationProvider {
-  @NonNls private static final String PROTOCOL_ID = "php_qn";
+public class CfmlUnitQualifiedNameLocationProvider implements SMTestLocator, DumbAware {
+  private static final String PROTOCOL_ID = "cfml_qn";
+
+  public static final CfmlUnitQualifiedNameLocationProvider INSTANCE = new CfmlUnitQualifiedNameLocationProvider();
 
   @NotNull
-  public List<Location> getLocation(@NotNull String protocolId, @NotNull String locationData, Project project) {
-    if (PROTOCOL_ID.equals(protocolId)) {
-      PsiElement element = findElement(locationData, project);
+  @Override
+  public List<Location> getLocation(@NotNull String protocol, @NotNull String path, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+    if (PROTOCOL_ID.equals(protocol)) {
+      PsiElement element = findElement(path, project);
       if (element != null) {
         return Collections.<Location>singletonList(new PsiLocation<PsiElement>(project, element));
       }
@@ -51,7 +56,7 @@ public class CfmlUnitQualifiedNameLocationProvider implements TestLocationProvid
   }
 
   @Nullable
-  private PsiElement findElement(String link, Project project) {
+  private static PsiElement findElement(String link, Project project) {
     String[] location = link.split("::");
 
     int tokensNumber = location.length;
@@ -72,7 +77,7 @@ public class CfmlUnitQualifiedNameLocationProvider implements TestLocationProvid
         return result;
       }
       for (CfmlTag tag : tags) {
-        if ("cfcomponent".equals(tag.getTagName().toLowerCase())) {
+        if ("cfcomponent".equals(tag.getTagName().toLowerCase(Locale.ENGLISH))) {
           result = tag;
           break;
         }
