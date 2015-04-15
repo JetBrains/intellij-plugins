@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.runner.unittest;
 
-
 import com.intellij.execution.Location;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -13,7 +12,6 @@ import java.util.List;
 
 public class DartTestLocationProviderTest extends DartCodeInsightFixtureTestCase {
 
-
   private void doTest(@NotNull final String locationHint, @NotNull final String fileContents) {
     final int caretOffset = fileContents.indexOf("<caret>");
     assertTrue(caretOffset != -1);
@@ -24,8 +22,7 @@ public class DartTestLocationProviderTest extends DartCodeInsightFixtureTestCase
     final PsiElement elementAtOffset = file.findElementAt(caretOffset);
     final PsiElement targetId = elementAtOffset == null ? null : elementAtOffset.getParent();
 
-    DartTestLocationProvider provider = new DartTestLocationProvider();
-    final List<Location> locations = provider.getLocation(locationHint, file);
+    final List<Location> locations = DartTestLocationProvider.INSTANCE.getLocation(locationHint, file);
     assertEquals(1, locations.size());
 
     final Location location = locations.get(0);

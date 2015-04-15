@@ -13,6 +13,7 @@ import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
+import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
@@ -29,6 +30,7 @@ import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,12 +62,10 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
     final DartUnitRunConfiguration runConfiguration = (DartUnitRunConfiguration)env.getRunProfile();
     final DartUnitRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
 
-    final TestConsoleProperties testConsoleProperties =
-      new SMTRunnerConsoleProperties(runConfiguration, DART_FRAMEWORK_NAME, env.getExecutor());
-    testConsoleProperties.setUsePredefinedMessageFilter(false);
+    final TestConsoleProperties testConsoleProperties = new DartConsoleProperties(runConfiguration, env);
 
-    final SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil
-      .createConsoleWithCustomLocator(DART_FRAMEWORK_NAME, testConsoleProperties, env, new DartTestLocationProvider(), true, null);
+    final SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
+      DART_FRAMEWORK_NAME, testConsoleProperties, env, null, true, null);
 
     try {
       final VirtualFile dartFile = runnerParameters.getDartFile();
@@ -128,5 +128,18 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
   private static String getRunnerCode() throws IOException {
     final URL resource = ResourceUtil.getResource(DartUnitRunningState.class, "/config", UNIT_CONFIG_FILE_NAME);
     return ResourceUtil.loadText(resource);
+  }
+
+  private static class DartConsoleProperties extends SMTRunnerConsoleProperties {
+    public DartConsoleProperties(DartUnitRunConfiguration runConfiguration, ExecutionEnvironment env) {
+      super(runConfiguration, DART_FRAMEWORK_NAME, env.getExecutor());
+      setUsePredefinedMessageFilter(false);
+    }
+
+    @Nullable
+    @Override
+    public SMTestLocator getTestLocator() {
+      return DartTestLocationProvider.INSTANCE;
+    }
   }
 }

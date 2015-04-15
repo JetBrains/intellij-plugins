@@ -3,6 +3,8 @@ package com.jetbrains.lang.dart.ide.runner.unittest;
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
+import com.intellij.execution.testframework.sm.runner.SMTestLocator;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
@@ -11,31 +13,28 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testIntegration.TestLocationProvider;
 import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class DartTestLocationProvider implements TestLocationProvider {
+public class DartTestLocationProvider implements SMTestLocator, DumbAware {
+  private static final List<Location> NONE = Collections.emptyList();
 
-  private static final List<Location> NONE = new ArrayList<Location>();
+  public static final DartTestLocationProvider INSTANCE = new DartTestLocationProvider();
 
   @NotNull
   @Override
-  public List<Location> getLocation(@NotNull String protocolId, @NotNull String locationData, Project project) {
+  public List<Location> getLocation(@NotNull String protocol, @NotNull String path, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+    ///Users/x/projects/foo/test/foo_test.dart,main tests/calculate_fail
 
-    if (project == null) {
-      return NONE;
-    }
-
-    ///Users/x/projs/foo/test/foo_test.dart,main tests/calculate_fail
-
-    final List<String> elements = StringUtil.split(locationData, ",");
+    final List<String> elements = StringUtil.split(path, ",");
     if (elements.size() != 2) {
       return NONE;
     }
