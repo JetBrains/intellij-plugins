@@ -210,7 +210,7 @@
     <action id="Dart.DartStyle" class="com.jetbrains.lang.dart.ide.actions.DartStyleAction"
             text="Reformat with Dart Style" description="Format your Dart code using the dart_style formatter">
       <add-to-group group-id="CodeFormatGroup" anchor="last"/>
-      <keyboard-shortcut first-keystroke="alt F" keymap="$default"/>
+      <add-to-group group-id="EditorPopupMenu" relative-to-action="EditorPopupMenu1" anchor="after"/>
     </action>
     <action id="Generate.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateConstructorAction"
             text="Constructor">
