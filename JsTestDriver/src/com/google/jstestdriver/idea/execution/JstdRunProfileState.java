@@ -32,6 +32,7 @@ import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
+import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
@@ -104,7 +105,7 @@ public class JstdRunProfileState implements RunProfileState {
     ConsoleView consoleView = createSMTRunnerConsoleView(ideServer);
     consoleView.attachToProcess(processHandler);
     DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
-    executionResult.setRestartActions(new ToggleAutoTestAction(myEnvironment));
+    executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;
   }
 
@@ -122,12 +123,12 @@ public class JstdRunProfileState implements RunProfileState {
   @NotNull
   private SMTRunnerConsoleView createSMTRunnerConsoleView(@Nullable JstdServer ideServer) {
     JstdRunConfiguration configuration = (JstdRunConfiguration)myEnvironment.getRunProfile();
-    TestConsoleProperties testConsoleProperties = new JstdConsoleProperties(configuration, myEnvironment.getExecutor());
-    String propertyName = SMTestRunnerConnectionUtil.getSplitterPropertyName(JSTD_FRAMEWORK_NAME);
     JstdTestProxyFilterProvider filterProvider = new JstdTestProxyFilterProvider(myEnvironment.getProject());
+    TestConsoleProperties testConsoleProperties = new JstdConsoleProperties(configuration, myEnvironment.getExecutor(), filterProvider);
+    String propertyName = SMTestRunnerConnectionUtil.getSplitterPropertyName(JSTD_FRAMEWORK_NAME);
     JstdConsoleView consoleView = new JstdConsoleView(testConsoleProperties, myEnvironment, propertyName, ideServer);
     Disposer.register(myEnvironment.getProject(), consoleView);
-    SMTestRunnerConnectionUtil.initConsoleView(consoleView, JSTD_FRAMEWORK_NAME, null, true, filterProvider);
+    SMTestRunnerConnectionUtil.initConsoleView(consoleView, JSTD_FRAMEWORK_NAME);
     return consoleView;
   }
 
@@ -167,7 +168,7 @@ public class JstdRunProfileState implements RunProfileState {
     //commandLine.addParameter("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=y");
 
     File file = new File(PathUtil.getJarPathForClass(JsTestDriverServer.class));
-    commandLine.setWorkDirectory(file.getParentFile());
+    commandLine.withWorkDirectory(file.getParentFile());
 
     commandLine.addParameter("-cp");
     commandLine.addParameter(buildClasspath());
@@ -295,17 +296,28 @@ public class JstdRunProfileState implements RunProfileState {
   }
 
   private static class JstdConsoleProperties extends SMTRunnerConsoleProperties {
-    public JstdConsoleProperties(JstdRunConfiguration configuration, Executor executor) {
-      super(configuration, JSTD_FRAMEWORK_NAME, executor, false);
+    private final JstdTestProxyFilterProvider myFilterProvider;
+
+    public JstdConsoleProperties(JstdRunConfiguration configuration, Executor executor, JstdTestProxyFilterProvider filterProvider) {
+      super(configuration, JSTD_FRAMEWORK_NAME, executor);
+      myFilterProvider = filterProvider;
       setUsePredefinedMessageFilter(false);
       setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
       setIfUndefined(TestConsoleProperties.HIDE_IGNORED_TEST, true);
       setIfUndefined(TestConsoleProperties.SCROLL_TO_SOURCE, true);
+      setIdBasedTestTree(true);
+      setPrintTestingStartedTime(false);
     }
 
     @Override
     public SMTestLocator getTestLocator() {
       return JstdTestLocationProvider.INSTANCE;
+    }
+
+    @Nullable
+    @Override
+    public TestProxyFilterProvider getFilterProvider() {
+      return myFilterProvider;
     }
   }
 }

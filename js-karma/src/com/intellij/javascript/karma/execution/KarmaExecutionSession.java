@@ -12,6 +12,7 @@ import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
+import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.server.KarmaServer;
@@ -64,12 +65,12 @@ public class KarmaExecutionSession {
   @NotNull
   private SMTRunnerConsoleView createSMTRunnerConsoleView() {
     KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration)myEnvironment.getRunProfile();
-    TestConsoleProperties testConsoleProperties = new KarmaConsoleProperties(runConfiguration, myExecutor);
-    String propertyName = SMTestRunnerConnectionUtil.getSplitterPropertyName(FRAMEWORK_NAME);
     KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(myProject, myKarmaServer);
+    TestConsoleProperties testConsoleProperties = new KarmaConsoleProperties(runConfiguration, myExecutor, filterProvider);
+    String propertyName = SMTestRunnerConnectionUtil.getSplitterPropertyName(FRAMEWORK_NAME);
     KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties, myEnvironment, propertyName, myKarmaServer, this);
     Disposer.register(myProject, consoleView);
-    SMTestRunnerConnectionUtil.initConsoleView(consoleView, FRAMEWORK_NAME, null, true, filterProvider);
+    SMTestRunnerConnectionUtil.initConsoleView(consoleView, FRAMEWORK_NAME);
     return consoleView;
   }
 
@@ -120,7 +121,7 @@ public class KarmaExecutionSession {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     File configFile = new File(myRunSettings.getConfigPath());
     // looks like it should work with any working directory
-    commandLine.setWorkDirectory(configFile.getParentFile());
+    commandLine.withWorkDirectory(configFile.getParentFile());
     commandLine.setExePath(myNodeInterpreterPath);
     //commandLine.addParameter("--debug-brk=5858");
     commandLine.addParameter(clientAppFile.getAbsolutePath());
@@ -151,18 +152,28 @@ public class KarmaExecutionSession {
   }
 
   private static class KarmaConsoleProperties extends SMTRunnerConsoleProperties {
-    public KarmaConsoleProperties(KarmaRunConfiguration configuration, Executor executor) {
-      super(configuration, FRAMEWORK_NAME, executor, false);
+    private final KarmaTestProxyFilterProvider myFilterProvider;
+
+    public KarmaConsoleProperties(KarmaRunConfiguration configuration, Executor executor, KarmaTestProxyFilterProvider filterProvider) {
+      super(configuration, FRAMEWORK_NAME, executor);
+      myFilterProvider = filterProvider;
       setUsePredefinedMessageFilter(false);
       setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
       setIfUndefined(TestConsoleProperties.HIDE_IGNORED_TEST, true);
       setIfUndefined(TestConsoleProperties.SCROLL_TO_SOURCE, true);
       setIfUndefined(TestConsoleProperties.SELECT_FIRST_DEFECT, true);
+      setIdBasedTestTree(true);
+      setPrintTestingStartedTime(false);
     }
 
     @Override
     public SMTestLocator getTestLocator() {
       return KarmaTestLocationProvider.INSTANCE;
+    }
+
+    @Override
+    public TestProxyFilterProvider getFilterProvider() {
+      return myFilterProvider;
     }
   }
 }

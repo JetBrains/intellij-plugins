@@ -149,8 +149,9 @@ public class BndTestState extends JavaCommandLineState {
     private final ServerSocket mySocket;
 
     public MyTestConsoleProperties(@NotNull BndTestState runProfile, @NotNull Executor executor) {
-      super(runProfile.myConfiguration, TEST_FRAMEWORK_NAME, executor, false);
+      super(runProfile.myConfiguration, TEST_FRAMEWORK_NAME, executor);
       mySocket = runProfile.mySocket;
+      setPrintTestingStartedTime(false);
     }
 
     @NotNull

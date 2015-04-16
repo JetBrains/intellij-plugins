@@ -14,7 +14,6 @@ import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
-import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -53,7 +52,7 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
 
     final DefaultExecutionResult executionResult =
       new DefaultExecutionResult(consoleView, processHandler, createActions(consoleView, processHandler, executor));
-    executionResult.setRestartActions(new ToggleAutoTestAction(getEnvironment()));
+    executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;
   }
 
@@ -63,24 +62,22 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
     final DartUnitRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
 
     final TestConsoleProperties testConsoleProperties = new DartConsoleProperties(runConfiguration, env);
-
-    final SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
-      DART_FRAMEWORK_NAME, testConsoleProperties, env, null, true, null);
+    final ConsoleView consoleView = SMTestRunnerConnectionUtil.createConsole(DART_FRAMEWORK_NAME, testConsoleProperties, env);
 
     try {
       final VirtualFile dartFile = runnerParameters.getDartFile();
-      smtConsoleView.addMessageFilter(new DartConsoleFilter(project, dartFile));
+      consoleView.addMessageFilter(new DartConsoleFilter(project, dartFile));
 
       final String workingDir = StringUtil.isEmptyOrSpaces(runnerParameters.getWorkingDirectory())
                                 ? dartFile.getParent().getPath()
                                 : runnerParameters.getWorkingDirectory();
-      smtConsoleView.addMessageFilter(new DartRelativePathsConsoleFilter(project, workingDir));
-      smtConsoleView.addMessageFilter(new UrlFilter());
+      consoleView.addMessageFilter(new DartRelativePathsConsoleFilter(project, workingDir));
+      consoleView.addMessageFilter(new UrlFilter());
     }
     catch (RuntimeConfigurationError ignore) {/**/}
 
-    Disposer.register(project, smtConsoleView);
-    return smtConsoleView;
+    Disposer.register(project, consoleView);
+    return consoleView;
   }
 
   @NotNull
@@ -134,6 +131,7 @@ public class DartUnitRunningState extends DartCommandLineRunningState {
     public DartConsoleProperties(DartUnitRunConfiguration runConfiguration, ExecutionEnvironment env) {
       super(runConfiguration, DART_FRAMEWORK_NAME, env.getExecutor());
       setUsePredefinedMessageFilter(false);
+      setIdBasedTestTree(true);
     }
 
     @Nullable
