@@ -10,6 +10,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
+import com.intellij.openapi.util.text.CharFilter;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.io.HttpRequests;
 import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
@@ -89,7 +91,9 @@ public class DartSdkUpdateChecker {
       sdkUpdateInfo = stableSdkInfo;
     }
 
-    if (sdkUpdateInfo != null && sdkUpdateInfo.myRevision > currentRevision) {
+    if (sdkUpdateInfo != null &&
+        sdkUpdateInfo.myRevision > currentRevision &&
+        compareVersionsDigitsAndDotsOnly(sdkUpdateInfo.myPresentableVersion, currentSdkVersion) >= 0) {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         @Override
         public void run() {
@@ -97,6 +101,24 @@ public class DartSdkUpdateChecker {
         }
       }, ModalityState.NON_MODAL, project.getDisposed());
     }
+  }
+
+  private static int compareVersionsDigitsAndDotsOnly(@NotNull final String version1, @NotNull final String version2) {
+    final CharFilter filter = new CharFilter() {
+      @Override
+      public boolean accept(char ch) {
+        return ch != '.' && (ch < '0' || ch > '9');
+      }
+    };
+
+    final int index1 = StringUtil.findFirst(version1, filter);
+    final int index2 = StringUtil.findFirst(version2, filter);
+
+    if (index1 > 0 && index2 > 0) {
+      return StringUtil.compareVersionNumbers(version1.substring(0, index1), version2.substring(0, index2));
+    }
+
+    return StringUtil.compareVersionNumbers(version1, version2);
   }
 
   private static void notifySdkUpdateAvailable(@NotNull final Project project,
