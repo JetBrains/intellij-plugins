@@ -4,13 +4,18 @@ import com.google.dart.server.generated.types.SourceEdit;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -18,14 +23,17 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.FileTypeIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.LightweightHint;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerAnnotator;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
+import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.sdk.DartSdkGlobalLibUtil;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
@@ -40,14 +48,13 @@ public class DartStyleAction extends AnAction implements DumbAware {
 
   @Override
   public void actionPerformed(final AnActionEvent event) {
-    final DataContext dataContext = event.getDataContext();
-    final Project project = CommonDataKeys.PROJECT.getData(dataContext);
+    final Project project = event.getProject();
     if (project == null) {
       return;
     }
 
     PsiDocumentManager.getInstance(project).commitAllDocuments();
-    final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
+    final Editor editor = event.getData(CommonDataKeys.EDITOR);
 
     if (editor != null) {
       runDartStyleOverEditor(project, editor);
@@ -56,40 +63,51 @@ public class DartStyleAction extends AnAction implements DumbAware {
 
   @Override
   public void update(final AnActionEvent event) {
-    super.update(event);
     final Presentation presentation = event.getPresentation();
-    final DataContext dataContext = event.getDataContext();
-    final Project project = CommonDataKeys.PROJECT.getData(dataContext);
+    final Project project = event.getProject();
     if (project == null) {
       presentation.setVisible(false);
       presentation.setEnabled(false);
       return;
     }
 
-    presentation.setVisible(FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project)));
-
-    final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
-
+    final Editor editor = event.getData(CommonDataKeys.EDITOR);
     if (editor != null) {
-      PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-      if (file == null || file.getVirtualFile() == null || file.getFileType() != DartFileType.INSTANCE) {
-        presentation.setEnabled(false);
-        return;
-      }
-      else {
-        presentation.setEnabled(true);
-        return;
-      }
+      final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+      // visible for any Dart file, but enabled for applicable only
+      presentation.setVisible(psiFile != null && psiFile.getFileType() == DartFileType.INSTANCE);
+      presentation.setEnabled(isApplicableFile(psiFile));
+      return;
     }
-    presentation.setEnabled(false);
+
+    presentation.setEnabledAndVisible(false);
+  }
+
+  private static boolean isApplicableFile(@Nullable final PsiFile psiFile) {
+    if (psiFile == null || psiFile.getVirtualFile() == null || psiFile.getFileType() != DartFileType.INSTANCE) return false;
+
+    final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
+    if (module == null) return false;
+
+    final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
+    if (sdk == null || !DartAnalysisServerAnnotator.isDartSDKVersionSufficient(sdk)) return false;
+
+    if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return false;
+
+    if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return false;
+
+    return true;
   }
 
   private static void runDartStyleOverEditor(@NotNull final Project project, @NotNull final Editor editor) {
     final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-    if (psiFile == null || psiFile.getVirtualFile() == null || psiFile.getFileType() != DartFileType.INSTANCE) return;
+    if (!isApplicableFile(psiFile)) return;
 
     final Document document = editor.getDocument();
     if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
+
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    if (sdk == null || !DartAnalysisServerService.getInstance().serverReadyForRequest(project, sdk)) return;
 
     final Runnable runnable = new Runnable() {
       public void run() {
