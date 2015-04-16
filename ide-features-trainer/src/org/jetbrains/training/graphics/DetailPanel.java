@@ -60,10 +60,10 @@ public class DetailPanel extends JPanel implements Disposable{
         GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(customFont);
 
         myLabel.setFont(customFont.deriveFont(14.0F));
-        myLabel.setText("Default text");
+        myLabel.setText("");
         myLabel.setFocusable(false);
 
-        btn = new RoundedCornerButton("Test button");
+        btn = new RoundedCornerButton("");
         btn.setUI(new RoundedCornerButtonUI());
         btn.setFont(customFont.deriveFont(13.0F));
         btn.setBorderPainted(false);
