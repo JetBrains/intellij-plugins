@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class KarmaServer {
 
@@ -43,7 +42,6 @@ public class KarmaServer {
   private final KarmaCoveragePeer myCoveragePeer;
   private final KarmaWatcher myWatcher;
 
-  private final AtomicBoolean myOnPortBoundFired = new AtomicBoolean(false);
   private final KarmaServerSettings myServerSettings;
 
   private List<Runnable> myOnPortBoundCallbacks = Lists.newCopyOnWriteArrayList();
@@ -64,8 +62,13 @@ public class KarmaServer {
     KillableColoredProcessHandler processHandler = startServer(serverSettings);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     File configurationFile = myServerSettings.getConfigurationFile();
-    myState = new KarmaServerState(this, processHandler, configurationFile);
-    myProcessOutputArchive = new ProcessOutputArchive(processHandler);
+    myState = new KarmaServerState(this, configurationFile);
+    myProcessOutputArchive = new ProcessOutputArchive(processHandler) {
+      @Override
+      protected void onStandardOutputLineAvailable(@NotNull String line) {
+        myState.onStandardOutputLineAvailable(line);
+      }
+    };
     myWatcher = new KarmaWatcher(this);
     registerStreamEventHandlers();
     myProcessOutputArchive.startNotify();
@@ -218,7 +221,7 @@ public class KarmaServer {
   }
 
   public boolean isPortBound() {
-    return myOnPortBoundFired.get();
+    return myState.getServerPort() != -1;
   }
 
   public int getServerPort() {
@@ -243,19 +246,17 @@ public class KarmaServer {
   }
 
   void fireOnPortBound() {
-    if (myOnPortBoundFired.compareAndSet(false, true)) {
-      UIUtil.invokeLaterIfNeeded(new Runnable() {
-        @Override
-        public void run() {
-          List<Runnable> callbacks = ContainerUtil.newArrayList(myOnPortBoundCallbacks);
-          myOnPortBoundCallbacks.clear();
-          myOnPortBoundCallbacks = null;
-          for (Runnable callback : callbacks) {
-            callback.run();
-          }
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        List<Runnable> callbacks = ContainerUtil.newArrayList(myOnPortBoundCallbacks);
+        myOnPortBoundCallbacks.clear();
+        myOnPortBoundCallbacks = null;
+        for (Runnable callback : callbacks) {
+          callback.run();
         }
-      });
-    }
+      }
+    });
   }
 
   public boolean areBrowsersReady() {
