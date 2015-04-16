@@ -15,11 +15,11 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.ui.LightweightHint;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
@@ -85,12 +85,14 @@ public class DartStyleAction extends AnAction implements DumbAware {
   }
 
   private static void runDartStyleOverEditor(@NotNull final Project project, @NotNull final Editor editor) {
-    final PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
-    if (psiFile == null) return;
+    final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+    if (psiFile == null || psiFile.getVirtualFile() == null || psiFile.getFileType() != DartFileType.INSTANCE) return;
+
+    final Document document = editor.getDocument();
+    if (!ReadonlyStatusHandler.ensureDocumentWritable(project, document)) return;
 
     final Runnable runnable = new Runnable() {
       public void run() {
-        final Document document = editor.getDocument();
         final String path = FileUtil.toSystemDependentName(psiFile.getVirtualFile().getPath());
         int caretOffset = editor.getCaretModel().getOffset();
 
