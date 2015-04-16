@@ -1,7 +1,8 @@
-package org.jetbrains.training.graphics;
+package org.jetbrains.training.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.training.graphics.DetailPanel;
 
 import java.awt.*;
 import java.awt.font.TextAttribute;

@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.training.*;
 import org.jetbrains.training.editor.MouseListenerHolder;
 import org.jetbrains.training.graphics.HintPanel;
-import org.jetbrains.training.graphics.ShowHint;
 import org.jetbrains.training.keymap.KeymapUtil;
 import org.jetbrains.training.keymap.SubKeymapUtil;
 import org.jetbrains.training.lesson.Lesson;
@@ -20,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Queue;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by karashevich on 30/01/15.
