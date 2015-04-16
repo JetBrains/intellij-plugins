@@ -1,4 +1,4 @@
-package org.jetbrains.training.graphics;
+package org.jetbrains.training.util;
 
 import com.intellij.ide.impl.DataManagerImpl;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -8,6 +8,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
+import org.jetbrains.training.graphics.HintPanel;
 import org.jetbrains.training.lesson.Lesson;
 
 import java.awt.*;

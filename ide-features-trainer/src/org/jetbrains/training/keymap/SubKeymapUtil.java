@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 public class SubKeymapUtil{
 
     public static String getKeyStrokeTextSub(KeyStroke keyStroke) {
+        if (keyStroke == null) return "";
         final String modifiers = getModifiersText(keyStroke.getModifiers());
         final String key = SystemInfo.isMac ? MacKeymapUtil.getKeyText(keyStroke.getKeyCode()) : KeyEvent.getKeyText(keyStroke.getKeyCode());
 
