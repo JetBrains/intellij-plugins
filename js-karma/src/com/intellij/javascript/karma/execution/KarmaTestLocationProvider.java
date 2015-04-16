@@ -2,6 +2,7 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
+import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.javascript.testFramework.JsTestFileByTestNameIndex;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
@@ -17,7 +18,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.testIntegration.TestLocationProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,30 +28,25 @@ import java.util.List;
 /**
 * @author Sergey Simonchik
 */
-public class KarmaTestLocationProvider implements TestLocationProvider {
-
+public class KarmaTestLocationProvider implements SMTestLocator {
   private static final String PROTOCOL_ID__CONFIG_FILE = "config";
   private static final String PROTOCOL_ID__TEST_SUITE = "suite";
   private static final String PROTOCOL_ID__TEST = "test";
 
-  private final Project myProject;
-
-  public KarmaTestLocationProvider(@NotNull Project project) {
-    myProject = project;
-  }
+  public static final KarmaTestLocationProvider INSTANCE = new KarmaTestLocationProvider();
 
   @NotNull
   @Override
-  public List<Location> getLocation(@NotNull String protocolId, @NotNull String locationData, Project project) {
+  public List<Location> getLocation(@NotNull String protocol, @NotNull String path, @NotNull Project project, @NotNull GlobalSearchScope scope) {
     final Location location;
-    if (PROTOCOL_ID__CONFIG_FILE.equals(protocolId)) {
-      location = getConfigLocation(locationData);
+    if (PROTOCOL_ID__CONFIG_FILE.equals(protocol)) {
+      location = getConfigLocation(project, path);
     }
-    else if (PROTOCOL_ID__TEST_SUITE.equals(protocolId)) {
-      location = getTestLocation(locationData, true);
+    else if (PROTOCOL_ID__TEST_SUITE.equals(protocol)) {
+      location = getTestLocation(project, path, true);
     }
-    else if (PROTOCOL_ID__TEST.equals(protocolId)) {
-      location = getTestLocation(locationData, false);
+    else if (PROTOCOL_ID__TEST.equals(protocol)) {
+      location = getTestLocation(project, path, false);
     }
     else {
       location = null;
@@ -63,10 +58,10 @@ public class KarmaTestLocationProvider implements TestLocationProvider {
   }
 
   @Nullable
-  private Location<PsiFile> getConfigLocation(@NotNull String locationData) {    VirtualFile
-    virtualFile = VfsUtil.findFileByIoFile(new File(locationData), false);
+  private static Location<PsiFile> getConfigLocation(Project project, @NotNull String locationData) {
+    VirtualFile virtualFile = VfsUtil.findFileByIoFile(new File(locationData), false);
     if (virtualFile != null && virtualFile.isValid()) {
-      PsiFile psiFile = PsiManager.getInstance(myProject).findFile(virtualFile);
+      PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
       if (psiFile != null && psiFile.isValid()) {
         return PsiLocation.fromPsiElement(psiFile);
       }
@@ -75,7 +70,7 @@ public class KarmaTestLocationProvider implements TestLocationProvider {
   }
 
   @Nullable
-  private Location getTestLocation(@NotNull String locationData, boolean isSuite) {
+  private static Location getTestLocation(Project project, @NotNull String locationData, boolean isSuite) {
     List<String> path = EscapeUtils.split(locationData, '.');
     if (path.isEmpty()) {
       return null;
@@ -90,7 +85,7 @@ public class KarmaTestLocationProvider implements TestLocationProvider {
       suiteNames = path.subList(0, path.size() - 1);
       testName = path.get(path.size() - 1);
     }
-    PsiElement psiElement = findJasmineElement(suiteNames, testName);
+    PsiElement psiElement = findJasmineElement(project, suiteNames, testName);
     if (psiElement == null) {
       String moduleName = null;
       if (suiteNames.size() == 0) {
@@ -100,7 +95,7 @@ public class KarmaTestLocationProvider implements TestLocationProvider {
         moduleName = suiteNames.get(0);
       }
       if (moduleName != null) {
-        psiElement = findQUnitElement(moduleName, testName);
+        psiElement = findQUnitElement(project, moduleName, testName);
       }
     }
     if (psiElement != null) {
@@ -110,43 +105,44 @@ public class KarmaTestLocationProvider implements TestLocationProvider {
   }
 
   @Nullable
-  private PsiElement findJasmineElement(@NotNull List<String> suiteNames, @Nullable String testName) {
-    String suiteKey = JsTestFileByTestNameIndex.createJasmineKey(suiteNames);
-    GlobalSearchScope scope = GlobalSearchScope.projectScope(myProject);
-    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(suiteKey, scope);
+  private static PsiElement findJasmineElement(Project project, @NotNull List<String> suiteNames, @Nullable String testName) {
+    String key = JsTestFileByTestNameIndex.createJasmineKey(suiteNames);
+    GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
+
+    JasmineFileStructureBuilder builder = JasmineFileStructureBuilder.getInstance();
     for (VirtualFile file : jsTestVirtualFiles) {
-      PsiFile psiFile = PsiManager.getInstance(myProject).findFile(file);
+      PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
       if (psiFile instanceof JSFile) {
-        JSFile jsFile = (JSFile) psiFile;
-        JasmineFileStructureBuilder builder = JasmineFileStructureBuilder.getInstance();
-        JasmineFileStructure jasmineFileStructure = builder.fetchCachedTestFileStructure(jsFile);
+        JasmineFileStructure jasmineFileStructure = builder.fetchCachedTestFileStructure((JSFile)psiFile);
         PsiElement element = jasmineFileStructure.findPsiElement(suiteNames, testName);
         if (element != null && element.isValid()) {
           return element;
         }
       }
     }
+
     return null;
   }
 
   @Nullable
-  private PsiElement findQUnitElement(@NotNull String moduleName, @Nullable String testName) {
-    String qunitKey = JsTestFileByTestNameIndex.createQUnitKey(moduleName, testName);
-    GlobalSearchScope scope = GlobalSearchScope.projectScope(myProject);
-    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(qunitKey, scope);
+  private static PsiElement findQUnitElement(Project project, @NotNull String moduleName, @Nullable String testName) {
+    String key = JsTestFileByTestNameIndex.createQUnitKey(moduleName, testName);
+    GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
+
+    QUnitFileStructureBuilder builder = QUnitFileStructureBuilder.getInstance();
     for (VirtualFile file : jsTestVirtualFiles) {
-      PsiFile psiFile = PsiManager.getInstance(myProject).findFile(file);
+      PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
       if (psiFile instanceof JSFile) {
-        JSFile jsFile = (JSFile) psiFile;
-        QUnitFileStructureBuilder builder = QUnitFileStructureBuilder.getInstance();
-        QUnitFileStructure qunitFileStructure = builder.fetchCachedTestFileStructure(jsFile);
+        QUnitFileStructure qunitFileStructure = builder.fetchCachedTestFileStructure((JSFile)psiFile);
         PsiElement element = qunitFileStructure.findPsiElement(moduleName, testName);
         if (element != null && element.isValid()) {
           return element;
         }
       }
     }
+
     return null;
   }
-
 }
