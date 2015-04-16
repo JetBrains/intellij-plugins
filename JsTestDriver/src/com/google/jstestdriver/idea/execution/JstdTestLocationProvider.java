@@ -5,6 +5,7 @@ import com.google.jstestdriver.idea.assertFramework.JstdTestMethodNameRefiner;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
 import com.intellij.execution.testframework.sm.FileUrlProvider;
+import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.javascript.testFramework.JsTestFileByTestNameIndex;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
@@ -25,7 +26,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.testIntegration.TestLocationProvider;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,25 +38,26 @@ import java.util.Map;
 /**
 * @author Sergey Simonchik
 */
-public class JstdTestLocationProvider implements TestLocationProvider {
-
+public class JstdTestLocationProvider implements SMTestLocator {
   private static final String PROTOCOL_ID__CONFIG_FILE = "config";
   private static final String PROTOCOL_ID__TEST_CASE = "testCase";
   private static final String PROTOCOL_ID__TEST = "test";
   private static final String PROTOCOL_ID__BROWSER_ERROR = "browserError";
 
+  public static final JstdTestLocationProvider INSTANCE = new JstdTestLocationProvider();
+
   @NotNull
   @Override
-  public List<Location> getLocation(@NotNull String protocolId, @NotNull String locationData, Project project) {
+  public List<Location> getLocation(@NotNull String protocol, @NotNull String path, @NotNull Project project, @NotNull GlobalSearchScope scope) {
     final Location location;
-    if (PROTOCOL_ID__CONFIG_FILE.equals(protocolId)) {
-      location = findConfigFile(locationData, project);
+    if (PROTOCOL_ID__CONFIG_FILE.equals(protocol)) {
+      location = findConfigFile(path, project);
     }
-    else if (PROTOCOL_ID__TEST_CASE.equals(protocolId) || PROTOCOL_ID__TEST.equals(protocolId)) {
-      location = findTest(locationData, project);
+    else if (PROTOCOL_ID__TEST_CASE.equals(protocol) || PROTOCOL_ID__TEST.equals(protocol)) {
+      location = findTest(path, project);
     }
-    else if (PROTOCOL_ID__BROWSER_ERROR.equals(protocolId)) {
-      location = findJsFile(locationData, project);
+    else if (PROTOCOL_ID__BROWSER_ERROR.equals(protocol)) {
+      location = findJsFile(path, project);
     }
     else {
       location = null;
