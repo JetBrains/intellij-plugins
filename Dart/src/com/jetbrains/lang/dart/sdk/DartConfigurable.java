@@ -146,14 +146,25 @@ public class DartConfigurable implements SearchableConfigurable {
                                               currentDartiumSettingsRetriever, myDartiumSettingsButton, myCheckedModeCheckBox,
                                               isResettingControlsComputable);
 
-    final DocumentAdapter documentListener = new DocumentAdapter() {
+    mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+      protected void textChanged(final DocumentEvent e) {
+        final String sdkHomePath = mySdkPathTextWithBrowse.getText().trim();
+        if (!sdkHomePath.isEmpty()) {
+          final String version = DartSdkUtil.getSdkVersion(sdkHomePath);
+          if (version != null && (version.contains("-dev.") || version.contains("-edge."))) {
+            mySdkUpdateChannelCombo.setSelectedItem(DartSdkUpdateOption.StableAndDev);
+          }
+        }
+
+        updateErrorLabel();
+      }
+    });
+
+    myDartiumPathTextWithBrowse.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
         updateErrorLabel();
       }
-    };
-
-    mySdkPathTextWithBrowse.getTextField().getDocument().addDocumentListener(documentListener);
-    myDartiumPathTextWithBrowse.getTextField().getDocument().addDocumentListener(documentListener);
+    });
 
     myCheckSdkUpdateCheckBox.addActionListener(new ActionListener() {
       @Override
