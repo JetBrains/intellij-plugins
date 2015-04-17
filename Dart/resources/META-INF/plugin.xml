@@ -9,9 +9,7 @@
   <depends optional="true" config-file="dart-yaml.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
 
-  <!-- Uncomment the following lines when running Dart tests for the 'Dart-plugin' project. Do not commit these lines uncommented! -->
-  <!--<depends>HtmlTools</depends>-->
-  <!--<depends>com.intellij.css</depends>-->
+  <!-- Uncomment the following line when running Dart tests for the 'Dart-plugin' project. Do not commit these lines uncommented! -->
   <!--<depends>com.intellij.plugins.webcomponents</depends>-->
 
   <change-notes>

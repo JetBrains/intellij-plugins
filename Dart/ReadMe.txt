@@ -13,7 +13,6 @@ Prerequisites:
   4.3. Add some jars to the Plugin SDK Classpath:
          [IDEA Installation]/plugins/copyright/lib/*.jar
          [IDEA Installation]/plugins/JavaScriptDebugger/lib/*.jar
-         [IDEA Installation]/plugins/htmltools/lib/*.jar
          [IDEA Installation]/plugins/CSS/lib/*.jar
          [IDEA Installation]/plugins/yaml/lib/*.jar
          [IDEA Plugins folder]/WebComponents/lib/*.jar (see here how to locate [IDEA Plugins folder]: https://intellij-support.jetbrains.com/entries/23358108)
