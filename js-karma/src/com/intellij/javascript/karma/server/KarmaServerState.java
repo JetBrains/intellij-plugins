@@ -30,11 +30,11 @@ public class KarmaServerState {
   private static final String BROWSER_DISCONNECTED_EVENT_TYPE = "browserDisconnected";
   private static final Pattern SERVER_PORT_LINE_PATTERN = Pattern.compile("Karma.+server started at http://[^:]+:(\\d+)/.*$");
 
-  private static final String NO_BINARY_PREFIX = "ERROR [launcher]: No binary for ";
-  private static final String NO_BINARY_SUFFIX = " browser on your platform.\n";
-
-  public static final String UNREGISTERED_LAUNCHER_PREFIX = "WARN [launcher]: Can not load \"";
-  public static final String UNREGISTERED_LAUNCHER_SUFFIX = "\", it is not registered!\n";
+  private static final String[][] FAILED_TO_START_BROWSER_PATTERNS = new String[][] {
+    {"ERROR [launcher]: No binary for ", " browser on your platform.\n"},
+    {"WARN [launcher]: Can not load \"", "\", it is not registered!\n"},
+    {"ERROR [launcher]: Cannot start ", "\n"}
+  };
 
   private final KarmaServer myServer;
   private final List<String> myOverriddenBrowsers;
@@ -136,10 +136,7 @@ public class KarmaServerState {
       }
     }
     if (!myBrowsersReady.get()) {
-      String failedToStartBrowser = getInnerSubstring(line, UNREGISTERED_LAUNCHER_PREFIX, UNREGISTERED_LAUNCHER_SUFFIX);
-      if (failedToStartBrowser == null) {
-        failedToStartBrowser = getInnerSubstring(line, NO_BINARY_PREFIX, NO_BINARY_SUFFIX);
-      }
+      String failedToStartBrowser = parseFailedToStartBrowser(line);
       if (failedToStartBrowser != null) {
         LOG.info("Browser " + failedToStartBrowser + " failed to start: " + line);
         myFailedToStartBrowsers.add(failedToStartBrowser);
@@ -148,6 +145,17 @@ public class KarmaServerState {
         }
       }
     }
+  }
+
+  @Nullable
+  private static String parseFailedToStartBrowser(@NotNull String line) {
+    for (String[] pattern : FAILED_TO_START_BROWSER_PATTERNS) {
+      String failedToStartBrowser = getInnerSubstring(line, pattern[0], pattern[1]);
+      if (failedToStartBrowser != null) {
+        return failedToStartBrowser;
+      }
+    }
+    return null;
   }
 
   private static int parseServerPort(@NotNull String text) {
