@@ -117,7 +117,20 @@ public interface DartTokenTypesSets {
   );
 
   TokenSet BINARY_OPERATORS = TokenSet.create(
-    OR_OR, AND_AND, RELATIONAL_OPERATOR, BITWISE_OPERATOR, SHIFT_OPERATOR, ADDITIVE_OPERATOR, MULTIPLICATIVE_OPERATOR
+    // '&&' '||'
+    AND_AND, OR_OR,
+    // '==' '!='
+    EQ_EQ, NEQ,
+    // '<' '<=' '>' '>='
+    LT, LT_EQ, GT, GT_EQ,
+    // '&' '|' '^'
+    AND, OR, XOR,
+    // '<<' '>>'
+    LT_LT, // GT_GT,
+    // '+' '-'
+    PLUS, MINUS,
+    // '*' '/'
+    MUL, DIV
   );
 
   TokenSet LOGIC_OPERATORS = TokenSet.create(
@@ -125,8 +138,10 @@ public interface DartTokenTypesSets {
   );
 
   TokenSet UNARY_OPERATORS = TokenSet.create(
-    PLUS_PLUS, MINUS_MINUS, NOT, MINUS
+    // '-' '!' '~' '++' '--'
+    MINUS, NOT, BIN_NOT, PLUS_PLUS, MINUS_MINUS
   );
+  
   TokenSet BITWISE_OPERATORS = TokenSet.create(BITWISE_OPERATOR);
   TokenSet FUNCTION_DEFINITION = TokenSet.create(
     FUNCTION_SIGNATURE,
