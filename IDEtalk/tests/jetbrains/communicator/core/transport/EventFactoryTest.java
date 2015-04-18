@@ -23,36 +23,36 @@ import jetbrains.communicator.mock.MockTransport;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 
 /**
  * @author Kir
- * @noinspection JUnitTestCaseWithNonTrivialConstructors
  */
-public class EventFactoryTest extends TestCase {
-  public static Test suite() throws IOException {
+public class EventFactoryTest {
+  public static Test suite() throws IOException, URISyntaxException {
     TestSuite result = new TestSuite();
 
     URL self = EventFactoryTest.class.getResource("EventFactoryTest.class");
-    File parent = new File(new File(self.getFile()).getParentFile(), "efData");
+    File parent = new File(new File(self.toURI()).getParentFile(), "efData");
 
     File[] files = parent.listFiles();
-    for (int i = 0; i < files.length; i++) {
-      String s = FileUtil.loadFile(files[i]);
-      String []data = s.split("==[^=]*==\r?\n");
-      result.addTest(new MessageEventTst(files[i].getName(), data));
+    assert files != null;
+    for (File file : files) {
+      String s = FileUtil.loadFile(file);
+      String[] data = s.split("==[^=]*==\r?\n");
+      result.addTest(new MessageEventTest(file.getName(), data));
     }
 
-
-    //result.addTestSuite(EventFactoryTest.class);
     return result;
   }
 
-  private static class MessageEventTst extends TestCase {
+  @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "JUnitTestCaseWithNoTests"})
+  private static class MessageEventTest extends TestCase {
     private final String[] myData;
 
-    MessageEventTst(String name, String[] data) {
+    public MessageEventTest(String name, String[] data) {
       super(name);
       myData = data;
     }
@@ -74,6 +74,5 @@ public class EventFactoryTest extends TestCase {
         fail(Arrays.asList(myData).toString());
       }
     }
-
   }
 }
