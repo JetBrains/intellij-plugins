@@ -26,7 +26,7 @@
     <orderEntry type="module" module-name="platform-tests" />
     <orderEntry type="module" module-name="ultimate-resources" />
     <orderEntry type="library" scope="TEST" name="JUnit3" level="project" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../lib/jmock-1.0.1.jar!/" />
