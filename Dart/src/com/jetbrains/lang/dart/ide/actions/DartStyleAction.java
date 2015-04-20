@@ -14,13 +14,20 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.LightweightHint;
@@ -36,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DartStyleAction extends AnAction implements DumbAware {
@@ -59,6 +67,11 @@ public class DartStyleAction extends AnAction implements DumbAware {
     if (editor != null) {
       runDartStyleOverEditor(project, editor);
     }
+    else {
+      final VirtualFile[] files = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
+      final List<VirtualFile> vFiles = getApplicableVirtualFiles(project, files);
+      runDartStyleOverVirtualFiles(project, vFiles);
+    }
   }
 
   @Override
@@ -66,8 +79,7 @@ public class DartStyleAction extends AnAction implements DumbAware {
     final Presentation presentation = event.getPresentation();
     final Project project = event.getProject();
     if (project == null) {
-      presentation.setVisible(false);
-      presentation.setEnabled(false);
+      presentation.setEnabledAndVisible(false);
       return;
     }
 
@@ -80,7 +92,19 @@ public class DartStyleAction extends AnAction implements DumbAware {
       return;
     }
 
-    presentation.setEnabledAndVisible(false);
+    final VirtualFile[] files = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
+    if (files == null) {
+      presentation.setEnabledAndVisible(false);
+      return;
+    }
+
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    if (sdk == null || !DartAnalysisServerAnnotator.isDartSDKVersionSufficient(sdk) || !mayHaveApplicableVirtualFiles(files)) {
+      presentation.setEnabledAndVisible(false);
+      return;
+    }
+
+    presentation.setEnabledAndVisible(true);
   }
 
   private static boolean isApplicableFile(@Nullable final PsiFile psiFile) {
@@ -97,6 +121,45 @@ public class DartStyleAction extends AnAction implements DumbAware {
     if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return false;
 
     return true;
+  }
+
+  private static boolean mayHaveApplicableVirtualFiles(@NotNull final VirtualFile[] files) {
+    for (VirtualFile file : files) {
+      if (file.isDirectory() || file.getFileType() == DartFileType.INSTANCE) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @NotNull
+  private static List<VirtualFile> getApplicableVirtualFiles(@NotNull final Project project, @Nullable final VirtualFile[] files) {
+    final List<VirtualFile> dartFiles = new ArrayList<VirtualFile>();
+    if (files == null) return dartFiles;
+
+    for (VirtualFile virtualFile : files) {
+      VfsUtilCore.visitChildrenRecursively(virtualFile, new VirtualFileVisitor() {
+        @NotNull
+        @Override
+        public Result visitFileEx(@NotNull VirtualFile file) {
+          if (file.isDirectory() || file.getFileType() != DartFileType.INSTANCE) return CONTINUE;
+
+          final Module module = ModuleUtilCore.findModuleForFile(file, project);
+          if (module == null) return CONTINUE;
+
+          final DartSdk sdk = DartSdk.getDartSdk(project);
+          if (sdk == null || !DartAnalysisServerAnnotator.isDartSDKVersionSufficient(sdk)) return CONTINUE;
+
+          if (!DartSdkGlobalLibUtil.isDartSdkGlobalLibAttached(module, sdk.getGlobalLibName())) return CONTINUE;
+
+          if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(project, file)) return CONTINUE;
+
+          dartFiles.add(file);
+          return CONTINUE;
+        }
+      });
+    }
+    return dartFiles;
   }
 
   private static void runDartStyleOverEditor(@NotNull final Project project, @NotNull final Editor editor) {
@@ -119,22 +182,22 @@ public class DartStyleAction extends AnAction implements DumbAware {
           DartAnalysisServerService.getInstance().edit_format(path, caretOffset, 0);
 
         if (formatResult == null) {
-          showHintLater(editor, DartBundle.message("dart.style.failed"), true);
+          showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
           LOG.warn("Unexpected response from edit_format, formatResult is null");
           return;
         }
 
         final List<SourceEdit> edits = formatResult.getEdits();
         if (edits == null || edits.size() == 0) {
-          showHintLater(editor, DartBundle.message("dart.style.already.good"), false);
+          showHintLater(editor, DartBundle.message("dart.style.hint.already.good"), false);
         }
         else if (edits.size() == 1) {
           document.replaceString(0, document.getTextLength(), edits.get(0).getReplacement());
           editor.getCaretModel().moveToOffset(formatResult.getOffset());
-          showHintLater(editor, DartBundle.message("dart.style.success"), false);
+          showHintLater(editor, DartBundle.message("dart.style.hint.success"), false);
         }
         else {
-          showHintLater(editor, DartBundle.message("dart.style.failed"), true);
+          showHintLater(editor, DartBundle.message("dart.style.hint.failed"), true);
           LOG.warn("Unexpected response from edit_format, formatResult.getEdits().size() = " + edits.size());
         }
       }
@@ -167,5 +230,49 @@ public class DartStyleAction extends AnAction implements DumbAware {
         return editor.isDisposed() || !editor.getComponent().isShowing();
       }
     });
+  }
+
+  private static void runDartStyleOverVirtualFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
+    if (dartFiles.isEmpty()) {
+      Messages.showInfoMessage(project, DartBundle.message("dart.style.files.no.dart.files"), DartBundle.message("dart.style.action.name"));
+      return;
+    }
+    if (Messages.showOkCancelDialog(project, DartBundle.message("dart.style.files.dialog.question", StringUtil.join(dartFiles, ", ")),
+                                    DartBundle.message("dart.style.action.name"), DartIcons.Dart_16) != Messages.OK) {
+      return;
+    }
+
+    final Runnable runnable = new Runnable() {
+      public void run() {
+        CommandProcessor.getInstance().markCurrentCommandAsGlobal(project);
+        DartAnalysisServerService.getInstance().updateFilesContent();
+
+        for (final VirtualFile virtualFile : dartFiles) {
+          final String path = FileUtil.toSystemDependentName(virtualFile.getPath());
+          final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+          if (document == null) continue;
+
+          int textLength = document.getTextLength();
+          if (textLength == 0) continue;
+
+          DartAnalysisServerService.FormatResult formatResult =
+            DartAnalysisServerService.getInstance().edit_format(path, 0, 1);
+
+          if (formatResult != null && formatResult.getEdits() != null && formatResult.getEdits().size() == 1) {
+            final SourceEdit sourceEdit = formatResult.getEdits().get(0);
+            document.setText(sourceEdit.getReplacement());
+          }
+        }
+        FileDocumentManager.getInstance().saveAllDocuments();
+      }
+    };
+
+    ApplicationManager.getApplication().runWriteAction(
+      new Runnable() {
+        @Override
+        public void run() {
+          CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.style.action.name"), null);
+        }
+      });
   }
 }
