@@ -214,7 +214,7 @@
               <text value="Cus&amp;tom package root:"/>
             </properties>
           </component>
-          <component id="fd5a6" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myCustomPackageRootsTextWithBrowse">
+          <component id="fd5a6" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myCustomPackageRootTextWithBrowse">
             <constraints>
               <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>

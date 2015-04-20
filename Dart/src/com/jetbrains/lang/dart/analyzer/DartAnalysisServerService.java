@@ -171,8 +171,7 @@ public class DartAnalysisServerService {
     });
 
     ApplicationManager.getApplication().getMessageBus().connect()
-      .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
-                 new FileEditorManagerAdapter() {
+      .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerAdapter() {
                    @Override
                    public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
                      if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE) {
@@ -280,7 +279,9 @@ public class DartAnalysisServerService {
     }
   }
 
-  public boolean updateRoots(final List<String> includedRoots, final List<String> excludedRoots) {
+  public boolean updateRoots(@NotNull final List<String> includedRoots,
+                             @NotNull final List<String> excludedRoots,
+                             @Nullable final Map<String, String> packageRoots) {
     synchronized (myLock) {
       if (myServer == null) return false;
 
@@ -295,7 +296,7 @@ public class DartAnalysisServerService {
       final boolean ok = runInPooledThreadAndWait(new Runnable() {
         @Override
         public void run() {
-          server.analysis_setAnalysisRoots(includedRoots, excludedRoots, null);
+          server.analysis_setAnalysisRoots(includedRoots, excludedRoots, packageRoots);
         }
       }, runnableInfo, SEND_REQUEST_TIMEOUT);
 
