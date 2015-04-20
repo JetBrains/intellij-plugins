@@ -21,9 +21,8 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
   static {
     fillMap(ATTRIBUTES, RESERVED_WORDS, DartSyntaxHighlighterColors.KEYWORD);
 
+    fillMap(ATTRIBUTES, ASSIGNMENT_OPERATORS, DartSyntaxHighlighterColors.OPERATION_SIGN);
     fillMap(ATTRIBUTES, BINARY_OPERATORS, DartSyntaxHighlighterColors.OPERATION_SIGN);
-    fillMap(ATTRIBUTES, LOGIC_OPERATORS, DartSyntaxHighlighterColors.OPERATION_SIGN);
-    fillMap(ATTRIBUTES, BITWISE_OPERATORS, DartSyntaxHighlighterColors.OPERATION_SIGN);
     fillMap(ATTRIBUTES, UNARY_OPERATORS, DartSyntaxHighlighterColors.OPERATION_SIGN);
 
     fillMap(ATTRIBUTES, STRINGS, DartSyntaxHighlighterColors.STRING);
