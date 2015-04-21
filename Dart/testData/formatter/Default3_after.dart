@@ -28,4 +28,5 @@ abstract class Test3 {
 
 @Foo
 void foo() {
+  var foo = {};
 }
