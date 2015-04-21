@@ -319,9 +319,6 @@ public class DartParser implements PsiParser {
     else if (t == SHIFT_OPERATOR) {
       r = shiftOperator(b, 0);
     }
-    else if (t == SHIFT_RIGHT_OPERATOR) {
-      r = shiftRightOperator(b, 0);
-    }
     else if (t == SHORT_TEMPLATE_ENTRY) {
       r = shortTemplateEntry(b, 0);
     }
@@ -842,9 +839,6 @@ public class DartParser implements PsiParser {
   //                            bitwiseOperator
   static boolean binaryOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "binaryOperator")) return false;
-    if (!nextTokenIs(b, "", REM, AND,
-      MUL, PLUS, MINUS, DIV, LT, LT_LT,
-      LT_EQ, EQ_EQ, GT, GT_EQ, XOR, OR, INT_DIV)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = multiplicativeOperator(b, l + 1);
@@ -4943,7 +4937,6 @@ public class DartParser implements PsiParser {
   // shiftOperator additiveExpressionWrapper
   public static boolean shiftExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "shiftExpression")) return false;
-    if (!nextTokenIs(b, "<shift expression>", LT_LT, GT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, "<shift expression>");
     r = shiftOperator(b, l + 1);
@@ -4977,28 +4970,14 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '<<' | shiftRightOperator
+  // '<<' | <<collapseShiftRight>>
   public static boolean shiftOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "shiftOperator")) return false;
-    if (!nextTokenIs(b, "<shift operator>", LT_LT, GT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<shift operator>");
     r = consumeToken(b, LT_LT);
-    if (!r) r = shiftRightOperator(b, l + 1);
+    if (!r) r = collapseShiftRight(b, l + 1);
     exit_section_(b, l, m, SHIFT_OPERATOR, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // '>' '>'
-  public static boolean shiftRightOperator(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "shiftRightOperator")) return false;
-    if (!nextTokenIs(b, GT)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, GT);
-    r = r && consumeToken(b, GT);
-    exit_section_(b, m, SHIFT_RIGHT_OPERATOR, r);
     return r;
   }
 
@@ -6014,10 +5993,6 @@ public class DartParser implements PsiParser {
   //                           '[' ']' '='?
   public static boolean userDefinableOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "userDefinableOperator")) return false;
-    if (!nextTokenIs(b, "<user definable operator>", REM, AND,
-      MUL, PLUS, MINUS, DIV, LT, LT_LT,
-      LT_EQ, EQ_EQ, GT, GT_EQ, LBRACKET, XOR,
-      OR, BIN_NOT, INT_DIV)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<user definable operator>");
     r = binaryOperator(b, l + 1);

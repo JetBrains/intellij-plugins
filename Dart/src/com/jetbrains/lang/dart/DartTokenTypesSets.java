@@ -126,7 +126,7 @@ public interface DartTokenTypesSets {
     // '&' '|' '^'
     AND, OR, XOR,
     // '<<' '>>'
-    LT_LT, // GT_GT,
+    LT_LT, GT_GT,
     // '+' '-'
     PLUS, MINUS,
     // '*' '/'

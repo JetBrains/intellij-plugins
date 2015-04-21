@@ -1737,9 +1737,7 @@ Dart File
           PsiElement(operator)('operator')
           USER_DEFINABLE_OPERATOR
             SHIFT_OPERATOR
-              SHIFT_RIGHT_OPERATOR
-                PsiElement(>)('>')
-                PsiElement(>)('>')
+              PsiElement(>>)('>>')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
             NORMAL_FORMAL_PARAMETER
