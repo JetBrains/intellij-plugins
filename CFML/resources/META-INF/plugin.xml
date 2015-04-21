@@ -51,7 +51,7 @@
         <colorSettingsPage implementation="com.intellij.coldFusion.UI.highlighting.CfmlColorSettingPage"/>
         <lang.fileViewProviderFactory language="CFML"
                                       implementationClass="com.intellij.coldFusion.model.files.CfmlFileViewProviderFactory"/>
-        <lang.syntaxHighlighterFactory key="CFML" implementationClass="com.intellij.coldFusion.UI.highlighting.CfmlSyntaxHighlighterFactory"/>
+        <lang.syntaxHighlighterFactory language="CFML" implementationClass="com.intellij.coldFusion.UI.highlighting.CfmlSyntaxHighlighterFactory"/>
         <indexPatternBuilder implementation="com.intellij.coldFusion.model.psi.CfmlIndexPatternBuilder"/>
         <completion.contributor language="CFML"
                 implementationClass="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlCompletionContributor"/>

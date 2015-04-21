@@ -47,7 +47,7 @@
     
     <todoIndexer filetype="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.index.HbTodoIndexer"/>
     <idIndexer filetype="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.index.HbIdIndexer"/>
-    <lang.syntaxHighlighterFactory key="Handlebars" implementationClass="com.dmarcotte.handlebars.HbHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbHighlighterFactory"/>
 
     <localInspection bundle="messages.HbBundle"
                      key="handlebars.inspections.helpers.empty"
