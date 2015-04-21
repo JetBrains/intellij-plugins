@@ -7,7 +7,4 @@ import com.intellij.psi.PsiElement;
 
 public interface DartShiftOperator extends DartPsiCompositeElement {
 
-  @Nullable
-  DartShiftRightOperator getShiftRightOperator();
-
 }

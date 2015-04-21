@@ -89,4 +89,18 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     builder_.putUserData(INSIDE_SYNC_OR_ASYNC_FUNCTION, wasSyncOrAsync);
     return result;
   }
+
+  public static boolean collapseShiftRight(PsiBuilder builder_, int level_) {
+    final PsiBuilder.Marker marker_ = builder_.mark();
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    if (!consumeToken(builder_, GT)) {
+      marker_.rollbackTo();
+      return false;
+    }
+    marker_.collapse(GT_GT);
+    return true;
+  }
 }

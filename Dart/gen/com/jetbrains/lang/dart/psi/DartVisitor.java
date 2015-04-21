@@ -424,10 +424,6 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
-  public void visitShiftRightOperator(@NotNull DartShiftRightOperator o) {
-    visitPsiCompositeElement(o);
-  }
-
   public void visitShortTemplateEntry(@NotNull DartShortTemplateEntry o) {
     visitPsiCompositeElement(o);
   }
