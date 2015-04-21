@@ -5,7 +5,7 @@
 <info textAttributesKey="DART_BUILTIN">int</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">x</info>;
 
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION"><info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">main</info></info>() {
-    <info textAttributesKey="DART_BUILTIN">int</info> <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">z</info> = <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">blah</info>();
+    <info textAttributesKey="DART_BUILTIN">int</info> <info textAttributesKey="DART_LOCAL_VARIABLE">z</info> = <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">blah</info>();
 }
 
 <info textAttributesKey="DART_BUILTIN">int</info> <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION"><info textAttributesKey="DART_TOP_LEVEL_FUNCTION_DECLARATION">blah</info></info>() => <info textAttributesKey="DART_TOP_LEVEL_VARIABLE_ACCESS">x</info>;
