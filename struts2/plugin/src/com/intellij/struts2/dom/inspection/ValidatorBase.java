@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2015 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.inspection;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.compiler.options.ValidationConfiguration;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.util.InspectionValidator;
@@ -30,9 +29,8 @@ import org.jetbrains.annotations.NotNull;
 abstract class ValidatorBase extends InspectionValidator {
 
   protected ValidatorBase(@NotNull String description,
-                          @NotNull String progressIndicatorText,
-                          Class<? extends LocalInspectionTool>... inspectionToolClasses) {
-    super(description, progressIndicatorText, inspectionToolClasses);
+                          @NotNull String progressIndicatorText) {
+    super(description, progressIndicatorText);
   }
 
   protected final boolean isEnabledForModule(final Module module) {
