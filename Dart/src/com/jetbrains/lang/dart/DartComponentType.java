@@ -18,7 +18,18 @@ public enum DartComponentType {
                                                                               : getIcon();
     }
   },
-  FUNCTION(AllIcons.Nodes.Function),
+  FUNCTION(AllIcons.Nodes.Function) {
+    @Override
+    public Icon getIcon(@NotNull DartComponent component) {
+      if (component.isGetter()) {
+        return AllIcons.Nodes.PropertyReadStatic;
+      }
+      if (component.isSetter()) {
+        return AllIcons.Nodes.PropertyWriteStatic;
+      }
+      return getIcon();
+    }
+  },
   METHOD(AllIcons.Nodes.Method) {
     @Override
     public Icon getIcon(@NotNull DartComponent component) {

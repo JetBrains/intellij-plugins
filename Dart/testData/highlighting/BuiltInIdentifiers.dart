@@ -19,13 +19,13 @@ void <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttribute
 void <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">export</info></info>() => null;
 <info textAttributesKey="DART_KEYWORD">external</info> void <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">external</info></info>();
 void <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">factory</info></info>() => null;
-<info textAttributesKey="DART_KEYWORD">get</info> <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">get</info> => null;
+<info textAttributesKey="DART_KEYWORD">get</info> <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">get</info> => null;
 void <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">implements</info></info>() => null;
 void <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">import</info></info>() => null;
 void <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">library</info></info>() => null;
 void <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">operator</info></info>() => null;
 void <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">part</info></info>() => null;
-<info textAttributesKey="DART_KEYWORD">set</info> <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">set</info>(<info textAttributesKey="DART_PARAMETER">a</info>) => null;
+<info textAttributesKey="DART_KEYWORD">set</info> <info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE">set</info>(<info textAttributesKey="DART_PARAMETER">a</info>) => null;
 <info textAttributesKey="DART_KEYWORD">static</info> void <info textAttributesKey="DART_STATIC_MEMBER_FUNCTION"><info textAttributesKey="DART_STATIC_MEMBER_FUNCTION">static</info></info>() => null;
 void <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">typedef</info></info>() => null;
 
@@ -41,7 +41,7 @@ void <info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION"><info textAttribute
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">print</info>(<info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION_CALL">export</info>());
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">print</info>(<info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION_CALL">external</info>());
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">print</info>(<info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION_CALL">factory</info>());
-<info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">print</info>(<info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION">get</info>());
+<info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">print</info>(<info textAttributesKey="DART_INSTANCE_MEMBER_VARIABLE_ACCESS">get</info>());
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">print</info>(<info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION_CALL">implements</info>());
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">print</info>(<info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION_CALL">import</info>());
 <info textAttributesKey="DART_TOP_LEVEL_FUNCTION_CALL">print</info>(<info textAttributesKey="DART_INSTANCE_MEMBER_FUNCTION_CALL">library</info>());
