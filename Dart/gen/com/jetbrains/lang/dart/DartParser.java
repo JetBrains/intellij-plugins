@@ -361,8 +361,8 @@ public class DartParser implements PsiParser {
     else if (t == THIS_EXPRESSION) {
       r = thisExpression(b, 0);
     }
-    else if (t == THROW_STATEMENT) {
-      r = throwStatement(b, 0);
+    else if (t == THROW_EXPRESSION) {
+      r = throwExpression(b, 0);
     }
     else if (t == TRY_STATEMENT) {
       r = tryStatement(b, 0);
@@ -431,7 +431,7 @@ public class DartParser implements PsiParser {
       NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION,
       REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION,
       SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION,
-      VALUE_EXPRESSION),
+      THROW_EXPRESSION, VALUE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -630,7 +630,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // ('async' '*'? | 'sync' '*'?)? '=>' (expression | throwStatement)
+  // ('async' '*'? | 'sync' '*'?)? '=>' expression
   static boolean arrowBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "arrowBody")) return false;
     if (!nextTokenIs(b, "", EXPRESSION_BODY_DEF, ASYNC, SYNC)) return false;
@@ -639,7 +639,7 @@ public class DartParser implements PsiParser {
     r = arrowBody_0(b, l + 1);
     r = r && consumeToken(b, EXPRESSION_BODY_DEF);
     p = r; // pin = 2
-    r = r && arrowBody_2(b, l + 1);
+    r = r && expression(b, l + 1);
     exit_section_(b, l, m, null, r, p, null);
     return r || p;
   }
@@ -696,17 +696,6 @@ public class DartParser implements PsiParser {
     if (!recursion_guard_(b, l, "arrowBody_0_0_1_1")) return false;
     consumeToken(b, MUL);
     return true;
-  }
-
-  // expression | throwStatement
-  private static boolean arrowBody_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "arrowBody_2")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = expression(b, l + 1);
-    if (!r) r = throwStatement(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
   }
 
   /* ********************************************************** */
@@ -4204,7 +4193,7 @@ public class DartParser implements PsiParser {
     if (!r) r = breakStatement(b, l + 1);
     if (!r) r = continueStatement(b, l + 1);
     if (!r) r = returnStatement(b, l + 1);
-    if (!r) r = throwStatementWithSemicolon(b, l + 1);
+    if (!r) r = consumeToken(b, THROWSTATEMENTWITHSEMICOLON);
     if (!r) r = assertStatement(b, l + 1);
     if (!r) r = statementFollowedBySemiColon(b, l + 1);
     if (!r) r = yieldEachStatement(b, l + 1);
@@ -4643,7 +4632,8 @@ public class DartParser implements PsiParser {
   //                      functionExpression |
   //                      newExpression |
   //                      constConstructorExpression |
-  //                      refOrThisOrSuperOrParenExpression
+  //                      refOrThisOrSuperOrParenExpression |
+  //                      throwExpression
   static boolean primary(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primary")) return false;
     boolean r;
@@ -4653,6 +4643,7 @@ public class DartParser implements PsiParser {
     if (!r) r = newExpression(b, l + 1);
     if (!r) r = constConstructorExpression(b, l + 1);
     if (!r) r = refOrThisOrSuperOrParenExpression(b, l + 1);
+    if (!r) r = throwExpression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -5609,38 +5600,16 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // 'throw' expression?
-  public static boolean throwStatement(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "throwStatement")) return false;
+  // 'throw' expression
+  public static boolean throwExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "throwExpression")) return false;
     if (!nextTokenIs(b, THROW)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, null);
+    boolean r;
+    Marker m = enter_section_(b);
     r = consumeToken(b, THROW);
-    p = r; // pin = 1
-    r = r && throwStatement_1(b, l + 1);
-    exit_section_(b, l, m, THROW_STATEMENT, r, p, null);
-    return r || p;
-  }
-
-  // expression?
-  private static boolean throwStatement_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "throwStatement_1")) return false;
-    expression(b, l + 1);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // throwStatement ';'
-  static boolean throwStatementWithSemicolon(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "throwStatementWithSemicolon")) return false;
-    if (!nextTokenIs(b, THROW)) return false;
-    boolean r, p;
-    Marker m = enter_section_(b, l, _NONE_, null);
-    r = throwStatement(b, l + 1);
-    p = r; // pin = 1
-    r = r && consumeToken(b, SEMICOLON);
-    exit_section_(b, l, m, null, r, p, null);
-    return r || p;
+    r = r && expression(b, l + 1);
+    exit_section_(b, m, THROW_EXPRESSION, r);
+    return r;
   }
 
   /* ********************************************************** */

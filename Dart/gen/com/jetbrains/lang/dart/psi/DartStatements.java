@@ -47,9 +47,6 @@ public interface DartStatements extends DartExecutionScope {
   List<DartSwitchStatement> getSwitchStatementList();
 
   @NotNull
-  List<DartThrowStatement> getThrowStatementList();
-
-  @NotNull
   List<DartTryStatement> getTryStatementList();
 
   @NotNull

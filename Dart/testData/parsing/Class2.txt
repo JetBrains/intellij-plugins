@@ -155,7 +155,7 @@ Dart File
                       PsiElement(NUMBER)('42')
                     PsiElement(;)(';')
                     PsiElement(else)('else')
-                    THROW_STATEMENT
+                    THROW_EXPRESSION
                       PsiElement(throw)('throw')
                       LITERAL_EXPRESSION
                         PsiElement(NUMBER)('42')

@@ -122,7 +122,7 @@ Dart File
                       PsiElement(NUMBER)('87')
                     PsiElement(:)(':')
                     STATEMENTS
-                      THROW_STATEMENT
+                      THROW_EXPRESSION
                         PsiElement(throw)('throw')
                         LITERAL_EXPRESSION
                           PsiElement(NUMBER)('42')
@@ -323,7 +323,7 @@ Dart File
             PsiElement())(')')
           FUNCTION_BODY
             PsiElement(=>)('=>')
-            THROW_STATEMENT
+            THROW_EXPRESSION
               PsiElement(throw)('throw')
               NEW_EXPRESSION
                 PsiElement(new)('new')
@@ -562,7 +562,7 @@ Dart File
                       PsiElement())(')')
                     FUNCTION_EXPRESSION_BODY
                       PsiElement(=>)('=>')
-                      THROW_STATEMENT
+                      THROW_EXPRESSION
                         PsiElement(throw)('throw')
                         NEW_EXPRESSION
                           PsiElement(new)('new')

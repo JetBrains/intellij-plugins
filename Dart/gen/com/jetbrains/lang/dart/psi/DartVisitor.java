@@ -484,8 +484,8 @@ public class DartVisitor extends PsiElementVisitor {
     // visitReference(o);
   }
 
-  public void visitThrowStatement(@NotNull DartThrowStatement o) {
-    visitPsiCompositeElement(o);
+  public void visitThrowExpression(@NotNull DartThrowExpression o) {
+    visitExpression(o);
   }
 
   public void visitTryStatement(@NotNull DartTryStatement o) {

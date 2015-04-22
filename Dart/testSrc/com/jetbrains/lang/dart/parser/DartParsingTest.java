@@ -139,4 +139,8 @@ public class DartParsingTest extends ParsingTestCase {
   public void testNotClosedComment4() throws Throwable {
     doTest();
   }
+
+  public void testThrowExpression() throws Throwable {
+    doTest();
+  }
 }

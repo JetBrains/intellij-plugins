@@ -121,7 +121,7 @@ public interface DartTokenTypes {
   IElementType SYMBOL_LITERAL_EXPRESSION = new DartElementType("SYMBOL_LITERAL_EXPRESSION");
   IElementType TERNARY_EXPRESSION = new DartElementType("TERNARY_EXPRESSION");
   IElementType THIS_EXPRESSION = new DartElementType("THIS_EXPRESSION");
-  IElementType THROW_STATEMENT = new DartElementType("THROW_STATEMENT");
+  IElementType THROW_EXPRESSION = new DartElementType("THROW_EXPRESSION");
   IElementType TRY_STATEMENT = new DartElementType("TRY_STATEMENT");
   IElementType TYPE = new DartElementType("TYPE");
   IElementType TYPE_ARGUMENTS = new DartElementType("TYPE_ARGUMENTS");
@@ -246,6 +246,7 @@ public interface DartTokenTypes {
   IElementType SYNC = new DartElementType("sync");
   IElementType THIS = new DartElementType("this");
   IElementType THROW = new DartElementType("throw");
+  IElementType THROWSTATEMENTWITHSEMICOLON = new DartElementType("throwStatementWithSemicolon");
   IElementType TRUE = new DartElementType("true");
   IElementType TRY = new DartElementType("try");
   IElementType TYPEDEF = new DartElementType("typedef");
@@ -599,8 +600,8 @@ public interface DartTokenTypes {
       else if (type == THIS_EXPRESSION) {
         return new DartThisExpressionImpl(node);
       }
-      else if (type == THROW_STATEMENT) {
-        return new DartThrowStatementImpl(node);
+      else if (type == THROW_EXPRESSION) {
+        return new DartThrowExpressionImpl(node);
       }
       else if (type == TRY_STATEMENT) {
         return new DartTryStatementImpl(node);

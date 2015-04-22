@@ -11,21 +11,21 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartThrowStatementImpl extends DartPsiCompositeElementImpl implements DartThrowStatement {
+public class DartThrowExpressionImpl extends DartExpressionImpl implements DartThrowExpression {
 
-  public DartThrowStatementImpl(ASTNode node) {
+  public DartThrowExpressionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitThrowStatement(this);
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitThrowExpression(this);
     else super.accept(visitor);
   }
 
   @Override
-  @Nullable
+  @NotNull
   public DartExpression getExpression() {
-    return findChildByClass(DartExpression.class);
+    return findNotNullChildByClass(DartExpression.class);
   }
 
 }
