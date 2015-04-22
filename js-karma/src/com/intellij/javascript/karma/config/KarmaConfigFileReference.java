@@ -5,9 +5,6 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaConfigFileReference extends FileReference {
 
   private final FileType myExpectedFileType;
@@ -31,8 +28,7 @@ public class KarmaConfigFileReference extends FileReference {
 
   @Override
   public boolean isSoft() {
-    // true to highlight it in KarmaConfigFileInspection
-    return true;
+    return myPatternUsed;
   }
 
   public boolean isPatternUsed() {
