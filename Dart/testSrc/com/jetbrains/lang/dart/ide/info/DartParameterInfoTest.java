@@ -137,4 +137,12 @@ public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
     doTest("int a, double b", 0);
   }
 
+  public void testParamInfo_fieldFormal_normal() throws Throwable {
+    doTest("int a, double b", 0);
+  }
+
+  public void testParamInfo_fieldFormal_named() throws Throwable {
+    doTest("int a, {double b}", 0);
+  }
+
 }

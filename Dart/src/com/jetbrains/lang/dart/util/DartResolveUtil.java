@@ -934,6 +934,10 @@ public class DartResolveUtil {
       // seems foo(<caret>)
       parameterIndex = 0;
     }
+    else if (PsiTreeUtil.getParentOfType(place, DartNewExpression.class, true) != null) {
+      // seems new Foo(<caret>)
+      parameterIndex = 0;
+    }
     return parameterIndex;
   }
 
