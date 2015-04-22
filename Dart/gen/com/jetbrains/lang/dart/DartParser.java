@@ -4621,11 +4621,11 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '-' | '+' | '--' | '++' | '!' | '~' | '?'
+  // '-' | '+' | '--' | '++' | '!' | '~'
   public static boolean prefixOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "prefixOperator")) return false;
     if (!nextTokenIs(b, "<prefix operator>", NOT, PLUS,
-      PLUS_PLUS, MINUS, MINUS_MINUS, QUEST, BIN_NOT)) return false;
+      PLUS_PLUS, MINUS, MINUS_MINUS, BIN_NOT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<prefix operator>");
     r = consumeToken(b, MINUS);
@@ -4634,7 +4634,6 @@ public class DartParser implements PsiParser {
     if (!r) r = consumeToken(b, PLUS_PLUS);
     if (!r) r = consumeToken(b, NOT);
     if (!r) r = consumeToken(b, BIN_NOT);
-    if (!r) r = consumeToken(b, QUEST);
     exit_section_(b, l, m, PREFIX_OPERATOR, r, false, null);
     return r;
   }

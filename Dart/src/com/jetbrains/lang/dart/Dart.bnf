@@ -526,7 +526,7 @@ left multiplicativeExpression ::= multiplicativeOperator prefixExpression
 
 prefixExpression ::= (prefixOperator prefixExpression) | awaitExpression | suffixExpressionWrapper
 {mixin="com.jetbrains.lang.dart.psi.impl.DartOperatorExpressionImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
-prefixOperator ::= '-' | '+' | '--' | '++' | '!' | '~' | '?'
+prefixOperator ::= '-' | '+' | '--' | '++' | '!' | '~'
 
 awaitExpression ::= 'await' prefixExpression
 
