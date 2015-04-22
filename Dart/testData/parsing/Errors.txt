@@ -41,7 +41,7 @@ Dart File
         PsiElement({)('{')
         PsiComment(SINGLE_LINE_COMMENT)('// WI-14572')
         STATEMENTS
-          THROW_STATEMENT
+          THROW_EXPRESSION
             PsiElement(throw)('throw')
             NEW_EXPRESSION
               PsiElement(new)('new')

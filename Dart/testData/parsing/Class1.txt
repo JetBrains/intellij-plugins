@@ -754,7 +754,7 @@ Dart File
       PsiElement(sync)('sync')
       PsiElement(*)('*')
       PsiElement(=>)('=>')
-      THROW_STATEMENT
+      THROW_EXPRESSION
         PsiElement(throw)('throw')
         REFERENCE_EXPRESSION
           ID

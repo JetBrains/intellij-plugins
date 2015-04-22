@@ -47,9 +47,6 @@ public interface DartIfStatement extends DartPsiCompositeElement {
   List<DartSwitchStatement> getSwitchStatementList();
 
   @NotNull
-  List<DartThrowStatement> getThrowStatementList();
-
-  @NotNull
   List<DartTryStatement> getTryStatementList();
 
   @NotNull

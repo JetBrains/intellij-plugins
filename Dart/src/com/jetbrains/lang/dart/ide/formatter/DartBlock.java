@@ -10,22 +10,25 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
+import com.jetbrains.lang.dart.DartTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 
 public class DartBlock extends AbstractBlock implements BlockWithParent {
+  public static final List<DartBlock> DART_EMPTY = Collections.emptyList();
 
   private static final TokenSet STATEMENTS_WITH_OPTIONAL_BRACES = TokenSet.create(
     IF_STATEMENT, WHILE_STATEMENT, FOR_STATEMENT
   );
 
   private static final TokenSet LAST_TOKENS_IN_SWITCH_CASE = TokenSet.create(
-    BREAK_STATEMENT, CONTINUE_STATEMENT, RETURN_STATEMENT, THROW_STATEMENT
+    BREAK_STATEMENT, CONTINUE_STATEMENT, RETURN_STATEMENT
   );
 
   private final DartIndentProcessor myIndentProcessor;
@@ -36,6 +39,7 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
   private Wrap myChildWrap = null;
   private final Indent myIndent;
   private BlockWithParent myParent;
+  private List<DartBlock> mySubDartBlocks;
 
   protected DartBlock(ASTNode node,
                       Wrap wrap,
@@ -97,7 +101,7 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
   @Override
   public ChildAttributes getChildAttributes(final int newIndex) {
     final IElementType elementType = myNode.getElementType();
-    final DartBlock previousBlock = newIndex == 0 ? null : (DartBlock)getSubBlocks().get(newIndex - 1);
+    final DartBlock previousBlock = newIndex == 0 ? null : getSubDartBlocks().get(newIndex - 1);
     final IElementType previousType = previousBlock == null ? null : previousBlock.getNode().getElementType();
 
     if (previousType == LBRACE || previousType == LBRACKET) {
@@ -114,18 +118,12 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
 
     if (previousType == SWITCH_CASE || previousType == DEFAULT_CASE) {
       if (previousBlock != null) {
-        final List<Block> subBlocks = previousBlock.getSubBlocks();
+        final List<DartBlock> subBlocks = previousBlock.getSubDartBlocks();
         if (!subBlocks.isEmpty()) {
-          final DartBlock lastChildInPrevBlock = (DartBlock)subBlocks.get(subBlocks.size() - 1);
-          final List<Block> subSubBlocks = lastChildInPrevBlock.getSubBlocks();
-          if (!subSubBlocks.isEmpty()) {
-            final DartBlock lastChildInLastChildInPrevBlock = (DartBlock)subSubBlocks.get(subSubBlocks.size() - 1);
-            final IElementType typeOfLastChildInPrevBlock = lastChildInLastChildInPrevBlock.getNode().getElementType();
-
-            if (LAST_TOKENS_IN_SWITCH_CASE.contains(typeOfLastChildInPrevBlock) ||
-                typeOfLastChildInPrevBlock == SEMICOLON && lastButOneIsThrowStatement(subSubBlocks)) {
-              return new ChildAttributes(Indent.getNormalIndent(), null);  // e.g. Enter after BREAK_STATEMENT
-            }
+          final DartBlock lastChildInPrevBlock = subBlocks.get(subBlocks.size() - 1);
+          final List<DartBlock> subSubBlocks = lastChildInPrevBlock.getSubDartBlocks();
+          if (isLastTokenInSwitchCase(subSubBlocks)) {
+            return new ChildAttributes(Indent.getNormalIndent(), null);  // e.g. Enter after BREAK_STATEMENT
           }
         }
       }
@@ -141,8 +139,35 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     return new ChildAttributes(previousBlock.getIndent(), previousBlock.getAlignment());
   }
 
-  private static boolean lastButOneIsThrowStatement(@NotNull final List<Block> blocks) {
-    return blocks.size() > 1 && ((DartBlock)blocks.get(blocks.size() - 2)).getNode().getElementType() == THROW_STATEMENT;
+  private static boolean isLastTokenInSwitchCase(@NotNull final List<DartBlock> blocks) {
+    int size = blocks.size();
+    // No blocks.
+    if (size == 0) {
+      return false;
+    }
+    // [return x;]
+    DartBlock lastBlock = blocks.get(size - 1);
+    final IElementType type = lastBlock.getNode().getElementType();
+    if (LAST_TOKENS_IN_SWITCH_CASE.contains(type)) {
+      return true;
+    }
+    // [throw expr][;]
+    if (type == SEMICOLON && size > 1) {
+      DartBlock lastBlock2 = blocks.get(size - 2);
+      return lastBlock2.getNode().getElementType() == THROW_EXPRESSION;
+    }
+    return false;
+  }
+
+  public List<DartBlock> getSubDartBlocks() {
+    if (mySubDartBlocks == null) {
+      mySubDartBlocks = new ArrayList<DartBlock>();
+      for (Block block : getSubBlocks()) {
+        mySubDartBlocks.add((DartBlock)block);
+      }
+      mySubDartBlocks = !mySubDartBlocks.isEmpty() ? mySubDartBlocks : DART_EMPTY;
+    }
+    return mySubDartBlocks;
   }
 
   @Override

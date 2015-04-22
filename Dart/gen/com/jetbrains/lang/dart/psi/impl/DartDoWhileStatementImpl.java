@@ -102,12 +102,6 @@ public class DartDoWhileStatementImpl extends DartPsiCompositeElementImpl implem
 
   @Override
   @Nullable
-  public DartThrowStatement getThrowStatement() {
-    return findChildByClass(DartThrowStatement.class);
-  }
-
-  @Override
-  @Nullable
   public DartTryStatement getTryStatement() {
     return findChildByClass(DartTryStatement.class);
   }
