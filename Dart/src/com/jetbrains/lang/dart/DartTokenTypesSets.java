@@ -129,8 +129,8 @@ public interface DartTokenTypesSets {
     LT_LT, GT_GT,
     // '+' '-'
     PLUS, MINUS,
-    // '*' '/'
-    MUL, DIV
+    // '*' '/' '%' '~/'
+    MUL, DIV, REM, INT_DIV
   );
 
   TokenSet LOGIC_OPERATORS = TokenSet.create(
