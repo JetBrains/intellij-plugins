@@ -17,5 +17,3 @@
   <info textAttributesKey="DART_KEYWORD">await</info> for (;;);
   <info textAttributesKey="DART_KEYWORD">await</info> c;
 }
-
-<error>`</error> // this syntax error is here to make sure that DartAnalysisServerAnnotator won't run
